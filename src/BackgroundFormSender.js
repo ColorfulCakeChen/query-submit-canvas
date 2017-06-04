@@ -122,7 +122,7 @@
       var fieldData = inputArray.at(0, 2, i);  // 欄位資料。
       formData[fieldName] = fieldData;
       //alert("send data = " + JSON.stringify(formData));
-      thus.sendByURL(formActionURL, formData);
+      this.sendByURL(formActionURL, formData);
     }
   }
 
