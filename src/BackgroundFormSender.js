@@ -123,6 +123,7 @@
       formData[fieldName] = fieldData;
       //alert("send data = " + JSON.stringify(formData));
       thus.sendByURL(formActionURL, formData);
+    }
   }
 
 
