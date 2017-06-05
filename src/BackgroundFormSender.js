@@ -15,23 +15,22 @@
 
   function BackgroundFormSender()
   {
-    this.theIFrame = document.createElement("iframe");   // 產生一個看不見的iframe，存放這個物件產生的所有HTML元素。
-    this.theIFrame.style.display = "none";               // 永不顯示這個用來運作的iframe。
+    this.theIFrame = document.createElement("iframe");      // 產生一個看不見的iframe，存放這個物件產生的所有HTML物件。
+    this.theIFrame.style.display = "none";                  // 永不顯示這個用來運作的iframe。
     document.body.appendChild(this.theIFrame);
 
-    this.theDocument = this.theIFrame.contentDocument;
+    this.theDocument = this.theIFrame.contentDocument;     // 接下來產生的HTML物件，都要放在這個內部文件裡。
 
-    this.resultIFrame = this.theDocument.createElement("iframe");   // 產生一個看不見的iframe，作為接收form submit response的目的地。
+                                                           // 產生用來接收form submit response的目的地iframe。
+    this.resultIFrame = this.theDocument.createElement("iframe");
     this.resultIFrame.id = "BackgroundFormSender_"
                              + "ResultIFrame_"
-                             + Date.now();                  // 盡可能確保名稱是唯一的。(作為form submit response target。)
+                             + Date.now();                 // 盡可能確保名稱是唯一的。(作為form submit response target。)
     this.resultIFrame.name = this.resultIFrame.id;
-    this.resultIFrame.style.display = "none";               // 永不顯示這個用來接收form submit response的iframe。
     this.theDocument.body.appendChild(this.resultIFrame);
-
-    this.form = this.theDocument.createElement("form");     // 每次傳送資料，都會重複使用這個(看不見的)form。(減少記憶體的重複配置與釋放。)
-    this.form.style.display = "none";                       // 永不顯示這個用來在背景傳送資料的form。
-    this.theDocument.body.appendChild(this.form);           // To be sent, the form needs to be attached to the main document.
+                                                           // 產生用來傳送資料的form submit response的目的地iframe。
+    this.form = this.theDocument.createElement("form");    // 每次傳送資料，都會重複使用這個(看不見的)form。(減少記憶體的重複配置與釋放。)
+    this.theDocument.body.appendChild(this.form);          // To be sent, the form needs to be attached to the main document.
 
     this.requestId = 0; // 累計已經呼叫過多少次。(For debug.)
   }
