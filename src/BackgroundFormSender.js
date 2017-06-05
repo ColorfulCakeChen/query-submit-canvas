@@ -11,8 +11,6 @@
 
   function BackgroundFormSender()
   {
-    this.theRuntime = theRuntime;
-
     this.resultIFrame = document.createElement("iframe");   // 產生一個看不見的iframe，作為接收form submit response的目的地。
     this.resultIFrame.id = "BackgroundFormSender_"
                              + "ResultIFrame_"
@@ -27,6 +25,11 @@
 
     this.requestId = 0; // 累計已經呼叫過多少次。(For debug.)
   }
+
+  /**
+   * 讓所有的實體都可以存取 Construct.net 的 runtime engine。
+   */
+  BackgroundFormSender.prototype.theRuntime = theRuntime;
 
   /**
    * 透過隱藏的form傳送資料。
