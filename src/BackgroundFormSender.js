@@ -5,6 +5,8 @@
  *
  *   Browser.ExexJS("gBackgroundFormSender.sendByArray(" & inputArray.UID & ");")
  *
+ * 根據測試，如果兩次發送資料(到同一個目的地URL)的時間間隔太短，結果可能會有資料丟失。建議至少間隔300ms以上。
+ *
  * @param theGlobal
  *   傳入記載全域變數的地方(在Browser中，通常就是window)。用來存放這個BackgroundFormSender物件。
  *
@@ -28,7 +30,7 @@
                              + Date.now();                 // 盡可能確保名稱是唯一的。(作為form submit response target。)
     this.resultIFrame.name = this.resultIFrame.id;
     this.theDocument.body.appendChild(this.resultIFrame);
-                                                           // 產生用來傳送資料的form submit response的目的地iframe。
+                                                           // 產生用來傳送資料的form。
     this.form = this.theDocument.createElement("form");    // 每次傳送資料，都會重複使用這個(看不見的)form。(減少記憶體的重複配置與釋放。)
     this.theDocument.body.appendChild(this.form);          // To be sent, the form needs to be attached to the main document.
 
@@ -36,7 +38,7 @@
   }
 
   /**
-   * 讓所有的實體都可以存取 Construct.net 的 runtime engine。
+   * 讓這個類別所有的實體都可以存取 Construct.net 的 runtime engine。
    */
   BackgroundFormSender.prototype.theRuntime = theRuntime;
 
@@ -144,17 +146,6 @@
     theGlobal.gBackgroundFormSender = new BackgroundFormSender();
   }
 
-//   var URL="https://docs.google.com/forms/d/e/1FAIpQLScwkiFQAGMgt9nWthrJuIjVjPmUcQP-cW3EAM4ojGkE-QiW3g/formResponse";
-//   //entry.1504146089
-//   //entry.1756834287
-//   var data={ "entry.1504146089": gBackgroundFormSender.requestId + "yy" + Date.now() };
-//   //alert("send data = " + JSON.stringify(data));
-//   gBackgroundFormSender.sendData(URL, data);
-
-// //  setTimeout(function () {
-// //    var data2={ "entry.1504146089": gBackgroundFormSender.requestId + "zz" + Date.now(), "entry.1756834287": "abc", "extra2": "123" };
-// //    gBackgroundFormSender.sendData(URL, data2);
-// //  }, 500);
 
 // 因為是透過 Construct.net 的 Browser.ExecJS() 執行這整段程式碼，所以這裡的 this 就是 Browser plugin 自己。
 })(window, this.runtime);
