@@ -15,17 +15,23 @@
 
   function BackgroundFormSender()
   {
-    this.resultIFrame = document.createElement("iframe");   // 產生一個看不見的iframe，作為接收form submit response的目的地。
+    this.theIFrame = document.createElement("iframe");   // 產生一個看不見的iframe，存放這個物件產生的所有HTML元素。
+    this.theIFrame.style.display = "none";               // 永不顯示這個用來運作的iframe。
+    document.body.appendChild(this.theIFrame);
+
+    this.theDocument = this.theIFrame.contentDocument;
+
+    this.resultIFrame = this.theDocument.createElement("iframe");   // 產生一個看不見的iframe，作為接收form submit response的目的地。
     this.resultIFrame.id = "BackgroundFormSender_"
                              + "ResultIFrame_"
                              + Date.now();                  // 盡可能確保名稱是唯一的。(作為form submit response target。)
     this.resultIFrame.name = this.resultIFrame.id;
     this.resultIFrame.style.display = "none";               // 永不顯示這個用來接收form submit response的iframe。
-    document.body.appendChild(this.resultIFrame);
+    this.theDocument.body.appendChild(this.resultIFrame);
 
-    this.form = document.createElement("form");             // 每次傳送資料，都會重複使用這個(看不見的)form。(減少記憶體的重複配置與釋放。)
+    this.form = this.theDocument.createElement("form");     // 每次傳送資料，都會重複使用這個(看不見的)form。(減少記憶體的重複配置與釋放。)
     this.form.style.display = "none";                       // 永不顯示這個用來在背景傳送資料的form。
-    document.body.appendChild(this.form);                   // To be sent, the form needs to be attached to the main document.
+    this.theDocument.body.appendChild(this.form);           // To be sent, the form needs to be attached to the main document.
 
     this.requestId = 0; // 累計已經呼叫過多少次。(For debug.)
   }
@@ -62,7 +68,7 @@
     {
       if (!inputElement)
       {  // 表單中的欄位不夠用，需要產生新的欄位。
-        inputElement = document.createElement("input");
+        inputElement = this.theDocument.createElement("input");
         this.form.appendChild(inputElement);
         inputElementCreatedCount++;
       }
@@ -123,10 +129,10 @@
 
     var formActionURL = inputArray.at(0, 0, 0);  // 表單的接收網址。
     var formData = {};
-    for (var i = 0; i < inputArray.cz; ++i)  // 陣列的depth(cz)，代表欄位的數量。
+    for (var i = 0; i < inputArray.cz; ++i)      // 陣列的depth(cz)，代表欄位的數量。
     {
-      var fieldName = inputArray.at(0, 1, i);  // 欄位名稱。
-      var fieldData = inputArray.at(0, 2, i);  // 欄位資料。
+      var fieldName = inputArray.at(0, 1, i);   // 欄位名稱。
+      var fieldData = inputArray.at(0, 2, i);   // 欄位資料。
       formData[fieldName] = fieldData;
       //alert("send data = " + JSON.stringify(formData));
       this.sendByURL(formActionURL, formData);
