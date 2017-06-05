@@ -1,7 +1,7 @@
 /**
  * 請在 Construct.net 的 On start of layout 中，使用 Browser.ExexJS() 執行這個檔案的內容。
- * 執行後產生一個名叫 gBackgroundFormSender 的全域物件，呼叫 gBackgroundFormSender.sendByArray()，
- * 並傳入記載有相關參數的 (Consteuct.net) Array plugin instance UID，即可傳送資料。類似這樣：
+ * 執行後會產生一個名叫 gBackgroundFormSender 的全域物件。呼叫它的函式sendByArray()，
+ * 並傳入記載有相關參數的 Array UID (這裡所說的 Array 是 Construct.net 的一種 plugin)，即可傳送資料。類似這樣：
  *
  *   Browser.ExexJS("gBackgroundFormSender.sendByArray(" & inputArray.UID & ");")
  *
