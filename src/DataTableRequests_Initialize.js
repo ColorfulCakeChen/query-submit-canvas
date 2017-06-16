@@ -21,8 +21,10 @@ function DataTableRequests_Initialize(theGlobal)
    * class RequestState
    * 記載單一筆請求的資料。
    */
-  function RequestState(requestId, theRuntime, inoutArrayUID)
+  function RequestState(theDataTableRequests, requestId, theRuntime, inoutArrayUID)
   {
+    this.theDataTableRequests = theDataTableRequests;  // 以便在查詢結束後，能夠把這筆記錄從容器中移除。
+
     this.requestId = requestId;
     this.isFailed = false;
     this.response = null;
@@ -37,6 +39,12 @@ function DataTableRequests_Initialize(theGlobal)
   RequestState.prototype.toString = function ()
   {
     return JSON.stringify(this);
+  }
+
+  // 把這筆紀錄，從所屬列表中移除。
+  RequestState.prototype.removeThisFromContainer = function ()
+  {
+    this.theDataTableRequests.requestStateMap.delete(this.requestId);
   }
 
   // 把結果字串存入陣列中用來回傳資料的地方，並且喚醒 Construct.net EventSheet 中的 Wait for signal。
@@ -126,10 +134,11 @@ function DataTableRequests_Initialize(theGlobal)
         var query = new google.visualization.Query(URL);
         query.setQuery(querySQL);
         query.send(function (response) {
+          theRequestState.removeThisFromContainer();  // 從列表中移除已經完成的查詢，釋放記憶體。
           if (response.isError())
           {
             //alert("Query failed.");
-            google.visualization.errors.addError(theRequestState.theRuntime.canvasdiv, theRequestState.response);
+            google.visualization.errors.addError(theRequestState.theRuntime.canvasdiv, response);
             var message = response.getMessage();
             var detailedMessage = response.getDetailedMessage();
             reject(message + ' ' + detailedMessage);
@@ -176,7 +185,7 @@ function DataTableRequests_Initialize(theGlobal)
     var requestId = this.nextRequestId;  // 產生這次查詢請求的編號。
     this.nextRequestId++;
 
-    var theRequestState = new RequestState(requestId, theRuntime, inoutArrayUID);
+    var theRequestState = new RequestState(this, requestId, theRuntime, inoutArrayUID);
     this.requestStateMap.set(requestId, theRequestState);
     return theRequestState;
   }
