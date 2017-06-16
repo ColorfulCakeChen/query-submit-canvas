@@ -18,7 +18,7 @@
    * class RequestState
    * 記載單一筆請求的資料。
    */
-  function RequestState(theDataTableRequests, requestId, inoutArrayUID)
+  function RequestState(theDataTableRequests, requestId, inoutArrayUID, signalTag)
   {
     this.theDataTableRequests = theDataTableRequests;  // 以便在查詢結束後，能夠把這筆記錄從容器中移除。
 
@@ -29,7 +29,8 @@
     this.inoutArrayUID =  inoutArrayUID;
     this.inoutArray =     this.theRuntime.getObjectByUID(inoutArrayUID);
     this.sheetDocKey =    this.inoutArray.at(0, 0, 0);
-    this.signalTag   =    this.inoutArray.at(0, 0, 1);
+    //this.signalTag   =    this.inoutArray.at(0, 0, 1);
+    this.signalTag   =    signalTag;
   }
 
   /**
@@ -78,21 +79,17 @@
    * @param inoutArrayUID
    *   傳入存放有查詢相關參數的 Construct.net Array plugin 的 instance 的 UID。
    *   inoutArray(0,0,0) = sheetDocKey (要被查詢的Google Sheet檔案的編號)
-   *   inoutArray(0,0,1) = signalTag   (查詢結束時(不論成功或失敗)要通知 Construct.net 的哪個 Wait for signal。) 
+   *   inoutArray(0,0,1) = ??? 
    *   inoutArray(0,0,2) = 查詢成功時，從這個陣列傳回查詢的結果。
 !!!???
    *   inoutArray(1,y,z) = 查詢成功時，從這個陣列傳回查詢的結果。
+   *
+   * @return
+   *   傳回一個字串(signalTag)，當查詢結束時(不論成功或失敗)，
+   *   會通知 Construct.net 喚醒在這個 signalTag 等待的所有 Wait for signal。
    */
   DataTableRequests.prototype.sendQuery = function (inoutArrayUID)
   {
-//    //var self = this;
-//
-//    if (!theGlobal.gDataTableRequests)  // 必須已經建立暫存這些查詢請求的全域物件。
-//    {
-//      alert("Please DataTableRequests_Initialize() first.");
-//      return;
-//    }
-
     var theRequestState = this.createRequestState(inoutArrayUID);  // 產生這次查詢請求的編號與狀態記錄。
 
     new Promise(function (resolve, reject)
@@ -171,20 +168,7 @@
       alert("Query failed. " + err);
     });
 
-//    // 
-//    var retDictionary =
-//    {
-//      "c2dictionary":true,
-//      "data":
-//      {
-//        "shouldWait": "gDataTableRequests.shouldWait(" + theRequestState.requestId + ");",
-//        "isFailed": "gDataTableRequests.isFailed(" + theRequestState.requestId + ");",
-//        "getFailedMessage": "gDataTableRequests.getFailedMessage(" + theRequestState.requestId + ");",
-//        "getDataTable": "gDataTableRequests.getDataTable(" + theRequestState.requestId + ");"
-//      }
-//    };
-//
-//    return JSON.stringify(retDictionary);
+    return theRequestState.signalTag;
   }
 
   // 產生、記載、傳回新的請求狀態記錄。
@@ -192,66 +176,68 @@
     var requestId = this.nextRequestId;  // 產生這次查詢請求的編號。
     this.nextRequestId++;
 
-    var theRequestState = new RequestState(this, requestId, inoutArrayUID);
+    var signalTag = "DataTableRequest_" + requestId;  // 盡可能產生不容易重複的名稱。
+
+    var theRequestState = new RequestState(this, requestId, inoutArrayUID, signalTag);
     this.requestStateMap.set(requestId, theRequestState);
     return theRequestState;
   }
 
-  // 如果還需要等待指定編號的請求的執行結果，傳回true。否則，表示該請求已經完成(不論成功或失敗，或甚至無此請求)，傳回false。
-  DataTableRequests.prototype.shouldWait = function (requestId) {
-    var theRequestState = this.requestStateMap.get(requestId);
-    //alert("theRequestState=" + theRequestState);
-    if (!theRequestState)
-      return false;  // 無此請求資料，不需要等待，因為不可能完成。  
-    if (theRequestState.isFailed)
-      return false;  // 已經執行失敗，不需要再等待。
-    if (!theRequestState.response)
-      return false;  // 已經執行成功，不需要再等待。
-    return true;     // 繼續等待執行結果的到來。
-  };
+//   // 如果還需要等待指定編號的請求的執行結果，傳回true。否則，表示該請求已經完成(不論成功或失敗，或甚至無此請求)，傳回false。
+//   DataTableRequests.prototype.shouldWait = function (requestId) {
+//     var theRequestState = this.requestStateMap.get(requestId);
+//     //alert("theRequestState=" + theRequestState);
+//     if (!theRequestState)
+//       return false;  // 無此請求資料，不需要等待，因為不可能完成。  
+//     if (theRequestState.isFailed)
+//       return false;  // 已經執行失敗，不需要再等待。
+//     if (!theRequestState.response)
+//       return false;  // 已經執行成功，不需要再等待。
+//     return true;     // 繼續等待執行結果的到來。
+//   };
 
-  // 傳回指定編號的請求，是否已經執行失敗。
-  DataTableRequests.prototype.isFailed = function (requestId) {
-    var theRequestState = this.requestStateMap.get(requestId);
-    if (!theRequestState)
-      return true;  // 無此請求資料，視為執行失敗，因為也沒有資料可以使用。  
-    return theRequestState.isFailed;
-  };
+//   // 傳回指定編號的請求，是否已經執行失敗。
+//   DataTableRequests.prototype.isFailed = function (requestId) {
+//     var theRequestState = this.requestStateMap.get(requestId);
+//     if (!theRequestState)
+//       return true;  // 無此請求資料，視為執行失敗，因為也沒有資料可以使用。  
+//     return theRequestState.isFailed;
+//   };
 
-  /**
-   * 如果傳回指定編號的請求，已經執行失敗，傳回失敗原因的描述字串。
-   * @param clear  如果傳入true，會順便把該請求記錄，從這個表中移除。(釋出記憶體。)
-   */
-  DataTableRequests.prototype.getFailedMessage = function (requestId, clear) {
-    var theRequestState = this.requestStateMap.get(requestId);
-    if (clear)
-      this.requestStateMap["delete"](requestId);            // 清除此紀錄。
-    if (!theRequestState)
-      return "Request(" + requestId + ") does not exist.";  // 無此請求資料。
-    if (!theRequestState.isFailed)
-      return "Request(" + requestId + ") not yet failed.";  // 此請求尚未失敗(結果還不知道)。
-    if (!theRequestState.response)
-      return "Request(" + requestId + ") failed with unknown reason.";  // 此請求已經失敗，但原因未知。
+//   /**
+//    * 如果傳回指定編號的請求，已經執行失敗，傳回失敗原因的描述字串。
+//    * @param clear  如果傳入true，會順便把該請求記錄，從這個表中移除。(釋出記憶體。)
+//    */
+//   DataTableRequests.prototype.getFailedMessage = function (requestId, clear) {
+//     var theRequestState = this.requestStateMap.get(requestId);
+//     if (clear)
+//       this.requestStateMap["delete"](requestId);            // 清除此紀錄。
+//     if (!theRequestState)
+//       return "Request(" + requestId + ") does not exist.";  // 無此請求資料。
+//     if (!theRequestState.isFailed)
+//       return "Request(" + requestId + ") not yet failed.";  // 此請求尚未失敗(結果還不知道)。
+//     if (!theRequestState.response)
+//       return "Request(" + requestId + ") failed with unknown reason.";  // 此請求已經失敗，但原因未知。
 
-    var message = theRequestState.response.getMessage();
-    var detailedMessage = theRequestState.response.getDetailedMessage();
-    return ("Request(" + requestId + ") " + message + " " + detailedMessage);
-  };
+//     var message = theRequestState.response.getMessage();
+//     var detailedMessage = theRequestState.response.getDetailedMessage();
+//     return ("Request(" + requestId + ") " + message + " " + detailedMessage);
+//   };
 
-  /**
-   * 如果(shouldWait() == false) && (isFailed() == false))，傳回查詢的資料。
-   * @param clear  如果傳入true，會順便把該請求記錄，從這個表中移除。(釋出記憶體。)
-   */
-  DataTableRequests.prototype.getDataTable = function (requestId, clear) {
-    var theRequestState = this.requestStateMap.get(requestId);
-    if (clear)
-      this.requestStateMap["delete"](requestId);            // 清除此紀錄。
-    if (!theRequestState)
-      return "Request(" + requestId + ") does not exist.";    // 無此請求資料。
-    if (!theRequestState.response)
-      return "Request(" + requestId + ") not yet response.";  // 此請求還在進行中，結果還不知道。
-    return JSON.stringify(theRequestState.response.getDataTable());
-  };
+//   /**
+//    * 如果(shouldWait() == false) && (isFailed() == false))，傳回查詢的資料。
+//    * @param clear  如果傳入true，會順便把該請求記錄，從這個表中移除。(釋出記憶體。)
+//    */
+//   DataTableRequests.prototype.getDataTable = function (requestId, clear) {
+//     var theRequestState = this.requestStateMap.get(requestId);
+//     if (clear)
+//       this.requestStateMap["delete"](requestId);            // 清除此紀錄。
+//     if (!theRequestState)
+//       return "Request(" + requestId + ") does not exist.";    // 無此請求資料。
+//     if (!theRequestState.response)
+//       return "Request(" + requestId + ") not yet response.";  // 此請求還在進行中，結果還不知道。
+//     return JSON.stringify(theRequestState.response.getDataTable());
+//   };
 
 
   if (!theGlobal.gDataTableRequests)
