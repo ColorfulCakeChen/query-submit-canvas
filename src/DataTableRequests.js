@@ -1,42 +1,51 @@
 /**
- * @param theGlobal 傳入記載全域變數的地方。(在Browser中，通常就是window。)
+ * 請在 Construct.net 的 On start of layout 中，使用 Browser.ExexJS() 執行這個檔案的內容。
+ * 執行後會產生一個名叫 gDataTableRequests 的全域物件。呼叫它的函式 sendQuery()，
+ * 並傳入記載有相關參數的 Array UID (這裡所說的 Array 是 Construct.net 的一種 plugin)，即可傳送資料。類似這樣：
+ *
+ *   Browser.ExecJS("gDataTableRequests.sendQuery(" & inputArray.UID & ");")
+ *
+ *
+ * @param theGlobal
+ *   傳入記載全域變數的地方(在Browser中，通常就是window)。用來存放這個 DataTableRequests 物件。
+ *
+ * @param theRuntime
+ *   傳入Consrruct.net的Runtime引擎物件。用來根據UID取得物件。
  */
-function DataTableRequests_Deinitialize(theGlobal)
-{
-  if (!theGlobal.gDataTableRequests)  // 原本就不存在，不需要清除。
-    return;
-
-  delete theGlobal.gDataTableRequests;
-}
-
-/**
- * @param theGlobal 傳入記載全域變數的地方，以便能夠檢查某些全域物件是否存在，以及建立全域物件。(在Browser中，通常就是傳入window。)
- */
-function DataTableRequests_Initialize(theGlobal)
-{
-  if (theGlobal.gDataTableRequests)  // 已經初始化過了，不需要重新建立。
-    return;
+(function (theGlobal, theRuntime) {
 
   /**
    * class RequestState
    * 記載單一筆請求的資料。
    */
-  function RequestState(requestId, theRuntime, inoutArrayUID)
+  function RequestState(theDataTableRequests, requestId, inoutArrayUID)
   {
+    this.theDataTableRequests = theDataTableRequests;  // 以便在查詢結束後，能夠把這筆記錄從容器中移除。
+
     this.requestId = requestId;
     this.isFailed = false;
     this.response = null;
 
-    this.theRuntime =     theRuntime;
     this.inoutArrayUID =  inoutArrayUID;
-    this.inoutArray =     theRuntime.getObjectByUID(inoutArrayUID);
+    this.inoutArray =     this.theRuntime.getObjectByUID(inoutArrayUID);
     this.sheetDocKey =    this.inoutArray.at(0, 0, 0);
     this.signalTag   =    this.inoutArray.at(0, 0, 1);
   }
 
+  /**
+   * 讓這個類別所有的實體都可以存取 Construct.net 的 runtime engine。
+   */
+  RequestState.prototype.theRuntime = theRuntime;
+
   RequestState.prototype.toString = function ()
   {
     return JSON.stringify(this);
+  }
+
+  // 把這筆紀錄，從所屬列表中移除。
+  RequestState.prototype.removeThisFromContainer = function ()
+  {
+    this.theDataTableRequests.requestStateMap.delete(this.requestId);
   }
 
   // 把結果字串存入陣列中用來回傳資料的地方，並且喚醒 Construct.net EventSheet 中的 Wait for signal。
@@ -50,15 +59,21 @@ function DataTableRequests_Initialize(theGlobal)
   /**
    * class DataTableRequests
    * 記載所有請求的資料。
+   *
+   * @param theRuntime
+   *   傳入Consrruct.net的Runtime引擎物件。
    */
-  function DataTableRequests() {
+  function DataTableRequests(theRuntime) {
     this.nextRequestId = 0;
     this.requestStateMap = new Map();  // 使用nextRequestId產生的數值，作為索引鍵值。
   }
 
   /**
-   * @param theRuntime
-   *   傳入Consrruct.net的Runtime引擎物件。
+   * 讓這個類別所有的實體都可以存取 Construct.net 的 runtime engine。
+   */
+  DataTableRequests.prototype.theRuntime = theRuntime;
+
+  /**
    *
    * @param inoutArrayUID
    *   傳入存放有查詢相關參數的 Construct.net Array plugin 的 instance 的 UID。
@@ -68,7 +83,7 @@ function DataTableRequests_Initialize(theGlobal)
 !!!???
    *   inoutArray(1,y,z) = 查詢成功時，從這個陣列傳回查詢的結果。
    */
-  DataTableRequests.prototype.sendQuery = function (theRuntime, inoutArrayUID)
+  DataTableRequests.prototype.sendQuery = function (inoutArrayUID)
   {
 //    //var self = this;
 //
@@ -78,7 +93,7 @@ function DataTableRequests_Initialize(theGlobal)
 //      return;
 //    }
 
-    var theRequestState = this.createRequestState(theRuntime, inoutArrayUID);  // 產生這次查詢請求的編號與狀態記錄。
+    var theRequestState = this.createRequestState(inoutArrayUID);  // 產生這次查詢請求的編號與狀態記錄。
 
     new Promise(function (resolve, reject)
     {
@@ -126,9 +141,11 @@ function DataTableRequests_Initialize(theGlobal)
         var query = new google.visualization.Query(URL);
         query.setQuery(querySQL);
         query.send(function (response) {
+          theRequestState.removeThisFromContainer();  // 從列表中移除已經完成的查詢，釋放記憶體。
           if (response.isError())
           {
             //alert("Query failed.");
+            google.visualization.errors.addError(theRequestState.theRuntime.canvasdiv, response);
             var message = response.getMessage();
             var detailedMessage = response.getDetailedMessage();
             reject(message + ' ' + detailedMessage);
@@ -171,11 +188,11 @@ function DataTableRequests_Initialize(theGlobal)
   }
 
   // 產生、記載、傳回新的請求狀態記錄。
-  DataTableRequests.prototype.createRequestState = function (theRuntime, inoutArrayUID) {
+  DataTableRequests.prototype.createRequestState = function (inoutArrayUID) {
     var requestId = this.nextRequestId;  // 產生這次查詢請求的編號。
     this.nextRequestId++;
 
-    var theRequestState = new RequestState(requestId, theRuntime, inoutArrayUID);
+    var theRequestState = new RequestState(this, requestId, inoutArrayUID);
     this.requestStateMap.set(requestId, theRequestState);
     return theRequestState;
   }
@@ -236,16 +253,12 @@ function DataTableRequests_Initialize(theGlobal)
     return JSON.stringify(theRequestState.response.getDataTable());
   };
 
-  theGlobal.gDataTableRequests = new DataTableRequests();
-}
+
+  if (!theGlobal.gDataTableRequests)
+  { // 第一次執行時，產生用來進行資料表查詢的全域物件。
+    theGlobal.gDataTableRequests = new DataTableRequests();
+  }
 
 
-
-
-
-
-
-
-
-
-DataTableRequests_Initialize(window);
+// 因為是透過 Construct.net 的 Browser.ExecJS() 執行這整段程式碼，所以這裡的 this 就是 Browser plugin 自己。
+})(window, this.runtime);
