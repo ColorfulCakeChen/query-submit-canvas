@@ -129,6 +129,7 @@ function DataTableRequests_Initialize(theGlobal)
           if (response.isError())
           {
             //alert("Query failed.");
+            google.visualization.errors.addError(theRequestState.theRuntime.canvasdiv, theRequestState.response);
             var message = response.getMessage();
             var detailedMessage = response.getDetailedMessage();
             reject(message + ' ' + detailedMessage);
