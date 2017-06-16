@@ -3,7 +3,7 @@
  * 執行後會產生一個名叫 gDataTableRequests 的全域物件。呼叫它的函式 sendQuery()，
  * 並傳入記載有相關參數的 Array UID (這裡所說的 Array 是 Construct.net 的一種 plugin)，即可傳送資料。類似這樣：
  *
- *   Browser.ExexJS("gDataTableRequests.sendQuery(" & inputArray.UID & ");")
+ *   Browser.ExecJS("gDataTableRequests.sendQuery(" & inputArray.UID & ");")
  *
  *
  * @param theGlobal
