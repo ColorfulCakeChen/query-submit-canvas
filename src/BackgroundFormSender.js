@@ -11,7 +11,7 @@
  *   傳入記載全域變數的地方(在Browser中，通常就是window)。用來存放這個BackgroundFormSender物件。
  *
  * @param theRuntime
- *   傳入Consrruct.net的Runtime引擎物件。用來根據UID取得物件。
+ *   傳入Construct.net的Runtime引擎物件。用來根據UID取得物件。
  */
 (function (theGlobal, theRuntime) {
 
