@@ -1,9 +1,13 @@
 /**
  * 請在 Construct.net 的 On start of layout 中，使用 Browser.ExexJS() 執行這個檔案的內容。
- * 執行後會產生一個名叫 gDataTableRequests 的全域物件。呼叫它的函式 sendQuery()，
- * 並傳入記載有相關參數的 Array UID (這裡所說的 Array 是 Construct.net 的一種 plugin)，即可傳送資料。類似這樣：
+ * 執行後會產生一個名叫 gDataTableRequests 的全域物件。呼叫它的函式 sendQuery()，並傳入記載
+ * 有相關參數的 Array UID (這裡所說的 Array 是 Construct.net 的一種 plugin)，即可查詢並下載
+ * 資料。該函式會傳回一個字串，代表訊號名稱(signal tag)，請在 Construct.net 的 EventSheet 中
+ * 使用 Wait for signal 等待該訊號。類似這樣：
  *
- *   Browser.ExecJS("gDataTableRequests.sendQuery(" & inputArray.UID & ");")
+ *   Wait for signal  Browser.ExecJS("gDataTableRequests.sendQuery(" & inputArray.UID & ");")
+ *
+ * 當該查詢執行完畢，不論結果是成功或失敗，都會喚醒在該訊號名稱上等待的事件。
  *
  *
  * @param theGlobal
