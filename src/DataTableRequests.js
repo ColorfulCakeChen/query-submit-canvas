@@ -119,7 +119,8 @@
       // 成功載入Google Charts API的Loader後，再用它來載入Google Charts API。
       scriptElement.onload = function () {
         // Load the Visualization API and the corechart package.
-        google.charts.load("current", {packages: ["corechart"]});
+        //google.charts.load("current", {packages: ["corechart"]});
+        google.charts.load("current");  // Because we just use query and do not draw any chart, no need to load any chart package.
         google.charts.setOnLoadCallback(function () {
           resolve(google);
           //alert("load Chart API done.");
