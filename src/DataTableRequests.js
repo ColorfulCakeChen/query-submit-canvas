@@ -129,17 +129,17 @@
     })
     .then(function (google)  // After Google Charts API is loaded.
     {
-      //var sheetDocKey = "1QzhY3yJGRBil30z6b99Ao0meVGNfw_T9A6mup4wZ3zw";
-      var sheetId = 0;
-      var headerLineCount = 1;
-      //var URL = "https://docs.google.com/spreadsheets/d/1QzhY3yJGRBil30z6b99Ao0meVGNfw_T9A6mup4wZ3zw/gviz/tq?gid=0&headers=1";
-      var URL = "https://docs.google.com/spreadsheets/d/"
-                  + theRequestState.sheetDocKey + "/gviz/tq?gid=" + sheetId + "&headers=" + headerLineCount;
-
-      var querySQL = "SELECT *";
-
       return new Promise(function (resolve, reject)
       {
+        //var sheetDocKey = "1QzhY3yJGRBil30z6b99Ao0meVGNfw_T9A6mup4wZ3zw";
+        var sheetId = 0;
+        var headerLineCount = 1;
+        //var URL = "https://docs.google.com/spreadsheets/d/1QzhY3yJGRBil30z6b99Ao0meVGNfw_T9A6mup4wZ3zw/gviz/tq?gid=0&headers=1";
+        var URL = "https://docs.google.com/spreadsheets/d/"
+                    + theRequestState.sheetDocKey + "/gviz/tq?gid=" + sheetId + "&headers=" + headerLineCount;
+
+        var querySQL = "SELECT *";
+
         var query = new google.visualization.Query(URL);
         query.setQuery(querySQL);
         query.send(function (response) {
