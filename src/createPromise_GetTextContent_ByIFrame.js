@@ -1,5 +1,5 @@
 /**
- * 動態透過 IFrame 載入同源(same origin)網頁中的特定元素的文字內容。
+ * 動態透過 IFrame 載入同源(Same Origin)網頁中的特定元素的文字內容。
  *
  * @param iframeSrcURL 傳入要被載入內容的網址。會使用 iframe 載入該網址的內容。並在完成後，該 iframe 會被移除與釋放。
  * @param elementIdInsideIFrame 傳入元素編號。在使用 iframe 載入指定的網頁後，會取得該該網頁中該編號元素的文字內容。
