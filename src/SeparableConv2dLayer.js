@@ -19,7 +19,7 @@ class SeparableConv2dLayer {
       return;
     }
 
-	  if ( this.depthwiseFilter.weightIndexBegin >= integerWeights.length ) {
+    if ( this.depthwiseFilter.weightIndexBegin >= integerWeights.length ) {
       return;
     }
 
@@ -29,16 +29,16 @@ class SeparableConv2dLayer {
     this.depthwiseFilter.weightCount = this.params.filterHeight * this.params.filterWidth * inChannels * this.params.channelMultiplier;
     this.pointwiseFilter.weightCount = inChannels * this.params.channelMultiplier * this.params.outChannels;
 
-	  this.depthwiseFilter.weightIndexEnd = this.depthwiseFilter.weightIndexBegin + this.depthwiseFilter.weightCount;
+    this.depthwiseFilter.weightIndexEnd = this.depthwiseFilter.weightIndexBegin + this.depthwiseFilter.weightCount;
     if ( this.depthwiseFilter.weightIndexEnd >= integerWeights.length) {
       return;
     }
-	  this.depthwiseFilter = integerWeights.slice(this.depthwiseFilter.weightIndexBegin, this.depthwiseFilter.weightIndexEnd)
+    this.depthwiseFilter = integerWeights.slice(this.depthwiseFilter.weightIndexBegin, this.depthwiseFilter.weightIndexEnd)
       .map( integerWeight => ( integerWeight - weightValueOffset ) / weightValueDivisor );
 
     this.pointwiseFilter.weightIndexBegin = this.depthwiseFilter.weightIndexEnd;
-	  this.pointwiseFilter.weightIndexEnd =   this.pointwiseFilter.weightIndexBegin + this.pointwiseFilter.weightCount;
-	  if ( this.pointwiseFilter.weightIndexEnd >= integerWeights.length) {
+    this.pointwiseFilter.weightIndexEnd =   this.pointwiseFilter.weightIndexBegin + this.pointwiseFilter.weightCount;
+    if ( this.pointwiseFilter.weightIndexEnd >= integerWeights.length) {
       return;
     }
 
@@ -62,18 +62,18 @@ class SeparableConv2dLayer {
           str => { str.match(encodedWeightMatchRegExp).map(element=>parseInt(element,encodedWeightBase)) } );
 
     let theEntities = encodedEntities.map( integerWeights => {
-	    let theEntity=[], weightIndex=0, inChannels=4; // Suppose the first layer's input channel count is always RGBA 4 channels.
-	    while (weightIndex < integerWeights.length) {
-	      let layer = new SeparableConv2dLayer( integerWeights, weightIndex, weightValueOffset, weightValueDivisor);	
-	      theEntity.push(layer);		
-	      inChannels =  layer.params.outChannels;  // The next layer's input channel count is the previous layer's output channel count.
-	      weightIndex = layer.pointwiseFilter.weightIndexEnd;
-	    }
+      let theEntity=[], weightIndex=0, inChannels=4; // Suppose the first layer's input channel count is always RGBA 4 channels.
+      while (weightIndex < integerWeights.length) {
+        let layer = new SeparableConv2dLayer( integerWeights, weightIndex, weightValueOffset, weightValueDivisor);	
+        theEntity.push(layer);		
+        inChannels =  layer.params.outChannels;  // The next layer's input channel count is the previous layer's output channel count.
+        weightIndex = layer.pointwiseFilter.weightIndexEnd;
+      }
       return theEntity;
-	  }
-	
+    }
+
     return theEntities;
-  };
+  }
 
 }
 
