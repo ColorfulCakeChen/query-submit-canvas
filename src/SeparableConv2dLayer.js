@@ -42,8 +42,8 @@ class SeparableConv2dLayer {
       return;
     }
 
-     this.pointwiseFilter = integerWeights.slice(this.pointwiseFilter.weightIndexBegin, this.pointwiseFilter.weightIndexEnd)
-       .map( integerWeight => ( integerWeight - weightValueOffset ) / weightValueDivisor );
+    this.pointwiseFilter = integerWeights.slice(this.pointwiseFilter.weightIndexBegin, this.pointwiseFilter.weightIndexEnd)
+      .map( integerWeight => ( integerWeight - weightValueOffset ) / weightValueDivisor );
   }
 
   /**
