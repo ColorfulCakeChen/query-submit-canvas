@@ -53,7 +53,7 @@ class SeparableConv2dLayer {
    * @param  {number}   encodedWeightBase        Every weight is encoded by this base number. (e.g. 2 or 10 or 16 or 36) 
    * @param  {number}   weightValueOffset        The value will be subtracted from the integer weight value.
    * @param  {number}   weightValueDivisor       Divide the integer weight value by this value for converting to floating-point number.
-   * @return {Object[]} Deocoded entity for separableConv2d(). Every entity is an array of SeparableConv2dLayer.
+   * @return {Object[]} Decoded entity for separableConv2d(). Every entity is an array of SeparableConv2dLayer.
    */
   static StringArrayToSeparableConv2dEntities(
     encodedStringArray, encodedWeightMatchRegExp, encodedWeightBase, weightValueOffset, weightValueDivisor) {
