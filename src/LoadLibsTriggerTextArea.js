@@ -6,14 +6,14 @@
   }
 
   /*alert("hi1");*/
-  var theTextArea = d.querySelector("textarea[title='"+TextAreaElementTooltip+"']");
+  let theTextArea = d.querySelector("textarea[title='"+TextAreaElementTooltip+"']");
 
   if (urlArray.length <= 0) {
     theTextArea.value = "No Library needs to load.";
     theTextArea.dispatchEvent(new Event("input")); /* None to be loaded. Done. */
   }
 
-  var i = 0, p = createPromiseLoadScript(urlArray[i]);
+  let i = 0;
 
   function onLoadOk(e) {
     /*alert('Library ({$i}/{$urlArray.length}) loaded: ({$urlArray[i]})');*/
@@ -23,8 +23,7 @@
     } else {
       theTextArea.value = 'Library ({$i}/{$urlArray.length}) loaded: ({$urlArray[i]})';
       ++i;
-      p=createPromiseLoadScript(urlArray[i]);
-      p.then(onLoadOk).catch(onLoadFailed);
+      createPromiseLoadScript(urlArray[i]).then(onLoadOk).catch(onLoadFailed);
     }
   }
 
@@ -33,6 +32,6 @@
     theTextArea.value = 'Library ({$i}/{$urlArray.length}) loading FAILED! {$e} ({$urlArray[i]})';
   }
 
-  p.then(onLoadOk).catch(onLoadFailed);
+  createPromiseLoadScript(urlArray[i]).then(onLoadOk).catch(onLoadFailed);
 
 })(window,document,'script',
