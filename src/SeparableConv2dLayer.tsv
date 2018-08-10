@@ -58,10 +58,10 @@ class SeparableConv2dLayer {
   static StringArrayToSeparableConv2dEntities(
     encodedStringArray, encodedWeightMatchRegExp, encodedWeightBase, weightValueOffset, weightValueDivisor) {
 
-    let integerWeights = Array.from(encodedStringArray,
+    let integerWeightsArray = Array.from(encodedStringArray,
           str => { str.match(encodedWeightMatchRegExp).map(element=>parseInt(element,encodedWeightBase)) } );
 
-    let theEntities = encodedEntities.map( integerWeights => {
+    let theEntities = integerWeightsArray.map( integerWeights => {
       let theEntity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
       while ( weightIndex < integerWeights.length ) {
         let layer = new SeparableConv2dLayer(integerWeights, weightIndex, weightValueOffset, weightValueDivisor);	
