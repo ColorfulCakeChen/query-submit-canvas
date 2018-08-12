@@ -8,42 +8,57 @@ class SeparableConv2dLayer {
    * @param {number}   weightIndexBegin   The position to start to decode from the integerWeights.
    * @param {number}   weightValueOffset  The value will be subtracted from the integer weight value.
    * @param {number}   weightValueDivisor Divide the integer weight value by this value for converting to floating-point number.
+   * @param {number}   inChannels         The input channel count.
    */ 
-  constructor(integerWeights, weightIndexBegin, weightValueOffset, weightValueDivisor) {
+  constructor(integerWeights, weightIndexBegin, weightValueOffset, weightValueDivisor, inChannels) {
     this.weightIndexBegin = weightIndex;
     this.params = {};
-    this.depthwiseFilter = {weightIndexBegin: weightIndex + SeparableConv2dLayer.ParamNames.length};
-    this.pointwiseFilter = {};
+    this.depthwise = {weightIndexBegin: weightIndex + SeparableConv2dLayer.ParamNames.length};
+    this.pointwise = {};
+    this.bias = {};
+
+    function integerToFloat(integerWeight) {
+      return ( integerWeight - weightValueOffset ) / weightValueDivisor;
+    }
 
     if ( weightIndex >= integerWeights.length ) {
       return;
     }
 
-    if ( this.depthwiseFilter.weightIndexBegin >= integerWeights.length ) {
+    if ( this.depthwise.weightIndexBegin >= integerWeights.length ) {
       return;
     }
 
     for ( let i = 0; i < SeparableConv2dLayer.ParamNames.length; ++i ) {
       this.params[ SeparableConv2dLayer.ParamNames[i] ] = integerWeights[weightIndex+i]; }
 
-    this.depthwiseFilter.weightCount = this.params.filterHeight * this.params.filterWidth * inChannels * this.params.channelMultiplier;
-    this.pointwiseFilter.weightCount = inChannels * this.params.channelMultiplier * this.params.outChannels;
+    this.depthwise.weightCount = this.params.filterHeight * this.params.filterWidth * inChannels * this.params.channelMultiplier;
+    this.depthwise.shape =       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier];
+    this.pointwise.weightCount = inChannels * this.params.channelMultiplier * this.params.outChannels;
+    this.pointwise.shape =       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels];
+    this.bias.weightCount =      this.params.outChannels;
+    this.bias.shape =            [1, 1, this.params.outChannels];
 
-    this.depthwiseFilter.weightIndexEnd = this.depthwiseFilter.weightIndexBegin + this.depthwiseFilter.weightCount;
-    if ( this.depthwiseFilter.weightIndexEnd >= integerWeights.length) {
+    this.depthwise.weightIndexEnd =   this.depthwise.weightIndexBegin + this.depthwise.weightCount;
+    this.pointwise.weightIndexBegin = this.depthwise.weightIndexEnd;
+    this.pointwise.weightIndexEnd =   this.pointwise.weightIndexBegin + this.pointwise.weightCount;
+    this.bias.weightIndexBegin =      this.pointwise.weightIndexEnd;
+    this.bias.weightIndexEnd =        this.bias.weightIndexBegin + this.bias.weightCount;
+
+    if ( this.depthwise.weightIndexEnd >= integerWeights.length) {
       return;
     }
-    this.depthwiseFilter = integerWeights.slice(this.depthwiseFilter.weightIndexBegin, this.depthwiseFilter.weightIndexEnd)
-      .map( integerWeight => ( integerWeight - weightValueOffset ) / weightValueDivisor );
+    this.depthwise.filter = integerWeights.slice(this.depthwise.weightIndexBegin, this.depthwise.weightIndexEnd).map( integerToFloat );
 
-    this.pointwiseFilter.weightIndexBegin = this.depthwiseFilter.weightIndexEnd;
-    this.pointwiseFilter.weightIndexEnd =   this.pointwiseFilter.weightIndexBegin + this.pointwiseFilter.weightCount;
-    if ( this.pointwiseFilter.weightIndexEnd >= integerWeights.length) {
+    if ( this.pointwise.weightIndexEnd >= integerWeights.length) {
       return;
     }
+    this.pointwise.filter = integerWeights.slice(this.pointwise.weightIndexBegin, this.pointwise.weightIndexEnd).map( integerToFloat );
 
-    this.pointwiseFilter = integerWeights.slice(this.pointwiseFilter.weightIndexBegin, this.pointwiseFilter.weightIndexEnd)
-      .map( integerWeight => ( integerWeight - weightValueOffset ) / weightValueDivisor );
+    if ( this.bias.weightIndexEnd >= integerWeights.length) {
+      return;
+    }
+    this.bias.filter = integerWeights.slice(this.bias.weightIndexBegin, this.bias.weightIndexEnd).map( integerToFloat );
   }
 
   /**
@@ -64,10 +79,10 @@ class SeparableConv2dLayer {
     let theEntities = integerWeightsArray.map( integerWeights => {
       let theEntity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
       while ( weightIndex < integerWeights.length ) {
-        let layer = new SeparableConv2dLayer(integerWeights, weightIndex, weightValueOffset, weightValueDivisor);	
+        let layer = new SeparableConv2dLayer(integerWeights, weightIndex, weightValueOffset, weightValueDivisor, inChannels);	
         theEntity.push(layer);		
         inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
-        weightIndex = layer.pointwiseFilter.weightIndexEnd;
+        weightIndex = layer.bias.weightIndexEnd;
       }
       return theEntity;
     });
