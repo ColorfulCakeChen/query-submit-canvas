@@ -30,7 +30,7 @@ var weightValueOffset = 0;
 var weightValueDivisor = 1;
 
 var theEntities = SeparableConv2d.Layer.StringArrayToSeparableConv2dEntities(
-      strEncodedWeights, encodedWeightCharCount, encodedWeightBase, weightValueOffset, weightValueDivisor );
+      [strEncodedWeights], encodedWeightCharCount, encodedWeightBase, weightValueOffset, weightValueDivisor );
 
 var entity = theEntities[0];
 tf.util.assert(
