@@ -117,7 +117,7 @@ SeparableConv2d.Layer.Filter = class {
     }
 
     let byteOffset = Float32Array.BYTES_PER_ELEMENT * this.weightIndexBegin;
-    this.filter =    new Float32Array( integerWeights.buffer(), byteOffset, this.weightCount ); // Share the underlying array buffer.
+    this.filter =    new Float32Array( integerWeights.buffer, byteOffset, this.weightCount ); // Share the underlying array buffer.
     this.filter.forEach( ( element, i, array ) => array[ i ] = integerToFloat( element ) ); // Convert weight to floating-point number.
   }
 }
