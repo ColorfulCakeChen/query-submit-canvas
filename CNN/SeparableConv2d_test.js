@@ -22,7 +22,7 @@ var integerWeights = intParams.concat( intDepthwiseFilter, intPointwiseFilter, i
 var encodedWeightBase = 36;
 var encodedWeightCharCount = 5;
 var encodedWeights = integerWeights.map(
-      integerWeight => integerWeight.toString(encodedWeightBase).padString(encodedWeightCharCount, "0") );
+      integerWeight => integerWeight.toString(encodedWeightBase).padStart(encodedWeightCharCount, "0") );
 var strEncodedWeights = "".concat(...encodedWeights);
 
 // For converting to the integer itself.
