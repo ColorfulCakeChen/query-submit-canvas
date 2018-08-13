@@ -96,7 +96,7 @@ SeparableConv2d.Layer.ParamNames = [
   "filterHeight", "filterWidth", "channelMultiplier", "dilationHeight", "dilationWidth", "outChannels"];
 
 /**
- * A class for the CNN filter (i.e. depthwise, pointwise and bias).
+ * A class for the CNN (depthwise, pointwise and bias) filter.
  */
 SeparableConv2d.Layer.Filter = class {
 
