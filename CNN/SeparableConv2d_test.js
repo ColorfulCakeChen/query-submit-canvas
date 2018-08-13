@@ -64,7 +64,7 @@ tf.util.assert(
   `layer.depthwise.filter ${layer.depthwise.filter} != ${intDepthwiseFilter}`);
 
 
-var thePointwiseShape = [1, 1, inChannels * intParams[2], intParams[3]];
+var thePointwiseShape = [1, 1, inChannels * intParams[2], intParams[5]];
 tf.util.assert(
   tf.util.arraysEqual(layer.pointwise.shape, thePointwiseShape),
   `layer.pointwise.shape ${layer.pointwise.shape} != ${thePointwiseShape}`);
