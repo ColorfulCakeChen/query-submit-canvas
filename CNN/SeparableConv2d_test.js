@@ -34,7 +34,8 @@ var theEntities = SeparableConv2d.Layer.StringArrayToSeparableConv2dEntities(
 
 var entity = theEntities[0];
 tf.util.assert(
-  entity.params.filterHeight == intParams[0], `entity.params.filterHeight ${entity.params.filterHeight} != ${intParams[0]}`);
+  entity.params.filterHeight == intParams[0],
+  `entity.params.filterHeight ${entity.params.filterHeight} != ${intParams[0]}`);
 
 tf.util.assert(
   entity.params.filterWidth == intParams[1], `entity.params.filterWidth ${entity.params.filterWidth} != ${intParams[1]}`);
