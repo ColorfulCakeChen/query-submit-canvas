@@ -32,53 +32,54 @@ var weightValueDivisor = 1;
 var theEntities = SeparableConv2d.Layer.StringArrayToSeparableConv2dEntities(
       [strEncodedWeights], encodedWeightCharCount, encodedWeightBase, weightValueOffset, weightValueDivisor );
 
-var entity = theEntities[0];
+var entity = theEntities[ 0 ];
+var layer = entity[ 0 ];
 tf.util.assert(
-  entity.params.filterHeight == intParams[0],
-  `entity.params.filterHeight ${entity.params.filterHeight} != ${intParams[0]}`);
+  layer.params.filterHeight == intParams[0],
+  `layer.params.filterHeight ${layer.params.filterHeight} != ${intParams[0]}`);
 
 tf.util.assert(
-  entity.params.filterWidth == intParams[1], `entity.params.filterWidth ${entity.params.filterWidth} != ${intParams[1]}`);
+  layer.params.filterWidth == intParams[1], `layer.params.filterWidth ${layer.params.filterWidth} != ${intParams[1]}`);
 
 tf.util.assert(
-  entity.params.channelMultiplier == intParams[2], `entity.params.channelMultiplier ${entity.params.channelMultiplier} != ${intParams[2]}`);
+  layer.params.channelMultiplier == intParams[2], `layer.params.channelMultiplier ${layer.params.channelMultiplier} != ${intParams[2]}`);
 
 tf.util.assert(
-  entity.params.dilationHeight == intParams[3], `entity.params.dilationHeight ${entity.params.dilationHeight} != ${intParams[3]}`);
+  layer.params.dilationHeight == intParams[3], `layer.params.dilationHeight ${layer.params.dilationHeight} != ${intParams[3]}`);
 
 tf.util.assert(
-  entity.params.dilationWidth == intParams[4], `entity.params.dilationWidth ${entity.params.dilationWidth} != ${intParams[4]}`);
+  layer.params.dilationWidth == intParams[4], `layer.params.dilationWidth ${layer.params.dilationWidth} != ${intParams[4]}`);
 
 tf.util.assert(
-  entity.params.outChannels == intParams[5], `entity.params.outChannels ${entity.params.outChannels} != ${intParams[5]}`);
+  layer.params.outChannels == intParams[5], `layer.params.outChannels ${layer.params.outChannels} != ${intParams[5]}`);
 
 
 var theDepthwiseShape = [intParams[0], intParams[1], inChannels, intParams[2]];
 tf.util.assert(
-  tf.util.arraysEqual(entity.depthwise.shape, theDepthwiseShape),
-  `entity.depthwise.shape ${entity.depthwise.shape} != ${theDepthwiseShape}`);
+  tf.util.arraysEqual(layer.depthwise.shape, theDepthwiseShape),
+  `layer.depthwise.shape ${entity.depthwise.shape} != ${theDepthwiseShape}`);
 
 tf.util.assert(
-  tf.util.arraysEqual(entity.depthwise.filter, intDepthwiseFilter),
-  `entity.depthwise.filter ${entity.depthwise.filter} != ${intDepthwiseFilter}`);
+  tf.util.arraysEqual(layer.depthwise.filter, intDepthwiseFilter),
+  `layer.depthwise.filter ${entity.depthwise.filter} != ${intDepthwiseFilter}`);
 
 
 var thePointwiseShape = [1, 1, inChannels * intParams[2], intParams[3]];
 tf.util.assert(
-  tf.util.arraysEqual(entity.pointwise.shape, thePointwiseShape),
-  `entity.pointwise.shape ${entity.pointwise.shape} != ${thePointwiseShape}`);
+  tf.util.arraysEqual(layer.pointwise.shape, thePointwiseShape),
+  `layer.pointwise.shape ${layer.pointwise.shape} != ${thePointwiseShape}`);
 
 tf.util.assert(
-  tf.util.arraysEqual(entity.pointwise.filter, intPointwiseFilter),
-  `entity.pointwise.filter ${entity.pointwise.filter} != ${intPointwiseFilter}`);
+  tf.util.arraysEqual(layer.pointwise.filter, intPointwiseFilter),
+  `layer.pointwise.filter ${layer.pointwise.filter} != ${intPointwiseFilter}`);
 
 
 var theBiasShape = [1, 1, intParams[5]];
 tf.util.assert(
-  tf.util.arraysEqual(entity.bias.shape, theBiasShape),
-  `entity.bias.shape ${entity.bias.shape} != ${theBiasShape}`);
+  tf.util.arraysEqual(layer.bias.shape, theBiasShape),
+  `layer.bias.shape ${layer.bias.shape} != ${theBiasShape}`);
 
 tf.util.assert(
-  tf.util.arraysEqual(entity.bias.filter, intBias),
-  `entity.bias.filter ${entity.bias.filter} != ${intBias}`);
+  tf.util.arraysEqual(layer.bias.filter, intBias),
+  `layer.bias.filter ${layer.bias.filter} != ${intBias}`);
 
