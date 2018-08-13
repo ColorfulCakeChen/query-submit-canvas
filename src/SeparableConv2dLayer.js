@@ -1,88 +1,118 @@
+
+var SeparableConv2d = {};
+
+SeparableConv2d.Params = class {
+  /**
+   * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
+   * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
+   */ 
+  constructor(integerWeights, weightIndexBegin) {
+    this.weightIndexBegin = weightIndexBegin;
+    this.weightIndexEnd =   weightIndexBegin + SeparableConv2d.ParamNames.length;
+
+    if ( this.weightIndexEnd > integerWeights.length )
+      return;
+
+    SeparableConv2d.ParamNames.forEach( ( paramName, i ) => this[ paramName ] = integerWeights[ weightIndexBegin + i ] );
+  }
+}
+
+SeparableConv2d.ParamNames = ["filterHeight", "filterWidth", "channelMultiplier", "dilationHeight", "dilationWidth", "outChannels"];
+
+
 /**
- *
+ * The CNN filter for depthwise, pointwise and bias.
  */
-class SeparableConv2dLayer {
+SeparableConv2d.Filter = class {
 
   /**
-   * @param {number[]} integerWeights     An integer array (1D).
-   * @param {number}   weightIndexBegin   The position to start to decode from the integerWeights.
-   * @param {number}   weightValueOffset  The value will be subtracted from the integer weight value.
-   * @param {number}   weightValueDivisor Divide the integer weight value by this value for converting to floating-point number.
-   * @param {number}   inChannels         The input channel count.
+   * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
+   * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
+   * @param {number}       weightValueOffset  The value will be subtracted from the integer weight value.
+   * @param {number}       weightValueDivisor Divide the integer weight value by this value for converting to floating-point number.
+   * @param {number[]}     shape              The filter shape (element count for every dimension).
    */ 
-  constructor(integerWeights, weightIndexBegin, weightValueOffset, weightValueDivisor, inChannels) {
-    this.weightIndexBegin = weightIndex;
-    this.params = {};
-    this.depthwise = {weightIndexBegin: weightIndex + SeparableConv2dLayer.ParamNames.length};
-    this.pointwise = {};
-    this.bias = {};
+  constructor(integerWeights, weightIndexBegin, weightValueOffset, weightValueDivisor, shape) {
+    this.shape =            shape;
+    this.weightCount =      shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
+    this.weightIndexBegin = weightIndexBegin;
+    this.weightIndexEnd =   weightIndexBegin + this.weightCount;  // Exclusive. As the next filter's begin.
+
+    if ( this.weightIndexEnd > integerWeights.length ) {
+      return; // No filter when shape is too large.
+    }
 
     function integerToFloat(integerWeight) {
       return ( integerWeight - weightValueOffset ) / weightValueDivisor;
     }
 
-    if ( weightIndex >= integerWeights.length ) {
-      return;
-    }
+    let byteOffset = Float32Array.BYTES_PER_ELEMENT * this.weightIndexBegin;
+    this.filter =    new Float32Array( integerWeights.buffer(), byteOffset, this.weightCount ); // Share the underlying array buffer.
+    this.filter.map( integerToFloat ); // Convert weight to floating-point number.
+  }
+}
 
-    if ( this.depthwise.weightIndexBegin >= integerWeights.length ) {
-      return;
-    }
 
-    for ( let i = 0; i < SeparableConv2dLayer.ParamNames.length; ++i ) {
-      this.params[ SeparableConv2dLayer.ParamNames[i] ] = integerWeights[weightIndex+i]; }
+/**
+ *
+ */
+SeparableConv2d.Layer = class {
 
-    this.depthwise.weightCount = this.params.filterHeight * this.params.filterWidth * inChannels * this.params.channelMultiplier;
-    this.depthwise.shape =       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier];
-    this.pointwise.weightCount = inChannels * this.params.channelMultiplier * this.params.outChannels;
-    this.pointwise.shape =       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels];
-    this.bias.weightCount =      this.params.outChannels;
-    this.bias.shape =            [1, 1, this.params.outChannels];
+  /**
+   * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
+   * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
+   * @param {number}       weightValueOffset  The value will be subtracted from the integer weight value.
+   * @param {number}       weightValueDivisor Divide the integer weight value by this value for converting to floating-point number.
+   * @param {number}       inChannels         The input channel count.
+   */ 
+  constructor(integerWeights, weightIndexBegin, weightValueOffset, weightValueDivisor, inChannels) {
+    this.integerWeights =   integerWeights;
+    this.weightIndexBegin = weightIndexBegin;
 
-    this.depthwise.weightIndexEnd =   this.depthwise.weightIndexBegin + this.depthwise.weightCount;
-    this.pointwise.weightIndexBegin = this.depthwise.weightIndexEnd;
-    this.pointwise.weightIndexEnd =   this.pointwise.weightIndexBegin + this.pointwise.weightCount;
-    this.bias.weightIndexBegin =      this.pointwise.weightIndexEnd;
-    this.bias.weightIndexEnd =        this.bias.weightIndexBegin + this.bias.weightCount;
+    this.params = new SeparableConv2d.Params(integerWeights, weightIndexBegin);
+    this.depthwise = new SeparableConv2d.Filter(
+      integerWeights, this.params.weightIndexEnd, weightValueOffset, weightValueDivisor,
+      [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier] );
 
-    if ( this.depthwise.weightIndexEnd >= integerWeights.length) {
-      return;
-    }
-    this.depthwise.filter = integerWeights.slice(this.depthwise.weightIndexBegin, this.depthwise.weightIndexEnd).map( integerToFloat );
+    this.pointwise = new SeparableConv2d.Filter(
+      integerWeights, this.depthwise.weightIndexEnd, weightValueOffset, weightValueDivisor,
+      [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels] );
 
-    if ( this.pointwise.weightIndexEnd >= integerWeights.length) {
-      return;
-    }
-    this.pointwise.filter = integerWeights.slice(this.pointwise.weightIndexBegin, this.pointwise.weightIndexEnd).map( integerToFloat );
+    this.bias = new SeparableConv2d.Filter(
+      integerWeights, this.pointwise.weightIndexEnd, weightValueOffset, weightValueDivisor,
+      [1, 1, this.params.outChannels] );
 
-    if ( this.bias.weightIndexEnd >= integerWeights.length) {
-      return;
-    }
-    this.bias.filter = integerWeights.slice(this.bias.weightIndexBegin, this.bias.weightIndexEnd).map( integerToFloat );
+    this.weightIndexEnd = this.bias.weightIndexEnd;
   }
 
   /**
    * 
-   * @param  {string[]} encodedStringArray       Every string is an encoded entity.
-   * @param  {RegExp}   encodedWeightMatchRegExp RegExp for extracting an encoded weight from the encoded string. (e.g. /(.{5})/g )
-   * @param  {number}   encodedWeightBase        Every weight is encoded by this base number. (e.g. 2 or 10 or 16 or 36) 
-   * @param  {number}   weightValueOffset        The value will be subtracted from the integer weight value.
-   * @param  {number}   weightValueDivisor       Divide the integer weight value by this value for converting to floating-point number.
+   * @param  {string[]} encodedStringArray     Every string is an encoded entity.
+   * @param  {number}   encodedWeightCharCount Every weight is encoded as string with this length. (e.g. 5 )
+   * @param  {number}   encodedWeightBase      Every weight is encoded by this base number. (e.g. 2 or 10 or 16 or 36) 
+   * @param  {number}   weightValueOffset      The value will be subtracted from the integer weight value.
+   * @param  {number}   weightValueDivisor     Divide the integer weight value by this value for converting to floating-point number.
    * @return {Object[]} Decoded entity for separableConv2d(). Every entity is an array of SeparableConv2dLayer.
    */
   static StringArrayToSeparableConv2dEntities(
-    encodedStringArray, encodedWeightMatchRegExp, encodedWeightBase, weightValueOffset, weightValueDivisor) {
+    encodedStringArray, encodedWeightCharCount, encodedWeightBase, weightValueOffset, weightValueDivisor) {
 
-    let integerWeightsArray = Array.from(encodedStringArray,
-          str => { str.match(encodedWeightMatchRegExp).map(element=>parseInt(element,encodedWeightBase)) } );
+    // RegExp for extracting an encoded weight from the encoded string. (e.g. /(.{5})/g )
+    let encodedWeightMatchRegExp = new RegExp("(.{" + encodedWeightCharCount + "})", "g");
+    let integerWeightsArray = Array.from(encodedStringArray, str => {
+      let encodedWeights = str.match(encodedWeightMatchRegExp);       // Split string.
+      let integerWeights = new Float32Array( encodedWeights.length );
+      encodedWeights.forEach( ( element, i ) => { integerWeights[ i ] =  parseInt(element, encodedWeightBase); } ); // Decode as integer.
+      return integerWeights;
+    } );
 
     let theEntities = integerWeightsArray.map( integerWeights => {
       let theEntity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
       while ( weightIndex < integerWeights.length ) {
-        let layer = new SeparableConv2dLayer(integerWeights, weightIndex, weightValueOffset, weightValueDivisor, inChannels);	
+        let layer = new SeparableConv2d.Layer(integerWeights, weightIndex, weightValueOffset, weightValueDivisor, inChannels);	
         theEntity.push(layer);		
         inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
-        weightIndex = layer.bias.weightIndexEnd;
+        weightIndex = layer.weightIndexEnd;
       }
       return theEntity;
     });
@@ -91,5 +121,3 @@ class SeparableConv2dLayer {
   }
 
 }
-
-SeparableConv2dLayer.ParamNames = ["filterHeight", "filterWidth", "channelMultiplier", "dilationHeight", "dilationWidth", "outChannels"];
