@@ -2,6 +2,77 @@
 var SeparableConv2d = {};
 
 /**
+ * Parser for decoding string array to SeparableConv2d entities.
+ */
+SeparableConv2d.Parser = class {
+
+  /**
+   * @param {string}              encodedString The encoded string.
+   * @param {HTMLProgressElement} htmlProgress  If not null, reporting progress to this UI.
+   */
+  static * ToIntegerWeights(encodedString, htmlProgress) {
+  }
+
+  /**
+   * 
+   * @param  {string[]} encodedStringArray     Every string is an encoded entity.
+   * @param  {number}   encodedWeightCharCount Every weight is encoded as string with this length. (e.g. 5 )
+   * @param  {number}   encodedWeightBase      Every weight is encoded by this base number. (e.g. 2 or 10 or 16 or 36) 
+   * @param  {number}   weightValueOffset      The value will be subtracted from the integer weight value.
+   * @param  {number}   weightValueDivisor     Divide the integer weight value by this value for converting to floating-point number.
+   * @param  {string}   htmlProgressTitle      The title of HTMLProgressElement for reporting progress. If null, no reporting.
+   *
+   * @return {Promise} A promise resolved as an Object[] which is the decoded entity for separableConv2d().
+   *   The entity is an array of SeparableConv2d.Layer.
+   */
+  static StringArrayToSeparableConv2dEntities(
+    encodedStringArray, encodedWeightCharCount, encodedWeightBase, weightValueOffset, weightValueDivisor,
+    htmlProgressTitle) {
+
+    function integerToFloat(integerWeight) {
+      return ( integerWeight - weightValueOffset ) / weightValueDivisor;
+    }
+
+    let htmlProgress;
+
+    function* (encodedStringArray) {
+    }
+
+    if (htmlProgressTitle) {
+      htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"`);
+    }
+
+    let p = new Promise( (resolve, reject) => {
+      setTimeout(() => {
+        // RegExp for extracting an encoded weight from the encoded string. (e.g. /(.{5})/g )
+        let encodedWeightMatchRegExp = new RegExp("(.{" + encodedWeightCharCount + "})", "g");
+        let integerWeightsArray = Array.from(encodedStringArray, str => {
+          let encodedWeights = str.match(encodedWeightMatchRegExp);       // Split string.
+          let integerWeights = new Float32Array( encodedWeights.length );
+          encodedWeights.forEach( ( element, i ) => { integerWeights[ i ] =  parseInt(element, encodedWeightBase); } ); // Decode as integer.
+          return integerWeights;
+        } );
+
+        let theEntities = integerWeightsArray.map( integerWeights => {
+          let theEntity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
+          while ( weightIndex < integerWeights.length ) {
+            let layer = new SeparableConv2d.Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
+            theEntity.push(layer);		
+            inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
+            weightIndex = layer.weightIndexEnd;
+          }
+          return theEntity;
+        });
+
+        return theEntities;
+      });
+    });
+    return p;
+  }
+
+}
+
+/**
  * A CNN layer contains three filters: depthwise, pointwise and bias.
  */
 SeparableConv2d.Layer = class {
@@ -30,45 +101,6 @@ SeparableConv2d.Layer = class {
       [1, 1, this.params.outChannels], integerToFloat );
 
     this.weightIndexEnd = this.bias.weightIndexEnd;
-  }
-
-  /**
-   * 
-   * @param  {string[]} encodedStringArray     Every string is an encoded entity.
-   * @param  {number}   encodedWeightCharCount Every weight is encoded as string with this length. (e.g. 5 )
-   * @param  {number}   encodedWeightBase      Every weight is encoded by this base number. (e.g. 2 or 10 or 16 or 36) 
-   * @param  {number}   weightValueOffset      The value will be subtracted from the integer weight value.
-   * @param  {number}   weightValueDivisor     Divide the integer weight value by this value for converting to floating-point number.
-   * @return {Object[]} Decoded entity for separableConv2d(). Every entity is an array of SeparableConv2d.Layer.
-   */
-  static StringArrayToSeparableConv2dEntities(
-    encodedStringArray, encodedWeightCharCount, encodedWeightBase, weightValueOffset, weightValueDivisor) {
-
-    function integerToFloat(integerWeight) {
-      return ( integerWeight - weightValueOffset ) / weightValueDivisor;
-    }
-
-    // RegExp for extracting an encoded weight from the encoded string. (e.g. /(.{5})/g )
-    let encodedWeightMatchRegExp = new RegExp("(.{" + encodedWeightCharCount + "})", "g");
-    let integerWeightsArray = Array.from(encodedStringArray, str => {
-      let encodedWeights = str.match(encodedWeightMatchRegExp);       // Split string.
-      let integerWeights = new Float32Array( encodedWeights.length );
-      encodedWeights.forEach( ( element, i ) => { integerWeights[ i ] =  parseInt(element, encodedWeightBase); } ); // Decode as integer.
-      return integerWeights;
-    } );
-
-    let theEntities = integerWeightsArray.map( integerWeights => {
-      let theEntity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
-      while ( weightIndex < integerWeights.length ) {
-        let layer = new SeparableConv2d.Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
-        theEntity.push(layer);		
-        inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
-        weightIndex = layer.weightIndexEnd;
-      }
-      return theEntity;
-    });
-
-    return theEntities;
   }
 
 }
@@ -103,7 +135,7 @@ SeparableConv2d.Layer.Filter = class {
   /**
    * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
    * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
-   * @param {number[]}     shape              The filter shape (element count for every dimension).
+   * @param {number[]}     shape              The filter shape (element count for every dimension). The shape.length is dimension.
    * @param {Function}     integerToFloat     An function which input an integer and return a floating-point number.
    */ 
   constructor(integerWeights, weightIndexBegin, shape, integerToFloat) {
