@@ -84,7 +84,10 @@ SeparableConv2d.Parser = class {
     let theMemoryGenerator = memoryGenerator(encodedStringArray);
 
     promiseTimeout( (resolve, reject) => {
-      for (let integerWeights of theMemoryGenerator) {
+      let memoryGeneratorResult = theMemoryGenerator().next();
+      if (memoryGeneratorResult.done)
+        
+      let integerWeights of ) {
 //!!! ...unfinished...
         for (??? let entity of theEntityGenerator) {
         }
@@ -101,12 +104,26 @@ SeparableConv2d.Parser = class {
    *   The entity is an array of SeparableConv2d.Layer.
    */
   StringArrayToSeparableConv2dEntities(encodedStringArray) {
+    let theMemoryGenerator = memoryGenerator(encodedStringArray);
     let theEntityGenerator = entityGenerator(encodedStringArray);
 
+    let theEntities = [];
 //!!! ...unfinished...
     promiseTimeout( (resolve, reject) => {
-      for (let entity of theEntityGenerator) {
-      }
+
+      promiseTimeout( (resolve, reject) => {
+        let memoryGeneratorResult = theMemoryGenerator().next();
+        if (memoryGeneratorResult.done)
+          reject();
+        else
+          resolve(memoryGeneratorResult.value);
+      }).then((integerWeights) => {
+
+
+//!!! ...unfinished...
+      }).catch(() => {
+        resolve(theEntities);
+      });
     });
 
 //!!! ...unfinished...
