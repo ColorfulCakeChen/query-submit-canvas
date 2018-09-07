@@ -7,40 +7,114 @@ var SeparableConv2d = {};
 SeparableConv2d.Parser = class {
 
   /**
-   * @param {string}              encodedString The encoded string.
-   * @param {HTMLProgressElement} htmlProgress  If not null, reporting progress to this UI.
-   */
-  static * ToIntegerWeights(encodedString, htmlProgress) {
-  }
-
-  /**
    * 
-   * @param  {string[]} encodedStringArray     Every string is an encoded entity.
    * @param  {number}   encodedWeightCharCount Every weight is encoded as string with this length. (e.g. 5 )
    * @param  {number}   encodedWeightBase      Every weight is encoded by this base number. (e.g. 2 or 10 or 16 or 36) 
    * @param  {number}   weightValueOffset      The value will be subtracted from the integer weight value.
    * @param  {number}   weightValueDivisor     Divide the integer weight value by this value for converting to floating-point number.
    * @param  {string}   htmlProgressTitle      The title of HTMLProgressElement for reporting progress. If null, no reporting.
+   */
+  constructor(encodedWeightCharCount, encodedWeightBase, weightValueOffset, weightValueDivisor, htmlProgressTitle) {
+    this.encodedWeightCharCount = encodedWeightCharCount;
+    this.encodedWeightBase =      encodedWeightBase;
+    this.weightValueOffset =      weightValueOffset;
+    this.weightValueDivisor =     weightValueDivisor;
+    this.htmlProgressTitle =      htmlProgressTitle;
+
+    this.htmlProgress = null;
+    if (htmlProgressTitle) {
+      htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"]`);
+    }
+  }
+
+  /**
+   * @param {integer} integerWeight The integer which will be converted to floating-point number by subtract and divide.
+   * @return The floating-point number.
+   */
+  integerToFloat(integerWeight) {
+    return ( integerWeight - this.weightValueOffset ) / this.weightValueDivisor;
+  }
+
+  /**
+   * When progress is advanced, call this method to display in UI.
+   * @param {integer} advancedVolume The volume which will be added to the HTMLProgressElement.value.
+   */
+  reportProgressAdvance(advancedVolume) {
+    if (this.htmlProgress) {
+      this.htmlProgress.value += advancedVolume;
+    }
+  }
+
+  /**
+   * @param {function} promiseTimeoutCallback
+   *   The function to be scheduled (by setTimeout()) to execute with two parameters (resolve, reject). Inside the callback,
+   *   call resolve() or reject() will resolve or reject the promise.
+   *
+   * @return A promise for scheduling to run the promiseTimeoutCallback.
+   */
+  promiseTimeout(promiseTimeoutCallback) {
+    return new Promise( (resolve, reject) => {
+      setTimeout(promiseTimeoutCallback, 0, resolve, reject);
+    });
+  }
+
+
+  /**
+   * @param {string[]}            encodedStringArray     Every string is an encoded entity.
+   * 
+   */
+  * memoryGenerator(encodedStringArray) {
+    this.entityCount =         encodedStringArray.length;
+    this.integerWeightsArray = new Array(encodedStringArray.length);
+    for (let i = 0; i < encodedStringArray.length; ++i) {
+      yield ( this.integerWeightsArray[ i ] = new Float32Array( encodedStringArray[ i ].length ) );
+    }
+  }
+
+  /**
+   * @param {string}              encodedString The encoded string.
+   */
+  * ToIntegerWeights(encodedString) {
+  }
+
+  /**
+   * @param {string[]}            encodedStringArray     Every string is an encoded entity.
+   */
+  * entityGenerator(encodedStringArray) {
+    let theMemoryGenerator = memoryGenerator(encodedStringArray);
+
+    promiseTimeout( (resolve, reject) => {
+      for (let integerWeights of theMemoryGenerator) {
+//!!! ...unfinished...
+        for (??? let entity of theEntityGenerator) {
+        }
+      }
+    });
+
+  }
+
+  /**
+   * 
+   * @param  {string[]} encodedStringArray     Every string is an encoded entity.
    *
    * @return {Promise} A promise resolved as an Object[] which is the decoded entity for separableConv2d().
    *   The entity is an array of SeparableConv2d.Layer.
    */
-  static StringArrayToSeparableConv2dEntities(
-    encodedStringArray, encodedWeightCharCount, encodedWeightBase, weightValueOffset, weightValueDivisor,
-    htmlProgressTitle) {
+  StringArrayToSeparableConv2dEntities(encodedStringArray) {
+    let theEntityGenerator = entityGenerator(encodedStringArray);
 
-    function integerToFloat(integerWeight) {
-      return ( integerWeight - weightValueOffset ) / weightValueDivisor;
-    }
+//!!! ...unfinished...
+    promiseTimeout( (resolve, reject) => {
+      for (let entity of theEntityGenerator) {
+      }
+    });
 
-    let htmlProgress;
+//!!! ...unfinished...
 
-    function* (encodedStringArray) {
-    }
+    this.entityCount =            encodedStringArray.length;
+    this.integerWeightsArray =    new Array(encodedStringArray.length);
 
-    if (htmlProgressTitle) {
-      htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"`);
-    }
+    let integerToFloat = this.integerToFloat.bind(this);
 
     let p = new Promise( (resolve, reject) => {
       setTimeout(() => {
