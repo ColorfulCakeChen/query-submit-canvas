@@ -2,6 +2,77 @@
 var SeparableConv2d = {};
 
 /**
+ * Periodically call generator.next() by setTimeout() until ( generator.next().done == true ). The generator
+ * will generate in part-time.
+ *
+ * When ( generator.next().done == false ), the generator.next().value should be a number.
+ *
+ * For the first time ( generator.next().done == false ), the generator.next().value should be a positive number
+ * represents the maximum progress volume. The HTMLProgressElement.max will be set to this first value. The
+ * HTMLProgressElement.value will be set to 0.
+ *
+ * After that, everytime ( generator.next().done == false ), the generator.next().value should be a number
+ * represents the advanced progress volume. The HTMLProgressElement.value will be set to
+ * ( HTMLProgressElement.value + generator.next().value ).
+ *
+ * Finally, when ( generator.next().done == true ), the promise will resolve with the last time
+ * ( generator.next().value ) and the HTMLProgressElement.onclick() will be called for informing. 
+ *
+ * @param {function*} generatorFunction
+ *   This function will be called once. It should return a generator.
+ *
+ * @param {string} htmlProgressTitle
+ *   The title of HTMLProgressElement for reporting progress. If null, there will be no progress reporting.
+ *
+ * @return A promise resolved with the ( generator.next().value ) when ( generator.next().done == true ).
+ */
+SeparableConv2d.partTimeGenerate = function (generatorFunction, htmlProgressTitle) {
+
+  let htmlProgress = null;
+  if (htmlProgressTitle) {
+    htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"]`);
+  }
+
+  function progressMax(maxVolume) {
+    if (htmlProgress)
+      htmlProgress.max = maxVolume;
+  }
+
+  function progressAdvance(advancedVolume) {
+    if (htmlProgress)
+      htmlProgress.value += advancedVolume;
+  }
+
+  function progressOnClick() {
+    if (htmlProgress)
+      htmlProgress.dispatchEvent(new Event("click"));
+  }
+
+  let delayMilliseconds = 0;
+
+  function promiseTimeout(generator) {
+    return new Promise( (resolve, reject) => {
+      setTimeout(() => {
+        let generatorResult = generator.next();   /* Advance and the get the increased progress volume. */
+        if (generatorResult.done) {               /* All done. Resolved. Report to UI by click event. */
+          resolve(generatorResult.value);
+          progressOnClick();
+        } else {
+          progressAdvance(generatorResult.value); /* Report advanced progress to UI. */
+          resolve(promiseTimeout(generator));     /* Schedule the next run. */ 
+        }
+      }, delayMilliseconds);
+    });
+  }
+
+  let generator = generatorFunction();
+  let firstResult = generator.next();  /* Get the maximum progress volume. */
+  progressMax(firstResult.value);
+  return promiseTimeout(generator);    /* Schedule the next run. */
+}
+
+
+/**
  * Parser for decoding string array to SeparableConv2d entities.
  */
 SeparableConv2d.Parser = class {
@@ -56,6 +127,17 @@ SeparableConv2d.Parser = class {
     return new Promise( (resolve, reject) => {
       setTimeout(promiseTimeoutCallback, 0, resolve, reject);
     });
+  }
+
+  /**
+   * @param {function*} generatorFunction
+   *   This function will be called once. It should return a generator. The generator.next() will be called in setTimeout()
+   * periodically until ( generator.next().done == true ). When ( generator.next().done == false )The generator.next().value
+   * should be an integer represents progress advanced volume.
+   *
+   * @return A promise for scheduling to run the promiseTimeoutCallback.
+   */
+  partTimeGeneratorRunner( generatorFunction ) {
   }
 
 
