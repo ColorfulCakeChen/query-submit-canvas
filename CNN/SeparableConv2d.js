@@ -12,7 +12,7 @@ SeparableConv2d.ProgressReceiver.Base = class  {
 }
 
 /** Dummy progress receiver which discards all information. */
-SeparableConv2d.ProgressReceiver.Base.Dummy = new SeparableConv2d.ProgressReceiver.Base();
+SeparableConv2d.ProgressReceiver.Base.dummy = new SeparableConv2d.ProgressReceiver.Base();
 
 /**
  * Report progress to HTMLProgressElement.
@@ -47,24 +47,22 @@ SeparableConv2d.ProgressReceiver.HTMLProgress = class extends SeparableConv2d.Pr
  * Finally, when ( generator.next().done == true ), the promise will resolve with the last time
  * ( generator.next().value ) and the HTMLProgressElement.onclick() will be called for informing. 
  *
- * @param {function*} generatorFunction This function will be called once. It should return a generator.
+ * @param {function}  generator         The generator.next() will be called periodically until done.
  * @param {string}    htmlProgressTitle The title of HTMLProgressElement. If null, no progress reporting.
  * @param {integer}   delayMilliseconds The delay time when setTimeout(). Default 0.
  *
  * @return A promise resolved with the ( generator.next().value ) when ( generator.next().done == true ).
  */
-SeparableConv2d.partTimeGenerate = function (generatorFunction, htmlProgressTitle, delayMilliseconds) {
+SeparableConv2d.partTimeGenerate = function (generator, htmlProgressTitle, delayMilliseconds = 0) {
 
   let htmlProgress = null;
   if (htmlProgressTitle) {
     htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"]`);
   }
 
-  let progressReceiver = SeparableConv2d.ProgressReceiver.Base.Dummy;
+  let progressReceiver = SeparableConv2d.ProgressReceiver.Base.dummy;
   if (htmlProgress)
     progressReceiver = new SeparableConv2d.ProgressReceiver.HTMLProgress(htmlProgress);
-
-  delayMilliseconds = delayMilliseconds || 0;
 
   function promiseTimeout(generator) {
     return new Promise( (resolve, reject) => {
@@ -81,10 +79,9 @@ SeparableConv2d.partTimeGenerate = function (generatorFunction, htmlProgressTitl
     });
   }
 
-  let generator = generatorFunction();
-  let firstResult = generator.next();  /* Get the maximum progress volume. */
+  let firstResult = generator.next();       /* Get the maximum progress volume. */
   progressReceiver.init(firstResult.value);
-  return promiseTimeout(generator);    /* Schedule the next run. */
+  return promiseTimeout(generator);         /* Schedule the next run. */
 }
 
 /**
@@ -106,11 +103,6 @@ SeparableConv2d.Parser = class {
     this.weightValueOffset =      weightValueOffset;
     this.weightValueDivisor =     weightValueDivisor;
     this.htmlProgressTitle =      htmlProgressTitle;
-
-    this.htmlProgress = null;
-    if (htmlProgressTitle) {
-      htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"]`);
-    }
   }
 
   /**
@@ -122,45 +114,10 @@ SeparableConv2d.Parser = class {
   }
 
   /**
-   * When progress is advanced, call this method to display in UI.
-   * @param {integer} advancedVolume The volume which will be added to the HTMLProgressElement.value.
-   */
-  reportProgressAdvance(advancedVolume) {
-    if (this.htmlProgress) {
-      this.htmlProgress.value += advancedVolume;
-    }
-  }
-
-  /**
-   * @param {function} promiseTimeoutCallback
-   *   The function to be scheduled (by setTimeout()) to execute with two parameters (resolve, reject). Inside the callback,
-   *   call resolve() or reject() will resolve or reject the promise.
-   *
-   * @return A promise for scheduling to run the promiseTimeoutCallback.
-   */
-  promiseTimeout(promiseTimeoutCallback) {
-    return new Promise( (resolve, reject) => {
-      setTimeout(promiseTimeoutCallback, 0, resolve, reject);
-    });
-  }
-
-  /**
-   * @param {function*} generatorFunction
-   *   This function will be called once. It should return a generator. The generator.next() will be called in setTimeout()
-   * periodically until ( generator.next().done == true ). When ( generator.next().done == false )The generator.next().value
-   * should be an integer represents progress advanced volume.
-   *
-   * @return A promise for scheduling to run the promiseTimeoutCallback.
-   */
-  partTimeGeneratorRunner( generatorFunction ) {
-  }
-
-
-  /**
    * @param {string[]}            encodedStringArray     Every string is an encoded entity.
    * 
    */
-  * memoryGenerator(encodedStringArray) {
+  * entitiesGenerator(encodedStringArray) {
     this.entityCount =         encodedStringArray.length;
     this.integerWeightsArray = new Array(encodedStringArray.length);
     for (let i = 0; i < encodedStringArray.length; ++i) {
@@ -168,11 +125,6 @@ SeparableConv2d.Parser = class {
     }
   }
 
-  /**
-   * @param {string}              encodedString The encoded string.
-   */
-  * ToIntegerWeights(encodedString) {
-  }
 
   /**
    * @param {string[]}            encodedStringArray     Every string is an encoded entity.
@@ -201,8 +153,9 @@ SeparableConv2d.Parser = class {
    *   The entity is an array of SeparableConv2d.Layer.
    */
   StringArrayToSeparableConv2dEntities(encodedStringArray) {
-    let theMemoryGenerator = memoryGenerator(encodedStringArray);
-    let theEntityGenerator = entityGenerator(encodedStringArray);
+    let theEntitiesGenerator = entitiesGenerator(encodedStringArray);
+    let p = SeparableConv2d.partTimeGenerate(theEntitiesGenerator, this.htmlProgressTitle);
+    return p;
 
     let theEntities = [];
 //!!! ...unfinished...
