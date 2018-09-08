@@ -18,49 +18,34 @@ var SeparableConv2d = {};
  * Finally, when ( generator.next().done == true ), the promise will resolve with the last time
  * ( generator.next().value ) and the HTMLProgressElement.onclick() will be called for informing. 
  *
- * @param {function*} generatorFunction
- *   This function will be called once. It should return a generator.
- *
- * @param {string} htmlProgressTitle
- *   The title of HTMLProgressElement for reporting progress. If null, there will be no progress reporting.
+ * @param {function*} generatorFunction This function will be called once. It should return a generator.
+ * @param {string}    htmlProgressTitle The title of HTMLProgressElement. If null, no progress reporting.
+ * @param {integer}   delayMilliseconds The delay time when setTimeout(). Default 0.
  *
  * @return A promise resolved with the ( generator.next().value ) when ( generator.next().done == true ).
  */
-SeparableConv2d.partTimeGenerate = function (generatorFunction, htmlProgressTitle) {
+SeparableConv2d.partTimeGenerate = function (generatorFunction, htmlProgressTitle, delayMilliseconds) {
 
   let htmlProgress = null;
   if (htmlProgressTitle) {
     htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"]`);
   }
 
-  function progressInit(maxVolume) {
-    if (htmlProgress) {
-      htmlProgress.value = 0;
-      htmlProgress.max = maxVolume;
-    }
-  }
+  let progressReceiver = SeparableConv2d.ProgressReceiver.Base.Dummy;
+  if (htmlProgress)
+    progressReceiver = new SeparableConv2d.ProgressReceiver.HTMLProgress(htmlProgress);
 
-  function progressAdvance(advancedVolume) {
-    if (htmlProgress)
-      htmlProgress.value += advancedVolume;
-  }
-
-  function progressOnClick() {
-    if (htmlProgress)
-      htmlProgress.dispatchEvent(new Event("click"));
-  }
-
-  let delayMilliseconds = 0;
+  delayMilliseconds = delayMilliseconds || 0;
 
   function promiseTimeout(generator) {
     return new Promise( (resolve, reject) => {
       setTimeout(() => {
-        let generatorResult = generator.next();   /* Advance and the get the increased progress volume. */
-        if (generatorResult.done) {               /* All done. Resolved. Report to UI by click event. */
-          resolve(generatorResult.value);
-          progressOnClick();
+        let result = generator.next();   /* Advance and the get the increased progress volume. */
+        if (result.done) {               /* All done. Resolved. Report to UI by click event. */
+          resolve(result.value);
+          progressReceiver.done();
         } else {
-          progressAdvance(generatorResult.value); /* Report advanced progress to UI. */
+          progressReceiver.advance(result.value); /* Report advanced progress to UI. */
           resolve(promiseTimeout(generator));     /* Schedule the next run. */ 
         }
       }, delayMilliseconds);
@@ -69,10 +54,38 @@ SeparableConv2d.partTimeGenerate = function (generatorFunction, htmlProgressTitl
 
   let generator = generatorFunction();
   let firstResult = generator.next();  /* Get the maximum progress volume. */
-  progressInit(firstResult.value);
+  progressReceiver.init(firstResult.value);
   return promiseTimeout(generator);    /* Schedule the next run. */
 }
 
+/** namespace about receiving progress informing. */
+SeparableConv2d.ProgressReceiver = {};
+
+/** The skeleton of progress receiver.  */
+SeparableConv2d.ProgressReceiver.Base = class  {
+  init(maxVolume) {}
+  advance(advancedVolume) {}
+  done() {}
+}
+
+/** Dummy progress receiver which discards all information. */
+SeparableConv2d.ProgressReceiver.Base.Dummy = new SeparableConv2d.ProgressReceiver.Base();
+
+/**
+ * Report progress to HTMLProgressElement.
+ *
+ * init() will set HTMLProgressElement.value to 0 and set HTMLProgressElement.max to parameter maxVolume.
+ * advanced() will set HTMLProgressElement.value to ( HTMLProgressElement.value + generator.next().value ).
+ * done() will call HTMLProgressElement.onclick().
+ * 
+ * @param {HTMLProgressElement} htmlProgress The HTMLProgressElement for reporting progress. can not null.
+ */
+SeparableConv2d.ProgressReceiver.HTMLProgress = class extends SeparableConv2d.ProgressReceiver.Base {
+  constructor(htmlProgress) { this.htmlProgress = htmlProgress; }
+  init(maxVolume)           { this.htmlProgress.value = 0; this.htmlProgress.max = maxVolume; }
+  advance(advancedVolume)   { this.htmlProgress.value += advancedVolume; }
+  done()                    { this.htmlProgress.dispatchEvent(new Event("click")); }
+}
 
 /**
  * Parser for decoding string array to SeparableConv2d entities.
