@@ -33,9 +33,11 @@ SeparableConv2d.partTimeGenerate = function (generatorFunction, htmlProgressTitl
     htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"]`);
   }
 
-  function progressMax(maxVolume) {
-    if (htmlProgress)
+  function progressInit(maxVolume) {
+    if (htmlProgress) {
+      htmlProgress.value = 0;
       htmlProgress.max = maxVolume;
+    }
   }
 
   function progressAdvance(advancedVolume) {
@@ -67,7 +69,7 @@ SeparableConv2d.partTimeGenerate = function (generatorFunction, htmlProgressTitl
 
   let generator = generatorFunction();
   let firstResult = generator.next();  /* Get the maximum progress volume. */
-  progressMax(firstResult.value);
+  progressInit(firstResult.value);
   return promiseTimeout(generator);    /* Schedule the next run. */
 }
 
