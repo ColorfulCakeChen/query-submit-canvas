@@ -31,6 +31,19 @@ SeparableConv2d.ProgressReceiver.HTMLProgress = class extends SeparableConv2d.Pr
 }
 
 /**
+ * @param {string} htmlProgressTitle The title of HTMLProgressElement.
+ * @return Return a new ProgressReceiver.HTMLProgress. If not found, return ProgressReceiver.Base.dummy.
+ */
+SeparableConv2d.ProgressReceiver.HTMLProgress.getByTitle = function (htmlProgressTitle) {
+  if (htmlProgressTitle) {
+    let htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"]`);
+    if (htmlProgress)
+      return new SeparableConv2d.ProgressReceiver.HTMLProgress(htmlProgress);
+  }
+  return SeparableConv2d.ProgressReceiver.Base.dummy;
+}
+
+/**
  * Periodically call generator.next() by setTimeout() until ( generator.next().done == true ). The generator
  * will generate in part-time.
  *
@@ -55,16 +68,9 @@ SeparableConv2d.ProgressReceiver.HTMLProgress = class extends SeparableConv2d.Pr
  */
 SeparableConv2d.partTimeGenerate = function (generator, htmlProgressTitle, delayMilliseconds = 0) {
 
-  let htmlProgress = null;
-  if (htmlProgressTitle) {
-    htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"]`);
-  }
+  let progressReceiver = SeparableConv2d.ProgressReceiver.HTMLProgress.getByTitle(htmlProgressTitle);
 
-  let progressReceiver = SeparableConv2d.ProgressReceiver.Base.dummy;
-  if (htmlProgress)
-    progressReceiver = new SeparableConv2d.ProgressReceiver.HTMLProgress(htmlProgress);
-
-  function promiseTimeout(generator) {
+  function promiseTimeout() {
     return new Promise( (resolve, reject) => {
       setTimeout(() => {
         let result = generator.next();   /* Advance and the get the increased progress volume. */
@@ -73,7 +79,7 @@ SeparableConv2d.partTimeGenerate = function (generator, htmlProgressTitle, delay
           progressReceiver.done();
         } else {
           progressReceiver.advance(result.value); /* Report advanced progress to UI. */
-          resolve(promiseTimeout(generator));     /* Schedule the next run. */ 
+          resolve(promiseTimeout());     /* Schedule the next run. */ 
         }
       }, delayMilliseconds);
     });
@@ -81,7 +87,7 @@ SeparableConv2d.partTimeGenerate = function (generator, htmlProgressTitle, delay
 
   let firstResult = generator.next();       /* Get the maximum progress volume. */
   progressReceiver.init(firstResult.value);
-  return promiseTimeout(generator);         /* Schedule the next run. */
+  return promiseTimeout();                 /* Schedule the next run. */
 }
 
 /**
