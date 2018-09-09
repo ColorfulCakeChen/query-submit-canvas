@@ -1,3 +1,5 @@
+import * as SeparableConv2d from "./SeparableConv2d.mjs";
+
 var inChannels = 4;
 
 var intParams = [
