@@ -1,4 +1,4 @@
-import * as SeparableConv2d from "./SeparableConv2d.mjs";
+window.addEventListener("load", function(event) {
 
 var inChannels = 4;
 
@@ -85,3 +85,4 @@ tf.util.assert(
   tf.util.arraysEqual(layer.bias.filter, intBias),
   `layer.bias.filter ${layer.bias.filter} != ${intBias}`);
 
+  });
