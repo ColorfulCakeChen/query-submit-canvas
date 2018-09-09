@@ -1,3 +1,5 @@
+import * as SeparableConv2d from "SeparableConv2d.mjs";
+
 window.addEventListener("load", function(event) {
 
 var inChannels = 4;
