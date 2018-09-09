@@ -1,4 +1,4 @@
-import * as SeparableConv2d from "SeparableConv2d.mjs";
+import * as SeparableConv2d from "./SeparableConv2d.mjs";
 
 window.addEventListener("load", function(event) {
 
