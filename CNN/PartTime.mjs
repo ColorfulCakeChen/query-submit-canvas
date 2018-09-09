@@ -1,6 +1,6 @@
 import * as ProgressReceiver from "./ProgressReceiver.mjs";
 
-export {partTimeGenerate};
+export {forOf};
 
 /**
  * Periodically call generator.next() by setTimeout() until ( generator.next().done == true ). The generator
@@ -25,7 +25,7 @@ export {partTimeGenerate};
  *
  * @return A promise resolved with the ( generator.next().value ) when ( generator.next().done == true ).
  */
-function partTimeGenerate(generator, htmlProgressTitle, delayMilliseconds = 0) {
+function forOf(generator, htmlProgressTitle, delayMilliseconds = 0) {
 
   let progressReceiver = ProgressReceiver.HTMLProgress.createByTitle_or_getDummy(htmlProgressTitle);
 
