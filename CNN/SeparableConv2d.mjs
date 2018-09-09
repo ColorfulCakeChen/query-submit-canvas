@@ -1,99 +1,12 @@
+import * as ProgressReceiver from "./ProgressReceiver.mjs";
+import * as PartTime from "./PartTime.mjs";
 
-var SeparableConv2d = {};
-
-/** namespace about receiving progress informing. */
-SeparableConv2d.ProgressReceiver = {};
-
-/** The skeleton of progress receiver.  */
-SeparableConv2d.ProgressReceiver.Base = class  {
-  init(maxVolume) {}
-  advance(advancedVolume) {}
-  done() {}
-}
-
-/** Dummy progress receiver which discards all information. */
-SeparableConv2d.ProgressReceiver.Base.dummy = new SeparableConv2d.ProgressReceiver.Base();
-
-/**
- * Report progress to HTMLProgressElement.
- *
- * init() will set HTMLProgressElement.value to 0 and set HTMLProgressElement.max to parameter maxVolume.
- * advanced() will set HTMLProgressElement.value to ( HTMLProgressElement.value + generator.next().value ).
- * done() will call HTMLProgressElement.onclick().
- * 
- * @param {HTMLProgressElement} htmlProgress The HTMLProgressElement for reporting progress. can not null.
- */
-SeparableConv2d.ProgressReceiver.HTMLProgress = class extends SeparableConv2d.ProgressReceiver.Base {
-  constructor(htmlProgress) { this.htmlProgress = htmlProgress; }
-  init(maxVolume)           { this.htmlProgress.value = 0; this.htmlProgress.max = maxVolume; }
-  advance(advancedVolume)   { this.htmlProgress.value += advancedVolume; }
-  done()                    { this.htmlProgress.dispatchEvent(new Event("click")); }
-}
-
-/**
- * @param {string} htmlProgressTitle The title of HTMLProgressElement.
- * @return Return a new ProgressReceiver.HTMLProgress. If not found, return ProgressReceiver.Base.dummy.
- */
-SeparableConv2d.ProgressReceiver.HTMLProgress.getByTitle = function (htmlProgressTitle) {
-  if (htmlProgressTitle) {
-    let htmlProgress = document.querySelector(`progress[title="${htmlProgressTitle}"]`);
-    if (htmlProgress)
-      return new SeparableConv2d.ProgressReceiver.HTMLProgress(htmlProgress);
-  }
-  return SeparableConv2d.ProgressReceiver.Base.dummy;
-}
-
-/**
- * Periodically call generator.next() by setTimeout() until ( generator.next().done == true ). The generator
- * will generate in part-time.
- *
- * When ( generator.next().done == false ), the generator.next().value should be a number.
- *
- * For the first time ( generator.next().done == false ), the generator.next().value should be a positive number
- * represents the maximum progress volume. The HTMLProgressElement.max will be set to this first value. The
- * HTMLProgressElement.value will be set to 0.
- *
- * After that, everytime ( generator.next().done == false ), the generator.next().value should be a number
- * represents the advanced progress volume. The HTMLProgressElement.value will be set to
- * ( HTMLProgressElement.value + generator.next().value ).
- *
- * Finally, when ( generator.next().done == true ), the promise will resolve with the last time
- * ( generator.next().value ) and the HTMLProgressElement.onclick() will be called for informing. 
- *
- * @param {function}  generator         The generator.next() will be called periodically until done.
- * @param {string}    htmlProgressTitle The title of HTMLProgressElement. If null, no progress reporting.
- * @param {integer}   delayMilliseconds The delay time when setTimeout(). Default 0.
- *
- * @return A promise resolved with the ( generator.next().value ) when ( generator.next().done == true ).
- */
-SeparableConv2d.partTimeGenerate = function (generator, htmlProgressTitle, delayMilliseconds = 0) {
-
-  let progressReceiver = SeparableConv2d.ProgressReceiver.HTMLProgress.getByTitle(htmlProgressTitle);
-
-  function promiseTimeout() {
-    return new Promise( (resolve, reject) => {
-      setTimeout(() => {
-        let result = generator.next();   /* Advance and the get the increased progress volume. */
-        if (result.done) {               /* All done. Resolved. Report to UI by click event. */
-          resolve(result.value);
-          progressReceiver.done();
-        } else {
-          progressReceiver.advance(result.value); /* Report advanced progress to UI. */
-          resolve(promiseTimeout());     /* Schedule the next run. */ 
-        }
-      }, delayMilliseconds);
-    });
-  }
-
-  let firstResult = generator.next();       /* Get the maximum progress volume. */
-  progressReceiver.init(firstResult.value);
-  return promiseTimeout();                 /* Schedule the next run. */
-}
+export {Parser, Layer};
 
 /**
  * Parser for decoding string array to SeparableConv2d entities.
  */
-SeparableConv2d.Parser = class {
+class Parser {
 
   /**
    * 
@@ -222,7 +135,7 @@ SeparableConv2d.Parser = class {
 /**
  * A CNN layer contains three filters: depthwise, pointwise and bias.
  */
-SeparableConv2d.Layer = class {
+class Layer {
 
   /**
    * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
@@ -255,7 +168,7 @@ SeparableConv2d.Layer = class {
 /**
  * A class for the CNN layer parameters.
  */
-SeparableConv2d.Layer.Params = class {
+Layer.Params = class {
   /**
    * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
    * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
@@ -271,13 +184,13 @@ SeparableConv2d.Layer.Params = class {
   }
 }
 
-SeparableConv2d.Layer.ParamNames = [
+Layer.ParamNames = [
   "filterHeight", "filterWidth", "channelMultiplier", "dilationHeight", "dilationWidth", "outChannels"];
 
 /**
  * A class for the CNN (depthwise, pointwise and bias) filter.
  */
-SeparableConv2d.Layer.Filter = class {
+Layer.Filter = class {
 
   /**
    * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
