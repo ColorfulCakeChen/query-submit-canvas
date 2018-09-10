@@ -35,8 +35,7 @@ function StringArrayToEntities(
     const suspendWeightCount = 1000; /* When scan so many weight, yield for releasing CPU time. */
     let progress = { value: 0, max: 0 };
 
-    /** Estimate maximum volume for progress reporting. */
-    for (let encodedString of encodedStringArray) {
+    for (let encodedString of encodedStringArray) { /* Estimate maximum volume for progress reporting. */
       progress.max += encodedString.length;
     }
 
@@ -79,11 +78,24 @@ function StringArrayToEntities(
           yield progress;
           weightIndexAfterYield = 0;
         }
- 
-//!!! ...unfinished...
-        progress.value += ;
-        yield progress;
       }
+
+      progress.value = totalScanedCharCount;
+      yield progress; /* After weights of one entity converted to integer, release CPU time. */
+
+
+//!!! ...unfinished...
+    let theEntities = integerWeightsArray.map( integerWeights => {
+      let theEntity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
+      while ( weightIndex < integerWeights.length ) {
+        let layer = new SeparableConv2d.Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
+        theEntity.push(layer);		
+        inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
+        weightIndex = layer.weightIndexEnd;
+      }
+      return theEntity;
+    });
+
     }
 
 
