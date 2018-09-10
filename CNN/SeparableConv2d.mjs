@@ -23,6 +23,9 @@ function StringArrayToEntities(
 
   encodedWeightCharCount = max(1, encodedWeightCharCount); /* At least one character for a weight. */
 
+  const suspendWeightCount = 1000; /* Everytime so many weights decoded, yield for releasing CPU time. */
+  const suspendLayerCount = 100;   /* Everytime so many layers created, yield for releasing CPU time. */
+
   /**
    * @param {integer} integerWeight The integer which will be converted to floating-point number by subtract and divide.
    * @return The floating-point number.
@@ -31,14 +34,68 @@ function StringArrayToEntities(
     return ( integerWeight - weightValueOffset ) / weightValueDivisor;
   }
 
-  function* entitiesGenerator() {
-    const suspendWeightCount = 1000; /* Everytime scanning so many weights, yield for releasing CPU time. */
-    let progress = { value: 0, max: 0 };
+  /** Acceptable by ValueMaxDone.Base.  */
+  class Progress {
+    constructor() {
+      this.totalCharCount = 0;
+      this.totalWeightCount = 0;
+      this.accumulatedCharCount = 0;    /* Increased when converting characters to weights. */
+      this.accumulatedWeightCount = 0;  /* Increased when converting weights to layers. */
+    }
 
-    for (let encodedString of encodedStringArray) { /* Estimate maximum volume for progress reporting. */
-      progress.max += encodedString.length;
+    get value() { return this.accumulatedCharCount + this.accumulatedWeightCount; }
+    get max()   { return this.totalCharCount + this.totalWeightCount; }
+  }
+
+  let progress = new Progress();
+
+  /** Convert encodedString, yield progress, return integerWeights. */
+  function* weightGenerator(encodedString) {
+    let encodedWeightCount = Math.ceil(encodedString.length / encodedWeightCharCount);
+    let integerWeights = new Float32Array( encodedWeightCount );
+
+    let collectedCharCount = 0;
+    let encodedWeight;
+    let weightIndex = 0;
+    let weightIndexAfterYield = 0;
+
+    for (let encodedChar of encodedString) {
+      progress.accumulatedCharCount++;
+
+      if (0 == collectedCharCount)
+        encodedWeight = encodedChar;
+      else
+        encodedWeight += encodedChar;
+
+      collectedCharCount++;
+      if (collectedCharCount < encodedWeightCharCount)
+        continue; /* Collect characters for one weight. */
+
+      collectedCharCount = 0;
+
+      integerWeights[ weightIndex ] = parseInt(encodedWeight, encodedWeightBase); /* Decode as integer. */
+      weightIndex++;
+      weightIndexAfterYield++;
+
+      if (weightIndexAfterYield >= suspendWeightCount) { /* Every suspendWeightCount, release CPU time. */
+        yield progress;
+        weightIndexAfterYield = 0;
+      }
+    }
+
+    yield progress; /* After weights of one entity converted to integer, release CPU time. */
+    return integerWeights;
+  }
+
+  /** Convert encodedStringArray, save in entities, yield progress. */
+  function* entitiesGenerator() {
+
+    /* Estimate maximum volume for progress reporting. Parsing has two pass: one for converting characters to weight,
+       another for converting weights to layer. So the total volume is sum of these two. */
+    for (let encodedString of encodedStringArray) {
+      progress.totalCharCount += encodedString.length;
       let encodedWeightCount = Math.ceil(encodedString.length / encodedWeightCharCount);
-      progress.max += encodedWeightCount;
+      progress.totalWeightCount += encodedWeightCount;
     }
 
     let entityCount = encodedStringArray.length;
@@ -46,50 +103,12 @@ function StringArrayToEntities(
 
     yield progress; /* Report initial progress after first time memory allocation. */
 
-    let totalScanedCharCount = 0;
-    for (let i = 0; i < encodedStringArray.length; ++i) {
-      let encodedString = encodedStringArray[ i ];
-      let encodedWeightCount = Math.ceil(encodedString.length / encodedWeightCharCount);
-      let integerWeights = new Float32Array( encodedWeightCount );
+    for (let encodedString of encodedStringArray) {
+      let integerWeights = yield* weightGenerator(encodedString);
 
-      let collectedCharCount = 0;
-      let encodedWeight;
-      let weightIndex = 0;
-      let weightIndexAfterYield = 0;
-
-      for (let encodedChar of encodedString) {
-        totalScanedCharCount++;
-
-        if (0 == collectedCharCount)
-          encodedWeight = encodedChar;
-        else
-          encodedWeight += encodedChar;
-
-        collectedCharCount++;
-        if (collectedCharCount < encodedWeightCharCount)
-          continue; /* Collect characters for one weight. */
-
-        collectedCharCount = 0;
- 
-        integerWeights[ weightIndex ] = parseInt(encodedWeight, encodedWeightBase); /* Decode as integer. */
-        weightIndex++;
-        weightIndexAfterYield++;
-
-        if (weightIndexAfterYield >= suspendWeightCount) { /* Every suspendWeightCount, release CPU time. */
-          progress.value = totalScanedCharCount;
-          yield progress;
-          weightIndexAfterYield = 0;
-        }
-      }
-
-      progress.value = totalScanedCharCount;
-      yield progress; /* After weights of one entity converted to integer, release CPU time. */
-
-      let totalScanedWeightCount = 0;
 
 
 //!!! ...unfinished...
-    let theEntities = integerWeightsArray.map( integerWeights => {
       let theEntity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
       while ( weightIndex < integerWeights.length ) {
         let layer = new SeparableConv2d.Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
@@ -101,9 +120,9 @@ function StringArrayToEntities(
     });
 
       entity.push(layer);
-      
+
       entities.push(entity);
-      progress.value = totalScanedCharCount + totalScanedWeightCount;
+      progress.value = accumulatedCharCount + accumulatedWeightCount;
       yield progress; /* After weights of one entity converted to layer, release CPU time. */
 
 
