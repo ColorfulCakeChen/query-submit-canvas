@@ -20,12 +20,6 @@ Base.dummy = new Base();
 
 /**
  * Report progress to HTMLProgressElement.
- *
- * init() will 
- * advanced() will set HTMLProgressElement.value to ( HTMLProgressElement.value + generator.next().value ).
- * done() will 
- * 
- * 
  */
 class HTMLProgress extends Base {
   /** @param {HTMLProgressElement} htmlProgress The HTMLProgressElement for reporting progress. can not null. */
