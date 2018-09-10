@@ -32,11 +32,13 @@ function StringArrayToEntities(
   }
 
   function* entitiesGenerator() {
-    const suspendWeightCount = 1000; /* When scan so many weight, yield for releasing CPU time. */
+    const suspendWeightCount = 1000; /* Everytime scanning so many weights, yield for releasing CPU time. */
     let progress = { value: 0, max: 0 };
 
     for (let encodedString of encodedStringArray) { /* Estimate maximum volume for progress reporting. */
       progress.max += encodedString.length;
+      let encodedWeightCount = Math.ceil(encodedString.length / encodedWeightCharCount);
+      progress.max += encodedWeightCount;
     }
 
     let entityCount = encodedStringArray.length;
@@ -83,6 +85,8 @@ function StringArrayToEntities(
       progress.value = totalScanedCharCount;
       yield progress; /* After weights of one entity converted to integer, release CPU time. */
 
+      let totalScanedWeightCount = 0;
+
 
 //!!! ...unfinished...
     let theEntities = integerWeightsArray.map( integerWeights => {
@@ -95,6 +99,13 @@ function StringArrayToEntities(
       }
       return theEntity;
     });
+
+      entity.push(layer);
+      
+      entities.push(entity);
+      progress.value = totalScanedCharCount + totalScanedWeightCount;
+      yield progress; /* After weights of one entity converted to layer, release CPU time. */
+
 
     }
 
