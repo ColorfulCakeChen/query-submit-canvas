@@ -49,7 +49,7 @@ function StringArrayToEntities(
 
   let progress = new Progress();
 
-  /** Convert encodedString, yield progress, return integerWeights. */
+  /** Input encodedString, yield progress, return integerWeights. */
   function* weightGenerator(encodedString) {
     let encodedWeightCount = Math.ceil(encodedString.length / encodedWeightCharCount);
     let integerWeights = new Float32Array( encodedWeightCount );
@@ -87,7 +87,31 @@ function StringArrayToEntities(
     return integerWeights;
   }
 
-  /** Convert encodedStringArray, save in entities, yield progress. */
+  /** Input integerWeights, yield progress, return entity. */
+  function* entityGenerator(integerWeights) {
+    let layerCountAfterYield = 0;
+
+    let entity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
+    while ( weightIndex < integerWeights.length ) {
+      let layer = new Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
+      entity.push(layer);	
+      progress.accumulatedWeightCount += ( layer.weightIndexEnd - layer.weightIndexBegin );
+      layerCountAfterYield++;
+
+      if (layerCountAfterYield >= suspendLayerCount) { /* Every suspendLayerCount, release CPU time. */
+        yield progress;
+        layerCountAfterYield = 0;
+      }
+
+      inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
+      weightIndex = layer.weightIndexEnd;
+    }
+
+    yield progress; /* After weights of one entity converted to layers, release CPU time. */
+    return entity;
+  }
+
+  /** Input encodedStringArray, yield progress, return entities. */
   function* entitiesGenerator() {
 
     /* Estimate maximum volume for progress reporting. Parsing has two pass: one for converting characters to weight,
@@ -101,60 +125,16 @@ function StringArrayToEntities(
     let entityCount = encodedStringArray.length;
     let entities =    new Array(entityCount);
 
-    yield progress; /* Report initial progress after first time memory allocation. */
+    yield progress; /* Report initial progress after maximum volume calculated and first memory block allocated. */
 
-    for (let encodedString of encodedStringArray) {
+    for (let i = 0; i < encodedStringArray.length; i++) {
+      let encodedString = encodedStringArray[ i ];
       let integerWeights = yield* weightGenerator(encodedString);
-
-
-
-//!!! ...unfinished...
-      let theEntity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
-      while ( weightIndex < integerWeights.length ) {
-        let layer = new SeparableConv2d.Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
-        theEntity.push(layer);		
-        inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
-        weightIndex = layer.weightIndexEnd;
-      }
-      return theEntity;
-    });
-
-      entity.push(layer);
-
-      entities.push(entity);
-      progress.value = accumulatedCharCount + accumulatedWeightCount;
-      yield progress; /* After weights of one entity converted to layer, release CPU time. */
-
-
+      let entity = yield* entityGenerator(integerWeights);
+      entities[ i ] = entity;
     }
-
-
-//!!! ...unfinished...
-
-//!!! ...unfinished...
-
-    // RegExp for extracting an encoded weight from the encoded string. (e.g. /(.{5})/g )
-    let encodedWeightMatchRegExp = new RegExp("(.{" + encodedWeightCharCount + "})", "g");
-    let integerWeightsArray = Array.from(encodedStringArray, str => {
-      let encodedWeights = str.match(encodedWeightMatchRegExp);       // Split string.
-      let integerWeights = new Float32Array( encodedWeights.length );
-      encodedWeights.forEach( ( element, i ) => { integerWeights[ i ] = parseInt(element, encodedWeightBase); } ); // Decode as integer.
-      return integerWeights;
-    } );
-
-    let theEntities = integerWeightsArray.map( integerWeights => {
-      let theEntity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
-      while ( weightIndex < integerWeights.length ) {
-        let layer = new SeparableConv2d.Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
-        theEntity.push(layer);		
-        inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
-        weightIndex = layer.weightIndexEnd;
-      }
-      return theEntity;
-    });
-
+    return entities;
   }
-
 
   let progressReceiver = ValueMaxDone.HTMLProgress.createByTitle_or_getDummy(this.htmlProgressTitle);
   let theEntitiesGenerator = entitiesGenerator(encodedStringArray);
@@ -162,7 +142,7 @@ function StringArrayToEntities(
     progressReceiver.setValueMax(valueMax); /* Report progress to UI. */
   }).then((doneValue) => {
     progressReceiver.informDone(doneValue); /* Inform UI progress done. */
-    return this.entities;
+    return doneValue; /* The doneValue will be the entities */
   });
   return p;
 }
