@@ -4,7 +4,7 @@
  *
  * @param {function}  callback          will be called as callback( generator.next().value ) when ( generator.next().done == false ).
  * @param {function}  generator         The generator.next() will be called periodically until done.
- * @param {integer}   delayMilliseconds The delay time when setTimeout(). Default 0.
+ * @param {integer}   delayMilliseconds The delay time when schedule the next run. Default 0.
  *
  * @return A promise resolved with the ( generator.next().value ) when ( generator.next().done == true ).
  */
