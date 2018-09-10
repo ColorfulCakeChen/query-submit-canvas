@@ -1,5 +1,5 @@
-import * as ProgressReceiver from "./ProgressReceiver.mjs";
 import * as PartTime from "./PartTime.mjs";
+import * as ValueMaxDone from "./ValueMaxDone.mjs";
 
 export {Parser, Layer};
 
@@ -9,7 +9,20 @@ export {Parser, Layer};
 class Parser {
 
   /**
-   * 
+   *
+   * When ( generator.next().done == false ), the generator.next().value should be a number.
+   *
+   * For the first time ( generator.next().done == false ), the generator.next().value should be a positive number
+   * represents the maximum progress volume. The HTMLProgressElement.max will be set to this first value. The
+   * HTMLProgressElement.value will be set to 0.
+   *
+   * After that, everytime ( generator.next().done == false ), the generator.next().value should be a number
+   * represents the advanced progress volume. The HTMLProgressElement.value will be set to
+   * ( HTMLProgressElement.value + generator.next().value ).
+   *
+   * Finally, when ( generator.next().done == true ), the promise will resolve with the last time
+   * ( generator.next().value ) and the HTMLProgressElement.onclick() will be called for informing. 
+   *
    * @param  {number}   encodedWeightCharCount Every weight is encoded as string with this length. (e.g. 5 )
    * @param  {number}   encodedWeightBase      Every weight is encoded by this base number. (e.g. 2 or 10 or 16 or 36) 
    * @param  {number}   weightValueOffset      The value will be subtracted from the integer weight value.
@@ -72,8 +85,13 @@ class Parser {
    *   The entity is an array of SeparableConv2d.Layer.
    */
   StringArrayToSeparableConv2dEntities(encodedStringArray) {
+    let progressReceiver = ValueMaxDone.HTMLProgress.createByTitle_or_getDummy(this.htmlProgressTitle);
     let theEntitiesGenerator = entitiesGenerator(encodedStringArray);
-    let p = SeparableConv2d.partTimeGenerate(theEntitiesGenerator, this.htmlProgressTitle);
+    let p = PartTime.forOf((valueMax) => {
+      progressReceiver.setValueMax(valueMax); /* Report progress to UI. */
+    }, theEntitiesGenerator).then((doneValue) => {
+      progressReceiver.informDone(doneValue); /* Inform UI progress done. */
+    });
     return p;
 
     let theEntities = [];
