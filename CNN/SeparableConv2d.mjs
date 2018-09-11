@@ -94,22 +94,22 @@ function StringArrayToEntities(
     let entity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
     while ( weightIndex < integerWeights.length ) {
       let layer = new Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
-      entity.push(layer);	
+      if (layer.filter) {	/* Only collect valid layer. */
+        entity.push(layer);
+        progress.accumulatedWeightCount += layer.weightCount;
+        inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
+        weightIndex = layer.weightIndexEnd;
+      } else { /* Discard invalid layer. Progress skip to the end of the weight array. */
+        progress.accumulatedWeightCount += ( integerWeights.length - weightIndex );
+        weightIndex = integerWeights.length; /* For stopping the loop. */
+      }
 
-      if (layer.weightIndexEnd < integerWeights.length) {
-        progress.accumulatedWeightCount += ( layer.weightIndexEnd - weightIndex );
-      else
-        progress.accumulatedWeightCount += ( integerWeights.length - weightIndex ); /* Can only consume until end at most. */
-
-      layerCountAfterYield++;
+      layerCountAfterYield++; /* Count even if layer invalid, because CPU time is still used. */
 
       if (layerCountAfterYield >= suspendLayerCount) { /* Every suspendLayerCount, release CPU time. */
         yield progress;
         layerCountAfterYield = 0;
       }
-
-      inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
-      weightIndex = layer.weightIndexEnd;
     }
 
     yield progress; /* After weights of one entity converted to layers, release CPU time. */
@@ -219,17 +219,21 @@ Layer.Filter = class {
    * @param {Function}     integerToFloat     An function which input an integer and return a floating-point number.
    */ 
   constructor(integerWeights, weightIndexBegin, shape, integerToFloat) {
-    this.shape =            shape;
-    this.weightCount =      shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
-    this.weightIndexBegin = weightIndexBegin;
-    this.weightIndexEnd =   weightIndexBegin + this.weightCount;  // Exclusive. As the next filter's begin.
+    this.shape =           shape;
+    let weightCount =      shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
+    let weightIndexEnd =   weightIndexBegin + weightCount;  /* Exclusive. As the next filter's begin. */
 
-    if ( this.weightIndexEnd > integerWeights.length ) {
-      return; // No filter when shape is too large.
+    if ( weightIndexEnd > integerWeights.length ) {
+      return; /* No filter when shape is too large. */
     }
 
-    let byteOffset = Float32Array.BYTES_PER_ELEMENT * this.weightIndexBegin;
-    this.filter =    new Float32Array( integerWeights.buffer, byteOffset, this.weightCount ); // Share the underlying array buffer.
-    this.filter.forEach( ( element, i, array ) => array[ i ] = integerToFloat( element ) ); // Convert weight to floating-point number.
+    let byteOffset = Float32Array.BYTES_PER_ELEMENT * weightIndexBegin;
+    this.filter =    new Float32Array( integerWeights.buffer, byteOffset, weightCount ); /* Share the underlying array buffer. */
+    this.filter.forEach((element, i, array) => array[ i ] = integerToFloat(element)); /* Convert weight to floating-point number. */
   }
+
+  get weightIndexBegin() { return this.filter.byteOffset / Float32Array.BYTES_PER_ELEMENT; }
+  get weightIndexEnd()   { return this.weightIndexBegin() + this.weightCount(); }
+  get weightCount()      { return this.filter.length; }
+
 }
