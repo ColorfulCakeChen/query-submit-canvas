@@ -94,7 +94,7 @@ function StringArrayToEntities(
     let entity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
     while ( weightIndex < integerWeights.length ) {
       let layer = new Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
-      if (layer.filter) {	/* Only collect valid layer. */
+      if (layer.isValid()) {	/* Only collect valid layer. */
         entity.push(layer);
         progress.accumulatedWeightCount += layer.weightCount;
         inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
@@ -165,24 +165,33 @@ class Layer {
    */ 
   constructor(integerWeights, weightIndexBegin, inChannels, integerToFloat) {
     this.integerWeights =   integerWeights;
-    this.weightIndexBegin = weightIndexBegin;
 
     this.params = new Layer.Params(integerWeights, weightIndexBegin);
+    if ( this.params.weightIndexEnd > integerWeights.length )
+      return;
+
     this.depthwise = new Layer.Filter(
       integerWeights, this.params.weightIndexEnd,
       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier], integerToFloat );
+
+    if ( !this.depthwise.filter )
+      return;
 
     this.pointwise = new Layer.Filter(
       integerWeights, this.depthwise.weightIndexEnd,
       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels], integerToFloat );
 
+    if ( !this.pointwise.filter )
+      return;
+
     this.bias = new Layer.Filter(
       integerWeights, this.pointwise.weightIndexEnd,
       [1, 1, this.params.outChannels], integerToFloat );
-
-    this.weightIndexEnd = this.bias.weightIndexEnd;
   }
 
+  isValid()              { return ( this.bias.filter ? true : false ); }
+  get weightIndexBegin() { return this.params.weightIndexBegin; }
+  get weightIndexEnd()   { return this.bias.weightIndexEnd; }
 }
 
 /**
