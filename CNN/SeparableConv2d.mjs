@@ -1,7 +1,7 @@
 import * as PartTime from "./PartTime.mjs";
 import * as ValueMaxDone from "./ValueMaxDone.mjs";
 
-export {Parser, Layer};
+export {StringArrayToEntities, Layer};
 
 /**
  * Parsing and decoding string array to SeparableConv2d entities.
@@ -95,7 +95,12 @@ function StringArrayToEntities(
     while ( weightIndex < integerWeights.length ) {
       let layer = new Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
       entity.push(layer);	
-      progress.accumulatedWeightCount += ( layer.weightIndexEnd - layer.weightIndexBegin );
+
+      if (layer.weightIndexEnd < integerWeights.length) {
+        progress.accumulatedWeightCount += ( layer.weightIndexEnd - weightIndex );
+      else
+        progress.accumulatedWeightCount += ( integerWeights.length - weightIndex ); /* Can only consume until end at most. */
+
       layerCountAfterYield++;
 
       if (layerCountAfterYield >= suspendLayerCount) { /* Every suspendLayerCount, release CPU time. */
@@ -162,16 +167,16 @@ class Layer {
     this.integerWeights =   integerWeights;
     this.weightIndexBegin = weightIndexBegin;
 
-    this.params = new SeparableConv2d.Layer.Params(integerWeights, weightIndexBegin);
-    this.depthwise = new SeparableConv2d.Layer.Filter(
+    this.params = new Layer.Params(integerWeights, weightIndexBegin);
+    this.depthwise = new Layer.Filter(
       integerWeights, this.params.weightIndexEnd,
       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier], integerToFloat );
 
-    this.pointwise = new SeparableConv2d.Layer.Filter(
+    this.pointwise = new Layer.Filter(
       integerWeights, this.depthwise.weightIndexEnd,
       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels], integerToFloat );
 
-    this.bias = new SeparableConv2d.Layer.Filter(
+    this.bias = new Layer.Filter(
       integerWeights, this.pointwise.weightIndexEnd,
       [1, 1, this.params.outChannels], integerToFloat );
 
@@ -190,12 +195,12 @@ Layer.Params = class {
    */ 
   constructor(integerWeights, weightIndexBegin) {
     this.weightIndexBegin = weightIndexBegin;
-    this.weightIndexEnd =   weightIndexBegin + SeparableConv2d.Layer.ParamNames.length;
+    this.weightIndexEnd =   weightIndexBegin + Layer.ParamNames.length;
 
     if ( this.weightIndexEnd > integerWeights.length )
       return;
 
-    SeparableConv2d.Layer.ParamNames.forEach( ( paramName, i ) => this[ paramName ] = integerWeights[ weightIndexBegin + i ] );
+    Layer.ParamNames.forEach( ( paramName, i ) => this[ paramName ] = integerWeights[ weightIndexBegin + i ] );
   }
 }
 
