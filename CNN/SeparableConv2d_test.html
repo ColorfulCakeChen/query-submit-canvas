@@ -4,12 +4,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.12.0"></script>
     <!-- script type="module" src="SeparableConv2d.js"></script -->
     <script type="module">
-      //const url="https://docs.google.com/spreadsheets/d/e/2PACX-1vSzA4SXUR5VyPmJ1cLEkNMiJgfb28zzgp4HtwoBlumIIOTkL_y7mgPldqaGtsunIq5eTu5QndluyFcV/pub?gid=0&single=true&output=tsv";
-      const url="https://docs.google.com/spreadsheets/d/e/2PACX-1vSzA4SXUR5VyPmJ1cLEkNMiJgfb28zzgp4HtwoBlumIIOTkL_y7mgPldqaGtsunIq5eTu5QndluyFcV/pub?gid=0&single=true";
+      const url="https://docs.google.com/spreadsheets/d/e/2PACX-1vSzA4SXUR5VyPmJ1cLEkNMiJgfb28zzgp4HtwoBlumIIOTkL_y7mgPldqaGtsunIq5eTu5QndluyFcV/pub?gid=0&single=true&output=tsv";
+      //const url="https://docs.google.com/spreadsheets/d/e/2PACX-1vSzA4SXUR5VyPmJ1cLEkNMiJgfb28zzgp4HtwoBlumIIOTkL_y7mgPldqaGtsunIq5eTu5QndluyFcV/pub?gid=0&single=true";
 
-      var c=new XMLHttpRequest();
-      c.open("GET",url);
-      c.send();
+      var xhr=new XMLHttpRequest();
+      xhr.open("GET",url);
+      xhr.send();
     </script>
   </head>
   <body>
