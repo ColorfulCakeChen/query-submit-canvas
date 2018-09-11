@@ -3,6 +3,60 @@ import * as ValueMaxDone from "./ValueMaxDone.mjs";
 
 export {StringArrayToEntities, Layer};
 
+/** Aggregate all progress and represent by percentag. Acceptable by ValueMaxDone.Base.*/
+class ProgressPercentage {
+  constructor() {
+    this.accumulation = 0;
+    this.total = 0;
+  }
+
+  addSub(progressPart) {
+    this.subProgressParts = this.subProgressParts || [];
+    this.subProgressParts.push(progressPart);
+  }
+
+  get value() {
+    let valueSum = 0, maxSum = 0;
+    if (this.subProgressParts) { /* Aggregate all sub progress. */
+      for (let progressPart of this.subProgressParts) {
+        if (!progressPart)
+          continue;
+        valueSum += progressPart.value();
+        maxSum += progressPart.max();
+      }
+    }
+
+    if (this.total > 0) { /* Avoid divided by zero. */
+      valueSum += ( this.accumulation / this.total ) * 100; /* Aggregate self progress. */
+      maxSum += 100;
+    }
+
+    if (maxSum > 0) { /* Avoid divided by zero. */
+      return ( valueSum / maxSum ) * 100;
+    }
+    return 0; /* Always zero since the total is illegal. */
+  }
+
+  get max() {
+    return 100;
+  }
+}
+
+/** Acceptable by ValueMaxDone.Base.  */
+class Progress extends ProgressPercentage {
+  constructor() {
+    this.progressDownload = new ProgressPercentage();  /* Increased when downloading from network. */
+    this.progressJSONParse = new ProgressPercentage(); /* Increased when parsing the downloaded data. */
+    this.CharCount = new ProgressPercentage();         /* Increased when converting characters to weights. */
+    this.WeightCount = new ProgressPercentage();       /* Increased when converting weights to layers. */
+
+    addSub(this.progressDownload);
+    addSub(this.progressJSONParse);
+    addSub(this.CharCount);
+    addSub(this.WeightCount);
+  }
+}
+
 /**
  * Parsing and decoding string array to SeparableConv2d entities.
  * 
@@ -34,19 +88,6 @@ function StringArrayToEntities(
     return ( integerWeight - weightValueOffset ) / weightValueDivisor;
   }
 
-  /** Acceptable by ValueMaxDone.Base.  */
-  class Progress {
-    constructor() {
-      this.totalCharCount = 0;
-      this.totalWeightCount = 0;
-      this.accumulatedCharCount = 0;    /* Increased when converting characters to weights. */
-      this.accumulatedWeightCount = 0;  /* Increased when converting weights to layers. */
-    }
-
-    get value() { return this.accumulatedCharCount + this.accumulatedWeightCount; }
-    get max()   { return this.totalCharCount + this.totalWeightCount; }
-  }
-
   let progress = new Progress();
 
   /** Input encodedString, yield progress, return integerWeights. */
@@ -60,7 +101,7 @@ function StringArrayToEntities(
     let weightIndexAfterYield = 0;
 
     for (let encodedChar of encodedString) {
-      progress.accumulatedCharCount++;
+      progress.CharCount.accumulation++;
 
       if (0 == collectedCharCount)
         encodedWeight = encodedChar;
@@ -100,7 +141,7 @@ function StringArrayToEntities(
         inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
         weightIndex = layer.weightIndexEnd;
       } else { /* Discard invalid layer. Progress skip to the end of the weight array. */
-        progress.accumulatedWeightCount += ( integerWeights.length - weightIndex );
+        progress.WeightCount.accumulation += ( integerWeights.length - weightIndex );
         weightIndex = integerWeights.length; /* For stopping the loop. */
       }
 
@@ -122,9 +163,9 @@ function StringArrayToEntities(
     /* Estimate maximum volume for progress reporting. Parsing has two pass: one for converting characters to weight,
        another for converting weights to layer. So the total volume is sum of these two. */
     for (let encodedString of encodedStringArray) {
-      progress.totalCharCount += encodedString.length;
+      progress.CharCount.total += encodedString.length;
       let encodedWeightCount = Math.ceil(encodedString.length / encodedWeightCharCount);
-      progress.totalWeightCount += encodedWeightCount;
+      progress.WeightCount.total += encodedWeightCount;
     }
 
     let entityCount = encodedStringArray.length;
