@@ -1,17 +1,15 @@
 import * as PartTime from "./PartTime.mjs";
-import * as Progress from "./Progress.mjs";
+import * as ValueMax from "./ValueMax.mjs";
 
 export {StringArrayToEntities, Layer};
 
-
-
-/** Aggregate all progress about downloading, JSON parsing, character scanning, and weight scanning.  */
-class Progress extends Progress.Percentage.Aggregate {
+/** Aggregate all progress about downloading, JSON parsing, characters scanning, and weights scanning.  */
+class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
-    this.download = new Progress.Percentage.Concrete();    // Increased when downloading from network.
-    this.JSONParse = new Progress.Percentage.Concrete();   // Increased when parsing the downloaded data as JSON.
-    this.CharCount = new Progress.Percentage.Concrete();   // Increased when converting characters to weights.
-    this.WeightCount = new Progress.Percentage.Concrete(); // Increased when converting weights to layers.
+    this.download = new ValueMax.Percentage.Concrete();    // Increased when downloading from network.
+    this.JSONParse = new ValueMax.Percentage.Concrete();   // Increased when parsing the downloaded data as JSON.
+    this.CharCount = new ValueMax.Percentage.Concrete();   // Increased when converting characters to weights.
+    this.WeightCount = new ValueMax.Percentage.Concrete(); // Increased when converting weights to layers.
 
     addChild(this.progressDownload);
     addChild(this.progressJSONParse);
@@ -145,7 +143,7 @@ function StringArrayToEntities(
     return entities;
   }
 
-  let progressReceiver = Progress.Receiver.HTMLProgress.createByTitle_or_getDummy(this.htmlProgressTitle);
+  let progressReceiver = ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy(this.htmlProgressTitle);
   let theEntitiesGenerator = entitiesGenerator(encodedStringArray);
   let p = PartTime.forOf(theEntitiesGenerator, (valueMax) => {
     progressReceiver.setValueMax(valueMax); /* Report progress to UI. */
