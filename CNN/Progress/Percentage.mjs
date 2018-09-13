@@ -1,4 +1,4 @@
-export {Base, Percentage, Average};
+export {Base, Concrete, Aggregate};
 
 /**
  * The base class for representing progress as number berween [0, 100] inclusive. Acceptable by Receiver.Base.
@@ -25,7 +25,7 @@ class Base {
  *
  * The max() always returns 100. The value() returns number berween [0, 100] inclusive.
  */
-class Percentage extends Base {
+class Concrete extends Base {
   constructor() {
     this.accumulation = 0;
     this.total = 0;
