@@ -1,59 +1,22 @@
 import * as PartTime from "./PartTime.mjs";
-import * as ValueMaxDone from "./ValueMaxDone.mjs";
+import * as Progress from "./Progress.mjs";
 
 export {StringArrayToEntities, Layer};
 
-/** Aggregate all progress and represent by percentag. Acceptable by ValueMaxDone.Base.*/
-class ProgressPercentage {
+
+
+/** Aggregate all progress about downloading, JSON parsing, character scanning, and weight scanning.  */
+class Progress extends Progress.Percentage.Aggregate {
   constructor() {
-    this.accumulation = 0;
-    this.total = 0;
-  }
+    this.download = new Progress.Percentage.Concrete();    // Increased when downloading from network.
+    this.JSONParse = new Progress.Percentage.Concrete();   // Increased when parsing the downloaded data as JSON.
+    this.CharCount = new Progress.Percentage.Concrete();   // Increased when converting characters to weights.
+    this.WeightCount = new Progress.Percentage.Concrete(); // Increased when converting weights to layers.
 
-  addSub(progressPart) {
-    this.subProgressParts = this.subProgressParts || [];
-    this.subProgressParts.push(progressPart);
-  }
-
-  get value() {
-    let valueSum = 0, maxSum = 0;
-    if (this.subProgressParts) { /* Aggregate all sub progress. */
-      for (let progressPart of this.subProgressParts) {
-        if (!progressPart)
-          continue;
-        valueSum += progressPart.value();
-        maxSum += progressPart.max();
-      }
-    }
-
-    if (this.total > 0) { /* Avoid divided by zero. */
-      valueSum += ( this.accumulation / this.total ) * 100; /* Aggregate self progress. */
-      maxSum += 100;
-    }
-
-    if (maxSum > 0) { /* Avoid divided by zero. */
-      return ( valueSum / maxSum ) * 100;
-    }
-    return 0; /* Always zero since the total is illegal. */
-  }
-
-  get max() {
-    return 100;
-  }
-}
-
-/** Acceptable by ValueMaxDone.Base.  */
-class Progress extends ProgressPercentage {
-  constructor() {
-    this.progressDownload = new ProgressPercentage();  /* Increased when downloading from network. */
-    this.progressJSONParse = new ProgressPercentage(); /* Increased when parsing the downloaded data. */
-    this.CharCount = new ProgressPercentage();         /* Increased when converting characters to weights. */
-    this.WeightCount = new ProgressPercentage();       /* Increased when converting weights to layers. */
-
-    addSub(this.progressDownload);
-    addSub(this.progressJSONParse);
-    addSub(this.CharCount);
-    addSub(this.WeightCount);
+    addChild(this.progressDownload);
+    addChild(this.progressJSONParse);
+    addChild(this.CharCount);
+    addChild(this.WeightCount);
   }
 }
 
@@ -182,7 +145,7 @@ function StringArrayToEntities(
     return entities;
   }
 
-  let progressReceiver = ValueMaxDone.HTMLProgress.createByTitle_or_getDummy(this.htmlProgressTitle);
+  let progressReceiver = Progress.Receiver.HTMLProgress.createByTitle_or_getDummy(this.htmlProgressTitle);
   let theEntitiesGenerator = entitiesGenerator(encodedStringArray);
   let p = PartTime.forOf(theEntitiesGenerator, (valueMax) => {
     progressReceiver.setValueMax(valueMax); /* Report progress to UI. */
