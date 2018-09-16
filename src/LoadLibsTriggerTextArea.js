@@ -6,7 +6,7 @@
   }
 
   /*alert("hi1");*/
-  let theTextArea = d.querySelector("textarea[title='"+TextAreaElementTooltip+"']");
+  let theTextArea = d.querySelector(`textarea[title="${TextAreaElementTooltip}"]`);
   let i = 0;
 
   function onLoadFailed(e) {
