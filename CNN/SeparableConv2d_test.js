@@ -1,6 +1,8 @@
+import * as ScriptLoader from "./ScriptLoader.js";
 import * as SeparableConv2d from "./SeparableConv2d.js";
 
 window.addEventListener("load", function(event) {
+ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.0").then(() => {
 
 var inChannels = 4;
 
@@ -87,4 +89,4 @@ tf.util.assert(
   tf.util.arraysEqual(layer.bias.filter, intBias),
   `layer.bias.filter ${layer.bias.filter} != ${intBias}`);
 
-  });
+}});
