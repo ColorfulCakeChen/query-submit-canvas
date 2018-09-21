@@ -24,6 +24,7 @@ Base.dummy = new Base();
 class HTMLProgress extends Base {
   /** @param {HTMLProgressElement} htmlProgress The HTMLProgressElement for reporting progress. can not null. */
   constructor(htmlProgress) {
+    super();
     this.htmlProgress = htmlProgress;
   }
 
