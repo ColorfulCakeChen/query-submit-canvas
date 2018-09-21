@@ -36,7 +36,7 @@ class Progress extends ValueMax.Percentage.Aggregate {
 function StringArrayToEntities(
   encodedStringArray, encodedWeightCharCount, encodedWeightBase, weightValueOffset, weightValueDivisor, htmlProgressTitle) {
 
-  encodedWeightCharCount = max(1, encodedWeightCharCount); /* At least one character for a weight. */
+  encodedWeightCharCount = Math.max(1, encodedWeightCharCount); /* At least one character for a weight. */
 
   const suspendWeightCount = 1000; /* Everytime so many weights decoded, yield for releasing CPU time. */
   const suspendLayerCount = 100;   /* Everytime so many layers created, yield for releasing CPU time. */
