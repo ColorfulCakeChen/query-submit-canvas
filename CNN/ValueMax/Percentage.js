@@ -27,6 +27,7 @@ class Base {
  */
 class Concrete extends Base {
   constructor() {
+    super();
     this.accumulation = 0;
     this.total = 0;
   }
@@ -49,6 +50,7 @@ class Concrete extends Base {
  */
 class Aggregate extends Base {
   constructor() {
+    super();
     this.childProgressParts = [];
   }
 
