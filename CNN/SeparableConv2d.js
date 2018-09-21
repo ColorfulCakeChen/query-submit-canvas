@@ -245,7 +245,7 @@ Layer.Filter = class {
   }
 
   get weightIndexBegin() { return this.filter.byteOffset / Float32Array.BYTES_PER_ELEMENT; }
-  get weightIndexEnd()   { return this.weightIndexBegin() + this.weightCount(); }
+  get weightIndexEnd()   { return this.weightIndexBegin + this.weightCount; }
   get weightCount()      { return this.filter.length; }
 
 }
