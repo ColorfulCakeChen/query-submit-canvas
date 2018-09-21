@@ -6,6 +6,7 @@ export {StringArrayToEntities, Layer};
 /** Aggregate all progress about downloading, JSON parsing, characters scanning, and weights scanning.  */
 class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
+    super();
     this.download = new ValueMax.Percentage.Concrete();    // Increased when downloading from network.
     this.JSONParse = new ValueMax.Percentage.Concrete();   // Increased when parsing the downloaded data as JSON.
     this.CharCount = new ValueMax.Percentage.Concrete();   // Increased when converting characters to weights.
