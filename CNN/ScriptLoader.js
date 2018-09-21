@@ -12,5 +12,5 @@ function createPromise(url, isModule) {
       attributes.type = "module";
 
     document.head.appendChild(Object.assign(document.createElement("script"), attributes));
-  }
+  });
 }
