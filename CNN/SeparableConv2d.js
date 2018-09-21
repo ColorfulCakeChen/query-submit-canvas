@@ -12,10 +12,10 @@ class Progress extends ValueMax.Percentage.Aggregate {
     this.CharCount = new ValueMax.Percentage.Concrete();   // Increased when converting characters to weights.
     this.WeightCount = new ValueMax.Percentage.Concrete(); // Increased when converting weights to layers.
 
-    addChild(this.progressDownload);
-    addChild(this.progressJSONParse);
-    addChild(this.CharCount);
-    addChild(this.WeightCount);
+    this.addChild(this.progressDownload);
+    this.addChild(this.progressJSONParse);
+    this.addChild(this.CharCount);
+    this.addChild(this.WeightCount);
   }
 }
 
