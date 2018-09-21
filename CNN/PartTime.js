@@ -1,3 +1,5 @@
+export {forOf};
+
 /**
  * Periodically call generator.next() by setTimeout() until ( generator.next().done == true ). The generator
  * will generate in part-time. Just like a for..of loop but executes in part-time.
@@ -8,7 +10,7 @@
  *
  * @return A promise resolved with the ( generator.next().value ) when ( generator.next().done == true ).
  */
-export function forOf(generator, callback, delayMilliseconds = 0) {
+function forOf(generator, callback, delayMilliseconds = 0) {
 
   function promiseTimeout() {
     return new Promise( (resolve, reject) => {
