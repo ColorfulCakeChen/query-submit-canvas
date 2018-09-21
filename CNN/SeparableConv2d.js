@@ -1,5 +1,5 @@
-import * as PartTime from "./PartTime.mjs";
-import * as ValueMax from "./ValueMax.mjs";
+import * as PartTime from "./PartTime.js";
+import * as ValueMax from "./ValueMax.js";
 
 export {StringArrayToEntities, Layer};
 
