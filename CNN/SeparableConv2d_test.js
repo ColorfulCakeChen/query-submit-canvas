@@ -6,6 +6,8 @@ window.addEventListener("load", event => {
   ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.0").then(test); });
 
 function test() {
+  console.log("Hi! test()");
+
   var inChannels = 4;
 
   var intParams = [
@@ -37,7 +39,7 @@ function test() {
   var weightValueOffset = 0;
   var weightValueDivisor = 1;
 
-  var theEntities = SeparableConv2d.Layer.StringArrayToSeparableConv2dEntities(
+  var theEntities = SeparableConv2d.StringArrayToEntities(
         [strEncodedWeights], encodedWeightCharCount, encodedWeightBase, weightValueOffset, weightValueDivisor );
 
   var entity = theEntities[ 0 ];
