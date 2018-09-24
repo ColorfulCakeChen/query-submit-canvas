@@ -50,7 +50,7 @@ class Concrete extends Base {
  */
 class Aggregate extends Base {
   /**
-   * @param {Percentage[]} children An array of Percentage which will be aggregate.
+   * @param {Percentage.Base[]} children An array of Percentage which will be aggregate.
    */
   constructor(children = []) {
     super();
@@ -58,7 +58,7 @@ class Aggregate extends Base {
   }
 
   /**
-   * @param {Percentage} progressPart Another Progress.Percentage object.
+   * @param {Percentage.Base} progressPart Another Progress.Percentage object.
    */
   addChild(progressPart) {
     this.childProgressParts.push(progressPart);
