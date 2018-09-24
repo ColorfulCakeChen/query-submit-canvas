@@ -6,16 +6,26 @@ export {StringArrayToEntities, Layer};
 /** Aggregate all progress about downloading, JSON parsing, characters scanning, and weights scanning.  */
 class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
-    super();
-    this.download = new ValueMax.Percentage.Concrete();    // Increased when downloading from network.
-    this.JSONParse = new ValueMax.Percentage.Concrete();   // Increased when parsing the downloaded data as JSON.
-    this.CharCount = new ValueMax.Percentage.Concrete();   // Increased when converting characters to weights.
-    this.WeightCount = new ValueMax.Percentage.Concrete(); // Increased when converting weights to layers.
+    let children = [
+      new ValueMax.Percentage.Concrete(), // Increased when downloading from network.
+      new ValueMax.Percentage.Concrete(), // Increased when parsing the downloaded data as JSON.
+      new ValueMax.Percentage.Concrete(), // Increased when converting characters to weights.
+      new ValueMax.Percentage.Concrete()  // Increased when converting weights to layers.
+    ];
 
-    this.addChild(this.progressDownload);
-    this.addChild(this.progressJSONParse);
-    this.addChild(this.CharCount);
-    this.addChild(this.WeightCount);
+    super(children);
+
+    [this.download, this.JSONParse, this.CharCount, this.WeightCount] = children;
+
+//     this.download = new ValueMax.Percentage.Concrete();    // Increased when downloading from network.
+//     this.JSONParse = new ValueMax.Percentage.Concrete();   // Increased when parsing the downloaded data as JSON.
+//     this.CharCount = new ValueMax.Percentage.Concrete();   // Increased when converting characters to weights.
+//     this.WeightCount = new ValueMax.Percentage.Concrete(); // Increased when converting weights to layers.
+//
+//     this.addChild(this.progressDownload);
+//     this.addChild(this.progressJSONParse);
+//     this.addChild(this.CharCount);
+//     this.addChild(this.WeightCount);
   }
 }
 
