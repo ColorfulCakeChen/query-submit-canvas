@@ -49,9 +49,12 @@ class Concrete extends Base {
  * Aggregate all children progress and represents them as percentag.
  */
 class Aggregate extends Base {
-  constructor() {
+  /**
+   * @param {Percentage[]} children An array of Percentage which will be aggregate.
+   */
+  constructor(children = []) {
     super();
-    this.childProgressParts = [];
+    this.childProgressParts = children;
   }
 
   /**
