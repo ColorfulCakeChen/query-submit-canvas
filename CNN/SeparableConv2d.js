@@ -215,7 +215,7 @@ Layer.Params = class {
     this.weightIndexBegin = weightIndexBegin;
   }
 
-  isValid()               { return ( this.weightIndexEnd < this.integerWeights.length ) ? true : false; }
+  isValid()               { return ( this.weightIndexEnd <= this.integerWeights.length ) ? true : false; }
   get weightIndexEnd()    { let ParamCount = 6; return this.weightIndexBegin + ParamCount; }
 
   get filterHeight()      { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 0 ])); }
