@@ -176,14 +176,14 @@ class Layer {
       integerWeights, this.params.weightIndexEnd,
       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier], integerToFloat );
 
-    if ( !this.depthwise.filter )
+    if ( !this.depthwise.isValid() )
       return;
 
     this.pointwise = new Layer.Filter(
       integerWeights, this.depthwise.weightIndexEnd,
       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels], integerToFloat );
 
-    if ( !this.pointwise.filter )
+    if ( !this.pointwise.isValid() )
       return;
 
     this.bias = new Layer.Filter(
@@ -191,7 +191,13 @@ class Layer {
       [1, 1, this.params.outChannels], integerToFloat );
   }
 
-  isValid()              { return ( this.bias.filter ? true : false ); }
+  isValid() {
+    if ( this.bias )
+      if ( this.bias.isValid() )
+        return true;
+    return false;
+  }
+
   get weightIndexBegin() { return this.params.weightIndexBegin; }
   get weightIndexEnd()   { return this.bias.weightIndexEnd; }
 }
@@ -209,7 +215,7 @@ Layer.Params = class {
     this.weightIndexBegin = weightIndexBegin;
   }
 
-  isValid()               { return ( this.weightIndexEnd < this.integerWeights.length ) ? true : false ); }
+  isValid()               { return ( this.weightIndexEnd < this.integerWeights.length ) ? true : false; }
   get weightIndexEnd()    { let ParamCount = 6; return this.weightIndexBegin + ParamCount; }
 
   get filterHeight()      { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 0 ])); }
@@ -226,6 +232,8 @@ Layer.Params = class {
 Layer.Filter = class {
 
   /**
+   * There will be no filter (this.filter undefined and ( isValid() == false )) when shape is too large (or NaN).
+   *
    * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
    * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
    * @param {number[]}     shape              The filter shape (element count for every dimension). The shape.length is dimension.
@@ -236,15 +244,16 @@ Layer.Filter = class {
     let weightCount =      shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
     let weightIndexEnd =   weightIndexBegin + weightCount;  /* Exclusive. As the next filter's begin. */
 
-    if ( weightIndexEnd > integerWeights.length ) {
-      return; /* No filter when shape is too large. */
+    if ( weightIndexEnd <= integerWeights.length ) {
+      let byteOffset = Float32Array.BYTES_PER_ELEMENT * weightIndexBegin;
+      this.filter =    new Float32Array( integerWeights.buffer, byteOffset, weightCount ); /* Share the underlying array buffer. */
+      this.filter.forEach((element, i, array) => array[ i ] = integerToFloat(element)); /* Convert weight to floating-point number. */
+    } else {
+      // No filter when shape is too large (or NaN).
     }
-
-    let byteOffset = Float32Array.BYTES_PER_ELEMENT * weightIndexBegin;
-    this.filter =    new Float32Array( integerWeights.buffer, byteOffset, weightCount ); /* Share the underlying array buffer. */
-    this.filter.forEach((element, i, array) => array[ i ] = integerToFloat(element)); /* Convert weight to floating-point number. */
   }
 
+  isValid()              { return ( this.filter ) ? true : false; }
   get weightIndexBegin() { return this.filter.byteOffset / Float32Array.BYTES_PER_ELEMENT; }
   get weightIndexEnd()   { return this.weightIndexBegin + this.weightCount; }
   get weightCount()      { return this.filter.length; }
