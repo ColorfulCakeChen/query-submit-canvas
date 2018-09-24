@@ -16,16 +16,6 @@ class Progress extends ValueMax.Percentage.Aggregate {
     super(children);
 
     [this.download, this.JSONParse, this.CharCount, this.WeightCount] = children;
-
-//     this.download = new ValueMax.Percentage.Concrete();    // Increased when downloading from network.
-//     this.JSONParse = new ValueMax.Percentage.Concrete();   // Increased when parsing the downloaded data as JSON.
-//     this.CharCount = new ValueMax.Percentage.Concrete();   // Increased when converting characters to weights.
-//     this.WeightCount = new ValueMax.Percentage.Concrete(); // Increased when converting weights to layers.
-//
-//     this.addChild(this.progressDownload);
-//     this.addChild(this.progressJSONParse);
-//     this.addChild(this.CharCount);
-//     this.addChild(this.WeightCount);
   }
 }
 
@@ -177,10 +167,9 @@ class Layer {
    * @param {Function}     integerToFloat     An function which input an integer and return a floating-point number.
    */ 
   constructor(integerWeights, weightIndexBegin, inChannels, integerToFloat) {
-    this.integerWeights =   integerWeights;
 
     this.params = new Layer.Params(integerWeights, weightIndexBegin);
-    if ( this.params.weightIndexEnd > integerWeights.length )
+    if ( !this.params.isValid() )
       return;
 
     this.depthwise = new Layer.Filter(
@@ -216,18 +205,20 @@ Layer.Params = class {
    * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
    */ 
   constructor(integerWeights, weightIndexBegin) {
+    this.integerWeights =   integerWeights;
     this.weightIndexBegin = weightIndexBegin;
-    this.weightIndexEnd =   weightIndexBegin + Layer.ParamNames.length;
-
-    if ( this.weightIndexEnd > integerWeights.length )
-      return;
-
-    Layer.ParamNames.forEach( ( paramName, i ) => this[ paramName ] = integerWeights[ weightIndexBegin + i ] );
   }
-}
 
-Layer.ParamNames = [
-  "filterHeight", "filterWidth", "channelMultiplier", "dilationHeight", "dilationWidth", "outChannels"];
+  isValid()               { return ( this.weightIndexEnd < this.integerWeights.length ) ? true : false ); }
+  get weightIndexEnd()    { let ParamCount = 6; return this.weightIndexBegin + ParamCount; }
+
+  get filterHeight()      { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 0 ])); }
+  get filterWidth()       { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 1 ])); }
+  get channelMultiplier() { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 2 ])); }
+  get dilationHeight()    { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 3 ])); }
+  get dilationWidth()     { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 4 ])); }
+  get outChannels()       { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 5 ])); }
+}
 
 /**
  * A class for the CNN (depthwise, pointwise and bias) filter.
