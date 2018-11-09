@@ -1,7 +1,7 @@
 {
-  "name": "testcodesandboxtitle",
+  "name": "testcodesandboxgithub",
   "version": "1.0.0",
-  "description": "Test CodeSandbox description.",
+  "description": "Test CodeSandbox in GitHub description.",
   "keywords": [],
   "main": "index.js",
   "dependencies": {},
