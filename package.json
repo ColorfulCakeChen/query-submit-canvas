@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "Test CodeSandbox in GitHub description.",
   "keywords": [],
-  "main": "index.js",
+  "main": "index.html",
   "dependencies": {},
   "devDependencies": {
-    "svelte": "2.11.0"
   }
 }
