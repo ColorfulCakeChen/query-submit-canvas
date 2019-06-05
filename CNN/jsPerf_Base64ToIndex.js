@@ -1,5 +1,7 @@
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
+// https://jsperf.com/base64-to-index
+
 function base64ToIndex_withTable(base64ArrayBuffer, tableByUint8) {
 //   let resultArrayBuffer = new ArrayBuffer( base64ArrayBuffer.byteLength );
 //   let source = new Uint8Array( base64ArrayBuffer );
