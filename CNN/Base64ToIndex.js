@@ -2,7 +2,7 @@ const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345
 
 function base64ToIndex_withTable(base64_ArrayBuffer, table_ByUint8) {
   let source = new Uint8Array( base64_ArrayBuffer );
-  let resultBuffer = new ArrayBuffer( base64_ArrayBuffer.length );
+  let resultBuffer = new ArrayBuffer( base64_ArrayBuffer.byteLength );
   let result = new Uint8Array( resultBuffer );
   for (let i = 0; i < source.length; ++i)
     result[ i ] = source[ table_ByUint8[ i ] ];
