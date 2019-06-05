@@ -26,10 +26,10 @@ function base64ToIndex_withTable(base64ArrayBuffer, tableByUint8) {
   let bytes = new Uint8Array(resultArrayBuffer);
 
   for (let i = 0; i < sourceBytelength; i+=4) {
-    encoded1 = tableByUint8[ base64[i]   ];
-    encoded2 = tableByUint8[ base64[i+1] ];
-    encoded3 = tableByUint8[ base64[i+2] ];
-    encoded4 = tableByUint8[ base64[i+3] ];
+    encoded1 = tableByUint8[ source[i]   ];
+    encoded2 = tableByUint8[ source[i+1] ];
+    encoded3 = tableByUint8[ source[i+2] ];
+    encoded4 = tableByUint8[ source[i+3] ];
 
     bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
     bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
