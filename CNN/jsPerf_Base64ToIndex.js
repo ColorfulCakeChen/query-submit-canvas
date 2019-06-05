@@ -22,7 +22,7 @@ function base64ToIndex_withTable(base64ArrayBuffer, tableByUint8) {
     }
   }
 
-  let resultArrayBuffer = new ArrayBuffer(bufferLength),
+  let resultArrayBuffer = new ArrayBuffer(bufferLength);
   let bytes = new Uint8Array(resultArrayBuffer);
 
   for (let i = 0; i < sourceBytelength; i+=4) {
