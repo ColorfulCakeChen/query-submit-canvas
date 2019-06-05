@@ -39,6 +39,19 @@ function byArrayBuffer() {
   };
 }
 
+function by_atob() {
+  let textDecoder = new TextDecoder();
+  let textEncoder = new TextEncoder();
+
+  return function (base64_ArrayBuffer) {
+    let strBase64 = textDecoder.decode(base64_ArrayBuffer);
+    let strBase64Decoded = globalThis.atob(strBase64);
+    let resultUint8Array = textEncoder.encode(strBase64Decoded);
+    let resultArrayBuffer = resultUint8Array.buffer;
+    return resultArrayBuffer;
+  };
+}
+
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -54,3 +67,5 @@ for (let i = 0; i < dataUint8Array.length; ++i) {
 var base64ToIndex_ByArray = byArray();
 var base64ToIndex_ByHash = byHash();
 var base64ToIndex_ByArrayBuffer = byArrayBuffer();
+var base64ToIndex_By_atob = by_atob();
+
