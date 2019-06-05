@@ -10,7 +10,9 @@ function base64ToIndex_withTable(base64ArrayBuffer, tableByUint8) {
 //     result[ i ] = tableByUint8[ source[ i ] ];
 //   return resultArrayBuffer;
 
-!!! ...unfinished... (2019/06/05) Use https://github.com/beatgammit/base64-js/blob/master/index.js to decode.
+!!! ...unfinished... (2019/06/05) Use the following to decode.
+https://github.com/emn178/hi-base64/blob/master/src/base64.js
+https://github.com/beatgammit/base64-js/blob/master/index.js
   
   let source = new Uint8Array( base64ArrayBuffer );
   let sourceBytelength = source.length;
