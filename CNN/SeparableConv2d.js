@@ -99,7 +99,7 @@ function StringArrayToEntities(
       let layer = new Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
       if (layer.isValid()) {	/* Only collect valid layer. */
         entity.push(layer);
-        progress.accumulatedWeightCount += layer.weightCount;
+        progress.WeightCount.accumulation += layer.weightCount;
         inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
         weightIndex = layer.weightIndexEnd;
       } else { /* Discard invalid layer. Progress skip to the end of the weight array. */
