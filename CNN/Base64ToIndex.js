@@ -1,17 +1,18 @@
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-function base64ToIndex_withTable(base64_ArrayBuffer, table_ByUint8) {
-  let source = new Uint8Array( base64_ArrayBuffer );
-  let resultBuffer = new ArrayBuffer( base64_ArrayBuffer.byteLength );
-  let result = new Uint8Array( resultBuffer );
+function base64ToIndex_withTable(base64ArrayBuffer, table_ByUint8) {
+  let resultArrayBuffer = new ArrayBuffer( base64ArrayBuffer.byteLength );
+  let source = new Uint8Array( base64ArrayBuffer );
+  let result = new Uint8Array( resultArrayBuffer );
   for (let i = 0; i < source.length; ++i)
-    result[ i ] = source[ table_ByUint8[ i ] ];
-  return resultBuffer;
+    result[ i ] = table_ByUint8[ source[ i ] ];
+  return resultArrayBuffer;
 }
 
 function byArray() {
-  let table = new Array(256);
-  for (let i = 0; i< base64String.length; ++i)
+  //let table = new Array(256);
+  let table = [];
+  for (let i = 0; i < base64String.length; ++i)
     table[ base64String.codePointAt(i) ] = i;
 
   return function (base64_ArrayBuffer) {
@@ -21,7 +22,7 @@ function byArray() {
 
 function byArrayBuffer() {
   let table = new Uint8Array( new ArrayBuffer(256) );
-  for (let i = 0; i< base64String.length; ++i)
+  for (let i = 0; i < base64String.length; ++i)
     table[ base64String.codePointAt(i) ] = i;
 
   return function (base64_ArrayBuffer) {
@@ -31,7 +32,7 @@ function byArrayBuffer() {
 
 function byHash() {
   let table = {};
-  for (let i = 0; i< base64String.length; ++i)
+  for (let i = 0; i < base64String.length; ++i)
     table[ base64String.codePointAt(i) ] = i;
 
   return function (base64_ArrayBuffer) {
