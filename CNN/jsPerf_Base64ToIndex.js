@@ -1,11 +1,41 @@
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-function base64ToIndex_withTable(base64ArrayBuffer, table_ByUint8) {
-  let resultArrayBuffer = new ArrayBuffer( base64ArrayBuffer.byteLength );
+function base64ToIndex_withTable(base64ArrayBuffer, tableByUint8) {
+//   let resultArrayBuffer = new ArrayBuffer( base64ArrayBuffer.byteLength );
+//   let source = new Uint8Array( base64ArrayBuffer );
+//   let result = new Uint8Array( resultArrayBuffer );
+//   for (let i = 0; i < source.length; ++i)
+//     result[ i ] = tableByUint8[ source[ i ] ];
+//   return resultArrayBuffer;
+
+  
   let source = new Uint8Array( base64ArrayBuffer );
-  let result = new Uint8Array( resultArrayBuffer );
-  for (let i = 0; i < source.length; ++i)
-    result[ i ] = table_ByUint8[ source[ i ] ];
+  let sourceBytelength = source.length;
+  let bufferLength = sourceBytelength * 0.75,
+      p = 0,
+      encoded1, encoded2, encoded3, encoded4;
+
+  if ( (sourceBytelength >= 1) && (source[sourceBytelength - 1] === "=") ) {
+    bufferLength--;
+    if ( (sourceBytelength >= 1) && (source[sourceBytelength - 2] === "=") ) {
+      bufferLength--;
+    }
+  }
+
+  let resultArrayBuffer = new ArrayBuffer(bufferLength),
+  let bytes = new Uint8Array(resultArrayBuffer);
+
+  for (let i = 0; i < sourceBytelength; i+=4) {
+    encoded1 = tableByUint8[ base64[i]   ];
+    encoded2 = tableByUint8[ base64[i+1] ];
+    encoded3 = tableByUint8[ base64[i+2] ];
+    encoded4 = tableByUint8[ base64[i+3] ];
+
+    bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
+    bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
+    bytes[p++] = ((encoded3 & 3) << 6) | (encoded4 & 63);
+  }
+
   return resultArrayBuffer;
 }
 
