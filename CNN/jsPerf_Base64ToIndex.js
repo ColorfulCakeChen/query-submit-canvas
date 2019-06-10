@@ -93,11 +93,20 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
 }
 
-var dataArrayBuffer = new ArrayBuffer(4096);
-let dataUint8Array = new Uint8Array( dataArrayBuffer );
-for (let i = 0; i < dataUint8Array.length; ++i) {
-  dataUint8Array[ i ] = base64String.codePointAt( getRandomIntInclusive(0, 63) );
-}
+//var dataArrayBuffer = new ArrayBuffer(4096);
+//let dataUint8Array = new Uint8Array( dataArrayBuffer );
+//for (let i = 0; i < dataUint8Array.length; ++i) {
+//  dataUint8Array[ i ] = base64String.codePointAt( getRandomIntInclusive(0, 63) );
+//}
+
+const str = base64String.repeat(1024 * 8);
+  
+var array = [...str];
+var arrayBuffer = new ArrayBuffer(array.length);
+var uint8array = new Uint8Array(arrayBuffer);
+array.forEach(function(e, i) { uint8array[i] = e.codePointAt(0)});
+
+var dataArrayBuffer = arrayBuffer;
 
 var base64ToIndex_ByArray = byArray();
 var base64ToIndex_ByHash = byHash();
