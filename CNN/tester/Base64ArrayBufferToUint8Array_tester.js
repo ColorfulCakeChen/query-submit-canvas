@@ -1,7 +1,7 @@
 import * as ScriptLoader from "./ScriptLoader.js";
 import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array.js";
 import * as PartTime from "../PartTime.js";
-import * as ValueMax_Percentage from "./Percentage.js";
+import * as ValueMax_Percentage from "../ValueMax/Percentage.js";
 
 const base64EncodedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 const base64DecodedString = atob(base64String);
