@@ -61,13 +61,13 @@ window.addEventListener("load", event => {
 function test() {
   console.log("Hi! test()");
 
-  let r = await PartTime.forOf(
-                  Base64ArrayBufferToUint8Array.decode_Generator(
-                    original[ 0 ], progress, progress.Uint8Array, 0, 1),
-                  receiver
-  );
-
-  tf.util.assert(
-    r == result[0],
-    `No skip line, base64 decode ${r} != ${result[0]}`);
+  PartTime.forOf(
+    Base64ArrayBufferToUint8Array.decode_Generator(
+      original[ 0 ], progress, progress.Uint8Array, 0, 1),
+    receiver
+  ).then(r => {
+    tf.util.assert(
+      r == result[0],
+      `No skip line, base64 decode ${r} != ${result[0]}`);
+  });
 }
