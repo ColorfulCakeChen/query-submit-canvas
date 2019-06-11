@@ -63,7 +63,7 @@ function test() {
 
   PartTime.forOf(
     Base64ArrayBufferToUint8Array.decode_Generator(
-      original[ 0 ], progress, progress.Uint8Array, 0, 1),
+      original[ 0 ], 0, progress, progress.Uint8Array, 5),
     receiver
   ).then(r => {
     tf.util.assert(
