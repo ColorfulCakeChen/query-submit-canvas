@@ -10,7 +10,7 @@ let tEncoder = new TextEncoder();
 const base64DecodedUint8Array = tEncoder.encode(base64DecodedString);
 
 let original = [
-  base64String,
+  base64EncodedString,
   
   "\n"   + base64EncodedString,
   "\r"   + base64EncodedString,
