@@ -84,7 +84,14 @@ function* decode_Generator(
         break;                  // Already skip enough lines.
 
       rawByte = sourceBytes[ sourceIndex++ ];
-      progress_AccumulateOne_yieldIfNeed();
+
+      progressToAdvance.accumulation++;
+      byteCountAfterYield++;
+
+      if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
+        yield progressToYield;
+        byteCountAfterYield = 0;
+      }
 
       if (13 == rawByte) {      // "\r" (carriage return)
         ++skippedLineCount;     // One line is skipped. 
@@ -115,7 +122,14 @@ function* decode_Generator(
           break; // Decoding is done. (Ignore last non-4-bytes.)
 
         let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
-        progress_AccumulateOne_yieldIfNeed();
+
+        progressToAdvance.accumulation++;
+        byteCountAfterYield++;
+
+        if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
+          yield progressToYield;
+          byteCountAfterYield = 0;
+        }
 
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
