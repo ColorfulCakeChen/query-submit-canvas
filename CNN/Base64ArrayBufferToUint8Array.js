@@ -101,7 +101,6 @@ function* decode_Generator(
 
   {
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
-    const LEGAL_J = BYTES_PER_DECODE_UNIT - 1;
     let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
 
     let j, encodedByte;   
@@ -128,7 +127,7 @@ function* decode_Generator(
         encodedBytes[ j ] = encodedByte;
       }
 
-      if (j != LEGAL_J)
+      if (j != BYTES_PER_DECODE_UNIT)
         break; // Decoding is done. (Ignore last non-4-bytes.)
 
       targetBytes[resultByteCount++] =  (encodedBytes[ 1 ]       << 2) | (encodedBytes[ 2 ] >> 4);
