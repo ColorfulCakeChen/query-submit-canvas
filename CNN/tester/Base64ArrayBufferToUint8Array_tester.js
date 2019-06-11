@@ -6,21 +6,24 @@ import * as ValueMax from "../ValueMax.js";
 const base64EncodedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 const base64DecodedString = atob(base64EncodedString);
 
+let tDecoder = new TextDecoder();
+//const base64EncodedUint8Array = tDecoder.decode(base64EncodedString);
+
 let tEncoder = new TextEncoder();
 const base64DecodedUint8Array = tEncoder.encode(base64DecodedString);
 
 let original = [
-  base64EncodedString,
-  
-  "\n"   + base64EncodedString,
-  "\r"   + base64EncodedString,
-  "\r\n" + base64EncodedString,
-  "\n\r" + base64EncodedString,
+  tDecoder.decode(base64EncodedString),
 
-  "qwerty\n"   + base64EncodedString,
-  "qwerty\r"   + base64EncodedString,
-  "qwerty\r\n" + base64EncodedString,
-  "qwerty\n\r" + base64EncodedString,
+  tDecoder.decode("\n"   + base64EncodedString),
+  tDecoder.decode("\r"   + base64EncodedString),
+  tDecoder.decode("\r\n" + base64EncodedString),
+  tDecoder.decode("\n\r" + base64EncodedString),
+
+  tDecoder.decode("qwerty\n"   + base64EncodedString),
+  tDecoder.decode("qwerty\r"   + base64EncodedString),
+  tDecoder.decode("qwerty\r\n" + base64EncodedString),
+  tDecoder.decode("qwerty\n\r" + base64EncodedString),
 ];
 
 let result = [
