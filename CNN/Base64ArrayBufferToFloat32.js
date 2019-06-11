@@ -72,30 +72,27 @@ function* Base64ArrayBuffer_To_Uint8Array_Generator(
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
   let targetBytes = new Uint8Array( targetArrayBuffer );
 
-  const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
-  let encodedArrayBuffer = new ArrayBuffer( BYTES_PER_DECODE_UNIT );
-  let encodedBytes = new Uint8Array( encodedArrayBuffer );
-
   let resultBytes = 0; // Accumulate the real result byte count.
   let sourceIndex = 0;
 
   // Skip several lines.
   {
     let skippedLineCount = 0;
-    let justMeetCR = false; // If just meet a "\r" (carriage return) character, set to true.
+    let justMeetCR = false;     // True ,if just meet a "\r" (carriage return) character. For handling CRLF.
+    let rawByte;
 
     while (sourceIndex < sourceByteLength) {
       if (skippedLineCount >= skipLineCount)
         break;                  // Already skip enough lines.
 
-      let b = sourceBytes[ sourceIndex++ ];
-      progress_AccumulateOne_yieldIfNeed(); // Every suspendByteCount, release CPU time.
+      rawByte = sourceBytes[ sourceIndex++ ];
+      progress_AccumulateOne_yieldIfNeed();
 
-      if (13 == b) {            // "\r" (carriage return)
+      if (13 == rawByte) {      // "\r" (carriage return)
         ++skippedLineCount;     // One line is skipped. 
         justMeetCR = true;
       } else {
-        if (10 == b) {          // "\n" (new line)
+        if (10 == rawByte) {    // "\n" (new line)
           if (justMeetCR)       // A new line after a carriage return.
             ;                   // The line has already been counted. Ignore it.
           else
@@ -107,31 +104,40 @@ function* Base64ArrayBuffer_To_Uint8Array_Generator(
     }
   }
 
-  while (sourceIndex < sourceByteLength) {
-    for (let j = 0; j < BYTES_PER_DECODE_UNIT; ++j) {  // Extract 4 source bytes.
+  {
+    const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
+    let encodedArrayBuffer = new ArrayBuffer( BYTES_PER_DECODE_UNIT );
+    let encodedBytes = new Uint8Array( encodedArrayBuffer );
+
+    let translatedByte;   
+    while (sourceIndex < sourceByteLength) {
+
+      // Extract 4 source bytes.
+      for (let j = 0; j < BYTES_PER_DECODE_UNIT; ++j) {
+        if (sourceIndex >= sourceByteLength)
+          break; // Decoding is done. (Ignore last non-4-bytes.)
+
+        let translatedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
+        progress_AccumulateOne_yieldIfNeed();
+
+        if (255 === translatedByte)
+          continue; // Skip any non-base64 bytes.
+
+        encodedBytes[ j ] = translatedByte;
+      }
+
       if (sourceIndex >= sourceByteLength)
         break; // Decoding is done. (Ignore last non-4-bytes.)
 
-      let b = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
-      progress_AccumulateOne_yieldIfNeed(); // Every suspendByteCount, release CPU time.
 
-      if (255 === b)
-        continue; // Skip any non-base64 bytes.
+  !!! ...unfinished...
 
-      encodedBytes[ j ] = b;
+
+      targetBytes[ i ] = table_base64_Uint8_to_index[ sourceBytes[ i ] ];
     }
-
-    if (sourceIndex >= sourceByteLength)
-      break; // Decoding is done. (Ignore last non-4-bytes.)
-
-    
-!!! ...unfinished...
-
-
-    targetBytes[ i ] = table_base64_Uint8_to_index[ sourceBytes[ i ] ];
   }
 
-
+  !!! ...unfinished...
         len = base64.length, i, p = 0,
         encoded1, encoded2, encoded3, encoded4;
   
