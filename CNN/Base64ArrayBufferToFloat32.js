@@ -72,7 +72,7 @@ function* Base64ArrayBuffer_To_Uint8Array_Generator(
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
   let targetBytes = new Uint8Array( targetArrayBuffer );
 
-  let resultBytes = 0; // Accumulate the real result byte count.
+  let resultByteCount = 0; // Accumulate the real result byte count.
   let sourceIndex = 0;
 
   // Skip several lines.
