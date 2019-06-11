@@ -1,4 +1,4 @@
-import * as ScriptLoader from "./ScriptLoader.js";
+import * as ScriptLoader from "../ScriptLoader.js";
 import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array.js";
 import * as PartTime from "../PartTime.js";
 import * as ValueMax_Percentage from "../ValueMax/Percentage.js";
