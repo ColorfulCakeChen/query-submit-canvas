@@ -46,15 +46,15 @@ function* decode_Generator(
 
   let byteCountAfterYield = 0;
 
-  function progress_AccumulateOne_yieldIfNeed() {
-    progressToAdvance.accumulation++;
-    byteCountAfterYield++;
+//   function progress_AccumulateOne_yieldIfNeed() {
+//     progressToAdvance.accumulation++;
+//     byteCountAfterYield++;
 
-    if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
-      yield progressToYield;
-      byteCountAfterYield = 0;
-    }
-  }
+//     if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
+//       yield progressToYield;
+//       byteCountAfterYield = 0;
+//     }
+//   }
 
   let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
 
