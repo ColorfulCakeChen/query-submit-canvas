@@ -1,5 +1,5 @@
 import * as ScriptLoader from "./ScriptLoader.js";
-import * as Base64ArrrayBufferToUint8Array from "../Base64ArrrayBufferToUint8Array.js";
+import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array.js";
 import * as PartTime from "../PartTime.js";
 import * as ValueMax_Percentage from "./Percentage.js";
 
@@ -60,7 +60,7 @@ window.addEventListener("load", event => {
 function test() {
   console.log("Hi! test()");
 
-  let r = await PartTime.forOf(Base64ArrrayBufferToUint8Array.decode_Generator(
+  let r = await PartTime.forOf(Base64ArrayBufferToUint8Array.decode_Generator(
             original[ 0 ], progress, progress.Uint8Array, 0, 1);
 
   tf.util.assert(
