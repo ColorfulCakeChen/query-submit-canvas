@@ -1,16 +1,16 @@
 import * as PartTime from "./PartTime.js";
-import * as ValueMax_Percentage from "./Percentage.js";
+import * as ValueMax from "./ValueMax.js";
 
 export {StringArrayToEntities, Layer};
 
 /** Aggregate all progress about downloading, JSON parsing, characters scanning, and weights scanning.  */
-class Progress extends ValueMax_Percentage.Aggregate {
+class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
     let children = [
-      new ValueMax_Percentage.Concrete(), // Increased when downloading from network.
-      new ValueMax_Percentage.Concrete(), // Increased when parsing the downloaded data as JSON.
-      new ValueMax_Percentage.Concrete(), // Increased when converting characters to weights.
-      new ValueMax_Percentage.Concrete()  // Increased when converting weights to layers.
+      new ValueMax.Percentage.Concrete(), // Increased when downloading from network.
+      new ValueMax.Percentage.Concrete(), // Increased when parsing the downloaded data as JSON.
+      new ValueMax.Percentage.Concrete(), // Increased when converting characters to weights.
+      new ValueMax.Percentage.Concrete()  // Increased when converting weights to layers.
     ];
 
     super(children);
