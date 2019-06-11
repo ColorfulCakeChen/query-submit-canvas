@@ -41,7 +41,7 @@ let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
  * @return {ValueMax.Percentage.Aggregate or Uint8Array}
  *   Return progressYield when ( done = false ). Return decoded data as Uint8Array when ( done = true ).
  */
-function* Base64ArrayBuffer_To_Uint8Array_Generator(
+function* decode_Generator(
   sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount = 1024) {
 
   let byteCountAfterYield = 0;
@@ -104,8 +104,7 @@ function* Base64ArrayBuffer_To_Uint8Array_Generator(
 
   {
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
-    let encodedArrayBuffer = new ArrayBuffer( BYTES_PER_DECODE_UNIT );
-    let encodedBytes = new Uint8Array( encodedArrayBuffer );
+    let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
 
     let encodedByte;   
     while (sourceIndex < sourceByteLength) {
