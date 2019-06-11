@@ -56,7 +56,7 @@ class Progress extends ValueMax.Percentage.Aggregate {
 }
 
 let progress = new Progress();
-let receiver = new ValueMax.Receiver.Base();
+//let receiver = new ValueMax.Receiver.Base();
 
 window.addEventListener("load", event => {
   ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js").then(test); });
@@ -67,7 +67,7 @@ function test() {
   PartTime.forOf(
     Base64ArrayBufferToUint8Array.decode_Generator(
       original[ 0 ], 0, progress, progress.Uint8Array, 5),
-    receiver
+    progrgess => {} 
   ).then(r => {
     tf.util.assert(
       r == result[0],
