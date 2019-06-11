@@ -13,17 +13,17 @@ let tEncoder = new TextEncoder();
 const base64DecodedUint8Array = tEncoder.encode(base64DecodedString);
 
 let original = [
-  tDecoder.decode(base64EncodedString),
+  tEncoder.encode(base64EncodedString),
 
-  tDecoder.decode("\n"   + base64EncodedString),
-  tDecoder.decode("\r"   + base64EncodedString),
-  tDecoder.decode("\r\n" + base64EncodedString),
-  tDecoder.decode("\n\r" + base64EncodedString),
+  tEncoder.encode("\n"   + base64EncodedString),
+  tEncoder.encode("\r"   + base64EncodedString),
+  tEncoder.encode("\r\n" + base64EncodedString),
+  tEncoder.encode("\n\r" + base64EncodedString),
 
-  tDecoder.decode("qwerty\n"   + base64EncodedString),
-  tDecoder.decode("qwerty\r"   + base64EncodedString),
-  tDecoder.decode("qwerty\r\n" + base64EncodedString),
-  tDecoder.decode("qwerty\n\r" + base64EncodedString),
+  tEncoder.encode("qwerty\n"   + base64EncodedString),
+  tEncoder.encode("qwerty\r"   + base64EncodedString),
+  tEncoder.encode("qwerty\r\n" + base64EncodedString),
+  tEncoder.encode("qwerty\n\r" + base64EncodedString),
 ];
 
 let result = [
