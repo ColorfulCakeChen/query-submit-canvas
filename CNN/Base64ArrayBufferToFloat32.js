@@ -1,6 +1,6 @@
 import * as ValueMax from "./ValueMax.js";
 
-export { Base64ArrayBuffer_To_ArrayBuffer_Generator };
+export { Base64ArrayBuffer_To_Uint8Array_Generator };
 
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -26,6 +26,9 @@ let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
  * not be decoded). If an input byte is not a legal base64 code (i.e. not A..Z, a..z, 0..0, +, /), the byte
  * will be skipped (as if it does not exist). So the input bytes can be separated by new line.
  *
+ * @param  {Uint32} skipLineCount
+ *   Skip how many lines in the source before decoding.
+ *
  * @param  {ValueMax.Percentage.Aggregate} progressToYield
  *   Return this when every time yield.
  *
@@ -39,16 +42,27 @@ let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
  *   Return progressYield when ( done = false ). Return decoded data as Uint8Array when ( done = true ).
  */
 function* Base64ArrayBuffer_To_Uint8Array_Generator(
-  sourceBase64ArrayBuffer, progressToYield, progressToAdvance, suspendByteCount) {
+  sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount) {
 
   suspendByteCount = ( suspendByteCount <= 0 ) ? 1024 : suspendByteCount;
 
+  let byteCountAfterYield = 0;
+
+  function progress_AccumulateOne_yieldIfNeed() {
+    progressToAdvance.accumulation++;
+    byteCountAfterYield++;
+
+    if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
+      yield progressToYield;
+      byteCountAfterYield = 0;
+    }
+  }
+
   let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
 
-  if (progressToAdvance) {
-    progressToAdvance.accumulation = 0;
-    progressToAdvance.total = sourceByteLength;
-  }
+  // Initialize progress.
+  progressToAdvance.accumulation = 0;
+  progressToAdvance.total = sourceByteLength;
 
   // Decoding base64 will result a shorten data (75% in size). However, the source may not be pure base64 codes.
   // So it is safer to prepare same size bufer as source.
@@ -63,31 +77,50 @@ function* Base64ArrayBuffer_To_Uint8Array_Generator(
   let encodedBytes = new Uint8Array( encodedArrayBuffer );
 
   let resultBytes = 0; // Accumulate the real result byte count.
-  let byteCountAfterYield = 0;
   let sourceIndex = 0;
+
+  // Skip several lines.
+  {
+    let skippedLineCount = 0;
+    let justMeetCR = false; // If just meet a "\r" (carriage return) character, set to true.
+
+    while (sourceIndex < sourceByteLength) {
+      if (skippedLineCount >= skipLineCount)
+        break;                  // Already skip enough lines.
+
+      let b = sourceBytes[ sourceIndex++ ];
+      progress_AccumulateOne_yieldIfNeed(); // Every suspendByteCount, release CPU time.
+
+      if (13 == b) {            // "\r" (carriage return)
+        ++skippedLineCount;     // One line is skipped. 
+        justMeetCR = true;
+      } else {
+        if (10 == b) {          // "\n" (new line)
+          if (justMeetCR)       // A new line after a carriage return.
+            ;                   // The line has already been counted. Ignore it.
+          else
+            ++skippedLineCount; // One line is skipped. 
+        }
+
+        justMeetCR = false;
+      }
+    }
+  }
+
   while (sourceIndex < sourceByteLength) {
-
-!!! ...unfinished... Skip several lines
-
-    for (let j = 0; j < BYTES_PER_DECODE_UNIT; ++j, ++sourceIndex) {  // Extract 4 source bytes.
+    for (let j = 0; j < BYTES_PER_DECODE_UNIT; ++j) {  // Extract 4 source bytes.
       if (sourceIndex >= sourceByteLength)
         break; // Decoding is done. (Ignore last non-4-bytes.)
- 
-      let b = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex ] ];
-      progressToAdvance.accumulation++;
-      byteCountAfterYield++;
 
-      if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
-        yield progressToYield;
-        byteCountAfterYield = 0;
-      }
-  
+      let b = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
+      progress_AccumulateOne_yieldIfNeed(); // Every suspendByteCount, release CPU time.
+
       if (255 === b)
         continue; // Skip any non-base64 bytes.
 
       encodedBytes[ j ] = b;
     }
-                                                  
+
     if (sourceIndex >= sourceByteLength)
       break; // Decoding is done. (Ignore last non-4-bytes.)
 
