@@ -4,7 +4,7 @@ import * as PartTime from "../PartTime.js";
 import * as ValueMax from "../ValueMax.js";
 
 const base64EncodedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-const base64DecodedString = atob(base64String);
+const base64DecodedString = atob(base64EncodedString);
 
 let tEncoder = new TextEncoder();
 const base64DecodedUint8Array = tEncoder.encode(base64DecodedString);
