@@ -104,7 +104,7 @@ const str = base64String.repeat(1024 * 8);
 var array = [...str];
 var arrayBuffer = new ArrayBuffer(array.length);
 var uint8array = new Uint8Array(arrayBuffer);
-array.forEach(function(e, i) { uint8array[i] = e.codePointAt(0)});
+array.forEach(function(e, i) { uint8array[i] = e.codePointAt(0) });
 
 var dataArrayBuffer = arrayBuffer;
 
