@@ -42,9 +42,7 @@ let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
  *   Return progressYield when ( done = false ). Return decoded data as Uint8Array when ( done = true ).
  */
 function* Base64ArrayBuffer_To_Uint8Array_Generator(
-  sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount) {
-
-  suspendByteCount = ( suspendByteCount <= 0 ) ? 1024 : suspendByteCount;
+  sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount = 1024) {
 
   let byteCountAfterYield = 0;
 
@@ -78,7 +76,7 @@ function* Base64ArrayBuffer_To_Uint8Array_Generator(
   // Skip several lines.
   {
     let skippedLineCount = 0;
-    let justMeetCR = false;     // True ,if just meet a "\r" (carriage return) character. For handling CRLF.
+    let justMeetCR = false;     // True, if just meet a "\r" (carriage return) character. For handling CRLF.
     let rawByte;
 
     while (sourceIndex < sourceByteLength) {
@@ -109,7 +107,7 @@ function* Base64ArrayBuffer_To_Uint8Array_Generator(
     let encodedArrayBuffer = new ArrayBuffer( BYTES_PER_DECODE_UNIT );
     let encodedBytes = new Uint8Array( encodedArrayBuffer );
 
-    let translatedByte;   
+    let encodedByte;   
     while (sourceIndex < sourceByteLength) {
 
       // Extract 4 source bytes.
@@ -117,57 +115,25 @@ function* Base64ArrayBuffer_To_Uint8Array_Generator(
         if (sourceIndex >= sourceByteLength)
           break; // Decoding is done. (Ignore last non-4-bytes.)
 
-        let translatedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
+        let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
         progress_AccumulateOne_yieldIfNeed();
 
-        if (255 === translatedByte)
+        if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
 
-        encodedBytes[ j ] = translatedByte;
+        encodedBytes[ j ] = encodedByte;
       }
 
       if (sourceIndex >= sourceByteLength)
         break; // Decoding is done. (Ignore last non-4-bytes.)
 
-
-  !!! ...unfinished...
-
-
-      targetBytes[ i ] = table_base64_Uint8_to_index[ sourceBytes[ i ] ];
+      targetBytes[resultByteCount++] =  (encodedBytes[ 1 ]       << 2) | (encodedBytes[ 2 ] >> 4);
+      targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] & 15) << 4) | (encodedBytes[ 3 ] >> 2);
+      targetBytes[resultByteCount++] = ((encodedBytes[ 3 ] &  3) << 6) | (encodedBytes[ 4 ] & 63);
     }
   }
 
-  !!! ...unfinished...
-        len = base64.length, i, p = 0,
-        encoded1, encoded2, encoded3, encoded4;
-  
-      if (base64[base64.length - 1] === "=") {
-        bufferLength--;
-        if (base64[base64.length - 2] === "=") {
-          bufferLength--;
-        }
-      }
-  
-      var arraybuffer = new ArrayBuffer(bufferLength),
-      bytes = new Uint8Array(arraybuffer);
-  
-      for (i = 0; i < len; i+=4) {
-        encoded1 = THREE.Base64.base64ToIndexNew(base64[i]);
-        encoded2 = THREE.Base64.base64ToIndexNew(base64[i+1]);
-        encoded3 = THREE.Base64.base64ToIndexNew(base64[i+2]);
-        encoded4 = THREE.Base64.base64ToIndexNew(base64[i+3]);
-  
-        bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
-        bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
-        bytes[p++] = ((encoded3 & 3) << 6) | (encoded4 & 63);
-      }
-  
-      return arraybuffer;
-    };
-
-
-!!! ...unfinished... adjust resultBytes byteOffset , length]
-  let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultBytes ); 
-
-  return result;
+  // The resultBytes is a sub-range of target buffer.
+  let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount ); 
+  return resultBytes;
 }
