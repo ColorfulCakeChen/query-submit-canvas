@@ -23,21 +23,27 @@ class Base {
 /**
  * Aggregate all progress and represents them as percentag. Acceptable by Receiver.Base.
  *
- * The max() always returns 100. The value() returns number berween [0, 100] inclusive.
+ * The Concrete.max always returns 100. The Concrete.value returns number berween [0, 100] inclusive.
  */
 class Concrete extends Base {
   constructor() {
     super();
     this.accumulation = 0;
-    this.total = 0;
+    this.total = -1; // Negative indicates not initialized.
   }
 
   /**
-   * @return The progress as number between [0, 100] inclusive.
+   * @return
+   *   The progress as number between [0, 100] inclusive.
+   *   Always 0, if this.total is negative.
+   *   Always 100, if this.total is zero.
+   *   Otherwise, return the ratio of ( this.accumulation / this.total ).
    */
   get value() {
-    if (this.total <= 0)
-      return 100; // Return 100 if the total is illegal. Otherwise, the Aggregate.value will never become 100.
+    if (this.total < 0)
+      return 0;   // Return 0 if total is not initialized. Otherwise, the Aggregate.value will immediately 100.
+    if (this.total == 0)
+      return 100; // Return 100 if total is indeed zero. Otherwise, the Aggregate.value will never 100.
 
     let accumulation = Math.max(0, Math.min(this.accumulation, this.total)); // Restrict between [0, total].
     let percentage = ( accumulation / this.total ) * 100;
@@ -46,7 +52,7 @@ class Concrete extends Base {
 }
 
 /**
- * Aggregate all children progress and represents them as percentag.
+ * Aggregate all children progress and represents them as percentage.
  */
 class Aggregate extends Base {
   /**
