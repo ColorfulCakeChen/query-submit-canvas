@@ -129,6 +129,7 @@ window.addEventListener("load", event => {
 
 function test() {
   console.log("Base64 decode testing...");
+  let delayMilliseconds = 500;
 
   let testPromiseAll = [];
   for (let i = 0; i < testCases.length; ++i) {
@@ -137,7 +138,8 @@ function test() {
     let testPromise = PartTime.forOf(
       Base64ArrayBufferToUint8Array.decode_Generator(
         testCase.source, testCase.skipLineCount, progress, progress.uint8Array, 5),
-        (valueMax) => { progressReceiver.setValueMax(valueMax); /* Report progress to UI. */ } 
+      (valueMax) => { progressReceiver.setValueMax(valueMax); /* Report progress to UI. */ },
+      delayMilliseconds
     ).then(r => {
       progressReceiver.informDone(r); /* Inform UI progress done. */
       tf.util.assert(
