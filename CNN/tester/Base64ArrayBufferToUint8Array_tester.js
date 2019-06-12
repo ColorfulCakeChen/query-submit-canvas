@@ -10,14 +10,16 @@ function getRandomInt(max) {
 // This string will not fit to ASCII when base64 decoded. So can not be used to test. 
 //const base64EncodedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-// Use all printable ASCII codes form a 48 bytes.
-// (48 is divisible by 3, so its base64-encoded codes will divisible by 4.)
+// Use all printable ASCII codes form a string of 3-divisible length.
+// (So its base64-encoded codes will divisible by 4.)
 let originalArray = [];
 {
+  const ORIGINAL_TEST_STRING_LENGTH = 3 * 5;
+
   const PRINTABLE_ASCII_MIN = 32;
   const PRINTABLE_ASCII_MAX = 126;
 
-  for (let i = 0; i < 48; ++i) {
+  for (let i = 0; i < ORIGINAL_TEST_STRING_LENGTH; ++i) {
     let c = PRINTABLE_ASCII_MIN + getRandomInt(PRINTABLE_ASCII_MAX - PRINTABLE_ASCII_MIN + 1);
     originalArray.push( c );
   }
