@@ -21,7 +21,7 @@ let originalArray = [];
 
   for (let i = 0; i < ORIGINAL_TEST_STRING_LENGTH; ++i) {
     let c = PRINTABLE_ASCII_MIN + getRandomInt(PRINTABLE_ASCII_MAX - PRINTABLE_ASCII_MIN + 1);
-    originalArray.push( c );
+    originalArray.push( String.fromCodePoint( c ) );
   }
 }
 
