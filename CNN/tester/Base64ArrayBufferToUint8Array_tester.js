@@ -45,10 +45,10 @@ const base64EncodedStrings_extra = [
   base64EncodedString + base64EncodedString.slice(0, 3),
 
   // Test extra non-base64 codes inside. (They should be ignored.)
-  base64EncodedString.slice(0, 3) + "\n"   + base64EncodedString.slice(3, -1),
-  base64EncodedString.slice(0, 3) + "\r"   + base64EncodedString.slice(3, -1),
-  base64EncodedString.slice(0, 3) + "\r\n" + base64EncodedString.slice(3, -1),
-  base64EncodedString.slice(0, 3) + "\n\r" + base64EncodedString.slice(3, -1),
+  base64EncodedString.slice(0, 3) + "\n"   + base64EncodedString.slice(3),
+  base64EncodedString.slice(0, 3) + "\r"   + base64EncodedString.slice(3),
+  base64EncodedString.slice(0, 3) + "\r\n" + base64EncodedString.slice(3),
+  base64EncodedString.slice(0, 3) + "\n\r" + base64EncodedString.slice(3),
 ];
 
 let tEncoder = new TextEncoder();
@@ -127,7 +127,7 @@ function test() {
 
     let testPromise = PartTime.forOf(
       Base64ArrayBufferToUint8Array.decode_Generator(
-        testCase.source, testCase.skipLineCount, progress, progress.uint8Array, 25), //5),
+        testCase.source, testCase.skipLineCount, progress, progress.uint8Array, 5),
       progrgess => {} 
     ).then(r => {
       tf.util.assert(
