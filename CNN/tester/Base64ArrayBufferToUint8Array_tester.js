@@ -130,7 +130,7 @@ window.addEventListener("load", event => {
 
 function test() {
   console.log("Base64 decode testing...");
-  let delayMilliseconds = 500;
+  let delayMilliseconds = 1000;
 
   let testPromiseAll = [];
   for (let i = 0; i < testCases.length; ++i) {
