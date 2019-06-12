@@ -39,7 +39,7 @@ class Concrete extends Base {
     if (this.total <= 0)
       return 0; // Return zero if the total is illegal.
 
-    let accumulation = max(0, min(this.accumulation, this.total)); // Restrict between [0, total].
+    let accumulation = Math.max(0, Math.min(this.accumulation, this.total)); // Restrict between [0, total].
     let percentage = ( accumulation / this.total ) * 100;
     return percentage;
   }
@@ -79,7 +79,7 @@ class Aggregate extends Base {
         continue; // Skip illegal progress.
 
       let partValue = progressPart.value;
-      partValue = max(0, min(partValue, partMax)); // Restrict between [0, partMax].
+      partValue = Math.max(0, Math.min(partValue, partMax)); // Restrict between [0, partMax].
 
       valueSum += partValue;
       maxSum += partMax;
