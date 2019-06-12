@@ -33,9 +33,9 @@ const base64EncodedStrings_extra = [
   base64EncodedString,
 
   // Test extra has 0 to 3 bytes. (They should be ignored.)
-  base64EncodedString + "ab",
-  base64EncodedString + "ab",
-  base64EncodedString + "abc",
+  base64EncodedString + base64EncodedString.slice(0, 1),
+  base64EncodedString + base64EncodedString.slice(0, 2),
+  base64EncodedString + base64EncodedString.slice(0, 3),
 
   // Test extra non-base64 codes inside. (They should be ignored.)
   base64EncodedString.slice(0, 3) + "\n"   + base64EncodedString.slice(3, -1),
