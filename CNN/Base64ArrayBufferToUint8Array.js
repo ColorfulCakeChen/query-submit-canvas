@@ -107,7 +107,8 @@ function* decode_Generator(
     while (sourceIndex < sourceByteLength) {
 
       // Extract 4 source bytes.
-      for (j = 0; j < BYTES_PER_DECODE_UNIT; ++j) {
+      j = 0;
+      while (j < BYTES_PER_DECODE_UNIT) {
         if (sourceIndex >= sourceByteLength)
           break; // Decoding is done. (Ignore last non-4-bytes.)
 
@@ -124,7 +125,7 @@ function* decode_Generator(
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
 
-        encodedBytes[ j ] = encodedByte;
+        encodedBytes[ j++ ] = encodedByte;
       }
 
       if (j != BYTES_PER_DECODE_UNIT)
