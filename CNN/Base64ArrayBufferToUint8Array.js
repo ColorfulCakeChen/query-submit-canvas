@@ -44,6 +44,17 @@ function* decode_Generator(
 
   let byteCountAfterYield = 0;
 
+  function progress_accumulateOne_isNeedYield() {
+    progressToAdvance.accumulation++;
+    byteCountAfterYield++;
+
+    if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
+      byteCountAfterYield = 0;
+      return true;
+    }
+    return false;
+  }
+
   let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
 
   // Initialize progress.
@@ -64,7 +75,6 @@ function* decode_Generator(
   // Skip several lines.
   {
     let skippedLineCount = 0;
-    let justMeetCR = false;     // True, if just meet a "\r" (carriage return) character. For handling CRLF.
     let rawByte;
 
     while (sourceIndex < sourceByteLength) {
@@ -73,26 +83,22 @@ function* decode_Generator(
 
       rawByte = sourceBytes[ sourceIndex++ ];
 
-      progressToAdvance.accumulation++;
-      byteCountAfterYield++;
-
-      if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
+      if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
         yield progressToYield;
-        byteCountAfterYield = 0;
-      }
 
-      if (13 == rawByte) {      // "\r" (carriage return)
-        ++skippedLineCount;     // One line is skipped. 
-        justMeetCR = true;
-      } else {
-        if (10 == rawByte) {    // "\n" (new line)
-          if (justMeetCR)       // A new line after a carriage return.
-            ;                   // The line has already been counted. Ignore it.
-          else
-            ++skippedLineCount; // One line is skipped. 
+      if (13 == rawByte) {      // "\r" (carriage return; CR)
+        ++skippedLineCount;     // One line is skipped.
+
+        // If a LF follows a CR, it is considered as CRLF sequence and viewed as the same one line.
+        if ((sourceIndex < sourceByteLength) && (10 == sourceBytes[ sourceIndex ])) { 
+          ++sourceIndex;       // Skip it.
+          if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
+            yield progressToYield;
         }
 
-        justMeetCR = false;
+      } else {
+        if (10 == rawByte)      // "\n" (new line; LF)
+          ++skippedLineCount; // One line is skipped. 
       }
     }
   }
@@ -112,13 +118,8 @@ function* decode_Generator(
 
         let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
 
-        progressToAdvance.accumulation++;
-        byteCountAfterYield++;
-
-        if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
+        if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
           yield progressToYield;
-          byteCountAfterYield = 0;
-        }
 
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
