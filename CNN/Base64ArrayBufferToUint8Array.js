@@ -43,6 +43,7 @@ function* decode_Generator(
   sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount = 1024) {
 
   let byteCountAfterYield = 0;
+  let hasEverYielded = false;  // True, if yielded at least once.
 
   function progress_accumulateOne_isNeedYield() {
     progressToAdvance.accumulation++;
@@ -50,6 +51,7 @@ function* decode_Generator(
 
     if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
       byteCountAfterYield = 0;
+      hasEverYielded = true;
       return true;
     }
     return false;
@@ -137,6 +139,12 @@ function* decode_Generator(
   }
 
   // The resultBytes is a sub-range of target buffer.
-  let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount ); 
+  let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
+
+  if ((byteCountAfterYield > 0) || (false == hasEverYielded)) {
+    yield progressToYield; // Report the progress has been 100%
+  else
+    ; // The last progress report is (just luckily) 100%. No need to report the progress again.
+
   return resultBytes;
 }
