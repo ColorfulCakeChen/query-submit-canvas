@@ -127,7 +127,7 @@ function test() {
 
     let testPromise = PartTime.forOf(
       Base64ArrayBufferToUint8Array.decode_Generator(
-        testCase.source, testCase.skipLineCount, progress, progress.uint8Array, 5),
+        testCase.source, testCase.skipLineCount, progress, progress.uint8Array, 25), //5),
       progrgess => {} 
     ).then(r => {
       tf.util.assert(
