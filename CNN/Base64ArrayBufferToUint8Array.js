@@ -141,7 +141,7 @@ function* decode_Generator(
   // The resultBytes is a sub-range of target buffer.
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
 
-  if ((byteCountAfterYield > 0) || (false == hasEverYielded)) {
+  if ((byteCountAfterYield > 0) || (false == hasEverYielded))
     yield progressToYield; // Report the progress has been 100%
   else
     ; // The last progress report is (just luckily) 100%. No need to report the progress again.
