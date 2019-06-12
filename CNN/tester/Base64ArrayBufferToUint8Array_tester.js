@@ -3,17 +3,24 @@ import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array
 import * as PartTime from "../PartTime.js";
 import * as ValueMax from "../ValueMax.js";
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 // This string will not fit to ASCII when base64 decoded. So can not be used to test. 
 //const base64EncodedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-// Use all printable ASCII codes form a 99 bytes.
-// (99 is divisible by 3, so its base64-encoded codes will divisible by 4.)
+// Use all printable ASCII codes form a 48 bytes.
+// (48 is divisible by 3, so its base64-encoded codes will divisible by 4.)
 let originalArray = [];
 {
-  for (let i = 32; i <= 126; ++i) {  // 95 bytes.
-    originalArray.push( i );
+  const PRINTABLE_ASCII_MIN = 32;
+  const PRINTABLE_ASCII_MAX = 126;
+
+  for (let i = 0; i < 48; ++i) {
+    let c = PRINTABLE_ASCII_MIN + getRandomInt(PRINTABLE_ASCII_MAX - PRINTABLE_ASCII_MIN + 1);
+    originalArray.push( c );
   }
-  originalArray = originalArray.concat( originalArray.slice(0, 4) ); // Now it is 99 (= 95 + 4) bytes.
 }
 
 const originalString = originalArray.join("");
