@@ -36,8 +36,9 @@ let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
  * @param  {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time. Default is 1024 bytes.
  *
- * @return {ValueMax.Percentage.Aggregate or Uint8Array}
- *   Return progressYield when ( done = false ). Return decoded data as Uint8Array when ( done = true ).
+ * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
+ *   Yield ( value = progressYield ) when ( done = false ).
+ *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function* decode_Generator(
   sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount = 1024) {
@@ -62,6 +63,8 @@ function* decode_Generator(
   // Initialize progress.
   progressToAdvance.accumulation = 0;
   progressToAdvance.total = sourceByteLength;
+
+  yield progressToYield;   // Report the progress is 0%
 
   // Decoding base64 will result a shorten data (75% in size). However, the source may not be pure base64 codes.
   // So it is safer to prepare same size bufer as source.
