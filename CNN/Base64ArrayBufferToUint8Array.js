@@ -1,5 +1,3 @@
-//import * as ValueMax from "./ValueMax.js";
-
 export { decode_Generator };
 
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
