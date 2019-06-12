@@ -21,11 +21,11 @@ const base64EncodedStrings_extra = [
   base64EncodedString.slice(0, 3) + "\n\r" + base64EncodedString.slice(3, -1),
 ];
 
-//let tEncoder = new TextEncoder();
-//const base64EncodedUint8Array = tDecoder.decode(base64EncodedString);
-
+let tEncoder = new TextEncoder();
 let tDecoder = new TextDecoder();
-const base64DecodedUint8Array = tDecoder.decode(base64DecodedString);
+
+//const base64EncodedUint8Array = tDecoder.decode(base64EncodedString);
+const base64DecodedUint8Array = tEncoder.encode(base64DecodedString);
 
 class TestCase {
   constructor(source, skipLineCount, result, note) {
@@ -37,14 +37,14 @@ class TestCase {
 }
 
 let testCases = [
-  TestCase( tEncoder.encode(base64EncodedStrings_shorten[0]), 0, base64DecodedUint8Array, "Extra 0 bytes" ),
-  TestCase( tEncoder.encode(base64EncodedStrings_shorten[1]), 0, base64DecodedUint8Array, "Extra 1 bytes" ),
-  TestCase( tEncoder.encode(base64EncodedStrings_shorten[2]), 0, base64DecodedUint8Array, "Extra 2 bytes" ),
-  TestCase( tEncoder.encode(base64EncodedStrings_shorten[3]), 0, base64DecodedUint8Array, "Extra 3 bytes" ),
-  TestCase( tEncoder.encode(base64EncodedStrings_shorten[4]), 0, base64DecodedUint8Array, "Extra LF inside" ),
-  TestCase( tEncoder.encode(base64EncodedStrings_shorten[5]), 0, base64DecodedUint8Array, "Extra CR inside" ),
-  TestCase( tEncoder.encode(base64EncodedStrings_shorten[6]), 0, base64DecodedUint8Array, "Extra CRLF inside" ),
-  TestCase( tEncoder.encode(base64EncodedStrings_shorten[7]), 0, base64DecodedUint8Array, "Extra LFCR inside" ),
+  TestCase( tEncoder.encode(base64EncodedStrings_extra[0]), 0, base64DecodedUint8Array, "Extra 0 bytes" ),
+  TestCase( tEncoder.encode(base64EncodedStrings_extra[1]), 0, base64DecodedUint8Array, "Extra 1 bytes" ),
+  TestCase( tEncoder.encode(base64EncodedStrings_extra[2]), 0, base64DecodedUint8Array, "Extra 2 bytes" ),
+  TestCase( tEncoder.encode(base64EncodedStrings_extra[3]), 0, base64DecodedUint8Array, "Extra 3 bytes" ),
+  TestCase( tEncoder.encode(base64EncodedStrings_extra[4]), 0, base64DecodedUint8Array, "Extra LF inside" ),
+  TestCase( tEncoder.encode(base64EncodedStrings_extra[5]), 0, base64DecodedUint8Array, "Extra CR inside" ),
+  TestCase( tEncoder.encode(base64EncodedStrings_extra[6]), 0, base64DecodedUint8Array, "Extra CRLF inside" ),
+  TestCase( tEncoder.encode(base64EncodedStrings_extra[7]), 0, base64DecodedUint8Array, "Extra LFCR inside" ),
 
   TestCase( tEncoder.encode("\n"   + base64EncodedString), 1, base64DecodedUint8Array, "Begin LF" ),
   TestCase( tEncoder.encode("\r"   + base64EncodedString), 1, base64DecodedUint8Array, "Begin CR" ),
