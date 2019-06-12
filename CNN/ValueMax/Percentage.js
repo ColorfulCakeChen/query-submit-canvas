@@ -74,11 +74,11 @@ class Aggregate extends Base {
       if (!progressPart)
         continue;
 
-      let partMax = progressPart.max();
+      let partMax = progressPart.max;
       if (partMax <= 0)
         continue; // Skip illegal progress.
 
-      let partValue = progressPart.value();
+      let partValue = progressPart.value;
       partValue = max(0, min(partValue, partMax)); // Restrict between [0, partMax].
 
       valueSum += partValue;
