@@ -16,7 +16,8 @@ let originalArray = [];
   originalArray = originalArray.concat( originalArray.slice(0, 4) ); // Now it is 99 (= 95 + 4) bytes.
 }
 
-const base64EncodedString = originalArray.join("");
+const originalString = originalArray.join("");
+const base64EncodedString = btoa(originalString);
 const base64DecodedString = atob(base64EncodedString);
 
 const base64EncodedStrings_extra = [
