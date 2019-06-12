@@ -75,7 +75,7 @@ class TestCase {
 }
 
 let testCases = [
-//   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 0, emptyUint8Array, "Empty" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 0, emptyUint8Array, "Empty" ),
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 1]), 1, emptyUint8Array, "LF Empty" ),
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 2]), 1, emptyUint8Array, "CR Empty" ),
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 3]), 1, emptyUint8Array, "CRLF Empty" ),
