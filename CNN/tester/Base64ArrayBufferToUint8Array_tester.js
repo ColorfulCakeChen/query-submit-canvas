@@ -139,7 +139,7 @@ function test() {
         testCase.source, testCase.skipLineCount, progress, progress.uint8Array, 5),
         (valueMax) => { progressReceiver.setValueMax(valueMax); /* Report progress to UI. */ } 
     ).then(r => {
-      progressReceiver.informDone(doneValue); /* Inform UI progress done. */
+      progressReceiver.informDone(r); /* Inform UI progress done. */
       tf.util.assert(
         r.toString() == testCase.result.toString(),
         `${i}. Skip ${testCase.skipLineCount} lines. ${testCase.note} [${r}] != [${testCase.result}]`);
