@@ -111,13 +111,14 @@ let testCases = [
 class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
     let children = [
-      new ValueMax.Percentage.Concrete(), // Increased when downloading from network.
+//      new ValueMax.Percentage.Concrete(), // Increased when downloading from network.
       new ValueMax.Percentage.Concrete(), // Increased when parsing the downloaded data to Uint8Array.
     ];
 
     super(children);
 
-    [this.download, this.uint8Array] = children;
+//    [this.download, this.uint8Array] = children;
+    [this.uint8Array] = children;
   }
 }
 
