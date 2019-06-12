@@ -112,13 +112,17 @@ class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
     let children = [
 //      new ValueMax.Percentage.Concrete(), // Increased when downloading from network.
-      new ValueMax.Percentage.Concrete(), // Increased when parsing the downloaded data to Uint8Array.
+//      new ValueMax.Percentage.Concrete(), // Increased when parsing the downloaded data to Uint8Array.
     ];
+    
+    for (let i = 0; i < testCases.length; ++i) {
+      children.push(new ValueMax.Percentage.Concrete()); // Increased when parsing the downloaded data to Uint8Array.
+    }
 
     super(children);
 
 //    [this.download, this.uint8Array] = children;
-    [this.uint8Array] = children;
+//    [this.uint8Array] = children;
   }
 }
 
@@ -138,7 +142,7 @@ function test() {
 
     let testPromise = PartTime.forOf(
       Base64ArrayBufferToUint8Array.decode_Generator(
-        testCase.source, testCase.skipLineCount, progress, progress.uint8Array, 5),
+        testCase.source, testCase.skipLineCount, progress, progress.childProgressParts[ i ], 5),
       (valueMax) => { progressReceiver.setValueMax(valueMax); /* Report progress to UI. */ },
       delayMilliseconds
     ).then(r => {
