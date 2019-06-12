@@ -122,7 +122,7 @@ class Progress extends ValueMax.Percentage.Aggregate {
 }
 
 let progress = new Progress();
-//let receiver = new ValueMax.Receiver.Base();
+let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
 window.addEventListener("load", event => {
   ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js").then(test); });
