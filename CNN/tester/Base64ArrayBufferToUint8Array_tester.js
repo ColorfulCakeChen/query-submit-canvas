@@ -125,5 +125,5 @@ function test() {
 
   Promise.all(testPromiseAll).then(values => {
     console.log("Base64 decode testing... Done.");
-  }
+  });
 }
