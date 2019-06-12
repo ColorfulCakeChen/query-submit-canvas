@@ -3,7 +3,20 @@ import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array
 import * as PartTime from "../PartTime.js";
 import * as ValueMax from "../ValueMax.js";
 
-const base64EncodedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+// This string will not fit to ASCII when base64 decoded. So can not be used to test. 
+//const base64EncodedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+// Use all printable ASCII codes form a 99 bytes.
+// (99 is divisible by 3, so its base64-encoded codes will divisible by 4.)
+let originalArray = [];
+{
+  for (let i = 32; i <= 126; ++i) {  // 95 bytes.
+    originalArray.push( i );
+  }
+  originalArray = originalArray.concat( originalArray.slice(0, 4) ); // Now it is 99 (= 95 + 4) bytes.
+}
+
+const base64EncodedString = originalArray.join("");
 const base64DecodedString = atob(base64EncodedString);
 
 const base64EncodedStrings_extra = [
