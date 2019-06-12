@@ -37,7 +37,7 @@ class Concrete extends Base {
    */
   get value() {
     if (this.total <= 0)
-      return 0; // Return zero if the total is illegal.
+      return 100; // Return 100 if the total is illegal. Otherwise, the Aggregate.value will never become 100.
 
     let accumulation = Math.max(0, Math.min(this.accumulation, this.total)); // Restrict between [0, total].
     let percentage = ( accumulation / this.total ) * 100;
