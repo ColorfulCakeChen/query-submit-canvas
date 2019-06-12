@@ -14,7 +14,7 @@ function getRandomInt(max) {
 // (So its base64-encoded codes will divisible by 4.)
 let originalArray = [];
 {
-  const ORIGINAL_TEST_STRING_LENGTH = 3 * 5;
+  const ORIGINAL_TEST_STRING_LENGTH = 3 * 4;
 
   const PRINTABLE_ASCII_MIN = 32;
   const PRINTABLE_ASCII_MAX = 126;
@@ -117,7 +117,7 @@ function test() {
     ).then(r => {
       tf.util.assert(
         r.toString() == testCase.result.toString(),
-        `[${i}] (${testCase.skipLineCount}) (${testCase.note}) ${r} != ${testCase.result}`);
+        `${i}. Skip ${testCase.skipLineCount} lines. ${testCase.note} [${r}] != [${testCase.result}]`);
     });
 
     testPromiseAll.push( testPromise );
