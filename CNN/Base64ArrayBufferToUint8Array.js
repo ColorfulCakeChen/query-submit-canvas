@@ -64,7 +64,8 @@ function* decode_Generator(
   progressToAdvance.accumulation = 0;
   progressToAdvance.total = sourceByteLength;
 
-  yield progressToYield;   // Report the progress is 0%
+//!!! ...removed... (2019/06/12) If yield 0%, how to set hasEverYielded ?
+//  yield progressToYield;   // Report the progress is 0%
 
   // Decoding base64 will result a shorten data (75% in size). However, the source may not be pure base64 codes.
   // So it is safer to prepare same size bufer as source.
