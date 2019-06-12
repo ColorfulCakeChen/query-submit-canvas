@@ -106,10 +106,11 @@ window.addEventListener("load", event => {
 function test() {
   console.log("Base64 decode testing...");
 
+  let testPromiseAll = [];
   for (let i = 0; i < testCases.length; ++i) {
     let testCase = testCases[ i ];
 
-    PartTime.forOf(
+    let testPromise = PartTime.forOf(
       Base64ArrayBufferToUint8Array.decode_Generator(
         testCase.source, testCase.skipLineCount, progress, progress.uint8Array, 5),
       progrgess => {} 
@@ -118,7 +119,11 @@ function test() {
         r.toString() == testCase.result.toString(),
         `[${i}] (${testCase.skipLineCount}) (${testCase.note}) ${r} != ${testCase.result}`);
     });
+
+    testPromiseAll.push( testPromise );
   }
 
-  console.log("Base64 decode testing... Done.");
+  Promise.all(testPromiseAll).then(values => {
+    console.log("Base64 decode testing... Done.");
+  }
 }
