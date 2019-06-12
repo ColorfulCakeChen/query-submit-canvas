@@ -137,8 +137,9 @@ function test() {
     let testPromise = PartTime.forOf(
       Base64ArrayBufferToUint8Array.decode_Generator(
         testCase.source, testCase.skipLineCount, progress, progress.uint8Array, 5),
-      progrgess => {} 
+        (valueMax) => { progressReceiver.setValueMax(valueMax); /* Report progress to UI. */ } 
     ).then(r => {
+      progressReceiver.informDone(doneValue); /* Inform UI progress done. */
       tf.util.assert(
         r.toString() == testCase.result.toString(),
         `${i}. Skip ${testCase.skipLineCount} lines. ${testCase.note} [${r}] != [${testCase.result}]`);
