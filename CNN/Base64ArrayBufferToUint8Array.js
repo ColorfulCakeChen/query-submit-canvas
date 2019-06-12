@@ -130,9 +130,9 @@ function* decode_Generator(
       if (j != BYTES_PER_DECODE_UNIT)
         break; // Decoding is done. (Ignore last non-4-bytes.)
 
-      targetBytes[resultByteCount++] =  (encodedBytes[ 1 ]       << 2) | (encodedBytes[ 2 ] >> 4);
-      targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] & 15) << 4) | (encodedBytes[ 3 ] >> 2);
-      targetBytes[resultByteCount++] = ((encodedBytes[ 3 ] &  3) << 6) | (encodedBytes[ 4 ] & 63);
+      targetBytes[resultByteCount++] =  (encodedBytes[ 0 ]       << 2) | (encodedBytes[ 1 ] >> 4);
+      targetBytes[resultByteCount++] = ((encodedBytes[ 1 ] & 15) << 4) | (encodedBytes[ 2 ] >> 2);
+      targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
     }
   }
 
