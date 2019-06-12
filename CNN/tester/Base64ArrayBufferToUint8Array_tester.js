@@ -68,10 +68,10 @@ class TestCase {
 
 let testCases = [
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 0, base64DecodedUint8Array, "Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 1]), 0, base64DecodedUint8Array, "LF Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 2]), 0, base64DecodedUint8Array, "CR Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 3]), 0, base64DecodedUint8Array, "CRLF Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 4]), 0, base64DecodedUint8Array, "LFCR Empty" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 1]), 1, base64DecodedUint8Array, "LF Empty" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 2]), 1, base64DecodedUint8Array, "CR Empty" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 3]), 1, base64DecodedUint8Array, "CRLF Empty" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 4]), 2, base64DecodedUint8Array, "LFCR Empty" ),
 
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 5]), 0, base64DecodedUint8Array, "Extra 0 bytes" ),
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 6]), 0, base64DecodedUint8Array, "Extra 1 bytes" ),
