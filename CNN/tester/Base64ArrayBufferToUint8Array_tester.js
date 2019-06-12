@@ -49,6 +49,13 @@ const base64EncodedStrings_extra = [
   base64EncodedString.slice(0, 3) + "\r"   + base64EncodedString.slice(3),
   base64EncodedString.slice(0, 3) + "\r\n" + base64EncodedString.slice(3),
   base64EncodedString.slice(0, 3) + "\n\r" + base64EncodedString.slice(3),
+
+  // Test skip 3 lines. Test multiple non-base64 codes. (They should be ignored.)
+  "qwerty5ASDFG7\n\n\r"
+    + base64EncodedString.slice(0, 2) + "\n\n\r\r\r\n\r\n"
+    + base64EncodedString.slice(2, 7) + "\n\n\r\r\r\n\r\n"
+    + base64EncodedString.slice(7, 9) + "\n\n\r\r\r\n\r\n"
+    + base64EncodedString.slice(9)    + "\n\n\r\r\r\n\r\n",
 ];
 
 let tEncoder = new TextEncoder();
@@ -93,6 +100,8 @@ let testCases = [
   new TestCase( tEncoder.encode("qwerty\r"   + base64EncodedString), 1, base64DecodedUint8Array, "Text CR" ),
   new TestCase( tEncoder.encode("qwerty\r\n" + base64EncodedString), 1, base64DecodedUint8Array, "Text CRLF" ),
   new TestCase( tEncoder.encode("qwerty\n\r" + base64EncodedString), 2, base64DecodedUint8Array, "Text LFCR" ),
+
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[13]), 3, base64DecodedUint8Array, "Multiple LF and CR inside" ),
 ];
 
 
