@@ -43,7 +43,7 @@ let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
 function* decoder(
   sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount = 1024) {
 
-  let byteCountAfterYield = 0;
+//  let byteCountAfterYield = 0;
   let hasEverYielded = false;  // True, if yielded at least once.
 // !!! (2019/06/13) Temp Remarked for performance testing.
 //   function progress_accumulateOne_isNeedYield() {
@@ -60,13 +60,25 @@ function* decoder(
 
   function progress_accumulateOne() {
     progressToAdvance.accumulation++;
-    byteCountAfterYield++;
+//    byteCountAfterYield++;
   }
 
+  let lastYieldAccumulation = progressToAdvance.accumulation;  // The value of progressToAdvance.accumulation when yield.
+  let nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
+
   function progress_isNeedYield() {
-    if (byteCountAfterYield < suspendByteCount)
+//     if (byteCountAfterYield < suspendByteCount)
+//       return false;
+//     byteCountAfterYield = 0;
+//     hasEverYielded = true;
+//     return true; // Every suspendByteCount, release CPU time.
+
+    if (progressToAdvance.accumulation < nextYieldAccumulation)
       return false;
-    byteCountAfterYield = 0;
+
+    lastYieldAccumulation = progressToAdvance.accumulation;
+    nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
+
     hasEverYielded = true;
     return true; // Every suspendByteCount, release CPU time.
   }
@@ -170,7 +182,8 @@ function* decoder(
   // the result data may be less than target length.
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
 
-  if ((byteCountAfterYield > 0) || (false == hasEverYielded))
+//  if ((byteCountAfterYield > 0) || (false == hasEverYielded))
+  if ((false == hasEverYielded) || (lastYieldAccumulation == progressToAdvance.accumulation))
     yield progressToYield; // Report the progress has been 100%
   else
     ; // The last progress report is (just luckily) 100%. No need to report the progress again.
