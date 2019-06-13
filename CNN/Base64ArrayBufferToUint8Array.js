@@ -116,12 +116,19 @@ function* decoder(
         if (progressToAdvance.accumulation >= sourceByteLength)
           break; // Decoding is done. (Ignore last non-4-bytes.)
 
-        let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+//         let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
 
-        if (255 === encodedByte)
+//         if (255 === encodedByte)
+//           continue; // Skip any non-base64 bytes.
+
+//         encodedBytes[ j++ ] = encodedByte;
+
+        encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+
+        if (255 === encodedBytes[ j ])
           continue; // Skip any non-base64 bytes.
 
-        encodedBytes[ j++ ] = encodedByte;
+        ++j;
       }
 
       if (j != BYTES_PER_DECODE_UNIT)
