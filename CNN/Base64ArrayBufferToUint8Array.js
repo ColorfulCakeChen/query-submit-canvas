@@ -19,22 +19,23 @@ let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
 
 /**
  *
- * @param  {ArrayBuffer} sourceBase64ArrayBuffer
+ * @param {ArrayBuffer} sourceBase64ArrayBuffer
  *   The input base64 data as ArrayBuffer. If the last bytes not enough 4 bytes, they will be discarded (will
  * not be decoded). If an input byte is not a legal base64 code (i.e. not A..Z, a..z, 0..0, +, /), the byte
  * will be skipped (as if it does not exist). So the input bytes can be separated by new line.
  *
- * @param  {Uint32} skipLineCount
+ * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
- * @param  {ValueMax.Percentage.Aggregate} progressToYield
+ * @param {ValueMax.Percentage.Aggregate} progressToYield
  *   Return this when every time yield.
  *
- * @param  {ValueMax.Percentage.Concrete}  progressToAdvance
+ * @param {ValueMax.Percentage.Concrete}  progressToAdvance
  *   Increase this when every time advanced.
  *
- * @param  {Uint32} suspendByteCount
- *   Everytime so many bytes decoded, yield for releasing CPU time. Default is 1024 bytes.
+ * @param {Uint32} suspendByteCount
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
+ *   Default is 1024 bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
  *   Yield ( value = progressYield ) when ( done = false ).
@@ -43,11 +44,14 @@ let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
 function* decoder(
   sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount) {
 
+  // 0. Initialize.
+
   // If undefined or null or negative or zero or less than 1, set to default.
   if ((suspendByteCount | 0) <= 0)
     suspendByteCount = 1024;
 
   let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
+  let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
 
   // Initialize progress.
   progressToAdvance.accumulation = 0;
@@ -55,35 +59,25 @@ function* decoder(
 
   let nextYieldAccumulation = suspendByteCount;
 
-  let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
-//  let sourceIndex = 0;
-
-  // Skip specified lines.
+  // 1. Skip specified lines.
   {
     let skippedLineCount = 0;
     let rawByte;
 
-//    while (sourceIndex < sourceByteLength) {
     while (progressToAdvance.accumulation < sourceByteLength) {
       if (skippedLineCount >= skipLineCount)
         break;                 // Already skip enough lines.
 
-//      rawByte = sourceBytes[ sourceIndex++ ];
       rawByte = sourceBytes[ progressToAdvance.accumulation++ ];
-
-//      progressToAdvance.accumulation++;
 
       if (13 == rawByte) {     // "\r" (carriage return; CR)
         ++skippedLineCount;    // One line is skipped.
 
         // If a LF follows a CR, it is considered as CRLF sequence and viewed as the same one line.
-//         if ((sourceIndex < sourceByteLength) && (10 == sourceBytes[ sourceIndex ])) { 
-//           ++sourceIndex;      // Skip it.
         if (   (progressToAdvance.accumulation < sourceByteLength)
             && (10 == sourceBytes[ progressToAdvance.accumulation ])
            ) { 
-          ++progressToAdvance.accumulation;      // Skip it.
-//          progressToAdvance.accumulation++;
+          ++progressToAdvance.accumulation; // Skip it.
         }
 
       } else {
@@ -91,16 +85,18 @@ function* decoder(
           ++skippedLineCount; // One line is skipped. 
       }
 
-      if (progressToAdvance.accumulation >= nextYieldAccumulation) { // Every suspendByteCount, release CPU time.
+      // Every suspendByteCount, release CPU time (and report progress).
+      if (progressToAdvance.accumulation >= nextYieldAccumulation) {
         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
         yield progressToYield;
       }
     }
   }
 
+  // 2. Decode.
+
   // Decoding base64 will result in a shorter data (about 75% (= 3 / 4) in size).
-//  let possibleBase64ByteLength = (sourceByteLength - sourceIndex);  // The skipped lines will not be decoded.
-  let possibleBase64ByteLength = (sourceByteLength - progressToAdvance.accumulation);  // The skipped lines will not be decoded.
+  let possibleBase64ByteLength = (sourceByteLength - progressToAdvance.accumulation);  // Forget the skipped lines.
   let targetByteLength = Math.ceil(possibleBase64ByteLength * 0.75);
   let targetArrayBuffer = new ArrayBuffer( targetByteLength );
   let targetBytes = new Uint8Array( targetArrayBuffer );
@@ -111,21 +107,16 @@ function* decoder(
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
     let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
 
-    let j, encodedByte;   
-//    while (sourceIndex < sourceByteLength) {
+    let j, encodedByte;
     while (progressToAdvance.accumulation < sourceByteLength) {
 
       // Extract 4 source bytes.
       j = 0;
       while (j < BYTES_PER_DECODE_UNIT) {
-//        if (sourceIndex >= sourceByteLength)
         if (progressToAdvance.accumulation >= sourceByteLength)
           break; // Decoding is done. (Ignore last non-4-bytes.)
 
-//        let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
         let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
-
-//        progressToAdvance.accumulation++;
 
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
@@ -140,12 +131,15 @@ function* decoder(
       targetBytes[resultByteCount++] = ((encodedBytes[ 1 ] & 15) << 4) | (encodedBytes[ 2 ] >> 2);
       targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
 
-      if (progressToAdvance.accumulation >= nextYieldAccumulation) { // Every suspendByteCount, release CPU time.
+      // Every suspendByteCount, release CPU time (and report progress).
+      if (progressToAdvance.accumulation >= nextYieldAccumulation) {
         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
         yield progressToYield;
       }
     }
   }
+
+  // 3. Result.
 
   // The resultBytes is a sub-range of target buffer.
   //
