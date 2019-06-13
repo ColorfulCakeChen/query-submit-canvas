@@ -120,20 +120,9 @@ function* decoder(
           break; // Decoding is done. (Ignore last non-4-bytes.)
 
         let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
-// !!! ... Temp Remarked for performance test ... (2019/06/13)
-//         if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
-//           yield progressToYield;
 
-//!!! VVV
-        progressToAdvance.accumulation++;
-        byteCountAfterYield++;
-
-        if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
-          byteCountAfterYield = 0;
-          hasEverYielded = true;
+        if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
           yield progressToYield;
-        }
-//!!! ^^^
 
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
