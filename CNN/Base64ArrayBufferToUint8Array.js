@@ -64,18 +64,7 @@ function* decode_Generator(
   progressToAdvance.accumulation = 0;
   progressToAdvance.total = sourceByteLength;
 
-//!!! ...removed... (2019/06/12) If yield 0%, how to set hasEverYielded ?
-//  yield progressToYield;   // Report the progress is 0%
-
-  // Decoding base64 will result a shorten data (75% in size). However, the source may not be pure base64 codes.
-  // So it is safer to prepare same size bufer as source.
-  let targetByteLength = sourceByteLength;
-  let targetArrayBuffer = new ArrayBuffer( targetByteLength );
-
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
-  let targetBytes = new Uint8Array( targetArrayBuffer );
-
-  let resultByteCount = 0; // Accumulate the real result byte count.
   let sourceIndex = 0;
 
   // Skip several lines.
@@ -108,6 +97,17 @@ function* decode_Generator(
       }
     }
   }
+
+  // Decoding base64 will result in a shorter data (about 75% (= 3 / 4) in size).
+  let possibleBase64ByteLength = (sourceByteLength - sourceIndex);  // The skipped lines will not be decoded.
+  let targetByteLength = Math.ceil(possibleBase64ByteLength * 0.75);
+  let targetBytes = new Uint8Array( new ArrayBuffer( targetByteLength ) );
+ 
+  // Accumulate the real result byte count.
+  //
+  // Because the source may have some non-base64 codes which will be ignored,
+  // the target data may be less than expected.
+  let resultByteCount = 0;
 
   {
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
