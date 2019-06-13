@@ -67,11 +67,11 @@ function* decoder(
       if (skippedLineCount >= skipLineCount)
         break;                 // Already skip enough lines.
 
-//      let rawByte = sourceBytes[ progressToAdvance.accumulation++ ];
+      let rawByte = sourceBytes[ progressToAdvance.accumulation++ ];
 
-//      if (13 == rawByte) {     // "\r" (carriage return; CR)
-      if (13 == sourceBytes[ progressToAdvance.accumulation ]) {     // "\r" (carriage return; CR)
-        ++progressToAdvance.accumulation;
+      if (13 == rawByte) {     // "\r" (carriage return; CR)
+//      if (13 == sourceBytes[ progressToAdvance.accumulation ]) {     // "\r" (carriage return; CR)
+//        ++progressToAdvance.accumulation;
         ++skippedLineCount;    // One line is skipped.
 
         // If a LF follows a CR, it is considered as CRLF sequence and viewed as the same one line.
@@ -82,9 +82,9 @@ function* decoder(
         }
 
       } else {
-//        if (10 == rawByte)    // "\n" (new line; LF)
-        if (10 == sourceBytes[ progressToAdvance.accumulation ])    // "\n" (new line; LF)
-          ++progressToAdvance.accumulation;
+        if (10 == rawByte)    // "\n" (new line; LF)
+//         if (10 == sourceBytes[ progressToAdvance.accumulation ])    // "\n" (new line; LF)
+//           ++progressToAdvance.accumulation;
           ++skippedLineCount; // One line is skipped. 
       }
 
