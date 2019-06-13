@@ -49,11 +49,6 @@ function* decoder(
   progressToAdvance.accumulation = 0;
   progressToAdvance.total = sourceByteLength;
 
-//!!!
-//  let hasEverYielded = false;  // True, if yielded at least once.
-
-//!!!
-//  let lastYieldAccumulation = progressToAdvance.accumulation;  // The value of progressToAdvance.accumulation when yield.
   let lastYieldAccumulation = -1;  // Zero or positive indicates has been yielded at least once.
   let nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
 
@@ -63,9 +58,6 @@ function* decoder(
 
     lastYieldAccumulation = progressToAdvance.accumulation;
     nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
-
-//!!!
-//    hasEverYielded = true;
     return true; // Every suspendByteCount, release CPU time.
   }
 
@@ -141,9 +133,14 @@ function* decoder(
       targetBytes[resultByteCount++] =  (encodedBytes[ 0 ]       << 2) | (encodedBytes[ 1 ] >> 4);
       targetBytes[resultByteCount++] = ((encodedBytes[ 1 ] & 15) << 4) | (encodedBytes[ 2 ] >> 2);
       targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
-
-      if (progress_isNeedYield()) // Every suspendByteCount, release CPU time.
+//!!!
+//       if (progress_isNeedYield()) // Every suspendByteCount, release CPU time.
+//         yield progressToYield;
+      if (progressToAdvance.accumulation >= nextYieldAccumulation) { // Every suspendByteCount, release CPU time.
+        lastYieldAccumulation = progressToAdvance.accumulation;
+        nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
         yield progressToYield;
+      }      
     }
   }
 
@@ -153,8 +150,6 @@ function* decoder(
   // the result data may be less than target length.
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
 
-//!!!
-//  if (   (false == hasEverYielded)                                  // Never report progress.
   if (   (lastYieldAccumulation < 0)                                // Never report progress (never yield).
       || (lastYieldAccumulation != progressToAdvance.accumulation)  // Or, has advance some after last progress report.
      )
