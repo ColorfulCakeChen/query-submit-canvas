@@ -45,17 +45,30 @@ function* decoder(
 
   let byteCountAfterYield = 0;
   let hasEverYielded = false;  // True, if yielded at least once.
+// !!! (2019/06/13) Temp Remarked for performance testing.
+//   function progress_accumulateOne_isNeedYield() {
+//     progressToAdvance.accumulation++;
+//     byteCountAfterYield++;
 
-  function progress_accumulateOne_isNeedYield() {
+//     if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
+//       byteCountAfterYield = 0;
+//       hasEverYielded = true;
+//       return true;
+//     }
+//     return false;
+//   }
+
+  function progress_accumulateOne() {
     progressToAdvance.accumulation++;
     byteCountAfterYield++;
+  }
 
-    if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
-      byteCountAfterYield = 0;
-      hasEverYielded = true;
-      return true;
-    }
-    return false;
+  function progress_isNeedYield() {
+    if (byteCountAfterYield < suspendByteCount)
+      return false;
+    byteCountAfterYield = 0;
+    hasEverYielded = true;
+    return true; // Every suspendByteCount, release CPU time.
   }
 
   let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
@@ -78,8 +91,10 @@ function* decoder(
 
       rawByte = sourceBytes[ sourceIndex++ ];
 
-      if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
-        yield progressToYield;
+// !!! (2019/06/13) Temp Remarked for performance testing.
+//       if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
+//         yield progressToYield;
+      progress_accumulateOne();
 
       if (13 == rawByte) {      // "\r" (carriage return; CR)
         ++skippedLineCount;     // One line is skipped.
@@ -87,14 +102,19 @@ function* decoder(
         // If a LF follows a CR, it is considered as CRLF sequence and viewed as the same one line.
         if ((sourceIndex < sourceByteLength) && (10 == sourceBytes[ sourceIndex ])) { 
           ++sourceIndex;       // Skip it.
-          if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
-            yield progressToYield;
+// !!! (2019/06/13) Temp Remarked for performance testing.
+//           if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
+//             yield progressToYield;
+          progress_accumulateOne();
         }
 
       } else {
         if (10 == rawByte)      // "\n" (new line; LF)
           ++skippedLineCount; // One line is skipped. 
       }
+
+      if (progress_isNeedYield()) // Every suspendByteCount, release CPU time.
+        yield progressToYield;
     }
   }
 
@@ -121,8 +141,10 @@ function* decoder(
 
         let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
 
-        if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
-          yield progressToYield;
+// !!! (2019/06/13) Temp Remarked for performance testing.
+//         if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
+//           yield progressToYield;
+        progress_accumulateOne();
 
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
@@ -136,6 +158,9 @@ function* decoder(
       targetBytes[resultByteCount++] =  (encodedBytes[ 0 ]       << 2) | (encodedBytes[ 1 ] >> 4);
       targetBytes[resultByteCount++] = ((encodedBytes[ 1 ] & 15) << 4) | (encodedBytes[ 2 ] >> 2);
       targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
+
+      if (progress_isNeedYield()) // Every suspendByteCount, release CPU time.
+        yield progressToYield;
     }
   }
 
