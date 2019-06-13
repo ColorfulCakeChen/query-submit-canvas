@@ -43,51 +43,31 @@ let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
 function* decoder(
   sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount = 1024) {
 
-//  let byteCountAfterYield = 0;
-  let hasEverYielded = false;  // True, if yielded at least once.
-// !!! (2019/06/13) Temp Remarked for performance testing.
-//   function progress_accumulateOne_isNeedYield() {
-//     progressToAdvance.accumulation++;
-//     byteCountAfterYield++;
+  let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
 
-//     if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
-//       byteCountAfterYield = 0;
-//       hasEverYielded = true;
-//       return true;
-//     }
-//     return false;
-//   }
+  // Initialize progress.
+  progressToAdvance.accumulation = 0;
+  progressToAdvance.total = sourceByteLength;
 
-//   function progress_accumulateOne() {
-//     progressToAdvance.accumulation++;
-// //    byteCountAfterYield++;
-//   }
+//!!!
+//  let hasEverYielded = false;  // True, if yielded at least once.
 
-  let lastYieldAccumulation = progressToAdvance.accumulation;  // The value of progressToAdvance.accumulation when yield.
+//!!!
+//  let lastYieldAccumulation = progressToAdvance.accumulation;  // The value of progressToAdvance.accumulation when yield.
+  let lastYieldAccumulation = -1;  // Zero or positive indicates has been yielded at least once.
   let nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
 
   function progress_isNeedYield() {
-//     if (byteCountAfterYield < suspendByteCount)
-//       return false;
-//     byteCountAfterYield = 0;
-//     hasEverYielded = true;
-//     return true; // Every suspendByteCount, release CPU time.
-
     if (progressToAdvance.accumulation < nextYieldAccumulation)
       return false;
 
     lastYieldAccumulation = progressToAdvance.accumulation;
     nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
 
-    hasEverYielded = true;
+//!!!
+//    hasEverYielded = true;
     return true; // Every suspendByteCount, release CPU time.
   }
-
-  let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
-
-  // Initialize progress.
-  progressToAdvance.accumulation = 0;
-  progressToAdvance.total = sourceByteLength;
 
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
   let sourceIndex = 0;
@@ -103,9 +83,6 @@ function* decoder(
 
       rawByte = sourceBytes[ sourceIndex++ ];
 
-// !!! (2019/06/13) Temp Remarked for performance testing.
-//       if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
-//         yield progressToYield;
       progressToAdvance.accumulation++;
 
       if (13 == rawByte) {      // "\r" (carriage return; CR)
@@ -114,9 +91,6 @@ function* decoder(
         // If a LF follows a CR, it is considered as CRLF sequence and viewed as the same one line.
         if ((sourceIndex < sourceByteLength) && (10 == sourceBytes[ sourceIndex ])) { 
           ++sourceIndex;       // Skip it.
-// !!! (2019/06/13) Temp Remarked for performance testing.
-//           if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
-//             yield progressToYield;
           progressToAdvance.accumulation++;
         }
 
@@ -153,9 +127,6 @@ function* decoder(
 
         let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
 
-// !!! (2019/06/13) Temp Remarked for performance testing.
-//         if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
-//           yield progressToYield;
         progressToAdvance.accumulation++;
 
         if (255 === encodedByte)
@@ -182,8 +153,9 @@ function* decoder(
   // the result data may be less than target length.
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
 
-//  if ((byteCountAfterYield > 0) || (false == hasEverYielded))
-  if (   (false == hasEverYielded)                                  // Never report progress.
+//!!!
+//  if (   (false == hasEverYielded)                                  // Never report progress.
+  if (   (lastYieldAccumulation < 0)                                // Never report progress (never yield).
       || (lastYieldAccumulation != progressToAdvance.accumulation)  // Or, has advance some after last progress report.
      )
     yield progressToYield; // Report the progress has been 100%
