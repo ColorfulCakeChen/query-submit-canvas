@@ -65,23 +65,23 @@ function* decoder(
 
     while (sourceIndex < sourceByteLength) {
       if (skippedLineCount >= skipLineCount)
-        break;                  // Already skip enough lines.
+        break;                 // Already skip enough lines.
 
       rawByte = sourceBytes[ sourceIndex++ ];
 
       progressToAdvance.accumulation++;
 
-      if (13 == rawByte) {      // "\r" (carriage return; CR)
-        ++skippedLineCount;     // One line is skipped.
+      if (13 == rawByte) {     // "\r" (carriage return; CR)
+        ++skippedLineCount;    // One line is skipped.
 
         // If a LF follows a CR, it is considered as CRLF sequence and viewed as the same one line.
         if ((sourceIndex < sourceByteLength) && (10 == sourceBytes[ sourceIndex ])) { 
-          ++sourceIndex;       // Skip it.
+          ++sourceIndex;      // Skip it.
           progressToAdvance.accumulation++;
         }
 
       } else {
-        if (10 == rawByte)      // "\n" (new line; LF)
+        if (10 == rawByte)    // "\n" (new line; LF)
           ++skippedLineCount; // One line is skipped. 
       }
 
