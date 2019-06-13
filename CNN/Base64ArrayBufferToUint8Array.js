@@ -83,7 +83,7 @@ function* decoder(
             && (10 == sourceBytes[ progressToAdvance.accumulation ])
            ) { 
           ++progressToAdvance.accumulation;      // Skip it.
-          progressToAdvance.accumulation++;
+//          progressToAdvance.accumulation++;
         }
 
       } else {
