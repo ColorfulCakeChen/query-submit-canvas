@@ -1,11 +1,8 @@
-import * as ScriptLoader from "../ScriptLoader.js";
 import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array.js";
 import * as PartTime from "../PartTime.js";
+import * as Random from "../Random.js";
+import * as ScriptLoader from "../ScriptLoader.js";
 import * as ValueMax from "../ValueMax.js";
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
 
 // This string will not fit to ASCII when base64 decoded. So can not be used to test. 
 //const base64EncodedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -20,7 +17,7 @@ let originalArray = [];
   const PRINTABLE_ASCII_MAX = 126;
 
   for (let i = 0; i < ORIGINAL_TEST_STRING_LENGTH; ++i) {
-    let c = PRINTABLE_ASCII_MIN + getRandomInt(PRINTABLE_ASCII_MAX - PRINTABLE_ASCII_MIN + 1);
+    let c = Random.getIntInclusive(PRINTABLE_ASCII_MIN, PRINTABLE_ASCII_MAX);
     originalArray.push( String.fromCodePoint( c ) );
   }
 }
