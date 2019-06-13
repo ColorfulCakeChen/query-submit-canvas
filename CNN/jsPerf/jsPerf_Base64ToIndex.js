@@ -92,8 +92,9 @@ class Progress extends ValueMax.Percentage.Aggregate {
 }
 
 function byArrayBuffer() {
+  let progress = new Progress();
+
   return function (base64_ArrayBuffer) {
-    let progress = new Progress();
     let suspendByteCount = base64_ArrayBuffer.byteLength + 1; // Large enough to avoid from yield.
     let decoder = Base64ArrayBufferToUint8Array.decoder(base64_ArrayBuffer, 0, progress, progress.uint8Array, suspendByteCount);
     for (let p of decoder) {
