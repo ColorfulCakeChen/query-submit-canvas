@@ -1,4 +1,4 @@
-export { decode_Generator };
+export { decoder };
 
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -40,7 +40,7 @@ let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
  *   Yield ( value = progressYield ) when ( done = false ).
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* decode_Generator(
+function* decoder(
   sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount = 1024) {
 
   let byteCountAfterYield = 0;
