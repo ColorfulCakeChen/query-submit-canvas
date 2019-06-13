@@ -139,9 +139,11 @@ function test() {
   for (let i = 0; i < testCases.length; ++i) {
     let testCase = testCases[ i ];
 
+    let decoder = Base64ArrayBufferToUint8Array.decoder(
+        testCase.source, testCase.skipLineCount, progress, progress.childProgressParts[ i ], 5);
+
     let testPromise = PartTime.forOf(
-      Base64ArrayBufferToUint8Array.decode_Generator(
-        testCase.source, testCase.skipLineCount, progress, progress.childProgressParts[ i ], 5),
+      decoder,
       (valueMax) => { progressReceiver.setValueMax(valueMax); /* Report progress to UI. */ },
       delayMilliseconds
     ).then(r => {
