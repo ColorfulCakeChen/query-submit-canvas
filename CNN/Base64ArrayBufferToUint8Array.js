@@ -109,7 +109,6 @@ function* decoder(
   {
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
     let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
-//    let encodedBytes = new Array( BYTES_PER_DECODE_UNIT );
 
     let j, encodedByte;   
     while (sourceIndex < sourceByteLength) {
@@ -124,6 +123,17 @@ function* decoder(
 // !!! ... Temp Remarked for performance test ... (2019/06/13)
 //         if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
 //           yield progressToYield;
+
+//!!! VVV
+        progressToAdvance.accumulation++;
+        byteCountAfterYield++;
+
+        if (byteCountAfterYield >= suspendByteCount) { // Every suspendByteCount, release CPU time.
+          byteCountAfterYield = 0;
+          hasEverYielded = true;
+          yield progressToYield;
+        }
+//!!! ^^^
 
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
