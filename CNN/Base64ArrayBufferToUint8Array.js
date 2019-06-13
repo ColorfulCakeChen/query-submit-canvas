@@ -183,7 +183,9 @@ function* decoder(
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
 
 //  if ((byteCountAfterYield > 0) || (false == hasEverYielded))
-  if ((false == hasEverYielded) || (lastYieldAccumulation == progressToAdvance.accumulation))
+  if (   (false == hasEverYielded)                                  // Never report progress.
+      || (lastYieldAccumulation != progressToAdvance.accumulation)  // Or, has advance some after last progress report.
+     )
     yield progressToYield; // Report the progress has been 100%
   else
     ; // The last progress report is (just luckily) 100%. No need to report the progress again.
