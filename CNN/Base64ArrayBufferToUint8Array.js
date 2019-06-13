@@ -67,7 +67,7 @@ function* decoder(
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
   let sourceIndex = 0;
 
-  // Skip several lines.
+  // Skip specified lines.
   {
     let skippedLineCount = 0;
     let rawByte;
@@ -104,11 +104,7 @@ function* decoder(
   let targetArrayBuffer = new ArrayBuffer( targetByteLength );
   let targetBytes = new Uint8Array( targetArrayBuffer );
 
-  // Accumulate the real result byte count.
-  //
-  // Because the source may have some non-base64 codes which will be ignored,
-  // the target data may be less than expected.
-  let resultByteCount = 0;
+  let resultByteCount = 0;  // Accumulate the real result byte count.
 
   {
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
@@ -144,6 +140,9 @@ function* decoder(
   }
 
   // The resultBytes is a sub-range of target buffer.
+  //
+  // Because the source may have some non-base64 codes which will be ignored,
+  // the result data may be less than target length.
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
 
   if ((byteCountAfterYield > 0) || (false == hasEverYielded))
