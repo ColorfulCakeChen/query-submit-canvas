@@ -138,10 +138,10 @@ let arrayBuffer = new ArrayBuffer(array.length);
 let uint8array = new Uint8Array(arrayBuffer);
 array.forEach(function(e, i) { uint8array[i] = e.codePointAt(0) });
 
-var dataArrayBuffer = arrayBuffer;
+globalThis.dataArrayBuffer = arrayBuffer;
 
 // var base64ToIndex_ByArray = byArray();
 // var base64ToIndex_ByHash = byHash();
-var base64ToIndex_ByArrayBuffer = byArrayBuffer();
-var base64ToIndex_By_atob = by_atob();
+globalThis.base64ToIndex_ByArrayBuffer = byArrayBuffer();
+globalThis.base64ToIndex_By_atob = by_atob();
 
