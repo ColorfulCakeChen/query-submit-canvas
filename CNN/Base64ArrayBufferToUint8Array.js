@@ -56,27 +56,33 @@ function* decoder(
   let nextYieldAccumulation = suspendByteCount;
 
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
-  let sourceIndex = 0;
+//  let sourceIndex = 0;
 
   // Skip specified lines.
   {
     let skippedLineCount = 0;
     let rawByte;
 
-    while (sourceIndex < sourceByteLength) {
+//    while (sourceIndex < sourceByteLength) {
+    while (progressToAdvance.accumulation < sourceByteLength) {
       if (skippedLineCount >= skipLineCount)
         break;                 // Already skip enough lines.
 
-      rawByte = sourceBytes[ sourceIndex++ ];
+//      rawByte = sourceBytes[ sourceIndex++ ];
+      rawByte = sourceBytes[ progressToAdvance.accumulation++ ];
 
-      progressToAdvance.accumulation++;
+//      progressToAdvance.accumulation++;
 
       if (13 == rawByte) {     // "\r" (carriage return; CR)
         ++skippedLineCount;    // One line is skipped.
 
         // If a LF follows a CR, it is considered as CRLF sequence and viewed as the same one line.
-        if ((sourceIndex < sourceByteLength) && (10 == sourceBytes[ sourceIndex ])) { 
-          ++sourceIndex;      // Skip it.
+//         if ((sourceIndex < sourceByteLength) && (10 == sourceBytes[ sourceIndex ])) { 
+//           ++sourceIndex;      // Skip it.
+        if (   (progressToAdvance.accumulation < sourceByteLength)
+            && (10 == sourceBytes[ progressToAdvance.accumulation ])
+           ) { 
+          ++progressToAdvance.accumulation;      // Skip it.
           progressToAdvance.accumulation++;
         }
 
@@ -93,7 +99,8 @@ function* decoder(
   }
 
   // Decoding base64 will result in a shorter data (about 75% (= 3 / 4) in size).
-  let possibleBase64ByteLength = (sourceByteLength - sourceIndex);  // The skipped lines will not be decoded.
+//  let possibleBase64ByteLength = (sourceByteLength - sourceIndex);  // The skipped lines will not be decoded.
+  let possibleBase64ByteLength = (sourceByteLength - progressToAdvance.accumulation);  // The skipped lines will not be decoded.
   let targetByteLength = Math.ceil(possibleBase64ByteLength * 0.75);
   let targetArrayBuffer = new ArrayBuffer( targetByteLength );
   let targetBytes = new Uint8Array( targetArrayBuffer );
@@ -105,17 +112,20 @@ function* decoder(
     let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
 
     let j, encodedByte;   
-    while (sourceIndex < sourceByteLength) {
+//    while (sourceIndex < sourceByteLength) {
+    while (progressToAdvance.accumulation < sourceByteLength) {
 
       // Extract 4 source bytes.
       j = 0;
       while (j < BYTES_PER_DECODE_UNIT) {
-        if (sourceIndex >= sourceByteLength)
+//        if (sourceIndex >= sourceByteLength)
+        if (progressToAdvance.accumulation >= sourceByteLength)
           break; // Decoding is done. (Ignore last non-4-bytes.)
 
-        let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
+//        let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
+        let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
 
-        progressToAdvance.accumulation++;
+//        progressToAdvance.accumulation++;
 
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
