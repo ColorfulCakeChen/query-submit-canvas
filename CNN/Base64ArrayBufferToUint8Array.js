@@ -58,10 +58,10 @@ function* decoder(
 //     return false;
 //   }
 
-  function progress_accumulateOne() {
-    progressToAdvance.accumulation++;
-//    byteCountAfterYield++;
-  }
+//   function progress_accumulateOne() {
+//     progressToAdvance.accumulation++;
+// //    byteCountAfterYield++;
+//   }
 
   let lastYieldAccumulation = progressToAdvance.accumulation;  // The value of progressToAdvance.accumulation when yield.
   let nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
@@ -106,7 +106,7 @@ function* decoder(
 // !!! (2019/06/13) Temp Remarked for performance testing.
 //       if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
 //         yield progressToYield;
-      progress_accumulateOne();
+      progressToAdvance.accumulation++;
 
       if (13 == rawByte) {      // "\r" (carriage return; CR)
         ++skippedLineCount;     // One line is skipped.
@@ -117,7 +117,7 @@ function* decoder(
 // !!! (2019/06/13) Temp Remarked for performance testing.
 //           if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
 //             yield progressToYield;
-          progress_accumulateOne();
+          progressToAdvance.accumulation++;
         }
 
       } else {
@@ -156,7 +156,7 @@ function* decoder(
 // !!! (2019/06/13) Temp Remarked for performance testing.
 //         if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
 //           yield progressToYield;
-        progress_accumulateOne();
+        progressToAdvance.accumulation++;
 
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
