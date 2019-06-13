@@ -2,81 +2,10 @@ import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array
 import * as Random from "../Random.js";
 import * as ValueMax from "../ValueMax.js";
 
-// const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+/**
+ * @see {@link https://jsperf.com/base64-to-index}
+ */
 
-// // https://jsperf.com/base64-to-index
-
-// function base64ToIndex_withTable(base64ArrayBuffer, tableByUint8) {
-// //   let resultArrayBuffer = new ArrayBuffer( base64ArrayBuffer.byteLength );
-// //   let source = new Uint8Array( base64ArrayBuffer );
-// //   let result = new Uint8Array( resultArrayBuffer );
-// //   for (let i = 0; i < source.length; ++i)
-// //     result[ i ] = tableByUint8[ source[ i ] ];
-// //   return resultArrayBuffer;
-
-// !!! ...unfinished... (2019/06/05) Use the following to decode.
-// https://github.com/emn178/hi-base64/blob/master/src/base64.js
-// https://github.com/beatgammit/base64-js/blob/master/index.js
-  
-//   let source = new Uint8Array( base64ArrayBuffer );
-//   let sourceBytelength = source.length;
-//   let bufferLength = sourceBytelength * 0.75,
-//       p = 0,
-//       encoded1, encoded2, encoded3, encoded4;
-
-//   if ( (sourceBytelength >= 1) && (source[sourceBytelength - 1] === "=") ) {
-//     bufferLength--;
-//     if ( (sourceBytelength >= 1) && (source[sourceBytelength - 2] === "=") ) {
-//       bufferLength--;
-//     }
-//   }
-
-//   let resultArrayBuffer = new ArrayBuffer(bufferLength);
-//   let bytes = new Uint8Array(resultArrayBuffer);
-
-//   for (let i = 0; i < sourceBytelength; i+=4) {
-//     encoded1 = tableByUint8[ source[i]   ];
-//     encoded2 = tableByUint8[ source[i+1] ];
-//     encoded3 = tableByUint8[ source[i+2] ];
-//     encoded4 = tableByUint8[ source[i+3] ];
-
-//     bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
-//     bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
-//     bytes[p++] = ((encoded3 & 3) << 6) | (encoded4 & 63);
-//   }
-
-//   return resultArrayBuffer;
-// }
-
-// function byArray() {
-//   let table = [];
-//   for (let i = 0; i < base64String.length; ++i)
-//     table[ base64String.codePointAt(i) ] = i;
-
-//   return function (base64_ArrayBuffer) {
-//     return base64ToIndex_withTable(base64_ArrayBuffer, table);
-//   };
-// }
-
-// function byHash() {
-//   let table = {};
-//   for (let i = 0; i < base64String.length; ++i)
-//     table[ base64String.codePointAt(i) ] = i;
-
-//   return function (base64_ArrayBuffer) {
-//     return base64ToIndex_withTable(base64_ArrayBuffer, table);
-//   };
-// }
-
-// function byArrayBuffer() {
-//   let table = new Uint8Array( new ArrayBuffer(256) );
-//   for (let i = 0; i < base64String.length; ++i)
-//     table[ base64String.codePointAt(i) ] = i;
-
-//   return function (base64_ArrayBuffer) {
-//     return base64ToIndex_withTable(base64_ArrayBuffer, table);
-//   };
-// }
 
 /** Aggregate all progress.  */
 class Progress extends ValueMax.Percentage.Aggregate {
