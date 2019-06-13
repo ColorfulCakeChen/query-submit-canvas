@@ -108,7 +108,8 @@ function* decoder(
 
   {
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
-    let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
+//    let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
+    let encodedBytes = new Array( BYTES_PER_DECODE_UNIT );
 
     let j, encodedByte;   
     while (sourceIndex < sourceByteLength) {
