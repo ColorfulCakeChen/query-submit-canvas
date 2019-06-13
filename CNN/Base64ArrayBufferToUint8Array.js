@@ -101,8 +101,9 @@ function* decode_Generator(
   // Decoding base64 will result in a shorter data (about 75% (= 3 / 4) in size).
   let possibleBase64ByteLength = (sourceByteLength - sourceIndex);  // The skipped lines will not be decoded.
   let targetByteLength = Math.ceil(possibleBase64ByteLength * 0.75);
-  let targetBytes = new Uint8Array( new ArrayBuffer( targetByteLength ) );
- 
+  let targetArrayBuffer = new ArrayBuffer( targetByteLength );
+  let targetBytes = new Uint8Array( targetArrayBuffer );
+
   // Accumulate the real result byte count.
   //
   // Because the source may have some non-base64 codes which will be ignored,
