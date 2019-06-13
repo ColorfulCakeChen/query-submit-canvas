@@ -54,18 +54,6 @@ function* decoder(
   progressToAdvance.total = sourceByteLength;
 
   let nextYieldAccumulation = suspendByteCount;
-//!!!
-//  let lastYieldAccumulation = -1;  // Zero or positive indicates has been yielded at least once.
-//  let nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
-//!!!
-//   function progress_isNeedYield() {
-//     if (progressToAdvance.accumulation < nextYieldAccumulation)
-//       return false;
-
-//     lastYieldAccumulation = progressToAdvance.accumulation;
-//     nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
-//     return true; // Every suspendByteCount, release CPU time.
-//   }
 
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
   let sourceIndex = 0;
@@ -97,12 +85,7 @@ function* decoder(
           ++skippedLineCount; // One line is skipped. 
       }
 
-//!!!
-//       if (progress_isNeedYield()) // Every suspendByteCount, release CPU time.
-//         yield progressToYield;
       if (progressToAdvance.accumulation >= nextYieldAccumulation) { // Every suspendByteCount, release CPU time.
-//!!!
-//        lastYieldAccumulation = progressToAdvance.accumulation;
         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
         yield progressToYield;
       }
@@ -146,16 +129,11 @@ function* decoder(
       targetBytes[resultByteCount++] =  (encodedBytes[ 0 ]       << 2) | (encodedBytes[ 1 ] >> 4);
       targetBytes[resultByteCount++] = ((encodedBytes[ 1 ] & 15) << 4) | (encodedBytes[ 2 ] >> 2);
       targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
-//!!!
-//       if (progress_isNeedYield()) // Every suspendByteCount, release CPU time.
-//         yield progressToYield;
+
       if (progressToAdvance.accumulation >= nextYieldAccumulation) { // Every suspendByteCount, release CPU time.
-//!!!
-//        lastYieldAccumulation = progressToAdvance.accumulation;
         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
         yield progressToYield;
       }
-      
     }
   }
 
@@ -164,18 +142,14 @@ function* decoder(
   // Because the source may have some non-base64 codes which will be ignored,
   // the result data may be less than target length.
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
-//!!!
-//   if (   (lastYieldAccumulation < 0)                                // Never report progress (never yield).
-//       || (lastYieldAccumulation != progressToAdvance.accumulation)  // Or, has advance some after last progress report.
-//      )
-//     yield progressToYield; // Report the progress has been 100%
-//   else
-//     ; // The last progress report is (just luckily) 100%. No need to report the progress again.
 
-  if (   (nextYieldAccumulation == suspendByteCount)                // Never report progress (never yield).
-      || ((nextYieldAccumulation - progressToAdvance.accumulation) < suspendByteCount)  // Or, has advance some after last progress report.
+  if (   // Never yield (i.e. never report progress), report at least once for done.
+         (nextYieldAccumulation == suspendByteCount)
+
+         // Or, some advance has been made after last progress report, report for done.
+      || ((nextYieldAccumulation - progressToAdvance.accumulation) < suspendByteCount)
      )
-    yield progressToYield; // Report the progress has been 100%
+    yield progressToYield; // Report the progress has been done (100%).
   else
     ; // The last progress report is (just luckily) 100%. No need to report the progress again.
 
