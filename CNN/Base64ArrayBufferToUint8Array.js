@@ -107,7 +107,7 @@ function* decoder(
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
     let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
 
-    let j, encodedByte;
+    let j; //, encodedByte;
     while (progressToAdvance.accumulation < sourceByteLength) {
 
       // Extract 4 source bytes.
@@ -116,7 +116,7 @@ function* decoder(
         if (progressToAdvance.accumulation >= sourceByteLength)
           break; // Decoding is done. (Ignore last non-4-bytes.)
 
-        encodedByte = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+        let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
 
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
