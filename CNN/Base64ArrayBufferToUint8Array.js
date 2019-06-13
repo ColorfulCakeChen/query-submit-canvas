@@ -108,8 +108,8 @@ function* decoder(
 
   {
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
-//    let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
-    let encodedBytes = new Array( BYTES_PER_DECODE_UNIT );
+    let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
+//    let encodedBytes = new Array( BYTES_PER_DECODE_UNIT );
 
     let j, encodedByte;   
     while (sourceIndex < sourceByteLength) {
@@ -121,9 +121,9 @@ function* decoder(
           break; // Decoding is done. (Ignore last non-4-bytes.)
 
         let encodedByte = table_base64_Uint8_to_index[ sourceBytes[ sourceIndex++ ] ];
-
-        if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
-          yield progressToYield;
+// !!! ... Temp Remarked for performance test ... (2019/06/13)
+//         if (progress_accumulateOne_isNeedYield()) // Every suspendByteCount, release CPU time.
+//           yield progressToYield;
 
         if (255 === encodedByte)
           continue; // Skip any non-base64 bytes.
