@@ -55,12 +55,16 @@ function* decoder(
   let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
 
+//!!!    
+//  suspendByteCount = Math.max(suspendByteCount | 0, Math.min(1024, sourceByteLength));
+
+  suspendByteCount |= 0;  // Bitwising OR with zero is for converting to integer (if it is undefined or null).
+
   // Ensure between [0, min(1024, sourceByteLength)].
-  // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
   //
   // It is important that the suspendByteCount is not greater than source length. So the
   // nextYieldAccumulation can be used for boundary checking.
-  suspendByteCount = Math.max(suspendByteCount | 0, Math.min(1024, sourceByteLength));
+  suspendByteCount = Math.max(0, Math.min(1024, sourceByteLength));
 
 
 //!!! (2019/06/14 Remarked)
