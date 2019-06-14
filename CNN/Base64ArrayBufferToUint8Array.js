@@ -71,7 +71,7 @@ function* decoder(
   // Ensure between [0, min(1024, sourceByteLength)].
   //
   // It is important that the suspendByteCount is not greater than source length. So the
-  // nextYieldAccumulation can be used for boundary checking.
+  // nextYieldAccumulation can be used as boundary checking to reduce checking times and increase performance.
   {
     // If undefined or null or negative or zero or less than 1, set to default.
     if ((suspendByteCount | 0) <= 0)
@@ -84,6 +84,8 @@ function* decoder(
   progressToAdvance.accumulation = 0;
   progressToAdvance.total = sourceByteLength;
 
+//!!!
+//  let yieldCount = 0;
   let nextYieldAccumulation = suspendByteCount;
 
   // 1. Skip specified lines.
@@ -133,6 +135,8 @@ function* decoder(
         if (nextYieldAccumulation > sourceByteLength)
           nextYieldAccumulation = sourceByteLength;
 
+//!!!
+//        ++yieldCount;
         yield progressToYield;
       }
     }
@@ -195,7 +199,8 @@ function* decoder(
 
         if (nextYieldAccumulation > sourceByteLength)
           nextYieldAccumulation = sourceByteLength;
-
+//!!!
+//        ++yieldCount;
         yield progressToYield;
       }
 
@@ -210,15 +215,29 @@ function* decoder(
   // the result data may be less than target length.
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
 
-  if (   // Never yield (i.e. never report progress), report at least once for done.
-         (nextYieldAccumulation == suspendByteCount)
+//!!! (2019/06/14) Remarked. not feasible.
+//   if (   // Never yield (i.e. never report progress), report at least once for done.
+//          (nextYieldAccumulation == suspendByteCount)
+//
+//          // Or, some advance has been made after last progress report, report for done.
+//       || ((nextYieldAccumulation - progressToAdvance.accumulation) < suspendByteCount)
+//      )
+//     yield progressToYield; // Report the progress has been done (100%).
+//   else
+//     ; // The last progress report is (just luckily) 100%. No need to report the progress again.
 
-         // Or, some advance has been made after last progress report, report for done.
-      || ((nextYieldAccumulation - progressToAdvance.accumulation) < suspendByteCount)
-     )
-    yield progressToYield; // Report the progress has been done (100%).
-  else
-    ; // The last progress report is (just luckily) 100%. No need to report the progress again.
+//!!! (2019/06/14) Remarked. not workable.
+//   if (   // Never yield (i.e. never report progress), report at least once (for done).
+//          (0 == yieldCount)
+// !!! wrong
+//          // Or, some advance has been made after last progress report, report for done.
+//       || ((nextYieldAccumulation - progressToAdvance.accumulation) < suspendByteCount)
+//      )
+//     yield progressToYield; // Report the progress has been done (100%).
+//   else
+//     ; // The last progress report is (just luckily) 100%. No need to report the progress again.
+
+  yield progressToYield; // Report the progress has been done (100%).
 
   return resultBytes;
 }
