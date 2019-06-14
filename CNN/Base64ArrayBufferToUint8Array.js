@@ -70,14 +70,16 @@ function* decoder(
 
   // Ensure between [0, min(1024, sourceByteLength)].
   //
+//!!!
   // It is important that the suspendByteCount is not greater than source length. So the
   // nextYieldAccumulation can be used as boundary checking to reduce checking times and increase performance.
   {
     // If undefined or null or negative or zero or less than 1, set to default.
     if ((suspendByteCount | 0) <= 0)
       suspendByteCount = 1024;
-    if (suspendByteCount > sourceByteLength)
-      suspendByteCount = sourceByteLength;
+//!!!
+//     if (suspendByteCount > sourceByteLength)
+//       suspendByteCount = sourceByteLength;
   }
 
   // Initialize progress.
@@ -86,7 +88,9 @@ function* decoder(
 
 //!!!
 //  let yieldCount = 0;
-  let nextYieldAccumulation = suspendByteCount;
+//!!!
+//  let nextYieldAccumulation = suspendByteCount;
+  let nextYieldAccumulation = Math.min(sourceByteLength, progressToAdvance.accumulation + suspendByteCount);
 
   // 1. Skip specified lines.
   {
