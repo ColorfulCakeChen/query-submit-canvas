@@ -62,42 +62,43 @@ const base64DecodedUint8Array = tEncoder.encode(base64DecodedString);
 const emptyUint8Array = new Uint8Array(0);
 
 class TestCase {
-  constructor(source, skipLineCount, result, note) {
+  constructor(source, skipLineCount, result, suspendByteCount, note) {
     this.source = source;
     this.skipLineCount = skipLineCount;
     this.result = result;
+    this.suspendByteCount = suspendByteCount;
     this.note = note;
   }
 }
 
 let testCases = [
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 0, emptyUint8Array, "Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 1]), 1, emptyUint8Array, "LF Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 2]), 1, emptyUint8Array, "CR Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 3]), 1, emptyUint8Array, "CRLF Empty" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 4]), 2, emptyUint8Array, "LFCR Empty" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 0, emptyUint8Array, undefined, "Empty" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 1]), 1, emptyUint8Array, undefined, "LF Empty" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 2]), 1, emptyUint8Array,         5, "CR Empty" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 3]), 1, emptyUint8Array, undefined, "CRLF Empty" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 4]), 2, emptyUint8Array,         5, "LFCR Empty" ),
 
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 5]), 0, base64DecodedUint8Array, "Extra 0 bytes" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 6]), 0, base64DecodedUint8Array, "Extra 1 bytes" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 7]), 0, base64DecodedUint8Array, "Extra 2 bytes" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 8]), 0, base64DecodedUint8Array, "Extra 3 bytes" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 5]), 0, base64DecodedUint8Array, undefined, "Extra 0 bytes" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 6]), 0, base64DecodedUint8Array,         7, "Extra 1 bytes" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 7]), 0, base64DecodedUint8Array, undefined, "Extra 2 bytes" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 8]), 0, base64DecodedUint8Array,         8, "Extra 3 bytes" ),
 
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 9]), 0, base64DecodedUint8Array, "Extra LF inside" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[10]), 0, base64DecodedUint8Array, "Extra CR inside" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[11]), 0, base64DecodedUint8Array, "Extra CRLF inside" ),
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[12]), 0, base64DecodedUint8Array, "Extra LFCR inside" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 9]), 0, base64DecodedUint8Array,       128, "Extra LF inside" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[10]), 0, base64DecodedUint8Array, undefined, "Extra CR inside" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[11]), 0, base64DecodedUint8Array,       512, "Extra CRLF inside" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[12]), 0, base64DecodedUint8Array, undefined, "Extra LFCR inside" ),
 
-  new TestCase( tEncoder.encode("\n"   + base64EncodedString), 1, base64DecodedUint8Array, "Begin LF" ),
-  new TestCase( tEncoder.encode("\r"   + base64EncodedString), 1, base64DecodedUint8Array, "Begin CR" ),
-  new TestCase( tEncoder.encode("\r\n" + base64EncodedString), 1, base64DecodedUint8Array, "Begin CRLF" ),
-  new TestCase( tEncoder.encode("\n\r" + base64EncodedString), 2, base64DecodedUint8Array, "Begin LFCR" ),
+  new TestCase( tEncoder.encode("\n"   + base64EncodedString), 1, base64DecodedUint8Array,         5, "Begin LF" ),
+  new TestCase( tEncoder.encode("\r"   + base64EncodedString), 1, base64DecodedUint8Array,         5, "Begin CR" ),
+  new TestCase( tEncoder.encode("\r\n" + base64EncodedString), 1, base64DecodedUint8Array,         5, "Begin CRLF" ),
+  new TestCase( tEncoder.encode("\n\r" + base64EncodedString), 2, base64DecodedUint8Array, undefined, "Begin LFCR" ),
 
-  new TestCase( tEncoder.encode("qwerty\n"   + base64EncodedString), 1, base64DecodedUint8Array, "Text LF" ),
-  new TestCase( tEncoder.encode("qwerty\r"   + base64EncodedString), 1, base64DecodedUint8Array, "Text CR" ),
-  new TestCase( tEncoder.encode("qwerty\r\n" + base64EncodedString), 1, base64DecodedUint8Array, "Text CRLF" ),
-  new TestCase( tEncoder.encode("qwerty\n\r" + base64EncodedString), 2, base64DecodedUint8Array, "Text LFCR" ),
+  new TestCase( tEncoder.encode("qwerty\n"   + base64EncodedString), 1, base64DecodedUint8Array,         6, "Text LF" ),
+  new TestCase( tEncoder.encode("qwerty\r"   + base64EncodedString), 1, base64DecodedUint8Array, undefined, "Text CR" ),
+  new TestCase( tEncoder.encode("qwerty\r\n" + base64EncodedString), 1, base64DecodedUint8Array,      2048, "Text CRLF" ),
+  new TestCase( tEncoder.encode("qwerty\n\r" + base64EncodedString), 2, base64DecodedUint8Array,         7, "Text LFCR" ),
 
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[13]), 3, base64DecodedUint8Array, "Multiple LF and CR inside" ),
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[13]), 3, base64DecodedUint8Array, 8, "Multiple LF and CR inside" ),
 ];
 
 
@@ -137,7 +138,7 @@ function test() {
     let testCase = testCases[ i ];
 
     let decoder = Base64ArrayBufferToUint8Array.decoder(
-        testCase.source, testCase.skipLineCount, progress, progress.childProgressParts[ i ], 5);
+        testCase.source, testCase.skipLineCount, progress, progress.childProgressParts[ i ], testCase.suspendByteCount);
 
     let testPromise = PartTime.forOf(
       decoder,
@@ -147,7 +148,10 @@ function test() {
       progressReceiver.informDone(r); /* Inform UI progress done. */
       tf.util.assert(
         r.toString() == testCase.result.toString(),
-        `${i}. Skip ${testCase.skipLineCount} lines. ${testCase.note} [${r}] != [${testCase.result}]`);
+        `[${i}]`
+          + ` Skip ${testCase.skipLineCount} lines.`
+          + ` suspendByteCount=${testCase.suspendByteCount}.`
+          + ` ${testCase.note} [${r}] != [${testCase.result}]`);
     });
 
     testPromiseAll.push( testPromise );
