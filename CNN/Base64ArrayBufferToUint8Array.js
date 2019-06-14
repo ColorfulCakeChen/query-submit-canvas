@@ -4,7 +4,6 @@ const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345
 
 //!!! (2019/06/14) Remarked for performance testing.
 // Mapping table for base64 (as Uint8) to index.
-//let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
 let table_base64_Uint8_to_index = new Array(256); // Faster than Uint8Array().
 {
   // For all non-base64 codes, using value greater than 63 (i.e. impossible base64) for identifying them.
@@ -176,7 +175,6 @@ function* decoder(
 
   {
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
-//    let encodedBytes = new Uint8Array( BYTES_PER_DECODE_UNIT );
     let encodedBytes = new Array( BYTES_PER_DECODE_UNIT ); // Faster than Uint8Array().
 //    let oneByte;
 
@@ -188,22 +186,20 @@ function* decoder(
         if (progressToAdvance.accumulation >= sourceByteLength)
           break; // Decoding is done. (Ignore last non-4-bytes.)
 // !!! (2019/06/14) Remarked for use 6th bit the advance byte count.
-//         encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
-//
-//         if (255 === encodedBytes[ j ])
-//           continue; // Skip any non-base64 bytes.
-//
-//         ++j;
+        encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
 
-// !!! (2019/06/14) Remarked for use 6th bit the advance byte count.
-        ;
-
-        if (255 ===
-            (encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ])
-           )
+        if (255 === encodedBytes[ j ])
           continue; // Skip any non-base64 bytes.
 
         ++j;
+
+// !!! (2019/06/14) Remarked for use 6th bit the advance byte count.
+//         if (255 ===
+//             (encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ])
+//            )
+//           continue; // Skip any non-base64 bytes.
+//
+//         ++j;
 
 // !!! (2019/06/14) Remarked for use 6th bit the advance byte count.
 //         oneByte = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
