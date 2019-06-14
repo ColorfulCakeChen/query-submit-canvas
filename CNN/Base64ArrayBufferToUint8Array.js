@@ -52,12 +52,24 @@ function* decoder(
 
   // 0. Initialize.
 
-  // If undefined or null or negative or zero or less than 1, set to default.
-  if ((suspendByteCount | 0) <= 0)
-    suspendByteCount = 1024;
-
   let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
+
+  // Ensure between [0, min(1024, sourceByteLength)].
+  // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
+  //
+  // It is important that the suspendByteCount is not greater than source length. So the
+  // nextYieldAccumulation can be used for boundary checking.
+  suspendByteCount = Math.max(suspendByteCount | 0, Math.min(1024, sourceByteLength));
+
+
+//!!! (2019/06/14 Remarked)
+//   // If undefined or null or negative or zero or less than 1, set to default.
+//   if ((suspendByteCount | 0) <= 0)
+//     suspendByteCount = 1024;
+// //!!!
+//   if (suspendByteCount > sourceByteLength)
+//     suspendByteCount = sourceByteLength;
 
   // Initialize progress.
   progressToAdvance.accumulation = 0;
