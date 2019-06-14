@@ -6,29 +6,81 @@ const BITS_ONES_0_5 = Number.parseInt("00111111", 2);  // 00111111 = 0x3F
 const BITS_ONES_6_7 = Number.parseInt("11000000", 2);  // 11000000 = 0xC0
 const BITS_ONES_6_6 = Number.parseInt("01000000", 2);  // 01000000 = 0x40
 
-// Mapping table for base64 (as Uint8) to index.
+//!!! (2019/06/14) Remarked for performance testing.
+// // Mapping table for base64 (as Uint8) to index.
+// let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
+// {
+//   // For all non-base64 codes, using value greater than 63 (i.e. impossible base64) for identifying them.
+//   for (let i = 0; i < table_base64_Uint8_to_index.length; ++i)
+//     table_base64_Uint8_to_index[ i ] = 255;
 //
-// The value of decoded base64 is between [0, 63]. It uses only lowest 6 bits.
-// The highest 2 bits can be used to store the byte count to advance.
-// It is 0 for illegal base64 codes, and 1 for legal base64 codes.
+//   // For all legal base64 codes, using value between [0, 63].
+//   {
+//     for (let i = 0; i < base64String.length; ++i) {
+//       let codePoint = base64String.codePointAt(i);
+//       table_base64_Uint8_to_index[ codePoint ] = i; 
+//     }
 //
-let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
-{
-  // For all non-base64 codes, the 6th bit always 0.
-  for (let i = 0; i < table_base64_Uint8_to_index.length; ++i)
-    table_base64_Uint8_to_index[ i ] = 0;
+//     // Support decoding URL-safe base64 strings, as Node.js does.
+//     // See: https://en.wikipedia.org/wiki/Base64#URL_applications
+//     table_base64_Uint8_to_index['-'.charCodeAt(0)] = 62;
+//     table_base64_Uint8_to_index['_'.charCodeAt(0)] = 63;
+//   }
+// }
 
-  // For all legal base64 codes, the 6th bit always 1.
+//!!! (2019/06/14) Remarked for performance testing.
+// // Mapping table for base64 (as Uint8) to index.
+// //
+// // The value of decoded base64 is between [0, 63]. It uses only lowest 6 bits.
+// // The highest 2 bits can be used to store the byte count to advance.
+// // It is 0 for illegal base64 codes, and 1 for legal base64 codes.
+// //
+// let table_base64_Uint8_to_index = new Uint8Array( new ArrayBuffer(256) );
+// {
+//   // For all non-base64 codes, the 6th bit always 0.
+//   for (let i = 0; i < table_base64_Uint8_to_index.length; ++i)
+//     table_base64_Uint8_to_index[ i ] = 0;
+//
+//   // For all legal base64 codes, the 6th bit always 1.
+//   {
+//     for (let i = 0; i < base64String.length; ++i) {
+//       let codePoint = base64String.codePointAt(i);
+//       table_base64_Uint8_to_index[ codePoint ] = i | BITS_ONES_6_6; 
+//     }
+//
+//     // Support decoding URL-safe base64 strings, as Node.js does.
+//     // See: https://en.wikipedia.org/wiki/Base64#URL_applications
+//     table_base64_Uint8_to_index['-'.charCodeAt(0)] = 62 | BITS_ONES_6_6;
+//     table_base64_Uint8_to_index['_'.charCodeAt(0)] = 63 | BITS_ONES_6_6;
+//   }
+// }
+
+// Mapping table for base64 (as Uint8) to index.
+let table_arrayBuffer512 = new ArrayBuffer(512);
+let table_base64_Uint8_to_index = new Uint8Array( table_arrayBuffer512,   0, 256 );
+let table_base64_Uint8_to_advanceByteCount = new Uint8Array( table_arrayBuffer512, 255, 256 );
+{
+  // For all non-base64 codes, the advanceByteCount is 0.
+  for (let i = 0; i < table_base64_Uint8_to_index.length; ++i) {
+    table_base64_Uint8_to_index[ i ] = 255;
+    table_base64_Uint8_to_advanceByteCount[ i ] = 0;
+  }
+
+  // All legal base64 codes.
   {
-    for (let i = 0; i < base64String.length; ++i) {
-      let codePoint = base64String.codePointAt(i);
-      table_base64_Uint8_to_index[ codePoint ] = i | BITS_ONES_6_6; 
-    }
+    for (let i = 0; i < base64String.length; ++i)
+      table_base64_Uint8_to_index[ base64String.codePointAt(i) ] = i; 
 
     // Support decoding URL-safe base64 strings, as Node.js does.
     // See: https://en.wikipedia.org/wiki/Base64#URL_applications
-    table_base64_Uint8_to_index['-'.charCodeAt(0)] = 62 | BITS_ONES_6_6;
-    table_base64_Uint8_to_index['_'.charCodeAt(0)] = 63 | BITS_ONES_6_6;
+    table_base64_Uint8_to_index['-'.charCodeAt(0)] = 62;
+    table_base64_Uint8_to_index['_'.charCodeAt(0)] = 63;
+
+    // For all legal base64 codes, the advanceByteCount is 1.
+    for (let i = 0; i < table_base64_Uint8_to_index.length; ++i) {
+      if (255 != table_base64_Uint8_to_index[ i ])
+        table_base64_Uint8_to_advanceByteCount[ i ] = 1;
+    }
   }
 }
 
@@ -162,17 +214,15 @@ function* decoder(
 //         // Hope for increasing parsing performance.
 //         j += ( oneByte & 0xC0 ) >>> 6; // (0xC0 = BITS_ONES_6_7)
 
-        let oneByte = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+        let encodedByte = sourceBytes[ progressToAdvance.accumulation++ ];
 
-        encodedBytes[ j ] = oneByte << 2 >>> 2; // Remove the highest two bits. (0x3F = BITS_ONES_0_5)
+        encodedBytes[ j ] = table_base64_Uint8_to_index[ encodedByte ];  // Base64 to index.
 
-        // The highest two bits is:
-        //   1 for legal base64 code. So the byte count is increased.
-        //   0 for non-base64 code. So the code is skipped (i.e. the byte count is kept).
+        // Base64 to advanceByteCount.
         //
         // This trick control the byte count (i.e. variable j) without using if-condition.
         // Hope for increasing parsing performance.
-        j += ( oneByte << 1 ) >>> 6; // (0xC0 = BITS_ONES_6_7)
+        j += table_base64_Uint8_to_advanceByteCount[ encodedByte ];
       }
 
       if (j != BYTES_PER_DECODE_UNIT)
