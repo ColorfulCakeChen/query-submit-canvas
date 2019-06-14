@@ -94,26 +94,45 @@ function* decoder(
       if (skippedLineCount >= skipLineCount)
         break;                 // Already skip enough lines.
 
-      let rawByte = sourceBytes[ progressToAdvance.accumulation++ ];
+//!!!
+      // (This inner loop combines both source and yield boundary checking. Reducing checking to increase performance.) 
+      while (progressToAdvance.accumulation < nextYieldAccumulation) {
+        if (skippedLineCount >= skipLineCount)
+          break;                 // Already skip enough lines.
 
-      if (13 == rawByte) {     // "\r" (carriage return; CR)
-        ++skippedLineCount;    // One line is skipped.
+        let rawByte = sourceBytes[ progressToAdvance.accumulation++ ];
 
-        // If a LF follows a CR, it is considered as CRLF sequence and viewed as the same one line.
-        if (   (progressToAdvance.accumulation < sourceByteLength)
-            && (10 == sourceBytes[ progressToAdvance.accumulation ])
-           ) { 
-          ++progressToAdvance.accumulation; // Skip it.
+        if (13 == rawByte) {     // "\r" (carriage return; CR)
+          ++skippedLineCount;    // One line is skipped.
+
+          // If a LF follows a CR, it is considered as CRLF sequence and viewed as the same one line.
+          //
+          // Note: It may exceed the nextYieldAccumulation boundary. But should not exceed sourceByteLength.
+          if (   (progressToAdvance.accumulation < sourceByteLength)
+              && (10 == sourceBytes[ progressToAdvance.accumulation ])
+             ) { 
+            ++progressToAdvance.accumulation; // Skip it.
+          }
+
+        } else {
+          if (10 == rawByte)    // "\n" (new line; LF)
+            ++skippedLineCount; // One line is skipped. 
         }
-
-      } else {
-        if (10 == rawByte)    // "\n" (new line; LF)
-          ++skippedLineCount; // One line is skipped. 
       }
+// !!!
+//       // Every suspendByteCount, release CPU time (and report progress).
+//       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
+//         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
+//         yield progressToYield;
+//       }
 
       // Every suspendByteCount, release CPU time (and report progress).
       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
+
+        if (nextYieldAccumulation > sourceByteLength)
+          nextYieldAccumulation = sourceByteLength;
+
         yield progressToYield;
       }
     }
@@ -135,32 +154,51 @@ function* decoder(
 
     while (progressToAdvance.accumulation < sourceByteLength) {
 
-      // Extract 4 source bytes.
-      let j = 0;
-      while (j < BYTES_PER_DECODE_UNIT) {
-        if (progressToAdvance.accumulation >= sourceByteLength)
+//!!!
+      // (This inner loop combines both source and yield boundary checking. Reducing checking to increase performance.) 
+      while (progressToAdvance.accumulation < nextYieldAccumulation) {
+
+        // Extract 4 source bytes.
+        let j = 0;
+        while (j < BYTES_PER_DECODE_UNIT) {
+
+          // Note: It may exceed the nextYieldAccumulation boundary. But should not exceed sourceByteLength.
+          if (progressToAdvance.accumulation >= sourceByteLength)
+            break; // Decoding is done. (Ignore last non-4-bytes.)
+
+          encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+
+          if (255 === encodedBytes[ j ])
+            continue; // Skip any non-base64 bytes.
+
+          ++j;
+        }
+
+        if (j != BYTES_PER_DECODE_UNIT)
           break; // Decoding is done. (Ignore last non-4-bytes.)
 
-        encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
-
-        if (255 === encodedBytes[ j ])
-          continue; // Skip any non-base64 bytes.
-
-        ++j;
+        targetBytes[resultByteCount++] =  (encodedBytes[ 0 ]       << 2) | (encodedBytes[ 1 ] >> 4);
+        targetBytes[resultByteCount++] = ((encodedBytes[ 1 ] & 15) << 4) | (encodedBytes[ 2 ] >> 2);
+        targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
       }
 
-      if (j != BYTES_PER_DECODE_UNIT)
-        break; // Decoding is done. (Ignore last non-4-bytes.)
-
-      targetBytes[resultByteCount++] =  (encodedBytes[ 0 ]       << 2) | (encodedBytes[ 1 ] >> 4);
-      targetBytes[resultByteCount++] = ((encodedBytes[ 1 ] & 15) << 4) | (encodedBytes[ 2 ] >> 2);
-      targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
+//!!!
+//       // Every suspendByteCount, release CPU time (and report progress).
+//       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
+//         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
+//         yield progressToYield;
+//       }
 
       // Every suspendByteCount, release CPU time (and report progress).
       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
+
+        if (nextYieldAccumulation > sourceByteLength)
+          nextYieldAccumulation = sourceByteLength;
+
         yield progressToYield;
       }
+
     }
   }
 
