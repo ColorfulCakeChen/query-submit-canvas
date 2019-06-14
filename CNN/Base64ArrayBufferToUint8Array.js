@@ -52,44 +52,20 @@ function* decoder(
 
   // 0. Initialize.
 
+  // If undefined or null or negative or zero or less than 1, set to default.
+  // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
+  if ((suspendByteCount | 0) <= 0)
+    suspendByteCount = 1024;
+
   let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
-
-//!!! (2019/06/14 Remarked)
-// //  suspendByteCount = Math.max(suspendByteCount | 0, Math.min(1024, sourceByteLength));
-//
-// //  suspendByteCount |= 0;  // Bitwising OR with zero is for converting to integer (if it is undefined or null).
-//
-//   // Ensure between [0, min(1024, sourceByteLength)].
-//   //
-//   // It is important that the suspendByteCount is not greater than source length. So the
-//   // nextYieldAccumulation can be used for boundary checking.
-// //!!!
-// //  suspendByteCount = Math.max(0, Math.min(1024, sourceByteLength));
-//   suspendByteCount = Math.max(0, Math.max(suspendByteCount | 0, Math.min(1024, sourceByteLength)));
-
-  // Ensure between [0, min(1024, sourceByteLength)].
-  //
-//!!!
-  // It is important that the suspendByteCount is not greater than source length. So the
-  // nextYieldAccumulation can be used as boundary checking to reduce checking times and increase performance.
-  {
-    // If undefined or null or negative or zero or less than 1, set to default.
-    if ((suspendByteCount | 0) <= 0)
-      suspendByteCount = 1024;
-//!!!
-//     if (suspendByteCount > sourceByteLength)
-//       suspendByteCount = sourceByteLength;
-  }
 
   // Initialize progress.
   progressToAdvance.accumulation = 0;
   progressToAdvance.total = sourceByteLength;
 
-//!!!
-//  let yieldCount = 0;
-//!!!
-//  let nextYieldAccumulation = suspendByteCount;
+  // It is important that the nextYieldAccumulation is not greater than source length, so that
+  // it can be used as boundary checking to reduce checking times and increase performance.
   let nextYieldAccumulation = Math.min(sourceByteLength, progressToAdvance.accumulation + suspendByteCount);
 
   // 1. Skip specified lines.
@@ -100,7 +76,6 @@ function* decoder(
       if (skippedLineCount >= skipLineCount)
         break;                 // Already skip enough lines.
 
-//!!!
       // (This inner loop combines both source and yield boundary checking. Reducing checking to increase performance.) 
       while (progressToAdvance.accumulation < nextYieldAccumulation) {
         if (skippedLineCount >= skipLineCount)
@@ -125,24 +100,10 @@ function* decoder(
             ++skippedLineCount; // One line is skipped. 
         }
       }
-// !!!
-//       // Every suspendByteCount, release CPU time (and report progress).
-//       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
-//         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
-//         yield progressToYield;
-//       }
 
       // Every suspendByteCount, release CPU time (and report progress).
       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
-//!!!
-//         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
-//
-//         if (nextYieldAccumulation > sourceByteLength)
-//           nextYieldAccumulation = sourceByteLength;
-
         nextYieldAccumulation = Math.min(sourceByteLength, progressToAdvance.accumulation + suspendByteCount);
-//!!!
-//        ++yieldCount;
         yield progressToYield;
       }
     }
@@ -164,7 +125,6 @@ function* decoder(
 
     while (progressToAdvance.accumulation < sourceByteLength) {
 
-//!!!
       // (This inner loop combines both source and yield boundary checking. Reducing checking to increase performance.) 
       while (progressToAdvance.accumulation < nextYieldAccumulation) {
 
@@ -192,23 +152,9 @@ function* decoder(
         targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
       }
 
-//!!!
-//       // Every suspendByteCount, release CPU time (and report progress).
-//       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
-//         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
-//         yield progressToYield;
-//       }
-
       // Every suspendByteCount, release CPU time (and report progress).
       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
-//!!!
-//         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
-//
-//         if (nextYieldAccumulation > sourceByteLength)
-//           nextYieldAccumulation = sourceByteLength;
         nextYieldAccumulation = Math.min(sourceByteLength, progressToAdvance.accumulation + suspendByteCount);
-//!!!
-//        ++yieldCount;
         yield progressToYield;
       }
 
@@ -222,28 +168,6 @@ function* decoder(
   // Because the source may have some non-base64 codes which will be ignored,
   // the result data may be less than target length.
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
-
-//!!! (2019/06/14) Remarked. not feasible.
-//   if (   // Never yield (i.e. never report progress), report at least once for done.
-//          (nextYieldAccumulation == suspendByteCount)
-//
-//          // Or, some advance has been made after last progress report, report for done.
-//       || ((nextYieldAccumulation - progressToAdvance.accumulation) < suspendByteCount)
-//      )
-//     yield progressToYield; // Report the progress has been done (100%).
-//   else
-//     ; // The last progress report is (just luckily) 100%. No need to report the progress again.
-
-//!!! (2019/06/14) Remarked. not workable.
-//   if (   // Never yield (i.e. never report progress), report at least once (for done).
-//          (0 == yieldCount)
-// !!! wrong
-//          // Or, some advance has been made after last progress report, report for done.
-//       || ((nextYieldAccumulation - progressToAdvance.accumulation) < suspendByteCount)
-//      )
-//     yield progressToYield; // Report the progress has been done (100%).
-//   else
-//     ; // The last progress report is (just luckily) 100%. No need to report the progress again.
 
   yield progressToYield; // Report the progress has been done (100%).
 
