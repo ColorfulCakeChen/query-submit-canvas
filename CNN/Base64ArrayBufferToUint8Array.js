@@ -174,7 +174,7 @@ function* decoder(
     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
 //    let encodedBytes = new Uint8Array( new ArrayBuffer( BYTES_PER_DECODE_UNIT ) );
     let encodedBytes = new Uint8Array( BYTES_PER_DECODE_UNIT );
-    let oneByte = new Uint8Array( 1 );
+    let oneByte;
 
     while (progressToAdvance.accumulation < sourceByteLength) {
 
@@ -192,9 +192,9 @@ function* decoder(
 //         ++j;
 
 // !!! (2019/06/14) Remarked for use 6th bit the advance byte count.
-        oneByte[ 0 ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+        oneByte = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
 
-        encodedBytes[ j ] = oneByte[ 0 ] & 0x3F; // Remove the highest two bits. (0x3F = BITS_ONES_0_5)
+        encodedBytes[ j ] = oneByte & 0x3F; // Remove the highest two bits. (0x3F = BITS_ONES_0_5)
 
         // The highest two bits is:
         //   1 for legal base64 code. So the byte count is increased.
@@ -202,7 +202,7 @@ function* decoder(
         //
         // This trick control the byte count (i.e. variable j) without using if-condition.
         // Hope for increasing parsing performance.
-        j += ( oneByte[ 0 ] & 0xC0 ) >>> 6; // (0xC0 = BITS_ONES_6_7)
+        j += ( oneByte & 0xC0 ) >>> 6; // (0xC0 = BITS_ONES_6_7)
 
 // !!! (2019/06/14) Remarked for use 6th bit the advance byte count.
 //         let base64Byte = sourceBytes[ progressToAdvance.accumulation++ ];
