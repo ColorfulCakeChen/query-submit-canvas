@@ -130,11 +130,13 @@ function* decoder(
 
       // Every suspendByteCount, release CPU time (and report progress).
       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
-        nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
+//!!!
+//         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
+//
+//         if (nextYieldAccumulation > sourceByteLength)
+//           nextYieldAccumulation = sourceByteLength;
 
-        if (nextYieldAccumulation > sourceByteLength)
-          nextYieldAccumulation = sourceByteLength;
-
+        nextYieldAccumulation = Math.min(sourceByteLength, progressToAdvance.accumulation + suspendByteCount);
 //!!!
 //        ++yieldCount;
         yield progressToYield;
@@ -195,10 +197,12 @@ function* decoder(
 
       // Every suspendByteCount, release CPU time (and report progress).
       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
-        nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
-
-        if (nextYieldAccumulation > sourceByteLength)
-          nextYieldAccumulation = sourceByteLength;
+//!!!
+//         nextYieldAccumulation = progressToAdvance.accumulation + suspendByteCount;
+//
+//         if (nextYieldAccumulation > sourceByteLength)
+//           nextYieldAccumulation = sourceByteLength;
+        nextYieldAccumulation = Math.min(sourceByteLength, progressToAdvance.accumulation + suspendByteCount);
 //!!!
 //        ++yieldCount;
         yield progressToYield;
