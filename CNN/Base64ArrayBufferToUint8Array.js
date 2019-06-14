@@ -146,7 +146,7 @@ function* decoder(
         //
         // This trick control the byte count (i.e. variable j) without using if-condition.
         // Hope for increasing parsing performance.
-        j += oneByte & BITS_ONES_6_7;
+        j += (oneByte & BITS_ONES_6_7 ) >> 6;
       }
 
       if (j != BYTES_PER_DECODE_UNIT)
