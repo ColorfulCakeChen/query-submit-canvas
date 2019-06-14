@@ -72,6 +72,8 @@ class TestCase {
 }
 
 let testCases = [
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 1, emptyUint8Array, undefined, "Empty. Not enough lines." ),
+
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 0, emptyUint8Array, undefined, "Empty" ),
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 1]), 1, emptyUint8Array, undefined, "LF Empty" ),
   new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 2]), 1, emptyUint8Array,         5, "CR Empty" ),
