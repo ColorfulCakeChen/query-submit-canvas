@@ -149,8 +149,9 @@ function* decoder(
 //         // Hope for increasing parsing performance.
 //         j += ( oneByte & BITS_ONES_6_7 ) >>> 6;
 
-        // Remove the highest two bits.
-        encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation ] ] & BITS_ONES_0_5;
+        let oneByte = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+
+        encodedBytes[ j ] = oneByte & 0x3F; // Remove the highest two bits.
 
         // The highest two bits is:
         //   1 for legal base64 code. So the byte count is increased.
@@ -158,9 +159,7 @@ function* decoder(
         //
         // This trick control the byte count (i.e. variable j) without using if-condition.
         // Hope for increasing parsing performance.
-        j += ( table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation ] ] & BITS_ONES_6_7 ) >>> 6;
-
-        ++progressToAdvance.accumulation;
+        j += ( oneByte & 0xC0 ) >>> 6;
       }
 
       if (j != BYTES_PER_DECODE_UNIT)
