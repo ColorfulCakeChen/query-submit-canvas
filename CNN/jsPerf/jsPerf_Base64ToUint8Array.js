@@ -3,7 +3,7 @@ import * as Random from "../Random.js";
 import * as ValueMax from "../ValueMax.js";
 
 /**
- * @see {@link https://jsperf.com/base64-to-index}
+ * @see {@link https://jsperf.com/base64-to-uint8arrray}
  */
 
 
