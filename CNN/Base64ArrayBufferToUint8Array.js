@@ -169,7 +169,7 @@ function* decoder(
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_0 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
-        } while (255 !== encoded_0);
+        } while (255 === encoded_0);
 
 
         let encoded_1;
@@ -179,7 +179,7 @@ function* decoder(
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_1 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
-        } while (255 !== encoded_1);
+        } while (255 === encoded_1);
 
 
         let encoded_2;
@@ -189,7 +189,7 @@ function* decoder(
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_2 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
-        } while (255 !== encoded_2);
+        } while (255 === encoded_2);
 
 
         let encoded_3;
@@ -199,7 +199,7 @@ function* decoder(
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_3 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
-        } while (255 !== encoded_3);
+        } while (255 === encoded_3);
 
 
         targetBytes[resultByteCount++] =  (encoded_0       << 2) | (encoded_1 >> 4);
