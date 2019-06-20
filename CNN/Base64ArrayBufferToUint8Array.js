@@ -120,10 +120,6 @@ function* decoder(
   let resultByteCount = 0;  // Accumulate the real result byte count.
 
   {
-//!!! (2019/06/20) Remarked for performance test. non-array
-//     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
-//     let encodedBytes = new Array( BYTES_PER_DECODE_UNIT ); // Faster than using Uint8Array().
-
     while (progressToAdvance.accumulation < sourceByteLength) {
 
       nextYieldLoop:
@@ -131,36 +127,11 @@ function* decoder(
       // (This inner loop combines both source and yield boundary checking. Reducing checking to increase performance.) 
       while (progressToAdvance.accumulation < nextYieldAccumulation) {
 
-//!!! (2019/06/20) Remarked for performance test. non-array
-//         // Extract 4 source bytes.
-//         let j = 0;
-//         while (j < BYTES_PER_DECODE_UNIT) {
-//
-//           // Note: It may exceed the nextYieldAccumulation boundary. But should not exceed sourceByteLength.
-//           if (progressToAdvance.accumulation >= sourceByteLength)
-//             break; // Decoding is done. (Ignore last non-4-bytes.)
-//
-//           encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
-//
-//           if (255 === encodedBytes[ j ])
-//             continue; // Skip any non-base64 bytes.
-//
-//           ++j;
-//         }
-//
-//         if (j != BYTES_PER_DECODE_UNIT)
-//           break; // Decoding is done. (Ignore last non-4-bytes.)
-//
-//         targetBytes[resultByteCount++] =  (encodedBytes[ 0 ]       << 2) | (encodedBytes[ 1 ] >> 4);
-//         targetBytes[resultByteCount++] = ((encodedBytes[ 1 ] & 15) << 4) | (encodedBytes[ 2 ] >> 2);
-//         targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
-
-
-
-
-
-        // Extract 4 source bytes.
-//        let encoded_0, encode_1, encoded_2,encoded_3;
+        // Extract 4 source bytes. (A decode unit consists of 4 base64 encoded source bytes.)
+        //
+        // Although it is verbose to loop unrolling manually, it is far more faster
+        // to use 4 local variables than use a 4-element normal array. (Note: the
+        // 4-element normal array is far more faster than a Uint8Array() again).
 
         let encoded_0;
         do {
