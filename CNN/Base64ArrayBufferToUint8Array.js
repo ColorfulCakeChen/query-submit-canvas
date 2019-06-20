@@ -120,36 +120,91 @@ function* decoder(
   let resultByteCount = 0;  // Accumulate the real result byte count.
 
   {
-    const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
-    let encodedBytes = new Array( BYTES_PER_DECODE_UNIT ); // Faster than using Uint8Array().
+//!!! (2019/06/20) Remarked for performance test. non-array
+//     const BYTES_PER_DECODE_UNIT = 4; // A decode unit consists of 4 base64 encoded source bytes.
+//     let encodedBytes = new Array( BYTES_PER_DECODE_UNIT ); // Faster than using Uint8Array().
 
     while (progressToAdvance.accumulation < sourceByteLength) {
+
+      nextYieldLoop:
 
       // (This inner loop combines both source and yield boundary checking. Reducing checking to increase performance.) 
       while (progressToAdvance.accumulation < nextYieldAccumulation) {
 
-        // Extract 4 source bytes.
-        let j = 0;
-        while (j < BYTES_PER_DECODE_UNIT) {
+//!!! (2019/06/20) Remarked for performance test. non-array
+//         // Extract 4 source bytes.
+//         let j = 0;
+//         while (j < BYTES_PER_DECODE_UNIT) {
+//
+//           // Note: It may exceed the nextYieldAccumulation boundary. But should not exceed sourceByteLength.
+//           if (progressToAdvance.accumulation >= sourceByteLength)
+//             break; // Decoding is done. (Ignore last non-4-bytes.)
+//
+//           encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+//
+//           if (255 === encodedBytes[ j ])
+//             continue; // Skip any non-base64 bytes.
+//
+//           ++j;
+//         }
+//
+//         if (j != BYTES_PER_DECODE_UNIT)
+//           break; // Decoding is done. (Ignore last non-4-bytes.)
+//
+//         targetBytes[resultByteCount++] =  (encodedBytes[ 0 ]       << 2) | (encodedBytes[ 1 ] >> 4);
+//         targetBytes[resultByteCount++] = ((encodedBytes[ 1 ] & 15) << 4) | (encodedBytes[ 2 ] >> 2);
+//         targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
 
+
+
+
+
+        // Extract 4 source bytes.
+//        let encoded_0, encode_1, encoded_2,encoded_3;
+
+        let encoded_0;
+        do {
           // Note: It may exceed the nextYieldAccumulation boundary. But should not exceed sourceByteLength.
           if (progressToAdvance.accumulation >= sourceByteLength)
-            break; // Decoding is done. (Ignore last non-4-bytes.)
+            break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encodedBytes[ j ] = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+          encoded_0 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+        } while (255 !== encoded_0);
 
-          if (255 === encodedBytes[ j ])
-            continue; // Skip any non-base64 bytes.
 
-          ++j;
-        }
+        let encoded_1;
+        do {
+          // Note: It may exceed the nextYieldAccumulation boundary. But should not exceed sourceByteLength.
+          if (progressToAdvance.accumulation >= sourceByteLength)
+            break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-        if (j != BYTES_PER_DECODE_UNIT)
-          break; // Decoding is done. (Ignore last non-4-bytes.)
+          encoded_1 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+        } while (255 !== encoded_1);
 
-        targetBytes[resultByteCount++] =  (encodedBytes[ 0 ]       << 2) | (encodedBytes[ 1 ] >> 4);
-        targetBytes[resultByteCount++] = ((encodedBytes[ 1 ] & 15) << 4) | (encodedBytes[ 2 ] >> 2);
-        targetBytes[resultByteCount++] = ((encodedBytes[ 2 ] &  3) << 6) | (encodedBytes[ 3 ] & 63);
+
+        let encoded_2;
+        do {
+          // Note: It may exceed the nextYieldAccumulation boundary. But should not exceed sourceByteLength.
+          if (progressToAdvance.accumulation >= sourceByteLength)
+            break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
+
+          encoded_2 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+        } while (255 !== encoded_2);
+
+
+        let encoded_3;
+        do {
+          // Note: It may exceed the nextYieldAccumulation boundary. But should not exceed sourceByteLength.
+          if (progressToAdvance.accumulation >= sourceByteLength)
+            break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
+
+          encoded_3 = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.accumulation++ ] ];
+        } while (255 !== encoded_3);
+
+
+        targetBytes[resultByteCount++] =  (encoded_0       << 2) | (encoded_1 >> 4);
+        targetBytes[resultByteCount++] = ((encoded_1 & 15) << 4) | (encoded_2 >> 2);
+        targetBytes[resultByteCount++] = ((encoded_2 &  3) << 6) | (encoded_3 & 63);
       }
 
       // Every suspendByteCount, release CPU time (and report progress).
