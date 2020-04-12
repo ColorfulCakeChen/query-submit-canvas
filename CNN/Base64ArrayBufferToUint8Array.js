@@ -34,7 +34,7 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Skip how many lines in the source before decoding.
  *
  * @param {ValueMax.Percentage.Aggregate} progressToYield
- *   Return this when every time yield.
+ *   Return this when every time yield. Usually, this is the container of the progressToAdvance.
  *
  * @param {ValueMax.Percentage.Concrete}  progressToAdvance
  *   Increase this when every time advanced.
