@@ -44,7 +44,7 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Default is 1024 bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
- *   Yield ( value = progressYield ) when ( done = false ).
+ *   Yield ( value = progressToYield ) when ( done = false ).
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function* decoder(
@@ -192,7 +192,7 @@ function* decoder(
   // The resultBytes is a sub-range of target buffer.
   //
   // Because the source may have some non-base64 codes which will be ignored,
-  // the result data may be less than target length.
+  // the length of resultBytes may be less than targetBytes.
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
 
   yield progressToYield; // Report the progress has been done (100%).
