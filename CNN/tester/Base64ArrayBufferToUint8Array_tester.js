@@ -125,15 +125,15 @@ class Progress extends ValueMax.Percentage.Aggregate {
   }
 }
 
-let progress = new Progress();
-let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
-
 window.addEventListener("load", event => {
   ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js").then(test); });
 
 function test() {
   console.log("Base64 decode testing...");
   let delayMilliseconds = 1000;
+
+  let progress = new Progress();
+  let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
   let testPromiseAll = [];
   for (let i = 0; i < testCases.length; ++i) {
