@@ -4,6 +4,18 @@ import * as ValueMax from "../ValueMax.js";
 
 export { NeuralNetwork };
 
+/**
+ * A three layers separable 2D convolution neural network.
+ *
+ * It uses sine as activation function. This is inspired by Fourier transform.
+ *
+ * It does global average before pointwise convolution. The result should be same as global average after
+ * pointwise convolution. The calculation performance, however, should be better because data quantity are
+ * reduced.
+ *
+ * (EDSAP = Embedding_DepthwiseConv_Sine_Avg_PointwiseConv)
+ *
+ */
 class NeuralNetwork {
 
   constructor() {
