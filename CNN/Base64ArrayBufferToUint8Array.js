@@ -27,8 +27,8 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *
  * @param {ArrayBuffer} sourceBase64ArrayBuffer
  *   The input base64 data as ArrayBuffer. If the last bytes not enough 4 bytes, they will be discarded (will
- * not be decoded). If an input byte is not a legal base64 code (i.e. not A..Z, a..z, 0..0, +, /), the byte
- * will be skipped (as if it does not exist). So the input bytes can be separated by new line.
+ * not be decoded). If an input byte is not a legal base64 code (i.e. not A..Z, a..z, 0..9, +, /, -, _), the
+ * byte will be skipped (as if it does not exist). So the input bytes can be separated by new line.
  *
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
