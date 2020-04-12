@@ -37,7 +37,7 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Return this when every time yield. Usually, this is the container of the progressToAdvance.
  *
  * @param {ValueMax.Percentage.Concrete}  progressToAdvance
- *   Increase this when every time advanced.
+ *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
