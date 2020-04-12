@@ -61,6 +61,7 @@ function* decoder(
   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
 
   // Initialize progress.
+  progressToAdvance = progressToAdvance || {};  // If null, using a dummy object instead.
   progressToAdvance.accumulation = 0;
   progressToAdvance.total = sourceByteLength;
 
