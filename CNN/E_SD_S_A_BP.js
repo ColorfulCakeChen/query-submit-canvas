@@ -10,12 +10,12 @@ export { NeuralNetwork };
  * (E_SD_S_A_BP = Embedding, Shared-Depthwise-Conv, Sine, Avgerage, Biased-Pointwise-Conv)
  *
  *
- * - Embedding layer
+ * - Embedding layer (1st layer)
  *
  * Every input channel will be expanded into multiple embedding channels.
  *
  *
- * - Shared Depthwise (2D) Convolution Layer
+ * - Shared Depthwise (2D) Convolution Layer (2nd layer)
  *
  * Every embedding channel (of every input channel) will be expanded into multiple depthwise (2D)
  * convolution channels.
@@ -37,7 +37,7 @@ export { NeuralNetwork };
  * are reduced.
  *
  *
- * - Biased Pointwise Convolution Layer
+ * - Biased Pointwise Convolution Layer (3rd layer)
  *
  * All depthwise channels will be pointwise convoluted. Every output channel is composed by a biased
  * pointwise convolution. The "biased" means there is a bias term (i.e. a constant weight) when convoluting.
