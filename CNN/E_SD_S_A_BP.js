@@ -7,13 +7,42 @@ export { NeuralNetwork };
 /**
  * A three layers separable 2D convolution neural network.
  *
- * It uses sine as activation function. This is inspired by Fourier transform.
+ * (E_SD_S_A_BP = Embedding, Shared-Depthwise-Conv, Sine, Avgerage, Biased-Pointwise-Conv)
+ *
+ *
+ * - Embedding layer
+ *
+ * Every input channel will be expanded into multiple embedding channels.
+ *
+ *
+ * - Shared Depthwise (2D) Convolution Layer
+ *
+ * Every embedding channel (of every input channel) will be expanded into multiple depthwise (2D)
+ * convolution channels.
+ *
+ * This layer is shared. Every embedding channel uses the same depthwise convolution filters. This reduces
+ * the amount of filters parameters.
+ *
+ *
+ * - Sine activation function
+ *
+ * After depthwise convolution, It uses sine as activation function. This is inspired by Fourier transform
+ * which uses trigonometric functions to approximate any function.
+ *
+ *
+ * - Global Average
  *
  * It does global average before pointwise convolution. The result should be same as global average after
- * pointwise convolution. The calculation performance, however, should be better because data quantity are
- * reduced.
+ * pointwise convolution. The calculation performance, however, should be better because the amount of data
+ * are reduced.
  *
- * (EDSAP = Embedding_DepthwiseConv_Sine_Avg_PointwiseConv)
+ *
+ * - Biased Pointwise Convolution Layer
+ *
+ * All depthwise channels will be pointwise convoluted. Every output channel is composed by a biased
+ * pointwise convolution. The "biased" means there is a bias term (i.e. a constant weight) when convoluting.
+ * The bias term is necessary to achieve affine transform. The affine transform is important to complete
+ * trigonometric series. A complete trigonometric series has ability to approximate any function.
  *
  */
 class NeuralNetwork {
