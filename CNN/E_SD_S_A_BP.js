@@ -5,7 +5,7 @@ import * as ValueMax from "../ValueMax.js";
 export { NeuralNetwork };
 
 /**
- * A three layers separable 2D convolution neural network.
+ * A three layers separable convolution neural network.
  *
  * (E_SD_S_A_BP = Embedding, Shared-Depthwise-Conv, Sine, Avgerage, Biased-Pointwise-Conv)
  *
@@ -15,13 +15,14 @@ export { NeuralNetwork };
  * Every input channel will be expanded into multiple embedding channels.
  *
  *
- * - Shared Depthwise (2D) Convolution Layer (2nd layer)
+ * - Shared Depthwise Convolution Layer (2nd layer)
  *
- * Every embedding channel (of every input channel) will be expanded into multiple depthwise (2D)
+ * Every embedding channel (of every input channel) will be expanded into multiple depthwise
  * convolution channels.
  *
  * This layer is shared. Every embedding channel uses the same depthwise convolution filters. This reduces
- * the amount of filters parameters.
+ * the amount of filters' parameters so that speeds up the learning phase. The sharing idea comes from
+ * Google's ALBERT (A Lite BERT) neural network.
  *
  *
  * - Sine activation function
@@ -60,75 +61,141 @@ class NeuralNetwork {
 class Shape {
 
   /**
-   * @param {number} input_Width
-   *   The horizontal size (pixel count) of input image.
+//   * @param {number} inputWidth
+//   *   The horizontal size (pixel count) of input image.
+//   *
+//   * @param {number} inputHeight
+//   *   The vertical size (pixel count) of input image.
    *
-   * @param {number} input_Height
-   *   The vertical size (pixel count) of input image.
+   * @param {number} inputChannelCount
+   *   The channel count of every input pixel. This is the depth of a pixel.
    *
-   * @param {number} inputChannel_Count
-   *   The channel count of every pixel. This is the depth of a pixel.
+   * @param {number} embeddingVocabularyCount_PerInputChannel
+   *   The possible value count for one input channel. For example, this should be 256 for a color image's
+   * red (or green, or blue, or alpha) channel.
    *
-   * @param {number} inputChannel_One_EmbeddingChannel_Count
+   * @param {number} embeddingChannelCount_PerInputChannel
    *   The embedding channel count for every input channel.
    *
-   * @param {number} inputChannel_One_EmbeddingChannel_One_DepthwiseChannel_Count
+   * @param {number} depthwiseChannelCount_PerEmbeddingChannel
    *   The depthwise channel count for every embedding channel (of every input channel).
    *
-   * @param {number} outputChannel_Count
-   *   The output channel count.
+   * @param {number} outputChannelCount
+   *   The output channel count. This is also the count of the pointwise convolution filters.
    *
-   * @param {number} depthwiseFilter_Width
+   * @param {number} depthwiseFilterWidth
    *   The horizontal size (weight count) of the depthwise convolution filter. Default is 3.
    *
-   * @param {number} depthwiseFilter_Height
+   * @param {number} depthwiseFilterHeight
    *   The vertical size (weight count) of the depthwise convolution filter. Default is 3.
    */
   constructor(
-    input_Width,
-    input_Height,
-    inputChannel_Count,
-    inputChannel_One_EmbeddingChannel_Count,
-    inputChannel_One_EmbeddingChannel_One_DepthwiseChannel_Count,
-    outputChannel_Count,
-    depthwiseFilter_Width = 3,
-    depthwiseFilter_Height = 3
+    //inputWidth,
+    //inputHeight,
+    inputChannelCount,
+    embeddingVocabularyCount_PerInputChannel,
+    embeddingChannelCount_PerInputChannel,
+    depthwiseChannelCount_PerEmbeddingChannel,
+    outputChannelCount,
+    depthwiseFilterWidth = 3,
+    depthwiseFilterHeight = 3
   ) {
-    this.input_Width = input_Width;
-    this.input_Height = input_Height;
+    //this.inputWidth = inputWidth;
+    //this.inputHeight = inputHeight;
 
-    this.inputChannel_Count = inputChannel_Count;
+    this.inputChannelCount =                         inputChannelCount;
+    this.embeddingVocabularyCount_PerInputChannel =  embeddingVocabularyCount_PerInputChannel;
+    this.embeddingChannelCount_PerInputChannel =     embeddingChannelCount_PerInputChannel;
+    this.depthwiseChannelCount_PerEmbeddingChannel = depthwiseChannelCount_PerEmbeddingChannel;
+    this.outputChannelCount =                        outputChannelCount;
 
-    this.inputChannel_One_EmbeddingChannel_Count = inputChannel_One_EmbeddingChannel_Count;
-
-    this.inputChannel_One_EmbeddingChannel_One_DepthwiseChannel_Count
-      = inputChannel_One_EmbeddingChannel_One_DepthwiseChannel_Count;
-
-    this.outputChannel_Count = outputChannel_Count;
-
-    this.depthwiseFilter_Width = depthwiseFilter_Width;
-    this.depthwiseFilter_Height = depthwiseFilter_Height;
+    this.depthwiseFilterWidth = depthwiseFilterWidth;
+    this.depthwiseFilterHeight = depthwiseFilterHeight;
   }
 
-  /** @return {number} The embedding channel count for all input channel. */
-  get inputChannel_All_EmbeddingChannel_Count() {
+//   /** @return {number} The total input pixel count (= inputWidth * inputHeight ). */
+//   get pixelCount_AllInput() {
+//     return ( this.inputWidth * this.inputHeight );
+//   }
+//
+//   /** @return {number} The total input weight count (= inputChannelCount * pixelCount_AllInput ). */
+//   get weightCount_AllInput() {
+//     return ( this.inputChannelCount * this.pixelCount_AllInput );
+//   }
+
+  /** @return {number} The embedding vocabulary count for all input channel
+   * (= embeddingVocabularyCount_PerInputChannel * inputChannelCount ).
+   */
+  get embeddingVocabularyCount_AllInputChannel() {
+    return ( this.embeddingVocabularyCount_PerInputChannel * this.inputChannelCount );
   }
 
-  /** @return {number} The depthwise channel count for all embedding channel (of all input channel). */
-  get inputChannel_All_EmbeddingChannel_All_DepthwiseChannel_Count() {
+  /** @return {number} The embedding channel count for all input channel
+   * (= embeddingChannelCount_PerInputChannel * inputChannelCount ).
+   */
+  get embeddingChannelCount_AllInputChannel() {
+    return ( this.embeddingChannelCount_PerInputChannel * this.inputChannelCount );
   }
 
-  /** @return {number} The input pixel count (= input_Width * input_Height ). */
-  get input_Pixel_Count() {
-    return ( this.input_Width * this.input_Height );
+  /** @return {number} The size of one embedding table (all embedding channel of one input channel) 
+   * (= embeddingVocabularyCount_PerInputChannel * embeddingChannelCount_PerInputChannel ).
+   */
+  get weightCount_AllEmbeddingChannel_PerInputChannel() {
+    return ( this.embeddingVocabularyCount_PerInputChannel * this.embeddingChannelCount_PerInputChannel )
   }
 
-  /** @return {number} The depthwise filter size (= depthwiseFilter_Width * depthwiseFilter_Height ). */
-  get depthwiseFilter_One_Weight_Count() {
+  /** @return {number} The size of all embedding table (all embedding channel of all input channel) 
+   * (= weightCount_AllEmbeddingChannel_PerInputChannel * inputChannelCount ).
+   */
+  get weightCount_AllEmbeddingChannel_AllInputChannel() {
+    return ( this.weightCount_AllEmbeddingChannel_PerInputChannel * this.inputChannelCount )
   }
 
-  /** @return {number} The pointwise filter size (= inputChannel_All_EmbeddingChannel_All_DepthwiseChannel_Count + 1 ). */
-  get pointwiseFilter_One_Weight_Count() {
+
+  /** @return {number} The depthwise channel count for all embedding channel (of one input channel)
+   * (= depthwiseChannelCount_PerEmbeddingChannel * embeddingChannelCount_PerInputChannel ).
+   */
+  get depthwiseChannelCount_AllEmbeddingChannel_PerInputChannel() {
+    return ( this.depthwiseChannelCount_PerEmbeddingChannel * this.embeddingChannelCount_PerInputChannel );
+  }
+
+  /** @return {number} The depthwise channel count for all embedding channel (of all input channel)
+   * (= depthwiseChannelCount_AllEmbeddingChannel_PerInputChannel * inputChannelCount ).
+   */
+  get depthwiseChannelCount_AllEmbeddingChannel_AllInputChannel() {
+    return ( this.depthwiseChannelCount_AllEmbeddingChannel_PerInputChannel * this.inputChannelCount );
+  }
+
+  /** @return {number} The size of one depthwise filter (= depthwiseFilterWidth * depthwiseFilterHeight ). */
+  get weightCount_PerDepthwiseFilter() {
+    return ( this.depthwiseFilterWidth * this.depthwiseFilterHeight )
+  }
+!!! ???
+  /** @return {number} The size of all depthwise filter
+   * (= weightCount_PerDepthwiseFilter * depthwiseChannelCount_AllEmbeddingChannel_AllInputChannel ).
+   */
+  get weightCount_AllDepthwiseFilter() {
+    return ( this.weightCount_PerDepthwiseFilter * this.depthwiseChannelCount_AllEmbeddingChannel_AllInputChannel )
+  }
+
+  /** @return {number} The pointwise filter count (= outputChannelCount ). */
+  get pointwiseFilterCount() {
+    return this.outputChannelCount;
+  }
+
+  /** @return {number} The size of one pointwise filter (= depthwiseChannelCount_AllEmbeddingChannel_AllInputChannel + 1 ). */
+  get weightCount_PerPointwiseFilter() {
+    return ( this.depthwiseChannelCount_AllEmbeddingChannel_AllInputChannel + 1 );  // The "+ 1" is for the bias term.
+  }
+
+  /** @return {number} The size of all pointwise filter (= weightCount_PerPointwiseFilter * outputChannelCount ). */
+  get weightCount_AllPointwiseFilter() {
+    return ( this.weightCount_PerPointwiseFilter * this.outputChannelCount );
+  }
+
+  /** @return {number} The size of the whole neural network (= ??? ). */
+  get weightCount_AllPointwiseFilter() {
+//    return (  );
   }
 }
 
