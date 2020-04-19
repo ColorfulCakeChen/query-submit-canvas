@@ -62,10 +62,10 @@ class Shape {
 
   /**
    * @param {number} inputScaleToWidth
-   *   Scale the width of the input image to this horizontal size (pixel count).
+   *   Scale the width of the input image to this horizontal size (pixel count) before convoluting.
    *
    * @param {number} inputScaleToHeight
-   *   Scale the height of the input image to this vertical size (pixel count).
+   *   Scale the height of the input image to this vertical size (pixel count) before convoluting.
    *
    * @param {number} inputChannelCount
    *   The channel count of every input pixel. This is the depth of a pixel.
@@ -166,17 +166,22 @@ class Shape {
     return ( this.depthwiseChannelCount_AllEmbeddingChannel_PerInputChannel * this.inputChannelCount );
   }
 
-  /** @return {number} The size of one depthwise filter (= depthwiseFilterWidth * depthwiseFilterHeight ). */
+  /** @return {number} The weight count of one depthwise filter (= depthwiseFilterWidth * depthwiseFilterHeight ). */
   get weightCount_PerDepthwiseFilter() {
     return ( this.depthwiseFilterWidth * this.depthwiseFilterHeight )
   }
-!!! ???
-  /** @return {number} The size of all depthwise filter
-   * (= weightCount_PerDepthwiseFilter * depthwiseChannelCount_AllEmbeddingChannel_AllInputChannel ).
+
+  /**
+   * This is also the weight count of all depthwise filter of all embedding channel of all input channel,
+   * because they are shared by all embedding channel of all input channel.
+   *
+   * @return {number} The weight count of all depthwise filter of one embedding channel.
+   * (= weightCount_PerDepthwiseFilter * depthwiseChannelCount_PerEmbeddingChannel ).
    */
-  get weightCount_AllDepthwiseFilter() {
-    return ( this.weightCount_PerDepthwiseFilter * this.depthwiseChannelCount_AllEmbeddingChannel_AllInputChannel )
+  get weightCount_AllDepthwiseFilter_PerEmbeddingChannel() {
+    return ( this.weightCount_PerDepthwiseFilter * this.depthwiseChannelCount_PerEmbeddingChannel )
   }
+
 
   /** @return {number} The pointwise filter count (= outputChannelCount ). */
   get pointwiseFilterCount() {
