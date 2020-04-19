@@ -7,7 +7,7 @@ export { NeuralNetwork };
 /**
  * A three layers separable convolution neural network.
  *
- * (E_SD_S_A_BP = Embedding, Shared-Depthwise-Conv, Sine, Avgerage, Biased-Pointwise-Conv)
+ * (E_SD_S_A_BP = Embedding, Shared-Depthwise-Convolution, Sine, Avgerage, Biased-Pointwise-Convolution)
  *
  *
  * - Embedding layer (1st layer)
@@ -61,11 +61,11 @@ class NeuralNetwork {
 class Shape {
 
   /**
-//   * @param {number} inputWidth
-//   *   The horizontal size (pixel count) of input image.
-//   *
-//   * @param {number} inputHeight
-//   *   The vertical size (pixel count) of input image.
+   * @param {number} inputScaleToWidth
+   *   Scale the width of the input image to this horizontal size (pixel count).
+   *
+   * @param {number} inputScaleToHeight
+   *   Scale the height of the input image to this vertical size (pixel count).
    *
    * @param {number} inputChannelCount
    *   The channel count of every input pixel. This is the depth of a pixel.
@@ -90,8 +90,8 @@ class Shape {
    *   The vertical size (weight count) of the depthwise convolution filter. Default is 3.
    */
   constructor(
-    //inputWidth,
-    //inputHeight,
+    inputScaleToWidth,
+    inputScaleToHeight,
     inputChannelCount,
     embeddingVocabularyCount_PerInputChannel,
     embeddingChannelCount_PerInputChannel,
@@ -100,8 +100,8 @@ class Shape {
     depthwiseFilterWidth = 3,
     depthwiseFilterHeight = 3
   ) {
-    //this.inputWidth = inputWidth;
-    //this.inputHeight = inputHeight;
+    this.inputScaleToWidth = inputScaleToWidth;
+    this.inputScaleToHeight = inputScaleToHeight;
 
     this.inputChannelCount =                         inputChannelCount;
     this.embeddingVocabularyCount_PerInputChannel =  embeddingVocabularyCount_PerInputChannel;
