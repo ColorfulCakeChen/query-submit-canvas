@@ -1,4 +1,5 @@
 //import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array.js";
+//import * as tf from "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.7.2/dist/tf.min.js"
 //import * as PartTime from "../PartTime.js";
 import * as ValueMax from "../ValueMax.js";
 
