@@ -57,7 +57,7 @@ class NeuralNetwork {
   /**
    * Return a generator for initializing this NeuralNetwork from the shape and a byte array.
    *
-   * @param {Shape} shape
+   * @param {Architecture} architecture
    *   The shape of the neural network. It affects how the sourceUint8Array will be interpreted (in
    * decoder()), and how the input image will be scaled when every time it is fed into this
    * neural network (in predict()).
@@ -81,10 +81,11 @@ class NeuralNetwork {
    *   Yield ( value = decoded data as NeuralNetwork ) when ( done = true ).
    */
   * decoder(
-    shape, sourceUint8Array, progressToYield, progressToAdvance, suspendWeightCount) {
+    architecture, sourceUint8Array, progressToYield, progressToAdvance, suspendWeightCount) {
 
     // 0. Initialize.
-    this.shape = shape;
+    this.architecture = architecture;
+    this.embeddingTables[] = new Array( , architecture.inputChannelCount );
 
     // If undefined or null or negative or zero or less than 1, set to default.
     // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
@@ -109,7 +110,7 @@ class NeuralNetwork {
     // 1. Decode.
     while (progressToAdvance.accumulation < sourceWeightCount) {
 
-      this.embeddingLayer = tf.tensor( 
+      this.embeddingTables[] = tf.tensor( , architecture.inputChannelCount );
   //!!! ...unfinished...
 
       // Every suspendWeightCount, release CPU time (and report progress).
@@ -121,7 +122,7 @@ class NeuralNetwork {
 
     // 2. Result.
     yield progressToYield; // Report the progress has been done (100%).
-    return resultNeuralNetwork;
+    return this;
   }
 
 
@@ -148,6 +149,8 @@ class NeuralNetwork {
         let theLastAxisId = input.shape.length - 1;
 
         // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+        //
+        // This should be the same as this.architecture.inputChannelCount.
         let splitCount = input.shape[ theLastAxisId ];
 
         // Split the last axis (of input) as many as the shape size (of the last axis).
@@ -158,7 +161,7 @@ class NeuralNetwork {
       // Embedding (looking up the table by vocabulary index).
       const embeddTensor3DArray = vocabularyIndicesArray.map( t => {
 //!!! ...unfinished... should use different embedding table
-        return this.embeddingLayer.gather( t );
+        return this.embeddingTables[?].gather( t );
       });
 
       const r = tf.concat3D( embeddTensor3DArray );
@@ -182,7 +185,7 @@ class NeuralNetwork {
  * Describe the shape of an E_SD_S_A_BP neural network.
  *
  */
-class Shape {
+class Architecture {
 
   /**
    * @param {number} inputScaleToWidth
