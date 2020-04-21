@@ -138,20 +138,29 @@ class NeuralNetwork {
 
     const embeddingResult = tf.tidy( "Embedding", () => {
 
-      // Split the last axis.
-      //
-      // For example, a color image is a height-width-channel tensor3D. The last axis is the r-g-b-a
-      // 4 color channels. Splitting along the last axis (i.e. the color channels) results in an array
-      // [ r, g, b, a ] which has 4 tensor3D (in fact, they are tensor1D).
-      let theLastAxisId = input.shape.length - 1;
-      const splittedTensor3DArray = input.split( input.shape.length, theLastAxisId );
+      // Extract vocabulary indices from input.
+      const vocabularyIndicesArray = tf.tidy( "Embedding_VocabularyIndicesArray", () => {
 
-      const embeddTensor3DArray = splittedTensor3DArray.map( t => {
-//!!! ...unfinished... should use different embedding layer
-        return this.embeddingLayer.gather( t.as1D() );
+        // Split the last axis of input.
+        //
+        // For example, suppose input is a color image (i.e. height-width-color tensor3D). The last
+        // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
+        // results in an array [ r, g, b, a ] which has 4 tensor3D (in fact, they should be
+        // viewed as tensor1D).
+        let theLastAxisId = input.shape.length - 1;
+        const splittedLastAxisArray = input.split( input.shape.length, theLastAxisId );
+
+        // Convert to integer tensor1D for used as tf.gather()'s indices.
+        return splittedLastAxisArray.map( t => t.as1D().toInt() );
       });
 
-      const r = tf.concat( embeddTensor3DArray );
+      // Embedding (looking up the table by vocabulary index).
+      const embeddTensor3DArray = vocabularyIndicesArray.map( t => {
+//!!! ...unfinished... should use different embedding table
+        return this.embeddingLayer.gather( t );
+      });
+
+      const r = tf.concat3D( embeddTensor3DArray );
 //!!! ...unfinished...
       return r.reshape(
           getExactlyOneShape(this.computeOutputShape(input.shape)));
