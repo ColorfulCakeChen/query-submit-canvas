@@ -129,7 +129,7 @@ class NeuralNetwork {
    * Process the input and produce output by using the weights of this neural network.
    *
    * @param {tf.tensor3D} input
-   *   A tensor3D data (e.g. height-width-channel for color image) with shape.inputChannelCount
+   *   A tensor3D data (e.g. height-width-color for color image) with shape.inputChannelCount
    * (e.g. 4 for r-g-b-a) channels.
    *
    * @return {tf.tensor1D} The output as tensor1D.
@@ -141,17 +141,19 @@ class NeuralNetwork {
       // Extract vocabulary indices from input.
       const vocabularyIndicesArray = tf.tidy( "Embedding_VocabularyIndicesArray", () => {
 
-        // Split the last axis of input.
-        //
+        // Split the last axis (of input) as many as the shape size (of the last axis).
+
         // For example, suppose input is a color image (i.e. height-width-color tensor3D). The last
         // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
         // results in an array [ r, g, b, a ] which has 4 tensor3D (in fact, they should be
         // viewed as tensor1D).
         let theLastAxisId = input.shape.length - 1;
-        const splittedLastAxisArray = input.split( input.shape.length, theLastAxisId );
 
-        // Convert to integer tensor1D for used as tf.gather()'s indices.
-        return splittedLastAxisArray.map( t => t.as1D().toInt() );
+        // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+        let splitCount = input.shape[ theLastAxisId ];
+
+        // Split and convert to integer tensor1D, so that they can be used as tf.gather()'s indices.
+        return input.split( splitCount, theLastAxisId ).map( t => t.as1D().toInt() );
       });
 
       // Embedding (looking up the table by vocabulary index).
