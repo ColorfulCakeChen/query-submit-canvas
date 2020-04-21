@@ -3,7 +3,7 @@
 //import * as PartTime from "../PartTime.js";
 //import * as ValueMax from "../ValueMax.js";
 
-export { NeuralNetwork };
+export { NeuralNetwork, Architecture };
 
 /**
  * A three layers separable convolution neural network.
