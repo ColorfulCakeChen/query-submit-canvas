@@ -13,13 +13,14 @@ export { NeuralNetwork };
  *
  * - Embedding layer (1st layer)
  *
- * Every input channel will be expanded into multiple embedding channels.
+ * Every input channel will be expanded into multiple embedding channels. This layer provides context
+ * independent non-linear transformation.
  *
  *
  * - Shared Depthwise Convolution Layer (2nd layer)
  *
  * Every embedding channel (of every input channel) will be expanded into multiple depthwise
- * convolution channels.
+ * convolution channels. This layer provides context dependent linear transformation.
  *
  * This layer is shared. Every embedding channel uses the same depthwise convolution filters. This reduces
  * the amount of filters' parameters so that speeds up the learning phase. The sharing idea comes from
@@ -29,12 +30,13 @@ export { NeuralNetwork };
  * - Sine activation function
  *
  * After depthwise convolution, It uses sine as activation function. This is inspired by Fourier transform
- * which uses trigonometric functions to approximate any function.
+ * which uses trigonometric functions to approximate any function. The depthwise convolutin combined with
+ * this (sine) activation function provides context dependent non-linear transformation.
  *
  *
  * - Global Average
  *
- * It does global average before pointwise convolution. The result should be same as global average after
+ * Before pointwise convolution, doing global average. The result should be same as global average after
  * pointwise convolution. The calculation performance, however, should be better because the amount of data
  * is reduced.
  *
