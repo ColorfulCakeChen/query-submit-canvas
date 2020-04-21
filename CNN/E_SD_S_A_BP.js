@@ -1,7 +1,7 @@
 //import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array.js";
 //import * as tf from "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.7.2/dist/tf.min.js"
 //import * as PartTime from "../PartTime.js";
-import * as ValueMax from "../ValueMax.js";
+//import * as ValueMax from "../ValueMax.js";
 
 export { NeuralNetwork };
 
@@ -51,15 +51,120 @@ export { NeuralNetwork };
  */
 class NeuralNetwork {
 
-  /**
-   * @param {Shape} shape
-   *   The shape of the neural network. It affects how the input image will be scaled when every time it
-   * is fed into this neural network.
-   */
-  constructor(shape) {
-    this.shape = shape;
+  constructor() {
   }
 
+  /**
+   * Return a generator for initializing this NeuralNetwork from the shape and a byte array.
+   *
+   * @param {Shape} shape
+   *   The shape of the neural network. It affects how the sourceUint8Array will be interpreted (in
+   * decoder()), and how the input image will be scaled when every time it is fed into this
+   * neural network (in predict()).
+   *
+   * @param {Uint8Array} sourceUint8Array
+   *   The input data as sourceUint8Array. It will be interpreted as Float32Array. If the last bytes
+   * not enough 4 bytes (to compose a float32), they will be ignored (will not be used).
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressToYield
+   *   Return this when every time yield. Usually, this is the container of the progressToAdvance.
+   *
+   * @param {ValueMax.Percentage.Concrete}  progressToAdvance
+   *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
+   *
+   * @param {Uint32} suspendWeightCount
+   *   Everytime so many weights decoded, yield for releasing CPU time (and reporting progress).
+   *   Default is 1024 bytes.
+   *
+   * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
+   *   Yield ( value = progressToYield ) when ( done = false ).
+   *   Yield ( value = decoded data as NeuralNetwork ) when ( done = true ).
+   */
+  * decoder(
+    shape, sourceUint8Array, progressToYield, progressToAdvance, suspendWeightCount) {
+
+    // 0. Initialize.
+    this.shape = shape;
+
+    // If undefined or null or negative or zero or less than 1, set to default.
+    // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
+    if ((suspendWeightCount | 0) <= 0)
+      suspendWeightCount = 1024;
+
+    // Interpret the source byte array as float32 array.
+    //
+    // floor() for ignoring the last non-4-bytes.
+    let sourceWeightCount = Math.floor( sourceUint8Array.byteLength / Float32Array.BYTES_PER_ELEMENT );
+    let sourceFloat32Array = new Float32Array( sourceUint8Array.buffer, sourceUint8Array.byteOffset, sourceWeightCount );
+
+    // Initialize progress.
+    progressToAdvance = progressToAdvance || {};  // If null, using a dummy object instead.
+    progressToAdvance.accumulation = 0;
+    progressToAdvance.total = sourceWeightCount;
+
+    // It is important that the nextYieldAccumulation is not greater than source length, so that
+    // it can be used as boundary checking to reduce checking times and increase performance.
+    let nextYieldAccumulation = Math.min( sourceWeightCount, progressToAdvance.accumulation + suspendWeightCount );
+
+    // 1. Decode.
+    while (progressToAdvance.accumulation < sourceWeightCount) {
+
+      this.embeddingLayer = tf.tensor( 
+  //!!! ...unfinished...
+
+      // Every suspendWeightCount, release CPU time (and report progress).
+      if (progressToAdvance.accumulation >= nextYieldAccumulation) {
+        nextYieldAccumulation = Math.min( sourceWeightCount, progressToAdvance.accumulation + suspendWeightCount );
+        yield progressToYield;
+      }
+    }
+
+    // 2. Result.
+    yield progressToYield; // Report the progress has been done (100%).
+    return resultNeuralNetwork;
+  }
+
+
+  /**
+   * Process the input and produce output by using the weights of this neural network.
+   *
+   * @param {tf.tensor3D} input
+   *   A tensor3D data (e.g. height-width-channel for color image) with shape.inputChannelCount
+   * (e.g. 4 for r-g-b-a) channels.
+   *
+   * @return {tf.tensor1D} The output as tensor1D.
+   */
+  predict(input) {
+
+    const embeddingResult = tf.tidy( "Embedding", () => {
+
+      // Split the last axis.
+      //
+      // For example, a color image is a height-width-channel tensor3D. The last axis is the r-g-b-a
+      // 4 color channels. Splitting along the last axis (i.e. the color channels) results in an array
+      // [ r, g, b, a ] which has 4 tensor3D (in fact, they are tensor1D).
+      let theLastAxisId = input.shape.length - 1;
+      const splittedTensor3DArray = input.split( input.shape.length, theLastAxisId );
+
+      const embeddTensor3DArray = splittedTensor3DArray.map( t => {
+//!!! ...unfinished... should use different embedding layer
+        return this.embeddingLayer.gather( t.as1D() );
+      });
+
+      const r = tf.concat( embeddTensor3DArray );
+//!!! ...unfinished...
+      return r.reshape(
+          getExactlyOneShape(this.computeOutputShape(input.shape)));
+    });
+
+    const depthwiseResult = tidy( "Depthwise", () => {
+//!!! ...unfinished...
+      const r = ;
+      return r;
+    });
+
+//!!! ...unfinished...
+  }
 }
 
 
@@ -230,72 +335,3 @@ class Shape {
             + this.weightCount_AllPointwiseFilter );
   }
 }
-
-
-/**
- * Create a NeuralNetwork from a byte array.
- *
- * @param {Uint8Array} sourceUint8Array
- *   The input data as sourceUint8Array. It will be interpreted as Float32Array. If the last bytes not enough
- *  4 bytes (to compose a float32), they will be ignored (will not be used).
- *
- * @param {Shape} shape
- *   The shape of the neural network. It affects how the sourceUint8Array will be interpreted.
- *
- * @param {ValueMax.Percentage.Aggregate} progressToYield
- *   Return this when every time yield. Usually, this is the container of the progressToAdvance.
- *
- * @param {ValueMax.Percentage.Concrete}  progressToAdvance
- *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
- *
- * @param {Uint32} suspendWeightCount
- *   Everytime so many weights decoded, yield for releasing CPU time (and reporting progress).
- *   Default is 1024 bytes.
- *
- * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
- *   Yield ( value = progressToYield ) when ( done = false ).
- *   Yield ( value = decoded data as NeuralNetwork ) when ( done = true ).
- */
-NeuralNetwork.decoder = function* (
-  sourceUint8Array, shape, progressToYield, progressToAdvance, suspendWeightCount) {
-
-  // 0. Initialize.
-
-  // If undefined or null or negative or zero or less than 1, set to default.
-  // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
-  if ((suspendWeightCount | 0) <= 0)
-    suspendWeightCount = 1024;
-
-  // Interpret the source byte array as float32 array.
-  //
-  // floor() for ignoring the last non-4-bytes.
-  let sourceWeightCount = Math.floor( sourceUint8Array.byteLength / Float32Array.BYTES_PER_ELEMENT );
-  let sourceFloat32Array = new Float32Array( sourceUint8Array.buffer, sourceUint8Array.byteOffset, sourceWeightCount );
-
-  // Initialize progress.
-  progressToAdvance = progressToAdvance || {};  // If null, using a dummy object instead.
-  progressToAdvance.accumulation = 0;
-  progressToAdvance.total = sourceWeightCount;
-
-  // It is important that the nextYieldAccumulation is not greater than source length, so that
-  // it can be used as boundary checking to reduce checking times and increase performance.
-  let nextYieldAccumulation = Math.min( sourceWeightCount, progressToAdvance.accumulation + suspendWeightCount );
-
-  // 1. Decode.
-  while (progressToAdvance.accumulation < sourceWeightCount) {
-
-//!!! ...unfinished...
-
-    // Every suspendWeightCount, release CPU time (and report progress).
-    if (progressToAdvance.accumulation >= nextYieldAccumulation) {
-      nextYieldAccumulation = Math.min( sourceWeightCount, progressToAdvance.accumulation + suspendWeightCount );
-      yield progressToYield;
-    }
-  }
-
-  // 2. Result.
-  let resultNeuralNetwork = new NeuralNetwork( shape );
-  yield progressToYield; // Report the progress has been done (100%).
-  return resultNeuralNetwork;
-}
-
