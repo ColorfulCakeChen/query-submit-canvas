@@ -84,8 +84,9 @@ class NeuralNetwork {
     architecture, sourceUint8Array, progressToYield, progressToAdvance, suspendWeightCount) {
 
     // 0. Initialize.
+    disposeTensors();
     this.architecture = architecture;
-    this.embeddingTables[] = new Array( , architecture.inputChannelCount );
+    this.embeddingVocabularyTables = new Array( , architecture.inputChannelCount );
 
     // If undefined or null or negative or zero or less than 1, set to default.
     // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
@@ -110,8 +111,10 @@ class NeuralNetwork {
     // 1. Decode.
     while (progressToAdvance.accumulation < sourceWeightCount) {
 
-      this.embeddingTables[] = tf.tensor( , architecture.inputChannelCount );
+      tf.tidy( "E_SD_S_A_BP.NeuralNetwork.decoder.embeddingVocabularyTables", () => {
+        this.embeddingVocabularyTables[] = tf.tensor( , architecture.inputChannelCount );
   //!!! ...unfinished...
+      });
 
       // Every suspendWeightCount, release CPU time (and report progress).
       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
@@ -127,6 +130,17 @@ class NeuralNetwork {
 
 
   /**
+   * Release tensors.
+   */
+  disposeTensors() {
+
+    tf.dispose( this.embeddingVocabularyTables );
+    this.embeddingVocabularyTables = null;
+//!!! ...unfinished...
+  }
+
+
+  /**
    * Process the input and produce output by using the weights of this neural network.
    *
    * @param {tf.tensor3D} input
@@ -136,47 +150,55 @@ class NeuralNetwork {
    * @return {tf.tensor1D} The output as tensor1D.
    */
   predict(input) {
+    const predictResult = tf.tidy( "E_SD_S_A_BP.NeuralNetwork.predict", () => {
 
-    const embeddingResult = tf.tidy( "Embedding", () => {
+      const embeddingResult = tf.tidy( "Embedding", () => {
 
-      // Extract vocabulary indices from input.
-      const vocabularyIndicesArray = tf.tidy( "Embedding_VocabularyIndicesArray", () => {
-
-        // For example, suppose input is a color image (i.e. height-width-color tensor3D). The last
-        // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
-        // results in an array [ r, g, b, a ] which has 4 tensor3D (in fact, they should be
-        // viewed as tensor1D).
-        let theLastAxisId = input.shape.length - 1;
-
-        // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+        // Scale input into specific size.
         //
-        // This should be the same as this.architecture.inputChannelCount.
-        let splitCount = input.shape[ theLastAxisId ];
+        // Use ( alignCorners == true ) for better looking when visualizing.
+        const scaledInput = tf.image.resizeBilinear( input, this.architecture.inputScaleToSize, true );
 
-        // Split the last axis (of input) as many as the shape size (of the last axis).
-        // And then convert to integer tensor1D, so that they can be used as tf.gather()'s indices.
-        return input.split( splitCount, theLastAxisId ).map( t => t.as1D().toInt() );
+        // Extract vocabulary indices from input.
+        const vocabularyIndicesArray = tf.tidy( "VocabularyIndicesArray", () => {
+
+          // For example, suppose input is a color image (i.e. height-width-color tensor3D). The last
+          // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
+          // results in an array [ r, g, b, a ] which has 4 tensor3D (in fact, they should be
+          // viewed as tensor1D).
+          let theLastAxisId = scaledInput.shape.length - 1;
+
+          // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+          //
+          // This should be the same as this.architecture.inputChannelCount.
+          let splitCount = scaledInput.shape[ theLastAxisId ];
+
+          // Split the last axis (of input) as many as the shape size (of the last axis).
+          // And then convert to integer tensor1D, so that they can be used as tf.gather()'s indices.
+          return scaledInput.split( splitCount, theLastAxisId ).map( t => t.as1D().toInt() );
+        });
+
+        // Embedding (looking up the table by vocabulary index).
+        const embeddTensor3DArray = vocabularyIndicesArray.map( t => {
+  //!!! ...unfinished... should use different embedding table
+          return this.embeddingVocabularyTables[?].gather( t );
+        });
+
+        const r = tf.concat3D( embeddTensor3DArray );
+  //!!! ...unfinished...
+        return r.reshape(
+            getExactlyOneShape(this.computeOutputShape(input.shape)));
       });
 
-      // Embedding (looking up the table by vocabulary index).
-      const embeddTensor3DArray = vocabularyIndicesArray.map( t => {
-//!!! ...unfinished... should use different embedding table
-        return this.embeddingTables[?].gather( t );
+      const depthwiseResult = tidy( "DepthwiseConv", () => {
+  //!!! ...unfinished...
+        const r = ;
+        return r;
       });
 
-      const r = tf.concat3D( embeddTensor3DArray );
 //!!! ...unfinished...
-      return r.reshape(
-          getExactlyOneShape(this.computeOutputShape(input.shape)));
     });
-
-    const depthwiseResult = tidy( "Depthwise", () => {
-//!!! ...unfinished...
-      const r = ;
-      return r;
-    });
-
-//!!! ...unfinished...
+    return predictResult;
   }
 }
 
@@ -188,11 +210,9 @@ class NeuralNetwork {
 class Architecture {
 
   /**
-   * @param {number} inputScaleToWidth
-   *   Scale the width of the input image to this horizontal size (pixel count) before convoluting.
-   *
-   * @param {number} inputScaleToHeight
-   *   Scale the height of the input image to this vertical size (pixel count) before convoluting.
+   * @param {Array of number} inputScaleToSize
+   *   Scale the height and width of the input image to size [ inputScaleToHeight, inputScaleToWidth ]
+   * (in pixels) before convoluting.
    *
    * @param {number} inputChannelCount
    *   The channel count of every input pixel. This is the depth of a pixel.
@@ -217,8 +237,7 @@ class Architecture {
    *   The vertical size (weight count) of the depthwise convolution filter. Default is 3.
    */
   constructor(
-    inputScaleToWidth,
-    inputScaleToHeight,
+    inputScaleToSize,
     inputChannelCount,
     embeddingVocabularyCount_PerInputChannel,
     embeddingChannelCount_PerInputChannel,
@@ -227,8 +246,7 @@ class Architecture {
     depthwiseFilterWidth = 3,
     depthwiseFilterHeight = 3
   ) {
-    this.inputScaleToWidth = inputScaleToWidth;
-    this.inputScaleToHeight = inputScaleToHeight;
+    this.inputScaleToSize = inputScaleToSize;
 
     this.inputChannelCount =                         inputChannelCount;
     this.embeddingVocabularyCount_PerInputChannel =  embeddingVocabularyCount_PerInputChannel;
