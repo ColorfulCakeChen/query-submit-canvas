@@ -110,10 +110,11 @@ function StringArrayToEntities(
 
     progressToAdvance.accumulation = 0;
 
-    let byteOffset = integerWeights.byteOffset;
-    let entity = [], inChannels = 4; // Suppose the first layer's input channel count is always RGBA 4 channels.
+    let byteOffset = integerWeights.byteOffset; // Bounded by the integerWeights.
+    let entity = [], inChannels = 4;            // Suppose the first layer's input channel count is always RGBA 4 channels.
 
-    while ( byteOffset < integerWeights.byteLength ) {
+    let legalByteOffsetEnd = integerWeights.byteOffset + integerWeights.byteLength;
+    while ( byteOffset < legalByteOffsetEnd ) {
 
       let layer = new Layer(integerWeights, byteOffset, inChannels, integerToFloat);	
       if (layer.isValid()) {	// Only collect valid layer.
@@ -123,7 +124,7 @@ function StringArrayToEntities(
         byteOffset = layer.byteOffsetEnd;
       } else { // Discard invalid layer. Progress skip to the end of the weight array.
         progressToAdvance.accumulation += ( integerWeights.byteLength - byteOffset );
-        byteOffset = integerWeights.byteLength; // For stopping the loop.
+        byteOffset = legalByteOffsetEnd; // For stopping the loop.
       }
 
       layerCountAfterYield++; // Count even if layer invalid, because CPU time is still used.
@@ -182,34 +183,43 @@ function StringArrayToEntities(
 class Layer {
 
   /**
-   * @param {Float32Array} integerWeights  A Float32Array whose values are all integers.
-   * @param {number}       byteOffsetBegin The position to start to decode from the integerWeights.
-   * @param {number}       inChannels      The input channel count.
-   * @param {Function}     integerToFloat  A function which input an integer and return a floating-point number.
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpret as weights.
+   *
+   * @param {number}       byteOffsetBegin
+   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
+   * (not to the inputFloat32Array.byteOffset).
+   *
+   * @param {number}       inChannels
+   *   The input channel count.
+   *
+   * @param {Function}     weightConverter
+   *   A function which will be applied on every weight (e.g. integerToFloat, or floatToInteger). The result of the
+   * function will replace the original value in the weights[] array. If null, there will be no converting.
    */ 
-  constructor(integerWeights, byteOffsetBegin, inChannels, integerToFloat) {
+  constructor(inputFloat32Array, byteOffsetBegin, inChannels, weightConverter) {
 
-    this.params = new Layer.Params(integerWeights, byteOffsetBegin);
+    this.params = new Layer.Params(inputFloat32Array, byteOffsetBegin);
     if ( !this.params.isValid() )
       return;
 
     this.depthwise = new Layer.Filter(
-      integerWeights, this.params.byteOffsetEnd,
-      [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier], integerToFloat );
+      inputFloat32Array, this.params.byteOffsetEnd,
+      [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier], weightConverter );
 
     if ( !this.depthwise.isValid() )
       return;
 
     this.pointwise = new Layer.Filter(
-      integerWeights, this.depthwise.byteOffsetEnd,
-      [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels], integerToFloat );
+      inputFloat32Array, this.depthwise.byteOffsetEnd,
+      [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels], weightConverter );
 
     if ( !this.pointwise.isValid() )
       return;
 
     this.bias = new Layer.Filter(
-      integerWeights, this.pointwise.byteOffsetEnd,
-      [1, 1, this.params.outChannels], integerToFloat );
+      inputFloat32Array, this.pointwise.byteOffsetEnd,
+      [1, 1, this.params.outChannels], weightConverter );
   }
 
   isValid() {
@@ -224,33 +234,6 @@ class Layer {
 }
 
 /**
- * A class for the CNN layer parameters.
- */
-Layer.Params = class {
-  /**
-   * @param {Float32Array} integerWeights   A Float32Array whose values are all integers.
-   * @param {number}       byteOffsetBegin  The position to start to decode from the integerWeights.
-   */ 
-  constructor(integerWeights, byteOffsetBegin) {
-    this.integerWeights =  integerWeights;
-    this.byteOffsetBegin = byteOffsetBegin;
-  }
-
-  isValid()               { return ( this.byteOffsetEnd <= this.integerWeights.byteLength ) ? true : false; }
-  get byteOffsetEnd()     { return this.byteOffsetBegin + this.weightByteCount; }
-
-  get weightCount()       { return 6; }
-  get weightByteCount()   { return ( this.weightCount * Float32Array.BYTES_PER_ELEMENT ); }
-
-  get filterHeight()      { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 0 ])); }
-  get filterWidth()       { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 1 ])); }
-  get channelMultiplier() { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 2 ])); }
-  get dilationHeight()    { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 3 ])); }
-  get dilationWidth()     { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 4 ])); }
-  get outChannels()       { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 5 ])); }
-}
-
-/**
  * A class for the CNN (depthwise, pointwise and bias) filter.
  */
 Layer.Filter = class {
@@ -258,21 +241,33 @@ Layer.Filter = class {
   /**
    * There will be no filter (this.filter undefined and ( isValid() == false )) when shape is too large (or NaN).
    *
-   * @param {Float32Array} integerWeights  A Float32Array whose values are all integers.
-   * @param {number}       byteOffsetBegin The position to start to decode from the integerWeights.
-   * @param {number[]}     shape           The filter shape (element count for every dimension). The shape.length is dimension.
-   * @param {Function}     integerToFloat  A function which input an integer and return a floating-point number.
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpret as weights.
+   *
+   * @param {number}       byteOffsetBegin
+   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
+   * (not to the inputFloat32Array.byteOffset).
+   *
+   * @param {number[]}     shape
+   *   The filter shape (element count for every dimension). The shape.length is dimension.
+   *
+   * @param {Function}     weightConverter
+   *   A function which will be applied on every weight (e.g. integerToFloat, or floatToInteger). The result of the
+   * function will replace the original value in the weights[] array. If null, there will be no converting.
    */ 
-  constructor(integerWeights, byteOffsetBegin, shape, integerToFloat) {
+  constructor(inputFloat32Array, byteOffsetBegin, shape, weightConverter = null) {
     this.shape =           shape;
     let weightCount =      shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
     let weightByteCount =  weightCount * Float32Array.BYTES_PER_ELEMENT;
     let byteOffsetEnd =    byteOffsetBegin + weightByteCount;  // Exclusive. As the next filter's begin.
 
-    if ( byteOffsetEnd <= integerWeights.byteLength ) {
-      let byteOffset = integerWeights.byteOffset + byteOffsetBegin;
-      this.filter = new Float32Array( integerWeights.buffer, byteOffset, weightCount ); // Share the underlying array buffer.
-      this.filter.forEach((element, i, array) => array[ i ] = integerToFloat(element)); // Convert weight to floating-point number.
+    let legalByteOffsetEnd = inputFloat32Array.byteOffset + inputFloat32Array.byteLength;
+    if ( byteOffsetEnd <= legalByteOffsetEnd ) {
+      // Share the underlying array buffer. But be bounded by the inputFloat32Array.byteLength.
+      this.filter = new Float32Array( inputFloat32Array.buffer, byteOffsetBegin, weightCount );
+
+      if (weightConverter)
+        this.filter.forEach((element, i, array) => array[ i ] = weightConverter(element)); // Convert weights.
     } else {
       // No filter when shape is too large (or NaN).
     }
@@ -284,4 +279,29 @@ Layer.Filter = class {
   get weightByteCount()  { return this.filter.byteLength; }
   get weightCount()      { return this.filter.length; }
 
+}
+
+/**
+ * A class for the CNN layer parameters.
+ */
+Layer.Params = class extends Layer.Filter {
+  /**
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpret as weights.
+   *
+   * @param {number}       byteOffsetBegin
+   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
+   * (not to the inputFloat32Array.byteOffset).
+   */ 
+  constructor(inputFloat32Array, byteOffsetBegin) {
+    // Fixed 6 weights. And convert the value to positive integer.
+    super( inputFloat32Array, byteOffsetBegin, [ 6 ], v => Math.abs(Math.trunc(v)) );
+  }
+
+  get filterHeight()      { return this.filter[ 0 ])); }
+  get filterWidth()       { return this.filter[ 1 ])); }
+  get channelMultiplier() { return this.filter[ 2 ])); }
+  get dilationHeight()    { return this.filter[ 3 ])); }
+  get dilationWidth()     { return this.filter[ 4 ])); }
+  get outChannels()       { return this.filter[ 5 ])); }
 }
