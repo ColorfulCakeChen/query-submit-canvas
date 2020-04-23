@@ -86,7 +86,7 @@ class NeuralNetwork {
     // 0. Initialize.
     disposeTensors();
     this.architecture = architecture;
-    this.embeddingVocabularyTables = new Array( , architecture.inputChannelCount );
+    this.embeddingVocabularyTables = new Array( architecture.inputChannelCount );
 
     // If undefined or null or negative or zero or less than 1, set to default.
     // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
@@ -97,6 +97,7 @@ class NeuralNetwork {
     //
     // floor() for ignoring the last non-4-bytes.
     let sourceWeightCount = Math.floor( sourceUint8Array.byteLength / Float32Array.BYTES_PER_ELEMENT );
+//!!!
     let sourceFloat32Array = new Float32Array( sourceUint8Array.buffer, sourceUint8Array.byteOffset, sourceWeightCount );
 
     // Initialize progress.
