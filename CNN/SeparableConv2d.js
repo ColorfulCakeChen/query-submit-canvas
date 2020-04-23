@@ -237,9 +237,10 @@ Layer.Params = class {
   }
 
   isValid()               { return ( this.byteOffsetEnd <= this.integerWeights.byteLength ) ? true : false; }
-  get byteOffsetEnd()     { return this.byteOffsetBegin + ( this.weightCount * Float32Array.BYTES_PER_ELEMENT ); }
+  get byteOffsetEnd()     { return this.byteOffsetBegin + this.weightByteCount; }
 
   get weightCount()       { return 6; }
+  get weightByteCount()   { return ( this.weightCount * Float32Array.BYTES_PER_ELEMENT ); }
 
   get filterHeight()      { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 0 ])); }
   get filterWidth()       { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 1 ])); }
