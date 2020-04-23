@@ -50,8 +50,6 @@ function StringArrayToEntities(
     return ( integerWeight - weightValueOffset ) / weightValueDivisor;
   }
 
-  let progress = new Progress();
-
   /** Input encodedString, yield progress, return integerWeights.
    *
    * @param {ValueMax.Percentage.Aggregate} progressToYield
@@ -139,6 +137,8 @@ function StringArrayToEntities(
 
   /** Input encodedStringArray, yield progress, return entities. */
   function* entitiesGenerator() {
+
+    let progress = new Progress();
 
     /* Estimate maximum volume for progress reporting. Parsing has two pass: one for converting characters to weight,
        another for converting weights to layer. So the total volume is sum of these two. */
