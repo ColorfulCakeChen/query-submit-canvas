@@ -52,8 +52,15 @@ function StringArrayToEntities(
 
   let progress = new Progress();
 
-  /** Input encodedString, yield progress, return integerWeights. */
-  function* weightGenerator(encodedString) {
+  /** Input encodedString, yield progress, return integerWeights.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressToYield
+   *   Return this when every time yield. Usually, this is the container of the progressToAdvance.
+   *
+   * @param {ValueMax.Percentage.Concrete}  progressToAdvance
+   *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
+   */
+  function* weightGenerator(encodedString, progressToYield, progressToAdvance) {
     let encodedWeightCount = Math.ceil(encodedString.length / encodedWeightCharCount);
     let integerWeights = new Float32Array( encodedWeightCount );
 
@@ -62,8 +69,10 @@ function StringArrayToEntities(
     let weightIndex = 0;
     let weightIndexAfterYield = 0;
 
+    progressToAdvance.accumulation = 0;
+
     for (let encodedChar of encodedString) {
-      progress.CharCount.accumulation++;
+      progressToAdvance.accumulation++;
 
       if (0 == collectedCharCount)
         encodedWeight = encodedChar;
@@ -72,50 +81,59 @@ function StringArrayToEntities(
 
       collectedCharCount++;
       if (collectedCharCount < encodedWeightCharCount)
-        continue; /* Collect characters for one weight. */
+        continue; // Collect characters for one weight.
 
       collectedCharCount = 0;
 
-      integerWeights[ weightIndex ] = parseInt(encodedWeight, encodedWeightBase); /* Decode as integer. */
+      integerWeights[ weightIndex ] = parseInt(encodedWeight, encodedWeightBase); // Decode as integer.
       weightIndex++;
       weightIndexAfterYield++;
 
-      if (weightIndexAfterYield >= suspendWeightCount) { /* Every suspendWeightCount, release CPU time. */
-        yield progress;
+      if (weightIndexAfterYield >= suspendWeightCount) { // Every suspendWeightCount, release CPU time.
+        yield progressToYield;
         weightIndexAfterYield = 0;
       }
     }
 
-    yield progress; /* After weights of one entity converted to integer, release CPU time. */
+    yield progressToYield; // After weights of one entity converted to integer, release CPU time.
     return integerWeights;
   }
 
-  /** Input integerWeights, yield progress, return entity. */
-  function* entityGenerator(integerWeights) {
+  /** Input integerWeights, yield progress, return entity.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressToYield
+   *   Return this when every time yield. Usually, this is the container of the progressToAdvance.
+   *
+   * @param {ValueMax.Percentage.Concrete}  progressToAdvance
+   *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
+   */
+  function* entityGenerator(integerWeights, progressToYield, progressToAdvance) {
     let layerCountAfterYield = 0;
 
-    let entity = [], weightIndex = 0, inChannels = 4; /* Suppose the first layer's input channel count is always RGBA 4 channels. */
+    progressToAdvance.accumulation = 0;
+    
+    let entity = [], weightIndex = 0, inChannels = 4; // Suppose the first layer's input channel count is always RGBA 4 channels.
     while ( weightIndex < integerWeights.length ) {
       let layer = new Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
-      if (layer.isValid()) {	/* Only collect valid layer. */
+      if (layer.isValid()) {	// Only collect valid layer.
         entity.push(layer);
-        progress.WeightCount.accumulation += layer.weightCount;
-        inChannels =  layer.params.outChannels;  /* The next layer's input channel count is the previous layer's output channel count. */
+        progressToAdvance.accumulation += layer.weightCount;
+        inChannels =  layer.params.outChannels;  // The next layer's input channel count is the previous layer's output channel count.
         weightIndex = layer.weightIndexEnd;
-      } else { /* Discard invalid layer. Progress skip to the end of the weight array. */
-        progress.WeightCount.accumulation += ( integerWeights.length - weightIndex );
-        weightIndex = integerWeights.length; /* For stopping the loop. */
+      } else { // Discard invalid layer. Progress skip to the end of the weight array.
+        progressToAdvance.accumulation += ( integerWeights.length - weightIndex );
+        weightIndex = integerWeights.length; // For stopping the loop.
       }
 
-      layerCountAfterYield++; /* Count even if layer invalid, because CPU time is still used. */
+      layerCountAfterYield++; // Count even if layer invalid, because CPU time is still used.
 
-      if (layerCountAfterYield >= suspendLayerCount) { /* Every suspendLayerCount, release CPU time. */
-        yield progress;
+      if (layerCountAfterYield >= suspendLayerCount) { // Every suspendLayerCount, release CPU time.
+        yield progressToYield;
         layerCountAfterYield = 0;
       }
     }
 
-    yield progress; /* After weights of one entity converted to layers, release CPU time. */
+    yield progressToYield; // After weights of one entity converted to layers, release CPU time.
     return entity;
   }
 
@@ -137,8 +155,8 @@ function StringArrayToEntities(
 
     for (let i = 0; i < encodedStringArray.length; i++) {
       let encodedString = encodedStringArray[ i ];
-      let integerWeights = yield* weightGenerator(encodedString);
-      let entity = yield* entityGenerator(integerWeights);
+      let integerWeights = yield* weightGenerator(encodedString, progress, progress.CharCount);
+      let entity = yield* entityGenerator(integerWeights, progress, progress.WeightCount);
       entities[ i ] = entity;
     }
     return entities;
