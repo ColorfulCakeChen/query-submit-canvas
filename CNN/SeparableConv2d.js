@@ -252,20 +252,21 @@ Layer.Filter = class {
   /**
    * There will be no filter (this.filter undefined and ( isValid() == false )) when shape is too large (or NaN).
    *
-   * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
+   * @param {Float32Array} integerWeights     A Float32Array whose values are all integers.
    * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
    * @param {number[]}     shape              The filter shape (element count for every dimension). The shape.length is dimension.
-   * @param {Function}     integerToFloat     An function which input an integer and return a floating-point number.
+   * @param {Function}     integerToFloat     A function which input an integer and return a floating-point number.
    */ 
   constructor(integerWeights, weightIndexBegin, shape, integerToFloat) {
     this.shape =           shape;
     let weightCount =      shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
-    let weightIndexEnd =   weightIndexBegin + weightCount;  /* Exclusive. As the next filter's begin. */
+    let weightIndexEnd =   weightIndexBegin + weightCount;  // Exclusive. As the next filter's begin.
 
     if ( weightIndexEnd <= integerWeights.length ) {
-      let byteOffset = Float32Array.BYTES_PER_ELEMENT * weightIndexBegin;
-      this.filter =    new Float32Array( integerWeights.buffer, byteOffset, weightCount ); /* Share the underlying array buffer. */
-      this.filter.forEach((element, i, array) => array[ i ] = integerToFloat(element)); /* Convert weight to floating-point number. */
+      let extraByteOffset = Float32Array.BYTES_PER_ELEMENT * weightIndexBegin;
+      let byteOffset = integerWeights.byteOffset + extraByteOffset;
+      this.filter = new Float32Array( integerWeights.buffer, byteOffset, weightCount ); // Share the underlying array buffer.
+      this.filter.forEach((element, i, array) => array[ i ] = integerToFloat(element)); // Convert weight to floating-point number.
     } else {
       // No filter when shape is too large (or NaN).
     }
