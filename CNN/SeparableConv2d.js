@@ -15,7 +15,7 @@ class Progress extends ValueMax.Percentage.Aggregate {
 
     super(children);
 
-    [this.download, this.JSONParse, this.CharCount, this.WeightCount] = children;
+    [this.download, this.JSONParse, this.CharCount, this.WeightByteCount] = children;
   }
 }
 
@@ -109,18 +109,21 @@ function StringArrayToEntities(
     let layerCountAfterYield = 0;
 
     progressToAdvance.accumulation = 0;
-    
-    let entity = [], weightIndex = 0, inChannels = 4; // Suppose the first layer's input channel count is always RGBA 4 channels.
-    while ( weightIndex < integerWeights.length ) {
-      let layer = new Layer(integerWeights, weightIndex, inChannels, integerToFloat);	
+
+    let byteOffset = integerWeights.byteOffset;
+    let entity = [], inChannels = 4; // Suppose the first layer's input channel count is always RGBA 4 channels.
+
+    while ( byteOffset < integerWeights.byteLength ) {
+
+      let layer = new Layer(integerWeights, byteOffset, inChannels, integerToFloat);	
       if (layer.isValid()) {	// Only collect valid layer.
         entity.push(layer);
-        progressToAdvance.accumulation += layer.weightCount;
-        inChannels =  layer.params.outChannels;  // The next layer's input channel count is the previous layer's output channel count.
-        weightIndex = layer.weightIndexEnd;
+        progressToAdvance.accumulation += layer.weightByteCount;
+        inChannels = layer.params.outChannels;  // The next layer's input channel count is the previous layer's output channel count.
+        byteOffset = layer.byteOffsetEnd;
       } else { // Discard invalid layer. Progress skip to the end of the weight array.
-        progressToAdvance.accumulation += ( integerWeights.length - weightIndex );
-        weightIndex = integerWeights.length; // For stopping the loop.
+        progressToAdvance.accumulation += ( integerWeights.byteLength - byteOffset );
+        byteOffset = integerWeights.byteLength; // For stopping the loop.
       }
 
       layerCountAfterYield++; // Count even if layer invalid, because CPU time is still used.
@@ -144,8 +147,8 @@ function StringArrayToEntities(
        another for converting weights to layer. So the total volume is sum of these two. */
     for (let encodedString of encodedStringArray) {
       progress.CharCount.total += encodedString.length;
-      let encodedWeightCount = Math.ceil(encodedString.length / encodedWeightCharCount);
-      progress.WeightCount.total += encodedWeightCount;
+      let encodedWeightByteCount = Math.ceil(encodedString.length / encodedWeightCharCount) * Float32Array.BYTES_PER_ELEMENT;
+      progress.WeightByteCount.total += encodedWeightByteCount;
     }
 
     let entityCount = encodedStringArray.length;
@@ -156,7 +159,7 @@ function StringArrayToEntities(
     for (let i = 0; i < encodedStringArray.length; i++) {
       let encodedString = encodedStringArray[ i ];
       let integerWeights = yield* weightGenerator(encodedString, progress, progress.CharCount);
-      let entity = yield* entityGenerator(integerWeights, progress, progress.WeightCount);
+      let entity = yield* entityGenerator(integerWeights, progress, progress.WeightByteCount);
       entities[ i ] = entity;
     }
     return entities;
@@ -179,33 +182,33 @@ function StringArrayToEntities(
 class Layer {
 
   /**
-   * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
-   * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
-   * @param {number}       inChannels         The input channel count.
-   * @param {Function}     integerToFloat     An function which input an integer and return a floating-point number.
+   * @param {Float32Array} integerWeights  A Float32Array whose values are all integers.
+   * @param {number}       byteOffsetBegin The position to start to decode from the integerWeights.
+   * @param {number}       inChannels      The input channel count.
+   * @param {Function}     integerToFloat  A function which input an integer and return a floating-point number.
    */ 
-  constructor(integerWeights, weightIndexBegin, inChannels, integerToFloat) {
+  constructor(integerWeights, byteOffsetBegin, inChannels, integerToFloat) {
 
-    this.params = new Layer.Params(integerWeights, weightIndexBegin);
+    this.params = new Layer.Params(integerWeights, byteOffsetBegin);
     if ( !this.params.isValid() )
       return;
 
     this.depthwise = new Layer.Filter(
-      integerWeights, this.params.weightIndexEnd,
+      integerWeights, this.params.byteOffsetEnd,
       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier], integerToFloat );
 
     if ( !this.depthwise.isValid() )
       return;
 
     this.pointwise = new Layer.Filter(
-      integerWeights, this.depthwise.weightIndexEnd,
+      integerWeights, this.depthwise.byteOffsetEnd,
       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels], integerToFloat );
 
     if ( !this.pointwise.isValid() )
       return;
 
     this.bias = new Layer.Filter(
-      integerWeights, this.pointwise.weightIndexEnd,
+      integerWeights, this.pointwise.byteOffsetEnd,
       [1, 1, this.params.outChannels], integerToFloat );
   }
 
@@ -216,8 +219,8 @@ class Layer {
     return false;
   }
 
-  get weightIndexBegin() { return this.params.weightIndexBegin; }
-  get weightIndexEnd()   { return this.bias.weightIndexEnd; }
+  get byteOffsetBegin() { return this.params.byteOffsetBegin; }
+  get byteOffsetEnd()   { return this.bias.byteOffsetEnd; }
 }
 
 /**
@@ -225,16 +228,18 @@ class Layer {
  */
 Layer.Params = class {
   /**
-   * @param {Float32Array} integerWeights     An Float32Array whose values are all integers.
-   * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
+   * @param {Float32Array} integerWeights   A Float32Array whose values are all integers.
+   * @param {number}       byteOffsetBegin  The position to start to decode from the integerWeights.
    */ 
-  constructor(integerWeights, weightIndexBegin) {
-    this.integerWeights =   integerWeights;
-    this.weightIndexBegin = weightIndexBegin;
+  constructor(integerWeights, byteOffsetBegin) {
+    this.integerWeights =  integerWeights;
+    this.byteOffsetBegin = byteOffsetBegin;
   }
 
-  isValid()               { return ( this.weightIndexEnd <= this.integerWeights.length ) ? true : false; }
-  get weightIndexEnd()    { let ParamCount = 6; return this.weightIndexBegin + ParamCount; }
+  isValid()               { return ( this.byteOffsetEnd <= this.integerWeights.byteLength ) ? true : false; }
+  get byteOffsetEnd()     { return this.byteOffsetBegin + ( this.weightCount * Float32Array.BYTES_PER_ELEMENT ); }
+
+  get weightCount()       { return 6; }
 
   get filterHeight()      { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 0 ])); }
   get filterWidth()       { return Math.abs(Math.trunc(this.integerWeights[ this.weightIndexBegin + 1 ])); }
@@ -252,19 +257,19 @@ Layer.Filter = class {
   /**
    * There will be no filter (this.filter undefined and ( isValid() == false )) when shape is too large (or NaN).
    *
-   * @param {Float32Array} integerWeights     A Float32Array whose values are all integers.
-   * @param {number}       weightIndexBegin   The position to start to decode from the integerWeights.
-   * @param {number[]}     shape              The filter shape (element count for every dimension). The shape.length is dimension.
-   * @param {Function}     integerToFloat     A function which input an integer and return a floating-point number.
+   * @param {Float32Array} integerWeights  A Float32Array whose values are all integers.
+   * @param {number}       byteOffsetBegin The position to start to decode from the integerWeights.
+   * @param {number[]}     shape           The filter shape (element count for every dimension). The shape.length is dimension.
+   * @param {Function}     integerToFloat  A function which input an integer and return a floating-point number.
    */ 
-  constructor(integerWeights, weightIndexBegin, shape, integerToFloat) {
+  constructor(integerWeights, byteOffsetBegin, shape, integerToFloat) {
     this.shape =           shape;
     let weightCount =      shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
-    let weightIndexEnd =   weightIndexBegin + weightCount;  // Exclusive. As the next filter's begin.
+    let weightByteCount =  weightCount * Float32Array.BYTES_PER_ELEMENT;
+    let byteOffsetEnd =    byteOffsetBegin + weightByteCount;  // Exclusive. As the next filter's begin.
 
-    if ( weightIndexEnd <= integerWeights.length ) {
-      let extraByteOffset = Float32Array.BYTES_PER_ELEMENT * weightIndexBegin;
-      let byteOffset = integerWeights.byteOffset + extraByteOffset;
+    if ( byteOffsetEnd <= integerWeights.byteLength ) {
+      let byteOffset = integerWeights.byteOffset + byteOffsetBegin;
       this.filter = new Float32Array( integerWeights.buffer, byteOffset, weightCount ); // Share the underlying array buffer.
       this.filter.forEach((element, i, array) => array[ i ] = integerToFloat(element)); // Convert weight to floating-point number.
     } else {
@@ -273,8 +278,9 @@ Layer.Filter = class {
   }
 
   isValid()              { return ( this.filter ) ? true : false; }
-  get weightIndexBegin() { return this.filter.byteOffset / Float32Array.BYTES_PER_ELEMENT; }
-  get weightIndexEnd()   { return this.weightIndexBegin + this.weightCount; }
+  get byteOffsetBegin()  { return this.filter.byteOffset; }
+  get byteOffsetEnd()    { return this.byteOffsetBegin + this.weightByteCount; }
+  get weightByteCount()  { return this.filter.byteLength; }
   get weightCount()      { return this.filter.length; }
 
 }
