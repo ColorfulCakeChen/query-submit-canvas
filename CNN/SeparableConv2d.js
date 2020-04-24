@@ -206,21 +206,21 @@ class Layer {
       return;
 
     this.depthwise = new Layer.Filter(
-      inputFloat32Array, this.params.byteOffsetEnd, null, 0,
+      inputFloat32Array, this.params.primaryByteOffsetEnd, null, 0,
       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier] );
 
     if ( !this.depthwise.isValid() )
       return;
 
     this.pointwise = new Layer.Filter(
-      inputFloat32Array, this.depthwise.byteOffsetEnd, null, 0,
+      inputFloat32Array, this.depthwise.primaryByteOffsetEnd, null, 0,
       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels] );
 
     if ( !this.pointwise.isValid() )
       return;
 
     this.bias = new Layer.Filter(
-      inputFloat32Array, this.pointwise.byteOffsetEnd, null, 0,
+      inputFloat32Array, this.pointwise.primaryByteOffsetEnd, null, 0,
       [1, 1, this.params.outChannels] );
   }
 
