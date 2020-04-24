@@ -75,7 +75,7 @@ function StringArrayToEntities(
       if (0 == collectedCharCount)
         encodedWeight = encodedChar;
       else
-        encodedWeight += encodedChar;
+        encodedWeight += encodedChar;  // String concatenate.
 
       collectedCharCount++;
       if (collectedCharCount < encodedWeightCharCount)
@@ -83,7 +83,8 @@ function StringArrayToEntities(
 
       collectedCharCount = 0;
 
-      integerWeights[ weightIndex ] = parseInt(encodedWeight, encodedWeightBase); // Decode as integer.
+     // Decode as integer, and then convert to floating-point number.
+      integerWeights[ weightIndex ] = integerToFloat( parseInt(encodedWeight, encodedWeightBase) );
       weightIndex++;
       weightIndexAfterYield++;
 
@@ -116,7 +117,7 @@ function StringArrayToEntities(
     let legalByteOffsetEnd = integerWeights.byteOffset + integerWeights.byteLength;
     while ( byteOffset < legalByteOffsetEnd ) {
 
-      let layer = new Layer(integerWeights, byteOffset, inChannels, integerToFloat);	
+      let layer = new Layer( integerWeights, byteOffset, inChannels );	
       if (layer.isValid()) {	// Only collect valid layer.
         entity.push(layer);
         progressToAdvance.accumulation += layer.weightByteCount;
@@ -192,12 +193,8 @@ class Layer {
    *
    * @param {number}       inChannels
    *   The input channel count.
-   *
-   * @param {Function}     weightConverter
-   *   A function which will be applied on every weight (e.g. integerToFloat, or floatToInteger). The result of the
-   * function will replace the original value in the weights[] array. If null, there will be no converting.
    */ 
-  constructor( inputFloat32Array, byteOffsetBegin, inChannels, weightConverter ) {
+  constructor( inputFloat32Array, byteOffsetBegin, inChannels ) {
 
     this.params = new Layer.Params( inputFloat32Array, byteOffsetBegin );
     if ( !this.params.isValid() )
@@ -205,21 +202,21 @@ class Layer {
 
     this.depthwise = new Layer.Filter(
       inputFloat32Array, this.params.byteOffsetEnd, null, 0,
-      [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier], weightConverter );
+      [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier] );
 
     if ( !this.depthwise.isValid() )
       return;
 
     this.pointwise = new Layer.Filter(
       inputFloat32Array, this.depthwise.byteOffsetEnd, null, 0,
-      [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels], weightConverter );
+      [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels] );
 
     if ( !this.pointwise.isValid() )
       return;
 
     this.bias = new Layer.Filter(
       inputFloat32Array, this.pointwise.byteOffsetEnd, null, 0,
-      [1, 1, this.params.outChannels], weightConverter );
+      [1, 1, this.params.outChannels] );
   }
 
   isValid() {
@@ -234,7 +231,7 @@ class Layer {
 }
 
 /**
- * A class for the CNN (depthwise, pointwise and bias) filter.
+ * A class for the CNN (depthwise, pointwise and bias) filter weights.
  */
 Layer.Filter = class {
 
