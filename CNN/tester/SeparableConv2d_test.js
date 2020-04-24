@@ -93,4 +93,6 @@ function test() {
       tf.util.arraysEqual(layer.bias.weights, intBias),
       `layer.bias.weights ${layer.bias.weights} != ${intBias}`);
   });
+
+  console.log("test() done.");
 }
