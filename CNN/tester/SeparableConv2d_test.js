@@ -94,5 +94,13 @@ function test() {
       `layer.bias.weights ${layer.bias.weights} != ${intBias}`);
   });
 
+  {  // Test fixedParams.
+    let intParams2 = intParams.map( v => v + 10 ); 
+    let layerParams = new SeparableConv2d.Layer.Params( integerWeights, 0, intParams2, 0 );
+    tf.util.assert(
+      tf.util.arraysEqual(layerParams.weights, intParams2),
+      `layerParams.weights ${layerParams.weights} != ${intParams2}`);
+  }
+
   console.log("test() done.");
 }
