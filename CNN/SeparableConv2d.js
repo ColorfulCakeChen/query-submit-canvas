@@ -193,10 +193,15 @@ class Layer {
    *
    * @param {number}       inChannels
    *   The input channel count.
+   *
+   * @param {Array} fixedParams
+   *   If null, extract 6 parameters from inputFloat32Array. If not null, extract 6 parameters from it instead of
+   * inputFloat32Array. If not null, it should have 6 elements: [ filterHeight, filterWidth, channelMultiplier,
+   * dilationHeight, dilationWidth, outChannels ].
    */ 
-  constructor( inputFloat32Array, byteOffsetBegin, inChannels ) {
+  constructor( inputFloat32Array, byteOffsetBegin, inChannels, fixedParams = null ) {
 
-    this.params = new Layer.Params( inputFloat32Array, byteOffsetBegin );
+    this.params = new Layer.Params( inputFloat32Array, byteOffsetBegin, fixedParams );
     if ( !this.params.isValid() )
       return;
 
@@ -335,8 +340,9 @@ Layer.Params = class extends Layer.Filter {
    * (not to the inputFloat32Array.byteOffset).
    *
    * @param {Array} fixedWeights
-   *   If not null, it will be used instead of the super.weights[]. It should have 6 elements: [ filterHeight,
-   * filterWidth, channelMultiplier, dilationHeight, dilationWidth, outChannels ].
+   *   If null, extract 6 parameters from inputFloat32Array. If not null, extract 6 parameters from it instead of
+   * inputFloat32Array. If not null, it should have 6 elements: [ filterHeight, filterWidth, channelMultiplier,
+   * dilationHeight, dilationWidth, outChannels ].
    */
   constructor( inputFloat32Array, byteOffsetBegin, fixedWeights = null ) {
 
@@ -349,7 +355,8 @@ Layer.Params = class extends Layer.Filter {
       secondaryInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
 
     // Extract 6 weights from inputFloat32Array or fixedWeights, and convert the values to positive integer.
-    super( inputFloat32Array, byteOffsetBegin, secondaryInput, 0, [ 6 ], toPositiveInteger );
+    let parameterCount = 6;
+    super( inputFloat32Array, byteOffsetBegin, secondaryInput, 0, [ parameterCount ], toPositiveInteger );
   }
 
   get filterHeight()      { return this.weights[ 0 ])); }
