@@ -70,8 +70,8 @@ function test() {
       `layer.depthwise.shape ${layer.depthwise.shape} != ${theDepthwiseShape}`);
 
     tf.util.assert(
-      tf.util.arraysEqual(layer.depthwise.filter, intDepthwiseFilter),
-      `layer.depthwise.filter ${layer.depthwise.filter} != ${intDepthwiseFilter}`);
+      tf.util.arraysEqual(layer.depthwise.weights, intDepthwiseFilter),
+      `layer.depthwise.filter ${layer.depthwise.weights} != ${intDepthwiseFilter}`);
 
 
     var thePointwiseShape = [1, 1, inChannels * intParams[2], intParams[5]];
@@ -80,8 +80,8 @@ function test() {
       `layer.pointwise.shape ${layer.pointwise.shape} != ${thePointwiseShape}`);
 
     tf.util.assert(
-      tf.util.arraysEqual(layer.pointwise.filter, intPointwiseFilter),
-      `layer.pointwise.filter ${layer.pointwise.filter} != ${intPointwiseFilter}`);
+      tf.util.arraysEqual(layer.pointwise.weights, intPointwiseFilter),
+      `layer.pointwise.filter ${layer.pointwise.weights} != ${intPointwiseFilter}`);
 
 
     var theBiasShape = [1, 1, intParams[5]];
@@ -90,7 +90,7 @@ function test() {
       `layer.bias.shape ${layer.bias.shape} != ${theBiasShape}`);
 
     tf.util.assert(
-      tf.util.arraysEqual(layer.bias.filter, intBias),
-      `layer.bias.filter ${layer.bias.filter} != ${intBias}`);
+      tf.util.arraysEqual(layer.bias.weights, intBias),
+      `layer.bias.filter ${layer.bias.weights} != ${intBias}`);
   });
 }
