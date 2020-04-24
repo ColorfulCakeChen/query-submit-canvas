@@ -359,10 +359,10 @@ Layer.Params = class extends Layer.Filter {
     super( inputFloat32Array, byteOffsetBegin, secondaryInput, 0, [ parameterCount ], toPositiveInteger );
   }
 
-  get filterHeight()      { return this.weights[ 0 ])); }
-  get filterWidth()       { return this.weights[ 1 ])); }
-  get channelMultiplier() { return this.weights[ 2 ])); }
-  get dilationHeight()    { return this.weights[ 3 ])); }
-  get dilationWidth()     { return this.weights[ 4 ])); }
-  get outChannels()       { return this.weights[ 5 ])); }
+  get filterHeight()      { return this.weights[ 0 ]; }
+  get filterWidth()       { return this.weights[ 1 ]; }
+  get channelMultiplier() { return this.weights[ 2 ]; }
+  get dilationHeight()    { return this.weights[ 3 ]; }
+  get dilationWidth()     { return this.weights[ 4 ]; }
+  get outChannels()       { return this.weights[ 5 ]; }
 }
