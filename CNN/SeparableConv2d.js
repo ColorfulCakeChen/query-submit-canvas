@@ -178,7 +178,7 @@ function StringArrayToEntities(
 }
 
 /**
- * A CNN layer contains three filters: depthwise, pointwise and bias.
+ * A CNN layer contains one params (this.params) and three filters: depthwise, pointwise and bias.
  */
 class Layer {
 
@@ -197,28 +197,28 @@ class Layer {
    *   A function which will be applied on every weight (e.g. integerToFloat, or floatToInteger). The result of the
    * function will replace the original value in the weights[] array. If null, there will be no converting.
    */ 
-  constructor(inputFloat32Array, byteOffsetBegin, inChannels, weightConverter) {
+  constructor( inputFloat32Array, byteOffsetBegin, inChannels, weightConverter ) {
 
-    this.params = new Layer.Params(inputFloat32Array, byteOffsetBegin);
+    this.params = new Layer.Params( inputFloat32Array, byteOffsetBegin );
     if ( !this.params.isValid() )
       return;
 
     this.depthwise = new Layer.Filter(
-      inputFloat32Array, this.params.byteOffsetEnd,
+      inputFloat32Array, this.params.byteOffsetEnd, null, 0,
       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier], weightConverter );
 
     if ( !this.depthwise.isValid() )
       return;
 
     this.pointwise = new Layer.Filter(
-      inputFloat32Array, this.depthwise.byteOffsetEnd,
+      inputFloat32Array, this.depthwise.byteOffsetEnd, null, 0,
       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels], weightConverter );
 
     if ( !this.pointwise.isValid() )
       return;
 
     this.bias = new Layer.Filter(
-      inputFloat32Array, this.pointwise.byteOffsetEnd,
+      inputFloat32Array, this.pointwise.byteOffsetEnd, null, 0,
       [1, 1, this.params.outChannels], weightConverter );
   }
 
@@ -239,69 +239,126 @@ class Layer {
 Layer.Filter = class {
 
   /**
-   * There will be no filter (this.filter undefined and ( isValid() == false )) when shape is too large (or NaN).
+   * Create Float32Array weights[] over the primaryInput (or secondaryInput) according to the specific
+   * byteOffsetBegin, shape, and weightConverter.
    *
-   * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpret as weights.
+   * @param {Float32Array} primaryInput
+   *   The primary input Float32Array. It can not be null. Its byteOffset will be checked against
+   * primaryByteOffsetBegin. Its content will be interpret as weights if secondaryInput is null.
+   * Otherwise, its content will be ignored if secondaryInput is not null.
    *
-   * @param {number}       byteOffsetBegin
-   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
-   * (not to the inputFloat32Array.byteOffset).
+   * @param {number}       primaryByteOffsetBegin
+   *   The position to start to decode from the inputPrimary. This is relative to the primaryInput.buffer
+   * (not to the primaryInput.byteOffset). If this value less than primaryInput.byteOffset, the
+   * initialization will fail (i.e. ( isValid() == false ) ).
+   *
+   * @param {Float32Array} secondaryInput
+   *   The secondary input Float32Array. It can be null. If not null, its content will be interpret as weights and
+   * the content of inputPrimary will be ignored.
+   *
+   * @param {number}       secondaryByteOffsetBegin
+   *   The position to start to decode from the inputSecondary. This is relative to the secondaryInput.buffer
+   * (not to the secondaryInput.byteOffset). If this value less than secondaryInput.byteOffset, the
+   * initialization will fail (i.e. ( isValid() == false ) ).
    *
    * @param {number[]}     shape
-   *   The filter shape (element count for every dimension). The shape.length is dimension.
+   *   The filter shape (element count for every dimension). The shape.length is dimension. The initialization will
+   * fail (i.e. ( isValid() == false ) ) if shape is too large (or NaN) (exceeds the primaryInput (or, inputSecondary
+   * if not null) bounding).
    *
    * @param {Function}     weightConverter
    *   A function which will be applied on every weight (e.g. integerToFloat, or floatToInteger). The result of the
    * function will replace the original value in the weights[] array. If null, there will be no converting.
    */ 
-  constructor(inputFloat32Array, byteOffsetBegin, shape, weightConverter = null) {
-    this.shape =           shape;
-    let weightCount =      shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
-    let weightByteCount =  weightCount * Float32Array.BYTES_PER_ELEMENT;
-    let byteOffsetEnd =    byteOffsetBegin + weightByteCount;  // Exclusive. As the next filter's begin.
+  constructor(
+    primaryInput, primaryByteOffsetBegin, secondaryInput, secondaryByteOffsetBegin, shape, weightConverter = null ) {
 
-    let legalByteOffsetEnd = inputFloat32Array.byteOffset + inputFloat32Array.byteLength;
-    if ( byteOffsetEnd <= legalByteOffsetEnd ) {
-      // Share the underlying array buffer. But be bounded by the inputFloat32Array.byteLength.
-      this.filter = new Float32Array( inputFloat32Array.buffer, byteOffsetBegin, weightCount );
+    this.primaryInput =   primaryInput;
+    this.secondaryInput = secondaryInput;
+    this.shape =          shape;
 
-      if (weightConverter)
-        this.filter.forEach((element, i, array) => array[ i ] = weightConverter(element)); // Convert weights.
+    if ( null == primaryInput )
+      return;  // Failed, if no primary input.
+    if ( primaryByteOffsetBegin < primaryInput.byteOffset )
+      return;  // Failed, if the primary beginning position is illegal (less than bounding).
+    if ( secondaryInput && ( secondaryByteOffsetBegin < secondaryInput.byteOffset ) )
+      return;  // Failed, if the secondary beginning position is illegal (less than bounding).
+
+    let weightCount =     shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
+    let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
+
+    let input, byteOffsetBegin, byteOffsetEnd;
+    if ( null == secondaryInput ) {
+      input =                         primaryInput;
+      byteOffsetBegin =
+      this.primaryByteOffsetBegin =   primaryByteOffsetBegin;
+      byteOffsetEnd =
+      this.primaryByteOffsetEnd =     primaryByteOffsetBegin + weightByteCount;    // Exclusive. As the next filter's begin.
+      this.secondaryByteOffsetBegin = 0;
+      this.secondaryByteOffsetEnd =   0;
     } else {
-      // No filter when shape is too large (or NaN).
+      input =                         secondaryInput;
+      this.primaryByteOffsetBegin =   0;
+      this.primaryByteOffsetEnd =     0;
+      byteOffsetBegin =
+      this.secondaryByteOffsetBegin = secondaryByteOffsetBegin;
+      byteOffsetEnd =
+      this.secondaryByteOffsetEnd =   secondaryByteOffsetBegin + weightByteCount;  // Exclusive. As the next filter's begin.
     }
+
+    let legalByteOffsetEnd = input.byteOffset + input.byteLength;
+
+    if ( byteOffsetEnd > legalByteOffsetEnd )
+      return;  // Failed, if shape is too large (or NaN).
+
+    // Share the underlying array buffer. But be bounded by the input.byteLength.
+    this.weights = new Float32Array( input.buffer, byteOffsetBegin, weightCount );
+
+    if (weightConverter)  // Convert weights.
+      this.weights.forEach( ( element, i, array ) => array[ i ] = weightConverter( element ) );
   }
 
-  isValid()              { return ( this.filter ) ? true : false; }
-  get byteOffsetBegin()  { return this.filter.byteOffset; }
-  get byteOffsetEnd()    { return this.byteOffsetBegin + this.weightByteCount; }
-  get weightByteCount()  { return this.filter.byteLength; }
-  get weightCount()      { return this.filter.length; }
+  isValid()                      { return ( this.weights ) ? true : false; }
 
+  get weightByteCount()          { return this.weights.byteLength; }
+  get weightCount()              { return this.weights.length; }
 }
 
 /**
- * A class for the CNN layer parameters.
+ * A class for the CNN separable convolution (2D) layer parameters.
  */
 Layer.Params = class extends Layer.Filter {
+
   /**
    * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpret as weights.
+   *   A Float32Array whose values will be interpret as weights. The weights will be convert to positive integer.
    *
    * @param {number}       byteOffsetBegin
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
-   */ 
-  constructor(inputFloat32Array, byteOffsetBegin) {
-    // Fixed 6 weights. And convert the value to positive integer.
-    super( inputFloat32Array, byteOffsetBegin, [ 6 ], v => Math.abs(Math.trunc(v)) );
+   *
+   * @param {Array} fixedWeights
+   *   If not null, it will be used instead of the super.weights[]. It should have 6 elements: [ filterHeight,
+   * filterWidth, channelMultiplier, dilationHeight, dilationWidth, outChannels ].
+   */
+  constructor( inputFloat32Array, byteOffsetBegin, fixedWeights = null ) {
+
+    function toPositiveInteger( v ) {
+      return Math.abs( Math.trunc( v ) );
+    }
+
+    let secondaryInput;
+    if ( fixedWeights )
+      secondaryInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
+
+    // Extract 6 weights from inputFloat32Array or fixedWeights, and convert the values to positive integer.
+    super( inputFloat32Array, byteOffsetBegin, secondaryInput, 0, [ 6 ], toPositiveInteger );
   }
 
-  get filterHeight()      { return this.filter[ 0 ])); }
-  get filterWidth()       { return this.filter[ 1 ])); }
-  get channelMultiplier() { return this.filter[ 2 ])); }
-  get dilationHeight()    { return this.filter[ 3 ])); }
-  get dilationWidth()     { return this.filter[ 4 ])); }
-  get outChannels()       { return this.filter[ 5 ])); }
+  get filterHeight()      { return this.weights[ 0 ])); }
+  get filterWidth()       { return this.weights[ 1 ])); }
+  get channelMultiplier() { return this.weights[ 2 ])); }
+  get dilationHeight()    { return this.weights[ 3 ])); }
+  get dilationWidth()     { return this.weights[ 4 ])); }
+  get outChannels()       { return this.weights[ 5 ])); }
 }
