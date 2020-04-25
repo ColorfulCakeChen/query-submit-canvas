@@ -206,21 +206,21 @@ class Layer {
       return;
 
     this.depthwise = new Layer.Filter(
-      inputFloat32Array, this.params.primaryByteOffsetEnd, null, 0,
+      inputFloat32Array, this.params.defaultByteOffsetEnd, null, 0,
       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier] );
 
     if ( !this.depthwise.isValid() )
       return;
 
     this.pointwise = new Layer.Filter(
-      inputFloat32Array, this.depthwise.primaryByteOffsetEnd, null, 0,
+      inputFloat32Array, this.depthwise.defaultByteOffsetEnd, null, 0,
       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels] );
 
     if ( !this.pointwise.isValid() )
       return;
 
     this.bias = new Layer.Filter(
-      inputFloat32Array, this.pointwise.primaryByteOffsetEnd, null, 0,
+      inputFloat32Array, this.pointwise.defaultByteOffsetEnd, null, 0,
       [1, 1, this.params.outChannels] );
   }
 
@@ -241,22 +241,22 @@ class Layer {
 Layer.Filter = class {
 
   /**
-   * Create Float32Array weights[] over the primaryInput (or secondaryInput) according to the specific
+   * Create Float32Array weights[] over the defaultInput (or privilegeInput) according to the specific
    * byteOffsetBegin, shape, and weightConverter.
    *
-   * @param {Float32Array} primaryInput
-   *   The primary input Float32Array. It can not be null. Its byteOffset will be checked against
-   * primaryByteOffsetBegin. Its content will be interpret as weights if secondaryInput is null.
-   * Otherwise, its content will be ignored if secondaryInput is not null.
+   * @param {Float32Array} defaultInput
+   *   The default input Float32Array. It can not be null. Its byteOffset will be checked against
+   * defaultByteOffsetBegin. Its content will be interpret as weights if privilegeInput is null.
+   * Otherwise, its content will be ignored if privilegeInput is not null.
    *
-   * @param {number}       primaryByteOffsetBegin
-   *   The position to start to decode from the inputPrimary. This is relative to the primaryInput.buffer
-   * (not to the primaryInput.byteOffset). If this value less than primaryInput.byteOffset, the
+   * @param {number}       defaultByteOffsetBegin
+   *   The position to start to decode from the inputdefault. This is relative to the defaultInput.buffer
+   * (not to the defaultInput.byteOffset). If this value less than defaultInput.byteOffset, the
    * initialization will fail (i.e. ( isValid() == false ) ).
    *
-   * @param {Float32Array} secondaryInput
-   *   The secondary input Float32Array. It can be null. If not null, its content will be interpret as weights and
-   * the content of inputPrimary will be ignored.
+   * @param {Float32Array} privilegeInput
+   *   The privilege input Float32Array. It can be null. If not null, its content will be interpret as weights and
+   * the content of defaultInput will be ignored.
    *
    * @param {number}       secondaryByteOffsetBegin
    *   The position to start to decode from the inputSecondary. This is relative to the secondaryInput.buffer
@@ -265,7 +265,7 @@ Layer.Filter = class {
    *
    * @param {number[]}     shape
    *   The filter shape (element count for every dimension). The shape.length is dimension. The initialization will
-   * fail (i.e. ( isValid() == false ) ) if shape is too large (or NaN) (exceeds the primaryInput (or, inputSecondary
+   * fail (i.e. ( isValid() == false ) ) if shape is too large (or NaN) (exceeds the defaultInput (or, inputSecondary
    * if not null) bounding).
    *
    * @param {Function}     weightConverter
@@ -273,39 +273,39 @@ Layer.Filter = class {
    * function will replace the original value in the weights[] array. If null, there will be no converting.
    */ 
   constructor(
-    primaryInput, primaryByteOffsetBegin, secondaryInput, secondaryByteOffsetBegin, shape, weightConverter = null ) {
+    defaultInput, defaultByteOffsetBegin, privilegeInput, privilegeByteOffsetBegin, shape, weightConverter = null ) {
 
-    this.primaryInput =   primaryInput;
-    this.secondaryInput = secondaryInput;
+    this.defaultInput =   defaultInput;
+    this.privilegeInput = privilegeInput;
     this.shape =          shape;
 
-    if ( null == primaryInput )
-      return;  // Failed, if no primary input.
-    if ( primaryByteOffsetBegin < primaryInput.byteOffset )
-      return;  // Failed, if the primary beginning position is illegal (less than bounding).
-    if ( secondaryInput && ( secondaryByteOffsetBegin < secondaryInput.byteOffset ) )
-      return;  // Failed, if the secondary beginning position is illegal (less than bounding).
+    if ( null == defaultInput )
+      return;  // Failed, if no default input.
+    if ( defaultByteOffsetBegin < defaultInput.byteOffset )
+      return;  // Failed, if the default beginning position is illegal (less than bounding).
+    if ( privilegeInput && ( privilegeByteOffsetBegin < privilegeInput.byteOffset ) )
+      return;  // Failed, if the privilege beginning position is illegal (less than bounding).
 
     let weightCount =     shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
     let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
 
     let input, byteOffsetBegin, byteOffsetEnd;
-    if ( null == secondaryInput ) {
-      input =                         primaryInput;
+    if ( null == privilegeInput ) {
+      input =                         defaultInput;
       byteOffsetBegin =
-      this.primaryByteOffsetBegin =   primaryByteOffsetBegin;
+      this.defaultByteOffsetBegin =   defaultByteOffsetBegin;
       byteOffsetEnd =
-      this.primaryByteOffsetEnd =     primaryByteOffsetBegin + weightByteCount;    // Exclusive. As the next filter's begin.
-      this.secondaryByteOffsetBegin = 0;
-      this.secondaryByteOffsetEnd =   0;
+      this.defaultByteOffsetEnd =     defaultByteOffsetBegin + weightByteCount;    // Exclusive. As the next filter's begin.
+      this.privilegeByteOffsetBegin = 0;
+      this.privilegeByteOffsetEnd =   0;
     } else {
-      input =                         secondaryInput;
-      this.primaryByteOffsetBegin =   0;
-      this.primaryByteOffsetEnd =     0;
+      input =                         privilegeInput;
+      this.defaultByteOffsetBegin =   0;
+      this.defaultByteOffsetEnd =     0;
       byteOffsetBegin =
-      this.secondaryByteOffsetBegin = secondaryByteOffsetBegin;
+      this.privilegeByteOffsetBegin = privilegeByteOffsetBegin;
       byteOffsetEnd =
-      this.secondaryByteOffsetEnd =   secondaryByteOffsetBegin + weightByteCount;  // Exclusive. As the next filter's begin.
+      this.privilegeByteOffsetEnd =   privilegeByteOffsetBegin + weightByteCount;  // Exclusive. As the next filter's begin.
     }
 
     let legalByteOffsetEnd = input.byteOffset + input.byteLength;
@@ -350,13 +350,13 @@ Layer.Params = class extends Layer.Filter {
       return Math.abs( Math.trunc( v ) );
     }
 
-    let secondaryInput;
+    let privilegeInput;
     if ( fixedWeights )
-      secondaryInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
+      privilegeInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
 
     // Extract 6 weights from inputFloat32Array or fixedWeights, and convert the values to positive integer.
     let parameterCount = 6;
-    super( inputFloat32Array, byteOffsetBegin, secondaryInput, 0, [ parameterCount ], toPositiveInteger );
+    super( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCount ], toPositiveInteger );
   }
 
   get filterHeight()      { return this.weights[ 0 ]; }
