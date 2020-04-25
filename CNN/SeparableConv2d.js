@@ -244,28 +244,31 @@ Layer.Filter = class {
    * Create Float32Array weights[] over the defaultInput (or privilegeInput) according to the specific
    * byteOffsetBegin, shape, and weightConverter.
    *
+   * The defaultInput and privilegeInput can not both be null. If one of them is null, the non-null is used.
+   * If both are non-null, the privilegeInput will be used.
+   *
    * @param {Float32Array} defaultInput
-   *   The default input Float32Array. It can not be null. Its byteOffset will be checked against
-   * defaultByteOffsetBegin. Its content will be interpret as weights if privilegeInput is null.
-   * Otherwise, its content will be ignored if privilegeInput is not null.
+   *   The default input Float32Array. Its byteOffset will be checked against defaultByteOffsetBegin.
+   * Its content will be interpret as weights if privilegeInput is null. Otherwise, its content
+   * will be ignored if privilegeInput is not null.
    *
    * @param {number}       defaultByteOffsetBegin
-   *   The position to start to decode from the inputdefault. This is relative to the defaultInput.buffer
+   *   The position to start to decode from the defaultInput. This is relative to the defaultInput.buffer
    * (not to the defaultInput.byteOffset). If this value less than defaultInput.byteOffset, the
    * initialization will fail (i.e. ( isValid() == false ) ).
    *
    * @param {Float32Array} privilegeInput
-   *   The privilege input Float32Array. It can be null. If not null, its content will be interpret as weights and
+   *   The privilege input Float32Array. If not null, its content will be interpret as weights and
    * the content of defaultInput will be ignored.
    *
-   * @param {number}       secondaryByteOffsetBegin
-   *   The position to start to decode from the inputSecondary. This is relative to the secondaryInput.buffer
-   * (not to the secondaryInput.byteOffset). If this value less than secondaryInput.byteOffset, the
+   * @param {number}       privilegeByteOffsetBegin
+   *   The position to start to decode from the privilegeInput. This is relative to the privilegeInput.buffer
+   * (not to the privilegeInput.byteOffset). If this value less than privilegeInput.byteOffset, the
    * initialization will fail (i.e. ( isValid() == false ) ).
    *
    * @param {number[]}     shape
    *   The filter shape (element count for every dimension). The shape.length is dimension. The initialization will
-   * fail (i.e. ( isValid() == false ) ) if shape is too large (or NaN) (exceeds the defaultInput (or, inputSecondary
+   * fail (i.e. ( isValid() == false ) ) if shape is too large (or NaN) (exceeds the defaultInput (or, privilegeInput
    * if not null) bounding).
    *
    * @param {Function}     weightConverter
@@ -279,33 +282,45 @@ Layer.Filter = class {
     this.privilegeInput = privilegeInput;
     this.shape =          shape;
 
-    if ( null == defaultInput )
-      return;  // Failed, if no default input.
-    if ( defaultByteOffsetBegin < defaultInput.byteOffset )
-      return;  // Failed, if the default beginning position is illegal (less than bounding).
-    if ( privilegeInput && ( privilegeByteOffsetBegin < privilegeInput.byteOffset ) )
-      return;  // Failed, if the privilege beginning position is illegal (less than bounding).
-
     let weightCount =     shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
     let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
 
-    let input, byteOffsetBegin, byteOffsetEnd;
-    if ( null == privilegeInput ) {
-      input =                         defaultInput;
-      byteOffsetBegin =
-      this.defaultByteOffsetBegin =   defaultByteOffsetBegin;
-      byteOffsetEnd =
-      this.defaultByteOffsetEnd =     defaultByteOffsetBegin + weightByteCount;    // Exclusive. As the next filter's begin.
-      this.privilegeByteOffsetBegin = 0;
-      this.privilegeByteOffsetEnd =   0;
-    } else {
+    let input, byteOffsetBegin;
+    let byteOffsetEnd; // Exclusive. As the next filter's begin.
+
+    if ( privilegeInput ) {       // privilegeInput first.
+
+      if ( privilegeByteOffsetBegin < privilegeInput.byteOffset )
+        return;  // Failed, the privilege beginning position is illegal (less than bounding).
+
       input =                         privilegeInput;
-      this.defaultByteOffsetBegin =   0;
-      this.defaultByteOffsetEnd =     0;
+      this.defaultByteOffsetBegin =
+      this.defaultByteOffsetEnd =     defaultByteOffsetBegin;
+
       byteOffsetBegin =
       this.privilegeByteOffsetBegin = privilegeByteOffsetBegin;
+
       byteOffsetEnd =
-      this.privilegeByteOffsetEnd =   privilegeByteOffsetBegin + weightByteCount;  // Exclusive. As the next filter's begin.
+      this.privilegeByteOffsetEnd =   privilegeByteOffsetBegin + weightByteCount;
+
+    } else if ( defaultInput ) {  // defaultInput second.
+
+        if ( defaultByteOffsetBegin < defaultInput.byteOffset )
+          return;  // Failed, the default beginning position is illegal (less than bounding).
+
+        input =                         privilegeInput;
+
+        byteOffsetBegin =
+        this.defaultByteOffsetBegin =   defaultByteOffsetBegin;
+
+        byteOffsetEnd =
+        this.defaultByteOffsetEnd =     defaultByteOffsetBegin + weightByteCount;
+
+        this.privilegeByteOffsetBegin =
+        this.privilegeByteOffsetEnd =   privilegeByteOffsetBegin;
+
+    } else {
+      return;  // Failed, privilege and default input both are null.
     }
 
     let legalByteOffsetEnd = input.byteOffset + input.byteLength;
