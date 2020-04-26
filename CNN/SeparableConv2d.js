@@ -237,6 +237,22 @@ class Layer {
 
 /**
  * A class for the CNN (depthwise, pointwise and bias) filter weights.
+ *
+ * @member {number} defaultByteOffsetBegin
+ *   The weights[] begins at defaultInput's defaultByteOffsetBegin (relative to defaultInput.buffer,
+ * not to defaultInput.byteOffset).
+ *
+ * @member {number} defaultByteOffsetEnd
+ *   The weights[] ends at defaultInput's defaultByteOffsetEnd (relative to defaultInput.buffer,
+ * not to defaultInput.byteOffset) exclusively.
+ *
+ * @member {number} privilegeByteOffsetBegin
+ *   The weights[] begins at privilegeInput's privilegeByteOffsetBegin (relative to privilegeInput.buffer,
+ * not to privilegeInput.byteOffset).
+ *
+ * @member {number} privilegeByteOffsetEnd
+ *   The weights[] ends at privilegeInput's privilegeByteOffsetEnd (relative to privilegeInput.buffer,
+ * not to privilegeInput.byteOffset) exclusively.
  */
 Layer.Filter = class {
 
@@ -320,13 +336,12 @@ Layer.Filter = class {
       return;  // Failed, privilege and default input both are null.
     }
 
+    // Bounded by the input.byteLength.
     let legalByteOffsetEnd = input.byteOffset + input.byteLength;
-
     if ( byteOffsetEnd > legalByteOffsetEnd )
       return;  // Failed, if shape is too large (or NaN).
 
-    // Share the underlying array buffer. But be bounded by the input.byteLength.
-    this.weights = new Float32Array( input.buffer, byteOffsetBegin, weightCount );
+    this.weights = new Float32Array( input.buffer, byteOffsetBegin, weightCount );  // Share the underlying array buffer.
   }
 
   isValid()                      { return ( this.weights ) ? true : false; }
@@ -365,7 +380,7 @@ Layer.Params = class extends Layer.Filter {
 
     // Extract 6 weights from inputFloat32Array or fixedWeights, and convert the values to positive integer.
     let parameterCount = 6;
-    super( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCount ], toPositiveInteger );
+    super( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCount ] );
 
     // Copy and convert to integer.
     //
