@@ -306,34 +306,23 @@ Layer.Filter = class {
       if ( privilegeByteOffsetBegin < privilegeInput.byteOffset )
         return;  // Failed, the privilege beginning position is illegal (less than bounding).
 
-      input =                         privilegeInput;
-      this.defaultByteOffsetBegin =
-      this.defaultByteOffsetEnd =     defaultByteOffsetBegin;
-
-      byteOffsetBegin =
-      this.privilegeByteOffsetBegin = privilegeByteOffsetBegin;
-
-      byteOffsetEnd =
-      this.privilegeByteOffsetEnd =   privilegeByteOffsetBegin + weightByteCount;
+      input = privilegeInput;
+      byteOffsetBegin = this.privilegeByteOffsetBegin = privilegeByteOffsetBegin;
+      byteOffsetEnd =   this.privilegeByteOffsetEnd =   privilegeByteOffsetBegin + weightByteCount;
+      this.defaultByteOffsetBegin = this.defaultByteOffsetEnd = defaultByteOffsetBegin; // Not used, stay at beginning.
 
     } else if ( defaultInput ) {  // defaultInput second.
 
-        if ( defaultByteOffsetBegin < defaultInput.byteOffset )
-          return;  // Failed, the default beginning position is illegal (less than bounding).
+      if ( defaultByteOffsetBegin < defaultInput.byteOffset )
+        return;  // Failed, the default beginning position is illegal (less than bounding).
 
-        input =                         privilegeInput;
-
-        byteOffsetBegin =
-        this.defaultByteOffsetBegin =   defaultByteOffsetBegin;
-
-        byteOffsetEnd =
-        this.defaultByteOffsetEnd =     defaultByteOffsetBegin + weightByteCount;
-
-        this.privilegeByteOffsetBegin =
-        this.privilegeByteOffsetEnd =   privilegeByteOffsetBegin;
+      input = defaultInput;
+      byteOffsetBegin = this.defaultByteOffsetBegin = defaultByteOffsetBegin;
+      byteOffsetEnd =   this.defaultByteOffsetEnd =   defaultByteOffsetBegin + weightByteCount;
+      this.privilegeByteOffsetBegin = this.privilegeByteOffsetEnd = privilegeByteOffsetBegin; // Not used, stay at beginning.
 
     } else {
-      return;  // Failed, privilege and default input both are null.
+      return;  // Failed, both privilege and default input are null.
     }
 
     // Bounded by the input.byteLength.
