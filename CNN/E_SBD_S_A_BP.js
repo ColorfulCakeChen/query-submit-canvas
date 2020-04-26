@@ -8,7 +8,7 @@ export { NeuralNetwork, Architecture };
 /**
  * A three layers separable convolution neural network.
  *
- * (E_SD_S_A_BP = Embedding, Shared-Depthwise-Convolution, Sine, Avgerage, Biased-Pointwise-Convolution)
+ * (E_SD_S_A_BP = Embedding, Shared-Biased-Depthwise-Convolution, Sine, Avgerage, Biased-Pointwise-Convolution)
  *
  *
  * - Embedding layer (1st layer)
@@ -17,10 +17,18 @@ export { NeuralNetwork, Architecture };
  * independent non-linear transformation.
  *
  *
- * - Shared Depthwise Convolution Layer (2nd layer)
+ * - Shared Biased Depthwise Convolution Layer (2nd layer)
  *
- * Every embedding channel (of every input channel) will be expanded into multiple depthwise
- * convolution channels. This layer provides context dependent linear transformation.
+ * Every embedding channel (of every input channel) will be expanded into multiple depthwise convolution
+ * channels. This provides context dependent linear transformation.
+ *
+ * The expanded multiple depthwise convolution channels will be expanded again into more channels by adding
+ * different bias values. This completes context dependent affine transformation.
+ *
+ * The bias item is important although it is does not exist in most convolution neural network and fourier
+ * series. The fourier series does not have bias item because it uses both SIN and COS function simultaneously
+ * (according to trigonometric angle addition and subtraction theorems). This neural network, however, uses
+ * only SIN (no COS) function as activation function so the angle bias becomes necessary.
  *
  * This layer is shared. Every embedding channel uses the same depthwise convolution filters. This reduces
  * the amount of filters' parameters so that speeds up the learning phase. The sharing idea comes from
@@ -29,9 +37,9 @@ export { NeuralNetwork, Architecture };
  *
  * - Sine activation function
  *
- * After depthwise convolution, It uses sine as activation function. This is inspired by Fourier transform
- * which uses trigonometric functions to approximate any function. The depthwise convolutin combined with
- * this (sine) activation function provides context dependent non-linear transformation.
+ * After biased depthwise convolution, It uses sine as activation function. This is inspired by Fourier
+ * transform which uses trigonometric functions to approximate any function. The biased depthwise convolutin
+ * combined with this (sine) activation function provides context dependent non-linear transformation.
  *
  *
  * - Global Average
