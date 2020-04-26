@@ -271,12 +271,9 @@ Layer.Filter = class {
    * fail (i.e. ( isValid() == false ) ) if shape is too large (or NaN) (exceeds the defaultInput (or, privilegeInput
    * if not null) bounding).
    *
-   * @param {Function}     weightConverter
-   *   A function which will be applied on every weight (e.g. integerToFloat, or floatToInteger). The result of the
-   * function will replace the original value in the weights[] array. If null, there will be no converting.
    */ 
   constructor(
-    defaultInput, defaultByteOffsetBegin, privilegeInput, privilegeByteOffsetBegin, shape, weightConverter = null ) {
+    defaultInput, defaultByteOffsetBegin, privilegeInput, privilegeByteOffsetBegin, shape ) {
 
     this.defaultInput =   defaultInput;
     this.privilegeInput = privilegeInput;
@@ -330,9 +327,6 @@ Layer.Filter = class {
 
     // Share the underlying array buffer. But be bounded by the input.byteLength.
     this.weights = new Float32Array( input.buffer, byteOffsetBegin, weightCount );
-
-    if (weightConverter)  // Convert weights.
-      this.weights.forEach( ( element, i, array ) => array[ i ] = weightConverter( element ) );
   }
 
   isValid()                      { return ( this.weights ) ? true : false; }
@@ -372,12 +366,21 @@ Layer.Params = class extends Layer.Filter {
     // Extract 6 weights from inputFloat32Array or fixedWeights, and convert the values to positive integer.
     let parameterCount = 6;
     super( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCount ], toPositiveInteger );
+
+    // Copy and convert to integer.
+    //
+    // Do not modify the original array data. When backtracking (to try another neural network layer
+    // configuration), it is necessary to use the original data.
+    if ( this.isValid() ) {
+      this.weightsModified = new Float32Array( this.weights );
+      this.weightsModified.forEach( ( element, i, array ) => array[ i ] = toPositiveInteger( element ) );
+    }
   }
 
-  get filterHeight()      { return this.weights[ 0 ]; }
-  get filterWidth()       { return this.weights[ 1 ]; }
-  get channelMultiplier() { return this.weights[ 2 ]; }
-  get dilationHeight()    { return this.weights[ 3 ]; }
-  get dilationWidth()     { return this.weights[ 4 ]; }
-  get outChannels()       { return this.weights[ 5 ]; }
+  get filterHeight()      { return this.weightsModified[ 0 ]; }
+  get filterWidth()       { return this.weightsModified[ 1 ]; }
+  get channelMultiplier() { return this.weightsModified[ 2 ]; }
+  get dilationHeight()    { return this.weightsModified[ 3 ]; }
+  get dilationWidth()     { return this.weightsModified[ 4 ]; }
+  get outChannels()       { return this.weightsModified[ 5 ]; }
 }
