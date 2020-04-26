@@ -306,6 +306,7 @@ Layer.Filter = class {
       if ( privilegeByteOffsetBegin < privilegeInput.byteOffset )
         return;  // Failed, the privilege beginning position is illegal (less than bounding).
 
+//!!! ...unfinished... It is ok to create Float32Array( null, byteOffset, length ). this.defaultWeights, this.privilegeWeights
       input = privilegeInput;
       byteOffsetBegin = this.privilegeByteOffsetBegin = privilegeByteOffsetBegin;
       byteOffsetEnd =   this.privilegeByteOffsetEnd =   privilegeByteOffsetBegin + weightByteCount;
