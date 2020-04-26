@@ -375,8 +375,12 @@ Layer.Params = class extends Layer.Filter {
     }
 
     let privilegeInput;
-    if ( fixedWeights )
-      privilegeInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
+    if ( fixedWeights ) {
+      if ( fixedWeights instanceof Float32Array )
+        privilegeInput = fixedWeights;
+      else
+        privilegeInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
+    }
 
     // Extract 6 weights from inputFloat32Array or fixedWeights, and convert the values to positive integer.
     let parameterCount = 6;
