@@ -218,7 +218,7 @@ class NeuralNetwork {
         return r;
       });
 
-//!!! ...unfinished...
+//!!! ...unfinished... Pointwise should be achieved by Con2D (not by Conv1D) with 1 x 1 filters.
     });
     return predictResult;
   }
