@@ -1,5 +1,5 @@
-export { Layer };
-  
+export { Filter, Params };
+
 /**
  * A CNN layer contains one params (this.params) and three filters: depthwise, pointwise and bias.
  */
@@ -65,25 +65,48 @@ class Layer {
 }
 
 /**
- * A class for the CNN (depthwise, pointwise and bias) filter weights.
+ * A Float32Array and its shape. It can be used as CNN (depthwise, pointwise and bias) filter
+ * weights.
+ *
+ * @member {Float32Array} defaultInput
+ *   The default input Float32Array. Its byteOffset will be checked against defaultByteOffsetBegin.
+ * Its content will be interpret as weights if privilegeInput is null. Otherwise, its content
+ * will be ignored if privilegeInput is not null.
  *
  * @member {number} defaultByteOffsetBegin
  *   The weights[] begins at defaultInput's defaultByteOffsetBegin (relative to defaultInput.buffer,
- * not to defaultInput.byteOffset).
+ * not to defaultInput.byteOffset). If this value less than defaultInput.byteOffset, the
+ * initialization will fail (i.e. ( isValid() == false ) ).
  *
  * @member {number} defaultByteOffsetEnd
  *   The weights[] ends at defaultInput's defaultByteOffsetEnd (relative to defaultInput.buffer,
  * not to defaultInput.byteOffset) exclusively.
  *
+ * @member {Float32Array} privilegeInput
+ *   The privilege input Float32Array. If not null, its content will be interpret as weights and
+ * the content of defaultInput will be ignored.
+ *
  * @member {number} privilegeByteOffsetBegin
  *   The weights[] begins at privilegeInput's privilegeByteOffsetBegin (relative to privilegeInput.buffer,
- * not to privilegeInput.byteOffset).
+ * not to privilegeInput.byteOffset). If this value less than privilegeInput.byteOffset, the
+ * initialization will fail (i.e. ( isValid() == false ) ).
  *
  * @member {number} privilegeByteOffsetEnd
  *   The weights[] ends at privilegeInput's privilegeByteOffsetEnd (relative to privilegeInput.buffer,
  * not to privilegeInput.byteOffset) exclusively.
+ *
+ * @member {number[]} shape
+ *   The filter shape (element count for every dimension). The shape.length is dimension. The initialization will
+ * fail (i.e. ( isValid() == false ) ) if shape is too large (or NaN) (exceeds the defaultInput (or, privilegeInput
+ * if not null) bounding).
+ *
+ * @member {Float32Array} weights
+ *  The values. It is a reference (sub-range) to the underlying defaultInput (or privilegeInput).
  */
-Layer.Filter = class {
+class Filter {
+
+  constructor() {
+  }
 
   /**
    * Create Float32Array weights[] over the defaultInput (or privilegeInput) according to the specific
@@ -92,39 +115,16 @@ Layer.Filter = class {
    * The defaultInput and privilegeInput can not both be null. If one of them is null, the non-null is used.
    * If both are non-null, the privilegeInput will be used.
    *
-   * @param {Float32Array} defaultInput
-   *   The default input Float32Array. Its byteOffset will be checked against defaultByteOffsetBegin.
-   * Its content will be interpret as weights if privilegeInput is null. Otherwise, its content
-   * will be ignored if privilegeInput is not null.
-   *
-   * @param {number}       defaultByteOffsetBegin
-   *   The position to start to decode from the defaultInput. This is relative to the defaultInput.buffer
-   * (not to the defaultInput.byteOffset). If this value less than defaultInput.byteOffset, the
-   * initialization will fail (i.e. ( isValid() == false ) ).
-   *
-   * @param {Float32Array} privilegeInput
-   *   The privilege input Float32Array. If not null, its content will be interpret as weights and
-   * the content of defaultInput will be ignored.
-   *
-   * @param {number}       privilegeByteOffsetBegin
-   *   The position to start to decode from the privilegeInput. This is relative to the privilegeInput.buffer
-   * (not to the privilegeInput.byteOffset). If this value less than privilegeInput.byteOffset, the
-   * initialization will fail (i.e. ( isValid() == false ) ).
-   *
-   * @param {number[]}     shape
-   *   The filter shape (element count for every dimension). The shape.length is dimension. The initialization will
-   * fail (i.e. ( isValid() == false ) ) if shape is too large (or NaN) (exceeds the defaultInput (or, privilegeInput
-   * if not null) bounding).
-   *
+   * @return {boolean} Return false, if initialization failed.
    */ 
-  constructor(
-    defaultInput, defaultByteOffsetBegin, privilegeInput, privilegeByteOffsetBegin, shape ) {
+  init( defaultInput, defaultByteOffsetBegin, privilegeInput, privilegeByteOffsetBegin, shape ) {
 
     this.defaultInput =   defaultInput;
     this.privilegeInput = privilegeInput;
     this.shape =          shape;
+    this.weights =        null;
 
-    let weightCount =     shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue );
+    let weightCount =     ( shape ) ? shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue ) : 0;
     let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
 
     let input, byteOffsetBegin;
@@ -133,7 +133,7 @@ Layer.Filter = class {
     if ( privilegeInput ) {       // privilegeInput first.
 
       if ( privilegeByteOffsetBegin < privilegeInput.byteOffset )
-        return;  // Failed, the privilege beginning position is illegal (less than bounding).
+        return false;  // Failed, the privilege beginning position is illegal (less than bounding).
 
 //!!! ...unfinished... It is ok to create Float32Array( null, byteOffset, length ). this.defaultWeights, this.privilegeWeights
       input = privilegeInput;
@@ -144,7 +144,7 @@ Layer.Filter = class {
     } else if ( defaultInput ) {  // defaultInput second.
 
       if ( defaultByteOffsetBegin < defaultInput.byteOffset )
-        return;  // Failed, the default beginning position is illegal (less than bounding).
+        return false;  // Failed, the default beginning position is illegal (less than bounding).
 
       input = defaultInput;
       byteOffsetBegin = this.defaultByteOffsetBegin = defaultByteOffsetBegin;
@@ -152,17 +152,19 @@ Layer.Filter = class {
       this.privilegeByteOffsetBegin = this.privilegeByteOffsetEnd = privilegeByteOffsetBegin; // Not used, stay at beginning.
 
     } else {
-      return;  // Failed, both privilege and default input are null.
+      return false;  // Failed, both privilege and default input are null.
     }
 
     // Bounded by the input.byteLength.
     let legalByteOffsetEnd = input.byteOffset + input.byteLength;
     if ( byteOffsetEnd > legalByteOffsetEnd )
-      return;  // Failed, if shape is too large (or NaN).
+      return false;  // Failed, if shape is too large (or NaN).
 
     this.weights = new Float32Array( input.buffer, byteOffsetBegin, weightCount );  // Share the underlying array buffer.
+    return true;     // Success.
   }
 
+  /** @return Return true, if initialization is success (i.e. ( this.weights != null )). */
   isValid()                      { return ( this.weights ) ? true : false; }
 
   get weightByteCount()          { return this.weights.byteLength; }
@@ -172,26 +174,30 @@ Layer.Filter = class {
 /**
  * A class for the CNN separable convolution (2D) layer parameters.
  */
-Layer.Params = class extends Layer.Filter {
+class Params extends Filter {
 
   /**
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpret as weights. The weights will be convert to positive integer.
    *
-   * @param {number}       byteOffsetBegin
+   * @param {number} byteOffsetBegin
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
-   * @param {Array} fixedWeights
+   * @param {Float32Array|Array} fixedWeights
    *   If null, extract 6 parameters from inputFloat32Array. If not null, extract 6 parameters from it instead of
    * inputFloat32Array. If not null, it should have 6 elements: [ filterHeight, filterWidth, channelMultiplier,
    * dilationHeight, dilationWidth, outChannels ].
+   *
+   * @return {boolean} Return false, if initialization failed.
    */
-  constructor( inputFloat32Array, byteOffsetBegin, fixedWeights = null ) {
+  init( inputFloat32Array, byteOffsetBegin, fixedWeights = null ) {
 
     function toPositiveInteger( v ) {
       return Math.abs( Math.trunc( v ) );
     }
+
+    this.weightsModified = null;  // Clear for re-initialization.
 
     let privilegeInput;
     if ( fixedWeights ) {
@@ -203,16 +209,18 @@ Layer.Params = class extends Layer.Filter {
 
     // Extract 6 weights from inputFloat32Array or fixedWeights, and convert the values to positive integer.
     let parameterCount = 6;
-    super( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCount ] );
+    let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCount ] );
 
     // Copy and convert to integer.
     //
     // Do not modify the original array data. When backtracking (to try another neural network layer
     // configuration), it is necessary to use the original data.
-    if ( this.isValid() ) {
+    if ( bInitOk ) {
       this.weightsModified = new Float32Array( this.weights );
       this.weightsModified.forEach( ( element, i, array ) => array[ i ] = toPositiveInteger( element ) );
     }
+
+    return bInitOk;
   }
 
   get filterHeight()      { return this.weightsModified[ 0 ]; }
