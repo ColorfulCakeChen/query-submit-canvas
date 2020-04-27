@@ -213,12 +213,28 @@ class NeuralNetwork {
       });
 
       const depthwiseResult = tidy( "DepthwiseConv", () => {
-  //!!! ...unfinished...
+//!!! ...unfinished... 
+        // Because depthwise filter is small, it is still memory space friendly to repeat (copy) filters
+        // to share them with all embedded channels.
         const r = ;
+        
+//!!! ...unfinished... depthwise bias
+//!!! ...unfinished... sine
+//!!! ...unfinished... global average
+
         return r;
       });
 
+
+      const pointwiseResult = tidy( "PointwiseConv", () => {
 //!!! ...unfinished... Pointwise should be achieved by Con2D (not by Conv1D) with 1 x 1 filters.
+        const r = ;
+
+//!!! ...unfinished... pointwise bias
+        return r;
+      });
+
+//!!! ...unfinished...
     });
     return predictResult;
   }
@@ -226,7 +242,7 @@ class NeuralNetwork {
 
 
 /**
- * Describe the shape of an E_SD_S_A_BP neural network.
+ * Describe the shape of an E_SBD_S_A_BP neural network.
  *
  */
 class Architecture {
@@ -245,10 +261,12 @@ class Architecture {
    * red (or green, or blue, or alpha) channel.
    *
    * @param {number} embeddingChannelCount_PerInputChannel
-   *   The embedding channel count for every input channel.
+   *   The embedding channel count for every input channel. This is the channelMultiplier from input
+   * to embedding.
    *
    * @param {number} depthwiseChannelCount_PerEmbeddingChannel
-   *   The depthwise channel count for every embedding channel (of every input channel).
+   *   The depthwise channel count for every embedding channel (of every input channel). This is the
+   * channelMultiplier from embedding to depthwise.
    *
    * @param {number} outputChannelCount
    *   The output channel count. This is also the count of the pointwise convolution filters.
@@ -328,36 +346,41 @@ class Architecture {
 
   /** @return {number} The weight count of one depthwise filter (= depthwiseFilterHeight * depthwiseFilterWidth ). */
   get weightCount_PerDepthwiseFilter() {
-    return ( this.depthwiseFilterHeight * this.depthwiseFilterWidth )
+    return ( this.depthwiseFilterHeight * this.depthwiseFilterWidth );
   }
 
-  /** @return {number} The weight count of all depthwise filter of one embedding channel
-   * (= weightCount_PerDepthwiseFilter * depthwiseChannelCount_PerEmbeddingChannel ).
-   */
-  get weightCount_AllDepthwiseFilter_PerEmbeddingChannel() {
-    return ( this.weightCount_PerDepthwiseFilter * this.depthwiseChannelCount_PerEmbeddingChannel )
+  /** @return {number} The weight count of one biased depthwise filter (= weightCount_PerDepthwiseFilter + 1 ). */
+  get weightCount_PerDepthwiseFilterBiased() {
+    return ( this.weightCount_PerDepthwiseFilter + 1 );  // The "+ 1" is for the bias term.
   }
 
-  /**
-   * This is the same as weightCount_AllDepthwiseFilter_PerEmbeddingChannel, because all depthwise filter
-   * are shared by all embedding channel of all input channel.
-   *
-   * @return {number} The weight count of all depthwise filter of all embedding channel of one input channel
-   * (= weightCount_AllDepthwiseFilter_PerEmbeddingChannel ).
+  /** @return {number} The weight count of all biased depthwise filter of one embedding channel
+   * (= weightCount_PerDepthwiseFilterBiased * depthwiseChannelCount_PerEmbeddingChannel ).
    */
-  get weightCount_AllDepthwiseFilter_AllEmbeddingChannel_PerInputChannel() {
-    return ( this.weightCount_AllDepthwiseFilter_PerEmbeddingChannel )
+  get weightCount_AllDepthwiseFilterBiased_PerEmbeddingChannel() {
+    return ( this.weightCount_PerDepthwiseFilterBiased * this.depthwiseChannelCount_PerEmbeddingChannel )
   }
 
   /**
-   * This is the same as weightCount_AllDepthwiseFilter_PerEmbeddingChannel, because all depthwise filter
+   * This is the same as weightCount_AllDepthwiseFilterBiased_PerEmbeddingChannel, because all depthwise filter
    * are shared by all embedding channel of all input channel.
    *
-   * @return {number} The weight count of all depthwise filter of all embedding channel of all input channel
+   * @return {number} The weight count of all biased depthwise filter of all embedding channel of one input channel
    * (= weightCount_AllDepthwiseFilter_PerEmbeddingChannel ).
    */
-  get weightCount_AllDepthwiseFilter_AllEmbeddingChannel_AllInputChannel() {
-    return ( this.weightCount_AllDepthwiseFilter_PerEmbeddingChannel )
+  get weightCount_AllDepthwiseFilterBiased_AllEmbeddingChannel_PerInputChannel() {
+    return ( this.weightCount_AllDepthwiseFilterBiased_PerEmbeddingChannel )
+  }
+
+  /**
+   * This is the same as weightCount_AllDepthwiseFilterBiased_PerEmbeddingChannel, because all depthwise filter
+   * are shared by all embedding channel of all input channel.
+   *
+   * @return {number} The weight count of all biased depthwise filter of all embedding channel of all input channel
+   * (= weightCount_AllDepthwiseFilter_PerEmbeddingChannel ).
+   */
+  get weightCount_AllDepthwiseFilterBiased_AllEmbeddingChannel_AllInputChannel() {
+    return ( this.weightCount_AllDepthwiseFilterBiased_PerEmbeddingChannel )
   }
 
 
@@ -367,10 +390,11 @@ class Architecture {
   }
 
   /** @return {number} The weight count of one pointwise filter
-   * (= depthwiseChannelCount_AllEmbeddingChannel_AllInputChannel + 1 ).
+   * (= depthwiseChannelCountBiased_AllEmbeddingChannel_AllInputChannel + 1 ).
    */
   get weightCount_PerPointwiseFilter() {
-    return ( this.depthwiseChannelCount_AllEmbeddingChannel_AllInputChannel + 1 );  // The "+ 1" is for the bias term.
+    // The "+ 1" is for the bias term of pointwise filter.
+    return ( this.depthwiseChannelCountBiased_AllEmbeddingChannel_AllInputChannel + 1 );
   }
 
   /** @return {number} The weight count of all pointwise filter (= weightCount_PerPointwiseFilter * outputChannelCount ). */
@@ -381,12 +405,12 @@ class Architecture {
 
   /** @return {number} The weight count of the whole neural network
    * (= weightCount_AllEmbeddingChannel_AllInputChannel
-   *  + weightCount_AllDepthwiseFilter_AllEmbeddingChannel_AllInputChannel
+   *  + weightCount_AllDepthwiseFilterBiased_AllEmbeddingChannel_AllInputChannel
    *  + weightCount_AllPointwiseFilter ).
    */
   get weightCount_AllPointwiseFilter() {
     return ( this.weightCount_AllEmbeddingChannel_AllInputChannel
-            + this.weightCount_AllDepthwiseFilter_AllEmbeddingChannel_AllInputChannel
+            + this.weightCount_AllDepthwiseFilterBiased_AllEmbeddingChannel_AllInputChannel
             + this.weightCount_AllPointwiseFilter );
   }
 }
