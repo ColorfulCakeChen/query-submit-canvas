@@ -6,54 +6,22 @@ export { Params, Layer, StringArrayToEntities };
 
 
 /**
- * A class for the CNN separable convolution (2D) layer parameters.
+ * CNN separable convolution (2D) layer parameters.
  */
-class Params extends Weights.ShapeFloat32Array {
+class Params extends Weights.Params {
 
   /**
-   * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpret as weights. The weights will be convert to positive integer.
+   * If outChannels is null, extract 6 parameters [ filterHeight, filterWidth, channelMultiplier, dilationHeight,
+   * dilationWidth, outChannels ] from inputFloat32Array or fixedWeights.
    *
-   * @param {number} byteOffsetBegin
-   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
-   * (not to the inputFloat32Array.byteOffset).
-   *
-   * @param {Float32Array|Array} fixedWeights
-   *   If null, extract 6 parameters from inputFloat32Array. If not null, extract 6 parameters from it instead of
-   * inputFloat32Array. If not null, it should have 6 elements: [ filterHeight, filterWidth, channelMultiplier,
-   * dilationHeight, dilationWidth, outChannels ].
+   * If outChannels is not null, extract 5 parameters [ filterHeight, filterWidth, channelMultiplier, dilationHeight,
+   * dilationWidth ] from inputFloat32Array or fixedWeights.
    *
    * @return {boolean} Return false, if initialization failed.
    */
-  init( inputFloat32Array, byteOffsetBegin, fixedWeights = null ) {
-
-    function toPositiveInteger( v ) {
-      return Math.abs( Math.trunc( v ) );
-    }
-
-    this.weightsModified = null;     // So that distinguishable if re-initialization failed.
-
-    let privilegeInput;
-    if ( fixedWeights ) {
-      if ( fixedWeights instanceof Float32Array )
-        privilegeInput = fixedWeights;
-      else
-        privilegeInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
-    }
-
-    // Extract 6 weights from inputFloat32Array or fixedWeights, and convert the values to positive integer.
-    let parameterCount = 6;
-    let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCount ] );
-
-    // Copy and convert to integer.
-    //
-    // Do not modify the original array data. When backtracking (to try another neural network layer
-    // configuration), it is necessary to use the original data.
-    if ( bInitOk ) {
-      this.weightsModified = new Float32Array( this.weights );
-      this.weightsModified.forEach( ( element, i, array ) => array[ i ] = toPositiveInteger( element ) );
-    }
-
+  init( inputFloat32Array, byteOffsetBegin, inChannels, outChannels = null, fixedWeights = null ) {
+    let parameterCount = 6;  // Extract 6 weights and convert the values to positive integer.
+    let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, parameterCount, inChannels, outChannels, fixedWeights );
     return bInitOk;
   }
 
@@ -62,7 +30,7 @@ class Params extends Weights.ShapeFloat32Array {
   get channelMultiplier() { return this.weightsModified[ 2 ]; }
   get dilationHeight()    { return this.weightsModified[ 3 ]; }
   get dilationWidth()     { return this.weightsModified[ 4 ]; }
-  get outChannels()       { return this.weightsModified[ 5 ]; }
+//  get outChannels()       { return this.weightsModified[ 5 ]; }
 }
 
 
@@ -89,32 +57,32 @@ class Layer {
    */ 
   constructor( inputFloat32Array, byteOffsetBegin, inChannels, fixedParams = null ) {
 
-    this.params = new Layer.Params( inputFloat32Array, byteOffsetBegin, fixedParams );
+    this.params = new Params( inputFloat32Array, byteOffsetBegin, fixedParams );
     if ( !this.params.isValid() )
       return;
 
-    this.depthwise = new Layer.Filter(
+    this.depthwise = new Weights.Base(
       inputFloat32Array, this.params.defaultByteOffsetEnd, null, 0,
       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier] );
 
     if ( !this.depthwise.isValid() )
       return;
 
-    this.depthwiseBias = new Layer.Filter(
+    this.depthwiseBias = new Weights.Base(
       inputFloat32Array, this.depthwise.defaultByteOffsetEnd, null, 0,
       [1, 1, inChannels, this.params.channelMultiplier] );
 
     if ( !this.depthwiseBias.isValid() )
       return;
 
-    this.pointwise = new Layer.Filter(
+    this.pointwise = new Weights.Base(
       inputFloat32Array, this.depthwiseBias.defaultByteOffsetEnd, null, 0,
       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels] );
 
     if ( !this.pointwise.isValid() )
       return;
 
-    this.pointwiseBias = new Layer.Filter(
+    this.pointwiseBias = new Weights.Base(
       inputFloat32Array, this.pointwise.defaultByteOffsetEnd, null, 0,
       [1, 1, this.params.outChannels] );
   }
