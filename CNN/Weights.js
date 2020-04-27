@@ -178,6 +178,4 @@ class Params extends Base {
     return bInitOk;
   }
 
-
-//  get channelMultiplier() { return this.weightsModified[ 0 ]; }
 }
