@@ -122,7 +122,7 @@ class Filter {
     this.defaultInput =   defaultInput;
     this.privilegeInput = privilegeInput;
     this.shape =          shape;
-    this.weights =        null;
+    this.weights =        null;   // So that ( isValid() == false ) if re-initialization failed.
 
     let weightCount =     ( shape ) ? shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue ) : 0;
     let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
@@ -197,7 +197,7 @@ class Params extends Filter {
       return Math.abs( Math.trunc( v ) );
     }
 
-    this.weightsModified = null;  // Clear for re-initialization.
+    this.weightsModified = null;     // So that distinguishable if re-initialization failed.
 
     let privilegeInput;
     if ( fixedWeights ) {
