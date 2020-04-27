@@ -20,7 +20,7 @@ class Params extends Weights.Params {
    * @return {boolean} Return false, if initialization failed.
    */
   init( inputFloat32Array, byteOffsetBegin, inChannels, outChannels = null, fixedWeights = null ) {
-    let parameterCount = 6;  // Extract 6 weights and convert the values to positive integer.
+    let parameterCount = 6;  // Extract at most 6 weights and convert the values to positive integer.
     let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, parameterCount, inChannels, outChannels, fixedWeights );
     return bInitOk;
   }
@@ -30,7 +30,6 @@ class Params extends Weights.Params {
   get channelMultiplier() { return this.weightsModified[ 2 ]; }
   get dilationHeight()    { return this.weightsModified[ 3 ]; }
   get dilationWidth()     { return this.weightsModified[ 4 ]; }
-//  get outChannels()       { return this.weightsModified[ 5 ]; }
 }
 
 
