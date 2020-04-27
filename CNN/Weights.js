@@ -112,6 +112,11 @@ class Base {
 /**
  * The parameters for the weights of a neural network layer.
  *
+ * @member {number} parameterCountMax
+ *   If init()'s outChannels is null, extract parameterCountMax weights from inputFloat32Array or fixedWeights.
+ * If init()'s outChannels is not null, extract ( parameterCountMax - 1 ) weights from inputFloat32Array or
+ * fixedWeights.
+ *
  * @member {number} inChannels
  *   The input channel count of this neural network layer for easily layer construction backtracking. This
  * is inChannels of init()
@@ -123,7 +128,8 @@ class Base {
  *
  * @member {Float32Array} weightsModified
  *  The copied extracted values. They are copied from inputFloat32Array or fixedWeights, and then converted
- * to positive integer.
+ * to positive integer. Its length maybe ( parameterCountMax ) or ( parameterCountMax - 1 ) according to
+ * whether init()'s outChannels is null or not.
  */
 class Params extends Base {
 
@@ -135,17 +141,15 @@ class Params extends Base {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
-   * @param {number} parameterCount
-   *   Extract how many weights from inputFloat32Array or fixedWeights, and convert the values to positive integer.
-   *
    * @param {Float32Array|Array} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
    * inputFloat32Array. If not null, it should have parameterCount elements.
    *
    * @return {boolean} Return false, if initialization failed.
    */
-  init( inputFloat32Array, byteOffsetBegin, parameterCount, inChannels, outChannels = null, fixedWeights = null ) {
+  init( inputFloat32Array, byteOffsetBegin, parameterCountMax, inChannels, outChannels = null, fixedWeights = null ) {
 
+    this.parameterCountMax = parameterCountMax;
     this.inChannels = inChannels;
     this.outChannels = outChannels;
     this.weightsModified = null;     // So that distinguishable if re-initialization failed.
@@ -158,8 +162,17 @@ class Params extends Base {
         privilegeInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
     }
 
-//     // Extract 6 weights from inputFloat32Array or fixedWeights, and convert the values to positive integer.
-//     let parameterCount = 6;
+    // Extract how many weights.
+    let parameterCount;
+    {
+      if ( outChannels )
+        parameterCount = parameterCountMax - 1;  // Since there is outChannels, extract fewer weights.
+      else
+        parameterCount = parameterCountMax;
+
+      parameterCount = Math.max( parameterCount, 0 ); // Could not negative.
+    }
+
     let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCount ] );
 
     // Copy and convert to integer.
