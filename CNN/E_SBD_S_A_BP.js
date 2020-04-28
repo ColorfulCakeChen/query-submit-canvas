@@ -208,6 +208,8 @@ class NeuralNetwork {
           this.embeddingVocabularyTables[ channelIndex ].gather( vocabularyIndices );
         });
 
+//!!! ...unfinished... (inverted) residual connection
+
         // Concatenate along the last axis, so that it is still tensor3D but with embedded (more) channels in the last axis.
         return tf.concat( embeddedTensor3DArray, theLastAxisId );
       });
@@ -220,7 +222,7 @@ class NeuralNetwork {
         
 //!!! ...unfinished... depthwise bias
 //!!! ...unfinished... sine
-//!!! ...unfinished... global average
+//!!! ...unfinished... (with or without) global average
 
         return r;
       });
@@ -233,6 +235,8 @@ class NeuralNetwork {
 //!!! ...unfinished... pointwise bias
         return r;
       });
+
+//!!! ...unfinished... (inverted) residual connection
 
 //!!! ...unfinished...
     });
