@@ -20,8 +20,8 @@ class Params extends Weights.Params {
    * @return {boolean} Return false, if initialization failed.
    */
   init( inputFloat32Array, byteOffsetBegin, inChannels, outChannels = null, fixedWeights = null ) {
-    let parameterCount = 6;  // Extract at most 6 weights and convert the values to positive integer.
-    let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, parameterCount, inChannels, outChannels, fixedWeights );
+    let parameterCountMax = 6;  // Extract at most 6 weights and convert the values to positive integer.
+    let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, parameterCountMax, inChannels, outChannels, fixedWeights );
     return bInitOk;
   }
 
