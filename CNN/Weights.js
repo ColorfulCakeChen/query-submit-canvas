@@ -124,7 +124,7 @@ class Base {
  * @member {number} outChannels
  *   The output channel count of this neural network layer for easily layer construction backtracking. This
  * is outChannels of init() if not null. Otherwise (i.e. init()'s outChannels is null), it is will be the
- * last element of this.weightsModified[] which are extracted from inputFloat32Array. 
+ * last element of this.weightsModified[] which are extracted from inputFloat32Array (or fixedWeights). 
  *
  * @member {Float32Array} weightsModified
  *  The copied extracted values. They are copied from inputFloat32Array or fixedWeights, and then converted
