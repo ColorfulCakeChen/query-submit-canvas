@@ -18,16 +18,18 @@ class Params extends Weights.Params {
    */
   init( inputFloat32Array, byteOffsetBegin, inChannels, outChannels = null, fixedWeights = null ) {
     let parameterCountMax = 2;  // Extract at most 2 weights and convert the values to positive integer.
-    let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, parameterCountMax, inChannels, outChannels, fixedWeights );
-    return bInitOk;
+    return super.init( inputFloat32Array, byteOffsetBegin, parameterCountMax, inChannels, outChannels, fixedWeights );
   }
 
+  /** Every input channel will be expanded into so many embedding channels. */
   get channelMultiplier() { return this.weightsModified[ 0 ]; }
 }
 
 
 /**
- * A CNN layer contains one params (this.params) and three filters: depthwise, pointwise and bias.
+ * An embedding layer contains one params (this.params) and inChannels embedding vocabulary tables.
+ * Every input channel uses one embedding vocabulary table. Every embedding vocabulary table has
+ * vocabularyCountPerInputChannel vocabularies. Every vocabulary has outChannels embedding channels.
  */
 class Layer {
 
@@ -42,14 +44,32 @@ class Layer {
    * @param {number}       inChannels
    *   The input channel count.
    *
+   * @param {number} outChannels
+   *   If not null, this is the output channel count. Otherwise (i.e. null), the last element of this.weightsModified[]
+   * which are extracted from inputFloat32Array (or fixedWeights) will be the output channel count. 
+   *
+   * @param {number} vocabularyCountPerInputChannel
+   *   
+   *
+   *
+   * @param {number} channelMultiplier
+   *   
+   *
+   *
    * @param {Array} fixedParams
-   *   If null, extract 6 parameters from inputFloat32Array. If not null, extract 6 parameters from it instead of
-   * inputFloat32Array. If not null, it should have 6 elements: [ filterHeight, filterWidth, channelMultiplier,
-   * dilationHeight, dilationWidth, outChannels ].
+   *   If null, extract 1 parameter from inputFloat32Array. If not null, extract 1 parameter from it instead of
+   * inputFloat32Array. If not null, it should have 1 elements: [ channelMultiplier ].
    */ 
-  constructor( inputFloat32Array, byteOffsetBegin, inChannels, fixedParams = null ) {
+  init( inputFloat32Array, byteOffsetBegin, inChannels, vocabularyCountPerInputChannel, channelMultiplier = null ) {
 
-    this.params = new Layer.Params( inputFloat32Array, byteOffsetBegin, fixedParams );
+    let outChannels = null;
+    let fixedParams = null;
+    if ( channelMultiplier ) {
+      outChannels = inChannels * channelMultiplier;
+      fixedParams = [ channelMultiplier ];
+    }
+
+    this.params = new Params( inputFloat32Array, byteOffsetBegin, inChannels, outChannels, fixedParams );
     if ( !this.params.isValid() )
       return;
 
