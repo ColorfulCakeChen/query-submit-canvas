@@ -170,7 +170,7 @@ class Params extends Base {
       else
         parameterCount = parameterCountMax;
 
-      parameterCount = Math.max( parameterCount, 0 ); // Could not negative.
+      parameterCount = Math.max( parameterCount, 0 ); // Prevent from negative. At least, should be zero.
     }
 
     let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCount ] );
@@ -178,7 +178,7 @@ class Params extends Base {
     // Copy and convert to integer.
     //
     // Do not modify the original array data. When backtracking (to try another neural network layer
-    // configuration), it is necessary to use the original data.
+    // configuration), the original data is necessary.
     if ( bInitOk ) {
       this.weightsModified = new Float32Array( this.weights );
       this.weightsModified.forEach( ( element, i, array ) => array[ i ] = Base.toPositiveInteger( element ) );
