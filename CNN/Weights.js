@@ -123,20 +123,20 @@ class Base {
  *
  * @member {number} outChannels
  *   The output channel count of this neural network layer for easily layer construction backtracking. This
- * is outChannels of init() if truthy (i.e. not zero). Otherwise (i.e. init()'s outChannels is falsy (0 or
- * null or undefined)), it is will be the last element of this.weightsModified[] which are extracted from
- * inputFloat32Array. 
+ * is outChannels of init() if not null. Otherwise (i.e. init()'s outChannels is null), it is will be the
+ * last element of this.weightsModified[] which are extracted from inputFloat32Array. 
  *
  * @member {Float32Array} weightsModified
  *  The copied extracted values. They are copied from inputFloat32Array or fixedWeights, and then converted
  * to positive integer. Its length maybe ( parameterCountMax ) or ( parameterCountMax - 1 ) according to
- * whether init()'s outChannels is falsy or truthy.
+ * whether init()'s outChannels is null or not.
  */
 class Params extends Base {
 
   /**
    * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpret as weights.
+   *   A Float32Array whose values will be interpret as weights. It should have parameterCountMax (if outChannels
+   * null) or ( parameterCountMax - 1 ) (if outChannels not null) elements.
    *
    * @param {number} byteOffsetBegin
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
@@ -144,12 +144,12 @@ class Params extends Base {
    *
    * @param {Float32Array|Array} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
-   * inputFloat32Array. If not null, it should have parameterCountMax (if outChannels falsy) or
-   * ( parameterCountMax - 1 ) (if outChannels truthy) elements.
+   * inputFloat32Array. If not null, it should have parameterCountMax (if outChannels null) or
+   * ( parameterCountMax - 1 ) (if outChannels not null) elements.
    *
    * @return {boolean} Return false, if initialization failed.
    */
-  init( inputFloat32Array, byteOffsetBegin, parameterCountMax, inChannels, outChannels, fixedWeights = null ) {
+  init( inputFloat32Array, byteOffsetBegin, parameterCountMax, inChannels, outChannels = null, fixedWeights = null ) {
 
     this.parameterCountMax = parameterCountMax;
     this.inChannels = inChannels;
