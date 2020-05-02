@@ -25,11 +25,11 @@ class Params extends Weights.Params {
     return bInitOk;
   }
 
-  get filterHeight()      { return this.weightsModified[ 0 ]; }
-  get filterWidth()       { return this.weightsModified[ 1 ]; }
-  get channelMultiplier() { return this.weightsModified[ 2 ]; }
-  get dilationHeight()    { return this.weightsModified[ 3 ]; }
-  get dilationWidth()     { return this.weightsModified[ 4 ]; }
+  get dilationHeight()    { return this.weightsModified[ 0 ]; }
+  get dilationWidth()     { return this.weightsModified[ 1 ]; }
+  get filterHeight()      { return this.weightsModified[ 2 ]; }
+  get filterWidth()       { return this.weightsModified[ 3 ]; }
+  get channelMultiplier() { return this.weightsModified[ 4 ]; }
 }
 
 
