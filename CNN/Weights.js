@@ -177,6 +177,8 @@ class Params extends Base {
    * value of channelMultiplier and outChannels.
    *
    * @return {boolean} Return false, if initialization failed.
+   *
+   * @override
    */
   init(
     inputFloat32Array, byteOffsetBegin, parameterCountExtractedAtLeast, inChannels,
