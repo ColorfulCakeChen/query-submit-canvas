@@ -117,15 +117,15 @@ class Base {
  *   How many parameters are extracted from inputFloat32Array or fixedWeights at least.
  *
  * @member {number} parameterCountExtracted
- *   How many parameters are extracted from inputFloat32Array or fixedWeights in fact. This will be the length
- * of this.weights[] and this.weightsModified[].
+ *   How many parameters are extracted from inputFloat32Array or fixedWeights in fact. Only existed if init()
+ * successfully. The same as this.weightCount (i.e. length of this.weights[] and this.weightsModified[]).
  *   - = ( parameterCountExtractedAtLeast + 0 ), if both channelMultiplier and outChannels are not null.
  *   - = ( parameterCountExtractedAtLeast + 1 ), if only channelMultiplier is null.
  *   - = ( parameterCountExtractedAtLeast + 1 ), if only outChannels is null.
  *   - = ( parameterCountExtractedAtLeast + 2 ), if both channelMultiplier and outChannels are null.
  *
  * @member {number} parameterCount
- *   Always ( parameterCountExtractedAtLeast + 2 )。 This is the total parameter count provided by this object
+ *   Always ( parameterCountExtractedAtLeast + 2 ). This is the total parameter count provided by this object
  * if init() successfully.
  *
  * @member {number} inChannels
@@ -252,5 +252,5 @@ class Params extends Base {
     return bInitOk;
   }
 
-  get parameterCountExtracted() { return this.shape.length; }
+  get parameterCountExtracted() { return this.weightCount; }
 }
