@@ -14,38 +14,28 @@ class Params extends Weights.Params {
    * If outChannels is not null, extract 1 parameters [ channelMultiplier ] from inputFloat32Array or
    * fixedWeights.
    *
-   * @param {number} vocabularyCountPerInputChannel
-   *   
-   *
-   *
    * @param {number} channelMultiplier
-   * If outChannels is null, extract 2 parameters [ channelMultiplier, outChannels ] from inputFloat32Array
-   * or fixedWeights.
-   *
-   * If outChannels is not null, extract 1 parameters [ channelMultiplier ] from inputFloat32Array or
-   * fixedWeights.
-   *   
-   *
+   *   Every input channel will be expanded into so many embedding channels. This is also vocabulary count
+   * per input channel (or, vocabulary count per vocabulary table). Every input channel will have a
+   * vocabulary table. If channelMultiplier is null, it will be extracted from inputFloat32Array
+   * (i.e. by evolution). The outChannels (output channel count) is always depending on channelMultiplier
+   * and equal to ( inChannels * channelMultiplier ).
    *
    * @return {boolean} Return false, if initialization failed.
+   *
+   * @override
    */
-  init( inputFloat32Array, byteOffsetBegin, inChannels, vocabularyCountPerInputChannel, channelMultiplier = null ) {
-    
-    this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
+  init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null ) {
 
-    let outChannels = null;
-    let fixedWeights = null;
-    if ( channelMultiplier ) {
-      outChannels = inChannels * channelMultiplier;
-      fixedWeights = [ channelMultiplier ];
-    }
+    // Except channelMultiplier, no parameter needs to be extract and convert (to positive integer).
+    let parameterCountAtLeast = 0;
 
-    let parameterCountMax = 2;  // Extract at most 2 weights and convert the values to positive integer.
-    return super.init( inputFloat32Array, byteOffsetBegin, parameterCountMax, inChannels, outChannels, fixedWeights );
+    // For an embedding layer, its output channel count is always depeding on channelMultiplier.
+    let outChannels = Number.POSITIVE_INFINITY;
+
+    return super.init( inputFloat32Array, byteOffsetBegin, parameterCountAtLeast, inChannels, channelMultiplier, outChannels );
   }
 
-  /** Every input channel will be expanded into so many embedding channels. */
-  get channelMultiplier() { return this.weightsModified[ 0 ]; }
 }
 
 
