@@ -57,7 +57,8 @@ class Base {
     this.shape =          shape;
     this.weights =        null;   // So that ( isValid() == false ) if re-initialization failed.
 
-    let weightCount =     ( shape ) ? shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue ) : 0;
+//    let weightCount =     ( shape ) ? shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue ) : 0;
+    let weightCount =     ( shape ) ? tf.sizeFromShape( shape ) : 0; // tf.sizeFromShape() can handle zero length (i.e. scalar).
     let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
 
     let input, byteOffsetBegin;
