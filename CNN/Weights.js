@@ -113,19 +113,25 @@ class Base {
 /**
  * The parameters for the weights of a neural network layer.
  *
- * @member {number} parameterCountMax
- *   If init()'s outChannels is falsy, extract parameterCountMax weights from inputFloat32Array
- * (or fixedWeights). If init()'s outChannels is truthy, extract ( parameterCountMax - 1 ) weights from
- * inputFloat32Array (or fixedWeights).
+ * @member {number} parameterCountExtractedAtLeast
+ *   How many parameters are extracted from inputFloat32Array or fixedWeights at least.
+ *
+ * @member {number} parameterCountExtracted
+ *   How many parameters are extracted from inputFloat32Array or fixedWeights. This will be the length
+ * of this.weights[] and this.weightsModified[].
+ *   - = ( parameterCountExtractedAtLeast + 0 ), if both channelMultiplier and outChannels are not null.
+ *   - = ( parameterCountExtractedAtLeast + 1 ), if only channelMultiplier is null.
+ *   - = ( parameterCountExtractedAtLeast + 1 ), if only outChannels is null.
+ *   - = ( parameterCountExtractedAtLeast + 2 ), if both channelMultiplier and outChannels are null.
  *
  * @member {number} inChannels
- *   The input channel count of this neural network layer for easily layer construction backtracking. This
- * is inChannels of init()
+ *   The input channel count of this neural network layer.
+ *
+ * @member {number} channelMultiplier
+ *   Every input channel will be expanded into how many channels.
  *
  * @member {number} outChannels
- *   The output channel count of this neural network layer for easily layer construction backtracking. This
- * is outChannels of init() if not null. Otherwise (i.e. init()'s outChannels is null), it is will be the
- * last element of this.weightsModified[] which are extracted from inputFloat32Array (or fixedWeights). 
+ *   The output channel count of this neural network layer.
  *
  * @member {Float32Array} weightsModified
  *  The copied extracted values. They are copied from inputFloat32Array or fixedWeights, and then converted
@@ -136,24 +142,54 @@ class Params extends Base {
 
   /**
    * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpret as weights. It should have parameterCountMax (if outChannels
-   * null) or ( parameterCountMax - 1 ) (if outChannels not null) elements.
+   *   A Float32Array whose values will be interpret as weights. It should have ( parameterCountMax ) or
+   * ( parameterCountMax - 1 ) or ( parameterCountMax - 2 ) elements according to the combination of
+   * channelMultiplier and outChannels.
    *
    * @param {number} byteOffsetBegin
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
+   * @param {number} inChannels
+   *   There will be how many input channels. (Input channel count)
+   *
+???
+   * @param {number} parameterCountExtractedAtLeast
+   *   There will be at least how many parameters extracted from inputFloat32Array or fixedWeights.
+   *
+   * @param {number} channelMultiplier
+   *   Every input channel will be expanded into how many channels.
+   *   - If null, extracted from inputFloat32Array or fixedWeights. (By evolution)
+   *   - If not null, it will be used instead of extracting from inputFloat32Array or fixedWeights. (By specifying)
+   *
+   * @param {number} outChannels
+   *   There will be how many output channels. (Output channel count)
+   *   - If null, extracted from inputFloat32Array or fixedWeights. (By evolution)
+   *   - If not Number.isFinite(), it will be ( inChannels * channelMultiplier ). (By channelMultiplier)
+   *   - If Number.isFinite(), it will be used instead of extracting from inputFloat32Array or fixedWeights. (By specifying)
+   *
    * @param {Float32Array|Array} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
-   * inputFloat32Array. If not null, it should have parameterCountMax (if outChannels null) or
-   * ( parameterCountMax - 1 ) (if outChannels not null) elements.
+   * inputFloat32Array. If not null, it should have ( parameterCountMax ) or ( parameterCountMax - 1 )
+   * or ( parameterCountMax - 2 ) elements according to the combination of channelMultiplier and outChannels.
    *
    * @return {boolean} Return false, if initialization failed.
    */
-  init( inputFloat32Array, byteOffsetBegin, parameterCountMax, inChannels, outChannels = null, fixedWeights = null ) {
+  init(
+    inputFloat32Array, byteOffsetBegin, parameterCountExtractedAtLeast, inChannels,
 
-    this.parameterCountMax = parameterCountMax;
+    channelMultiplierByEvolution
+    channelMultiplierBySpecify
+     
+    outChannelsByChannelMultiplier  (Number.isNaN() == true)
+    outChannelsByEvolution
+    outChannelsBySpecify
+
+    outChannels = null, fixedWeights = null ) {
+
+    this.parameterCountExtractedAtLeast = this.parameterCountExtracted = parameterCountExtractedAtLeast;
     this.inChannels = inChannels;
+
     this.outChannels = outChannels;
     this.weightsModified = null;     // So that distinguishable if re-initialization failed.
 
