@@ -14,9 +14,32 @@ class Params extends Weights.Params {
    * If outChannels is not null, extract 1 parameters [ channelMultiplier ] from inputFloat32Array or
    * fixedWeights.
    *
+   * @param {number} vocabularyCountPerInputChannel
+   *   
+   *
+   *
+   * @param {number} channelMultiplier
+   * If outChannels is null, extract 2 parameters [ channelMultiplier, outChannels ] from inputFloat32Array
+   * or fixedWeights.
+   *
+   * If outChannels is not null, extract 1 parameters [ channelMultiplier ] from inputFloat32Array or
+   * fixedWeights.
+   *   
+   *
+   *
    * @return {boolean} Return false, if initialization failed.
    */
-  init( inputFloat32Array, byteOffsetBegin, inChannels, outChannels = null, fixedWeights = null ) {
+  init( inputFloat32Array, byteOffsetBegin, inChannels, vocabularyCountPerInputChannel, channelMultiplier = null ) {
+    
+    this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
+
+    let outChannels = null;
+    let fixedWeights = null;
+    if ( channelMultiplier ) {
+      outChannels = inChannels * channelMultiplier;
+      fixedWeights = [ channelMultiplier ];
+    }
+
     let parameterCountMax = 2;  // Extract at most 2 weights and convert the values to positive integer.
     return super.init( inputFloat32Array, byteOffsetBegin, parameterCountMax, inChannels, outChannels, fixedWeights );
   }
