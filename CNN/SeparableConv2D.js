@@ -11,25 +11,38 @@ export { Params, Layer, StringArrayToEntities };
 class Params extends Weights.Params {
 
   /**
-   * If outChannels is null, extract 6 parameters [ filterHeight, filterWidth, channelMultiplier, dilationHeight,
-   * dilationWidth, outChannels ] from inputFloat32Array or fixedWeights.
+   * If ( channelMultiplier != null ) and ( outChannels != null ), extract 4 parameters [ dilationHeight,
+   * dilationWidth, filterHeight, filterWidth ] from inputFloat32Array or fixedWeights.
    *
-   * If outChannels is not null, extract 5 parameters [ filterHeight, filterWidth, channelMultiplier, dilationHeight,
-   * dilationWidth ] from inputFloat32Array or fixedWeights.
+   * If ( channelMultiplier == null ) and ( outChannels != null ), extract 5 parameters [ dilationHeight,
+   * dilationWidth, filterHeight, filterWidth, channelMultiplier ] from inputFloat32Array or fixedWeights.
+   *
+   * If ( channelMultiplier != null ) and ( outChannels == null ), extract 5 parameters [ dilationHeight,
+   * dilationWidth, filterHeight, filterWidth, outChannels ] from inputFloat32Array or fixedWeights.
+   *
+   * If ( channelMultiplier == null ) and ( outChannels == null ), extract 6 parameters [ dilationHeight,
+   * dilationWidth, filterHeight, filterWidth, channelMultiplier, outChannels ] from inputFloat32Array
+   * or fixedWeights.
    *
    * @return {boolean} Return false, if initialization failed.
+   *
+   * @override
    */
-  init( inputFloat32Array, byteOffsetBegin, inChannels, outChannels = null, fixedWeights = null ) {
-    let parameterCountMax = 6;  // Extract at most 6 weights and convert the values to positive integer.
-    let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, parameterCountMax, inChannels, outChannels, fixedWeights );
-    return bInitOk;
+  init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null, outChannels = null, fixedWeights = null ) {
+
+//!!! pad mode ? inverted residual connection (by concatenate) ?
+
+    // Except channelMultiplier and outChannels, there are 4 parameters need to be extract and convert (to positive integer).
+    let parameterCountAtLeast = 4;
+
+    return super.init(
+      inputFloat32Array, byteOffsetBegin, parameterCountAtLeast, inChannels, channelMultiplier, outChannels, fixedWeights );
   }
 
   get dilationHeight()    { return this.weightsModified[ 0 ]; }
   get dilationWidth()     { return this.weightsModified[ 1 ]; }
   get filterHeight()      { return this.weightsModified[ 2 ]; }
   get filterWidth()       { return this.weightsModified[ 3 ]; }
-  get channelMultiplier() { return this.weightsModified[ 4 ]; }
 }
 
 
