@@ -8,12 +8,6 @@ export { Params, Layer };
 class Params extends Weights.Params {
 
   /**
-   * If outChannels is null, extract 2 parameters [ channelMultiplier, outChannels ] from inputFloat32Array
-   * or fixedWeights.
-   *
-   * If outChannels is not null, extract 1 parameters [ channelMultiplier ] from inputFloat32Array or
-   * fixedWeights.
-   *
    * @param {number} channelMultiplier
    *   Every input channel will be expanded into so many embedding channels. This is also vocabulary count
    * per input channel (or, vocabulary count per vocabulary table). Every input channel will have a
