@@ -24,6 +24,7 @@ class Params extends Weights.Params {
 //!!! ...unfinished...
 // inverted residual connection (by add or by concatenate) ?
 // squeeze-and-excitation ?
+// Shuffled Grouped Pointwise Convolution ... ?
 
     // Except channelMultiplier, no parameter needs to be extract and convert (to positive integer).
     let parameterCountAtLeast = 0;
