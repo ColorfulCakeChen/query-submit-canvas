@@ -21,7 +21,9 @@ class Params extends Weights.Params {
    */
   init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null ) {
 
-//!!! inverted residual connection (by concatenate) ?
+//!!! ...unfinished...
+// inverted residual connection (by add or by concatenate) ?
+// squeeze-and-excitation ?
 
     // Except channelMultiplier, no parameter needs to be extract and convert (to positive integer).
     let parameterCountAtLeast = 0;
