@@ -34,6 +34,7 @@ class Params extends Weights.Params {
 // pad mode ?
 // inverted residual connection (by add or by concatenate) ?
 // squeeze-and-excitation ?
+// Shuffled Grouped Pointwise Convolution ... ?
 
     // Except channelMultiplier and outChannels, there are 4 parameters need to be extract and convert (to positive integer).
     let parameterCountAtLeast = 4;
