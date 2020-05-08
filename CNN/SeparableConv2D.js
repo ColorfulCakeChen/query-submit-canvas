@@ -30,7 +30,10 @@ class Params extends Weights.Params {
    */
   init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null, outChannels = null, fixedWeights = null ) {
 
-//!!! pad mode ? inverted residual connection (by concatenate) ?
+//!!! ...unfinished...
+// pad mode ?
+// inverted residual connection (by add or by concatenate) ?
+// squeeze-and-excitation ?
 
     // Except channelMultiplier and outChannels, there are 4 parameters need to be extract and convert (to positive integer).
     let parameterCountAtLeast = 4;
