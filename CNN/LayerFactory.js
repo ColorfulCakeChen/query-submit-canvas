@@ -11,5 +11,9 @@ class LayerFactory {
   constructor() {
   }
 
-  create
+  create() {
+//!!! ...unfinished...
+// group convolution ...
+
+  }
 }
