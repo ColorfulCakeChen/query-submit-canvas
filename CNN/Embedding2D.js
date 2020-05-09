@@ -22,9 +22,9 @@ class Params extends Weights.Params {
   init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null ) {
 
 //!!! ...unfinished...
-// inverted residual connection (by add or by concatenate) ?
+// inverted residual connection (by add or by concatenate) ? (dense net)
 // squeeze-and-excitation ?
-// Shuffled Grouped Pointwise Convolution ... ?
+// Shuffled Grouped Pointwise Convolution ... ? (by tf.gather() ?)
 
     // Except channelMultiplier, no parameter needs to be extract and convert (to positive integer).
     let parameterCountAtLeast = 0;
