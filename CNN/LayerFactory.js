@@ -13,7 +13,7 @@ class LayerFactory {
 
   create() {
 //!!! ...unfinished...
-// Shuffled Grouped Pointwise Convolution ...
+// Shuffled Grouped Pointwise Convolution ... (by tf.gather() ?)
 
   }
 }
