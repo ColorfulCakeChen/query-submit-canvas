@@ -191,7 +191,7 @@ class NeuralNetwork {
         let theLastAxisId = ( scaledInput.shape.length - 1 );  // Or, ( scaledInput.rank - 1 )
 
         // Extract vocabulary indices from input.
-        const vocabularyIndicesArray = tf.tidy( "VocabularyIndicesArray", () => {
+        const vocabularyIndicesTensor2DArray = tf.tidy( "VocabularyIndicesArray", () => {
 
           // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
           //
@@ -204,8 +204,8 @@ class NeuralNetwork {
         });
 
         // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
-        const embeddedTensor3DArray = vocabularyIndicesArray.map( ( vocabularyIndices, channelIndex ) => {
-          this.embeddingVocabularyTables[ channelIndex ].gather( vocabularyIndices );
+        const embeddedTensor3DArray = vocabularyIndicesTensor2DArray.map( ( vocabularyIndicesTensor2D, channelIndex ) => {
+          this.embeddingVocabularyTables[ channelIndex ].gather( vocabularyIndicesTensor2D );
         });
 
 //!!! ...unfinished... (inverted) residual connection
