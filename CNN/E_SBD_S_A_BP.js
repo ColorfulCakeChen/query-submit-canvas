@@ -199,8 +199,8 @@ class NeuralNetwork {
           let splitCount = scaledInput.shape[ theLastAxisId ];
 
           // Split the last axis (of input) as many as the shape size (of the last axis).
-          // And then convert to integer tensor1D, so that they can be used as tf.gather()'s indices.
-          return scaledInput.split( splitCount, theLastAxisId ).map( t => t.as1D().toInt() );
+          // And then convert to integer (tensor2D), so that they can be used as tf.gather()'s indices.
+          return scaledInput.split( splitCount, theLastAxisId ).map( t => t.toInt() );
         });
 
         // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
