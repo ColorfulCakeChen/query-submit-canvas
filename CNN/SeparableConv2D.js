@@ -76,36 +76,32 @@ class Layer {
    */
   init( inputFloat32Array, byteOffsetBegin, inChannels, fixedParams = null ) {
 
-    this.params = new Params( inputFloat32Array, byteOffsetBegin, fixedParams );
-    if ( !this.params.isValid() )
+    this.params = new Params();
+    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, fixedParams ) )
       return false;
 
-    this.depthwise = new Weights.Base(
-      inputFloat32Array, this.params.defaultByteOffsetEnd, null, 0,
-      [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier] );
-
-    if ( !this.depthwise.isValid() )
+    this.depthwise = new Weights.Base();
+    if ( !this.depthwise.init(
+           inputFloat32Array, this.params.defaultByteOffsetEnd, null, 0,
+           [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier] ) )
       return false;
 
-    this.depthwiseBias = new Weights.Base(
-      inputFloat32Array, this.depthwise.defaultByteOffsetEnd, null, 0,
-      [1, 1, inChannels, this.params.channelMultiplier] );
-
-    if ( !this.depthwiseBias.isValid() )
+    this.depthwiseBias = new Weights.Base();
+    if ( !this.depthwiseBias.init(
+          inputFloat32Array, this.depthwise.defaultByteOffsetEnd, null, 0,
+          [1, 1, inChannels, this.params.channelMultiplier] ) )
       return false;
 
-    this.pointwise = new Weights.Base(
-      inputFloat32Array, this.depthwiseBias.defaultByteOffsetEnd, null, 0,
-      [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels] );
-
-    if ( !this.pointwise.isValid() )
+    this.pointwise = new Weights.Base();
+    if ( !this.pointwise.init(
+          inputFloat32Array, this.depthwiseBias.defaultByteOffsetEnd, null, 0,
+          [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels] ) )
       return false;
 
-    this.pointwiseBias = new Weights.Base(
-      inputFloat32Array, this.pointwise.defaultByteOffsetEnd, null, 0,
-      [1, 1, this.params.outChannels] );
-
-    if ( !this.pointwiseBias.isValid() )
+    this.pointwiseBias = new Weights.Base();
+    if ( !this.pointwiseBias.init(
+          inputFloat32Array, this.pointwise.defaultByteOffsetEnd, null, 0,
+          [1, 1, this.params.outChannels] );
       return false;
 
     return true;
