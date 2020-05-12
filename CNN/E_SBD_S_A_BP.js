@@ -94,7 +94,7 @@ class NeuralNetwork {
     // 0. Initialize.
     disposeTensors();
     this.architecture = architecture;
-    this.embeddingVocabularyTables = new Array( architecture.inputChannelCount );
+//    this.embeddingVocabularyTables = new Array( architecture.inputChannelCount );
 
     // If undefined or null or negative or zero or less than 1, set to default.
     // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
@@ -120,10 +120,17 @@ class NeuralNetwork {
     // 1. Decode.
     while (progressToAdvance.accumulation < sourceWeightCount) {
 
-      tf.tidy( "E_SD_S_A_BP.NeuralNetwork.decoder.embeddingVocabularyTables", () => {
-        this.embeddingVocabularyTables[] = tf.tensor( , architecture.inputChannelCount );
-        tf.keep(??);
-  //!!! ...unfinished...
+      this.embeddingVocabularyTables = tf.tidy( "E_SD_S_A_BP.NeuralNetwork.decoder.embeddingVocabularyTables", () => {
+        let embeddingVocabularyTables = new Array( architecture.inputChannelCount );
+        for ( let i = 0; i < architecture.inputChannelCount; ++i ) {
+          embeddingVocabularyTables[ i ] = tf.tensor2d(
+            ,
+            [ architecture.embeddingVocabularyCount_PerInputChannel, architecture.embeddingChannelCount_PerInputChannel ] );
+          tf.keep(??);
+//!!! ...unfinished...
+        }
+//!!! ...unfinished...
+        return embeddingVocabularyTables;
       });
 
       // Every suspendWeightCount, release CPU time (and report progress).
