@@ -36,7 +36,8 @@ class Params extends Weights.Params {
 // squeeze-and-excitation ?
 // Shuffled Grouped Pointwise Convolution ... ? (by tf.gather() ?)
 
-    // Except channelMultiplier and outChannels, there are 4 parameters need to be extract and convert (to positive integer).
+    // Except channelMultiplier and outChannels, there are 4 parameters [ dilationHeight, dilationWidth, filterHeight,
+    // filterWidth ] need to be extract and convert (to positive integer).
     let parameterCountAtLeast = 4;
 
     return super.init(
@@ -110,8 +111,8 @@ class Layer {
     return false;
   }
 
-  get byteOffsetBegin() { return this.params.byteOffsetBegin; }
-  get byteOffsetEnd()   { return this.pointwiseBias.byteOffsetEnd; }
+  get byteOffsetBegin() { return this.params.defaultByteOffsetBegin; }
+  get byteOffsetEnd()   { return this.pointwiseBias.defaultByteOffsetEnd; }
 }
 
 
