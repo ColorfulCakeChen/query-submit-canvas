@@ -172,7 +172,7 @@ class Params extends Base {
    *
    * @param {Float32Array|Array} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
-   * inputFloat32Array. If not null, it should have ( parameterCountExtractedAtLeast ) or
+   * inputFloat32Array. When not null, it should have ( parameterCountExtractedAtLeast ) or
    * ( parameterCountExtractedAtLeast + 1 ) or ( parameterCountExtractedAtLeast + 2 ) elements according to the
    * value of channelMultiplier and outChannels.
    *
@@ -209,7 +209,7 @@ class Params extends Base {
         privilegeInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
     }
 
-    // Extract from array.
+    // Extract from input array.
     let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCountExtracted ] );
 
     // Copy and convert to integer.
