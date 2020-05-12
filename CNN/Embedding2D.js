@@ -76,20 +76,20 @@ class Layer {
 
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
 
-    this.params = new Params( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier );
-    if ( !this.params.isValid() )
+    this.params = new Params();
+    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
       return false;
 
     {
       this.vocabularyTables = new Array( inChannels );
 
+      let channelMultiplierInFact = this.params.channelMultiplier;
       let byteOffsetEnd = this.params.defaultByteOffsetEnd;
       for ( let i = 0; i < inChannels; ++i ) {
 
-        this.vocabularyTables[ i ] = new Weights.Base(
-          inputFloat32Array, byteOffsetEnd, null, 0, [vocabularyCountPerInputChannel, this.params.channelMultiplier] );
-
-        if ( !this.vocabularyTables[ i ].isValid() )
+        this.vocabularyTables[ i ] = new Weights.Base();
+        if ( !this.vocabularyTables[ i ].init(
+               inputFloat32Array, byteOffsetEnd, null, 0, [vocabularyCountPerInputChannel, channelMultiplierInFact] ) )
           return false;
 
         byteOffsetEnd = this.vocabularyTables[ i ].defaultByteOffsetEnd;
