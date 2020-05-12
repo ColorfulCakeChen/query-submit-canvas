@@ -107,6 +107,8 @@ class Layer {
 
     if ( !this.pointwiseBias.isValid() )
       return false;
+
+    return true;
   }
 
   isValid() {
