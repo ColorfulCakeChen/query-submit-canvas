@@ -71,37 +71,42 @@ class Layer {
    *   If null, extract 6 parameters from inputFloat32Array. If not null, extract 6 parameters from it instead of
    * inputFloat32Array. If not null, it should have 6 elements: [ filterHeight, filterWidth, channelMultiplier,
    * dilationHeight, dilationWidth, outChannels ].
-   */ 
-  constructor( inputFloat32Array, byteOffsetBegin, inChannels, fixedParams = null ) {
+   *
+   * @return {boolean} Return false, if initialization failed.
+   */
+  init( inputFloat32Array, byteOffsetBegin, inChannels, fixedParams = null ) {
 
     this.params = new Params( inputFloat32Array, byteOffsetBegin, fixedParams );
     if ( !this.params.isValid() )
-      return;
+      return false;
 
     this.depthwise = new Weights.Base(
       inputFloat32Array, this.params.defaultByteOffsetEnd, null, 0,
       [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier] );
 
     if ( !this.depthwise.isValid() )
-      return;
+      return false;
 
     this.depthwiseBias = new Weights.Base(
       inputFloat32Array, this.depthwise.defaultByteOffsetEnd, null, 0,
       [1, 1, inChannels, this.params.channelMultiplier] );
 
     if ( !this.depthwiseBias.isValid() )
-      return;
+      return false;
 
     this.pointwise = new Weights.Base(
       inputFloat32Array, this.depthwiseBias.defaultByteOffsetEnd, null, 0,
       [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels] );
 
     if ( !this.pointwise.isValid() )
-      return;
+      return false;
 
     this.pointwiseBias = new Weights.Base(
       inputFloat32Array, this.pointwise.defaultByteOffsetEnd, null, 0,
       [1, 1, this.params.outChannels] );
+
+    if ( !this.pointwiseBias.isValid() )
+      return false;
   }
 
   isValid() {
