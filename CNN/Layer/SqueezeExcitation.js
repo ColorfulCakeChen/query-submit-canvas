@@ -1,4 +1,4 @@
-import * as Weights from "./Weights.js";
+import * as Weights from "../Weights.js";
 
 export { Params, Layer };
 
@@ -8,16 +8,17 @@ export { Params, Layer };
 class Params extends Weights.Params {
 
   /**
+   * The outChannels (output channel count) will always be the same as inChannels (input channel count).
+   *
    * @param {number} channelMultiplier
-   *   Every input channel will be expanded into so many embedding channels. The outChannels (output channel count)
-   * is always depending on channelMultiplier and equal to ( inChannels * channelMultiplier ). If null, it will be
-   * extracted from inputFloat32Array (i.e. by evolution).
+   *   Every input channel will be expanded into so many depthwise channels. If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
    *
    * @return {boolean} Return false, if initialization failed.
    *
    * @override
    */
-  init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null ) {
+  init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null, fixedWeights = null ) {
 
 //!!! ...unfinished...
 // inverted residual connection (by add or by concatenate) ? (dense net)
@@ -27,19 +28,26 @@ class Params extends Weights.Params {
     // Except channelMultiplier, no parameter needs to be extract and convert (to positive integer).
     let parameterCountAtLeast = 0;
 
-    // For an embedding layer, its output channel count is always depeding on channelMultiplier.
-    let outChannels = Number.POSITIVE_INFINITY;
+    // For a squeeze-and-excitation layer, its output channel count is always the same as input channel count. (By specifying)
+    let outChannels = inChannels;
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterCountAtLeast, inChannels, channelMultiplier, outChannels );
   }
 
+  get filterHeight()      { return 1; }
+  get filterWidth()       { return 1; }
 }
 
 
 /**
- * An embedding layer contains one params (this.params) and inChannels embedding vocabulary tables.
- * Every input channel has one embedding vocabulary table. Every embedding vocabulary table has
- * vocabularyCountPerInputChannel vocabularies. Every vocabulary has channelMultiplier embedding channels.
+!!! ...unfinished... should be 2 x (biased depthwise convolution, sine, biased pointwise convolution)
+
+ * A squeeze-and-excitation layer contains one params (this.params), 1x1 depthwise convolution filters and bias,
+ * pointwise convolution filters and bias.
+ *
+ */
+/**
+ * A CNN layer contains one params (this.params) and three filters: depthwise, pointwise and bias.
  */
 class Layer {
 
@@ -47,68 +55,60 @@ class Layer {
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpret as weights.
    *
-   * @param {number} byteOffsetBegin
+   * @param {number}       byteOffsetBegin
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
-   * @param {number} inChannels
+   * @param {number}       inChannels
    *   The input channel count.
    *
-   * @param {number} vocabularyCountPerInputChannel
-   *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
-   * every input channel has a vocabulary table). For an image data (R-G-B-A four channels), there will be 256
-   * vocabularies per input channel because every channel is represented by one byte (8 bits) which has 2^8 = 256 kinds
-   * of possible values.
-   *
-   * @param {number} channelMultiplier
-   *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
-   * embedding channels. The outChannels (output channel count) is always depending on channelMultiplier and equal
-   * to ( inChannels * channelMultiplier ). If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * @param {Array} fixedParams
+   *   If null, extract 6 parameters from inputFloat32Array. If not null, extract 6 parameters from it instead of
+   * inputFloat32Array. If not null, it should have 6 elements: [ filterHeight, filterWidth, channelMultiplier,
+   * dilationHeight, dilationWidth, outChannels ].
    *
    * @return {boolean} Return false, if initialization failed.
    */
-  init( inputFloat32Array, byteOffsetBegin, inChannels, vocabularyCountPerInputChannel, channelMultiplier = null ) {
-
-//!!! ...unfinished...
-// inverted residual connection (by add or by concatenate) ? (dense net)
-// squeeze-and-excitation ?
-// Shuffled Grouped Pointwise Convolution ... ? (by tf.gather() ?)
-
-    this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
+  init( inputFloat32Array, byteOffsetBegin, inChannels, fixedParams = null ) {
 
     this.params = new Params();
-    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
+    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, fixedParams ) )
       return false;
 
-    {
-      this.vocabularyTables = new Array( inChannels );
+    this.depthwise = new Weights.Base();
+    if ( !this.depthwise.init(
+           inputFloat32Array, this.params.defaultByteOffsetEnd, null, 0,
+           [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier] ) )
+      return false;
 
-      let channelMultiplierInFact = this.params.channelMultiplier;
-      let nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
-      for ( let i = 0; i < inChannels; ++i ) {
+    this.depthwiseBias = new Weights.Base();
+    if ( !this.depthwiseBias.init(
+          inputFloat32Array, this.depthwise.defaultByteOffsetEnd, null, 0,
+          [1, 1, inChannels, this.params.channelMultiplier] ) )
+      return false;
 
-        this.vocabularyTables[ i ] = new Weights.Base();
-        if ( !this.vocabularyTables[ i ].init(
-               inputFloat32Array, nextByteOffsetBegin, null, 0, [vocabularyCountPerInputChannel, channelMultiplierInFact] ) )
-          return false;
+    this.pointwise = new Weights.Base();
+    if ( !this.pointwise.init(
+          inputFloat32Array, this.depthwiseBias.defaultByteOffsetEnd, null, 0,
+          [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels] ) )
+      return false;
 
-        nextByteOffsetBegin = this.vocabularyTables[ i ].defaultByteOffsetEnd;
-      });
-    }
+    this.pointwiseBias = new Weights.Base();
+    if ( !this.pointwiseBias.init(
+          inputFloat32Array, this.pointwise.defaultByteOffsetEnd, null, 0,
+          [1, 1, this.params.outChannels] );
+      return false;
 
     return true;
   }
 
-
   isValid() {
-    if ( this.params )
-      if ( this.vocabularyTables )
-        if ( this.vocabularyTables[ this.params.inChannels - 1 ] )
-          if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // Every vocabulary table is valid.
-            return true;
+    if ( this.pointwiseBias )
+      if ( this.pointwiseBias.isValid() )
+        return true;
     return false;
   }
 
   get byteOffsetBegin() { return this.params.defaultByteOffsetBegin; }
-  get byteOffsetEnd()   { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
+  get byteOffsetEnd()   { return this.pointwiseBias.defaultByteOffsetEnd; }
 }
