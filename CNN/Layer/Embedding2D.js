@@ -28,7 +28,7 @@ class Params extends Weights.Params {
     let parameterCountAtLeast = 0;
 
     // For an embedding layer, its output channel count is always depeding on channelMultiplier.
-    let outChannels = Number.POSITIVE_INFINITY;
+    let outChannels = Inifity; // Number.POSITIVE_INFINITY;
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterCountAtLeast, inChannels, channelMultiplier, outChannels );
   }
@@ -98,6 +98,7 @@ class Layer {
 
     return true;
   }
+
 
   isValid() {
     if ( this.params )
