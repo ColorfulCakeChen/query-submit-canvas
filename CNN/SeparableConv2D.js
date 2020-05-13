@@ -24,6 +24,14 @@ class Params extends Weights.Params {
    * dilationWidth, filterHeight, filterWidth, channelMultiplier, outChannels ] from inputFloat32Array
    * or fixedWeights.
    *
+   * @param {number} channelMultiplier
+   *   Every input channel will be expanded into so many depthwise channels. If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
+   *
+   * @param {number} outChannels
+   *   All depthwise channels will be integrated into so many output channels. If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
+   *
    * @return {boolean} Return false, if initialization failed.
    *
    * @override
