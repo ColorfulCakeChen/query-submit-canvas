@@ -200,7 +200,7 @@ class Params extends Base {
    */
   init( inputFloat32Array, byteOffsetBegin, parameterMap, fixedWeights = null ) {
 
-    this.weightsModified = null;     // So that distinguishable if re-initialization failed.
+    this.weightsModified = this.parameterMap = null; // So that distinguishable if re-initialization failed.
 
     if ( !parameterMap )
       return false;
