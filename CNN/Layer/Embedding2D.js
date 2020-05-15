@@ -24,13 +24,15 @@ class Params extends Weights.Params {
 // squeeze-and-excitation ?
 // Shuffled Grouped Pointwise Convolution ... ? (by tf.gather() ?)
 
-    // Except channelMultiplier, no parameter needs to be extract and convert (to positive integer).
-    let parameterCountAtLeast = 0;
+    let parameterMap = new Map( [
+      [ Weights.Params.Keys.inChannels,         inChannels ],
+      [ Weights.Params.Keys.channelMultiplier,  channelMultiplier ],
 
-    // For an embedding layer, its output channel count is always depeding on channelMultiplier.
-    let outChannels = Inifity; // Number.POSITIVE_INFINITY;
+      // For an embedding layer, its output channel count is always depeding on channelMultiplier.
+      [ Weights.Params.Keys.outChannels,        Inifity ],
+    ] );
 
-    return super.init( inputFloat32Array, byteOffsetBegin, parameterCountAtLeast, inChannels, channelMultiplier, outChannels );
+    return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
 }
