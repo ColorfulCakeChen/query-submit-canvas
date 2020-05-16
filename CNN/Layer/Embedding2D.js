@@ -96,20 +96,32 @@ class Layer {
     if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
       return false;
 
-    {
-      this.vocabularyTables = new Array( inChannels );
+    let embeddingChannelCountPerInputChannel = this.embeddingChannelCountPerInputChannel; // The real channelMultiplier.
+    let vocabularyTableShape = [ vocabularyCountPerInputChannel, embeddingChannelCountPerInputChannel ];
 
-      let channelMultiplierInFact = this.params.channelMultiplier;
+    // Extract data of vocabulary tables.
+    this.vocabularyTables = new Array( inChannels );
+    {
       let nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
       for ( let i = 0; i < inChannels; ++i ) {
-
         this.vocabularyTables[ i ] = new Weights.Base();
-        if ( !this.vocabularyTables[ i ].init(
-               inputFloat32Array, nextByteOffsetBegin, null, 0, [vocabularyCountPerInputChannel, channelMultiplierInFact] ) )
-          return false;
-
+        if ( !this.vocabularyTables[ i ].init( inputFloat32Array, nextByteOffsetBegin, null, 0, vocabularyTableShape ) )
+          return false;  // e.g. input array do not have enough data.
         nextByteOffsetBegin = this.vocabularyTables[ i ].defaultByteOffsetEnd;
+      }
+    }
+
+    // Build tf.tensor of vocabulary tables.
+    try {
+      this.vocabularyTablesTensors = tf.tidy( "Embedding2D.Layer.buildTensors", () => {
+        let vocabularyTablesTensors = new Array( inChannels );
+        this.vocabularyTables.forEach( ( vocabularyTable, i ) => {
+          vocabularyTablesTensors[ i ] = tf.tensor2d( vocabularyTable, vocabularyTableShape );
+        });
+        return vocabularyTablesTensors;
       });
+    } catch ( e ) {
+      return false; // e.g. out of (GPU) memory.
     }
 
     return true;
@@ -121,35 +133,6 @@ class Layer {
         if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
           return true;
     return false;
-  }
-
-  /** Build tf.tensor according to this.vocabularyTables[]. */
-  buildTensors() {
-    disposeTensor();
-
-    if ( !isValid() )
-      return;
-
-    this.vocabularyTablesTensors = tf.tidy( "Embedding2D.Layer.buildTensors", () => {
-      let inChannels =                           this.inChannels;
-      let vocabularyCountPerInputChannel =       this.vocabularyCountPerInputChannel;
-      let embeddingChannelCountPerInputChannel = this.embeddingChannelCountPerInputChannel;
-
-      let vocabularyTablesTensors = new Array( inChannels );
-
-      for ( let i = 0; i < inChannels; ++i ) {
-
-        let vocabularyTable = this.vocabularyTables[ i ];
-        if ( !vocabularyTable )
-          continue;
-
-        vocabularyTablesTensors[ i ] = tf.tensor2d(
-          vocabularyTable,
-          [ vocabularyCountPerInputChannel, embeddingChannelCountPerInputChannel ] );
-      }
-
-      return vocabularyTablesTensors;
-    });
   }
 
   /** Release tf.tensor. */
