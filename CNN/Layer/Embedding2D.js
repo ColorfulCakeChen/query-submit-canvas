@@ -1,4 +1,4 @@
-import * as Weights from "./Weights.js";
+import * as Weights from "../Weights.js";
 
 export { Params, Layer };
 
@@ -25,11 +25,11 @@ class Params extends Weights.Params {
 // Shuffled Grouped Pointwise Convolution ... ? (by tf.gather() ?)
 
     let parameterMap = new Map( [
-      [ Weights.Params.Keys.inChannels,         inChannels ],
-      [ Weights.Params.Keys.channelMultiplier,  channelMultiplier ],
+      [ Weights.Params.Keys.inChannels,        inChannels ],
+      [ Weights.Params.Keys.channelMultiplier, channelMultiplier ],
 
-      // For an embedding layer, its output channel count is always depeding on channelMultiplier.
-      [ Weights.Params.Keys.outChannels,        Inifity ],
+      // For an embedding layer, its output channel count always depends on channelMultiplier.
+      [ Weights.Params.Keys.outChannels,       Inifity ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
@@ -76,9 +76,11 @@ class Layer {
 // squeeze-and-excitation ?
 // Shuffled Grouped Pointwise Convolution ... ? (by tf.gather() ?)
 
+    this.params = this.vocabularyTables = null; // So that distinguishable if re-initialization failed.
+
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
 
-    this.params = new Params();
+    this.params = new Weights.Params();
     if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
       return false;
 
@@ -104,10 +106,11 @@ class Layer {
 
   isValid() {
     if ( this.params )
-      if ( this.vocabularyTables )
-        if ( this.vocabularyTables[ this.params.inChannels - 1 ] )
-          if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // Every vocabulary table is valid.
-            return true;
+      if ( this.params.isValid() )
+        if ( this.vocabularyTables )
+          if ( this.vocabularyTables[ this.params.inChannels - 1 ] )
+            if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // Every vocabulary table is valid.
+              return true;
     return false;
   }
 
