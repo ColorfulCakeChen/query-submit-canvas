@@ -67,7 +67,8 @@ class Params extends Weights.Params {
 
 
 /**
- * A CNN layer contains one params (this.params) and three filters: depthwise, pointwise and bias.
+ * A CNN layer contains one params (this.params) and four filters: depthwise, depthwiseBias, pointwise
+ * and pointwiseBias.
  */
 class Layer {
 
@@ -75,12 +76,20 @@ class Layer {
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpret as weights.
    *
-   * @param {number}       byteOffsetBegin
+   * @param {number} byteOffsetBegin
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
-   * @param {number}       inChannels
+   * @param {number} inChannels
    *   The input channel count.
+   *
+   * @param {number} channelMultiplier
+   *   Every input channel will be expanded into so many depthwise channels. If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
+   *
+   * @param {number} outChannels
+   *   All depthwise channels will be integrated into so many output channels. If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
    *
    * @param {Array} fixedWeights
    *   If null, extract 6 parameters from inputFloat32Array. If not null, extract 6 parameters from it instead of
