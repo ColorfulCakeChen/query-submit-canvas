@@ -89,36 +89,37 @@ class Layer {
    *
    * @return {boolean} Return false, if initialization failed.
    */
-  init( inputFloat32Array, byteOffsetBegin, inChannels, fixedWeights = null ) {
+  init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null, outChannels = null, fixedWeights = null ) {
 
-    this.params = this.pointwiseBias = null; // So that distinguishable if re-initialization failed.
+    // So that distinguishable if re-initialization failed.
+    this.params = this.depthwise = this.depthwiseBias = this.pointwise = this.pointwiseBias = null;
 
-    this.params = new Weights.Params();
-    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, fixedWeights ) )
+    this.params = new Params();
+    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier, outChannels, fixedWeights ) )
       return false;
 
     this.depthwise = new Weights.Base();
     if ( !this.depthwise.init(
            inputFloat32Array, this.params.defaultByteOffsetEnd, null, 0,
-           [this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier] ) )
+           [ this.params.filterHeight, this.params.filterWidth, inChannels, this.params.channelMultiplier ] ) )
       return false;
 
     this.depthwiseBias = new Weights.Base();
     if ( !this.depthwiseBias.init(
           inputFloat32Array, this.depthwise.defaultByteOffsetEnd, null, 0,
-          [1, 1, inChannels, this.params.channelMultiplier] ) )
+          [ 1, 1, inChannels, this.params.channelMultiplier ] ) )
       return false;
 
     this.pointwise = new Weights.Base();
     if ( !this.pointwise.init(
           inputFloat32Array, this.depthwiseBias.defaultByteOffsetEnd, null, 0,
-          [1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels] ) )
+          [ 1, 1, inChannels * this.params.channelMultiplier, this.params.outChannels ] ) )
       return false;
 
     this.pointwiseBias = new Weights.Base();
     if ( !this.pointwiseBias.init(
           inputFloat32Array, this.pointwise.defaultByteOffsetEnd, null, 0,
-          [1, 1, this.params.outChannels] );
+          [ 1, 1, this.params.outChannels ] );
       return false;
 
     return true;
