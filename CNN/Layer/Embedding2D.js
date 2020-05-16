@@ -45,7 +45,8 @@ class Params extends Weights.Params {
  *
  * @member {Array of number} inputScaleToSize
  *   Scale the height and width of the input image to size [ inputScaleToHeight, inputScaleToWidth ]
- * (in pixels) before convoluting. For text input, the inputScaleToHeight should be 1. 
+ * (in pixels) before convoluting. For text input, the inputScaleToHeight should be 1. If null, there will be
+ * no scaling when predict().
  *
  * @member {number} vocabularyCountPerInputChannel
  *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
@@ -113,12 +114,11 @@ class Layer {
 
     // Build tf.tensor of vocabulary tables.
     try {
-      this.vocabularyTablesTensors = tf.tidy( "Embedding2D.Layer.buildTensors", () => {
-        let vocabularyTablesTensors = new Array( inChannels );
-        this.vocabularyTables.forEach( ( vocabularyTable, i ) => {
-          vocabularyTablesTensors[ i ] = tf.tensor2d( vocabularyTable, vocabularyTableShape );
+      this.vocabularyTablesTensor2DArray = tf.tidy( "Embedding2D.Layer.buildTensors", () => {
+        return this.vocabularyTables.map( ( vocabularyTable, i ) => {
+//!!! residual (concat id) in advance ?
+          tf.tensor2d( vocabularyTable, vocabularyTableShape )
         });
-        return vocabularyTablesTensors;
       });
     } catch ( e ) {
       return false; // e.g. out of (GPU) memory.
@@ -128,9 +128,11 @@ class Layer {
   }
 
   isValid() {
-    if ( this.vocabularyTables )
-      if ( this.vocabularyTables[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
+    if ( this.vocabularyTablesTensors )
+      if ( this.vocabularyTablesTensors[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
         if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
+          
+          this.vocabularyTablesTensors
           return true;
     return false;
   }
@@ -155,10 +157,16 @@ class Layer {
       try {
 
         // Scale input into specific size.
-        //
-        // Use ( alignCorners == true ) for better looking when visualizing.
-        //const scaledInput = tf.image.resizeBilinear( inputTensor3D, this.architecture.inputScaleToSize, true );
-        const scaledInput = inputTensor3D.resizeBilinear( inputTensor3D, this.inputScaleToSize, true );
+        let scaledInput;
+        if (   ( !this.inputScaleToSize )                                       // No scaling information.
+            || (   ( this.inputScaleToSize[ 0 ] == inputTensor3D.shape[ 0 ] )   // Or, already same size.
+                && ( this.inputScaleToSize[ 1 ] == inputTensor3D.shape[ 1 ] ) )
+           ) {
+          scaledInput = inputTensor3D;
+        } else {
+          // Otherwise, scaling by using ( alignCorners == true ) for better looking when visualizing.
+          scaledInput = inputTensor3D.resizeBilinear( inputTensor3D, this.inputScaleToSize, true );
+        }
 
         // For example, suppose input is a color image (i.e. height-width-color tensor3D). The last
         // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
@@ -194,7 +202,7 @@ class Layer {
           embeddedTensor3DArray.push( oneChannelTensor3D );
 
           // Every tensor2D (i.e. one channel) will be expanded to tensor3D (i.e. multiple channels).
-          const multipleChannelTensor3D = this.vocabularyTablesTensors[ i ].gather( oneChannelTensor3D );
+          const multipleChannelTensor3D = this.vocabularyTablesTensor2DArray[ i ].gather( oneChannelTensor3D );
           embeddedTensor3DArray.push( multipleChannelTensor3D );
         }
 
