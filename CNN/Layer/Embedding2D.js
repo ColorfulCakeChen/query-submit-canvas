@@ -80,7 +80,7 @@ class Layer {
 
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
 
-    this.params = new Weights.Params();
+    this.params = new Params();
     if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
       return false;
 
