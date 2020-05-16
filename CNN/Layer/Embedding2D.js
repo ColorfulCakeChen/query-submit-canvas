@@ -103,14 +103,11 @@ class Layer {
     return true;
   }
 
-
   isValid() {
-    if ( this.params )
-      if ( this.params.isValid() )
-        if ( this.vocabularyTables )
-          if ( this.vocabularyTables[ this.params.inChannels - 1 ] )
-            if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // Every vocabulary table is valid.
-              return true;
+    if ( this.vocabularyTables )
+      if ( this.vocabularyTables[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
+        if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
+          return true;
     return false;
   }
 
