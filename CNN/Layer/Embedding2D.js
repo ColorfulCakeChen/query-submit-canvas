@@ -29,7 +29,7 @@ class Params extends Weights.Params {
       [ Weights.Params.Keys.channelMultiplier, channelMultiplier ],
 
       // For an embedding layer, its output channel count always depends on channelMultiplier.
-      [ Weights.Params.Keys.outChannels,       Inifity ],
+      [ Weights.Params.Keys.outChannels,       Infinity ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
