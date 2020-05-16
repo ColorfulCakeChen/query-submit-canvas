@@ -125,7 +125,6 @@ class Base {
  *   Always ( parameterMap.size ). This is the total parameter count provided by this object
  * if init() successfully.
  *
-//!!! ...unfinished...
  * @member {number} inChannels
  *   The input channel count of this neural network layer.
  *
@@ -267,9 +266,18 @@ class Params extends Base {
   get parameterCountExtracted() { return this.weightCount; }
   get parameterCount()          { return this.parameterMap.size; }
 
+  // Most kinds of layers have these parameters.
+  
   get inChannels()        { return this.parameterMap.get( Params.Keys.inChannels ); }
   get channelMultiplier() { return this.parameterMap.get( Params.Keys.channelMultiplier ); }
   get outChannels()       { return this.parameterMap.get( Params.Keys.outChannels ); }
+
+  // Convolution layer have these parameters.
+
+  get dilationHeight()    { return this.parameterMap.get( Params.Keys.dilationHeight ); }
+  get dilationWidth()     { return this.parameterMap.get( Params.Keys.dilationWidth ); }
+  get filterHeight()      { return this.parameterMap.get( Params.Keys.filterHeight ); }
+  get filterWidth()       { return this.parameterMap.get( Params.Keys.filterWidth ); }
 }
 
 /**
