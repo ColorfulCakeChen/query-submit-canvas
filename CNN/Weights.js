@@ -242,7 +242,7 @@ class Params extends Base {
       this.parameterMap.set( key, this.weightsModified[ arrayIndex ] );
     }
 
-    // If original parameterMap has output channel count and its value is infinity, its value should be depend
+    // If original parameterMap has output channel count and its value is infinity, its value will depend
     // on channelMultiplier (i.e. by channelMultiplier).
     //
     // Usually, the embedding layer uses this behavior.
