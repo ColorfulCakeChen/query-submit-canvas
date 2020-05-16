@@ -117,18 +117,9 @@ class Base {
  *   All parameters provided by this object. Its keys are the same as init()'s parameterMap. Its values are
  * combined from init()'s parameterMap and inputFloat32Array (or fixedWeights).
  *
-//!!! ...unfinished...
- * @member {number} parameterCountExtractedAtLeast
- *   How many parameters are extracted from inputFloat32Array or fixedWeights at least.
- *
  * @member {number} parameterCountExtracted
  *   How many parameters are extracted from inputFloat32Array or fixedWeights in fact. Only existed if init()
  * successfully. The same as this.weightCount (i.e. length of this.weights[] and this.weightsModified[]).
-//!!! ...unfinished...
- *   - = ( parameterCountExtractedAtLeast + 0 ), if both channelMultiplier and outChannels are not null.
- *   - = ( parameterCountExtractedAtLeast + 1 ), if only channelMultiplier is null.
- *   - = ( parameterCountExtractedAtLeast + 1 ), if only outChannels is null.
- *   - = ( parameterCountExtractedAtLeast + 2 ), if both channelMultiplier and outChannels are null.
  *
  * @member {number} parameterCount
  *   Always ( parameterMap.size ). This is the total parameter count provided by this object
@@ -171,6 +162,7 @@ class Params extends Base {
    *     - If Infinity (Number.POSITIVE_INFINITY), it will be ( inChannels * channelMultiplier ). (By channelMultiplier)
    *     - If null, extracted from inputFloat32Array or fixedWeights. (By evolution)
    *
+   *
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpret as weights. It should have ( parameterCountExtractedAtLeast ) or
    * ( parameterCountExtractedAtLeast + 1 ) or ( parameterCountExtractedAtLeast + 2 ) elements according to the
@@ -180,19 +172,16 @@ class Params extends Base {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
-//!!! ...unfinished...
    * @param {Map} parameterMap
-   *   Describe what parameters to be extracted. The keys of parameterMap will be viewed as parameter names.
+   *   Describe what parameters to be used or extracted. The keys of parameterMap will be viewed as parameter names.
    * The values of parameterMap will be viewed as parameter values. If the value of a [ key, value ] entry is null,
    * the parameter's value will be extracted from inputFloat32Array or fixedWeights (i.e. by evolution). Otherwise,
    * the parameter's value will be the value of the [ key, value ] entry (i.e. by specifying).
    *
-//!!! ...unfinished...
    * @param {Float32Array|Array} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
-   * inputFloat32Array. When not null, it should have ( parameterCountExtractedAtLeast ) or
-   * ( parameterCountExtractedAtLeast + 1 ) or ( parameterCountExtractedAtLeast + 2 ) elements according to the
-   * value of channelMultiplier and outChannels.
+   * inputFloat32Array. When not null, it should have parameterCountExtracted elements (i.e. the count of null values
+   * of parameterMap).
    *
    * @return {boolean} Return false, if initialization failed.
    *
@@ -203,13 +192,16 @@ class Params extends Base {
     this.weightsModified = this.parameterMap = null; // So that distinguishable if re-initialization failed.
 
     if ( !parameterMap )
-      return false;
+      return false;  // Don not know what parameters to be used or extracted.
 
     let inChannels = parameterMap.get( Params.Keys.inChannels );
     if ( !inChannels )
-      return false; // It is a required parameter.
+      return false;  // At least, there should be a (required) parameter (i.e. input channel count).
 
-    this.parameterMap = new Map( parameterMap );
+    this.parameterMap = new Map( parameterMap );  // Copy so that the original map will not be modified.
+
+    // Collect what parameters should be extracted from input array (rather than use values in the parameterMap).
+    // At the same time, its array index will also be recorded for extracting its value from array.
     let arrayIndexMap = new Map();
     {
       let i = 0;
@@ -233,7 +225,7 @@ class Params extends Base {
         privilegeInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
     }
 
-    // Extract from input array.
+    // Extract a block of input array.
     let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCountExtracted ] );
 
     if ( !bInitOk )
@@ -251,12 +243,22 @@ class Params extends Base {
       this.parameterMap.set( key, this.weightsModified[ arrayIndex ] );
     }
 
+    // If original parameterMap has output channel count and its value is infinity, its value should be depend
+    // on channelMultiplier (i.e. by channelMultiplier).
+    //
+    // Usually, the embedding layer uses this behavior.
     let outChannelsOriginal = parameterMap.get( Params.Keys.outChannels );
-
-    if ( !Number.isFinite( outChannelsOriginal ) ) { // outChannels by ChannelMultiplier.
-      let channelMultiplier = this.channelMultiplier;
-      let outChannels = inChannels * channelMultiplier;
-      this.parameterMap.set( Params.Keys.outChannels, outChannels );
+    if ( outChannelsOriginal ) {
+      if ( !Number.isFinite( outChannelsOriginal ) ) {
+        let channelMultiplier = this.channelMultiplier;   // May be specified or extracted.
+        let outChannels = inChannels * channelMultiplier;
+        this.parameterMap.set( Params.Keys.outChannels, outChannels );
+      } else {
+        // Use the original value in parameterMap as output channel count (i.e. by specifying).
+      }
+    } else {
+      // Either use the extracted value as output channel count (i.e. by evolution),
+      // or there is no output channel count in fact.
     }
 
     return bInitOk;
@@ -286,6 +288,11 @@ Params.Keys = class {
 //   static outChannels()       {}
 }
 
-Params.Keys.inChannels = Symbol("inChannels");
+Params.Keys.inChannels =        Symbol("inChannels");
 Params.Keys.channelMultiplier = Symbol("channelMultiplier");
-Params.Keys.outChannels = Symbol("outChannels");
+Params.Keys.outChannels =       Symbol("outChannels");
+
+Params.Keys.dilationHeight =    Symbol("dilationHeight");
+Params.Keys.dilationWidth =     Symbol("dilationWidth");
+Params.Keys.filterHeight =      Symbol("filterHeight");
+Params.Keys.filterWidth =       Symbol("filterWidth");
