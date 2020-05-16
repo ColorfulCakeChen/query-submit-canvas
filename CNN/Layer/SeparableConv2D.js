@@ -1,28 +1,21 @@
-import * as Weights from "./Weights.js";
-import * as PartTime from "./PartTime.js";
-import * as ValueMax from "./ValueMax.js";
+import * as Weights from "../Weights.js";
+import * as PartTime from "../PartTime.js";
+import * as ValueMax from "../ValueMax.js";
 
 export { Params, Layer, StringArrayToEntities };
 
 
 /**
- * CNN separable convolution (2D) layer parameters.
+ * CNN (depthwise and pointwise) separable convolution (2D) layer parameters.
  */
 class Params extends Weights.Params {
 
   /**
-   * If ( channelMultiplier != null ) and ( outChannels != null ), extract 4 parameters [ dilationHeight,
-   * dilationWidth, filterHeight, filterWidth ] from inputFloat32Array or fixedWeights.
+   * At least, there will be 4 parameters [ dilationHeight, dilationWidth, filterHeight, filterWidth ]
+   * extracted from inputFloat32Array or fixedWeights.
    *
-   * If ( channelMultiplier == null ) and ( outChannels != null ), extract 5 parameters [ dilationHeight,
-   * dilationWidth, filterHeight, filterWidth, channelMultiplier ] from inputFloat32Array or fixedWeights.
-   *
-   * If ( channelMultiplier != null ) and ( outChannels == null ), extract 5 parameters [ dilationHeight,
-   * dilationWidth, filterHeight, filterWidth, outChannels ] from inputFloat32Array or fixedWeights.
-   *
-   * If ( channelMultiplier == null ) and ( outChannels == null ), extract 6 parameters [ dilationHeight,
-   * dilationWidth, filterHeight, filterWidth, channelMultiplier, outChannels ] from inputFloat32Array
-   * or fixedWeights.
+   * Acccording to channelMultiplier and outChannels whether are null, there may be more parameters extracted
+   * from inputFloat32Array or fixedWeights.
    *
    * @param {number} channelMultiplier
    *   Every input channel will be expanded into so many depthwise channels. If null, it will be extracted
@@ -31,6 +24,11 @@ class Params extends Weights.Params {
    * @param {number} outChannels
    *   All depthwise channels will be integrated into so many output channels. If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
+   *
+   * @param {Float32Array|Array} fixedWeights
+   *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
+   * inputFloat32Array. When not null, it should have parameterCountExtracted elements (i.e. the count of null values
+   * of parameterMap).
    *
    * @return {boolean} Return false, if initialization failed.
    *
@@ -44,18 +42,27 @@ class Params extends Weights.Params {
 // squeeze-and-excitation ?
 // Shuffled Grouped Pointwise Convolution ... ? (by tf.gather() ?)
 
-    // Except channelMultiplier and outChannels, there are 4 parameters [ dilationHeight, dilationWidth, filterHeight,
-    // filterWidth ] need to be extract and convert (to positive integer).
-    let parameterCountAtLeast = 4;
+    let parameterMap = new Map( [
+      [ Weights.Params.Keys.inChannels,        inChannels ],
+      [ Weights.Params.Keys.channelMultiplier, channelMultiplier ],
+      [ Weights.Params.Keys.outChannels,       outChannels ],
+
+      [ Weights.Params.Keys.dilationHeight,    null ],
+      [ Weights.Params.Keys.dilationWidth,     null ],
+      [ Weights.Params.Keys.filterHeight,      null ],
+      [ Weights.Params.Keys.filterWidth,       null ],
+    ] );
 
     return super.init(
-      inputFloat32Array, byteOffsetBegin, parameterCountAtLeast, inChannels, channelMultiplier, outChannels, fixedWeights );
+      inputFloat32Array, byteOffsetBegin, parameterMap, fixedWeights );
   }
 
-  get dilationHeight()    { return this.weightsModified[ 0 ]; }
-  get dilationWidth()     { return this.weightsModified[ 1 ]; }
-  get filterHeight()      { return this.weightsModified[ 2 ]; }
-  get filterWidth()       { return this.weightsModified[ 3 ]; }
+  // Convolution layer have these parameters.
+
+  get dilationHeight()    { return this.parameterMap.get( Params.Keys.dilationHeight ); }
+  get dilationWidth()     { return this.parameterMap.get( Params.Keys.dilationWidth ); }
+  get filterHeight()      { return this.parameterMap.get( Params.Keys.filterHeight ); }
+  get filterWidth()       { return this.parameterMap.get( Params.Keys.filterWidth ); }
 }
 
 
@@ -75,17 +82,19 @@ class Layer {
    * @param {number}       inChannels
    *   The input channel count.
    *
-   * @param {Array} fixedParams
+   * @param {Array} fixedWeights
    *   If null, extract 6 parameters from inputFloat32Array. If not null, extract 6 parameters from it instead of
-   * inputFloat32Array. If not null, it should have 6 elements: [ filterHeight, filterWidth, channelMultiplier,
-   * dilationHeight, dilationWidth, outChannels ].
+   * inputFloat32Array. If not null, it should have 6 elements: [ channelMultiplier, outChannels, filterHeight,
+   * filterWidth, dilationHeight, dilationWidth ].
    *
    * @return {boolean} Return false, if initialization failed.
    */
-  init( inputFloat32Array, byteOffsetBegin, inChannels, fixedParams = null ) {
+  init( inputFloat32Array, byteOffsetBegin, inChannels, fixedWeights = null ) {
 
-    this.params = new Params();
-    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, fixedParams ) )
+    this.params = this.pointwiseBias = null; // So that distinguishable if re-initialization failed.
+
+    this.params = new Weights.Params();
+    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, fixedWeights ) )
       return false;
 
     this.depthwise = new Weights.Base();
