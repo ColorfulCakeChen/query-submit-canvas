@@ -114,10 +114,31 @@ class Layer {
 
     // Build tf.tensor of vocabulary tables.
     try {
-      this.vocabularyTablesTensor2DArray = tf.tidy( "Embedding2D.Layer.buildTensors", () => {
+      this.vocabularyTablesTensor2DArray = tf.tidy( "Embedding2D.Layer.init.vocabularyTablesTensor2DArray", () => {
+
+        let theLastAxisId = ( vocabularyTableShape.length - 1 ); // e.g. will be 1 for tensor2d.
+
+        // Create vocabulary id list. (tensor1d)
+        const vocabularyIdsTensor1d
+          = tf.linspace( 0, ( vocabularyCountPerInputChannel - 1 ), vocabularyCountPerInputChannel );
+
+        // Convert vocabulary id list to tensor2d. (for concatenating with vocabulary table)
+        const vocabularyIdsTensor2d = vocabularyIdsTensor1d.expandDims( theLastAxisId );
+
         return this.vocabularyTables.map( ( vocabularyTable, i ) => {
-//!!! residual (concat id) in advance ?
-          tf.tensor2d( vocabularyTable, vocabularyTableShape )
+          return tf.tidy( "Embedding2D.Layer.init.vocabularyTableWithId", () => {
+
+            // Create an embedding vocabulary table (without vocabulary id).
+            const vocabularyTable = tf.tensor2d( vocabularyTable, vocabularyTableShape );
+
+            // Concatenate vocabulary id prefix vocabulary table.
+            //
+            // This is a residual connection for embedding layer. This concatenating uses some GPU memory space.
+            // It, however, reduces some calculation time when predict() because the residual connection is already
+            // created in advance (here).
+            const vocabularyTableWithId = vocabularyIdsTensor2d.concat( vocabularyTable );
+            retrun vocabularyTableWithId;
+          });
         });
       });
     } catch ( e ) {
@@ -128,9 +149,9 @@ class Layer {
   }
 
   isValid() {
-    if ( this.vocabularyTablesTensors )
-      if ( this.vocabularyTablesTensors[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
-        if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
+    if ( this.vocabularyTablesTensor2DArray )
+      if ( this.vocabularyTablesTensor2DArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
+        if ( this.vocabularyTablesTensor2DArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
           
           this.vocabularyTablesTensors
           return true;
@@ -139,8 +160,10 @@ class Layer {
 
   /** Release tf.tensor. */
   disposeTensors() {
-    tf.dispose( this.vocabularyTablesTensors );
-    this.vocabularyTablesTensors = null;
+    if ( this.vocabularyTablesTensor2DArray ) {
+      tf.dispose( this.vocabularyTablesTensor2DArray );
+      this.vocabularyTablesTensor2DArray = null;
+    }
   }
 
   /**
@@ -187,26 +210,30 @@ class Layer {
           return scaledInput.split( splitCount, theLastAxisId ).map( t => t.toInt() );
         });
 
-  //!!! (2020/05/16 Remarked) ...Old... Needs (inverted) residual connection
-  //       // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
-  //       // Every tensor2D (i,e, one channel) will be expanded to tensor3D (i.e. multiple channels).
-  //       const embeddedTensor3DArray = vocabularyIndicesTensor2DArray.map( ( vocabularyIndicesTensor2D, channelIndex ) => {
-  //         this.vocabularyTablesTensors[ channelIndex ].gather( vocabularyIndicesTensor2D );
-  //       });
-
         // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
-        let embeddedTensor3DArray = [];
-        for ( let i = 0; i < splitCount; ++i ) {
-          // Include the original input channel as residual connection.        
-          let oneChannelTensor3D = vocabularyIndicesOneChannelTensor3DArray[ i ];
-          embeddedTensor3DArray.push( oneChannelTensor3D );
+        // Every tensor3D (one channel) will be expanded to tensor3D (multiple channels).
+        //
+        // Note: this.vocabularyTablesTensor2DArray[] already be prefixed vocabulary id (when init()). So it
+        // has residual connection in advance.
+        const embeddedTensor3DArray = vocabularyIndicesOneChannelTensor3DArray.map(
+          ( oneChannelTensor3D, channelIndex ) => {
+            return this.vocabularyTablesTensor2DArray[ channelIndex ].gather( oneChannelTensor3D );
+        });
 
-          // Every tensor2D (i.e. one channel) will be expanded to tensor3D (i.e. multiple channels).
-          const multipleChannelTensor3D = this.vocabularyTablesTensor2DArray[ i ].gather( oneChannelTensor3D );
-          embeddedTensor3DArray.push( multipleChannelTensor3D );
-        }
+//!!! (2020/05/16 Remarked) ...Old... Already residual connection when init().
+//         // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
+//         let embeddedTensor3DArray = [];
+//         for ( let i = 0; i < splitCount; ++i ) {
+//           // Include the original input channel as residual connection.        
+//           let oneChannelTensor3D = vocabularyIndicesOneChannelTensor3DArray[ i ];
+//           embeddedTensor3DArray.push( oneChannelTensor3D );
+//
+//           // Every tensor2D (i.e. one channel) will be expanded to tensor3D (i.e. multiple channels).
+//           const multipleChannelTensor3D = this.vocabularyTablesTensor2DArray[ i ].gather( oneChannelTensor3D );
+//           embeddedTensor3DArray.push( multipleChannelTensor3D );
+//         }
 
-  //!!! ...unfinished... squeeze-and-excitation.
+//!!! ...unfinished... squeeze-and-excitation.
 
         // Concatenate along the last axis, so that it is still tensor3D but with embedded (more) channels in the last axis.
         return tf.concat( embeddedTensor3DArray, theLastAxisId );
