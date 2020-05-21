@@ -33,8 +33,9 @@ function ConcatGather( dataTensor3dArray ) {
     let dataTensor3d = tf.concat( dataTensor3dArray, lastAxisId );
 
     // shuffle and split by gather (one operation achieves two operations).
-    let shuffledSplitedTensor3dArray = globalThis.shuffledChannelIndicesArray.map( ( shuffledChannelIndices, i ) => {
-      return dataTensor3d.gather( shuffledChannelIndices, lastAxisId );
+    let shuffledSplitedTensor3dArray = globalThis.shuffledChannelIndicesTensor1dArray.map(
+      ( shuffledChannelIndicesTensor1d, i ) => {
+        return dataTensor3d.gather( shuffledChannelIndicesTensor1d, lastAxisId );
     });
 
     return shuffledSplitedTensor3dArray;
@@ -123,8 +124,8 @@ let dataTensor3dArray = tf.tidy( () => {
   return dataTensor3d.split( groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
 });
 
-// Shuffled channel indices (One dimension) for by_ConcatGather()
-globalThis.shuffledChannelIndicesArray = tf.tidy( () => {
+// Shuffled channel indices tensor1d (One dimension) for ConcatGather()
+globalThis.shuffledChannelIndicesTensor1dArray = tf.tidy( () => {
   let channelIndices = tf.linspace( 0, depth - 1, depth ).toInt(); // should be integer so that can be used as gather's index.
   let lastAxisId = channelIndices.rank - 1;
 
@@ -137,6 +138,8 @@ globalThis.shuffledChannelIndicesArray = tf.tidy( () => {
   return x.split( groupCount, lastAxisId );
 });
 
+// Shuffled channel indices (One dimension) for SplitConcat()
+globalThis.shuffledChannelIndicesArray = globalThis.shuffledChannelIndicesTensor1dArray.dataSync();
 
 
 globalThis.dataTensor3dArray = dataTensor3dArray;
