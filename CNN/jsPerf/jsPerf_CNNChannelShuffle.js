@@ -117,13 +117,13 @@ function by_SplitConcat( dataTensor3dArray ) {
 }
 
 
-let height = 100; // image height
-let width = 150;  // image width
-let depth = 120;  // image channel count
+let height = 1000; // image height
+let width = 1500;  // image width
+let depth = 1200;  // image channel count
 
 let valueCount = height * width * depth;
 
-let groupCount = 20; // Split the data into how many groups.
+let groupCount = 200; // Split the data into how many groups.
 
 let dataTensor3dArray = tf.tidy( () => {
   let dataTensor1d = tf.linspace(0, valueCount - 1, valueCount );
@@ -168,4 +168,4 @@ globalThis.dataTensor3dArray = dataTensor3dArray;
 
 globalThis.cnnShuffle_by_ConcatReshapeTransposeReshapeSplit = by_ConcatReshapeTransposeReshapeSplit;
 globalThis.cnnShuffle_by_ConcatGather = by_ConcatGather;
-globalThis.cnnShuffle_by_SplitSplitConcatConcat = by_SplitConcat;
+globalThis.cnnShuffle_by_SplitConcat = by_SplitConcat;
