@@ -57,12 +57,19 @@ function SplitConcat( dataTensor3dArray ) {
     });
 
     let oneChannelTensor3dArray = tensor3dArrayArray.flat(); // Every element will be a single channel tensor3d.
+    let multipleChannelTensor3dArray = new Array( intermediateChannelCount );
 
     // shuffle and split by concat (one operation achieves two operations).
     let shuffledSplitedTensor3dArray = globalThis.shuffledChannelIndicesArray.map( ( shuffledChannelIndices, i ) => {
-      let multipleChannelTensor3dArray = shuffledChannelIndices.map( ( channelIndex ) => {
-        return oneChannelTensor3dArray[ channelIndex ];
+//!!!
+//       let multipleChannelTensor3dArray = shuffledChannelIndices.map( ( channelIndex ) => {
+//         return oneChannelTensor3dArray[ channelIndex ];
+//       });
+
+      shuffledChannelIndices.forEach( ( channelIndex, i ) => {
+        multipleChannelTensor3dArray[ i ] = oneChannelTensor3dArray[ channelIndex ];
       });
+
       return tf.concat( multipleChannelTensor3dArray, lastAxisId );
     });
 
