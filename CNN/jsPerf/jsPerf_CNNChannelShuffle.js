@@ -14,9 +14,9 @@ function ConcatReshapeTransposeReshapeSplit( dataTensor3dArray ) {
     let dataTensor3d = tf.concat( dataTensor3dArray, lastAxisId );
  
     let [ h, w, c ] = dataTensor3d.shape;
-    let newChannelCount = c / groupCount;
+    let intermediateChannelCount = c / groupCount;
 
-    let x = dataTensor3d.reshape( [ h, w, groupCount, newChannelCount ] );
+    let x = dataTensor3d.reshape( [ h, w, groupCount, intermediateChannelCount ] );
     x = x.transpose( [ 0, 1, 3, 2 ] );
     x = x.reshape( [ h, w, c] );
 
@@ -33,7 +33,7 @@ function ConcatGather( dataTensor3dArray ) {
     let dataTensor3d = tf.concat( dataTensor3dArray, lastAxisId );
 
     // shuffle and split by gather (one operation achieves two operations).
-    let shuffledSplitedArray = shuffledChannelIndicesArray.map( ( shuffledChannelIndices, i ) => {
+    let shuffledSplitedArray = globalThis.shuffledChannelIndicesArray.map( ( shuffledChannelIndices, i ) => {
       return dataTensor3d.gather( shuffledChannelIndices, lastAxisId );
     });
 
@@ -41,8 +41,34 @@ function ConcatGather( dataTensor3dArray ) {
   });
 }
 
-// split-split-concat-concat
-function by_SplitSplitConcatConcat( dataTensor3dArray ) {
+// split-concat
+function by_SplitConcat( dataTensor3dArray ) {
+  return tf.tidy( () => {
+    let groupCount = dataTensor3dArray.length;
+    let lastAxisId = dataTensor3dArray[ 0 ].rank - 1;
+
+    let totalChannelCount = groupCount * dataTensor3dArray[ 0 ].shape[ lastAxisId ];
+    let intermediateChannelCount = totalChannelCount / groupCount;
+
+    // Split every group into more (intermediate) channels.
+    let tensor3dArrayArray = dataTensor3dArray.map( ( dataTensor3d, i ) => {
+      return dataTensor3d.split( intermediateChannelCount, lastAxisId );
+    });
+
+    let resultTensor3dArray = new Array( groupCount );
+    for ( let x = 0; x < groupCount; ++x ) {
+
+      // Collect x-th intermediate channels of every group as new (x-th) group (i.e. shuffle them).
+      let shuffledTensor3dArray = tensor3dArrayArray.map( ( tensor3dArray, y ) => {
+        return tensor3dArray[ x ];
+      });
+
+      // Concatenate x-th intermediate channels into one group (i.e. the x-th group).
+      resultTensor3dArray[ x ] = tf.concat( shuffledTensor3dArray, lastAxisId );
+    }
+
+    return resultTensor3dArray;
+  });
 }
 
 
@@ -61,8 +87,11 @@ function by_ConcatGather( dataTensor3dArray ) {
   });
 }
 
-// Test split-split-concat-concat
-function by_SplitSplitConcatConcat( dataTensor3dArray ) {
+// Test split-concat
+function by_SplitConcat( dataTensor3dArray ) {
+  tf.tidy( () => {
+    SplitConcat( dataTensor3dArray );
+  });
 }
 
 
