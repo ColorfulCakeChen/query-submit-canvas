@@ -5,10 +5,9 @@
  * @see {@link https://jsperf.com/colorfulcakechen-cnn-channel-shuffle}
  */
 
-
 // concat-reshape-transpose-reshape-split
-function by_ConcatReshapeTransposeReshapeSplit( dataTensor3dArray ) {
-  tf.tidy( () => {
+function ConcatReshapeTransposeReshapeSplit( dataTensor3dArray ) {
+  return tf.tidy( () => {
     let groupCount = dataTensor3dArray.length;
     let lastAxisId = dataTensor3dArray[ 0 ].rank - 1;
 
@@ -21,15 +20,48 @@ function by_ConcatReshapeTransposeReshapeSplit( dataTensor3dArray ) {
     x = x.transpose( [ 0, 1, 3, 2 ] );
     x = x.reshape( [ h, w, c] );
 
-    x = x.split( groupCount, lastAxisId );
+    return x = x.split( groupCount, lastAxisId );
   });
 }
 
 // concat-gather
-function by_ConcatGather( dataTensor3dArray ) {
+function ConcatGather( dataTensor3dArray ) {
+  tf.tidy( () => {
+    let groupCount = dataTensor3dArray.length;
+    let lastAxisId = dataTensor3dArray[ 0 ].rank - 1;
+
+    let dataTensor3d = tf.concat( dataTensor3dArray, lastAxisId );
+
+    // shuffle and split by gather (one operation achieves two operations).
+    let shuffledSplitedArray = shuffledChannelIndicesArray.map( ( shuffledChannelIndices, i ) => {
+      return dataTensor3d.gather( shuffledChannelIndices, lastAxisId );
+    });
+
+    return shuffledSplitedArray;
+  });
 }
 
 // split-split-concat-concat
+function by_SplitSplitConcatConcat( dataTensor3dArray ) {
+}
+
+
+
+// Test concat-reshape-transpose-reshape-split
+function by_ConcatReshapeTransposeReshapeSplit( dataTensor3dArray ) {
+  tf.tidy( () => {
+    ConcatReshapeTransposeReshapeSplit( dataTensor3dArray );
+  });
+}
+
+// Test concat-gather
+function by_ConcatGather( dataTensor3dArray ) {
+  tf.tidy( () => {
+    ConcatGather( dataTensor3dArray );
+  });
+}
+
+// Test split-split-concat-concat
 function by_SplitSplitConcatConcat( dataTensor3dArray ) {
 }
 
@@ -43,13 +75,28 @@ let valueCount = height * width * depth;
 let groupCount = 2; // Split the data into how many groups.
 
 let dataTensor3dArray = tf.tidy( () => {
-  let dataTensor1d = tf.linspace(0, valueCount - 1, valueCount);
+  let dataTensor1d = tf.linspace(0, valueCount - 1, valueCount );
   let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
   return dataTensor3d.split( groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
 });
 
+// Shuffled channel indices (One dimension) for by_ConcatGather()
+globalThis.shuffledChannelIndicesArray = tf.tidy( () => {
+  let channelIndices = tf.linspace( 0, depth - 1, depth );
+  let lastAxisId = channelIndices.rank - 1;
 
-globalThis.dataTensor3d = dataTensor3d;
+  let newChannelCount = depth / groupCount;
+
+  let x = channelIndices.reshape( [ groupCount, newChannelCount ] );
+  x = x.transpose( [ 1, 0 ] );
+  x = x.reshape( [ depth ] );
+
+  return x.split( groupCount, lastAxisId );
+});
+
+
+
+globalThis.dataTensor3dArray = dataTensor3dArray;
 
 globalThis.cnnShuffle_by_ConcatReshapeTransposeReshapeSplit = by_ConcatReshapeTransposeReshapeSplit();
 globalThis.cnnShuffle_by_ConcatGather = by_ConcatGather();
