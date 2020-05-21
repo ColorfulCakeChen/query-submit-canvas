@@ -129,9 +129,9 @@ globalThis.shuffledChannelIndicesTensor1dArray = tf.tidy( () => {
   let channelIndices = tf.linspace( 0, depth - 1, depth ).toInt(); // should be integer so that can be used as gather's index.
   let lastAxisId = channelIndices.rank - 1;
 
-  let newChannelCount = depth / groupCount;
+  let intermediateChannelCount = depth / groupCount;
 
-  let x = channelIndices.reshape( [ groupCount, newChannelCount ] );
+  let x = channelIndices.reshape( [ groupCount, intermediateChannelCount ] );
   x = x.transpose( [ 1, 0 ] );
   x = x.reshape( [ depth ] );
 
@@ -139,7 +139,13 @@ globalThis.shuffledChannelIndicesTensor1dArray = tf.tidy( () => {
 });
 
 // Shuffled channel indices (One dimension) for SplitConcat()
-globalThis.shuffledChannelIndicesArray = globalThis.shuffledChannelIndicesTensor1dArray.dataSync();
+Promise.all(
+  globalThis.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
+    return shuffledChannelIndicesTensor1d.data();
+  })
+).then( ( values ) => {
+  globalThis.shuffledChannelIndicesArray = values;
+});
 
 
 globalThis.dataTensor3dArray = dataTensor3dArray;
