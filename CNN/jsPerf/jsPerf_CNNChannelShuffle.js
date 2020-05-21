@@ -63,7 +63,7 @@ function SplitConcat( dataTensor3dArray ) {
       let multipleChannelTensor3dArray = shuffledChannelIndices.map( ( channelIndex ) => {
         return oneChannelTensor3dArray[ channelIndex ];
       });
-      return multipleChannelTensor3dArray.concat( lastAxisId );
+      return tf.concat( multipleChannelTensor3dArray, lastAxisId );
     });
 
     return shuffledSplitedTensor3dArray;
@@ -139,13 +139,22 @@ globalThis.shuffledChannelIndicesTensor1dArray = tf.tidy( () => {
 });
 
 // Shuffled channel indices (One dimension) for SplitConcat()
-Promise.all(
-  globalThis.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
-    return shuffledChannelIndicesTensor1d.data();
-  })
-).then( ( values ) => {
-  globalThis.shuffledChannelIndicesArray = values;
+globalThis.shuffledChannelIndicesArray = new Array( globalThis.shuffledChannelIndicesTensor1dArray.length );
+globalThis.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d, i ) => {
+  globalThis.shuffledChannelIndicesArray[ i ] = shuffledChannelIndicesTensor1d.dataSync();
 });
+
+//!!!
+// Promise.all(
+//   globalThis.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d, i ) => {
+//     let p = shuffledChannelIndicesTensor1d.data().then( ( shuffledChannelIndices ) => {
+//       globalThis.shuffledChannelIndicesArray[ i ] = shuffledChannelIndices;
+//     });
+//     return p;
+//   })
+// ).then( ( values ) => {
+//   //globalThis.shuffledChannelIndicesArray = values;
+// });
 
 
 globalThis.dataTensor3dArray = dataTensor3dArray;
