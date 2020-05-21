@@ -117,13 +117,13 @@ function by_SplitConcat( dataTensor3dArray ) {
 }
 
 
-let height = 10; // image height
-let width = 15;  // image width
-let depth = 12;  // image channel count
+let height = 100; // image height
+let width = 150;  // image width
+let depth = 120;  // image channel count
 
 let valueCount = height * width * depth;
 
-let groupCount = 2; // Split the data into how many groups.
+let groupCount = 20; // Split the data into how many groups.
 
 let dataTensor3dArray = tf.tidy( () => {
   let dataTensor1d = tf.linspace(0, valueCount - 1, valueCount );
