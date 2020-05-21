@@ -166,6 +166,6 @@ globalThis.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTens
 
 globalThis.dataTensor3dArray = dataTensor3dArray;
 
-globalThis.cnnShuffle_by_ConcatReshapeTransposeReshapeSplit = by_ConcatReshapeTransposeReshapeSplit();
-globalThis.cnnShuffle_by_ConcatGather = by_ConcatGather();
-globalThis.cnnShuffle_by_SplitSplitConcatConcat = by_SplitSplitConcatConcat();
+globalThis.cnnShuffle_by_ConcatReshapeTransposeReshapeSplit = by_ConcatReshapeTransposeReshapeSplit;
+globalThis.cnnShuffle_by_ConcatGather = by_ConcatGather;
+globalThis.cnnShuffle_by_SplitSplitConcatConcat = by_SplitSplitConcatConcat;
