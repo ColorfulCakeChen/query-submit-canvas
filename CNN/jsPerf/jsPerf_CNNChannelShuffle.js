@@ -56,12 +56,13 @@ function by_SplitConcat( dataTensor3dArray ) {
     });
 
     let resultTensor3dArray = new Array( groupCount );
+    let shuffledTensor3dArray = new Array( intermediateChannelCount );
     for ( let x = 0; x < groupCount; ++x ) {
 
       // Collect x-th intermediate channels of every group as new (x-th) group (i.e. shuffle them).
-      let shuffledTensor3dArray = tensor3dArrayArray.map( ( tensor3dArray, y ) => {
-        return tensor3dArray[ x ];
-      });
+      for ( let y = 0; y < intermediateChannelCount; ++y ) {
+        shuffledTensor3dArray[ y ] = tensor3dArrayArray[ y ][ x ]
+      }
 
       // Concatenate x-th intermediate channels into one group (i.e. the x-th group).
       resultTensor3dArray[ x ] = tf.concat( shuffledTensor3dArray, lastAxisId );
