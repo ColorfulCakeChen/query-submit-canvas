@@ -26,7 +26,7 @@ function ConcatReshapeTransposeReshapeSplit( dataTensor3dArray ) {
 
 // concat-gather
 function ConcatGather( dataTensor3dArray ) {
-  tf.tidy( () => {
+  return tf.tidy( () => {
     let groupCount = dataTensor3dArray.length;
     let lastAxisId = dataTensor3dArray[ 0 ].rank - 1;
 
@@ -82,7 +82,7 @@ let dataTensor3dArray = tf.tidy( () => {
 
 // Shuffled channel indices (One dimension) for by_ConcatGather()
 globalThis.shuffledChannelIndicesArray = tf.tidy( () => {
-  let channelIndices = tf.linspace( 0, depth - 1, depth );
+  let channelIndices = tf.linspace( 0, depth - 1, depth ).toInt(); // should be integer so that can be used as gather's index.
   let lastAxisId = channelIndices.rank - 1;
 
   let newChannelCount = depth / groupCount;
