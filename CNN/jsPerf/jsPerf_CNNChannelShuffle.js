@@ -42,7 +42,7 @@ function ConcatGather( dataTensor3dArray ) {
 }
 
 // split-concat
-function by_SplitConcat( dataTensor3dArray ) {
+function SplitConcat( dataTensor3dArray ) {
   return tf.tidy( () => {
     let groupCount = dataTensor3dArray.length;
     let lastAxisId = dataTensor3dArray[ 0 ].rank - 1;
