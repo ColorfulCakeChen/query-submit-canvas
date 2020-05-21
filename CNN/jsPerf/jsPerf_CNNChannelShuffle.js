@@ -117,9 +117,9 @@ function by_SplitConcat( dataTensor3dArray ) {
 }
 
 
-let height = 1000; // image height
-let width = 1500;  // image width
-let depth = 120;  // image channel count
+let height = 210; // image height
+let width = 210;  // image width
+let depth = 60;  // image channel count
 
 let valueCount = height * width * depth;
 
