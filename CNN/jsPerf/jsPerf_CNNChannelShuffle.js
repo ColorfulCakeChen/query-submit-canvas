@@ -145,7 +145,8 @@ let depth = 30;  // image channel count
 let valueCount = height * width * depth;
 
 //let groupCount = 15; // Split the data into how many groups.
-let groupCount = 2; // Split the data into how many groups.
+let groupCount = 4; // Split the data into how many groups.
+//let groupCount = 2; // Split the data into how many groups.
 
 let dataTensor3dArray = tf.tidy( () => {
   let dataTensor1d = tf.linspace(0, valueCount - 1, valueCount );
