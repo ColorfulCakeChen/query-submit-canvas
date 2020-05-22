@@ -102,13 +102,9 @@ function isTensorArrayEqual( tensorArray1, tensorArray2 ) {
 // Testing whether the results of different implementation are the same.
 function testResultSame() {
   tf.tidy( () => {
-    let t1 = ConcatReshapeTransposeReshapeSplit( dataTensor3dArray );
-    let t2 = ConcatGather( dataTensor3dArray );
-    let t3 = SplitConcat( dataTensor3dArray );
-
-    let t1Array = t1.dataSync();
-    let t2Array = t2.dataSync();
-    let t3Array = t3.dataSync();
+    let t1Array = ConcatReshapeTransposeReshapeSplit( dataTensor3dArray );
+    let t2Array = ConcatGather( dataTensor3dArray );
+    let t3Array = SplitConcat( dataTensor3dArray );
 
     tf.util.assert(
       isTensorArrayEqual( t1Array, t2Array ),
