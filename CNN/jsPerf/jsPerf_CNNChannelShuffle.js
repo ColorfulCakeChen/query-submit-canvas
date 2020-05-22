@@ -50,22 +50,24 @@ function SplitConcat( dataTensor3dArray ) {
 
     let totalChannelCount = groupCount * dataTensor3dArray[ 0 ].shape[ lastAxisId ];
     let intermediateChannelCount = totalChannelCount / groupCount;
+//!!! Old
+//     // Split every group (a multiple channel tensor3d) into more (intermediate) channels.
+//     let tensor3dArrayArray = dataTensor3dArray.map( ( dataTensor3d, i ) => {
+//       return dataTensor3d.split( intermediateChannelCount, lastAxisId );
+//     });
+//
+//     let oneChannelTensor3dArray = tensor3dArrayArray.flat(); // Every element will be a single channel tensor3d.
 
     // Split every group (a multiple channel tensor3d) into more (intermediate) channels.
-    let tensor3dArrayArray = dataTensor3dArray.map( ( dataTensor3d, i ) => {
-      return dataTensor3d.split( intermediateChannelCount, lastAxisId );
-    });
+    let oneChannelTensor3dArray = new Array(); // Every element will be a single channel tensor3d.
+    for ( let dataTensor3d of dataTensor3dArray ) {
+      oneChannelTensor3dArray.push( ...dataTensor3d.split( intermediateChannelCount, lastAxisId ) );
+    }
 
-    let oneChannelTensor3dArray = tensor3dArrayArray.flat(); // Every element will be a single channel tensor3d.
     let multipleChannelTensor3dArray = new Array( intermediateChannelCount );
 
     // shuffle and split by concat (one operation achieves two operations).
     let shuffledSplitedTensor3dArray = globalThis.shuffledChannelIndicesArray.map( ( shuffledChannelIndices, i ) => {
-//!!!
-//       let multipleChannelTensor3dArray = shuffledChannelIndices.map( ( channelIndex ) => {
-//         return oneChannelTensor3dArray[ channelIndex ];
-//       });
-
       shuffledChannelIndices.forEach( ( channelIndex, i ) => {
         multipleChannelTensor3dArray[ i ] = oneChannelTensor3dArray[ channelIndex ];
       });
@@ -74,22 +76,6 @@ function SplitConcat( dataTensor3dArray ) {
     });
 
     return shuffledSplitedTensor3dArray;
-
-// !!!
-//     let resultTensor3dArray = new Array( groupCount );
-//     let shuffledTensor3dArray = new Array( intermediateChannelCount );
-//     for ( let x = 0; x < groupCount; ++x ) {
-//
-//       // Collect x-th intermediate channels of every group as new (x-th) group (i.e. shuffle them).
-//       for ( let y = 0; y < intermediateChannelCount; ++y ) {
-//         shuffledTensor3dArray[ y ] = tensor3dArrayArray[ x ][ y ];
-//       }
-//
-//       // Concatenate x-th intermediate channels into one group (i.e. the x-th group).
-//       resultTensor3dArray[ x ] = tf.concat( shuffledTensor3dArray, lastAxisId );
-//     }
-//
-//     return resultTensor3dArray;
   });
 }
 
