@@ -80,6 +80,26 @@ function SplitConcat( dataTensor3dArray ) {
 }
 
 
+// Testing whether the results of different implementation are the same.
+function compareResult() {
+  tf.tidy( () => {
+    let t1 = ConcatReshapeTransposeReshapeSplit( dataTensor3dArray );
+    let t2 = ConcatGather( dataTensor3dArray );
+    let t3 = SplitConcat( dataTensor3dArray );
+
+    let t1Array = t1.dataSync();
+    let t2Array = t2.dataSync();
+    let t3Array = t3.dataSync();
+
+    tf.util.assert(
+      tf.util.arraysEqual(t1Array, t2Array),
+      `ConcatReshapeTransposeReshapeSplit() != ConcatGather()`);    
+
+    tf.util.assert(
+      tf.util.arraysEqual(t2Array, t3Array),
+      `ConcatGather() != SplitConcat()`);    
+  });
+}
 
 // Test concat-reshape-transpose-reshape-split
 function by_ConcatReshapeTransposeReshapeSplit( dataTensor3dArray ) {
