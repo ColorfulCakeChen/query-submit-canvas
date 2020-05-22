@@ -145,7 +145,7 @@ let depth = 30;  // image channel count
 let valueCount = height * width * depth;
 
 //let groupCount = 15; // Split the data into how many groups.
-let groupCount = 4; // Split the data into how many groups.
+let groupCount = 10; // Split the data into how many groups.
 //let groupCount = 2; // Split the data into how many groups.
 
 let dataTensor3dArray = tf.tidy( () => {
@@ -174,19 +174,6 @@ globalThis.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTens
   globalThis.shuffledChannelIndicesArray[ i ] = shuffledChannelIndicesTensor1d.dataSync();
 });
 
-//!!!
-// Promise.all(
-//   globalThis.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d, i ) => {
-//     let p = shuffledChannelIndicesTensor1d.data().then( ( shuffledChannelIndices ) => {
-//       globalThis.shuffledChannelIndicesArray[ i ] = shuffledChannelIndices;
-//     });
-//     return p;
-//   })
-// ).then( ( values ) => {
-//   //globalThis.shuffledChannelIndicesArray = values;
-// });
-
-
 globalThis.dataTensor3dArray = dataTensor3dArray;
 
 globalThis.cnnShuffle_by_ConcatReshapeTransposeReshapeSplit = by_ConcatReshapeTransposeReshapeSplit;
@@ -194,5 +181,3 @@ globalThis.cnnShuffle_by_ConcatGather = by_ConcatGather;
 globalThis.cnnShuffle_by_SplitConcat = by_SplitConcat;
 
 globalThis.cnnShuffle_testResultSame= testResultSame;
-
-
