@@ -144,6 +144,8 @@ let depth = 30;  // image channel count
 
 let valueCount = height * width * depth;
 
+// ( depth / groupCount ) should be an integer.
+
 //let groupCount = 15; // Split the data into how many groups.
 let groupCount = 10; // Split the data into how many groups.
 //let groupCount = 2; // Split the data into how many groups.
@@ -180,4 +182,4 @@ globalThis.cnnShuffle_by_ConcatReshapeTransposeReshapeSplit = by_ConcatReshapeTr
 globalThis.cnnShuffle_by_ConcatGather = by_ConcatGather;
 globalThis.cnnShuffle_by_SplitConcat = by_SplitConcat;
 
-globalThis.cnnShuffle_testResultSame= testResultSame;
+globalThis.cnnShuffle_testResultSame = testResultSame;
