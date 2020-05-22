@@ -12,7 +12,7 @@ function ConcatReshapeTransposeReshapeSplit( dataTensor3dArray ) {
     let lastAxisId = dataTensor3dArray[ 0 ].rank - 1;
 
     let dataTensor3d = tf.concat( dataTensor3dArray, lastAxisId );
- 
+
     let [ h, w, c ] = dataTensor3d.shape;
     let intermediateChannelCount = c / groupCount;
 
