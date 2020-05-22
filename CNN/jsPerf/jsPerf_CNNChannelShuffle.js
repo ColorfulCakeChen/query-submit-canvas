@@ -79,6 +79,25 @@ function SplitConcat( dataTensor3dArray ) {
   });
 }
 
+/** @return Return true, if two array of tensor are equal by value. */
+function isTensorArrayEqual( tensorArray1, tensorArray2 ) {
+
+  if ( tensorArray1 === tensorArray2 )
+    return true;
+
+  if ( tensorArray1 == null || tensorArray2 == null )
+    return false;
+
+  if ( tensorArray1.length !== tensorArray2.length )
+    return false;
+
+  for ( let i = 0; i < tensorArray1.length; ++i ) {
+    if ( !tensorArray1[ i ].equal( tensorArray2[ i ] ) )
+      return false;
+  }
+
+  return true;
+}
 
 // Testing whether the results of different implementation are the same.
 function testResultSame() {
@@ -92,11 +111,11 @@ function testResultSame() {
     let t3Array = t3.dataSync();
 
     tf.util.assert(
-      tf.util.arraysEqual(t1Array, t2Array),
+      isTensorArrayEqual( t1Array, t2Array ),
       `ConcatReshapeTransposeReshapeSplit() != ConcatGather()`);    
 
     tf.util.assert(
-      tf.util.arraysEqual(t2Array, t3Array),
+      isTensorArrayEqual( t2Array, t3Array ),
       `ConcatGather() != SplitConcat()`);    
   });
 }
