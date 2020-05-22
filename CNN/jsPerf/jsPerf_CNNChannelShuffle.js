@@ -81,7 +81,7 @@ function SplitConcat( dataTensor3dArray ) {
 
 
 // Testing whether the results of different implementation are the same.
-function compareResult() {
+function testResultSame() {
   tf.tidy( () => {
     let t1 = ConcatReshapeTransposeReshapeSplit( dataTensor3dArray );
     let t2 = ConcatGather( dataTensor3dArray );
@@ -176,3 +176,7 @@ globalThis.dataTensor3dArray = dataTensor3dArray;
 globalThis.cnnShuffle_by_ConcatReshapeTransposeReshapeSplit = by_ConcatReshapeTransposeReshapeSplit;
 globalThis.cnnShuffle_by_ConcatGather = by_ConcatGather;
 globalThis.cnnShuffle_by_SplitConcat = by_SplitConcat;
+
+globalThis.cnnShuffle_testResultSame= testResultSame;
+
+
