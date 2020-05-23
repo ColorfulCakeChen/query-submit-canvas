@@ -37,16 +37,19 @@ class Layer {
 
   /**
    *
-   * @param {number} totalChannelCount
-   *   The total channel count of all channels of the input tensor3d list. The output tensor3d list will also
-   * have so many channels.
+   * @param {number[]} concatenatedShape
+   *   An array of integer describes the shape of the concatenated apply()'s input tensor (tensor3d or tensor1d).
+   * For example, if apply() will be called with an array of image (i.e. array of tensor3d), concatenatedShape
+   * should be [ height, width, totalChannelCount ]. Another example, if the input will be an array of tensor1d,
+   * concatenatedShape should be [ totalChannelCount ]. No matter which example, the totalChannelCount should
+   * always be the total sum of the last dimension size of all tensors in the apply()'s input array.
    *
    * @param {number} outputGroupCount
    *   If greater than 1, the input tensor3d list (after concatenated) will be shuffled and then splitted into so
    * many group. The ( totalChannelCount / outputGroupCount ) should be an integer. If less or equal than 1 (or null),
    * the output tensor3d list will just be concatenated input tensor3d list (i.e. no shuffle and split).
    */
-  init( totalChannelCount, outputGroupCount ) {
+  init( concatenatedShape, outputGroupCount ) {
 
     if ( ( !outputGroupCount ) || ( outputGroupCount < 1 ) )
       outputGroupCount = 1; // At least one (means: no shuffle and split (concatenate only)).
@@ -56,8 +59,24 @@ class Layer {
     disposeTensors();
 //    this.totalChannelCount = this.outputGroupCount = null; // So that distinguishable if re-initialization failed.
 
-    this.totalChannelCount = totalChannelCount;
+    this.concatenatedShape = concatenatedShape;
     this.outputGroupCount = outputGroupCount;
+
+    let lastAxisId = this.lastAxisId = concatenatedShape.length - 1;
+    let totalChannelCount = this.totalChannelCount = concatenatedShape[ lastAxisId ];
+
+    // The channel count of every output group. (It should be an integer.)
+    let channelCountPerGroup = this.outputGroupChannelCount = totalChannelCount / outputGroupCount;
+
+    // The shape before transpose. For example, if concatenatedShape is [ h, w, c ], the intermediateShape will be
+    // [ h, w, outputGroupCount, channelCountPerGroup ].
+    let intermediateShape = this.intermediateShape = concatenatedShape.slice( 0, lastAxisId );
+    intermediateShape.push( outputGroupCount, channelCountPerGroup );
+
+
+    let x = dataTensor3d.reshape( [ h, w, groupCount, channelCountPerGroup ] );
+    x = x.transpose( [ 0, 1, 3, 2 ] );
+    x = x.reshape( [ h, w, c ] );
 
     // Build of channel index table (as array of tf.tensor1d).
     try {
@@ -66,7 +85,8 @@ class Layer {
       this.shuffledChannelIndicesTensor1dArray = tf.tidy( "ChannelShuffler.Layer.init.channelIndicesArray", () => {
 
         // should be integer so that can be used as tf.gather()'s index.
-        let channelIndices = tf.linspace( 0, totalChannelCount - 1, totalChannelCount ).toInt();
+        //let channelIndices = tf.linspace( 0, totalChannelCount - 1, totalChannelCount ).toInt();
+        let channelIndices = tf.range(0, totalChannelCount, 1, "int32");
         let lastAxisId = channelIndices.rank - 1;
 
         let intermediateChannelCount = totalChannelCount / outputGroupCount;
@@ -136,6 +156,30 @@ class Layer {
     });
 
     return outputTensor3DArray;
+  }
+
+  /**
+   *
+   *
+   */
+  static ???() {
+
+      // Shuffled channel indices tensor1d (One dimension) for ConcatGather()
+      this.shuffledChannelIndicesTensor1dArray = tf.tidy( "ChannelShuffler.Layer.init.channelIndicesArray", () => {
+
+        // should be integer so that can be used as tf.gather()'s index.
+        //let channelIndices = tf.linspace( 0, totalChannelCount - 1, totalChannelCount ).toInt();
+        let channelIndices = tf.range(0, totalChannelCount, 1, "int32");
+        let lastAxisId = channelIndices.rank - 1;
+
+        let intermediateChannelCount = totalChannelCount / outputGroupCount;
+
+        let x = channelIndices.reshape( [ outputGroupCount, intermediateChannelCount ] );
+        x = x.transpose( [ 1, 0 ] );
+        x = x.reshape( [ totalChannelCount ] );
+
+        return x.split( outputGroupCount, lastAxisId );
+      });
   }
 
 }
