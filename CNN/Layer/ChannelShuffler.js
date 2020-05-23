@@ -66,13 +66,23 @@ class Layer {
     let totalChannelCount = this.totalChannelCount = concatenatedShape[ lastAxisId ];
 
     // The channel count of every output group. (It should be an integer.)
-    let channelCountPerGroup = this.outputGroupChannelCount = totalChannelCount / outputGroupCount;
+    let channelCountPerGroup = this.channelCountPerGroup = totalChannelCount / outputGroupCount;
 
     // The shape before transpose. For example, if concatenatedShape is [ h, w, c ], the intermediateShape will be
-    // [ h, w, outputGroupCount, channelCountPerGroup ].
+    // [ h, w, outputGroupCount, channelCountPerGroup ]. The last dimension is splitted into two dimensions.
     let intermediateShape = this.intermediateShape = concatenatedShape.slice( 0, lastAxisId );
     intermediateShape.push( outputGroupCount, channelCountPerGroup );
 
+    // The axis permutation of transpose.
+    //
+    // For example, if the intermediateShape is [ h, w, outputGroupCount, channelCountPerGroup ]. Its
+    // axis permutation will be [ 0, 1, 3, 2 ] so that the last two dimensions will be swapped.
+    let transposePermutation = this.transposePermutation = new Array( intermediateShape.keys() );
+    {
+      let last1 = transposePermutation.pop();
+      let last2 = transposePermutation.pop();
+      transposePermutation.push( last1, last2 );
+    }
 
     let x = dataTensor3d.reshape( [ h, w, groupCount, channelCountPerGroup ] );
     x = x.transpose( [ 0, 1, 3, 2 ] );
