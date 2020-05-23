@@ -1,9 +1,79 @@
 //import * as Weights from "../Weights.js";
 
-export { Layer };
+export { Info, Layer };
 
 //!!!
 // named as Pipe.ChannelShuffler ?
+
+/**
+ * The information for channel shuffler.
+ *
+ *
+ * @member {number[]} concatenatedShape
+ *   An array of integer describes the shape of the concatenated apply()'s input tensor (tensor3d or tensor1d).
+ * For example, if apply() will be called with an array of image (i.e. array of tensor3d), concatenatedShape
+ * should be [ height, width, totalChannelCount ]. Another example, if the input will be an array of tensor1d,
+ * concatenatedShape should be [ totalChannelCount ]. No matter which example, the totalChannelCount should
+ * always be the total sum of the last dimension size of all tensors in the apply()'s input array.
+ *
+ * @member {number} outputGroupCount
+ *   If greater than 1, the input tensor3d list (after concatenated) will be shuffled and then splitted into so
+ * many group. The ( totalChannelCount / outputGroupCount ) should be an integer. If less or equal than 1 (or null),
+ * the output tensor3d list will just be an array with only one tensor3d which is the concatenation of all the
+ * input tensor3d list (i.e. no shuffle and split).
+ *
+ *
+ * @member {number} lastAxisId
+ *   The last axis id of apply()'s input tensor. It will be ( concatenatedShape.length - 1 ).
+ *
+ * @member {number} totalChannelCount
+ *   The total channel count when all the apply()'s input tensor concatenated. It will be the value of the last
+ * element of concatenatedShape (i.e. concatenatedShape[ lastAxisId ]).
+ *
+ * @member {number} channelCountPerGroup
+ *   There will be so many channels in one (output) group.
+ *
+ * @member {number[]} intermediateShape
+ *   Before shuffling, the apply()'s (concatenated) input wiil be reshaped to this intermediateShape.
+ *
+ * @member {number[]} transposePermutation
+ *   After reshaped to intermediateShape, the (concatenated) input will be transposed according to this
+ * transposePermutation (i.e. shuffle them).
+ */
+class Info {
+
+  constructor( concatenatedShape, outputGroupCount ) {
+
+    outputGroupCount = Math.trunc( outputGroupCount || 1 );
+    if ( outputGroupCount < 1 )
+      outputGroupCount = 1; // At least one (means: no shuffle and split (concatenate only)).
+
+    this.concatenatedShape = concatenatedShape;
+    this.outputGroupCount = outputGroupCount;
+
+    let lastAxisId = this.lastAxisId = concatenatedShape.length - 1;
+    let totalChannelCount = this.totalChannelCount = concatenatedShape[ lastAxisId ];
+
+    // The channel count of every output group. (It should be an integer.)
+    let channelCountPerGroup = this.channelCountPerGroup = totalChannelCount / outputGroupCount;
+
+    // The shape before transpose. For example, if concatenatedShape is [ h, w, c ], the intermediateShape will be
+    // [ h, w, outputGroupCount, channelCountPerGroup ]. The last dimension is splitted into two dimensions.
+    let intermediateShape = this.intermediateShape = concatenatedShape.slice( 0, lastAxisId );
+    intermediateShape.push( outputGroupCount, channelCountPerGroup );
+
+    // The axis permutation of transpose.
+    //
+    // For example, if the intermediateShape is [ h, w, outputGroupCount, channelCountPerGroup ]. Its
+    // axis permutation will be [ 0, 1, 3, 2 ] so that the last two dimensions will be swapped.
+    let transposePermutation = this.transposePermutation = new Array( intermediateShape.keys() );
+    {
+      let last1 = transposePermutation.pop();
+      let last2 = transposePermutation.pop();
+      transposePermutation.push( last1, last2 );
+    }
+  }
+}
 
 /**
  * An channel shuffler accepts a list of tensor3d with same size (height, width, channel) and outputs a shuffled
@@ -38,21 +108,16 @@ class Layer {
   /**
    *
    * @param {number[]} concatenatedShape
-   *   An array of integer describes the shape of the concatenated apply()'s input tensor (tensor3d or tensor1d).
-   * For example, if apply() will be called with an array of image (i.e. array of tensor3d), concatenatedShape
-   * should be [ height, width, totalChannelCount ]. Another example, if the input will be an array of tensor1d,
-   * concatenatedShape should be [ totalChannelCount ]. No matter which example, the totalChannelCount should
-   * always be the total sum of the last dimension size of all tensors in the apply()'s input array.
+   *   Used to calculate shuffle Info.
    *
    * @param {number} outputGroupCount
-   *   If greater than 1, the input tensor3d list (after concatenated) will be shuffled and then splitted into so
-   * many group. The ( totalChannelCount / outputGroupCount ) should be an integer. If less or equal than 1 (or null),
-   * the output tensor3d list will just be concatenated input tensor3d list (i.e. no shuffle and split).
+   *   Used to calculate shuffle Info.
+   *
+   * @see Info
    */
   init( concatenatedShape, outputGroupCount ) {
 
-    if ( ( !outputGroupCount ) || ( outputGroupCount < 1 ) )
-      outputGroupCount = 1; // At least one (means: no shuffle and split (concatenate only)).
+    this.shuffleInfo = new Info( concatenatedShape, outputGroupCount );
 
 //!!! ...unfinished...
 
