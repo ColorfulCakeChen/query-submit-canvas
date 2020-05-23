@@ -40,7 +40,7 @@ export { Info, Layer };
  *   After reshaped to intermediateShape, the (concatenated) input will be transposed according to this
  * transposePermutation (i.e. shuffle them).
  */
-class Info {
+class ShuffleInfo {
 
   constructor( concatenatedShape, outputGroupCount ) {
 
@@ -73,6 +73,84 @@ class Info {
       transposePermutation.push( last1, last2 );
     }
   }
+
+  /**
+   * Permute the input tensor by reshape-transpose-reshape.
+   *
+   * @param {tf.tensor} concatenatedTensor
+   *   An single tensor (not array) to be processed. It should conform to this.concatenatedShape.
+   *
+   * @return {tf.tensor}
+   *   A shuffled tensor. Its size is the same as concatenatedTensor but its last dimension is shuffled.
+   */
+  reshapeTransposeReshape( concatenatedTensor ) {
+    return tf.tidy( "ChannelShuffler.ShuffleInfo.reshapeTransposeReshape", () => {
+      return concatenatedTensor
+        .reshape( this.intermediateShape )
+        .transpose( this.transposePermutation )
+        .reshape( this.concatenatedShape );
+    });
+  }
+
+  /**
+   * Permute and split the input tensor by reshape-transpose-reshape-split.
+   *
+   * @param {tf.tensor} concatenatedTensor
+   *   An single tensor (not array) to be processed. It should conform to this.concatenatedShape.
+   *
+   * @return {tf.tensor[]}
+   *   An array of shuffled tensors. Their total channel count is the same as concatenatedTensor, but their
+   * last dimensions are shuffled.
+   */
+  reshapeTransposeReshapeSplit( concatenatedTensor ) {
+    return tf.tidy( "ChannelShuffler.ShuffleInfo.reshapeTransposeReshapeSplit", () => {
+      return concatenatedTensor
+        .reshape( this.intermediateShape )
+        .transpose( this.transposePermutation )
+        .reshape( this.concatenatedShape )
+        .split( this.outputGroupCount, this.lastAxisId );
+    });
+  }
+
+  /**
+   * Concatenate and permute the input tensor by concat-reshape-transpose-reshape.
+   *
+   * @param {tf.tensor[]} tensorArray
+   *   An array of tensors to be processed. It should conform to this.concatenatedShape.
+   *
+   * @return {tf.tensor}
+   *   A shuffled tensor. Its total channel count is the same as concatenated tensorArray, but their
+   * last dimensions are shuffled.
+   */
+  concatReshapeTransposeReshape( tensorArray ) {
+    return tf.tidy( "ChannelShuffler.ShuffleInfo.concatReshapeTransposeReshape", () => {
+      return tf.concat( tensorArray )
+        .reshape( this.intermediateShape )
+        .transpose( this.transposePermutation )
+        .reshape( this.concatenatedShape );
+    });
+  }
+
+  /**
+   * Concatenate, permute and split the input tensor by concat-reshape-transpose-reshape-split.
+   *
+   * @param {tf.tensor[]} tensorArray
+   *   An array of tensors to be processed. It should conform to this.concatenatedShape.
+   *
+   * @return {tf.tensor[]}
+   *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
+   * last dimensions are shuffled.
+   */
+  concatReshapeTransposeReshapeSplit( tensorArray ) {
+    return tf.tidy( "ChannelShuffler.ShuffleInfo.concatReshapeTransposeReshapeSplit", () => {
+      return tf.concat( tensorArray )
+        .reshape( this.intermediateShape )
+        .transpose( this.transposePermutation )
+        .reshape( this.concatenatedShape )
+        .split( this.outputGroupCount, this.lastAxisId );
+    });
+  }
+
 }
 
 /**
@@ -88,91 +166,41 @@ class Info {
  *
  *
  *
- * @member {Array of number} inputScaleToSize
- *   Scale the height and width of the input image to size [ inputScaleToHeight, inputScaleToWidth ]
- * (in pixels) before convoluting. For text input, the inputScaleToHeight should be 1. If null, there will be
- * no scaling when predict().
- *
- * @member {number} vocabularyCountPerInputChannel
- *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
- * every input channel has a vocabulary table). For an image data (R-G-B-A four channels), there will be 256
- * vocabularies per input channel because every channel is represented by one byte (8 bits) which has 2^8 = 256 kinds
- * of possible values.
- *
- * @member {number} embeddingChannelCountPerInputChannel
- *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
- * embedding channels. This is same as the this.params.channelMultiplier.
+ * @member {ShuffleInfo} shuffleInfo
+ *   The information calculated from init()'s concatenatedShape and outputGroupCount.
  */
 class Layer {
 
   /**
    *
    * @param {number[]} concatenatedShape
-   *   Used to calculate shuffle Info.
+   *   Used to calculate shuffleInfo.
    *
    * @param {number} outputGroupCount
-   *   Used to calculate shuffle Info.
+   *   Used to calculate shuffleInfo.
    *
    * @see Info
    */
   init( concatenatedShape, outputGroupCount ) {
 
-    this.shuffleInfo = new Info( concatenatedShape, outputGroupCount );
+    this.shuffleInfo = new ShuffleInfo( concatenatedShape, outputGroupCount );
 
 //!!! ...unfinished...
 
     disposeTensors();
 //    this.totalChannelCount = this.outputGroupCount = null; // So that distinguishable if re-initialization failed.
 
-    this.concatenatedShape = concatenatedShape;
-    this.outputGroupCount = outputGroupCount;
-
-    let lastAxisId = this.lastAxisId = concatenatedShape.length - 1;
-    let totalChannelCount = this.totalChannelCount = concatenatedShape[ lastAxisId ];
-
-    // The channel count of every output group. (It should be an integer.)
-    let channelCountPerGroup = this.channelCountPerGroup = totalChannelCount / outputGroupCount;
-
-    // The shape before transpose. For example, if concatenatedShape is [ h, w, c ], the intermediateShape will be
-    // [ h, w, outputGroupCount, channelCountPerGroup ]. The last dimension is splitted into two dimensions.
-    let intermediateShape = this.intermediateShape = concatenatedShape.slice( 0, lastAxisId );
-    intermediateShape.push( outputGroupCount, channelCountPerGroup );
-
-    // The axis permutation of transpose.
+    // Build shuffled channel index table (as an array of tf.tensor1d).
     //
-    // For example, if the intermediateShape is [ h, w, outputGroupCount, channelCountPerGroup ]. Its
-    // axis permutation will be [ 0, 1, 3, 2 ] so that the last two dimensions will be swapped.
-    let transposePermutation = this.transposePermutation = new Array( intermediateShape.keys() );
-    {
-      let last1 = transposePermutation.pop();
-      let last2 = transposePermutation.pop();
-      transposePermutation.push( last1, last2 );
-    }
-
-    let x = dataTensor3d.reshape( [ h, w, groupCount, channelCountPerGroup ] );
-    x = x.transpose( [ 0, 1, 3, 2 ] );
-    x = x.reshape( [ h, w, c ] );
-
-    // Build of channel index table (as array of tf.tensor1d).
+    // It can be used by algorithm ConcatGather().
+    // They should be integers so that can be used as tf.gather()'s index.
     try {
-
-      // Shuffled channel indices tensor1d (One dimension) for ConcatGather()
       this.shuffledChannelIndicesTensor1dArray = tf.tidy( "ChannelShuffler.Layer.init.channelIndicesArray", () => {
-
-        // should be integer so that can be used as tf.gather()'s index.
         //let channelIndices = tf.linspace( 0, totalChannelCount - 1, totalChannelCount ).toInt();
-        let channelIndices = tf.range(0, totalChannelCount, 1, "int32");
-        let lastAxisId = channelIndices.rank - 1;
-
-        let intermediateChannelCount = totalChannelCount / outputGroupCount;
-
-        let x = channelIndices.reshape( [ outputGroupCount, intermediateChannelCount ] );
-        x = x.transpose( [ 1, 0 ] );
-        x = x.reshape( [ totalChannelCount ] );
-
-        return x.split( outputGroupCount, lastAxisId );
+        let channelIndices = tf.range(0, this.shuffleInfo.totalChannelCount, 1, "int32");
+        let channelIndicesShuffleInfo = new ShuffleInfo( channelIndices.shape, outputGroupCount );
+        return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
       });
-
     } catch ( e ) {
       return false; // e.g. out of (GPU) memory.
     }
@@ -237,7 +265,7 @@ class Layer {
    *
    *
    */
-  static ???() {
+  static ???( shuffleInfo ) {
 
       // Shuffled channel indices tensor1d (One dimension) for ConcatGather()
       this.shuffledChannelIndicesTensor1dArray = tf.tidy( "ChannelShuffler.Layer.init.channelIndicesArray", () => {
