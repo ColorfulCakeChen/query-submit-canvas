@@ -385,36 +385,21 @@ class Layer {
    */
   init( concatenatedShape, outputGroupCount ) {
 
-    this.shuffleInfo = new ShuffleInfo( concatenatedShape, outputGroupCount );
-
 //!!! ...unfinished...
 
     disposeTensors();
-//    this.totalChannelCount = this.outputGroupCount = null; // So that distinguishable if re-initialization failed.
 
-    // Build shuffled channel index table (as an array of tf.tensor1d).
-    //
-    // It can be used by algorithm ConcatGather().
-    // They should be integers so that can be used as tf.gather()'s index.
-    try {
-      this.shuffledChannelIndicesTensor1dArray = tf.tidy( "ChannelShuffler.Layer.init.channelIndicesArray", () => {
-        //let channelIndices = tf.linspace( 0, totalChannelCount - 1, totalChannelCount ).toInt();
-        let channelIndices = tf.range(0, this.shuffleInfo.totalChannelCount, 1, "int32");
-        let channelIndicesShuffleInfo = new ShuffleInfo( channelIndices.shape, outputGroupCount );
-        return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
-      });
-    } catch ( e ) {
-      return false; // e.g. out of (GPU) memory.
-    }
+    this.concatGather = new ConcatGather();
+    let initOk = this.concatGather.init( concatenatedShape, outputGroupCount );
 
-    return true;
+    return initOk;
   }
 
   /** Release tf.tensor. */
   disposeTensors() {
-    if ( this.shuffledChannelIndicesTensor1dArray ) {
-      tf.dispose( this.shuffledChannelIndicesTensor1dArray );
-      this.shuffledChannelIndicesTensor1dArray = null;
+    if ( this.concatGather ) {
+      this.concatGather.disposeTensors();
+      this.concatGather = null;
     }
   }
 
