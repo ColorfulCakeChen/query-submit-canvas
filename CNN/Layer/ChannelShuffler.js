@@ -124,7 +124,7 @@ class ShuffleInfo {
    */
   concatReshapeTransposeReshape( tensorArray ) {
     return tf.tidy( "ChannelShuffler.ShuffleInfo.concatReshapeTransposeReshape", () => {
-      return tf.concat( tensorArray )
+      return tf.concat( tensorArray, this.lastAxisId )
         .reshape( this.intermediateShape )
         .transpose( this.transposePermutation )
         .reshape( this.concatenatedShape );
@@ -143,11 +143,116 @@ class ShuffleInfo {
    */
   concatReshapeTransposeReshapeSplit( tensorArray ) {
     return tf.tidy( "ChannelShuffler.ShuffleInfo.concatReshapeTransposeReshapeSplit", () => {
-      return tf.concat( tensorArray )
+      return tf.concat( tensorArray, this.lastAxisId )
         .reshape( this.intermediateShape )
         .transpose( this.transposePermutation )
         .reshape( this.concatenatedShape )
         .split( this.outputGroupCount, this.lastAxisId );
+    });
+  }
+
+}
+
+
+/**
+ * Implement the channel shuffler by tf.concat() and tf.gather().
+ *
+ * When outputGroupCount is small (e.g. 2), this is be faster than concat-reshape-transpose-reshape-split because
+ * the total operations (and memory access) are smaller.
+ *
+ * The extra cost is a pre-built channel index look up table.
+ *
+ *
+ * @member {ShuffleInfo} shuffleInfo
+ *   The information calculated from init()'s concatenatedShape and outputGroupCount.
+ */
+class ConcatGather {
+
+  /**
+   *
+   * @param {number[]} concatenatedShape
+   *   Used to calculate shuffleInfo.
+   *
+   * @param {number} outputGroupCount
+   *   Used to calculate shuffleInfo.
+   *
+   * @see ShuffleInfo
+   */
+  init( concatenatedShape, outputGroupCount ) {
+
+    disposeTensors(); // So that distinguishable if re-initialization failed.
+
+    this.shuffleInfo = new ShuffleInfo( concatenatedShape, outputGroupCount );
+
+    // Build shuffled channel index table (as an array of tf.tensor1d).
+    //
+    // It can be used by algorithm ConcatGather().
+    // They should be integers so that can be used as tf.gather()'s index.
+    try {
+      this.shuffledChannelIndicesTensor1dArray
+        = tf.tidy( "ChannelShuffler.ConcatGather.init.shuffledChannelIndicesTensor1dArray", () => {
+          //let channelIndices = tf.linspace( 0, totalChannelCount - 1, totalChannelCount ).toInt();
+          let channelIndices = tf.range(0, this.shuffleInfo.totalChannelCount, 1, "int32");
+          let channelIndicesShuffleInfo = new ShuffleInfo( channelIndices.shape, outputGroupCount );
+          return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
+        });
+    } catch ( e ) {
+      return false; // e.g. out of (GPU) memory.
+    }
+
+    return true;
+  }
+
+  /** Release tf.tensor. */
+  disposeTensors() {
+    if ( this.shuffledChannelIndicesTensor1dArray ) {
+      tf.dispose( this.shuffledChannelIndicesTensor1dArray );
+      this.shuffledChannelIndicesTensor1dArray = null;
+    }
+  }
+
+  /**
+   * Permute and split the input tensor by gather.
+   *
+   * @param {tf.tensor} concatenatedTensor
+   *   An single tensor (not array) to be processed. It should conform to this.shuffleInfo.concatenatedShape.
+   *
+   * @return {tf.tensor[]}
+   *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
+   * last dimensions are shuffled.
+   */
+  gather( concatenatedTensor ) {
+    return tf.tidy( () => {
+      // shuffle and split by gather (one operation achieves two operations).
+      let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+        shuffledChannelIndicesTensor1d =>
+          concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId );
+      });
+      return shuffledSplitedTensorArray;
+    });
+  }
+
+  /**
+   * Concatenate, permute and split the input tensor by concat-gather.
+   *
+   * @param {tf.tensor[]} tensorArray
+   *   An array of tensors to be processed. It should conform to this.concatenatedShape.
+   *
+   * @return {tf.tensor[]}
+   *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
+   * last dimensions are shuffled.
+   */
+  concatGather( tensorArray ) {
+    return tf.tidy( () => {
+      let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
+      // shuffle and split by gather (one operation achieves two operations).
+      let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+        shuffledChannelIndicesTensor1d =>
+          concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId );
+      });
+
+      return shuffledSplitedTensorArray;
     });
   }
 
@@ -259,30 +364,6 @@ class Layer {
     });
 
     return outputTensor3DArray;
-  }
-
-  /**
-   *
-   *
-   */
-  static ???( shuffleInfo ) {
-
-      // Shuffled channel indices tensor1d (One dimension) for ConcatGather()
-      this.shuffledChannelIndicesTensor1dArray = tf.tidy( "ChannelShuffler.Layer.init.channelIndicesArray", () => {
-
-        // should be integer so that can be used as tf.gather()'s index.
-        //let channelIndices = tf.linspace( 0, totalChannelCount - 1, totalChannelCount ).toInt();
-        let channelIndices = tf.range(0, totalChannelCount, 1, "int32");
-        let lastAxisId = channelIndices.rank - 1;
-
-        let intermediateChannelCount = totalChannelCount / outputGroupCount;
-
-        let x = channelIndices.reshape( [ outputGroupCount, intermediateChannelCount ] );
-        x = x.transpose( [ 1, 0 ] );
-        x = x.reshape( [ totalChannelCount ] );
-
-        return x.split( outputGroupCount, lastAxisId );
-      });
   }
 
 }
