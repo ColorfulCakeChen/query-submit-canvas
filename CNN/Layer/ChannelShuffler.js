@@ -160,11 +160,15 @@ class ShuffleInfo {
  * When outputGroupCount is small (e.g. 2), this is be faster than concat-reshape-transpose-reshape-split because
  * the total operations (and memory access) are smaller.
  *
- * The extra cost is a pre-built channel index look up table.
+ * The extra cost is a pre-built channel index look up table (with tensor1d).
  *
  *
  * @member {ShuffleInfo} shuffleInfo
  *   The information calculated from init()'s concatenatedShape and outputGroupCount.
+ *
+ * @member {tf.tensor1d[]} shuffledChannelIndicesTensor1dArray
+ *   The look up table for tf.gather()'s channel index. This table is composed of tensor1d so should be released
+ * by calling disposeTensors().
  */
 class ConcatGather {
 
@@ -222,7 +226,7 @@ class ConcatGather {
    * last dimensions are shuffled.
    */
   gather( concatenatedTensor ) {
-    return tf.tidy( () => {
+    return tf.tidy( "ChannelShuffler.ConcatGather.gather", () => {
       // shuffle and split by gather (one operation achieves two operations).
       let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
         shuffledChannelIndicesTensor1d =>
@@ -243,7 +247,7 @@ class ConcatGather {
    * last dimensions are shuffled.
    */
   concatGather( tensorArray ) {
-    return tf.tidy( () => {
+    return tf.tidy( "ChannelShuffler.ConcatGather.concatGather", () => {
       let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
       // shuffle and split by gather (one operation achieves two operations).
@@ -257,6 +261,99 @@ class ConcatGather {
   }
 
 }
+
+
+/**
+ * Implement the channel shuffler by tf.split() and tf.concat().
+ *
+ * It seems slower than concat-gather and concat-reshape-transpose-reshape-split. Perhaps the total operations
+ * (and memory access) are too much (e.g. releasing many single channel temporary tensors).
+ *
+ * The extra cost is a pre-built channel index look up table (with integers, not tensor1d).
+ *
+ *
+ * @member {ShuffleInfo} shuffleInfo
+ *   The information calculated from init()'s concatenatedShape and outputGroupCount.
+ *
+ * @member {number[][]} shuffledChannelIndicesArray
+ *   The look up table for tf.gather()'s channel index. This table is composed of array of integers.
+ */
+class SplitConcat {
+
+  /**
+   *
+   * @param {number[]} concatenatedShape
+   *   Used to calculate shuffleInfo.
+   *
+   * @param {number} outputGroupCount
+   *   Used to calculate shuffleInfo.
+   *
+   * @see ConcatGather
+   */
+  init( concatenatedShape, outputGroupCount ) {
+
+    let concatGather = new ConcatGather();
+    let initOk = concatGather.init( concatenatedShape, outputGroupCount );
+
+    try {
+      if ( initOk ) {
+        // Shuffled channel indices (one dimension) for SplitConcat()
+        this.shuffledChannelIndicesArray = new Array( concatGather.shuffledChannelIndicesTensor1dArray.length );
+        concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d, i ) => {
+          this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndicesTensor1d.dataSync();
+        });
+
+        this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
+      }
+
+    } finally {
+      concatGather.disposeTensors(); // Always release the look up table (with tensor1d).
+    }
+
+    return initOk;
+  }
+
+  /**
+   * Concatenate, permute and split the input tensor by split-concat-gather.
+   *
+   * @param {tf.tensor[]} tensorArray
+   *   An array of tensors to be processed. It should conform to this.concatenatedShape.
+   *
+   * @return {tf.tensor[]}
+   *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
+   * last dimensions are shuffled.
+   */
+  splitConcat( tensorArray ) {
+    return tf.tidy( "ChannelShuffler.SplitConcat.splitConcat", () => {
+
+      // Become local variables for reducing access time.
+      let lastAxisId = this.shuffleInfo.lastAxisId;
+      let channelCountPerGroup = this.shuffleInfo.channelCountPerGroup;
+
+      // Every element will be a single channel tensor3d.
+      let singleChannelTensorArray = new Array( this.shuffleInfo.totalChannelCount ); // Pre-allocate memory for speeding up.
+      singleChannelTensorArray.length = 0; // Empty the array.
+
+      // Split every group (a multiple channels tensor3d) into many single channel tensor3d.
+      for ( let tensor of tensorArray ) {
+        singleChannelTensorArray.push( ...tensor.split( channelCountPerGroup, lastAxisId ) );
+      }
+
+      // An array for many single channel tensor3d of one group. (re-used multiple times to reduce memory re-allocation.)
+      let tensorArrayForOneGroup = new Array( channelCountPerGroup );
+
+      // shuffle and split by concat (one operation achieves two operations).
+      return this.shuffledChannelIndicesArray.map( ( shuffledChannelIndices ) => {
+        shuffledChannelIndices.forEach( ( channelIndex, i ) => {
+          tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
+        });
+        return tf.concat( tensorArrayForOneGroup, lastAxisId );
+      });
+    });
+  }
+
+}
+
 
 /**
  * An channel shuffler accepts a list of tensor3d with same size (height, width, channel) and outputs a shuffled
