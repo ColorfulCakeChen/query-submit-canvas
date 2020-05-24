@@ -1,9 +1,6 @@
 //import * as Weights from "../Weights.js";
 
-export { Info, Layer };
-
-//!!!
-// named as Pipe.ChannelShuffler ?
+export { ShuffleInfo, ConcatGather, SplitConcat, Layer };
 
 /**
  * The information for channel shuffler.
@@ -355,6 +352,10 @@ class SplitConcat {
 }
 
 
+//!!!
+// named as Pipe.ChannelShuffler ?
+
+
 /**
  * An channel shuffler accepts a list of tensor3d with same size (height, width, channel) and outputs a shuffled
  * (re-grouped) list tensor3d.
@@ -446,6 +447,26 @@ class Layer {
     });
 
     return outputTensor3DArray;
+  }
+
+  /** @return Return true, if two array of tensor are equal by value. */
+  static isTensorArrayEqual( tensorArray1, tensorArray2 ) {
+
+    if ( tensorArray1 === tensorArray2 )
+      return true;
+
+    if ( tensorArray1 == null || tensorArray2 == null )
+      return false;
+
+    if ( tensorArray1.length !== tensorArray2.length )
+      return false;
+
+    for ( let i = 0; i < tensorArray1.length; ++i ) {
+      if ( !tensorArray1[ i ].equal( tensorArray2[ i ] ) )
+        return false;
+    }
+
+    return true;
   }
 
 }
