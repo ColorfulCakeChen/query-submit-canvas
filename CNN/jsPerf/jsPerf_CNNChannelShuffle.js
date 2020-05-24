@@ -6,207 +6,125 @@ import * as ChannelShuffler from "../Layer/ChannelShuffler.js";
  * @see {@link https://jsperf.com/colorfulcakechen-cnn-channel-shuffle}
  */
 
-// // concat-reshape-transpose-reshape-split
-// function ConcatReshapeTransposeReshapeSplit( dataTensor3dArray ) {
-//   return tf.tidy( () => {
-//     let groupCount = dataTensor3dArray.length;
-//     let lastAxisId = dataTensor3dArray[ 0 ].rank - 1;
-//
-//     let dataTensor3d = tf.concat( dataTensor3dArray, lastAxisId );
-//
-//     let [ h, w, c ] = dataTensor3d.shape;
-//     let intermediateChannelCount = c / groupCount;
-//
-//     let x = dataTensor3d.reshape( [ h, w, groupCount, intermediateChannelCount ] );
-//     x = x.transpose( [ 0, 1, 3, 2 ] );
-//     x = x.reshape( [ h, w, c] );
-//
-//     return x = x.split( groupCount, lastAxisId );
-//   });
-// }
-//
-// // concat-gather
-// function ConcatGather( dataTensor3dArray ) {
-//   return tf.tidy( () => {
-//     let groupCount = dataTensor3dArray.length;
-//     let lastAxisId = dataTensor3dArray[ 0 ].rank - 1;
-//
-//     let dataTensor3d = tf.concat( dataTensor3dArray, lastAxisId );
-//
-//     // shuffle and split by gather (one operation achieves two operations).
-//     let shuffledSplitedTensor3dArray = globalThis.shuffledChannelIndicesTensor1dArray.map(
-//       ( shuffledChannelIndicesTensor1d, i ) => {
-//         return dataTensor3d.gather( shuffledChannelIndicesTensor1d, lastAxisId );
-//     });
-//
-//     return shuffledSplitedTensor3dArray;
-//   });
-// }
+/**
+ * A test set.
+ */
+class HeightWidthDepthGroup {
 
-// // split-concat
-// function SplitConcat( dataTensor3dArray ) {
-//   return tf.tidy( () => {
-//     let groupCount = dataTensor3dArray.length;
-//     let lastAxisId = dataTensor3dArray[ 0 ].rank - 1;
-//
-//     let totalChannelCount = groupCount * dataTensor3dArray[ 0 ].shape[ lastAxisId ];
-//     let intermediateChannelCount = totalChannelCount / groupCount;
-// //!!! Old
-// //     // Split every group (a multiple channel tensor3d) into more (intermediate) channels.
-// //     let tensor3dArrayArray = dataTensor3dArray.map( ( dataTensor3d, i ) => {
-// //       return dataTensor3d.split( intermediateChannelCount, lastAxisId );
-// //     });
-// //
-// //     let oneChannelTensor3dArray = tensor3dArrayArray.flat(); // Every element will be a single channel tensor3d.
-//
-//     // Split every group (a multiple channel tensor3d) into more (intermediate) channels.
-//     let oneChannelTensor3dArray = new Array(); // Every element will be a single channel tensor3d.
-//     for ( let dataTensor3d of dataTensor3dArray ) {
-//       oneChannelTensor3dArray.push( ...dataTensor3d.split( intermediateChannelCount, lastAxisId ) );
-//     }
-//
-//     let multipleChannelTensor3dArray = new Array( intermediateChannelCount );
-//
-//     // shuffle and split by concat (one operation achieves two operations).
-//     let shuffledSplitedTensor3dArray = globalThis.shuffledChannelIndicesArray.map( ( shuffledChannelIndices, i ) => {
-//       shuffledChannelIndices.forEach( ( channelIndex, i ) => {
-//         multipleChannelTensor3dArray[ i ] = oneChannelTensor3dArray[ channelIndex ];
-//       });
-//
-//       return tf.concat( multipleChannelTensor3dArray, lastAxisId );
-//     });
-//
-//     return shuffledSplitedTensor3dArray;
-//   });
-// }
-//
-// /** @return Return true, if two array of tensor are equal by value. */
-// function isTensorArrayEqual( tensorArray1, tensorArray2 ) {
-//
-//   if ( tensorArray1 === tensorArray2 )
-//     return true;
-//
-//   if ( tensorArray1 == null || tensorArray2 == null )
-//     return false;
-//
-//   if ( tensorArray1.length !== tensorArray2.length )
-//     return false;
-//
-//   for ( let i = 0; i < tensorArray1.length; ++i ) {
-//     if ( !tensorArray1[ i ].equal( tensorArray2[ i ] ) )
-//       return false;
-//   }
-//
-//   return true;
-// }
-//
-// // Testing whether the results of different implementation are the same.
-// function testResultSame() {
-//   tf.tidy( () => {
-//     let t1Array = ConcatReshapeTransposeReshapeSplit( dataTensor3dArray );
-//     let t2Array = ConcatGather( dataTensor3dArray );
-//     let t3Array = SplitConcat( dataTensor3dArray );
-//
-//     tf.util.assert(
-//       isTensorArrayEqual( t1Array, t2Array ),
-//       `ConcatReshapeTransposeReshapeSplit() != ConcatGather()`);    
-//
-//     tf.util.assert(
-//       isTensorArrayEqual( t2Array, t3Array ),
-//       `ConcatGather() != SplitConcat()`);    
-//   });
-// }
+  /**
+   * @param {number} height      image height
+   * @param {number} width       image width
+   * @param {number} depth       image channel count
+   * @param {number} groupCount  Split the data into how many groups. ( depth / groupCount ) should be an integer.
+   */
+  constructor( height, width, depth, groupCount ) {
 
+    this.height = height;
+    this.width = width;
+    this.depth = depth;
+    this.groupCount = groupCount;
 
-// Testing whether the results of different implementation are the same.
-function testResultSame() {
-  tf.tidy( () => {
-    let t1Array = globalThis.shuffleInfo.concatReshapeTransposeReshapeSplit( dataTensor3dArray );
-    let t2Array = globalThis.concatGather.concatGather( dataTensor3dArray );
-    let t3Array = globalThis.splitConcat.splitConcat( dataTensor3dArray );
+    this.valueCount = height * width * depth;
 
-    tf.util.assert(
-      ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
-      `ConcatReshapeTransposeReshapeSplit() != ConcatGather()`);    
+    this.concatenatedShape = [ height, width, depth ];
 
-    tf.util.assert(
-      ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ),
-      `ConcatGather() != SplitConcat()`);    
-  });
+    this.dataTensor3dArray = tf.tidy( () => {
+      let dataTensor1d = tf.linspace(0, this.valueCount - 1, this.valueCount );
+      let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
+      return dataTensor3d.split( groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
+    });
+
+    this.shuffleInfo = new ChannelShuffler.ShuffleInfo( this.concatenatedShape, groupCount );
+    ( this.concatGather = new ChannelShuffler.ConcatGather() ).init( this.concatenatedShape, groupCount );
+    ( this.splitConcat = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount );
+
+  }
+
+  disposeTensors() {
+    if ( this.dataTensor3dArray ) {
+      tf.dispose( this.dataTensor3dArray );
+      this.dataTensor3dArray = null;
+    }      
+  }
+
+  // Test concat-reshape-transpose-reshape-split
+  function test_ConcatReshapeTransposeReshapeSplit() {
+    tf.tidy( () => {
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
+    });
+  }
+
+  // Test concat-gather
+  function testBy_ConcatGather() {
+    tf.tidy( () => {
+      this.concatGather.concatGather( this.dataTensor3dArray );
+    });
+  }
+
+  // Test split-concat
+  function testBy_SplitConcat() {
+    tf.tidy( () => {
+      this.splitConcat.splitConcat( this.dataTensor3dArray );
+    });
+  }
+
+  // Testing whether the results of different implementation are the same.
+  testResultSame() {
+    tf.tidy( () => {
+      let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
+      let t2Array = this.concatGather.concatGather( this.dataTensor3dArray );
+      let t3Array = this.splitConcat.splitConcat( this.dataTensor3dArray );
+
+      tf.util.assert(
+        ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
+        `ConcatReshapeTransposeReshapeSplit() != ConcatGather()`);    
+
+      tf.util.assert(
+        ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ),
+        `ConcatGather() != SplitConcat()`);    
+    });
+  }
+  
 }
 
 
-// Test concat-reshape-transpose-reshape-split
-function by_ConcatReshapeTransposeReshapeSplit( dataTensor3dArray ) {
-  tf.tidy( () => {
-    globalThis.shuffleInfo.concatReshapeTransposeReshapeSplit( dataTensor3dArray );
-  });
-}
-
-// Test concat-gather
-function by_ConcatGather( dataTensor3dArray ) {
-  tf.tidy( () => {
-    globalThis.concatGather.concatGather( dataTensor3dArray );
-  });
-}
-
-// Test split-concat
-function by_SplitConcat( dataTensor3dArray ) {
-  tf.tidy( () => {
-    globalThis.splitConcat.splitConcat( dataTensor3dArray );
-  });
-}
-
-
-let height = 110; // image height
-let width = 110;  // image width
-let depth = 30;  // image channel count
-
-let valueCount = height * width * depth;
-
-// ( depth / groupCount ) should be an integer.
-
-//let groupCount = 15; // Split the data into how many groups.
-let groupCount = 10; // Split the data into how many groups.
-//let groupCount = 2; // Split the data into how many groups.
-
-let concatenatedShape = [ height, width, depth ];
-
-let dataTensor3dArray = tf.tidy( () => {
-  let dataTensor1d = tf.linspace(0, valueCount - 1, valueCount );
-  let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
-  return dataTensor3d.split( groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
-});
-
-// // Shuffled channel indices tensor1d (One dimension) for ConcatGather()
-// globalThis.shuffledChannelIndicesTensor1dArray = tf.tidy( () => {
-//   let channelIndices = tf.linspace( 0, depth - 1, depth ).toInt(); // should be integer so that can be used as gather's index.
-//   let lastAxisId = channelIndices.rank - 1;
+// let height = 110; // image height
+// let width = 110;  // image width
+// let depth = 30;  // image channel count
 //
-//   let intermediateChannelCount = depth / groupCount;
+// let valueCount = height * width * depth;
 //
-//   let x = channelIndices.reshape( [ groupCount, intermediateChannelCount ] );
-//   x = x.transpose( [ 1, 0 ] );
-//   x = x.reshape( [ depth ] );
+// // ( depth / groupCount ) should be an integer.
 //
-//   return x.split( groupCount, lastAxisId );
+// //let groupCount = 15; // Split the data into how many groups.
+// let groupCount = 10; // Split the data into how many groups.
+// //let groupCount = 2; // Split the data into how many groups.
+//
+// let concatenatedShape = [ height, width, depth ];
+//
+// let dataTensor3dArray = tf.tidy( () => {
+//   let dataTensor1d = tf.linspace(0, valueCount - 1, valueCount );
+//   let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
+//   return dataTensor3d.split( groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
 // });
 //
-// // Shuffled channel indices (One dimension) for SplitConcat()
-// globalThis.shuffledChannelIndicesArray = new Array( globalThis.shuffledChannelIndicesTensor1dArray.length );
-// globalThis.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d, i ) => {
-//   globalThis.shuffledChannelIndicesArray[ i ] = shuffledChannelIndicesTensor1d.dataSync();
-// });
+// globalThis.shuffleInfo = new ChannelShuffler.ShuffleInfo( concatenatedShape, groupCount );
+// ( globalThis.concatGather = new ChannelShuffler.ConcatGather() ).init( concatenatedShape, groupCount );
+// ( globalThis.splitConcat = new ChannelShuffler.SplitConcat() ).init( concatenatedShape, groupCount );
+//
+// globalThis.dataTensor3dArray = dataTensor3dArray;
+//
+// globalThis.cnnShuffle_by_ConcatReshapeTransposeReshapeSplit = by_ConcatReshapeTransposeReshapeSplit;
+// globalThis.cnnShuffle_by_ConcatGather = by_ConcatGather;
+// globalThis.cnnShuffle_by_SplitConcat = by_SplitConcat;
+//
+// globalThis.cnnShuffle_testResultSame = testResultSame;
 
-globalThis.shuffleInfo = new ChannelShuffler.ShuffleInfo( concatenatedShape, groupCount );
-( globalThis.concatGather = new ChannelShuffler.ConcatGather() ).init( concatenatedShape, groupCount );
-( globalThis.splitConcat = new ChannelShuffler.SplitConcat() ).init( concatenatedShape, groupCount );
+
+globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( 110, 110, 24, 8 ); // height, width, depth, groupCount
+globalThis.testSet_110x110x24_g4 = new HeightWidthDepthGroup( 110, 110, 24, 4 );
+globalThis.testSet_110x110x24_g3 = new HeightWidthDepthGroup( 110, 110, 24, 3 );
+globalThis.testSet_110x110x24_g2 = new HeightWidthDepthGroup( 110, 110, 24, 2 );
+globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( 110, 110, 24, 1 );
 
 
-globalThis.dataTensor3dArray = dataTensor3dArray;
-
-globalThis.cnnShuffle_by_ConcatReshapeTransposeReshapeSplit = by_ConcatReshapeTransposeReshapeSplit;
-globalThis.cnnShuffle_by_ConcatGather = by_ConcatGather;
-globalThis.cnnShuffle_by_SplitConcat = by_SplitConcat;
-
-globalThis.cnnShuffle_testResultSame = testResultSame;
