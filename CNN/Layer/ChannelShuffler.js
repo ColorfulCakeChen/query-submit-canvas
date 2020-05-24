@@ -181,7 +181,7 @@ class ConcatGather {
    */
   init( concatenatedShape, outputGroupCount ) {
 
-    disposeTensors(); // So that distinguishable if re-initialization failed.
+    this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     this.shuffleInfo = new ShuffleInfo( concatenatedShape, outputGroupCount );
 
