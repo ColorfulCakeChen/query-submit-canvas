@@ -55,14 +55,14 @@ class HeightWidthDepthGroup {
   }
 
   // Test concat-gather
-  testBy_ConcatGather() {
+  test_ConcatGather() {
     tf.tidy( () => {
       this.concatGather.concatGather( this.dataTensor3dArray );
     });
   }
 
   // Test split-concat
-  testBy_SplitConcat() {
+  test_SplitConcat() {
     tf.tidy( () => {
       this.splitConcat.splitConcat( this.dataTensor3dArray );
     });
