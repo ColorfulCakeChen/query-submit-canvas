@@ -228,7 +228,7 @@ class ConcatGather {
       let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
         shuffledChannelIndicesTensor1d =>
           concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
-      });
+      );
       return shuffledSplitedTensorArray;
     });
   }
