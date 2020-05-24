@@ -63,7 +63,7 @@ class ShuffleInfo {
     //
     // For example, if the intermediateShape is [ h, w, outputGroupCount, channelCountPerGroup ]. Its
     // axis permutation will be [ 0, 1, 3, 2 ] so that the last two dimensions will be swapped.
-    let transposePermutation = this.transposePermutation = new Array( intermediateShape.keys() );
+    let transposePermutation = this.transposePermutation = new Array( ...intermediateShape.keys() );
     {
       let last1 = transposePermutation.pop();
       let last2 = transposePermutation.pop();
