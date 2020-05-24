@@ -250,9 +250,8 @@ class ConcatGather {
       // shuffle and split by gather (one operation achieves two operations).
       let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
         shuffledChannelIndicesTensor1d =>
-          concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId );
-      });
-
+          concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
+      );
       return shuffledSplitedTensorArray;
     });
   }
