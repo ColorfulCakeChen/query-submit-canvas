@@ -199,8 +199,8 @@ let dataTensor3dArray = tf.tidy( () => {
 // });
 
 globalThis.shuffleInfo = new ChannelShuffler.ShuffleInfo( concatenatedShape, groupCount );
-( globalThis.concatGather = new ChannelShuffler.ConcatGather( concatenatedShape, groupCount ) ).init;
-( globalThis.splitConcat = new ChannelShuffler.SplitConcat( concatenatedShape, groupCount ) ).init;
+( globalThis.concatGather = new ChannelShuffler.ConcatGather() ).init( concatenatedShape, groupCount );
+( globalThis.splitConcat = new ChannelShuffler.SplitConcat() ).init( concatenatedShape, groupCount );
 
 
 globalThis.dataTensor3dArray = dataTensor3dArray;
