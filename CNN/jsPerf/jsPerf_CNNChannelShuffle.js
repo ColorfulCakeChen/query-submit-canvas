@@ -170,6 +170,8 @@ let valueCount = height * width * depth;
 let groupCount = 10; // Split the data into how many groups.
 //let groupCount = 2; // Split the data into how many groups.
 
+let concatenatedShape = [ height, width, depth ];
+
 let dataTensor3dArray = tf.tidy( () => {
   let dataTensor1d = tf.linspace(0, valueCount - 1, valueCount );
   let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
@@ -196,9 +198,9 @@ let dataTensor3dArray = tf.tidy( () => {
 //   globalThis.shuffledChannelIndicesArray[ i ] = shuffledChannelIndicesTensor1d.dataSync();
 // });
 
-globalThis.shuffleInfo = new ChannelShuffler.ShuffleInfo();
-( globalThis.concatGather = new ChannelShuffler.ConcatGather() ).init;
-( globalThis.splitConcat = new ChannelShuffler.SplitConcat() ).init;
+globalThis.shuffleInfo = new ChannelShuffler.ShuffleInfo( concatenatedShape, groupCount );
+( globalThis.concatGather = new ChannelShuffler.ConcatGather( concatenatedShape, groupCount ) ).init;
+( globalThis.splitConcat = new ChannelShuffler.SplitConcat( concatenatedShape, groupCount ) ).init;
 
 
 globalThis.dataTensor3dArray = dataTensor3dArray;
