@@ -48,21 +48,21 @@ class HeightWidthDepthGroup {
   }
 
   // Test concat-reshape-transpose-reshape-split
-  function test_ConcatReshapeTransposeReshapeSplit() {
+  test_ConcatReshapeTransposeReshapeSplit() {
     tf.tidy( () => {
       this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
     });
   }
 
   // Test concat-gather
-  function testBy_ConcatGather() {
+  testBy_ConcatGather() {
     tf.tidy( () => {
       this.concatGather.concatGather( this.dataTensor3dArray );
     });
   }
 
   // Test split-concat
-  function testBy_SplitConcat() {
+  testBy_SplitConcat() {
     tf.tidy( () => {
       this.splitConcat.splitConcat( this.dataTensor3dArray );
     });
