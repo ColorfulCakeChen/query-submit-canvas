@@ -421,7 +421,7 @@ class Layer {
    *   The output as a list of tensor3D. Return null, if failed (e.g. out of GPU memory).
    */
 //  apply( inputTensor3DArray, outputTensor3DArray ) {
-  apply( inputTensor3DArray, outputTensor3DArray ) {
+  apply( inputTensor3DArray ) {
 
     const outputTensor3DArray = tf.tidy( "ChannelShuffler.Layer.apply", () => {
       try {
