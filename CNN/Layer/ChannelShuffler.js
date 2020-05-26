@@ -206,15 +206,15 @@ class ConcatGather {
           if ( bSort ) {
             // Shuffled channel indices (one dimension) for SplitConcat()
 //            this.shuffledChannelIndicesArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
-            this.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d, i ) => {
+            shuffledChannelIndicesTensor1dArray.forEach( ( shuffledChannelIndicesTensor1d, i ) => {
 
-              let shuffledChannelIndicesArray = shuffledChannelIndicesTensor1d.dataSync(); // Download from GPU memory.
-              shuffledChannelIndicesArray.sort( ( n1, n2 ) => ( n1 - n2 ) ); // Sorting from small to large.
+              let shuffledChannelIndices = shuffledChannelIndicesTensor1d.dataSync(); // Download from GPU memory.
+              shuffledChannelIndices.sort( ( n1, n2 ) => ( n1 - n2 ) );               // Sorting from small to large.
 
 //              this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndicesArray;
 
               // Upload sorted channel indices to GPU memory.
-              this.shuffledChannelIndicesTensor1dArray[ i ] = tf.tensor1d( shuffledChannelIndicesArray, "int32");
+              shuffledChannelIndicesTensor1dArray[ i ] = tf.tensor1d( shuffledChannelIndices, "int32");
             });
           }
 
