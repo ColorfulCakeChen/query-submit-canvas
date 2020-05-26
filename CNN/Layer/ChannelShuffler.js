@@ -177,13 +177,9 @@ class ConcatGather {
    * @param {number} outputGroupCount
    *   Used to calculate shuffleInfo.
    *
-   * @param {boolean} bSort
-   *   If tru, sort the channel indixes. Sorted channel indixes may speed up the memory access when using them
-   * as tf.gather()'s indices. This is because ordered memory access conform to locality.
-   *
    * @see ShuffleInfo
    */
-  init( concatenatedShape, outputGroupCount, bSort = true ) {
+  init( concatenatedShape, outputGroupCount ) {
 
     this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
@@ -193,34 +189,15 @@ class ConcatGather {
     //
     // It can be used by algorithm ConcatGather().
     // They should be integers so that can be used as tf.gather()'s index.
+    //
+    // Not like SplitConcat, the channel indixes will not be sorted here. According to testing, sorted
+    // channel seems slow down memory access when using them as tf.gather()'s index list.
     try {
       this.shuffledChannelIndicesTensor1dArray
         = tf.tidy( "ChannelShuffler.ConcatGather.init.shuffledChannelIndicesTensor1dArray", () => {
-          //let channelIndices = tf.linspace( 0, totalChannelCount - 1, totalChannelCount ).toInt();
           let channelIndices = tf.range(0, this.shuffleInfo.totalChannelCount, 1, "int32");
           let channelIndicesShuffleInfo = new ShuffleInfo( channelIndices.shape, outputGroupCount );
-          let shuffledChannelIndicesTensor1dArray = channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
-          //return shuffledChannelIndicesTensor1dArray;
-
-//!!!
-          if ( ( bSort ) && ( this.shuffleInfo.outputGroupCount > 1 ) ) {
-            // Shuffled channel indices (one dimension) for SplitConcat()
-//            this.shuffledChannelIndicesArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
-            shuffledChannelIndicesTensor1dArray.forEach( ( shuffledChannelIndicesTensor1d, i ) => {
-
-              let shuffledChannelIndices = shuffledChannelIndicesTensor1d.dataSync(); // Download from GPU memory.
-              shuffledChannelIndices.sort( ( n1, n2 ) => ( n1 - n2 ) );               // Sorting from small to large.
-
-//              this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndicesArray;
-
-              // Upload sorted channel indices to GPU memory.
-              shuffledChannelIndicesTensor1dArray[ i ] = tf.tensor1d( shuffledChannelIndices, "int32");
-            });
-
-          // If only one output group, there is not necessary to sort.
-          }
-
-          return shuffledChannelIndicesTensor1dArray;
+          return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
         });
     } catch ( e ) {
       return false; // e.g. out of (GPU) memory.
@@ -309,23 +286,21 @@ class SplitConcat {
    * @param {number} outputGroupCount
    *   Used to calculate shuffleInfo.
    *
-   * @param {boolean} bSort
-   *   If tru, sort the channel indixes. Sorted channel indixes may speed up the memory access when using them
-   * as tf.gather()'s indices. This is because ordered memory access conform to locality.
-   *
    * @see ConcatGather
    */
-  init( concatenatedShape, outputGroupCount, bSort = true ) {
+  init( concatenatedShape, outputGroupCount ) {
 
     let concatGather = new ConcatGather();
     let initOk = concatGather.init( concatenatedShape, outputGroupCount, bSort );
 
     try {
       if ( initOk ) {
-        // Shuffled channel indices (one dimension) for SplitConcat()
+        // Shuffled channel indices (one dimension integers) for SplitConcat()
         this.shuffledChannelIndicesArray = new Array( concatGather.shuffledChannelIndicesTensor1dArray.length );
-        concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d, i ) => {
-          this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndicesTensor1d.dataSync();
+        concatGather.shuffledChannelIndicesTensor1dArray.forEach( ( shuffledChannelIndicesTensor1d, i ) => {
+          let shuffledChannelIndices = shuffledChannelIndicesTensor1d.dataSync(); // Download from GPU memory.
+          shuffledChannelIndices.sort( ( n1, n2 ) => ( n1 - n2 ) );               // Sorting from small to large.
+          this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndices;
         });
 
         this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
