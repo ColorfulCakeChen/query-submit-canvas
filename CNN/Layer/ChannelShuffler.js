@@ -288,7 +288,7 @@ class SplitConcat {
    *
    * @see ConcatGather
    */
-  init( concatenatedShape, outputGroupCount, bSharedSplittedArray ) {
+  init( concatenatedShape, outputGroupCount, bSharedCollectArray ) {
 
     let concatGather = new ConcatGather();
     let initOk = concatGather.init( concatenatedShape, outputGroupCount );
@@ -304,10 +304,12 @@ class SplitConcat {
         });
 
         this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
+        
+        // Shared pre-allocate memory could speed up the process of splitting.
+        this.singleChannelTensorArray = new Array( this.shuffleInfo.totalChannelCount );
+        this.tensorArrayForOneGroup = new Array( this.shuffleInfo.channelCountPerGroup );
 //!!!
-        this.bSharedSplittedArray = bSharedSplittedArray;
-        this.singleChannelTensorArray = new Array( this.shuffleInfo.totalChannelCount ); // Pre-allocate memory for speeding up.
-
+        this.bSharedCollectArray = bSharedCollectArray;
       }
 
     } finally {
@@ -335,22 +337,20 @@ class SplitConcat {
       let channelCountPerGroup = this.shuffleInfo.channelCountPerGroup;
 
       // Every element will be a single channel tensor3d.
-      let singleChannelTensorArray;
-//!!!
-      if ( this.bSharedSplittedArray )
-        singleChannelTensorArray = this.singleChannelTensorArray; // Use shared pre-allocate memory for speeding up.
-      else
-        singleChannelTensorArray = new Array( this.shuffleInfo.totalChannelCount ); // Pre-allocate memory for speeding up.
-
+      let singleChannelTensorArray = this.singleChannelTensorArray; // Use shared pre-allocate memory for speeding up.
       singleChannelTensorArray.length = 0; // Empty the array.
 
       // Split every group (a multiple channels tensor3d) into many single channel tensor3d.
       for ( let tensor of tensorArray ) {
         singleChannelTensorArray.push( ...tensor.split( channelCountPerGroup, lastAxisId ) );
       }
-
+//!!!
       // An array for many single channel tensor3d of one group. (re-used multiple times to reduce memory re-allocation.)
-      let tensorArrayForOneGroup = new Array( channelCountPerGroup );
+      let tensorArrayForOneGroup;
+      if ( bSharedCollectArray )
+        tensorArrayForOneGroup = this.tensorArrayForOneGroup;
+      else
+        tensorArrayForOneGroup = new Array( channelCountPerGroup );
 
       // shuffle and split by concat (one operation achieves two operations).
       return this.shuffledChannelIndicesArray.map( ( shuffledChannelIndices ) => {
