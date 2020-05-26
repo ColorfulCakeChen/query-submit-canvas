@@ -154,8 +154,8 @@ class ShuffleInfo {
 /**
  * Implement the channel shuffler by tf.concat() and tf.gather().
  *
- * When outputGroupCount is small (e.g. 2), this is be faster than concat-reshape-transpose-reshape-split because
- * the total operations (and memory access) are smaller.
+ * When outputGroupCount is smaller (e.g. 2), this may be faster than concat-reshape-transpose-reshape-split and
+ * split-concat because the total operations (and memory access) are smaller.
  *
  * The extra cost is a pre-built channel index look up table (with tensor1d).
  *
@@ -203,7 +203,7 @@ class ConcatGather {
           //return shuffledChannelIndicesTensor1dArray;
 
 //!!!
-          if ( bSort ) {
+          if ( ( bSort ) && ( this.shuffleInfo.channelCountPerGroup > 1 ) ) {
             // Shuffled channel indices (one dimension) for SplitConcat()
 //            this.shuffledChannelIndicesArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
             shuffledChannelIndicesTensor1dArray.forEach( ( shuffledChannelIndicesTensor1d, i ) => {
@@ -216,6 +216,8 @@ class ConcatGather {
               // Upload sorted channel indices to GPU memory.
               shuffledChannelIndicesTensor1dArray[ i ] = tf.tensor1d( shuffledChannelIndices, "int32");
             });
+
+          // If only one output group, there is not necessary to sort.
           }
 
           return shuffledChannelIndicesTensor1dArray;
@@ -285,8 +287,8 @@ class ConcatGather {
 /**
  * Implement the channel shuffler by tf.split() and tf.concat().
  *
- * It seems slower than concat-gather and concat-reshape-transpose-reshape-split. Perhaps the total operations
- * (and memory access) are too much (e.g. releasing many single channel temporary tensors).
+ * When outputGroupCount is larger (e.g. 8), this may be faster than concat-reshape-transpose-reshape-split and
+ * concat-gather.
  *
  * The extra cost is a pre-built channel index look up table (with integers, not tensor1d).
  *
