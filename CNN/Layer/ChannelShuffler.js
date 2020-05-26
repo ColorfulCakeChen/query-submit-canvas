@@ -177,9 +177,13 @@ class ConcatGather {
    * @param {number} outputGroupCount
    *   Used to calculate shuffleInfo.
    *
+   * @param {boolean} bSort
+   *   If tru, sort the channel indixes. Sorted channel indixes may speed up the memory access when using them
+   * as tf.gather()'s indices. This is because ordered memory access conform to locality.
+   *
    * @see ShuffleInfo
    */
-  init( concatenatedShape, outputGroupCount ) {
+  init( concatenatedShape, outputGroupCount, bSort = true ) {
 
     this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
@@ -195,7 +199,26 @@ class ConcatGather {
           //let channelIndices = tf.linspace( 0, totalChannelCount - 1, totalChannelCount ).toInt();
           let channelIndices = tf.range(0, this.shuffleInfo.totalChannelCount, 1, "int32");
           let channelIndicesShuffleInfo = new ShuffleInfo( channelIndices.shape, outputGroupCount );
-          return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
+          let shuffledChannelIndicesTensor1dArray = channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
+          //return shuffledChannelIndicesTensor1dArray;
+
+//!!!
+          if ( bSort ) {
+            // Shuffled channel indices (one dimension) for SplitConcat()
+//            this.shuffledChannelIndicesArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
+            this.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d, i ) => {
+
+              let shuffledChannelIndicesArray = shuffledChannelIndicesTensor1d.dataSync(); // Download from GPU memory.
+              shuffledChannelIndicesArray.sort( ( n1, n2 ) => ( n1 - n2 ) ); // Sorting from small to large.
+
+//              this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndicesArray;
+
+              // Upload sorted channel indices to GPU memory.
+              this.shuffledChannelIndicesTensor1dArray[ i ] = tf.tensor1d( shuffledChannelIndicesArray, "int32");
+            });
+          }
+
+          return shuffledChannelIndicesTensor1dArray;
         });
     } catch ( e ) {
       return false; // e.g. out of (GPU) memory.
@@ -284,12 +307,16 @@ class SplitConcat {
    * @param {number} outputGroupCount
    *   Used to calculate shuffleInfo.
    *
+   * @param {boolean} bSort
+   *   If tru, sort the channel indixes. Sorted channel indixes may speed up the memory access when using them
+   * as tf.gather()'s indices. This is because ordered memory access conform to locality.
+   *
    * @see ConcatGather
    */
-  init( concatenatedShape, outputGroupCount ) {
+  init( concatenatedShape, outputGroupCount, bSort = true ) {
 
     let concatGather = new ConcatGather();
-    let initOk = concatGather.init( concatenatedShape, outputGroupCount );
+    let initOk = concatGather.init( concatenatedShape, outputGroupCount, bSort );
 
     try {
       if ( initOk ) {
