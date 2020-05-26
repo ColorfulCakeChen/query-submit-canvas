@@ -288,7 +288,7 @@ class SplitConcat {
    *
    * @see ConcatGather
    */
-  init( concatenatedShape, outputGroupCount ) {
+  init( concatenatedShape, outputGroupCount, bSharedSplittedArray ) {
 
     let concatGather = new ConcatGather();
     let initOk = concatGather.init( concatenatedShape, outputGroupCount );
@@ -304,6 +304,10 @@ class SplitConcat {
         });
 
         this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
+//!!!
+        this.bSharedSplittedArray = bSharedSplittedArray;
+        this.singleChannelTensorArray = new Array( this.shuffleInfo.totalChannelCount ); // Pre-allocate memory for speeding up.
+
       }
 
     } finally {
@@ -331,7 +335,13 @@ class SplitConcat {
       let channelCountPerGroup = this.shuffleInfo.channelCountPerGroup;
 
       // Every element will be a single channel tensor3d.
-      let singleChannelTensorArray = new Array( this.shuffleInfo.totalChannelCount ); // Pre-allocate memory for speeding up.
+      let singleChannelTensorArray;
+//!!!
+      if ( this.bSharedSplittedArray )
+        singleChannelTensorArray = this.singleChannelTensorArray; // Use shared pre-allocate memory for speeding up.
+      else
+        singleChannelTensorArray = new Array( this.shuffleInfo.totalChannelCount ); // Pre-allocate memory for speeding up.
+
       singleChannelTensorArray.length = 0; // Empty the array.
 
       // Split every group (a multiple channels tensor3d) into many single channel tensor3d.
