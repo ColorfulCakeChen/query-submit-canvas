@@ -36,7 +36,6 @@ class HeightWidthDepthGroup {
 
     this.shuffleInfo = new ChannelShuffler.ShuffleInfo( this.concatenatedShape, groupCount );
     ( this.concatGatherUnsorted = new ChannelShuffler.ConcatGather() ).init( this.concatenatedShape, groupCount );
-    ( this.splitConcatSorted = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount, false );
     ( this.splitConcatSortedShared = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount, true );
   }
 
@@ -61,13 +60,6 @@ class HeightWidthDepthGroup {
     });
   }
 
-  // Test split-concat (Sorted)
-  test_SplitConcatSorted() {
-    tf.tidy( () => {
-      this.splitConcatSorted.splitConcat( this.dataTensor3dArray );
-    });
-  }
-
   // Test split-concat (Sorted Shared)
   test_SplitConcatSortedShared() {
     tf.tidy( () => {
@@ -80,8 +72,7 @@ class HeightWidthDepthGroup {
     tf.tidy( () => {
       let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
       let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
-      let t3Array = this.splitConcatSorted.splitConcat( this.dataTensor3dArray );
-      let t4Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
+      let t3Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
 
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
@@ -89,11 +80,7 @@ class HeightWidthDepthGroup {
 
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ),
-        `ConcatGatherUnsorted() != SplitConcatSorted()`);    
-
-      tf.util.assert(
-        ChannelShuffler.Layer.isTensorArrayEqual( t3Array, t4Array ),
-        `SplitConcatSorted() != SplitConcatSortedShared()`);    
+        `ConcatGatherUnsorted() != SplitConcatSortedShared()`);    
     });
   }
   
