@@ -203,7 +203,7 @@ class ConcatGather {
           //return shuffledChannelIndicesTensor1dArray;
 
 //!!!
-          if ( ( bSort ) && ( this.shuffleInfo.channelCountPerGroup > 1 ) ) {
+          if ( ( bSort ) && ( this.shuffleInfo.outputGroupCount > 1 ) ) {
             // Shuffled channel indices (one dimension) for SplitConcat()
 //            this.shuffledChannelIndicesArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
             shuffledChannelIndicesTensor1dArray.forEach( ( shuffledChannelIndicesTensor1d, i ) => {
