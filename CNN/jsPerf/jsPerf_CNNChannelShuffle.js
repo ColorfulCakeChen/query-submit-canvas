@@ -36,7 +36,8 @@ class HeightWidthDepthGroup {
 
     this.shuffleInfo = new ChannelShuffler.ShuffleInfo( this.concatenatedShape, groupCount );
     ( this.concatGatherUnsorted = new ChannelShuffler.ConcatGather() ).init( this.concatenatedShape, groupCount );
-    ( this.splitConcatSorted = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount );
+    ( this.splitConcatSorted = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount, false );
+    ( this.splitConcatSortedShared = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount, true );
   }
 
   disposeTensors() {
@@ -67,12 +68,20 @@ class HeightWidthDepthGroup {
     });
   }
 
+  // Test split-concat (Sorted Shared)
+  test_SplitConcatSortedShared() {
+    tf.tidy( () => {
+      this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
+    });
+  }
+
   // Testing whether the results of different implementation are the same.
   testResultSame() {
     tf.tidy( () => {
       let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
       let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
       let t3Array = this.splitConcatSorted.splitConcat( this.dataTensor3dArray );
+      let t4Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
 
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
@@ -81,43 +90,14 @@ class HeightWidthDepthGroup {
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ),
         `ConcatGatherUnsorted() != SplitConcatSorted()`);    
+
+      tf.util.assert(
+        ChannelShuffler.Layer.isTensorArrayEqual( t3Array, t4Array ),
+        `SplitConcatSorted() != SplitConcatSortedShared()`);    
     });
   }
   
 }
-
-
-// let height = 110; // image height
-// let width = 110;  // image width
-// let depth = 30;  // image channel count
-//
-// let valueCount = height * width * depth;
-//
-// // ( depth / groupCount ) should be an integer.
-//
-// //let groupCount = 15; // Split the data into how many groups.
-// let groupCount = 10; // Split the data into how many groups.
-// //let groupCount = 2; // Split the data into how many groups.
-//
-// let concatenatedShape = [ height, width, depth ];
-//
-// let dataTensor3dArray = tf.tidy( () => {
-//   let dataTensor1d = tf.linspace(0, valueCount - 1, valueCount );
-//   let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
-//   return dataTensor3d.split( groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
-// });
-//
-// globalThis.shuffleInfo = new ChannelShuffler.ShuffleInfo( concatenatedShape, groupCount );
-// ( globalThis.concatGather = new ChannelShuffler.ConcatGather() ).init( concatenatedShape, groupCount );
-// ( globalThis.splitConcat = new ChannelShuffler.SplitConcat() ).init( concatenatedShape, groupCount );
-//
-// globalThis.dataTensor3dArray = dataTensor3dArray;
-//
-// globalThis.cnnShuffle_by_ConcatReshapeTransposeReshapeSplit = by_ConcatReshapeTransposeReshapeSplit;
-// globalThis.cnnShuffle_by_ConcatGather = by_ConcatGather;
-// globalThis.cnnShuffle_by_SplitConcat = by_SplitConcat;
-//
-// globalThis.cnnShuffle_testResultSame = testResultSame;
 
 
 globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( 110, 110, 24, 8 ); // height, width, depth, groupCount
