@@ -347,7 +347,7 @@ class SplitConcat {
 //!!!
       // An array for many single channel tensor3d of one group. (re-used multiple times to reduce memory re-allocation.)
       let tensorArrayForOneGroup;
-      if ( bSharedCollectArray )
+      if ( this.bSharedCollectArray )
         tensorArrayForOneGroup = this.tensorArrayForOneGroup;
       else
         tensorArrayForOneGroup = new Array( channelCountPerGroup );
