@@ -291,7 +291,7 @@ class SplitConcat {
   init( concatenatedShape, outputGroupCount ) {
 
     let concatGather = new ConcatGather();
-    let initOk = concatGather.init( concatenatedShape, outputGroupCount, bSort );
+    let initOk = concatGather.init( concatenatedShape, outputGroupCount );
 
     try {
       if ( initOk ) {
