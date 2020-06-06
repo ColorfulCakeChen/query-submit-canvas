@@ -7,11 +7,12 @@ export { ShuffleInfo, ConcatGather, SplitConcat, Layer };
  *
  *
  * @member {number[]} concatenatedShape
- *   An array of integer describes the shape of the concatenated apply()'s input tensor (tensor3d or tensor1d).
- * For example, if apply() will be called with an array of image (i.e. array of tensor3d), concatenatedShape
- * should be [ height, width, totalChannelCount ]. Another example, if the input will be an array of tensor1d,
- * concatenatedShape should be [ totalChannelCount ]. No matter which example, the totalChannelCount should
- * always be the total sum of the last dimension size of all tensors in the apply()'s input array.
+ *   An array of integer describes the shape of the reshapeTransposeReshape()'s concatenated input tensor (tensor3d
+ * or tensor1d). For example, if reshapeTransposeReshape() will be called with an array of image (i.e. array of
+ * tensor3d), concatenatedShape should be [ height, width, totalChannelCount ]. Another example, if the input will
+ * be an array of tensor1d, concatenatedShape should be [ totalChannelCount ]. No matter which example, the
+ * totalChannelCount should always be the total sum of the last dimension size of all tensors in the
+ * concatReshapeTransposeReshape()'s input array.
  *
  * @member {number} outputGroupCount
  *   If greater than 1, the input tensor3d list (after concatenated) will be shuffled and then splitted into so
@@ -21,7 +22,7 @@ export { ShuffleInfo, ConcatGather, SplitConcat, Layer };
  *
  *
  * @member {number} lastAxisId
- *   The last axis id of apply()'s input tensor. It will be ( concatenatedShape.length - 1 ).
+ *   The last axis id of reshapeTransposeReshape()'s input tensor. It will be ( concatenatedShape.length - 1 ).
  *
  * @member {number} totalChannelCount
  *   The total channel count when all the apply()'s input tensor concatenated. It will be the value of the last
@@ -31,11 +32,11 @@ export { ShuffleInfo, ConcatGather, SplitConcat, Layer };
  *   There will be so many channels in one (output) group.
  *
  * @member {number[]} intermediateShape
- *   Before shuffling, the apply()'s (concatenated) input wiil be reshaped to this intermediateShape.
+ *   Before shuffling, the reshapeTransposeReshape()'s (concatenated) input will be reshaped to this intermediateShape.
  *
  * @member {number[]} transposePermutation
  *   After reshaped to intermediateShape, the (concatenated) input will be transposed according to this
- * transposePermutation (i.e. shuffle them).
+ * transposePermutation (so that they are shuffled).
  */
 class ShuffleInfo {
 
@@ -43,7 +44,7 @@ class ShuffleInfo {
 
     outputGroupCount = Math.trunc( outputGroupCount || 1 );
     if ( outputGroupCount < 1 )
-      outputGroupCount = 1; // At least one (means: no shuffle and split (concatenate only)).
+      outputGroupCount = 1; // At least one (means: no shuffle and split (i.e. just concatenate only)).
 
     this.concatenatedShape = concatenatedShape;
     this.outputGroupCount = outputGroupCount;
@@ -358,6 +359,15 @@ class SplitConcat {
     });
   }
 
+}
+
+
+/**
+ * Implement the channel shuffler by 1x1 tf.Conv2D() (i.e. pointwise convolution).
+ *
+ *
+ */
+class Pointwise {
 }
 
 
