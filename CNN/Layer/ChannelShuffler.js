@@ -1,6 +1,6 @@
 //import * as Weights from "../Weights.js";
 
-export { ShuffleInfo, ConcatGather, SplitConcat, Layer };
+export { ShuffleInfo, ConcatGather, SplitConcat, Pointwise, Layer };
 
 /**
  * The information for channel shuffler.
@@ -25,8 +25,8 @@ export { ShuffleInfo, ConcatGather, SplitConcat, Layer };
  *   The last axis id of reshapeTransposeReshape()'s input tensor. It will be ( concatenatedShape.length - 1 ).
  *
  * @member {number} totalChannelCount
- *   The total channel count when all the apply()'s input tensor concatenated. It will be the value of the last
- * element of concatenatedShape (i.e. concatenatedShape[ lastAxisId ]).
+ *   The total channel count when all the concatReshapeTransposeReshape()'s input tensor concatenated. It will be
+ * the value of the last element of concatenatedShape (i.e. concatenatedShape[ lastAxisId ]).
  *
  * @member {number} channelCountPerGroup
  *   There will be so many channels in one (output) group.
@@ -291,6 +291,8 @@ class SplitConcat {
    */
   init( concatenatedShape, outputGroupCount ) {
 
+    this.shuffleInfo = null; // So that distinguishable if re-initialization failed.
+
     let concatGather = new ConcatGather();
     let initOk = concatGather.init( concatenatedShape, outputGroupCount );
 
@@ -312,7 +314,7 @@ class SplitConcat {
       }
 
     } finally {
-      concatGather.disposeTensors(); // Always release the look up table (with tensor1d).
+      concatGather.disposeTensors(); // Always release the look up table (by tensor1d).
     }
 
     return initOk;
@@ -368,6 +370,117 @@ class SplitConcat {
  *
  */
 class Pointwise {
+
+  /**
+   *
+   * @param {number[]} concatenatedShape
+   *   Used to calculate shuffleInfo.
+   *
+   * @param {number} outputGroupCount
+   *   Used to calculate shuffleInfo.
+   *
+   * @see ConcatGather
+   */
+  init( concatenatedShape, outputGroupCount ) {
+
+    this.disposeTensors();
+    this.shuffleInfo = null; // So that distinguishable if re-initialization failed.
+
+    let concatGather = new ConcatGather();
+    let initOk = concatGather.init( concatenatedShape, outputGroupCount );
+
+    // Build 1x1 convolution filters for channel shuffling (as an array of tf.tensor4d).
+    try {
+      if ( initOk ) {
+        let filterHeight = 1; // Pointwise convolution is convolution 2d with 1 x 1 filter.
+        let filterWidth = 1;
+        let inDepth = this.shuffleInfo.totalChannelCount;
+        let outDepth = this.shuffleInfo.channelCountPerGroup;
+
+        // Every filter is a tensor3d [ filterHeight, filterWidth, inDepth ].
+        // All filters composes a tensor4d.
+        let filtersShape = [ filterHeight, filterWidth, inDepth, outDepth ];
+
+        this.filtersTensor4dArray = tf.tidy( "ChannelShuffler.Pointwise.init.filtersTensor4dArray", () => {
+          return concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
+
+            // Generate oneHotIndices (tensor2d) by shuffledChannelIndices (tensor1d).
+            let filtersOfOneGroupTensor2d = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
+
+            // Transpose it so that the last axis is the outDepth (not inDepth).
+            filtersOfOneGroupTensor2d = filtersOfOneGroupTensor2d.transpose();
+
+            // Expand from tensor2d to tensor4d.
+            let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d.reshape( filtersShape );
+            return filtersOfOneGroupTensor4d;
+          });
+        });
+
+        this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
+      }
+
+    } catch ( e ) {
+      initOk = false; // e.g. out of (GPU) memory.
+
+    } finally {
+      concatGather.disposeTensors(); // Always release the look up table (by tensor1d).
+    }
+
+    return initOk; 
+  }
+
+  /** Release tf.tensor. */
+  disposeTensors() {
+    if ( this.filtersTensor4dArray ) {
+      tf.dispose( this.filtersTensor4dArray );
+      this.filtersTensor4dArray = null;
+    }
+  }
+
+  /**
+   * Permute and split the input tensor by gather.
+   *
+   * @param {tf.tensor} concatenatedTensor
+   *   An single tensor (not array) to be processed. It should conform to this.shuffleInfo.concatenatedShape.
+   *
+   * @return {tf.tensor[]}
+   *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
+   * last dimensions are shuffled.
+   */
+  gather( concatenatedTensor ) {
+    return tf.tidy( "ChannelShuffler.Pointwise.gather", () => {
+      // shuffle and split by pointwise convolution (one operation achieves two operations).
+      let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
+        filtersTensor4d =>
+          concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
+      );
+      return shuffledSplitedTensorArray;
+    });
+  }
+
+  /**
+   * Concatenate, permute and split the input tensor by concat-gather.
+   *
+   * @param {tf.tensor[]} tensorArray
+   *   An array of tensors to be processed. It should conform to this.concatenatedShape.
+   *
+   * @return {tf.tensor[]}
+   *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
+   * last dimensions are shuffled.
+   */
+  concatGather( tensorArray ) {
+    return tf.tidy( "ChannelShuffler.Pointwise.concatGather", () => {
+      let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
+      // shuffle and split by pointwise convolution (one operation achieves two operations).
+      let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
+        filtersTensor4d =>
+          concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
+      );
+      return shuffledSplitedTensorArray;
+    });
+  }
+
 }
 
 
