@@ -394,8 +394,8 @@ class PointwiseConv {
       if ( initOk ) {
         let filterHeight = 1; // Pointwise convolution is convolution 2d with 1 x 1 filter.
         let filterWidth = 1;
-        let inDepth = this.shuffleInfo.totalChannelCount;
-        let outDepth = this.shuffleInfo.channelCountPerGroup;
+        let inDepth = concatGather.shuffleInfo.totalChannelCount;
+        let outDepth = concatGather.shuffleInfo.channelCountPerGroup;
 
         // Every filter is a tensor3d [ filterHeight, filterWidth, inDepth ].
         // All filters composes a tensor4d.
