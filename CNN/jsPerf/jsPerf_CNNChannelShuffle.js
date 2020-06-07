@@ -36,14 +36,21 @@ class HeightWidthDepthGroup {
 
     this.shuffleInfo = new ChannelShuffler.ShuffleInfo( this.concatenatedShape, groupCount );
     ( this.concatGatherUnsorted = new ChannelShuffler.ConcatGather() ).init( this.concatenatedShape, groupCount );
-    ( this.splitConcatSortedShared = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount, true );
+    ( this.splitConcatSortedShared = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount );
+    ( this.pointwiseConv = new ChannelShuffler.PointwiseConv() ).init( this.concatenatedShape, groupCount );
   }
 
   disposeTensors() {
     if ( this.dataTensor3dArray ) {
       tf.dispose( this.dataTensor3dArray );
       this.dataTensor3dArray = null;
-    }      
+    }
+
+    if ( this.concatGatherUnsorted )
+      this.concatGatherUnsorted.disposeTensors();
+
+    if ( this.pointwiseConv )
+      this.pointwiseConv.disposeTensors();
   }
 
   // Test concat-reshape-transpose-reshape-split
@@ -67,12 +74,20 @@ class HeightWidthDepthGroup {
     });
   }
 
+  // Test pointwise-convolution
+  test_SplitConcatSortedShared() {
+    tf.tidy( () => {
+      this.pointwiseConv.concatGather( this.dataTensor3dArray );
+    });
+  }
+
   // Testing whether the results of different implementation are the same.
   testResultSame() {
     tf.tidy( () => {
       let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
       let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
       let t3Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
+      let t4Array = this.pointwiseConv.concatGather( this.dataTensor3dArray );
 
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
@@ -81,6 +96,10 @@ class HeightWidthDepthGroup {
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ),
         `ConcatGatherUnsorted() != SplitConcatSortedShared()`);    
+
+      tf.util.assert(
+        ChannelShuffler.Layer.isTensorArrayEqual( t3Array, t4Array ),
+        `SplitConcatSortedShared() != PointwiseConv()`);    
     });
   }
   
