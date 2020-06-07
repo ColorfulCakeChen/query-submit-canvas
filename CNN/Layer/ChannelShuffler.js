@@ -1,6 +1,6 @@
 //import * as Weights from "../Weights.js";
 
-export { ShuffleInfo, ConcatGather, SplitConcat, Pointwise, Layer };
+export { ShuffleInfo, ConcatGather, SplitConcat, PointwiseConv, Layer };
 
 /**
  * The information for channel shuffler.
@@ -369,7 +369,7 @@ class SplitConcat {
  *
  *
  */
-class Pointwise {
+class PointwiseConv {
 
   /**
    *
@@ -401,7 +401,7 @@ class Pointwise {
         // All filters composes a tensor4d.
         let filtersShape = [ filterHeight, filterWidth, inDepth, outDepth ];
 
-        this.filtersTensor4dArray = tf.tidy( "ChannelShuffler.Pointwise.init.filtersTensor4dArray", () => {
+        this.filtersTensor4dArray = tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray", () => {
           return concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
 
             // Generate oneHotIndices (tensor2d) by shuffledChannelIndices (tensor1d).
@@ -448,7 +448,7 @@ class Pointwise {
    * last dimensions are shuffled.
    */
   gather( concatenatedTensor ) {
-    return tf.tidy( "ChannelShuffler.Pointwise.gather", () => {
+    return tf.tidy( "ChannelShuffler.PointwiseConv.gather", () => {
       // shuffle and split by pointwise convolution (one operation achieves two operations).
       let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
         filtersTensor4d =>
@@ -469,7 +469,7 @@ class Pointwise {
    * last dimensions are shuffled.
    */
   concatGather( tensorArray ) {
-    return tf.tidy( "ChannelShuffler.Pointwise.concatGather", () => {
+    return tf.tidy( "ChannelShuffler.PointwiseConv.concatGather", () => {
       let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
       // shuffle and split by pointwise convolution (one operation achieves two operations).
