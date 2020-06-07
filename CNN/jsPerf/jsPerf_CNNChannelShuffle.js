@@ -75,7 +75,7 @@ class HeightWidthDepthGroup {
   }
 
   // Test pointwise-convolution
-  test_SplitConcatSortedShared() {
+  test_PointwiseConv() {
     tf.tidy( () => {
       this.pointwiseConv.concatGather( this.dataTensor3dArray );
     });
