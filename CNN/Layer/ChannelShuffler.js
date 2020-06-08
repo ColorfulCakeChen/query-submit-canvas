@@ -1,6 +1,6 @@
 //import * as Weights from "../Weights.js";
 
-export { ShuffleInfo, ConcatGather, SplitConcat, PointwiseConv, PointwiseConvSplit, Layer };
+export { ShuffleInfo, ConcatGather, SplitConcat, PointwiseConv, Layer };
 
 /**
  * The information for channel shuffler.
