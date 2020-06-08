@@ -304,7 +304,11 @@ class SplitConcat {
           let shuffledChannelIndices = shuffledChannelIndicesTensor1d.dataSync(); // Download from GPU memory.
 //!!! Remarked for test unsorted.
 //          shuffledChannelIndices.sort( ( n1, n2 ) => ( n1 - n2 ) );               // Sorting from small to large.
-          this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndices;
+
+//          this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndices;
+
+          // Sorting from small to large for improving memory locality (and memory access performance).
+          this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndices.sort( ( n1, n2 ) => ( n1 - n2 ) );
         });
 
         this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
