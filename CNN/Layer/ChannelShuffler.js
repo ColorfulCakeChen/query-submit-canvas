@@ -354,9 +354,17 @@ class SplitConcat {
 
       // shuffle and split by concat (one operation achieves two operations).
       return this.shuffledChannelIndicesArray.map( ( shuffledChannelIndices ) => {
-        shuffledChannelIndices.forEach( ( channelIndex, i ) => {
-          tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
-        });
+//!!! Using a loop instead.
+//         shuffledChannelIndices.forEach( ( channelIndex, i ) => {
+//           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
+//         });
+
+        let arrayLength = tensorArrayForOneGroup.length;
+        for ( let i = 0; i < arrayLength; ++i ) {
+          // The shuffledChannelIndices[ i ] is channelIndex.
+          tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ shuffledChannelIndices[ i ] ];
+        }
+
         return tf.concat( tensorArrayForOneGroup, lastAxisId );
       });
     });
