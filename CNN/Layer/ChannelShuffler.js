@@ -404,8 +404,11 @@ class SplitConcat {
  * other shuffling method.
  *
  *
+ * PointwiseConv-Split
  *
- *
+ * Another style of this implementation is PointwiseConv-Split (i.e. pointwise convolution by only one 1x1
+ * filter and then split). Its performance, however, is slower than pointwise convolution of multiple 1x1
+ * filters. The reason seems that the tf.split() is a slow operation (especially in mobile).
  *
  *
  *
@@ -525,104 +528,6 @@ class PointwiseConv {
 
 }
 
-
-
-
-/**
- * Implement the channel shuffler by 1x1 tf.Conv2D() (i.e. pointwise convolution) and split.
- *
- *
- */
-class PointwiseConvSplit {
-
-  /**
-   *
-   * @param {number[]} concatenatedShape
-   *   Used to calculate shuffleInfo.
-   *
-   * @param {number} outputGroupCount
-   *   Used to calculate shuffleInfo.
-   *
-   * @see PointwiseConv
-   */
-  init( concatenatedShape, outputGroupCount ) {
-
-    this.disposeTensors();
-    this.shuffleInfo = null; // So that distinguishable if re-initialization failed.
-
-    let pointwiseConv = new PointwiseConv();
-    let initOk = pointwiseConv.init( concatenatedShape, outputGroupCount );
-
-    // Concatenate all 1x1 convolution filters for channel shuffling. (as one tf.tensor4d).
-    try {
-      if ( initOk ) {
-        this.filterTensor4d = tf.tidy( "ChannelShuffler.PointwiseConvSplit.init.filterTensor4d", () => {
-          
-          // This is different from pointwiseConv.shuffleInfo.lastAxisId.
-          let filtersTensor4dLastAxisId = pointwiseConv.filtersTensor4dArray[ 0 ].rank - 1;
-
-//          return tf.concat( pointwiseConv.filtersTensor4dArray, ??? pointwiseConv.shuffleInfo.lastAxisId );
-          return tf.concat( pointwiseConv.filtersTensor4dArray, filtersTensor4dLastAxisId );
-        });
-
-        this.shuffleInfo = pointwiseConv.shuffleInfo; // Need the shuffle info.
-      }
-
-    } catch ( e ) {
-      initOk = false; // e.g. out of (GPU) memory.
-
-    } finally {
-      pointwiseConv.disposeTensors(); // Always release the temporary tensors.
-    }
-
-    return initOk; 
-  }
-
-  /** Release tf.tensor. */
-  disposeTensors() {
-    if ( this.filterTensor4d ) {
-      tf.dispose( this.filterTensor4d );
-      this.filterTensor4d = null;
-    }
-  }
-
-  /**
-   * Permute and split the input tensor by gather.
-   *
-   * @param {tf.tensor} concatenatedTensor
-   *   An single tensor (not array) to be processed. It should conform to this.shuffleInfo.concatenatedShape.
-   *
-   * @return {tf.tensor[]}
-   *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
-   * last dimensions are shuffled.
-   */
-  shuffleSplit( concatenatedTensor ) {
-    return tf.tidy( "ChannelShuffler.PointwiseConvSplit.shuffleSplit", () => {
-      return concatenatedTensor
-        .conv2d( this.filterTensor4d, 1, "valid" )  // shuffle all groups by only one pointwise convolution.
-        .split( this.shuffleInfo.outputGroupCount, this.shuffleInfo.lastAxisId );
-    });
-  }
-
-  /**
-   * Concatenate, permute and split the input tensor by concat-gather.
-   *
-   * @param {tf.tensor[]} tensorArray
-   *   An array of tensors to be processed. It should conform to this.concatenatedShape.
-   *
-   * @return {tf.tensor[]}
-   *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
-   * last dimensions are shuffled.
-   */
-  concatShuffleSplit( tensorArray ) {
-    return tf.tidy( "ChannelShuffler.PointwiseConvSplit.concatShuffleSplit", () => {
-      return tf.concat( tensorArray, this.shuffleInfo.lastAxisId )
-        .conv2d( this.filterTensor4d, 1, "valid" )  // shuffle all groups by only one pointwise convolution.
-        .split( this.shuffleInfo.outputGroupCount, this.shuffleInfo.lastAxisId );
-    });
-  }
-
-}
 
 
 //!!!
