@@ -104,8 +104,9 @@ class HeightWidthDepthGroup {
       tf.tidy( () => {
 //         let t2MeanArray = t2Array.map( t => t.mean() );
 //         let t3MeanArray = t3Array.map( t => t.mean() );
-        let t2SumArray = t2Array.map( t => t.sum() );
-        let t3SumArray = t3Array.map( t => t.sum() );
+        let lastAxisId = t2Array[ 0 ].rank - 1;
+        let t2SumArray = t2Array.map( t => t.sum( lastAxisId ) );
+        let t3SumArray = t3Array.map( t => t.sum( lastAxisId ) );
 
         tf.util.assert(
           ChannelShuffler.Layer.isTensorArrayEqual( t2SumArray, t3SumArray ),
