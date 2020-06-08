@@ -301,7 +301,9 @@ class SplitConcat {
         // Shuffled channel indices (one dimension integers) for SplitConcat()
         this.shuffledChannelIndicesArray = new Array( concatGather.shuffledChannelIndicesTensor1dArray.length );
         concatGather.shuffledChannelIndicesTensor1dArray.forEach( ( shuffledChannelIndicesTensor1d, i ) => {
-          let shuffledChannelIndices = shuffledChannelIndicesTensor1d.dataSync(); // Download from GPU memory.
+//!!! Use arraySync() instead.
+//          let shuffledChannelIndices = shuffledChannelIndicesTensor1d.dataSync(); // Download from GPU memory.
+          let shuffledChannelIndices = shuffledChannelIndicesTensor1d.arraySync(); // Download from GPU memory.
 //!!! Remarked for test unsorted.
 //          shuffledChannelIndices.sort( ( n1, n2 ) => ( n1 - n2 ) );               // Sorting from small to large.
 
