@@ -29,10 +29,10 @@ class HeightWidthDepthGroup {
     this.concatenatedShape = [ height, width, depth ];
 
     this.dataTensor3dArray = tf.tidy( () => {
-      let dataTensor1d = tf.linspace(0, this.valueCount - 1, this.valueCount );
+      let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
 
 //!!! test splitConcatSorted (reduce floating-point error)
-      dataTensor1d = dataTensor1d.toInt();
+//      dataTensor1d = dataTensor1d.toInt();
 
       let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
       return dataTensor3d.split( groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
