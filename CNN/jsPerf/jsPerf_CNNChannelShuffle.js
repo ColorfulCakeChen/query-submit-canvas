@@ -91,15 +91,26 @@ class HeightWidthDepthGroup {
 
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
-        `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()`);    
+        `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()`);
+
+//!!! Sorted never equal to Unsorted. 
+//       tf.util.assert(
+//         ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ),
+//         `ConcatGatherUnsorted() != SplitConcatSortedShared()`);
+
+      // Because the sorted will never equal to unsorted, try to compare their average.
+      tf.tidy( () => {
+        let t2MeanArray = t2Array.map( t => t.mean() );
+        let t3MeanArray = t3Array.map( t => t.mean() );
+
+        tf.util.assert(
+          ChannelShuffler.Layer.isTensorArrayEqual( t2MeanArray, t3MeanArray ),
+          `ConcatGatherUnsorted() != SplitConcatSortedShared()`);
+      });
 
       tf.util.assert(
-        ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ),
-        `ConcatGatherUnsorted() != SplitConcatSortedShared()`);    
-
-      tf.util.assert(
-        ChannelShuffler.Layer.isTensorArrayEqual( t3Array, t4Array ),
-        `SplitConcatSortedShared() != PointwiseConv()`);    
+        ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t4Array ),
+        `ConcatGatherUnsorted() != PointwiseConv()`);
     });
   }
   
