@@ -89,7 +89,7 @@ class HeightWidthDepthGroup {
   // Test pointwise-convolution-split
   test_PointwiseConvSplit() {
     tf.tidy( () => {
-      this.pointwiseConvSplit.concatGather( this.dataTensor3dArray );
+      this.pointwiseConvSplit.concatShuffleSplit( this.dataTensor3dArray );
     });
   }
 
@@ -100,7 +100,7 @@ class HeightWidthDepthGroup {
       let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
       let t3Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
       let t4Array = this.pointwiseConv.concatGather( this.dataTensor3dArray );
-      let t5Array = this.pointwiseConvSplit.concatGather( this.dataTensor3dArray );
+      let t5Array = this.pointwiseConvSplit.concatShuffleSplit( this.dataTensor3dArray );
 
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
