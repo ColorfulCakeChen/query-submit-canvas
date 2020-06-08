@@ -31,9 +31,6 @@ class HeightWidthDepthGroup {
     this.dataTensor3dArray = tf.tidy( () => {
       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
 
-//!!! test splitConcatSorted (reduce floating-point error)
-//      dataTensor1d = dataTensor1d.toInt();
-
       let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
       return dataTensor3d.split( groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
     });
@@ -42,7 +39,6 @@ class HeightWidthDepthGroup {
     ( this.concatGatherUnsorted = new ChannelShuffler.ConcatGather() ).init( this.concatenatedShape, groupCount );
     ( this.splitConcatSortedShared = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount );
     ( this.pointwiseConv = new ChannelShuffler.PointwiseConv() ).init( this.concatenatedShape, groupCount );
-    ( this.pointwiseConvSplit = new ChannelShuffler.PointwiseConvSplit() ).init( this.concatenatedShape, groupCount );
   }
 
   disposeTensors() {
@@ -86,13 +82,6 @@ class HeightWidthDepthGroup {
     });
   }
 
-  // Test pointwise-convolution-split
-  test_PointwiseConvSplit() {
-    tf.tidy( () => {
-      this.pointwiseConvSplit.concatShuffleSplit( this.dataTensor3dArray );
-    });
-  }
-
   // Testing whether the results of different implementation are the same.
   testResultSame() {
     tf.tidy( () => {
@@ -100,7 +89,6 @@ class HeightWidthDepthGroup {
       let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
       let t3Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
       let t4Array = this.pointwiseConv.concatGather( this.dataTensor3dArray );
-      let t5Array = this.pointwiseConvSplit.concatShuffleSplit( this.dataTensor3dArray );
 
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
@@ -127,10 +115,6 @@ class HeightWidthDepthGroup {
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t4Array ),
         `ConcatGatherUnsorted() != PointwiseConv()`);
-
-      tf.util.assert(
-        ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t5Array ),
-        `ConcatGatherUnsorted() != PointwiseConvSplit()`);
     });
   }
   
