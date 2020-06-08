@@ -389,6 +389,24 @@ class SplitConcat {
 /**
  * Implement the channel shuffler by 1x1 tf.Conv2D() (i.e. pointwise convolution).
  *
+ * Interestingly, although it looks like the most computing intensively (because many multiplications),
+ * it is indeed the fastest method (faster than concat-reshape-transpose-reshape-split, concat-gather,
+ * split-concat) in desktop computer. Even in mobile, it is still the second fatest method (just slower
+ * than concat-gather).
+ *
+ * In desktop computer, the concat-gather method usually is the second fastest method (slower than this
+ * pointwise-convolution method). Only when output group is one (i.e. no group; all one group), the
+ * concat-gather method beats (i.e. is fatser than) this pointwise-convolution method.
+ *
+ * In both desktop and mobile, the less the output group count is, the faster the shuffling is. That is, one
+ * output group is faster than two (and four, eight, ...) output group. This behavior is the same as the
+ * other shuffling method.
+ *
+ *
+ *
+ *
+ *
+ *
  *
  */
 class PointwiseConv {
@@ -428,9 +446,6 @@ class PointwiseConv {
 
             // Generate oneHotIndices (tensor2d) by shuffledChannelIndices (tensor1d).
             let filtersOfOneGroupTensor2d = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
-
-//!!! Just for test
-//            filtersOfOneGroupTensor2d = tf.ones( filtersOfOneGroupTensor2d.shape );
 
             // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
             // of tf.conv2d()'s filters.
