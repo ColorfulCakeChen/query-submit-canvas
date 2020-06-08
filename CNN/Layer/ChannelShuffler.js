@@ -430,7 +430,7 @@ class PointwiseConv {
             let filtersOfOneGroupTensor2d = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
 
 //!!! Just for test
-            filtersOfOneGroupTensor2d = tf.ones( filtersOfOneGroupTensor2d.shape );
+//            filtersOfOneGroupTensor2d = tf.ones( filtersOfOneGroupTensor2d.shape );
 
             // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
             // of tf.conv2d()'s filters.
