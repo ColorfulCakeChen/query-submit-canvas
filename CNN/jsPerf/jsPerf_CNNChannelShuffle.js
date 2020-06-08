@@ -98,13 +98,16 @@ class HeightWidthDepthGroup {
 //         ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ),
 //         `ConcatGatherUnsorted() != SplitConcatSortedShared()`);
 
-      // Because the sorted will never equal to unsorted, try to compare their average.
+      // Because the sorted will never equal to unsorted, try to compare their sum.
+      // (Using average may be have some floating-point error.)
       tf.tidy( () => {
-        let t2MeanArray = t2Array.map( t => t.mean() );
-        let t3MeanArray = t3Array.map( t => t.mean() );
+//         let t2MeanArray = t2Array.map( t => t.mean() );
+//         let t3MeanArray = t3Array.map( t => t.mean() );
+        let t2SumArray = t2Array.map( t => t.sum() );
+        let t3SumArray = t3Array.map( t => t.sum() );
 
         tf.util.assert(
-          ChannelShuffler.Layer.isTensorArrayEqual( t2MeanArray, t3MeanArray ),
+          ChannelShuffler.Layer.isTensorArrayEqual( t2SumArray, t3SumArray ),
           `ConcatGatherUnsorted() != SplitConcatSortedShared()`);
       });
 
