@@ -557,7 +557,12 @@ class PointwiseConvSplit {
     try {
       if ( initOk ) {
         this.filterTensor4d = tf.tidy( "ChannelShuffler.PointwiseConvSplit.init.filterTensor4d", () => {
-          return tf.concat( pointwiseConv.filtersTensor4dArray, pointwiseConv.shuffleInfo.lastAxisId );
+          
+          // This is different from pointwiseConv.shuffleInfo.lastAxisId.
+          let filtersTensor4dLastAxisId = pointwiseConv.filtersTensor4dArray[ 0 ].rank - 1;
+
+//          return tf.concat( pointwiseConv.filtersTensor4dArray, ??? pointwiseConv.shuffleInfo.lastAxisId );
+          return tf.concat( pointwiseConv.filtersTensor4dArray, filtersTensor4dLastAxisId );
         });
 
         this.shuffleInfo = pointwiseConv.shuffleInfo; // Need the shuffle info.
