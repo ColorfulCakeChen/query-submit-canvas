@@ -1,6 +1,6 @@
 //import * as Weights from "../Weights.js";
 
-export { ShuffleInfo, ConcatGather, SplitConcat, PointwiseConv, Layer };
+export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv, Layer };
 
 /**
  * The information for channel shuffler.
@@ -301,15 +301,8 @@ class SplitConcat {
         // Shuffled channel indices (one dimension integers) for SplitConcat()
         this.shuffledChannelIndicesArray = new Array( concatGather.shuffledChannelIndicesTensor1dArray.length );
         concatGather.shuffledChannelIndicesTensor1dArray.forEach( ( shuffledChannelIndicesTensor1d, i ) => {
-//!!! Use arraySync() instead.
-//          let shuffledChannelIndices = shuffledChannelIndicesTensor1d.dataSync(); // Download from GPU memory.
           let shuffledChannelIndices = shuffledChannelIndicesTensor1d.arraySync(); // Download from GPU memory.
-//!!! Remarked for test unsorted.
-//          shuffledChannelIndices.sort( ( n1, n2 ) => ( n1 - n2 ) );               // Sorting from small to large.
 
-//          this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndices;
-
-//!!! Strange! if sorted, the result will wrong. why?
           // Sorting from small to large for improving memory locality (and memory access performance).
           this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndices.sort( ( n1, n2 ) => ( n1 - n2 ) );
         });
@@ -361,18 +354,22 @@ class SplitConcat {
 
       // shuffle and split by concat (one operation achieves two operations).
       return this.shuffledChannelIndicesArray.map( ( shuffledChannelIndices ) => {
-//!!! Using a loop instead.
+//!!! Using a loop instead. (to reduce function call overhead)
 //         shuffledChannelIndices.forEach( ( channelIndex, i ) => {
 //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
 //         });
 
-//!!! Use for-of instead.
+//!!! Use for-of instead. (to reduce array member access overhead)
 //         let arrayLength = tensorArrayForOneGroup.length;
 //         for ( let i = 0; i < arrayLength; ++i ) {
 //           // The shuffledChannelIndices[ i ] is channelIndex.
 //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ shuffledChannelIndices[ i ] ];
 //         }
 
+        // Using for-of could be a better method.
+        //
+        // If using shuffledChannelIndices.forEach(), there is a function call overhead.
+        // If using for ( i = 0; ... ) and shuffledChannelIndices[ i ], there is a array member access overhead.
         let i = 0;
         for ( let channelIndex of shuffledChannelIndices ) {
           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
@@ -404,7 +401,7 @@ class SplitConcat {
  * other shuffling method.
  *
  *
- * PointwiseConv-Split
+ * Concat-PointwiseConv-Split
  *
  * Another style of this implementation is PointwiseConv-Split (i.e. pointwise convolution by only one 1x1
  * filter and then split). Its performance, however, is slower than pointwise convolution of multiple 1x1
@@ -413,7 +410,7 @@ class SplitConcat {
  *
  *
  */
-class PointwiseConv {
+class ConcatPointwiseConv {
 
   /**
    *
