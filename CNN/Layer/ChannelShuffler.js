@@ -593,7 +593,7 @@ class PointwiseConvSplit {
    */
   shuffleSplit( concatenatedTensor ) {
     return tf.tidy( "ChannelShuffler.PointwiseConvSplit.shuffleSplit", () => {
-      retrun concatenatedTensor
+      return concatenatedTensor
         .conv2d( this.filterTensor4d, 1, "valid" )  // shuffle all groups by only one pointwise convolution.
         .split( this.shuffleInfo.outputGroupCount, this.shuffleInfo.lastAxisId );
     });
@@ -611,7 +611,7 @@ class PointwiseConvSplit {
    */
   concatShuffleSplit( tensorArray ) {
     return tf.tidy( "ChannelShuffler.PointwiseConvSplit.concatShuffleSplit", () => {
-      retrun tf.concat( tensorArray, this.shuffleInfo.lastAxisId )
+      return tf.concat( tensorArray, this.shuffleInfo.lastAxisId )
         .conv2d( this.filterTensor4d, 1, "valid" )  // shuffle all groups by only one pointwise convolution.
         .split( this.shuffleInfo.outputGroupCount, this.shuffleInfo.lastAxisId );
     });
