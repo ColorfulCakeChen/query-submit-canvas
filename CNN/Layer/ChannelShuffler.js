@@ -407,10 +407,11 @@ class PointwiseConv {
             // Generate oneHotIndices (tensor2d) by shuffledChannelIndices (tensor1d).
             let filtersOfOneGroupTensor2d = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
 
-            // Transpose it so that the last axis is the outDepth (not inDepth).
+            // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
+            // of tf.conv2d()'s filters.
             filtersOfOneGroupTensor2d = filtersOfOneGroupTensor2d.transpose();
 
-            // Expand from tensor2d to tensor4d.
+            // Reinterpret the tensor2d to tensor4d so that it can be used as tf.conv2d()'s filters.
             let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d.reshape( filtersShape );
             return filtersOfOneGroupTensor4d;
           });
