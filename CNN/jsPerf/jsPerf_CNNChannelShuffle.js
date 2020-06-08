@@ -38,7 +38,7 @@ class HeightWidthDepthGroup {
     this.shuffleInfo = new ChannelShuffler.ShuffleInfo( this.concatenatedShape, groupCount );
     ( this.concatGatherUnsorted = new ChannelShuffler.ConcatGather() ).init( this.concatenatedShape, groupCount );
     ( this.splitConcatSortedShared = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount );
-    ( this.pointwiseConv = new ChannelShuffler.PointwiseConv() ).init( this.concatenatedShape, groupCount );
+    ( this.concatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv() ).init( this.concatenatedShape, groupCount );
   }
 
   disposeTensors() {
@@ -50,8 +50,8 @@ class HeightWidthDepthGroup {
     if ( this.concatGatherUnsorted )
       this.concatGatherUnsorted.disposeTensors();
 
-    if ( this.pointwiseConv )
-      this.pointwiseConv.disposeTensors();
+    if ( this.concatPointwiseConv )
+      this.concatPointwiseConv.disposeTensors();
   }
 
   // Test concat-reshape-transpose-reshape-split
@@ -75,10 +75,10 @@ class HeightWidthDepthGroup {
     });
   }
 
-  // Test pointwise-convolution
-  test_PointwiseConv() {
+  // Test concat-pointwise-convolution
+  test_ConcatPointwiseConv() {
     tf.tidy( () => {
-      this.pointwiseConv.concatGather( this.dataTensor3dArray );
+      this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
     });
   }
 
@@ -88,7 +88,7 @@ class HeightWidthDepthGroup {
       let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
       let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
       let t3Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
-      let t4Array = this.pointwiseConv.concatGather( this.dataTensor3dArray );
+      let t4Array = this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
 
       tf.util.assert(
         ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
