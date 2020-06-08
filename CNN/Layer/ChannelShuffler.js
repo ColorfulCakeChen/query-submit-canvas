@@ -365,10 +365,17 @@ class SplitConcat {
 //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
 //         });
 
-        let arrayLength = tensorArrayForOneGroup.length;
-        for ( let i = 0; i < arrayLength; ++i ) {
-          // The shuffledChannelIndices[ i ] is channelIndex.
-          tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ shuffledChannelIndices[ i ] ];
+//!!! Use for-of instead.
+//         let arrayLength = tensorArrayForOneGroup.length;
+//         for ( let i = 0; i < arrayLength; ++i ) {
+//           // The shuffledChannelIndices[ i ] is channelIndex.
+//           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ shuffledChannelIndices[ i ] ];
+//         }
+
+        let i = 0;
+        for ( let channelIndex of shuffledChannelIndices ) {
+          tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
+          ++i;
         }
 
         return tf.concat( tensorArrayForOneGroup, lastAxisId );
