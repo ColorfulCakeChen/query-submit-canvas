@@ -599,7 +599,17 @@ class Layer {
       return false;
 
     for ( let i = 0; i < tensorArray1.length; ++i ) {
-      if ( !tensorArray1[ i ].equal( tensorArray2[ i ] ) )
+//!!! wrong. They are tensor.
+//       if ( !tensorArray1[ i ].equal( tensorArray2[ i ] ) )
+//         return false;
+
+      let allElementEqual = tf.tidy( "ChannelShuffler.Layer.isTensorArrayEqual", () => {
+        let everyElementEqualTensor1d = tensorArray1[ i ].equal( tensorArray2[ i ] );
+        let allElementEqualTensor1d = everyElementEqualTensor1d.all();
+        return allElementEqualTensor1d.arraySync(); // 0: false. 1: true.
+      });
+
+      if ( !allElementEqual )
         return false;
     }
 
