@@ -41,7 +41,7 @@ class HeightWidthDepth {
       let filtersShape = [ filterHeight, filterWidth, inChannels, channelMultiplier ];
 
       let filtersTensor1d = tf.range( 1, this.valueCount, 1 );
-      let filtersTensor4d = tf.tensor4d( filtersTensor1d, filtersShape );
+      let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
       return filtersTensor4d;
     });
   }
