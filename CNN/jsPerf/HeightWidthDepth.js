@@ -170,11 +170,11 @@ class Base {
         console.log(
            `${title} :`
 
-         + `, newBytes: ${profile.newBytes}`
-         + `, newTensors: ${profile.newTensors}`
-         + `, byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`
+         + `newBytes: ${profile.newBytes}, `
+         + `newTensors: ${profile.newTensors}, `
+         + `byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}, `
 
-         + `, kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
+         + `kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
       });
     });
   }
