@@ -166,7 +166,7 @@ class Base {
       tf.time( func ).then( time => {
         
         console.log(
-           `${title} :`
+           `${title}: `
 
          + `newBytes: ${profile.newBytes}, `
          + `newTensors: ${profile.newTensors}, `
