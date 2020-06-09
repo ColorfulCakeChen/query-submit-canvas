@@ -1,4 +1,5 @@
 import * as ChannelShuffler from "../Layer/ChannelShuffler.js";
+import * as TensorTools from "../util/TensorTools.js";
 
 /**
  * Test different channel shuffle implementation for CNN ShuffleNet.
@@ -91,7 +92,7 @@ class HeightWidthDepthGroup {
       let t4Array = this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
 
       tf.util.assert(
-        ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
+        TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ),
         `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()`);
 
 //!!! Sorted never equal to Unsorted. 
@@ -109,12 +110,12 @@ class HeightWidthDepthGroup {
         let t3SumArray = t3Array.map( t => t.sum( lastAxisId ) );
 
         tf.util.assert(
-          ChannelShuffler.Layer.isTensorArrayEqual( t2SumArray, t3SumArray ),
+          TensorTools.Comparator.isTensorArrayEqual( t2SumArray, t3SumArray ),
           `ConcatGatherUnsorted() != SplitConcatSortedShared()`);
       });
 
       tf.util.assert(
-        ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t4Array ),
+        TensorTools.Comparator.isTensorArrayEqual( t2Array, t4Array ),
         `ConcatGatherUnsorted() != PointwiseConv()`);
     });
   }
