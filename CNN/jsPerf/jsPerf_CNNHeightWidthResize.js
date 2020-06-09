@@ -1,4 +1,4 @@
-//import * as ChannelShuffler from "../Layer/ChannelShuffler.js";
+import * as TensorTools from "../util/TensorTools.js";
 
 /**
  * Test different resize implementation for CNN.
@@ -62,50 +62,62 @@ class HeightWidthDepth {
   // Test max-pool
   test_MaxPool() {
     tf.tidy( () => {
-      let quarter = this.dataTensor3d.maxPool( 2, 1, "valid" );
+      this.dataTensor3d.maxPool( 2, 1, "valid" );
     });
   }
 
   // Test avg-pool
   test_AvgPool() {
     tf.tidy( () => {
-      let quarter = this.dataTensor3d.avgPool( 2, 1, "valid" );
+      this.dataTensor3d.avgPool( 2, 1, "valid" );
     });
   }
 
   // Test depthwise convolution (2D)
   test_DepthwiseConv2d() {
     tf.tidy( () => {
-      let quarter = this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters, 1, "valid" );
+      this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters, 1, "valid" );
     });
   }
 
   // Test rsize-nearest-neighbor
   test_ResizeNearestNeighbor() {
     tf.tidy( () => {
-      let quarter = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
+      this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
     });
   }
 
   // Test rsize-bilinear 
   test_ResizeBilinear() {
     tf.tidy( () => {
-      let quarter = this.dataTensor3d.resizeBilinear( this.targetSize, true );
+      this.dataTensor3d.resizeBilinear( this.targetSize, true );
     });
   }
 
   // Testing whether the results of different implementation are the same.
   testResultSame() {
     tf.tidy( () => {
-      test_MaxPool();
-      test_AvgPool();
-      test_DepthwiseConv2d();
-      test_ResizeNearestNeighbor();
-      test_ResizeBilinear();
+      let quarterTensor1 = this.dataTensor3d.maxPool( 2, 1, "valid" );
+      let quarterTensor2 = this.dataTensor3d.avgPool( 2, 1, "valid" );
+      let quarterTensor3 = this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters, 1, "valid" );
+      let quarterTensor4 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
+      let quarterTensor5 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
 
-//      tf.util.assert(
-//        ChannelShuffler.Layer.isTensorArrayEqual( t1Array, t2Array ),
-//        `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()`);
+      tf.util.assert(
+        tf.util.arraysEqual( quarterTensor1.shape, quarterTensor2.shape ),
+        `MaxPool() != AvgPool()`);
+
+      tf.util.assert(
+        tf.util.arraysEqual( quarterTensor2.shape, quarterTensor3.shape ),
+        `AvgPool() != DepthwiseConv2d()`);
+
+      tf.util.assert(
+        tf.util.arraysEqual( quarterTensor3.shape, quarterTensor4.shape ),
+        `DepthwiseConv2d() != ResizeNearestNeighbor()`);
+
+      tf.util.assert(
+        tf.util.arraysEqual( quarterTensor4.shape, quarterTensor5.shape ),
+        `ResizeNearestNeighbor() != ResizeBilinear()`);
     });
   }
   
