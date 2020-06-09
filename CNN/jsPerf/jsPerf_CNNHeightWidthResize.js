@@ -76,7 +76,7 @@ class HeightWidthDepth {
   // Test depthwise convolution (2D)
   test_DepthwiseConv2d() {
     tf.tidy( () => {
-      this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters, 1, "valid" );
+      this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
     });
   }
 
@@ -99,7 +99,7 @@ class HeightWidthDepth {
     tf.tidy( () => {
       let quarterTensor1 = this.dataTensor3d.maxPool( 2, 1, "valid" );
       let quarterTensor2 = this.dataTensor3d.avgPool( 2, 1, "valid" );
-      let quarterTensor3 = this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters, 1, "valid" );
+      let quarterTensor3 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
       let quarterTensor4 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
       let quarterTensor5 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
 
