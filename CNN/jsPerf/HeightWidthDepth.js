@@ -99,7 +99,7 @@ class Base {
   // Test depthwise convolution (2D) by 3x3 filter with stride 2
   test_DepthwiseConv2d_3x3_Stride2() {
     tf.tidy( () => {
-      let t = this.dataTensor3d.depthwiseConv2D( this.depthwiseConv3x3Filters, 2, "same" );
+      let t = this.dataTensor3d.depthwiseConv2d( this.depthwiseConv3x3Filters, 2, "same" );
       tf.dispose( t );
     });
   }
