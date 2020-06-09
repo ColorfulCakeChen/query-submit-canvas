@@ -111,4 +111,4 @@ class HeightWidthDepth {
 }
 
 
-globalThis.testSet_110x110x24 = new HeightWidthDepthGroup( 110, 110, 24 ); // height, width, depth
+globalThis.testSet_110x110x24 = new HeightWidthDepth( 110, 110, 24 ); // height, width, depth
