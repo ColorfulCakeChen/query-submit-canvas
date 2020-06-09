@@ -34,8 +34,8 @@ class HeightWidthDepth {
     });
 
     this.depthwiseConvFilters = tf.tidy( () => {
-      let filterHeight =      targetSize[ 0 ] + 1;
-      let filterWidth =       targetSize[ 1 ] + 1;
+      let filterHeight =      this.targetSize[ 0 ] + 1;
+      let filterWidth =       this.targetSize[ 1 ] + 1;
       let inChannels =        depth;
       let channelMultiplier = 1;
       let filtersShape = [ filterHeight, filterWidth, inChannels, channelMultiplier ];
