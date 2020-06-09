@@ -131,8 +131,7 @@ class HeightWidthDepth {
       let quarterTensor1 = this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
       let quarterTensor2 = this.dataTensor3d.avgPool( this.filterHeightWidth, 1, "valid" );
       let quarterTensor3 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
-//      let quarterTensor4 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConv3x3Filters, 2, "same" );
-      let quarterTensor4 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConv3x3Filters, 2, "valid" );
+      let quarterTensor4 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConv3x3Filters, 2, "same" );
       let quarterTensor5 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
       let quarterTensor6 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
 
