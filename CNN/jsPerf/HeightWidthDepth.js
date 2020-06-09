@@ -163,10 +163,8 @@ class Base {
   
   logProfile( title, func ) {
     tf.profile( func ).then( profile => {
-
       tf.time( func ).then( time => {
         
-        console.log();
         console.log(
            `${title} :`
 
