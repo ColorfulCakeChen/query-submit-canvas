@@ -27,6 +27,10 @@ class HeightWidthDepth {
     //this.concatenatedShape = [ height, width, depth ];
     this.targetSize = [ ( height / 2 ), ( width / 2 ) ];
 
+    let filterHeight =      this.targetSize[ 0 ] + 1;
+    let filterWidth =       this.targetSize[ 1 ] + 1;
+    this.filterHeightWidth = [ filterHeight, filterWidth ];
+
     this.dataTensor3d = tf.tidy( () => {
       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
       let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
@@ -34,14 +38,12 @@ class HeightWidthDepth {
     });
 
     this.depthwiseConvFilters = tf.tidy( () => {
-      let filterHeight =      this.targetSize[ 0 ] + 1;
-      let filterWidth =       this.targetSize[ 1 ] + 1;
       let inChannels =        depth;
       let channelMultiplier = 1;
       let filtersShape = [ filterHeight, filterWidth, inChannels, channelMultiplier ];
+      let filtersValueCount = tf.util.sizeFromShape( filtersShape );
 
-      let filterSize = tf.util.sizeFromShape( filtersShape );
-      let filtersTensor1d = tf.range( 0, filterSize, 1 );
+      let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
       let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
       return filtersTensor4d;
     });
@@ -62,14 +64,14 @@ class HeightWidthDepth {
   // Test max-pool
   test_MaxPool() {
     tf.tidy( () => {
-      this.dataTensor3d.maxPool( 2, 1, "valid" );
+      this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
     });
   }
 
   // Test avg-pool
   test_AvgPool() {
     tf.tidy( () => {
-      this.dataTensor3d.avgPool( 2, 1, "valid" );
+      this.dataTensor3d.avgPool( this.filterHeightWidth, 1, "valid" );
     });
   }
 
@@ -97,8 +99,8 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   testResultSame() {
     tf.tidy( () => {
-      let quarterTensor1 = this.dataTensor3d.maxPool( 2, 1, "valid" );
-      let quarterTensor2 = this.dataTensor3d.avgPool( 2, 1, "valid" );
+      let quarterTensor1 = this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
+      let quarterTensor2 = this.dataTensor3d.avgPool( this.filterHeightWidth, 1, "valid" );
       let quarterTensor3 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
       let quarterTensor4 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
       let quarterTensor5 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
