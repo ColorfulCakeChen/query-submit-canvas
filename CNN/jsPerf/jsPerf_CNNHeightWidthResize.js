@@ -37,10 +37,20 @@ class HeightWidthDepth {
       return dataTensor3d;
     });
 
+    let inChannels =        depth;
+    let channelMultiplier = 1;
+
     this.depthwiseConvFilters = tf.tidy( () => {
-      let inChannels =        depth;
-      let channelMultiplier = 1;
       let filtersShape = [ filterHeight, filterWidth, inChannels, channelMultiplier ];
+      let filtersValueCount = tf.util.sizeFromShape( filtersShape );
+
+      let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
+      let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
+      return filtersTensor4d;
+    });
+
+    this.depthwiseConv3x3Filters = tf.tidy( () => {
+      let filtersShape = [ 3, 3, inChannels, channelMultiplier ];
       let filtersValueCount = tf.util.sizeFromShape( filtersShape );
 
       let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
@@ -59,14 +69,20 @@ class HeightWidthDepth {
       tf.dispose( this.depthwiseConvFilters );
       this.depthwiseConvFilters = null;
     }
+
+    if ( this.depthwiseConv3x3Filters ) {
+      tf.dispose( this.depthwiseConv3x3Filters );
+      this.depthwiseConv3x3Filters = null;
+    }
   }
 
-  // Test max-pool
-  test_MaxPool() {
-    tf.tidy( () => {
-      this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
-    });
-  }
+//!!! This testing seems crash the video driver.
+//   // Test max-pool
+//   test_MaxPool() {
+//     tf.tidy( () => {
+//       this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
+//     });
+//   }
 
   // Test avg-pool
   test_AvgPool() {
@@ -79,6 +95,13 @@ class HeightWidthDepth {
   test_DepthwiseConv2d() {
     tf.tidy( () => {
       this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
+    });
+  }
+
+  // Test depthwise convolution (2D) by 3x3 filter with stride 2
+  test_DepthwiseConv2d_3x3_Stride2() {
+    tf.tidy( () => {
+      this.dataTensor3d.depthwiseConv2D( this.depthwiseConv3x3Filters, 1, "same" );
     });
   }
 
@@ -99,15 +122,16 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   testResultSame() {
     tf.tidy( () => {
-      let quarterTensor1 = this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
+//      let quarterTensor1 = this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
       let quarterTensor2 = this.dataTensor3d.avgPool( this.filterHeightWidth, 1, "valid" );
       let quarterTensor3 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
-      let quarterTensor4 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
-      let quarterTensor5 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
+      let quarterTensor4 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConv3x3Filters, 1, "same" );
+      let quarterTensor5 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
+      let quarterTensor6 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
 
-      tf.util.assert(
-        tf.util.arraysEqual( quarterTensor1.shape, quarterTensor2.shape ),
-        `MaxPool() != AvgPool()`);
+//       tf.util.assert(
+//         tf.util.arraysEqual( quarterTensor1.shape, quarterTensor2.shape ),
+//         `MaxPool() != AvgPool()`);
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor2.shape, quarterTensor3.shape ),
@@ -115,10 +139,14 @@ class HeightWidthDepth {
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor3.shape, quarterTensor4.shape ),
-        `DepthwiseConv2d() != ResizeNearestNeighbor()`);
+        `DepthwiseConv2d() != DepthwiseConv2d_3x3_Stride2()`);
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor4.shape, quarterTensor5.shape ),
+        `DepthwiseConv2d_3x3_Stride2() != ResizeNearestNeighbor()`);
+
+      tf.util.assert(
+        tf.util.arraysEqual( quarterTensor5.shape, quarterTensor6.shape ),
         `ResizeNearestNeighbor() != ResizeBilinear()`);
     });
   }
