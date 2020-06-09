@@ -172,11 +172,9 @@ class ConcatGather {
 
   /**
    *
-   * @param {number[]} concatenatedShape
-   *   Used to calculate shuffleInfo.
-   *
-   * @param {number} outputGroupCount
-   *   Used to calculate shuffleInfo.
+   * @param {number[]} concatenatedShape  Used to calculate shuffleInfo.
+   * @param {number}   outputGroupCount   Used to calculate shuffleInfo.
+   * @return {boolean} If failed (e.g. out of GPU memory), return false. Otherwise, return true.
    *
    * @see ShuffleInfo
    */
