@@ -152,12 +152,12 @@ class Base {
     });
 
     tf.tidy( () => {
-      this.logProfile( "MaxPool", this.test_MaxPool );
-      this.logProfile( "AvgPool", this.test_AvgPool );
-      this.logProfile( "DepthwiseConv2d", this.test_DepthwiseConv2d );
-      this.logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2 );
-      this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor );
-      this.logProfile( "ResizeBilinear", this.test_ResizeBilinear );
+      this.logProfile( "MaxPool", this.test_MaxPool.bind( this ) );
+      this.logProfile( "AvgPool", this.test_AvgPool.bind( this ) );
+      this.logProfile( "DepthwiseConv2d", this.test_DepthwiseConv2d.bind( this ) );
+      this.logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2.bind( this ) );
+      this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) );
+      this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) );
     });
   }
   
