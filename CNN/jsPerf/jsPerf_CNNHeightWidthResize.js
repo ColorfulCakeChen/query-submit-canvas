@@ -77,61 +77,67 @@ class HeightWidthDepth {
   }
 
 //!!! This testing seems crash the video driver.
-//   // Test max-pool
-//   test_MaxPool() {
-//     tf.tidy( () => {
-//       this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
-//     });
-//   }
+  // Test max-pool
+  test_MaxPool() {
+    tf.tidy( () => {
+      let t = this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
+      tf.dispose( t );
+    });
+  }
 
   // Test avg-pool
   test_AvgPool() {
     tf.tidy( () => {
-      this.dataTensor3d.avgPool( this.filterHeightWidth, 1, "valid" );
+      let t = this.dataTensor3d.avgPool( this.filterHeightWidth, 1, "valid" );
+      tf.dispose( t );
     });
   }
 
   // Test depthwise convolution (2D)
   test_DepthwiseConv2d() {
     tf.tidy( () => {
-      this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
+      let t = this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
+      tf.dispose( t );
     });
   }
 
   // Test depthwise convolution (2D) by 3x3 filter with stride 2
   test_DepthwiseConv2d_3x3_Stride2() {
     tf.tidy( () => {
-      this.dataTensor3d.depthwiseConv2D( this.depthwiseConv3x3Filters, 2, "same" );
+      let t = this.dataTensor3d.depthwiseConv2D( this.depthwiseConv3x3Filters, 2, "same" );
+      tf.dispose( t );
     });
   }
 
   // Test rsize-nearest-neighbor
   test_ResizeNearestNeighbor() {
     tf.tidy( () => {
-      this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
+      let t = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
+      tf.dispose( t );
     });
   }
 
   // Test rsize-bilinear 
   test_ResizeBilinear() {
     tf.tidy( () => {
-      this.dataTensor3d.resizeBilinear( this.targetSize, true );
+      let t = this.dataTensor3d.resizeBilinear( this.targetSize, true );
+      tf.dispose( t );
     });
   }
 
   // Testing whether the results of different implementation are the same.
   testResultSame() {
     tf.tidy( () => {
-//      let quarterTensor1 = this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
+      let quarterTensor1 = this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
       let quarterTensor2 = this.dataTensor3d.avgPool( this.filterHeightWidth, 1, "valid" );
       let quarterTensor3 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
       let quarterTensor4 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConv3x3Filters, 2, "same" );
       let quarterTensor5 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
       let quarterTensor6 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
 
-//       tf.util.assert(
-//         tf.util.arraysEqual( quarterTensor1.shape, quarterTensor2.shape ),
-//         `MaxPool() != AvgPool()`);
+      tf.util.assert(
+        tf.util.arraysEqual( quarterTensor1.shape, quarterTensor2.shape ),
+        `MaxPool() != AvgPool()`);
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor2.shape, quarterTensor3.shape ),
