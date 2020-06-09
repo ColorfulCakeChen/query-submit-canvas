@@ -91,7 +91,7 @@ class Base {
   // Test depthwise convolution (2D)
   test_DepthwiseConv2d() {
     tf.tidy( () => {
-      let t = this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
+      let t = this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters, 1, "valid" );
       tf.dispose( t );
     });
   }
@@ -125,8 +125,8 @@ class Base {
     tf.tidy( () => {
       let quarterTensor1 = this.dataTensor3d.maxPool( this.filterHeightWidth, 1, "valid" );
       let quarterTensor2 = this.dataTensor3d.avgPool( this.filterHeightWidth, 1, "valid" );
-      let quarterTensor3 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConvFilters, 1, "valid" );
-      let quarterTensor4 = this.dataTensor3d.depthwiseConv2D( this.depthwiseConv3x3Filters, 2, "same" );
+      let quarterTensor3 = this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters, 1, "valid" );
+      let quarterTensor4 = this.dataTensor3d.depthwiseConv2d( this.depthwiseConv3x3Filters, 2, "same" );
       let quarterTensor5 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
       let quarterTensor6 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
 
@@ -163,14 +163,18 @@ class Base {
   
   logProfile( title, func ) {
     tf.profile( func ).then( profile => {
-      console.log(`${title} :`);
-      console.log(
-         ` newBytes: ${profile.newBytes}`
-       + ` newTensors: ${profile.newTensors}`
-       + ` byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
 
       tf.time( func ).then( time => {
-        console.log(`kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
+        
+        console.log();
+        console.log(
+           `${title} :`
+
+         + `, newBytes: ${profile.newBytes}`
+         + `, newTensors: ${profile.newTensors}`
+         + `, byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`
+
+         + `, kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
       });
     });
   }
