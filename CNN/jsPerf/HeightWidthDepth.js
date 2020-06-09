@@ -150,6 +150,28 @@ class Base {
         tf.util.arraysEqual( quarterTensor5.shape, quarterTensor6.shape ),
         `ResizeNearestNeighbor() != ResizeBilinear()`);
     });
+
+    tf.tidy( () => {
+      logProfile( "MaxPool", this.test_MaxPool );
+      logProfile( "AvgPool", this.test_AvgPool );
+      logProfile( "DepthwiseConv2d", this.test_DepthwiseConv2d );
+      logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2 );
+      logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor );
+      logProfile( "ResizeBilinear", this.test_ResizeBilinear );
+    });
   }
   
+  logProfile( title, func ) {
+    const profile = await tf.profile( func );
+    
+    console.log(`${title} :`);
+    console.log(
+       ` newBytes: ${profile.newBytes}`
+     + ` newTensors: ${profile.newTensors}`
+     + ` byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
+
+    const time = await tf.time( func );
+
+    console.log(`kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
+  }
 }
