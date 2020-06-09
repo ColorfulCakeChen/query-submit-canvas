@@ -40,7 +40,8 @@ class HeightWidthDepth {
       let channelMultiplier = 1;
       let filtersShape = [ filterHeight, filterWidth, inChannels, channelMultiplier ];
 
-      let filtersTensor4d = tf.tensor4d( , filtersShape );
+      let filtersTensor1d = tf.range( 1, this.valueCount, 1 );
+      let filtersTensor4d = tf.tensor4d( filtersTensor1d, filtersShape );
       return filtersTensor4d;
     });
   }
