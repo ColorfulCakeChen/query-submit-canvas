@@ -1,3 +1,4 @@
+export { Comparator };
 
 /**
  * An channel shuffler accepts a list of tensor3d with same size (height, width, channel) and outputs a shuffled
