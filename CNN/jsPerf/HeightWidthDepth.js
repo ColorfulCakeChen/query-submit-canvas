@@ -162,16 +162,16 @@ class Base {
   }
   
   logProfile( title, func ) {
-    const profile = await tf.profile( func );
-    
-    console.log(`${title} :`);
-    console.log(
-       ` newBytes: ${profile.newBytes}`
-     + ` newTensors: ${profile.newTensors}`
-     + ` byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
+    tf.profile( func ).then( profile => {
+      console.log(`${title} :`);
+      console.log(
+         ` newBytes: ${profile.newBytes}`
+       + ` newTensors: ${profile.newTensors}`
+       + ` byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}`);
 
-    const time = await tf.time( func );
-
-    console.log(`kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
+      tf.time( func ).then( time => {
+        console.log(`kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
+      });
+    });
   }
 }
