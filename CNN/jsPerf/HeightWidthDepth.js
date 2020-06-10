@@ -170,6 +170,7 @@ class Base {
 
          + `newBytes: ${profile.newBytes}, `
          + `newTensors: ${profile.newTensors}, `
+         + `peakBytes: ${profile.peakBytes}, `
          + `byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}, `
 
          + `kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
