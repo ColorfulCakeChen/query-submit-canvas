@@ -128,7 +128,7 @@ class Base {
       let quarterTensor3 = this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters, 1, "valid" );
       let quarterTensor4 = this.dataTensor3d.depthwiseConv2d( this.depthwiseConv3x3Filters, 2, "same" );
       let quarterTensor5 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
-      let quarterTensor6 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
+//      let quarterTensor6 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor1.shape, quarterTensor2.shape ),
