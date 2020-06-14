@@ -26,12 +26,12 @@ class Base {
     this.targetSize = [ Math.floor( height / 20 ) * 10, Math.floor( width / 20 ) * 10 ];
 
     // The filter size for achieving target size in one step.
-    let filterHeight_OneStep =      this.targetSize[ 0 ] + 1;
-    let filterWidth_OneStep =       this.targetSize[ 1 ] + 1;
+    let filterHeight_OneStep =      ( height - this.targetSize[ 0 ] ) + 1;
+    let filterWidth_OneStep =       ( width - this.targetSize[ 1 ] ) + 1;
     this.filterHeightWidth_OneStep = [ filterHeight_OneStep, filterWidth_OneStep ];
 
     // How many steps if achieving target size in many 3x3 depthwise convolution.
-    let sizeReducedPerStepBy3x3 = 2;
+    let sizeReducedPerStepBy3x3 = 3 - 1;
     this.stepsBy3x3MultiSteps = ( this.height - this.targetSize[ 0 ] ) / sizeReducedPerStepBy3x3;
 
     this.dataTensor3d = tf.tidy( () => {
