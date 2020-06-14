@@ -81,7 +81,7 @@ class Base {
 
   // Test max-pool
   test_MaxPool( bReturn ) {
-    tf.tidy( () => {
+    return tf.tidy( () => {
       let t = this.dataTensor3d.maxPool( this.filterHeightWidth_OneStep, 1, "valid" );
       if ( bReturn )
         return t;
@@ -90,7 +90,7 @@ class Base {
 
   // Test avg-pool
   test_AvgPool( bReturn ) {
-    tf.tidy( () => {
+    return tf.tidy( () => {
       let t = this.dataTensor3d.avgPool( this.filterHeightWidth_OneStep, 1, "valid" );
       if ( bReturn )
         return t;
@@ -99,7 +99,7 @@ class Base {
 
   // Test depthwise convolution (2D)
   test_DepthwiseConv2d_OneStep( bReturn ) {
-    tf.tidy( () => {
+    return tf.tidy( () => {
       let t = this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters_OneStep, 1, "valid" );
       if ( bReturn )
         return t;
@@ -108,12 +108,15 @@ class Base {
 
   // Test depthwise convolution (2D) by 3x3 filter with multi-step
   test_DepthwiseConv2d_3x3_MultiStep( bReturn ) {
-    tf.tidy( () => {
+    return tf.tidy( () => {
       let steps = this.stepsBy3x3MultiSteps;
       let t = this.dataTensor3d;
       for ( let i = 0; i < steps; ++i ) {
         let tNew = t.depthwiseConv2d( this.depthwiseConv3x3Filters, 1, "valid" );
-        tf.dispose( t );
+
+        if ( t != this.dataTensor3d )  // NOTE: Do not dispose the original data.
+          tf.dispose( t );
+
         t = tNew;
       }
       if ( bReturn )
@@ -123,7 +126,7 @@ class Base {
 
   // Test depthwise convolution (2D) by 3x3 filter with stride 2
   test_DepthwiseConv2d_3x3_Stride2( bReturn ) {
-    tf.tidy( () => {
+    return tf.tidy( () => {
       let t = this.dataTensor3d.depthwiseConv2d( this.depthwiseConv3x3Filters, 2, "same" );
       if ( bReturn )
         return t;
@@ -132,7 +135,7 @@ class Base {
 
   // Test rsize-bilinear 
   test_ResizeBilinear( bReturn ) {
-    tf.tidy( () => {
+    return tf.tidy( () => {
       let t = this.dataTensor3d.resizeBilinear( this.targetSize, true );
       if ( bReturn )
         return t;
@@ -141,7 +144,7 @@ class Base {
 
   // Test rsize-nearest-neighbor
   test_ResizeNearestNeighbor( bReturn ) {
-    tf.tidy( () => {
+    return tf.tidy( () => {
       let t = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
       if ( bReturn )
         return t;
