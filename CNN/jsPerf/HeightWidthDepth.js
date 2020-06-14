@@ -104,18 +104,18 @@ class Base {
     });
   }
 
-  // Test rsize-nearest-neighbor
-  test_ResizeNearestNeighbor() {
-    tf.tidy( () => {
-      let t = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
-      tf.dispose( t );
-    });
-  }
-
   // Test rsize-bilinear 
   test_ResizeBilinear() {
     tf.tidy( () => {
       let t = this.dataTensor3d.resizeBilinear( this.targetSize, true );
+      tf.dispose( t );
+    });
+  }
+
+  // Test rsize-nearest-neighbor
+  test_ResizeNearestNeighbor() {
+    tf.tidy( () => {
+      let t = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
       tf.dispose( t );
     });
   }
@@ -127,8 +127,8 @@ class Base {
       let quarterTensor2 = this.dataTensor3d.avgPool( this.filterHeightWidth, 1, "valid" );
       let quarterTensor3 = this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters, 1, "valid" );
       let quarterTensor4 = this.dataTensor3d.depthwiseConv2d( this.depthwiseConv3x3Filters, 2, "same" );
-      let quarterTensor5 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
-      let quarterTensor6 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
+      let quarterTensor5 = this.dataTensor3d.resizeBilinear( this.targetSize, true );
+      let quarterTensor6 = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor1.shape, quarterTensor2.shape ),
@@ -144,11 +144,11 @@ class Base {
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor4.shape, quarterTensor5.shape ),
-        `DepthwiseConv2d_3x3_Stride2() != ResizeNearestNeighbor()`);
+        `DepthwiseConv2d_3x3_Stride2() != ResizeBilinear()`);
 
-      tf.util.assert(
-        tf.util.arraysEqual( quarterTensor5.shape, quarterTensor6.shape ),
-        `ResizeNearestNeighbor() != ResizeBilinear()`);
+//       tf.util.assert(
+//         tf.util.arraysEqual( quarterTensor5.shape, quarterTensor6.shape ),
+//         `ResizeBilinear() != ResizeNearestNeighbor()`);
     });
 
     tf.tidy( () => {
@@ -156,8 +156,8 @@ class Base {
       this.logProfile( "AvgPool", this.test_AvgPool.bind( this ) );
       this.logProfile( "DepthwiseConv2d", this.test_DepthwiseConv2d.bind( this ) );
       this.logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2.bind( this ) );
-      this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) );
       this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) );
+//      this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) );
     });
   }
   
