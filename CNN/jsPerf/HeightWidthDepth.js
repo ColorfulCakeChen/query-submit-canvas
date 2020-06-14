@@ -32,7 +32,7 @@ class Base {
 
     // How many steps if achieving target size in many 3x3 depthwise convolution.
     let sizeReducedPerStepBy3x3 = 2;
-    let this.stepsBy3x3MultiSteps = ( this.height - this.targetSize[ 0 ] ) / sizeReducedPerStepBy3x3;
+    this.stepsBy3x3MultiSteps = ( this.height - this.targetSize[ 0 ] ) / sizeReducedPerStepBy3x3;
 
     this.dataTensor3d = tf.tidy( () => {
       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
