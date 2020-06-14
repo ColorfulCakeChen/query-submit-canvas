@@ -32,7 +32,11 @@ class Base {
 
     // How many steps if achieving target size in many 3x3 depthwise convolution.
     let sizeReducedPerStepBy3x3 = 3 - 1;
-    this.stepsBy3x3MultiSteps = ( this.height - this.targetSize[ 0 ] ) / sizeReducedPerStepBy3x3;
+    this.stepsBy3x3 = ( this.height - this.targetSize[ 0 ] ) / sizeReducedPerStepBy3x3;
+
+    // How many steps if achieving target size in many 2x2 depthwise convolution.
+    let sizeReducedPerStepBy2x2 = 2 - 1;
+    this.stepsBy2x2 = ( this.height - this.targetSize[ 0 ] ) / sizeReducedPerStepBy2x2;
 
     this.dataTensor3d = tf.tidy( () => {
       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
@@ -60,6 +64,15 @@ class Base {
       let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
       return filtersTensor4d;
     });
+
+    this.depthwiseConv2x2Filters = tf.tidy( () => {
+      let filtersShape = [ 2, 2, inChannels, channelMultiplier ];
+      let filtersValueCount = tf.util.sizeFromShape( filtersShape );
+
+      let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
+      let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
+      return filtersTensor4d;
+    });
   }
 
   disposeTensors() {
@@ -75,6 +88,11 @@ class Base {
 
     if ( this.depthwiseConv3x3Filters ) {
       tf.dispose( this.depthwiseConv3x3Filters );
+      this.depthwiseConv3x3Filters = null;
+    }
+
+    if ( this.depthwiseConv2x2Filters ) {
+      tf.dispose( this.depthwiseConv2x2Filters );
       this.depthwiseConv3x3Filters = null;
     }
   }
@@ -109,10 +127,28 @@ class Base {
   // Test depthwise convolution (2D) by 3x3 filter with multi-step
   test_DepthwiseConv2d_3x3_MultiStep( bReturn ) {
     return tf.tidy( () => {
-      let steps = this.stepsBy3x3MultiSteps;
+      let steps = this.stepsBy3x3;
       let t = this.dataTensor3d;
       for ( let i = 0; i < steps; ++i ) {
         let tNew = t.depthwiseConv2d( this.depthwiseConv3x3Filters, 1, "valid" );
+
+        if ( t != this.dataTensor3d )  // NOTE: Do not dispose the original data.
+          tf.dispose( t );
+
+        t = tNew;
+      }
+      if ( bReturn )
+        return t;
+    });
+  }
+
+  // Test depthwise convolution (2D) by 2x2 filter with multi-step
+  test_DepthwiseConv2d_2x2_MultiStep( bReturn ) {
+    return tf.tidy( () => {
+      let steps = this.stepsBy2x2;
+      let t = this.dataTensor3d;
+      for ( let i = 0; i < steps; ++i ) {
+        let tNew = t.depthwiseConv2d( this.depthwiseConv2x2Filters, 1, "valid" );
 
         if ( t != this.dataTensor3d )  // NOTE: Do not dispose the original data.
           tf.dispose( t );
@@ -158,9 +194,10 @@ class Base {
       let quarterTensor2 = this.test_AvgPool( true );
       let quarterTensor3 = this.test_DepthwiseConv2d_OneStep( true );
       let quarterTensor4 = this.test_DepthwiseConv2d_3x3_MultiStep( true );
-      let quarterTensor5 = this.test_DepthwiseConv2d_3x3_Stride2( true );
-      let quarterTensor6 = this.test_ResizeBilinear( true );
-      let quarterTensor7 = this.test_ResizeNearestNeighbor( true );
+      let quarterTensor5 = this.test_DepthwiseConv2d_2x2_MultiStep( true );
+      let quarterTensor6 = this.test_DepthwiseConv2d_3x3_Stride2( true );
+      let quarterTensor7 = this.test_ResizeBilinear( true );
+      let quarterTensor8 = this.test_ResizeNearestNeighbor( true );
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor1.shape, quarterTensor2.shape ),
@@ -176,14 +213,18 @@ class Base {
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor4.shape, quarterTensor5.shape ),
-        `DepthwiseConv2d_3x3_MultiStep() != DepthwiseConv2d_3x3_Stride2()`);
+        `DepthwiseConv2d_3x3_MultiStep() != DepthwiseConv2d_2x2_MultiStep()`);
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor5.shape, quarterTensor6.shape ),
-        `DepthwiseConv2d_3x3_Stride2() != ResizeBilinear()`);
+        `DepthwiseConv2d_2x2_MultiStep() != DepthwiseConv2d_3x3_Stride2()`);
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor6.shape, quarterTensor7.shape ),
+        `DepthwiseConv2d_3x3_Stride2() != ResizeBilinear()`);
+
+      tf.util.assert(
+        tf.util.arraysEqual( quarterTensor7.shape, quarterTensor8.shape ),
         `ResizeBilinear() != ResizeNearestNeighbor()`);
     });
 
@@ -192,6 +233,7 @@ class Base {
       this.logProfile( "AvgPool", this.test_AvgPool.bind( this ) );
       this.logProfile( "DepthwiseConv2d_OneStep", this.test_DepthwiseConv2d_OneStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_3x3_MultiStep", this.test_DepthwiseConv2d_3x3_MultiStep.bind( this ) );
+      this.logProfile( "DepthwiseConv2d_2x2_MultiStep", this.test_DepthwiseConv2d_2x2_MultiStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2.bind( this ) );
       this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) );
       this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) );
