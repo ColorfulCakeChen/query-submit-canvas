@@ -3,6 +3,82 @@
 export { Base };
 
 /**
+ * Testing Filters of multiple layers.
+ */
+class TestFilters2D {
+
+  /**
+   * @param sourceHeight      The height (and width) of the source image which will be processed by apply().
+   * @param sourceDepth       The channel count of the source image.
+   * @param targetHeight      The taregt image height (and width).
+   * @param filterHeight      The height (and width) of each depthwise convolution.
+   */
+  init( sourceHeight, sourceDepth, targetHeight, filterHeight ) {
+    this.disposeTensors();
+
+    let differenceHeight = sourceHeight - targetHeight;
+    let filterWidth = filterHeight;
+    let channelMultiplier = 1;
+
+    // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
+    let heightReducedPerStep = filterHeight - 1;
+
+    // The step count for reducing sourceHeight to targetHeight by depthwise convolution filter.
+    this.stepCount = Math.floor( differenceHeight / heightReducedPerStep );
+
+    // Every element (Tensor4d) is a depthwiseConvFilters for one layer (i.e. one step).
+    this.depthwiseConvFiltersTensor4dArray = tf.tidy( () => {
+
+      let filtersShape = [ filterHeight, filterWidth, sourceDepth, channelMultiplier ];
+      let filtersValueCount = tf.util.sizeFromShape( filtersShape );
+
+      let filtersTensor4dArray = new Array( this.stepCount );
+      filtersTensor4dArray.forEach( ( element, i, array ) => { 
+        let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
+        let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
+        array[ i ] = filtersTensor4d;
+      });
+
+      return filtersTensor4dArray;
+    });
+
+  }
+
+  disposeTensors() {
+    if ( this.depthwiseConvFiltersTensor4dArray ) {
+      tf.dispose( this.depthwiseConvFiltersTensor4dArray );
+      this.depthwiseConvFiltersTensor4dArray = null;
+    }
+  }
+
+  /**
+   * @param sourceImage
+   *   The image which will be processed.
+   *
+   * @param bReturn
+   *   If true, the result convoluiotn will be returned.
+   *
+   * @return
+   *   If ( bReturn == true ), return the convolution result (tensor). Otheriwse, reurn null.
+   */
+  apply( sourceImage, bReturn ) {
+    return tf.tidy( () => {
+      let t = sourceImage;
+      for ( let depthwiseConvFiltersTensor4d of this.depthwiseConvFiltersTensor4dArray ) {
+        let tNew = t.depthwiseConv2d( depthwiseConvFiltersTensor4d, 1, "valid" );  // Stride = 1
+        if ( t != sourceImage )  // NOTE: Do not dispose the original data.
+          tf.dispose( t );       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+      if ( bReturn )
+        return t;
+    });
+  }
+
+}
+
+
+/**
  * A test set.
  */
 class Base {
