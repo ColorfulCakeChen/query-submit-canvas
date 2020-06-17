@@ -104,15 +104,7 @@ class Base {
     // The filter size for achieving target size in one step.
     let filterHeight_OneStep =      ( height - this.targetSize[ 0 ] ) + 1;
     let filterWidth_OneStep =       ( width - this.targetSize[ 1 ] ) + 1;
-    this.filterHeightWidth_OneStep = [ filterHeight_OneStep, filterWidth_OneStep ];
-
-    // How many steps if achieving target size in many 3x3 depthwise convolution.
-    let sizeReducedPerStepBy3x3 = 3 - 1;
-    this.stepsBy3x3 = ( this.height - this.targetSize[ 0 ] ) / sizeReducedPerStepBy3x3;
-
-    // How many steps if achieving target size in many 2x2 depthwise convolution.
-    let sizeReducedPerStepBy2x2 = 2 - 1;
-    this.stepsBy2x2 = ( this.height - this.targetSize[ 0 ] ) / sizeReducedPerStepBy2x2;
+//    this.filterHeightWidth_OneStep = [ filterHeight_OneStep, filterWidth_OneStep ];
 
     this.dataTensor3d = tf.tidy( () => {
       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
@@ -123,14 +115,17 @@ class Base {
     let inChannels =        depth;
     let channelMultiplier = 1;
 
-    this.depthwiseConvFilters_OneStep = tf.tidy( () => {
-      let filtersShape = [ filterHeight_OneStep, filterWidth_OneStep, inChannels, channelMultiplier ];
-      let filtersValueCount = tf.util.sizeFromShape( filtersShape );
+//     this.depthwiseConvFilters_OneStep = tf.tidy( () => {
+//       let filtersShape = [ filterHeight_OneStep, filterWidth_OneStep, inChannels, channelMultiplier ];
+//       let filtersValueCount = tf.util.sizeFromShape( filtersShape );
+//
+//       let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
+//       let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
+//       return filtersTensor4d;
+//     });
 
-      let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
-      let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
-      return filtersTensor4d;
-    });
+    this.depthwiseConvFilters_OneStep = new TestFilters2D();
+    this.depthwiseConvFilters_OneStep.init( height, depth, this.targetSize[ 0 ], filterHeight_OneStep );
 
     ( this.depthwiseConv3x3Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 3 );
     ( this.depthwiseConv2x2Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 2 );
