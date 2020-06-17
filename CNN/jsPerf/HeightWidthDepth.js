@@ -132,23 +132,8 @@ class Base {
       return filtersTensor4d;
     });
 
-    this.depthwiseConv3x3Filters = tf.tidy( () => {
-      let filtersShape = [ 3, 3, inChannels, channelMultiplier ];
-      let filtersValueCount = tf.util.sizeFromShape( filtersShape );
-
-      let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
-      let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
-      return filtersTensor4d;
-    });
-
-    this.depthwiseConv2x2Filters = tf.tidy( () => {
-      let filtersShape = [ 2, 2, inChannels, channelMultiplier ];
-      let filtersValueCount = tf.util.sizeFromShape( filtersShape );
-
-      let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
-      let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
-      return filtersTensor4d;
-    });
+    ( this.depthwiseConv3x3Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 3 );
+    ( this.depthwiseConv2x2Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 2 );
   }
 
   disposeTensors() {
@@ -163,12 +148,12 @@ class Base {
     }
 
     if ( this.depthwiseConv3x3Filters ) {
-      tf.dispose( this.depthwiseConv3x3Filters );
+      this.depthwiseConv3x3Filters.disposeTensors();
       this.depthwiseConv3x3Filters = null;
     }
 
     if ( this.depthwiseConv2x2Filters ) {
-      tf.dispose( this.depthwiseConv2x2Filters );
+      this.depthwiseConv2x2Filters.disposeTensors();
       this.depthwiseConv3x3Filters = null;
     }
   }
@@ -202,38 +187,12 @@ class Base {
 
   // Test depthwise convolution (2D) by 3x3 filter with multi-step
   test_DepthwiseConv2d_3x3_MultiStep( bReturn ) {
-    return tf.tidy( () => {
-      let steps = this.stepsBy3x3;
-      let t = this.dataTensor3d;
-      for ( let i = 0; i < steps; ++i ) {
-        let tNew = t.depthwiseConv2d( this.depthwiseConv3x3Filters, 1, "valid" );
-
-        if ( t != this.dataTensor3d )  // NOTE: Do not dispose the original data.
-          tf.dispose( t );
-
-        t = tNew;
-      }
-      if ( bReturn )
-        return t;
-    });
+    return depthwiseConv3x3Filters.apply( this.dataTensor3d, bReturn );
   }
 
   // Test depthwise convolution (2D) by 2x2 filter with multi-step
   test_DepthwiseConv2d_2x2_MultiStep( bReturn ) {
-    return tf.tidy( () => {
-      let steps = this.stepsBy2x2;
-      let t = this.dataTensor3d;
-      for ( let i = 0; i < steps; ++i ) {
-        let tNew = t.depthwiseConv2d( this.depthwiseConv2x2Filters, 1, "valid" );
-
-        if ( t != this.dataTensor3d )  // NOTE: Do not dispose the original data.
-          tf.dispose( t );
-
-        t = tNew;
-      }
-      if ( bReturn )
-        return t;
-    });
+    return depthwiseConv2x2Filters.apply( this.dataTensor3d, bReturn );
   }
 
   // Test depthwise convolution (2D) by 3x3 filter with stride 2
