@@ -140,7 +140,7 @@ class Base {
     }
 
     if ( this.depthwiseConvFilters_OneStep ) {
-      tf.dispose( this.depthwiseConvFilters_OneStep );
+      this.depthwiseConvFilters_OneStep.disposeTensors();
       this.depthwiseConvFilters_OneStep = null;
     }
 
@@ -175,17 +175,17 @@ class Base {
 
   // Test depthwise convolution (2D)
   test_DepthwiseConv2d_OneStep( bReturn ) {
-    return depthwiseConvFilters_OneStep.apply( this.dataTensor3d, bReturn );
+    return this.depthwiseConvFilters_OneStep.apply( this.dataTensor3d, bReturn );
   }
 
   // Test depthwise convolution (2D) by 3x3 filter with multi-step
   test_DepthwiseConv2d_3x3_MultiStep( bReturn ) {
-    return depthwiseConv3x3Filters.apply( this.dataTensor3d, bReturn );
+    return this.depthwiseConv3x3Filters.apply( this.dataTensor3d, bReturn );
   }
 
   // Test depthwise convolution (2D) by 2x2 filter with multi-step
   test_DepthwiseConv2d_2x2_MultiStep( bReturn ) {
-    return depthwiseConv2x2Filters.apply( this.dataTensor3d, bReturn );
+    return this.depthwiseConv2x2Filters.apply( this.dataTensor3d, bReturn );
   }
 
   // Test depthwise convolution (2D) by 3x3 filter with stride 2
