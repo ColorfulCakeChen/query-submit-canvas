@@ -20,6 +20,11 @@ class TestFilters2D {
     let filterWidth = filterHeight;
     let channelMultiplier = 1;
 
+    this.filtersShape = [ filterHeight, filterWidth, sourceDepth, channelMultiplier ];
+    this.filterHeightWidth = [ filterHeight, filterWidth ];
+
+    let filtersValueCount = tf.util.sizeFromShape( this.filtersShape );
+
     // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
     let heightReducedPerStep = filterHeight - 1;
 
@@ -28,9 +33,6 @@ class TestFilters2D {
 
     // Every element (Tensor4d) is a depthwiseConvFilters for one layer (i.e. one step).
     this.depthwiseConvFiltersTensor4dArray = tf.tidy( () => {
-
-      let filtersShape = [ filterHeight, filterWidth, sourceDepth, channelMultiplier ];
-      let filtersValueCount = tf.util.sizeFromShape( filtersShape );
 
       let filtersTensor4dArray = new Array( this.stepCount );
       filtersTensor4dArray.forEach( ( element, i, array ) => { 
@@ -156,7 +158,7 @@ class Base {
   // Test max-pool
   test_MaxPool( bReturn ) {
     return tf.tidy( () => {
-      let t = this.dataTensor3d.maxPool( this.filterHeightWidth_OneStep, 1, "valid" );
+      let t = this.dataTensor3d.maxPool( this.depthwiseConvFilters_OneStep.filterHeightWidth, 1, "valid" );
       if ( bReturn )
         return t;
     });
@@ -165,7 +167,7 @@ class Base {
   // Test avg-pool
   test_AvgPool( bReturn ) {
     return tf.tidy( () => {
-      let t = this.dataTensor3d.avgPool( this.filterHeightWidth_OneStep, 1, "valid" );
+      let t = this.dataTensor3d.avgPool( this.depthwiseConvFilters_OneStep.filterHeightWidth, 1, "valid" );
       if ( bReturn )
         return t;
     });
@@ -173,11 +175,7 @@ class Base {
 
   // Test depthwise convolution (2D)
   test_DepthwiseConv2d_OneStep( bReturn ) {
-    return tf.tidy( () => {
-      let t = this.dataTensor3d.depthwiseConv2d( this.depthwiseConvFilters_OneStep, 1, "valid" );
-      if ( bReturn )
-        return t;
-    });
+    return depthwiseConvFilters_OneStep.apply( this.dataTensor3d, bReturn );
   }
 
   // Test depthwise convolution (2D) by 3x3 filter with multi-step
