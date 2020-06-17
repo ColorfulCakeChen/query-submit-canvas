@@ -293,10 +293,10 @@ class Base {
       this.logProfile( "MaxPool", this.test_MaxPool.bind( this ) );
       this.logProfile( "AvgPool", this.test_AvgPool.bind( this ) );
       this.logProfile( "DepthwiseConv2d_OneStep", this.test_DepthwiseConv2d_OneStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_2x2_MultiStep", this.test_DepthwiseConv2d_2x2_MultiStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_3x3_MultiStep", this.test_DepthwiseConv2d_3x3_MultiStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_6x6_MultiStep", this.test_DepthwiseConv2d_6x6_MultiStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_11x11_MultiStep", this.test_DepthwiseConv2d_11x11_MultiStep.bind( this ) );
+      this.logProfile( "DepthwiseConv2d_6x6_MultiStep", this.test_DepthwiseConv2d_6x6_MultiStep.bind( this ) );
+      this.logProfile( "DepthwiseConv2d_3x3_MultiStep", this.test_DepthwiseConv2d_3x3_MultiStep.bind( this ) );
+      this.logProfile( "DepthwiseConv2d_2x2_MultiStep", this.test_DepthwiseConv2d_2x2_MultiStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2.bind( this ) );
       this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) );
       this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) );
