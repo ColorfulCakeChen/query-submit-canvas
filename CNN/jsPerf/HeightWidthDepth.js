@@ -35,11 +35,11 @@ class TestFilters2D {
     this.depthwiseConvFiltersTensor4dArray = tf.tidy( () => {
 
       let filtersTensor4dArray = new Array( this.stepCount );
-      filtersTensor4dArray.forEach( ( element, i, array ) => { 
+      for ( let i = 0; i < this.stepCount; ++i ) {
         let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
-        let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
-        array[ i ] = filtersTensor4d;
-      });
+        let filtersTensor4d = filtersTensor1d.reshape( this.filtersShape );
+        filtersTensor4dArray[ i ] = filtersTensor4d;
+      }
 
       return filtersTensor4dArray;
     });
