@@ -101,7 +101,8 @@ class Base {
     //this.concatenatedShape = [ height, width, depth ];
 
     // About half, but the difference should be divisable by 2.
-    this.targetSize = [ Math.floor( height / 20 ) * 10, Math.floor( width / 20 ) * 10 ];
+//    this.targetSize = [ Math.floor( height / 20 ) * 10, Math.floor( width / 20 ) * 10 ];
+    this.targetSize = [ 1, 1 ]; // to 1x1.
 
     // The filter size for achieving target size in one step.
     let filterHeight_OneStep =      ( height - this.targetSize[ 0 ] ) + 1;
@@ -116,15 +117,6 @@ class Base {
 
     let inChannels =        depth;
     let channelMultiplier = 1;
-
-//     this.depthwiseConvFilters_OneStep = tf.tidy( () => {
-//       let filtersShape = [ filterHeight_OneStep, filterWidth_OneStep, inChannels, channelMultiplier ];
-//       let filtersValueCount = tf.util.sizeFromShape( filtersShape );
-//
-//       let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
-//       let filtersTensor4d = filtersTensor1d.reshape( filtersShape );
-//       return filtersTensor4d;
-//     });
 
     this.depthwiseConvFilters_OneStep = new TestFilters2D();
     this.depthwiseConvFilters_OneStep.init( height, depth, this.targetSize[ 0 ], filterHeight_OneStep );
@@ -248,7 +240,7 @@ class Base {
       let quarterTensor_3x3 =                   this.test_DepthwiseConv2d_3x3_MultiStep( true );
       let quarterTensor_6x6 =                   this.test_DepthwiseConv2d_6x6_MultiStep( true );
       let quarterTensor_11x11 =                 this.test_DepthwiseConv2d_11x11_MultiStep( true );
-      let quarterTensor_3x3_Stride2 =           this.test_DepthwiseConv2d_3x3_Stride2( true );
+//      let quarterTensor_3x3_Stride2 =           this.test_DepthwiseConv2d_3x3_Stride2( true );
       let quarterTensor_ResizeBilinear =        this.test_ResizeBilinear( true );
       let quarterTensor_ResizeNearestNeighbor = this.test_ResizeNearestNeighbor( true );
 
@@ -276,13 +268,17 @@ class Base {
         tf.util.arraysEqual( quarterTensor_6x6.shape, quarterTensor_11x11.shape ),
         `DepthwiseConv2d_6x6_MultiStep() != DepthwiseConv2d_11x11_MultiStep()`);
 
-      tf.util.assert(
-        tf.util.arraysEqual( quarterTensor_11x11.shape, quarterTensor_3x3_Stride2.shape ),
-        `DepthwiseConv2d_11x11_MultiStep() != DepthwiseConv2d_3x3_Stride2()`);
+//       tf.util.assert(
+//         tf.util.arraysEqual( quarterTensor_11x11.shape, quarterTensor_3x3_Stride2.shape ),
+//         `DepthwiseConv2d_11x11_MultiStep() != DepthwiseConv2d_3x3_Stride2()`);
+//
+//       tf.util.assert(
+//         tf.util.arraysEqual( quarterTensor_3x3_Stride2.shape, quarterTensor_ResizeBilinear.shape ),
+//         `DepthwiseConv2d_3x3_Stride2() != ResizeBilinear()`);
 
       tf.util.assert(
-        tf.util.arraysEqual( quarterTensor_3x3_Stride2.shape, quarterTensor_ResizeBilinear.shape ),
-        `DepthwiseConv2d_3x3_Stride2() != ResizeBilinear()`);
+        tf.util.arraysEqual( quarterTensor_11x11.shape, quarterTensor_ResizeBilinear.shape ),
+        `DepthwiseConv2d_11x11_MultiStep() != ResizeBilinear()`);
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor_ResizeBilinear.shape, quarterTensor_ResizeNearestNeighbor.shape ),
@@ -297,7 +293,7 @@ class Base {
       this.logProfile( "DepthwiseConv2d_6x6_MultiStep", this.test_DepthwiseConv2d_6x6_MultiStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_3x3_MultiStep", this.test_DepthwiseConv2d_3x3_MultiStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_2x2_MultiStep", this.test_DepthwiseConv2d_2x2_MultiStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2.bind( this ) );
+//      this.logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2.bind( this ) );
       this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) );
       this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) );
     });
