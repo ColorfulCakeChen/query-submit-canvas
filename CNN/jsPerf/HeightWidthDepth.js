@@ -171,7 +171,8 @@ class Base {
   // Test avg-pool
   test_AvgPool( bReturn ) {
     return tf.tidy( () => {
-      let t = this.dataTensor3d.avgPool( this.depthwiseConvFilters_OneStep.filterHeightWidth, 1, "valid" );
+//      let t = this.dataTensor3d.avgPool( this.depthwiseConvFilters_OneStep.filterHeightWidth, 1, "valid" );
+      let t = this.dataTensor3d.pool( this.depthwiseConvFilters_OneStep.filterHeightWidth, "avg", "valid", 1, 1 );
       if ( bReturn )
         return t;
     });
