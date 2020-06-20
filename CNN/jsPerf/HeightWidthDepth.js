@@ -213,6 +213,8 @@ class Base {
     });
   }
 
+//!!! ...unfinished...
+// resize 1/2 v.s. tf.pool( windowShape = [ 2, 2 ], poolingType = “avg”, pad = “valid”, dilations = 1, strides = 2 )
   // Test rsize-bilinear 
   test_ResizeBilinear( bReturn ) {
     return tf.tidy( () => {
