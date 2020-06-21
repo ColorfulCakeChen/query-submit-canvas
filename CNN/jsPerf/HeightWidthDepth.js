@@ -169,7 +169,7 @@ class Base {
     ( this.depthwiseConvFilters_OneStep = new TestFilters2D() )
       .init( height, depth, this.targetSize[ 0 ], filterHeight_OneStep, false );
 
-    ( this.depthwiseConvFilters_OneStep_1x1 = new TestFilters2D() )
+    ( this.depthwiseConvFilters_1x1_OneStep = new TestFilters2D() )
       .init( height, depth, this.targetSize[ 0 ], filterHeight_OneStep, true );
 
     ( this.depthwiseConv2x2Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 2, false );
@@ -191,9 +191,9 @@ class Base {
       this.depthwiseConvFilters_OneStep = null;
     }
 
-    if ( this.depthwiseConvFilters_OneStep_1x1 ) {
-      this.depthwiseConvFilters_OneStep_1x1.disposeTensors();
-      this.depthwiseConvFilters_OneStep_1x1 = null;
+    if ( this.depthwiseConvFilters_1x1_OneStep ) {
+      this.depthwiseConvFilters_1x1_OneStep.disposeTensors();
+      this.depthwiseConvFilters_1x1_OneStep = null;
     }
 
     if ( this.depthwiseConv2x2Filters1x1 ) {
@@ -240,14 +240,14 @@ class Base {
     });
   }
 
-  // Test depthwise convolution (2D) and pointwise convolution
-  test_DepthwiseConv2d_OneStep_1x1( bReturn ) {
-    return this.depthwiseConvFilters_OneStep_1x1.apply( this.dataTensor3d, bReturn );
-  }
-
   // Test depthwise convolution (2D)
   test_DepthwiseConv2d_OneStep( bReturn ) {
     return this.depthwiseConvFilters_OneStep.apply( this.dataTensor3d, bReturn );
+  }
+
+  // Test depthwise convolution (2D) and pointwise convolution
+  test_DepthwiseConv2d_1x1_OneStep( bReturn ) {
+    return this.depthwiseConvFilters_1x1_OneStep.apply( this.dataTensor3d, bReturn );
   }
 
   // Test depthwise convolution (2D) by 2x2 filter with multi-step
@@ -311,7 +311,7 @@ class Base {
       let quarterTensor_MaxPool =               this.test_MaxPool( true );
       let quarterTensor_AvgPool =               this.test_AvgPool( true );
       let quarterTensor_OneStep =               this.test_DepthwiseConv2d_OneStep( true );
-      let quarterTensor_OneStep_1x1 =           this.test_DepthwiseConv2d_OneStep_1x1( true );
+      let quarterTensor_1x1_OneStep =           this.test_DepthwiseConv2d_1x1_OneStep( true );
       let quarterTensor_2x2 =                   this.test_DepthwiseConv2d_2x2_MultiStep( true );
       let quarterTensor_2x2_1x1 =               this.test_DepthwiseConv2d_2x2_1x1_MultiStep( true );
       let quarterTensor_3x3 =                   this.test_DepthwiseConv2d_3x3_MultiStep( true );
@@ -330,12 +330,12 @@ class Base {
         `AvgPool() != DepthwiseConv2d_OneStep()`);
 
       tf.util.assert(
-        tf.util.arraysEqual( quarterTensor_OneStep.shape, quarterTensor_OneStep_1x1.shape ),
-        `DepthwiseConv2d_OneStep() != DepthwiseConv2d_OneStep_1x1()`);
+        tf.util.arraysEqual( quarterTensor_OneStep.shape, quarterTensor_1x1_OneStep.shape ),
+        `DepthwiseConv2d_OneStep() != DepthwiseConv2d_1x1_OneStep()`);
 
       tf.util.assert(
-        tf.util.arraysEqual( quarterTensor_OneStep_1x1.shape, quarterTensor_2x2.shape ),
-        `DepthwiseConv2d_OneStep_1x1() != DepthwiseConv2d_2x2_MultiStep()`);
+        tf.util.arraysEqual( quarterTensor_1x1_OneStep.shape, quarterTensor_2x2.shape ),
+        `DepthwiseConv2d_1x1_OneStep() != DepthwiseConv2d_2x2_MultiStep()`);
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor_2x2.shape, quarterTensor_2x2_1x1.shape ),
@@ -374,7 +374,7 @@ class Base {
       this.logProfile( "MaxPool", this.test_MaxPool.bind( this ) );
       this.logProfile( "AvgPool", this.test_AvgPool.bind( this ) );
       this.logProfile( "DepthwiseConv2d_OneStep", this.test_DepthwiseConv2d_OneStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_OneStep_1x1", this.test_DepthwiseConv2d_OneStep_1x1.bind( this ) );
+      this.logProfile( "DepthwiseConv2d_1x1_OneStep", this.test_DepthwiseConv2d_1x1_OneStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_11x11_MultiStep", this.test_DepthwiseConv2d_11x11_MultiStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_6x6_MultiStep", this.test_DepthwiseConv2d_6x6_MultiStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_3x3_MultiStep", this.test_DepthwiseConv2d_3x3_MultiStep.bind( this ) );
