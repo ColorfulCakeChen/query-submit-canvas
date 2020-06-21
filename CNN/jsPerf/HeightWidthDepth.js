@@ -12,18 +12,26 @@ class TestFilters2D {
    * @param sourceDepth       The channel count of the source image.
    * @param targetHeight      The taregt image height (and width).
    * @param filterHeight      The height (and width) of each depthwise convolution.
+   * @param bPointwise        If true, there will be pointwise convolution after every layer of depthwise convolution.
    */
-  init( sourceHeight, sourceDepth, targetHeight, filterHeight ) {
+  init( sourceHeight, sourceDepth, targetHeight, filterHeight, bPointwise ) {
     this.disposeTensors();
 
     let differenceHeight = sourceHeight - targetHeight;
     let filterWidth = filterHeight;
     let channelMultiplier = 1;
 
-    this.filtersShape = [ filterHeight, filterWidth, sourceDepth, channelMultiplier ];
-    this.filterHeightWidth = [ filterHeight, filterWidth ];
+    this.bPointwise = bPointwise;
 
-    let filtersValueCount = tf.util.sizeFromShape( this.filtersShape );
+    this.depthwiseFiltersShape = [ filterHeight, filterWidth, sourceDepth, channelMultiplier ];
+    this.depthwiseFilterHeightWidth = [ filterHeight, filterWidth ];
+
+    let depthwiseFiltersValueCount = tf.util.sizeFromShape( this.depthwiseFiltersShape );
+
+    this.pointwiseFiltersShape = [ 1, 1, sourceDepth, sourceDepth ];  // Assume output depth is the same as input.
+    this.pointwiseFilterHeightWidth = [ 1, 1 ];
+
+    let pointwiseFiltersValueCount = tf.util.sizeFromShape( this.pointwiseFiltersShape );
 
     // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
     let heightReducedPerStep = filterHeight - 1;
@@ -31,25 +39,39 @@ class TestFilters2D {
     // The step count for reducing sourceHeight to targetHeight by depthwise convolution filter.
     this.stepCount = Math.floor( differenceHeight / heightReducedPerStep );
 
-    // Every element (Tensor4d) is a depthwiseConvFilters for one layer (i.e. one step).
-    this.depthwiseConvFiltersTensor4dArray = tf.tidy( () => {
-
+    // Every element (Tensor4d) is a depthwiseFilters for one layer (i.e. one step).
+    this.depthwiseFiltersTensor4dArray = tf.tidy( () => {
       let filtersTensor4dArray = new Array( this.stepCount );
       for ( let i = 0; i < this.stepCount; ++i ) {
-        let filtersTensor1d = tf.range( 0, filtersValueCount, 1 );
-        let filtersTensor4d = filtersTensor1d.reshape( this.filtersShape );
+        let filtersTensor1d = tf.range( 0, depthwiseFiltersValueCount, 1 );
+        let filtersTensor4d = filtersTensor1d.reshape( this.depthwiseFiltersShape );
         filtersTensor4dArray[ i ] = filtersTensor4d;
       }
+      return filtersTensor4dArray;
+    });
 
+    // Every element (Tensor4d) is a pointwiseFilters for one layer (i.e. one step).
+    this.pointwiseFiltersTensor4dArray = tf.tidy( () => {
+      let filtersTensor4dArray = new Array( this.stepCount );
+      for ( let i = 0; i < this.stepCount; ++i ) {
+        let filtersTensor1d = tf.range( 0, pointwiseFiltersValueCount, 1 );
+        let filtersTensor4d = filtersTensor1d.reshape( this.pointwiseFiltersShape );
+        filtersTensor4dArray[ i ] = filtersTensor4d;
+      }
       return filtersTensor4dArray;
     });
 
   }
 
   disposeTensors() {
-    if ( this.depthwiseConvFiltersTensor4dArray ) {
-      tf.dispose( this.depthwiseConvFiltersTensor4dArray );
-      this.depthwiseConvFiltersTensor4dArray = null;
+    if ( this.depthwiseFiltersTensor4dArray ) {
+      tf.dispose( this.depthwiseFiltersTensor4dArray );
+      this.depthwiseFiltersTensor4dArray = null;
+    }
+
+    if ( this.pointwiseFiltersTensor4dArray ) {
+      tf.dispose( this.pointwiseFiltersTensor4dArray );
+      this.pointwiseFiltersTensor4dArray = null;
     }
   }
 
@@ -65,13 +87,40 @@ class TestFilters2D {
    */
   apply( sourceImage, bReturn ) {
     return tf.tidy( () => {
-      let t = sourceImage;
-      for ( let depthwiseConvFiltersTensor4d of this.depthwiseConvFiltersTensor4dArray ) {
-        let tNew = t.depthwiseConv2d( depthwiseConvFiltersTensor4d, 1, "valid" );  // Stride = 1
-        if ( t != sourceImage )  // NOTE: Do not dispose the original data.
-          tf.dispose( t );       // Dispose all intermediate (temporary) data.
+
+      let tNew;
+
+      // Layer 0
+      //
+      // So that every layer could dispose previous result without worry about mis-dispose source.
+      let depthwiseFiltersTensor4d = this.depthwiseFiltersTensor4dArray[ 0 ];
+      let pointwiseFiltersTensor4d = this.pointwiseFiltersTensor4dArray[ 0 ];
+
+      let t = sourceImage.depthwiseConv2d( depthwiseFiltersTensor4d, 1, "valid" );  // Stride = 1
+      // NOTE: Do not dispose the original data.
+
+      if ( this.bPointwise ) {
+        tNew = t.conv2d( pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+        tf.dispose( t );                                         // Dispose all intermediate (temporary) data.
         t = tNew;
       }
+
+      // Layer 1, ...
+      for ( let i = 1; i < this.stepCount; ++i ) {
+        depthwiseFiltersTensor4d = this.depthwiseFiltersTensor4dArray[ i ];
+        pointwiseFiltersTensor4d = this.pointwiseFiltersTensor4dArray[ i ];
+
+        tNew = t.depthwiseConv2d( depthwiseFiltersTensor4d, 1, "valid" );  // Stride = 1
+        tf.dispose( t );                                           // Dispose all intermediate (temporary) data.
+        t = tNew;
+
+        if ( this.bPointwise ) {
+          tNew = t.conv2d( pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+          tf.dispose( t );                                         // Dispose all intermediate (temporary) data.
+          t = tNew;
+        }
+      }
+
       if ( bReturn )
         return t;
     });
@@ -107,7 +156,6 @@ class Base {
     // The filter size for achieving target size in one step.
     let filterHeight_OneStep =      ( height - this.targetSize[ 0 ] ) + 1;
     let filterWidth_OneStep =       ( width - this.targetSize[ 1 ] ) + 1;
-//    this.filterHeightWidth_OneStep = [ filterHeight_OneStep, filterWidth_OneStep ];
 
     this.dataTensor3d = tf.tidy( () => {
       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
@@ -121,7 +169,9 @@ class Base {
     this.depthwiseConvFilters_OneStep = new TestFilters2D();
     this.depthwiseConvFilters_OneStep.init( height, depth, this.targetSize[ 0 ], filterHeight_OneStep );
 
-    ( this.depthwiseConv2x2Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 2 );
+    ( this.depthwiseConv2x2Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 2, false );
+    ( this.depthwiseConv2x2Filters1x1 = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 2, true );
+
     ( this.depthwiseConv3x3Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 3 );
     ( this.depthwiseConv6x6Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 6 );
     ( this.depthwiseConv11x11Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 11 );
@@ -136,6 +186,11 @@ class Base {
     if ( this.depthwiseConvFilters_OneStep ) {
       this.depthwiseConvFilters_OneStep.disposeTensors();
       this.depthwiseConvFilters_OneStep = null;
+    }
+
+    if ( this.depthwiseConv2x2Filters1x1 ) {
+      this.depthwiseConv2x2Filters1x1.disposeTensors();
+      this.depthwiseConv2x2Filters1x1 = null;
     }
 
     if ( this.depthwiseConv2x2Filters ) {
@@ -162,7 +217,7 @@ class Base {
   // Test max-pool
   test_MaxPool( bReturn ) {
     return tf.tidy( () => {
-      let t = this.dataTensor3d.maxPool( this.depthwiseConvFilters_OneStep.filterHeightWidth, 1, "valid" );
+      let t = this.dataTensor3d.maxPool( this.depthwiseConvFilters_OneStep.depthwiseFilterHeightWidth, 1, "valid" );
       if ( bReturn )
         return t;
     });
@@ -171,8 +226,7 @@ class Base {
   // Test avg-pool
   test_AvgPool( bReturn ) {
     return tf.tidy( () => {
-//      let t = this.dataTensor3d.avgPool( this.depthwiseConvFilters_OneStep.filterHeightWidth, 1, "valid" );
-      let t = this.dataTensor3d.pool( this.depthwiseConvFilters_OneStep.filterHeightWidth, "avg", "valid", 1, 1 );
+      let t = this.dataTensor3d.pool( this.depthwiseConvFilters_OneStep.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
       if ( bReturn )
         return t;
     });
@@ -185,6 +239,11 @@ class Base {
 
   // Test depthwise convolution (2D) by 2x2 filter with multi-step
   test_DepthwiseConv2d_2x2_MultiStep( bReturn ) {
+    return this.depthwiseConv2x2Filters.apply( this.dataTensor3d, bReturn );
+  }
+
+  // Test depthwise convolution (2D) by 2x2 filter and pointwise convolution with multi-step
+  test_DepthwiseConv2d_2x2_1x1_MultiStep( bReturn ) {
     return this.depthwiseConv2x2Filters.apply( this.dataTensor3d, bReturn );
   }
 
@@ -240,6 +299,7 @@ class Base {
       let quarterTensor_AvgPool =               this.test_AvgPool( true );
       let quarterTensor_OneStep =               this.test_DepthwiseConv2d_OneStep( true );
       let quarterTensor_2x2 =                   this.test_DepthwiseConv2d_2x2_MultiStep( true );
+      let quarterTensor_2x2_1x1 =               this.test_DepthwiseConv2d_2x2_1x1_MultiStep( true );
       let quarterTensor_3x3 =                   this.test_DepthwiseConv2d_3x3_MultiStep( true );
       let quarterTensor_6x6 =                   this.test_DepthwiseConv2d_6x6_MultiStep( true );
       let quarterTensor_11x11 =                 this.test_DepthwiseConv2d_11x11_MultiStep( true );
@@ -260,8 +320,12 @@ class Base {
         `DepthwiseConv2d_OneStep() != DepthwiseConv2d_2x2_MultiStep()`);
 
       tf.util.assert(
-        tf.util.arraysEqual( quarterTensor_2x2.shape, quarterTensor_3x3.shape ),
-        `DepthwiseConv2d_2x2_MultiStep() != DepthwiseConv2d_3x3_MultiStep()`);
+        tf.util.arraysEqual( quarterTensor_2x2.shape, quarterTensor_2x2_1x1.shape ),
+        `DepthwiseConv2d_2x2_MultiStep() != DepthwiseConv2d_2x2_1x1_MultiStep()`);
+
+      tf.util.assert(
+        tf.util.arraysEqual( quarterTensor_2x2_1x1.shape, quarterTensor_3x3.shape ),
+        `DepthwiseConv2d_2x2_1x1_MultiStep() != DepthwiseConv2d_3x3_MultiStep()`);
 
       tf.util.assert(
         tf.util.arraysEqual( quarterTensor_3x3.shape, quarterTensor_6x6.shape ),
@@ -296,6 +360,7 @@ class Base {
       this.logProfile( "DepthwiseConv2d_6x6_MultiStep", this.test_DepthwiseConv2d_6x6_MultiStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_3x3_MultiStep", this.test_DepthwiseConv2d_3x3_MultiStep.bind( this ) );
       this.logProfile( "DepthwiseConv2d_2x2_MultiStep", this.test_DepthwiseConv2d_2x2_MultiStep.bind( this ) );
+      this.logProfile( "DepthwiseConv2d_2x2_1x1_MultiStep", this.test_DepthwiseConv2d_2x2_1x1_MultiStep.bind( this ) );
 //      this.logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2.bind( this ) );
       this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) );
       this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) );
@@ -312,7 +377,7 @@ class Base {
          + `newBytes: ${profile.newBytes}, `
          + `newTensors: ${profile.newTensors}, `
          + `peakBytes: ${profile.peakBytes}, `
-         + `byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}, `
+//         + `byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}, `
 
          + `kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
       });
