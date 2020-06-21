@@ -371,6 +371,7 @@ class Base {
     });
 
     tf.tidy( () => {
+
       this.logProfile( "MaxPool", this.test_MaxPool.bind( this ) );
       this.logProfile( "AvgPool", this.test_AvgPool.bind( this ) );
       this.logProfile( "DepthwiseConv2d_OneStep", this.test_DepthwiseConv2d_OneStep.bind( this ) );
@@ -387,10 +388,12 @@ class Base {
   }
   
   logProfile( title, func ) {
+
+    // Get backend name before the following promise. Otherwise, it may be changed when the function been executed.
+    let backendName = tf.getBackend();
+
     tf.profile( func ).then( profile => {
       tf.time( func ).then( time => {
-
-        let backendName = tf.getBackend();
 
         console.log(
            `${title} (${backendName}): `
