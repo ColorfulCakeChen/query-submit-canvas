@@ -166,9 +166,11 @@ class Base {
     let inChannels =        depth;
     let channelMultiplier = 1;
 
-    this.depthwiseConvFilters_OneStep = new TestFilters2D();
-    this.depthwiseConvFilters_OneStep.init( height, depth, this.targetSize[ 0 ], filterHeight_OneStep, false );
-    this.depthwiseConvFilters_OneStep_1x1.init( height, depth, this.targetSize[ 0 ], filterHeight_OneStep, true );
+    ( this.depthwiseConvFilters_OneStep = new TestFilters2D() )
+      .init( height, depth, this.targetSize[ 0 ], filterHeight_OneStep, false );
+
+    ( this.depthwiseConvFilters_OneStep_1x1 = new TestFilters2D() )
+      .init( height, depth, this.targetSize[ 0 ], filterHeight_OneStep, true );
 
     ( this.depthwiseConv2x2Filters = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 2, false );
     ( this.depthwiseConv2x2Filters1x1 = new TestFilters2D() ).init( height, depth, this.targetSize[ 0 ], 2, true );
