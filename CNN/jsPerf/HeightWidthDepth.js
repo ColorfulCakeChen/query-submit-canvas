@@ -389,9 +389,11 @@ class Base {
   logProfile( title, func ) {
     tf.profile( func ).then( profile => {
       tf.time( func ).then( time => {
-        
+
+        let backendName = tf.getBackend();
+
         console.log(
-           `${title}: `
+           `${title} (${backendName}): `
 
          + `newBytes: ${profile.newBytes}, `
          + `newTensors: ${profile.newTensors}, `
