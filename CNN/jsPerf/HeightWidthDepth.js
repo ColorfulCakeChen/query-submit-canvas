@@ -306,7 +306,7 @@ class Base {
   }
 
   // Testing whether the results of different implementation are the same.
-  testResultSame() {
+  async testResultSame() {
     tf.tidy( () => {
       let quarterTensor_MaxPool =               this.test_MaxPool( true );
       let quarterTensor_AvgPool =               this.test_AvgPool( true );
@@ -370,41 +370,36 @@ class Base {
         `ResizeBilinear() != ResizeNearestNeighbor()`);
     });
 
-    tf.tidy( () => {
-
-      this.logProfile( "MaxPool", this.test_MaxPool.bind( this ) );
-      this.logProfile( "AvgPool", this.test_AvgPool.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_OneStep", this.test_DepthwiseConv2d_OneStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_1x1_OneStep", this.test_DepthwiseConv2d_1x1_OneStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_11x11_MultiStep", this.test_DepthwiseConv2d_11x11_MultiStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_6x6_MultiStep", this.test_DepthwiseConv2d_6x6_MultiStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_3x3_MultiStep", this.test_DepthwiseConv2d_3x3_MultiStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_2x2_MultiStep", this.test_DepthwiseConv2d_2x2_MultiStep.bind( this ) );
-      this.logProfile( "DepthwiseConv2d_2x2_1x1_MultiStep", this.test_DepthwiseConv2d_2x2_1x1_MultiStep.bind( this ) );
-//      this.logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2.bind( this ) );
-      this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) );
-      this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) );
-    });
+    await this.logProfile( "MaxPool", this.test_MaxPool.bind( this ) );
+    await this.logProfile( "AvgPool", this.test_AvgPool.bind( this ) );
+    await this.logProfile( "DepthwiseConv2d_OneStep", this.test_DepthwiseConv2d_OneStep.bind( this ) );
+    await this.logProfile( "DepthwiseConv2d_1x1_OneStep", this.test_DepthwiseConv2d_1x1_OneStep.bind( this ) );
+    await this.logProfile( "DepthwiseConv2d_11x11_MultiStep", this.test_DepthwiseConv2d_11x11_MultiStep.bind( this ) );
+    await this.logProfile( "DepthwiseConv2d_6x6_MultiStep", this.test_DepthwiseConv2d_6x6_MultiStep.bind( this ) );
+    await this.logProfile( "DepthwiseConv2d_3x3_MultiStep", this.test_DepthwiseConv2d_3x3_MultiStep.bind( this ) );
+    await this.logProfile( "DepthwiseConv2d_2x2_MultiStep", this.test_DepthwiseConv2d_2x2_MultiStep.bind( this ) );
+    await this.logProfile( "DepthwiseConv2d_2x2_1x1_MultiStep", this.test_DepthwiseConv2d_2x2_1x1_MultiStep.bind( this ) );
+//    await this.logProfile( "DepthwiseConv2d_3x3_Stride2", this.test_DepthwiseConv2d_3x3_Stride2.bind( this ) );
+    await this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) );
+    await this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) );
   }
-  
-  logProfile( title, func ) {
+
+  async logProfile( title, func ) {
 
     // Get backend name before the following promise. Otherwise, it may be changed when the function been executed.
     let backendName = tf.getBackend();
 
-    tf.profile( func ).then( profile => {
-      tf.time( func ).then( time => {
+    let profile = await tf.profile( func );
+    let time = await tf.time( func );
 
-        console.log(
-           `${title} (${backendName}): `
+    console.log(
+       `${title} (${backendName}): `
 
-         + `newBytes: ${profile.newBytes}, `
-         + `newTensors: ${profile.newTensors}, `
-         + `peakBytes: ${profile.peakBytes}, `
-//         + `byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}, `
+     + `newBytes: ${profile.newBytes}, `
+     + `newTensors: ${profile.newTensors}, `
+     + `peakBytes: ${profile.peakBytes}, `
+//     + `byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}, `
 
-         + `kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
-      });
-    });
+     + `kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
   }
 }
