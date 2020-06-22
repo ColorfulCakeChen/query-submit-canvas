@@ -60,7 +60,7 @@ class Base {
     ];
 
     // Create test filters.
-    this.testFiltersArray = this.testFilterSpecTable.map( ( filtersSpec, i ) => {
+    this.testFiltersArray = this.testFiltersSpecTable.map( ( filtersSpec, i ) => {
       let testFilters = new TestFilters2D.Base();
       testFilters.init( ...filtersSpec );
       return testFilters;
