@@ -21,7 +21,7 @@ globalThis.testCaseLoader = async function () {
 
   console.log("library WebGL compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
   globalThis.testCase = new HeightWidthDepth.Base( testCase_Height, testCase_Width, testCase_Depth );
-  await globalThis.testCase.testResultSame();
+  let resultProfilesWebGL = await globalThis.testCase.generateProfiles();
   globalThis.testCase.disposeTensors();
   console.log("library WebGL compiling done.");
 
@@ -32,10 +32,68 @@ globalThis.testCaseLoader = async function () {
 
   console.log("library CPU compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
   globalThis.testCase = new HeightWidthDepth.Base( testCase_Height, testCase_Width, testCase_Depth );
-  await globalThis.testCase.testResultSame();
+  let resultProfilesCPU = await globalThis.testCase.generateProfiles();
   // DO NOT dispose it so that jsPerf can use it.
   //globalThis.testCase.disposeTensors();
   console.log("library CPU compiling done.");
+
+  // Display to web page.
+  publishProfiles( "profilesHTMLTable", resultProfilesWebGL, resultProfilesCPU );
 }
 
+/**
+ * Publish the profiles to HTML table.
+ * 
+ * @param {string}   strResultHTMLTableName  the HTML table name for display execution time.
+ * @param {Object[]} profilesWebGL           the array of profiles for execution time of WebGL.
+ * @param {Object[]} profilesCPU             the array of profiles for execution time of CPU.
+ */
+function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesCPU ) {
 
+  if ( !document )
+    return;
+
+  if ( !strResultHTMLTableName )
+    return;
+
+  let htmlTable = document.getElementById( strResultHTMLTableName );
+  if ( !htmlTable )
+    return;
+
+  /**
+   * @param {HTMLTable}         htmlTable The HTML table as display target.
+   * @param {string}            th_OR_td  "th" for table header, "td" for table body.
+   * @param {string[]|number[]} dataArray The data to be displaye 
+   */
+  function addOneLineCells( htmlTable, th_OR_td, dataArray ) {
+    let oneLine = document.createElement( th_OR_td );
+
+    let count = dataArray.length;
+    for ( let i = 0; i < count; ++i ) {
+      let data = dataArray[ i ];
+      oneLine.appendChild( document.createElement("td").appendChild( document.createTextNode( data ) ) );
+    }
+    htmlTable.appendChild( oneLine );
+  }
+
+  // Table header (top line).
+  addOneLineCells( htmlTable, "th", [
+    "title",
+    "backendName", "kernelMs", "wallMs",
+    "backendName", "kernelMs", "wallMs",
+    "newBytes", "newTensors", "peakBytes" ] );
+
+  let profileCount = profilesWebGL.length;
+  for ( let i = 0; i < profileCount; ++i ) {
+
+    let profileWebGL = profilesWebGL[ i ];
+    let profileCPU = profilesCPU[ i ];
+
+    addOneLineCells( htmlTable, "td", [
+      profileWebGL.title,
+      profileWebGL.backendName, profileWebGL.kernelMs, profileWebGL.wallMs,
+      profileCPU.backendName, profileCPU.kernelMs, profileCPU.wallMs,
+      profileWebGL.newBytes, profileWebGL.newTensors, profileWebGL.peakBytes ] );
+  }
+
+}
