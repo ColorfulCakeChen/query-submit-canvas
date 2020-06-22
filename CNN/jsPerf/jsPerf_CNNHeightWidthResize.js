@@ -1,4 +1,6 @@
 import * as HeightWidthDepth from "./HeightWidthDepth.js";
+import * as PartTime from "../PartTime.js";
+import * as ValueMax from "../ValueMax.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
 /**
@@ -14,13 +16,33 @@ let testCase_Depth = 24;
 
 //globalThis.testSet_101x101x24 = new HeightWidthDepth.Base( 101, 101, 24 ); // height, width, depth
 
+/** Aggregate all progress about WebGL an CPU.  */
+class Progress extends ValueMax.Percentage.Aggregate {
+  constructor() {
+    let children = [
+      new ValueMax.Percentage.Concrete(), // Increased when executing by WebGL.
+      new ValueMax.Percentage.Concrete(), // Increased when executing by CPU.
+    ];
+
+    super(children);
+    [ this.WebGL, this.CPU ] = children;
+  }
+}
+
+/** Profile test case.  */
 globalThis.testCaseLoader = async function () {
+
+  let progress = new Progress();
+  let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
   await tf.setBackend("webgl");  // WebGL seems crashed.
   console.log("library WebGL ready.");
 
   console.log("library WebGL compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
-  globalThis.testCase = new HeightWidthDepth.Base( testCase_Height, testCase_Width, testCase_Depth );
+
+  globalThis.testCase = new HeightWidthDepth.Base(
+    testCase_Height, testCase_Width, testCase_Depth, progress, progress.WebGL, progressReceiver );
+
   let resultProfilesWebGL = await globalThis.testCase.generateProfiles();
   globalThis.testCase.disposeTensors();
   console.log("library WebGL compiling done.");
@@ -31,7 +53,10 @@ globalThis.testCaseLoader = async function () {
   console.log("library CPU ready.");
 
   console.log("library CPU compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
-  globalThis.testCase = new HeightWidthDepth.Base( testCase_Height, testCase_Width, testCase_Depth );
+
+  globalThis.testCase = new HeightWidthDepth.Base(
+    testCase_Height, testCase_Width, testCase_Depth, progress, progress.WebGL, progressReceiver );
+
   let resultProfilesCPU = await globalThis.testCase.generateProfiles();
   // DO NOT dispose it so that jsPerf can use it.
   //globalThis.testCase.disposeTensors();
@@ -40,6 +65,7 @@ globalThis.testCaseLoader = async function () {
   // Display to web page.
   publishProfiles( "profilesHTMLTable", resultProfilesWebGL, resultProfilesCPU );
 }
+
 
 /**
  * Publish the profiles to HTML table.
