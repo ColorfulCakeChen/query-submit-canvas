@@ -12,12 +12,25 @@ class Base {
    * @param {number} height      image height
    * @param {number} width       image width
    * @param {number} depth       image channel count
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressToYield
+   *   Return this when every time yield. Usually, this is the container of the progressToAdvance.
+   *
+   * @param {ValueMax.Percentage.Concrete}  progressToAdvance
+   *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
+   *
+   * @param {ValueMax.Receiver.Base}  progressReceiver
+   *   Every time the progress is advanced, progressReceiver.setValueMax( progressToYield ) will be called.
    */
-  constructor( height, width, depth ) {
+  constructor( height, width, depth, progressToYield, progressToAdvance, progressReceiver ) {
 
     this.height = height;
     this.width = width;
     this.depth = depth;
+
+    this.progressToYield = progressToYield;
+    this.progressToAdvance = progressToAdvance;
+    this.progressReceiver = progressReceiver;
 
     this.valueCount = height * width * depth;
 
@@ -65,6 +78,13 @@ class Base {
       testFilters.init( ...filtersSpec );
       return testFilters;
     });
+
+    // Initialize progress accumulator.
+    
+    // "+2" for test_ResizeNearestNeighbor and test_ResizeBilinear.
+    // "*2" for compiling (with assert) and profiling.
+    progressToAdvance.total = ( this.testFiltersArray.length + 2 ) * 2;
+    progressToAdvance.accumulation = 0;
   }
 
   disposeTensors() {
@@ -91,6 +111,15 @@ class Base {
     });
   }
 
+  // Test rsize-nearest-neighbor
+  test_ResizeNearestNeighbor( bReturn ) {
+    return tf.tidy( () => {
+      let t = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
+      if ( bReturn )
+        return t;
+    });
+  }
+
 //!!! ...unfinished...
 // resize 1/2 v.s. tf.pool( windowShape = [ 2, 2 ], poolingType = “avg”, pad = “valid”, dilations = 1, strides = 2 )
   // Test rsize-bilinear 
@@ -102,13 +131,10 @@ class Base {
     });
   }
 
-  // Test rsize-nearest-neighbor
-  test_ResizeNearestNeighbor( bReturn ) {
-    return tf.tidy( () => {
-      let t = this.dataTensor3d.resizeNearestNeighbor( this.targetSize, true );
-      if ( bReturn )
-        return t;
-    });
+  /** Advance the progressToAdvance, and report progressToYield to progressReceiver. */
+  progressAdvanveReport() {
+      ++this.progressToAdvance.accumulation;
+      this.progressReceiver.setValueMax( this.progressToYield );
   }
 
   /**
@@ -124,7 +150,10 @@ class Base {
 
 //      let quarterTensor_3x3_Stride2 =             this.test_DepthwiseConv2d_3x3_Stride2( true );
       let quarterTensor_ResizeNearestNeighbor =   this.test_ResizeNearestNeighbor( true );
+      this.progressAdvanveReport();
+
       let quarterTensor_ResizeBilinear =          this.test_ResizeBilinear( true );
+      this.progressAdvanveReport();
 
 //       tf.util.assert(
 //         tf.util.arraysEqual( quarterTensor_11x11.shape, quarterTensor_3x3_Stride2.shape ),
@@ -147,6 +176,8 @@ class Base {
           `${testFilters.name}() != ResizeBilinear()`);
 
         t.dispose();
+
+        this.progressAdvanveReport();
       });
 
     });
@@ -155,13 +186,18 @@ class Base {
     // Since the codes compiled, their execute time can be tested now.
 
     resultProfiles.push( await this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) ) );
+    this.progressAdvanveReport();
+
     resultProfiles.push( await this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) ) );
+    this.progressAdvanveReport();
 
     // All test filters in array.
     for ( let testFilters of this.testFiltersArray ) {
       // Note: Do not return result tensor so that need not to dispose them.
       resultProfiles.push(
         await this.logProfile( testFilters.name, testFilters.apply.bind( testFilters, this.dataTensor3d, false ) ) );
+
+      this.progressAdvanveReport();
     }
 
     return resultProfiles;
