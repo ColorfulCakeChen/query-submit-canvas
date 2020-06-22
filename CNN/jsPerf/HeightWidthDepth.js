@@ -9,19 +9,11 @@ export { Base };
 class Base {
 
   /**
-   * @param {string} strResultHTMLTableName
-   *   the HTML table name for display execution time.
-   *
    * @param {number} height      image height
    * @param {number} width       image width
    * @param {number} depth       image channel count
    */
-  constructor( strResultHTMLTableName, height, width, depth ) {
-
-    this.strResultHTMLTableName = strResultHTMLTableName;
-    if ( document && strResultHTMLTableName ) {
-      this.htmlTableResult = document.getElementById( strResultHTMLTableName );
-    }
+  constructor( height, width, depth ) {
 
     this.height = height;
     this.width = width;
