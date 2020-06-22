@@ -44,6 +44,7 @@ class Base {
     // [ TestFiltersName, sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, bPointwise ]
     this.testFiltersSpecTable = [
       [ "DAvg_101x101_OneStep",      height, depth, targetHeight, filterHeight_OneStep,  "Avg", false ],
+      [ "DAvg_101x101_1x1_OneStep",  height, depth, targetHeight, filterHeight_OneStep,  "Avg",  true ],
       [ "DMax_101x101_OneStep",      height, depth, targetHeight, filterHeight_OneStep,  "Max", false ],
       [ "DConv_101x101_OneStep",     height, depth, targetHeight, filterHeight_OneStep, "Conv", false ],
       [ "DConv_101x101_1x1_OneStep", height, depth, targetHeight, filterHeight_OneStep, "Conv",  true ],
