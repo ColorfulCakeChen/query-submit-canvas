@@ -13,7 +13,7 @@ let testCase_Depth = 24;
 
 //globalThis.testSet_101x101x24 = new HeightWidthDepth.Base( 101, 101, 24 ); // height, width, depth
 
-async function testCaseLoader() {
+globalThis.testCaseLoader = async function () {
 
   await tf.setBackend("webgl");  // WebGL seems crashed.
   console.log("library WebGL ready.");
