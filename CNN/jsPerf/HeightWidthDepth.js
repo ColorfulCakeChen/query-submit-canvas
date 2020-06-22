@@ -125,7 +125,9 @@ class Base {
    * @return {Object[]}
    *   Return array of profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs }.
    */
-  async generateProfile() {
+  async generateProfiles() {
+    let resultProfiles = [];
+
     tf.tidy( () => {
 
 //      let quarterTensor_3x3_Stride2 =             this.test_DepthwiseConv2d_3x3_Stride2( true );
@@ -160,14 +162,17 @@ class Base {
     // The above codes also compiles the codes.
     // Since the codes compiled, their execute time can be tested now.
 
-    await this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) );
-    await this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) );
+    resultProfiles.push( await this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) ) );
+    resultProfiles.push( await this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) ) );
 
     // All test filters in array.
     for ( let testFilters of this.testFiltersArray ) {
       // Note: Do not return result tensor so that need not to dispose them.
-      await this.logProfile( testFilters.name, testFilters.apply.bind( testFilters, this.dataTensor3d, false ) );
+      resultProfiles.push(
+        await this.logProfile( testFilters.name, testFilters.apply.bind( testFilters, this.dataTensor3d, false ) ) );
     }
+
+    return resultProfiles;
   }
 
   /**
