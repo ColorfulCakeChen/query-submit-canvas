@@ -9,11 +9,19 @@ export { Base };
 class Base {
 
   /**
+   * @param {string} strResultHTMLTableName
+   *   the HTML table name for display execution time.
+   *
    * @param {number} height      image height
    * @param {number} width       image width
    * @param {number} depth       image channel count
    */
-  constructor( height, width, depth ) {
+  constructor( strResultHTMLTableName, height, width, depth ) {
+
+    this.strResultHTMLTableName = strResultHTMLTableName;
+    if ( document && strResultHTMLTableName ) {
+      this.htmlTableResult = document.getElementById( strResultHTMLTableName );
+    }
 
     this.height = height;
     this.width = width;
@@ -111,8 +119,13 @@ class Base {
     });
   }
 
-  // Testing whether the results of different implementation are the same.
-  async testResultSame() {
+  /**
+   * Testing whether the results of different implementation are the same.
+   *
+   * @return {Object[]}
+   *   Return array of profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs }.
+   */
+  async generateProfile() {
     tf.tidy( () => {
 
 //      let quarterTensor_3x3_Stride2 =             this.test_DepthwiseConv2d_3x3_Stride2( true );
@@ -157,6 +170,10 @@ class Base {
     }
   }
 
+  /**
+   * @return {Object}
+   *   Return profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs }.
+   */
   async logProfile( title, func ) {
 
     // Get backend name before the following promise. Otherwise, it may be changed when the function been executed.
@@ -174,5 +191,17 @@ class Base {
 //     + `byte usage over all kernels: ${profile.kernels.map(k => k.totalBytesSnapshot)}, `
 
      + `kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
+
+    let resultProfile = {
+      title: title,
+      backendName: backendName,
+      newBytes: profile.newBytes,
+      newTensors: profile.newTensors,
+      peakBytes: profile.peakBytes,
+      kernelMs: time.kernelMs,
+      wallMs: time.wallMs
+    };
+
+    return resultProfile;
   }
 }
