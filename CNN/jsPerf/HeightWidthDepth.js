@@ -151,10 +151,14 @@ class Base {
     await this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) );
 
     // All test filters should generate same size result.
-    this.testFiltersArray.forEach( ( testFilters, i ) => {
+//     this.testFiltersArray.forEach( ( testFilters, i ) => {
+//       // Note: Do not return result tensor so that need not to dispose them.
+//       await this.logProfile( testFilters.name, testFilters.apply.bind( this.dataTensor3d, false ) );
+//     });
+    for ( let testFilters of this.testFiltersArray ) {
       // Note: Do not return result tensor so that need not to dispose them.
       await this.logProfile( testFilters.name, testFilters.apply.bind( this.dataTensor3d, false ) );
-    });
+    }
   }
 
   async logProfile( title, func ) {
