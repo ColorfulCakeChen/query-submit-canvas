@@ -66,12 +66,14 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesCPU ) {
    * @param {string[]|number[]} dataArray The data to be displaye 
    */
   function addOneLineCells( htmlTable, th_OR_td, dataArray ) {
-    let oneLine = document.createElement( th_OR_td );
+    let oneLine = document.createElement( "tr" );
 
     let count = dataArray.length;
     for ( let i = 0; i < count; ++i ) {
       let data = dataArray[ i ];
-      oneLine.appendChild( document.createElement("td").appendChild( document.createTextNode( data ) ) );
+      let oneCell = document.createElement( th_OR_td );
+      oneCell.appendChild( document.createTextNode( data ) )
+      oneLine.appendChild( oneCell );
     }
     htmlTable.appendChild( oneLine );
   }
