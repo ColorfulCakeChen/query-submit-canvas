@@ -7,6 +7,7 @@ export { Base };
 class Base {
 
   /**
+   * @param name              This test filters' name.
    * @param sourceHeight      The height (and width) of the source image which will be processed by apply().
    * @param sourceDepth       The channel count of the source image.
    * @param targetHeight      The taregt image height (and width).
@@ -14,8 +15,10 @@ class Base {
    * @param filterHeight      The height (and width) of each depthwise convolution.
    * @param bPointwise        If true, there will be pointwise convolution after every layer of depthwise convolution.
    */
-  init( sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, bPointwise ) {
+  init( name, sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, bPointwise ) {
     this.disposeTensors();
+
+    this.name = name;
 
     let differenceHeight = sourceHeight - targetHeight;
     let filterWidth = filterHeight;
