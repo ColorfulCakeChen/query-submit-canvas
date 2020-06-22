@@ -5,6 +5,7 @@ import * as HeightWidthDepth from "./HeightWidthDepth.js";
  * Test different resize implementation for CNN.
  *
  * @see {@link https://jsperf.com/colorfulcakechen-cnn-height-width-resize}
+ * @see {@link https://colorfulcakechen.github.io/query-submit-canvas/CNN/jsPerf/TestFilters2D.html}
  */
 
 let testCase_Height = 101;
