@@ -55,7 +55,7 @@ globalThis.testCaseLoader = async function () {
   console.log("library CPU compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
 
   globalThis.testCase = new HeightWidthDepth.Base(
-    testCase_Height, testCase_Width, testCase_Depth, progress, progress.WebGL, progressReceiver );
+    testCase_Height, testCase_Width, testCase_Depth, progress, progress.CPU, progressReceiver );
 
   let resultProfilesCPU = await globalThis.testCase.generateProfiles();
   // DO NOT dispose it so that jsPerf can use it.
