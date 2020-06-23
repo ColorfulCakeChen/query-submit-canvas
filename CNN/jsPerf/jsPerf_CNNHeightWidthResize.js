@@ -106,9 +106,9 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesCPU ) {
 
   // Table header (top line).
   addOneLineCells( htmlTable, "th", [
-    "title",
-    "backendName", "kernelMs", "wallMs",
-    "backendName", "kernelMs", "wallMs",
+    "TestName",
+    "backend", "kernelMs", "wallMs",
+    "backend", "kernelMs", "wallMs",
     "newBytes", "newTensors", "peakBytes" ] );
 
   let profileCount = profilesWebGL.length;
