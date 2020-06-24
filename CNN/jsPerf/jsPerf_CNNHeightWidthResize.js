@@ -36,6 +36,7 @@ globalThis.testCaseLoader = async function () {
   let progress = new Progress();
   let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
+  let resultProfilesWebGL;
   {
     await tf.setBackend("webgl");  // WebGL seems crashed jsPerf.
     console.log("library WebGL ready.");
@@ -45,11 +46,12 @@ globalThis.testCaseLoader = async function () {
     globalThis.testCase = new HeightWidthDepth.Base(
       testCase_Height, testCase_Width, testCase_Depth, progress, progress.WebGL, progressReceiver );
 
-    let resultProfilesWebGL = await globalThis.testCase.generateProfiles();
+    resultProfilesWebGL = await globalThis.testCase.generateProfiles();
     globalThis.testCase.disposeTensors();
     console.log("library WebGL compiling done.");
   }
 
+  let resultProfilesWASM;
   {
     await tf.setBackend("wasm")  // WASM seems no ResizeNearestNeighbor.
     console.log("library WASM ready.");
@@ -59,11 +61,12 @@ globalThis.testCaseLoader = async function () {
     globalThis.testCase = new HeightWidthDepth.Base(
       testCase_Height, testCase_Width, testCase_Depth, progress, progress.WASM, progressReceiver );
 
-    let resultProfilesWASM = await globalThis.testCase.generateProfiles();
+    resultProfilesWASM = await globalThis.testCase.generateProfiles();
     globalThis.testCase.disposeTensors();
     console.log("library WASM compiling done.");
   }
 
+  let resultProfilesCPU;
   {
     await tf.setBackend("cpu");
     //await tf.ready();
@@ -74,14 +77,14 @@ globalThis.testCaseLoader = async function () {
     globalThis.testCase = new HeightWidthDepth.Base(
       testCase_Height, testCase_Width, testCase_Depth, progress, progress.CPU, progressReceiver );
 
-    let resultProfilesCPU = await globalThis.testCase.generateProfiles();
+    resultProfilesCPU = await globalThis.testCase.generateProfiles();
     // DO NOT dispose it so that jsPerf can use it.
     //globalThis.testCase.disposeTensors();
     console.log("library CPU compiling done.");
   }
 
   // Display to web page.
-  publishProfiles( "profilesHTMLTable", resultProfilesWebGL, resultProfilesCPU );
+  publishProfiles( "profilesHTMLTable", resultProfilesWebGL, resultProfilesWASM, resultProfilesCPU );
 }
 
 
