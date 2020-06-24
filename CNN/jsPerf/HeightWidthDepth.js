@@ -218,8 +218,9 @@ class Base {
   async * profilesGenerator() {
     let resultProfiles = [];
 
+    let tensor_FromPixels;
     {
-      let tensor_FromPixels = this.test_FromPixels( true );
+      tensor_FromPixels = this.test_FromPixels( true );
       yield* this.progressAdvanceYield();
 
       tf.util.assert(
@@ -241,12 +242,13 @@ class Base {
       tensor_FromPixels.dispose();
     }
 
+    let tensor_ResizeNearestNeighbor, tensor_ResizeBilinear;
     {
 //      let quarterTensor_3x3_Stride2 =             this.test_DepthwiseConv2d_3x3_Stride2( true );
-      let tensor_ResizeNearestNeighbor =   this.test_ResizeNearestNeighbor( true );
+      tensor_ResizeNearestNeighbor =   this.test_ResizeNearestNeighbor( true );
       yield* this.progressAdvanceYield();
 
-      let tensor_ResizeBilinear =          this.test_ResizeBilinear( true );
+      tensor_ResizeBilinear =          this.test_ResizeBilinear( true );
       yield* this.progressAdvanceYield();
 
 //       tf.util.assert(
