@@ -35,32 +35,49 @@ globalThis.testCaseLoader = async function () {
   let progress = new Progress();
   let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
-  await tf.setBackend("webgl");  // WebGL seems crashed.
-  console.log("library WebGL ready.");
+  {
+    await tf.setBackend("webgl");  // WebGL seems crashed jsPerf.
+    console.log("library WebGL ready.");
 
-  console.log("library WebGL compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
+    console.log("library WebGL compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
 
-  globalThis.testCase = new HeightWidthDepth.Base(
-    testCase_Height, testCase_Width, testCase_Depth, progress, progress.WebGL, progressReceiver );
+    globalThis.testCase = new HeightWidthDepth.Base(
+      testCase_Height, testCase_Width, testCase_Depth, progress, progress.WebGL, progressReceiver );
 
-  let resultProfilesWebGL = await globalThis.testCase.generateProfiles();
-  globalThis.testCase.disposeTensors();
-  console.log("library WebGL compiling done.");
+    let resultProfilesWebGL = await globalThis.testCase.generateProfiles();
+    globalThis.testCase.disposeTensors();
+    console.log("library WebGL compiling done.");
+  }
 
-  //await tf.setBackend("wasm")  // WASM seems no ResizeNearestNeighbor.
-  await tf.setBackend("cpu");
-  //await tf.ready();
-  console.log("library CPU ready.");
+  {
+    await tf.setBackend("wasm")  // WASM seems no ResizeNearestNeighbor.
+    console.log("library WASM ready.");
 
-  console.log("library CPU compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
+    console.log("library WASM compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
 
-  globalThis.testCase = new HeightWidthDepth.Base(
-    testCase_Height, testCase_Width, testCase_Depth, progress, progress.CPU, progressReceiver );
+    globalThis.testCase = new HeightWidthDepth.Base(
+      testCase_Height, testCase_Width, testCase_Depth, progress, progress.WebGL, progressReceiver );
 
-  let resultProfilesCPU = await globalThis.testCase.generateProfiles();
-  // DO NOT dispose it so that jsPerf can use it.
-  //globalThis.testCase.disposeTensors();
-  console.log("library CPU compiling done.");
+    let resultProfilesWASM = await globalThis.testCase.generateProfiles();
+    globalThis.testCase.disposeTensors();
+    console.log("library WASM compiling done.");
+  }
+
+  {
+    await tf.setBackend("cpu");
+    //await tf.ready();
+    console.log("library CPU ready.");
+
+    console.log("library CPU compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
+
+    globalThis.testCase = new HeightWidthDepth.Base(
+      testCase_Height, testCase_Width, testCase_Depth, progress, progress.CPU, progressReceiver );
+
+    let resultProfilesCPU = await globalThis.testCase.generateProfiles();
+    // DO NOT dispose it so that jsPerf can use it.
+    //globalThis.testCase.disposeTensors();
+    console.log("library CPU compiling done.");
+  }
 
   // Display to web page.
   publishProfiles( "profilesHTMLTable", resultProfilesWebGL, resultProfilesCPU );
@@ -72,9 +89,10 @@ globalThis.testCaseLoader = async function () {
  * 
  * @param {string}   strResultHTMLTableName  the HTML table name for display execution time.
  * @param {Object[]} profilesWebGL           the array of profiles for execution time of WebGL.
+ * @param {Object[]} profilesWASM            the array of profiles for execution time of WASM.
  * @param {Object[]} profilesCPU             the array of profiles for execution time of CPU.
  */
-function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesCPU ) {
+function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, profilesCPU ) {
 
   if ( !document )
     return;
@@ -92,12 +110,19 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesCPU ) {
    * @param {string[]|number[]} dataArray The data to be displaye 
    */
   function addOneLineCells( htmlTable, th_OR_td, dataArray ) {
+    let cellElementName;
     let oneLine = document.createElement( "tr" );
 
     let count = dataArray.length;
     for ( let i = 0; i < count; ++i ) {
       let data = dataArray[ i ];
-      let oneCell = document.createElement( th_OR_td );
+
+      if ( 0 == i )
+        cellElementName = "th"; // First column always use <th>
+      else
+        cellElementName = th_OR_td;
+
+      let oneCell = document.createElement( cellElementName );
       oneCell.appendChild( document.createTextNode( data ) )
       oneLine.appendChild( oneCell );
     }
@@ -109,17 +134,20 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesCPU ) {
     "TestName",
     "backend", "kernelMs", "wallMs",
     "backend", "kernelMs", "wallMs",
+    "backend", "kernelMs", "wallMs",
     "newBytes", "newTensors", "peakBytes" ] );
 
   let profileCount = profilesWebGL.length;
   for ( let i = 0; i < profileCount; ++i ) {
 
     let profileWebGL = profilesWebGL[ i ];
+    let profileWASM = profilesWASM[ i ];
     let profileCPU = profilesCPU[ i ];
 
     addOneLineCells( htmlTable, "td", [
       profileWebGL.title,
       profileWebGL.backendName, profileWebGL.kernelMs, profileWebGL.wallMs,
+      profileWASM.backendName, profileWASM.kernelMs, profileWASM.wallMs,
       profileCPU.backendName, profileCPU.kernelMs, profileCPU.wallMs,
       profileWebGL.newBytes, profileWebGL.newTensors, profileWebGL.peakBytes ] );
   }
