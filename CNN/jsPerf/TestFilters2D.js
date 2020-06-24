@@ -81,7 +81,7 @@ class Base {
       + `${ this.depthwiseActivationFunction ? ( "_" + depthwiseActivationName ) : ""}`
       + `${ this.bPointwise ? "_1x1" : ""}`
       + `${ this.pointwiseActivationFunction ? ( "_" + pointwiseActivationName ) : ""}`
-      + `${ ( "_" + this.blockCount ) }_Block`
+      + `_Block_${this.blockCount}`
     ;
 
     // Every element (Tensor4d) is a depthwiseFilters for one layer (i.e. one step).
