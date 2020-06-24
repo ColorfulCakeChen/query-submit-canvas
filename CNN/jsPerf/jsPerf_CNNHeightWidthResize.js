@@ -21,11 +21,12 @@ class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
     let children = [
       new ValueMax.Percentage.Concrete(), // Increased when executing by WebGL.
+      new ValueMax.Percentage.Concrete(), // Increased when executing by WASM.
       new ValueMax.Percentage.Concrete(), // Increased when executing by CPU.
     ];
 
     super(children);
-    [ this.WebGL, this.CPU ] = children;
+    [ this.WebGL, this.WASM, this.CPU ] = children;
   }
 }
 
@@ -39,7 +40,7 @@ globalThis.testCaseLoader = async function () {
     await tf.setBackend("webgl");  // WebGL seems crashed jsPerf.
     console.log("library WebGL ready.");
 
-    console.log("library WebGL compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
+    console.log("library WebGL compiling...");  // For pre-compile tensorflow.js GPU codes. (and Test correctness.)
 
     globalThis.testCase = new HeightWidthDepth.Base(
       testCase_Height, testCase_Width, testCase_Depth, progress, progress.WebGL, progressReceiver );
@@ -53,10 +54,10 @@ globalThis.testCaseLoader = async function () {
     await tf.setBackend("wasm")  // WASM seems no ResizeNearestNeighbor.
     console.log("library WASM ready.");
 
-    console.log("library WASM compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
+    console.log("library WASM compiling...");  // For pre-compile tensorflow.js WASM codes. (and Test correctness.)
 
     globalThis.testCase = new HeightWidthDepth.Base(
-      testCase_Height, testCase_Width, testCase_Depth, progress, progress.WebGL, progressReceiver );
+      testCase_Height, testCase_Width, testCase_Depth, progress, progress.WASM, progressReceiver );
 
     let resultProfilesWASM = await globalThis.testCase.generateProfiles();
     globalThis.testCase.disposeTensors();
@@ -68,7 +69,7 @@ globalThis.testCaseLoader = async function () {
     //await tf.ready();
     console.log("library CPU ready.");
 
-    console.log("library CPU compiling...");  // For pre-compile tensorflow.js GPU code. (and Test correctness.)
+    console.log("library CPU compiling...");  // For pre-compile tensorflow.js CPU codes. (and Test correctness.)
 
     globalThis.testCase = new HeightWidthDepth.Base(
       testCase_Height, testCase_Width, testCase_Depth, progress, progress.CPU, progressReceiver );
