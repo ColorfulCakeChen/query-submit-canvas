@@ -57,20 +57,28 @@ class Base {
 
     // [ TestFiltersName, sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, bPointwise ]
     this.testFiltersSpecTable = [
-      [ "DAvg_101x101_OneStep",      height, depth, targetHeight, filterHeight_OneStep,  "Avg", false ],
-      [ "DAvg_101x101_1x1_OneStep",  height, depth, targetHeight, filterHeight_OneStep,  "Avg",  true ],
-      [ "DMax_101x101_OneStep",      height, depth, targetHeight, filterHeight_OneStep,  "Max", false ],
-      [ "DConv_101x101_OneStep",     height, depth, targetHeight, filterHeight_OneStep, "Conv", false ],
-      [ "DConv_101x101_1x1_OneStep", height, depth, targetHeight, filterHeight_OneStep, "Conv",  true ],
+//      [ "DAvg_101x101_OneStep",      height, depth, targetHeight, filterHeight_OneStep,  "Avg", false ],
+//      [ "DAvg_101x101_1x1_OneStep",  height, depth, targetHeight, filterHeight_OneStep,  "Avg",  true ],
+//      [ "DMax_101x101_OneStep",      height, depth, targetHeight, filterHeight_OneStep,  "Max", false ],
+      [ "DConv_101x101_OneStep",             height, depth, targetHeight, filterHeight_OneStep, "Conv",        "", false ],
+      [ "DConv_101x101_1x1_OneStep",         height, depth, targetHeight, filterHeight_OneStep, "Conv",        "",  true ],
+      [ "DConv_101x101_RELU_1x1_OneStep",    height, depth, targetHeight, filterHeight_OneStep, "Conv",    "relu",  true ],
+      [ "DConv_101x101_RELU6_1x1_OneStep",   height, depth, targetHeight, filterHeight_OneStep, "Conv",   "relu6",  true ],
+      [ "DConv_101x101_SIGMOID_1x1_OneStep", height, depth, targetHeight, filterHeight_OneStep, "Conv", "sigmoid",  true ],
+      [ "DConv_101x101_SIN_1x1_OneStep",     height, depth, targetHeight, filterHeight_OneStep, "Conv",     "sin",  true ],
 
-      [ "DAvg_2x2_MultiStep",        height, depth, targetHeight,                    2,  "Avg", false ],
-      [ "DMax_2x2_MultiStep",        height, depth, targetHeight,                    2,  "Max", false ],
-      [ "DConv_2x2_MultiStep",       height, depth, targetHeight,                    2, "Conv", false ],
-      [ "DConv_2x2_1x1_MultiStep",   height, depth, targetHeight,                    2, "Conv",  true ],
+//       [ "DAvg_2x2_MultiStep",        height, depth, targetHeight,                    2,  "Avg", false ],
+//       [ "DMax_2x2_MultiStep",        height, depth, targetHeight,                    2,  "Max", false ],
+      [ "DConv_2x2_MultiStep",               height, depth, targetHeight,                    2, "Conv",        "", false ],
+      [ "DConv_2x2_1x1_MultiStep",           height, depth, targetHeight,                    2, "Conv",        "",  true ],
+      [ "DConv_2x2_RELU_1x1_MultiStep",      height, depth, targetHeight,                    2, "Conv",    "relu",  true ],
+      [ "DConv_2x2_RELU6_1x1_MultiStep",     height, depth, targetHeight,                    2, "Conv",   "relu8",  true ],
+      [ "DConv_2x2_SIGMOID_1x1_MultiStep",   height, depth, targetHeight,                    2, "Conv", "sigmoid",  true ],
+      [ "DConv_2x2_SIN_1x1_MultiStep",       height, depth, targetHeight,                    2, "Conv",     "sin",  true ],
 
-      [ "DConv_3x3_MultiStep",       height, depth, targetHeight,                    3, "Conv", false ],
-      [ "DConv_6x6_MultiStep",       height, depth, targetHeight,                    6, "Conv", false ],
-      [ "DConv_11x11_MultiStep",     height, depth, targetHeight,                   11, "Conv", false ],
+      [ "DConv_3x3_MultiStep",               height, depth, targetHeight,                    3, "Conv",        "", false ],
+      [ "DConv_6x6_MultiStep",               height, depth, targetHeight,                    6, "Conv",        "", false ],
+      [ "DConv_11x11_MultiStep",             height, depth, targetHeight,                   11, "Conv",        "", false ],
     ];
 
     // Create test filters.
