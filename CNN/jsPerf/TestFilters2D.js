@@ -77,7 +77,7 @@ class Base {
     this.blockCount = Math.floor( differenceHeight / heightReducedPerStep );
 
     // e.g. "DConv_101x101_RELU_1x1_RELU_1_Block"
-    this.name = `D${strAvgMaxConv}_${filterHeight}x{filterHeight}`
+    this.name = `D${strAvgMaxConv}_${filterHeight}x${filterHeight}`
       + `${ this.depthwiseActivationFunction ? ( "_" + depthwiseActivationName ) : ""}`
       + `${ this.bPointwise ? "_1x1" : ""}`
       + `${ this.pointwiseActivationFunction ? ( "_" + pointwiseActivationName ) : ""}`
