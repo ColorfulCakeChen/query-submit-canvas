@@ -3,11 +3,12 @@ export { Base };
 
 /**
  * Testing Filters of multiple layers.
+ *
+ * @member {string} name This test filters' name.
  */
 class Base {
 
   /**
-   * @param name              This test filters' name.
    * @param sourceHeight      The height (and width) of the source image which will be processed by apply().
    * @param sourceDepth       The channel count of the source image.
    * @param targetHeight      The taregt image height (and width).
@@ -23,19 +24,21 @@ class Base {
    *   The activation function name after pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "sin".
    * If ( bPointwise == false ), this activation function will be ignored.
    */
-  init( name, sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, depthwiseActivationName, bPointwise, pointwiseActivationName ) {
+  init( sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, depthwiseActivationName, bPointwise, pointwiseActivationName ) {
     this.disposeTensors();
 
-    this.name = name;
+//    this.name = name;
 
     let differenceHeight = sourceHeight - targetHeight;
     let filterWidth = filterHeight;
     let channelMultiplier = 1;
 
     this.strAvgMaxConv = strAvgMaxConv;
-    this.bDepthwiseAvg = ( strAvgMaxConv == "Avg" );
-    this.bDepthwiseMax = ( strAvgMaxConv == "Max" );
-    this.bDepthwiseConv = ( strAvgMaxConv == "Conv" );
+    switch ( strAvgMaxConv ) {
+      case "Avg":  this.bDepthwiseAvg = true;
+      case "Max":  this.bDepthwiseMax = true;
+      case "Conv": this.bDepthwiseConv = true;
+    }
 
     this.depthwiseActivationName = depthwiseActivationName;
     switch ( depthwiseActivationName ) {
@@ -71,7 +74,15 @@ class Base {
     let heightReducedPerStep = filterHeight - 1;
 
     // The step count for reducing sourceHeight to targetHeight by depthwise convolution filter.
-    this.stepCount = Math.floor( differenceHeight / heightReducedPerStep );
+    this.blockCount = Math.floor( differenceHeight / heightReducedPerStep );
+
+    // e.g. "DConv_101x101_RELU_1x1_RELU_1_Block"
+    this.name = `D${strAvgMaxConv}_${filterHeight}x{filterHeight}`
+      + `${ this.depthwiseActivationFunction ? ( "_" + depthwiseActivationName ) : ""}`
+      + `${ this.bPointwise ? "_1x1" : ""}`
+      + `${ this.pointwiseActivationFunction ? ( "_" + pointwiseActivationName ) : ""}`
+      + `${this.blockCount}_Block`
+    ;
 
     // Every element (Tensor4d) is a depthwiseFilters for one layer (i.e. one step).
     this.depthwiseFiltersTensor4dArray = tf.tidy( () => {
@@ -168,7 +179,7 @@ class Base {
       // Layer 1, ...
       if ( this.bDepthwiseAvg ) {
 
-        for ( let i = 1; i < this.stepCount; ++i ) {
+        for ( let i = 1; i < this.blockCount; ++i ) {
           tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
           t.dispose();                                           // Dispose all intermediate (temporary) data.
           t = tNew;
@@ -194,7 +205,7 @@ class Base {
 
       } else if ( this.bDepthwiseMax ) {
 
-        for ( let i = 1; i < this.stepCount; ++i ) {
+        for ( let i = 1; i < this.blockCount; ++i ) {
           tNew = t.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
           t.dispose();                                           // Dispose all intermediate (temporary) data.
           t = tNew;
@@ -220,7 +231,7 @@ class Base {
 
       } else if ( this.bDepthwiseConv ) {
 
-        for ( let i = 1; i < this.stepCount; ++i ) {
+        for ( let i = 1; i < this.blockCount; ++i ) {
           tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ i ], 1, "valid" );  // Stride = 1
           t.dispose();                                           // Dispose all intermediate (temporary) data.
           t = tNew;
