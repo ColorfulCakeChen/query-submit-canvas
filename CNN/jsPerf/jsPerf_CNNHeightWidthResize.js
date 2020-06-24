@@ -21,12 +21,13 @@ class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
     let children = [
       new ValueMax.Percentage.Concrete(), // Increased when executing by WebGL.
-      new ValueMax.Percentage.Concrete(), // Increased when executing by WASM.
+//      new ValueMax.Percentage.Concrete(), // Increased when executing by WASM.
       new ValueMax.Percentage.Concrete(), // Increased when executing by CPU.
     ];
 
     super(children);
-    [ this.WebGL, this.WASM, this.CPU ] = children;
+//    [ this.WebGL, this.WASM, this.CPU ] = children;
+    [ this.WebGL, this.CPU ] = children;
   }
 }
 
