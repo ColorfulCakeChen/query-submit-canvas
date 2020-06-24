@@ -144,9 +144,13 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
   // Table header (top line).
   addOneLineCells( thead, "th", [
     "TestName",
-    "backend", "kernelMs", "wallMs",
-//    "backend", "kernelMs", "wallMs",
-    "backend", "kernelMs", "wallMs",
+    `kernelMs (${profileWebGL.backendName})`, `kernelMs (${profileCPU.backendName})`,
+    `wallMs (${profileWebGL.backendName})`, `wallMs (${profileCPU.backendName})`,
+
+//     "backend", "kernelMs", "wallMs",
+// //    "backend", "kernelMs", "wallMs",
+//     "backend", "kernelMs", "wallMs",
+
     "newBytes", "newTensors", "peakBytes" ] );
 
   let digitsCount = 4;
@@ -160,9 +164,14 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
 
     addOneLineCells( tbody, "td", [
       profileWebGL.title,
-      profileWebGL.backendName, profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
-//      profileWASM.backendName, profileWASM.kernelMs.toFixed( digitsCount ), profileWASM.wallMs.toFixed( digitsCount ),
-      profileCPU.backendName, profileCPU.kernelMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
+
+      profileWebGL.kernelMs.toFixed( digitsCount ), profileCPU.kernelMs.toFixed( digitsCount ), 
+      profileWebGL.wallMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
+
+//       profileWebGL.backendName, profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
+// //      profileWASM.backendName, profileWASM.kernelMs.toFixed( digitsCount ), profileWASM.wallMs.toFixed( digitsCount ),
+//       profileCPU.backendName, profileCPU.kernelMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
+
       profileWebGL.newBytes, profileWebGL.newTensors, profileWebGL.peakBytes ] );
   }
 
