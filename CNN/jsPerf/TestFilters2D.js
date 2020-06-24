@@ -13,13 +13,17 @@ class Base {
    * @param targetHeight      The taregt image height (and width).
    * @param strAvgMaxConv     "Avg" or "Max" or "Conv". for average pooling, max pooling, depthwise convolution.
    *
-   * @param activationName
-   *   The activation function name. One of the following "", "relu", "relu6", "sigmoid", "sin".
+   * @param depthwiseActivationName
+   *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "sin".
    *
    * @param filterHeight      The height (and width) of each depthwise convolution.
    * @param bPointwise        If true, there will be pointwise convolution after every layer of depthwise convolution.
+   *
+   * @param pointwiseActivationName
+   *   The activation function name after pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "sin".
+   * If ( bPointwise == false ), this activation function will be ignored.
    */
-  init( name, sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, activationName, bPointwise ) {
+  init( name, sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, depthwiseActivationName, bPointwise, pointwiseActivationName ) {
     this.disposeTensors();
 
     this.name = name;
@@ -33,16 +37,25 @@ class Base {
     this.bDepthwiseMax = ( strAvgMaxConv == "Max" );
     this.bDepthwiseConv = ( strAvgMaxConv == "Conv" );
 
-    this.activationName = activationName;
-    switch ( activationName ) {
-      case "relu":    this.activationFunction = tf.relu;    break;
-      case "relu6":   this.activationFunction = tf.relu6;   break;
-      case "sigmoid": this.activationFunction = tf.sigmoid; break;
-      case "sin":     this.activationFunction = tf.sin;     break;
+    this.depthwiseActivationName = depthwiseActivationName;
+    switch ( depthwiseActivationName ) {
+      case "relu":    this.depthwiseActivationFunction = tf.relu;    break;
+      case "relu6":   this.depthwiseActivationFunction = tf.relu6;   break;
+      case "sigmoid": this.depthwiseActivationFunction = tf.sigmoid; break;
+      case "sin":     this.depthwiseActivationFunction = tf.sin;     break;
       //default:
     }
 
     this.bPointwise = bPointwise;
+
+    this.pointwiseActivationName = pointwiseActivationName;
+    switch ( pointwiseActivationName ) {
+      case "relu":    this.pointwiseActivationFunction = tf.relu;    break;
+      case "relu6":   this.pointwiseActivationFunction = tf.relu6;   break;
+      case "sigmoid": this.pointwiseActivationFunction = tf.sigmoid; break;
+      case "sin":     this.pointwiseActivationFunction = tf.sin;     break;
+      //default:
+    }
 
     this.depthwiseFiltersShape = [ filterHeight, filterWidth, sourceDepth, channelMultiplier ];
     this.depthwiseFilterHeightWidth = [ filterHeight, filterWidth ];
@@ -134,8 +147,8 @@ class Base {
       }
       // NOTE: Do not dispose the original data.
 
-      if ( this.activationFunction ) {
-        tNew = this.activationFunction( t );
+      if ( this.depthwiseActivationFunction ) {
+        tNew = this.depthwiseActivationFunction( t );
         t.dispose();                                         // Dispose all intermediate (temporary) data.
         t = tNew;
       }
@@ -144,6 +157,12 @@ class Base {
         tNew = t.conv2d( this.pointwiseFiltersTensor4dArray[ 0 ], 1, "valid" ); // 1x1, Stride = 1
         t.dispose();                                         // Dispose all intermediate (temporary) data.
         t = tNew;
+
+        if ( this.pointwiseActivationFunction ) {
+          tNew = this.pointwiseActivationFunction( t );
+          t.dispose();                                         // Dispose all intermediate (temporary) data.
+          t = tNew;
+        }
       }
 
       // Layer 1, ...
@@ -154,8 +173,8 @@ class Base {
           t.dispose();                                           // Dispose all intermediate (temporary) data.
           t = tNew;
 
-          if ( this.activationFunction ) {
-            tNew = this.activationFunction( t );
+          if ( this.depthwiseActivationFunction ) {
+            tNew = this.depthwiseActivationFunction( t );
             t.dispose();                                         // Dispose all intermediate (temporary) data.
             t = tNew;
           }
@@ -164,6 +183,12 @@ class Base {
             tNew = t.conv2d( this.pointwiseFiltersTensor4dArray[ i ], 1, "valid" ); // 1x1, Stride = 1
             t.dispose();                                         // Dispose all intermediate (temporary) data.
             t = tNew;
+
+            if ( this.pointwiseActivationFunction ) {
+              tNew = this.pointwiseActivationFunction( t );
+              t.dispose();                                         // Dispose all intermediate (temporary) data.
+              t = tNew;
+            }
           }
         }
 
@@ -174,8 +199,8 @@ class Base {
           t.dispose();                                           // Dispose all intermediate (temporary) data.
           t = tNew;
 
-          if ( this.activationFunction ) {
-            tNew = this.activationFunction( t );
+          if ( this.depthwiseActivationFunction ) {
+            tNew = this.depthwiseActivationFunction( t );
             t.dispose();                                         // Dispose all intermediate (temporary) data.
             t = tNew;
           }
@@ -184,6 +209,12 @@ class Base {
             tNew = t.conv2d( this.pointwiseFiltersTensor4dArray[ i ], 1, "valid" ); // 1x1, Stride = 1
             t.dispose();                                         // Dispose all intermediate (temporary) data.
             t = tNew;
+
+            if ( this.pointwiseActivationFunction ) {
+              tNew = this.pointwiseActivationFunction( t );
+              t.dispose();                                         // Dispose all intermediate (temporary) data.
+              t = tNew;
+            }
           }
         }
 
@@ -194,8 +225,8 @@ class Base {
           t.dispose();                                           // Dispose all intermediate (temporary) data.
           t = tNew;
 
-          if ( this.activationFunction ) {
-            tNew = this.activationFunction( t );
+          if ( this.depthwiseActivationFunction ) {
+            tNew = this.depthwiseActivationFunction( t );
             t.dispose();                                         // Dispose all intermediate (temporary) data.
             t = tNew;
           }
@@ -204,6 +235,12 @@ class Base {
             tNew = t.conv2d( this.pointwiseFiltersTensor4dArray[ i ], 1, "valid" ); // 1x1, Stride = 1
             t.dispose();                                         // Dispose all intermediate (temporary) data.
             t = tNew;
+
+            if ( this.pointwiseActivationFunction ) {
+              tNew = this.pointwiseActivationFunction( t );
+              t.dispose();                                         // Dispose all intermediate (temporary) data.
+              t = tNew;
+            }
           }
         }
 
