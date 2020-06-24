@@ -218,8 +218,9 @@ class Base {
     let resultProfiles = await PartTime.forOf(
       generator,
       ( valueMaxPromise ) => {
-        let valueMax = await valueMaxPromise;          // Since profilesGenerator is async generator, wait it to be resloved.
-        this.progressReceiver.setValueMax( valueMax ); // Report progress to UI.
+        valueMaxPromise.then( ( valueMax ) => {        // Since profilesGenerator is async generator, wait it to be resloved.
+          this.progressReceiver.setValueMax( valueMax ); // Report progress to UI.
+        });
       },
       delayMilliseconds
     );
