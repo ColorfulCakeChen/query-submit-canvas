@@ -144,14 +144,7 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
   // Table header (top line).
   addOneLineCells( thead, "th", [
     "TestName",
-     "backend", "kernelMs", "wallMs",
-//     `kernelMs (${profilesWebGL[ 0 ].backendName})`, `kernelMs (${profilesCPU[ 0 ].backendName})`,
-//     `wallMs (${profilesWebGL[ 0 ].backendName})`, `wallMs (${profilesCPU[ 0 ].backendName})`,
-
-//     "backend", "kernelMs", "wallMs",
-// //    "backend", "kernelMs", "wallMs",
-//     "backend", "kernelMs", "wallMs",
-
+    "kernelMs", "wallMs",
     "newBytes", "newTensors", "peakBytes" ] );
 
   let digitsCount = 4;
