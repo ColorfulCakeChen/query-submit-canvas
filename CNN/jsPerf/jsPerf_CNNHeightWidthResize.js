@@ -143,7 +143,7 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
     "backend", "kernelMs", "wallMs",
     "newBytes", "newTensors", "peakBytes" ] );
 
-  let digitsCount = 6;
+  let digitsCount = 7;
 
   let profileCount = profilesWebGL.length;
   for ( let i = 0; i < profileCount; ++i ) {
@@ -154,9 +154,9 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
 
     addOneLineCells( htmlTable, "td", [
       profileWebGL.title,
-      profileWebGL.backendName, profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
-//      profileWASM.backendName, profileWASM.kernelMs.toFixed( digitsCount ), profileWASM.wallMs.toFixed( digitsCount ),
-      profileCPU.backendName, profileCPU.kernelMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
+      profileWebGL.backendName, profileWebGL.kernelMs.toPrecision( digitsCount ), profileWebGL.wallMs.toPrecision( digitsCount ),
+//      profileWASM.backendName, profileWASM.kernelMs.toPrecision( digitsCount ), profileWASM.wallMs.toPrecision( digitsCount ),
+      profileCPU.backendName, profileCPU.kernelMs.toPrecision( digitsCount ), profileCPU.wallMs.toPrecision( digitsCount ),
       profileWebGL.newBytes, profileWebGL.newTensors, profileWebGL.peakBytes ] );
   }
 
