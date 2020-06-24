@@ -148,7 +148,7 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
   for ( let i = 0; i < profileCount; ++i ) {
 
     let profileWebGL = profilesWebGL[ i ];
-    let profileWASM = profilesWASM[ i ];
+//    let profileWASM = profilesWASM[ i ];
     let profileCPU = profilesCPU[ i ];
 
     addOneLineCells( htmlTable, "td", [
