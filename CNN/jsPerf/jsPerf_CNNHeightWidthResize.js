@@ -144,8 +144,8 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
   // Table header (top line).
   addOneLineCells( thead, "th", [
     "TestName",
-    `kernelMs (${profileWebGL.backendName})`, `kernelMs (${profileCPU.backendName})`,
-    `wallMs (${profileWebGL.backendName})`, `wallMs (${profileCPU.backendName})`,
+    `kernelMs (${profilesWebGL[ 0 ].backendName})`, `kernelMs (${profilesCPU[ 0 ].backendName})`,
+    `wallMs (${profilesWebGL[ 0 ].backendName})`, `wallMs (${profilesCPU[ 0 ].backendName})`,
 
 //     "backend", "kernelMs", "wallMs",
 // //    "backend", "kernelMs", "wallMs",
