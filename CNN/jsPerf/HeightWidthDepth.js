@@ -170,7 +170,7 @@ class Base {
         `ResizeBilinear() != ResizeNearestNeighbor()`);
 
       // All test filters should generate same size result.
-      this.testFiltersArray.forEach( ( testFilters, i ) => {
+      for ( let testFilters of this.testFiltersArray ) {
         let t = testFilters.apply( this.dataTensor3d, true );
 
         tf.util.assert(
@@ -180,7 +180,7 @@ class Base {
         t.dispose();
 
         yield* this.progressAdvanceYield();
-      });
+      }
 
 //    });
 
