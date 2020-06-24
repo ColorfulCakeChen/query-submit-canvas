@@ -223,19 +223,19 @@ class Base {
       yield* this.progressAdvanceYield();
 
       tf.util.assert(
-        4 == tensor_FromPixels.rank ),
+        ( 4 == tensor_FromPixels.rank ),
         `${tensor_FromPixels.rank} != 4`);
 
       tf.util.assert(
-        tensor_FromPixels.shape[ 0 ] == this.height ),
+        ( tensor_FromPixels.shape[ 0 ] == this.height ),
         `fromPixels Height ${tensor_FromPixels.shape[ 0 ]} != ${this.height}`);
 
       tf.util.assert(
-        tensor_FromPixels.shape[ 1 ] == this.width ),
+        ( tensor_FromPixels.shape[ 1 ] == this.width ),
         `fromPixels Width ${tensor_FromPixels.shape[ 1 ]} != ${this.width}`);
 
       tf.util.assert(
-        4 == tensor_FromPixels.shape[ 2 ] ),
+        ( 4 == tensor_FromPixels.shape[ 2 ] ),
         `fromPixels Depth ${tensor_FromPixels.shape[ 1 ]} != 4`);
 
       tensor_FromPixels.dispose();
