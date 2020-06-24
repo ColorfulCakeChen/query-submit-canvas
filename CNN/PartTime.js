@@ -10,18 +10,34 @@ export {forOf};
  *
  * @return A promise resolved with the ( generator.next().value ) when ( generator.next().done == true ).
  */
-function forOf(generator, callback, delayMilliseconds = 0) {
+function forOf( generator, callback, delayMilliseconds = 0 ) {
 
   function promiseTimeout() {
-    return new Promise( (resolve, reject) => {
-      setTimeout(() => {
+    return new Promise( ( resolve, reject ) => {
+      setTimeout( () => {
         let result = generator.next();
-        if (result.done) {
-          resolve(result.value);
+
+        // If the result is a promise (i.e. the generator is an async generator).
+        if ( result instanceof Promise ) {
+          result.then( ( r ) => {  // Wait it resolved, then process it as sync generator.
+            if ( r.done ) {
+              resolve( r.value );
+            } else {
+              callback( r.value );
+              resolve( promiseTimeout() );
+            }
+          });
+
+        // The generator is a usually sync generator, process its result.
         } else {
-          callback(result.value)
-          resolve(promiseTimeout());
+          if ( result.done ) {
+            resolve( result.value );
+          } else {
+            callback( result.value );
+            resolve( promiseTimeout() );
+          }
         }
+
       }, delayMilliseconds);
     });
   }
