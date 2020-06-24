@@ -212,11 +212,15 @@ class Base {
    *   Return array of profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs }.
    */
   async generateProfiles() {
-    let delayMilliseconds = 0;
     let generator = this.profilesGenerator();
+
+    let delayMilliseconds = 0;
     let resultProfiles = await PartTime.forOf(
       generator,
-      ( valueMax ) => { this.progressReceiver.setValueMax( valueMax ); }, // Report progress to UI.
+      ( valueMaxPromise ) => {
+        let valueMax = await valueMaxPromise;          // Since profilesGenerator is async generator, wait it to be resloved.
+        this.progressReceiver.setValueMax( valueMax ); // Report progress to UI.
+      },
       delayMilliseconds
     );
 
