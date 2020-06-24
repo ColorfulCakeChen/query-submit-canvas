@@ -223,8 +223,8 @@ class Base {
       yield* this.progressAdvanceYield();
 
       tf.util.assert(
-        ( 4 == tensor_FromPixels.rank ),
-        `${tensor_FromPixels.rank} != 4`);
+        ( 3 == tensor_FromPixels.rank ),
+        `${tensor_FromPixels.rank} != 3`);  // tensor3d
 
       tf.util.assert(
         ( tensor_FromPixels.shape[ 0 ] == this.height ),
@@ -235,8 +235,8 @@ class Base {
         `fromPixels Width ${tensor_FromPixels.shape[ 1 ]} != ${this.width}`);
 
       tf.util.assert(
-        ( 4 == tensor_FromPixels.shape[ 2 ] ),
-        `fromPixels Depth ${tensor_FromPixels.shape[ 1 ]} != 4`);
+        ( tensor_FromPixels.shape[ 2 ] == 4 ),
+        `fromPixels Depth ${tensor_FromPixels.shape[ 2 ]} != 4`);  // 4 channels.
 
       tensor_FromPixels.dispose();
     }
