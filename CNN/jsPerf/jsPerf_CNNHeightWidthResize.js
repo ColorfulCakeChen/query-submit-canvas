@@ -111,11 +111,11 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
     return;
 
   /**
-   * @param {HTMLTable}         htmlTable The HTML table as display target.
+   * @param {HTMLNode}         htmlNode The HTML table (or thead, or tbody) as display target.
    * @param {string}            th_OR_td  "th" for table header, "td" for table body.
    * @param {string[]|number[]} dataArray The data to be displaye 
    */
-  function addOneLineCells( htmlTable, th_OR_td, dataArray ) {
+  function addOneLineCells( htmlNode, th_OR_td, dataArray ) {
     let cellElementName;
     let oneLine = document.createElement( "tr" );
 
@@ -132,11 +132,17 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
       oneCell.appendChild( document.createTextNode( data ) )
       oneLine.appendChild( oneCell );
     }
-    htmlTable.appendChild( oneLine );
+    htmlNode.appendChild( oneLine );
   }
 
+  let thead = document.createElement( "thead" );
+  let tbody = document.createElement( "tbody" );
+
+  htmlTable.appendChild( thead );
+  htmlTable.appendChild( tbody );
+
   // Table header (top line).
-  addOneLineCells( htmlTable, "th", [
+  addOneLineCells( thead, "th", [
     "TestName",
     "backend", "kernelMs", "wallMs",
 //    "backend", "kernelMs", "wallMs",
@@ -152,7 +158,7 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
 //    let profileWASM = profilesWASM[ i ];
     let profileCPU = profilesCPU[ i ];
 
-    addOneLineCells( htmlTable, "td", [
+    addOneLineCells( tbody, "td", [
       profileWebGL.title,
       profileWebGL.backendName, profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
 //      profileWASM.backendName, profileWASM.kernelMs.toFixed( digitsCount ), profileWASM.wallMs.toFixed( digitsCount ),
