@@ -28,7 +28,7 @@ class Base {
     this.height = height;
     this.width = width;
     this.depth = depth;
-
+    
     this.progressToYield = progressToYield;
     this.progressToAdvance = progressToAdvance;
     this.progressReceiver = progressReceiver;
@@ -55,78 +55,78 @@ class Base {
     let inChannels =        depth;
     let channelMultiplier = 1;
 
-    // [ TestFiltersName, sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, bPointwise ]
+    // [ sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, bPointwise ]
     this.testFiltersSpecTable = [
-//      [ "DAvg_101x101_OneStep",      height, depth, targetHeight, filterHeight_OneStep,  "Avg", false ],
-//      [ "DAvg_101x101_1x1_OneStep",  height, depth, targetHeight, filterHeight_OneStep,  "Avg",  true ],
-//      [ "DMax_101x101_OneStep",      height, depth, targetHeight, filterHeight_OneStep,  "Max", false ],
-      [ "DConv_101x101_OneStep",                 height, depth, targetHeight, filterHeight_OneStep, "Conv",        "", false ],
-      [ "DConv_101x101_1x1_OneStep",             height, depth, targetHeight, filterHeight_OneStep, "Conv",        "",  true ],
-      [ "DConv_101x101_RELU_1x1_OneStep",        height, depth, targetHeight, filterHeight_OneStep, "Conv",    "relu",  true ],
-      [ "DConv_101x101_RELU_1x1_RELU_OneStep",   height, depth, targetHeight, filterHeight_OneStep, "Conv",    "relu",  true,    "relu" ],
-      [ "DConv_101x101_RELU6_1x1_OneStep",       height, depth, targetHeight, filterHeight_OneStep, "Conv",   "relu6",  true ],
-      [ "DConv_101x101_RELU6_1x1_RELU6_OneStep", height, depth, targetHeight, filterHeight_OneStep, "Conv",   "relu6",  true,   "relu6" ],
-      [ "DConv_101x101_SIGMOID_1x1_OneStep",     height, depth, targetHeight, filterHeight_OneStep, "Conv", "sigmoid",  true ],
-      [ "DConv_101x101_SIGMOID_1x1_OneStep",     height, depth, targetHeight, filterHeight_OneStep, "Conv", "sigmoid",  true, "sigmoid" ],
-      [ "DConv_101x101_SIN_1x1_OneStep",         height, depth, targetHeight, filterHeight_OneStep, "Conv",     "sin",  true ],
-      [ "DConv_101x101_SIN_1x1_OneStep",         height, depth, targetHeight, filterHeight_OneStep, "Conv",     "sin",  true,     "sin" ],
+//      [ height, depth, targetHeight, filterHeight_OneStep,  "Avg", false ],
+//      [ height, depth, targetHeight, filterHeight_OneStep,  "Avg",  true ],
+//      [ height, depth, targetHeight, filterHeight_OneStep,  "Max", false ],
+      [ height, depth, targetHeight, filterHeight_OneStep, "Conv",        "", false ],
+      [ height, depth, targetHeight, filterHeight_OneStep, "Conv",        "",  true ],
+      [ height, depth, targetHeight, filterHeight_OneStep, "Conv",    "relu",  true ],
+      [ height, depth, targetHeight, filterHeight_OneStep, "Conv",    "relu",  true,    "relu" ],
+      [ height, depth, targetHeight, filterHeight_OneStep, "Conv",   "relu6",  true ],
+      [ height, depth, targetHeight, filterHeight_OneStep, "Conv",   "relu6",  true,   "relu6" ],
+      [ height, depth, targetHeight, filterHeight_OneStep, "Conv", "sigmoid",  true ],
+      [ height, depth, targetHeight, filterHeight_OneStep, "Conv", "sigmoid",  true, "sigmoid" ],
+      [ height, depth, targetHeight, filterHeight_OneStep, "Conv",     "sin",  true ],
+      [ height, depth, targetHeight, filterHeight_OneStep, "Conv",     "sin",  true,     "sin" ],
 
-//       [ "DAvg_2x2_MultiStep",        height, depth, targetHeight,                    2,  "Avg", false ],
-//       [ "DMax_2x2_MultiStep",        height, depth, targetHeight,                    2,  "Max", false ],
-      [ "DConv_2x2_MultiStep",                 height, depth, targetHeight,                    2, "Conv",        "", false ],
-      [ "DConv_2x2_1x1_MultiStep",             height, depth, targetHeight,                    2, "Conv",        "",  true ],
-      [ "DConv_2x2_RELU_1x1_MultiStep",        height, depth, targetHeight,                    2, "Conv",    "relu",  true ],
-      [ "DConv_2x2_RELU_1x1_MultiStep",        height, depth, targetHeight,                    2, "Conv",    "relu",  true,    "relu" ],
-      [ "DConv_2x2_RELU6_1x1_MultiStep",       height, depth, targetHeight,                    2, "Conv",   "relu6",  true ],
-      [ "DConv_2x2_RELU6_1x1_MultiStep",       height, depth, targetHeight,                    2, "Conv",   "relu6",  true,   "relu6" ],
-      [ "DConv_2x2_SIGMOID_1x1_MultiStep",     height, depth, targetHeight,                    2, "Conv", "sigmoid",  true ],
-      [ "DConv_2x2_SIGMOID_1x1_MultiStep",     height, depth, targetHeight,                    2, "Conv", "sigmoid",  true, "sigmoid" ],
-      [ "DConv_2x2_SIN_1x1_MultiStep",         height, depth, targetHeight,                    2, "Conv",     "sin",  true ],
-      [ "DConv_2x2_SIN_1x1_MultiStep",         height, depth, targetHeight,                    2, "Conv",     "sin",  true,     "sin" ],
+//       [ height, depth, targetHeight,                    2,  "Avg", false ],
+//       [ height, depth, targetHeight,                    2,  "Max", false ],
+      [ height, depth, targetHeight,                    2, "Conv",        "", false ],
+      [ height, depth, targetHeight,                    2, "Conv",        "",  true ],
+      [ height, depth, targetHeight,                    2, "Conv",    "relu",  true ],
+      [ height, depth, targetHeight,                    2, "Conv",    "relu",  true,    "relu" ],
+      [ height, depth, targetHeight,                    2, "Conv",   "relu6",  true ],
+      [ height, depth, targetHeight,                    2, "Conv",   "relu6",  true,   "relu6" ],
+      [ height, depth, targetHeight,                    2, "Conv", "sigmoid",  true ],
+      [ height, depth, targetHeight,                    2, "Conv", "sigmoid",  true, "sigmoid" ],
+      [ height, depth, targetHeight,                    2, "Conv",     "sin",  true ],
+      [ height, depth, targetHeight,                    2, "Conv",     "sin",  true,     "sin" ],
 
-      [ "DConv_3x3_MultiStep",                 height, depth, targetHeight,                    3, "Conv",        "", false ],
-      [ "DConv_3x3_1x1_MultiStep",             height, depth, targetHeight,                    3, "Conv",        "",  true ],
-      [ "DConv_3x3_RELU_1x1_MultiStep",        height, depth, targetHeight,                    3, "Conv",    "relu",  true ],
-      [ "DConv_3x3_RELU_1x1_MultiStep",        height, depth, targetHeight,                    3, "Conv",    "relu",  true,    "relu" ],
-      [ "DConv_3x3_RELU6_1x1_MultiStep",       height, depth, targetHeight,                    3, "Conv",   "relu6",  true ],
-      [ "DConv_3x3_RELU6_1x1_MultiStep",       height, depth, targetHeight,                    3, "Conv",   "relu6",  true,   "relu6" ],
-      [ "DConv_3x3_SIGMOID_1x1_MultiStep",     height, depth, targetHeight,                    3, "Conv", "sigmoid",  true ],
-      [ "DConv_3x3_SIGMOID_1x1_MultiStep",     height, depth, targetHeight,                    3, "Conv", "sigmoid",  true, "sigmoid" ],
-      [ "DConv_3x3_SIN_1x1_MultiStep",         height, depth, targetHeight,                    3, "Conv",     "sin",  true ],
-      [ "DConv_3x3_SIN_1x1_MultiStep",         height, depth, targetHeight,                    3, "Conv",     "sin",  true,     "sin" ],
+      [ height, depth, targetHeight,                    3, "Conv",        "", false ],
+      [ height, depth, targetHeight,                    3, "Conv",        "",  true ],
+      [ height, depth, targetHeight,                    3, "Conv",    "relu",  true ],
+      [ height, depth, targetHeight,                    3, "Conv",    "relu",  true,    "relu" ],
+      [ height, depth, targetHeight,                    3, "Conv",   "relu6",  true ],
+      [ height, depth, targetHeight,                    3, "Conv",   "relu6",  true,   "relu6" ],
+      [ height, depth, targetHeight,                    3, "Conv", "sigmoid",  true ],
+      [ height, depth, targetHeight,                    3, "Conv", "sigmoid",  true, "sigmoid" ],
+      [ height, depth, targetHeight,                    3, "Conv",     "sin",  true ],
+      [ height, depth, targetHeight,                    3, "Conv",     "sin",  true,     "sin" ],
 
-      [ "DConv_5x5_MultiStep",                 height, depth, targetHeight,                    5, "Conv",        "", false ],
-      [ "DConv_5x5_1x1_MultiStep",             height, depth, targetHeight,                    5, "Conv",        "",  true ],
-      [ "DConv_5x5_RELU_1x1_MultiStep",        height, depth, targetHeight,                    5, "Conv",    "relu",  true ],
-      [ "DConv_5x5_RELU_1x1_MultiStep",        height, depth, targetHeight,                    5, "Conv",    "relu",  true,    "relu" ],
-      [ "DConv_5x5_RELU6_1x1_MultiStep",       height, depth, targetHeight,                    5, "Conv",   "relu6",  true ],
-      [ "DConv_5x5_RELU6_1x1_MultiStep",       height, depth, targetHeight,                    5, "Conv",   "relu6",  true,   "relu6" ],
-      [ "DConv_5x5_SIGMOID_1x1_MultiStep",     height, depth, targetHeight,                    5, "Conv", "sigmoid",  true ],
-      [ "DConv_5x5_SIGMOID_1x1_MultiStep",     height, depth, targetHeight,                    5, "Conv", "sigmoid",  true, "sigmoid" ],
-      [ "DConv_5x5_SIN_1x1_MultiStep",         height, depth, targetHeight,                    5, "Conv",     "sin",  true ],
-      [ "DConv_5x5_SIN_1x1_MultiStep",         height, depth, targetHeight,                    5, "Conv",     "sin",  true,     "sin" ],
+      [ height, depth, targetHeight,                    5, "Conv",        "", false ],
+      [ height, depth, targetHeight,                    5, "Conv",        "",  true ],
+      [ height, depth, targetHeight,                    5, "Conv",    "relu",  true ],
+      [ height, depth, targetHeight,                    5, "Conv",    "relu",  true,    "relu" ],
+      [ height, depth, targetHeight,                    5, "Conv",   "relu6",  true ],
+      [ height, depth, targetHeight,                    5, "Conv",   "relu6",  true,   "relu6" ],
+      [ height, depth, targetHeight,                    5, "Conv", "sigmoid",  true ],
+      [ height, depth, targetHeight,                    5, "Conv", "sigmoid",  true, "sigmoid" ],
+      [ height, depth, targetHeight,                    5, "Conv",     "sin",  true ],
+      [ height, depth, targetHeight,                    5, "Conv",     "sin",  true,     "sin" ],
 
-      [ "DConv_6x6_MultiStep",                 height, depth, targetHeight,                    6, "Conv",        "", false ],
-      [ "DConv_6x6_1x1_MultiStep",             height, depth, targetHeight,                    6, "Conv",        "",  true ],
-      [ "DConv_6x6_RELU_1x1_MultiStep",        height, depth, targetHeight,                    6, "Conv",    "relu",  true ],
-      [ "DConv_6x6_RELU_1x1_MultiStep",        height, depth, targetHeight,                    6, "Conv",    "relu",  true,    "relu" ],
-      [ "DConv_6x6_RELU6_1x1_MultiStep",       height, depth, targetHeight,                    6, "Conv",   "relu6",  true ],
-      [ "DConv_6x6_RELU6_1x1_MultiStep",       height, depth, targetHeight,                    6, "Conv",   "relu6",  true,   "relu6" ],
-      [ "DConv_6x6_SIGMOID_1x1_MultiStep",     height, depth, targetHeight,                    6, "Conv", "sigmoid",  true ],
-      [ "DConv_6x6_SIGMOID_1x1_MultiStep",     height, depth, targetHeight,                    6, "Conv", "sigmoid",  true, "sigmoid" ],
-      [ "DConv_6x6_SIN_1x1_MultiStep",         height, depth, targetHeight,                    6, "Conv",     "sin",  true ],
-      [ "DConv_6x6_SIN_1x1_MultiStep",         height, depth, targetHeight,                    6, "Conv",     "sin",  true,     "sin" ],
+      [ height, depth, targetHeight,                    6, "Conv",        "", false ],
+      [ height, depth, targetHeight,                    6, "Conv",        "",  true ],
+      [ height, depth, targetHeight,                    6, "Conv",    "relu",  true ],
+      [ height, depth, targetHeight,                    6, "Conv",    "relu",  true,    "relu" ],
+      [ height, depth, targetHeight,                    6, "Conv",   "relu6",  true ],
+      [ height, depth, targetHeight,                    6, "Conv",   "relu6",  true,   "relu6" ],
+      [ height, depth, targetHeight,                    6, "Conv", "sigmoid",  true ],
+      [ height, depth, targetHeight,                    6, "Conv", "sigmoid",  true, "sigmoid" ],
+      [ height, depth, targetHeight,                    6, "Conv",     "sin",  true ],
+      [ height, depth, targetHeight,                    6, "Conv",     "sin",  true,     "sin" ],
 
-      [ "DConv_11x11_MultiStep",               height, depth, targetHeight,                    11, "Conv",        "", false ],
-      [ "DConv_11x11_1x1_MultiStep",           height, depth, targetHeight,                    11, "Conv",        "",  true ],
-      [ "DConv_11x11_RELU_1x1_MultiStep",      height, depth, targetHeight,                    11, "Conv",    "relu",  true ],
-      [ "DConv_11x11_RELU_1x1_MultiStep",      height, depth, targetHeight,                    11, "Conv",    "relu",  true,    "relu" ],
-      [ "DConv_11x11_RELU6_1x1_MultiStep",     height, depth, targetHeight,                    11, "Conv",   "relu6",  true ],
-      [ "DConv_11x11_RELU6_1x1_MultiStep",     height, depth, targetHeight,                    11, "Conv",   "relu6",  true,   "relu6" ],
-      [ "DConv_11x11_SIGMOID_1x1_MultiStep",   height, depth, targetHeight,                    11, "Conv", "sigmoid",  true ],
-      [ "DConv_11x11_SIGMOID_1x1_MultiStep",   height, depth, targetHeight,                    11, "Conv", "sigmoid",  true, "sigmoid" ],
-      [ "DConv_11x11_SIN_1x1_MultiStep",       height, depth, targetHeight,                    11, "Conv",     "sin",  true ],
-      [ "DConv_11x11_SIN_1x1_MultiStep",       height, depth, targetHeight,                    11, "Conv",     "sin",  true,     "sin" ],
+      [ height, depth, targetHeight,                    11, "Conv",        "", false ],
+      [ height, depth, targetHeight,                    11, "Conv",        "",  true ],
+      [ height, depth, targetHeight,                    11, "Conv",    "relu",  true ],
+      [ height, depth, targetHeight,                    11, "Conv",    "relu",  true,    "relu" ],
+      [ height, depth, targetHeight,                    11, "Conv",   "relu6",  true ],
+      [ height, depth, targetHeight,                    11, "Conv",   "relu6",  true,   "relu6" ],
+      [ height, depth, targetHeight,                    11, "Conv", "sigmoid",  true ],
+      [ height, depth, targetHeight,                    11, "Conv", "sigmoid",  true, "sigmoid" ],
+      [ height, depth, targetHeight,                    11, "Conv",     "sin",  true ],
+      [ height, depth, targetHeight,                    11, "Conv",     "sin",  true,     "sin" ],
     ];
 
     // Create test filters.
@@ -136,11 +136,16 @@ class Base {
       return testFilters;
     });
 
+    // TestCanvas
+    this.testCnavas = document.createElement( "canvas" );
+    this.testCnavas.height = height;
+    this.testCnavas.width = width;
+
     // Initialize progress accumulator.
     
-    // "+2" for test_ResizeNearestNeighbor and test_ResizeBilinear.
+    // "+3" for test_FromPixels, test_ResizeNearestNeighbor and test_ResizeBilinear.
     // "*2" for compiling (with assert) and profiling.
-    progressToAdvance.total = ( this.testFiltersArray.length + 2 ) * 2;
+    progressToAdvance.total = ( this.testFiltersArray.length + 3 ) * 2;
     progressToAdvance.accumulation = 0;
   }
 
@@ -158,11 +163,10 @@ class Base {
     this.testFiltersSpecTable = null;
   }
 
-  // Test depthwise convolution (2D) by 3x3 filter with stride 2
-  test_DepthwiseConv2d_3x3_Stride2( bReturn ) {
+  // Test from-pixels
+  test_FromPixels( bReturn ) {
     return tf.tidy( () => {
-      let t = this.dataTensor3d.depthwiseConv2d(
-                this.depthwiseConv_3x3.depthwiseConvFiltersTensor4dArray[ 0 ], 2, "same" );
+      let t = tf.browser.fromPixels( this.testCnavas, 4 );  // 4 channels.
       if ( bReturn )
         return t;
     });
@@ -188,6 +192,16 @@ class Base {
     });
   }
 
+  // Test depthwise convolution (2D) by 3x3 filter with stride 2
+  test_DepthwiseConv2d_3x3_Stride2( bReturn ) {
+    return tf.tidy( () => {
+      let t = this.dataTensor3d.depthwiseConv2d(
+                this.depthwiseConv_3x3.depthwiseConvFiltersTensor4dArray[ 0 ], 2, "same" );
+      if ( bReturn )
+        return t;
+    });
+  }
+
   /** Advance the progressToAdvance, and report progressToYield to progressReceiver. */
   * progressAdvanceYield() {
     ++this.progressToAdvance.accumulation;
@@ -204,13 +218,35 @@ class Base {
   async * profilesGenerator() {
     let resultProfiles = [];
 
-//    tf.tidy( () => {
-
-//      let quarterTensor_3x3_Stride2 =             this.test_DepthwiseConv2d_3x3_Stride2( true );
-      let quarterTensor_ResizeNearestNeighbor =   this.test_ResizeNearestNeighbor( true );
+    {
+      let tensor_FromPixels = this.test_FromPixels( true );
       yield* this.progressAdvanceYield();
 
-      let quarterTensor_ResizeBilinear =          this.test_ResizeBilinear( true );
+      tf.util.assert(
+        4 == tensor_FromPixels.rank ),
+        `${tensor_FromPixels.rank} != 4`);
+
+      tf.util.assert(
+        tensor_FromPixels.shape[ 0 ] == this.height ),
+        `fromPixels Height ${tensor_FromPixels.shape[ 0 ]} != ${this.height}`);
+
+      tf.util.assert(
+        tensor_FromPixels.shape[ 1 ] == this.width ),
+        `fromPixels Width ${tensor_FromPixels.shape[ 1 ]} != ${this.width}`);
+
+      tf.util.assert(
+        4 == tensor_FromPixels.shape[ 2 ] ),
+        `fromPixels Depth ${tensor_FromPixels.shape[ 1 ]} != 4`);
+
+      tensor_FromPixels.dispose();
+    }
+
+    {
+//      let quarterTensor_3x3_Stride2 =             this.test_DepthwiseConv2d_3x3_Stride2( true );
+      let tensor_ResizeNearestNeighbor =   this.test_ResizeNearestNeighbor( true );
+      yield* this.progressAdvanceYield();
+
+      let tensor_ResizeBilinear =          this.test_ResizeBilinear( true );
       yield* this.progressAdvanceYield();
 
 //       tf.util.assert(
@@ -222,26 +258,32 @@ class Base {
 //         `DepthwiseConv2d_3x3_Stride2() != ResizeBilinear()`);
 
       tf.util.assert(
-        tf.util.arraysEqual( quarterTensor_ResizeBilinear.shape, quarterTensor_ResizeNearestNeighbor.shape ),
+        tf.util.arraysEqual( tensor_ResizeBilinear.shape, tensor_ResizeNearestNeighbor.shape ),
         `ResizeBilinear() != ResizeNearestNeighbor()`);
+      
+      tensor_ResizeNearestNeighbor.dispose();
+      tensor_ResizeBilinear.dispose();
+    }
 
-      // All test filters should generate same size result.
-      for ( let testFilters of this.testFiltersArray ) {
-        let t = testFilters.apply( this.dataTensor3d, true );
+    // All test filters should generate same size result.
+    for ( let testFilters of this.testFiltersArray ) {
+      let t = testFilters.apply( this.dataTensor3d, true );
 
-        tf.util.assert(
-          tf.util.arraysEqual( t.shape, quarterTensor_ResizeBilinear.shape ),
-          `${testFilters.name}() != ResizeBilinear()`);
+      tf.util.assert(
+        tf.util.arraysEqual( t.shape, tensor_ResizeBilinear.shape ),
+        `${testFilters.name}() != ResizeBilinear()`);
 
-        t.dispose();
+      t.dispose();
 
-        yield* this.progressAdvanceYield();
-      }
+      yield* this.progressAdvanceYield();
+    }
 
-//    });
 
     // The above codes also compiles the codes.
     // Since the codes compiled, their execute time can be tested now.
+
+    resultProfiles.push( await this.logProfile( "FromPixels", this.test_FromPixels.bind( this ) ) );
+    yield* this.progressAdvanceYield();
 
     resultProfiles.push( await this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) ) );
     yield* this.progressAdvanceYield();
