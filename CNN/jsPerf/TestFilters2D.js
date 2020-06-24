@@ -15,13 +15,13 @@ class Base {
    * @param strAvgMaxConv     "Avg" or "Max" or "Conv". for average pooling, max pooling, depthwise convolution.
    *
    * @param depthwiseActivationName
-   *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "sin".
+   *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
    *
    * @param filterHeight      The height (and width) of each depthwise convolution.
    * @param bPointwise        If true, there will be pointwise convolution after every layer of depthwise convolution.
    *
    * @param pointwiseActivationName
-   *   The activation function name after pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "sin".
+   *   The activation function name after pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
    * If ( bPointwise == false ), this activation function will be ignored.
    */
   init( sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, depthwiseActivationName, bPointwise, pointwiseActivationName ) {
@@ -45,6 +45,7 @@ class Base {
       case "relu":    this.depthwiseActivationFunction = tf.relu;    break;
       case "relu6":   this.depthwiseActivationFunction = tf.relu6;   break;
       case "sigmoid": this.depthwiseActivationFunction = tf.sigmoid; break;
+      case "tanh":    this.depthwiseActivationFunction = tf.tanh;     break;
       case "sin":     this.depthwiseActivationFunction = tf.sin;     break;
       //default:
     }
@@ -56,6 +57,7 @@ class Base {
       case "relu":    this.pointwiseActivationFunction = tf.relu;    break;
       case "relu6":   this.pointwiseActivationFunction = tf.relu6;   break;
       case "sigmoid": this.pointwiseActivationFunction = tf.sigmoid; break;
+      case "tanh":    this.pointwiseActivationFunction = tf.tanh;     break;
       case "sin":     this.pointwiseActivationFunction = tf.sin;     break;
       //default:
     }
