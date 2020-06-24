@@ -149,7 +149,7 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
     "backend", "kernelMs", "wallMs",
     "newBytes", "newTensors", "peakBytes" ] );
 
-  let digitsCount = 6;
+  let digitsCount = 4;
 
   let profileCount = profilesWebGL.length;
   for ( let i = 0; i < profileCount; ++i ) {
