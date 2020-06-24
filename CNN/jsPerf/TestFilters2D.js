@@ -86,8 +86,8 @@ class Base {
 
     // Every element (Tensor4d) is a depthwiseFilters for one layer (i.e. one step).
     this.depthwiseFiltersTensor4dArray = tf.tidy( () => {
-      let filtersTensor4dArray = new Array( this.stepCount );
-      for ( let i = 0; i < this.stepCount; ++i ) {
+      let filtersTensor4dArray = new Array( this.blockCount );
+      for ( let i = 0; i < this.blockCount; ++i ) {
         if ( this.bDepthwiseConv ) {
           let filtersTensor1d = tf.range( 0, depthwiseFiltersValueCount, 1 );
           let filtersTensor4d = filtersTensor1d.reshape( this.depthwiseFiltersShape );
@@ -101,8 +101,8 @@ class Base {
 
     // Every element (Tensor4d) is a pointwiseFilters for one layer (i.e. one step).
     this.pointwiseFiltersTensor4dArray = tf.tidy( () => {
-      let filtersTensor4dArray = new Array( this.stepCount );
-      for ( let i = 0; i < this.stepCount; ++i ) {
+      let filtersTensor4dArray = new Array( this.blockCount );
+      for ( let i = 0; i < this.blockCount; ++i ) {
         if ( bPointwise ) {
           let filtersTensor1d = tf.range( 0, pointwiseFiltersValueCount, 1 );
           let filtersTensor4d = filtersTensor1d.reshape( this.pointwiseFiltersShape );
