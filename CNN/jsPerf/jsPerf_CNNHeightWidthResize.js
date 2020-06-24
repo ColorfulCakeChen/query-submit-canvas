@@ -156,14 +156,14 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
 //    let profileWASM = profilesWASM[ i ];
 
     addOneLineCells( tbody, "td", [
-      `${profileWebGL.title} (${profileWebGL.backendName})`,
+      `(${profileWebGL.backendName}) ${profileWebGL.title}`,
       profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
       profileWebGL.newBytes, profileWebGL.newTensors, profileWebGL.peakBytes ] );
 
     let profileCPU = profilesCPU[ i ];
 
     addOneLineCells( tbody, "td", [
-      `${profileCPU.title} (${profileCPU.backendName})`,
+      `(${profileCPU.backendName})`,
       profileCPU.kernelMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
       "", "", "" ] );
   }
