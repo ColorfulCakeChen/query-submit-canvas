@@ -1,3 +1,4 @@
+import * as PartTime from "../PartTime.js";
 import * as TestFilters2D from "./TestFilters2D.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
@@ -132,28 +133,29 @@ class Base {
   }
 
   /** Advance the progressToAdvance, and report progressToYield to progressReceiver. */
-  progressAdvanveReport() {
-      ++this.progressToAdvance.accumulation;
-      this.progressReceiver.setValueMax( this.progressToYield );
+  * progressAdvanceYield() {
+    ++this.progressToAdvance.accumulation;
+    yield this.progressToYield;
   }
 
   /**
    * Testing whether the results of different implementation are the same.
    *
-   * @return {Object[]}
-   *   Return array of profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs }.
+   * @yield {ValueMax.Percentage.Aggregate or Object[]}
+   *   Yield ( value = progressToYield ) when ( done = false ).
+   *   Yield ( value = array of profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs } ) when ( done = true ).
    */
-  async generateProfiles() {
+  async * profilesGenerator() {
     let resultProfiles = [];
 
-    tf.tidy( () => {
+//    tf.tidy( () => {
 
 //      let quarterTensor_3x3_Stride2 =             this.test_DepthwiseConv2d_3x3_Stride2( true );
       let quarterTensor_ResizeNearestNeighbor =   this.test_ResizeNearestNeighbor( true );
-      this.progressAdvanveReport();
+      yield* this.progressAdvanceYield();
 
       let quarterTensor_ResizeBilinear =          this.test_ResizeBilinear( true );
-      this.progressAdvanveReport();
+      yield* this.progressAdvanceYield();
 
 //       tf.util.assert(
 //         tf.util.arraysEqual( quarterTensor_11x11.shape, quarterTensor_3x3_Stride2.shape ),
@@ -177,19 +179,19 @@ class Base {
 
         t.dispose();
 
-        this.progressAdvanveReport();
+        yield* this.progressAdvanceYield();
       });
 
-    });
+//    });
 
     // The above codes also compiles the codes.
     // Since the codes compiled, their execute time can be tested now.
 
     resultProfiles.push( await this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) ) );
-    this.progressAdvanveReport();
+    yield* this.progressAdvanceYield();
 
     resultProfiles.push( await this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) ) );
-    this.progressAdvanveReport();
+    yield* this.progressAdvanceYield();
 
     // All test filters in array.
     for ( let testFilters of this.testFiltersArray ) {
@@ -197,9 +199,28 @@ class Base {
       resultProfiles.push(
         await this.logProfile( testFilters.name, testFilters.apply.bind( testFilters, this.dataTensor3d, false ) ) );
 
-      this.progressAdvanveReport();
+      yield* this.progressAdvanceYield();
     }
 
+    return resultProfiles;
+  }
+
+  /**
+   * Testing whether the results of different implementation are the same.
+   *
+   * @return {Object[]}
+   *   Return array of profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs }.
+   */
+  async generateProfiles() {
+    let delayMilliseconds = 0;
+    let generator = this.profilesGenerator();
+    let resultProfiles = await PartTime.forOf(
+      generator,
+      ( valueMax ) => { this.progressReceiver.setValueMax( valueMax ); }, // Report progress to UI.
+      delayMilliseconds
+    );
+
+    this.progressReceiver.informDone(); // Inform UI progress done.
     return resultProfiles;
   }
 
