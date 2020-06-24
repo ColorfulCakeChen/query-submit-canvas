@@ -144,8 +144,9 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
   // Table header (top line).
   addOneLineCells( thead, "th", [
     "TestName",
-    `kernelMs (${profilesWebGL[ 0 ].backendName})`, `kernelMs (${profilesCPU[ 0 ].backendName})`,
-    `wallMs (${profilesWebGL[ 0 ].backendName})`, `wallMs (${profilesCPU[ 0 ].backendName})`,
+     "backend", "kernelMs", "wallMs",
+//     `kernelMs (${profilesWebGL[ 0 ].backendName})`, `kernelMs (${profilesCPU[ 0 ].backendName})`,
+//     `wallMs (${profilesWebGL[ 0 ].backendName})`, `wallMs (${profilesCPU[ 0 ].backendName})`,
 
 //     "backend", "kernelMs", "wallMs",
 // //    "backend", "kernelMs", "wallMs",
@@ -160,19 +161,18 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
 
     let profileWebGL = profilesWebGL[ i ];
 //    let profileWASM = profilesWASM[ i ];
+
+    addOneLineCells( tbody, "td", [
+      `${profileWebGL.title} (${profileWebGL.backendName})`,
+      profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
+      profileWebGL.newBytes, profileWebGL.newTensors, profileWebGL.peakBytes ] );
+
     let profileCPU = profilesCPU[ i ];
 
     addOneLineCells( tbody, "td", [
-      profileWebGL.title,
-
-      profileWebGL.kernelMs.toFixed( digitsCount ), profileCPU.kernelMs.toFixed( digitsCount ), 
-      profileWebGL.wallMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
-
-//       profileWebGL.backendName, profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
-// //      profileWASM.backendName, profileWASM.kernelMs.toFixed( digitsCount ), profileWASM.wallMs.toFixed( digitsCount ),
-//       profileCPU.backendName, profileCPU.kernelMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
-
-      profileWebGL.newBytes, profileWebGL.newTensors, profileWebGL.peakBytes ] );
+      `${profileCPU.title} (${profileCPU.backendName})`,
+      profileCPU.kernelMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
+      "", "", "" ] );
   }
 
 }
