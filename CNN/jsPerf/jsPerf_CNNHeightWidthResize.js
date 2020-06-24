@@ -52,19 +52,20 @@ globalThis.testCaseLoader = async function () {
   }
 
   let resultProfilesWASM;
-  {
-    await tf.setBackend("wasm")  // WASM seems no ResizeNearestNeighbor.
-    console.log("library WASM ready.");
-
-    console.log("library WASM compiling...");  // For pre-compile tensorflow.js WASM codes. (and Test correctness.)
-
-    globalThis.testCase = new HeightWidthDepth.Base(
-      testCase_Height, testCase_Width, testCase_Depth, progress, progress.WASM, progressReceiver );
-
-    resultProfilesWASM = await globalThis.testCase.generateProfiles();
-    globalThis.testCase.disposeTensors();
-    console.log("library WASM compiling done.");
-  }
+//!!! ...unfinished... Wait until tensorflow WASM mature.
+//   {
+//     await tf.setBackend("wasm")  // WASM seems no ResizeNearestNeighbor.
+//     console.log("library WASM ready.");
+//
+//     console.log("library WASM compiling...");  // For pre-compile tensorflow.js WASM codes. (and Test correctness.)
+//
+//     globalThis.testCase = new HeightWidthDepth.Base(
+//       testCase_Height, testCase_Width, testCase_Depth, progress, progress.WASM, progressReceiver );
+//
+//     resultProfilesWASM = await globalThis.testCase.generateProfiles();
+//     globalThis.testCase.disposeTensors();
+//     console.log("library WASM compiling done.");
+//   }
 
   let resultProfilesCPU;
   {
@@ -137,9 +138,11 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
   addOneLineCells( htmlTable, "th", [
     "TestName",
     "backend", "kernelMs", "wallMs",
-    "backend", "kernelMs", "wallMs",
+//    "backend", "kernelMs", "wallMs",
     "backend", "kernelMs", "wallMs",
     "newBytes", "newTensors", "peakBytes" ] );
+
+  let digitsCount = 6;
 
   let profileCount = profilesWebGL.length;
   for ( let i = 0; i < profileCount; ++i ) {
@@ -150,9 +153,9 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
 
     addOneLineCells( htmlTable, "td", [
       profileWebGL.title,
-      profileWebGL.backendName, profileWebGL.kernelMs, profileWebGL.wallMs,
-      profileWASM.backendName, profileWASM.kernelMs, profileWASM.wallMs,
-      profileCPU.backendName, profileCPU.kernelMs, profileCPU.wallMs,
+      profileWebGL.backendName, profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
+//      profileWASM.backendName, profileWASM.kernelMs.toFixed( digitsCount ), profileWASM.wallMs.toFixed( digitsCount ),
+      profileCPU.backendName, profileCPU.kernelMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
       profileWebGL.newBytes, profileWebGL.newTensors, profileWebGL.peakBytes ] );
   }
 
