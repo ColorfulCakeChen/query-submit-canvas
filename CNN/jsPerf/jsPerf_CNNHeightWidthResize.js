@@ -38,7 +38,7 @@ globalThis.testCaseLoader = async function () {
   let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
   let resultProfilesWebGL;
-  {
+  tf.tidy( () => {
     await tf.setBackend("webgl");  // WebGL seems crashed jsPerf.
     console.log("library WebGL ready.");
 
@@ -50,7 +50,7 @@ globalThis.testCaseLoader = async function () {
     resultProfilesWebGL = await globalThis.testCase.generateProfiles();
     globalThis.testCase.disposeTensors();
     console.log("library WebGL compiling done.");
-  }
+  });
 
   let resultProfilesWASM;
 //!!! ...unfinished... Wait until tensorflow WASM mature.
