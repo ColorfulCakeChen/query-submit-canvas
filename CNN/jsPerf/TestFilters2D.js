@@ -99,18 +99,18 @@ class Base {
 
     this.depthwiseFilterHeightWidth = [ filterHeight, filterWidth ];
     this.depthwiseFiltersShape = [ filterHeight, filterWidth, sourceDepth, channelMultiplier ];
-    this.depthwiseBiasesShape =  [            1,           1, sourceDepth, channelMultiplier ];
+    this.depthwiseBiasesShape =  [            1,           1, ( sourceDepth * channelMultiplier ) ];
 
     let depthwiseFiltersValueCount = tf.util.sizeFromShape( this.depthwiseFiltersShape );
     let depthwiseBiasesValueCount =  tf.util.sizeFromShape( this.depthwiseBiasesShape );
 
     // Every element (Tensor4d) is a depthwiseFilters for one block.
     this.depthwiseFiltersTensor4dArray
-      = Base.generateTensor4dArray( this.blockCount, depthwiseFiltersValueCount, this.depthwiseFiltersShape, this.bDepthwiseConv );
+      = Base.generateTensorArray( this.blockCount, depthwiseFiltersValueCount, this.depthwiseFiltersShape, this.bDepthwiseConv );
 
-    // Every element (Tensor4d) is a depthwiseBiases for one block.
-    this.depthwiseBiasesTensor4dArray
-      = Base.generateTensor4dArray( this.blockCount, depthwiseBiasesValueCount, this.depthwiseBiasesShape, ( this.bDepthwiseConv && bDepthwiseBias ) );
+    // Every element (Tensor3d) is a depthwiseBiases for one block.
+    this.depthwiseBiasesTensor3dArray
+      = Base.generateTensorArray( this.blockCount, depthwiseBiasesValueCount, this.depthwiseBiasesShape, ( this.bDepthwiseConv && bDepthwiseBias ) );
 
 
     // Pointwise Filters and Biases
@@ -122,40 +122,42 @@ class Base {
     this.pointwiseFiltersShape = [ 1, 1, pointwiseInputDepth, pointwiseOutputDepth ];
 
     // Both input depth and output depth of pointwise bias are the same as pointwise convolution output.
-    this.pointwiseBiasesShape =  [ 1, 1, pointwiseOutputDepth, pointwiseOutputDepth ];
+    this.pointwiseBiasesShape =  [ 1, 1, pointwiseOutputDepth ];
 
     let pointwiseFiltersValueCount = tf.util.sizeFromShape( this.pointwiseFiltersShape );
     let pointwiseBiasesValueCount =  tf.util.sizeFromShape( this.pointwiseBiasesShape );
 
     // Every element (Tensor4d) is a pointwiseFilters for one block.
     this.pointwiseFiltersTensor4dArray
-      = Base.generateTensor4dArray( this.blockCount, pointwiseFiltersValueCount, this.pointwiseFiltersShape, bPointwise );
+      = Base.generateTensorArray( this.blockCount, pointwiseFiltersValueCount, this.pointwiseFiltersShape, bPointwise );
 
-    // Every element (Tensor4d) is a pointwiseBiases for one block.
-    this.pointwiseBiasesTensor4dArray
-      = Base.generateTensor4dArray( this.blockCount, pointwiseBiasesValueCount, this.pointwiseBiasesShape, ( bPointwise && bPointwiseBias ) );
+    // Every element (Tensor3d) is a pointwiseBiases for one block.
+    this.pointwiseBiasesTensor3dArray
+      = Base.generateTensorArray( this.blockCount, pointwiseBiasesValueCount, this.pointwiseBiasesShape, ( bPointwise && bPointwiseBias ) );
   }
 
   /**
-   * @param {number}   blockCount    The element count (i.e. length) of the returned array.
-   * @param {number}   valueCount    The element count of every tensor4d (which is an element of the returned array).
-   * @param {number[]} tensor4dShape The tensor's shape of every element of the returned array.
-   * @param {boolean}  bNullElement  If true, every element of the return array will be null.
-   * @return {tf.tensor4d[]} Return a array whose every element is a tensor4d (for one block) of null (if ( bNullElement == true ) ).
+   * @param {number}   blockCount     The element count (i.e. length) of the returned array.
+   * @param {number}   valueCount     The element count of every tensor4d (which is an element of the returned array).
+   * @param {number[]} newTensorShape The tensor's shape of every element of the returned array.
+   * @param {boolean}  bNullElement   If true, every element of the return array will be null.
+   *
+   * @return {tf.tensor4d[]|tf.tensor3d[]}
+   *   Return a array whose every element is a tensor4d or tensor3d (for one block), or null (if ( bNullElement == true ) ).
    */
-  static generateTensor4dArray( blockCount, valueCount, tensor4dShape, bNullElement ) {
+  static generateTensorArray( blockCount, valueCount, newTensorShape, bNullElement ) {
     return tf.tidy( () => {
-      let tensor4dArray = new Array( blockCount );
+      let tensorNewArray = new Array( blockCount );
       for ( let i = 0; i < blockCount; ++i ) {
         if ( bNullElement ) {
           let tensor1d = tf.range( 0, valueCount, 1 );
-          let tensor4d = tensor1d.reshape( tensor4dShape );
-          tensor4dArray[ i ] = tensor4d;
+          let tensorNew = tensor1d.reshape( newTensorShape );
+          tensorNewArray[ i ] = tensorNew;
         } else {
-          tensor4dArray[ i ] = null;
+          tensorNewArray[ i ] = null;
         }
       }
-      return tensor4dArray;
+      return tensorNewArray;
     });
   }
 
@@ -165,9 +167,9 @@ class Base {
       this.depthwiseFiltersTensor4dArray = null;
     }
 
-    if ( this.depthwiseBiasesTensor4dArray ) {
-      tf.dispose( this.depthwiseBiasesTensor4dArray );
-      this.depthwiseBiasesTensor4dArray = null;
+    if ( this.depthwiseBiasesTensor3dArray ) {
+      tf.dispose( this.depthwiseBiasesTensor3dArray );
+      this.depthwiseBiasesTensor3dArray = null;
     }
 
     if ( this.pointwiseFiltersTensor4dArray ) {
@@ -175,9 +177,9 @@ class Base {
       this.pointwiseFiltersTensor4dArray = null;
     }
 
-    if ( this.pointwiseBiasesTensor4dArray ) {
-      tf.dispose( this.pointwiseBiasesTensor4dArray );
-      this.pointwiseBiasesTensor4dArray = null;
+    if ( this.pointwiseBiasesTensor3dArray ) {
+      tf.dispose( this.pointwiseBiasesTensor3dArray );
+      this.pointwiseBiasesTensor3dArray = null;
     }
   }
 
@@ -190,7 +192,7 @@ class Base {
     let t = inputTensor, tNew;
 
     if ( this.bDepthwiseBias ) {
-      tNew = t.add( this.depthwiseBiasesTensor4dArray[ blockIndex ] );
+      tNew = t.add( this.depthwiseBiasesTensor3dArray[ blockIndex ] );
       t.dispose();                                         // Dispose all intermediate (temporary) data.
       t = tNew;
     }
@@ -207,7 +209,7 @@ class Base {
       t = tNew;
 
       if ( this.bPointwiseBias ) {
-        tNew = t.add( this.pointwiseBiasesTensor4dArray[ blockIndex ] );
+        tNew = t.add( this.pointwiseBiasesTensor3dArray[ blockIndex ] );
         t.dispose();                                       // Dispose all intermediate (temporary) data.
         t = tNew;
       }
