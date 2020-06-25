@@ -116,6 +116,15 @@ class Base {
       return testFilters;
     });
 
+    // Extra test more channel.
+    {
+      let testFilters = new TestFilters2D.Base();
+      testFilters.init( height, depth * 2000, targetHeight,
+        filterHeight_OneStep, "Conv",  true,     "sin",  true,  true,     "sin"
+      );
+      this.testFiltersArray.push( testFilters );
+    }
+
     // TestCanvas
     this.testCnavas = document.createElement( "canvas" );
     this.testCnavas.height = height;
