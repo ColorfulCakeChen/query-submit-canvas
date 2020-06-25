@@ -57,7 +57,7 @@ class Base {
 
     // [ filterHeight, strAvgMaxConv, bDepthwiseBias, depthwiseActivationName, bPointwise, bPointwiseBias, pointwiseActivationName ]
     this.testFiltersSpecTable = [
-      [ filterHeight_OneStep,   1, "Conv", false,        "", false, false,        "" ],
+      [ filterHeight_OneStep,   1, "Conv", false,        "",  true, false,        "" ],
       [ filterHeight_OneStep,   1, "Conv",  true,        "",  true,  true,        "" ],
       [ filterHeight_OneStep,   1, "Conv",  true,    "relu",  true,  true,    "relu" ],
 //       [ filterHeight_OneStep,   1, "Conv",  true,   "relu6",  true,  true,   "relu6" ],
@@ -66,23 +66,23 @@ class Base {
       [ filterHeight_OneStep,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
       [ filterHeight_OneStep, 200, "Conv",  true,     "sin",  true,  true,     "sin" ],
 
-      [                    2,   1, "Conv", false,        "", false, false,        "" ],
+      [                    2,   1, "Conv", false,        "",  true, false,        "" ],
       [                    2,   1, "Conv",  true,        "",  true,  true,        "" ],
       [                    2,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
 
-      [                    3,   1, "Conv", false,        "", false, false,        "" ],
+      [                    3,   1, "Conv", false,        "",  true, false,        "" ],
       [                    3,   1, "Conv",  true,        "",  true,  true,        "" ],
       [                    3,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
 
-      [                    5,   1, "Conv", false,        "", false, false,        "" ],
+      [                    5,   1, "Conv", false,        "",  true, false,        "" ],
       [                    5,   1, "Conv",  true,        "",  true,  true,        "" ],
       [                    5,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
 
-      [                    7,   1, "Conv", false,        "", false, false,        "" ],
+      [                    7,   1, "Conv", false,        "",  true, false,        "" ],
       [                    7,   1, "Conv",  true,        "",  true,  true,        "" ],
       [                    7,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
 
-      [                    9,   1, "Conv", false,        "", false, false,        "" ],
+      [                    9,   1, "Conv", false,        "",  true, false,        "" ],
       [                    9,   1, "Conv",  true,        "",  true,  true,        "" ],
       [                    9,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
     ];
