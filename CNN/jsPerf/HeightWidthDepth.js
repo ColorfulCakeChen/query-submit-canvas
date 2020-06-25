@@ -57,56 +57,34 @@ class Base {
 
     // [ filterHeight, strAvgMaxConv, bDepthwiseBias, depthwiseActivationName, bPointwise, bPointwiseBias, pointwiseActivationName ]
     this.testFiltersSpecTable = [
-//      [ filterHeight_OneStep,  "Avg", false ],
-//      [ filterHeight_OneStep,  "Avg",  true ],
-//      [ filterHeight_OneStep,  "Max", false ],
-      [ filterHeight_OneStep, "Conv", false,        "", false, false,        "" ],
-      [ filterHeight_OneStep, "Conv",  true,        "",  true,  true,        "" ],
-      [ filterHeight_OneStep, "Conv",  true,    "relu",  true,  true,    "relu" ],
-//       [ filterHeight_OneStep, "Conv",  true,   "relu6",  true,  true,   "relu6" ],
-//       [ filterHeight_OneStep, "Conv",  true, "sigmoid",  true,  true, "sigmoid" ],
-      [ filterHeight_OneStep, "Conv",  true,    "tanh",  true,  true,    "tanh" ],
-      [ filterHeight_OneStep, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [ filterHeight_OneStep,   1, "Conv", false,        "", false, false,        "" ],
+      [ filterHeight_OneStep,   1, "Conv",  true,        "",  true,  true,        "" ],
+      [ filterHeight_OneStep,   1, "Conv",  true,    "relu",  true,  true,    "relu" ],
+//       [ filterHeight_OneStep,   1, "Conv",  true,   "relu6",  true,  true,   "relu6" ],
+//       [ filterHeight_OneStep,   1, "Conv",  true, "sigmoid",  true,  true, "sigmoid" ],
+      [ filterHeight_OneStep,   1, "Conv",  true,    "tanh",  true,  true,    "tanh" ],
+      [ filterHeight_OneStep,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [ filterHeight_OneStep, 200, "Conv",  true,     "sin",  true,  true,     "sin" ],
 
-      [                    2, "Conv", false,        "", false, false,        "" ],
-      [                    2, "Conv",  true,        "",  true,  true,        "" ],
-//       [                    2, "Conv",  true,    "relu",  true,  true,    "relu" ],
-//       [                    2, "Conv",  true,   "relu6",  true,  true,   "relu6" ],
-//       [                    2, "Conv",  true, "sigmoid",  true,  true, "sigmoid" ],
-//       [                    2, "Conv",  true,    "tanh",  true,  true,    "tanh" ],
-      [                    2, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [                    2,   1, "Conv", false,        "", false, false,        "" ],
+      [                    2,   1, "Conv",  true,        "",  true,  true,        "" ],
+      [                    2,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
 
-      [                    3, "Conv", false,        "", false, false,        "" ],
-      [                    3, "Conv",  true,        "",  true,  true,        "" ],
-//       [                    3, "Conv",  true,    "relu",  true,  true,    "relu" ],
-//       [                    3, "Conv",  true,   "relu6",  true,  true,   "relu6" ],
-//       [                    3, "Conv",  true, "sigmoid",  true,  true, "sigmoid" ],
-//       [                    3, "Conv",  true,    "tanh",  true,  true,    "tanh" ],
-      [                    3, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [                    3,   1, "Conv", false,        "", false, false,        "" ],
+      [                    3,   1, "Conv",  true,        "",  true,  true,        "" ],
+      [                    3,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
 
-      [                    5, "Conv", false,        "", false, false,        "" ],
-      [                    5, "Conv",  true,        "",  true,  true,        "" ],
-//       [                    5, "Conv",  true,    "relu",  true,  true,    "relu" ],
-//       [                    5, "Conv",  true,   "relu6",  true,  true,   "relu6" ],
-//       [                    5, "Conv",  true, "sigmoid",  true,  true, "sigmoid" ],
-//       [                    5, "Conv",  true,    "tanh",  true,  true,    "tanh" ],
-      [                    5, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [                    5,   1, "Conv", false,        "", false, false,        "" ],
+      [                    5,   1, "Conv",  true,        "",  true,  true,        "" ],
+      [                    5,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
 
-      [                    7, "Conv", false,        "", false, false,        "" ],
-      [                    7, "Conv",  true,        "",  true,  true,        "" ],
-//       [                    7, "Conv",  true,    "relu",  true,  true,    "relu" ],
-//       [                    7, "Conv",  true,   "relu6",  true,  true,   "relu6" ],
-//       [                    7, "Conv",  true, "sigmoid",  true,  true, "sigmoid" ],
-//       [                    7, "Conv",  true,    "tanh",  true,  true,    "tanh" ],
-      [                    7, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [                    7,   1, "Conv", false,        "", false, false,        "" ],
+      [                    7,   1, "Conv",  true,        "",  true,  true,        "" ],
+      [                    7,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
 
-      [                    9, "Conv", false,        "", false, false,        "" ],
-      [                    9, "Conv",  true,        "",  true,  true,        "" ],
-//       [                    9, "Conv",  true,    "relu",  true,  true,    "relu" ],
-//       [                    9, "Conv",  true,   "relu6",  true,  true,   "relu6" ],
-//       [                    9, "Conv",  true, "sigmoid",  true,  true, "sigmoid" ],
-//       [                    9, "Conv",  true,    "tanh",  true,  true,    "tanh" ],
-      [                    9, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [                    9,   1, "Conv", false,        "", false, false,        "" ],
+      [                    9,   1, "Conv",  true,        "",  true,  true,        "" ],
+      [                    9,   1, "Conv",  true,     "sin",  true,  true,     "sin" ],
     ];
 
     // Create test filters.
@@ -116,14 +94,14 @@ class Base {
       return testFilters;
     });
 
-    // Extra test more channel.
-    {
-      let testFilters = new TestFilters2D.Base();
-      testFilters.init( height, depth * 200, targetHeight,
-        filterHeight_OneStep, "Conv",  true,     "sin",  true,  true,     "sin"
-      );
-      this.testFiltersArray.push( testFilters );
-    }
+//     // Extra test more channel.
+//     {
+//       let testFilters = new TestFilters2D.Base();
+//       testFilters.init( height, depth * 200, targetHeight,
+//         filterHeight_OneStep, "Conv",  true,     "sin",  true,  true,     "sin"
+//       );
+//       this.testFiltersArray.push( testFilters );
+//     }
 
     // TestCanvas
     this.testCnavas = document.createElement( "canvas" );
