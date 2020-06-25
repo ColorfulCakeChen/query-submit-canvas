@@ -46,7 +46,9 @@ class Base {
 
     let differenceHeight = sourceHeight - targetHeight;
     let filterWidth = filterHeight;
+
     this.channelMultiplier = channelMultiplier;
+    this.channelCountPerStage = sourceDepth * channelMultiplier;
 
     this.strAvgMaxConv = strAvgMaxConv;
     switch ( strAvgMaxConv ) {
@@ -87,7 +89,7 @@ class Base {
     this.blockCount = Math.floor( differenceHeight / heightReducedPerStep );
 
     // e.g. "D24_DConv_101x101_DBias_RELU__PConv_PBias_RELU__Block_1"
-    this.name = `D${sourceDepth * channelMultiplier}_D${strAvgMaxConv}_${filterHeight}x${filterHeight}`
+    this.name = `D${this.channelCountPerStage}_D${strAvgMaxConv}_${filterHeight}x${filterHeight}`
       + `${ ( this.bDepthwiseBias ) ? ( "_DBias" ) : ""}`
       + `${ ( this.depthwiseActivationFunction ) ? ( "_" + depthwiseActivationName ) : ""}`
       + `${ ( this.bPointwise ) ? "__PConv" : ""}`
@@ -99,25 +101,25 @@ class Base {
     // Depthwise Filters and Biases
 
     this.depthwiseFilterHeightWidth = [ filterHeight, filterWidth ];
-    this.depthwiseFiltersShape = [ filterHeight, filterWidth, sourceDepth, channelMultiplier ];
-    this.depthwiseBiasesShape =  [            1,           1, ( sourceDepth * channelMultiplier ) ];
 
-    let depthwiseFiltersValueCount = tf.util.sizeFromShape( this.depthwiseFiltersShape );
-    let depthwiseBiasesValueCount =  tf.util.sizeFromShape( this.depthwiseBiasesShape );
+    // First stage's depthwise filters will expand channel count from sourceDepth to ( sourceDepth * channelMultiplier ).
+    this.depthwiseFiltersShapeFirst = [ filterHeight, filterWidth, sourceDepth,               channelMultiplier ];
+    this.depthwiseFiltersShape =      [ filterHeight, filterWidth, this.channelCountPerStage,                 1 ];
+    this.depthwiseBiasesShape =       [            1,           1, this.channelCountPerStage ];
 
     // Every element (Tensor4d) is a depthwiseFilters for one block.
     this.depthwiseFiltersTensor4dArray
-      = Base.generateTensorArray( this.blockCount, depthwiseFiltersValueCount, this.depthwiseFiltersShape, this.bDepthwiseConv );
+      = Base.generateTensorArray( this.blockCount, this.depthwiseFiltersShapeFirst, this.depthwiseFiltersShape, this.bDepthwiseConv );
 
     // Every element (Tensor3d) is a depthwiseBiases for one block.
     this.depthwiseBiasesTensor3dArray
-      = Base.generateTensorArray( this.blockCount, depthwiseBiasesValueCount, this.depthwiseBiasesShape, ( this.bDepthwiseConv && bDepthwiseBias ) );
+      = Base.generateTensorArray( this.blockCount, null, this.depthwiseBiasesShape, ( this.bDepthwiseConv && bDepthwiseBias ) );
 
 
     // Pointwise Filters and Biases
 
-    let pointwiseInputDepth =  sourceDepth;
-    let pointwiseOutputDepth = sourceDepth; // Assume output depth is the same as input.
+    let pointwiseInputDepth =  this.channelCountPerStage;
+    let pointwiseOutputDepth = this.channelCountPerStage; // Assume output depth is the same as input.
 
     this.pointwiseFilterHeightWidth = [ 1, 1 ];
     this.pointwiseFiltersShape = [ 1, 1, pointwiseInputDepth, pointwiseOutputDepth ];
@@ -125,34 +127,43 @@ class Base {
     // Both input depth and output depth of pointwise bias are the same as pointwise convolution output.
     this.pointwiseBiasesShape =  [ 1, 1, pointwiseOutputDepth ];
 
-    let pointwiseFiltersValueCount = tf.util.sizeFromShape( this.pointwiseFiltersShape );
-    let pointwiseBiasesValueCount =  tf.util.sizeFromShape( this.pointwiseBiasesShape );
-
     // Every element (Tensor4d) is a pointwiseFilters for one block.
     this.pointwiseFiltersTensor4dArray
-      = Base.generateTensorArray( this.blockCount, pointwiseFiltersValueCount, this.pointwiseFiltersShape, bPointwise );
+      = Base.generateTensorArray( this.blockCount, null, this.pointwiseFiltersShape, bPointwise );
 
     // Every element (Tensor3d) is a pointwiseBiases for one block.
     this.pointwiseBiasesTensor3dArray
-      = Base.generateTensorArray( this.blockCount, pointwiseBiasesValueCount, this.pointwiseBiasesShape, ( bPointwise && bPointwiseBias ) );
+      = Base.generateTensorArray( this.blockCount, null, this.pointwiseBiasesShape, ( bPointwise && bPointwiseBias ) );
   }
 
   /**
-   * @param {number}   blockCount     The element count (i.e. length) of the returned array.
-   * @param {number}   valueCount     The element count of every tensor4d (which is an element of the returned array).
-   * @param {number[]} newTensorShape The tensor's shape of every element of the returned array.
-   * @param {boolean}  bNullElement   If true, every element of the return array will be null.
+   * @param {number}   blockCount          The element count (i.e. length) of the returned array.
+   * @param {number[]} newTensorShapeFirst The tensor's shape of first element of the returned array. If null, same as newTensorShape.
+   * @param {number[]} newTensorShape      The tensor's shape of every (except first) element of the returned array.
+   * @param {boolean}  bNullElement        If true, every element of the return array will be null.
    *
    * @return {tf.tensor4d[]|tf.tensor3d[]}
    *   Return a array whose every element is a tensor4d or tensor3d (for one block), or null (if ( bNullElement == true ) ).
    */
-  static generateTensorArray( blockCount, valueCount, newTensorShape, bNullElement ) {
+  static generateTensorArray( blockCount, newTensorShapeFirst, newTensorShape, bNullElement ) {
     return tf.tidy( () => {
+      if ( !newTensorShapeFirst )
+        newTensorShapeFirst = newTensorShape;
+
+      let valueCountFirst = tf.util.sizeFromShape( newTensorShape );  // first element (i.e. first stage)
+      let valueCount = tf.util.sizeFromShape( newTensorShape );
+
+      let tensor1d, tensorNew;
       let tensorNewArray = new Array( blockCount );
       for ( let i = 0; i < blockCount; ++i ) {
         if ( bNullElement ) {
-          let tensor1d = tf.range( 0, valueCount, 1 );
-          let tensorNew = tensor1d.reshape( newTensorShape );
+          if ( 0 == i ) {
+            tensor1d = tf.range( 0, valueCountFirst, 1 );
+            tensorNew = tensor1d.reshape( newTensorShapeFirst );
+          } else {
+            tensor1d = tf.range( 0, valueCount, 1 );
+            tensorNew = tensor1d.reshape( newTensorShape );
+          }
           tensorNewArray[ i ] = tensorNew;
         } else {
           tensorNewArray[ i ] = null;
