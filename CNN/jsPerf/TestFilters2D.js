@@ -34,7 +34,8 @@ class Base {
    * If ( bPointwise == false ), this activation function will be also ignored.
    */
   init(
-    sourceHeight, sourceDepth, targetHeight, filterHeight,
+    sourceHeight, sourceDepth, targetHeight,
+    filterHeight,
     strAvgMaxConv, bDepthwiseBias, depthwiseActivationName,
     bPointwise, bPointwiseBias, pointwiseActivationName ) {
 
