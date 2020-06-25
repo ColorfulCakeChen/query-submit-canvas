@@ -13,6 +13,7 @@ class Base {
    * @param sourceDepth       The channel count of the source image.
    * @param targetHeight      The taregt image height (and width).
    * @param filterHeight      The height (and width) of each depthwise convolution.
+   * @param channelMultiplier Every input channel will become so many channels.
    *
    * @param strAvgMaxConv
    *   Depthwise operation. "Avg" or "Max" or "Conv" for average pooling, max pooling, depthwise convolution.
@@ -35,7 +36,7 @@ class Base {
    */
   init(
     sourceHeight, sourceDepth, targetHeight,
-    filterHeight,
+    filterHeight, channelMultiplier,
     strAvgMaxConv, bDepthwiseBias, depthwiseActivationName,
     bPointwise, bPointwiseBias, pointwiseActivationName ) {
 
@@ -45,7 +46,7 @@ class Base {
 
     let differenceHeight = sourceHeight - targetHeight;
     let filterWidth = filterHeight;
-    let channelMultiplier = 1;
+    this.channelMultiplier = channelMultiplier;
 
     this.strAvgMaxConv = strAvgMaxConv;
     switch ( strAvgMaxConv ) {
@@ -61,7 +62,7 @@ class Base {
       case "relu":    this.depthwiseActivationFunction = tf.relu;    break;
       case "relu6":   this.depthwiseActivationFunction = tf.relu6;   break;
       case "sigmoid": this.depthwiseActivationFunction = tf.sigmoid; break;
-      case "tanh":    this.depthwiseActivationFunction = tf.tanh;     break;
+      case "tanh":    this.depthwiseActivationFunction = tf.tanh;    break;
       case "sin":     this.depthwiseActivationFunction = tf.sin;     break;
       //default:
     }
@@ -74,7 +75,7 @@ class Base {
       case "relu":    this.pointwiseActivationFunction = tf.relu;    break;
       case "relu6":   this.pointwiseActivationFunction = tf.relu6;   break;
       case "sigmoid": this.pointwiseActivationFunction = tf.sigmoid; break;
-      case "tanh":    this.pointwiseActivationFunction = tf.tanh;     break;
+      case "tanh":    this.pointwiseActivationFunction = tf.tanh;    break;
       case "sin":     this.pointwiseActivationFunction = tf.sin;     break;
       //default:
     }
@@ -86,7 +87,7 @@ class Base {
     this.blockCount = Math.floor( differenceHeight / heightReducedPerStep );
 
     // e.g. "D24_DConv_101x101_DBias_RELU__PConv_PBias_RELU__Block_1"
-    this.name = `D${sourceDepth}_D${strAvgMaxConv}_${filterHeight}x${filterHeight}`
+    this.name = `D${sourceDepth * channelMultiplier}_D${strAvgMaxConv}_${filterHeight}x${filterHeight}`
       + `${ ( this.bDepthwiseBias ) ? ( "_DBias" ) : ""}`
       + `${ ( this.depthwiseActivationFunction ) ? ( "_" + depthwiseActivationName ) : ""}`
       + `${ ( this.bPointwise ) ? "__PConv" : ""}`
