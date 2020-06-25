@@ -12,19 +12,32 @@ class Base {
    * @param sourceHeight      The height (and width) of the source image which will be processed by apply().
    * @param sourceDepth       The channel count of the source image.
    * @param targetHeight      The taregt image height (and width).
-   * @param strAvgMaxConv     "Avg" or "Max" or "Conv". for average pooling, max pooling, depthwise convolution.
+   * @param filterHeight      The height (and width) of each depthwise convolution.
+   *
+   * @param strAvgMaxConv
+   *   Depthwise operation. "Avg" or "Max" or "Conv" for average pooling, max pooling, depthwise convolution.
+   *
+   * @param bDepthwiseBias
+   *   If true, there will be a bias after depthwise convolution.
    *
    * @param depthwiseActivationName
    *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
    *
-   * @param filterHeight      The height (and width) of each depthwise convolution.
-   * @param bPointwise        If true, there will be pointwise convolution after every layer of depthwise convolution.
+   * @param bPointwise
+   *   If true, there will be pointwise convolution after every layer of depthwise convolution.
+   *
+   * @param bPointwiseBias
+   *   If true, there will be a bias after pointwise convolution. If ( bPointwise == false ), this will be also ignored.
    *
    * @param pointwiseActivationName
    *   The activation function name after pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
-   * If ( bPointwise == false ), this activation function will be ignored.
+   * If ( bPointwise == false ), this activation function will be also ignored.
    */
-  init( sourceHeight, sourceDepth, targetHeight, filterHeight, strAvgMaxConv, depthwiseActivationName, bPointwise, pointwiseActivationName ) {
+  init(
+    sourceHeight, sourceDepth, targetHeight, filterHeight,
+    strAvgMaxConv, bDepthwiseBias, depthwiseActivationName,
+    bPointwise, bPointwiseBias, pointwiseActivationName ) {
+
     this.disposeTensors();
 
 //    this.name = name;
@@ -40,6 +53,8 @@ class Base {
       case "Conv": this.bDepthwiseConv = true;
     }
 
+    this.bDepthwiseBias = bDepthwiseBias;
+
     this.depthwiseActivationName = depthwiseActivationName;
     switch ( depthwiseActivationName ) {
       case "relu":    this.depthwiseActivationFunction = tf.relu;    break;
@@ -51,6 +66,7 @@ class Base {
     }
 
     this.bPointwise = bPointwise;
+    this.bPointwiseBias = bPointwiseBias;
 
     this.pointwiseActivationName = pointwiseActivationName;
     switch ( pointwiseActivationName ) {
@@ -61,16 +77,6 @@ class Base {
       case "sin":     this.pointwiseActivationFunction = tf.sin;     break;
       //default:
     }
-
-    this.depthwiseFiltersShape = [ filterHeight, filterWidth, sourceDepth, channelMultiplier ];
-    this.depthwiseFilterHeightWidth = [ filterHeight, filterWidth ];
-
-    let depthwiseFiltersValueCount = tf.util.sizeFromShape( this.depthwiseFiltersShape );
-
-    this.pointwiseFiltersShape = [ 1, 1, sourceDepth, sourceDepth ];  // Assume output depth is the same as input.
-    this.pointwiseFilterHeightWidth = [ 1, 1 ];
-
-    let pointwiseFiltersValueCount = tf.util.sizeFromShape( this.pointwiseFiltersShape );
 
     // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
     let heightReducedPerStep = filterHeight - 1;
@@ -86,36 +92,68 @@ class Base {
       + `_Block_${this.blockCount}`
     ;
 
-    // Every element (Tensor4d) is a depthwiseFilters for one layer (i.e. one step).
-    this.depthwiseFiltersTensor4dArray = tf.tidy( () => {
-      let filtersTensor4dArray = new Array( this.blockCount );
-      for ( let i = 0; i < this.blockCount; ++i ) {
-        if ( this.bDepthwiseConv ) {
-          let filtersTensor1d = tf.range( 0, depthwiseFiltersValueCount, 1 );
-          let filtersTensor4d = filtersTensor1d.reshape( this.depthwiseFiltersShape );
-          filtersTensor4dArray[ i ] = filtersTensor4d;
+    // Depthwise Filters and Biases
+
+    this.depthwiseFilterHeightWidth = [ filterHeight, filterWidth ];
+    this.depthwiseFiltersShape = [ filterHeight, filterWidth, sourceDepth, channelMultiplier ];
+    this.depthwiseBiasesShape =  [            1,           1, sourceDepth, channelMultiplier ];
+
+    let depthwiseFiltersValueCount = tf.util.sizeFromShape( this.depthwiseFiltersShape );
+    let depthwiseBiasesValueCount =  tf.util.sizeFromShape( this.depthwiseBiasesShape );
+
+    // Every element (Tensor4d) is a depthwiseFilters for one block.
+    this.depthwiseFiltersTensor4dArray
+      = Base.generateTensor4dArray( this.blockCount, depthwiseFiltersValueCount, this.depthwiseFiltersShape, this.bDepthwiseConv );
+
+    // Every element (Tensor4d) is a depthwiseBiases for one block.
+    this.depthwiseBiasesTensor4dArray
+      = Base.generateTensor4dArray( this.blockCount, depthwiseBiasesValueCount, this.depthwiseBiasesShape, ( this.bDepthwiseConv && bDepthwiseBias ) );
+
+
+    // Pointwise Filters and Biases
+
+    let pointwiseInputDepth =  sourceDepth;
+    let pointwiseOutputDepth = sourceDepth; // Assume output depth is the same as input.
+
+    this.pointwiseFilterHeightWidth = [ 1, 1 ];
+    this.pointwiseFiltersShape = [ 1, 1, pointwiseInputDepth, pointwiseOutputDepth ];
+
+    // Both input depth and output depth of pointwise bias are the same as pointwise convolution output.
+    this.pointwiseBiasesShape =  [ 1, 1, pointwiseOutputDepth, pointwiseOutputDepth ];
+
+    let pointwiseFiltersValueCount = tf.util.sizeFromShape( this.pointwiseFiltersShape );
+    let pointwiseBiasesValueCount =  tf.util.sizeFromShape( this.pointwiseBiasesShape );
+
+    // Every element (Tensor4d) is a pointwiseFilters for one block.
+    this.pointwiseFiltersTensor4dArray
+      = Base.generateTensor4dArray( this.blockCount, pointwiseFiltersValueCount, this.pointwiseFiltersShape, bPointwise );
+
+    // Every element (Tensor4d) is a pointwiseBiases for one block.
+    this.pointwiseBiasesTensor4dArray
+      = Base.generateTensor4dArray( this.blockCount, pointwiseBiasesValueCount, this.pointwiseBiasesShape, ( bPointwise && bPointwiseBias ) );
+  }
+
+  /**
+   * @param {number}   blockCount    The element count (i.e. length) of the returned array.
+   * @param {number}   valueCount    The element count of every tensor4d (which is an element of the returned array).
+   * @param {number[]} tensor4dShape The tensor's shape of every element of the returned array.
+   * @param {boolean}  bNullElement  If true, every element of the return array will be null.
+   * @return {tf.tensor4d[]} Return a array whose every element is a tensor4d (for one block) of null (if ( bNullElement == true ) ).
+   */
+  static generateTensor4dArray( blockCount, valueCount, tensor4dShape, bNullElement ) {
+    return tf.tidy( () => {
+      let tensor4dArray = new Array( blockCount );
+      for ( let i = 0; i < blockCount; ++i ) {
+        if ( bNullElement ) {
+          let tensor1d = tf.range( 0, valueCount, 1 );
+          let tensor4d = tensor1d.reshape( tensor4dShape );
+          tensor4dArray[ i ] = tensor4d;
         } else {
-          filtersTensor4dArray[ i ] = null;
+          tensor4dArray[ i ] = null;
         }
       }
-      return filtersTensor4dArray;
+      return tensor4dArray;
     });
-
-    // Every element (Tensor4d) is a pointwiseFilters for one layer (i.e. one step).
-    this.pointwiseFiltersTensor4dArray = tf.tidy( () => {
-      let filtersTensor4dArray = new Array( this.blockCount );
-      for ( let i = 0; i < this.blockCount; ++i ) {
-        if ( bPointwise ) {
-          let filtersTensor1d = tf.range( 0, pointwiseFiltersValueCount, 1 );
-          let filtersTensor4d = filtersTensor1d.reshape( this.pointwiseFiltersShape );
-          filtersTensor4dArray[ i ] = filtersTensor4d;
-        } else {
-          filtersTensor4dArray[ i ] = null;
-        }
-      }
-      return filtersTensor4dArray;
-    });
-
   }
 
   disposeTensors() {
@@ -124,10 +162,61 @@ class Base {
       this.depthwiseFiltersTensor4dArray = null;
     }
 
+    if ( this.depthwiseBiasesTensor4dArray ) {
+      tf.dispose( this.depthwiseBiasesTensor4dArray );
+      this.depthwiseBiasesTensor4dArray = null;
+    }
+
     if ( this.pointwiseFiltersTensor4dArray ) {
       tf.dispose( this.pointwiseFiltersTensor4dArray );
       this.pointwiseFiltersTensor4dArray = null;
     }
+
+    if ( this.pointwiseBiasesTensor4dArray ) {
+      tf.dispose( this.pointwiseBiasesTensor4dArray );
+      this.pointwiseBiasesTensor4dArray = null;
+    }
+  }
+
+  /**
+   * @param  {tf.tensor4d} inputTensor  Apply this tensor with depthwise (bias and activation) and pointwise (bias and activation).
+   * @param  {number}      blockIndex   Which block's depthwise and pointwise operrations.
+   * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
+   */
+  apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( inputTensor, blockIndex ) {
+    let t = inputTensor, tNew;
+
+    if ( this.bDepthwiseBias ) {
+      tNew = t.add( this.depthwiseBiasesTensor4dArray[ blockIndex ] );
+      t.dispose();                                         // Dispose all intermediate (temporary) data.
+      t = tNew;
+    }
+
+    if ( this.depthwiseActivationFunction ) {
+      tNew = this.depthwiseActivationFunction( t );
+      t.dispose();                                         // Dispose all intermediate (temporary) data.
+      t = tNew;
+    }
+
+    if ( this.bPointwise ) {
+      tNew = t.conv2d( this.pointwiseFiltersTensor4dArray[ blockIndex ], 1, "valid" ); // 1x1, Stride = 1
+      t.dispose();                                         // Dispose all intermediate (temporary) data.
+      t = tNew;
+
+      if ( this.bPointwiseBias ) {
+        tNew = t.add( this.pointwiseBiasesTensor4dArray[ blockIndex ] );
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+
+      if ( this.pointwiseActivationFunction ) {
+        tNew = this.pointwiseActivationFunction( t );
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+    }
+
+    return t;
   }
 
   /**
@@ -144,8 +233,6 @@ class Base {
     return tf.tidy( () => {
 
       let t, tNew;
-//      let depthwiseFiltersTensor4d;
-//      let pointwiseFiltersTensor4d;
 
       // Layer 0
       //
@@ -160,23 +247,7 @@ class Base {
       }
       // NOTE: Do not dispose the original data.
 
-      if ( this.depthwiseActivationFunction ) {
-        tNew = this.depthwiseActivationFunction( t );
-        t.dispose();                                         // Dispose all intermediate (temporary) data.
-        t = tNew;
-      }
-
-      if ( this.bPointwise ) {
-        tNew = t.conv2d( this.pointwiseFiltersTensor4dArray[ 0 ], 1, "valid" ); // 1x1, Stride = 1
-        t.dispose();                                         // Dispose all intermediate (temporary) data.
-        t = tNew;
-
-        if ( this.pointwiseActivationFunction ) {
-          tNew = this.pointwiseActivationFunction( t );
-          t.dispose();                                         // Dispose all intermediate (temporary) data.
-          t = tNew;
-        }
-      }
+      t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( t, 0 );
 
       // Layer 1, ...
       if ( this.bDepthwiseAvg ) {
@@ -184,25 +255,7 @@ class Base {
         for ( let i = 1; i < this.blockCount; ++i ) {
           tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
           t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = tNew;
-
-          if ( this.depthwiseActivationFunction ) {
-            tNew = this.depthwiseActivationFunction( t );
-            t.dispose();                                         // Dispose all intermediate (temporary) data.
-            t = tNew;
-          }
-
-          if ( this.bPointwise ) {
-            tNew = t.conv2d( this.pointwiseFiltersTensor4dArray[ i ], 1, "valid" ); // 1x1, Stride = 1
-            t.dispose();                                         // Dispose all intermediate (temporary) data.
-            t = tNew;
-
-            if ( this.pointwiseActivationFunction ) {
-              tNew = this.pointwiseActivationFunction( t );
-              t.dispose();                                         // Dispose all intermediate (temporary) data.
-              t = tNew;
-            }
-          }
+          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
         }
 
       } else if ( this.bDepthwiseMax ) {
@@ -210,25 +263,7 @@ class Base {
         for ( let i = 1; i < this.blockCount; ++i ) {
           tNew = t.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
           t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = tNew;
-
-          if ( this.depthwiseActivationFunction ) {
-            tNew = this.depthwiseActivationFunction( t );
-            t.dispose();                                         // Dispose all intermediate (temporary) data.
-            t = tNew;
-          }
-
-          if ( this.bPointwise ) {
-            tNew = t.conv2d( this.pointwiseFiltersTensor4dArray[ i ], 1, "valid" ); // 1x1, Stride = 1
-            t.dispose();                                         // Dispose all intermediate (temporary) data.
-            t = tNew;
-
-            if ( this.pointwiseActivationFunction ) {
-              tNew = this.pointwiseActivationFunction( t );
-              t.dispose();                                         // Dispose all intermediate (temporary) data.
-              t = tNew;
-            }
-          }
+          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
         }
 
       } else if ( this.bDepthwiseConv ) {
@@ -236,25 +271,7 @@ class Base {
         for ( let i = 1; i < this.blockCount; ++i ) {
           tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ i ], 1, "valid" );  // Stride = 1
           t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = tNew;
-
-          if ( this.depthwiseActivationFunction ) {
-            tNew = this.depthwiseActivationFunction( t );
-            t.dispose();                                         // Dispose all intermediate (temporary) data.
-            t = tNew;
-          }
-
-          if ( this.bPointwise ) {
-            tNew = t.conv2d( this.pointwiseFiltersTensor4dArray[ i ], 1, "valid" ); // 1x1, Stride = 1
-            t.dispose();                                         // Dispose all intermediate (temporary) data.
-            t = tNew;
-
-            if ( this.pointwiseActivationFunction ) {
-              tNew = this.pointwiseActivationFunction( t );
-              t.dispose();                                         // Dispose all intermediate (temporary) data.
-              t = tNew;
-            }
-          }
+          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
         }
 
       }
