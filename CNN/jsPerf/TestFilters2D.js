@@ -101,8 +101,8 @@ class Base {
       this.blockCount = Math.floor( differenceHeight / heightReducedPerStep );
     }
 
-    // e.g. "D24_24__DConv_101x101_DBias_RELU__PConv_PBias_RELU__Block_1__Step_1"
-    this.name = `D${sourceDepth}_${this.channelCountBlock0}`
+    // e.g. "C24_24__DConv_101x101_DBias_RELU__PConv_PBias_RELU__Block_1__Step_1"
+    this.name = `C${sourceDepth}_${this.channelCountBlock0}`
       + `__D${strAvgMaxConv}_${filterHeight}x${filterHeight}`
       + `${ ( this.bDepthwiseBias ) ? ( "_DBias" ) : "" }`
       + `${ ( this.depthwiseActivationFunction ) ? ( "_" + depthwiseActivationName ) : "" }`
