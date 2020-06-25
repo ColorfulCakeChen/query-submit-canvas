@@ -85,12 +85,14 @@ class Base {
     // The step count for reducing sourceHeight to targetHeight by depthwise convolution filter.
     this.blockCount = Math.floor( differenceHeight / heightReducedPerStep );
 
-    // e.g. "DConv_101x101_RELU_1x1_RELU_1_Block"
+    // e.g. "DConv_101x101_DBias_RELU__1x1_PBias_RELU__Block_1"
     this.name = `D${strAvgMaxConv}_${filterHeight}x${filterHeight}`
-      + `${ this.depthwiseActivationFunction ? ( "_" + depthwiseActivationName ) : ""}`
-      + `${ this.bPointwise ? "_1x1" : ""}`
-      + `${ this.pointwiseActivationFunction ? ( "_" + pointwiseActivationName ) : ""}`
-      + `_Block_${this.blockCount}`
+      + `${ ( this.bDepthwiseBias ) ? ( "_DBias" ) : ""}`
+      + `${ ( this.depthwiseActivationFunction ) ? ( "_" + depthwiseActivationName ) : ""}`
+      + `${ ( this.bPointwise ) ? "__1x1" : ""}`
+      + `${ ( this.bPointwise && this.bPointwiseBias ) ? ( "_PBias" ) : ""}`
+      + `${ ( this.bPointwise && this.pointwiseActivationFunction ) ? ( "_" + pointwiseActivationName ) : ""}`
+      + `__Block_${this.blockCount}`
     ;
 
     // Depthwise Filters and Biases
