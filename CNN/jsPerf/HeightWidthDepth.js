@@ -341,7 +341,7 @@ class Base {
 
     // Detect memory leak.
     tf.util.assert(
-      ( tensorMemoryAfter.numBytes != tensorMemoryBefore.numBytes ),
+      ( tensorMemoryAfter.numBytes == tensorMemoryBefore.numBytes ),
       `tensorMemoryAfter.numBytes (${tensorMemoryAfter.numBytes}) != tensorMemoryBefore.numBytes (${tensorMemoryBefore.numBytes})`);
 
     return resultProfiles;
