@@ -324,6 +324,8 @@ class Base {
    *   Return array of profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs }.
    */
   async generateProfiles() {
+    let tensorMemoryBefore = tf.memory();
+    
     let generator = this.profilesGenerator();
 
     let delayMilliseconds = 0;
@@ -334,6 +336,14 @@ class Base {
     );
 
     this.progressReceiver.informDone(); // Inform UI progress done.
+
+    let tensorMemoryAfter = tf.memory();
+
+    // Detect memory leak.
+    tf.util.assert(
+      ( tensorMemoryAfter.numBytes != tensorMemoryBefore.numBytes ),
+      `tensorMemoryAfter.numBytes (${tensorMemoryAfter.numBytes}) != tensorMemoryBefore.numBytes (${tensorMemoryBefore.numBytes})`);
+
     return resultProfiles;
   }
 
