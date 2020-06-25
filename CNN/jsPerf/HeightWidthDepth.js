@@ -239,7 +239,8 @@ class Base {
       let t = testFilters.apply( this.dataTensor3d, true );
 
       tf.util.assert(
-        tf.util.arraysEqual( ( t.shape / testFilters.channelMultiplier ), tensor_ResizeBilinear.shape ),
+        tf.util.arraysEqual(
+          [ t.shape[ 0 ], t.shape[ 1 ], ( t.shape[ 2 ] / testFilters.channelMultiplier ) ], tensor_ResizeBilinear.shape ),
         `Shape ${testFilters.name}() != ResizeBilinear()`);
 
       t.dispose();
