@@ -15,8 +15,7 @@ class Block {
 
     this.disposeTensors();
 
-//!!! ...unfinished...
-    // Both MobileNetV2 and ShuffleNetV2:
+    // Both MobileNetV3 and ShuffleNetV2:
     //   - They all do not use (depthwise convolution) channelMultiplier.
     //   - They all use 1x1 (pointwise) convolution to expand channel count.
     //   - They all use 1x1 (pointwise) convolution before depthwise convolution.
@@ -30,10 +29,14 @@ class Block {
     //   B) depthwise convolution, without activation.
     //   C) 1x1 (pointwise) convolution, (ShuffleNetV2) with or (MobileNetV2) without activation.
     //
-    // In MobileNetV2, step A expands channel count (with activation), step C shrinks channel count (without activation).
-    // In ShuffleNetV2, step A (with activation) and step C (with activation) never change channel count .
+    // In MobileNetV3, step A expands channel count (with activation), step C shrinks channel count (without activation).
+    // It may use squeeze-and-excitation after step B.
+    //
+    // In ShuffleNetV2, step A (with activation) and step C (with activation) never change channel count. It expands channel count
+    // by concatenating when shrinking (halving) height x weight.
     //
 
+//!!! ...unfinished...
     this.stepCountPerBlock = stepCountPerBlock;
 
     this.filterHeight = filterHeight;
