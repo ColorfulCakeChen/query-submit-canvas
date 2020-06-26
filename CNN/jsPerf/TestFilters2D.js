@@ -8,19 +8,38 @@ class Block {
 
   init(
     sourceChannelCount,
-    filterHeight, channelMultiplier,
+    filterHeight, depthwiseChannelMultiplier,
     stepCountPerBlock,
     strAvgMaxConv, bDepthwiseBias, depthwiseActivationName,
     bPointwise, bPointwiseBias, pointwiseActivationName ) {
 
     this.disposeTensors();
 
+//!!! ...unfinished...
+    // Both MobileNetV2 and ShuffleNetV2:
+    //   - They all do not use (depthwise convolution) channelMultiplier.
+    //   - They all use 1x1 (pointwise) convolution to expand channel count.
+    //   - They all use 1x1 (pointwise) convolution before depthwise convolution.
+    //   - They all do not use activation function after depthwise convolution.
+    //   - They all use depthwise convolution with ( pad = "same").
+    //   - They all use depthwise convolution with ( strides = 2 ) for shrinking (halving) height x weight.
+    //   - They all do not use bias after pointwise and depthwise convolution.
+    //
+    // Inisde one of their block, three convolutions are used:
+    //   A) 1x1 (pointwise) convolution, with activation.
+    //   B) depthwise convolution, without activation.
+    //   C) 1x1 (pointwise) convolution, (ShuffleNetV2) with or (MobileNetV2) without activation.
+    //
+    // In MobileNetV2, step A expands channel count (with activation), step C shrinks channel count (without activation).
+    // In ShuffleNetV2, step A (with activation) and step C (with activation) never change channel count .
+    //
+
     this.stepCountPerBlock = stepCountPerBlock;
 
     this.filterHeight = filterHeight;
     let filterWidth = filterHeight;
 
-    this.channelMultiplier = channelMultiplier;
+    this.depthwiseChannelMultiplier = depthwiseChannelMultiplier;
     this.channelCount = sourceChannelCount * channelMultiplier;
 
     this.strAvgMaxConv = strAvgMaxConv;
