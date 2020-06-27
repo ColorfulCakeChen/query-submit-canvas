@@ -86,8 +86,9 @@ class Block {
     }
 
     let sourceWidth = sourceHeight;  // Assume source's width equals its height.
-//     this.sourceHeight = sourceHeight;
-//     this.sourceWidth =  sourceWidth;
+    this.sourceHeight = sourceHeight;
+    this.sourceWidth = sourceWidth;
+    this.sourceChannelCount = sourceChannelCount;
 
     this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, sourceChannelCount ];
 
@@ -98,7 +99,7 @@ class Block {
     }
 
     this.depthwiseFilterHeight = depthwiseFilterHeight;
-    let depthwiseFilterWidth = depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
+    let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
 
     this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
     if ( channelExpansionFactor <= 0 ) {      // ShuffleNetV2
@@ -149,7 +150,6 @@ class Block {
       };
     }
 
-    this.blockOutputChannelCount = this.channelCountStep1.pointwiseAfter;
     this.stepCountPerBlock = stepCountPerBlock;
 
     this.strAvgMaxConv = strAvgMaxConv;
@@ -187,9 +187,8 @@ class Block {
     // Pointwise Filters for Channel Expansion
     {
       this.expansionFilterHeightWidth = [ 1, 1 ];
-      this.expansionFiltersShapeStep0 = [ 1, 1, sourceChannelCount, this.expandedChannelCount ];
-//!!!
-      this.expansionFiltersShape = [ 1, 1, channelCountAfterStep0, this.channelCountAfterStep0 ];
+      this.expansionFiltersShapeStep0 = [ 1, 1, this.channelCountStep0.expansionBefore, this.channelCountStep0.expansionAfter_depthwiseBefore ];
+      this.expansionFiltersShape =      [ 1, 1, this.channelCountStep1.expansionBefore, this.channelCountStep1.expansionAfter_depthwiseBefore ];
 
       // Every element (Tensor4d) is a pointwiseFilters for one step.
       this.expansionFiltersTensor4dArray = Block.generateTensorArray( stepCountPerBlock, this.expansionFiltersShapeStep0, this.expansionFiltersShape, false );
@@ -200,9 +199,14 @@ class Block {
       this.depthwiseFilterHeightWidth = [ depthwiseFilterHeight, depthwiseFilterWidth ];
 
       // First block's depthwise filters could expand channel count from sourceChannelCount to ( this.expandedChannelCount * depthwiseChannelMultiplierStep0 ).
-      this.depthwiseFiltersShapeStep0 = [ depthwiseFilterHeight, depthwiseFilterWidth,   this.expandedChannelCount, depthwiseChannelMultiplierStep0 ];
-      this.depthwiseFiltersShape =      [ depthwiseFilterHeight, depthwiseFilterWidth, this.channelCountAfterStep0,                               1 ];
-      this.depthwiseBiasesShape =       [                     1,                    1, this.channelCountAfterStep0 ];
+      this.depthwiseFiltersShapeStep0
+        = [ depthwiseFilterHeight, depthwiseFilterWidth, this.channelCountStep0.expansionAfter_depthwiseBefore, depthwiseChannelMultiplierStep0 ];
+
+      this.depthwiseFiltersShape
+        = [ depthwiseFilterHeight, depthwiseFilterWidth, this.channelCountStep1.expansionAfter_depthwiseBefore,                               1 ];
+
+      this.depthwiseBiasesShapeStep0 =  [ 1, 1, this.channelCountStep0.depthwiseAfter_pointwiseBefore ];
+      this.depthwiseBiasesShape =       [ 1, 1, this.channelCountStep1.depthwiseAfter_pointwiseBefore ];
 
       // Every element (Tensor4d) is a depthwiseFilters for one step.
       this.depthwiseFiltersTensor4dArray
@@ -210,29 +214,42 @@ class Block {
 
       // Every element (Tensor3d) is a depthwiseBiases for one step.
       this.depthwiseBiasesTensor3dArray
-        = Block.generateTensorArray( stepCountPerBlock, null, this.depthwiseBiasesShape, ( this.bDepthwiseConv && bDepthwiseBias ) );
+        = Block.generateTensorArray( stepCountPerBlock, this.depthwiseBiasesShapeStep0, this.depthwiseBiasesShape, ( this.bDepthwiseConv && bDepthwiseBias ) );
     }
 
 //!!! ...unfinished...
+    // Branch's Depthwise Filters and Biases
+    if ( channelExpansionFactor <= 0 ) {      // ShuffleNetV2
+
+//!!!
+
+      // Every element (Tensor4d) is a depthwiseFilters for one step.
+      this.branchDepthwiseFiltersTensor4dArray
+        = Block.generateTensorArray( stepCountPerBlock, ??? this.depthwiseFiltersShapeStep0, this.depthwiseFiltersShape, this.bDepthwiseConv );
+
+      // Every element (Tensor3d) is a depthwiseBiases for one step.
+      this.branchDepthwiseBiasesTensor3dArray
+        = Block.generateTensorArray( stepCountPerBlock, null, this.depthwiseBiasesShape, ( this.bDepthwiseConv && bDepthwiseBias ) );
+    }
 
     // Pointwise Filters and Biases
     {
-      let pointwiseInputDepth =  this.channelCountBlock0;
-      let pointwiseOutputDepth = this.channelCountBlock0; // Assume output depth is the same as input.
-
       this.pointwiseFilterHeightWidth = [ 1, 1 ];
-      this.pointwiseFiltersShape = [ 1, 1, pointwiseInputDepth, pointwiseOutputDepth ];
 
-      // Both input depth and output depth of pointwise bias are the same as pointwise convolution output.
-      this.pointwiseBiasesShape =  [ 1, 1, pointwiseOutputDepth ];
+      this.pointwiseFiltersShapeStep0 = [ 1, 1, this.channelCountStep0.depthwiseAfter_pointwiseBefore, this.channelCountStep0.pointwiseAfter ];
+      this.pointwiseFiltersShape =      [ 1, 1, this.channelCountStep0.depthwiseAfter_pointwiseBefore, this.channelCountStep1.pointwiseAfter ];
+
+      // Both input channel count and output channel count of pointwise bias are the same as pointwise convolution output.
+      this.pointwiseBiasesShapeStep0 =  [ 1, 1, this.channelCountStep0.pointwiseAfter ];
+      this.pointwiseBiasesShape =       [ 1, 1, this.channelCountStep1.pointwiseAfter ];
 
       // Every element (Tensor4d) is a pointwiseFilters for one step.
       this.pointwiseFiltersTensor4dArray
-        = Block.generateTensorArray( this.blockCount, null, this.pointwiseFiltersShape, bPointwise );
+        = Block.generateTensorArray( this.blockCount, this.pointwiseFiltersShapeStep0, this.pointwiseFiltersShape, bPointwise );
 
       // Every element (Tensor3d) is a pointwiseBiases for one step.
       this.pointwiseBiasesTensor3dArray
-        = Block.generateTensorArray( this.blockCount, null, this.pointwiseBiasesShape, ( bPointwise && bPointwiseBias ) );
+        = Block.generateTensorArray( this.blockCount, this.pointwiseBiasesShapeStep0, this.pointwiseBiasesShape, ( bPointwise && bPointwiseBias ) );
     }
   }
 
@@ -284,6 +301,7 @@ class Block {
       this.expansionFiltersTensor4dArray = null;
     }
 
+
     if ( this.depthwiseFiltersTensor4dArray ) {
       tf.dispose( this.depthwiseFiltersTensor4dArray );
       this.depthwiseFiltersTensor4dArray = null;
@@ -293,6 +311,18 @@ class Block {
       tf.dispose( this.depthwiseBiasesTensor3dArray );
       this.depthwiseBiasesTensor3dArray = null;
     }
+
+
+    if ( this.branchDepthwiseFiltersTensor4dArray ) {
+      tf.dispose( this.branchDepthwiseFiltersTensor4dArray );
+      this.branchDepthwiseFiltersTensor4dArray = null;
+    }
+
+    if ( this.branchDepthwiseBiasesTensor3dArray ) {
+      tf.dispose( this.branchDepthwiseBiasesTensor3dArray );
+      this.branchDepthwiseBiasesTensor3dArray = null;
+    }
+    
 
     if ( this.pointwiseFiltersTensor4dArray ) {
       tf.dispose( this.pointwiseFiltersTensor4dArray );
@@ -348,6 +378,9 @@ class Block {
 
     return t;
   }
+
+  // The output channel count of this block's last step.
+  get outputChannelCount() { return this.channelCountStep1.pointwiseAfter; }
 
 }
 
