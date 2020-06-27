@@ -103,7 +103,7 @@ class Block {
     this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
     if ( channelExpansionFactor <= 0 ) {      // ShuffleNetV2
 
-      // the channel count of the first step (Step 0).
+      // the channel count of the first step (i.e. Step 0).
       this.channelCountStep0 = {
         expansionBefore:                 sourceChannelCount,
         expansionAfter_depthwiseBefore:  sourceChannelCount,  // No expansion.
@@ -117,7 +117,7 @@ class Block {
         pointwiseAfter:                  sourceChannelCount * depthwiseChannelMultiplierStep0,
       };
 
-      // the channel count after the first step (Step 1, 2, 3, ...).
+      // the channel count after the first step (i.e. Step 1, 2, 3, ...).
       this.channelCountStep1 = {
         expansionBefore:                 this.channelCountStep0.pointwiseAfter + this.channelCountStep0Branch.pointwiseAfter,  // Expansion twice.
         expansionAfter_depthwiseBefore:  this.channelCountStep0.pointwiseAfter + this.channelCountStep0Branch.pointwiseAfter,
@@ -129,7 +129,7 @@ class Block {
 
       this.expandedChannelCount = sourceChannelCount * channelExpansionFactor;
 
-      // the channel count of the first step (Step 0).
+      // the channel count of the first step (i.e. Step 0).
       this.channelCountStep0 = {
         expansionBefore:                 sourceChannelCount,
         expansionAfter_depthwiseBefore:  this.expandedChannelCount,  // Expansion.
@@ -140,6 +140,7 @@ class Block {
       this.channelCountStep0Branch = { // MobileNet no branch.
       };
 
+      // the channel count after the first step (i.e. Step 1, 2, 3, ...).
       this.channelCountStep1 = {
         expansionBefore:                 this.channelCountStep0.pointwiseAfter,
         expansionAfter_depthwiseBefore:  this.channelCountStep0.pointwiseAfter * 2,  // Expansion twice.
@@ -148,6 +149,7 @@ class Block {
       };
     }
 
+    this.blockOutputChannelCount = this.channelCountStep1.pointwiseAfter;
     this.stepCountPerBlock = stepCountPerBlock;
 
     this.strAvgMaxConv = strAvgMaxConv;
