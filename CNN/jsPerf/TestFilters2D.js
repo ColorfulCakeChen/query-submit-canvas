@@ -1,3 +1,4 @@
+import * as ChannelShuffler from "../Layer/ChannelShuffler.js";
 
 export { Base };
 
@@ -6,9 +7,43 @@ export { Base };
  */
 class Block {
 
+  /**
+   * @param {number} strSplitOrAdd
+   *   If "Split", using ShuffleNetV2. If "Add", using MobileNetV2.
+   *
+   * @param sourceHeight        The height (and width) of the source image which will be processed by apply().
+   * @param sourceChannelCount  The channel count of the source image.
+   * @param targetHeight        The taregt image height (and width).
+   * @param filterHeight        The height (and width) of each depthwise convolution.
+   *
+   * @param {number} stepCountPerBlock
+   *   If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
+   * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
+   * (half downsample) and use ( stageCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
+   *
+   * @param strAvgMaxConv
+   *   Depthwise operation. "Avg" or "Max" or "Conv" for average pooling, max pooling, depthwise convolution.
+   *
+   * @param bDepthwiseBias
+   *   If true, there will be a bias after depthwise convolution.
+   *
+   * @param depthwiseActivationName
+   *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
+   *
+   * @param bPointwise
+   *   If true, there will be pointwise convolution after every layer of depthwise convolution.
+   *
+   * @param bPointwiseBias
+   *   If true, there will be a bias after pointwise convolution. If ( bPointwise == false ), this will be also ignored.
+   *
+   * @param pointwiseActivationName
+   *   The activation function name after pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
+   * If ( bPointwise == false ), this activation function will be also ignored.
+   */
   init(
-    sourceChannelCount,
-    filterHeight, depthwiseChannelMultiplier,
+    strSplitOrAdd,
+    sourceHeight, sourceChannelCount, targetHeight,
+    filterHeight, //depthwiseChannelMultiplier,
     stepCountPerBlock,
     strAvgMaxConv, bDepthwiseBias, depthwiseActivationName,
     bPointwise, bPointwiseBias, pointwiseActivationName ) {
@@ -36,14 +71,33 @@ class Block {
     // by concatenating when shrinking (halving) height x weight.
     //
 
-//!!! ...unfinished...
-    this.stepCountPerBlock = stepCountPerBlock;
+    this.strSplitOrAdd = strSplitOrAdd;
+    switch ( strSplitOrAdd ) {
+      case "Split":  this.bShuffleNetV2 = true; break;
+      case "Add":    this.bMobileNetV2 =  true; break;
+    }
+
+    let sourceWidth = sourceHeight;
+//     this.sourceHeight = sourceHeight;
+//     this.sourceWidth =  sourceWidth;
+
+//     let depthwiseChannelMultiplier = 1;
+//     this.depthwiseChannelMultiplier = depthwiseChannelMultiplier;
+//     this.channelCount = sourceChannelCount * depthwiseChannelMultiplier;
+
+    this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, sourceChannelCount ];
+
+    if ( this.bShuffleNetV2 ) {
+      let outputGroupCount = 2; // ShuffleNetV2 uses two groups.
+
+      this.concatGather = new ChannelShuffler.ConcatGather();
+      this.concatGather.init( this.sourceConcatenatedShape, outputGroupCount );
+    }
 
     this.filterHeight = filterHeight;
-    let filterWidth = filterHeight;
+    let filterWidth = filterHeight;  // Assume filter's width equals its height.
 
-    this.depthwiseChannelMultiplier = depthwiseChannelMultiplier;
-    this.channelCount = sourceChannelCount * channelMultiplier;
+    this.stepCountPerBlock = stepCountPerBlock;
 
     this.strAvgMaxConv = strAvgMaxConv;
     switch ( strAvgMaxConv ) {
@@ -81,6 +135,12 @@ class Block {
   }
 
   disposeTensors() {
+    if ( this.concatGather ) {
+      this.concatGather.disposeTensors();
+      this.concatGather = null;
+    }
+
+//!!! ...unfinished...
   }
 
 
