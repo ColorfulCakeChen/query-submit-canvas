@@ -8,8 +8,8 @@ export { Base };
 class Block {
 
   /**
-   * @param {number} strSplitOrAdd
-   *   If "Split", using ShuffleNetV2. If "Add", using MobileNetV2.
+   * @param {number} channelExpansionFactor
+   *   If 0 (or negative), using ShuffleNetV2. If positive (>= 1), using MobileNetV2.
    *
    * @param sourceHeight        The height (and width) of the source image which will be processed by apply().
    * @param sourceChannelCount  The channel count of the source image.
@@ -41,7 +41,7 @@ class Block {
    * If ( bPointwise == false ), this activation function will be also ignored.
    */
   init(
-    strSplitOrAdd,
+    channelExpansionFactor,
     sourceHeight, sourceChannelCount, targetHeight,
     filterHeight, //depthwiseChannelMultiplier,
     stepCountPerBlock,
@@ -71,10 +71,11 @@ class Block {
     // by concatenating when shrinking (halving) height x weight.
     //
 
-    this.strSplitOrAdd = strSplitOrAdd;
-    switch ( strSplitOrAdd ) {
-      case "Split":  this.bShuffleNetV2 = true; break;
-      case "Add":    this.bMobileNetV2 =  true; break;
+    this.channelExpansionFactor = channelExpansionFactor;
+    if ( channelExpansionFactor <= 0 ) {
+      this.bShuffleNetV2 = true;
+    } else {
+      this.bMobileNetV2 =  true;
     }
 
     let sourceWidth = sourceHeight;
@@ -88,8 +89,7 @@ class Block {
     this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, sourceChannelCount ];
 
     if ( this.bShuffleNetV2 ) {
-      let outputGroupCount = 2; // ShuffleNetV2 uses two groups.
-
+      let outputGroupCount = 2; // ShuffleNetV2 always uses two groups.
       this.concatGather = new ChannelShuffler.ConcatGather();
       this.concatGather.init( this.sourceConcatenatedShape, outputGroupCount );
     }
