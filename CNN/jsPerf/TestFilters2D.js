@@ -101,6 +101,11 @@ class Block {
     this.depthwiseFilterHeight = depthwiseFilterHeight;
     let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
 
+    // The special of a block's step 0 are:
+    //   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2)
+    //   - Double channels. (ShuffleNetV2 only)
+    //   - Expand channels depthwiseChannelMultiplierStep0. (Both ShuffleNetV2 and MobileNetV2 do not have. This is added by us only.)
+
     this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
     if ( channelExpansionFactor <= 0 ) {      // ShuffleNetV2
 
@@ -112,6 +117,7 @@ class Block {
         pointwiseAfter:                  sourceChannelCount * depthwiseChannelMultiplierStep0,
       };
 
+      // The step 0 of ShuffleNetV2 has a branch for halving height x width without 1x1 (pointwise) convolution before halving.
       this.channelCountStep0Branch = {
         depthwiseBefore:                 sourceChannelCount,  // No expansion.
         depthwiseAfter_pointwiseBefore:  sourceChannelCount * depthwiseChannelMultiplierStep0,
@@ -138,7 +144,8 @@ class Block {
         pointwiseAfter:                  this.expandedChannelCount * depthwiseChannelMultiplierStep0,
       };
 
-      this.channelCountStep0Branch = { // MobileNet no branch.
+      // The step 0 of MobileNetV2 has no branch.
+      this.channelCountStep0Branch = {
       };
 
       // the channel count after the first step (i.e. Step 1, 2, 3, ...).
