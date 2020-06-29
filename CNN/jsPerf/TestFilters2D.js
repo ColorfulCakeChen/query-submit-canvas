@@ -3,10 +3,353 @@ import * as ChannelShuffler from "../Layer/ChannelShuffler.js";
 export { Base };
 
 /**
- * One step of one block of testing filters.
+ * One step of one block of testing filters. There are at most three convolution inside this object.
+ *   - 1x1 pointwise convolution: change channel count. (exapnd)
+ *   - NxN depthwise convolution: change channel count. (channel multiplier)
+ *   - 1x1 pointwise convolution: change channel count. (shrink)
+ *
+ * @member {number} channelCount_expansionAfter_depthwiseBefore
+ *   The channel count after the first 1x1 pointwise convolution. If ( expansionChannelCountRate > 0 ), it equals
+ * ( channelCount_expansionBefore * expansionChannelCountRate ).
+ *
+ * @member {number} channelCount_depthwiseAfter_pointwiseBefore
+ *   The channel count after the NxN depthwise convolution.  If ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
+ * ( channelCount_expansionAfter_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier ).
+ *
+ * @member {number} channelCount_pointwiseAfter
+ *   The channel count after the second 1x1 pointwise convolution. If ( pointwiseChannelCountRate > 0 ), it equals
+ * ( channelCount_depthwiseAfter_pointwiseBefore * pointwiseChannelCountRate ).
  */
-// class PointDepthPoint {
-// }
+class ExpandMultiplierShrink {
+
+  /**
+   * @param {number} channelCount_expansionBefore
+   *   The channel count of input image.
+   *
+   * @param {number} expansionChannelCountRate
+   *   The output channel count of the first pointwise convolution will be ( channelCount_expansionBefore * expansionChannelCountRate ).
+   * If 0, there will be no pointwise convolution before depthwise convolution.
+   *
+   * @param {boolean} bExpansionBias
+   *   If true, there will be a bias after pointwise convolution. If ( pointwiseChannelCountRate == 0 ), this will also be ignored.
+   *
+   * @param {string} expansionActivationName
+   *   The activation function name after the first 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
+   * If ( expansionChannelCountRate == 0 ), this activation function will also be ignored.
+   *
+   * @param {string|number} depthwise_AvgMax_Or_ChannelMultiplier
+   *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
+   * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
+   *
+   * @param {number} depthwiseFilterHeight
+   *   The height (and width) of depthwise convolution's filter.
+   *
+   * @param {number} depthwiseStrides
+   *   The strides of depthwise convolution.
+   *
+   * @param {string} depthwisePad
+   *   The padding of depthwise convolution. "valid" or "same".
+   *
+   * @param {boolean} bDepthwiseBias
+   *   If true, there will be a bias after depthwise convolution.
+   *
+   * @param {string} depthwiseActivationName
+   *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
+   *
+   * @param {number} pointwiseChannelCountRate
+   *   The output channel count of the second 1x1 pointwise convolution will be ( output channel count of depthwise convolution * pointwiseChannelCountRate ).
+   * If 0, there will be no pointwise convolution after depthwise convolution.
+   *
+   * @param {boolean} bPointwiseBias
+   *   If true, there will be a bias after the second 1x1 pointwise convolution. If ( pointwiseChannelCountRate == 0 ), this will also be ignored.
+   *
+   * @param {string} pointwiseActivationName
+   *   The activation function name after the second 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
+   * If ( pointwiseChannelCountRate == 0 ), this activation function will also be ignored.
+   */
+  init(
+    channelCount_expansionBefore,
+    expansionChannelCountRate, bExpansionBias, expansionActivationName,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
+    pointwiseChannelCountRate, bPointwiseBias, pointwiseActivationName ) {
+
+    this.disposeTensors();
+
+    this.channelCount_expansionBefore = channelCount_expansionBefore;
+
+    // The first 1x1 pointwise convolution.
+    this.expansionChannelCountRate = expansionChannelCountRate;
+    this.bExpansion = ( expansionChannelCountRate > 0 );
+    this.expansionActivationName = expansionActivationName;
+    this.expansionActivationFunction = ExpandMultiplierShrink.getActivationFunction( expansionActivationName );
+
+    if ( this.bExpansion )
+      this.channelCount_expansionAfter_depthwiseBefore = channelCount_expansionBefore * expansionChannelCountRate;
+    else
+      this.channelCount_expansionAfter_depthwiseBefore = channelCount_expansionBefore;  // No first 1x1 pointwise convolution.
+
+    this.expansionFilterHeightWidth = [ 1, 1 ];
+    this.expansionFiltersShape =      [ 1, 1, this.channelCount_expansionBefore, this.channelCount_expansionAfter_depthwiseBefore ];
+    this.expansionFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.expansionFiltersShape );
+
+    // The depthwise operation.
+    this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
+    if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+      switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+        case "Avg":  this.bDepthwiseAvg = true;
+        case "Max":  this.bDepthwiseMax = true;
+        //case "Conv": this.bDepthwiseConv = true;
+      }
+      this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise channel multiplier.
+    } else {
+      if ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) {
+        this.bDepthwiseConv = true;
+        this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier;
+      } else {
+        this.bDepthwiseConv = false;  // e.g. negative number
+        this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise channel multiplier.
+      }
+    }
+
+    this.depthwiseFilterHeight = depthwiseFilterHeight;
+    this.depthwiseFilterWidth = depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
+    this.depthwiseStrides = depthwiseStrides;
+    this.depthwisePad = depthwisePad;
+    this.bDepthwiseBias = bDepthwiseBias;
+    this.depthwiseActivationName = depthwiseActivationName;
+    this.depthwiseActivationFunction = ExpandMultiplierShrink.getActivationFunction( depthwiseActivationName );
+
+    this.depthwiseFilterHeightWidth = [ depthwiseFilterHeight, depthwiseFilterWidth ];
+    this.depthwiseFiltersShape
+      = [ depthwiseFilterHeight, depthwiseFilterWidth, this.channelCount_expansionAfter_depthwiseBefore, depthwiseChannelMultiplier ];
+
+    this.depthwiseBiasesShape =       [ 1, 1, this.channelCount_depthwiseAfter_pointwiseBefore ];
+
+    if ( this.bDepthwiseConv ) {
+      this.depthwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.depthwiseFiltersShape );
+
+      if ( bDepthwiseBias )
+        this.depthwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.depthwiseBiasesShape );
+    }
+
+    // The second pointwise convolution.
+    this.pointwiseChannelCountRate = pointwiseChannelCountRate;
+    this.bPointwise = ( pointwiseChannelCountRate > 0 );
+    this.bPointwiseBias = bPointwiseBias;
+    this.pointwiseActivationName = pointwiseActivationName;
+    this.pointwiseActivationFunction = ExpandMultiplierShrink.getActivationFunction( pointwiseActivationName );
+
+    if ( this.bPointwise )
+      this.channelCount_pointwiseAfter = this.channelCount_depthwiseAfter_pointwiseBefore * pointwiseChannelCountRate;
+    else
+      this.channelCount_pointwiseAfter = this.channelCount_depthwiseAfter_pointwiseBefore;  // No second 1x1 pointwise convolution.
+
+    this.pointwiseFilterHeightWidth = [ 1, 1 ];
+
+    this.pointwiseFiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwiseBefore, this.channelCount_pointwiseAfter ];
+    this.pointwiseBiasesShape =       [ 1, 1, this.channelCountStep1.pointwiseAfter ];
+
+    if ( bPointwise ) {
+      this.pointwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.pointwiseFiltersShape );
+
+      if ( bPointwiseBias )
+        this.pointwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.pointwiseBiasesShape );
+    }
+  }
+
+  static getActivationFunction( strActivationName ) {
+    switch ( strActivationName ) {
+      case "relu":    return tf.relu;    break;
+      case "relu6":   return tf.relu6;   break;
+      case "sigmoid": return tf.sigmoid; break;
+      case "tanh":    return tf.tanh;    break;
+      case "sin":     return tf.sin;     break;
+      //default:
+    }
+    return null;
+  }
+
+  /**
+   * @param {number[]} newTensorShape
+   *   The returned tensor's shape. If null, same as zero size.
+   *
+   * @return {tf.tensor4d|tf.tensor3d}
+   *   Return a tensor4d or tensor3d acccording to newTensorShape. If size of newTensorShape is zero, return null.
+   */
+  static generateTensor( newTensorShape ) {
+    return tf.tidy( () => {
+
+      let valueCount = 0;
+      if ( newTensorShape )
+        valueCount = tf.util.sizeFromShape( newTensorShape );
+
+      let tensor1d, tensorNew = null;
+      if ( valueCount ) {
+        tensor1d = tf.range( 0, valueCount, 1 );
+        tensorNew = tensor1d.reshape( newTensorShape );
+      }
+
+      return tensorNew;
+    });
+  }
+
+  disposeTensors() {
+    if ( this.expansionFiltersTensor4d ) {
+      tf.dispose( this.expansionFiltersTensor4d );
+      this.expansionFiltersTensor4d = null;
+    }
+
+    if ( this.depthwiseFiltersTensor4d ) {
+      tf.dispose( this.depthwiseFiltersTensor4d );
+      this.depthwiseFiltersTensor4d = null;
+    }
+
+    if ( this.depthwiseBiasesTensor3d ) {
+      tf.dispose( this.depthwiseBiasesTensor3d );
+      this.depthwiseBiasesTensor3d = null;
+    }
+
+    if ( this.pointwiseFiltersTensor4d ) {
+      tf.dispose( this.pointwiseFiltersTensor4d );
+      this.pointwiseFiltersTensor4d = null;
+    }
+
+    if ( this.pointwiseBiasesTensor3d ) {
+      tf.dispose( this.pointwiseBiasesTensor3d );
+      this.pointwiseBiasesTensor3d = null;
+    }
+  }
+
+  /**
+   * @param  {tf.tensor4d} inputTensor  Apply this tensor with depthwise (bias and activation) and pointwise (bias and activation).
+   * @param  {number}      blockIndex   Which block's depthwise and pointwise operrations.
+   * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
+   */
+  apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( inputTensor ) {
+    let t = inputTensor, tNew;
+
+    if ( this.bDepthwiseBias ) {
+      tNew = t.add( this.depthwiseBiasesTensor3d );
+      t.dispose();                                         // Dispose all intermediate (temporary) data.
+      t = tNew;
+    }
+
+    if ( this.depthwiseActivationFunction ) {
+      tNew = this.depthwiseActivationFunction( t );
+      t.dispose();                                         // Dispose all intermediate (temporary) data.
+      t = tNew;
+    }
+
+    if ( this.bPointwise ) {
+      tNew = t.conv2d( this.pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+      t.dispose();                                         // Dispose all intermediate (temporary) data.
+      t = tNew;
+
+      if ( this.bPointwiseBias ) {
+        tNew = t.add( this.pointwiseBiasesTensor3d );
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+
+      if ( this.pointwiseActivationFunction ) {
+        tNew = this.pointwiseActivationFunction( t );
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+    }
+
+    return t;
+  }
+
+  /**
+   * Process input by this block's steps.
+   *
+   * @param sourceImage
+   *   The image which will be processed.
+   *
+   * @param bReturn
+   *   If true, the result convoluiotn will be returned.
+   *
+   * @return
+   *   If ( bReturn == true ), return the convolution result (tensor). Otheriwse, reurn null.
+   */
+  apply( sourceImage, bReturn ) {
+    return tf.tidy( () => {
+
+      let t, tNew;
+
+      // Step 0
+
+//!!!
+    if ( this.bDepthwiseAvg ) {
+      t = sourceImage.pool( this.depthwiseFilterHeightWidth, "avg", depthwisePad, 1, depthwiseStrides ); // dilations = 1
+    } else if ( this.bDepthwiseMax ) {
+      t = sourceImage.pool( this.depthwiseFilterHeightWidth, "max", depthwisePad, 1, depthwiseStrides ); // dilations = 1
+    } else if ( this.bDepthwiseConv ) {
+      t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4d, depthwiseStrides, depthwisePad );
+    }
+//!!!
+      if ( this.bDepthwiseAvg ) {
+        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
+      } else if ( this.bDepthwiseMax ) {
+        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
+      } else if ( this.bDepthwiseConv ) {
+        t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ 0 ], 1, "valid" );  // Stride = 1
+      }
+      // NOTE: Do not dispose the original data.
+
+//!!! ...unfinished...
+
+      // Step 0 ???
+      //
+      // So that every layer could dispose previous result without worry about mis-dispose source.
+
+      if ( this.bDepthwiseAvg ) {
+        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
+      } else if ( this.bDepthwiseMax ) {
+        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
+      } else if ( this.bDepthwiseConv ) {
+        t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ 0 ], 1, "valid" );  // Stride = 1
+      }
+      // NOTE: Do not dispose the original data.
+
+      t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( t, 0 );
+
+      // Layer 1, ...
+      if ( this.bDepthwiseAvg ) {
+
+        for ( let i = 1; i < this.blockCount; ++i ) {
+          tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
+          t.dispose();                                           // Dispose all intermediate (temporary) data.
+          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
+        }
+
+      } else if ( this.bDepthwiseMax ) {
+
+        for ( let i = 1; i < this.blockCount; ++i ) {
+          tNew = t.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
+          t.dispose();                                           // Dispose all intermediate (temporary) data.
+          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
+        }
+
+      } else if ( this.bDepthwiseConv ) {
+
+        for ( let i = 1; i < this.blockCount; ++i ) {
+          tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ i ], 1, "valid" );  // Stride = 1
+          t.dispose();                                           // Dispose all intermediate (temporary) data.
+          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
+        }
+
+      }
+
+      if ( bReturn )
+        return t;
+    });
+  }
+
+  /** The output channel count after these three convolutions. */
+  get outputChannelCount() { return this.channelCount_pointwiseAfter; }
+}
 
 /**
  * One block of testing filters.
@@ -33,25 +376,7 @@ class Block {
    *   If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
    * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
    * (half downsample) and use ( stageCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
-   *
-   * @param strAvgMaxConv
-   *   Depthwise operation. "Avg" or "Max" or "Conv" for average pooling, max pooling, depthwise convolution.
-   *
-   * @param bDepthwiseBias
-   *   If true, there will be a bias after depthwise convolution.
-   *
-   * @param depthwiseActivationName
-   *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
-   *
-   * @param bPointwise
-   *   If true, there will be pointwise convolution after every layer of depthwise convolution.
-   *
-   * @param bPointwiseBias
-   *   If true, there will be a bias after pointwise convolution. If ( bPointwise == false ), this will be also ignored.
-   *
-   * @param pointwiseActivationName
-   *   The activation function name after pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
-   * If ( bPointwise == false ), this activation function will be also ignored.
+
    */
   init(
     channelExpansionFactor,
@@ -165,37 +490,6 @@ class Block {
 
     this.stepCountPerBlock = stepCountPerBlock;
 
-    this.strAvgMaxConv = strAvgMaxConv;
-    switch ( strAvgMaxConv ) {
-      case "Avg":  this.bDepthwiseAvg = true;
-      case "Max":  this.bDepthwiseMax = true;
-      case "Conv": this.bDepthwiseConv = true;
-    }
-
-    this.bDepthwiseBias = bDepthwiseBias;
-
-    this.depthwiseActivationName = depthwiseActivationName;
-    switch ( depthwiseActivationName ) {
-      case "relu":    this.depthwiseActivationFunction = tf.relu;    break;
-      case "relu6":   this.depthwiseActivationFunction = tf.relu6;   break;
-      case "sigmoid": this.depthwiseActivationFunction = tf.sigmoid; break;
-      case "tanh":    this.depthwiseActivationFunction = tf.tanh;    break;
-      case "sin":     this.depthwiseActivationFunction = tf.sin;     break;
-      //default:
-    }
-
-    this.bPointwise = bPointwise;
-    this.bPointwiseBias = bPointwiseBias;
-
-    this.pointwiseActivationName = pointwiseActivationName;
-    switch ( pointwiseActivationName ) {
-      case "relu":    this.pointwiseActivationFunction = tf.relu;    break;
-      case "relu6":   this.pointwiseActivationFunction = tf.relu6;   break;
-      case "sigmoid": this.pointwiseActivationFunction = tf.sigmoid; break;
-      case "tanh":    this.pointwiseActivationFunction = tf.tanh;    break;
-      case "sin":     this.pointwiseActivationFunction = tf.sin;     break;
-      //default:
-    }
 
     // Pointwise Filters for Channel Expansion
     {
@@ -386,115 +680,6 @@ class Block {
   }
 
 
-  /**
-   * @param  {tf.tensor4d} inputTensor  Apply this tensor with depthwise (bias and activation) and pointwise (bias and activation).
-   * @param  {number}      blockIndex   Which block's depthwise and pointwise operrations.
-   * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
-   */
-  apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( inputTensor, stepIndex ) {
-    let t = inputTensor, tNew;
-
-    if ( this.bDepthwiseBias ) {
-      tNew = t.add( this.depthwiseBiasesTensor3dArray[ stepIndex ] );
-      t.dispose();                                         // Dispose all intermediate (temporary) data.
-      t = tNew;
-    }
-
-    if ( this.depthwiseActivationFunction ) {
-      tNew = this.depthwiseActivationFunction( t );
-      t.dispose();                                         // Dispose all intermediate (temporary) data.
-      t = tNew;
-    }
-
-    if ( this.bPointwise ) {
-      tNew = t.conv2d( this.pointwiseFiltersTensor4dArray[ stepIndex ], 1, "valid" ); // 1x1, Stride = 1
-      t.dispose();                                         // Dispose all intermediate (temporary) data.
-      t = tNew;
-
-      if ( this.bPointwiseBias ) {
-        tNew = t.add( this.pointwiseBiasesTensor3dArray[ stepIndex ] );
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
-        t = tNew;
-      }
-
-      if ( this.pointwiseActivationFunction ) {
-        tNew = this.pointwiseActivationFunction( t );
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
-        t = tNew;
-      }
-    }
-
-    return t;
-  }
-
-  /**
-   * Process input by this block's steps.
-   *
-   * @param sourceImage
-   *   The image which will be processed.
-   *
-   * @param bReturn
-   *   If true, the result convoluiotn will be returned.
-   *
-   * @return
-   *   If ( bReturn == true ), return the convolution result (tensor). Otheriwse, reurn null.
-   */
-  apply( sourceImage, bReturn ) {
-    return tf.tidy( () => {
-
-      let t, tNew;
-
-      // Step 0
-
-
-//!!! ...unfinished...
-
-      // Step 0 ???
-      //
-      // So that every layer could dispose previous result without worry about mis-dispose source.
-
-      if ( this.bDepthwiseAvg ) {
-        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
-      } else if ( this.bDepthwiseMax ) {
-        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
-      } else if ( this.bDepthwiseConv ) {
-        t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ 0 ], 1, "valid" );  // Stride = 1
-      }
-      // NOTE: Do not dispose the original data.
-
-      t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( t, 0 );
-
-      // Layer 1, ...
-      if ( this.bDepthwiseAvg ) {
-
-        for ( let i = 1; i < this.blockCount; ++i ) {
-          tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
-          t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
-        }
-
-      } else if ( this.bDepthwiseMax ) {
-
-        for ( let i = 1; i < this.blockCount; ++i ) {
-          tNew = t.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
-          t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
-        }
-
-      } else if ( this.bDepthwiseConv ) {
-
-        for ( let i = 1; i < this.blockCount; ++i ) {
-          tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ i ], 1, "valid" );  // Stride = 1
-          t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
-        }
-
-      }
-
-      if ( bReturn )
-        return t;
-    });
-  }
 
   // The output channel count of this block's last step.
   get outputChannelCount() { return this.channelCountStep1.pointwiseAfter; }
