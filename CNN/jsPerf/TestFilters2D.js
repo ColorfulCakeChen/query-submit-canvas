@@ -231,7 +231,6 @@ class ExpandMultiplierShrink {
     }
   }
 
-
   /**
    * Process input, destroy input, return result.
    *
@@ -324,19 +323,21 @@ class ExpandMultiplierShrink {
 class Block {
 
   /**
+   * @param sourceHeight        The height (and width) of the source image which will be processed by apply().
+   * @param sourceChannelCount  The channel count of the source image.
+   * @param targetHeight        The taregt image height (and width).
+   *
+   * @param {boolean} bShuffleNetV2
+   *   If true, ShuffleNetV2 (i.e. split and concat channels) will be used and expansionChannelCountRate will be fixed as 1.
+   * If false, MobileNetV2 (i.e. expand, shrink, and add channels) will be used.
+   *
    * @param {number} stepCountPerBlock
    *   If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
    * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
    * (half downsample) and use ( stageCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
    *
-   * @param sourceHeight        The height (and width) of the source image which will be processed by apply().
-   * @param sourceChannelCount  The channel count of the source image.
-   * @param targetHeight        The taregt image height (and width).
-   *
-   * @param {number} expansionChannelCountRate
-   *   The channel expansion rate by 1x1 (pointwise) convolution (not by depthwise convolution). If 0 (or negative), it will looks like
-   * ShuffleNetV2 (i.e. will split and concat channels). If positive (>= 1), it will looks like MobileNetV2 (i.e. expand and shrink
-   * channels).
+   * @param strAvgMaxConv
+   *   Depthwise operation. "Avg" or "Max" or "Conv" for average pooling, max pooling, depthwise convolution.
    *
    * @param {number} depthwiseChannelMultiplierStep0
    *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor.
@@ -345,6 +346,7 @@ class Block {
    */
   init(
     sourceHeight, sourceChannelCount, targetHeight,
+    bShuffleNetV2,
     stepCountPerBlock,
     expansionChannelCountRate, bExpansionBias, expansionActivationName,
     strAvgMaxConv, depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bDepthwiseBias, depthwiseActivationName,
@@ -373,12 +375,7 @@ class Block {
     // by concatenating when shrinking (halving) height x weight.
     //
 
-    this.channelExpansionFactor = channelExpansionFactor;
-    if ( channelExpansionFactor <= 0 ) {
-      this.bShuffleNetV2 = true;
-    } else {
-      this.bMobileNetV2 =  true;
-    }
+    this.bShuffleNetV2 = bShuffleNetV2;
 
     let sourceWidth = sourceHeight;  // Assume source's width equals its height.
     this.sourceHeight = sourceHeight;
@@ -388,6 +385,8 @@ class Block {
     this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, sourceChannelCount ];
 
     if ( this.bShuffleNetV2 ) {
+      expansionChannelCountRate = 1;  // ShuffleNetV2 never expands channels by pointwise convolution.
+
       let outputGroupCount = 2; // ShuffleNetV2 always uses two groups.
       this.concatGather = new ChannelShuffler.ConcatGather();
       this.concatGather.init( this.sourceConcatenatedShape, outputGroupCount );
@@ -402,7 +401,7 @@ class Block {
     //   - Expand channels by channelMultiplier of depthwise convolution. (Both ShuffleNetV2 and MobileNetV2 do not have this. It is added by us only.)
 
     this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
-    if ( channelExpansionFactor <= 0 ) {      // ShuffleNetV2
+    if ( bShuffleNetV2 ) {      // ShuffleNetV2
 
       // the channel count of the first step (i.e. Step 0).
       this.channelCountStep0 = {
@@ -429,7 +428,7 @@ class Block {
 
     } else {  // MobileNetV2
 
-      this.expandedChannelCount = sourceChannelCount * channelExpansionFactor;
+      this.expandedChannelCount = sourceChannelCount * expansionChannelCountRate;
 
       // the channel count of the first step (i.e. Step 0).
       this.channelCountStep0 = {
@@ -453,21 +452,58 @@ class Block {
     }
 
     this.stepCountPerBlock = stepCountPerBlock;
+    this.steps = new Array( stepCountPerBlock );
+
+    // Step 0.
+    {
+      let depthwise_AvgMax_Or_ChannelMultiplier;
+      if ( strAvgMaxConv == "Conv" )
+        depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
+      else
+        depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
+
+      let depthwiseStrides = 2;  // Step 0 is responsibile for halving input's height (and width).
+      let depthwisePad = "same";
+
+      let step0 = new ExpandMultiplierShrink();
+      step0.init(
+        this.channelCountStep0.expansionBefore,
+        expansionChannelCountRate, bExpansionBias, expansionActivationName,
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
+        pointwiseChannelCountRate, bPointwiseBias, pointwiseActivationName ) {
+      );
+
+      this.steps[ 0 ] = step0;
+
+//!!! step0's branch ?
+    }
+
+    // Step 1, 2, 3, ...
+    for ( let i = 1; i < stepCountPerBlock; ++i )
+    {
+      let depthwise_AvgMax_Or_ChannelMultiplier;
+      if ( strAvgMaxConv == "Conv" )
+        depthwise_AvgMax_Or_ChannelMultiplier = 1; // Force to 1, because only step 0 can have ( channelMultiplier > 1 ).
+      else
+        depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
+
+      let depthwiseStrides = 1;  // Force to 1, because only step 0 should halve input's height (and width).
+      let depthwisePad = "same";
+
+      let step = new ExpandMultiplierShrink();
+      step.init(
+        this.channelCountStep1.expansionBefore,
+        expansionChannelCountRate, bExpansionBias, expansionActivationName,
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
+        pointwiseChannelCountRate, bPointwiseBias, pointwiseActivationName ) {
+      );
+
+      this.steps[ i ] = step;
+    }      
+
 
       
-    let step0 = new ExpandMultiplierShrink();
-    step0.init(
-      this.channelCountStep0.expansionBefore,
-
-      1, // expansionChannelCountRate
-      bExpansionBias,
-      expansionActivationName
-
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
-      pointwiseChannelCountRate, bPointwiseBias, pointwiseActivationName ) {
-    );
-
-
+      
     // Pointwise Filters for Channel Expansion
     {
       this.expansionFilterHeightWidth = [ 1, 1 ];
