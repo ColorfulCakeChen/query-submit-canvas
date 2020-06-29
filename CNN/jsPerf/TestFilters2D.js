@@ -101,10 +101,25 @@ class ExpandMultiplierShrink {
         //case "Conv": this.bDepthwiseConv = true;
       }
       this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise channel multiplier.
+      
+    if ( this.bDepthwiseAvg ) {
+      t = sourceImage.pool( this.depthwiseFilterHeightWidth, "avg", depthwisePad, 1, depthwiseStrides ); // dilations = 1
+    } else if ( this.bDepthwiseMax ) {
+      t = sourceImage.pool( this.depthwiseFilterHeightWidth, "max", depthwisePad, 1, depthwiseStrides ); // dilations = 1
+    } else if ( this.bDepthwiseConv ) {
+      t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4d, depthwiseStrides, depthwisePad );
+    }
+      
     } else {
       if ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) {
         this.bDepthwiseConv = true;
         this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier;
+
+        this.depthwiseFiltersShape
+          = [ depthwiseFilterHeight, this.depthwiseFilterWidth, this.channelCount_expansionAfter_depthwiseBefore, depthwise_AvgMax_Or_ChannelMultiplier ];
+
+        this.depthwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.depthwiseFiltersShape );
+
       } else {
         this.bDepthwiseConv = false;  // e.g. negative number
         this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise channel multiplier.
@@ -119,18 +134,12 @@ class ExpandMultiplierShrink {
     this.depthwiseActivationName = depthwiseActivationName;
     this.depthwiseActivationFunction = ExpandMultiplierShrink.getActivationFunction( depthwiseActivationName );
 
-    this.depthwiseFilterHeightWidth = [ depthwiseFilterHeight, depthwiseFilterWidth ];
-    this.depthwiseFiltersShape
-      = [ depthwiseFilterHeight, depthwiseFilterWidth, this.channelCount_expansionAfter_depthwiseBefore, depthwiseChannelMultiplier ];
-
+    this.depthwiseFilterHeightWidth = [ depthwiseFilterHeight, this.depthwiseFilterWidth ];
     this.depthwiseBiasesShape =       [ 1, 1, this.channelCount_depthwiseAfter_pointwiseBefore ];
 
-    if ( this.bDepthwiseConv ) {
-      this.depthwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.depthwiseFiltersShape );
-
+    if ( this.bDepthwiseAvg || this.bDepthwiseMax || this.bDepthwiseConv )
       if ( bDepthwiseBias )
         this.depthwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.depthwiseBiasesShape );
-    }
 
     // The second pointwise convolution.
     this.pointwiseChannelCountRate = pointwiseChannelCountRate;
@@ -288,14 +297,6 @@ class ExpandMultiplierShrink {
     } else if ( this.bDepthwiseConv ) {
       t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4d, depthwiseStrides, depthwisePad );
     }
-//!!!
-      if ( this.bDepthwiseAvg ) {
-        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
-      } else if ( this.bDepthwiseMax ) {
-        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
-      } else if ( this.bDepthwiseConv ) {
-        t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ 0 ], 1, "valid" );  // Stride = 1
-      }
       // NOTE: Do not dispose the original data.
 
 //!!! ...unfinished...
