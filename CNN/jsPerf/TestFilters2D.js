@@ -31,7 +31,7 @@ class ExpandMultiplierShrink {
    * If 0, there will be no pointwise convolution before depthwise convolution.
    *
    * @param {boolean} bExpansionBias
-   *   If true, there will be a bias after pointwise convolution. If ( pointwiseChannelCountRate == 0 ), this will also be ignored.
+   *   If true, there will be a bias after pointwise convolution. If ( expansionChannelCountRate == 0 ), this will also be ignored.
    *
    * @param {string} expansionActivationName
    *   The activation function name after the first 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
@@ -80,39 +80,39 @@ class ExpandMultiplierShrink {
     // The first 1x1 pointwise convolution.
     this.expansionChannelCountRate = expansionChannelCountRate;
     this.bExpansion = ( expansionChannelCountRate > 0 );
+    this.bExpansionBias = bExpansionBias;
     this.expansionActivationName = expansionActivationName;
     this.expansionActivationFunction = ExpandMultiplierShrink.getActivationFunction( expansionActivationName );
 
-    if ( this.bExpansion )
+    if ( this.bExpansion ) {
       this.channelCount_expansionAfter_depthwiseBefore = channelCount_expansionBefore * expansionChannelCountRate;
-    else
-      this.channelCount_expansionAfter_depthwiseBefore = channelCount_expansionBefore;  // No first 1x1 pointwise convolution.
 
-    this.expansionFilterHeightWidth = [ 1, 1 ];
-    this.expansionFiltersShape =      [ 1, 1, this.channelCount_expansionBefore, this.channelCount_expansionAfter_depthwiseBefore ];
-    this.expansionFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.expansionFiltersShape );
+      this.expansionFilterHeightWidth = [ 1, 1 ];
+      this.expansionFiltersShape =      [ 1, 1, this.channelCount_expansionBefore, this.channelCount_expansionAfter_depthwiseBefore ];
+      this.expansionBiasesShape =       [ 1, 1, this.channelCount_expansionAfter_depthwiseBefore ];
+
+      this.expansionFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.expansionFiltersShape );
+
+      if ( bExpansionBias )
+        this.expansionBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.expansionBiasesShape );
+
+    } else {
+      this.channelCount_expansionAfter_depthwiseBefore = channelCount_expansionBefore;  // No first 1x1 pointwise convolution.
+    }
 
     // The depthwise operation.
     this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
     if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) {
       switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-        case "Avg":  this.bDepthwiseAvg = true;
-        case "Max":  this.bDepthwiseMax = true;
+        case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; break;
+        case "Max":  this.bDepthwise = this.bDepthwiseMax = true; break;
         //case "Conv": this.bDepthwiseConv = true;
       }
       this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise channel multiplier.
-      
-    if ( this.bDepthwiseAvg ) {
-      t = sourceImage.pool( this.depthwiseFilterHeightWidth, "avg", depthwisePad, 1, depthwiseStrides ); // dilations = 1
-    } else if ( this.bDepthwiseMax ) {
-      t = sourceImage.pool( this.depthwiseFilterHeightWidth, "max", depthwisePad, 1, depthwiseStrides ); // dilations = 1
-    } else if ( this.bDepthwiseConv ) {
-      t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4d, depthwiseStrides, depthwisePad );
-    }
-      
+
     } else {
       if ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) {
-        this.bDepthwiseConv = true;
+        this.bDepthwise = this.bDepthwiseConv = true;
         this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier;
 
         this.depthwiseFiltersShape
@@ -121,7 +121,7 @@ class ExpandMultiplierShrink {
         this.depthwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.depthwiseFiltersShape );
 
       } else {
-        this.bDepthwiseConv = false;  // e.g. negative number
+        this.bDepthwise = this.bDepthwiseConv = false;  // e.g. zero or negative number
         this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise channel multiplier.
       }
     }
@@ -137,9 +137,10 @@ class ExpandMultiplierShrink {
     this.depthwiseFilterHeightWidth = [ depthwiseFilterHeight, this.depthwiseFilterWidth ];
     this.depthwiseBiasesShape =       [ 1, 1, this.channelCount_depthwiseAfter_pointwiseBefore ];
 
-    if ( this.bDepthwiseAvg || this.bDepthwiseMax || this.bDepthwiseConv )
+    if ( this.bDepthwise ) {
       if ( bDepthwiseBias )
         this.depthwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.depthwiseBiasesShape );
+    }
 
     // The second pointwise convolution.
     this.pointwiseChannelCountRate = pointwiseChannelCountRate;
@@ -148,21 +149,20 @@ class ExpandMultiplierShrink {
     this.pointwiseActivationName = pointwiseActivationName;
     this.pointwiseActivationFunction = ExpandMultiplierShrink.getActivationFunction( pointwiseActivationName );
 
-    if ( this.bPointwise )
+    if ( this.bPointwise ) {
       this.channelCount_pointwiseAfter = this.channelCount_depthwiseAfter_pointwiseBefore * pointwiseChannelCountRate;
-    else
-      this.channelCount_pointwiseAfter = this.channelCount_depthwiseAfter_pointwiseBefore;  // No second 1x1 pointwise convolution.
 
-    this.pointwiseFilterHeightWidth = [ 1, 1 ];
+      this.pointwiseFilterHeightWidth = [ 1, 1 ];
+      this.pointwiseFiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwiseBefore, this.channelCount_pointwiseAfter ];
+      this.pointwiseBiasesShape =       [ 1, 1, this.channelCount_pointwiseAfter ];
 
-    this.pointwiseFiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwiseBefore, this.channelCount_pointwiseAfter ];
-    this.pointwiseBiasesShape =       [ 1, 1, this.channelCountStep1.pointwiseAfter ];
-
-    if ( bPointwise ) {
       this.pointwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.pointwiseFiltersShape );
 
       if ( bPointwiseBias )
         this.pointwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.pointwiseBiasesShape );
+
+    } else {
+      this.channelCount_pointwiseAfter = this.channelCount_depthwiseAfter_pointwiseBefore;  // No second 1x1 pointwise convolution.
     }
   }
 
@@ -229,14 +229,55 @@ class ExpandMultiplierShrink {
     }
   }
 
+
   /**
-   * @param  {tf.tensor4d} inputTensor  Apply this tensor with depthwise (bias and activation) and pointwise (bias and activation).
-   * @param  {number}      blockIndex   Which block's depthwise and pointwise operrations.
+   * Process input by this block's steps.
+   *
+   * @param {tf.tensor4d} inputTensor
+   *   The image which will be processed. This inputTensor will be disposed.
+   *
+   * @param bReturn
+   *   If true, the result convoluiotn will be returned.
+   *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
-  apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( inputTensor ) {
+  apply( inputTensor ) {
     let t = inputTensor, tNew;
+//!!!
+    if ( this.bExpansion ) {
+      tNew = t.conv2d( this.expansionFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+      t.dispose();                                         // Dispose all intermediate (temporary) data.
+      t = tNew;
 
+    // NOTE: Do not dispose the original data.
+
+      if ( this.bExpansionBias ) {
+        tNew = t.add( this.expansionBiasesTensor3d );
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+
+      if ( this.expansionActivationFunction ) {
+        tNew = this.expansionActivationFunction( t );
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+    }
+
+    if ( this.bDepthwiseAvg ) {
+      tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+      t.dispose();                                       // Dispose all intermediate (temporary) data.
+      t = tNew;
+    } else if ( this.bDepthwiseMax ) {
+      tNew = t.pool( this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+      t.dispose();                                       // Dispose all intermediate (temporary) data.
+      t = tNew;
+    } else if ( this.bDepthwiseConv ) {
+      tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+      t.dispose();                                       // Dispose all intermediate (temporary) data.
+      t = tNew;
+    }
+//!!!
     if ( this.bDepthwiseBias ) {
       tNew = t.add( this.depthwiseBiasesTensor3d );
       t.dispose();                                         // Dispose all intermediate (temporary) data.
@@ -269,35 +310,6 @@ class ExpandMultiplierShrink {
 
     return t;
   }
-
-  /**
-   * Process input by this block's steps.
-   *
-   * @param sourceImage
-   *   The image which will be processed.
-   *
-   * @param bReturn
-   *   If true, the result convoluiotn will be returned.
-   *
-   * @return
-   *   If ( bReturn == true ), return the convolution result (tensor). Otheriwse, reurn null.
-   */
-  apply( sourceImage, bReturn ) {
-    return tf.tidy( () => {
-
-      let t, tNew;
-
-      // Step 0
-
-//!!!
-    if ( this.bDepthwiseAvg ) {
-      t = sourceImage.pool( this.depthwiseFilterHeightWidth, "avg", depthwisePad, 1, depthwiseStrides ); // dilations = 1
-    } else if ( this.bDepthwiseMax ) {
-      t = sourceImage.pool( this.depthwiseFilterHeightWidth, "max", depthwisePad, 1, depthwiseStrides ); // dilations = 1
-    } else if ( this.bDepthwiseConv ) {
-      t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4d, depthwiseStrides, depthwisePad );
-    }
-      // NOTE: Do not dispose the original data.
 
 //!!! ...unfinished...
 
