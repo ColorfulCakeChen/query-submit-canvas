@@ -233,25 +233,21 @@ class ExpandMultiplierShrink {
 
 
   /**
-   * Process input by this block's steps.
+   * Process input, destroy input, return result.
    *
    * @param {tf.tensor4d} inputTensor
    *   The image which will be processed. This inputTensor will be disposed.
    *
-   * @param bReturn
-   *   If true, the result convoluiotn will be returned.
-   *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
-  apply( inputTensor ) {
+  apply_and_destroy( inputTensor ) {
     let t = inputTensor, tNew;
-//!!!
+
+    // The first 1x1 pointwise convolution.
     if ( this.bExpansion ) {
       tNew = t.conv2d( this.expansionFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
       t.dispose();                                         // Dispose all intermediate (temporary) data.
       t = tNew;
-
-    // NOTE: Do not dispose the original data.
 
       if ( this.bExpansionBias ) {
         tNew = t.add( this.expansionBiasesTensor3d );
@@ -266,32 +262,37 @@ class ExpandMultiplierShrink {
       }
     }
 
-    if ( this.bDepthwiseAvg ) {
-      tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
-      t.dispose();                                       // Dispose all intermediate (temporary) data.
-      t = tNew;
-    } else if ( this.bDepthwiseMax ) {
-      tNew = t.pool( this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
-      t.dispose();                                       // Dispose all intermediate (temporary) data.
-      t = tNew;
-    } else if ( this.bDepthwiseConv ) {
-      tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
-      t.dispose();                                       // Dispose all intermediate (temporary) data.
-      t = tNew;
-    }
-//!!!
-    if ( this.bDepthwiseBias ) {
-      tNew = t.add( this.depthwiseBiasesTensor3d );
-      t.dispose();                                         // Dispose all intermediate (temporary) data.
-      t = tNew;
+    // The depthwise convolution (or average pooling, or max pooling).
+    if ( this.bDepthwise ) {
+
+      if ( this.bDepthwiseConv ) {
+        tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      } else if ( this.bDepthwiseAvg ) {
+        tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      } else if ( this.bDepthwiseMax ) {
+        tNew = t.pool( this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+
+      if ( this.bDepthwiseBias ) {
+        tNew = t.add( this.depthwiseBiasesTensor3d );
+        t.dispose();                                         // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+
+      if ( this.depthwiseActivationFunction ) {
+        tNew = this.depthwiseActivationFunction( t );
+        t.dispose();                                         // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
     }
 
-    if ( this.depthwiseActivationFunction ) {
-      tNew = this.depthwiseActivationFunction( t );
-      t.dispose();                                         // Dispose all intermediate (temporary) data.
-      t = tNew;
-    }
-
+    // The second 1x1 pointwise convolution.
     if ( this.bPointwise ) {
       tNew = t.conv2d( this.pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
       t.dispose();                                         // Dispose all intermediate (temporary) data.
@@ -311,55 +312,6 @@ class ExpandMultiplierShrink {
     }
 
     return t;
-  }
-
-//!!! ...unfinished...
-
-      // Step 0 ???
-      //
-      // So that every layer could dispose previous result without worry about mis-dispose source.
-
-      if ( this.bDepthwiseAvg ) {
-        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
-      } else if ( this.bDepthwiseMax ) {
-        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
-      } else if ( this.bDepthwiseConv ) {
-        t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ 0 ], 1, "valid" );  // Stride = 1
-      }
-      // NOTE: Do not dispose the original data.
-
-      t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( t, 0 );
-
-      // Layer 1, ...
-      if ( this.bDepthwiseAvg ) {
-
-        for ( let i = 1; i < this.blockCount; ++i ) {
-          tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
-          t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
-        }
-
-      } else if ( this.bDepthwiseMax ) {
-
-        for ( let i = 1; i < this.blockCount; ++i ) {
-          tNew = t.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
-          t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
-        }
-
-      } else if ( this.bDepthwiseConv ) {
-
-        for ( let i = 1; i < this.blockCount; ++i ) {
-          tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ i ], 1, "valid" );  // Stride = 1
-          t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
-        }
-
-      }
-
-      if ( bReturn )
-        return t;
-    });
   }
 
   /** The output channel count after these three convolutions. */
