@@ -324,34 +324,31 @@ class ExpandMultiplierShrink {
 class Block {
 
   /**
-   * @param {number} channelExpansionFactor
-   *   The channel expansion factor by 1x1 (pointwise) convolution (not by depthwise convolution). If 0 (or negative), it will looks like
-   * ShuffleNetV2 (i.e. will split and concat channels). If positive (>= 1), it will looks like MobileNetV2 (i.e. expand and shrink
-   * channels).
+   * @param {number} stepCountPerBlock
+   *   If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
+   * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
+   * (half downsample) and use ( stageCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
    *
    * @param sourceHeight        The height (and width) of the source image which will be processed by apply().
    * @param sourceChannelCount  The channel count of the source image.
    * @param targetHeight        The taregt image height (and width).
    *
-   * @param depthwiseFilterHeight
-   *   The height (and width) of each depthwise convolution.
+   * @param {number} expansionChannelCountRate
+   *   The channel expansion rate by 1x1 (pointwise) convolution (not by depthwise convolution). If 0 (or negative), it will looks like
+   * ShuffleNetV2 (i.e. will split and concat channels). If positive (>= 1), it will looks like MobileNetV2 (i.e. expand and shrink
+   * channels).
    *
    * @param {number} depthwiseChannelMultiplierStep0
    *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor.
    *
-   * @param {number} stepCountPerBlock
-   *   If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
-   * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
-   * (half downsample) and use ( stageCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
-
+   * @see ExpandMultiplierShrink.init()
    */
   init(
-    channelExpansionFactor,
     sourceHeight, sourceChannelCount, targetHeight,
-    depthwiseFilterHeight, depthwiseChannelMultiplierStep0,
     stepCountPerBlock,
-    strAvgMaxConv, bDepthwiseBias, depthwiseActivationName,
-    bPointwise, bPointwiseBias, pointwiseActivationName ) {
+    expansionChannelCountRate, bExpansionBias, expansionActivationName,
+    strAvgMaxConv, depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bDepthwiseBias, depthwiseActivationName,
+    pointwiseChannelCountRate, bPointwiseBias, pointwiseActivationName ) {
 
     this.disposeTensors();
 
@@ -395,9 +392,9 @@ class Block {
       this.concatGather = new ChannelShuffler.ConcatGather();
       this.concatGather.init( this.sourceConcatenatedShape, outputGroupCount );
     }
-
-    this.depthwiseFilterHeight = depthwiseFilterHeight;
-    let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
+// !!!
+//     this.depthwiseFilterHeight = depthwiseFilterHeight;
+//     let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
 
     // The special of a block's step 0 are:
     //   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2) (by depthwise convolution with strides = 2)
@@ -456,6 +453,19 @@ class Block {
     }
 
     this.stepCountPerBlock = stepCountPerBlock;
+
+      
+    let step0 = new ExpandMultiplierShrink();
+    step0.init(
+      this.channelCountStep0.expansionBefore,
+
+      1, // expansionChannelCountRate
+      bExpansionBias,
+      expansionActivationName
+
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
+      pointwiseChannelCountRate, bPointwiseBias, pointwiseActivationName ) {
+    );
 
 
     // Pointwise Filters for Channel Expansion
