@@ -56,22 +56,23 @@ class ExpandMultiplierShrink {
    * @param {string} depthwiseActivationName
    *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
    *
+!!! should always same as channelCount_expansionBefore
+
    * @param {number} pointwiseChannelCountRate
    *   The output channel count of the second 1x1 pointwise convolution will be ( output channel count of depthwise convolution * pointwiseChannelCountRate ).
    * If 0, there will be no pointwise convolution after depthwise convolution.
    *
    * @param {boolean} bPointwiseBias
-   *   If true, there will be a bias after the second 1x1 pointwise convolution. If ( pointwiseChannelCountRate == 0 ), this will also be ignored.
+   *   If true, there will be a bias after the second 1x1 pointwise convolution.
    *
    * @param {string} pointwiseActivationName
    *   The activation function name after the second 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
-   * If ( pointwiseChannelCountRate == 0 ), this activation function will also be ignored.
    */
   init(
     channelCount_expansionBefore,
     expansionChannelCountRate, bExpansionBias, expansionActivationName,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
-    pointwiseChannelCountRate, bPointwiseBias, pointwiseActivationName ) {
+    bPointwiseBias, pointwiseActivationName ) {
 
     this.disposeTensors();
 
@@ -142,28 +143,21 @@ class ExpandMultiplierShrink {
         this.depthwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.depthwiseBiasesShape );
     }
 
-    // The second pointwise convolution.
-    this.pointwiseChannelCountRate = pointwiseChannelCountRate;
-    this.bPointwise = ( pointwiseChannelCountRate > 0 );
+    // The second pointwise convolution. (This convolution is always existed. It, however, may have or not bias and activation function.)
     this.bPointwiseBias = bPointwiseBias;
     this.pointwiseActivationName = pointwiseActivationName;
     this.pointwiseActivationFunction = ExpandMultiplierShrink.getActivationFunction( pointwiseActivationName );
 
-    if ( this.bPointwise ) {
-      this.channelCount_pointwiseAfter = this.channelCount_depthwiseAfter_pointwiseBefore * pointwiseChannelCountRate;
+    this.channelCount_pointwiseAfter = this.channelCount_expansionBefore; // The output channel count always be the same as input.
 
-      this.pointwiseFilterHeightWidth = [ 1, 1 ];
-      this.pointwiseFiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwiseBefore, this.channelCount_pointwiseAfter ];
-      this.pointwiseBiasesShape =       [ 1, 1, this.channelCount_pointwiseAfter ];
+    this.pointwiseFilterHeightWidth = [ 1, 1 ];
+    this.pointwiseFiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwiseBefore, this.channelCount_pointwiseAfter ];
+    this.pointwiseBiasesShape =       [ 1, 1, this.channelCount_pointwiseAfter ];
 
-      this.pointwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.pointwiseFiltersShape );
+    this.pointwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.pointwiseFiltersShape );
 
-      if ( bPointwiseBias )
-        this.pointwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.pointwiseBiasesShape );
-
-    } else {
-      this.channelCount_pointwiseAfter = this.channelCount_depthwiseAfter_pointwiseBefore;  // No second 1x1 pointwise convolution.
-    }
+    if ( bPointwiseBias )
+      this.pointwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.pointwiseBiasesShape );
   }
 
   /** Convert activation function to function object. */
@@ -292,7 +286,7 @@ class ExpandMultiplierShrink {
     }
 
     // The second 1x1 pointwise convolution.
-    if ( this.bPointwise ) {
+    {
       tNew = t.conv2d( this.pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
       t.dispose();                                         // Dispose all intermediate (temporary) data.
       t = tNew;
