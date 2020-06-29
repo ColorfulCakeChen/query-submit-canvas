@@ -8,6 +8,8 @@ export { Base };
  *   - NxN depthwise convolution: change channel count. (channel multiplier)
  *   - 1x1 pointwise convolution: change channel count. (shrink)
  *
+ * The second pointwise convolution is always existed. It, however, may have or not bias and activation function.
+ *
  * @member {number} channelCount_expansionAfter_depthwiseBefore
  *   The channel count after the first 1x1 pointwise convolution. If ( expansionChannelCountRate > 0 ), it equals
  * ( channelCount_expansionBefore * expansionChannelCountRate ).
@@ -55,12 +57,6 @@ class ExpandMultiplierShrink {
    *
    * @param {string} depthwiseActivationName
    *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
-   *
-!!! should always same as channelCount_expansionBefore
-
-   * @param {number} pointwiseChannelCountRate
-   *   The output channel count of the second 1x1 pointwise convolution will be ( output channel count of depthwise convolution * pointwiseChannelCountRate ).
-   * If 0, there will be no pointwise convolution after depthwise convolution.
    *
    * @param {boolean} bPointwiseBias
    *   If true, there will be a bias after the second 1x1 pointwise convolution.
@@ -286,22 +282,20 @@ class ExpandMultiplierShrink {
     }
 
     // The second 1x1 pointwise convolution.
-    {
-      tNew = t.conv2d( this.pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-      t.dispose();                                         // Dispose all intermediate (temporary) data.
+    tNew = t.conv2d( this.pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    t.dispose();                                         // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    if ( this.bPointwiseBias ) {
+      tNew = t.add( this.pointwiseBiasesTensor3d );
+      t.dispose();                                       // Dispose all intermediate (temporary) data.
       t = tNew;
+    }
 
-      if ( this.bPointwiseBias ) {
-        tNew = t.add( this.pointwiseBiasesTensor3d );
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
-        t = tNew;
-      }
-
-      if ( this.pointwiseActivationFunction ) {
-        tNew = this.pointwiseActivationFunction( t );
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
-        t = tNew;
-      }
+    if ( this.pointwiseActivationFunction ) {
+      tNew = this.pointwiseActivationFunction( t );
+      t.dispose();                                       // Dispose all intermediate (temporary) data.
+      t = tNew;
     }
 
     return t;
@@ -344,7 +338,7 @@ class Block {
     stepCountPerBlock,
     expansionChannelCountRate, bExpansionBias, expansionActivationName,
     strAvgMaxConv, depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bDepthwiseBias, depthwiseActivationName,
-    pointwiseChannelCountRate, bPointwiseBias, pointwiseActivationName ) {
+    bPointwiseBias, pointwiseActivationName ) {
 
     this.disposeTensors();
 
@@ -464,12 +458,21 @@ class Block {
         this.channelCountStep0.expansionBefore,
         expansionChannelCountRate, bExpansionBias, expansionActivationName,
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
-        pointwiseChannelCountRate, bPointwiseBias, pointwiseActivationName ) {
+        bPointwiseBias, pointwiseActivationName ) {
       );
 
       this.steps[ 0 ] = step0;
 
-//!!! step0's branch ?
+      // Step0's branch (ShuffleNetV2)
+      if ( this.bShuffleNetV2 ) {
+        this.step0Branch = new ExpandMultiplierShrink();
+        this.step0Branch.init(
+          this.channelCountStep0.expansionBefore,
+          0, false, "", // ShuffleNetV2 Step0's branch does not have pointwise convolution before depthwise convolution ( strides = 2 ).
+          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
+          bPointwiseBias, pointwiseActivationName ) {
+        );
+      }
     }
 
     // Step 1, 2, 3, ...
@@ -489,143 +492,11 @@ class Block {
         this.channelCountStep1.expansionBefore,
         expansionChannelCountRate, bExpansionBias, expansionActivationName,
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
-        pointwiseChannelCountRate, bPointwiseBias, pointwiseActivationName ) {
+        bPointwiseBias, pointwiseActivationName ) {
       );
 
       this.steps[ i ] = step;
     }      
-
-
-      
-      
-    // Pointwise Filters for Channel Expansion
-    {
-      this.expansionFilterHeightWidth = [ 1, 1 ];
-      this.expansionFiltersShapeStep0 = [ 1, 1, this.channelCountStep0.expansionBefore, this.channelCountStep0.expansionAfter_depthwiseBefore ];
-      this.expansionFiltersShape =      [ 1, 1, this.channelCountStep1.expansionBefore, this.channelCountStep1.expansionAfter_depthwiseBefore ];
-
-      // Every element (Tensor4d) is a pointwiseFilters for one step.
-      this.expansionFiltersTensor4dArray = Block.generateTensorArray( stepCountPerBlock, this.expansionFiltersShapeStep0, this.expansionFiltersShape );
-    }
-
-    // Depthwise Filters and Biases
-    {
-      this.depthwiseFilterHeightWidth = [ depthwiseFilterHeight, depthwiseFilterWidth ];
-
-      // First step's depthwise filters could expand channel count by depthwiseChannelMultiplierStep0.
-      this.depthwiseFiltersShapeStep0
-        = [ depthwiseFilterHeight, depthwiseFilterWidth, this.channelCountStep0.expansionAfter_depthwiseBefore, depthwiseChannelMultiplierStep0 ];
-
-      this.depthwiseFiltersShape
-        = [ depthwiseFilterHeight, depthwiseFilterWidth, this.channelCountStep1.expansionAfter_depthwiseBefore,                               1 ];
-
-      this.depthwiseBiasesShapeStep0 =  [ 1, 1, this.channelCountStep0.depthwiseAfter_pointwiseBefore ];
-      this.depthwiseBiasesShape =       [ 1, 1, this.channelCountStep1.depthwiseAfter_pointwiseBefore ];
-
-      // Every element (Tensor4d) is a depthwiseFilters for one step.
-      if ( this.bDepthwiseConv )
-        this.depthwiseFiltersTensor4dArray = Block.generateTensorArray( stepCountPerBlock, this.depthwiseFiltersShapeStep0, this.depthwiseFiltersShape );
-
-      // Every element (Tensor3d) is a depthwiseBiases for one step.
-      if ( this.bDepthwiseConv && bDepthwiseBias )
-        this.depthwiseBiasesTensor3dArray = Block.generateTensorArray( stepCountPerBlock, this.depthwiseBiasesShapeStep0, this.depthwiseBiasesShape );
-    }
-
-    // Pointwise Filters and Biases
-    {
-      this.pointwiseFilterHeightWidth = [ 1, 1 ];
-
-      this.pointwiseFiltersShapeStep0 = [ 1, 1, this.channelCountStep0.depthwiseAfter_pointwiseBefore, this.channelCountStep0.pointwiseAfter ];
-      this.pointwiseFiltersShape =      [ 1, 1, this.channelCountStep0.depthwiseAfter_pointwiseBefore, this.channelCountStep1.pointwiseAfter ];
-
-      // Both input channel count and output channel count of pointwise bias are the same as pointwise convolution output.
-      this.pointwiseBiasesShapeStep0 =  [ 1, 1, this.channelCountStep0.pointwiseAfter ];
-      this.pointwiseBiasesShape =       [ 1, 1, this.channelCountStep1.pointwiseAfter ];
-
-      // Every element (Tensor4d) is a pointwiseFilters for one step.
-      if ( bPointwise )
-        this.pointwiseFiltersTensor4dArray = Block.generateTensorArray( stepCountPerBlock, this.pointwiseFiltersShapeStep0, this.pointwiseFiltersShape );
-
-      // Every element (Tensor3d) is a pointwiseBiases for one step.
-      if ( bPointwise && bPointwiseBias )
-        this.pointwiseBiasesTensor3dArray = Block.generateTensorArray( stepCountPerBlock, this.pointwiseBiasesShapeStep0, this.pointwiseBiasesShape );
-    }
-
-    // Branch's Depthwise Filters and Biases and Pointwise Filters and Biases. (Only ShuffleNetV2 block's step 0 has this branch.)
-    if ( channelExpansionFactor <= 0 ) {      // ShuffleNetV2
-
-      {
-        this.branchDepthwiseFilterHeightWidth = [ depthwiseFilterHeight, depthwiseFilterWidth ];
-
-        this.branchDepthwiseFiltersShapeStep0
-          = [ depthwiseFilterHeight, depthwiseFilterWidth, this.channelCountStep0Branch.depthwiseBefore, depthwiseChannelMultiplierStep0 ];
-
-        this.branchDepthwiseBiasesShapeStep0 =  [ 1, 1, this.channelCountStep0Branch.depthwiseAfter_pointwiseBefore ];
-
-        // Every element (Tensor4d) is a depthwiseFilters for one step.
-        this.branchDepthwiseFiltersTensor4dArray = Block.generateTensorArray( stepCountPerBlock, this.branchDepthwiseFiltersShapeStep0, null );
-
-        // Every element (Tensor3d) is a depthwiseBiases for one step.
-        this.branchDepthwiseBiasesTensor3dArray = Block.generateTensorArray( stepCountPerBlock, this.branchDepthwiseBiasesShapeStep0, null );
-      }
-
-      {
-        this.branchPointwiseFilterHeightWidth = [ 1, 1 ];
-
-        this.branchPointwiseFiltersShapeStep0 = [ 1, 1, this.channelCountStep0Branch.depthwiseAfter_pointwiseBefore, this.channelCountStep0Branch.pointwiseAfter ];
-
-        // Both input channel count and output channel count of pointwise bias are the same as pointwise convolution output.
-        this.branchPointwiseBiasesShapeStep0 =  [ 1, 1, this.channelCountStep0Branch.pointwiseAfter ];
-
-        // Every element (Tensor4d) is a pointwiseFilters for one step.
-        this.branchPointwiseFiltersTensor4dArray = Block.generateTensorArray( stepCountPerBlock, this.branchPointwiseFiltersShapeStep0, null );
-
-        // Every element (Tensor3d) is a pointwiseBiases for one step.
-        this.branchPointwiseBiasesTensor3dArray = Block.generateTensorArray( stepCountPerBlock, this.branchPointwiseBiasesShapeStep0, null );
-      }
-    }
-  }
-
-  /**
-   * @param {number}   stepCount           The element count (i.e. length) of the returned array.
-   * @param {number[]} newTensorShapeFirst The tensor's shape of first element of the returned array. If null, same as newTensorShape.
-   * @param {number[]} newTensorShape      The tensor's shape of every (except first) element of the returned array. If null, same as zero size.
-   *
-   * @return {tf.tensor4d[]|tf.tensor3d[]}
-   *   Return a array whose every element is a tensor4d or tensor3d (for one block), or null (if ( bCreateElement == false ) ).
-   */
-  static generateTensorArray( stepCount, newTensorShapeFirst, newTensorShape ) {
-    return tf.tidy( () => {
-      let valueCount = 0;
-      if ( newTensorShape )
-        valueCount = tf.util.sizeFromShape( newTensorShape );
-
-      // first element (i.e. first step) (i.e. step 0)
-      let valueCountFirst = 0;
-      if ( newTensorShapeFirst )
-        valueCountFirst = tf.util.sizeFromShape( newTensorShapeFirst );
-      else
-        valueCountFirst = valueCount;
-
-      let tensor1d, tensorNew;
-      let tensorNewArray = new Array( stepCount );
-      for ( let i = 0; i < stepCount; ++i ) {
-        tensorNew = null; // For ( valueCount == 0 )
-        if ( 0 == i ) {   // Step 0
-          if ( valueCountFirst ) {
-            tensor1d = tf.range( 0, valueCountFirst, 1 );
-            tensorNew = tensor1d.reshape( newTensorShapeFirst );
-          }
-        } else {          // Step 1, 2, 3, ...
-          if ( valueCount ) {
-            tensor1d = tf.range( 0, valueCount, 1 );
-            tensorNew = tensor1d.reshape( newTensorShape );
-          }
-        }
-        tensorNewArray[ i ] = tensorNew;
-      }
-      return tensorNewArray;
-    });
   }
 
   disposeTensors() {
@@ -634,59 +505,23 @@ class Block {
       this.concatGather = null;
     }
 
-    if ( this.expansionFiltersTensor4dArray ) {
-      tf.dispose( this.expansionFiltersTensor4dArray );
-      this.expansionFiltersTensor4dArray = null;
-    }
-
-
-    if ( this.depthwiseFiltersTensor4dArray ) {
-      tf.dispose( this.depthwiseFiltersTensor4dArray );
-      this.depthwiseFiltersTensor4dArray = null;
-    }
-
-    if ( this.depthwiseBiasesTensor3dArray ) {
-      tf.dispose( this.depthwiseBiasesTensor3dArray );
-      this.depthwiseBiasesTensor3dArray = null;
-    }
-
-
-    if ( this.pointwiseFiltersTensor4dArray ) {
-      tf.dispose( this.pointwiseFiltersTensor4dArray );
-      this.pointwiseFiltersTensor4dArray = null;
-    }
-
-    if ( this.pointwiseBiasesTensor3dArray ) {
-      tf.dispose( this.pointwiseBiasesTensor3dArray );
-      this.pointwiseBiasesTensor3dArray = null;
-    }
-
-
     {
-      if ( this.branchDepthwiseFiltersTensor4dArray ) {
-        tf.dispose( this.branchDepthwiseFiltersTensor4dArray );
-        this.branchDepthwiseFiltersTensor4dArray = null;
+      for ( let i = 0; i < stepCountPerBlock; ++i )
+      {
+        let step = this.steps[ i ];
+        step.disposeTensors();
       }
+      this.steps = null;
+    }
 
-      if ( this.branchDepthwiseBiasesTensor3dArray ) {
-        tf.dispose( this.branchDepthwiseBiasesTensor3dArray );
-        this.branchDepthwiseBiasesTensor3dArray = null;
-      }
-
-
-      if ( this.branchPointwiseFiltersTensor4dArray ) {
-        tf.dispose( this.branchPointwiseFiltersTensor4dArray );
-        this.branchPointwiseFiltersTensor4dArray = null;
-      }
-
-      if ( this.branchPointwiseBiasesTensor3dArray ) {
-        tf.dispose( this.branchPointwiseBiasesTensor3dArray );
-        this.branchPointwiseBiasesTensor3dArray = null;
-      }
+    if ( this.step0Branch ) {
+      this.step0Branch.disposeTensors();
+      this.step0Branch = null;
     }
   }
 
 
+//!!!???
 
   // The output channel count of this block's last step.
   get outputChannelCount() { return this.channelCountStep1.pointwiseAfter; }
