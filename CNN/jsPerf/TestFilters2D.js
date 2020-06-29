@@ -108,7 +108,7 @@ class ExpandMultiplierShrink {
         case "Max":  this.bDepthwise = this.bDepthwiseMax = true; break;
         //case "Conv": this.bDepthwiseConv = true;
       }
-      this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise channel multiplier.
+      this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // depthwise without channel multiplier.
 
     } else {
       if ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) {
@@ -122,7 +122,7 @@ class ExpandMultiplierShrink {
 
       } else {
         this.bDepthwise = this.bDepthwiseConv = false;  // e.g. zero or negative number
-        this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise channel multiplier.
+        this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise and no channel multiplier.
       }
     }
 
@@ -166,6 +166,7 @@ class ExpandMultiplierShrink {
     }
   }
 
+  /** Convert activation function to function object. */
   static getActivationFunction( strActivationName ) {
     switch ( strActivationName ) {
       case "relu":    return tf.relu;    break;
@@ -202,6 +203,7 @@ class ExpandMultiplierShrink {
     });
   }
 
+  /** Release all tensors. */
   disposeTensors() {
     if ( this.expansionFiltersTensor4d ) {
       tf.dispose( this.expansionFiltersTensor4d );
