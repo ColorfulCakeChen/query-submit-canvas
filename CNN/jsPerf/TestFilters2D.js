@@ -11,16 +11,16 @@ export { Base };
  * The second pointwise convolution is always existed. It, however, may have or not bias and activation function.
  *
  * @member {number} channelCount_expansionAfter_depthwiseBefore
- *   The channel count after the first 1x1 pointwise convolution. If ( expansionChannelCountRate > 0 ), it equals
- * ( channelCount_expansionBefore * expansionChannelCountRate ).
+ *   The channel count after the first 1x1 pointwise convolution. If ( expansionChannelCount > 0 ), it equals expansionChannelCount.
+ * If ( expansionChannelCount <= 0 ), it equals channelCount_expansionBefore.
  *
  * @member {number} channelCount_depthwiseAfter_pointwiseBefore
  *   The channel count after the NxN depthwise convolution.  If ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
  * ( channelCount_expansionAfter_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier ).
  *
  * @member {number} channelCount_pointwiseAfter
- *   The channel count after the second 1x1 pointwise convolution. If ( pointwiseChannelCountRate > 0 ), it equals
- * ( channelCount_depthwiseAfter_pointwiseBefore * pointwiseChannelCountRate ).
+ *   The channel count after the second 1x1 pointwise convolution. If ( pointwiseChannelCount > 0 ), it equals pointwiseChannelCount.
+ * If ( pointwiseChannelCount <= 0 ), it equals channelCount_depthwiseAfter_pointwiseBefore.
  */
 class ExpandMultiplierShrink {
 
@@ -28,16 +28,15 @@ class ExpandMultiplierShrink {
    * @param {number} channelCount_expansionBefore
    *   The channel count of input image.
    *
-   * @param {number} expansionChannelCountRate
-   *   The output channel count of the first pointwise convolution will be ( channelCount_expansionBefore * expansionChannelCountRate ).
-   * If 0, there will be no pointwise convolution before depthwise convolution.
+   * @param {number} expansionChannelCount
+   *   The output channel count of the first pointwise convolution. If 0, there will be no pointwise convolution before depthwise convolution.
    *
    * @param {boolean} bExpansionBias
-   *   If true, there will be a bias after pointwise convolution. If ( expansionChannelCountRate == 0 ), this will also be ignored.
+   *   If true, there will be a bias after pointwise convolution. If ( expansionChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {string} expansionActivationName
    *   The activation function name after the first 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
-   * If ( expansionChannelCountRate == 0 ), this activation function will also be ignored.
+   * If ( expansionChannelCount == 0 ), this activation function will also be ignored.
    *
    * @param {string|number} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
@@ -58,31 +57,35 @@ class ExpandMultiplierShrink {
    * @param {string} depthwiseActivationName
    *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
    *
+   * @param {number} pointwiseChannelCount
+   *   The output channel count of the second 1x1 pointwise convolution. If 0, there will be no pointwise convolution before depthwise convolution.
+   *
    * @param {boolean} bPointwiseBias
-   *   If true, there will be a bias after the second 1x1 pointwise convolution.
+   *   If true, there will be a bias after the second 1x1 pointwise convolution. If ( pointwiseChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {string} pointwiseActivationName
    *   The activation function name after the second 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
+   * If ( pointwiseChannelCount == 0 ), this activation function will also be ignored.
    */
   init(
     channelCount_expansionBefore,
-    expansionChannelCountRate, bExpansionBias, expansionActivationName,
+    expansionChannelCount, bExpansionBias, expansionActivationName,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
-    bPointwiseBias, pointwiseActivationName ) {
+    pointwiseChannelCount, bPointwiseBias, pointwiseActivationName ) {
 
     this.disposeTensors();
 
     this.channelCount_expansionBefore = channelCount_expansionBefore;
 
     // The first 1x1 pointwise convolution.
-    this.expansionChannelCountRate = expansionChannelCountRate;
-    this.bExpansion = ( expansionChannelCountRate > 0 );
+    this.expansionChannelCount = expansionChannelCount;
+    this.bExpansion = ( expansionChannelCount > 0 );
     this.bExpansionBias = bExpansionBias;
     this.expansionActivationName = expansionActivationName;
     this.expansionActivationFunction = ExpandMultiplierShrink.getActivationFunction( expansionActivationName );
 
     if ( this.bExpansion ) {
-      this.channelCount_expansionAfter_depthwiseBefore = channelCount_expansionBefore * expansionChannelCountRate;
+      this.channelCount_expansionAfter_depthwiseBefore = expansionChannelCount;
 
       this.expansionFilterHeightWidth = [ 1, 1 ];
       this.expansionFiltersShape =      [ 1, 1, this.channelCount_expansionBefore, this.channelCount_expansionAfter_depthwiseBefore ];
@@ -140,20 +143,29 @@ class ExpandMultiplierShrink {
     }
 
     // The second pointwise convolution. (This convolution is always existed. It, however, may have or not bias and activation function.)
+    this.pointwiseChannelCount = pointwiseChannelCount;
+    this.bPointwise = ( pointwiseChannelCount > 0 );
     this.bPointwiseBias = bPointwiseBias;
     this.pointwiseActivationName = pointwiseActivationName;
     this.pointwiseActivationFunction = ExpandMultiplierShrink.getActivationFunction( pointwiseActivationName );
 
-    this.channelCount_pointwiseAfter = this.channelCount_expansionBefore; // The output channel count always be the same as input.
+    if ( this.bPointwise ) {
+      this.channelCount_pointwiseAfter = this.pointwiseChannelCount;
 
-    this.pointwiseFilterHeightWidth = [ 1, 1 ];
-    this.pointwiseFiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwiseBefore, this.channelCount_pointwiseAfter ];
-    this.pointwiseBiasesShape =       [ 1, 1, this.channelCount_pointwiseAfter ];
+      this.pointwiseFilterHeightWidth = [ 1, 1 ];
+      this.pointwiseFiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwiseBefore, this.channelCount_pointwiseAfter ];
+      this.pointwiseBiasesShape =       [ 1, 1, this.channelCount_pointwiseAfter ];
 
-    this.pointwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.pointwiseFiltersShape );
+      this.pointwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.pointwiseFiltersShape );
 
-    if ( bPointwiseBias )
-      this.pointwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.pointwiseBiasesShape );
+      if ( this.bPointwise ) {
+        if ( bPointwiseBias )
+          this.pointwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.pointwiseBiasesShape );
+      }
+    } else {
+      this.channelCount_pointwiseAfter = this.channelCount_depthwiseAfter_pointwiseBefore;
+    }
+
   }
 
   /** Convert activation function to function object. */
@@ -282,20 +294,22 @@ class ExpandMultiplierShrink {
     }
 
     // The second 1x1 pointwise convolution.
-    tNew = t.conv2d( this.pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-    t.dispose();                                         // Dispose all intermediate (temporary) data.
-    t = tNew;
-
-    if ( this.bPointwiseBias ) {
-      tNew = t.add( this.pointwiseBiasesTensor3d );
-      t.dispose();                                       // Dispose all intermediate (temporary) data.
+    if ( this.bPointwise ) {
+      tNew = t.conv2d( this.pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+      t.dispose();                                         // Dispose all intermediate (temporary) data.
       t = tNew;
-    }
 
-    if ( this.pointwiseActivationFunction ) {
-      tNew = this.pointwiseActivationFunction( t );
-      t.dispose();                                       // Dispose all intermediate (temporary) data.
-      t = tNew;
+      if ( this.bPointwiseBias ) {
+        tNew = t.add( this.pointwiseBiasesTensor3d );
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+
+      if ( this.pointwiseActivationFunction ) {
+        tNew = this.pointwiseActivationFunction( t );
+        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
     }
 
     return t;
@@ -336,9 +350,9 @@ class Block {
     sourceHeight, sourceChannelCount, targetHeight,
     bShuffleNetV2,
     stepCountPerBlock,
-    expansionChannelCountRate, bExpansionBias, expansionActivationName,
+    expansionChannelCount, bExpansionBias, expansionActivationName,
     strAvgMaxConv, depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bDepthwiseBias, depthwiseActivationName,
-    bPointwiseBias, pointwiseActivationName ) {
+    pointwiseChannelCount, bPointwiseBias, pointwiseActivationName ) {
 
     this.disposeTensors();
 
@@ -373,7 +387,8 @@ class Block {
     this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, sourceChannelCount ];
 
     if ( this.bShuffleNetV2 ) {
-      expansionChannelCountRate = 1;  // ShuffleNetV2 never expands channels by pointwise convolution.
+      expansionChannelCount = sourceChannelCount;  // ShuffleNetV2 never expands channels by pointwise convolution.
+//      pointwiseChannelCount = ???;
 
       let outputGroupCount = 2; // ShuffleNetV2 always uses two groups.
       this.concatGather = new ChannelShuffler.ConcatGather();
@@ -521,7 +536,7 @@ class Block {
   }
 
 
-//!!!???
+//!!!??? If ( pointwiseChannelCount == channelCount.expansionBefore ) in MobileNetV2, add input and output as output.
 
   // The output channel count of this block's last step.
   get outputChannelCount() { return this.channelCountStep1.pointwiseAfter; }
