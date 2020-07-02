@@ -373,15 +373,23 @@ class Block {
    * @param {number} depthwiseChannelMultiplierStep0
    *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor.
    *
+   * @param {boolean} bBias
+   *   If true, there will be a bias after every convolution.
+   *
+   * @param {string} strActivationName
+   *   The activation function name after the convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
+   *
    * @see ExpandMultiplierShrink.init()
    */
   init(
     sourceHeight, sourceChannelCount, targetHeight,
     bShuffleNetV2,
     stepCountPerBlock,
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    strAvgMaxConv, depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bDepthwiseBias, depthwiseActivationName,
-    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName ) {
+//     step0_pointwise1ChannelCount, step0_bPointwise1Bias, step0_pointwise1ActivationName,
+//     step0_pointwise2ChannelCount, step0_bPointwise2Bias, step0_pointwise2ActivationName,
+//     strAvgMaxConv, depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bDepthwiseBias, depthwiseActivationName,
+//     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName ) {
+    strAvgMaxConv, depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, strActivationName ) {
 
     this.disposeTensors();
 
@@ -415,61 +423,74 @@ class Block {
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
 
-    this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, sourceChannelCount ];
+    this.strAvgMaxConv = strAvgMaxConv;
+    this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
 
-    if ( this.bShuffleNetV2 ) {
-      expansionChannelCount = sourceChannelCount;  // ShuffleNetV2 never expands channels by pointwise convolution.
-//      pointwiseChannelCount = ???;
+    let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
+    this.depthwiseFilterHeight = depthwiseFilterHeight;
+    this.depthwiseFilterWidth = depthwiseFilterWidth;
+
+    this.bBias = bBias;
+    this.strActivationName = strActivationName;
+
+//     channelCount_pointwise1Before,
+//     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+//     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
+//     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName
+
+    if ( bShuffleNetV2 ) {
+
+      this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, sourceChannelCount ];
+
+      pointwise1ChannelCount = sourceChannelCount;  // ShuffleNetV2 never expands channels by pointwise convolution.
+//      pointwise2ChannelCount = ???;
 
       let outputGroupCount = 2; // ShuffleNetV2 always uses two (depthwise convolution) groups.
       this.concatGather = new ChannelShuffler.ConcatGather();
       this.concatGather.init( this.sourceConcatenatedShape, outputGroupCount );
     }
-// !!!
-//     this.depthwiseFilterHeight = depthwiseFilterHeight;
-//     let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
 
     // The special of a block's step 0 are:
     //   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2) (by depthwise convolution with strides = 2)
-    //   - Double channels. (ShuffleNetV2 only)
+    //   - Double channels. (by concat if ShuffleNetV2. by second pointwise if MobileNetV2.)
     //   - Expand channels by channelMultiplier of depthwise convolution. (Both ShuffleNetV2 and MobileNetV2 do not have this. It is added by us only.)
 
-    this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
     if ( bShuffleNetV2 ) {      // ShuffleNetV2
 
       // the channel count of the first step (i.e. Step 0).
       this.channelCountStep0 = {
-        expansionBefore:                 sourceChannelCount,
-        expansionAfter_depthwiseBefore:  sourceChannelCount,  // No expansion.
-        depthwiseAfter_pointwiseBefore:  sourceChannelCount * depthwiseChannelMultiplierStep0,
-        pointwiseAfter:                  sourceChannelCount * depthwiseChannelMultiplierStep0,
+        pointwise1Before:                 sourceChannelCount,
+        pointwise1After_depthwiseBefore:  sourceChannelCount,  // No expansion.
+        depthwiseAfter_pointwise2Before:  sourceChannelCount * depthwiseChannelMultiplierStep0,
+        pointwise2After:                  sourceChannelCount * depthwiseChannelMultiplierStep0,
       };
 
-      // The step 0 of ShuffleNetV2 has a branch for height and width halving without 1x1 (pointwise) convolution before halving by depthwise convolution.
+      // The step 0 of ShuffleNetV2 has a branch for halving height and width by depthwise convolution without 1x1 (pointwise) convolution in front of it.
       this.channelCountStep0Branch = {
-        depthwiseBefore:                 sourceChannelCount,  // No expansion.
-        depthwiseAfter_pointwiseBefore:  sourceChannelCount * depthwiseChannelMultiplierStep0,
-        pointwiseAfter:                  sourceChannelCount * depthwiseChannelMultiplierStep0,
+        depthwiseBefore:                  sourceChannelCount,  // No expansion.
+        depthwiseAfter_pointwise2Before:  sourceChannelCount * depthwiseChannelMultiplierStep0,
+        pointwise2After:                  sourceChannelCount * depthwiseChannelMultiplierStep0,
       };
 
       // the channel count after the first step (i.e. Step 1, 2, 3, ...).
       this.channelCountStep1 = {
-        expansionBefore:                 this.channelCountStep0.pointwiseAfter + this.channelCountStep0Branch.pointwiseAfter,  // Expansion twice.
-        expansionAfter_depthwiseBefore:  this.channelCountStep0.pointwiseAfter + this.channelCountStep0Branch.pointwiseAfter,
-        depthwiseAfter_pointwiseBefore:  this.channelCountStep0.pointwiseAfter + this.channelCountStep0Branch.pointwiseAfter,
-        pointwiseAfter:                  this.channelCountStep0.pointwiseAfter + this.channelCountStep0Branch.pointwiseAfter,
+        pointwise1Before:                 this.channelCountStep0.pointwise2After + this.channelCountStep0Branch.pointwise2After,  // Expansion twice.
+        pointwise1After_depthwiseBefore:  this.channelCountStep0.pointwise2After + this.channelCountStep0Branch.pointwise2After,
+        depthwiseAfter_pointwise2Before:  this.channelCountStep0.pointwise2After + this.channelCountStep0Branch.pointwise2After,
+        pointwise2After:                  this.channelCountStep0.pointwise2After + this.channelCountStep0Branch.pointwise2After,
       };
 
     } else {  // MobileNetV2
 
-      this.expandedChannelCount = sourceChannelCount * expansionChannelCountRate;
+//      this.expandedChannelCount = sourceChannelCount * pointwise1ChannelCount;
+      this.pointwise1ChannelCount = pointwise1ChannelCount;
 
       // the channel count of the first step (i.e. Step 0).
       this.channelCountStep0 = {
-        expansionBefore:                 sourceChannelCount,
-        expansionAfter_depthwiseBefore:  this.expandedChannelCount,  // Expansion.
-        depthwiseAfter_pointwiseBefore:  this.expandedChannelCount * depthwiseChannelMultiplierStep0,
-        pointwiseAfter:                  this.expandedChannelCount * depthwiseChannelMultiplierStep0,
+        pointwise1Before:                 sourceChannelCount,
+        pointwise1After_depthwiseBefore:  this.pointwise1ChannelCount,  // Expansion temporarily.
+        depthwiseAfter_pointwise2Before:  this.pointwise1ChannelCount * depthwiseChannelMultiplierStep0,
+        pointwise2After:                  ( this.sourceChannelCount * depthwiseChannelMultiplierStep0 ) * 2,  // Expansion twice.
       };
 
       // The step 0 of MobileNetV2 has no branch.
@@ -478,10 +499,10 @@ class Block {
 
       // the channel count after the first step (i.e. Step 1, 2, 3, ...).
       this.channelCountStep1 = {
-        expansionBefore:                 this.channelCountStep0.pointwiseAfter,
-        expansionAfter_depthwiseBefore:  this.channelCountStep0.pointwiseAfter * 2,  // Expansion twice.
-        depthwiseAfter_pointwiseBefore:  this.channelCountStep0.pointwiseAfter * 2,
-        pointwiseAfter:                  this.channelCountStep0.pointwiseAfter * 2,
+        pointwise1Before:                 this.channelCountStep0.pointwise2After,
+        pointwise1After_depthwiseBefore:  ??? this.channelCountStep0.pointwise2After * 2,  // Expansion twice.
+        depthwiseAfter_pointwise2Before:  this.channelCountStep0.pointwise2After,
+        pointwise2After:                  this.channelCountStep0.pointwise2After
       };
     }
 
@@ -489,6 +510,7 @@ class Block {
     this.steps = new Array( stepCountPerBlock );
 
     // Step 0.
+    let step0, step0Branch;
     {
       let depthwise_AvgMax_Or_ChannelMultiplier;
       if ( strAvgMaxConv == "Conv" )
@@ -499,31 +521,57 @@ class Block {
       let depthwiseStrides = 2;  // Step 0 is responsibile for halving input's height (and width).
       let depthwisePad = "same";
 
-      let step0 = new ExpandMultiplierShrink();
+      let pointwise1ChannelCount, pointwise2ChannelCount;
+      if ( bShuffleNetV2 ) {
+        pointwise1ChannelCount = sourceChannelCount * 1; // In ShuffleNetV2, all convolutions do not change channel count
+        pointwise2ChannelCount = sourceChannelCount * 1;
+      } else {
+        pointwise1ChannelCount = sourceChannelCount * 4; // In MobileNetV2, ( pointwise1ChannelCount > pointwise2ChannelCount )
+        pointwise2ChannelCount = sourceChannelCount * 2; // The channel count of step 0 of MobileNetV2 output is twice as input.
+      }
+
+      step0 = new PointDepthPoint();
       step0.init(
-        this.channelCountStep0.expansionBefore,
-        expansionChannelCountRate, bExpansionBias, expansionActivationName,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
-        bPointwise2Bias, pointwise2ActivationName ) {
+        sourceChannelCount,
+        pointwise1ChannelCount, bBias, strActivationName,
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
+        pointwise2ChannelCount, bBias, strActivationName ) {
       );
 
       this.steps[ 0 ] = step0;
 
       // Step0's branch (ShuffleNetV2)
-      if ( this.bShuffleNetV2 ) {
-        this.step0Branch = new ExpandMultiplierShrink();
-        this.step0Branch.init(
-          this.channelCountStep0.expansionBefore,
+      //
+      // The step 0 of ShuffleNetV2 has a branch for halving height and width by depthwise convolution without 1x1 (pointwise) convolution in front of it.
+      if ( bShuffleNetV2 ) {
+        this.step0Branch = step0Branch = new PointDepthPoint();
+        step0Branch.init(
+          sourceChannelCount,
           0, false, "", // ShuffleNetV2 Step0's branch does not have pointwise convolution before depthwise convolution ( strides = 2 ).
-          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
-          bPointwise2Bias, pointwise2ActivationName ) {
+          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
+          pointwise2ChannelCount, bBias, strActivationName ) {
         );
       }
     }
 
+//     channelCount_pointwise1Before,
+//     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+//     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
+//     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName
+
     // Step 1, 2, 3, ...
-    for ( let i = 1; i < stepCountPerBlock; ++i )
     {
+      // In ShuffleNetV2, the input channel count of step 1 (2, 3, ...) is the concatenated output channel count of the main and branch of step 0.
+      // In MobileNetV2, the input channel count of step 1 (2, 3, ...) is the output channel count of the step 0.
+      //
+      // However, they are the same as ( sourceChannelCount * 2 ).
+      let channelCount_pointwise1Before;
+      if ( bShuffleNetV2 ) {
+        channelCount_pointwise1Before = step0.channelCount_pointwise2After + step0Branch.channelCount_pointwise2After;
+      } else {
+        channelCount_pointwise1Before = step0.channelCount_pointwise2After;
+      }
+
       let depthwise_AvgMax_Or_ChannelMultiplier;
       if ( strAvgMaxConv == "Conv" )
         depthwise_AvgMax_Or_ChannelMultiplier = 1; // Force to 1, because only step 0 can have ( channelMultiplier > 1 ).
@@ -533,16 +581,28 @@ class Block {
       let depthwiseStrides = 1;  // Force to 1, because only step 0 should halve input's height (and width).
       let depthwisePad = "same";
 
-      let step = new ExpandMultiplierShrink();
-      step.init(
-        this.channelCountStep1.expansionBefore,
-        expansionChannelCountRate, bExpansionBias, expansionActivationName,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
-        bPointwise2Bias, pointwise2ActivationName ) {
-      );
+      let pointwise1ChannelCount, pointwise2ChannelCount;
+      if ( bShuffleNetV2 ) {
+        pointwise1ChannelCount = channelCount_pointwise1Before * 1; // In ShuffleNetV2, all convolutions do not change channel count
+        pointwise2ChannelCount = channelCount_pointwise1Before * 1;
+      } else {
+        pointwise1ChannelCount = channelCount_pointwise1Before * 2; // In MobileNetV2, ( pointwise1ChannelCount > pointwise2ChannelCount )
+        pointwise2ChannelCount = channelCount_pointwise1Before * 1; // The channel count of step 1 (2, 3, ...) of MobileNetV2 output are the same as input.
+      }
 
-      this.steps[ i ] = step;
-    }      
+      for ( let i = 1; i < stepCountPerBlock; ++i )
+      {
+        let step = new PointDepthPoint();
+        step.init(
+          channelCount_pointwise1Before,
+          pointwise1ChannelCount, bBias, strActivationName,
+          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
+          pointwise2ChannelCount, bBias, strActivationName ) {
+        );
+
+        this.steps[ i ] = step;
+      }
+    }
   }
 
   disposeTensors() {
