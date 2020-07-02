@@ -122,7 +122,7 @@ class ExpandMultiplierShrink {
 
       } else {
         this.bDepthwise = this.bDepthwiseConv = false;  // e.g. zero or negative number
-        this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise and no channel multiplier.
+        this.channelCount_depthwiseAfter_pointwiseBefore = this.channelCount_expansionAfter_depthwiseBefore; // No depthwise (so that no channel multiplier).
       }
     }
 
@@ -158,17 +158,16 @@ class ExpandMultiplierShrink {
 
       this.pointwiseFiltersTensor4d = ExpandMultiplierShrink.generateTensor( this.pointwiseFiltersShape );
 
-      if ( this.bPointwise ) {
-        if ( bPointwiseBias )
-          this.pointwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.pointwiseBiasesShape );
-      }
+      if ( bPointwiseBias )
+        this.pointwiseBiasesTensor3d = ExpandMultiplierShrink.generateTensor( this.pointwiseBiasesShape );
+
     } else {
       this.channelCount_pointwiseAfter = this.channelCount_depthwiseAfter_pointwiseBefore;
     }
 
   }
 
-  /** Convert activation function to function object. */
+  /** Convert activation function name to function object. */
   static getActivationFunction( strActivationName ) {
     switch ( strActivationName ) {
       case "relu":    return tf.relu;    break;
@@ -212,6 +211,11 @@ class ExpandMultiplierShrink {
       this.expansionFiltersTensor4d = null;
     }
 
+    if ( this.expansionBiasesTensor3d ) {
+      tf.dispose( this.expansionBiasesTensor3d );
+      this.expansionBiasesTensor3d = null;
+    }
+
     if ( this.depthwiseFiltersTensor4d ) {
       tf.dispose( this.depthwiseFiltersTensor4d );
       this.depthwiseFiltersTensor4d = null;
@@ -247,67 +251,91 @@ class ExpandMultiplierShrink {
     // The first 1x1 pointwise convolution.
     if ( this.bExpansion ) {
       tNew = t.conv2d( this.expansionFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-      t.dispose();                                         // Dispose all intermediate (temporary) data.
+      t.dispose();                                       // Dispose all intermediate (temporary) data.
       t = tNew;
 
       if ( this.bExpansionBias ) {
         tNew = t.add( this.expansionBiasesTensor3d );
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
         t = tNew;
       }
 
       if ( this.expansionActivationFunction ) {
         tNew = this.expansionActivationFunction( t );
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
         t = tNew;
       }
     }
 
     // The depthwise convolution (or average pooling, or max pooling).
-    if ( this.bDepthwise ) {
-
-      if ( this.bDepthwiseConv ) {
-        tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
-        t = tNew;
-      } else if ( this.bDepthwiseAvg ) {
-        tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
-        t = tNew;
-      } else if ( this.bDepthwiseMax ) {
-        tNew = t.pool( this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
-        t = tNew;
-      }
+    if ( this.bDepthwiseConv ) {
+      tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+      t.dispose();                                       // Dispose all intermediate (temporary) data.
+      t = tNew;
 
       if ( this.bDepthwiseBias ) {
         tNew = t.add( this.depthwiseBiasesTensor3d );
-        t.dispose();                                         // Dispose all intermediate (temporary) data.
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
         t = tNew;
       }
 
       if ( this.depthwiseActivationFunction ) {
         tNew = this.depthwiseActivationFunction( t );
-        t.dispose();                                         // Dispose all intermediate (temporary) data.
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
         t = tNew;
       }
+
+    } else if ( this.bDepthwiseAvg ) {
+      tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+      t.dispose();                                       // Dispose all intermediate (temporary) data.
+      t = tNew;
+
+      if ( this.bDepthwiseBias ) {
+        tNew = t.add( this.depthwiseBiasesTensor3d );
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+
+      if ( this.depthwiseActivationFunction ) {
+        tNew = this.depthwiseActivationFunction( t );
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+
+    } else if ( this.bDepthwiseMax ) {
+      tNew = t.pool( this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+      t.dispose();                                       // Dispose all intermediate (temporary) data.
+      t = tNew;
+
+      if ( this.bDepthwiseBias ) {
+        tNew = t.add( this.depthwiseBiasesTensor3d );
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+
+      if ( this.depthwiseActivationFunction ) {
+        tNew = this.depthwiseActivationFunction( t );
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
+        t = tNew;
+      }
+
     }
 
     // The second 1x1 pointwise convolution.
     if ( this.bPointwise ) {
       tNew = t.conv2d( this.pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-      t.dispose();                                         // Dispose all intermediate (temporary) data.
+      t.dispose();                                       // Dispose all intermediate (temporary) data.
       t = tNew;
 
       if ( this.bPointwiseBias ) {
         tNew = t.add( this.pointwiseBiasesTensor3d );
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
         t = tNew;
       }
 
       if ( this.pointwiseActivationFunction ) {
         tNew = this.pointwiseActivationFunction( t );
-        t.dispose();                                       // Dispose all intermediate (temporary) data.
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
         t = tNew;
       }
     }
