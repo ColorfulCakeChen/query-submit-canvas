@@ -106,7 +106,7 @@ class Block {
       let pointwise1ChannelCount = 0; // no pointwise convolution before depthwise convolution.
       let pointwise2ChannelCount = sourceChannelCount;  // Assume output channel count is the same as input channel count.
 
-      let step0 = new PointDepthPoint.Base();
+      let step0 = this.step0 = new PointDepthPoint.Base();
       step0.init(
         sourceChannelCount,
         pointwise1ChannelCount, bBias, strActivationName,
@@ -114,7 +114,7 @@ class Block {
         pointwise2ChannelCount, bBias, strActivationName );
 
       this.steps = new Array( 1 );
-      this.steps[ 0 ] = step0;
+      this.steps[ 0 ] = step0;  // So that can be disposed by for-loop.
 
     } else {  // ShuffleNetV2, or MobileNetV2.
 
@@ -146,14 +146,14 @@ class Block {
           pointwise2ChannelCount = sourceChannelCount * 2; // The channel count of step 0 of MobileNetV2 output is twice as input.
         }
 
-        step0 = new PointDepthPoint.Base();
+        step0 = this.step0 = new PointDepthPoint.Base();
         step0.init(
           sourceChannelCount,
           pointwise1ChannelCount, bBias, strActivationName,
           depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
           pointwise2ChannelCount, bBias, strActivationName );
 
-        this.steps[ 0 ] = step0;
+        this.steps[ 0 ] = step0;  // So that can be disposed by for-loop.
 
         // Step0's branch (ShuffleNetV2)
         //
@@ -209,8 +209,7 @@ class Block {
           pointwise2ChannelCount = channelCount_pointwise1Before * 1; // The channel count of step 1 (2, 3, ...) of MobileNetV2 output are the same as input.
         }
 
-        for ( let i = 1; i < stepCountPerBlock; ++i )
-        {
+        for ( let i = 1; i < stepCountPerBlock; ++i ) {
           let step = new PointDepthPoint.Base();
           step.init(
             channelCount_pointwise1Before,
@@ -222,8 +221,6 @@ class Block {
         }
       }
     }
-
-
   }
 
   disposeTensors() {
@@ -233,13 +230,14 @@ class Block {
     }
 
     {
-      for ( let i = 0; i < this.stepCountPerBlock; ++i )
-      {
+      for ( let i = 0; i < this.stepCountPerBlock; ++i ) {
         let step = this.steps[ i ];
         step.disposeTensors();
       }
       this.steps = null;
     }
+
+    this.step0 = null;  // Should already be disposed by the above for-loop.
 
     if ( this.step0Branch ) {
       this.step0Branch.disposeTensors();
@@ -257,11 +255,14 @@ class Block {
    */
   apply_and_destroy( inputTensor ) {
     let t = inputTensor, tNew;
-    
+
     if ( this.stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
+
+      this.step0;
 
     } else {  // ShuffleNetV2, or MobileNetV2.
 
+      this.step0;
     }
 
 //!!!
@@ -275,7 +276,7 @@ class Block {
 
   // The output channel count of this block's last step.
   get outputChannelCount() {
-    if ( this.stepCountPerBlock <= 0 ) {
+    if ( this.stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
     } else if ( this.stepCountPerBlock == 1 ) {
     } else {
     }
