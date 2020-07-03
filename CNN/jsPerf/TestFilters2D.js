@@ -113,12 +113,9 @@ class Block {
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
         pointwise2ChannelCount, bBias, strActivationName );
 
-      this.steps = new Array( 1 );
-      this.steps[ 0 ] = step0;  // So that can be disposed by for-loop.
+      this.apply_and_destroy_fn = this.apply_and_destroy_NotShuffleNetV2_NotMobileNetV2.bind( this );
 
     } else {  // ShuffleNetV2, or MobileNetV2.
-
-      this.steps = new Array( stepCountPerBlock );
 
       // Step 0.
       //
@@ -153,8 +150,6 @@ class Block {
           depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
           pointwise2ChannelCount, bBias, strActivationName );
 
-        this.steps[ 0 ] = step0;  // So that can be disposed by for-loop.
-
         // Step0's branch (ShuffleNetV2)
         //
         // The step 0 of ShuffleNetV2 has a branch for halving height and width by depthwise convolution without 1x1 (pointwise) convolution in front of it.
@@ -165,11 +160,18 @@ class Block {
             0, false, "", // ShuffleNetV2 Step0's branch does not have pointwise convolution before depthwise convolution ( strides = 2 ).
             depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
             pointwise2ChannelCount, bBias, strActivationName );
+
+          this.apply_and_destroy_fn = this.apply_and_destroy_ShuffleNetV2.bind( this );  // Bind here because step 1 (2, 3, ...) may not existed.
+          this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
+
+        } else {
+          this.apply_and_destroy_fn = this.apply_and_destroy_MobileNetV2.bind( this );   // Bind here because step 1 (2, 3, ...) may not existed.
         }
       }
 
       // Step 1, 2, 3, ...
-      {
+      if ( stepCountPerBlock > 0 ) {
+
         let depthwise_AvgMax_Or_ChannelMultiplier;
         if ( strAvgMaxConv == "Conv" )
           depthwise_AvgMax_Or_ChannelMultiplier = 1; // Force to 1, because only step 0 can have ( channelMultiplier > 1 ).
@@ -209,7 +211,9 @@ class Block {
           pointwise2ChannelCount = channelCount_pointwise1Before * 1; // The channel count of step 1 (2, 3, ...) of MobileNetV2 output are the same as input.
         }
 
-        for ( let i = 1; i < stepCountPerBlock; ++i ) {
+        this.steps1After = new Array( stepCountPerBlock - 1 );  // "-1" because this array does not include step0.
+
+        for ( let i = 0; i < this.steps1After.length; ++i ) {
           let step = new PointDepthPoint.Base();
           step.init(
             channelCount_pointwise1Before,
@@ -217,7 +221,7 @@ class Block {
             depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
             pointwise2ChannelCount, bBias, strActivationName );
 
-          this.steps[ i ] = step;
+          this.steps1After[ i ] = step;
         }
       }
     }
@@ -229,20 +233,91 @@ class Block {
       this.concatGather = null;
     }
 
-    {
-      for ( let i = 0; i < this.stepCountPerBlock; ++i ) {
-        let step = this.steps[ i ];
+    if ( this.steps1After ) {
+      for ( let step of this.steps1After ) {
         step.disposeTensors();
       }
-      this.steps = null;
+      this.steps1After = null;
     }
 
-    this.step0 = null;  // Should already be disposed by the above for-loop.
+    if ( this.step0 ) {
+      this.step0.disposeTensors();
+      this.step0 = null;
+    }
 
     if ( this.step0Branch ) {
       this.step0Branch.disposeTensors();
       this.step0Branch = null;
     }
+
+    if ( this.concatTensorArray )
+      this.concatTensorArray = null;
+  }
+
+  /** Process input, destroy input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.) */
+  apply_and_destroy_NotShuffleNetV2_NotMobileNetV2( inputTensor ) {
+    let t = inputTensor, tNew;
+    tNew = this.step0.apply_and_destroy( t );
+    t.dispose();                                     // Dispose all intermediate (temporary) data.
+    t = tNew;
+    return t;
+  }
+
+  /** Process input, destroy input, return result. (For ShuffleNetV2.) */
+  apply_and_destroy_ShuffleNetV2( inputTensor ) {
+
+    // Keep data as local variables for improving performance.
+
+    let lastAxisId = this.concatGather.shuffleInfo.lastAxisId;
+
+    // There are exactly two output channel groups, take them out from array. (for reducing array access cost.)
+    let group0_channelIndicesTensor1d = this.concatGather.shuffledChannelIndicesTensor1dArray[ 0 ];
+    let group1_channelIndicesTensor1d = this.concatGather.shuffledChannelIndicesTensor1dArray[ 1 ];
+
+    let concatTensorArray = this.concatTensorArray; // Keep pre-allocated array (with two elements) as local variables for improving performance.
+
+//!!!
+    let t = inputTensor, tNew, tNewBranch;
+
+    // Step 0.
+    tNew = concatTensorArray[ 0 ] = this.step0.apply_and_destroy( t );
+    tNewBranch = concatTensorArray[ 1 ] = this.step0Branch.apply_and_destroy( t );
+
+    t.dispose();                                   // Dispose all intermediate (temporary) data.
+
+    let concatenatedTensor = tf.concat( concatTensorArray, lastAxisId );
+    tNew.dispose();                                // Dispose all intermediate (temporary) data.
+    tNewBranch.dispose();                          // Dispose all intermediate (temporary) data.
+
+    // shuffle and split by gather (one operation achieves two operations).
+    let group0_tensor = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
+    let group1_tensor = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
+    concatenatedTensor.dispose();                  // Dispose all intermediate (temporary) data.
+
+    // Step 1, 2, 3, ...
+    for ( let step of this.steps1After ) {
+
+        group0_tensor.dispose();                         // Dispose all intermediate (temporary) data.
+        group1_tensor.dispose();                   // Dispose all intermediate (temporary) data.
+
+//!!! ...unfinished...
+
+    tNew = this.step0.apply_and_destroy( t );
+    t.dispose();                                     // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    return t;
+  }
+
+  /** Process input, destroy input, return result. (For MobileNetV2.) */
+  apply_and_destroy_MobileNetV2( inputTensor ) {
+    let t = inputTensor, tNew;
+//!!!
+    tNew = this.step0.apply_and_destroy( t );
+    t.dispose();                                     // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    return t;
   }
 
   /**
@@ -254,22 +329,7 @@ class Block {
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
   apply_and_destroy( inputTensor ) {
-    let t = inputTensor, tNew;
-
-    if ( this.stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
-
-      this.step0;
-
-    } else {  // ShuffleNetV2, or MobileNetV2.
-
-      this.step0;
-    }
-
-//!!!
-        t.dispose();                                     // Dispose all intermediate (temporary) data.
-        t = tNew;
-
-    return t;
+    return this.apply_and_destroy_fn( inputTensor );
   }
 
 //!!!??? If ( pointwiseChannelCount == channelCount.expansionBefore ) in MobileNetV2, add input and output as output.
