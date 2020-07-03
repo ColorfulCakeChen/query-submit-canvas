@@ -417,6 +417,7 @@ class Block {
     //
 
     this.bShuffleNetV2 = bShuffleNetV2;
+    this.stepCountPerBlock = stepCountPerBlock;
 
     let sourceWidth = sourceHeight;  // Assume source's width equals its height.
     this.sourceHeight = sourceHeight;
@@ -433,71 +434,14 @@ class Block {
     this.bBias = bBias;
     this.strActivationName = strActivationName;
 
-//     channelCount_pointwise1Before,
-//     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-//     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
-//     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName
+    this.steps = new Array( stepCountPerBlock );
 
+    // Step 0.
+    //
     // The special of a block's step 0 are:
     //   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2) (by depthwise convolution with strides = 2)
     //   - Double channels. (by concat if ShuffleNetV2. by second pointwise if MobileNetV2.)
     //   - Expand channels by channelMultiplier of depthwise convolution. (Both ShuffleNetV2 and MobileNetV2 do not have this. It is added by us only.)
-
-    if ( bShuffleNetV2 ) {      // ShuffleNetV2
-
-      // the channel count of the first step (i.e. Step 0).
-      this.channelCountStep0 = {
-        pointwise1Before:                 sourceChannelCount,
-        pointwise1After_depthwiseBefore:  sourceChannelCount,  // No expansion.
-        depthwiseAfter_pointwise2Before:  sourceChannelCount * depthwiseChannelMultiplierStep0,
-        pointwise2After:                  sourceChannelCount * depthwiseChannelMultiplierStep0,
-      };
-
-      // The step 0 of ShuffleNetV2 has a branch for halving height and width by depthwise convolution without 1x1 (pointwise) convolution in front of it.
-      this.channelCountStep0Branch = {
-        depthwiseBefore:                  sourceChannelCount,  // No expansion.
-        depthwiseAfter_pointwise2Before:  sourceChannelCount * depthwiseChannelMultiplierStep0,
-        pointwise2After:                  sourceChannelCount * depthwiseChannelMultiplierStep0,
-      };
-
-      // the channel count after the first step (i.e. Step 1, 2, 3, ...).
-      this.channelCountStep1 = {
-        pointwise1Before:                 this.channelCountStep0.pointwise2After + this.channelCountStep0Branch.pointwise2After,  // Expansion twice.
-        pointwise1After_depthwiseBefore:  this.channelCountStep0.pointwise2After + this.channelCountStep0Branch.pointwise2After,
-        depthwiseAfter_pointwise2Before:  this.channelCountStep0.pointwise2After + this.channelCountStep0Branch.pointwise2After,
-        pointwise2After:                  this.channelCountStep0.pointwise2After + this.channelCountStep0Branch.pointwise2After,
-      };
-
-    } else {  // MobileNetV2
-
-//      this.expandedChannelCount = sourceChannelCount * pointwise1ChannelCount;
-      this.pointwise1ChannelCount = pointwise1ChannelCount;
-
-      // the channel count of the first step (i.e. Step 0).
-      this.channelCountStep0 = {
-        pointwise1Before:                 sourceChannelCount,
-        pointwise1After_depthwiseBefore:  this.pointwise1ChannelCount,  // Expansion temporarily.
-        depthwiseAfter_pointwise2Before:  this.pointwise1ChannelCount * depthwiseChannelMultiplierStep0,
-        pointwise2After:                  ( this.sourceChannelCount * depthwiseChannelMultiplierStep0 ) * 2,  // Expansion twice.
-      };
-
-      // The step 0 of MobileNetV2 has no branch.
-      this.channelCountStep0Branch = {
-      };
-
-      // the channel count after the first step (i.e. Step 1, 2, 3, ...).
-      this.channelCountStep1 = {
-        pointwise1Before:                 this.channelCountStep0.pointwise2After,
-        pointwise1After_depthwiseBefore:  ??? this.channelCountStep0.pointwise2After * 2,  // Expansion twice.
-        depthwiseAfter_pointwise2Before:  this.channelCountStep0.pointwise2After,
-        pointwise2After:                  this.channelCountStep0.pointwise2After
-      };
-    }
-
-    this.stepCountPerBlock = stepCountPerBlock;
-    this.steps = new Array( stepCountPerBlock );
-
-    // Step 0.
     let step0, step0Branch;
     {
       let depthwise_AvgMax_Or_ChannelMultiplier;
