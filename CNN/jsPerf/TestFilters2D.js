@@ -438,18 +438,6 @@ class Block {
 //     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
 //     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName
 
-    if ( bShuffleNetV2 ) {
-
-      this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, sourceChannelCount ];
-
-      pointwise1ChannelCount = sourceChannelCount;  // ShuffleNetV2 never expands channels by pointwise convolution.
-//      pointwise2ChannelCount = ???;
-
-      let outputGroupCount = 2; // ShuffleNetV2 always uses two (depthwise convolution) groups.
-      this.concatGather = new ChannelShuffler.ConcatGather();
-      this.concatGather.init( this.sourceConcatenatedShape, outputGroupCount );
-    }
-
     // The special of a block's step 0 are:
     //   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2) (by depthwise convolution with strides = 2)
     //   - Double channels. (by concat if ShuffleNetV2. by second pointwise if MobileNetV2.)
@@ -561,17 +549,6 @@ class Block {
 
     // Step 1, 2, 3, ...
     {
-      // In ShuffleNetV2, the input channel count of step 1 (2, 3, ...) is the concatenated output channel count of the main and branch of step 0.
-      // In MobileNetV2, the input channel count of step 1 (2, 3, ...) is the output channel count of the step 0.
-      //
-      // However, they are the same as ( sourceChannelCount * 2 ).
-      let channelCount_pointwise1Before;
-      if ( bShuffleNetV2 ) {
-        channelCount_pointwise1Before = step0.channelCount_pointwise2After + step0Branch.channelCount_pointwise2After;
-      } else {
-        channelCount_pointwise1Before = step0.channelCount_pointwise2After;
-      }
-
       let depthwise_AvgMax_Or_ChannelMultiplier;
       if ( strAvgMaxConv == "Conv" )
         depthwise_AvgMax_Or_ChannelMultiplier = 1; // Force to 1, because only step 0 can have ( channelMultiplier > 1 ).
@@ -581,11 +558,32 @@ class Block {
       let depthwiseStrides = 1;  // Force to 1, because only step 0 should halve input's height (and width).
       let depthwisePad = "same";
 
+      // In ShuffleNetV2, the input channel count of step 1 (2, 3, ...) is the concatenated output channel count of the main and branch of step 0.
+      // In MobileNetV2, the input channel count of step 1 (2, 3, ...) is the output channel count of the step 0.
+      //
+      // However, they are all the same as ( sourceChannelCount * 2 ).
+      let channelCount_pointwise1Before;
       let pointwise1ChannelCount, pointwise2ChannelCount;
+
       if ( bShuffleNetV2 ) {
-        pointwise1ChannelCount = channelCount_pointwise1Before * 1; // In ShuffleNetV2, all convolutions do not change channel count
-        pointwise2ChannelCount = channelCount_pointwise1Before * 1;
-      } else {
+        channelCount_pointwise1Before = step0.channelCount_pointwise2After + step0Branch.channelCount_pointwise2After;
+
+        // In ShuffleNetV2, all convolutions do not change channel count which is just half of canatenated channel count of step 0.
+        //
+        // This is because they will be splitted (by channel shuffler) into two channel groups. Every channel group has just channel
+        // count of one branch of step 0.
+        pointwise1ChannelCount = pointwise2ChannelCount = step0.channelCount_pointwise2After;
+
+        // In ShuffleNetV2, there is a channel shuffler in every step (except setp 0).
+        {
+          let sourceConcatenatedShape = this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, channelCount_pointwise1Before ];
+          let outputGroupCount = 2; // ShuffleNetV2 always uses two (depthwise convolution) groups.
+          this.concatGather = new ChannelShuffler.ConcatGather();
+          this.concatGather.init( sourceConcatenatedShape, outputGroupCount );
+        }
+
+      } else {  // MobileNetV2
+        channelCount_pointwise1Before = step0.channelCount_pointwise2After;
         pointwise1ChannelCount = channelCount_pointwise1Before * 2; // In MobileNetV2, ( pointwise1ChannelCount > pointwise2ChannelCount )
         pointwise2ChannelCount = channelCount_pointwise1Before * 1; // The channel count of step 1 (2, 3, ...) of MobileNetV2 output are the same as input.
       }
