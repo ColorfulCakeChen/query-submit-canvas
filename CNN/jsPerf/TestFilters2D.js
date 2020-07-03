@@ -282,13 +282,13 @@ class Block {
     let t0, t1, t1New, concatenatedTensor;
 
     // Step 0.
-    concatTensorArray[ 0 ] = t0 = this.step0Branch.apply_and_destroy( inputTensor );
-    concatTensorArray[ 1 ] = t1 = this.step0.apply_and_destroy( inputTensor );
-    inputTensor.dispose();                 // Dispose all intermediate (temporary) data.
+    concatTensorArray[ 0 ] = t0 = this.step0Branch.apply_and_destroy( inputTensor );  // Branch.
+    concatTensorArray[ 1 ] = t1 = this.step0      .apply_and_destroy( inputTensor );  // Main Path.
+    inputTensor.dispose();          // Dispose all intermediate (temporary) data.
 
     concatenatedTensor = tf.concat( concatTensorArray, lastAxisId );
-    t0.dispose();                          // Dispose all intermediate (temporary) data.
-    t1.dispose();                          // Dispose all intermediate (temporary) data.
+    t0.dispose();                   // Dispose all intermediate (temporary) data.
+    t1.dispose();                   // Dispose all intermediate (temporary) data.
 
     // Step 1, 2, 3, ...
     for ( let step of this.steps1After ) {
@@ -296,28 +296,18 @@ class Block {
       // shuffle and split by gather (one operation achieves two operations).
       t0 = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
       t1 = concatenatedTensor.gather( group1_channelIndicesTensor1d, lastAxisId );
-      concatenatedTensor.dispose();        // Dispose all intermediate (temporary) data.
+      concatenatedTensor.dispose(); // Dispose all intermediate (temporary) data.
 
       concatTensorArray[ 0 ] = t0;                                    // Branch do nothing (as a shortcut).
       concatTensorArray[ 1 ] = t1New = step.apply_and_destroy( t1 );  // Main path is processed.
-      t1.dispose();                        // Dispose all intermediate (temporary) data.
+      t1.dispose();                 // Dispose all intermediate (temporary) data.
 
       concatenatedTensor = tf.concat( concatTensorArray, lastAxisId );
-      t0.dispose();                        // Dispose all intermediate (temporary) data.
-      t1New.dispose();                     // Dispose all intermediate (temporary) data.
+      t0.dispose();                 // Dispose all intermediate (temporary) data.
+      t1New.dispose();              // Dispose all intermediate (temporary) data.
     }
 
-//!!!
-    t0.dispose();                     // Dispose all intermediate (temporary) data.
-    t1.dispose();                     // Dispose all intermediate (temporary) data.
-
-//!!! ...unfinished...
-
-    tNew = this.step0.apply_and_destroy( t );
-    t.dispose();                                     // Dispose all intermediate (temporary) data.
-    t = tNew;
-
-    return t;
+    return concatenatedTensor;
   }
 
   /** Process input, destroy input, return result. (For MobileNetV2.) */
