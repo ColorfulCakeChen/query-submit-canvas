@@ -268,6 +268,7 @@ class Block {
 
     // Keep data as local variables for improving performance.
 
+//!!! ...unfinished... Compare performance to call concatGather.concatGather() directly.
     let lastAxisId = this.concatGather.shuffleInfo.lastAxisId;
 
     // There are exactly two output channel groups, take them out from array. (for reducing array access cost.)
@@ -278,20 +279,20 @@ class Block {
 
 //!!!
     let t = inputTensor, tNew, tNewBranch;
+    let concatenatedTensor, group0_tensor, group1_tensor;
 
     // Step 0.
-    tNew = concatTensorArray[ 0 ] = this.step0.apply_and_destroy( t );
-    tNewBranch = concatTensorArray[ 1 ] = this.step0Branch.apply_and_destroy( t );
-
+    concatTensorArray[ 0 ] = tNew = this.step0.apply_and_destroy( t );
+    concatTensorArray[ 1 ] = tNewBranch = this.step0Branch.apply_and_destroy( t );
     t.dispose();                                   // Dispose all intermediate (temporary) data.
 
-    let concatenatedTensor = tf.concat( concatTensorArray, lastAxisId );
+    concatenatedTensor = tf.concat( concatTensorArray, lastAxisId );
     tNew.dispose();                                // Dispose all intermediate (temporary) data.
     tNewBranch.dispose();                          // Dispose all intermediate (temporary) data.
 
     // shuffle and split by gather (one operation achieves two operations).
-    let group0_tensor = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
-    let group1_tensor = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
+    group0_tensor = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
+    group1_tensor = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
     concatenatedTensor.dispose();                  // Dispose all intermediate (temporary) data.
 
     // Step 1, 2, 3, ...
