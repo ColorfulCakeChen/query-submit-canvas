@@ -233,11 +233,8 @@ class Block {
       this.concatGather = null;
     }
 
-    if ( this.steps1After ) {
-      for ( let step of this.steps1After ) {
-        step.disposeTensors();
-      }
-      this.steps1After = null;
+    if ( this.concatTensorArray ) {
+      this.concatTensorArray = null;
     }
 
     if ( this.step0 ) {
@@ -250,8 +247,12 @@ class Block {
       this.step0Branch = null;
     }
 
-    if ( this.concatTensorArray )
-      this.concatTensorArray = null;
+    if ( this.steps1After ) {
+      for ( let step of this.steps1After ) {
+        step.disposeTensors();
+      }
+      this.steps1After = null;
+    }
   }
 
   /** Process input, destroy input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.) */
