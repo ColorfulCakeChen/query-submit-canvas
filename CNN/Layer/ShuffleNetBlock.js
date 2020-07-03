@@ -77,7 +77,7 @@ class Base {
 
       // shuffle and split by gather (one operation achieves two operations).
       let group0_tensor = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
-      let group1_tensor = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
+      let group1_tensor = concatenatedTensor.gather( group1_channelIndicesTensor1d, lastAxisId );
 
 //!!! ...unfinished...
     });
