@@ -290,13 +290,14 @@ class Block {
     t0.dispose();                          // Dispose all intermediate (temporary) data.
     t1.dispose();                          // Dispose all intermediate (temporary) data.
 
-    // shuffle and split by gather (one operation achieves two operations).
-    t0 = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
-    t1 = concatenatedTensor.gather( group1_channelIndicesTensor1d, lastAxisId );
-    concatenatedTensor.dispose();          // Dispose all intermediate (temporary) data.
-
     // Step 1, 2, 3, ...
     for ( let step of this.steps1After ) {
+
+      // shuffle and split by gather (one operation achieves two operations).
+      t0 = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
+      t1 = concatenatedTensor.gather( group1_channelIndicesTensor1d, lastAxisId );
+      concatenatedTensor.dispose();        // Dispose all intermediate (temporary) data.
+
       concatTensorArray[ 0 ] = t0;                                    // Branch do nothing (as a shortcut).
       concatTensorArray[ 1 ] = t1New = step.apply_and_destroy( t1 );  // Main path is processed.
       t1.dispose();                        // Dispose all intermediate (temporary) data.
@@ -304,11 +305,6 @@ class Block {
       concatenatedTensor = tf.concat( concatTensorArray, lastAxisId );
       t0.dispose();                        // Dispose all intermediate (temporary) data.
       t1New.dispose();                     // Dispose all intermediate (temporary) data.
-
-      // shuffle and split by gather (one operation achieves two operations).
-      t0 = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
-      t1 = concatenatedTensor.gather( group1_channelIndicesTensor1d, lastAxisId );
-      concatenatedTensor.dispose();        // Dispose all intermediate (temporary) data.
     }
 
 //!!!
