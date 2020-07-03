@@ -256,10 +256,8 @@ class Block {
 
   /** Process input, destroy input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.) */
   apply_and_destroy_NotShuffleNetV2_NotMobileNetV2( inputTensor ) {
-    let t = inputTensor, tNew;
-    tNew = this.step0.apply_and_destroy( t );
-    t.dispose();                                     // Dispose all intermediate (temporary) data.
-    t = tNew;
+    let t = this.step0.apply_and_destroy( inputTensor );
+    inputTensor.dispose();          // Dispose all intermediate (temporary) data.
     return t;
   }
 
@@ -312,11 +310,18 @@ class Block {
 
   /** Process input, destroy input, return result. (For MobileNetV2.) */
   apply_and_destroy_MobileNetV2( inputTensor ) {
-    let t = inputTensor, tNew;
-//!!!
-    tNew = this.step0.apply_and_destroy( t );
-    t.dispose();                                     // Dispose all intermediate (temporary) data.
-    t = tNew;
+    let t, tNew;
+
+    // Step 0.
+    t = this.step0.apply_and_destroy( inputTensor );
+    inputTensor.dispose();          // Dispose all intermediate (temporary) data.
+
+    // Step 1, 2, 3, ...
+    for ( let step of this.steps1After ) {
+      tNew = step.apply_and_destroy( t );
+      t.dispose();                 // Dispose all intermediate (temporary) data.
+      t = tNew;
+    }
 
     return t;
   }
