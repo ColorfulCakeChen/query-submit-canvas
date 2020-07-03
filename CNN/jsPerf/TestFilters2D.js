@@ -467,8 +467,7 @@ class Block {
         sourceChannelCount,
         pointwise1ChannelCount, bBias, strActivationName,
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
-        pointwise2ChannelCount, bBias, strActivationName ) {
-      );
+        pointwise2ChannelCount, bBias, strActivationName );
 
       this.steps[ 0 ] = step0;
 
@@ -481,8 +480,7 @@ class Block {
           sourceChannelCount,
           0, false, "", // ShuffleNetV2 Step0's branch does not have pointwise convolution before depthwise convolution ( strides = 2 ).
           depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
-          pointwise2ChannelCount, bBias, strActivationName ) {
-        );
+          pointwise2ChannelCount, bBias, strActivationName );
       }
     }
 
@@ -510,13 +508,13 @@ class Block {
       let pointwise1ChannelCount, pointwise2ChannelCount;
 
       if ( bShuffleNetV2 ) {
-        channelCount_pointwise1Before = step0.channelCount_pointwise2After + step0Branch.channelCount_pointwise2After;
+        channelCount_pointwise1Before = step0.outputChannelCount + step0Branch.outputChannelCount;
 
         // In ShuffleNetV2, all convolutions do not change channel count which is just half of canatenated channel count of step 0.
         //
         // This is because they will be splitted (by channel shuffler) into two channel groups. Every channel group has just channel
         // count of one branch of step 0.
-        pointwise1ChannelCount = pointwise2ChannelCount = step0.channelCount_pointwise2After;
+        pointwise1ChannelCount = pointwise2ChannelCount = step0.outputChannelCount;
 
         // In ShuffleNetV2, there is a channel shuffler in every step (except setp 0).
         {
@@ -527,7 +525,7 @@ class Block {
         }
 
       } else {  // MobileNetV2
-        channelCount_pointwise1Before = step0.channelCount_pointwise2After;
+        channelCount_pointwise1Before = step0.outputChannelCount;
         pointwise1ChannelCount = channelCount_pointwise1Before * 2; // In MobileNetV2, ( pointwise1ChannelCount > pointwise2ChannelCount )
         pointwise2ChannelCount = channelCount_pointwise1Before * 1; // The channel count of step 1 (2, 3, ...) of MobileNetV2 output are the same as input.
       }
@@ -539,8 +537,7 @@ class Block {
           channelCount_pointwise1Before,
           pointwise1ChannelCount, bBias, strActivationName,
           depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
-          pointwise2ChannelCount, bBias, strActivationName ) {
-        );
+          pointwise2ChannelCount, bBias, strActivationName );
 
         this.steps[ i ] = step;
       }
@@ -554,7 +551,7 @@ class Block {
     }
 
     {
-      for ( let i = 0; i < stepCountPerBlock; ++i )
+      for ( let i = 0; i < this.stepCountPerBlock; ++i )
       {
         let step = this.steps[ i ];
         step.disposeTensors();
@@ -568,11 +565,34 @@ class Block {
     }
   }
 
+  /**
+   * Process input, destroy input, return result.
+   *
+   * @param {tf.tensor4d} inputTensor
+   *   The image which will be processed. This inputTensor will be disposed.
+   *
+   * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
+   */
+  apply_and_destroy( inputTensor ) {
+    let t = inputTensor, tNew;
+
+//!!!
+        t.dispose();                                     // Dispose all intermediate (temporary) data.
+        t = tNew;
+
+    return t;
+  }
 
 //!!!??? If ( pointwiseChannelCount == channelCount.expansionBefore ) in MobileNetV2, add input and output as output.
 
   // The output channel count of this block's last step.
-  get outputChannelCount() { return this.channelCountStep1.pointwiseAfter; }
+  get outputChannelCount() {
+    if ( this.stepCountPerBlock <= 0 ) {
+    } else if ( this.stepCountPerBlock == 1 ) {
+    } else {
+    }
+
+    return this.steps[ 0?? ].outputChannelCount; }
 
 }
 
