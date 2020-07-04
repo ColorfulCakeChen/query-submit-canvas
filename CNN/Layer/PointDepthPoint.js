@@ -340,6 +340,9 @@ class Base {
     }
 
     return t;
+
+//!!!??? If ( pointwiseChannelCount == channelCount.expansionBefore ) in MobileNetV2, add input and output as output.
+
   }
 
   /** The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After. */
