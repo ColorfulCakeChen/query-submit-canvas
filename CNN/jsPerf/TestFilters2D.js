@@ -270,6 +270,9 @@ class Block {
 
   /** Process input, destroy input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.)
    *
+   * @param {Block} this
+   *   This method should not be called directly. It should be called by calling apply_and_destroy().
+   *
    * @param {tf.tensor4d} inputTensor
    *   The image which will be processed. This inputTensor will be disposed.
    *
@@ -282,6 +285,9 @@ class Block {
   }
 
   /** Process input, destroy input, return result. (For ShuffleNetV2.)
+   *
+   * @param {Block} this
+   *   This method should not be called directly. It should be called by calling apply_and_destroy().
    *
    * @param {tf.tensor4d} inputTensor
    *   The image which will be processed. This inputTensor will be disposed.
@@ -335,6 +341,9 @@ class Block {
   }
 
   /** Process input, destroy input, return result. (For MobileNetV2.)
+   *
+   * @param {Block} this
+   *   This method should not be called directly. It should be called by calling apply_and_destroy().
    *
    * @param {tf.tensor4d} inputTensor
    *   The image which will be processed. This inputTensor will be disposed.
