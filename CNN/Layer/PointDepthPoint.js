@@ -20,6 +20,13 @@ export { Base };
  * @member {number} channelCount_pointwise2After
  *   The channel count after the second 1x1 pointwise convolution. If ( pointwise2ChannelCount > 0 ), it equals pointwiseChannelCount.
  * If ( pointwise2ChannelCount <= 0 ), it equals channelCount_depthwiseAfter_pointwise2Before.
+ *
+ * @member {function} apply_and_destroy
+ *   This is a method. It has an parameter inputTensor (tf.tensor4d) represents the image which will be processed. It returns a new
+ * tf.tensor4d. All other tensors (including inputTensor) will be disposed. In fact, this method calls one of
+??? 
+ * apply_and_destroy_??? NotShuffleNetV2_NotMobileNetV2(), apply_and_destroy_???ShuffleNetV2(), apply_and_destroy_???MobileNetV2() according to
+ * the init()'s parameters.
  */
 class Base {
 
@@ -65,12 +72,17 @@ class Base {
    * @param {string} pointwise2ActivationName
    *   The activation function name after the second 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
    * If ( pointwise2ChannelCount == 0 ), this activation function will also be ignored.
+   *
+   * @param {boolean} bAddInputToOutput
+   *   If true and ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be added
+   * to output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
    */
   init(
     channelCount_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
-    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName ) {
+    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+    bAddInputToOutput ) {
 
     this.disposeTensors();
 
@@ -164,6 +176,9 @@ class Base {
       this.channelCount_pointwise2After = this.channelCount_depthwiseAfter_pointwise2Before;
     }
 
+    this.bAddInputToOutput = bAddInputToOutput;
+//!!!
+    this.apply_and_destroy = ???;
   }
 
   /** Convert activation function name to function object. */
@@ -249,7 +264,7 @@ class Base {
 
     // The first 1x1 pointwise convolution.
     if ( this.bPointwise1 ) {
-      tNew = t.conv2d( this.pointwiseFiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+      tNew = t.conv2d( this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
       t.dispose();                                       // Dispose all intermediate (temporary) data.
       t = tNew;
 
