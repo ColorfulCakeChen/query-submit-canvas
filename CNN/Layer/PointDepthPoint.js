@@ -102,8 +102,18 @@ class Base {
 
       this.pointwise1FiltersTensor4d = Base.generateTensor( this.pointwise1FiltersShape );
 
-      if ( bPointwise1Bias )
+      if ( bAddInputToOutput )
+        this.pfn_pointwise1Conv = Base.pointwise1Conv;             // will NOT dispose inputTensor.
+      else
+        this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
+
+      if ( bPointwise1Bias ) {
         this.pointwise1BiasesTensor3d = Base.generateTensor( this.pointwise1BiasesShape );
+        this.pfn_pointwise1Bias = Base.pointwise1Bias_and_destroy;
+      }
+
+      if ( this.pointwise1ActivationFunction )
+        this.pfn_pointwise1Activation = Base.pointwise1Activation_and_destroy;
 
     } else {
       this.channelCount_pointwise1After_depthwiseBefore = channelCount_pointwise1Before;  // No first 1x1 pointwise convolution.
@@ -113,8 +123,8 @@ class Base {
     this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
     if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) {
       switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-        case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; break;
-        case "Max":  this.bDepthwise = this.bDepthwiseMax = true; break;
+        case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
+        case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
         //case "Conv": this.bDepthwiseConv = true;
       }
       this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // depthwise without channel multiplier.
@@ -128,6 +138,7 @@ class Base {
           = [ depthwiseFilterHeight, this.depthwiseFilterWidth, this.channelCount_pointwise1After_depthwiseBefore, depthwise_AvgMax_Or_ChannelMultiplier ];
 
         this.depthwiseFiltersTensor4d = Base.generateTensor( this.depthwiseFiltersShape );
+        this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy;
 
       } else {
         this.bDepthwise = this.bDepthwiseConv = false;  // e.g. zero or negative number
@@ -147,8 +158,13 @@ class Base {
     this.depthwiseBiasesShape =       [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before ];
 
     if ( this.bDepthwise ) {
-      if ( bDepthwiseBias )
+      if ( bDepthwiseBias ) {
         this.depthwiseBiasesTensor3d = Base.generateTensor( this.depthwiseBiasesShape );
+        this.pfn_depthwiseBias = Base.depthwiseBias_and_destroy;
+      }
+
+      if ( this.depthwiseActivationFunction )
+        this.pfn_depthwiseActivation = Base.depthwiseActivation_and_destroy;
     }
 
     // The second pointwise convolution. (This convolution is always existed. It, however, may have or not bias and activation function.)
@@ -167,8 +183,15 @@ class Base {
 
       this.pointwise2FiltersTensor4d = Base.generateTensor( this.pointwise2FiltersShape );
 
-      if ( bPointwise2Bias )
+      this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy;
+
+      if ( bPointwise2Bias ) {
         this.pointwise2BiasesTensor3d = Base.generateTensor( this.pointwise2BiasesShape );
+        this.pfn_pointwise2Bias = Base.pointwise1Bias_and_destroy;
+      }
+
+      if ( this.pointwise2ActivationFunction )
+        this.pfn_pointwise2Activation = Base.pointwise2Activation_and_destroy;
 
     } else {
       this.channelCount_pointwise2After = this.channelCount_depthwiseAfter_pointwise2Before;
@@ -268,57 +291,11 @@ class Base {
       tf.dispose( this.pointwise2BiasesTensor3d );
       this.pointwise2BiasesTensor3d = null;
     }
+
+    this.pfn_pointwise1Conv =     this.pfn_pointwise1Bias = this.pfn_pointwise1Activation =
+    this.pfn_depthwiseOperation = this.pfn_depthwiseBias =  this.pfn_depthwiseActivation =
+    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.no_operation;
   }
-
-//   /** Full with residual connection. */
-//   static apply_and_destroy_PointBiasActivation_DepthBiasActivation_PointBiasActivation_AddInputToOutput( inputTensor ) {
-
-//     // The first 1x1 pointwise convolution.
-//     let t0 = tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-//     // DO NOT dispose inputTensor here. It should be disposed at the end (after add it to output) for achieving residual connection.
-
-//     let t1 = tf.add( t0, this.pointwise1BiasesTensor3d );
-//     t0.dispose(); t0 = this.pointwise1ActivationFunction( t1 );
-
-//     // The depthwise convolution (or average pooling, or max pooling).
-//     t1.dispose(); t1 = tf.depthwiseConv2d( t0, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
-//     t0.dispose(); t0 = tf.add( t1, this.depthwiseBiasesTensor3d );
-//     t1.dispose(); t1 = this.depthwiseActivationFunction( t0 );
-
-//     // The second 1x1 pointwise convolution.
-//     t0.dispose(); t0 = tf.conv2d( t1, this.pointwise2FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-//     t1.dispose(); t1 = tf.add( t0, this.pointwise2BiasesTensor3d );
-//     t0.dispose(); t0 = this.pointwise2ActivationFunction( t1 );
-
-//     // Residual connection.
-//     t1.dispose(); t1 = tf.add( inputTensor, t0 );
-
-//     inputTensor.dispose();
-//     t0.dispose();
-
-//     return t1;
-//   }
-
-//   /** Full without residual connection. */
-//   static apply_and_destroy_PointBiasActivation_DepthBiasActivation_PointBiasActivation( t1 ) {
-
-//     // The first 1x1 pointwise convolution.
-//     let t0 = tf.conv2d( t1, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-//     t1.dispose(); t1 = tf.add( t0, this.pointwise1BiasesTensor3d );
-//     t0.dispose(); t0 = this.pointwise1ActivationFunction( t1 );
-
-//     // The depthwise convolution (or average pooling, or max pooling).
-//     t1.dispose(); t1 = tf.depthwiseConv2d( t0, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
-//     t0.dispose(); t0 = tf.add( t1, this.depthwiseBiasesTensor3d );
-//     t1.dispose(); t1 = this.depthwiseActivationFunction( t0 );
-
-//     // The second 1x1 pointwise convolution.
-//     t0.dispose(); t0 = tf.conv2d( t1, this.pointwise2FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-//     t1.dispose(); t1 = tf.add( t0, this.pointwise2BiasesTensor3d );
-//     t0.dispose(); t0 = this.pointwise2ActivationFunction( t1 );
-
-//     return t0;
-//   }
 
   /** (Just return inputTensor without doing anything.) */
   static no_operation( inputTensor ) { return inputTensor; }
@@ -407,6 +384,57 @@ class Base {
     return t0;
   }
 
+/*
+  /** Full with residual connection. * /
+  static apply_and_destroy_PointBiasActivation_DepthBiasActivation_PointBiasActivation_AddInputToOutput( inputTensor ) {
+
+    // The first 1x1 pointwise convolution.
+    let t0 = tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    // DO NOT dispose inputTensor here. It should be disposed at the end (after add it to output) for achieving residual connection.
+
+    let t1 = tf.add( t0, this.pointwise1BiasesTensor3d );
+    t0.dispose(); t0 = this.pointwise1ActivationFunction( t1 );
+
+    // The depthwise convolution (or average pooling, or max pooling).
+    t1.dispose(); t1 = tf.depthwiseConv2d( t0, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+    t0.dispose(); t0 = tf.add( t1, this.depthwiseBiasesTensor3d );
+    t1.dispose(); t1 = this.depthwiseActivationFunction( t0 );
+
+    // The second 1x1 pointwise convolution.
+    t0.dispose(); t0 = tf.conv2d( t1, this.pointwise2FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    t1.dispose(); t1 = tf.add( t0, this.pointwise2BiasesTensor3d );
+    t0.dispose(); t0 = this.pointwise2ActivationFunction( t1 );
+
+    // Residual connection.
+    t1.dispose(); t1 = tf.add( inputTensor, t0 );
+
+    inputTensor.dispose();
+    t0.dispose();
+
+    return t1;
+  }
+
+  /** Full without residual connection. * /
+  static apply_and_destroy_PointBiasActivation_DepthBiasActivation_PointBiasActivation( t1 ) {
+
+    // The first 1x1 pointwise convolution.
+    let t0 = tf.conv2d( t1, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    t1.dispose(); t1 = tf.add( t0, this.pointwise1BiasesTensor3d );
+    t0.dispose(); t0 = this.pointwise1ActivationFunction( t1 );
+
+    // The depthwise convolution (or average pooling, or max pooling).
+    t1.dispose(); t1 = tf.depthwiseConv2d( t0, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+    t0.dispose(); t0 = tf.add( t1, this.depthwiseBiasesTensor3d );
+    t1.dispose(); t1 = this.depthwiseActivationFunction( t0 );
+
+    // The second 1x1 pointwise convolution.
+    t0.dispose(); t0 = tf.conv2d( t1, this.pointwise2FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    t1.dispose(); t1 = tf.add( t0, this.pointwise2BiasesTensor3d );
+    t0.dispose(); t0 = this.pointwise2ActivationFunction( t1 );
+
+    return t0;
+  }
+
   /**
    * Process input, destroy input, return result.
    *
@@ -414,7 +442,7 @@ class Base {
    *   The image which will be processed. This inputTensor will be disposed.
    *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
-   */
+   * /
   apply_and_destroy( inputTensor ) {
     
 //!!!
@@ -517,6 +545,7 @@ class Base {
 //!!!??? If ( pointwiseChannelCount == channelCount.expansionBefore ) in MobileNetV2, add input and output as output.
 
   }
+*/
 
   /** The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After. */
   get outputChannelCount() { return this.channelCount_pointwise2After; }
