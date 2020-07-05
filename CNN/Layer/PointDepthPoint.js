@@ -177,6 +177,13 @@ class Base {
     }
 
     this.bAddInputToOutput = bAddInputToOutput;
+    if ( bAddInputToOutput )
+      if ( depthwiseStrides == 1 )
+        if ( channelCount_pointwise1Before == this.channelCount_pointwise2After ) {
+//!!!
+          this.apply_and_destroy = ???;
+        }
+
 //!!!
     this.apply_and_destroy = ???;
   }
@@ -249,6 +256,57 @@ class Base {
       tf.dispose( this.pointwise2BiasesTensor3d );
       this.pointwise2BiasesTensor3d = null;
     }
+  }
+
+  /** */
+  static apply_and_destroy_PointBiasActivation_DepthBiasActivation_PointBiasActivation_AddInputToOutput( inputTensor ) {
+    let t = inputTensor, tNew;
+
+    // The first 1x1 pointwise convolution.
+    t = inputTensor.conv2d( this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    // DO NOT dispose inputTensor here. Dispose inputTensor at the end (after add it to output) for achieving residual connection.
+
+    tNew = t.add( this.pointwise1BiasesTensor3d );
+    t.dispose();                                     // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    tNew = this.pointwise1ActivationFunction( t );
+    t.dispose();                                     // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    // The depthwise convolution (or average pooling, or max pooling).
+    tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+    t.dispose();                                       // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    tNew = t.add( this.depthwiseBiasesTensor3d );
+    t.dispose();                                     // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    tNew = this.depthwiseActivationFunction( t );
+    t.dispose();                                     // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    // The second 1x1 pointwise convolution.
+    tNew = t.conv2d( this.pointwise2FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    t.dispose();                                       // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    tNew = t.add( this.pointwise2BiasesTensor3d );
+    t.dispose();                                     // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    tNew = this.pointwise2ActivationFunction( t );
+    t.dispose();                                     // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    // Residual connection.
+    tNew = t.add( inputTensor );
+    inputTensor.dispose();                           // Dispose all intermediate (temporary) data.
+    t.dispose();                                     // Dispose all intermediate (temporary) data.
+    t = tNew;
+
+    return t;
   }
 
   /**
