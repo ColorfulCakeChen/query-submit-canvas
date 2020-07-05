@@ -260,53 +260,62 @@ class Base {
 
   /** */
   static apply_and_destroy_PointBiasActivation_DepthBiasActivation_PointBiasActivation_AddInputToOutput( inputTensor ) {
-    let t = inputTensor, tNew;
+    let t0, t1;
 
     // The first 1x1 pointwise convolution.
-    t = inputTensor.conv2d( this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-    // DO NOT dispose inputTensor here. Dispose inputTensor at the end (after add it to output) for achieving residual connection.
+    t0 = tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    // DO NOT dispose inputTensor here. It should be disposed at the end (after add it to output) for achieving residual connection.
 
-    tNew = t.add( this.pointwise1BiasesTensor3d );
-    t.dispose();                                     // Dispose all intermediate (temporary) data.
-    t = tNew;
-
-    tNew = this.pointwise1ActivationFunction( t );
-    t.dispose();                                     // Dispose all intermediate (temporary) data.
-    t = tNew;
+    t1 = tf.add( t0, this.pointwise1BiasesTensor3d );
+    t0.dispose(); t0 = this.pointwise1ActivationFunction( t1 );
 
     // The depthwise convolution (or average pooling, or max pooling).
-    tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
-    t.dispose();                                       // Dispose all intermediate (temporary) data.
-    t = tNew;
-
-    tNew = t.add( this.depthwiseBiasesTensor3d );
-    t.dispose();                                     // Dispose all intermediate (temporary) data.
-    t = tNew;
-
-    tNew = this.depthwiseActivationFunction( t );
-    t.dispose();                                     // Dispose all intermediate (temporary) data.
-    t = tNew;
+    t1.dispose(); t1 = tf.depthwiseConv2d( t0, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+    t0.dispose(); t0 = tf.add( t1, this.depthwiseBiasesTensor3d );
+    t1.dispose(); t1 = this.depthwiseActivationFunction( t0 );
 
     // The second 1x1 pointwise convolution.
-    tNew = t.conv2d( this.pointwise2FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-    t.dispose();                                       // Dispose all intermediate (temporary) data.
-    t = tNew;
-
-    tNew = t.add( this.pointwise2BiasesTensor3d );
-    t.dispose();                                     // Dispose all intermediate (temporary) data.
-    t = tNew;
-
-    tNew = this.pointwise2ActivationFunction( t );
-    t.dispose();                                     // Dispose all intermediate (temporary) data.
-    t = tNew;
+    t0.dispose(); t0 = tf.conv2d( t1, this.pointwise2FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    t1.dispose(); t1 = tf.add( t0, this.pointwise2BiasesTensor3d );
+    t0.dispose(); t0 = this.pointwise2ActivationFunction( t1 );
 
     // Residual connection.
-    tNew = t.add( inputTensor );
-    inputTensor.dispose();                           // Dispose all intermediate (temporary) data.
-    t.dispose();                                     // Dispose all intermediate (temporary) data.
-    t = tNew;
+    t1.dispose(); t1 = tf.add( inputTensor, t0 );
 
-    return t;
+    inputTensor.dispose();
+    t0.dispose();
+
+    return t1;
+  }
+//???
+  /** */
+  static apply_and_destroy_PointBiasActivation_DepthBiasActivation_PointBiasActivation_AddInputToOutput( inputTensor ) {
+    let t0, t1;
+
+    // The first 1x1 pointwise convolution.
+    t0 = tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    // DO NOT dispose inputTensor here. It should be disposed at the end (after add it to output) for achieving residual connection.
+
+    t1 = tf.add( t0, this.pointwise1BiasesTensor3d );
+    t0.dispose(); t0 = this.pointwise1ActivationFunction( t1 );
+
+    // The depthwise convolution (or average pooling, or max pooling).
+    t1.dispose(); t1 = tf.depthwiseConv2d( t0, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+    t0.dispose(); t0 = tf.add( t1, this.depthwiseBiasesTensor3d );
+    t1.dispose(); t1 = this.depthwiseActivationFunction( t0 );
+
+    // The second 1x1 pointwise convolution.
+    t0.dispose(); t0 = tf.conv2d( t1, this.pointwise2FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    t1.dispose(); t1 = tf.add( t0, this.pointwise2BiasesTensor3d );
+    t0.dispose(); t0 = this.pointwise2ActivationFunction( t1 );
+
+    // Residual connection.
+    t1.dispose(); t1 = tf.add( inputTensor, t0 );
+
+    inputTensor.dispose();
+    t0.dispose();
+
+    return t1;
   }
 
   /**
