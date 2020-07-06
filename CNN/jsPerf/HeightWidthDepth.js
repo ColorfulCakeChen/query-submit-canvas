@@ -57,35 +57,37 @@ class Base {
 
     // [ filterHeight, channelMultiplierBlock0, stepCountPerBlock,
     // strAvgMaxConv, bDepthwiseBias, depthwiseActivationName, bPointwise, bPointwiseBias, pointwiseActivationName ]
+
+    // [ stepCountPerBlock, bShuffleNetV2, strAvgMaxConv, depthwiseChannelMultiplierBlock0Step0, depthwiseFilterHeight, bBias, strActivationName ]
     this.testFiltersSpecTable = [
-      [ filterHeight_OneStep,   1, 0, "Conv", false,        "",  true, false,        "" ],
-      [ filterHeight_OneStep,   1, 0, "Conv",  true,        "",  true,  true,        "" ],
-      [ filterHeight_OneStep,   1, 0, "Conv",  true,    "relu",  true,  true,    "relu" ],
-//       [ filterHeight_OneStep,   1, 0, "Conv",  true,   "relu6",  true,  true,   "relu6" ],
-//       [ filterHeight_OneStep,   1, 0, "Conv",  true, "sigmoid",  true,  true, "sigmoid" ],
-      [ filterHeight_OneStep,   1, 0, "Conv",  true,    "tanh",  true,  true,    "tanh" ],
-      [ filterHeight_OneStep,   1, 0, "Conv",  true,     "sin",  true,  true,     "sin" ],
-      [ filterHeight_OneStep, 200, 0, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [ filterHeight_OneStep,   1, 0, "Conv", false,        "" ],
+      [ filterHeight_OneStep,   1, 0, "Conv",  true,        "" ],
+      [ filterHeight_OneStep,   1, 0, "Conv",  true,    "relu" ],
+//       [ filterHeight_OneStep,   1, 0, "Conv",  true,   "relu6" ],
+//       [ filterHeight_OneStep,   1, 0, "Conv",  true, "sigmoid" ],
+      [ filterHeight_OneStep,   1, 0, "Conv",  true,    "tanh" ],
+      [ filterHeight_OneStep,   1, 0, "Conv",  true,     "sin" ],
+      [ filterHeight_OneStep, 200, 0, "Conv",  true,     "sin" ],
 
-      [                    2,   1, 0, "Conv", false,        "",  true, false,        "" ],
-      [                    2,   1, 0, "Conv",  true,        "",  true,  true,        "" ],
-      [                    2,   1, 0, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [                    2,   1, 0, "Conv", false,        "" ],
+      [                    2,   1, 0, "Conv",  true,        "" ],
+      [                    2,   1, 0, "Conv",  true,     "sin" ],
 
-      [                    3,   1, 0, "Conv", false,        "",  true, false,        "" ],
-      [                    3,   1, 0, "Conv",  true,        "",  true,  true,        "" ],
-      [                    3,   1, 0, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [                    3,   1, 0, "Conv", false,        "" ],
+      [                    3,   1, 0, "Conv",  true,        "" ],
+      [                    3,   1, 0, "Conv",  true,     "sin" ],
 
-      [                    5,   1, 0, "Conv", false,        "",  true, false,        "" ],
-      [                    5,   1, 0, "Conv",  true,        "",  true,  true,        "" ],
-      [                    5,   1, 0, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [                    5,   1, 0, "Conv", false,        "" ],
+      [                    5,   1, 0, "Conv",  true,        "" ],
+      [                    5,   1, 0, "Conv",  true,     "sin" ],
 
-      [                    7,   1, 0, "Conv", false,        "",  true, false,        "" ],
-      [                    7,   1, 0, "Conv",  true,        "",  true,  true,        "" ],
-      [                    7,   1, 0, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [                    7,   1, 0, "Conv", false,        "" ],
+      [                    7,   1, 0, "Conv",  true,        "" ],
+      [                    7,   1, 0, "Conv",  true,     "sin" ],
 
-      [                    9,   1, 0, "Conv", false,        "",  true, false,        "" ],
-      [                    9,   1, 0, "Conv",  true,        "",  true,  true,        "" ],
-      [                    9,   1, 0, "Conv",  true,     "sin",  true,  true,     "sin" ],
+      [                    9,   1, 0, "Conv", false,        "" ],
+      [                    9,   1, 0, "Conv",  true,        "" ],
+      [                    9,   1, 0, "Conv",  true,     "sin" ],
     ];
 
     // Create test filters.
