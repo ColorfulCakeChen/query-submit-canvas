@@ -56,7 +56,9 @@ class Base {
 //     step0_pointwise1ChannelCount, step0_bPointwise1Bias, step0_pointwise1ActivationName,
 //     step0_pointwise2ChannelCount, step0_bPointwise2Bias, step0_pointwise2ActivationName,
 //     strAvgMaxConv, depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bDepthwiseBias, depthwiseActivationName,
-//     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName ) {
+//     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName
+
+//    pointwise1ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     strAvgMaxConv, depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, strActivationName ) {
 
     this.disposeTensors();
@@ -102,7 +104,7 @@ class Base {
     this.bBias = bBias;
     this.strActivationName = strActivationName;
     this.bAddInputToOutput = false;
-      
+
     if ( stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
       // Only one step (i.e. step 0 ) for depthwise operation with ( strides = 1, pad = "valid" ) for shrinking sourceHeight
@@ -154,10 +156,12 @@ class Base {
         if ( bShuffleNetV2 ) {
           pointwise1ChannelCount = sourceChannelCount * 1; // In ShuffleNetV2, all convolutions do not change channel count
           pointwise2ChannelCount = sourceChannelCount * 1;
+          this.pointwise2ActivationName = strActivationName;
         } else {
           pointwise1ChannelCount = sourceChannelCount * 4; // In MobileNetV2, ( pointwise1ChannelCount > pointwise2ChannelCount )
           pointwise2ChannelCount = sourceChannelCount * 2; // The channel count of step 0 of MobileNetV2 output is twice as input.
           this.bAddInputToOutput = true;
+          this.pointwise2ActivationName = null;            // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
         }
 
         step0 = this.step0 = new PointDepthPoint.Base();
@@ -165,7 +169,7 @@ class Base {
           sourceChannelCount,
           pointwise1ChannelCount, bBias, strActivationName,
           depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
-          pointwise2ChannelCount, bBias, strActivationName,
+          pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
           this.bAddInputToOutput );
 
         // Step0's branch (ShuffleNetV2)
@@ -177,7 +181,7 @@ class Base {
             sourceChannelCount,
             0, false, "", // ShuffleNetV2 Step0's branch does not have pointwise convolution before depthwise convolution ( strides = 2 ).
             depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
-            pointwise2ChannelCount, bBias, strActivationName );
+            pointwise2ChannelCount, bBias, this.pointwise2ActivationName );
 
           this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
 
@@ -240,7 +244,7 @@ class Base {
             channelCount_pointwise1Before,
             pointwise1ChannelCount, bBias, strActivationName,
             depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
-            pointwise2ChannelCount, bBias, strActivationName,
+            pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
             this.bAddInputToOutput );
 
           this.steps1After[ i ] = step;
