@@ -30,7 +30,7 @@ class Base {
 //     strAvgMaxConv, bDepthwiseBias, depthwiseActivationName,
 //     bPointwise2, bPointwise2Bias, pointwise2ActivationName,
 
-    strAvgMaxConv, depthwiseChannelMultiplierBlock0Step0, depthwiseFilterHeight, bBias, strActivationName ) {
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ) {
 
     this.disposeTensors();
 
