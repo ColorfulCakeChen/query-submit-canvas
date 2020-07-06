@@ -100,19 +100,19 @@ class TestSet {
     this.dOp();
   }
 
+  test_UnconditionalBranchArray() {
+    this.arrayOp[ 0 ]();
+    this.arrayOp[ 1 ]();
+    this.arrayOp[ 2 ]();
+    this.arrayOp[ 3 ]();
+  }
+
   test_UnconditionalBranchArraySpread() {
     let [ aOp, bOp, cOp, dOp ] = [ ...this.arrayOp ];
     aOp();
     bOp();
     cOp();
     dOp();
-  }
-
-  test_UnconditionalBranchArray() {
-    this.arrayOp[ 0 ]();
-    this.arrayOp[ 1 ]();
-    this.arrayOp[ 2 ]();
-    this.arrayOp[ 3 ]();
   }
 
   test_UnconditionalBranchArrayLoopIndex() {
@@ -139,6 +139,7 @@ class TestSet {
     this.test_ConditionalBranch();
     this.test_UnconditionalBranch();
     this.test_UnconditionalBranchArray();
+    this.test_UnconditionalBranchArraySpread();
     this.test_UnconditionalBranchArrayLoopIndex();
     this.test_UnconditionalBranchArrayLoopIndexLocal();
     this.test_UnconditionalBranchArrayLoopIterator();
