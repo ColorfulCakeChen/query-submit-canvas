@@ -101,6 +101,7 @@ class Base {
 
     this.bBias = bBias;
     this.strActivationName = strActivationName;
+    this.bAddInputToOutput = false;
       
     if ( stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
@@ -124,7 +125,8 @@ class Base {
         sourceChannelCount,
         pointwise1ChannelCount, bBias, strActivationName,
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
-        pointwise2ChannelCount, bBias, strActivationName );
+        pointwise2ChannelCount, bBias, strActivationName,
+        this.bAddInputToOutput );
 
       this.apply_and_destroy = Block.apply_and_destroy_NotShuffleNetV2_NotMobileNetV2;
       this.outputChannelCount = step0.outputChannelCount;
@@ -155,6 +157,7 @@ class Base {
         } else {
           pointwise1ChannelCount = sourceChannelCount * 4; // In MobileNetV2, ( pointwise1ChannelCount > pointwise2ChannelCount )
           pointwise2ChannelCount = sourceChannelCount * 2; // The channel count of step 0 of MobileNetV2 output is twice as input.
+          this.bAddInputToOutput = true;
         }
 
         step0 = this.step0 = new PointDepthPoint.Base();
@@ -162,7 +165,8 @@ class Base {
           sourceChannelCount,
           pointwise1ChannelCount, bBias, strActivationName,
           depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
-          pointwise2ChannelCount, bBias, strActivationName );
+          pointwise2ChannelCount, bBias, strActivationName,
+          this.bAddInputToOutput );
 
         // Step0's branch (ShuffleNetV2)
         //
@@ -236,7 +240,8 @@ class Base {
             channelCount_pointwise1Before,
             pointwise1ChannelCount, bBias, strActivationName,
             depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
-            pointwise2ChannelCount, bBias, strActivationName );
+            pointwise2ChannelCount, bBias, strActivationName,
+            this.bAddInputToOutput );
 
           this.steps1After[ i ] = step;
         }
