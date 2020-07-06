@@ -28,7 +28,7 @@ class Base {
     this.height = height;
     this.width = width;
     this.depth = depth;
-    
+
     this.progressToYield = progressToYield;
     this.progressToAdvance = progressToAdvance;
     this.progressReceiver = progressReceiver;
@@ -55,39 +55,39 @@ class Base {
     let inChannels =        depth;
     let channelMultiplier = 1;
 
-    // [ filterHeight, channelMultiplierBlock0, stepCountPerBlock,
-    // strAvgMaxConv, bDepthwiseBias, depthwiseActivationName, bPointwise, bPointwiseBias, pointwiseActivationName ]
+    // [ stepCountPerBlock, filterHeight, channelMultiplierBlock0,
+    // strAvgMaxConv, bDepthwiseBias, depthwiseActivationName // , bPointwise, bPointwiseBias, pointwiseActivationName ]
 
-    // [ stepCountPerBlock, bShuffleNetV2, strAvgMaxConv, depthwiseChannelMultiplierBlock0Step0, depthwiseFilterHeight, bBias, strActivationName ]
+    // [ stepCountPerBlock, bShuffleNetV2, strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ]
     this.testFiltersSpecTable = [
-      [ filterHeight_OneStep,   1, 0, "Conv", false,        "" ],
-      [ filterHeight_OneStep,   1, 0, "Conv",  true,        "" ],
-      [ filterHeight_OneStep,   1, 0, "Conv",  true,    "relu" ],
-//       [ filterHeight_OneStep,   1, 0, "Conv",  true,   "relu6" ],
-//       [ filterHeight_OneStep,   1, 0, "Conv",  true, "sigmoid" ],
-      [ filterHeight_OneStep,   1, 0, "Conv",  true,    "tanh" ],
-      [ filterHeight_OneStep,   1, 0, "Conv",  true,     "sin" ],
-      [ filterHeight_OneStep, 200, 0, "Conv",  true,     "sin" ],
+      [ 0, false, "Conv", filterHeight_OneStep,   1, false,        "" ],
+      [ 0, false, "Conv", filterHeight_OneStep,   1,  true,        "" ],
+      [ 0, false, "Conv", filterHeight_OneStep,   1,  true,    "relu" ],
+//       [ 0, false, "Conv", filterHeight_OneStep,   1,  true,   "relu6" ],
+//       [ 0, false, "Conv", filterHeight_OneStep,   1,  true, "sigmoid" ],
+      [ 0, false, "Conv", filterHeight_OneStep,   1,  true,    "tanh" ],
+      [ 0, false, "Conv", filterHeight_OneStep,   1,  true,     "sin" ],
+      [ 0, false, "Conv", filterHeight_OneStep, 200,  true,     "sin" ],
 
-      [                    2,   1, 0, "Conv", false,        "" ],
-      [                    2,   1, 0, "Conv",  true,        "" ],
-      [                    2,   1, 0, "Conv",  true,     "sin" ],
+      [ 0, false, "Conv",                    2,   1, false,        "" ],
+      [ 0, false, "Conv",                    2,   1,  true,        "" ],
+      [ 0, false, "Conv",                    2,   1,  true,     "sin" ],
 
-      [                    3,   1, 0, "Conv", false,        "" ],
-      [                    3,   1, 0, "Conv",  true,        "" ],
-      [                    3,   1, 0, "Conv",  true,     "sin" ],
+      [ 0, false, "Conv",                    3,   1, false,        "" ],
+      [ 0, false, "Conv",                    3,   1,  true,        "" ],
+      [ 0, false, "Conv",                    3,   1,  true,     "sin" ],
 
-      [                    5,   1, 0, "Conv", false,        "" ],
-      [                    5,   1, 0, "Conv",  true,        "" ],
-      [                    5,   1, 0, "Conv",  true,     "sin" ],
+      [ 0, false, "Conv",                    5,   1, false,        "" ],
+      [ 0, false, "Conv",                    5,   1,  true,        "" ],
+      [ 0, false, "Conv",                    5,   1,  true,     "sin" ],
 
-      [                    7,   1, 0, "Conv", false,        "" ],
-      [                    7,   1, 0, "Conv",  true,        "" ],
-      [                    7,   1, 0, "Conv",  true,     "sin" ],
+      [ 0, false, "Conv",                    7,   1, false,        "" ],
+      [ 0, false, "Conv",                    7,   1,  true,        "" ],
+      [ 0, false, "Conv",                    7,   1,  true,     "sin" ],
 
-      [                    9,   1, 0, "Conv", false,        "" ],
-      [                    9,   1, 0, "Conv",  true,        "" ],
-      [                    9,   1, 0, "Conv",  true,     "sin" ],
+      [ 0, false, "Conv",                    9,   1, false,        "" ],
+      [ 0, false, "Conv",                    9,   1,  true,        "" ],
+      [ 0, false, "Conv",                    9,   1,  true,     "sin" ],
     ];
 
     // Create test filters.
@@ -232,14 +232,15 @@ class Base {
       tf.util.assert(
         tf.util.arraysEqual( tensor_ResizeBilinear.shape, tensor_ResizeNearestNeighbor.shape ),
         `ResizeBilinear() != ResizeNearestNeighbor()`);
-      
+
       tensor_ResizeNearestNeighbor.dispose();
       tensor_ResizeBilinear.dispose();
     }
 
     // All test filters should generate same size result.
     for ( let testFilters of this.testFiltersArray ) {
-      let t = testFilters.apply( this.dataTensor3d, true );
+//      let t = testFilters.apply( this.dataTensor3d, true );
+      let t = testFilters.apply( this.testCnavas, true );
 
       tf.util.assert(
         tf.util.arraysEqual(
@@ -268,7 +269,8 @@ class Base {
     for ( let testFilters of this.testFiltersArray ) {
       // Note: Do not return result tensor so that need not to dispose them.
       resultProfiles.push(
-        await this.logProfile( testFilters.name, testFilters.apply.bind( testFilters, this.dataTensor3d, false ) ) );
+//        await this.logProfile( testFilters.name, testFilters.apply.bind( testFilters, this.dataTensor3d, false ) ) );
+        await this.logProfile( testFilters.name, testFilters.apply.bind( testFilters, this.testCnavas, false ) ) );
 
       yield* this.progressAdvanceYield();
     }
