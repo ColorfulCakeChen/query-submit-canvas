@@ -55,7 +55,7 @@ class TestSet {
   static c5() { return this.c + 5; }
   static c6() { return this.c + 6; }
   static d7() { return this.d + 7; }
-  static b8() { return this.d + 8; }
+  static d8() { return this.d + 8; }
 
   test_ConditionalBranch() {
     let r;
