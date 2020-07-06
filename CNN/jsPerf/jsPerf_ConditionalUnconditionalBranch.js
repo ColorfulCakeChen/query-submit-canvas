@@ -23,27 +23,35 @@ class TestSet {
     this.arrayOp = new Array( 4 );
 
     if ( this.a ) {
-      this.aOp = this.arrayOp[ 0 ] = TestSet.a1;
+      this.aOp = TestSet.a1;
+      this.arrayOp[ 0 ] = TestSet.a1.bind( this );
     } else {
-      this.aOp = this.arrayOp[ 0 ] = TestSet.a2;
+      this.aOp = TestSet.a2;
+      this.arrayOp[ 0 ] = TestSet.a2.bind( this );
     }
 
     if ( this.b ) {
-      this.bOp = this.arrayOp[ 1 ] = TestSet.b3;
+      this.bOp = TestSet.b3;
+      this.arrayOp[ 1 ] = TestSet.b3.bind( this );
     } else {
-      this.bOp = this.arrayOp[ 1 ] = TestSet.b4;
+      this.bOp = TestSet.b4;
+      this.arrayOp[ 1 ] = TestSet.b4.bind( this );
     }
 
     if ( this.c ) {
-      this.cOp = this.arrayOp[ 2 ] = TestSet.c5;
+      this.cOp = TestSet.c5;
+      this.arrayOp[ 2 ] = TestSet.c5.bind( this );
     } else {
-      this.cOp = this.arrayOp[ 2 ] = TestSet.c6;
+      this.cOp = TestSet.c6;
+      this.arrayOp[ 2 ] = TestSet.c6.bind( this );
     }
 
     if ( this.d ) {
-      this.dOp = this.arrayOp[ 3 ] = TestSet.d7;
+      this.dOp = TestSet.d7;
+      this.arrayOp[ 3 ] = TestSet.d7.bind( this );
     } else {
-      this.dOp = this.arrayOp[ 3 ] = TestSet.d8;
+      this.dOp = TestSet.d8;
+      this.arrayOp[ 3 ] = TestSet.d8.bind( this );
     }
 
   }
@@ -90,6 +98,14 @@ class TestSet {
     this.bOp();
     this.cOp();
     this.dOp();
+  }
+
+  test_UnconditionalBranchArraySpread() {
+    let [ aOp, bOp, cOp, dOp ] = [ ...this.arrayOp ];
+    aOp();
+    bOp();
+    cOp();
+    dOp();
   }
 
   test_UnconditionalBranchArray() {
