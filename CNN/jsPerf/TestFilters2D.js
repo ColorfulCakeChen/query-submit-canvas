@@ -5,7 +5,12 @@ export { Base };
 /**
  * Testing Filters of multiple blocks.
  *
- * @member {string} name This test filters' name.
+ * @member {string} name
+ *   This test filters' name.
+ *
+ * @member {number[]} sourceImageHeightWidth
+ *   The size (i.e. [ height, width ]) of the source image. When apply() is called, the source image will be extracted from the sourceCanvas
+ * and be resized to this size. The neural network receives this resized source image.
  */
 class Base {
 
@@ -88,6 +93,8 @@ class Base {
       + `__Block_${this.blockCount}`
       + `__Step${stepCountPerBlock}`
     ;
+
+    this.sourceImageHeightWidth = [ block0.sourceHeight, block0.sourceWidth ];
   }
 
   disposeTensors() {
@@ -100,67 +107,36 @@ class Base {
   }
 
   /**
-   * @param sourceImage
-   *   The image which will be processed.
+   * @param {HTMLCanvasElement} sourceCanvas
+   *   The canvas which provides image.
    *
    * @param bReturn
-   *   If true, the result convoluiotn will be returned.
+   *   If true, the result tensor will be returned. Otherwise, all tensors are disposed.
    *
    * @return
-   *   If ( bReturn == true ), return the convolution result (tensor). Otheriwse, reurn null.
+   *   If ( bReturn == true ), return the result tensor. Otheriwse, return null.
    */
-  apply( sourceImage, bReturn ) {
-    return tf.tidy( () => {
+  apply( sourceCanvas, bReturn ) {
+//    return tf.tidy( () => {
 
-//!!! ...unfinished... fromPixels(). so that we can always dispose all tensors.
+      // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
+      let sourceImageChannelCount = 4;
+      let sourceImage = tf.fromPixels( sourceCanvas, sourceImageChannelCount );
 
-      let t, tNew;
+      // Resize source image to a default size (height x width) which is used when training the neural network.
+      let t = tf.image.resizeBilinear( sourceImage, this.sourceImageHeightWidth, true ); // alignCorners = true
+      sourceImage.dispose();
 
-      // Layer 0
-      //
-      // So that every layer could dispose previous result without worry about mis-dispose source.
-
-      if ( this.bDepthwiseAvg ) {
-        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
-      } else if ( this.bDepthwiseMax ) {
-        t = sourceImage.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
-      } else if ( this.bDepthwiseConv ) {
-        t = sourceImage.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ 0 ], 1, "valid" );  // Stride = 1
-      }
-      // NOTE: Do not dispose the original data.
-
-      t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( t, 0 );
-
-      // Layer 1, ...
-      if ( this.bDepthwiseAvg ) {
-
-        for ( let i = 1; i < this.blockCount; ++i ) {
-          tNew = t.pool( this.depthwiseFilterHeightWidth, "avg", "valid", 1, 1 );
-          t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
-        }
-
-      } else if ( this.bDepthwiseMax ) {
-
-        for ( let i = 1; i < this.blockCount; ++i ) {
-          tNew = t.pool( this.depthwiseFilterHeightWidth, "max", "valid", 1, 1 );
-          t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
-        }
-
-      } else if ( this.bDepthwiseConv ) {
-
-        for ( let i = 1; i < this.blockCount; ++i ) {
-          tNew = t.depthwiseConv2d( this.depthwiseFiltersTensor4dArray[ i ], 1, "valid" );  // Stride = 1
-          t.dispose();                                           // Dispose all intermediate (temporary) data.
-          t = this.apply_Depthwise_Bias_Activation_Pointwise_Bias_Activation( tNew, i );
-        }
-
+      for ( let block of this.blocks ) {
+        t = block.apply_and_destroy( t );
       }
 
       if ( bReturn )
         return t;
-    });
+      else
+        t.dispose();
+
+//    });
   }
 
 }
