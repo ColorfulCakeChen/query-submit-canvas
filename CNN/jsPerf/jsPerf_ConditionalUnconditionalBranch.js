@@ -131,4 +131,4 @@ class TestSet {
 }
 
 
-globalThis.testSet = new TestSet();
+globalThis.testSet = new TestSet( 3, 2, 0, 1 );
