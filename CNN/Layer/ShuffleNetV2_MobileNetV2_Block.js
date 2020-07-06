@@ -63,7 +63,7 @@ class Base {
 //     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName
 
 //    pointwise1ChannelCount, bPointwise2Bias, pointwise2ActivationName,
-    strAvgMaxConv, depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, strActivationName ) {
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, strActivationName ) {
 
     this.disposeTensors();
 
@@ -99,11 +99,12 @@ class Base {
     this.sourceChannelCount = sourceChannelCount;
 
     this.strAvgMaxConv = strAvgMaxConv;
-    this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
 
     let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
     this.depthwiseFilterHeight = depthwiseFilterHeight;
     this.depthwiseFilterWidth = depthwiseFilterWidth;
+
+    this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
 
     this.bBias = bBias;
     this.strActivationName = strActivationName;
