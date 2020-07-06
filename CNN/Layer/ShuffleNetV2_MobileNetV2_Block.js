@@ -17,6 +17,10 @@ export { Base };
  * @member {number} outputChannelCount
  *   The output channel count of this block's last step.
  *
+ * @member {string} pointwise2ActivationName
+ *   The activation function name after the second 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
+ * If MobileNetV2, it will be null. Otherwise, it will be the same as strAvgMaxConv.
+ *
  * @see ChannelShuffler.ConcatGather
  */
 class Base {
