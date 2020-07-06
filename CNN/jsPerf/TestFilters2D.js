@@ -2,7 +2,6 @@ import * as ShuffleNetV2_MobileNetV2_Block from "../Layer/ShuffleNetV2_MobileNet
 
 export { Base };
 
-
 /**
  * Testing Filters of multiple blocks.
  *
@@ -11,143 +10,94 @@ export { Base };
 class Base {
 
   /**
-   * @param sourceHeight        The height (and width) of the source image which will be processed by apply().
-   * @param sourceChannelCount  The channel count of the source image.
-   * @param targetHeight        The taregt image height (and width).
-   * @param filterHeight        The height (and width) of each depthwise convolution.
+   * @param {number} depthwiseChannelMultiplierBlock0Step0
+   *   The depthwise convolution of the first step (Step 0) of the first block (Block 0) will expand input channel by this factor.
    *
-   * @param {number} channelMultiplierBlock0
-   *   The first block (Block 0) will expand input channel by this factor.
-   *
-   * @param {number} stepCountPerBlock
-   *   If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
-   * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
-   * (half downsample) and use ( stageCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
-   *
-   * @param strAvgMaxConv
-   *   Depthwise operation. "Avg" or "Max" or "Conv" for average pooling, max pooling, depthwise convolution.
-   *
-   * @param bDepthwiseBias
-   *   If true, there will be a bias after depthwise convolution.
-   *
-   * @param depthwiseActivationName
-   *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
-   *
-   * @param bPointwise2
-   *   If true, there will be pointwise convolution after every layer of depthwise convolution.
-   *
-   * @param bPointwise2Bias
-   *   If true, there will be a bias after pointwise convolution. If ( bPointwise2 == false ), this will be also ignored.
-   *
-   * @param pointwise2ActivationName
-   *   The activation function name after pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
-   * If ( bPointwise2 == false ), this activation function will be also ignored.
+   * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
-    channelExpansionFactor,
+///    channelExpansionFactor,
     sourceHeight, sourceChannelCount, targetHeight,
-    filterHeight, channelMultiplierBlock0,
+//    filterHeight, channelMultiplierBlock0,
     stepCountPerBlock,
-    strAvgMaxConv, bDepthwiseBias, depthwiseActivationName,
-    bPointwise2, bPointwise2Bias, pointwise2ActivationName ) {
+    bShuffleNetV2,
+
+//     strAvgMaxConv, bDepthwiseBias, depthwiseActivationName,
+//     bPointwise2, bPointwise2Bias, pointwise2ActivationName,
+
+    strAvgMaxConv, depthwiseChannelMultiplierBlock0Step0, depthwiseFilterHeight, bBias, strActivationName ) {
 
     this.disposeTensors();
 
     this.stepCountPerBlock = stepCountPerBlock;
+    this.bShuffleNetV2 = bShuffleNetV2;
 
     let differenceHeight = sourceHeight - targetHeight;
-    let filterWidth = filterHeight;
+    let filterWidth = depthwiseFilterHeight;
 
-    this.channelMultiplier = channelMultiplierBlock0;
-    this.channelCountBlock0 = sourceChannelCount * channelMultiplierBlock0;  // the channel count of the first block (Block 0).
+    this.depthwiseChannelMultiplierBlock0Step0 = depthwiseChannelMultiplierBlock0Step0;
+    this.channelCountBlock0 = sourceChannelCount * depthwiseChannelMultiplierBlock0Step0;  // the channel count of the first block (Block 0).
 
 //!!! ...unfinished...
 
-    // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
-    let heightReducedPerStep = filterHeight - 1;
+//     // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
+//     let heightReducedPerBlock;
+//     if ( stepCountPerBlock <= 0 ) { // Not ShuffleNetV2, Not MobileNetV2.
+//       heightReducedPerBlock = depthwiseFilterHeight - 1;
+//     } else {  // ShuffleNetV2 or MobileNetV2. Halven per block.
+//       heightReducedPerBlock = ???;
+//     }
 
-    if ( stepCountPerBlock >= 1 ) {
+    if ( stepCountPerBlock <= 0 ) { // Not ShuffleNetV2, Not MobileNetV2.
+
+      // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
+      let heightReducedPerBlock = depthwiseFilterHeight - 1;
+
+      // The block count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
+      this.blockCount = Math.floor( differenceHeight / heightReducedPerBlock );
+
+    } else {  // ShuffleNetV2 or MobileNetV2. Halven per block.
+
       // The block count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 2, pad = "same" ).
       this.blockCount = Math.floor( Math.log2( sourceHeight ) );
-    } else {
-      // The block count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
-      this.blockCount = Math.floor( differenceHeight / heightReducedPerStep );
+
     }
 
-//!!! ...unfinished... should use Block0 info (instead of this)
+    this.blocks = new Array( this.blockCount );
+    for ( let i = 0; i < this.blockCount; ++i )
+    {
+      let block = new ShuffleNetV2_MobileNetV2_Block.Base();
+      block.init(
+        sourceHeight, sourceChannelCount, targetHeight,
+        stepCountPerBlock,
+        bShuffleNetV2,
+        strAvgMaxConv, depthwiseChannelMultiplierBlock0Step0, depthwiseFilterHeight, bBias, strActivationName );
+      this.blocks[ i ] = block;
+    }
+
+    let block0 = this.blocks[ 0 ];
 
     // e.g. "C24_24__DConv_101x101_DBias_RELU__PConv_PBias_RELU__Block_1__Step_1"
     this.name = `C${sourceChannelCount}_${this.channelCountBlock0}`
-      + `__D${strAvgMaxConv}_${filterHeight}x${filterHeight}`
-      + `${ ( this.bDepthwiseBias ) ? ( "_DBias" ) : "" }`
-      + `${ ( this.depthwiseActivationFunction ) ? ( "_" + depthwiseActivationName ) : "" }`
-      + `${ ( this.bPointwise2 ) ? "__PConv" : "" }`
-      + `${ ( this.bPointwise2 && this.bPointwise2Bias ) ? ( "_PBias" ) : "" }`
-      + `${ ( this.bPointwise2 && this.pointwise2ActivationFunction ) ? ( "_" + pointwise2ActivationName ) : "" }`
+      + `__D${strAvgMaxConv}_${depthwiseFilterHeight}x${depthwiseFilterHeight}`
+      + `${ ( block0.step0.bDepthwiseBias ) ? ( "_DBias" ) : "" }`
+      + `${ ( block0.step0.depthwiseActivationFunction ) ? ( "_" + strAvgMaxConv ) : "" }`
+      + `${ ( block0.step0.bPointwise2 ) ? "__PConv" : "" }`
+      + `${ ( block0.step0.bPointwise2 && block0.step0.bPointwise2Bias ) ? ( "_PBias" ) : "" }`
+      + `${ ( block0.step0.bPointwise2 && block0.pointwise2ActivationName ) ? ( "_" + block0.step0.pointwise2ActivationName ) : "" }`
       + `__Block_${this.blockCount}`
       + `__Step${stepCountPerBlock}`
     ;
-
-    // Depthwise Filters and Biases
-
-    this.depthwiseFilterHeightWidth = [ filterHeight, filterWidth ];
-
-    // First block's depthwise filters will expand channel count from sourceChannelCount to ( sourceChannelCount * channelMultiplierBlock0 ).
-    this.depthwiseFiltersShapeFirst = [ filterHeight, filterWidth,      sourceChannelCount, channelMultiplierBlock0 ];
-    this.depthwiseFiltersShape =      [ filterHeight, filterWidth, this.channelCountBlock0,                       1 ];
-    this.depthwiseBiasesShape =       [            1,           1, this.channelCountBlock0 ];
-
-    // Every element (Tensor4d) is a depthwiseFilters for one block.
-    this.depthwiseFiltersTensor4dArray
-      = Base.generateTensorArray( this.blockCount, this.depthwiseFiltersShapeFirst, this.depthwiseFiltersShape, this.bDepthwiseConv );
-
-    // Every element (Tensor3d) is a depthwiseBiases for one block.
-    this.depthwiseBiasesTensor3dArray
-      = Base.generateTensorArray( this.blockCount, null, this.depthwiseBiasesShape, ( this.bDepthwiseConv && bDepthwiseBias ) );
-
-
-    // Pointwise Filters and Biases
-
-    let pointwiseInputDepth =  this.channelCountBlock0;
-    let pointwiseOutputDepth = this.channelCountBlock0; // Assume output depth is the same as input.
-
-    this.pointwiseFilterHeightWidth = [ 1, 1 ];
-    this.pointwiseFiltersShape = [ 1, 1, pointwiseInputDepth, pointwiseOutputDepth ];
-
-    // Both input depth and output depth of pointwise bias are the same as pointwise convolution output.
-    this.pointwiseBiasesShape =  [ 1, 1, pointwiseOutputDepth ];
-
-    // Every element (Tensor4d) is a pointwiseFilters for one block.
-    this.pointwiseFiltersTensor4dArray
-      = Base.generateTensorArray( this.blockCount, null, this.pointwiseFiltersShape, bPointwise2 );
-
-    // Every element (Tensor3d) is a pointwiseBiases for one block.
-    this.pointwiseBiasesTensor3dArray
-      = Base.generateTensorArray( this.blockCount, null, this.pointwiseBiasesShape, ( bPointwise2 && bPointwise2Bias ) );
   }
 
   disposeTensors() {
-    if ( this.depthwiseFiltersTensor4dArray ) {
-      tf.dispose( this.depthwiseFiltersTensor4dArray );
-      this.depthwiseFiltersTensor4dArray = null;
-    }
-
-    if ( this.depthwiseBiasesTensor3dArray ) {
-      tf.dispose( this.depthwiseBiasesTensor3dArray );
-      this.depthwiseBiasesTensor3dArray = null;
-    }
-
-    if ( this.pointwiseFiltersTensor4dArray ) {
-      tf.dispose( this.pointwiseFiltersTensor4dArray );
-      this.pointwiseFiltersTensor4dArray = null;
-    }
-
-    if ( this.pointwiseBiasesTensor3dArray ) {
-      tf.dispose( this.pointwiseBiasesTensor3dArray );
-      this.pointwiseBiasesTensor3dArray = null;
+    if ( this.blocks ) {
+      for ( let block of this.blocks ) {
+        block.disposeTensors();
+      }
+      this.blocks = null;
     }
   }
-
 
   /**
    * @param sourceImage
