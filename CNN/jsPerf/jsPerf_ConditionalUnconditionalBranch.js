@@ -56,40 +56,40 @@ class TestSet {
 
   }
 
-  static a1() { return this.a + 1; }
-  static a2() { return this.a + 2; }
-  static b3() { return this.b + 3; }
-  static b4() { return this.b + 4; }
-  static c5() { return this.c + 5; }
-  static c6() { return this.c + 6; }
-  static d7() { return this.d + 7; }
-  static d8() { return this.d + 8; }
+  static a1() { return Match.sin( this.a + 1 ); }
+  static a2() { return Match.sin( this.a + 2 ); }
+  static b3() { return Match.sin( this.b + 3 ); }
+  static b4() { return Match.sin( this.b + 4 ); }
+  static c5() { return Match.sin( this.c + 5 ); }
+  static c6() { return Match.sin( this.c + 6 ); }
+  static d7() { return Match.sin( this.d + 7 ); }
+  static d8() { return Match.sin( this.d + 8 ); }
 
   test_ConditionalBranch() {
     let r;
 
     if ( this.a ) {
-      r = this.a + 1;
+      r = Match.sin( this.a + 1 );
     } else {
-      r = this.a + 2;
+      r = Match.sin( this.a + 2 );
     }
 
     if ( this.b ) {
-      r = this.b + 3;
+      r = Match.sin( this.b + 3 );
     } else {
-      r = this.b + 4;
+      r = Match.sin( this.b + 4 );
     }
 
     if ( this.c ) {
-      r = this.c + 5;
+      r = Match.sin( this.c + 5 );
     } else {
-      r = this.c + 6;
+      r = Match.sin( this.c + 6 );
     }
 
     if ( this.d ) {
-      r = this.d + 7;
+      r = Match.sin( this.d + 7 );
     } else {
-      r = this.d + 8;
+      r = Match.sin( this.d + 8 );
     }
   }
 
