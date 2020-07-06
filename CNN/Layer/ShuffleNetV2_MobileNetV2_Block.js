@@ -339,7 +339,7 @@ class Base {
 
     // Step 1, 2, 3, ...
     let step;
-    for ( let i = 0; i < this.steps1After.length ) {
+    for ( let i = 0; i < this.steps1After.length; ++i ) {
       step = this.steps1After[ i ];
 
       // shuffle and split by gather (one operation achieves two operations).
@@ -378,7 +378,7 @@ class Base {
 
     // Step 1, 2, 3, ...
     let step;
-    for ( let i = 0; i < this.steps1After.length ) {
+    for ( let i = 0; i < this.steps1After.length; ++i ) {
       step = this.steps1After[ i ];
       tNew = step.apply_and_destroy( t );
       t.dispose();                  // Dispose all intermediate (temporary) data.
