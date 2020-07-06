@@ -100,6 +100,16 @@ class TestSet {
     this.dOp();
   }
 
+  test_UnconditionalBranchTry() {
+    try {
+      this.aOp();
+      this.bOp();
+      this.cOp();
+      this.dOp();
+    } finally {
+    }
+  }
+
   test_UnconditionalBranchArray() {
     this.arrayOp[ 0 ]();
     this.arrayOp[ 1 ]();
@@ -138,6 +148,7 @@ class TestSet {
   async testCaseLoader() {
     this.test_ConditionalBranch();
     this.test_UnconditionalBranch();
+    this.test_UnconditionalBranchTry();
     this.test_UnconditionalBranchArray();
     this.test_UnconditionalBranchArraySpread();
     this.test_UnconditionalBranchArrayLoopIndex();
