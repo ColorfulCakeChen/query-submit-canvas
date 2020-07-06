@@ -338,7 +338,9 @@ class Base {
     t1.dispose();                   // Dispose all intermediate (temporary) data.
 
     // Step 1, 2, 3, ...
-    for ( let step of this.steps1After ) {
+    let step;
+    for ( let i = 0; i < this.steps1After.length ) {
+      step = this.steps1After[ i ];
 
       // shuffle and split by gather (one operation achieves two operations).
       t0 = concatenatedTensor.gather( group0_channelIndicesTensor1d, lastAxisId );
@@ -375,7 +377,9 @@ class Base {
     inputTensor.dispose();          // Dispose all intermediate (temporary) data.
 
     // Step 1, 2, 3, ...
-    for ( let step of this.steps1After ) {
+    let step;
+    for ( let i = 0; i < this.steps1After.length ) {
+      step = this.steps1After[ i ];
       tNew = step.apply_and_destroy( t );
       t.dispose();                  // Dispose all intermediate (temporary) data.
       t = tNew;
