@@ -119,7 +119,7 @@ class TestSet {
   }
 
   // Testing whether the results of different implementation are the same. Also, pre-compile the codes.
-  testResultSame() {
+  async testCaseLoader() {
     this.test_ConditionalBranch();
     this.test_UnconditionalBranch();
     this.test_UnconditionalBranchArray();
