@@ -238,7 +238,9 @@ class Base {
     }
 
     // All test filters should generate same size result.
-    for ( let testFilters of this.testFiltersArray ) {
+    for ( let i = 0; i < this.testFiltersArray.length; ++i ) {
+      let testFilters = this.testFiltersArray[ i ];
+
 //      let t = testFilters.apply( this.dataTensor3d, true );
       let t = testFilters.apply( this.testCnavas, true );
 
@@ -266,7 +268,9 @@ class Base {
     yield* this.progressAdvanceYield();
 
     // All test filters in array.
-    for ( let testFilters of this.testFiltersArray ) {
+    for ( let i = 0; i < this.testFiltersArray.length; ++i ) {
+      let testFilters = this.testFiltersArray[ i ];
+
       // Note: Do not return result tensor so that need not to dispose them.
       resultProfiles.push(
 //        await this.logProfile( testFilters.name, testFilters.apply.bind( testFilters, this.dataTensor3d, false ) ) );
