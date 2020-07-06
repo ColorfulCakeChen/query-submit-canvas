@@ -135,7 +135,7 @@ class Base {
         pointwise2ChannelCount, bBias, strActivationName,
         this.bAddInputToOutput );
 
-      this.apply_and_destroy = Block.apply_and_destroy_NotShuffleNetV2_NotMobileNetV2;
+      this.apply_and_destroy = Base.apply_and_destroy_NotShuffleNetV2_NotMobileNetV2;
       this.outputChannelCount = step0.outputChannelCount;
 
     } else {  // ShuffleNetV2, or MobileNetV2.
@@ -190,11 +190,11 @@ class Base {
 
           this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
 
-          this.apply_and_destroy = Block.apply_and_destroy_ShuffleNetV2; // Bind here (step 0's logic), because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy = Base.apply_and_destroy_ShuffleNetV2; // Bind here (step 0's logic), because step 1 (2, 3, ...) may not existed.
           this.outputChannelCount = step0.outputChannelCount + step0Branch.outputChannelCount;
 
         } else {
-          this.apply_and_destroy = Block.apply_and_destroy_MobileNetV2;  // Bind here (step 0's logic), because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy = Base.apply_and_destroy_MobileNetV2;  // Bind here (step 0's logic), because step 1 (2, 3, ...) may not existed.
           this.outputChannelCount = step0.outputChannelCount;
         }
       }
