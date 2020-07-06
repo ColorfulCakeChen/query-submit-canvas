@@ -127,7 +127,9 @@ class Base {
       let t = tf.image.resizeBilinear( sourceImage, this.sourceImageHeightWidth, true ); // alignCorners = true
       sourceImage.dispose();
 
-      for ( let block of this.blocks ) {
+      let block;
+      for ( let i = 0; i < this.blocks.length; ++i ) {
+        block = this.blocks[ i ];
         t = block.apply_and_destroy( t );
       }
 
