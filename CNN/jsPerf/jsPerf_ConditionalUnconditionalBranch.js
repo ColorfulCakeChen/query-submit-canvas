@@ -56,91 +56,113 @@ class TestSet {
 
   }
 
-  static a1() { return Math.sin( this.a + 1 ); }
-  static a2() { return Math.sin( this.a + 2 ); }
-  static b3() { return Math.sin( this.b + 3 ); }
-  static b4() { return Math.sin( this.b + 4 ); }
-  static c5() { return Math.sin( this.c + 5 ); }
-  static c6() { return Math.sin( this.c + 6 ); }
-  static d7() { return Math.sin( this.d + 7 ); }
-  static d8() { return Math.sin( this.d + 8 ); }
+  static a1( p ) { return Math.sin( this.a + 1 ) + p; }
+  static a2( p ) { return Math.sin( this.a + 2 ) + p; }
+  static b3( p ) { return Math.sin( this.b + 3 ) + p; }
+  static b4( p ) { return Math.sin( this.b + 4 ) + p; }
+  static c5( p ) { return Math.sin( this.c + 5 ) + p; }
+  static c6( p ) { return Math.sin( this.c + 6 ) + p; }
+  static d7( p ) { return Math.sin( this.d + 7 ) + p; }
+  static d8( p ) { return Math.sin( this.d + 8 ) + p; }
 
   test_ConditionalBranch() {
+    let p = 1;
     let r;
 
     if ( this.a ) {
-      r = Math.sin( this.a + 1 );
+      r = Math.sin( this.a + 1 ) + p;
     } else {
-      r = Math.sin( this.a + 2 );
+      r = Math.sin( this.a + 2 ) + p;
     }
 
     if ( this.b ) {
-      r = Math.sin( this.b + 3 );
+      r = Math.sin( this.b + 3 ) + p;
     } else {
-      r = Math.sin( this.b + 4 );
+      r = Math.sin( this.b + 4 ) + p;
     }
 
     if ( this.c ) {
-      r = Math.sin( this.c + 5 );
+      r = Math.sin( this.c + 5 ) + p;
     } else {
-      r = Math.sin( this.c + 6 );
+      r = Math.sin( this.c + 6 ) + p;
     }
 
     if ( this.d ) {
-      r = Math.sin( this.d + 7 );
+      r = Math.sin( this.d + 7 ) + p;
     } else {
-      r = Math.sin( this.d + 8 );
+      r = Math.sin( this.d + 8 ) + p;
     }
   }
 
   test_UnconditionalBranch() {
-    this.aOp();
-    this.bOp();
-    this.cOp();
-    this.dOp();
+    let p = 1;
+    let r;
+
+    r = this.aOp( p );
+    r = this.bOp( p );
+    r = this.cOp( p );
+    r = this.dOp( p );
   }
 
   test_UnconditionalBranchTry() {
     try {
-      this.aOp();
-      this.bOp();
-      this.cOp();
-      this.dOp();
+      let p = 1;
+      let r;
+
+      r = this.aOp( p );
+      r = this.bOp( p );
+      r = this.cOp( p );
+      r = this.dOp( p );
     } finally {
     }
   }
 
   test_UnconditionalBranchArray() {
-    this.arrayOp[ 0 ]();
-    this.arrayOp[ 1 ]();
-    this.arrayOp[ 2 ]();
-    this.arrayOp[ 3 ]();
+    let p = 1;
+    let r;
+
+    r = this.arrayOp[ 0 ]( p );
+    r = this.arrayOp[ 1 ]( p );
+    r = this.arrayOp[ 2 ]( p );
+    r = this.arrayOp[ 3 ]( p );
   }
 
   test_UnconditionalBranchArraySpread() {
+    let p = 1;
+    let r;
+
     let [ aOp, bOp, cOp, dOp ] = [ ...this.arrayOp ];
-    aOp();
-    bOp();
-    cOp();
-    dOp();
+    r = aOp( p );
+    r = bOp( p );
+    r = cOp( p );
+    r = dOp( p );
   }
 
   test_UnconditionalBranchArrayLoopIndex() {
+    let p = 1;
+    let r;
+
     for ( let i = 0; i < this.arrayOp.length; ++i ) {
-      this.arrayOp[ i ]();
+      r = this.arrayOp[ i ]( p );
     }
   }
 
   test_UnconditionalBranchArrayLoopIndexLocal() {
+    let p = 1;
+    let r;
+
     let count = this.arrayOp.length;
     for ( let i = 0; i < count; ++i ) {
-      this.arrayOp[ i ]();
+      r = this.arrayOp[ i ]( p );
     }
   }
 
   test_UnconditionalBranchArrayLoopIterator() {
+    let p = 1;
+    let r;
+
     for ( let op of this.arrayOp ) {
-      op();
+      r = op( p );
     }
   }
 
