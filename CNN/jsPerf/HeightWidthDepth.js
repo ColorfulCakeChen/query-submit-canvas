@@ -81,8 +81,8 @@ class Base {
       [ 0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0, false,     "sin" ],
       [ 0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
       [ 0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
-      [ 1, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
-      [ 1,  true, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+//      [ 1, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+//      [ 1,  true, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
 
       [ 0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
       [ 0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0, false,     "sin" ],
