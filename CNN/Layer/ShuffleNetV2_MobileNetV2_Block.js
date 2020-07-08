@@ -131,7 +131,7 @@ class Base {
       step0.init(
         sourceChannelCount,
         pointwise1ChannelCount, bBias, strActivationName,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
+        depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
         pointwise2ChannelCount, bBias, strActivationName,
         this.bAddInputToOutput );
 
@@ -173,7 +173,7 @@ class Base {
         step0.init(
           sourceChannelCount,
           pointwise1ChannelCount, bBias, strActivationName,
-          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
+          depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
           pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
           this.bAddInputToOutput );
 
@@ -185,7 +185,7 @@ class Base {
           step0Branch.init(
             sourceChannelCount,
             0, false, "", // ShuffleNetV2 Step0's branch does not have pointwise convolution before depthwise convolution ( strides = 2 ).
-            depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
+            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
             pointwise2ChannelCount, bBias, this.pointwise2ActivationName );
 
           this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
@@ -248,7 +248,7 @@ class Base {
           step.init(
             channelCount_pointwise1Before,
             pointwise1ChannelCount, bBias, strActivationName,
-            depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bBias, strActivationName,
+            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
             pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
             this.bAddInputToOutput );
 
