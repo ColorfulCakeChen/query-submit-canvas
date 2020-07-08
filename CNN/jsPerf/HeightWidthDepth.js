@@ -25,9 +25,13 @@ class Base {
    */
   constructor( height, width, depth, progressToYield, progressToAdvance, progressReceiver ) {
 
+    let canvasChannelCount = 4;
+
     this.height = height;
     this.width = width;
-    this.depth = depth;
+//!!! Since source is canvas, the channel count should be the same as the canvas.
+//    this.depth = depth;
+    this.depth = depth = canvasChannelCount;
 
     this.progressToYield = progressToYield;
     this.progressToAdvance = progressToAdvance;
@@ -59,7 +63,6 @@ class Base {
     this.testCnavas = document.createElement( "canvas" );
     this.testCnavas.height = height;
     this.testCnavas.width = width;
-    let canvasChannelCount = 4;
 
     // [ stepCountPerBlock, bShuffleNetV2, strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ]
     this.testFiltersSpecTable = [
