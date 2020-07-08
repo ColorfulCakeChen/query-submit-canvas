@@ -29,9 +29,7 @@ class Base {
 
     this.height = height;
     this.width = width;
-//!!! Since source is canvas, the channel count should be the same as the canvas.
     this.depth = depth;
-//    this.depth = depth = canvasChannelCount;
 
     let depthwiseChannelMultiplierBlock0Step0 = depth / canvasChannelCount;
 
@@ -39,9 +37,9 @@ class Base {
     this.progressToAdvance = progressToAdvance;
     this.progressReceiver = progressReceiver;
 
-    this.valueCount = height * width * depth;
-
-    //this.concatenatedShape = [ height, width, depth ];
+//!!! Since source is canvas, the channel count should be the same as the canvas.
+//    this.valueCount = height * width * depth;
+    this.valueCount = height * width * canvasChannelCount;
 
     // About half, but the difference should be divisable by 2.
 //    this.targetSize = [ Math.floor( height / 20 ) * 10, Math.floor( width / 20 ) * 10 ];
@@ -54,7 +52,9 @@ class Base {
 
     this.dataTensor3d = tf.tidy( () => {
       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
-      let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
+//!!! Since source is canvas, the channel count should be the same as the canvas.
+//      let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
+      let dataTensor3d = dataTensor1d.reshape( [ height, width, canvasChannelCount ] );
       return dataTensor3d;
     });
 
