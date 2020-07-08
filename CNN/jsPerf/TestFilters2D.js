@@ -76,7 +76,7 @@ class Base {
 
       + `${ ( block0.step0.bPointwise1 ) ? "__PConv1" : "" }`
       + `${ ( block0.step0.bPointwise1 && block0.step0.bPointwise1Bias ) ? ( "_PBias" ) : "" }`
-      + `${ ( block0.step0.bPointwise1 && block0.pointwise1ActivationName ) ? ( "_" + block0.step0.pointwise1ActivationName ) : "" }`
+      + `${ ( block0.step0.bPointwise1 && block0.step0.pointwise1ActivationFunction ) ? ( "_" + block0.step0.pointwise1ActivationName ) : "" }`
 
       + `${ ( block0.step0.bDepthwise ) ? `__D${strAvgMaxConv}_${depthwiseFilterHeight}x${depthwiseFilterHeight}` : "" }`
       + `${ ( block0.step0.bDepthwise && block0.step0.bDepthwiseBias ) ? ( "_DBias" ) : "" }`
@@ -84,7 +84,7 @@ class Base {
 
       + `${ ( block0.step0.bPointwise2 ) ? "__PConv2" : "" }`
       + `${ ( block0.step0.bPointwise2 && block0.step0.bPointwise2Bias ) ? ( "_PBias" ) : "" }`
-      + `${ ( block0.step0.bPointwise2 && block0.pointwise2ActivationName ) ? ( "_" + block0.step0.pointwise2ActivationName ) : "" }`
+      + `${ ( block0.step0.bPointwise2 && block0.step0.pointwise2ActivationFunction ) ? ( "_" + block0.step0.pointwise2ActivationName ) : "" }`
 
       + `__Block_${this.blockCount}`
       + `__Step_${stepCountPerBlock}`
