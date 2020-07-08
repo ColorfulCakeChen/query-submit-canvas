@@ -235,11 +235,14 @@ class Base {
     for ( let i = 0; i < this.testFiltersArray.length; ++i ) {
       let testFilters = this.testFiltersArray[ i ];
 
+//!!! Using canvas as source.
 //      let t = testFilters.apply( this.dataTensor3d, true );
       let t = testFilters.apply( this.testCnavas, true );
 
       tf.util.assert(
         tf.util.arraysEqual(
+//!!! Now, output channel is the same as input channel count.
+//          [ t.shape[ 0 ], t.shape[ 1 ], ( t.shape[ 2 ] / testFilters.depthwiseChannelMultiplierBlock0Step0 ) ], tensor_ResizeBilinear.shape ),
           [ t.shape[ 0 ], t.shape[ 1 ], ( t.shape[ 2 ] / testFilters.depthwiseChannelMultiplierBlock0Step0 ) ], tensor_ResizeBilinear.shape ),
         `Shape ${testFilters.name}() != ResizeBilinear()`);
 
