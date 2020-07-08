@@ -102,7 +102,7 @@ class Base {
 
       this.pointwise1FiltersTensor4d = Base.generateTensor( this.pointwise1FiltersShape );
 
-      if ( bAddInputToOutput )
+      if ( ( bAddInputToOutput ) && ( depthwiseStrides == 1 ) )    // So setp 0 (whose strides == 2) never add input to output.
         this.pfn_pointwise1Conv = Base.pointwise1Conv;             // will NOT dispose inputTensor.
       else
         this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
@@ -198,13 +198,12 @@ class Base {
     }
 
     this.bAddInputToOutput = bAddInputToOutput;
-    if ( bAddInputToOutput ) {
+    if ( ( bAddInputToOutput ) && ( depthwiseStrides == 1 ) )    // So setp 0 (whose strides == 2) never add input to output.
       // Should also ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == this.channelCount_pointwise2After ).
       // Otherwise, the result will be wrong.
       this.apply_and_destroy = Base.apply_and_destroy_AddInputToOutput;
-    } else {
+    else
       this.apply_and_destroy = Base.apply_and_destroy_NoResidual;
-    }
   }
 
   /** Convert activation function name to function object. */
