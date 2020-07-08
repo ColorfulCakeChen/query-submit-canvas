@@ -55,9 +55,6 @@ class Base {
     let inChannels =        depth;
     let channelMultiplier = 1;
 
-    // [ stepCountPerBlock, filterHeight, channelMultiplierBlock0,
-    // strAvgMaxConv, bDepthwiseBias, depthwiseActivationName // , bPointwise, bPointwiseBias, pointwiseActivationName ]
-
     // [ stepCountPerBlock, bShuffleNetV2, strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ]
     this.testFiltersSpecTable = [
       [ 0, false, "Conv", filterHeight_OneStep,   1, false,        "" ],
@@ -96,15 +93,6 @@ class Base {
       testFilters.init( height, depth, targetHeight, ...filtersSpec );
       return testFilters;
     });
-
-//     // Extra test more channel.
-//     {
-//       let testFilters = new TestFilters2D.Base();
-//       testFilters.init( height, depth * 200, targetHeight,
-//         filterHeight_OneStep, "Conv",  true,     "sin",  true,  true,     "sin"
-//       );
-//       this.testFiltersArray.push( testFilters );
-//     }
 
     // TestCanvas
     this.testCnavas = document.createElement( "canvas" );
