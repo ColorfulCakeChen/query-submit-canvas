@@ -21,15 +21,9 @@ class Base {
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
-///    channelExpansionFactor,
     sourceHeight, sourceChannelCount, targetHeight,
-//    filterHeight, channelMultiplierBlock0,
     stepCountPerBlock,
     bShuffleNetV2,
-
-//     strAvgMaxConv, bDepthwiseBias, depthwiseActivationName,
-//     bPointwise2, bPointwise2Bias, pointwise2ActivationName,
-
     strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ) {
 
     this.disposeTensors();
@@ -43,16 +37,6 @@ class Base {
     this.depthwiseChannelMultiplierBlock0Step0 = depthwiseChannelMultiplierBlock0Step0;
     this.channelCountBlock0 = sourceChannelCount * depthwiseChannelMultiplierBlock0Step0;  // the channel count of the first block (Block 0).
 
-//!!! ...unfinished...
-
-//     // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
-//     let heightReducedPerBlock;
-//     if ( stepCountPerBlock <= 0 ) { // Not ShuffleNetV2, Not MobileNetV2.
-//       heightReducedPerBlock = depthwiseFilterHeight - 1;
-//     } else {  // ShuffleNetV2 or MobileNetV2. Halven per block.
-//       heightReducedPerBlock = ???;
-//     }
-
     if ( stepCountPerBlock <= 0 ) { // Not ShuffleNetV2, Not MobileNetV2.
 
       // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
@@ -65,7 +49,6 @@ class Base {
 
       // The block count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 2, pad = "same" ).
       this.blockCount = Math.floor( Math.log2( sourceHeight ) );
-
     }
 
     this.blocks = new Array( this.blockCount );
@@ -76,7 +59,7 @@ class Base {
         sourceHeight, sourceChannelCount, targetHeight,
         stepCountPerBlock,
         bShuffleNetV2,
-        strAvgMaxConv, depthwiseChannelMultiplierBlock0Step0, depthwiseFilterHeight, bBias, strActivationName );
+        strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName );
       this.blocks[ i ] = block;
     }
 
