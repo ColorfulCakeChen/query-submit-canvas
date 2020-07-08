@@ -69,7 +69,7 @@ class Base {
     this.name = `C${sourceChannelCount}_${this.channelCountBlock0}`
       + `__D${strAvgMaxConv}_${depthwiseFilterHeight}x${depthwiseFilterHeight}`
       + `${ ( block0.step0.bDepthwiseBias ) ? ( "_DBias" ) : "" }`
-      + `${ ( block0.step0.depthwiseActivationFunction ) ? ( "_" + strAvgMaxConv ) : "" }`
+      + `${ ( block0.step0.depthwiseActivationFunction ) ? ( "_" + strActivationName ) : "" }`
       + `${ ( block0.step0.bPointwise2 ) ? "__PConv" : "" }`
       + `${ ( block0.step0.bPointwise2 && block0.step0.bPointwise2Bias ) ? ( "_PBias" ) : "" }`
       + `${ ( block0.step0.bPointwise2 && block0.pointwise2ActivationName ) ? ( "_" + block0.step0.pointwise2ActivationName ) : "" }`
