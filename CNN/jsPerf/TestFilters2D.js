@@ -57,7 +57,6 @@ class Base {
     this.blocks = new Array( this.blockCount );
     for ( let i = 0; i < this.blockCount; ++i )
     {
-
       let block = new ShuffleNetV2_MobileNetV2_Block.Base();
       block.init(
         sourceHeight, nextBlockInputChannelCount, targetHeight,
