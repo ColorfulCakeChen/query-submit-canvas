@@ -80,22 +80,27 @@ class Base {
       [ 0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
       [ 0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
       [ 0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [ 0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0, false,     "sin" ],
 
       [ 0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
       [ 0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
       [ 0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [ 0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0, false,     "sin" ],
 
       [ 0, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
       [ 0, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
       [ 0, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [ 0, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0, false,     "sin" ],
 
       [ 0, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
       [ 0, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
       [ 0, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [ 0, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0, false,     "sin" ],
 
       [ 0, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
       [ 0, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
       [ 0, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [ 0, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0, false,     "sin" ],
     ];
 
     // Create test filters.
