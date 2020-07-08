@@ -30,8 +30,10 @@ class Base {
     this.height = height;
     this.width = width;
 //!!! Since source is canvas, the channel count should be the same as the canvas.
-//    this.depth = depth;
-    this.depth = depth = canvasChannelCount;
+    this.depth = depth;
+//    this.depth = depth = canvasChannelCount;
+
+    let depthwiseChannelMultiplierBlock0Step0 = depth / canvasChannelCount;
 
     this.progressToYield = progressToYield;
     this.progressToAdvance = progressToAdvance;
@@ -66,34 +68,34 @@ class Base {
 
     // [ stepCountPerBlock, bShuffleNetV2, strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ]
     this.testFiltersSpecTable = [
-      [ 0, false, "Conv", filterHeight_OneStep,   1, false,        "" ],
-      [ 0, false, "Conv", filterHeight_OneStep,   1,  true,        "" ],
-      [ 0, false, "Conv", filterHeight_OneStep,   1,  true,    "relu" ],
-//       [ 0, false, "Conv", filterHeight_OneStep,   1,  true,   "relu6" ],
-//       [ 0, false, "Conv", filterHeight_OneStep,   1,  true, "sigmoid" ],
-      [ 0, false, "Conv", filterHeight_OneStep,   1,  true,    "tanh" ],
-      [ 0, false, "Conv", filterHeight_OneStep,   1,  true,     "sin" ],
-      [ 0, false, "Conv", filterHeight_OneStep, 200,  true,     "sin" ],
+      [ 0, false, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
+      [ 0, false, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
+      [ 0, false, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,    "relu" ],
+//       [ 0, false, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,   "relu6" ],
+//       [ 0, false, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true, "sigmoid" ],
+      [ 0, false, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,    "tanh" ],
+      [ 0, false, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [ 0, false, "Conv", filterHeight_OneStep,                                   200,  true,     "sin" ],
 
-      [ 0, false, "Conv",                    2,   1, false,        "" ],
-      [ 0, false, "Conv",                    2,   1,  true,        "" ],
-      [ 0, false, "Conv",                    2,   1,  true,     "sin" ],
+      [ 0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
+      [ 0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
+      [ 0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
 
-      [ 0, false, "Conv",                    3,   1, false,        "" ],
-      [ 0, false, "Conv",                    3,   1,  true,        "" ],
-      [ 0, false, "Conv",                    3,   1,  true,     "sin" ],
+      [ 0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
+      [ 0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
+      [ 0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
 
-      [ 0, false, "Conv",                    5,   1, false,        "" ],
-      [ 0, false, "Conv",                    5,   1,  true,        "" ],
-      [ 0, false, "Conv",                    5,   1,  true,     "sin" ],
+      [ 0, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
+      [ 0, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
+      [ 0, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
 
-      [ 0, false, "Conv",                    7,   1, false,        "" ],
-      [ 0, false, "Conv",                    7,   1,  true,        "" ],
-      [ 0, false, "Conv",                    7,   1,  true,     "sin" ],
+      [ 0, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
+      [ 0, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
+      [ 0, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
 
-      [ 0, false, "Conv",                    9,   1, false,        "" ],
-      [ 0, false, "Conv",                    9,   1,  true,        "" ],
-      [ 0, false, "Conv",                    9,   1,  true,     "sin" ],
+      [ 0, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0, false,        "" ],
+      [ 0, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,        "" ],
+      [ 0, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
     ];
 
     // Create test filters.
