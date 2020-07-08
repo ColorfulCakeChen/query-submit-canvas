@@ -183,12 +183,11 @@ class Base {
       this.pointwise2BiasesShape =       [ 1, 1, this.channelCount_pointwise2After ];
 
       this.pointwise2FiltersTensor4d = Base.generateTensor( this.pointwise2FiltersShape );
-
       this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy;
 
       if ( bPointwise2Bias ) {
         this.pointwise2BiasesTensor3d = Base.generateTensor( this.pointwise2BiasesShape );
-        this.pfn_pointwise2Bias = Base.pointwise1Bias_and_destroy;
+        this.pfn_pointwise2Bias = Base.pointwise2Bias_and_destroy;
       }
 
       if ( this.pointwise2ActivationFunction )
