@@ -67,12 +67,19 @@ class Base {
 
     // e.g. "C24_24__DConv_101x101_DBias_RELU__PConv_PBias_RELU__Block_1__Step_1"
     this.name = `C${sourceChannelCount}_${this.channelCountBlock0}`
-      + `__D${strAvgMaxConv}_${depthwiseFilterHeight}x${depthwiseFilterHeight}`
-      + `${ ( block0.step0.bDepthwiseBias ) ? ( "_DBias" ) : "" }`
-      + `${ ( block0.step0.depthwiseActivationFunction ) ? ( "_" + strActivationName ) : "" }`
-      + `${ ( block0.step0.bPointwise2 ) ? "__PConv" : "" }`
+
+      + `${ ( block0.step0.bPointwise1 ) ? "__PConv1" : "" }`
+      + `${ ( block0.step0.bPointwise1 && block0.step0.bPointwise1Bias ) ? ( "_PBias" ) : "" }`
+      + `${ ( block0.step0.bPointwise1 && block0.pointwise1ActivationName ) ? ( "_" + block0.step0.pointwise1ActivationName ) : "" }`
+
+      + `${ ( block0.step0.bDepthwise ) ? `__D${strAvgMaxConv}_${depthwiseFilterHeight}x${depthwiseFilterHeight}` : "" }`
+      + `${ ( block0.step0.bDepthwise && block0.step0.bDepthwiseBias ) ? ( "_DBias" ) : "" }`
+      + `${ ( block0.step0.bDepthwise && block0.step0.depthwiseActivationFunction ) ? ( "_" + strActivationName ) : "" }`
+
+      + `${ ( block0.step0.bPointwise2 ) ? "__PConv2" : "" }`
       + `${ ( block0.step0.bPointwise2 && block0.step0.bPointwise2Bias ) ? ( "_PBias" ) : "" }`
       + `${ ( block0.step0.bPointwise2 && block0.pointwise2ActivationName ) ? ( "_" + block0.step0.pointwise2ActivationName ) : "" }`
+
       + `__Block_${this.blockCount}`
       + `__Step_${stepCountPerBlock}`
     ;
