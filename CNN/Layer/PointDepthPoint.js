@@ -285,10 +285,27 @@ class Base {
   static no_operation( inputTensor ) { return inputTensor; }
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving residual connection.) */
-  static pointwise1Conv( inputTensor ) { return tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); } // 1x1, Stride = 1
-  static pointwise1Conv_and_destroy( inputTensor ) { let t = tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); inputTensor.dispose(); return t; }
-  static pointwise1Bias_and_destroy( inputTensor ) { let t = tf.add( inputTensor, this.pointwise1BiasesTensor3d ); inputTensor.dispose(); return t; }
-  static pointwise1Activation_and_destroy( inputTensor ) { let t = this.pointwise1ActivationFunction( inputTensor ); inputTensor.dispose(); return t; }
+  static pointwise1Conv( inputTensor ) {
+    return tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+  }
+
+  static pointwise1Conv_and_destroy( inputTensor ) {
+    let t = tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" );
+    inputTensor.dispose();
+    return t;
+  }
+
+  static pointwise1Bias_and_destroy( inputTensor ) {
+    let t = tf.add( inputTensor, this.pointwise1BiasesTensor3d );
+    inputTensor.dispose();
+    return t;
+  }
+
+  static pointwise1Activation_and_destroy( inputTensor ) {
+    let t = this.pointwise1ActivationFunction( inputTensor );
+    inputTensor.dispose();
+    return t;
+  }
 
   /** Depthwise Average Pooling. */
   static depthwiseAvg_and_destroy( inputTensor ) {
@@ -311,12 +328,35 @@ class Base {
     return t;
   }
 
-  static depthwiseBias_and_destroy( inputTensor ) { let t = tf.add( inputTensor, this.depthwiseBiasesTensor3d ); inputTensor.dispose(); return t; }
-  static depthwiseActivation_and_destroy( inputTensor ) { let t = this.depthwiseActivationFunction( inputTensor ); inputTensor.dispose(); return t; }
+  static depthwiseBias_and_destroy( inputTensor ) {
+    let t = tf.add( inputTensor, this.depthwiseBiasesTensor3d );
+    inputTensor.dispose();
+    return t;
+  }
 
-  static pointwise2Conv_and_destroy( inputTensor ) { let t = tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" ); inputTensor.dispose(); return t; }
-  static pointwise2Bias_and_destroy( inputTensor ) { let t = tf.add( inputTensor, this.pointwise2BiasesTensor3d ); inputTensor.dispose(); return t; }
-  static pointwise2Activation_and_destroy( inputTensor ) { let t = this.pointwise2ActivationFunction( inputTensor ); inputTensor.dispose(); return t; }
+  static depthwiseActivation_and_destroy( inputTensor ) {
+    let t = this.depthwiseActivationFunction( inputTensor );
+    inputTensor.dispose();
+    return t;
+  }
+
+  static pointwise2Conv_and_destroy( inputTensor ) {
+    let t = tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" );
+    inputTensor.dispose();
+    return t;
+  }
+
+  static pointwise2Bias_and_destroy( inputTensor ) {
+    let t = tf.add( inputTensor, this.pointwise2BiasesTensor3d );
+    inputTensor.dispose();
+    return t;
+  }
+
+  static pointwise2Activation_and_destroy( inputTensor ) {
+    let t = this.pointwise2ActivationFunction( inputTensor );
+    inputTensor.dispose();
+    return t;
+  }
 
   /** The input will be added to output for achieving residual connection. */
   static apply_and_destroy_AddInputToOutput( inputTensor ) {
