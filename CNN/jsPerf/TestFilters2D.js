@@ -52,18 +52,22 @@ class Base {
     }
 
     let nextBlockInputChannelCount = sourceChannelCount;
+    let nextBlockDepthwiseChannelMultiplier = depthwiseChannelMultiplierBlock0Step0; // Only block 0 can have ( depthwise channel multiplier > 1 ).
 
     this.blocks = new Array( this.blockCount );
     for ( let i = 0; i < this.blockCount; ++i )
     {
+
       let block = new ShuffleNetV2_MobileNetV2_Block.Base();
       block.init(
         sourceHeight, nextBlockInputChannelCount, targetHeight,
         stepCountPerBlock,
         bShuffleNetV2,
-        strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName );
+        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, bBias, strActivationName );
+
       this.blocks[ i ] = block;
       nextBlockInputChannelCount = block.outputChannelCount; // Using previous block's output channel count as next block's input channel count.
+      nextBlockDepthwiseChannelMultiplier = 1;               // Except block 0, all other blocks' depthwise channel multiplier should be 1.
     }
 
     let block0 = this.blocks[ 0 ];
