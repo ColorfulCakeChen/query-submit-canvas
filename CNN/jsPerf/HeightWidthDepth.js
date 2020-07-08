@@ -55,6 +55,12 @@ class Base {
     let inChannels =        depth;
     let channelMultiplier = 1;
 
+    // TestCanvas
+    this.testCnavas = document.createElement( "canvas" );
+    this.testCnavas.height = height;
+    this.testCnavas.width = width;
+    let canvasChannelCount = 4;
+
     // [ stepCountPerBlock, bShuffleNetV2, strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ]
     this.testFiltersSpecTable = [
       [ 0, false, "Conv", filterHeight_OneStep,   1, false,        "" ],
@@ -90,14 +96,11 @@ class Base {
     // Create test filters.
     this.testFiltersArray = this.testFiltersSpecTable.map( ( filtersSpec, i ) => {
       let testFilters = new TestFilters2D.Base();
-      testFilters.init( height, depth, targetHeight, ...filtersSpec );
+//!!! Since source is canvas, the channel count should be the same as the canvas.
+//      testFilters.init( height, depth, targetHeight, ...filtersSpec );
+      testFilters.init( height, canvasChannelCount, targetHeight, ...filtersSpec );
       return testFilters;
     });
-
-    // TestCanvas
-    this.testCnavas = document.createElement( "canvas" );
-    this.testCnavas.height = height;
-    this.testCnavas.width = width;
 
     // Initialize progress accumulator.
     
