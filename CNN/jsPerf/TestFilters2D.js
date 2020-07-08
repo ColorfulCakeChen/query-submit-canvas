@@ -51,16 +51,19 @@ class Base {
       this.blockCount = Math.floor( Math.log2( sourceHeight ) );
     }
 
+    let nextBlockInputChannelCount = sourceChannelCount;
+
     this.blocks = new Array( this.blockCount );
     for ( let i = 0; i < this.blockCount; ++i )
     {
       let block = new ShuffleNetV2_MobileNetV2_Block.Base();
       block.init(
-        sourceHeight, sourceChannelCount, targetHeight,
+        sourceHeight, nextBlockInputChannelCount, targetHeight,
         stepCountPerBlock,
         bShuffleNetV2,
         strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName );
       this.blocks[ i ] = block;
+      nextBlockInputChannelCount = block.outputChannelCount; // Using previous block's output channel count as next block's input channel count.
     }
 
     let block0 = this.blocks[ 0 ];
