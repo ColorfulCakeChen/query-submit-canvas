@@ -115,17 +115,20 @@ class Base {
       // Only one step (i.e. step 0 ) for depthwise operation with ( strides = 1, pad = "valid" ) for shrinking sourceHeight
       // (minus ( filterHeight - 1 )).
 
+      let pointwise1ChannelCount = 0; // no pointwise convolution before depthwise convolution.
+      let pointwise2ChannelCount;
+
       let depthwise_AvgMax_Or_ChannelMultiplier;
-      if ( strAvgMaxConv == "Conv" )
+      if ( strAvgMaxConv == "Conv" ) { // Depthwise convolution.
         depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
-      else
+        pointwise2ChannelCount = sourceChannelCount * depthwiseChannelMultiplierStep0;
+      } else {
         depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
+        pointwise2ChannelCount = sourceChannelCount;           // The output channel count of average (or max) pooling is the same as input channel count.
+      }
 
       let depthwiseStrides = 1;
       let depthwisePad = "valid";     // so that shrinking sourceHeight a little.
-
-      let pointwise1ChannelCount = 0; // no pointwise convolution before depthwise convolution.
-      let pointwise2ChannelCount = sourceChannelCount;  // Assume output channel count is the same as input channel count.
 
       let step0 = this.step0 = new PointDepthPoint.Base();
       step0.init(
