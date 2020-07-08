@@ -74,7 +74,7 @@ class Base {
       + `${ ( block0.step0.bPointwise2 && block0.step0.bPointwise2Bias ) ? ( "_PBias" ) : "" }`
       + `${ ( block0.step0.bPointwise2 && block0.pointwise2ActivationName ) ? ( "_" + block0.step0.pointwise2ActivationName ) : "" }`
       + `__Block_${this.blockCount}`
-      + `__Step${stepCountPerBlock}`
+      + `__Step_${stepCountPerBlock}`
     ;
 
     this.sourceImageHeightWidth = [ block0.sourceHeight, block0.sourceWidth ];
