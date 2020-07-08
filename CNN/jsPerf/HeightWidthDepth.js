@@ -240,7 +240,7 @@ class Base {
 
       tf.util.assert(
         tf.util.arraysEqual(
-          [ t.shape[ 0 ], t.shape[ 1 ], ( t.shape[ 2 ] / testFilters.channelMultiplier ) ], tensor_ResizeBilinear.shape ),
+          [ t.shape[ 0 ], t.shape[ 1 ], ( t.shape[ 2 ] / testFilters.depthwiseChannelMultiplierBlock0Step0 ) ], tensor_ResizeBilinear.shape ),
         `Shape ${testFilters.name}() != ResizeBilinear()`);
 
       t.dispose();
