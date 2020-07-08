@@ -42,12 +42,12 @@ class Base {
    *   The activation function name after the first 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
    * If ( pointwise1ChannelCount == 0 ), this activation function will also be ignored.
    *
+   * @param {number} depthwiseFilterHeight
+   *   The height (and width) of depthwise convolution's filter.
+   *
    * @param {string|number} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
    * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
-   *
-   * @param {number} depthwiseFilterHeight
-   *   The height (and width) of depthwise convolution's filter.
    *
    * @param {number} depthwiseStrides
    *   The strides of depthwise convolution.
@@ -78,7 +78,7 @@ class Base {
   init(
     channelCount_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
+    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     bAddInputToOutput ) {
 
@@ -120,6 +120,9 @@ class Base {
     }
 
     // The depthwise operation.
+    this.depthwiseFilterHeight = depthwiseFilterHeight;
+    this.depthwiseFilterWidth = depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
+
     this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
     if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) {
       switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
@@ -146,8 +149,6 @@ class Base {
       }
     }
 
-    this.depthwiseFilterHeight = depthwiseFilterHeight;
-    this.depthwiseFilterWidth = depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
     this.depthwiseStrides = depthwiseStrides;
     this.depthwisePad = depthwisePad;
     this.bDepthwiseBias = bDepthwiseBias;
@@ -167,7 +168,7 @@ class Base {
         this.pfn_depthwiseActivation = Base.depthwiseActivation_and_destroy;
     }
 
-    // The second pointwise convolution. (This convolution is always existed. It, however, may have or not bias and activation function.)
+    // The second 1x1 pointwise convolution.
     this.pointwise2ChannelCount = pointwise2ChannelCount;
     this.bPointwise2 = ( pointwise2ChannelCount > 0 );
     this.bPointwise2Bias = bPointwise2Bias;
