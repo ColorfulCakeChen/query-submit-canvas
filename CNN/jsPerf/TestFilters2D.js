@@ -59,9 +59,13 @@ class Base {
 //      this.blockCount = Math.floor( Math.log2( sourceHeight ) );
       this.blockCount = Math.ceil( Math.log2( sourceHeight ) );
 
-      // Channel count is expanded both by channel multiplier of depthwise convolution of step 0 of block 0
-      // and by every block (half height x width and double channel count).
-      this.totalChannelExpansionFactor = depthwiseChannelMultiplierBlock0Step0 * Math.pow( 2, this.blockCount );
+//!!! wrong
+//       // Channel count is expanded both by channel multiplier of depthwise convolution of step 0 of block 0
+//       // and by every block (half height x width and double channel count).
+//       this.totalChannelExpansionFactor = depthwiseChannelMultiplierBlock0Step0 * Math.pow( 2, this.blockCount );
+
+      // Channel count is expanded by every block (half height x width and double channel count).
+      this.totalChannelExpansionFactor = Math.pow( 2, this.blockCount );
     }
 
     let nextBlockInputChannelCount = sourceChannelCount;
