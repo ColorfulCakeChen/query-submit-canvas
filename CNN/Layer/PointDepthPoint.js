@@ -74,13 +74,19 @@ class Base {
    * @param {boolean} bAddInputToOutput
    *   If true and ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be added
    * to output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
+   *
+//!!!???
+   * @param {boolean} bKeepInputTensor
+   *   If true, apply_and_destroy() will not dispose inputTensor. This is usually used by the branch of step 0 of ShuffleNetV2.
    */
   init(
     channelCount_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
     depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
-    bAddInputToOutput ) {
+    bAddInputToOutput,
+//!!!???
+    bKeepInputTensor ) {
 
     this.disposeTensors();
 
@@ -198,6 +204,9 @@ class Base {
     }
 
     this.bAddInputToOutput = bAddInputToOutput;
+//!!!???
+    this.bKeepInputTensor = bKeepInputTensor;
+
     if ( ( bAddInputToOutput ) && ( depthwiseStrides == 1 ) )    // So setp 0 (whose strides == 2) never add input to output.
       // Should also ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == this.channelCount_pointwise2After ).
       // Otherwise, the result will be wrong.
@@ -388,6 +397,8 @@ class Base {
   /** The input will not be added to output (i.e. no residual connection). */
   static apply_and_destroy_NoResidual( inputTensor ) {
     let t0, t1;
+
+//!!! ShuffleNetV2 step0Branch should not destroy input tensor.
 
     // The first 1x1 pointwise convolution.
     t0 = this.pfn_pointwise1Conv( inputTensor ); // inputTensor should be disposed here.
