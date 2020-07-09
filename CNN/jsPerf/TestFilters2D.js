@@ -48,7 +48,8 @@ class Base {
     } else {  // ShuffleNetV2 or MobileNetV2. Halven per block.
 
       // The block count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 2, pad = "same" ).
-      this.blockCount = Math.floor( Math.log2( sourceHeight ) );
+//      this.blockCount = Math.floor( Math.log2( sourceHeight ) );
+      this.blockCount = Math.ceiling( Math.log2( sourceHeight ) );
     }
 
     let nextBlockInputChannelCount = sourceChannelCount;
