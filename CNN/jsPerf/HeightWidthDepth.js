@@ -41,9 +41,7 @@ class Base {
 //    this.valueCount = height * width * depth;
     this.valueCount = height * width * canvasChannelCount;
 
-    // About half, but the difference should be divisable by 2.
-//    this.targetSize = [ Math.floor( height / 20 ) * 10, Math.floor( width / 20 ) * 10 ];
-    this.targetSize = [ 1, 1 ]; // to 1x1.
+    this.targetSize = [ 1, 1 ]; // to 1x1. The final output always has height x width = 1 x 1 (i.e. only one pixel per channel)
     let targetHeight = this.targetSize[ 0 ];
 
     // The filter size for achieving target size in one step.
@@ -110,7 +108,7 @@ class Base {
       let testFilters = new TestFilters2D.Base();
 //!!! Since source is canvas, the channel count should be the same as the canvas.
 //      testFilters.init( height, depth, targetHeight, ...filtersSpec );
-      testFilters.init( height, canvasChannelCount, targetHeight, ...filtersSpec );
+      testFilters.init( height, canvasChannelCount, ...filtersSpec );
       return testFilters;
     });
 
@@ -251,7 +249,8 @@ class Base {
       tf.util.assert(
         tf.util.arraysEqual(
 //!!! Now, output channel is the same as input channel count.
-          [ t.shape[ 0 ], t.shape[ 1 ], ( t.shape[ 2 ] / testFilters.depthwiseChannelMultiplierBlock0Step0 ) ], tensor_ResizeBilinear.shape ),
+//          [ t.shape[ 0 ], t.shape[ 1 ], ( t.shape[ 2 ] / testFilters.depthwiseChannelMultiplierBlock0Step0 ) ], tensor_ResizeBilinear.shape ),
+          [ t.shape[ 0 ], t.shape[ 1 ], ( t.shape[ 2 ] / testFilters.totalChannelExpansionFactor ) ], tensor_ResizeBilinear.shape ),
 //          [ t.shape[ 0 ], t.shape[ 1 ], t.shape[ 2 ] ], tensor_ResizeBilinear.shape ),
         `Shape ${testFilters.name}() != ResizeBilinear()`);
 
