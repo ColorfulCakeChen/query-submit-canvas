@@ -8,6 +8,9 @@ export { Base };
  * @member {string} name
  *   This test filters' name.
  *
+ * @member {number[]} totalChannelExpansionFactor
+ *   The final output of this neural network will have ( totalChannelExpansionFactor * sourceChannelCount ) channel count.
+ *
  * @member {number[]} sourceImageHeightWidth
  *   The size (i.e. [ height, width ]) of the source image. When apply() is called, the source image will be extracted from the sourceCanvas
  * and be resized to this size. The neural network receives this resized source image.
@@ -21,7 +24,7 @@ class Base {
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
-    sourceHeight, sourceChannelCount, targetHeight,
+    sourceHeight, sourceChannelCount, // targetHeight,
     stepCountPerBlock,
     bShuffleNetV2,
     strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ) {
@@ -30,6 +33,8 @@ class Base {
 
     this.stepCountPerBlock = stepCountPerBlock;
     this.bShuffleNetV2 = bShuffleNetV2;
+
+    let targetHeight = 1; // The final output always has height x width = 1 x 1 (i.e. only one pixel per channel)
 
     let differenceHeight = sourceHeight - targetHeight;
     let filterWidth = depthwiseFilterHeight;
@@ -45,11 +50,18 @@ class Base {
       // The block count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
       this.blockCount = Math.floor( differenceHeight / heightReducedPerBlock );
 
+      // Channel count only be expanded by channel multiplier of depthwise convolution of step 0 of block 0.
+      this.totalChannelExpansionFactor = depthwiseChannelMultiplierBlock0Step0;
+
     } else {  // ShuffleNetV2 or MobileNetV2. Halven per block.
 
       // The block count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 2, pad = "same" ).
 //      this.blockCount = Math.floor( Math.log2( sourceHeight ) );
       this.blockCount = Math.ceil( Math.log2( sourceHeight ) );
+
+      // Channel count is expanded both by channel multiplier of depthwise convolution of step 0 of block 0
+      // and by every block (half height x width and double channel count).
+      this.totalChannelExpansionFactor = depthwiseChannelMultiplierBlock0Step0 * Math.pow( 2, this.blockCount );
     }
 
     let nextBlockInputChannelCount = sourceChannelCount;
