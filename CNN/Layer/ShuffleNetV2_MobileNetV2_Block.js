@@ -333,6 +333,7 @@ class Base {
     let t0, t1, t1New, concatenatedTensor;
 
     // Step 0.
+//!!! ShuffleNetV2 step0Branch should not destroy input tensor.
     concatTensorArray[ 0 ] = t0 = this.step0Branch.apply_and_destroy( inputTensor );  // Branch.
     concatTensorArray[ 1 ] = t1 = this.step0      .apply_and_destroy( inputTensor );  // Main Path.
     inputTensor.dispose();          // Dispose all intermediate (temporary) data.
