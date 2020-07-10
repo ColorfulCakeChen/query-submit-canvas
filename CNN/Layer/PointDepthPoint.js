@@ -254,7 +254,7 @@ class Base {
         this.apply_and_destroy_or_keep = Base.apply_and_destroy_AddInputToOutput; // will dispose inputTensor.
 
     } else {
-      this.apply_and_destroy_or_keep = Base.apply_and_destroy_NoSkipConnection;   // will or will NOT dispose inputTensor.
+      this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
     }
   }
 
