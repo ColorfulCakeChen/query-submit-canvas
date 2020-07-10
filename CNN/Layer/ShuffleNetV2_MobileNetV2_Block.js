@@ -237,7 +237,7 @@ class Base {
           // count of one branch of step 0.
           pointwise1ChannelCount = pointwise2ChannelCount = step0.outputChannelCount;
 
-          // In ShuffleNetV2, there is a channel shuffler in every step (except setp 0).
+          // In ShuffleNetV2, there is a channel shuffler in every step (except setp 0). It is shared by these steps in the same block.
           {
             let sourceConcatenatedShape = this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, channelCount_pointwise1Before ];
             let outputGroupCount = 2; // ShuffleNetV2 always uses two (depthwise convolution) groups.
