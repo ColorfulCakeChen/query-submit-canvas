@@ -21,10 +21,11 @@ export { Base };
  *   The channel count after the second 1x1 pointwise convolution. If ( pointwise2ChannelCount > 0 ), it equals pointwiseChannelCount.
  * If ( pointwise2ChannelCount <= 0 ), it equals channelCount_depthwiseAfter_pointwise2Before.
  *
- * @member {function} apply_and_destroy
+ * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has an parameter inputTensor (tf.tensor4d) represents the image which will be processed. It returns a new
  * tf.tensor4d. All other tensors (including inputTensor) will be disposed. In fact, this method calls one of
- * apply_and_destroy_AddInputToOutput(), apply_and_destroy_NoResidual() according to the init()'s parameters.
+ * apply_and_destroy_AddInputToOutput(), apply_and_keep_AddInputToOutput(), apply_and_destroy_or_keep_NoSkipConnection() according
+ * to the init()'s parameters.
  */
 class Base {
 
@@ -117,11 +118,11 @@ class Base {
       this.pointwise1FiltersTensor4d = Base.generateTensor( this.pointwise1FiltersShape );
 
       if ( bShouldAddInputToOutput ) { // If MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
-        this.pfn_pointwise1Conv = Base.pointwise1Conv;                        // will NOT dispose inputTensor.
+        this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;    // will NOT dispose inputTensor.
         bAlreadyKeepInputTensor = true;
       } else {
         if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
-          this.pfn_pointwise1Conv = Base.pointwise1Conv;
+          this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;
           bAlreadyKeepInputTensor = true;
         } else {                                                              // will dispose inputTensor.
           this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy;
@@ -149,8 +150,8 @@ class Base {
 
       if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
         switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-          case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg; break;
-          case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax; break;
+          case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep; break;
+          case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep; break;
         }
         bAlreadyKeepInputTensor = true;
       } else {                                                              // will dispose inputTensor.
@@ -173,7 +174,7 @@ class Base {
         this.depthwiseFiltersTensor4d = Base.generateTensor( this.depthwiseFiltersShape );
 
         if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
-          this.pfn_depthwiseOperation = Base.depthwiseConv;
+          this.pfn_depthwiseOperation = Base.depthwiseConv_and_keep;
           bAlreadyKeepInputTensor = true;
         } else {                                                              // will dispose inputTensor.
           this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy;
@@ -221,7 +222,7 @@ class Base {
       this.pointwise2FiltersTensor4d = Base.generateTensor( this.pointwise2FiltersShape );
 
       if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
-        this.pfn_pointwise2Conv = Base.pointwise2Conv;
+        this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep;
         bAlreadyKeepInputTensor = true;
       } else {                                                              // will dispose inputTensor.
         this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy;
@@ -248,12 +249,12 @@ class Base {
       // Should also ( channelCount_pointwise1Before == this.channelCount_pointwise2After ). Otherwise, the result will be wrong.
 
       if ( bKeepInputTensor )
-        this.apply_and_destroy = Base.apply_and_KeepInputTensor_AddInputToOutput; // will NOT dispose inputTensor.
+        this.apply_and_destroy_or_keep = Base.apply_and_keep_AddInputToOutput;    // will NOT dispose inputTensor.
       else
-        this.apply_and_destroy = Base.apply_and_destroy_AddInputToOutput; // will dispose inputTensor.
+        this.apply_and_destroy_or_keep = Base.apply_and_destroy_AddInputToOutput; // will dispose inputTensor.
 
     } else {
-      this.apply_and_destroy = Base.apply_and_destroy_NoSkipConnection; // will or will NOT dispose inputTensor.
+      this.apply_and_destroy_or_keep = Base.apply_and_destroy_NoSkipConnection;   // will or will NOT dispose inputTensor.
     }
   }
 
@@ -335,7 +336,7 @@ class Base {
   static no_operation( inputTensor ) { return inputTensor; }
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
-  static pointwise1Conv( inputTensor ) {
+  static pointwise1Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
   }
 
@@ -358,7 +359,7 @@ class Base {
   }
 
   /** Depthwise Average Pooling. */
-  static depthwiseAvg( inputTensor ) {
+  static depthwiseAvg_and_keep( inputTensor ) {
     return tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
   }
 
@@ -369,7 +370,7 @@ class Base {
   }
 
   /** Depthwise Max Pooling. */
-  static depthwiseMax( inputTensor ) {
+  static depthwiseMax_and_keep( inputTensor ) {
     return tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
   }
 
@@ -380,7 +381,7 @@ class Base {
   }
 
   /** Depthwise Convolution. */
-  static depthwiseConv( inputTensor ) {
+  static depthwiseConv_and_keep( inputTensor ) {
     return tf.depthwiseConv2d( inputTensor, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
   }
 
@@ -403,7 +404,7 @@ class Base {
   }
 
   /** Second 1x1 pointwise convolution. */
-  static pointwise2Conv( inputTensor ) {
+  static pointwise2Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" );
   }
 
@@ -425,19 +426,8 @@ class Base {
     return t;
   }
 
-  /** Tensor add for skip connection. */
-  static skipConnectionAdd( inputTensor ) {
-    return tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" );
-  }
-
-  static skipConnectionAdd_and_destroy( inputTensor ) {
-    let t = tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" );
-    inputTensor.dispose();
-    return t;
-  }
-
   /** The input will be added to output for achieving skip connection. The inputTensor will be kept (not disposed).*/
-  static apply_and_KeepInputTensor_AddInputToOutput( inputTensor ) {
+  static apply_and_keep_AddInputToOutput( inputTensor ) {
     let t0, t1;
 
     // The first 1x1 pointwise convolution.
@@ -466,16 +456,14 @@ class Base {
 
   /** The input will be added to output for achieving skip connection. The inputTensor will be disposed. */
   static apply_and_destroy_AddInputToOutput( inputTensor ) {
-    let t = Base.apply_and_KeepInputTensor_AddInputToOutput.call( this, inputTensor );
+    let t = Base.apply_and_keep_AddInputToOutput.call( this, inputTensor );
     inputTensor.dispose();
     return t;
   }
 
   /** The input will not be added to output (i.e. no residual connection). */
-  static apply_and_destroy_NoSkipConnection( inputTensor ) {
+  static apply_and_destroy_or_keep_NoSkipConnection( inputTensor ) {
     let t0, t1;
-
-//!!! ShuffleNetV2 step0Branch should not destroy input tensor.
 
     // The first 1x1 pointwise convolution.
     t0 = this.pfn_pointwise1Conv( inputTensor ); // inputTensor should be disposed here.
