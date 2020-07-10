@@ -166,15 +166,30 @@ class Base {
         if ( bShuffleNetV2 ) {
           pointwise1ChannelCount = sourceChannelCount * 1;   // In ShuffleNetV2, all convolutions do not change channel count
           pointwise2ChannelCount = sourceChannelCount * 1;
+
+          this.pointwise1Bias = bBias;
           this.pointwise1ActivationName = strActivationName;
+
+          // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
+          this.depthwiseBias = false;
           this.depthwiseActivationName = null;               // In ShuffleNetV2, depthwise convolution does not have activation function.
+
+          this.pointwise2Bias = bBias;
           this.pointwise2ActivationName = strActivationName;
+
         } else {
           pointwise1ChannelCount = sourceChannelCount * 4;   // In MobileNetV2, ( pointwise1ChannelCount > pointwise2ChannelCount )
           pointwise2ChannelCount = sourceChannelCount * 2;   // The channel count of step 0 of MobileNetV2 output is twice as input.
           this.bAddInputToOutput = true;
+
+          this.pointwise1Bias = bBias;
           this.pointwise1ActivationName = strActivationName;
+
+          this.depthwiseBias = bBias;
           this.depthwiseActivationName = strActivationName;
+
+          // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
+          this.pointwise2Bias = false;
           this.pointwise2ActivationName = null;              // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
         }
 
