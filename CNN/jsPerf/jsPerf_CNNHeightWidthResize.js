@@ -145,7 +145,9 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
   addOneLineCells( thead, "th", [
     "TestName",
     "kernelMs", "wallMs",
-    "newBytes", "newTensors", "peakBytes" ] );
+    //"newBytes", "newTensors", // If not zero, there is memory leak.
+    "peakBytes"
+  ] );
 
   let digitsCount = 4;
 
@@ -158,14 +160,18 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
     addOneLineCells( tbody, "td", [
       `(${profileWebGL.backendName}) ${profileWebGL.title}`,
       profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
-      profileWebGL.newBytes, profileWebGL.newTensors, profileWebGL.peakBytes ] );
+      //profileWebGL.newBytes, profileWebGL.newTensors, // If not zero, there is memory leak.
+      profileWebGL.peakBytes
+    ] );
 
     let profileCPU = profilesCPU[ i ];
 
     addOneLineCells( tbody, "td", [
       `(${profileCPU.backendName})`,
       profileCPU.kernelMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
-      "", "", "" ] );
+      //"", "",
+      ""
+    ] );
   }
 
 }
