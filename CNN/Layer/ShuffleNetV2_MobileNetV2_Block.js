@@ -301,7 +301,8 @@ class Base {
    */
   static apply_and_destroy_NotShuffleNetV2_NotMobileNetV2( inputTensor ) {
     let t = this.step0.apply_and_destroy( inputTensor );
-    inputTensor.dispose();          // Dispose all intermediate (temporary) data.
+//!!! should already disposed.
+//    inputTensor.dispose();          // Dispose all intermediate (temporary) data.
     return t;
   }
 
@@ -354,7 +355,8 @@ class Base {
 
       concatTensorArray[ 0 ] = t0;                                    // Branch do nothing (as a shortcut).
       concatTensorArray[ 1 ] = t1New = step.apply_and_destroy( t1 );  // Main path is processed.
-      t1.dispose();                 // Dispose all intermediate (temporary) data.
+//!!! should already disposed.
+//      t1.dispose();                 // Dispose all intermediate (temporary) data.
 
       concatenatedTensor = tf.concat( concatTensorArray, lastAxisId );
       t0.dispose();                 // Dispose all intermediate (temporary) data.
@@ -379,15 +381,19 @@ class Base {
 
     // Step 0.
     t = this.step0.apply_and_destroy( inputTensor );
-    inputTensor.dispose();          // Dispose all intermediate (temporary) data.
+//!!! should already disposed.
+//    inputTensor.dispose();          // Dispose all intermediate (temporary) data.
 
     // Step 1, 2, 3, ...
     let step;
     for ( let i = 0; i < this.steps1After.length; ++i ) {
       step = this.steps1After[ i ];
-      tNew = step.apply_and_destroy( t );
-      t.dispose();                  // Dispose all intermediate (temporary) data.
-      t = tNew;
+//!!! should already disposed.
+//       tNew = step.apply_and_destroy( t );
+//       t.dispose();                  // Dispose all intermediate (temporary) data.
+//       t = tNew;
+
+      t = step.apply_and_destroy( t );
     }
 
     return t;
