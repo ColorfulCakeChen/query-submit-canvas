@@ -282,7 +282,7 @@ class Base {
    */
   async generateProfiles() {
     let tensorMemoryBefore = tf.memory();
-    
+
     let generator = this.profilesGenerator();
 
     let delayMilliseconds = 0;
