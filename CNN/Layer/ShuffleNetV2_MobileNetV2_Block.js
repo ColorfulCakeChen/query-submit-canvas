@@ -229,9 +229,6 @@ class Base {
         let pointwise1ChannelCount, pointwise2ChannelCount;
 
         if ( bShuffleNetV2 ) {
-//!!! 
-//          channelCount_pointwise1Before = step0.outputChannelCount + step0Branch.outputChannelCount;
-
           // Because the split is done in block level, the step receives only half of canatenated channel count of step 0 (i.e. not including the step0Branch).
           channelCount_pointwise1Before = step0.outputChannelCount;
 
@@ -243,7 +240,8 @@ class Base {
 
           // In ShuffleNetV2, there is a channel shuffler in every step (except setp 0). It is shared by these steps in the same block.
           {
-            let sourceConcatenatedShape = this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, channelCount_pointwise1Before ];
+            let concatenatedChannelCount = step0.outputChannelCount + step0Branch.outputChannelCount;
+            let sourceConcatenatedShape = this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, concatenatedChannelCount ];
             let outputGroupCount = 2; // ShuffleNetV2 always uses two (depthwise convolution) groups.
             this.concatGather = new ChannelShuffler.ConcatGather();
             this.concatGather.init( sourceConcatenatedShape, outputGroupCount );
