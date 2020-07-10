@@ -139,8 +139,10 @@ class Base {
 
       // Resize source image to a default size (height x width) which is used when training the neural network.
       let t = tf.image.resizeBilinear( sourceImage, this.sourceImageHeightWidth, true ); // alignCorners = true
-//!!! Temp Remarked for testing memory leak detection.
-//      sourceImage.dispose();
+      sourceImage.dispose();
+
+//!!! Temp for testing memory leak detection.
+      let tLeak = tf.tensor( [ 1, 2, 3 ] );
 
       let block;
       for ( let i = 0; i < this.blocks.length; ++i ) {
