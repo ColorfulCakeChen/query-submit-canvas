@@ -66,28 +66,28 @@ class Base {
 
     // [ stepCountPerBlock, bShuffleNetV2, strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ]
     this.testFiltersSpecTable = [
-      [  0, false, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
-      [  0, false, "Conv", filterHeight_OneStep,                                   200,  true,     "sin" ],
+//      [  0, false, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+//      [  0, false, "Conv", filterHeight_OneStep,                                   200,  true,     "sin" ],
 
-      [  0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
-      [ 10, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // MobileNetV2
-      [ 10,  true, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // ShuffleNetV2
+//      [  0, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [  5, false, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // MobileNetV2
+      [  5,  true, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // ShuffleNetV2
 
-      [  0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
-      [ 10, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // MobileNetV2
-      [ 10,  true, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // ShuffleNetV2
+//      [  0, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [  5, false, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // MobileNetV2
+      [  5,  true, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // ShuffleNetV2
 
-      [  0, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
-      [ 10, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // MobileNetV2
-      [ 10,  true, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // ShuffleNetV2
+//      [  0, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [  5, false, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // MobileNetV2
+      [  5,  true, "Conv",                    5, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // ShuffleNetV2
 
-      [  0, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
-      [ 10, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // MobileNetV2
-      [ 10,  true, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // ShuffleNetV2
+//      [  0, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [  5, false, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // MobileNetV2
+      [  5,  true, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // ShuffleNetV2
 
-      [  0, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
-      [ 10, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // MobileNetV2
-      [ 10,  true, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // ShuffleNetV2
+//      [  0, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
+      [  5, false, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // MobileNetV2
+      [  5,  true, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],  // ShuffleNetV2
     ];
 
     // Create test filters.
