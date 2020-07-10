@@ -136,7 +136,9 @@ class Base {
         pointwise1ChannelCount, bBias, strActivationName,
         depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
         pointwise2ChannelCount, bBias, strActivationName,
-        this.bAddInputToOutput );
+        this.bAddInputToOutput,
+        false // Not keep input tensor.
+      );
 
       this.apply_and_destroy = Base.apply_and_destroy_NotShuffleNetV2_NotMobileNetV2;
       this.outputChannelCount = step0.outputChannelCount;
@@ -178,7 +180,9 @@ class Base {
           pointwise1ChannelCount, bBias, strActivationName,
           depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
           pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
-          this.bAddInputToOutput );
+          this.bAddInputToOutput,
+          false // Not keep input tensor.
+        );
 
         // Step0's branch (ShuffleNetV2)
         //
@@ -189,7 +193,10 @@ class Base {
             sourceChannelCount,
             0, false, "", // ShuffleNetV2 Step0's branch does not have pointwise convolution before depthwise convolution ( strides = 2 ).
             depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
-            pointwise2ChannelCount, bBias, this.pointwise2ActivationName );
+            pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
+            false, // Not add input to output.
+            true   // Should keep input tensor, so that the input tensor can be used by the main path of setp 0.
+          );
 
           this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
 
@@ -253,7 +260,9 @@ class Base {
             pointwise1ChannelCount, bBias, strActivationName,
             depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
             pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
-            this.bAddInputToOutput );
+            this.bAddInputToOutput,
+            false // Not keep input tensor.
+          );
 
           this.steps1After[ i ] = step;
         }
@@ -300,10 +309,7 @@ class Base {
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
   static apply_and_destroy_NotShuffleNetV2_NotMobileNetV2( inputTensor ) {
-    let t = this.step0.apply_and_destroy( inputTensor );
-//!!! should already disposed.
-//    inputTensor.dispose();          // Dispose all intermediate (temporary) data.
-    return t;
+    return this.step0.apply_and_destroy_or_keep( inputTensor );
   }
 
   /** Process input, destroy input, return result. (For ShuffleNetV2.)
@@ -334,10 +340,8 @@ class Base {
     let t0, t1, t1New, concatenatedTensor;
 
     // Step 0.
-//!!! ShuffleNetV2 step0Branch should not destroy input tensor.
-    concatTensorArray[ 0 ] = t0 = this.step0Branch.apply_and_destroy( inputTensor );  // Branch.
-    concatTensorArray[ 1 ] = t1 = this.step0      .apply_and_destroy( inputTensor );  // Main Path.
-    inputTensor.dispose();          // Dispose all intermediate (temporary) data.
+    concatTensorArray[ 0 ] = t0 = this.step0Branch.apply_and_destroy_or_keep( inputTensor );  // Branch (will NOT destroy input tensor).
+    concatTensorArray[ 1 ] = t1 = this.step0      .apply_and_destroy_or_keep( inputTensor );  // Main Path (will destroy input tensor).
 
     concatenatedTensor = tf.concat( concatTensorArray, lastAxisId );
     t0.dispose();                   // Dispose all intermediate (temporary) data.
@@ -353,10 +357,8 @@ class Base {
       t1 = concatenatedTensor.gather( group1_channelIndicesTensor1d, lastAxisId );
       concatenatedTensor.dispose(); // Dispose all intermediate (temporary) data.
 
-      concatTensorArray[ 0 ] = t0;                                    // Branch do nothing (as a shortcut).
-      concatTensorArray[ 1 ] = t1New = step.apply_and_destroy( t1 );  // Main path is processed.
-//!!! should already disposed.
-//      t1.dispose();                 // Dispose all intermediate (temporary) data.
+      concatTensorArray[ 0 ] = t0;                                            // Branch do nothing (as a shortcut).
+      concatTensorArray[ 1 ] = t1New = step.apply_and_destroy_or_keep( t1 );  // Main path is processed.
 
       concatenatedTensor = tf.concat( concatTensorArray, lastAxisId );
       t0.dispose();                 // Dispose all intermediate (temporary) data.
@@ -380,20 +382,13 @@ class Base {
     let t, tNew;
 
     // Step 0.
-    t = this.step0.apply_and_destroy( inputTensor );
-//!!! should already disposed.
-//    inputTensor.dispose();          // Dispose all intermediate (temporary) data.
+    t = this.step0.apply_and_destroy_or_keep( inputTensor );
 
     // Step 1, 2, 3, ...
     let step;
     for ( let i = 0; i < this.steps1After.length; ++i ) {
       step = this.steps1After[ i ];
-//!!! should already disposed.
-//       tNew = step.apply_and_destroy( t );
-//       t.dispose();                  // Dispose all intermediate (temporary) data.
-//       t = tNew;
-
-      t = step.apply_and_destroy( t );
+      t = step.apply_and_destroy_or_keep( t );
     }
 
     return t;
