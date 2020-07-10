@@ -229,7 +229,11 @@ class Base {
         let pointwise1ChannelCount, pointwise2ChannelCount;
 
         if ( bShuffleNetV2 ) {
-          channelCount_pointwise1Before = step0.outputChannelCount + step0Branch.outputChannelCount;
+//!!! 
+//          channelCount_pointwise1Before = step0.outputChannelCount + step0Branch.outputChannelCount;
+
+          // Because the split is done in block level, the step receives only half of canatenated channel count of step 0 (i.e. not including the step0Branch).
+          channelCount_pointwise1Before = step0.outputChannelCount;
 
           // In ShuffleNetV2, all convolutions do not change channel count which is just half of canatenated channel count of step 0.
           //
