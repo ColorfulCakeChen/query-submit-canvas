@@ -329,7 +329,7 @@ class Base {
   /** (Just return inputTensor without doing anything.) */
   static no_operation( inputTensor ) { return inputTensor; }
 
-  /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving residual connection.) */
+  /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv( inputTensor ) {
     return tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
   }
@@ -353,6 +353,10 @@ class Base {
   }
 
   /** Depthwise Average Pooling. */
+  static depthwiseAvg( inputTensor ) {
+    return tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+  }
+
   static depthwiseAvg_and_destroy( inputTensor ) {
     let t = tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
     inputTensor.dispose();
@@ -360,6 +364,10 @@ class Base {
   }
 
   /** Depthwise Max Pooling. */
+  static depthwiseMax( inputTensor ) {
+    return tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+  }
+
   static depthwiseMax_and_destroy( inputTensor ) {
     let t = tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
     inputTensor.dispose();
@@ -367,6 +375,10 @@ class Base {
   }
 
   /** Depthwise Convolution. */
+  static depthwiseConv( inputTensor ) {
+    return tf.depthwiseConv2d( inputTensor, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+  }
+
   static depthwiseConv_and_destroy( inputTensor ) {
     let t = tf.depthwiseConv2d( inputTensor, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
     inputTensor.dispose();
@@ -383,6 +395,11 @@ class Base {
     let t = this.depthwiseActivationFunction( inputTensor );
     inputTensor.dispose();
     return t;
+  }
+
+  /** Second 1x1 pointwise convolution. */
+  static pointwise2Conv( inputTensor ) {
+    return tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" );
   }
 
   static pointwise2Conv_and_destroy( inputTensor ) {
