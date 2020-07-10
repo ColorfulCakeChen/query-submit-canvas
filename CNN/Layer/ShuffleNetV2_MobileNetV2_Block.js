@@ -110,6 +110,13 @@ class Base {
     this.strActivationName = strActivationName;
     this.bAddInputToOutput = false;
 
+    let pointwise1Bias = bBias;
+    let pointwise1ActivationName = strActivationName;
+    let depthwiseBias = bBias;
+    let depthwiseActivationName = strActivationName;
+    let pointwise2Bias = bBias;
+    let pointwise2ActivationName = strActivationName;
+
     if ( stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
       // Only one step (i.e. step 0 ) for depthwise operation with ( strides = 1, pad = "valid" )
@@ -133,9 +140,9 @@ class Base {
       let step0 = this.step0 = new PointDepthPoint.Base();
       step0.init(
         sourceChannelCount,
-        pointwise1ChannelCount, bBias, strActivationName,
-        depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
-        pointwise2ChannelCount, bBias, strActivationName,
+        pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationName,
+        depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+        pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
         this.bAddInputToOutput,
         false // Not keep input tensor.
       );
@@ -167,38 +174,26 @@ class Base {
           pointwise1ChannelCount = sourceChannelCount * 1;   // In ShuffleNetV2, all convolutions do not change channel count
           pointwise2ChannelCount = sourceChannelCount * 1;
 
-          this.pointwise1Bias = bBias;
-          this.pointwise1ActivationName = strActivationName;
-
           // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
-          this.depthwiseBias = false;
-          this.depthwiseActivationName = null;               // In ShuffleNetV2, depthwise convolution does not have activation function.
-
-          this.pointwise2Bias = bBias;
-          this.pointwise2ActivationName = strActivationName;
+          depthwiseBias = false;
+          depthwiseActivationName = null;               // In ShuffleNetV2, depthwise convolution does not have activation function.
 
         } else {
           pointwise1ChannelCount = sourceChannelCount * 4;   // In MobileNetV2, ( pointwise1ChannelCount > pointwise2ChannelCount )
           pointwise2ChannelCount = sourceChannelCount * 2;   // The channel count of step 0 of MobileNetV2 output is twice as input.
           this.bAddInputToOutput = true;
 
-          this.pointwise1Bias = bBias;
-          this.pointwise1ActivationName = strActivationName;
-
-          this.depthwiseBias = bBias;
-          this.depthwiseActivationName = strActivationName;
-
           // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
-          this.pointwise2Bias = false;
-          this.pointwise2ActivationName = null;              // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
+          pointwise2Bias = false;
+          pointwise2ActivationName = null;              // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
         }
 
         step0 = this.step0 = new PointDepthPoint.Base();
         step0.init(
           sourceChannelCount,
-          pointwise1ChannelCount, bBias, this.pointwise1ActivationName,
-          depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, this.depthwiseActivationName,
-          pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
+          pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationName,
+          depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+          pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
           this.bAddInputToOutput,
           false // Not keep input tensor.
         );
@@ -211,8 +206,8 @@ class Base {
           step0Branch.init(
             sourceChannelCount,
             0, false, "", // ShuffleNetV2 Step0's branch does not have the first 1x1 pointwise convolution before depthwise convolution ( strides = 2 ).
-            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, this.depthwiseActivationName,
-            pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
+            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+            pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
             false, // Not add input to output.
             true   // Should keep input tensor, so that the input tensor can be used by the main path of setp 0.
           );
@@ -278,9 +273,9 @@ class Base {
           let step = new PointDepthPoint.Base();
           step.init(
             channelCount_pointwise1Before,
-            pointwise1ChannelCount, bBias, strActivationName,
-            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
-            pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
+            pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationName,
+            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+            pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
             this.bAddInputToOutput,
             false // Not keep input tensor.
           );
