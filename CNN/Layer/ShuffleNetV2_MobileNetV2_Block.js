@@ -112,8 +112,8 @@ class Base {
 
     if ( stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
-      // Only one step (i.e. step 0 ) for depthwise operation with ( strides = 1, pad = "valid" ) for shrinking sourceHeight
-      // (minus ( filterHeight - 1 )).
+      // Only one step (i.e. step 0 ) for depthwise operation with ( strides = 1, pad = "valid" )
+      // for shrinking sourceHeight (minus ( filterHeight - 1 )).
 
       let pointwise1ChannelCount = 0; // no pointwise convolution before depthwise convolution.
       let pointwise2ChannelCount;
@@ -164,21 +164,25 @@ class Base {
 
         let pointwise1ChannelCount, pointwise2ChannelCount;
         if ( bShuffleNetV2 ) {
-          pointwise1ChannelCount = sourceChannelCount * 1; // In ShuffleNetV2, all convolutions do not change channel count
+          pointwise1ChannelCount = sourceChannelCount * 1;   // In ShuffleNetV2, all convolutions do not change channel count
           pointwise2ChannelCount = sourceChannelCount * 1;
+          this.pointwise1ActivationName = strActivationName;
+          this.depthwiseActivationName = null;               // In ShuffleNetV2, depthwise convolution does not have activation function.
           this.pointwise2ActivationName = strActivationName;
         } else {
-          pointwise1ChannelCount = sourceChannelCount * 4; // In MobileNetV2, ( pointwise1ChannelCount > pointwise2ChannelCount )
-          pointwise2ChannelCount = sourceChannelCount * 2; // The channel count of step 0 of MobileNetV2 output is twice as input.
+          pointwise1ChannelCount = sourceChannelCount * 4;   // In MobileNetV2, ( pointwise1ChannelCount > pointwise2ChannelCount )
+          pointwise2ChannelCount = sourceChannelCount * 2;   // The channel count of step 0 of MobileNetV2 output is twice as input.
           this.bAddInputToOutput = true;
-          this.pointwise2ActivationName = null;            // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
+          this.pointwise1ActivationName = strActivationName;
+          this.depthwiseActivationName = strActivationName;
+          this.pointwise2ActivationName = null;              // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
         }
 
         step0 = this.step0 = new PointDepthPoint.Base();
         step0.init(
           sourceChannelCount,
-          pointwise1ChannelCount, bBias, strActivationName,
-          depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
+          pointwise1ChannelCount, bBias, this.pointwise1ActivationName,
+          depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, this.depthwiseActivationName,
           pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
           this.bAddInputToOutput,
           false // Not keep input tensor.
@@ -191,8 +195,8 @@ class Base {
           this.step0Branch = step0Branch = new PointDepthPoint.Base();
           step0Branch.init(
             sourceChannelCount,
-            0, false, "", // ShuffleNetV2 Step0's branch does not have pointwise convolution before depthwise convolution ( strides = 2 ).
-            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, strActivationName,
+            0, false, "", // ShuffleNetV2 Step0's branch does not have the first 1x1 pointwise convolution before depthwise convolution ( strides = 2 ).
+            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bBias, this.depthwiseActivationName,
             pointwise2ChannelCount, bBias, this.pointwise2ActivationName,
             false, // Not add input to output.
             true   // Should keep input tensor, so that the input tensor can be used by the main path of setp 0.
