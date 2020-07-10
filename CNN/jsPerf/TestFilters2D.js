@@ -131,31 +131,24 @@ class Base {
    *   If ( bReturn == true ), return the result tensor. Otheriwse, return null.
    */
   apply( sourceCanvas, bReturn ) {
-//    return tf.tidy( () => {
+    // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
+    let sourceImageChannelCount = 4;
+    let sourceImage = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
 
-      // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
-      let sourceImageChannelCount = 4;
-      let sourceImage = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
+    // Resize source image to a default size (height x width) which is used when training the neural network.
+    let t = tf.image.resizeBilinear( sourceImage, this.sourceImageHeightWidth, true ); // alignCorners = true
+    sourceImage.dispose();
 
-      // Resize source image to a default size (height x width) which is used when training the neural network.
-      let t = tf.image.resizeBilinear( sourceImage, this.sourceImageHeightWidth, true ); // alignCorners = true
-      sourceImage.dispose();
+    let block;
+    for ( let i = 0; i < this.blocks.length; ++i ) {
+      block = this.blocks[ i ];
+      t = block.apply_and_destroy( t );
+    }
 
-//!!! Temp for testing memory leak detection.
-      let tLeak = tf.tensor( [ 1, 2, 3 ] );
-
-      let block;
-      for ( let i = 0; i < this.blocks.length; ++i ) {
-        block = this.blocks[ i ];
-        t = block.apply_and_destroy( t );
-      }
-
-      if ( bReturn )
-        return t;
-      else
-        t.dispose();
-
-//    });
+    if ( bReturn )
+      return t;
+    else
+      t.dispose();
   }
 
 }
