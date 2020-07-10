@@ -75,7 +75,6 @@ class Base {
    *   If true and ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be added
    * to output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
    *
-//!!!???
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy() will not dispose inputTensor. This is usually used by the branch of step 0 of ShuffleNetV2.
    */
@@ -85,10 +84,19 @@ class Base {
     depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     bAddInputToOutput,
-//!!!???
     bKeepInputTensor ) {
 
     this.disposeTensors();
+
+    let bShouldAddInputToOutput = false;
+    if (   ( bAddInputToOutput )          // MobileNetV2 should add input to output, so should not destroy input tensor (otherwise can not add it).
+        && ( depthwiseStrides == 1 ) ) {  // However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
+      bShouldAddInputToOutput = true;
+    }
+
+    // Record whether already keep input tensor.
+    // Only first operation should dispose input or not according to bKeepInputTensor.
+    let bAlreadyKeepInputTensor = false;
 
     this.channelCount_pointwise1Before = channelCount_pointwise1Before;
 
@@ -108,10 +116,17 @@ class Base {
 
       this.pointwise1FiltersTensor4d = Base.generateTensor( this.pointwise1FiltersShape );
 
-      if ( ( bAddInputToOutput ) && ( depthwiseStrides == 1 ) )    // So setp 0 (whose strides == 2) never add input to output.
-        this.pfn_pointwise1Conv = Base.pointwise1Conv;             // will NOT dispose inputTensor.
-      else
-        this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
+      if ( bShouldAddInputToOutput ) { // If MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
+        this.pfn_pointwise1Conv = Base.pointwise1Conv;                        // will NOT dispose inputTensor.
+        bAlreadyKeepInputTensor = true;
+      } else {
+        if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
+          this.pfn_pointwise1Conv = Base.pointwise1Conv;
+          bAlreadyKeepInputTensor = true;
+        } else {                                                              // will dispose inputTensor.
+          this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy;
+        }
+      }
 
       if ( bPointwise1Bias ) {
         this.pointwise1BiasesTensor3d = Base.generateTensor( this.pointwise1BiasesShape );
@@ -131,11 +146,20 @@ class Base {
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
     if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) {
-      switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-        case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
-        case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
-        //case "Conv": this.bDepthwiseConv = true;
+
+      if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
+        switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+          case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg; break;
+          case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax; break;
+        }
+        bAlreadyKeepInputTensor = true;
+      } else {                                                              // will dispose inputTensor.
+        switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+          case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
+          case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
+        }
       }
+
       this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // depthwise without channel multiplier.
 
     } else {
@@ -147,7 +171,13 @@ class Base {
           = [ depthwiseFilterHeight, this.depthwiseFilterWidth, this.channelCount_pointwise1After_depthwiseBefore, depthwise_AvgMax_Or_ChannelMultiplier ];
 
         this.depthwiseFiltersTensor4d = Base.generateTensor( this.depthwiseFiltersShape );
-        this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy;
+
+        if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
+          this.pfn_depthwiseOperation = Base.depthwiseConv;
+          bAlreadyKeepInputTensor = true;
+        } else {                                                              // will dispose inputTensor.
+          this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy;
+        }
 
       } else {
         this.bDepthwise = this.bDepthwiseConv = false;  // e.g. zero or negative number
@@ -189,7 +219,13 @@ class Base {
       this.pointwise2BiasesShape =       [ 1, 1, this.channelCount_pointwise2After ];
 
       this.pointwise2FiltersTensor4d = Base.generateTensor( this.pointwise2FiltersShape );
-      this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy;
+
+      if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
+        this.pfn_pointwise2Conv = Base.pointwise2Conv;
+        bAlreadyKeepInputTensor = true;
+      } else {                                                              // will dispose inputTensor.
+        this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy;
+      }
 
       if ( bPointwise2Bias ) {
         this.pointwise2BiasesTensor3d = Base.generateTensor( this.pointwise2BiasesShape );
@@ -204,15 +240,16 @@ class Base {
     }
 
     this.bAddInputToOutput = bAddInputToOutput;
-//!!!???
+    this.bShouldAddInputToOutput = bShouldAddInputToOutput;
+
     this.bKeepInputTensor = bKeepInputTensor;
 
-    if ( ( bAddInputToOutput ) && ( depthwiseStrides == 1 ) )    // So setp 0 (whose strides == 2) never add input to output.
-      // Should also ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == this.channelCount_pointwise2After ).
-      // Otherwise, the result will be wrong.
+    if ( bShouldAddInputToOutput ) { // If MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
+      // Should also ( channelCount_pointwise1Before == this.channelCount_pointwise2After ). Otherwise, the result will be wrong.
       this.apply_and_destroy = Base.apply_and_destroy_AddInputToOutput;
-    else
-      this.apply_and_destroy = Base.apply_and_destroy_NoResidual;
+    } else {
+      this.apply_and_destroy = Base.apply_and_destroy_NoSkipConnection;
+    }
   }
 
   /** Convert activation function name to function object. */
@@ -395,7 +432,7 @@ class Base {
   }
 
   /** The input will not be added to output (i.e. no residual connection). */
-  static apply_and_destroy_NoResidual( inputTensor ) {
+  static apply_and_destroy_NoSkipConnection( inputTensor ) {
     let t0, t1;
 
 //!!! ShuffleNetV2 step0Branch should not destroy input tensor.
