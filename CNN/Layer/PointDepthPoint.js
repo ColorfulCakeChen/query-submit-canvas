@@ -246,9 +246,14 @@ class Base {
 
     if ( bShouldAddInputToOutput ) { // If MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
       // Should also ( channelCount_pointwise1Before == this.channelCount_pointwise2After ). Otherwise, the result will be wrong.
-      this.apply_and_destroy = Base.apply_and_destroy_AddInputToOutput;
+
+      if ( bKeepInputTensor )
+        this.apply_and_destroy = Base.apply_and_KeepInputTensor_AddInputToOutput; // will NOT dispose inputTensor.
+      else
+        this.apply_and_destroy = Base.apply_and_destroy_AddInputToOutput; // will dispose inputTensor.
+
     } else {
-      this.apply_and_destroy = Base.apply_and_destroy_NoSkipConnection;
+      this.apply_and_destroy = Base.apply_and_destroy_NoSkipConnection; // will or will NOT dispose inputTensor.
     }
   }
 
@@ -420,8 +425,19 @@ class Base {
     return t;
   }
 
-  /** The input will be added to output for achieving residual connection. */
-  static apply_and_destroy_AddInputToOutput( inputTensor ) {
+  /** Tensor add for skip connection. */
+  static skipConnectionAdd( inputTensor ) {
+    return tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" );
+  }
+
+  static skipConnectionAdd_and_destroy( inputTensor ) {
+    let t = tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" );
+    inputTensor.dispose();
+    return t;
+  }
+
+  /** The input will be added to output for achieving skip connection. The inputTensor will be kept (not disposed).*/
+  static apply_and_KeepInputTensor_AddInputToOutput( inputTensor ) {
     let t0, t1;
 
     // The first 1x1 pointwise convolution.
@@ -439,13 +455,20 @@ class Base {
     t1 = this.pfn_pointwise2Bias( t0 );
     t0 = this.pfn_pointwise2Activation( t1 );
 
-    // Residual connection.
+    // Skip connection.
     t1 = tf.add( inputTensor, t0 );
-
-    inputTensor.dispose();
     t0.dispose();
 
+    // The inputTensor is kept (not disposed).
+
     return t1;
+  }
+
+  /** The input will be added to output for achieving skip connection. The inputTensor will be disposed. */
+  static apply_and_destroy_AddInputToOutput( inputTensor ) {
+    let t = Base.apply_and_KeepInputTensor_AddInputToOutput.call( this, inputTensor );
+    inputTensor.dispose();
+    return t;
   }
 
   /** The input will not be added to output (i.e. no residual connection). */
