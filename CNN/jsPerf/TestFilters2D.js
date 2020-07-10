@@ -105,6 +105,7 @@ class Base {
 
       + `__Block_${this.blockCount}`
       + `__Step_${stepCountPerBlock}`
+      + `${ ( bShuffleNetV2 ) ? "__Shuffle" : "" }`
     ;
 
     this.sourceImageHeightWidth = [ block0.sourceHeight, block0.sourceWidth ];
