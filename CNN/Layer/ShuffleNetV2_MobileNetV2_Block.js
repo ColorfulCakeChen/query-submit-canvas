@@ -4,22 +4,18 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
 export { Base };
 
 /**
- * Implement a block of ShuffleNetV2 (with 2 output channel groups) or MobileNetV2.
- *
+ * Implement a block of ( depthwise convolution and  pointwise convolution ) or ShuffleNetV2 (with 2 output channel groups) or MobileNetV1
+ * or MobileNetV2.
  *
  *
  * @member {function} apply_and_destroy
  *   This is a method. It has an parameter inputTensor (tf.tensor4d) represents the image which will be processed. It returns a new
  * tf.tensor4d. All other tensors (including inputTensor) will be disposed. In fact, this method calls one of
- * apply_and_destroy_NotShuffleNetV2_NotMobileNetV2(), apply_and_destroy_ShuffleNetV2(), apply_and_destroy_MobileNetV2() according to
- * the init()'s parameters.
+ * apply_and_destroy_NotChannelShuffle_NotAddInputToOutput(), apply_and_destroy_ChannelShuffle(), apply_and_destroy_AddInputToOutput()
+ * according to the init()'s parameters.
  *
  * @member {number} outputChannelCount
  *   The output channel count of this block's last step.
- *
- * @member {string} pointwise2ActivationName
- *   The activation function name after the second 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
- * If MobileNetV2, it will be null. Otherwise, it will be the same as strAvgMaxConv.
  *
  * @see ChannelShuffler.ConcatGather
  */
@@ -152,7 +148,7 @@ class Base {
         false  // Usually, need not keep input tensor.
       );
 
-      this.apply_and_destroy = Base.apply_and_destroy_NotShuffleNetV2_NotMobileNetV2;
+      this.apply_and_destroy = Base.apply_and_destroy_NotChannelShuffle_NotAddInputToOutput;
       this.outputChannelCount = step0.outputChannelCount;
 
     } else {  // ShuffleNetV2, or MobileNetV2.
@@ -221,11 +217,11 @@ class Base {
 
           this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
 
-          this.apply_and_destroy = Base.apply_and_destroy_ShuffleNetV2; // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy = Base.apply_and_destroy_ChannelShuffle; // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
           this.outputChannelCount = step0.outputChannelCount + step0Branch.outputChannelCount;
 
         } else {
-          this.apply_and_destroy = Base.apply_and_destroy_MobileNetV2;  // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy = Base.apply_and_destroy_AddInputToOutput;  // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
           this.outputChannelCount = step0.outputChannelCount;
         }
       }
@@ -319,7 +315,7 @@ class Base {
    *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
-  static apply_and_destroy_NotShuffleNetV2_NotMobileNetV2( inputTensor ) {
+  static apply_and_destroy_NotChannelShuffle_NotAddInputToOutput( inputTensor ) {
     return this.step0.apply_and_destroy_or_keep( inputTensor );
   }
 
@@ -333,7 +329,7 @@ class Base {
    *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
-  static apply_and_destroy_ShuffleNetV2( inputTensor ) {
+  static apply_and_destroy_ChannelShuffle( inputTensor ) {
 
     // Keep data as local variables for improving performance.
 
@@ -389,7 +385,7 @@ class Base {
    *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
-  static apply_and_destroy_MobileNetV2( inputTensor ) {
+  static apply_and_destroy_AddInputToOutput( inputTensor ) {
     let t, tNew;
 
     // Step 0.
