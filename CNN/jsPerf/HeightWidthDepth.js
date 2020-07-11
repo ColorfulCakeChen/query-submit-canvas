@@ -290,6 +290,11 @@ class Base {
       yield* this.progressAdvanceYield();
     }
 
+    if ( this.dataTensor3d ) {
+      tf.dispose( this.dataTensor3d );
+      this.dataTensor3d = null;
+    }
+
     return resultProfiles;
   }
 
