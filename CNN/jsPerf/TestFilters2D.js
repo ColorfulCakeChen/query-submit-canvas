@@ -163,7 +163,9 @@ class Base {
 
     // Add a constant channel (whose values are all 1) for achieving bias.
     if ( this.bBiasByConstChannel ) {
-      let onesTensor = tf.onesLike( t );
+//      let onesTensor = tf.onesLike( t );
+      let onesTensorShape = [ t.shape[ 0 ], t.shape[ 1 ], 1 ];  // Only 1 channel.
+      let onesTensor = tf.ones( onesTensorShape );
       let lastAxisId = t.rank - 1;
       let tNew = tf.concat( [ t, onesTensor ], lastAxisId );
       t.dispose();
