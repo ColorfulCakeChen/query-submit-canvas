@@ -78,6 +78,10 @@ class Base {
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy() will not dispose inputTensor. This is usually used by the branch of step 0 of ShuffleNetV2.
+   *
+   * @param {boolean} bBiasByConstChannel
+   *   If true, arrange channel and filter with constant value to achieve bias. This will take more memory (for pre-make filters)
+   * but may improve performance (because tf.add() is removed).
    */
   init(
     channelCount_pointwise1Before,
@@ -85,7 +89,9 @@ class Base {
     depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     bAddInputToOutput,
-    bKeepInputTensor ) {
+    bKeepInputTensor,
+    bBiasByConstChannel     
+  ) {
 
     this.disposeTensors();
 
@@ -98,6 +104,9 @@ class Base {
     // Record whether already keep input tensor.
     // Only first operation should dispose input or not according to bKeepInputTensor.
     let bAlreadyKeepInputTensor = false;
+
+//!!! ...unfinished...
+    this.bBiasByConstChannel = bBiasByConstChannel;
 
     this.channelCount_pointwise1Before = channelCount_pointwise1Before;
 
