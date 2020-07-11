@@ -74,30 +74,35 @@ class Base {
 //      [  0, false, 1, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    2,                                       1,  true,     "sin" ],  // MobileNetV1
       [  3, false, 2, "Conv",                    2,                                       1,  true,     "sin" ],  // MobileNetV2
+      [  3, false, 2, "Conv",                    2,                                       1, false,     "sin" ],  // MobileNetV2 without bias
       [  3,  true, 1, "Conv",                    2,                                       1,  true,     "sin" ],  // ShuffleNetV2
       [  3,  true, 1, "Conv",                    2,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
 
 //      [  0, false, 1, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    3,                                       1,  true,     "sin" ],  // MobileNetV1
       [  3, false, 2, "Conv",                    3,                                       1,  true,     "sin" ],  // MobileNetV2
+      [  3, false, 2, "Conv",                    3,                                       1, false,     "sin" ],  // MobileNetV2 without bias
       [  3,  true, 1, "Conv",                    3,                                       1,  true,     "sin" ],  // ShuffleNetV2
       [  3,  true, 1, "Conv",                    3,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
 
 //      [  0, false, 1, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    5,                                       1,  true,     "sin" ],  // MobileNetV1
       [  3, false, 2, "Conv",                    5,                                       1,  true,     "sin" ],  // MobileNetV2
+      [  3, false, 2, "Conv",                    5,                                       1, false,     "sin" ],  // MobileNetV2 without bias
       [  3,  true, 1, "Conv",                    5,                                       1,  true,     "sin" ],  // ShuffleNetV2
       [  3,  true, 1, "Conv",                    5,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
 
 //      [  0, false, 1, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    7,                                       1,  true,     "sin" ],  // MobileNetV1
       [  3, false, 2, "Conv",                    7,                                       1,  true,     "sin" ],  // MobileNetV2
+      [  3, false, 2, "Conv",                    7,                                       1, false,     "sin" ],  // MobileNetV2 without bias
       [  3,  true, 1, "Conv",                    7,                                       1,  true,     "sin" ],  // ShuffleNetV2
       [  3,  true, 1, "Conv",                    7,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
 
 //      [  0, false, 1, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    9,                                       1,  true,     "sin" ],  // MobileNetV1
       [  3, false, 2, "Conv",                    9,                                       1,  true,     "sin" ],  // MobileNetV2
+      [  3, false, 2, "Conv",                    9,                                       1, false,     "sin" ],  // MobileNetV2 without bias
       [  3,  true, 1, "Conv",                    9,                                       1,  true,     "sin" ],  // ShuffleNetV2
       [  3,  true, 1, "Conv",                    9,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
     ];
