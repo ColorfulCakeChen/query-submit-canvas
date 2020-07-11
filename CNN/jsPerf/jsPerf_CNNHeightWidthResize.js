@@ -11,10 +11,11 @@ import * as ValueMax from "../ValueMax.js";
  */
 
 //!!!
-// let testCase_Height = 96 + 1; // 96 divisilbe by 1, 2, 4, 6, 8. // 100 divisilbe by 1, 2, 4, 5, 10.
-// let testCase_Width =  96 + 1;
-let testCase_Height = 256;
-let testCase_Width =  256;
+let testCase_Height = 96 + 1; // 96 divisilbe by 1, 2, 4, 6, 8. // 100 divisilbe by 1, 2, 4, 5, 10.
+let testCase_Width =  96 + 1;
+//!!!
+// let testCase_Height = 256;
+// let testCase_Width =  256;
 let testCase_Depth = 24;
 
 //globalThis.testSet_101x101x24 = new HeightWidthDepth.Base( 101, 101, 24 ); // height, width, depth
