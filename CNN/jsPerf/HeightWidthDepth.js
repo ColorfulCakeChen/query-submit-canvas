@@ -25,7 +25,7 @@ class Base {
    */
   constructor( height, width, depth, progressToYield, progressToAdvance, progressReceiver ) {
 
-    let canvasChannelCount = 4;
+    let canvasChannelCount = this.canvasChannelCount = 4;
 
     this.height = height;
     this.width = width;
@@ -48,13 +48,14 @@ class Base {
     let filterHeight_OneStep =      ( height - this.targetSize[ 0 ] ) + 1;
     let filterWidth_OneStep =       ( width - this.targetSize[ 1 ] ) + 1;
 
-    this.dataTensor3d = tf.tidy( () => {
-      let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
-//!!! Since source is canvas, the channel count should be the same as the canvas.
-//      let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
-      let dataTensor3d = dataTensor1d.reshape( [ height, width, canvasChannelCount ] );
-      return dataTensor3d;
-    });
+//!!! Change to create from canvas.
+//     this.dataTensor3d = tf.tidy( () => {
+//       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
+// //!!! Since source is canvas, the channel count should be the same as the canvas.
+// //      let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
+//       let dataTensor3d = dataTensor1d.reshape( [ height, width, canvasChannelCount ] );
+//       return dataTensor3d;
+//     });
 
     let inChannels =        depth;
     let channelMultiplier = 1;
@@ -96,6 +97,7 @@ class Base {
       [  3,  true, 1, "Conv",                    9,                                       1,  true,     "sin" ],  // ShuffleNetV2
     ];
 
+//!!! Change to create one and test one.
     // Create test filters.
     this.testFiltersArray = this.testFiltersSpecTable.map( ( filtersSpec, i ) => {
       let testFilters = new TestFilters2D.Base();
@@ -106,10 +108,10 @@ class Base {
     });
 
     // Initialize progress accumulator.
-    
+
     // "+3" for test_FromPixels, test_ResizeNearestNeighbor and test_ResizeBilinear.
     // "*2" for compiling (with assert) and profiling.
-    progressToAdvance.total = ( this.testFiltersArray.length + 3 ) * 2;
+    progressToAdvance.total = ( this.testFiltersSpecTable.length + 3 ) * 2;
     progressToAdvance.accumulation = 0;
   }
 
@@ -120,10 +122,13 @@ class Base {
     }
 
     // Release test filters.
-    this.testFiltersArray.forEach( ( testFilters, i ) => {
-      testFilters.disposeTensors();
-    });
-    this.testFiltersArray = null;
+    if ( this.testFiltersArray ) {
+      this.testFiltersArray.forEach( ( testFilters, i ) => {
+        testFilters.disposeTensors();
+      });
+      this.testFiltersArray = null;
+    }
+
     this.testFiltersSpecTable = null;
   }
 
@@ -181,6 +186,9 @@ class Base {
    */
   async * profilesGenerator() {
     let resultProfiles = [];
+
+    if ( !this.dataTensor3d )
+      this.dataTensor3d = tf.browser.fromPixels( this.testCnavas, this.canvasChannelCount );
 
     let tensor_FromPixels;
     {
