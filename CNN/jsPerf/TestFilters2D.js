@@ -21,6 +21,10 @@ class Base {
    * @param {number} depthwiseChannelMultiplierBlock0Step0
    *   The depthwise convolution of the first step (Step 0) of the first block (Block 0) will expand input channel by this factor.
    *
+   * @param {boolean} bBiasByConstChannel
+   *   If true, arrange channel and filter with constant value to achieve bias. This will take more memory (for pre-make filters)
+   * but may improve performance (because tf.add() is removed).
+   *
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
@@ -34,10 +38,19 @@ class Base {
 
     this.disposeTensors();
 
+    this.sourceChannelCount = sourceChannelCount;
     this.stepCountPerBlock = stepCountPerBlock;
     this.bChannelShuffler = bChannelShuffler;
     this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
     this.bBiasByConstChannel = bBiasByConstChannel;
+
+    this.sourceChannelCountAdjusted = sourceChannelCount;
+    this.bBiasAdjusted = bBias;
+
+    if ( bBiasByConstChannel ) {
+      this.sourceChannelCountAdjusted += 1; // When apply(), an extra channel (all ones) will be appended to source as bias.
+      this.bBiasAdjusted = false;
+    }
 
     let targetHeight = 1; // The final output always has height x width = 1 x 1 (i.e. only one pixel per channel)
 
@@ -45,7 +58,7 @@ class Base {
     let filterWidth = depthwiseFilterHeight;
 
     this.depthwiseChannelMultiplierBlock0Step0 = depthwiseChannelMultiplierBlock0Step0;
-    this.channelCountBlock0 = sourceChannelCount * depthwiseChannelMultiplierBlock0Step0;  // the channel count of the first block (Block 0).
+    this.channelCountBlock0 = this.sourceChannelCountAdjusted * depthwiseChannelMultiplierBlock0Step0;  // the channel count of the first block (Block 0).
 
     if ( stepCountPerBlock <= 0 ) { // Not ShuffleNetV2, Not MobileNetV2.
 
@@ -73,7 +86,7 @@ class Base {
       this.totalChannelExpansionFactor = Math.pow( 2, this.blockCount );
     }
 
-    let nextBlockInputChannelCount = sourceChannelCount;
+    let nextBlockInputChannelCount = this.sourceChannelCountAdjusted;
     let nextBlockDepthwiseChannelMultiplier = depthwiseChannelMultiplierBlock0Step0; // Only block 0 can have ( depthwise channel multiplier > 1 ).
 
     this.blocks = new Array( this.blockCount );
@@ -85,7 +98,7 @@ class Base {
         stepCountPerBlock,
         bChannelShuffler,
         pointwise1ChannelCountRate,
-        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, bBias, strActivationName,
+        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, this.bBiasAdjusted, strActivationName,
         bBiasByConstChannel
       );
 
