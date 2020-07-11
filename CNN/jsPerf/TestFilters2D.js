@@ -21,6 +21,10 @@ class Base {
    * @param {number} depthwiseChannelMultiplierBlock0Step0
    *   The depthwise convolution of the first step (Step 0) of the first block (Block 0) will expand input channel by this factor.
    *
+   * @param {boolean} bBiasByConstChannel
+   *   If true, arrange channel and filter with constant value to achieve bias. This will take more memory (for pre-make filters)
+   * but may improve performance (because tf.add() is removed).
+   *
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
@@ -28,13 +32,16 @@ class Base {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ) {
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName,
+    bBiasByConstChannel
+  ) {
 
     this.disposeTensors();
 
     this.stepCountPerBlock = stepCountPerBlock;
     this.bChannelShuffler = bChannelShuffler;
     this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
+    this.bBiasByConstChannel = bBiasByConstChannel;
 
     let targetHeight = 1; // The final output always has height x width = 1 x 1 (i.e. only one pixel per channel)
 
@@ -141,6 +148,16 @@ class Base {
     // Resize source image to a default size (height x width) which is used when training the neural network.
     let t = tf.image.resizeBilinear( sourceImage, this.sourceImageHeightWidth, true ); // alignCorners = true
     sourceImage.dispose();
+
+    // Add a constant channel (whose values are all 1) for achieving bias.
+    if ( this.bBiasByConstChannel ) {
+      let onesTensor = tf.onesLike( t );
+      let lastAxisId = t.rank - 1;
+      let tNew = tf.concat( [ t, onesTensor ], lastAxisId );
+      t.dispose();
+      onesTensor.dispose();
+      t = tNew;
+    }
 
     let block;
     for ( let i = 0; i < this.blocks.length; ++i ) {
