@@ -26,13 +26,15 @@ class Base {
   init(
     sourceHeight, sourceChannelCount, // targetHeight,
     stepCountPerBlock,
-    bShuffleNetV2,
+    bChannelShuffler,
+    pointwise1ChannelCountRate,
     strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName ) {
 
     this.disposeTensors();
 
     this.stepCountPerBlock = stepCountPerBlock;
-    this.bShuffleNetV2 = bShuffleNetV2;
+    this.bChannelShuffler = bChannelShuffler;
+    this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
 
     let targetHeight = 1; // The final output always has height x width = 1 x 1 (i.e. only one pixel per channel)
 
@@ -78,7 +80,8 @@ class Base {
       block.init(
         sourceHeight, nextBlockInputChannelCount, targetHeight,
         stepCountPerBlock,
-        bShuffleNetV2,
+        bChannelShuffler,
+        pointwise1ChannelCountRate,
         strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, bBias, strActivationName );
 
       this.blocks[ i ] = block;
@@ -91,7 +94,7 @@ class Base {
     // e.g. "C24_24__DConv_101x101_DBias_RELU__PConv_PBias_RELU__Block_1__Step_1"
     this.name = `C${sourceChannelCount}_${this.channelCountBlock0}`
 
-      + `${ ( block0.step0.bPointwise1 ) ? "__PConv1" : "" }`
+      + `${ ( block0.step0.bPointwise1 ) ? "__PConv1(x" + pointwise1ChannelCountRate + ")" : "" }`
       + `${ ( block0.step0.bPointwise1 && block0.step0.bPointwise1Bias ) ? ( "_PBias1" ) : "" }`
       + `${ ( block0.step0.bPointwise1 && block0.step0.pointwise1ActivationFunction ) ? ( "_" + block0.step0.pointwise1ActivationName ) : "" }`
 
@@ -105,7 +108,7 @@ class Base {
 
       + `__Block_${this.blockCount}`
       + `__Step_${stepCountPerBlock}`
-      + `${ ( bShuffleNetV2 ) ? "__Shuffle" : "" }`
+      + `${ ( bChannelShuffler ) ? "__Shuffle" : ( ( stepCountPerBlock > 0 ) ? "__AddInput" : "" ) }`
     ;
 
     this.sourceImageHeightWidth = [ block0.sourceHeight, block0.sourceWidth ];
