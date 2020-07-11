@@ -66,45 +66,55 @@ class Base {
     this.testCnavas.width = width;
 
     // [ stepCountPerBlock, bChannelShuffler, pointwise1ChannelCountRate, strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0,
-    // bBias, strActivationName ]
+    // bBias, strActivationName, bBiasByConstChannel ]
     this.testFiltersSpecTable = [
 //      [  0, false, 1, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
 //      [  0, false, 1, "Conv", filterHeight_OneStep,                                   200,  true,     "sin" ],
 
 //      [  0, false, 1, "Conv",                    2, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    2,                                       1,  true,     "sin" ],  // MobileNetV1
-      [  3, false, 2, "Conv",                    2,                                       1,  true,     "sin" ],  // MobileNetV2
       [  3, false, 2, "Conv",                    2,                                       1, false,     "sin" ],  // MobileNetV2 without bias
-      [  3,  true, 1, "Conv",                    2,                                       1,  true,     "sin" ],  // ShuffleNetV2
+      [  3, false, 2, "Conv",                    2,                                       1,  true,     "sin" ],  // MobileNetV2
+      [  3, false, 2, "Conv",                    2,                                       1,  true,     "sin",  true ],  // MobileNetV2 with const bias channel
       [  3,  true, 1, "Conv",                    2,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
+      [  3,  true, 1, "Conv",                    2,                                       1,  true,     "sin" ],  // ShuffleNetV2
+      [  3,  true, 1, "Conv",                    2,                                       1,  true,     "sin",  true ],  // ShuffleNetV2 with const bias channel
 
 //      [  0, false, 1, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    3,                                       1,  true,     "sin" ],  // MobileNetV1
-      [  3, false, 2, "Conv",                    3,                                       1,  true,     "sin" ],  // MobileNetV2
       [  3, false, 2, "Conv",                    3,                                       1, false,     "sin" ],  // MobileNetV2 without bias
-      [  3,  true, 1, "Conv",                    3,                                       1,  true,     "sin" ],  // ShuffleNetV2
+      [  3, false, 2, "Conv",                    3,                                       1,  true,     "sin" ],  // MobileNetV2
+      [  3, false, 2, "Conv",                    3,                                       1,  true,     "sin",  true ],  // MobileNetV2 with const bias channel
       [  3,  true, 1, "Conv",                    3,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
+      [  3,  true, 1, "Conv",                    3,                                       1,  true,     "sin" ],  // ShuffleNetV2
+      [  3,  true, 1, "Conv",                    3,                                       1,  true,     "sin",  true ],  // ShuffleNetV2 with const bias channel
 
 //      [  0, false, 1, "Conv",                    3, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    5,                                       1,  true,     "sin" ],  // MobileNetV1
-      [  3, false, 2, "Conv",                    5,                                       1,  true,     "sin" ],  // MobileNetV2
       [  3, false, 2, "Conv",                    5,                                       1, false,     "sin" ],  // MobileNetV2 without bias
-      [  3,  true, 1, "Conv",                    5,                                       1,  true,     "sin" ],  // ShuffleNetV2
+      [  3, false, 2, "Conv",                    5,                                       1,  true,     "sin" ],  // MobileNetV2
+      [  3, false, 2, "Conv",                    5,                                       1,  true,     "sin",  true ],  // MobileNetV2 with const bias channel
       [  3,  true, 1, "Conv",                    5,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
+      [  3,  true, 1, "Conv",                    5,                                       1,  true,     "sin" ],  // ShuffleNetV2
+      [  3,  true, 1, "Conv",                    5,                                       1,  true,     "sin",  true ],  // ShuffleNetV2 with const bias channel
 
 //      [  0, false, 1, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    7,                                       1,  true,     "sin" ],  // MobileNetV1
-      [  3, false, 2, "Conv",                    7,                                       1,  true,     "sin" ],  // MobileNetV2
       [  3, false, 2, "Conv",                    7,                                       1, false,     "sin" ],  // MobileNetV2 without bias
-      [  3,  true, 1, "Conv",                    7,                                       1,  true,     "sin" ],  // ShuffleNetV2
+      [  3, false, 2, "Conv",                    7,                                       1,  true,     "sin" ],  // MobileNetV2
+      [  3, false, 2, "Conv",                    7,                                       1,  true,     "sin",  true ],  // MobileNetV2 with const bias channel
       [  3,  true, 1, "Conv",                    7,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
+      [  3,  true, 1, "Conv",                    7,                                       1,  true,     "sin" ],  // ShuffleNetV2
+      [  3,  true, 1, "Conv",                    7,                                       1,  true,     "sin",  true ],  // ShuffleNetV2 with const bias channel
 
 //      [  0, false, 1, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    9,                                       1,  true,     "sin" ],  // MobileNetV1
-      [  3, false, 2, "Conv",                    9,                                       1,  true,     "sin" ],  // MobileNetV2
       [  3, false, 2, "Conv",                    9,                                       1, false,     "sin" ],  // MobileNetV2 without bias
-      [  3,  true, 1, "Conv",                    9,                                       1,  true,     "sin" ],  // ShuffleNetV2
+      [  3, false, 2, "Conv",                    9,                                       1,  true,     "sin" ],  // MobileNetV2
+      [  3, false, 2, "Conv",                    9,                                       1,  true,     "sin",  true ],  // MobileNetV2 with const bias channel
       [  3,  true, 1, "Conv",                    9,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
+      [  3,  true, 1, "Conv",                    9,                                       1,  true,     "sin" ],  // ShuffleNetV2
+      [  3,  true, 1, "Conv",                    9,                                       1,  true,     "sin",  true ],  // ShuffleNetV2 with const bias channel
     ];
 
 //!!! Change to create one and test one.
