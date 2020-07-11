@@ -161,6 +161,7 @@ class Base {
     let t = tf.image.resizeBilinear( sourceImage, this.sourceImageHeightWidth, true ); // alignCorners = true
     sourceImage.dispose();
 
+//!!! ...unfinished... onesTensor should be pre-made without re-create everytime.
     // Add a constant channel (whose values are all 1) for achieving bias.
     if ( this.bBiasByConstChannel ) {
       let onesTensorShape = [ t.shape[ 0 ], t.shape[ 1 ], 1 ];  // Only one channel with all value is 1.
