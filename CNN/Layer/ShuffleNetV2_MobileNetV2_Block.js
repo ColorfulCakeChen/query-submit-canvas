@@ -39,7 +39,7 @@ class Base {
    *   If true, will like ShuffleNetV2 (i.e. split and concat channels). If false, will like MobileNetV1 or MobileNetV2 (i.e. add input to output).
    * If ( stepCountPerBlock <= 0 ), this flag will be ignored.
    *
-   * @param {boolean} pointwise1ChannelCountRate
+   * @param {number} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
    * That is, pointwise1ChannelCount = ( pointwise2ChannelCount * pointwise1ChannelCountRate ).
    *   - If ( stepCountPerBlock <= 0 ), this rate will be ignored because there will be no first 1x1 pointwise.
