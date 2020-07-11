@@ -21,10 +21,6 @@ class Base {
    * @param {number} depthwiseChannelMultiplierBlock0Step0
    *   The depthwise convolution of the first step (Step 0) of the first block (Block 0) will expand input channel by this factor.
    *
-   * @param {boolean} bBiasByConstChannel
-   *   If true, arrange channel and filter with constant value to achieve bias. This will take more memory (for pre-make filters)
-   * but may improve performance (because tf.add() is removed).
-   *
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
@@ -89,7 +85,9 @@ class Base {
         stepCountPerBlock,
         bChannelShuffler,
         pointwise1ChannelCountRate,
-        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, bBias, strActivationName );
+        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, bBias, strActivationName,
+        bBiasByConstChannel
+      );
 
       this.blocks[ i ] = block;
       nextBlockInputChannelCount = block.outputChannelCount; // Using previous block's output channel count as next block's input channel count.
@@ -115,6 +113,7 @@ class Base {
 
       + `__Block_${this.blockCount}`
       + `__Step_${stepCountPerBlock}`
+      + `${ ( bBiasByConstChannel ) ? "__ConstBiasChannel" : "" }`
       + `${ ( bChannelShuffler ) ? "__Shuffle" : ( ( stepCountPerBlock > 0 ) ? "__AddInput" : "" ) }`
     ;
 
