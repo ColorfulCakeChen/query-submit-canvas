@@ -36,8 +36,8 @@ class Base {
    * (halve height x width) and use ( stageCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
    *
    * @param {boolean} bChannelShuffler
-   *   If true, will like ShuffleNetV2 (i.e. split and concat channels). If false, will like MobileNetV1 or MobileNetV2 (i.e. expand, shrink,
-   * and add channels). If ( stepCountPerBlock <= 0 ), this flag will be ignored.
+   *   If true, will like ShuffleNetV2 (i.e. split and concat channels). If false, will like MobileNetV1 or MobileNetV2 (i.e. add input to output).
+   * If ( stepCountPerBlock <= 0 ), this flag will be ignored.
    *
    * @param {boolean} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
@@ -95,6 +95,9 @@ class Base {
 
     this.stepCountPerBlock = stepCountPerBlock;
     this.bChannelShuffler = bChannelShuffler;
+    this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
+
+    this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
     let sourceWidth = sourceHeight;  // Assume source's width equals its height.
     this.sourceHeight = sourceHeight;
@@ -111,7 +114,6 @@ class Base {
 
     this.bBias = bBias;
     this.strActivationName = strActivationName;
-    this.bAddInputToOutput = false;
 
     let pointwise1Bias = bBias;
     let pointwise1ActivationName = strActivationName;
@@ -147,7 +149,7 @@ class Base {
         depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
         pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
         false, // It is not possible to add-input-to-output, because ( depthwisePad == "valid" ).
-        false  // Not keep input tensor.
+        false  // Usually, need not keep input tensor.
       );
 
       this.apply_and_destroy = Base.apply_and_destroy_NotShuffleNetV2_NotMobileNetV2;
@@ -182,7 +184,6 @@ class Base {
 
         } else {                                             // MobileNetV1, or MobileNetV2.
           pointwise2ChannelCount = sourceChannelCount * 2;   // The channel count of step 0 of MobileNetV2 output is twice as input.
-          this.bAddInputToOutput = true;
 
           // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
           pointwise2Bias = false;
@@ -200,8 +201,8 @@ class Base {
           pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationName,
           depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
           pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
-          this.bAddInputToOutput,
-          false // Not keep input tensor.
+          false, // In MobileNet2, step 0 is not possible, because output channel count is tiwce as input. In ShuffleNetV2, it is not necessary. So, false.
+          false  // Usually, need not keep input tensor.
         );
 
         // Step0's branch (ShuffleNetV2)
@@ -214,19 +215,17 @@ class Base {
             0, false, "", // ShuffleNetV2 Step0's branch does not have the first 1x1 pointwise convolution before depthwise convolution ( strides = 2 ).
             depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
             pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
-//!!!
-//            this.bAddInputToOutput,
-            false, // Not add input to output.
-            true   // Should keep input tensor, so that the input tensor can be used by the main path of setp 0.
+            false, // Since there is channel shuffler, there is not necessary to add input to output.
+            true   // This is the only case that should keep input tensor, because the input tensor need be re-used by the main path of setp 0.
           );
 
           this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
 
-          this.apply_and_destroy = Base.apply_and_destroy_ShuffleNetV2; // Bind here (step 0's logic), because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy = Base.apply_and_destroy_ShuffleNetV2; // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
           this.outputChannelCount = step0.outputChannelCount + step0Branch.outputChannelCount;
 
         } else {
-          this.apply_and_destroy = Base.apply_and_destroy_MobileNetV2;  // Bind here (step 0's logic), because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy = Base.apply_and_destroy_MobileNetV2;  // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
           this.outputChannelCount = step0.outputChannelCount;
         }
       }
@@ -273,7 +272,7 @@ class Base {
             depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
             pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
             this.bAddInputToOutput,
-            false // Not keep input tensor.
+            false // Usually, need not keep input tensor.
           );
 
           this.steps1After[ i ] = step;
