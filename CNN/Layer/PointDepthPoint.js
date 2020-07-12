@@ -40,8 +40,8 @@ class Base {
    *   If true, there will be a bias after pointwise convolution. If ( pointwise1ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise1ActivationName
-   *   The activation function name after the first 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
-   * If ( pointwise1ChannelCount == 0 ), this activation function will also be ignored.
+   *   The activation function name after the first 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin",
+   * "cos". If ( pointwise1ChannelCount == 0 ), this activation function will also be ignored.
    *
    * @param {number} depthwiseFilterHeight
    *   The height (and width) of depthwise convolution's filter.
@@ -60,7 +60,7 @@ class Base {
    *   If true, there will be a bias after depthwise convolution.
    *
    * @param {string} depthwiseActivationName
-   *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
+   *   The activation function name after depthwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos".
    *
    * @param {number} pointwise2ChannelCount
    *   The output channel count of the second 1x1 pointwise convolution. If 0, there will be no pointwise convolution before depthwise convolution.
@@ -69,8 +69,8 @@ class Base {
    *   If true, there will be a bias after the second 1x1 pointwise convolution. If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise2ActivationName
-   *   The activation function name after the second 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
-   * If ( pointwise2ChannelCount == 0 ), this activation function will also be ignored.
+   *   The activation function name after the second 1x1 pointwise convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin",
+   * "cos". If ( pointwise2ChannelCount == 0 ), this activation function will also be ignored.
    *
    * @param {boolean} bAddInputToOutput
    *   If true and ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be added
@@ -275,6 +275,7 @@ class Base {
       case "sigmoid": return tf.sigmoid; break;
       case "tanh":    return tf.tanh;    break;
       case "sin":     return tf.sin;     break;
+      case "cos":     return tf.cos;     break;
       //default:
     }
     return null;
