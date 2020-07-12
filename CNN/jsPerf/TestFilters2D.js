@@ -21,6 +21,8 @@ class Base {
    * @param {number} depthwiseChannelMultiplierBlock0Step0
    *   The depthwise convolution of the first step (Step 0) of the first block (Block 0) will expand input channel by this factor.
    *
+//!!! should use ( strActivationName == "cos" ) and ( bBias == false ) to achieve bias-by-naturally.
+
    * @param {boolean} bBiasByConstChannel
    *   If true, arrange channel and filter with constant value to achieve bias. This will take more memory (for pre-make filters)
    * but may improve performance (because tf.add() is removed).
@@ -32,8 +34,7 @@ class Base {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName,
-    bBiasByConstChannel
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName
   ) {
 
     this.disposeTensors();
@@ -42,15 +43,9 @@ class Base {
     this.stepCountPerBlock = stepCountPerBlock;
     this.bChannelShuffler = bChannelShuffler;
     this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
-    this.bBiasByConstChannel = bBiasByConstChannel;
 
     this.sourceChannelCountAdjusted = sourceChannelCount;
     this.bBiasAdjusted = bBias;
-
-    if ( bBiasByConstChannel ) {
-      this.sourceChannelCountAdjusted += 1; // When apply(), an extra channel (all ones) will be appended to source as bias.
-      this.bBiasAdjusted = false;
-    }
 
     let targetHeight = 1; // The final output always has height x width = 1 x 1 (i.e. only one pixel per channel)
 
@@ -98,8 +93,7 @@ class Base {
         stepCountPerBlock,
         bChannelShuffler,
         pointwise1ChannelCountRate,
-        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, this.bBiasAdjusted, strActivationName,
-        bBiasByConstChannel
+        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, this.bBiasAdjusted, strActivationName
       );
 
       this.blocks[ i ] = block;
@@ -126,7 +120,6 @@ class Base {
 
       + `__Block_${this.blockCount}`
       + `__Step_${stepCountPerBlock}`
-      + `${ ( bBiasByConstChannel ) ? "__ConstBiasChannel" : "" }`
       + `${ ( bChannelShuffler ) ? "__Shuffle" : ( ( stepCountPerBlock > 0 ) ? "__AddInput" : "" ) }`
     ;
 
@@ -153,25 +146,20 @@ class Base {
    *   If ( bReturn == true ), return the result tensor. Otheriwse, return null.
    */
   apply( sourceCanvas, bReturn ) {
+
+    let ctx = sourceCanvas.getContext( '2d' );
+    let sourceImageData = ctx.getImageData( 0, 0, sourceCanvas.width, sourceCanvas.height );
+
+//!!! ...unfinished... here should transfer the sourceImageData to a web worker. Then, the web worker do the following fromPixels(), ... etc.
+
     // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
     let sourceImageChannelCount = 4;
-    let sourceImage = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
+//    let sourceImage = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
+    let sourceImageTensor = tf.browser.fromPixels( sourceImageData, sourceImageChannelCount );
 
     // Resize source image to a default size (height x width) which is used when training the neural network.
-    let t = tf.image.resizeBilinear( sourceImage, this.sourceImageHeightWidth, true ); // alignCorners = true
-    sourceImage.dispose();
-
-//!!! ...unfinished... onesTensor should be pre-made without re-create everytime.
-    // Add a constant channel (whose values are all 1) for achieving bias.
-    if ( this.bBiasByConstChannel ) {
-      let onesTensorShape = [ t.shape[ 0 ], t.shape[ 1 ], 1 ];  // Only one channel with all value is 1.
-      let onesTensor = tf.ones( onesTensorShape );
-      let lastAxisId = t.rank - 1;
-      let tNew = tf.concat( [ t, onesTensor ], lastAxisId );
-      t.dispose();
-      onesTensor.dispose();
-      t = tNew;
-    }
+    let t = tf.image.resizeBilinear( sourceImageTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
+    sourceImageTensor.dispose();
 
     let block;
     for ( let i = 0; i < this.blocks.length; ++i ) {
