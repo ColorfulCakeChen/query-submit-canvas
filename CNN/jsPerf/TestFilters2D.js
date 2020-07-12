@@ -156,7 +156,7 @@ class Base {
 
 //!!! ...unfinished...
 // here should transfer the sourceImageData to a web worker. Then, the web worker do the following fromPixels(), ... etc.
-// worker.postMessage( sourceImageData, [ sourceImageData.data ] );
+// worker.postMessage( sourceImageData, [ sourceImageData.data.buffer ] );
 
     // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
     let sourceImageChannelCount = 4;
