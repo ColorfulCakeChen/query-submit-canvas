@@ -27,6 +27,9 @@ class Base {
    *   If true, arrange channel and filter with constant value to achieve bias. This will take more memory (for pre-make filters)
    * but may improve performance (because tf.add() is removed).
    *
+   * @param {boolean} bWebWorker
+   *   If true, neural network will executed inside a web worker.
+   *
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
@@ -34,7 +37,8 @@ class Base {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName,
+    bWebWorker
   ) {
 
     this.disposeTensors();
@@ -44,8 +48,8 @@ class Base {
     this.bChannelShuffler = bChannelShuffler;
     this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
 
-    this.sourceChannelCountAdjusted = sourceChannelCount;
-    this.bBiasAdjusted = bBias;
+//!!! ...unfinished...
+    this.bWebWorker = bWebWorker;
 
     let targetHeight = 1; // The final output always has height x width = 1 x 1 (i.e. only one pixel per channel)
 
@@ -53,7 +57,7 @@ class Base {
     let filterWidth = depthwiseFilterHeight;
 
     this.depthwiseChannelMultiplierBlock0Step0 = depthwiseChannelMultiplierBlock0Step0;
-    this.channelCountBlock0 = this.sourceChannelCountAdjusted * depthwiseChannelMultiplierBlock0Step0;  // the channel count of the first block (Block 0).
+    this.channelCountBlock0 = sourceChannelCount * depthwiseChannelMultiplierBlock0Step0;  // the channel count of the first block (Block 0).
 
     if ( stepCountPerBlock <= 0 ) { // Not ShuffleNetV2, Not MobileNetV2.
 
@@ -81,7 +85,7 @@ class Base {
       this.totalChannelExpansionFactor = Math.pow( 2, this.blockCount );
     }
 
-    let nextBlockInputChannelCount = this.sourceChannelCountAdjusted;
+    let nextBlockInputChannelCount = sourceChannelCount;
     let nextBlockDepthwiseChannelMultiplier = depthwiseChannelMultiplierBlock0Step0; // Only block 0 can have ( depthwise channel multiplier > 1 ).
 
     this.blocks = new Array( this.blockCount );
@@ -93,7 +97,7 @@ class Base {
         stepCountPerBlock,
         bChannelShuffler,
         pointwise1ChannelCountRate,
-        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, this.bBiasAdjusted, strActivationName
+        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, bBias, strActivationName
       );
 
       this.blocks[ i ] = block;
@@ -150,7 +154,9 @@ class Base {
     let ctx = sourceCanvas.getContext( '2d' );
     let sourceImageData = ctx.getImageData( 0, 0, sourceCanvas.width, sourceCanvas.height );
 
-//!!! ...unfinished... here should transfer the sourceImageData to a web worker. Then, the web worker do the following fromPixels(), ... etc.
+//!!! ...unfinished...
+// here should transfer the sourceImageData to a web worker. Then, the web worker do the following fromPixels(), ... etc.
+// worker.postMessage( sourceImageData, [ sourceImageData.data ] );
 
     // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
     let sourceImageChannelCount = 4;
