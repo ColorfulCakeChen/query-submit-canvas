@@ -99,6 +99,7 @@ class Base {
       [  3,  true, 1, "Conv",                    5,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
       [  3,  true, 1, "Conv",                    5,                                       1,  true,     "sin" ],  // ShuffleNetV2
       [  3,  true, 1, "Conv",                    5,                                       1,  true,     "sin",  true ],  // ShuffleNetV2 with const bias channel
+      [  3,  true, 1, "Conv",                    5,                                       1,  true,     "cos" ],  // ShuffleNetV2
 
 //      [  0, false, 1, "Conv",                    7, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    7,                                       1,  true,     "sin" ],  // MobileNetV1
@@ -108,6 +109,7 @@ class Base {
       [  3,  true, 1, "Conv",                    7,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
       [  3,  true, 1, "Conv",                    7,                                       1,  true,     "sin" ],  // ShuffleNetV2
       [  3,  true, 1, "Conv",                    7,                                       1,  true,     "sin",  true ],  // ShuffleNetV2 with const bias channel
+      [  3,  true, 1, "Conv",                    7,                                       1,  true,     "cos" ],  // ShuffleNetV2
 
 //      [  0, false, 1, "Conv",                    9, depthwiseChannelMultiplierBlock0Step0,  true,     "sin" ],
       [  3, false, 1, "Conv",                    9,                                       1,  true,     "sin" ],  // MobileNetV1
@@ -117,6 +119,7 @@ class Base {
       [  3,  true, 1, "Conv",                    9,                                       1, false,     "sin" ],  // ShuffleNetV2 without bias
       [  3,  true, 1, "Conv",                    9,                                       1,  true,     "sin" ],  // ShuffleNetV2
       [  3,  true, 1, "Conv",                    9,                                       1,  true,     "sin",  true ],  // ShuffleNetV2 with const bias channel
+      [  3,  true, 1, "Conv",                    9,                                       1,  true,     "cos" ],  // ShuffleNetV2
     ];
 
 //!!! Change to create one and test one.
