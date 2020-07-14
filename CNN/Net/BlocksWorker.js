@@ -30,14 +30,19 @@ class Proxy {
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
    *
    * @param {number} workerId
-   *   This worker's id. The id of the first worker should be 0. If ( workerId < totalWorkerCount ), the next new worker will be created.
+   *   This worker's id. The id of the first worker should be 0. If ( workerId < ( totalWorkerCount - 1 ) ), the next new worker will be created.
    */
-  init( totalWorkerCount, weightsURL, workerId ) {
+  init_and_create_next( totalWorkerCount, weightsURL, workerId ) {
+//??? in cascade ?
     this.disposeWorkers();
 
     this.totalWorkerCount = totalWorkerCount;
     this.weightsURL = weightsURL;
     this.workerId = workerId || 0;
+
+    let remainedWorkerCount = totalWorkerCount - workerId;
+    if ( remainedWorkerCount <= 0 )
+      return;  // Done. All workers in the cascade chain are created.
 
 //     // Assume the "BlocksWorker.js" is the file name of this module file.
 //     let workerURL = new URL( "BlocksWorker.js", import.meta.url );
@@ -46,7 +51,7 @@ class Proxy {
     this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
     this.worker = new Worker( this.workerURL, this.workerOptions );
 
-    let remainedWorkerCount = totalWorkerCount - workerId;
+    remainedWorkerCount -= 1; // Because a new worker is just created, the remained count reduces one.
     if ( remainedWorkerCount <= 0 )
       return;  // Done. All workers in the cascade chain are created.
 
@@ -83,7 +88,7 @@ if ( globalThis.document ) {
 
     switch ( message.command ) {
       case "createNextWorker": //{ command: "createNextWorker", totalWorkerCount, weightsURL, workerId };
-        globalThis.workerProxy.init( message.remainedWorkerCount, message.weightsURL, message.workerId );
+        globalThis.workerProxy.init_and_create_next( message.remainedWorkerCount, message.weightsURL, message.workerId );
         break;
 
       case "disposeWorker": //{ command: "disposeWorker" };
