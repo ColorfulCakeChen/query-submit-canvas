@@ -1,5 +1,5 @@
 import * as PartTime from "../PartTime.js";
-import * as Blocks from "../Blocks.js";
+import * as Blocks from "../Net/Blocks.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
 export { Base };
