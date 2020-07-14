@@ -27,20 +27,26 @@ class BlocksWorker {
 }
 
 
-let theWorker = new BlocksWorker();
+if ( self.document ) {
+  // In main document context (Not in worker context). Do nothing.
 
-onmessage = function( e ) {
-  let message = e.data;
+} else {
+  // In worker context. Create neural network. Register message handler.
 
-  switch ( message.command ) {
-    case "init": //{ command: "init", remainedWorkerCount: remainedWorkerCount, weightsURL: weightsURL };
-      theWorker.init( message.remainedWorkerCount - 1, message.weightsURL );
-      break;
+  globalThis.theWorker = new BlocksWorker();
 
-    case "disposeWorker": //{ command: "disposeWorker" };
-      theWorker.disposeWorker( message );
-      break;
-      
+  globalThis.onmessage = function( e ) {
+    let message = e.data;
+
+    switch ( message.command ) {
+      case "init": //{ command: "init", remainedWorkerCount: remainedWorkerCount, weightsURL: weightsURL };
+        globalThis.theWorker.init( message.remainedWorkerCount - 1, message.weightsURL );
+        break;
+
+      case "disposeWorker": //{ command: "disposeWorker" };
+        globalThis.theWorker.disposeWorker( message );
+        break;
+
+    }
   }
-
 }
