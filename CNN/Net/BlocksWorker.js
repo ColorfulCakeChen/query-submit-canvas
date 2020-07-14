@@ -1,5 +1,5 @@
 /**
- * @file This file is both a importable module and a main javascript file of web worker.
+ * @file This file is both an importable module and a main javascript file of web worker.
  *
  */
 
@@ -37,13 +37,11 @@ class Proxy {
 //     // Assume the "BlocksWorker.js" is the file name of this module file.
 //     let workerURL = new URL( "BlocksWorker.js", import.meta.url );
 
-    this.workerURL = import.meta.url;        // Assume this file is both a importable module and a main javascript file of web worker.
+    this.workerURL = import.meta.url;        // Assume this file is both an importable module and a main javascript file of web worker.
     this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
     this.worker = new Worker( this.workerURL, this.workerOptions );
 
-//!!!??? ( remainedWorkerCount - 1 ) ?
-    let message = { command: "init", remainedWorkerCount: remainedWorkerCount, weightsURL: weightsURL };
-
+    let message = { command: "init", remainedWorkerCount: ( remainedWorkerCount - 1 ), weightsURL: weightsURL };
     this.worker.postMessage( message );
   }
 
@@ -60,35 +58,9 @@ class Proxy {
     
 }
 
-class BlocksWorker {
-
-  /**
-   *
-   * @param {number} remainedWorkerCount
-   *   There are still how many workers (not including this one) should be created in chain.
-   *
-   * @param {string} weightsURL
-   *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
-   */
-  init( remainedWorkerCount, weightsURL ) {
-    if ( remainedWorkerCount > 0 ) {
-      let message = { command: "init", remainedWorkerCount: remainedWorkerCount, weightsURL: weightsURL };
-      this.nextWorker = new Worker("./BlocksWorker.js");
-      this.nextWorker.postMessage( message );
-    }
-  }
-
-  disposeWorker( message ) {
-    if ( this.nextWorker ) {
-      let message = { command: "disposeWorker" };
-      this.nextWorker.postMessage( message );
-    }
-  }
-
-}
 
 
-if ( self.document ) {
+if ( globalThis.document ) {
   // In main document context (Not in worker context). Do nothing.
 
 } else {
