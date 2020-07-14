@@ -181,3 +181,27 @@ class Base {
 
 }
 
+/**
+ * There are two neural network inside. The apply() feeds the same input to the two different neural networks
+ *
+ */
+class Twins {
+
+  disposeTensors() {
+  }
+
+  /**
+   * @param {HTMLCanvasElement} sourceCanvas
+   *   The canvas which provides image.
+   *
+   * @param bReturn
+   *   If true, the result tensor will be returned. Otherwise, all tensors are disposed.
+   *
+   * @return {tf.tensor[]}
+   *   If ( bReturn == true ), return the result array of two tensors. Otheriwse, return null.
+   */
+  apply( sourceCanvas, bReturn ) {
+  }
+
+}
+
