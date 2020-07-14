@@ -31,8 +31,9 @@ class Base {
 
     // Assume the "BlocksWorker.js" is a sibiling file of this "BlocksWorkersChain.js" module file.
     let workerURL = new URL( "BlocksWorker.js", import.meta.url );
+    let workerOptions = { type: "module" }; // So that the worker script could use import statement.
 
-    this.worker0 = new Worker( workerURL );
+    this.worker0 = new Worker( workerURL, workerOptions );
     this.worker0.postMessage( message );
   }
 
