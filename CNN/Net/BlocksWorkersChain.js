@@ -29,7 +29,10 @@ class Base {
 
     let message = { command: "init", remainedWorkerCount: chainedWorkerCount, weightsURL: weightsURL };
 
-    this.worker0 = new Worker("./BlocksWorker.js");
+    // Assume the "BlocksWorker.js" is a sibiling file of this "BlocksWorkersChain.js" module file.
+    let workerURL = new URL( "BlocksWorker.js", import.meta.url );
+
+    this.worker0 = new Worker( workerURL );
     this.worker0.postMessage( message );
   }
 
