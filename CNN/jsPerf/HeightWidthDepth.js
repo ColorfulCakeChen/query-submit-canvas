@@ -1,5 +1,5 @@
 import * as PartTime from "../PartTime.js";
-import * as TestFilters2D from "./TestFilters2D.js";
+import * as Blocks from "../Blocks.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
 export { Base };
@@ -110,7 +110,7 @@ class Base {
 //!!! Change to create one and test one.
     // Create test filters.
     this.testFiltersArray = this.testFiltersSpecTable.map( ( filtersSpec, i ) => {
-      let testFilters = new TestFilters2D.Base();
+      let testFilters = new Blocks.Base();
 //!!! Since source is canvas, the channel count should be the same as the canvas.
 //      testFilters.init( height, depth, targetHeight, ...filtersSpec );
       testFilters.init( height, canvasChannelCount, ...filtersSpec );
