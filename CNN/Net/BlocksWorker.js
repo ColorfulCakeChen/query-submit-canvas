@@ -7,6 +7,7 @@
 export { Proxy };
 
 /**
+ * A wrapper of worker for
  * Many workers cascade in chain. Every worker handles one neural network. When apply() is called, the input (usually a large memory block)
  * will be transffered to the 1st worker to start computing, and then transffered to the 2nd worker to start computing, ... etc.
  *
@@ -22,17 +23,21 @@ class Proxy {
 
   /**
    *
-   * @param {number} remainedWorkerCount
-   *   There are still how many workers (not including this one) should be created in chain.
+   * @param {number} totalWorkerCount
+   *   There are how many workers should be created in chain.
    *
    * @param {string} weightsURL
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
+   *
+   * @param {number} workerId
+   *   This worker's id. The id of the first worker should be 0. If ( workerId < totalWorkerCount ), the next new worker will be created.
    */
-  init( remainedWorkerCount, weightsURL ) {
+  init( totalWorkerCount, weightsURL, workerId ) {
     this.disposeWorkers();
 
-    if ( remainedWorkerCount <= 0 )
-      return;  // Done. All workers in the cascde chain are created.
+    this.totalWorkerCount = totalWorkerCount;
+    this.weightsURL = weightsURL;
+    this.workerId = workerId || 0;
 
 //     // Assume the "BlocksWorker.js" is the file name of this module file.
 //     let workerURL = new URL( "BlocksWorker.js", import.meta.url );
@@ -41,7 +46,12 @@ class Proxy {
     this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
     this.worker = new Worker( this.workerURL, this.workerOptions );
 
-    let message = { command: "init", remainedWorkerCount: ( remainedWorkerCount - 1 ), weightsURL: weightsURL };
+    let remainedWorkerCount = totalWorkerCount - workerId;
+    if ( remainedWorkerCount <= 0 )
+      return;  // Done. All workers in the cascade chain are created.
+
+    // Create next worker in the cascade chain.
+    let message = { command: "createNextWorker", totalWorkerCount: totalWorkerCount, weightsURL: weightsURL, workerId: ( workerId + 1 ) };
     this.worker.postMessage( message );
   }
 
@@ -72,8 +82,8 @@ if ( globalThis.document ) {
     let message = e.data;
 
     switch ( message.command ) {
-      case "init": //{ command: "init", remainedWorkerCount: remainedWorkerCount, weightsURL: weightsURL };
-        globalThis.workerProxy.init( message.remainedWorkerCount - 1, message.weightsURL );
+      case "createNextWorker": //{ command: "createNextWorker", totalWorkerCount, weightsURL, workerId };
+        globalThis.workerProxy.init( message.remainedWorkerCount, message.weightsURL, message.workerId );
         break;
 
       case "disposeWorker": //{ command: "disposeWorker" };
