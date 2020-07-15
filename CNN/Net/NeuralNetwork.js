@@ -12,8 +12,7 @@ export { Base };
  *   The final output of this neural network will have ( totalChannelExpansionFactor * sourceChannelCount ) channel count.
  *
  * @member {number[]} sourceImageHeightWidth
- *   The size (i.e. [ height, width ]) of the source image. When apply() is called, the source image will be extracted from the sourceCanvas
- * and be resized to this size. The neural network receives this resized source image.
+ *   The size (i.e. [ height, width ]) of the source image. When apply_and_destroy_or_keep() is called, the input tensor should be this size.
  */
 class Base {
 
@@ -33,7 +32,7 @@ class Base {
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
-    sourceHeight, sourceChannelCount,
+    sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
@@ -93,7 +92,7 @@ class Base {
     {
       let block = new ShuffleNetV2_MobileNetV2_Block.Base();
       block.init(
-        sourceHeight, nextBlockInputChannelCount,
+        sourceHeight, sourceWidth, nextBlockInputChannelCount,
         stepCountPerBlock,
         bChannelShuffler,
         pointwise1ChannelCountRate,
@@ -147,6 +146,7 @@ class Base {
    *
    * @param {tf.tensor4d} inputTensor
    *   The image which will be processed. This inputTensor may or may not be disposed according to the init()'s bKeepInputTensor.
+   * Its size should be this.sourceImageHeightWidth.
    *
    * @param {boolean} bReturn
    *   If true, the result tensor will be returned. Otherwise, the result tensor will be disposed.
