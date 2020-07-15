@@ -22,7 +22,8 @@ export { Base };
 class Base {
 
   /**
-   * @param sourceHeight        The height (and width) of the source image which will be processed by apply().
+   * @param sourceHeight        The height of the source image which will be processed by apply_and_destroy_or_keep().
+   * @param sourceWidth         The width of the source image which will be processed by apply_and_destroy_or_keep().
    * @param sourceChannelCount  The channel count of the source image.
    *
    * @param {number} stepCountPerBlock
@@ -60,7 +61,7 @@ class Base {
    * @see PointDepthPoint.Base.init()
    */
   init(
-    sourceHeight, sourceChannelCount,
+    sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
@@ -100,7 +101,6 @@ class Base {
 
     this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
-    let sourceWidth = sourceHeight;  // Assume source's width equals its height.
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
