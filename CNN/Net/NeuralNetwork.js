@@ -155,19 +155,7 @@ class Base {
    *   If ( bReturn == true ), return the result (new) tensor. Otheriwse, the result tensor will be disposed and null will be returned.
    */
   apply_and_destroy_or_keep( inputTensor, bReturn ) {
-
     let t = inputTensor;
-
-//!!! ...unfinished...
-// here should convert sourceImageData to tensor, get typed-array (so that the receiver worker could convert to tensor again without re-construct typed-array),
-// transfer it to a web worker. Then, the web worker do the following fromPixels(), ... etc.
-//
-//     scaledSourceImageTensor.data().then( ( typedArray ) => {
-//       let message = [ values: typedArray, shape: scaledSourceImageTensor.shape, dtype: scaledSourceImageTensor ];
-//       worker.postMessage( message, [ message.values.data.buffer ] );
-//     });
-
-//!!! the following will dispose the scaledSourceImageTensor beffore the above codes get typed-array for another web worker.
 
     let block;
     for ( let i = 0; i < this.blocks.length; ++i ) {
