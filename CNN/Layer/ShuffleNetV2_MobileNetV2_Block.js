@@ -8,10 +8,10 @@ export { Base };
  * or MobileNetV2.
  *
  *
- * @member {function} apply_and_destroy
+ * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has an parameter inputTensor (tf.tensor4d) represents the image which will be processed. It returns a new
  * tf.tensor4d. All other tensors (including inputTensor) will be disposed. In fact, this method calls one of
- * apply_and_destroy_NotChannelShuffle_NotAddInputToOutput(), apply_and_destroy_ChannelShuffle(), apply_and_destroy_AddInputToOutput()
+ * apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput(), apply_and_destroy_or_keep_ChannelShuffle(), apply_and_destroy_or_keep_AddInputToOutput()
  * according to the init()'s parameters.
  *
  * @member {number} outputChannelCount
@@ -55,7 +55,7 @@ class Base {
    *   The activation function name after the convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
    *
    * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy() will not dispose inputTensor.
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
    *
    * @see PointDepthPoint.Base.init()
    */
@@ -153,7 +153,7 @@ class Base {
         bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
       );
 
-      this.apply_and_destroy = Base.apply_and_destroy_NotChannelShuffle_NotAddInputToOutput;
+      this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
       this.outputChannelCount = step0.outputChannelCount;
 
     } else {  // ShuffleNetV2, or MobileNetV2.
@@ -222,11 +222,11 @@ class Base {
 
           this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
 
-          this.apply_and_destroy = Base.apply_and_destroy_ChannelShuffle; // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_ChannelShuffle; // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
           this.outputChannelCount = step0.outputChannelCount + step0Branch.outputChannelCount;
 
         } else {
-          this.apply_and_destroy = Base.apply_and_destroy_AddInputToOutput;  // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_AddInputToOutput;  // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
           this.outputChannelCount = step0.outputChannelCount;
         }
       }
@@ -313,28 +313,28 @@ class Base {
   /** Process input, destroy input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.)
    *
    * @param {Block} this
-   *   This method should not be called directly. It should be called by calling apply_and_destroy().
+   *   This method should not be called directly. It should be called by calling apply_and_destroy_or_keep().
    *
    * @param {tf.tensor4d} inputTensor
    *   The image which will be processed. This inputTensor will be disposed.
    *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
-  static apply_and_destroy_NotChannelShuffle_NotAddInputToOutput( inputTensor ) {
+  static apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput( inputTensor ) {
     return this.step0.apply_and_destroy_or_keep( inputTensor );
   }
 
   /** Process input, destroy input, return result. (For ShuffleNetV2.)
    *
    * @param {Block} this
-   *   This method should not be called directly. It should be called by calling apply_and_destroy().
+   *   This method should not be called directly. It should be called by calling apply_and_destroy_or_keep().
    *
    * @param {tf.tensor4d} inputTensor
    *   The image which will be processed. This inputTensor will be disposed.
    *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
-  static apply_and_destroy_ChannelShuffle( inputTensor ) {
+  static apply_and_destroy_or_keep_ChannelShuffle( inputTensor ) {
 
     // Keep data as local variables for improving performance.
 
@@ -353,7 +353,7 @@ class Base {
 
     // Step 0.
     concatTensorArray[ 0 ] = t0 = this.step0Branch.apply_and_destroy_or_keep( inputTensor );  // Branch (will NOT destroy input tensor).
-    concatTensorArray[ 1 ] = t1 = this.step0      .apply_and_destroy_or_keep( inputTensor );  // Main Path (will destroy input tensor).
+    concatTensorArray[ 1 ] = t1 = this.step0      .apply_and_destroy_or_keep( inputTensor );  // Main Path (may or may not destroy input tensor).
 
     concatenatedTensor = tf.concat( concatTensorArray, lastAxisId );
     t0.dispose();                   // Dispose all intermediate (temporary) data.
@@ -383,14 +383,14 @@ class Base {
   /** Process input, destroy input, return result. (For MobileNetV2.)
    *
    * @param {Block} this
-   *   This method should not be called directly. It should be called by calling apply_and_destroy().
+   *   This method should not be called directly. It should be called by calling apply_and_destroy_or_keep().
    *
    * @param {tf.tensor4d} inputTensor
    *   The image which will be processed. This inputTensor will be disposed.
    *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
-  static apply_and_destroy_AddInputToOutput( inputTensor ) {
+  static apply_and_destroy_or_keep_AddInputToOutput( inputTensor ) {
     let t, tNew;
 
     // Step 0.
