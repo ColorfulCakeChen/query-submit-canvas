@@ -222,11 +222,11 @@ class Base {
 
           this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
 
-          this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_ChannelShuffle; // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_ChannelShuffle; // Bind in step 0's logic, because step 1 (2, 3, ...) may not existed.
           this.outputChannelCount = step0.outputChannelCount + step0Branch.outputChannelCount;
 
         } else {
-          this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_AddInputToOutput;  // Bind here (in step 0's logic), because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_AddInputToOutput;  // Bind in step 0's logic, because step 1 (2, 3, ...) may not existed.
           this.outputChannelCount = step0.outputChannelCount;
         }
       }
