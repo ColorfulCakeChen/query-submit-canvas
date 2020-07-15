@@ -24,7 +24,6 @@ class Base {
   /**
    * @param sourceHeight        The height (and width) of the source image which will be processed by apply().
    * @param sourceChannelCount  The channel count of the source image.
-   * @param targetHeight        The taregt image height (and width).
    *
    * @param {number} stepCountPerBlock
    *   If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
@@ -58,7 +57,7 @@ class Base {
    * @see PointDepthPoint.Base.init()
    */
   init(
-    sourceHeight, sourceChannelCount, targetHeight,
+    sourceHeight, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
