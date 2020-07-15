@@ -151,21 +151,30 @@ class Base {
    */
   apply( sourceCanvas, bReturn ) {
 
-    let ctx = sourceCanvas.getContext( '2d' );
-    let sourceImageData = ctx.getImageData( 0, 0, sourceCanvas.width, sourceCanvas.height );
+    let sourceImageChannelCount = 4; // tf.browser.fromPixels() handles RGBA 4 channels faster than RGB 3 channels.
 
-//!!! ...unfinished...
-// here should transfer the sourceImageData to a web worker. Then, the web worker do the following fromPixels(), ... etc.
-// worker.postMessage( sourceImageData, [ sourceImageData.data.buffer ] );
+//!!! 
+//     let ctx = sourceCanvas.getContext( '2d' );
+//     let sourceImageData = ctx.getImageData( 0, 0, sourceCanvas.width, sourceCanvas.height );
+//
+//     // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
+//     let sourceImageTensor = tf.browser.fromPixels( sourceImageData, sourceImageChannelCount );
+//
+//     // Resize source image to a default size (height x width) which is used when training the neural network.
+//     let t = tf.image.resizeBilinear( sourceImageTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
+//     sourceImageTensor.dispose();
 
     // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
-    let sourceImageChannelCount = 4;
-//    let sourceImage = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
-    let sourceImageTensor = tf.browser.fromPixels( sourceImageData, sourceImageChannelCount );
+    let sourceImageTensor = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
 
     // Resize source image to a default size (height x width) which is used when training the neural network.
     let t = tf.image.resizeBilinear( sourceImageTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
     sourceImageTensor.dispose();
+
+//!!! ...unfinished...
+// here should convert sourceImageData to tensor, get typed-array (so that the receiver worker could convert to tensor again without re-construct typed-array),
+// transfer it to a web worker. Then, the web worker do the following fromPixels(), ... etc.
+// worker.postMessage( sourceImageData, [ sourceImageData.data.buffer ] );
 
     let block;
     for ( let i = 0; i < this.blocks.length; ++i ) {
