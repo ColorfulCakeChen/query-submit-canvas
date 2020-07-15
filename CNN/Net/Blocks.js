@@ -153,7 +153,7 @@ class Base {
 
     let sourceImageChannelCount = 4; // tf.browser.fromPixels() handles RGBA 4 channels faster than RGB 3 channels.
 
-//!!! 
+//!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
 //     let ctx = sourceCanvas.getContext( '2d' );
 //     let sourceImageData = ctx.getImageData( 0, 0, sourceCanvas.width, sourceCanvas.height );
 //
@@ -174,7 +174,11 @@ class Base {
 //!!! ...unfinished...
 // here should convert sourceImageData to tensor, get typed-array (so that the receiver worker could convert to tensor again without re-construct typed-array),
 // transfer it to a web worker. Then, the web worker do the following fromPixels(), ... etc.
-// worker.postMessage( sourceImageData, [ sourceImageData.data.buffer ] );
+//
+//     sourceImageTensor.data().then( ( typedArray ) => {
+//       let message = [ values: typedArray, shape: sourceImageTensor.shape, dtype: sourceImageTensor ];
+//       worker.postMessage( message, [ message.values.data.buffer ] );
+//     });
 
     let block;
     for ( let i = 0; i < this.blocks.length; ++i ) {
