@@ -98,7 +98,7 @@ class Base {
         bChannelShuffler,
         pointwise1ChannelCountRate,
         strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, bBias, strActivationName,
-        nextKeepInputTensor;
+        nextKeepInputTensor
       );
 
       this.blocks[ i ] = block;
