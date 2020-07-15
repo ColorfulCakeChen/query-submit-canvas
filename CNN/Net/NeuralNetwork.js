@@ -27,9 +27,6 @@ class Base {
    *   If true, arrange channel and filter with constant value to achieve bias. This will take more memory (for pre-make filters)
    * but may improve performance (because tf.add() is removed).
    *
-   * @param {boolean} bWebWorker
-   *   If true, neural network will executed inside a web worker.
-   *
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
@@ -37,8 +34,7 @@ class Base {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName,
-    bWebWorker
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName
   ) {
 
     this.disposeTensors();
@@ -47,9 +43,6 @@ class Base {
     this.stepCountPerBlock = stepCountPerBlock;
     this.bChannelShuffler = bChannelShuffler;
     this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
-
-//!!! ...unfinished...
-    this.bWebWorker = bWebWorker;
 
     let targetHeight = 1; // The final output always has height x width = 1 x 1 (i.e. only one pixel per channel)
 
@@ -145,7 +138,7 @@ class Base {
    * @param {tf.tensor4d} inputTensor
    *   The image which will be processed. This inputTensor will be disposed.
    *
-   * @param bReturn
+   * @param {boolean} bReturn
    *   If true, the result tensor will be returned. Otherwise, all tensors are disposed.
    *
    * @return {tf.tensor4d}
