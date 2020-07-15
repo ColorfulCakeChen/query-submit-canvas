@@ -290,7 +290,8 @@ class Base {
       // Note: Do not return result tensor so that need not to dispose them.
       resultProfiles.push(
 //        await this.logProfile( testNeuralNetworks.name, testNeuralNetworks.apply.bind( testNeuralNetworks, this.dataTensor3d, false ) ) );
-        await this.logProfile( testNeuralNetworks.neuralNetworkArray[ 0 ].name, testNeuralNetworks.apply.bind( testNeuralNetworks, this.testCnavas, false ) ) );
+        await this.logProfile(
+          testNeuralNetworks.neuralNetworkArray[ 0 ].structure, testNeuralNetworks.apply.bind( testNeuralNetworks, this.testCnavas, false ) ) );
 
       yield* this.progressAdvanceYield();
     }
