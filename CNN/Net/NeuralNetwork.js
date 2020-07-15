@@ -152,7 +152,7 @@ class Base {
    *   If true, the result tensor will be returned. Otherwise, the result tensor will be disposed.
    *
    * @return {tf.tensor4d}
-   *   If ( bReturn == true ), return the result (new) tensor. Otheriwse, the result tensor will be disposed and null will be returned.
+   *   If ( bReturn == true ), return the result (new) tensor. Otheriwse, the result tensor will be disposed and nothing will be returned.
    */
   apply_and_destroy_or_keep( inputTensor, bReturn ) {
     let t = inputTensor;
@@ -163,12 +163,10 @@ class Base {
       t = block.apply_and_destroy_or_keep( t );
     }
 
-    if ( bReturn ) {
+    if ( bReturn )
       return t;
-    } else {
+    else
       t.dispose();
-      return null;
-    }
   }
 
 }
