@@ -5,8 +5,8 @@ export { Base };
 /**
  * A neural network composes of multiple blocks.
  *
- * @member {string} name
- *   This neural network's name.
+ * @member {string} structure
+ *   This neural network's structure.
  *
  * @member {number} totalChannelExpansionFactor
  *   The final output of this neural network will have ( totalChannelExpansionFactor * sourceChannelCount ) channel count.
@@ -109,7 +109,7 @@ class Base {
     let block0 = this.blocks[ 0 ];
 
     // e.g. "C24_24__DConv_101x101_DBias_RELU__PConv_PBias_RELU__Block_1__Step_1"
-    this.name = `C${sourceChannelCount}_${this.channelCountBlock0}`
+    this.structure = `C${sourceChannelCount}_${this.channelCountBlock0}`
 
       + `${ ( block0.step0.bPointwise1 ) ? "__PConv1(x" + pointwise1ChannelCountRate + ")" : "" }`
       + `${ ( block0.step0.bPointwise1 && block0.step0.bPointwise1Bias ) ? ( "_PBias1" ) : "" }`
