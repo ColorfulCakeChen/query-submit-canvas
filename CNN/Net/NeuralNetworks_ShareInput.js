@@ -126,7 +126,9 @@ class Base {
     let neuralNetwork;
     for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
       neuralNetwork = this.neuralNetworkArray[ i ];
-      let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor ); // The scaledSourceTensor will NOT be disposed here, so that it can be shared.
+
+      // The scaledSourceTensor will NOT be disposed here, so that it can be shared.
+      let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, bReturn );
 
       if ( bReturn )
         resultArray[ i ] = t;
