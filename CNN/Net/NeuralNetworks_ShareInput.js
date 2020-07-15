@@ -5,6 +5,10 @@ export { Base };
 /**
  * There are many neural networks inside. The apply() feeds the same input to the these different neural networks.
  *
+ *
+ * @member {number[]} sourceImageHeightWidth
+ *   The size (i.e. [ height, width ]) of the source image. When apply() is called, the source image will be extracted from the sourceCanvas
+ * and be resized to this size. Every neural network receives this resized source image.
  */
 class Base {
 
@@ -24,7 +28,7 @@ class Base {
    * @see NeuralNetwork.init 
    */
   init(
-    sourceHeight, sourceChannelCount,
+    sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
@@ -43,7 +47,7 @@ class Base {
     for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
       let neuralNetwork = new NeuralNetwork.Base();
       neuralNetwork.init(
-        sourceHeight, sourceChannelCount,
+        sourceHeight, sourceWidth, sourceChannelCount,
         stepCountPerBlock,
         bChannelShuffler,
         pointwise1ChannelCountRate,
@@ -53,6 +57,9 @@ class Base {
 
       this.neuralNetworkArray[ i ] = neuralNetwork;
     }
+
+    let neuralNetwork0 = this.neuralNetworkArray[ 0 ];
+    this.sourceImageHeightWidth = neuralNetwork0.sourceImageHeightWidth;
 
 //!!! ...unfinished...
     this.bWebWorker = bWebWorker;
