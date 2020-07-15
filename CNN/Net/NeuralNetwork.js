@@ -8,7 +8,7 @@ export { Base };
  * @member {string} name
  *   This neural network's name.
  *
- * @member {number[]} totalChannelExpansionFactor
+ * @member {number} totalChannelExpansionFactor
  *   The final output of this neural network will have ( totalChannelExpansionFactor * sourceChannelCount ) channel count.
  *
  * @member {number[]} sourceImageHeightWidth
