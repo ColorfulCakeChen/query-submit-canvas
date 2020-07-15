@@ -5,15 +5,6 @@ export { Base };
 /**
  * There are many neural networks inside. The apply() feeds the same input to the these different neural networks.
  *
- * @member {string} name
- *   This test filters' name.
- *
- * @member {number[]} totalChannelExpansionFactor
- *   The final output of this neural network will have ( totalChannelExpansionFactor * sourceChannelCount ) channel count.
- *
- * @member {number[]} sourceImageHeightWidth
- *   The size (i.e. [ height, width ]) of the source image. When apply() is called, the source image will be extracted from the sourceCanvas
- * and be resized to this size. The neural network receives this resized source image.
  */
 class Base {
 
@@ -30,7 +21,7 @@ class Base {
    * @param {boolean} bWebWorker
    *   If true, neural network will executed inside a web worker.
    *
-   * @see Blocks.init 
+   * @see NeuralNetwork.init 
    */
   init(
     sourceHeight, sourceChannelCount,
@@ -43,6 +34,8 @@ class Base {
   ) {
 
     this.disposeTensors();
+      
+    let bKeepInputTensor = true; // Must keep input tensor from disposing. So that the input can be shared across all neural networks.
 
     this.neuralNetworkArray = new Array( neuralNetworkCount );
     for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
@@ -53,7 +46,7 @@ class Base {
         bChannelShuffler,
         pointwise1ChannelCountRate,
         strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName,
-        neuralNetworkCount
+        bKeepInputTensor
       );
 
       this.neuralNetworkArray[ i ] = neuralNetwork;
@@ -100,24 +93,23 @@ class Base {
 //     sourceImageTensor.dispose();
 
     // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
-    let sourceImageTensor = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
+    let sourceTensor = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
 
     // Resize source image to a default size (height x width) which is used when training the neural network.
-    let scaledSourceImageTensor = tf.image.resizeBilinear( sourceImageTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
-    sourceImageTensor.dispose();
+    let scaledSourceTensor = tf.image.resizeBilinear( sourceTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
+    sourceTensor.dispose();
 
 //!!! ...unfinished...
 // here should convert sourceImageData to tensor, get typed-array (so that the receiver worker could convert to tensor again without re-construct typed-array),
 // transfer it to a web worker. Then, the web worker do the following fromPixels(), ... etc.
 //
-//     scaledSourceImageTensor.data().then( ( typedArray ) => {
-//       let message = [ values: typedArray, shape: scaledSourceImageTensor.shape, dtype: scaledSourceImageTensor ];
+//     scaledSourceTensor.data().then( ( typedArray ) => {
+//       let message = [ values: typedArray, shape: scaledSourceTensor.shape, dtype: scaledSourceTensor ];
 //       worker.postMessage( message, [ message.values.data.buffer ] );
 //     });
 
-//!!! the following will dispose the scaledSourceImageTensor before the above codes get typed-array for another web worker.
+//!!! the following will dispose the scaledSourceTensor before the above codes get typed-array for another web worker.
 
-//???
     let resultArray;
     if ( bReturn )
       resultArray = new Array( this.neuralNetworkArray.length );
@@ -125,7 +117,7 @@ class Base {
     let neuralNetwork;
     for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
       neuralNetwork = this.neuralNetworkArray[ i ];
-      let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceImageTensor );
+      let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor ); // The scaledSourceTensor will NOT be disposed here, so that it can be shared.
 
       if ( bReturn )
         resultArray[ i ] = t;
@@ -133,10 +125,9 @@ class Base {
         t.dispose();
     }
 
-    if ( bReturn )
-      return resultArray;
-    else
-      return null;
+    scaledSourceTensor.dispose();  // After all neural network done, destroy the input tensor.
+
+    return resultArray;
   }
 
 }
