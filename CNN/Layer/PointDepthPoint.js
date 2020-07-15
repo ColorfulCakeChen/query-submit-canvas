@@ -97,7 +97,7 @@ class Base {
     }
 
     // Record whether already keep input tensor.
-    // Only first operation should dispose input or not according to bKeepInputTensor.
+    // Only first operation could or not dispose input according to bKeepInputTensor.
     let bAlreadyKeepInputTensor = false;
 
     this.channelCount_pointwise1Before = channelCount_pointwise1Before;
@@ -112,7 +112,7 @@ class Base {
     if ( this.bPointwise1 ) {
       this.channelCount_pointwise1After_depthwiseBefore = pointwise1ChannelCount;
 
-      this.pointwise1FilterHeightWidth = [ 1, 1 ];
+      //this.pointwise1FilterHeightWidth = [ 1, 1 ];
       this.pointwise1FiltersShape =      [ 1, 1, this.channelCount_pointwise1Before, this.channelCount_pointwise1After_depthwiseBefore ];
       this.pointwise1BiasesShape =       [ 1, 1, this.channelCount_pointwise1After_depthwiseBefore ];
 
@@ -216,7 +216,7 @@ class Base {
     if ( this.bPointwise2 ) {
       this.channelCount_pointwise2After = this.pointwise2ChannelCount;
 
-      this.pointwise2FilterHeightWidth = [ 1, 1 ];
+      //this.pointwise2FilterHeightWidth = [ 1, 1 ];
       this.pointwise2FiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before, this.channelCount_pointwise2After ];
       this.pointwise2BiasesShape =       [ 1, 1, this.channelCount_pointwise2After ];
 
