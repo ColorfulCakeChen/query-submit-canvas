@@ -11,8 +11,8 @@ export { Base };
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has an parameter inputTensor (tf.tensor4d) represents the image which will be processed. It returns a new
  * tf.tensor4d. All other tensors (including inputTensor) will be disposed. In fact, this method calls one of
- * apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput(), apply_and_destroy_or_keep_ChannelShuffle(), apply_and_destroy_or_keep_AddInputToOutput()
- * according to the init()'s parameters.
+ * apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput(), apply_and_destroy_or_keep_ChannelShuffle(),
+ * apply_and_destroy_or_keep_AddInputToOutput() according to the init()'s parameters.
  *
  * @member {number} outputChannelCount
  *   The output channel count of this block's last step.
@@ -316,7 +316,7 @@ class Base {
    *   This method should not be called directly. It should be called by calling apply_and_destroy_or_keep().
    *
    * @param {tf.tensor4d} inputTensor
-   *   The image which will be processed. This inputTensor will be disposed.
+   *   The image which will be processed. This inputTensor may or may not be disposed.
    *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
@@ -330,7 +330,7 @@ class Base {
    *   This method should not be called directly. It should be called by calling apply_and_destroy_or_keep().
    *
    * @param {tf.tensor4d} inputTensor
-   *   The image which will be processed. This inputTensor will be disposed.
+   *   The image which will be processed. This inputTensor may or may not be disposed.
    *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
@@ -386,7 +386,7 @@ class Base {
    *   This method should not be called directly. It should be called by calling apply_and_destroy_or_keep().
    *
    * @param {tf.tensor4d} inputTensor
-   *   The image which will be processed. This inputTensor will be disposed.
+   *   The image which will be processed. This inputTensor may or may not be disposed.
    *
    * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
    */
