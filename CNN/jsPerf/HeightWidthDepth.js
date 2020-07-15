@@ -186,6 +186,7 @@ class Base {
   }
 
   /**
+   * Generate all test cases' performance profile.
    * Testing whether the results of different implementation are the same.
    *
    * @yield {ValueMax.Percentage.Aggregate or Object[]}
@@ -303,7 +304,7 @@ class Base {
   }
 
   /**
-   * Testing whether the results of different implementation are the same.
+   * Collect all test cases' performance profile.
    *
    * @return {Object[]}
    *   Return array of profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs }.
