@@ -78,11 +78,11 @@ class Base {
    * @param {HTMLCanvasElement} sourceCanvas
    *   The canvas which provides image.
    *
-   * @param bReturn
-   *   If true, the result tensor will be returned. Otherwise, all tensors are disposed.
+   * @param {boolean} bReturn
+   *   If true, the result tensors will be returned. Otherwise, the result tensors will be disposed.
    *
-   * @return
-   *   If ( bReturn == true ), return the result tensor. Otheriwse, return null.
+   * @return {tf.tensor4d[]}
+   *   If ( bReturn == true ), return array of the result tensor. Otheriwse, the result tensors will be disposed and null will be returned.
    */
   apply( sourceCanvas, bReturn ) {
 
@@ -103,7 +103,7 @@ class Base {
     let sourceImageTensor = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
 
     // Resize source image to a default size (height x width) which is used when training the neural network.
-    let t = tf.image.resizeBilinear( sourceImageTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
+    let scaledSourceImageTensor = tf.image.resizeBilinear( sourceImageTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
     sourceImageTensor.dispose();
 
 //!!! ...unfinished...
@@ -115,18 +115,29 @@ class Base {
 //       worker.postMessage( message, [ message.values.data.buffer ] );
 //     });
 
-//!!! the following will dispose the scaledSourceImageTensor beffore the above codes get typed-array for another web worker.
+//!!! the following will dispose the scaledSourceImageTensor before the above codes get typed-array for another web worker.
+
+//???
+    let resultArray;
+    if ( bReturn )
+      resultArray = new Array( this.neuralNetworkArray.length );
 
     let neuralNetwork;
     for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
       neuralNetwork = this.neuralNetworkArray[ i ];
-      neuralNetwork.apply_and_destroy( t );
+      let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceImageTensor );
+
+      if ( bReturn )
+        resultArray[ i ] = t;
+      else
+        t.dispose();
     }
 
-    if ( bReturn )
-      return t;
-    else
-      t.dispose();
+    if ( bReturn ) {
+      return resultArray;
+    } else {
+      return null;
+    }
   }
 
 }
