@@ -54,6 +54,9 @@ class Base {
    * @param {string} strActivationName
    *   The activation function name after the convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
    *
+   * @param {boolean} bKeepInputTensor
+   *   If true, apply_and_destroy() will not dispose inputTensor.
+   *
    * @see PointDepthPoint.Base.init()
    */
   init(
@@ -61,7 +64,8 @@ class Base {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, strActivationName
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, strActivationName,
+    bKeepInputTensor
   ) {
 
     this.disposeTensors();
@@ -92,6 +96,7 @@ class Base {
     this.stepCountPerBlock = stepCountPerBlock;
     this.bChannelShuffler = bChannelShuffler;
     this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
+    this.bKeepInputTensor = bKeepInputTensor;
 
     this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
@@ -145,7 +150,7 @@ class Base {
         depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
         pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
         false, // It is not possible to add-input-to-output, because ( depthwisePad == "valid" ).
-        false  // Usually, need not keep input tensor.
+        bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
       );
 
       this.apply_and_destroy = Base.apply_and_destroy_NotChannelShuffle_NotAddInputToOutput;
@@ -198,7 +203,7 @@ class Base {
           depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
           pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
           false, // In MobileNet2, step 0 is not possible, because output channel count is tiwce as input. In ShuffleNetV2, it is not necessary. So, false.
-          false  // Usually, need not keep input tensor.
+          bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
         );
 
         // Step0's branch (ShuffleNetV2)
@@ -212,7 +217,7 @@ class Base {
             depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
             pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
             false, // Since there is channel shuffler, there is not necessary to add input to output.
-            true   // This is the only case that should keep input tensor, because the input tensor need be re-used by the main path of setp 0.
+            true   // This is the only case that must keep input tensor, because the input tensor need be re-used by the main path of setp 0.
           );
 
           this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
@@ -268,7 +273,7 @@ class Base {
             depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
             pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
             this.bAddInputToOutput,
-            false // Usually, need not keep input tensor.
+            false // No matter bKeepInputTensor, all steps (except step 0) should not keep input tensor.
           );
 
           this.steps1After[ i ] = step;
