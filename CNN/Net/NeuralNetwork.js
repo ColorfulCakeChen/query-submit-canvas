@@ -146,7 +146,7 @@ class Base {
   /**
    *
    * @param {tf.tensor4d} inputTensor
-   *   The image which will be processed. This inputTensor will be disposed.
+   *   The image which will be processed. This inputTensor may or may not be disposed.
    *
    * @param {boolean} bReturn
    *   If true, the result tensor will be returned. Otherwise, all tensors are disposed.
@@ -173,7 +173,7 @@ class Base {
     let block;
     for ( let i = 0; i < this.blocks.length; ++i ) {
       block = this.blocks[ i ];
-      t = block.apply_and_destroy( t );
+      t = block.apply_and_destroy_or_keep( t );
     }
 
     if ( bReturn )
