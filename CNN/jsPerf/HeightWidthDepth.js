@@ -66,7 +66,7 @@ class Base {
     this.testCnavas.width = width;
 
     // [ stepCountPerBlock, bChannelShuffler, pointwise1ChannelCountRate, strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0,
-    // bBias, strActivationName, bBiasByConstChannel ]
+    // bBias, strActivationName ]
     this.testNeuralNetworksSpecTable = [
 //      [  0, false, 1, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,     "cos" ],
 //      [  0, false, 1, "Conv", filterHeight_OneStep,                                   200,  true,     "cos" ],
@@ -257,8 +257,8 @@ class Base {
       let t = tensorArray[ 0 ];  // Assume only one neural network.
 
       let originalChannelCount = ( t.shape[ 2 ] / testNeuralNetworks.totalChannelExpansionFactor );
-      if ( testNeuralNetworks.bBiasByConstChannel )
-        originalChannelCount -= 1;  // Minus the extra constant channel.
+//       if ( testNeuralNetworks.bBiasByConstChannel )
+//         originalChannelCount -= 1;  // Minus the extra constant channel.
 
       tf.util.assert(
         tf.util.arraysEqual(
