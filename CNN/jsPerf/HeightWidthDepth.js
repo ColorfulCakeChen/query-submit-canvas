@@ -111,9 +111,7 @@ class Base {
     // Create test filters.
     this.testNeuralNetworksArray = this.testNeuralNetworksSpecTable.map( ( filtersSpec, i ) => {
       let testNeuralNetworks = new NeuralNetworks_ShareInput.Base();
-//!!! Since source is canvas, the channel count should be the same as the canvas.
-//      testNeuralNetworks.init( height, depth, targetHeight, ...filtersSpec );
-      testNeuralNetworks.init( height, canvasChannelCount, ...filtersSpec );
+      testNeuralNetworks.init( height, width, canvasChannelCount, ...filtersSpec );
       return testNeuralNetworks;
     });
 
