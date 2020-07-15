@@ -6,6 +6,9 @@ export { Base };
  * There are many neural networks inside. The apply() feeds the same input to the these different neural networks.
  *
  *
+ * @member {number} totalChannelExpansionFactor
+ *   The final output of one neural network will have ( totalChannelExpansionFactor * sourceChannelCount ) channel count.
+ *
  * @member {number[]} sourceImageHeightWidth
  *   The size (i.e. [ height, width ]) of the source image. When apply() is called, the source image will be extracted from the sourceCanvas
  * and be resized to this size. Every neural network receives this resized source image.
@@ -59,6 +62,7 @@ class Base {
     }
 
     let neuralNetwork0 = this.neuralNetworkArray[ 0 ];
+    this.totalChannelExpansionFactor = neuralNetwork0.totalChannelExpansionFactor;
     this.sourceImageHeightWidth = neuralNetwork0.sourceImageHeightWidth;
 
 //!!! ...unfinished...
