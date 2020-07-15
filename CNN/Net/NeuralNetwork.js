@@ -27,6 +27,9 @@ class Base {
    *   If true, arrange channel and filter with constant value to achieve bias. This will take more memory (for pre-make filters)
    * but may improve performance (because tf.add() is removed).
    *
+   * @param {boolean} bKeepInputTensor
+   *   If true, apply_and_destroy() will not dispose inputTensor.
+   *
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
@@ -34,7 +37,8 @@ class Base {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName,
+    bKeepInputTensor
   ) {
 
     this.disposeTensors();
@@ -43,8 +47,9 @@ class Base {
     this.stepCountPerBlock = stepCountPerBlock;
     this.bChannelShuffler = bChannelShuffler;
     this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
+    this.bKeepInputTensor = bKeepInputTensor;
 
-    let targetHeight = 1; // The final output always has height x width = 1 x 1 (i.e. only one pixel per channel)
+    let targetHeight = 1; // The final output always has ( height x width ) = ( 1 x 1 ), i.e. only one pixel per channel.
 
     let differenceHeight = sourceHeight - targetHeight;
     let filterWidth = depthwiseFilterHeight;
@@ -81,6 +86,8 @@ class Base {
     let nextBlockInputChannelCount = sourceChannelCount;
     let nextBlockDepthwiseChannelMultiplier = depthwiseChannelMultiplierBlock0Step0; // Only block 0 can have ( depthwise channel multiplier > 1 ).
 
+    let nextKeepInputTensor = bKeepInputTensor; // Only step 0 may or may not keep the input tensor according to caller's necessary.
+
     this.blocks = new Array( this.blockCount );
     for ( let i = 0; i < this.blockCount; ++i )
     {
@@ -90,12 +97,14 @@ class Base {
         stepCountPerBlock,
         bChannelShuffler,
         pointwise1ChannelCountRate,
-        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, bBias, strActivationName
+        strAvgMaxConv, depthwiseFilterHeight, nextBlockDepthwiseChannelMultiplier, bBias, strActivationName,
+        nextKeepInputTensor;
       );
 
       this.blocks[ i ] = block;
       nextBlockInputChannelCount = block.outputChannelCount; // Using previous block's output channel count as next block's input channel count.
       nextBlockDepthwiseChannelMultiplier = 1;               // Except block 0, all other blocks' depthwise channel multiplier should be 1.
+      nextKeepInputTensor = false;                           // All blocks (except block 0) should not keep (and should dispose) the input tensor.
     }
 
     let block0 = this.blocks[ 0 ];
@@ -118,6 +127,7 @@ class Base {
       + `__Block_${this.blockCount}`
       + `__Step_${stepCountPerBlock}`
       + `${ ( bChannelShuffler ) ? "__Shuffle" : ( ( stepCountPerBlock > 0 ) ? "__AddInput" : "" ) }`
+      + `${ ( bKeepInputTensor ) ? "__KeepInput" : "" }`
     ;
 
     this.sourceImageHeightWidth = [ block0.sourceHeight, block0.sourceWidth ];
