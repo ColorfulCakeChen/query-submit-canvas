@@ -28,7 +28,7 @@ class Base {
    * but may improve performance (because tf.add() is removed).
    *
    * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy() will not dispose inputTensor.
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
    *
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
@@ -155,7 +155,7 @@ class Base {
    *   If ( bReturn == true ), return the result (new) tensor. All other tensors (including inputTensor) were disposed. If ( bReturn == false ),
    * return null.
    */
-  apply( inputTensor, bReturn ) {
+  apply_and_destroy_or_keep( inputTensor, bReturn ) {
 
     let t = inputTensor;
 
