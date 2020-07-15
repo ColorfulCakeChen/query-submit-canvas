@@ -126,7 +126,7 @@ class Base {
       + `__Block_${this.blockCount}`
       + `__Step_${stepCountPerBlock}`
       + `${ ( bChannelShuffler ) ? "__Shuffle" : ( ( stepCountPerBlock > 0 ) ? "__AddInput" : "" ) }`
-      + `${ ( bKeepInputTensor ) ? "__KeepInput" : "" }`
+      //+ `${ ( bKeepInputTensor ) ? "__KeepInput" : "" }`
     ;
 
     this.sourceImageHeightWidth = [ block0.sourceHeight, block0.sourceWidth ];
