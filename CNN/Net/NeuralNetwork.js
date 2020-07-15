@@ -149,7 +149,7 @@ class Base {
    *   The image which will be processed. This inputTensor may or may not be disposed.
    *
    * @param {boolean} bReturn
-   *   If true, the result tensor will be returned. Otherwise, all tensors are disposed.
+   *   If true, the result tensor will be returned. Otherwise, the result tensor will be disposed.
    *
    * @return {tf.tensor4d}
    *   If ( bReturn == true ), return the result (new) tensor. All other tensors (including inputTensor) were disposed. If ( bReturn == false ),
