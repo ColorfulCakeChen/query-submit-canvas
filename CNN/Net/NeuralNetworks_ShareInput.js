@@ -124,20 +124,21 @@ class Base {
 //!!! the following will dispose the scaledSourceTensor before the above codes get typed-array for another web worker.
 
     let resultArray;
-    if ( bReturn )
-      resultArray = new Array( this.neuralNetworkArray.length );
-
     let neuralNetwork;
-    for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
-      neuralNetwork = this.neuralNetworkArray[ i ];
 
-      // The scaledSourceTensor will NOT be disposed here, so that it can be shared.
-      let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, bReturn );
-
-      if ( bReturn )
+    if ( bReturn ) {
+      resultArray = new Array( this.neuralNetworkArray.length );
+      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
+        neuralNetwork = this.neuralNetworkArray[ i ];
+        let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, bReturn ); // The input tensor will NOT be disposed here, so that it can be shared.
         resultArray[ i ] = t;
-      else
-        t.dispose();
+      }
+    } else {
+      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
+        neuralNetwork = this.neuralNetworkArray[ i ];
+        neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, bReturn ); // The input tensor will NOT be disposed here, so that it can be shared.
+        // Since ( bReturn == false ), the neural network will not have returned value. So there is not necessary to handle it.
+      }
     }
 
     scaledSourceTensor.dispose();  // After all neural network done, destroy the input tensor.
