@@ -30,7 +30,7 @@ class Base {
    * @see ShuffleNetV2_MobileNetV2_Block.init 
    */
   init(
-    sourceHeight, sourceChannelCount, // targetHeight,
+    sourceHeight, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
@@ -86,7 +86,7 @@ class Base {
     {
       let block = new ShuffleNetV2_MobileNetV2_Block.Base();
       block.init(
-        sourceHeight, nextBlockInputChannelCount, targetHeight,
+        sourceHeight, nextBlockInputChannelCount,
         stepCountPerBlock,
         bChannelShuffler,
         pointwise1ChannelCountRate,
