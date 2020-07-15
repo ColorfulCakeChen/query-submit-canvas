@@ -1,5 +1,5 @@
 import * as PartTime from "../PartTime.js";
-import * as Blocks from "../Net/NeuralNetworks_ShareInput.js";
+import * as NeuralNetworks_ShareInput from "../Net/NeuralNetworks_ShareInput.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
 export { Base };
