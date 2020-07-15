@@ -5,6 +5,21 @@ export { Base };
 /**
  * A neural network composes of multiple blocks.
  *
+ * A special recommended configuration is 3x3 ShuffleNetV2 without (explicit) bias:
+ *   - bChannelShuffler: true
+ *   - pointwise1ChannelCountRate: 1
+ *   - strAvgMaxConv: "Conv"
+ *   - depthwiseFilterHeight: 3
+ *   - depthwiseChannelMultiplierBlock0Step0: 1
+ *   - bBias: false
+ *   - strActivationName: "cos"
+ *
+ * The cosine activation function can achieve impilcit bias. This is because depthwise and pointwise convolution can easily achieve zero
+ * and ( cos( 0 ) == 1 ). A constant value (e.g. 1) becomes an bias of the next convolution. So there is not necessary to use explicit bias
+ * which has worse performance (than without it).
+ *
+ *
+ *
  * @member {string} structure
  *   This neural network's structure.
  *
@@ -19,12 +34,6 @@ class Base {
   /**
    * @param {number} depthwiseChannelMultiplierBlock0Step0
    *   The depthwise convolution of the first step (Step 0) of the first block (Block 0) will expand input channel by this factor.
-   *
-//!!! should use ( strActivationName == "cos" ) and ( bBias == false ) to achieve bias-by-naturally.
-
-   * @param {boolean} bBiasByConstChannel
-   *   If true, arrange channel and filter with constant value to achieve bias. This will take more memory (for pre-make filters)
-   * but may improve performance (because tf.add() is removed).
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
