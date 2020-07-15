@@ -195,6 +195,9 @@ class Base {
   async * profilesGenerator() {
     let resultProfiles = [];
 
+    // First pass is for letting tensorflow's kernel to compile the codes.
+    // Second pass is for performance profiling.
+
     if ( !this.dataTensor3d )
       this.dataTensor3d = tf.browser.fromPixels( this.testCnavas, this.canvasChannelCount );
 
@@ -251,21 +254,14 @@ class Base {
     for ( let i = 0; i < this.testNeuralNetworksArray.length; ++i ) {
       let testNeuralNetworks = this.testNeuralNetworksArray[ i ];
 
-//!!! Using canvas as source.
-//      let t = testNeuralNetworks.apply( this.dataTensor3d, true );
       let tensorArray = testNeuralNetworks.apply( this.testCnavas, true );
       let t = tensorArray[ 0 ];  // Assume only one neural network.
 
-      let originalChannelCount = ( t.shape[ 2 ] / testNeuralNetworks.totalChannelExpansionFactor );
-//       if ( testNeuralNetworks.bBiasByConstChannel )
-//         originalChannelCount -= 1;  // Minus the extra constant channel.
+      let originalChannelCount = ( t.shape[ 2 ] / testNeuralNetworks.neuralNetworkArray[ 0 ].totalChannelExpansionFactor );
 
       tf.util.assert(
         tf.util.arraysEqual(
-//!!! Now, output channel is the same as input channel count.
-//          [ t.shape[ 0 ], t.shape[ 1 ], ( t.shape[ 2 ] / testNeuralNetworks.depthwiseChannelMultiplierBlock0Step0 ) ], tensor_ResizeBilinear.shape ),
           [ t.shape[ 0 ], t.shape[ 1 ], originalChannelCount ], tensor_ResizeBilinear.shape ),
-//          [ t.shape[ 0 ], t.shape[ 1 ], t.shape[ 2 ] ], tensor_ResizeBilinear.shape ),
         `Shape ${testNeuralNetworks.name}() != ResizeBilinear()`);
 
       t.dispose();
@@ -293,7 +289,7 @@ class Base {
       // Note: Do not return result tensor so that need not to dispose them.
       resultProfiles.push(
 //        await this.logProfile( testNeuralNetworks.name, testNeuralNetworks.apply.bind( testNeuralNetworks, this.dataTensor3d, false ) ) );
-        await this.logProfile( testNeuralNetworks.name, testNeuralNetworks.apply.bind( testNeuralNetworks, this.testCnavas, false ) ) );
+        await this.logProfile( testNeuralNetworks.neuralNetworkArray[ 0 ].name, testNeuralNetworks.apply.bind( testNeuralNetworks, this.testCnavas, false ) ) );
 
       yield* this.progressAdvanceYield();
     }
