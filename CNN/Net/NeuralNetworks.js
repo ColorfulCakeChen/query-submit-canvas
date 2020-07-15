@@ -82,7 +82,7 @@ class Base {
    *   If true, the result tensors will be returned. Otherwise, the result tensors will be disposed.
    *
    * @return {tf.tensor4d[]}
-   *   If ( bReturn == true ), return array of the result tensor. Otheriwse, the result tensors will be disposed and null will be returned.
+   *   If ( bReturn == true ), return array of the result tensor. Otheriwse, the result tensors will be disposed and nothing will be returned.
    */
   apply( sourceCanvas, bReturn ) {
 
@@ -133,11 +133,10 @@ class Base {
         t.dispose();
     }
 
-    if ( bReturn ) {
+    if ( bReturn )
       return resultArray;
-    } else {
+    else
       return null;
-    }
   }
 
 }
