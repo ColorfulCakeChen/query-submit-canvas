@@ -180,16 +180,16 @@ class Base {
           depthwiseActivationName = null;                    // In ShuffleNetV2, depthwise convolution does not have activation function.
 
         } else {                                             // MobileNetV1, or MobileNetV2.
-          pointwise2ChannelCount = sourceChannelCount * 2;   // The channel count of step 0 of MobileNetV2 output is twice as input.
+          pointwise2ChannelCount = sourceChannelCount * 2;   // The output channel count of step 0 of MobileNetV2 is twice as input.
 
           // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
           pointwise2Bias = false;
           pointwise2ActivationName = null;                   // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
         }
 
-        // If ( pointwise1ChannelCount < pointwise2ChannelCount ), like ResNet.
-        // If ( pointwise1ChannelCount == pointwise2ChannelCount ), like MobileNetV1 or ShufffleNetV2.
-        // If ( pointwise1ChannelCount > pointwise2ChannelCount ), like MobileNetV2.
+        // If ( pointwise1ChannelCount < pointwise2ChannelCount ), similiar to ResNet.
+        // If ( pointwise1ChannelCount == pointwise2ChannelCount ), similiar to MobileNetV1 or ShufffleNetV2.
+        // If ( pointwise1ChannelCount > pointwise2ChannelCount ), similiar to MobileNetV2.
         pointwise1ChannelCount = pointwise2ChannelCount * pointwise1ChannelCountRate;
 
         step0 = this.step0 = new PointDepthPoint.Base();
