@@ -3,10 +3,10 @@ import * as ShuffleNetV2_MobileNetV2_Block from "../Layer/ShuffleNetV2_MobileNet
 export { Base };
 
 /**
- * Testing Filters of multiple blocks.
+ * A neural network composes of multiple blocks.
  *
  * @member {string} name
- *   This test filters' name.
+ *   This neural network's name.
  *
  * @member {number[]} totalChannelExpansionFactor
  *   The final output of this neural network will have ( totalChannelExpansionFactor * sourceChannelCount ) channel count.
@@ -132,7 +132,8 @@ class Base {
 
   disposeTensors() {
     if ( this.blocks ) {
-      for ( let block of this.blocks ) {
+      for ( let i = 0; i < this.blocks.length; ++i ) {
+        let block = this.blocks[ i ];
         block.disposeTensors();
       }
       this.blocks = null;
@@ -140,45 +141,31 @@ class Base {
   }
 
   /**
-   * @param {HTMLCanvasElement} sourceCanvas
-   *   The canvas which provides image.
+   *
+   * @param {tf.tensor4d} inputTensor
+   *   The image which will be processed. This inputTensor will be disposed.
    *
    * @param bReturn
    *   If true, the result tensor will be returned. Otherwise, all tensors are disposed.
    *
-   * @return
-   *   If ( bReturn == true ), return the result tensor. Otheriwse, return null.
+   * @return {tf.tensor4d}
+   *   If ( bReturn == true ), return the result (new) tensor. All other tensors (including inputTensor) were disposed. If ( bReturn == false ),
+   * return null.
    */
-  apply( sourceCanvas, bReturn ) {
+  apply( inputTensor, bReturn ) {
 
-    let sourceImageChannelCount = 4; // tf.browser.fromPixels() handles RGBA 4 channels faster than RGB 3 channels.
-
-//!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
-//     let ctx = sourceCanvas.getContext( '2d' );
-//     let sourceImageData = ctx.getImageData( 0, 0, sourceCanvas.width, sourceCanvas.height );
-//
-//     // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
-//     let sourceImageTensor = tf.browser.fromPixels( sourceImageData, sourceImageChannelCount );
-//
-//     // Resize source image to a default size (height x width) which is used when training the neural network.
-//     let t = tf.image.resizeBilinear( sourceImageTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
-//     sourceImageTensor.dispose();
-
-    // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
-    let sourceImageTensor = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
-
-    // Resize source image to a default size (height x width) which is used when training the neural network.
-    let t = tf.image.resizeBilinear( sourceImageTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
-    sourceImageTensor.dispose();
+    let t = inputTensor;
 
 //!!! ...unfinished...
 // here should convert sourceImageData to tensor, get typed-array (so that the receiver worker could convert to tensor again without re-construct typed-array),
 // transfer it to a web worker. Then, the web worker do the following fromPixels(), ... etc.
 //
-//     sourceImageTensor.data().then( ( typedArray ) => {
-//       let message = [ values: typedArray, shape: sourceImageTensor.shape, dtype: sourceImageTensor ];
+//     scaledSourceImageTensor.data().then( ( typedArray ) => {
+//       let message = [ values: typedArray, shape: scaledSourceImageTensor.shape, dtype: scaledSourceImageTensor ];
 //       worker.postMessage( message, [ message.values.data.buffer ] );
 //     });
+
+//!!! the following will dispose the scaledSourceImageTensor beffore the above codes get typed-array for another web worker.
 
     let block;
     for ( let i = 0; i < this.blocks.length; ++i ) {
@@ -193,28 +180,3 @@ class Base {
   }
 
 }
-
-/**
- * There are two neural network inside. The apply() feeds the same input to the two different neural networks
- *
- */
-class Twins {
-
-  disposeTensors() {
-  }
-
-  /**
-   * @param {HTMLCanvasElement} sourceCanvas
-   *   The canvas which provides image.
-   *
-   * @param bReturn
-   *   If true, the result tensor will be returned. Otherwise, all tensors are disposed.
-   *
-   * @return {tf.tensor[]}
-   *   If ( bReturn == true ), return the result array of two tensors. Otheriwse, return null.
-   */
-  apply( sourceCanvas, bReturn ) {
-  }
-
-}
-
