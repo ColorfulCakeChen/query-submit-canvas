@@ -34,7 +34,9 @@ class Base {
   ) {
 
     this.disposeTensors();
-      
+
+    neuralNetworkCount = neuralNetworkCount | 1; // At least, one neural network.
+
     let bKeepInputTensor = true; // Must keep input tensor from disposing. So that the input can be shared across all neural networks.
 
     this.neuralNetworkArray = new Array( neuralNetworkCount );
