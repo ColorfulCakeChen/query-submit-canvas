@@ -3,7 +3,8 @@
  *
  */
 
-//import * as Blocks from "./Blocks.js";
+import * as NeuralNetwork from "./NeuralNetwork.js";
+
 export { Proxy };
 
 /**
@@ -23,6 +24,9 @@ class Proxy {
 
   /**
    *
+   * @param {NeuralNetwork.Config} neuralNetworkConfig
+   *   The configuration of the neural network which will be created by this web worker.
+   *
    * @param {number} totalWorkerCount
    *   There are how many workers should be created in chain.
    *
@@ -32,10 +36,11 @@ class Proxy {
    * @param {number} workerId
    *   This worker's id. The id of the first worker should be 0. If ( workerId < ( totalWorkerCount - 1 ) ), the next new worker will be created.
    */
-  init_and_create_next( totalWorkerCount, weightsURL, workerId ) {
+  init_and_create_next( neuralNetworkConfig, totalWorkerCount, weightsURL, workerId ) {
 //??? in cascade ?
     this.disposeWorkers();
 
+    this.neuralNetworkConfig = neuralNetworkConfig;
     this.totalWorkerCount = totalWorkerCount;
     this.weightsURL = weightsURL;
     this.workerId = workerId || 0;
@@ -56,7 +61,13 @@ class Proxy {
       return;  // Done. All workers in the cascade chain are created.
 
     // Create next worker in the cascade chain.
-    let message = { command: "createNextWorker", totalWorkerCount: totalWorkerCount, weightsURL: weightsURL, workerId: ( workerId + 1 ) };
+    let message = {
+      command: "createNextWorker",
+      neuralNetworkConfig: neuralNetworkConfig,
+      totalWorkerCount: totalWorkerCount,
+      weightsURL: weightsURL,
+      workerId: ( workerId + 1 )
+    };
     this.worker.postMessage( message );
   }
 
@@ -87,8 +98,8 @@ if ( globalThis.document ) {
     let message = e.data;
 
     switch ( message.command ) {
-      case "createNextWorker": //{ command: "createNextWorker", totalWorkerCount, weightsURL, workerId };
-        globalThis.workerProxy.init_and_create_next( message.remainedWorkerCount, message.weightsURL, message.workerId );
+      case "createNextWorker": //{ command: "createNextWorker", neuralNetworkConfig, totalWorkerCount, weightsURL, workerId };
+        globalThis.workerProxy.init_and_create_next( message.neuralNetworkConfig, message.remainedWorkerCount, message.weightsURL, message.workerId );
         break;
 
       case "disposeWorker": //{ command: "disposeWorker" };
