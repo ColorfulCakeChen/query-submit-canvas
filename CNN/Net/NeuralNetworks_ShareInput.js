@@ -77,6 +77,10 @@ class Base {
       }
       this.neuralNetworkArray = null;
     }
+
+    if ( this.workerProxy ) {
+      this.workerProxy.disposeWorkers();
+    }
   }
 
   /**
