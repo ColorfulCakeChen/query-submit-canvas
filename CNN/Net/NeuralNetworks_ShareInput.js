@@ -81,13 +81,11 @@ class Base {
    * @param {HTMLCanvasElement} sourceCanvas
    *   The canvas which provides image.
    *
-   * @param {boolean} bReturn
-   *   If true, the result tensors will be returned. Otherwise, the result tensors will be disposed.
-   *
-   * @return {tf.tensor4d[]}
-   *   If ( bReturn == true ), return array of the result tensor. Otheriwse, the result tensors will be disposed and nothing will be returned.
+   * @param {tf.tensor3d[]} resultArray
+   *   If ( resultArray != null ), all result (new) tensors will be return inside this array. If ( resultArray == null ), all result tensors
+   * will be disposed and nothing will be returned. No matter in which case, all other intermediate tensors were disposed.
    */
-  apply( sourceCanvas, bReturn ) {
+  apply( sourceCanvas, resultArray ) {
 
     let sourceImageChannelCount = 4; // tf.browser.fromPixels() handles RGBA 4 channels faster than RGB 3 channels.
 
@@ -120,20 +118,21 @@ class Base {
 
 //!!! the following will dispose the scaledSourceTensor before the above codes get typed-array for another web worker.
 
-    let resultArray;
+    // No matter whether resultArray is null, the input tensor will NOT be disposed by any neural network (so that can be shared between them).
+
     let neuralNetwork;
 
-    if ( bReturn ) {
-      resultArray = new Array( this.neuralNetworkArray.length );
+    if ( resultArray ) {
+      resultArray.length = this.neuralNetworkArray.length; // Re-allocate array.
       for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
         neuralNetwork = this.neuralNetworkArray[ i ];
-        let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, bReturn ); // The input tensor will NOT be disposed here, so that it can be shared.
+        let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, true );
         resultArray[ i ] = t;
       }
     } else {
       for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
         neuralNetwork = this.neuralNetworkArray[ i ];
-        neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, bReturn ); // The input tensor will NOT be disposed here, so that it can be shared.
+        neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, false ); // The input tensor will NOT be disposed here, so that it can be shared.
         // Since ( bReturn == false ), the neural network will not have returned value. So there is not necessary to handle it.
       }
     }
