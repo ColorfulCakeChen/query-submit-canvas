@@ -111,7 +111,8 @@ class Base {
     // Create test filters.
     this.testNeuralNetworksArray = this.testNeuralNetworksSpecTable.map( ( filtersSpec, i ) => {
       let testNeuralNetworks = new NeuralNetworks_ShareInput.Base();
-      testNeuralNetworks.init( height, width, canvasChannelCount, ...filtersSpec );
+      let config = new NeuralNetworks_ShareInput.Config( height, width, canvasChannelCount, ...filtersSpec );
+      testNeuralNetworks.init( config );
       return testNeuralNetworks;
     });
 
