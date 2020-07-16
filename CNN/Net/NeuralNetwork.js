@@ -153,15 +153,16 @@ class Base {
 
   /**
    *
-   * @param {tf.tensor4d} inputTensor
-   *   The image which will be processed. This inputTensor may or may not be disposed according to the init()'s bKeepInputTensor.
+   * @param {tf.tensor3d} inputTensor
+   *   The image which will be processed. This inputTensor may or may not be disposed according to init()'s bKeepInputTensor.
    * Its size should be this.sourceImageHeightWidth.
    *
    * @param {boolean} bReturn
    *   If true, the result tensor will be returned. Otherwise, the result tensor will be disposed.
    *
-   * @return {tf.tensor4d}
-   *   If ( bReturn == true ), return the result (new) tensor. Otheriwse, the result tensor will be disposed and nothing will be returned.
+   * @return {tf.tensor3d}
+   *   If ( bReturn == true ), return the result (new) tensor. If ( bReturn == false ), the result tensor will be disposed and nothing
+   * will be returned. No matter in which case, all other intermediate tensors were disposed.
    */
   apply_and_destroy_or_keep( inputTensor, bReturn ) {
     let t = inputTensor;
