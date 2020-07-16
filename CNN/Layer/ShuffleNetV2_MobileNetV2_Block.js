@@ -9,8 +9,8 @@ export { Base };
  *
  *
  * @member {function} apply_and_destroy_or_keep
- *   This is a method. It has an parameter inputTensor (tf.tensor4d) represents the image which will be processed. It returns a new
- * tf.tensor4d. All other tensors (including inputTensor) will be disposed. In fact, this method calls one of
+ *   This is a method. It has an parameter inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed.
+ * It returns a new tf.tensor3d. All other tensors (including inputTensor) will be disposed. In fact, this method calls one of
  * apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput(), apply_and_destroy_or_keep_ChannelShuffle(),
  * apply_and_destroy_or_keep_AddInputToOutput() according to the init()'s parameters.
  *
@@ -315,10 +315,10 @@ class Base {
    * @param {Block} this
    *   This method should not be called directly. It should be called by calling apply_and_destroy_or_keep().
    *
-   * @param {tf.tensor4d} inputTensor
-   *   The image which will be processed. This inputTensor may or may not be disposed.
+   * @param {tf.tensor3d} inputTensor
+   *   The image which will be processed. This inputTensor may or may not be disposed according to init()'s bKeepInputTensor.
    *
-   * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
+   * @return {tf.tensor3d} Return a new tensor. All other intermediate tensors were disposed.
    */
   static apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput( inputTensor ) {
     return this.step0.apply_and_destroy_or_keep( inputTensor );
@@ -329,10 +329,10 @@ class Base {
    * @param {Block} this
    *   This method should not be called directly. It should be called by calling apply_and_destroy_or_keep().
    *
-   * @param {tf.tensor4d} inputTensor
-   *   The image which will be processed. This inputTensor may or may not be disposed.
+   * @param {tf.tensor3d} inputTensor
+   *   The image which will be processed. This inputTensor may or may not be disposed according to init()'s bKeepInputTensor.
    *
-   * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
+   * @return {tf.tensor3d} Return a new tensor. All other intermediate tensors were disposed.
    */
   static apply_and_destroy_or_keep_ChannelShuffle( inputTensor ) {
 
@@ -385,10 +385,10 @@ class Base {
    * @param {Block} this
    *   This method should not be called directly. It should be called by calling apply_and_destroy_or_keep().
    *
-   * @param {tf.tensor4d} inputTensor
-   *   The image which will be processed. This inputTensor may or may not be disposed.
+   * @param {tf.tensor3d} inputTensor
+   *   The image which will be processed. This inputTensor may or may not be disposed according to init()'s bKeepInputTensor.
    *
-   * @return {tf.tensor4d} Return a new tensor. All other tensors (including inputTensor) were disposed.
+   * @return {tf.tensor3d} Return a new tensor. All other intermediate tensors were disposed.
    */
   static apply_and_destroy_or_keep_AddInputToOutput( inputTensor ) {
     let t, tNew;
