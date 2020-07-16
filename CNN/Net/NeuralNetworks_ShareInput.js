@@ -1,6 +1,6 @@
 import * as NeuralNetwork from "./NeuralNetwork.js";
 
-export { Base };
+export { NeuralNetwork.Config as Config, Base };
 
 /**
  * There are many neural networks inside. The apply() feeds the same input to the these different neural networks.
