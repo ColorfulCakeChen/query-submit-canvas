@@ -22,8 +22,8 @@ export { Base };
  * If ( pointwise2ChannelCount <= 0 ), it equals channelCount_depthwiseAfter_pointwise2Before.
  *
  * @member {function} apply_and_destroy_or_keep
- *   This is a method. It has an parameter inputTensor (tf.tensor4d) represents the image which will be processed. It returns a new
- * tf.tensor4d. All other tensors (including inputTensor) will be disposed. In fact, this method calls one of
+ *   This is a method. It has an parameter inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed.
+ * It returns a new tf.tensor3d. All other tensors (including inputTensor) will be disposed. In fact, this method calls one of
  * apply_and_destroy_AddInputToOutput(), apply_and_keep_AddInputToOutput(), apply_and_destroy_or_keep_NoSkipConnection() according
  * to the init()'s parameters.
  */
