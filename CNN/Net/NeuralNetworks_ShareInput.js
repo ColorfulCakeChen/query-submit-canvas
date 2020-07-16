@@ -13,14 +13,11 @@ export { Base };
 class Base {
 
   /**
+   * @param {NeuralNetwork.Config} config
+   *   The configuration of this neural network.
+   *
    * @param {number} neuralNetworkCount
    *   Create how many neural networks.
-   *
-//!!! should use ( strActivationName == "cos" ) and ( bBias == false ) to achieve bias-by-naturally.
-
-   * @param {boolean} bBiasByConstChannel
-   *   If true, arrange channel and filter with constant value to achieve bias. This will take more memory (for pre-make filters)
-   * but may improve performance (because tf.add() is removed).
    *
    * @param {boolean} bWebWorker
    *   If true, neural network will executed inside a web worker.
@@ -28,16 +25,14 @@ class Base {
    * @see NeuralNetwork.init 
    */
   init(
-    sourceHeight, sourceWidth, sourceChannelCount,
-    stepCountPerBlock,
-    bChannelShuffler,
-    pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName,
+    config,
     neuralNetworkCount,
     bWebWorker
   ) {
 
     this.disposeTensors();
+
+    this.config = config;
 
     neuralNetworkCount = neuralNetworkCount | 1; // At least, one neural network.
 
@@ -47,11 +42,7 @@ class Base {
     for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
       let neuralNetwork = new NeuralNetwork.Base();
       neuralNetwork.init(
-        sourceHeight, sourceWidth, sourceChannelCount,
-        stepCountPerBlock,
-        bChannelShuffler,
-        pointwise1ChannelCountRate,
-        strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName,
+        config,
         bKeepInputTensor
       );
 
