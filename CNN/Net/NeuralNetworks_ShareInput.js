@@ -82,10 +82,82 @@ class Base {
    *   The canvas which provides image.
    *
    * @param {tf.tensor3d[]} resultArray
-   *   If ( resultArray != null ), all result (new) tensors will be return inside this array. If ( resultArray == null ), all result tensors
-   * will be disposed and nothing will be returned. No matter in which case, all other intermediate tensors were disposed.
+   *   If ( resultArray != null ), all result (new) tensors will be filled into this array. This could reduce the array memory
+   * re-allocation and improve performance. If ( resultArray == null ), all result tensors will be disposed and nothing will be
+   * returned. No matter in which case, all other intermediate tensors were disposed.
+   *
+   * @return {tf.tensor3d[]} Return the resultArray.
    */
-  apply( sourceCanvas, resultArray ) {
+  apply_sync( sourceCanvas, resultArray ) {
+
+    let sourceImageChannelCount = 4; // tf.browser.fromPixels() handles RGBA 4 channels faster than RGB 3 channels.
+
+//!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
+//     let ctx = sourceCanvas.getContext( '2d' );
+//     let sourceImageData = ctx.getImageData( 0, 0, sourceCanvas.width, sourceCanvas.height );
+//
+//     // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
+//     let sourceImageTensor = tf.browser.fromPixels( sourceImageData, sourceImageChannelCount );
+//
+//     // Resize source image to a default size (height x width) which is used when training the neural network.
+//     let t = tf.image.resizeBilinear( sourceImageTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
+//     sourceImageTensor.dispose();
+
+    // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
+    let sourceTensor = tf.browser.fromPixels( sourceCanvas, sourceImageChannelCount );
+
+    // Resize source image to a default size (height x width) which is used when training the neural network.
+    let scaledSourceTensor = tf.image.resizeBilinear( sourceTensor, this.sourceImageHeightWidth, true ); // ( alignCorners = true ) for visual image resizing.
+    sourceTensor.dispose();
+
+//!!! ...unfinished...
+// here should convert sourceImageData to tensor, get typed-array (so that the receiver worker could convert to tensor again without re-construct typed-array),
+// transfer it to a web worker. Then, the web worker do the following fromPixels(), ... etc.
+//
+//     scaledSourceTensor.data().then( ( typedArray ) => {
+//       let message = [ values: typedArray, shape: scaledSourceTensor.shape, dtype: scaledSourceTensor ];
+//       worker.postMessage( message, [ message.values.data.buffer ] );
+//     });
+
+//!!! the following will dispose the scaledSourceTensor before the above codes get typed-array for another web worker.
+
+    // No matter whether resultArray is null, the input tensor will NOT be disposed by any neural network (so that can be shared between them).
+
+    let neuralNetwork;
+
+    if ( resultArray ) {
+      resultArray.length = this.neuralNetworkArray.length; // Re-allocate array.
+      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
+        neuralNetwork = this.neuralNetworkArray[ i ];
+        let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, true );
+        resultArray[ i ] = t;
+      }
+    } else {
+      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
+        neuralNetwork = this.neuralNetworkArray[ i ];
+        neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, false ); // The input tensor will NOT be disposed here, so that it can be shared.
+        // Since ( bReturn == false ), the neural network will not have returned value. So there is not necessary to handle it.
+      }
+    }
+
+    scaledSourceTensor.dispose();  // After all neural network done, destroy the input tensor.
+
+    return resultArray;
+  }
+
+
+  /**
+   * @param {HTMLCanvasElement} sourceCanvas
+   *   The canvas which provides image.
+   *
+   * @param {tf.tensor3d[]} resultArray
+   *   If ( resultArray != null ), all result (new) tensors will be filled into this array. This could reduce the array memory
+   * re-allocation and improve performance. If ( resultArray == null ), all result tensors will be disposed and nothing will be
+   * returned. No matter in which case, all other intermediate tensors were disposed.
+   *
+   * @return {Promise} Return a promise which resolves with the resultArray.
+   */
+  async apply_async( sourceCanvas, resultArray ) {
 
     let sourceImageChannelCount = 4; // tf.browser.fromPixels() handles RGBA 4 channels faster than RGB 3 channels.
 
