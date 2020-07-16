@@ -1,4 +1,5 @@
 import * as NeuralNetwork from "./NeuralNetwork.js";
+import * as NeuralWorker from "./NeuralWorker.js";
 
 export { Config } from "./NeuralNetwork.js";
 export { Base };
@@ -14,7 +15,7 @@ export { Base };
 class Base {
 
   /**
-   * @param {NeuralNetwork.Config} config
+   * @param {NeuralNetwork.Config} neuralNetworkConfig
    *   The configuration of this neural network.
    *
    * @param {number} neuralNetworkCount
@@ -26,36 +27,45 @@ class Base {
    * @see NeuralNetwork.init 
    */
   init(
-    config,
+    neuralNetworkConfig,
     neuralNetworkCount,
     bWebWorker
   ) {
+    neuralNetworkCount = neuralNetworkCount | 1; // At least, one neural network.
 
     this.disposeTensors();
 
-    this.config = config;
-
-    neuralNetworkCount = neuralNetworkCount | 1; // At least, one neural network.
-
-    let bKeepInputTensor = true; // Must keep input tensor from disposing. So that the input can be shared across all neural networks.
-
-    this.neuralNetworkArray = new Array( neuralNetworkCount );
-    for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
-      let neuralNetwork = new NeuralNetwork.Base();
-      neuralNetwork.init(
-        config,
-        bKeepInputTensor
-      );
-
-      this.neuralNetworkArray[ i ] = neuralNetwork;
-    }
-
-    // Assume all neural networks process the same size [ height, width ] input. So that the input can be shared (i.e. extracted once, processed multiple times).
-    let neuralNetwork0 = this.neuralNetworkArray[ 0 ];
-    this.sourceImageHeightWidth = neuralNetwork0.sourceImageHeightWidth;
-
-//!!! ...unfinished...
+    this.neuralNetworkConfig = neuralNetworkConfig;
     this.bWebWorker = bWebWorker;
+
+    if ( bWebWorker ) {
+//!!! ...unfinished...
+      let totalWorkerCount = neuralNetworkCount;
+      let weightsURL = "???";
+      let workerId = 0;  // First worker id should be 0.
+
+      let workerProxy = this.workerProxy = new NeuralWorker.Proxy();
+      workerProxy.init_and_create_next( neuralNetworkConfig, totalWorkerCount, weightsURL, workerId ); // Create web worker in cascade chain.
+
+    } else {
+
+      let bKeepInputTensor = true; // Must keep input tensor from disposing. So that the input can be shared across all neural networks.
+
+      this.neuralNetworkArray = new Array( neuralNetworkCount );
+      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
+        let neuralNetwork = new NeuralNetwork.Base();
+        neuralNetwork.init(
+          neuralNetworkConfig,
+          bKeepInputTensor
+        );
+
+        this.neuralNetworkArray[ i ] = neuralNetwork;
+      }
+      
+      // Assume all neural networks process the same size [ height, width ] input. So that the input can be shared (i.e. extracted once, processed multiple times).
+      let neuralNetwork0 = this.neuralNetworkArray[ 0 ];
+      this.sourceImageHeightWidth = neuralNetwork0.sourceImageHeightWidth;
+    }
 
   }
 
