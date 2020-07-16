@@ -252,10 +252,11 @@ class Base {
     }
 
     // All test filters should generate same size result.
+    let tensorArray = [];
     for ( let i = 0; i < this.testNeuralNetworksArray.length; ++i ) {
       let testNeuralNetworks = this.testNeuralNetworksArray[ i ];
 
-      let tensorArray = testNeuralNetworks.apply( this.testCnavas, true );
+      testNeuralNetworks.apply( this.testCnavas, tensorArray );
       let t = tensorArray[ 0 ];  // Assume only one neural network.
 
       let originalChannelCount = ( t.shape[ 2 ] / testNeuralNetworks.neuralNetworkArray[ 0 ].totalChannelExpansionFactor );
@@ -291,7 +292,7 @@ class Base {
       resultProfiles.push(
 //        await this.logProfile( testNeuralNetworks.name, testNeuralNetworks.apply.bind( testNeuralNetworks, this.dataTensor3d, false ) ) );
         await this.logProfile(
-          testNeuralNetworks.neuralNetworkArray[ 0 ].structure, testNeuralNetworks.apply.bind( testNeuralNetworks, this.testCnavas, false ) ) );
+          testNeuralNetworks.neuralNetworkArray[ 0 ].structure, testNeuralNetworks.apply.bind( testNeuralNetworks, this.testCnavas, null ) ) );
 
       yield* this.progressAdvanceYield();
     }
