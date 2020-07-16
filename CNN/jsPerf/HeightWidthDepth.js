@@ -256,7 +256,7 @@ class Base {
     for ( let i = 0; i < this.testNeuralNetworksArray.length; ++i ) {
       let testNeuralNetworks = this.testNeuralNetworksArray[ i ];
 
-      testNeuralNetworks.apply( this.testCnavas, tensorArray );
+      testNeuralNetworks.apply_sync( this.testCnavas, tensorArray );
       let t = tensorArray[ 0 ];  // Assume only one neural network.
 
       let originalChannelCount = ( t.shape[ 2 ] / testNeuralNetworks.neuralNetworkArray[ 0 ].totalChannelExpansionFactor );
@@ -288,11 +288,10 @@ class Base {
     for ( let i = 0; i < this.testNeuralNetworksArray.length; ++i ) {
       let testNeuralNetworks = this.testNeuralNetworksArray[ i ];
 
-      // Note: Do not return result tensor so that need not to dispose them.
+      // Note: Do not return the result tensor so that need not to dispose them.
       resultProfiles.push(
-//        await this.logProfile( testNeuralNetworks.name, testNeuralNetworks.apply.bind( testNeuralNetworks, this.dataTensor3d, false ) ) );
         await this.logProfile(
-          testNeuralNetworks.neuralNetworkArray[ 0 ].structure, testNeuralNetworks.apply.bind( testNeuralNetworks, this.testCnavas, null ) ) );
+          testNeuralNetworks.neuralNetworkArray[ 0 ].structure, testNeuralNetworks.apply_sync.bind( testNeuralNetworks, this.testCnavas, null ) ) );
 
       yield* this.progressAdvanceYield();
     }
