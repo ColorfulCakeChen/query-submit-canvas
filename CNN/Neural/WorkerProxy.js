@@ -65,52 +65,6 @@ class Base {
     this.worker.postMessage( message );
   }
 
-  /**
-   *
-   * @param {NeuralNetwork.Config} neuralNetworkConfig
-   *   The configuration of the neural network which will be created by this web worker.
-   *
-   * @param {number} remainedWorkerCount
-   *   There are how many workers should be created in chain.
-   *
-   * @param {string} weightsURL
-   *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
-   *
-   * @param {number} workerId
-   *   This worker's id. The id of the first worker should be 0. If ( workerId < ( totalWorkerCount - 1 ) ), the next new worker will be created.
-   */
-  createNextWorker( nextWorkerId, neuralNetworkConfig, remainedWorkerCount, weightsURL ) {
-//??? in cascade ?
-
-    this.neuralNetworkConfig = neuralNetworkConfig;
-    this.weightsURL = weightsURL;
-
-    if ( remainedWorkerCount <= 0 )
-      return;  // Done. All workers in the cascade chain are created.
-
-//     // Assume the "BlocksWorker.js" is the file name of this module file.
-//     let workerURL = new URL( "BlocksWorker.js", import.meta.url );
-
-    this.workerURL = import.meta.url;        // Assume this file is both an importable module and a main javascript file of web worker.
-    this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
-    this.worker = new Worker( this.workerURL, this.workerOptions );
-
-    // Create this worker in the cascade chain.
-    let message = {
-      command: "createNextWorker",
-      neuralNetworkConfig: neuralNetworkConfig,
-      remainedWorkerCount: remainedWorkerCount,
-      weightsURL: weightsURL,
-      workerId: workerId //( workerId + 1 )
-    };
-    this.worker.postMessage( message );
-
-//!!!???
-    remainedWorkerCount -= 1; // Because a new worker is just created, the remained count reduces one.
-    if ( remainedWorkerCount <= 0 )
-      return;  // Done. All workers in the cascade chain are created.
-  }
-
   disposeWorkers() {
     if ( this.worker ) {
       let message = { command: "disposeWorker" };
