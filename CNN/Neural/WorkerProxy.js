@@ -118,6 +118,9 @@ class Base {
    */
   processTensor_onResult( processingId, resultTypedArray ) {
 
+    if ( processingId != this.processingId )
+      return; // Discard result with wrong processing id. (e.g. old processing result)
+
 //!!! ...unfinished...
 
   }
