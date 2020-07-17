@@ -1,7 +1,7 @@
-import * as NeuralNetwork from "./NeuralNetwork.js";
-import * as NeuralWorker from "./NeuralWorker.js";
+import * as Net from "./Net.js";
+import * as WorkerProxy from "./WorkerProxy.js";
 
-export { Config } from "./NeuralNetwork.js";
+export { Config } from "./Net.js";
 export { Base };
 
 /**
