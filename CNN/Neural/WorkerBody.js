@@ -72,10 +72,16 @@ class WorkerBody {
       this.neuralNet = null;
     }
 
-//!!! how to dispose net worker in cascade chain?
+    if ( this.nextWorkerProxy ) { // Dispose the next web worker in cascade chain.
+      this.nextWorkerProxy.disposeWorker();
+      this.nextWorkerProxy = null;
+    }
+
+//!!!??? calling close() when the next worker disposed ?
+    close();
   }
 
-  apply() {
+  processTensor() {
   }
     
 }
@@ -86,7 +92,7 @@ if ( globalThis.document ) {
   // In main document context (Not in worker context). Do nothing.
 
 } else {
-  // In worker context. Create neural network. Register message handler.
+  // In worker context. Register message handler.
 
   globalThis.workerBody = new WorkerBody();
 
@@ -98,16 +104,12 @@ if ( globalThis.document ) {
         globalThis.workerProxy.init( message.workerId, message.neuralNetConfig, message.totalWorkerCount, message.weightsURL );
         break;
 
-      case "createNextWorker": //{ command: "createNextWorker", neuralNetworkConfig, remainedWorkerCount, weightsURL, workerId };
-        globalThis.workerProxy.init_and_create_next( message.neuralNetworkConfig, message.remainedWorkerCount, message.weightsURL, message.workerId );
-        break;
-
       case "disposeWorker": //{ command: "disposeWorker" };
         globalThis.workerProxy.disposeWorker();
         break;
 
-      case "apply": //{ command: "apply" };
-        globalThis.workerProxy.apply(  );
+      case "apply": //{ command: "processTensor" };
+        globalThis.workerProxy.processTensor(  );
         break;
 
     }
