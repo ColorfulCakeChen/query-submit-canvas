@@ -23,6 +23,7 @@ export { Base };
 class Base {
 
   /**
+   * Create a web worker and inform it to create a neural network. The worker may create more worker according to workerId and totalWorkerCount.
    *
    * @param {number} workerId
    *   This worker's id. The id of the first worker should be 0.
@@ -37,16 +38,9 @@ class Base {
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
    */
   init( workerId, neuralNetConfig, totalWorkerCount, weightsURL ) {
-//??? in cascade ?
-
     this.workerId = workerId;
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
-
-//     // Assume the "BlocksWorker.js" is the file name of this module file.
-//     let workerURL = new URL( "BlocksWorker.js", import.meta.url );
-
-//    this.workerURL = import.meta.url;        // Assume this file is both an importable module and a main javascript file of web worker.
 
     // Assume the main (i.e. body) javascript file of neural network web worker is a sibling file (i.e. inside the same folder) of this module file.
     this.workerURL = new URL( import.meta.url, "WorkerBody.js" );
@@ -54,7 +48,7 @@ class Base {
     this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
     this.worker = new Worker( this.workerURL, this.workerOptions );
 
-    // Initialize this worker.
+    // Initialize the worker.
     let message = {
       command: "init",
       workerId: workerId,
@@ -65,17 +59,21 @@ class Base {
     this.worker.postMessage( message );
   }
 
-  disposeWorkers() {
+  /**
+   * 
+   */
+  disposeWorker() {
     if ( this.worker ) {
       let message = { command: "disposeWorker" };
       this.worker.postMessage( message );
       this.worker = null;
-
-//!!! how to dispose net worker in cascade chain?
     }
   }
 
-  apply() {
+  /**
+   * 
+   */
+  processTensor() {
   }
-    
+
 }
