@@ -1,4 +1,3 @@
-//import * as Weights from "../Weights.js";
 
 export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv, Layer };
 
