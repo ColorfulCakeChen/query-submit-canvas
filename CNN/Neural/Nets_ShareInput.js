@@ -44,8 +44,8 @@ class Base {
       let weightsURL = "???";
       let workerId = 0;  // First worker id should be 0.
 
-      let workerProxy = this.workerProxy = new WorkerProxy.Base();
-      workerProxy.init( workerId, neuralNetConfig, totalWorkerCount, weightsURL ); // Create the first web worker and cascade chain.
+      let firstWorkerProxy = this.firstWorkerProxy = new WorkerProxy.Base();
+      firstWorkerProxy.init( workerId, neuralNetConfig, totalWorkerCount, weightsURL ); // Create the first web worker and cascade chain.
 
     } else {
 
