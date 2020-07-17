@@ -1,5 +1,5 @@
 
-export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv, Layer };
+export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv };
 
 /**
  * The information for channel shuffler.
@@ -522,104 +522,5 @@ class ConcatPointwiseConv {
 
 }
 
-
-
 //!!!
 // named as Pipe.ChannelShuffler ?
-
-
-/**
- * An channel shuffler accepts a list of tensor3d with same size (height, width, channel) and outputs a shuffled
- * (re-grouped) list tensor3d.
- *
- * Usually, the output tensor3d list length will be the same as input tensor3d list. Even more, the size of 
- * every output tensor3d will also be the same as input tensor3d. However, the order of the tensor3d's channels
- * (the 3rd dimension) are different.
- *
- * This is the Channel-Shuffle operation of the ShuffleNetV2 neural network.
- *
- *
- *
- *
- * @member {ShuffleInfo} shuffleInfo
- *   The information calculated from init()'s concatenatedShape and outputGroupCount.
- */
-class Layer {
-
-  /**
-   *
-   * @param {number[]} concatenatedShape
-   *   Used to calculate shuffleInfo.
-   *
-   * @param {number} outputGroupCount
-   *   Used to calculate shuffleInfo.
-   *
-   * @see Info
-   */
-  init( concatenatedShape, outputGroupCount ) {
-
-//!!! ...unfinished...
-
-    disposeTensors();
-
-    this.concatGather = new ConcatGather();
-    let initOk = this.concatGather.init( concatenatedShape, outputGroupCount );
-
-    return initOk;
-  }
-
-  /** Release tf.tensor. */
-  disposeTensors() {
-    if ( this.concatGather ) {
-      this.concatGather.disposeTensors();
-      this.concatGather = null;
-    }
-  }
-
-  /**
-   * Process the input and produce output by this neural network layer.
-   *
-   * The group count (i.e. element count) of input tensor3d list can be different from the group count
-   * (i.e. element count) of output tensor3d list
-   *
-   * If there are more than one tensor3d in the input tensor3d array, they will be concatenated.
-   *
-   * If need split, then need shuffle before split. 
-   *
-   * @param {Array of tf.tensor3d} inputTensor3DArray
-   *   A list of tensor3D (e.g. height-width-color for color image, or 1-width-1 for text) data. The sum of all the
-   * 3rd dimension (i.e. the channel dimension) of every input tensor3d should be the same as this.totalChannelCount.
-   *
-   * @return {Array of tf.tensor3d} outputTensor3DArray
-   *   The output as a list of tensor3D. Return null, if failed (e.g. out of GPU memory).
-   */
-//  apply( inputTensor3DArray, outputTensor3DArray ) {
-  apply( inputTensor3DArray ) {
-
-    const outputTensor3DArray = tf.tidy( "ChannelShuffler.Layer.apply", () => {
-      try {
-
-        // Concatenate all into one tensor3d.
-        let dataTensor3d;
-        if ( inputTensor3DArray.length > 1 )
-          dataTensor3d = tf.concat( inputTensor3DArray );
-        else
-          dataTensor3d = inputTensor3DArray[ 0 ]; // There is only one tensor3d, use it directly instead of concatenating.
-
-        // If there is only one output group, there is not necessary to shuffle (and split).
-        if ( this.outputGroupCount == 1 )
-          return [ dataTensor3d ];
-
-//!!! ...unfinished...
-        
-
-        return
-
-      } catch ( e ) {
-      }
-    });
-
-    return outputTensor3DArray;
-  }
-
-}
