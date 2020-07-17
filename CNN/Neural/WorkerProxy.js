@@ -1,11 +1,11 @@
 /**
- * @file This file is both an importable module and a main javascript file of web worker.
+ * @file This file is an importable module to handle neural (web) worker body.
  *
  */
 
-import * as NeuralNetwork from "./NeuralNetwork.js";
+//import * as NeuralNetwork from "./NeuralNetwork.js";
 
-export { Proxy };
+export { Base };
 
 /**
  * A wrapper of worker for
@@ -20,7 +20,7 @@ export { Proxy };
  * transfer the input data to the next worker immediately.
  *
  */
-class Proxy {
+class Base {
 
   /**
    *
