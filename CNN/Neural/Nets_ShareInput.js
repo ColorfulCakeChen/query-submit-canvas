@@ -15,7 +15,7 @@ export { Base };
 class Base {
 
   /**
-   * @param {NeuralNetwork.Config} neuralNetConfig
+   * @param {Net.Config} neuralNetConfig
    *   The configuration of this neural network.
    *
    * @param {number} neuralNetCount
@@ -24,7 +24,7 @@ class Base {
    * @param {boolean} bWebWorker
    *   If true, neural network will executed inside a web worker.
    *
-   * @see NeuralNetwork.init 
+   * @see Net.Base.init 
    */
   init(
     neuralNetConfig,
@@ -45,7 +45,7 @@ class Base {
       let workerId = 0;  // First worker id should be 0.
 
       let workerProxy = this.workerProxy = new WorkerProxy.Base();
-      workerProxy.init_and_create_next( neuralNetConfig, totalWorkerCount, weightsURL, workerId ); // Create web worker in cascade chain.
+      workerProxy.init( workerId, neuralNetConfig, totalWorkerCount, weightsURL ); // Create the first web worker and cascade chain.
 
     } else {
 
