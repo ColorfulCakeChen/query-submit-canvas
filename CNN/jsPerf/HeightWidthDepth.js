@@ -1,5 +1,5 @@
 import * as PartTime from "../PartTime.js";
-import * as NeuralNetworks_ShareInput from "../Net/NeuralNetworks_ShareInput.js";
+import * as NeuralNets_ShareInput from "../Neural/Nets_ShareInput.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
 export { Base };
@@ -67,7 +67,7 @@ class Base {
 
     // [ stepCountPerBlock, bChannelShuffler, pointwise1ChannelCountRate, strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0,
     // bBias, strActivationName ]
-    this.testNeuralNetworksSpecTable = [
+    this.testNeuralNetsSpecTable = [
 //      [  0, false, 1, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,     "cos" ],
 //      [  0, false, 1, "Conv", filterHeight_OneStep,                                   200,  true,     "cos" ],
 
@@ -109,18 +109,18 @@ class Base {
 
 //!!! Change to create one and test one.
     // Create test filters.
-    this.testNeuralNetworksArray = this.testNeuralNetworksSpecTable.map( ( filtersSpec, i ) => {
-      let testNeuralNetworks = new NeuralNetworks_ShareInput.Base();
-      let config = new NeuralNetworks_ShareInput.Config( height, width, canvasChannelCount, ...filtersSpec );
-      testNeuralNetworks.init( config );
-      return testNeuralNetworks;
+    this.testNeuralNetsArray = this.testNeuralNetsSpecTable.map( ( filtersSpec, i ) => {
+      let testNeuralNets = new NeuralNets_ShareInput.Base();
+      let config = new NeuralNets_ShareInput.Config( height, width, canvasChannelCount, ...filtersSpec );
+      testNeuralNets.init( config );
+      return testNeuralNets;
     });
 
     // Initialize progress accumulator.
 
     // "+3" for test_FromPixels, test_ResizeNearestNeighbor and test_ResizeBilinear.
     // "*2" for compiling (with assert) and profiling.
-    progressToAdvance.total = ( this.testNeuralNetworksSpecTable.length + 3 ) * 2;
+    progressToAdvance.total = ( this.testNeuralNetsSpecTable.length + 3 ) * 2;
     progressToAdvance.accumulation = 0;
   }
 
@@ -131,14 +131,14 @@ class Base {
     }
 
     // Release test filters.
-    if ( this.testNeuralNetworksArray ) {
-      this.testNeuralNetworksArray.forEach( ( testNeuralNetworks, i ) => {
-        testNeuralNetworks.disposeTensors();
+    if ( this.testNeuralNetsArray ) {
+      this.testNeuralNetsArray.forEach( ( testNeuralNets, i ) => {
+        testNeuralNets.disposeTensors();
       });
-      this.testNeuralNetworksArray = null;
+      this.testNeuralNetsArray = null;
     }
 
-    this.testNeuralNetworksSpecTable = null;
+    this.testNeuralNetsSpecTable = null;
   }
 
   // Test from-pixels
@@ -254,18 +254,18 @@ class Base {
 
     // All test filters should generate same size result.
     let tensorArray = [];
-    for ( let i = 0; i < this.testNeuralNetworksArray.length; ++i ) {
-      let testNeuralNetworks = this.testNeuralNetworksArray[ i ];
+    for ( let i = 0; i < this.testNeuralNetsArray.length; ++i ) {
+      let testNeuralNets = this.testNeuralNetsArray[ i ];
 
-      testNeuralNetworks.apply_sync( this.testCnavas, tensorArray );
+      testNeuralNets.apply_sync( this.testCnavas, tensorArray );
       let t = tensorArray[ 0 ];  // Assume only one neural network.
 
-      let originalChannelCount = ( t.shape[ 2 ] / testNeuralNetworks.neuralNetworkArray[ 0 ].totalChannelExpansionFactor );
+      let originalChannelCount = ( t.shape[ 2 ] / testNeuralNets.neuralNetworkArray[ 0 ].totalChannelExpansionFactor );
 
       tf.util.assert(
         tf.util.arraysEqual(
           [ t.shape[ 0 ], t.shape[ 1 ], originalChannelCount ], tensor_ResizeBilinear.shape ),
-        `Shape ${testNeuralNetworks.name}() != ResizeBilinear()`);
+        `Shape ${testNeuralNets.name}() != ResizeBilinear()`);
 
       t.dispose();
 
@@ -286,13 +286,13 @@ class Base {
     yield* this.progressAdvanceYield();
 
     // All test filters in array.
-    for ( let i = 0; i < this.testNeuralNetworksArray.length; ++i ) {
-      let testNeuralNetworks = this.testNeuralNetworksArray[ i ];
+    for ( let i = 0; i < this.testNeuralNetsArray.length; ++i ) {
+      let testNeuralNets = this.testNeuralNetsArray[ i ];
 
       // Note: Do not return the result tensor so that need not to dispose them.
       resultProfiles.push(
         await this.logProfile(
-          testNeuralNetworks.neuralNetworkArray[ 0 ].structure, testNeuralNetworks.apply_sync.bind( testNeuralNetworks, this.testCnavas, null ) ) );
+          testNeuralNets.neuralNetworkArray[ 0 ].structure, testNeuralNets.apply_sync.bind( testNeuralNets, this.testCnavas, null ) ) );
 
       yield* this.progressAdvanceYield();
     }
