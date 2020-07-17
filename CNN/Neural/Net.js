@@ -5,7 +5,7 @@ export { Config, Base };
 /**
  * A neural network's configuration.
  *
- * A special recommended configuration is 3x3 ShuffleNetV2 without (explicit) bias:
+ * A special recommended configuration is 3x3 ShuffleNetV2 without explicit bias (but with implicit bias by cosine activation):
  *   - bChannelShuffler: true
  *   - pointwise1ChannelCountRate: 1
  *   - strAvgMaxConv: "Conv"
