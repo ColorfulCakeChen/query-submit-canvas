@@ -81,9 +81,30 @@ class WorkerBody {
     close();
   }
 
-  processTensor() {
+  /**
+   * @param {number} processingId
+   *   The id of this processing. It is used when reporting processing result.
+   *
+   * @param {ImageData} sourceImageData
+   *   The image data to be processed.
+   *
+???
+   * @param {tf.tensor3d[]} resultArray
+   *   If ( resultArray != null ), all result (new) tensors will be filled into this array. This could reduce the array memory
+   * re-allocation and improve performance. If ( resultArray == null ), all result tensors will be disposed and nothing will be
+   * returned. No matter in which case, all other intermediate tensors were disposed.
+   *
+   * @return {Promise} Return a promise which resolves with the resultArray.
+   */
+  processTensor( processingId, sourceImageData ) {
+
+//!!! ...unfinished...
+    let resultTypedArray = resultTensor.data();
+
+    let message = { command: "processTensorResult", processingId: processingId, resultTypedArray: resultTypedArray };
+    postMessage( message, [ message.resultTypedArray.buffer ] );
   }
-    
+
 }
 
 
@@ -108,8 +129,8 @@ if ( globalThis.document ) {
         globalThis.workerProxy.disposeWorker();
         break;
 
-      case "apply": //{ command: "processTensor" };
-        globalThis.workerProxy.processTensor(  );
+      case "processTensor": //{ command: "processTensor", processingId, sourceImageData };
+        globalThis.workerProxy.processTensor( message.processingId, message.sourceImageData );
         break;
 
     }
