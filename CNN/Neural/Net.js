@@ -1,4 +1,4 @@
-import * as ShuffleNetV2_MobileNetV2_Block from "../Layer/ShuffleNetV2_MobileNetV2_Block.js";
+import * as ConvBlock from "../Conv/Block.js";
 
 export { Config, Base };
 
@@ -23,7 +23,7 @@ class Config {
    * @param {number} depthwiseChannelMultiplierBlock0Step0
    *   The depthwise convolution of the first step (Step 0) of the first block (Block 0) will expand input channel by this factor.
    *
-   * @see ShuffleNetV2_MobileNetV2_Block.Base.init 
+   * @see ConvBlock.Base.init 
    */
   constructor(
     sourceHeight, sourceWidth, sourceChannelCount,
@@ -78,7 +78,7 @@ class Base {
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
    *
-   * @see ShuffleNetV2_MobileNetV2_Block.init 
+   * @see ConvBlock.Base.init
    */
   init( config, bKeepInputTensor ) {
 
@@ -134,7 +134,7 @@ class Base {
     this.blocks = new Array( this.blockCount );
     for ( let i = 0; i < this.blockCount; ++i )
     {
-      let block = new ShuffleNetV2_MobileNetV2_Block.Base();
+      let block = new ConvBlock.Base();
       block.init(
         config.sourceHeight, config.sourceWidth, nextBlockInputChannelCount,
         config.stepCountPerBlock,
