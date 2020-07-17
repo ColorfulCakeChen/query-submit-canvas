@@ -15,10 +15,10 @@ export { Base };
 class Base {
 
   /**
-   * @param {NeuralNetwork.Config} neuralNetworkConfig
+   * @param {NeuralNetwork.Config} neuralNetConfig
    *   The configuration of this neural network.
    *
-   * @param {number} neuralNetworkCount
+   * @param {number} neuralNetCount
    *   Create how many neural networks.
    *
    * @param {boolean} bWebWorker
@@ -27,55 +27,55 @@ class Base {
    * @see NeuralNetwork.init 
    */
   init(
-    neuralNetworkConfig,
-    neuralNetworkCount,
+    neuralNetConfig,
+    neuralNetCount,
     bWebWorker
   ) {
-    neuralNetworkCount = neuralNetworkCount | 1; // At least, one neural network.
+    neuralNetCount = neuralNetCount | 1; // At least, one neural network.
 
     this.disposeTensors();
 
-    this.neuralNetworkConfig = neuralNetworkConfig;
+    this.neuralNetConfig = neuralNetConfig;
     this.bWebWorker = bWebWorker;
 
     if ( bWebWorker ) {
 //!!! ...unfinished...
-      let totalWorkerCount = neuralNetworkCount;
+      let totalWorkerCount = neuralNetCount;
       let weightsURL = "???";
       let workerId = 0;  // First worker id should be 0.
 
-      let workerProxy = this.workerProxy = new NeuralWorker.Proxy();
-      workerProxy.init_and_create_next( neuralNetworkConfig, totalWorkerCount, weightsURL, workerId ); // Create web worker in cascade chain.
+      let workerProxy = this.workerProxy = new WorkerProxy.Base();
+      workerProxy.init_and_create_next( neuralNetConfig, totalWorkerCount, weightsURL, workerId ); // Create web worker in cascade chain.
 
     } else {
 
       let bKeepInputTensor = true; // Must keep input tensor from disposing. So that the input can be shared across all neural networks.
 
-      this.neuralNetworkArray = new Array( neuralNetworkCount );
-      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
-        let neuralNetwork = new NeuralNetwork.Base();
-        neuralNetwork.init(
-          neuralNetworkConfig,
+      this.neuralNetArray = new Array( neuralNetCount );
+      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+        let neuralNet = new Net.Base();
+        neuralNet.init(
+          neuralNetConfig,
           bKeepInputTensor
         );
 
-        this.neuralNetworkArray[ i ] = neuralNetwork;
+        this.neuralNetArray[ i ] = neuralNet;
       }
       
       // Assume all neural networks process the same size [ height, width ] input. So that the input can be shared (i.e. extracted once, processed multiple times).
-      let neuralNetwork0 = this.neuralNetworkArray[ 0 ];
-      this.sourceImageHeightWidth = neuralNetwork0.sourceImageHeightWidth;
+      let neuralNet0 = this.neuralNetArray[ 0 ];
+      this.sourceImageHeightWidth = neuralNet0.sourceImageHeightWidth;
     }
 
   }
 
   disposeTensors() {
-    if ( this.neuralNetworkArray ) {
-      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
-        let neuralNetwork = this.neuralNetworkArray[ i ];
-        neuralNetwork.disposeTensors();
+    if ( this.neuralNetArray ) {
+      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+        let neuralNet = this.neuralNetArray[ i ];
+        neuralNet.disposeTensors();
       }
-      this.neuralNetworkArray = null;
+      this.neuralNetArray = null;
     }
 
     if ( this.workerProxy ) {
@@ -129,19 +129,19 @@ class Base {
 
     // No matter whether resultArray is null, the input tensor will NOT be disposed by any neural network (so that can be shared between them).
 
-    let neuralNetwork;
+    let neuralNet;
 
     if ( resultArray ) {
-      resultArray.length = this.neuralNetworkArray.length; // Re-allocate array.
-      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
-        neuralNetwork = this.neuralNetworkArray[ i ];
-        let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, true );
+      resultArray.length = this.neuralNetArray.length; // Re-allocate array.
+      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+        neuralNet = this.neuralNetArray[ i ];
+        let t = neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, true );
         resultArray[ i ] = t;
       }
     } else {
-      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
-        neuralNetwork = this.neuralNetworkArray[ i ];
-        neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, false ); // The input tensor will NOT be disposed here, so that it can be shared.
+      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+        neuralNet = this.neuralNetArray[ i ];
+        neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, false ); // The input tensor will NOT be disposed here, so that it can be shared.
         // Since ( bReturn == false ), the neural network will not have returned value. So there is not necessary to handle it.
       }
     }
@@ -198,19 +198,19 @@ class Base {
 
     // No matter whether resultArray is null, the input tensor will NOT be disposed by any neural network (so that can be shared between them).
 
-    let neuralNetwork;
+    let neuralNet;
 
     if ( resultArray ) {
-      resultArray.length = this.neuralNetworkArray.length; // Re-allocate array.
-      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
-        neuralNetwork = this.neuralNetworkArray[ i ];
-        let t = neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, true );
+      resultArray.length = this.neuralNetArray.length; // Re-allocate array.
+      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+        neuralNet = this.neuralNetArray[ i ];
+        let t = neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, true );
         resultArray[ i ] = t;
       }
     } else {
-      for ( let i = 0; i < this.neuralNetworkArray.length; ++i ) {
-        neuralNetwork = this.neuralNetworkArray[ i ];
-        neuralNetwork.apply_and_destroy_or_keep( scaledSourceTensor, false ); // The input tensor will NOT be disposed here, so that it can be shared.
+      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+        neuralNet = this.neuralNetArray[ i ];
+        neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, false ); // The input tensor will NOT be disposed here, so that it can be shared.
         // Since ( bReturn == false ), the neural network will not have returned value. So there is not necessary to handle it.
       }
     }
