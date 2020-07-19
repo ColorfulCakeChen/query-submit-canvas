@@ -101,7 +101,7 @@ class WorkerBody {
 //!!! ...unfinished...
     let resultTypedArray = resultTensor.data();
 
-    let message = { command: "processTensorResult", processingId: processingId, resultTypedArray: resultTypedArray };
+    let message = { command: "processTensorResult", workerId: this.workerId, processingId: processingId, resultTypedArray: resultTypedArray };
     postMessage( message, [ message.resultTypedArray.buffer ] );
   }
 
