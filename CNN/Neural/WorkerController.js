@@ -10,6 +10,8 @@ export { Base };
 /**
  * The wrapper of a neural network web worker for handling easily.
  *
+!!! ...unfinished... cascade is slow when return all result. Master / Slaves should be faster.
+
  * Many workers cascade in chain. Every worker handles one neural network. When apply() is called, the input (usually a large memory block)
  * will be transffered to the 1st worker to start computing, and then transffered to the 2nd worker to start computing, ... etc.
  *
@@ -24,10 +26,7 @@ export { Base };
 class Base {
 
   /**
-   * Create a web worker and inform it to create a neural network. The worker may create more worker according to workerId and totalWorkerCount.
-   *
-   * @param {number} workerId
-   *   This worker's id. The id of the first worker should be 0.
+   * Initialize this controller. It will create many web workers and inform them to create a neural network per worker.
    *
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
@@ -38,8 +37,7 @@ class Base {
    * @param {string} weightsURL
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
    */
-  init( workerId, neuralNetConfig, totalWorkerCount, weightsURL ) {
-    this.workerId = workerId;
+  init( neuralNetConfig, totalWorkerCount, weightsURL ) {
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
     this.processingId = -1; // The current processing id. Negative means processTensor() has not been called. Every processTensor() call will use a new id.
@@ -48,29 +46,38 @@ class Base {
     this.workerURL = new URL( import.meta.url, "WorkerBody.js" );
 
     this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
-    this.worker = new Worker( this.workerURL, this.workerOptions );
 
-    this.worker.onmessage = Base.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
-
-    // Initialize the worker.
+    // Worker Initialization message.
     let message = {
       command: "init",
-      workerId: workerId,
+      //workerId: workerId,
       neuralNetConfig: neuralNetConfig,
       totalWorkerCount: totalWorkerCount,
       weightsURL: weightsURL
     };
-    this.worker.postMessage( message );
+
+    this.workerArray = new Array( totalWorkerCount );
+    for ( let i = 0; i < totalWorkerCount; ++i ) {
+      let worker = new Worker( this.workerURL, this.workerOptions );
+      this.workerArray[ i ] = worker;
+
+      worker.onmessage = Base.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
+
+      message.workerId = i;
+      worker.postMessage( message );  // Initialize the worker.
+    }    
   }
 
   /**
    * 
    */
   disposeWorker() {
-    if ( this.worker ) {
-      let message = { command: "disposeWorker" };
-      this.worker.postMessage( message );
-      this.worker = null;
+    if ( this.workerArray ) {
+      for ( let i = 0; i < this.workerArray.length; ++i ) {
+        let message = { command: "disposeWorker" };
+        this.workerArray[ i ].postMessage( message );
+      }
+      this.workerArray  = null;
     }
   }
 
@@ -94,8 +101,9 @@ class Base {
     ++this.processingId; // Generate a new processing id so that the result returned from worker could be distinguished.
 
     let message = { command: "processTensor", processingId: this.processingId, sourceImageData: sourceImageData };
-    this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
-
+    for ( let i = 0; i < this.workerArray.length; ++i ) {
+      this.workerArray[ i ].postMessage( message, [ message.sourceImageData.data.buffer ] );
+    }
 
 //!!! How to return resultArray ?
 
@@ -110,13 +118,16 @@ class Base {
   /**
    * Dispatch messages come from the owned web worker.
    *
+   * @param {number} workerId
+   *   The id of the worker which sent the result back.
+   *
    * @param {number} processingId
    *   The processing id of the result.
    *
    * @param {TypedArray} resultTypedArray
    *   The result of the returned processing. It is the downloaded data of the result tensor.
    */
-  processTensor_onResult( processingId, resultTypedArray ) {
+  processTensor_onResult( workerId, processingId, resultTypedArray ) {
 
     if ( processingId != this.processingId )
       return; // Discard result with wrong processing id. (e.g. old processing result)
@@ -135,8 +146,8 @@ class Base {
     let message = e.data;
 
     switch ( message.command ) {
-      case "processTensorResult": //{ command: "processTensorResult", processingId, resultTypedArray };
-        this.processTensor_onResult( message.processingId, message.resultTypedArray );
+      case "processTensorResult": //{ command: "processTensorResult", workerId, processingId, resultTypedArray };
+        this.processTensor_onResult( message.workerId, message.processingId, message.resultTypedArray );
         break;
 
     }
