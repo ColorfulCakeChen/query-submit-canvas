@@ -71,7 +71,7 @@ class Base {
   /**
    * 
    */
-  disposeWorker() {
+  disposeWorkers() {
     if ( this.workerArray ) {
       for ( let i = 0; i < this.workerArray.length; ++i ) {
         let message = { command: "disposeWorker" };
@@ -110,6 +110,10 @@ class Base {
     let p = new Promise( ( resolve, reject ) => {
 
       resolve( resultArray );
+
+//!!! ...unfinished... record the function object resolve and reject in a Map.
+// processTensor_onResult() should call them according to worker id, processing id, success or failed.
+
     });
     
     return p;
