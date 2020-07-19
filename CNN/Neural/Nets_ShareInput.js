@@ -1,5 +1,5 @@
 import * as Net from "./Net.js";
-import * as WorkerProxy from "./WorkerProxy.js";
+import * as WorkerController from "./WorkerController.js";
 
 export { Config } from "./Net.js";
 export { Base };
@@ -44,10 +44,9 @@ class Base {
 //!!! ...unfinished...
       let totalWorkerCount = neuralNetCount;
       let weightsURL = "???";
-      let workerId = 0;  // First worker id should be 0.
 
-      let firstWorkerProxy = this.firstWorkerProxy = new WorkerProxy.Base();
-      firstWorkerProxy.init( workerId, neuralNetConfig, totalWorkerCount, weightsURL ); // Create the first web worker and cascade chain.
+      let workerController = this.workerController = new WorkerController.Base(); // Create the controller of web workers.
+      workerController.init( neuralNetConfig, totalWorkerCount, weightsURL );     // Create all web workers.
 
     } else {
 
@@ -80,8 +79,9 @@ class Base {
       this.neuralNetArray = null;
     }
 
-    if ( this.workerProxy ) {
-      this.workerProxy.disposeWorkers();
+    if ( this.workerController ) {
+      this.workerController.disposeWorkers();
+      this.workerController = null;
     }
   }
 
@@ -181,7 +181,7 @@ class Base {
       let sourceImageData = ctx.getImageData( 0, 0, sourceCanvas.width, sourceCanvas.height );
 
 //!!!???
-      this.firstWorkerProxy.processTensor( sourceImageData, resultArray );
+      this.workerController.processTensor( sourceImageData, resultArray );
 
       // Promise.allSettled( [ ... ] );
 
