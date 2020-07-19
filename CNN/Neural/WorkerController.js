@@ -36,8 +36,18 @@ class Base {
    *
    * @param {string} weightsURL
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
+   *
+!!! game_object_id_array.length as totalWorkerCount.
+!!! Handle game object created and destroyed. Create and destroy web worker in needed.
+
+   * @param {number[]} game_object_id_array
+   *   The id for game objects.
    */
-  init( neuralNetConfig, totalWorkerCount, weightsURL ) {
+  init(
+      neuralNetConfig, totalWorkerCount, weightsURL,
+      game_object_id_array
+  ) {
+
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
     this.processingId = -1; // The current processing id. Negative means processTensor() has not been called. Every processTensor() call will use a new id.
