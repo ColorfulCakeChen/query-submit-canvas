@@ -3,6 +3,11 @@
  *
  */
 
+//!!! ...unfinished...
+// In module (non-classic) web worker, static import is available. But at the same time, importScripts() will not be avbailable.
+// Solution may use classic (non-module) web worker so that tensorflow.js can be loaded by importScripts().
+// At the same time, using dynamic import() to load ourselves module because import() can be used in classic (non-module) script.
+
 import * as Net from "./Net.js";
 import * as WorkerProxy from "./WorkerProxy.js";
 
