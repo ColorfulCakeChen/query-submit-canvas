@@ -297,6 +297,8 @@ class Base {
       yield* this.progressAdvanceYield();
     }
 
+//!!! ...unfinshed... Using console.time() to measure async function execution time.
+
     if ( this.dataTensor3d ) {
       tf.dispose( this.dataTensor3d );
       this.dataTensor3d = null;
