@@ -52,6 +52,10 @@ class Base {
     this.weightsURL = weightsURL;
     this.processingId = -1; // The current processing id. Negative means processTensor() has not been called. Every processTensor() call will use a new id.
 
+    this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
+
+//!!! ...unfinished... According to logical CPU count, create so many web worker.
+
     // Assume the main (i.e. body) javascript file of neural network web worker is a sibling file (i.e. inside the same folder) of this module file.
     this.workerURL = new URL( import.meta.url, "WorkerBody.js" );
 
