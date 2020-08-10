@@ -55,6 +55,7 @@ class Base {
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
 //!!! ...unfinished... According to logical CPU count, create so many web worker.
+//!!! ...unfinished... Perhaps, two web workers are sufficient. This is because differential evolution evaluates just two entity every time.
 
     // Assume the main (i.e. body) javascript file of neural network web worker is a sibling file (i.e. inside the same folder) of this module file.
     this.workerURL = new URL( import.meta.url, "WorkerBody.js" );
