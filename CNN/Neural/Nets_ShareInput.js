@@ -118,7 +118,7 @@ class Base {
       // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
       let sourceTensor = tf.browser.fromPixels( sourceCanvas, this.sourceImageChannelCount );
 
-      // Resize source image to a default size (height x width) which is used when training the neural network.
+      // Resize source image to a default size (height x width). The default size should be the input image size which is used when training the neural network.
       let scaledSourceTensor = tf.image.resizeBilinear( sourceTensor, this.sourceImageHeightWidth, true ); // ( alignCorners = true ) for visual image resizing.
       sourceTensor.dispose();
 
