@@ -108,6 +108,8 @@ class WorkerBody {
 
     let message = { command: "processTensorResult", workerId: this.workerId, processingId: processingId, resultTypedArray: resultTypedArray };
     postMessage( message, [ message.resultTypedArray.buffer ] );
+
+//!!! ...unfinished... The result tensor should be disposed.
   }
 
 }
