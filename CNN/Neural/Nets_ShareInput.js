@@ -135,6 +135,8 @@ class Base {
 
       // No matter whether resultArray is null, the input tensor will NOT be disposed by any neural network (so that can be shared between them).
 
+      // The input tensor will NOT be disposed by any neural network, so that it can be shared.
+
       let neuralNet;
 
       if ( resultArray ) {
@@ -147,7 +149,7 @@ class Base {
       } else {
         for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
           neuralNet = this.neuralNetArray[ i ];
-          neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, false ); // The input tensor will NOT be disposed here, so that it can be shared.
+          neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, false );
           // Since ( bReturn == false ), the neural network will not have returned value. So there is not necessary to handle it.
         }
       }
