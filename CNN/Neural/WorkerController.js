@@ -7,6 +7,39 @@
 
 export { Base };
 
+
+/**
+ * Hold a processing's id, promise, resolve (fulfilling function object), reject (rejecting function object).
+ *
+ * @member {number}   workerId     The array index of the worker owns this processing.
+ * @member {number}   processingId The id of the processing.
+ * @member {Promise}  promise      The promise of the processing.
+ * @member {function} resolve      The fulfilling function object of the promise of the processing.
+ * @member {function} reject       The rejecting function object of the promise of the processing.
+ */
+class WorkerResultPromiseInfo {
+
+  constructor( workerId, processingId ) {
+    this.workerId = workerId;
+    this.processingId = processingId;
+  }
+
+}
+
+/**
+ * Hold the worker and its related promise map.
+ */
+class WorkerProxy {
+
+  constructor( workerId ) {
+    this.workerId = workerId;
+
+    // Every worker has a result promise map. The key of the map is processing id. The value of the map is a WorkerResultPromiseInfo.
+    this.resultPromiseInfoMap = new Map();
+  }
+
+}
+
 /**
  * The wrapper of a neural network web worker for handling easily.
  *
@@ -26,7 +59,7 @@ export { Base };
 class Base {
 
   /**
-   * Initialize this controller. It will create many web workers and inform them to create a neural network per worker.
+   * Initialize this worker controller. It will create two web workers and inform them to create a neural network per worker.
    *
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
@@ -55,7 +88,8 @@ class Base {
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
 //!!! ...unfinished... According to logical CPU count, create so many web worker.
-//!!! ...unfinished... Perhaps, two web workers are sufficient. This is because differential evolution evaluates just two entity every time.
+//!!! ...unfinished... Perhaps, two web workers are sufficient.
+    // Our neural networks are learning by differential evolution. Differential evolution evaluates just two entities every time.
 
     // Assume the main (i.e. body) javascript file of neural network web worker is a sibling file (i.e. inside the same folder) of this module file.
     this.workerURL = new URL( import.meta.url, "WorkerBody.js" );
@@ -71,28 +105,32 @@ class Base {
       weightsURL: weightsURL
     };
 
-    this.workerArray = new Array( totalWorkerCount );
+    this.workerProxyArray = new Array( totalWorkerCount );
+
     for ( let i = 0; i < totalWorkerCount; ++i ) {
-      let worker = new Worker( this.workerURL, this.workerOptions );
-      this.workerArray[ i ] = worker;
+      let workerProxy = new WorkerProxy( i );
+      this.workerProxyArray[ i ] = workerProxy;
+
+      let worker = workerProxy.worker = new Worker( this.workerURL, this.workerOptions );
 
       worker.onmessage = Base.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
 
       message.workerId = i;
       worker.postMessage( message );  // Initialize the worker.
-    }    
+    } 
+
   }
 
   /**
    * 
    */
   disposeWorkers() {
-    if ( this.workerArray ) {
-      for ( let i = 0; i < this.workerArray.length; ++i ) {
+    if ( this.workerProxyArray ) {
+      for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
         let message = { command: "disposeWorker" };
-        this.workerArray[ i ].postMessage( message );
+        this.workerProxyArray[ i ].worker.postMessage( message );
       }
-      this.workerArray  = null;
+      this.workerProxyArray  = null;
     }
   }
 
@@ -113,25 +151,35 @@ class Base {
 
 //!!! process id for matching to return resultArray ?
 
-    ++this.processingId; // Generate a new processing id so that the result returned from worker could be distinguished.
+    let processingId = ++this.processingId; // Generate a new processing id so that the result returned from worker could be distinguished.
 
-    let message = { command: "processTensor", processingId: this.processingId, sourceImageData: sourceImageData };
-    for ( let i = 0; i < this.workerArray.length; ++i ) {
-      this.workerArray[ i ].postMessage( message, [ message.sourceImageData.data.buffer ] );
-    }
+    let message = { command: "processTensor", processingId: processingId, sourceImageData: sourceImageData };
+    for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
+      let workerProxy = this.workerProxyArray[ i ];
+
+      workerProxy.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
+
+      let resultPromiseInfo = WorkerResultPromiseInfo( i, processingId );
 
 //!!! How to return resultArray ?
 
-    let p = new Promise( ( resolve, reject ) => {
+      let p = resultPromiseInfo.promise = new Promise( ( resolve, reject ) => {
 
-      resolve( resultArray );
+        resultPromiseInfo.resolve = resolve;
+        resultPromiseInfo.reject = reject;
 
-//!!! ...unfinished... record the function object resolve and reject in a Map.
-// processTensor_onResult() should call them according to worker id, processing id, success or failed.
+//        resolve( resultArray );
 
-    });
-    
-    return p;
+
+  //!!! ...unfinished... record the function object resolve and reject in a Map.
+  // processTensor_onResult() should call them according to worker id, processing id, success or failed.
+
+      });
+
+      workerProxy.resultPromiseInfoMap.set( processingId, resultPromiseInfo );
+
+    }
+
   }
 
   /**
@@ -148,11 +196,21 @@ class Base {
    */
   processTensor_onResult( workerId, processingId, resultTypedArray ) {
 
-    if ( processingId != this.processingId )
-      return; // Discard result with wrong processing id. (e.g. old processing result)
+    let workerProxy = this.workerProxyArray[ workerId ];
+    if ( !workerProxy )
+      return; // Discard result with non-existed worker id. (e.g. out of worker array index)
+
+    let resultPromiseInfo = workerProxy.resultPromiseInfoMap.get( processingId );
+    if ( !resultPromiseInfo )
+      return; // Discard result with non-existed processing id. (e.g. already handled old processing result)
+
+    resultPromiseInfo.resolve( resultTypedArray );
+
+    //resultPromiseInfo.reject();
 
 //!!! ...unfinished...
 
+    workerProxy.resultPromiseInfoMap.delete( processingId ); // Clear the info entry of handled processing result.
   }
 
   /**
