@@ -13,11 +13,11 @@ export { Base };
  *
  * @member {number}   workerId     The array index of the worker owns this processing.
  * @member {number}   processingId The id of the processing.
- * @member {Promise}  promise      The promise of the processing.
- * @member {function} resolve      The fulfilling function object of the promise of the processing.
- * @member {function} reject       The rejecting function object of the promise of the processing.
+ * @member {Promise}  promise      The pending promise for the processing.
+ * @member {function} resolve      The fulfilling function object of the pending promise for the processing.
+ * @member {function} reject       The rejecting function object of the pending promise for the processing.
  */
-class WorkerResultPromiseInfo {
+class WorkerPendingPromiseInfo {
 
   constructor( workerId, processingId ) {
     this.workerId = workerId;
@@ -28,14 +28,18 @@ class WorkerResultPromiseInfo {
 
 /**
  * Hold the worker and its related promise map.
+ *
+ * @member {number} workerId              The array index of this worker proxy.
+ * @member {Worker} worker                The worker.
+ * @member {Map}    pendingPromiseInfoMap The map for promise of the unhandled processing.
  */
 class WorkerProxy {
 
   constructor( workerId ) {
     this.workerId = workerId;
 
-    // Every worker has a result promise map. The key of the map is processing id. The value of the map is a WorkerResultPromiseInfo.
-    this.resultPromiseInfoMap = new Map();
+    // Every worker has a result promise map. The key of the map is processing id. The value of the map is a WorkerPendingPromiseInfo.
+    this.pendingPromiseInfoMap = new Map();
   }
 
 }
@@ -106,7 +110,6 @@ class Base {
     };
 
     this.workerProxyArray = new Array( totalWorkerCount );
-
     for ( let i = 0; i < totalWorkerCount; ++i ) {
       let workerProxy = new WorkerProxy( i );
       this.workerProxyArray[ i ] = workerProxy;
@@ -119,6 +122,7 @@ class Base {
       worker.postMessage( message );  // Initialize the worker.
     } 
 
+    this.resultPromiseArray = new Array( totalWorkerCount ); // Pre-allocation for reducing re-allocation.
   }
 
   /**
@@ -138,14 +142,18 @@ class Base {
    * @param {ImageData} sourceImageData
    *   The image data to be processed.
    *
+//!!! ...unfinished...
+
    * @param {tf.tensor3d[]} resultArray
    *   If ( resultArray != null ), all result (new) tensors will be filled into this array. This could reduce the array memory
    * re-allocation and improve performance. If ( resultArray == null ), all result tensors will be disposed and nothing will be
    * returned. No matter in which case, all other intermediate tensors were disposed.
+
    *
-   * @return {Promise} Return a promise which resolves with the resultArray.
+   * @return {Promise} Return a promise which will be resolved when all worker pending promises of the same processingId are resolved.
    */
-  async processTensor( sourceImageData, resultArray ) {
+//  async processTensor( sourceImageData, resultArray ) {
+  async processTensor( sourceImageData ) {
 
  //!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
 
@@ -159,27 +167,26 @@ class Base {
 
       workerProxy.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
 
-      let resultPromiseInfo = WorkerResultPromiseInfo( i, processingId );
+      let pendingPromiseInfo = WorkerPendingPromiseInfo( i, processingId );
 
 //!!! How to return resultArray ?
 
-      let p = resultPromiseInfo.promise = new Promise( ( resolve, reject ) => {
+      let p = this.resultPromiseArray[ i ] = pendingPromiseInfo.promise = new Promise( ( resolve, reject ) => {
 
-        resultPromiseInfo.resolve = resolve;
-        resultPromiseInfo.reject = reject;
+        pendingPromiseInfo.resolve = resolve;
+        pendingPromiseInfo.reject = reject;
 
-//        resolve( resultArray );
-
-
-  //!!! ...unfinished... record the function object resolve and reject in a Map.
-  // processTensor_onResult() should call them according to worker id, processing id, success or failed.
+//!!! ...unfinished... 
+// processTensor_onResult() should call them according to worker id, processing id, success or failed.
 
       });
 
-      workerProxy.resultPromiseInfoMap.set( processingId, resultPromiseInfo );
-
+      // Record the function object (resolve and reject) in a map so that the promise can be found and resolved when processing is done.
+      workerProxy.pendingPromiseInfoMap.set( processingId, pendingPromiseInfo );
     }
 
+    let promiseAllSettled = Promise.allSettled( this.resultPromiseArray );
+    return promiseAllSettled;
   }
 
   /**
@@ -200,17 +207,19 @@ class Base {
     if ( !workerProxy )
       return; // Discard result with non-existed worker id. (e.g. out of worker array index)
 
-    let resultPromiseInfo = workerProxy.resultPromiseInfoMap.get( processingId );
-    if ( !resultPromiseInfo )
+    let pendingPromiseInfo = workerProxy.pendingPromiseInfoMap.get( processingId );
+    if ( !pendingPromiseInfo )
       return; // Discard result with non-existed processing id. (e.g. already handled old processing result)
 
-    resultPromiseInfo.resolve( resultTypedArray );
+    pendingPromiseInfo.resolve( resultTypedArray );
 
-    //resultPromiseInfo.reject();
+    //pendingPromiseInfo.reject();
+
+//!!! ...unfinished... Whether should the older (i.e. smaller) processingId be cleared from map? (Could the processing be out of order?)
 
 //!!! ...unfinished...
 
-    workerProxy.resultPromiseInfoMap.delete( processingId ); // Clear the info entry of handled processing result.
+    workerProxy.pendingPromiseInfoMap.delete( processingId ); // Clear the info entry of handled processing result.
   }
 
   /**
