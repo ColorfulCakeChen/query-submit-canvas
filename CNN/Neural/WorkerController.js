@@ -142,22 +142,13 @@ class Base {
    * @param {ImageData} sourceImageData
    *   The image data to be processed.
    *
-//!!! ...unfinished...
-
-   * @param {tf.tensor3d[]} resultArray
-   *   If ( resultArray != null ), all result (new) tensors will be filled into this array. This could reduce the array memory
-   * re-allocation and improve performance. If ( resultArray == null ), all result tensors will be disposed and nothing will be
-   * returned. No matter in which case, all other intermediate tensors were disposed.
-
-   *
-   * @return {Promise} Return a promise which will be resolved when all worker pending promises of the same processingId are resolved.
+   * @return {Promise}
+   *   Return a promise which will be resolved when all worker pending promises of the same processingId are resolved. The promise
+   * resolved with an array of typed-array. Every type-array comes from the output tensor of one worker's neural network.
    */
-//  async processTensor( sourceImageData, resultArray ) {
   async processTensor( sourceImageData ) {
 
  //!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
-
-//!!! process id for matching to return resultArray ?
 
     let processingId = ++this.processingId; // Generate a new processing id so that the result returned from worker could be distinguished.
 
@@ -169,16 +160,9 @@ class Base {
 
       let pendingPromiseInfo = WorkerPendingPromiseInfo( i, processingId );
 
-//!!! How to return resultArray ?
-
-      let p = this.resultPromiseArray[ i ] = pendingPromiseInfo.promise = new Promise( ( resolve, reject ) => {
-
+      pendingPromiseInfo.promise = this.resultPromiseArray[ i ] = new Promise( ( resolve, reject ) => {
         pendingPromiseInfo.resolve = resolve;
         pendingPromiseInfo.reject = reject;
-
-//!!! ...unfinished... 
-// processTensor_onResult() should call them according to worker id, processing id, success or failed.
-
       });
 
       // Record the function object (resolve and reject) in a map so that the promise can be found and resolved when processing is done.
@@ -213,11 +197,10 @@ class Base {
 
     pendingPromiseInfo.resolve( resultTypedArray );
 
+//!!! ...unfinished... When will fail?
     //pendingPromiseInfo.reject();
 
 //!!! ...unfinished... Whether should the older (i.e. smaller) processingId be cleared from map? (Could the processing be out of order?)
-
-//!!! ...unfinished...
 
     workerProxy.pendingPromiseInfoMap.delete( processingId ); // Clear the info entry of handled processing result.
   }
