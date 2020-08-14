@@ -65,6 +65,9 @@ class Base {
   /**
    * Initialize this worker controller. It will create two web workers and inform them to create a neural network per worker.
    *
+   * @param {string} tensorflowJsURL
+   *   The URL of tensorflow javascript library. Every worker will load the library from the URL.
+   *
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
    *
@@ -81,10 +84,12 @@ class Base {
    *   The id for game objects.
    */
   init(
+      tensorflowJsURL,
       neuralNetConfig, totalWorkerCount, weightsURL,
       game_object_id_array
   ) {
 
+    this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
     this.processingId = -1; // The current processing id. Negative means processTensor() has not been called. Every processTensor() call will use a new id.
@@ -104,6 +109,7 @@ class Base {
     let message = {
       command: "init",
       //workerId: workerId,
+      tensorflowJsURL: tensorflowJsURL,
       neuralNetConfig: neuralNetConfig,
       totalWorkerCount: totalWorkerCount,
       weightsURL: weightsURL
@@ -174,6 +180,18 @@ class Base {
   }
 
   /**
+   * Handle messages from the progress of loading library of web workers.
+   */
+  initLibraryProgress_onReport( workerId ) {
+  }
+
+  /**
+   * Handle messages from the progress of loading neural network of web workers.
+   */
+  initNeuralNetProgress_onReport( workerId ) {
+  }
+
+  /**
    * Dispatch messages come from the owned web worker.
    *
    * @param {number} workerId
@@ -215,6 +233,14 @@ class Base {
     let message = e.data;
 
     switch ( message.command ) {
+      case "initLibraryProgressReport": //{ command: "initLibraryProgressReport", workerId, ,  };
+        //this.initLibraryProgress_onReport( message.workerId, ,  );
+        break;
+
+      case "initNeuralNetProgressReport": //{ command: "initNeuralNetProgressReport", workerId, ,  };
+        //this.initNeuralNetProgress_onReport( message.workerId, ,  );
+        break;
+
       case "processTensorResult": //{ command: "processTensorResult", workerId, processingId, resultTypedArray };
         this.processTensor_onResult( message.workerId, message.processingId, message.resultTypedArray );
         break;
