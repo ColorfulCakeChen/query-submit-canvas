@@ -9,7 +9,6 @@
 // At the same time, using dynamic import() to load ourselves module because import() can be used in classic (non-module) script.
 
 import * as Net from "./Net.js";
-import * as WorkerProxy from "./WorkerProxy.js";
 
 /**
  * The implementation of a neural network web worker.
@@ -117,29 +116,34 @@ class WorkerBody {
 
 
 if ( globalThis.document ) {
-  // In main document context (Not in worker context). Do nothing.
+  return; // In main document context (Not in worker context). Do nothing.
 
-} else {
-  // In worker context. Register message handler.
+// In worker context. Register message handler.
 
-  globalThis.workerBody = new WorkerBody();
+globalThis.workerBody = new WorkerBody();
 
-  globalThis.onmessage = function( e ) {
-    let message = e.data;
+globalThis.onmessage = function( e ) {
+  let message = e.data;
 
-    switch ( message.command ) {
-      case "init": //{ command: "init", workerId, neuralNetConfig, totalWorkerCount, weightsURL };
-        globalThis.workerProxy.init( message.workerId, message.neuralNetConfig, message.totalWorkerCount, message.weightsURL );
-        break;
+  switch ( message.command ) {
 
-      case "disposeWorker": //{ command: "disposeWorker" };
-        globalThis.workerProxy.disposeWorker();
-        break;
 
-      case "processTensor": //{ command: "processTensor", processingId, sourceImageData };
-        globalThis.workerProxy.processTensor( message.processingId, message.sourceImageData );
-        break;
+    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, totalWorkerCount, weightsURL };
 
-    }
+//!!! ...unfinished... global scope ? report progress ?
+      importScripts( message.tensorflowJsURL );          // Load tensorflow javascript library in global scope.
+      globalThis.NeuralNet = await import( "./Net.js" ); // Load neural network library in globalThis.NeuralNet scope.
+
+      globalThis.workerBody.init( message.workerId, message.neuralNetConfig, message.totalWorkerCount, message.weightsURL );
+      break;
+
+    case "disposeWorker": //{ command: "disposeWorker" };
+      globalThis.workerBody.disposeWorker();
+      break;
+
+    case "processTensor": //{ command: "processTensor", processingId, sourceImageData };
+      globalThis.workerBody.processTensor( message.processingId, message.sourceImageData );
+      break;
+
   }
 }
