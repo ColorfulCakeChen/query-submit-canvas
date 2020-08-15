@@ -68,11 +68,137 @@ class PendingPromiseInfo {
  */
 class Base {
 
-  constructor( workerId ) {
+  /**
+   * Initialize this worker proxy. It will create one web worker and inform it to create one neural network.
+   *
+   * @param {number} workerId
+   *   This id of this worker proxy (and web worker). This is the array index in the parent container (i.e. WorkerController).
+   *
+   * @param {string} tensorflowJsURL
+   *   The URL of tensorflow javascript library. Every worker will load the library from the URL.
+   *
+   * @param {Net.Config} neuralNetConfig
+   *   The configuration of the neural network which will be created by this web worker.
+   *
+   * @param {string} weightsURL
+   *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
+   *
+   * @param {InitProgress} initProgress
+   *   This worker proxy will modify theInitProgress to report its web worker's initialization progress.
+   */
+  init( workerId, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress ) {
     this.workerId = workerId;
+    this.tensorflowJsURL = tensorflowJsURL;
+    this.neuralNetConfig = neuralNetConfig;
+    this.weightsURL = weightsURL;
+    this.initProgress = initProgress;
 
     // Every worker has a result promise map. The key of the map is processing id. The value of the map is a WorkerPendingPromiseInfo.
     this.pendingPromiseInfoMap = new Map();
+    
+//!!! ...unfinished...
+
+    // Assume the main (i.e. body) javascript file of neural network web worker is a sibling file (i.e. inside the same folder) of this module file.
+    this.workerURL = new URL( import.meta.url, "WorkerBody.js" );
+
+    // Should not use "module" type worker, otherwise the worker can not use importScripts() to load tensorflow library.
+    //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
+    this.workerOptions = null;
+
+    // Worker Initialization message.
+    let message = {
+      command: "init",
+      workerId: workerId,
+      tensorflowJsURL: tensorflowJsURL,
+      neuralNetConfig: neuralNetConfig,
+      weightsURL: weightsURL
+    };
+
+    let worker = this.worker = new Worker( this.workerURL, this.workerOptions );
+
+    worker.onmessage = Base.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
+    worker.postMessage( message );  // Inform the worker to initialize.
+  }
+
+  /**
+   * 
+   */
+  disposeWorker() {
+    {
+      let message = { command: "disposeWorker" };
+      this.worker.postMessage( message );
+      this.worker  = null;
+    }
+
+    this.initProgress = null;
+  }
+
+  /**
+   * Handle messages from the progress of loading library of web workers.
+   */
+  initLibraryProgress_onReport( workerId ) {
+  }
+
+  /**
+   * Handle messages from the progress of loading neural network of web workers.
+   */
+  initNeuralNetProgress_onReport( workerId ) {
+  }
+
+  /**
+   * Dispatch messages come from the owned web worker.
+   *
+   * @param {number} workerId
+   *   The id of the worker which sent the result back.
+   *
+   * @param {number} processingId
+   *   The processing id of the result.
+   *
+   * @param {TypedArray} resultTypedArray
+   *   The result of the returned processing. It is the downloaded data of the result tensor.
+   */
+  processTensor_onResult( workerId, processingId, resultTypedArray ) {
+
+    if ( workerId != this.workerId )
+      return; // Discard result with non-existed worker id. (e.g. out of worker array index)
+
+    let pendingPromiseInfo = this.pendingPromiseInfoMap.get( processingId );
+    if ( !pendingPromiseInfo )
+      return; // Discard result with non-existed processing id. (e.g. already handled old processing result)
+
+    pendingPromiseInfo.resolve( resultTypedArray );
+
+//!!! ...unfinished... When will fail?
+    //pendingPromiseInfo.reject();
+
+//!!! ...unfinished... Whether should the older (i.e. smaller) processingId be cleared from map? (Could the processing be out of order?)
+
+    this.pendingPromiseInfoMap.delete( processingId ); // Clear the info entry of handled processing result.
+  }
+
+  /**
+   * Dispatch messages come from the owned web worker.
+   *
+   * @param {Base} this
+   *   Should be binded to this object.
+   */
+  static onmessage_fromWorker( e ) {
+    let message = e.data;
+
+    switch ( message.command ) {
+      case "initLibraryProgressReport": //{ command: "initLibraryProgressReport", workerId, ,  };
+        //this.initLibraryProgress_onReport( message.workerId, ,  );
+        break;
+
+      case "initNeuralNetProgressReport": //{ command: "initNeuralNetProgressReport", workerId, ,  };
+        //this.initNeuralNetProgress_onReport( message.workerId, ,  );
+        break;
+
+      case "processTensorResult": //{ command: "processTensorResult", workerId, processingId, resultTypedArray };
+        this.processTensor_onResult( message.workerId, message.processingId, message.resultTypedArray );
+        break;
+
+    }
   }
 
 }
