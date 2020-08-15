@@ -85,13 +85,17 @@ class Base {
    *
    * @param {InitProgress} initProgress
    *   This worker proxy will modify theInitProgress to report its web worker's initialization progress.
+   *
+   * @param {WorkerController} workerController
+   *   The container of this worker proxy.
    */
-  init( workerId, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress ) {
+  init( workerId, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress, workerController ) {
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
     this.initProgress = initProgress;
+    this.workerController = workerController;
 
     // Every worker has a result promise map. The key of the map is processing id. The value of the map is a WorkerPendingPromiseInfo.
     this.pendingPromiseInfoMap = new Map();
@@ -133,6 +137,64 @@ class Base {
     this.initProgress = null;
   }
 
+//!!! ...unfinished... How the collect all processTensor() promise to WorkerController (since they are called serially)?
+// by Promise chain?
+
+  /**
+   * @param {ImageData} sourceImageData
+   *   The image data to be processed.
+   *
+   * @param {function} pfnNextWorkerProcessTensor
+   *   If not null, it will be called as 
+   *
+   * @return {Promise}
+   *   Return a promise which will be resolved when all worker pending promises of the same processingId are resolved. The promise
+   * resolved with an array of typed-array. Every type-array comes from the output tensor of one worker's neural network.
+   */
+  async processTensor( sourceImageData, pfnNextWorkerProcessTensor ) {
+
+ //!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
+
+    let processingId = ++this.processingId; // Generate a new processing id so that the result returned from worker could be distinguished.
+
+    let message = { command: "processTensor", processingId: processingId, sourceImageData: sourceImageData };
+    for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
+      let workerProxy = this.workerProxyArray[ i ];
+
+      workerProxy.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
+
+      let pendingPromiseInfo = WorkerProxy.PendingPromiseInfo( i, processingId );
+
+      pendingPromiseInfo.promise = this.resultPromiseArray[ i ] = new Promise( ( resolve, reject ) => {
+        pendingPromiseInfo.resolve = resolve;
+        pendingPromiseInfo.reject = reject;
+      });
+
+      // Record the function object (resolve and reject) in a map so that the promise can be found and resolved when processing is done.
+      workerProxy.pendingPromiseInfoMap.set( processingId, pendingPromiseInfo );
+    }
+
+    let promiseAllSettled = Promise.allSettled( this.resultPromiseArray );
+    return promiseAllSettled;
+  }
+
+//!!! ...unfinished...
+  nextWorkerProcessTensor( workerId, processingId, sourceImageData ) {
+
+    if ( workerId != this.workerId )
+      return; // Ignore if wrong worker id.
+
+    if ( !this.pfnNextWorkerProcessTensor )
+      return; // There is not next web worker (i.e. this is the last web worker).
+
+    // The source image data is sent from this.processTensor() to this web worker and from this web worker back to here.
+    // Now, pass (i.e. serially) the source image data to next web worker.
+    //
+    // The reason to pass source image data serially is because the source image data (usually large) is tranferred (not copied) to web worker.
+    // Since it is not copied, it can only be past from one worker to another (i.e. one by one).
+    this.pfnNextWorkerProcessTensor( processingId, sourceImageData );
+  }
+
   /**
    * Handle messages from the progress of loading library of web workers.
    */
@@ -160,7 +222,7 @@ class Base {
   processTensor_onResult( workerId, processingId, resultTypedArray ) {
 
     if ( workerId != this.workerId )
-      return; // Discard result with non-existed worker id. (e.g. out of worker array index)
+      return; // Ignore if wrong worker id.
 
     let pendingPromiseInfo = this.pendingPromiseInfoMap.get( processingId );
     if ( !pendingPromiseInfo )
@@ -185,6 +247,8 @@ class Base {
   static onmessage_fromWorker( e ) {
     let message = e.data;
 
+//!!! ...unfinished... 
+
     switch ( message.command ) {
       case "initLibraryProgressReport": //{ command: "initLibraryProgressReport", workerId, ,  };
         //this.initLibraryProgress_onReport( message.workerId, ,  );
@@ -192,6 +256,10 @@ class Base {
 
       case "initNeuralNetProgressReport": //{ command: "initNeuralNetProgressReport", workerId, ,  };
         //this.initNeuralNetProgress_onReport( message.workerId, ,  );
+        break;
+
+      case "nextWorkerProcessTensor": //{ command: "nextWorkerProcessTensor", workerId, processingId, sourceImageData };
+        this.nextWorkerProcessTensor( message.workerId, message.processingId, message.sourceImageData );
         break;
 
       case "processTensorResult": //{ command: "processTensorResult", workerId, processingId, resultTypedArray };
