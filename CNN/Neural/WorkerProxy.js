@@ -139,6 +139,7 @@ class Base {
 
 //!!! ...unfinished... How the collect all processTensor() promise to WorkerController (since they are called serially)?
 // by Promise chain?
+//!!! ...unfinished... Generate two promise. One for processTensor result. Another for passing source image data to next web worker.
 
   /**
    * @param {ImageData} sourceImageData
