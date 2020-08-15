@@ -92,6 +92,8 @@ class Base {
     this.initProgressAll = null;
   }
 
+//!!! ...unfinished... Generate two promise. One for processTensor result. Another for passing source image data to next web worker.
+
   /**
    * @param {ImageData} sourceImageData
    *   The image data to be processed.
