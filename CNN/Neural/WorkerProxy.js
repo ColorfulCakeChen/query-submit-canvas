@@ -6,7 +6,7 @@
 import * as ValueMax from "../ValueMax.js";
 //import * as Net from "./Net.js";
 
-export { Base };
+export { InitProgress, InitProgressAll, PendingPromiseInfo, Base };
 
 
 /**
