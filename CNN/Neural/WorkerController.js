@@ -37,9 +37,6 @@ class Base {
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
    *
-   * @param {number} totalWorkerCount
-   *   There are how many workers should be created in chain.
-   *
    * @param {string} weightsURL
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
    *
@@ -51,13 +48,14 @@ class Base {
    */
   init(
       tensorflowJsURL,
-      neuralNetConfig, totalWorkerCount, weightsURL,
-      game_object_id_array
+      neuralNetConfig, totalWorkerCount, weightsURL
+//      game_object_id_array
   ) {
 
     this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
+
     this.processingId = -1; // The current processing id. Negative means processTensor() has not been called. Every processTensor() call will use a new id.
 
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
@@ -65,36 +63,16 @@ class Base {
 //!!! ...unfinished... According to logical CPU count, create so many web worker.
 //!!! ...unfinished... Perhaps, two web workers are sufficient.
     // Our neural networks are learning by differential evolution. Differential evolution evaluates just two entities every time.
+    // The output of one neural network will contain action signals of all game obejcts. However, only half of the output will be used
+    // because one neural network only control one alignment of the game world.
 
-    this.InitProgressAll = new WorkerProxy.InitProgressAll(); // Statistics of progress of all workers' initialization.
-
-    // Assume the main (i.e. body) javascript file of neural network web worker is a sibling file (i.e. inside the same folder) of this module file.
-    this.workerURL = new URL( import.meta.url, "WorkerBody.js" );
-
-    // Should not use "module" type worker, otherwise the worker can not use importScripts() to load tensorflow library.
-    //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
-
-    // Worker Initialization message.
-    let message = {
-      command: "init",
-      //workerId: workerId,
-      tensorflowJsURL: tensorflowJsURL,
-      neuralNetConfig: neuralNetConfig,
-      totalWorkerCount: totalWorkerCount,
-      weightsURL: weightsURL
-    };
+    this.initProgressAll = new WorkerProxy.InitProgressAll(); // Statistics of progress of all workers' initialization.
 
     this.workerProxyArray = new Array( totalWorkerCount );
     for ( let i = 0; i < totalWorkerCount; ++i ) {
-      let workerProxy = new WorkerProxy.Base( i );
-      this.workerProxyArray[ i ] = workerProxy;
-
-      let worker = workerProxy.worker = new Worker( this.workerURL, this.workerOptions );
-
-      worker.onmessage = Base.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
-
-      message.workerId = i;
-      worker.postMessage( message );  // Initialize the worker.
+      let initProgress = this.initProgressAll.childrren[ i ];
+      let workerProxy = this.workerProxyArray[ i ] = new WorkerProxy.Base();
+      workerProxy.init( i, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress );
     } 
 
     this.resultPromiseArray = new Array( totalWorkerCount ); // Pre-allocation for reducing re-allocation.
@@ -106,13 +84,12 @@ class Base {
   disposeWorkers() {
     if ( this.workerProxyArray ) {
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
-        let message = { command: "disposeWorker" };
-        this.workerProxyArray[ i ].worker.postMessage( message );
+        this.workerProxyArray[ i ].disposeWorker();
       }
       this.workerProxyArray  = null;
     }
 
-    this.InitProgressAll = null;
+    this.initProgressAll = null;
   }
 
   /**
@@ -150,73 +127,5 @@ class Base {
     return promiseAllSettled;
   }
 
-  /**
-   * Handle messages from the progress of loading library of web workers.
-   */
-  initLibraryProgress_onReport( workerId ) {
-  }
-
-  /**
-   * Handle messages from the progress of loading neural network of web workers.
-   */
-  initNeuralNetProgress_onReport( workerId ) {
-  }
-
-  /**
-   * Dispatch messages come from the owned web worker.
-   *
-   * @param {number} workerId
-   *   The id of the worker which sent the result back.
-   *
-   * @param {number} processingId
-   *   The processing id of the result.
-   *
-   * @param {TypedArray} resultTypedArray
-   *   The result of the returned processing. It is the downloaded data of the result tensor.
-   */
-  processTensor_onResult( workerId, processingId, resultTypedArray ) {
-
-    let workerProxy = this.workerProxyArray[ workerId ];
-    if ( !workerProxy )
-      return; // Discard result with non-existed worker id. (e.g. out of worker array index)
-
-    let pendingPromiseInfo = workerProxy.pendingPromiseInfoMap.get( processingId );
-    if ( !pendingPromiseInfo )
-      return; // Discard result with non-existed processing id. (e.g. already handled old processing result)
-
-    pendingPromiseInfo.resolve( resultTypedArray );
-
-//!!! ...unfinished... When will fail?
-    //pendingPromiseInfo.reject();
-
-//!!! ...unfinished... Whether should the older (i.e. smaller) processingId be cleared from map? (Could the processing be out of order?)
-
-    workerProxy.pendingPromiseInfoMap.delete( processingId ); // Clear the info entry of handled processing result.
-  }
-
-  /**
-   * Dispatch messages come from the owned web worker.
-   *
-   * @param {Base} this
-   *   Should be binded to this object.
-   */
-  static onmessage_fromWorker( e ) {
-    let message = e.data;
-
-    switch ( message.command ) {
-      case "initLibraryProgressReport": //{ command: "initLibraryProgressReport", workerId, ,  };
-        //this.initLibraryProgress_onReport( message.workerId, ,  );
-        break;
-
-      case "initNeuralNetProgressReport": //{ command: "initNeuralNetProgressReport", workerId, ,  };
-        //this.initNeuralNetProgress_onReport( message.workerId, ,  );
-        break;
-
-      case "processTensorResult": //{ command: "processTensorResult", workerId, processingId, resultTypedArray };
-        this.processTensor_onResult( message.workerId, message.processingId, message.resultTypedArray );
-        break;
-
-    }
-  }
   
 }
