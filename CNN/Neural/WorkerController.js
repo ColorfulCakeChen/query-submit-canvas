@@ -66,10 +66,13 @@ class Base {
 //!!! ...unfinished... Perhaps, two web workers are sufficient.
     // Our neural networks are learning by differential evolution. Differential evolution evaluates just two entities every time.
 
+    this.InitProgressAll = new WorkerProxy.InitProgressAll(); // Statistics of progress of all workers' initialization.
+
     // Assume the main (i.e. body) javascript file of neural network web worker is a sibling file (i.e. inside the same folder) of this module file.
     this.workerURL = new URL( import.meta.url, "WorkerBody.js" );
 
-    this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
+    // Should not use "module" type worker, otherwise the worker can not use importScripts() to load tensorflow library.
+    //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
 
     // Worker Initialization message.
     let message = {
@@ -108,6 +111,8 @@ class Base {
       }
       this.workerProxyArray  = null;
     }
+
+    this.InitProgressAll = null;
   }
 
   /**
