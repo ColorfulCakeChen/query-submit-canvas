@@ -109,6 +109,9 @@ class Base {
     //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
     this.workerOptions = null;
 
+    let worker = this.worker = new Worker( this.workerURL, this.workerOptions );
+    worker.onmessage = Base.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
+
     // Worker Initialization message.
     let message = {
       command: "init",
@@ -118,9 +121,6 @@ class Base {
       weightsURL: weightsURL
     };
 
-    let worker = this.worker = new Worker( this.workerURL, this.workerOptions );
-
-    worker.onmessage = Base.onmessage_fromWorker.bind( this ); // Register callback from the web worker.
     worker.postMessage( message );  // Inform the worker to initialize.
   }
 
@@ -142,6 +142,9 @@ class Base {
 //!!! ...unfinished... Generate two promise. One for processTensor result. Another for passing source image data to next web worker.
 
   /**
+   * @param {number} processingId
+   *   The processing id for distinguishing different processing request and result.
+   *
    * @param {ImageData} sourceImageData
    *   The image data to be processed.
    *
@@ -152,29 +155,27 @@ class Base {
    *   Return a promise which will be resolved when all worker pending promises of the same processingId are resolved. The promise
    * resolved with an array of typed-array. Every type-array comes from the output tensor of one worker's neural network.
    */
-  async processTensor( sourceImageData, pfnNextWorkerProcessTensor ) {
+  async processTensor( processingId, sourceImageData, pfnNextWorkerProcessTensor ) {
 
  //!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
 
-    let processingId = ++this.processingId; // Generate a new processing id so that the result returned from worker could be distinguished.
+//!!! ...unfinished... sourceImageData should be pass to next worker serially.
 
     let message = { command: "processTensor", processingId: processingId, sourceImageData: sourceImageData };
-    for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
-      let workerProxy = this.workerProxyArray[ i ];
 
-      workerProxy.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
+    this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
 
-      let pendingPromiseInfo = WorkerProxy.PendingPromiseInfo( i, processingId );
+    let pendingPromiseInfo = new PendingPromiseInfo( this.workerId, processingId );
 
-      pendingPromiseInfo.promise = this.resultPromiseArray[ i ] = new Promise( ( resolve, reject ) => {
-        pendingPromiseInfo.resolve = resolve;
-        pendingPromiseInfo.reject = reject;
-      });
+    pendingPromiseInfo.promise = new Promise( ( resolve, reject ) => {
+      pendingPromiseInfo.resolve = resolve;
+      pendingPromiseInfo.reject = reject;
+    });
 
-      // Record the function object (resolve and reject) in a map so that the promise can be found and resolved when processing is done.
-      workerProxy.pendingPromiseInfoMap.set( processingId, pendingPromiseInfo );
-    }
+    // Record the function object (resolve and reject) in a map so that the promise can be found and resolved when processing is done.
+    this.pendingPromiseInfoMap.set( processingId, pendingPromiseInfo );
 
+//!!! ...unfinished...
     let promiseAllSettled = Promise.allSettled( this.resultPromiseArray );
     return promiseAllSettled;
   }
