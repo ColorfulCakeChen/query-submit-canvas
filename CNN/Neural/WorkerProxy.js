@@ -190,6 +190,8 @@ class Base {
     this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
     // Now, sourceImageData.data.buffer has become invalid because it is transferred (not copied) to web worker.
 
+    let resultTypedArrayArray;
+
     // If this is not the last web worker in chain, wait for this web worker send back the source image data (after this web worker
     // has scaled (and so had a copy of) the source image data).
     if ( this.nextWorkerProxy ) {
@@ -197,12 +199,23 @@ class Base {
       // Re-used the variable sourceImageData to receive the source image data sent back from the web worker.
       sourceImageData = await processRelayPromises.relay.promise;
 
+//!!! ...unfinished...
       // Transfer (not copy) the source image data to the next (worker proxy owned) web worker.
-      this.nextWorkerProxy.processTensor( processingId, sourceImageData );
+      let resultTypedArrayArrayPromise = this.nextWorkerProxy.processTensor( processingId, sourceImageData );
+
+      let headResultTypedArray = await processRelayPromises.process.promise; // Wait for self web worker done.
+      let tailResultTypedArrayArray = await resultTypedArrayArrayPromise;    // Wait for other web workers done.
+
+      resultTypedArrayArray = [ headResultTypedArray ].concat( tailResultTypedArrayArray );
+
+    } else {
+
+      let headResultTypedArray = await processRelayPromises.process.promise; // Wait for self web worker done.
+      resultTypedArrayArray = [ headResultTypedArray ];
     }
 
 //!!! ...unfinished...
-    return processRelayPromises.process.promise;
+    return resultTypedArrayArray;
   }
 
 //!!! ...unfinished...
