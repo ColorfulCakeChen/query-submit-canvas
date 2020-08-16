@@ -106,16 +106,17 @@ class Base {
    * @param {InitProgress} initProgress
    *   This worker proxy will modify theInitProgress to report its web worker's initialization progress.
    *
-   * @param {WorkerController} workerController
-   *   The container of this worker proxy.
+   * @param {Base} nextWorkerProxy
+   *   The next web worker proxy of this web worker proxy. If null, means this is the last web worker proxy. If not null, it will
+   * be used in processTensor() to transfer the source image data to next web worker serially.
    */
-  init( workerId, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress, workerController ) {
+  init( workerId, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress, nextWorkerProxy ) {
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
     this.initProgress = initProgress;
-    this.workerController = workerController;
+    this.nextWorkerProxy = nextWorkerProxy;
 
     // Every worker has a result pending promise map. The key of the map is processing id. The value of the map is a ProcessRelayPromises.
     this.processRelayPromisesMap = new Map();
@@ -138,7 +139,8 @@ class Base {
       workerId: workerId,
       tensorflowJsURL: tensorflowJsURL,
       neuralNetConfig: neuralNetConfig,
-      weightsURL: weightsURL
+      weightsURL: weightsURL,
+      nextWorkerId: ( nextWorkerProxy ) ? nextWorkerProxy.workerId : null
     };
 
     worker.postMessage( message );  // Inform the worker to initialize.
@@ -155,6 +157,7 @@ class Base {
     }
 
     this.initProgress = null;
+    this.nextWorkerProxy = null;
   }
 
 //!!! ...unfinished... How the collect all processTensor() promise to WorkerController (since they are called serially)?
@@ -168,25 +171,35 @@ class Base {
    * @param {ImageData} sourceImageData
    *   The image data to be processed.
    *
-   * @param {function} pfnNextWorkerProcessTensor
-   *   If not null, it will be called as 
-   *
    * @return {Promise}
    *   Return a promise which will be resolved when all worker pending promises of the same processingId are resolved. The promise
    * resolved with an array of typed-array. Every type-array comes from the output tensor of one worker's neural network.
    */
-  async processTensor( processingId, sourceImageData, pfnNextWorkerProcessTensor ) {
+  async processTensor( processingId, sourceImageData ) {
+
+    // Prepare promises and their function object (resolve and reject) in a map so that the promises can be found and resolved when processing is done.
+    let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
+    this.processRelayPromisesMap.set( processingId, processRelayPromises );
 
  //!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
 
 //!!! ...unfinished... sourceImageData should be pass to next worker serially.
 
+    // Transfer (not copy) the source image data to this (worker proxy owned) web worker.
     let message = { command: "processTensor", processingId: processingId, sourceImageData: sourceImageData };
     this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
+    // Now, sourceImageData.data.buffer has become invalid because it is transferred (not copied) to web worker.
 
-    // Record the a promise's function object (resolve and reject) in a map so that the promise can be found and resolved when processing is done.
-    let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
-    this.processRelayPromisesMap.set( processingId, processRelayPromises );
+    // If this is not the last web worker in chain, wait for this web worker send back the source image data (after this web worker
+    // has scaled (and so had a copy of) the source image data).
+    if ( this.nextWorkerProxy ) {
+
+      // Re-used the variable sourceImageData to receive the source image data sent back from the web worker.
+      sourceImageData = await processRelayPromises.relay.promise;
+
+      // Transfer (not copy) the source image data to the next (worker proxy owned) web worker.
+      this.nextWorkerProxy.processTensor( processingId, sourceImageData );
+    }
 
 //!!! ...unfinished...
     return processRelayPromises.process.promise;
