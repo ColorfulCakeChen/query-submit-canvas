@@ -1,5 +1,5 @@
 /**
- * @file This file is an importable module to handle neural (web) worker body.
+ * @file This file is an importable module to handle and communicate to the neural network (web) worker body.
  *
  */
 
@@ -55,6 +55,11 @@ class PendingPromiseInfo {
   constructor( workerId, processingId ) {
     this.workerId = workerId;
     this.processingId = processingId;
+
+    let p = this.promise = new Promise( ( resolve, reject ) => {
+      this.resolve = resolve;
+      this.reject = reject;
+    });
   }
 
 }
@@ -162,22 +167,14 @@ class Base {
 //!!! ...unfinished... sourceImageData should be pass to next worker serially.
 
     let message = { command: "processTensor", processingId: processingId, sourceImageData: sourceImageData };
-
     this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
 
+    // Record the a promise's function object (resolve and reject) in a map so that the promise can be found and resolved when processing is done.
     let pendingPromiseInfo = new PendingPromiseInfo( this.workerId, processingId );
-
-    pendingPromiseInfo.promise = new Promise( ( resolve, reject ) => {
-      pendingPromiseInfo.resolve = resolve;
-      pendingPromiseInfo.reject = reject;
-    });
-
-    // Record the function object (resolve and reject) in a map so that the promise can be found and resolved when processing is done.
     this.pendingPromiseInfoMap.set( processingId, pendingPromiseInfo );
 
 //!!! ...unfinished...
-    let promiseAllSettled = Promise.allSettled( this.resultPromiseArray );
-    return promiseAllSettled;
+    return p;
   }
 
 //!!! ...unfinished...
