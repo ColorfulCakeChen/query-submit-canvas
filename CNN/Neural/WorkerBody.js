@@ -36,13 +36,13 @@ class WorkerBody {
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
    *
-   * @param {number} totalWorkerCount
-   *   There are how many workers should be created in chain.
-   *
    * @param {string} weightsURL
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
+   *
+   * @param {number} nextWorkerId
+   *   The next web worker id in chain. If null, this is the last worker in chain.
    */
-  init( workerId, neuralNetConfig, totalWorkerCount, weightsURL ) {
+  init( workerId, neuralNetConfig, weightsURL, nextWorkerId ) {
 
     workerId = workerId | 0;
     if ( workerId < 0 )
@@ -51,23 +51,26 @@ class WorkerBody {
     this.workerId = workerId;
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
+    this.nextWorkerId = nextWorkerId;
 
-    let remainedWorkerCount = totalWorkerCount - workerId; // How many web worker should be created.
-    if ( remainedWorkerCount <= 0 )
-      return; // Should not happen. If happened, just return without creating any neural network.
+//!!!
+//     let remainedWorkerCount = totalWorkerCount - workerId; // How many web worker should be created.
+//     if ( remainedWorkerCount <= 0 )
+//       return; // Should not happen. If happened, just return without creating any neural network.
 
     let bKeepInputTensor = false; // Because every web worker will copy the input, there is not necessary to keep input.
 
     this.neuralNet = new Net();
     this.neuralNet.init( neuralNetConfig, bKeepInputTensor );
 
-    remainedWorkerCount -= 1; // "-1" for a neural network is created.
-    if ( remainedWorkerCount <= 0 )
-      return; // All neural network web worker are created.
-
-    let nextWorkerId = workerId + 1;
-    let nextWorkerProxy = this.nextWorkerProxy = new WorkerProxy.Base();
-    nextWorkerProxy.init( nextWorkerId, neuralNetConfig, totalWorkerCount, weightsURL ); // Create the next web worker in cascade chain.
+//!!!
+//     remainedWorkerCount -= 1; // "-1" for a neural network is created.
+//     if ( remainedWorkerCount <= 0 )
+//       return; // All neural network web worker are created.
+//
+//     let nextWorkerId = workerId + 1;
+//     let nextWorkerProxy = this.nextWorkerProxy = new WorkerProxy.Base();
+//     nextWorkerProxy.init( nextWorkerId, neuralNetConfig, totalWorkerCount, weightsURL ); // Create the next web worker in cascade chain.
   }
 
   disposeWorker() {
@@ -128,13 +131,14 @@ globalThis.onmessage = function( e ) {
   switch ( message.command ) {
 
 
-    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, totalWorkerCount, weightsURL };
+    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, weightsURL, nextWorkerId };
+      nextWorkerId: ( nextWorkerProxy ) ? nextWorkerProxy.workerId : null
 
 //!!! ...unfinished... global scope ? report progress ?
       importScripts( message.tensorflowJsURL );          // Load tensorflow javascript library in global scope.
       globalThis.NeuralNet = await import( "./Net.js" ); // Load neural network library in globalThis.NeuralNet scope.
 
-      globalThis.workerBody.init( message.workerId, message.neuralNetConfig, message.totalWorkerCount, message.weightsURL );
+      globalThis.workerBody.init( message.workerId, message.neuralNetConfig, message.weightsURL, message.nextWorkerId );
       break;
 
     case "disposeWorker": //{ command: "disposeWorker" };
