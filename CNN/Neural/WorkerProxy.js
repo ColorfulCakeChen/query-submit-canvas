@@ -56,10 +56,25 @@ class PromiseResolveReject {
     this.workerId = workerId;
     this.processingId = processingId;
 
-    let p = this.promise = new Promise( ( resolve, reject ) => {
+    this.promise = new Promise( ( resolve, reject ) => {
       this.resolve = resolve;
       this.reject = reject;
     });
+  }
+
+}
+
+/**
+ * Hold two PromiseResolveReject.
+ *
+ * @member {PromiseResolveReject}   process The promise for reporting processTensor() done.
+ * @member {PromiseResolveReject}   relay   The promise for reporting sourceImageData is received from this web worker and should be past to next web worker.
+ */
+class ProcessRelayPromises {
+
+  constructor( workerId, processingId ) {
+    this.process = new PromiseResolveReject( workerId, processingId );
+    this.relay = new PromiseResolveReject( workerId, processingId );
   }
 
 }
@@ -102,9 +117,9 @@ class Base {
     this.initProgress = initProgress;
     this.workerController = workerController;
 
-    // Every worker has a result pending promise map. The key of the map is processing id. The value of the map is a PromiseResolveReject.
-    this.promiseResolveRejectMap = new Map();
-    
+    // Every worker has a result pending promise map. The key of the map is processing id. The value of the map is a ProcessRelayPromises.
+    this.processRelayPromisesMap = new Map();
+
 //!!! ...unfinished...
 
     // Assume the main (i.e. body) javascript file of neural network web worker is a sibling file (i.e. inside the same folder) of this module file.
@@ -170,11 +185,11 @@ class Base {
     this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
 
     // Record the a promise's function object (resolve and reject) in a map so that the promise can be found and resolved when processing is done.
-    let promiseResolveReject = new PromiseResolveReject( this.workerId, processingId );
-    this.promiseResolveRejectMap.set( processingId, promiseResolveReject );
+    let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
+    this.processRelayPromisesMap.set( processingId, processRelayPromises );
 
 //!!! ...unfinished...
-    return promiseResolveReject.promise;
+    return processRelayPromises.process.promise;
   }
 
 //!!! ...unfinished...
@@ -223,18 +238,18 @@ class Base {
     if ( workerId != this.workerId )
       return; // Ignore if wrong worker id.
 
-    let promiseResolveReject = this.promiseResolveRejectMap.get( processingId );
-    if ( !promiseResolveReject )
+    let processRelayPromises = this.processRelayPromisesMap.get( processingId );
+    if ( !processRelayPromises )
       return; // Discard result with non-existed processing id. (e.g. already handled old processing result)
 
-    promiseResolveReject.resolve( resultTypedArray );
+    processRelayPromises.process.resolve( resultTypedArray );
 
 //!!! ...unfinished... When will fail?
-    //pendingPromiseInfo.reject();
+    //processRelayPromises.reject();
 
 //!!! ...unfinished... Whether should the older (i.e. smaller) processingId be cleared from map? (Could the processing be out of order?)
 
-    this.pendingPromiseInfoMap.delete( processingId ); // Clear the info entry of handled processing result.
+    this.processRelayPromisesMap.delete( processingId ); // Clear the info entry of handled processing result.
   }
 
   /**
