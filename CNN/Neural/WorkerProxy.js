@@ -50,7 +50,7 @@ class InitProgressAll extends ValueMax.Percentage.Aggregate {
  * @member {function} resolve      The fulfilling function object of the pending promise for the processing.
  * @member {function} reject       The rejecting function object of the pending promise for the processing.
  */
-class PendingPromiseInfo {
+class PromiseResolveReject {
 
   constructor( workerId, processingId ) {
     this.workerId = workerId;
@@ -102,8 +102,8 @@ class Base {
     this.initProgress = initProgress;
     this.workerController = workerController;
 
-    // Every worker has a result promise map. The key of the map is processing id. The value of the map is a WorkerPendingPromiseInfo.
-    this.pendingPromiseInfoMap = new Map();
+    // Every worker has a result pending promise map. The key of the map is processing id. The value of the map is a PromiseResolveReject.
+    this.promiseResolveRejectMap = new Map();
     
 //!!! ...unfinished...
 
@@ -170,11 +170,11 @@ class Base {
     this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
 
     // Record the a promise's function object (resolve and reject) in a map so that the promise can be found and resolved when processing is done.
-    let pendingPromiseInfo = new PendingPromiseInfo( this.workerId, processingId );
-    this.pendingPromiseInfoMap.set( processingId, pendingPromiseInfo );
+    let promiseResolveReject = new PromiseResolveReject( this.workerId, processingId );
+    this.promiseResolveRejectMap.set( processingId, promiseResolveReject );
 
 //!!! ...unfinished...
-    return p;
+    return promiseResolveReject.promise;
   }
 
 //!!! ...unfinished...
@@ -223,11 +223,11 @@ class Base {
     if ( workerId != this.workerId )
       return; // Ignore if wrong worker id.
 
-    let pendingPromiseInfo = this.pendingPromiseInfoMap.get( processingId );
-    if ( !pendingPromiseInfo )
+    let promiseResolveReject = this.promiseResolveRejectMap.get( processingId );
+    if ( !promiseResolveReject )
       return; // Discard result with non-existed processing id. (e.g. already handled old processing result)
 
-    pendingPromiseInfo.resolve( resultTypedArray );
+    promiseResolveReject.resolve( resultTypedArray );
 
 //!!! ...unfinished... When will fail?
     //pendingPromiseInfo.reject();
