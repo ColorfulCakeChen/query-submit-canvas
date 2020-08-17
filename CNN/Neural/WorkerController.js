@@ -11,20 +11,21 @@ export { Base };
 
 
 /**
- * The wrapper of a neural network web worker for handling easily.
+ * The container of WorkerProxy. It orchestrates these WorkerProxy. Especially, it transfers (scaled) source image data to and from
+ * web worker. This could maximize parallel computing under the restriction transferring source image data to every web worker serially.
  *
-!!! ...unfinished... cascade is slow when return all result. Master / Slaves should be faster.
-
- * Many workers cascade in chain. Every worker handles one neural network. When apply() is called, the input (usually a large memory block)
+ * Every worker handles one neural network. When processTensor() is called, the input (usually a large memory block)
  * will be transffered to the 1st worker to start computing, and then transffered to the 2nd worker to start computing, ... etc.
  *
- * When passing large data by Worker.postMessage(), it is preferred by transferring (not by copying). If the large data wants to be transferred
- * to many workers, the only possible way is to transferring them serially. This is why the workers are arranged in cascade chain.
+ * When passing large data by Worker.postMessage(), it is preferred by transferring (not by copying). If the large data wants to be
+ * transferred (not copied) to many workers, the only possible way is to transferring them serially.
  *
- * However, serially transferring hurts the performance. Workers are better to compute parallelly. So every worker should transfer data to next
- * worker as soon as possible. When they get the first part of calculation result (rather than wait for all calculation done), they should
- * transfer the input data to the next worker immediately.
+ * However, serially transferring hurts the performance. Workers are better to compute parallelly. So every worker should transfer the
+ * (possible scaled) source image data back to this WorkerController, and keep computing neural network at the same. And then, this
+ * WorkerController will transfer the source image data to the next worker as soon as possible.
  *
+ * Finally, this WorkerController collects all web workers' processTensor() results in a promise. The promise will resolve with an array
+ * of typed-array. Every typed-array is the output of one neural network.
  */
 class Base {
 
@@ -98,11 +99,9 @@ class Base {
    *
    * @return {Promise}
    *   Return a promise which will be resolved when all worker processing promises of the same processingId are resolved. The promise
-   * resolved with an array of typed-array. Every type-array comes from the output tensor of one worker's neural network.
+   * resolved with an array of typed-array. Every typed-array comes from the output tensor of one worker's neural network.
    */
   async processTensor( sourceImageData ) {
-
- //!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
 
     let processingId = ++this.processingId; // Generate a new processing id so that the result returned from worker could be distinguished.
 
