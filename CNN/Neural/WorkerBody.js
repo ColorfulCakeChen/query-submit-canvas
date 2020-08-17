@@ -95,19 +95,13 @@ class WorkerBody {
   }
 
   /**
+   * Scale the source image data, transfer scaled source image data back to WorkerProxy, compute neural network, pass result to WorkerProxy.
+   *
    * @param {number} processingId
    *   The id of this processing. It is used when reporting processing result.
    *
    * @param {ImageData} sourceImageData
    *   The image data to be processed.
-   *
-???
-   * @param {tf.tensor3d[]} resultArray
-   *   If ( resultArray != null ), all result (new) tensors will be filled into this array. This could reduce the array memory
-   * re-allocation and improve performance. If ( resultArray == null ), all result tensors will be disposed and nothing will be
-   * returned. No matter in which case, all other intermediate tensors were disposed.
-   *
-   * @return {Promise} Return a promise which resolves with the resultArray.
    */
   processTensor( processingId, sourceImageData ) {
 
@@ -122,15 +116,16 @@ class WorkerBody {
     // The reason why it is done asynchronously is for not blocking the following computation of neural network.
     this.transferBackSourceImageDataAsync( processingId, scaledSourceTensor );
 
+    // At the same time (the scaled source image data is transferring back to WorkerProxy and then WorkerController), this worker is still computing
+    // the neural network parallelly.
+    let resultTensor3d = this.neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, true );
 
-//!!! ...unfinished...
+    let resultTypedArray = await resultTensor3d.data();
+    resultTensor3d.dispose(); // The result tensor should be disposed.
 
-    let resultTypedArray = resultTensor.data();
-
-    let message = { command: "processTensorResult", workerId: this.workerId, processingId: processingId, sourceImageData: scaledSourceImageData };
-    postMessage( message, [ message.sourceImageData.data.buffer ] );
-
-//!!! ...unfinished... The result tensor should be disposed.
+    // Pass the output of neural network to WorkerProxy and then WorkerController.
+    let message = { command: "processTensorResult", workerId: this.workerId, processingId: processingId, resultTypedArray: resultTypedArray };
+    postMessage( message, [ message.resultTypedArray.buffer ] );
   }
 
   /**
