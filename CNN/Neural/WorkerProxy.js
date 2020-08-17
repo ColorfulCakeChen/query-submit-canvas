@@ -80,7 +80,7 @@ class ProcessRelayPromises {
 }
 
 /**
- * Hold the worker and its related promise map.
+ * Hold the worker and its related promise map. It is a wrapper of a neural network web worker for handling easily.
  *
  * @member {number} workerId              The array index of this worker proxy.
  * @member {Worker} worker                The worker.
@@ -105,21 +105,13 @@ class Base {
    *
    * @param {InitProgress} initProgress
    *   This worker proxy will modify theInitProgress to report its web worker's initialization progress.
-   *
-//!!! ...unfinished...
-   * @param {Base} nextWorkerProxy
-   *   The next web worker proxy of this web worker proxy. If null, means this is the last web worker proxy. If not null, it will
-   * be used in processTensor() to transfer the source image data to next web worker serially.
    */
-//  init( workerId, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress, nextWorkerProxy ) {
   init( workerId, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress ) {
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
     this.initProgress = initProgress;
-//!!! ...unfinished...
-//    this.nextWorkerProxy = nextWorkerProxy;
 
     // Every worker has a result pending promise map. The key of the map is processing id. The value of the map is a ProcessRelayPromises.
     this.processRelayPromisesMap = new Map();
@@ -143,8 +135,6 @@ class Base {
       tensorflowJsURL: tensorflowJsURL,
       neuralNetConfig: neuralNetConfig,
       weightsURL: weightsURL
-//!!! ...unfinished...
-//      nextWorkerId: ( nextWorkerProxy ) ? nextWorkerProxy.workerId : null
     };
 
     worker.postMessage( message );  // Inform the worker to initialize.
@@ -163,10 +153,6 @@ class Base {
     this.initProgress = null;
     this.nextWorkerProxy = null;
   }
-
-//!!! ...unfinished... How the collect all processTensor() promise to WorkerController (since they are called serially)?
-// by Promise chain?
-//!!! ...unfinished... Generate two promise. One for processTensor result. Another for passing source image data to next web worker.
 
   /**
    * @param {number} processingId
@@ -200,12 +186,14 @@ class Base {
    * Handle messages from the progress of loading library of web workers.
    */
   initLibraryProgress_onReport( workerId ) {
+//!!! ...unfinished...
   }
 
   /**
    * Handle messages from the progress of loading neural network of web workers.
    */
   initNeuralNetProgress_onReport( workerId ) {
+//!!! ...unfinished...
   }
 
   /**
@@ -266,14 +254,14 @@ class Base {
   static onmessage_fromWorker( e ) {
     let message = e.data;
 
-//!!! ...unfinished... 
-
     switch ( message.command ) {
       case "initLibraryProgressReport": //{ command: "initLibraryProgressReport", workerId, ,  };
+//!!! ...unfinished...
         //this.initLibraryProgress_onReport( message.workerId, ,  );
         break;
 
       case "initNeuralNetProgressReport": //{ command: "initNeuralNetProgressReport", workerId, ,  };
+//!!! ...unfinished... 
         //this.initNeuralNetProgress_onReport( message.workerId, ,  );
         break;
 
