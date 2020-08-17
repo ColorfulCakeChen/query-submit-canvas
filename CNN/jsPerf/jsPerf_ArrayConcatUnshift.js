@@ -2,7 +2,7 @@
 /**
  * Test performancce of array concat and unshift.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/9225/1/colorfulcakechen-array-concat-unshift-d01e94e8696ce742e}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/9225/2/colorfulcakechen-array-concat-unshift}
  */
 
 /**
