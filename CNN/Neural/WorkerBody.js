@@ -137,16 +137,32 @@ class WorkerBody {
    * @param {number} processingId
    *   The id of this processing. It is used when reporting processing result.
    *
+   * @param {ImageData} originalSourceImageData
+   *   The original image data past to processTensor(). If its size is the same as scaledSourceTensor, this original will be transferred back to
+   * WorkerController. In this case, scaledSourceTensor.data() will not be called.
+   *
    * @param {tf.tensor3d} scaledSourceTensor
-   *   The scaled source image tensor3d. It is just read and will not be destroyed. Its data will be asynchronously downloaded and transfer to WorkerController.
+   *   The scaled source image tensor3d. If its size is different from originalSourceImageData, its data will be asynchronously downloaded
+   * and transferred back to WorkerController.
    *
    * @return {Promise} Return a promise which resolves with the resultArray.
    */
-  async transferBackSourceImageDataAsync( processingId, scaledSourceTensor ) {
+  async transferBackSourceImageDataAsync( processingId, originalSourceImageData, scaledSourceTensor ) {
 
-    // Convert back to scaled source ImageData asynchronously.
-    let scaledSourceImageDataTypedArray = await scaledSourceTensor.data();
-    let scaledSourceImageData = { height: scaledSourceTensor.shape[ 0 ], width: scaledSourceTensor.shape[ 1 ], data: scaledSourceImageDataTypedArray };
+    let scaledSourceImageData;
+
+    if (   ( scaledSourceTensor.shape[ 0 ] == originalSourceImageData.height )
+        && ( scaledSourceTensor.shape[ 1 ] == originalSourceImageData.width  ) ) {
+
+      // Since scaledSourceTensor is the same size as originalSourceImageData (i.e. does not be scaled), it is not necessary to download from scaledSourceTensor.
+      scaledSourceImageData = originalSourceImageData;
+
+    } else {
+
+      // Convert back to scaled source ImageData asynchronously.
+      let scaledSourceImageDataTypedArray = await scaledSourceTensor.data();
+      scaledSourceImageData = { height: scaledSourceTensor.shape[ 0 ], width: scaledSourceTensor.shape[ 1 ], data: scaledSourceImageDataTypedArray };
+    }
 
     // Transfer back to WorkerProxy (and inform WorkerController).
     let message = { command: "transferBackSourceImageData", workerId: this.workerId, processingId: processingId, sourceImageData: scaledSourceImageData };
