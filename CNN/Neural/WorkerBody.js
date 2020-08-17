@@ -3,16 +3,17 @@
  *
  */
 
-//!!! ...unfinished...
 // In module (non-classic) web worker, static import is available. But at the same time, importScripts() will not be avbailable.
-// Solution may use classic (non-module) web worker so that tensorflow.js can be loaded by importScripts().
+// For solving this problem, using classic (non-module) web worker so that tensorflow.js can be loaded by importScripts().
 // At the same time, using dynamic import() to load ourselves module because import() can be used in classic (non-module) script.
-
-import * as Net from "./Net.js";
+//
+//import * as Net from "./Net.js";
 
 /**
  * The implementation of a neural network web worker.
  *
+//!!! ...unfinished...
+
  * Many workers cascade in chain. Every worker handles one neural network. When apply() is called, the input (usually a large memory block)
  * will be transffered to the 1st worker to start computing, and then transffered to the 2nd worker to start computing, ... etc.
  *
@@ -27,6 +28,7 @@ import * as Net from "./Net.js";
 class WorkerBody {
 
   /**
+//!!! ...unfinished...
    * If ( ( totalWorkerCount - workerId ) > 0 ), this method will create a neural network.
    * If ( ( totalWorkerCount - workerId ) > 1 ), this method will create the next neural network web worker, too.
    *
@@ -39,10 +41,13 @@ class WorkerBody {
    * @param {string} weightsURL
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
    *
+//!!! ...unfinished...
    * @param {number} nextWorkerId
    *   The next web worker id in chain. If null, this is the last worker in chain.
    */
-  init( workerId, neuralNetConfig, weightsURL, nextWorkerId ) {
+//!!! ...unfinished...
+//  init( workerId, neuralNetConfig, weightsURL, nextWorkerId ) {
+  init( workerId, neuralNetConfig, weightsURL ) {
 
     workerId = workerId | 0;
     if ( workerId < 0 )
@@ -51,7 +56,8 @@ class WorkerBody {
     this.workerId = workerId;
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
-    this.nextWorkerId = nextWorkerId;
+//!!! ...unfinished...
+//    this.nextWorkerId = nextWorkerId;
 
 //!!!
 //     let remainedWorkerCount = totalWorkerCount - workerId; // How many web worker should be created.
@@ -79,10 +85,11 @@ class WorkerBody {
       this.neuralNet = null;
     }
 
-    if ( this.nextWorkerProxy ) { // Dispose the next web worker in cascade chain.
-      this.nextWorkerProxy.disposeWorker();
-      this.nextWorkerProxy = null;
-    }
+//!!! ...unfinished...
+//     if ( this.nextWorkerProxy ) { // Dispose the next web worker in cascade chain.
+//       this.nextWorkerProxy.disposeWorker();
+//       this.nextWorkerProxy = null;
+//     }
 
 //!!!??? calling close() when the next worker disposed ?
     close();
@@ -105,11 +112,18 @@ class WorkerBody {
    */
   processTensor( processingId, sourceImageData ) {
 
+    // Create (scaled) source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
+    //
+    // Usually, only the first web worker ( workerId == 0 ) will be responsible for scaling the source image data to default size.
+    // After that, all other web worker received the already scaled image data.
+    let scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_ImageData_or_Canvas( sourceImageData );
+
 //!!! ...unfinished...
+    
     let resultTypedArray = resultTensor.data();
 
-    let message = { command: "processTensorResult", workerId: this.workerId, processingId: processingId, resultTypedArray: resultTypedArray };
-    postMessage( message, [ message.resultTypedArray.buffer ] );
+    let message = { command: "sendBackSourceImageData", workerId: this.workerId, processingId: processingId, sourceImageData: sourceImageData };
+    postMessage( message, [ message.sourceImageData.data.buffer ] );
 
 //!!! ...unfinished... The result tensor should be disposed.
   }
@@ -131,14 +145,19 @@ globalThis.onmessage = function( e ) {
   switch ( message.command ) {
 
 
-    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, weightsURL, nextWorkerId };
+//!!! ...unfinished...
+//    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, weightsURL, nextWorkerId };
+    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, weightsURL };
       nextWorkerId: ( nextWorkerProxy ) ? nextWorkerProxy.workerId : null
 
 //!!! ...unfinished... global scope ? report progress ?
       importScripts( message.tensorflowJsURL );          // Load tensorflow javascript library in global scope.
       globalThis.NeuralNet = await import( "./Net.js" ); // Load neural network library in globalThis.NeuralNet scope.
+      globalThis.NeuralNet = await import( "./Net.js" ); // Load neural network library in globalThis.NeuralNet scope.
 
-      globalThis.workerBody.init( message.workerId, message.neuralNetConfig, message.weightsURL, message.nextWorkerId );
+//!!! ...unfinished...
+///      globalThis.workerBody.init( message.workerId, message.neuralNetConfig, message.weightsURL, message.nextWorkerId );
+      globalThis.workerBody.init( message.workerId, message.neuralNetConfig, message.weightsURL );
       break;
 
     case "disposeWorker": //{ command: "disposeWorker" };
