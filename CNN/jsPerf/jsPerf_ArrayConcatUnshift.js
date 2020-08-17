@@ -37,10 +37,10 @@ class TestSet {
     }
   }
 
-  test_ArrayShift() {
+  test_ArrayPush() {
     let result = [];
     for ( let i = 0; i < this.arrayListLength; ++i ) {
-      result.shift( ...this.arrayList[ i ] );
+      result.push( ...this.arrayList[ i ] );
     }
   }
 
@@ -48,7 +48,7 @@ class TestSet {
   async testCaseLoader() {
     this.test_ArrayConcat();
     this.test_ArrayUnshift();
-    this.test_ArrayShift();
+    this.test_ArrayPush();
   }
  
 }
