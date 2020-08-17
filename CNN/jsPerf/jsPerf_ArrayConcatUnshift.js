@@ -33,7 +33,7 @@ class TestSet {
   test_ArrayUnshift() {
     let result = [];
     for ( let i = ( this.arrayListLength - 1 ); i >= 0; --i ) {
-      result = result.unsihft( this.arrayList[ i ] );
+      result = result.unshift( this.arrayList[ i ] );
     }
   }
 
