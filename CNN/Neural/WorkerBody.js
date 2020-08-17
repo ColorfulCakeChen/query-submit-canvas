@@ -62,6 +62,13 @@ class WorkerBody {
    */
   processTensor( processingId, sourceImageData ) {
 
+//!!! ...unfinshed...
+// the sourceImageData maybe not real ImageData (because it is recovered by postMessage() or from scaledSourceTensor of previous web worker).
+// The fromPixel() may not handle them correctly.
+// Perhaps, convert ImageData to Float32Array, and then postMessage() it with shape [ height, width, channel ]  to web worker.
+// Web worker could uses them to construct tensor3d directly. This should be faster than fromPixels() because fromPixels() will convert twice:
+// one is from ImageData to Int32Array, another is from Int32Array to tensor3d.
+    
     // Create (scaled) source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
     //
     // Usually, only the first web worker ( workerId == 0 ) will be responsible for scaling the source image data to default size.
@@ -110,6 +117,8 @@ class WorkerBody {
       scaledSourceImageData = originalSourceImageData;
 
     } else {
+
+//!!! ...unfinshed... the downloaded data is not Uint8ClampedArray, and scaledSourceImageData is not real ImageData. the fromPixel() may not handle them correct.
 
       // Convert back to scaled source ImageData asynchronously.
       let scaledSourceImageDataTypedArray = await scaledSourceTensor.data();
