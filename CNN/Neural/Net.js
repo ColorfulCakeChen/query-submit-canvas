@@ -28,9 +28,9 @@ class Config {
   constructor(
     sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
-    bChannelShuffler,
-    pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0, bBias, strActivationName )
+    bChannelShuffler = true,
+    pointwise1ChannelCountRate = 1,
+    strAvgMaxConv = "Conv", depthwiseFilterHeight = 3, depthwiseChannelMultiplierBlock0Step0 = 1, bBias = false, strActivationName = "cos" )
   {
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
