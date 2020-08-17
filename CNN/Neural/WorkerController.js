@@ -108,34 +108,21 @@ class Base {
 
     for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
       let workerProxy = this.workerProxyArray[ i ];
-      workerProxy.processTensor( processingId, sourceImageData ); // Transfer (not copy) the source image data to one web worker.
+
+      // Transfer (not copy) the source image data to one web worker.
+      this.processTensorPromiseArray[ i ] = workerProxy.processTensor( processingId, sourceImageData );
+
       // Now, sourceImageData.data.buffer has become invalid because it is transferred (not copied) to the above web worker.
 
-
-//       if ( i >= this.workerProxyArray.length ) {
-//         // This is the last web worker in chain. No need to wait the source image data sent back from the web worker.
-//
-// //!!! ...unfinished...
-//       } else {
-//
-//         // This is not the last web worker in chain, wait for it sending back the source image data (after it
-//         // has scaled (and so had a copy of) the source image data).
-//
-// //!!! ...unfinished...
-//
-//       }
-
-//!!! ...unfinished...
       // No matter whether this is the last web worker in chain, wait for it sending back the source image data (after it
       // has scaled (and so had a copy of) the source image data).
-
-      let processRelayPromises = workerProxy.processRelayPromisesMap.get( processingId );
-
-      this.processTensorPromiseArray[ i ] = processRelayPromises.process.promise;
-
+      //
       // Re-used the variable sourceImageData to receive the source image data sent back from the web worker. It will be pass to the next web worker.
+      let processRelayPromises = workerProxy.processRelayPromisesMap.get( processingId );
       sourceImageData = await processRelayPromises.relay.promise;
     }
+
+//!!! ...unfinished... Array push() is faster than unshift(), and unshift() is faster than concat().
 
     // Since all web worker has received the source image data (although serially), wait for all them done.
     let promiseAllSettled = Promise.allSettled( this.processTensorPromiseArray );
