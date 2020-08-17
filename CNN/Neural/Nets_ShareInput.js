@@ -64,7 +64,7 @@ class Base {
       }
       
       // Assume all neural networks process the same size [ height, width ] input. So that the input can be shared (i.e. extracted once, processed multiple times).
-      let neuralNet0 = this.neuralNetArray[ 0 ];
+      let neuralNet0 = this.neuralNet0 = this.neuralNetArray[ 0 ];
       this.sourceImageHeightWidth = neuralNet0.sourceImageHeightWidth;
     }
 
@@ -86,8 +86,8 @@ class Base {
   }
 
   /**
-   * @param {HTMLCanvasElement} sourceCanvas
-   *   The canvas which provides image.
+   * @param {ImageData|HTMLCanvasElement} source_ImageData_or_Canvas
+   *   The image or canvas which provides image.
    *
    * @param {tf.tensor3d[]} resultArray
    *   If ( resultArray != null ), all result (new) tensors will be filled into this array. This could reduce the array memory
@@ -96,7 +96,7 @@ class Base {
    *
    * @return {tf.tensor3d[]} Return the resultArray.
    */
-  apply_sync( sourceCanvas, resultArray ) {
+  apply_sync( source_ImageData_or_Canvas, resultArray ) {
 
     if ( this.bWebWorker ) {
 
@@ -104,23 +104,8 @@ class Base {
 
     } else {
 
-  //!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
-  //     let ctx = sourceCanvas.getContext( '2d' );
-  //     let sourceImageData = ctx.getImageData( 0, 0, sourceCanvas.width, sourceCanvas.height );
-  //
-  //     // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceImage) except the returning tensor.
-  //     let sourceImageTensor = tf.browser.fromPixels( sourceImageData, this.sourceImageChannelCount );
-  //
-  //     // Resize source image to a default size (height x width) which is used when training the neural network.
-  //     let t = tf.image.resizeBilinear( sourceImageTensor, this.sourceImageHeightWidth, true ); // alignCorners = true
-  //     sourceImageTensor.dispose();
-
-      // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
-      let sourceTensor = tf.browser.fromPixels( sourceCanvas, this.sourceImageChannelCount );
-
-      // Resize source image to a default size (height x width). The default size should be the input image size used for training the neural network.
-      let scaledSourceTensor = tf.image.resizeBilinear( sourceTensor, this.sourceImageHeightWidth, true ); // ( alignCorners = true ) for visual image resizing.
-      sourceTensor.dispose();
+      // Get (scaled) source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
+      let scaledSourceTensor = this.neuralNet0.getScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas );
 
   //!!! ...unfinished...
   // here should convert sourceImageData to tensor, get typed-array (so that the receiver worker could convert to tensor again without re-construct typed-array),
