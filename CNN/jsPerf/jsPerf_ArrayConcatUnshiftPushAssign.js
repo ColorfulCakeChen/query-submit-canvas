@@ -47,7 +47,7 @@ class TestSet {
   test_ArrayAssign() {
     let result = new Array( this.arrayListLength );
     for ( let i = 0; i < this.arrayListLength; ++i ) {
-      result[ i ]= ( ...this.arrayList[ i ] );
+      result[ i ]= this.arrayList[ i ][ 0 ];
     }
   }
 
