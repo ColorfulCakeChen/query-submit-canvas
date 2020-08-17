@@ -87,7 +87,7 @@ class Base {
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
         this.workerProxyArray[ i ].disposeWorker();
       }
-      this.workerProxyArray  = null;
+      this.workerProxyArray = null;
     }
 
     this.initProgressAll = null;
