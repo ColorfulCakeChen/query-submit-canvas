@@ -44,11 +44,19 @@ class TestSet {
     }
   }
 
+  test_ArrayAssign() {
+    let result = new Array( this.arrayListLength );
+    for ( let i = 0; i < this.arrayListLength; ++i ) {
+      result[ i ]= ( ...this.arrayList[ i ] );
+    }
+  }
+
   // Testing whether the results of different implementation are the same. Also, pre-compile the codes.
   async testCaseLoader() {
     this.test_ArrayConcat();
     this.test_ArrayUnshift();
     this.test_ArrayPush();
+    this.test_ArrayAssign();
   }
  
 }
