@@ -68,7 +68,7 @@ class PromiseResolveReject {
  * Hold two PromiseResolveReject.
  *
  * @member {PromiseResolveReject}   process The promise for reporting processTensor() done.
- * @member {PromiseResolveReject}   relay   The promise for reporting sourceImageData is received from this web worker and should be past to next web worker.
+ * @member {PromiseResolveReject}   relay   The promise for reporting scaledSourceImageData is received from this web worker.
  */
 class ProcessRelayPromises {
 
@@ -184,37 +184,16 @@ class Base {
     // Prepare promises and their function object (resolve and reject) in a map so that the promises can be found and resolved when processing is done.
     //
     // The processRelayPromises.relay.promise will be await by outter (i.e. WorkerController) to transfer source image data to every web worker serially.
-    // The processRelayPromises.process.promise will be returned as the result of is processTensor().
+    // The processRelayPromises.process.promise will be returned as the result of this processTensor().
     let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
     this.processRelayPromisesMap.set( processingId, processRelayPromises );
     
- //!!! Transferring typed-array is better than ImageData because the ImageData should be re-constructed to typed-array again by another web worker.
-
-//!!! ...unfinished... sourceImageData should be pass to next worker serially.
-
     // Transfer (not copy) the source image data to this (worker proxy owned) web worker.
     let message = { command: "processTensor", processingId: processingId, sourceImageData: sourceImageData };
     this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
     // Now, sourceImageData.data.buffer has become invalid because it is transferred (not copied) to web worker.
 
     return processRelayPromises.process.promise;
-  }
-
-//!!! ...unfinished...
-  nextWorkerProcessTensor( workerId, processingId, sourceImageData ) {
-
-    if ( workerId != this.workerId )
-      return; // Ignore if wrong worker id.
-
-    if ( !this.pfnNextWorkerProcessTensor )
-      return; // There is not next web worker (i.e. this is the last web worker).
-
-    // The source image data is sent from this.processTensor() to this web worker and from this web worker back to here.
-    // Now, pass (i.e. serially) the source image data to next web worker.
-    //
-    // The reason to pass source image data serially is because the source image data (usually large) is tranferred (not copied) to web worker.
-    // Since it is not copied, it can only be past from one worker to another (i.e. one by one).
-    this.pfnNextWorkerProcessTensor( processingId, sourceImageData );
   }
 
   /**
@@ -230,7 +209,25 @@ class Base {
   }
 
   /**
-   * Dispatch messages come from the owned web worker.
+   * Called when the scaled source image data from web worker is received.
+   */
+  on_transferBackSourceImageData( workerId, processingId, sourceImageData ) {
+
+    if ( workerId != this.workerId )
+      return; // Ignore if wrong worker id.
+
+    let processRelayPromises = this.processRelayPromisesMap.get( processingId );
+    if ( !processRelayPromises )
+      return; // Ignore if processing id does not existed. (e.g. already handled)
+
+    processRelayPromises.relay.resolve( sourceImageData ); // This will be received by WorkerController.
+
+    // Here, the processRelayPromises should not be removed from processRelayPromisesMap.
+    // It will be removed when processTensor() done completely (i.e. inside on_processTensorResult()).
+  }
+
+  /**
+   * Called when the processed tensor from web worker is received.
    *
    * @param {number} workerId
    *   The id of the worker which sent the result back.
@@ -241,7 +238,7 @@ class Base {
    * @param {TypedArray} resultTypedArray
    *   The result of the returned processing. It is the downloaded data of the result tensor.
    */
-  processTensor_onResult( workerId, processingId, resultTypedArray ) {
+  on_processTensorResult( workerId, processingId, resultTypedArray ) {
 
     if ( workerId != this.workerId )
       return; // Ignore if wrong worker id.
@@ -280,12 +277,12 @@ class Base {
         //this.initNeuralNetProgress_onReport( message.workerId, ,  );
         break;
 
-      case "nextWorkerProcessTensor": //{ command: "nextWorkerProcessTensor", workerId, processingId, sourceImageData };
-        this.nextWorkerProcessTensor( message.workerId, message.processingId, message.sourceImageData );
+      case "transferBackSourceImageData": //{ command: "transferBackSourceImageData", workerId, processingId, sourceImageData };
+        this.on_transferBackSourceImageData( message.workerId, message.processingId, message.sourceImageData );
         break;
 
       case "processTensorResult": //{ command: "processTensorResult", workerId, processingId, resultTypedArray };
-        this.processTensor_onResult( message.workerId, message.processingId, message.resultTypedArray );
+        this.on_processTensorResult( message.workerId, message.processingId, message.resultTypedArray );
         break;
 
     }
