@@ -104,8 +104,8 @@ class Base {
 
     } else {
 
-      // Get (scaled) source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
-      let scaledSourceTensor = this.neuralNet0.getScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas );
+      // Create (scaled) source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
+      let scaledSourceTensor = this.neuralNet0.create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas );
 
   //!!! ...unfinished...
   // here should convert sourceImageData to tensor, get typed-array (so that the receiver worker could convert to tensor again without re-construct typed-array),
