@@ -38,8 +38,6 @@ class Base {
     this.neuralNetConfig = neuralNetConfig;
     this.bWebWorker = bWebWorker;
 
-    this.sourceImageChannelCount = 4; // tf.browser.fromPixels() handles RGBA 4 channels faster than RGB 3 channels.
-
     if ( bWebWorker ) {
 //!!! ...unfinished...
       let totalWorkerCount = neuralNetCount;
@@ -66,6 +64,7 @@ class Base {
       // Assume all neural networks process the same size [ height, width ] input. So that the input can be shared (i.e. extracted once, processed multiple times).
       let neuralNet0 = this.neuralNet0 = this.neuralNetArray[ 0 ];
       this.sourceImageHeightWidth = neuralNet0.sourceImageHeightWidth;
+      this.sourceImageChannelCount = neuralNet0.config.sourceChannelCount; // Note: tf.browser.fromPixels() handles RGBA 4 channels faster than RGB 3 channels.
     }
 
   }
