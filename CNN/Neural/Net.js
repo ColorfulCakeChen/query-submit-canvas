@@ -212,4 +212,29 @@ class Base {
       t.dispose();
   }
 
+  /**
+   * @param {ImageData|HTMLCanvasElement} source_ImageData_or_Canvas
+   *   The image or canvas which provides image.
+   *
+   * @return {tf.tensor3d}
+   *   Return the tensor3d which is the scaled image from canvas. Its size will be this.sourceImageHeightWidth. Its channel count
+   * will be this.config.sourceChannelCount.
+   */
+  getScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas ) {
+
+    // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
+    let sourceTensor = tf.browser.fromPixels( source_ImageData_or_Canvas, this.config.sourceChannelCount );
+
+    // If the size (height x width) is as expected, use it directly.
+    if (   ( sourceTensor.shape[ 0 ] == this.sourceImageHeightWidth[ 0 ] )
+        && ( sourceTensor.shape[ 1 ] == this.sourceImageHeightWidth[ 1 ] ) )
+      return sourceTensor;
+
+    // Otherwise, resize source image to a default size (height x width). The default size should be the input image size used for training the neural network.
+    let scaledSourceTensor = tf.image.resizeBilinear( sourceTensor, this.sourceImageHeightWidth, true ); // ( alignCorners = true ) for visual image resizing.
+    sourceTensor.dispose();
+
+    return scaledSourceTensor;
+  }
+
 }
