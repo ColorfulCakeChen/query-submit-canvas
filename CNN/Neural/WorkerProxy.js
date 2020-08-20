@@ -159,25 +159,60 @@ class Base {
    *   The processing id for distinguishing different processing request and result.
    *
    * @param {ImageData} sourceImageData
-   *   The image data to be processed.
+   *   The source image data to be processed. Its shape should be [ height, width, channel ] = [ this.neuralNet.sourceImageHeightWidth[ 0 ],
+   * this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ]. This usually is called for the first web worker
+   * in chain. The web worker will tansfer back a scaled typed-array. The scaled typed-array should be used to call the next web worker's
+   * processTypedArrayAsync().
    *
    * @return {Promise}
    *   Return a promise which will be resolved when all worker pending promises of the same processingId are resolved. The promise
    * resolved with an array of typed-array. Every type-array comes from the output tensor of one worker's neural network.
    */
-  async processTensor( processingId, sourceImageData ) {
+  async processImageDataAsync( processingId, sourceImageData ) {
 
     // Prepare promises and their function object (resolve and reject) in a map so that the promises can be found and resolved when processing is done.
     //
-    // The processRelayPromises.relay.promise will be await by outter (i.e. WorkerController) to transfer source image data to every web worker serially.
+    // The processRelayPromises.relay.promise will be await by outter (i.e. WorkerController) to transfer source typed-array to every web worker serially.
     // The processRelayPromises.process.promise will be returned as the result of this processTensor().
     let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
     this.processRelayPromisesMap.set( processingId, processRelayPromises );
     
     // Transfer (not copy) the source image data to this (worker proxy owned) web worker.
-    let message = { command: "processTensor", processingId: processingId, sourceImageData: sourceImageData };
+    let message = { command: "processImageData", processingId: processingId, sourceImageData: sourceImageData };
     this.worker.postMessage( message, [ message.sourceImageData.data.buffer ] );
     // Now, sourceImageData.data.buffer has become invalid because it is transferred (not copied) to web worker.
+
+    return processRelayPromises.process.promise;
+  }
+
+  /**
+   * @param {number} processingId
+   *   The processing id for distinguishing different processing request and result.
+   *
+   * @param {Float32Array} sourceTypedArray
+   *   The source typed-data to be processed. Its shape should be [ height, width, channel ] = [ this.neuralNet.sourceImageHeightWidth[ 0 ],
+   * this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ]. This usually is come from the previous web work
+   * by on_transferBackSourceTypedArray(). This usually is called for the second (and after) web worker in chain. The web worker will
+   * tansfer back this scaled typed-array. The scaled typed-array should continuously be used to call the next web worker's
+   * processTypedArrayAsync().
+   *
+   * @return {Promise}
+   *   Return a promise which will be resolved when all worker pending promises of the same processingId are resolved. The promise
+   * resolved with an array of typed-array. Every type-array comes from the output tensor of one worker's neural network.
+   */
+  async processTypedArrayAsync( processingId, sourceTypedArray ) {
+
+    // Prepare promises and their function object (resolve and reject) in a map so that the promises can be found and resolved when processing is done.
+    //
+    // The processRelayPromises.relay.promise will be await by outter (i.e. WorkerController) to transfer source typed-array to every web worker serially.
+    // The processRelayPromises.process.promise will be returned as the result of this processTensor().
+    let processRelayPromises = new ProcessRelayPromises( this.workerId, processingId );
+    this.processRelayPromisesMap.set( processingId, processRelayPromises );
+    
+    // Transfer (not copy) the source typed-array to this (worker proxy owned) web worker.
+    let message = { command: "processTypedArray", processingId: processingId, sourceTypedArray: sourceTypedArray };
+    this.worker.postMessage( message, [ message.sourceTypedArray.buffer ] );
+    // Now, sourceTypedArray.buffer has become invalid because it is transferred (not copied) to web worker.
 
     return processRelayPromises.process.promise;
   }
@@ -197,9 +232,9 @@ class Base {
   }
 
   /**
-   * Called when the scaled source image data from web worker is received.
+   * Called when the scaled source typed-array from web worker is received.
    */
-  on_transferBackSourceImageData( workerId, processingId, sourceImageData ) {
+  on_transferBackSourceTypedArray( workerId, processingId, sourceTypedArray ) {
 
     if ( workerId != this.workerId )
       return; // Ignore if wrong worker id.
@@ -208,7 +243,7 @@ class Base {
     if ( !processRelayPromises )
       return; // Ignore if processing id does not existed. (e.g. already handled)
 
-    processRelayPromises.relay.resolve( sourceImageData ); // This will be received by WorkerController.
+    processRelayPromises.relay.resolve( sourceTypedArray ); // This will be received by WorkerController.
 
     // Here, the processRelayPromises should not be removed from processRelayPromisesMap.
     // It will be removed when processTensor() done completely (i.e. inside on_processTensorResult()).
@@ -265,8 +300,8 @@ class Base {
         //this.initNeuralNetProgress_onReport( message.workerId, ,  );
         break;
 
-      case "transferBackSourceImageData": //{ command: "transferBackSourceImageData", workerId, processingId, sourceImageData };
-        this.on_transferBackSourceImageData( message.workerId, message.processingId, message.sourceImageData );
+      case "transferBackSourceTypedArray": //{ command: "transferBackSourceTypedArray", workerId, processingId, sourceTypedArray };
+        this.on_transferBackSourceTypedArray( message.workerId, message.processingId, message.sourceTypedArray );
         break;
 
       case "processTensorResult": //{ command: "processTensorResult", workerId, processingId, resultTypedArray };
