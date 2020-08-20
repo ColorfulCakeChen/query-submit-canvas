@@ -100,7 +100,7 @@ class Base {
    *
    * @return {Promise}
    *   Return a promise which will be resolved when all worker processing promises of the same processingId are resolved. The promise
-   * resolved with an array of typed-array. Every typed-array comes from the output tensor of one worker's neural network.
+   * resolves with an array of typed-array. Every typed-array comes from the output tensor of one worker's neural network.
    */
   async processImageDataAsync( sourceImageData ) {
 
@@ -125,7 +125,7 @@ class Base {
       // Now, sourceTypedArray.buffer has become invalid because it is transferred (not copied) to the above web worker.
     }
 
-//!!! ...unfinished... Array push() is faster than unshift(), and unshift() is faster than concat().
+    // Note: Array push() is faster than unshift(), and unshift() is faster than concat().
 
     // Since all web worker has received the source image data (although serially), wait for all them done.
     let promiseAllSettled = Promise.allSettled( this.processTensorPromiseArray );
