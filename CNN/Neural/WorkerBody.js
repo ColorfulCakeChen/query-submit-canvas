@@ -52,82 +52,119 @@ class WorkerBody {
   }
 
   /**
-   * Scale the source image data, transfer scaled source image data back to WorkerProxy, compute neural network, pass result to WorkerProxy.
+   * Convert source image data to tensor3d, scale it, transfer scaled source typed-array back to WorkerProxy, compute neural network,
+   * pass result back to WorkerProxy.
    *
    * @param {number} processingId
-   *   The id of this processing. It is used when reporting processing result.
+   *   The id of this processing. It is used when reporting processing resultso that WorkerProxy could find back corresponding promise.
    *
    * @param {ImageData} sourceImageData
-   *   The image data to be processed.
+   *   The image data to be processed. The size should be [ sourceImageData.height, sourceImageData.width ]
+   * = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ] ]. And it should RGBA 4 channels.
    */
-  processTensor( processingId, sourceImageData ) {
+  processImageData( processingId, sourceImageData ) {
 
-//!!! ...unfinshed...
-// the sourceImageData maybe not real ImageData (because it is recovered by postMessage() or from scaledSourceTensor of previous web worker).
-// The fromPixel() may not handle them correctly.
-// Perhaps, convert ImageData to Float32Array, and then postMessage() it with shape [ height, width, channel ]  to web worker.
-// Web worker could uses them to construct tensor3d directly. This should be faster than fromPixels() because fromPixels() will convert twice:
-// one is from ImageData to Int32Array, another is from Int32Array to tensor3d.
-    
-    // Create (scaled) source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
+    // Create (scaled) source image so that then neural network can process it.
     //
-    // Usually, only the first web worker ( workerId == 0 ) will be responsible for scaling the source image data to default size.
-    // After that, all other web worker received the already scaled image data.
+    // Usually, only the first web worker ( workerId == 0 ) is responsible for scaling the source image data to default size.
+    // After that, all other web worker received the already scaled typed-array.
+    //
+    // The reason why not use source ImageData directly is that the next web worker could re-create tensor3d more effficiently.
+    //
+    // ImageData uses Uint8ClampedArray internally. If it is past directly, the next web worker needs create tensor3d by fromPixel()
+    // which internally converts twice: from Uint8ClampedArray to Int32Array and from Int32Array to tensor3d.
+    //
+    // If passing typed-array (Float32Array), the next web worker could use it to re-create tensord3d directly.
     let scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_ImageData_or_Canvas( sourceImageData );
 
-    // Convert back to scaled source ImageData, and transfer back to WorkerProxy (and inform WorkerController).
+    // Download the scaledSourceTensor as typed-array (asynchronously), and transfer it back to WorkerProxy (and inform WorkerController).
     //
     // The reason why it is done asynchronously is for not blocking the following computation of neural network.
-    this.transferBackSourceImageDataAsync( processingId, scaledSourceTensor );
+    this.transferBackSourceScaledTensorAsync( processingId, scaledSourceTensor );
 
-    // At the same time (the scaled source image data is transferring back to WorkerProxy and then WorkerController), this worker is still computing
+    // At the same time (the scaled source typed-array data is transferring back to WorkerProxy and then WorkerController), this worker is
+    // still computing the neural network parallelly.
+    this.processAndDisposeTensor( processingId, scaledSourceTensor );
+  }
+
+  /**
+   * Transfer scaled source typed-array data back to WorkerProxy, compute neural network, pass result back to WorkerProxy.
+   *
+   * @param {number} processingId
+   *   The id of this processing. It is used when reporting processing resultso that WorkerProxy could find back corresponding promise.
+   *
+   * @param {Float32Array} sourceTypedArray
+   *   The image data to be processed. The sourceTypedArray.shape should be [ height, width, channel ] = [ this.neuralNet.sourceImageHeightWidth[ 0 ],
+   * this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
+   */
+  processTypedArray( processingId, sourceTypedArray ) {
+    let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
+
+    // Re-create (scaled) source tensor.
+    //
+    // This should be done before calling transferBackSourceTypedArray() which will transfer (not copy) the sourceTypedArray and invalid it.
+    let scaledSourceTensor = tf.tensor3d( sourceTypedArray, shape );
+
+    // Transfer (not copy) the sourceTypedArray back to WorkerProxy). This will invalid sourceTypedArray.
+    this.transferBackSourceTypedArray( processingId, sourceTypedArray );
+
+    // At the same time (the sourceTypedArray is transferring back to WorkerProxy and then WorkerController), this worker is still computing
     // the neural network parallelly.
+    this.processAndDisposeTensor( processingId, scaledSourceTensor );
+  }
+
+  /**
+   * Compute neural network, and pass result back to WorkerProxy.
+   *
+   * @param {number} processingId
+   *   The id of this processing. It is used when reporting processing resultso that WorkerProxy could find back corresponding promise.
+   *
+   * @param {tf.tensor3d} scaledSourceTensor
+   *   The source tensor3d to be processed. The scaledSourceTensor.shape should be [ height, width, channel ] =
+   * [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
+   * This tensor will be disposed when processing is done.
+   */
+  processAndDisposeTensor( processingId, scaledSourceTensor ) {
+    
+    // Note: scaledSourceTensor will be dispose because this.neuralNet is initialized with ( bKeepInputTensor == false ).
     let resultTensor3d = this.neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, true );
 
     let resultTypedArray = await resultTensor3d.data();
-    resultTensor3d.dispose(); // The result tensor should be disposed.
+    resultTensor3d.dispose(); // The result tensor should also be disposed.
 
-    // Pass the output of neural network to WorkerProxy and then WorkerController.
+    // Pass the output of neural network to WorkerProxy (and inform WorkerController).
     let message = { command: "processTensorResult", workerId: this.workerId, processingId: processingId, resultTypedArray: resultTypedArray };
     postMessage( message, [ message.resultTypedArray.buffer ] );
   }
 
   /**
-   * @param {number} processingId
-   *   The id of this processing. It is used when reporting processing result.
+   * Download the scaledSourceTensor as typed-array (Float32Array) asynchronously. Transfer the typed-array back to WorkerProxy
+   * (and inform WorkerController) so that it can be past to next web worker.
    *
-   * @param {ImageData} originalSourceImageData
-   *   The original image data past to processTensor(). If its size is the same as scaledSourceTensor, this original will be transferred back to
-   * WorkerController. In this case, scaledSourceTensor.data() will not be called.
+   * @param {number} processingId
+   *   The id of this processing. It is used by WorkerProxy to found back corresponding promise.
    *
    * @param {tf.tensor3d} scaledSourceTensor
-   *   The scaled source image tensor3d. If its size is different from originalSourceImageData, its data will be asynchronously downloaded
-   * and transferred back to WorkerController.
-   *
-   * @return {Promise} Return a promise which resolves with the resultArray.
+   *   The scaled source tensor3d generated by processImageData().
    */
-  async transferBackSourceImageDataAsync( processingId, originalSourceImageData, scaledSourceTensor ) {
+  async transferBackSourceScaledTensorAsync( processingId, scaledSourceTensor ) {
+    let sourceTypedArray = await scaledSourceTensor.data(); // Download scaled source tensor3d as typed-array (Float32Array) asynchronously.
+    this.transferBackSourceTypedArray( processingId, sourceTypedArray );
+  }
 
-    let scaledSourceImageData;
-
-    if (   ( scaledSourceTensor.shape[ 0 ] == originalSourceImageData.height )
-        && ( scaledSourceTensor.shape[ 1 ] == originalSourceImageData.width  ) ) {
-
-      // Since scaledSourceTensor is the same size as originalSourceImageData (i.e. does not be scaled), it is not necessary to download from scaledSourceTensor.
-      scaledSourceImageData = originalSourceImageData;
-
-    } else {
-
-//!!! ...unfinshed... the downloaded data is not Uint8ClampedArray, and scaledSourceImageData is not real ImageData. the fromPixel() may not handle them correct.
-
-      // Convert back to scaled source ImageData asynchronously.
-      let scaledSourceImageDataTypedArray = await scaledSourceTensor.data();
-      scaledSourceImageData = { height: scaledSourceTensor.shape[ 0 ], width: scaledSourceTensor.shape[ 1 ], data: scaledSourceImageDataTypedArray };
-    }
-
-    // Transfer back to WorkerProxy (and inform WorkerController).
-    let message = { command: "transferBackSourceImageData", workerId: this.workerId, processingId: processingId, sourceImageData: scaledSourceImageData };
-    postMessage( message, [ message.sourceImageData.data.buffer ] );
+  /**
+   * Transfer source typed-array back to WorkerProxy (and inform WorkerController) so that it can be past to next web worker.
+   *
+   * @param {number} processingId
+   *   The id of this processing. It is used by WorkerProxy to found back corresponding promise.
+   *
+   * @param {Float32Array} sourceTypedArray
+   *   The source typed-array past to processTypedArray(). This will become invalid after this call because it will be transferred (not
+   * copied) back to WorkerProxy.
+   */
+  transferBackSourceTypedArray( processingId, sourceTypedArray ) {
+    let message = { command: "transferBackSourceTypedArray", workerId: this.workerId, processingId: processingId, sourceTypedArray: sourceTypedArray };
+    postMessage( message, [ message.sourceTypedArray.buffer ] );
   }
 
 }
