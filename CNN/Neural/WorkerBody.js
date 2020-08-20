@@ -94,8 +94,8 @@ class WorkerBody {
    *   The id of this processing. It is used when reporting processing resultso that WorkerProxy could find back corresponding promise.
    *
    * @param {Float32Array} sourceTypedArray
-   *   The image data to be processed. The sourceTypedArray.shape should be [ height, width, channel ] = [ this.neuralNet.sourceImageHeightWidth[ 0 ],
-   * this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
+   *   The source typed-data to be processed. Its shape should be [ height, width, channel ] =
+   * [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
    */
   processTypedArray( processingId, sourceTypedArray ) {
     let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
@@ -192,7 +192,6 @@ globalThis.onmessage = function( e ) {
 //!!! ...unfinished... global scope ? report progress ?
       importScripts( message.tensorflowJsURL );          // Load tensorflow javascript library in global scope.
       globalThis.NeuralNet = await import( "./Net.js" ); // Load neural network library in globalThis.NeuralNet scope.
-      globalThis.NeuralNet = await import( "./Net.js" ); // Load neural network library in globalThis.NeuralNet scope.
 
 //!!! ...unfinished...
 ///      globalThis.workerBody.init( message.workerId, message.neuralNetConfig, message.weightsURL, message.nextWorkerId );
@@ -203,9 +202,12 @@ globalThis.onmessage = function( e ) {
       globalThis.workerBody.disposeWorker();
       break;
 
-    case "processTensor": //{ command: "processTensor", processingId, sourceImageData };
+    case "processImageData": //{ command: "processImageData", processingId, sourceImageData };
       globalThis.workerBody.processTensor( message.processingId, message.sourceImageData );
       break;
 
+    case "processTypedArray": //{ command: "processTypedArray", processingId, sourceTypedArray };
+      globalThis.workerBody.processTensor( message.processingId, message.sourceTypedArray );
+      break;
   }
 }
