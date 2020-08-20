@@ -95,30 +95,34 @@ class Base {
 
   /**
    * @param {ImageData} sourceImageData
-   *   The image data to be processed.
+   *   The source image data to be processed. Its shape [ height, width, channel ] should be the same as the size which is used when
+   * training the neural network.
    *
    * @return {Promise}
    *   Return a promise which will be resolved when all worker processing promises of the same processingId are resolved. The promise
    * resolved with an array of typed-array. Every typed-array comes from the output tensor of one worker's neural network.
    */
-  async processTensor( sourceImageData ) {
+  async processImageDataAsync( sourceImageData ) {
 
     let processingId = ++this.processingId; // Generate a new processing id so that the result returned from worker could be distinguished.
 
-    for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
-      let workerProxy = this.workerProxyArray[ i ];
+    let workerProxy, processRelayPromises, sourceTypedArray;
 
-      // Transfer (not copy) the source image data to one web worker.
-      this.processTensorPromiseArray[ i ] = workerProxy.processTensor( processingId, sourceImageData );
+    // For first (i == 0) web worker, passing source ImageData.
+    workerProxy = this.workerProxyArray[ 0 ];
+    this.processTensorPromiseArray[ 0 ] = workerProxy.processImageDataAsync( processingId, sourceImageData );
+    // Now, sourceImageData.data.buffer has become invalid because it is transferred (not copied) to the above web worker.
 
-      // Now, sourceImageData.data.buffer has become invalid because it is transferred (not copied) to the above web worker.
+    // For all other (i >= 1) web workers, passing scaled source typed-array.
+    for ( let i = 1; i < this.workerProxyArray.length; ++i ) {
 
-      // No matter whether this is the last web worker in chain, wait for it sending back the source image data (after it
-      // has scaled (and so had a copy of) the source image data).
-      //
-      // Re-used the variable sourceImageData to receive the source image data sent back from the web worker. It will be pass to the next web worker.
-      let processRelayPromises = workerProxy.processRelayPromisesMap.get( processingId );
-      sourceImageData = await processRelayPromises.relay.promise;
+      // Wait the previous web worker transferring back the scaled source typed-array. (after it has been copied into a new tensor inside the web worker).
+      processRelayPromises = workerProxy.processRelayPromisesMap.get( processingId );
+      sourceTypedArray = await processRelayPromises.relay.promise;
+
+      workerProxy = this.workerProxyArray[ i ];
+      this.processTensorPromiseArray[ i ] = workerProxy.processTypedArrayAsync( processingId, sourceTypedArray );
+      // Now, sourceTypedArray.buffer has become invalid because it is transferred (not copied) to the above web worker.
     }
 
 //!!! ...unfinished... Array push() is faster than unshift(), and unshift() is faster than concat().
