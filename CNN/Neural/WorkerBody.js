@@ -220,6 +220,24 @@ class WorkerBody {
     postMessage( message, [ message.sourceTypedArray.buffer ] );
   }
 
+//!!! ...unfinished... How to know and set total of the following:
+//       this.initProgress.libraryDownload;
+//       this.initProgress.weightsDownload;
+//       this.initProgress.weightsParse;
+
+  /** Inform WorkerProxy to reset initProgress. */
+  initProgress_restAccumulation_postMessage() {
+    let message = { command: "initProgress_restAccumulation", workerId: this.workerId };
+    postMessage( message );
+  }
+
+  /** Inform WorkerProxy to advance initProgress.libraryDownload. */
+  initProgress_libraryDownload_postMessage() {
+//    let message = { command: "initProgress_libraryDownload", workerId: this.workerId, total: this.initProgress.libraryDownload.total, accumulation: this.initProgress.libraryDownload.accumulation };
+//    let message = { command: "initProgress_libraryDownload", workerId: this.workerId, initProgress: this.initProgress.libraryDownload };
+    let message = { command: "initProgress_libraryDownload", workerId: this.workerId, total: this.initProgress.libraryDownload.total, accumulation: this.initProgress.libraryDownload.accumulation };
+    postMessage( message );
+  }
 }
 
 
