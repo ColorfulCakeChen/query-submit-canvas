@@ -170,36 +170,20 @@ class Base {
     //
     // The drawback is that the tensorflow.js library should have been loaded here. And the image scaling is done here (not in web worker).
     let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_ImageData_or_Canvas( sourceCanvas );
-    let scaledSourceTypedArray = await scaledSourceTensor.data();
+    let sourceTypedArray = await scaledSourceTensor.data();
     scaledSourceTensor.dispose(); // Discard the source tensor because type-array (not tensor) will be past to web worker
 
-//!!! ...unfinished...
     let processingId = ++this.processingId; // Generate a new processing id so that the result returned from worker could be distinguished.
 
-//!!! ...unfinished...
+    let workerProxy, processRelayPromises;
 
-    let workerProxy, processRelayPromises, sourceTypedArray;
-
-    // For first (i == 0) web worker, passing source ImageData.
-    workerProxy = this.workerProxyArray[ 0 ];
-    this.processTensorPromiseArray[ 0 ] = workerProxy.processImageDataAsync( processingId, sourceImageData );
-    // Now, sourceImageData.data.buffer has become invalid because it is transferred (not copied) to the above web worker.
-
-    // For all other (i >= 1) web workers, passing scaled source typed-array.
-    for ( let i = 1; i < this.workerProxyArray.length; ++i ) {
-
-      // Wait the previous web worker transferring back the scaled source typed-array. (after it has been copied into a new tensor inside the web worker).
-      processRelayPromises = workerProxy.processRelayPromisesMap.get( processingId );
-      sourceTypedArray = await processRelayPromises.relay.promise;
-
+    for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
       workerProxy = this.workerProxyArray[ i ];
-      this.processTensorPromiseArray[ i ] = workerProxy.processTypedArrayAsync( processingId, sourceTypedArray );
-      // Now, sourceTypedArray.buffer has become invalid because it is transferred (not copied) to the above web worker.
+      this.processTensorPromiseArray[ i ] = workerProxy.typedArray_processTensor_async( processingId, sourceTypedArray );
+      // The sourceTypedArray is still valid here because it is copied (not transferred) to the above web worker.
     }
 
-    // Note: Array push() is faster than unshift(), and unshift() is faster than concat().
-
-    // Since all web worker has received the source image data (although serially), wait for all them done.
+    // Since all web worker has received the source typed-array (parallelly), wait for all them done.
     let promiseAllSettled = Promise.allSettled( this.processTensorPromiseArray );
     return promiseAllSettled;
   }
