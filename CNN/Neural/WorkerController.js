@@ -129,7 +129,7 @@ class Base {
 
     // For first (i == 0) web worker, passing source ImageData.
     workerProxy = this.workerProxyArray[ 0 ];
-    this.processTensorPromiseArray[ 0 ] = workerProxy.processImageDataAsync( processingId, sourceImageData );
+    this.processTensorPromiseArray[ 0 ] = workerProxy.imageData_transferBack_processTensor_async( processingId, sourceImageData );
     // Now, sourceImageData.data.buffer has become invalid because it is transferred (not copied) to the above web worker.
 
     // For all other (i >= 1) web workers, passing scaled source typed-array.
@@ -140,7 +140,7 @@ class Base {
       sourceTypedArray = await processRelayPromises.relay.promise;
 
       workerProxy = this.workerProxyArray[ i ];
-      this.processTensorPromiseArray[ i ] = workerProxy.processTypedArrayAsync( processingId, sourceTypedArray );
+      this.processTensorPromiseArray[ i ] = workerProxy.typedArray_transferBack_processTensor_async( processingId, sourceTypedArray );
       // Now, sourceTypedArray.buffer has become invalid because it is transferred (not copied) to the above web worker.
     }
 
@@ -152,7 +152,9 @@ class Base {
   }
 
   /**
-   * Download image data from source canvas. Pass source image data to every web worker parallelly by copying.
+   * Download image data from source canvas, convert to tensor, scale, pass source image data to every web worker parallelly by copying.
+   *
+   * The tensorflow.js library should have been loaded so that the source image scaling could be done here (not in web worker).
    *
    * @param {HTMLCanvasElement} sourceCanvas
    *   The source canvas to be processed. Its shape [ height, width, channel ] should be the same as the size which is used when
@@ -166,7 +168,7 @@ class Base {
 
     // Create (scaled) source tensor so that every web worker needs not scale again and easier to re-create source tensor.
     //
-    // The drawback is that here should have tensorflow.js library loaded.
+    // The drawback is that the tensorflow.js library should have been loaded here. And the image scaling is done here (not in web worker).
     let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_ImageData_or_Canvas( sourceCanvas );
     let scaledSourceTypedArray = await scaledSourceTensor.data();
     scaledSourceTensor.dispose(); // Discard the source tensor because type-array (not tensor) will be past to web worker
