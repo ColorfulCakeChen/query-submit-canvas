@@ -84,7 +84,7 @@ class WorkerBody {
 
     // At the same time (the scaled source typed-array data is transferring back to WorkerProxy and then WorkerController), this worker is
     // still computing the neural network parallelly.
-    this.processAndDisposeTensor( processingId, scaledSourceTensor );
+    this.processTensorAndDispose( processingId, scaledSourceTensor );
   }
 
   /**
@@ -110,7 +110,7 @@ class WorkerBody {
 
     // At the same time (the sourceTypedArray is transferring back to WorkerProxy and then WorkerController), this worker is still computing
     // the neural network parallelly.
-    this.processAndDisposeTensor( processingId, scaledSourceTensor );
+    this.processTensorAndDispose( processingId, scaledSourceTensor );
   }
 
   /**
@@ -124,7 +124,7 @@ class WorkerBody {
    * [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
    * This tensor will be disposed when processing is done.
    */
-  processAndDisposeTensor( processingId, scaledSourceTensor ) {
+  processTensorAndDispose( processingId, scaledSourceTensor ) {
     
     // Note: scaledSourceTensor will be dispose because this.neuralNet is initialized with ( bKeepInputTensor == false ).
     let resultTensor3d = this.neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, true );
