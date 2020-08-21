@@ -3,43 +3,11 @@
  *
  */
 
-import * as ValueMax from "../ValueMax.js";
-//import * as Net from "./Net.js";
+//import * as ValueMax from "../ValueMax.js";
+import * as NeuralNetProgress from "./NetProgress.js";
 
-export { InitProgress, InitProgressAll, PendingPromiseInfo, Base };
+export { PendingPromiseInfo, Base };
 
-
-/**
- * Aggregate initialization progress of one web worker.
- * Including: download tensorflow and neural network library, download neural network weights, parse neural network weights.
- */
-class InitProgress extends ValueMax.Percentage.Aggregate {
-  constructor() {
-    let children = [
-      new ValueMax.Percentage.Concrete(), // Increased when downloading tensorflow and neural network library.
-      new ValueMax.Percentage.Concrete(), // Increased when downloading neural network weights.
-      new ValueMax.Percentage.Concrete(), // Increased when parsing neural network weights.
-    ];
-
-    super( children );
-    [ this.libraryDownload, this.weightsDownload, this.weightsParse ] = children;
-  }
-}
-
-/**
- * Aggregate initialization progress of two workers.
- */
-class InitProgressAll extends ValueMax.Percentage.Aggregate {
-  constructor() {
-    let children = [
-      new InitProgress(), // Increased when web worker 1 initializing.
-      new InitProgress(), // Increased when web worker 2 initializing.
-    ];
-
-    super( children );
-    [ this.worker1, this.worker2 ] = children;
-  }
-}
 
 /**
  * Hold a processing's id, promise, resolve (fulfilling function object), reject (rejecting function object).
@@ -103,8 +71,8 @@ class Base {
    * @param {string} weightsURL
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
    *
-   * @param {InitProgress} initProgress
-   *   This worker proxy will modify theInitProgress to report its web worker's initialization progress.
+   * @param {NeuralNetProgress.InitProgress} initProgress
+   *   This worker proxy will modify initProgress to report its web worker's initialization progress.
    */
   init( workerId, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress ) {
     this.workerId = workerId;
@@ -116,12 +84,10 @@ class Base {
     // Every worker has a result pending promise map. The key of the map is processing id. The value of the map is a ProcessRelayPromises.
     this.processRelayPromisesMap = new Map();
 
-//!!! ...unfinished...
-
     // Assume the main (i.e. body) javascript file of neural network web worker is a sibling file (i.e. inside the same folder) of this module file.
     this.workerURL = new URL( import.meta.url, "WorkerBody.js" );
 
-    // Should not use "module" type worker, otherwise the worker can not use importScripts() to load tensorflow library.
+    // Should not use "module" type worker, otherwise the worker can not use importScripts() to load tensorflow.js library.
     //this.workerOptions = { type: "module" }; // So that the worker script could use import statement.
     this.workerOptions = null;
 
@@ -151,7 +117,6 @@ class Base {
     }
 
     this.initProgress = null;
-    this.nextWorkerProxy = null;
   }
 
   /**
@@ -253,6 +218,10 @@ class Base {
    */
   initLibraryProgress_onReport( workerId ) {
 //!!! ...unfinished...
+    this.initProgress.libraryDownload;
+    this.initProgress.weightsDownload;
+    this.initProgress.weightsParse;
+
   }
 
   /**
