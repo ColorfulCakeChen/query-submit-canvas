@@ -210,7 +210,7 @@ class Base {
     this.processRelayPromisesMap.set( processingId, processRelayPromises );
     
     // Transfer (not copy) the source typed-array to this (worker proxy owned) web worker.
-    let message = { command: "typedArray_TransferBack_processTensor", processingId: processingId, sourceTypedArray: sourceTypedArray };
+    let message = { command: "typedArray_transferBack_processTensor", processingId: processingId, sourceTypedArray: sourceTypedArray };
     this.worker.postMessage( message, [ message.sourceTypedArray.buffer ] );
     // Now, sourceTypedArray.buffer has become invalid because it is transferred (not copied) to web worker.
 
