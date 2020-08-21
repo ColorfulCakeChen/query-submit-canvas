@@ -47,15 +47,17 @@ class WorkerBody {
 
       this.initProgress = new NeuralNetProgress.InitProgress(); // The progress object could be created only after the progress library has been loaded.
       this.initProgress.libraryDownload.total = 3; // There are 3 libraries should be loaded: NetProgress, tensorflow.js, NeuralNet.
-      this.initProgress.libraryDownload.accumulation = 1; // The library NetProgress has been loaded.
+      this.initProgress.libraryDownload.accumulation = 0;
+
+      ++this.initProgress.libraryDownload.accumulation; // The library NetProgress has been loaded.
 
 //!!! ...unfinished... inform WorkerProxy progress changed.
 
       importScripts( tensorflowJsURL ); // Load tensorflow javascript library in global scope.
-      this.initProgress.libraryDownload.accumulation = 2; // The library tensorflow.js has been loaded.
+      ++this.initProgress.libraryDownload.accumulation; // The library tensorflow.js has been loaded.
 
       globalThis.NeuralNet = await import( "./Net.js" ); // Load neural network library in globalThis.NeuralNet scope dynamically.
-      this.initProgress.libraryDownload.accumulation = 3; // The library NeuralNet has been loaded.
+      ++this.initProgress.libraryDownload.accumulation; // The library NeuralNet has been loaded.
     }
 
 //!!! ...unfinished... the neuralNetConfig is still class NeuralNet.Config? Otherwise, the create_ScaledSourceTensor_from_ImageData_or_Canvas() will be lost.
