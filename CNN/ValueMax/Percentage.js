@@ -6,6 +6,11 @@ export {Base, Concrete, Aggregate};
  * The max() always returns 100. The value() returns number berween [0, 100] inclusive.
  */
 class Base {
+
+  /** Dummy. Do nothing. Sub-class should override this method. */
+  resetAccumulation() {
+  }
+
   /**
    * Dummy.
    * @return Always return 0. Sub-class should override this method.
