@@ -32,6 +32,11 @@ class Concrete extends Base {
     this.total = -1; // Negative indicates not initialized.
   }
 
+  /** Reset this.accumulation to 0. */
+  resetAccumulation() {
+    this.accumulation = 0;
+  }
+
   /**
    * @return
    *   The progress as number between [0, 100] inclusive.
@@ -70,28 +75,41 @@ class Aggregate extends Base {
     this.childProgressParts.push(progressPart);
   }
 
+  /** Reset all children's this.accumulation to 0. */
+  resetAccumulation() {
+    for ( let i = 0; i < this.childProgressParts.length; ++i ) {
+      let progressPart = this.childProgressParts[ i ];
+      if ( progressPart ) {
+        progressPart.resetAccumulation();
+      }
+    }
+  }
+
   /**
    * @return The average of all children progress as number between [0, 100] inclusive.
    */
   get value() {
     let valueSum = 0, maxSum = 0;
 
-    for (let progressPart of this.childProgressParts) {
-      if (!progressPart)
+    // Use integer array index is faster than iterator.
+    //for (let progressPart of this.childProgressParts) {
+    for ( let i = 0; i < this.childProgressParts.length; ++i ) {
+      let progressPart = this.childProgressParts[ i ];
+      if ( !progressPart )
         continue;
 
       let partMax = progressPart.max;
-      if (partMax <= 0)
+      if ( partMax <= 0 )
         continue; // Skip illegal progress.
 
       let partValue = progressPart.value;
-      partValue = Math.max(0, Math.min(partValue, partMax)); // Restrict between [0, partMax].
+      partValue = Math.max( 0, Math.min( partValue, partMax ) ); // Restrict between [0, partMax].
 
       valueSum += partValue;
       maxSum += partMax;
     }
 
-    if (maxSum <= 0)
+    if ( maxSum <= 0 )
       return 0; // Return zero if the total is illegal.
 
     let percentage = ( valueSum / maxSum ) * 100;
