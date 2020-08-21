@@ -4,7 +4,7 @@
  */
 
 import * as WorkerProxy from "./WorkerProxy.js";
-//import * as ValueMax from "../ValueMax.js";
+import * as NeuralNetProgress from "./NetProgress.js";
 //import * as Net from "./Net.js";
 
 export { Base };
@@ -65,7 +65,7 @@ class Base {
     // only control one alignment of the game world.
     let totalWorkerCount = this.totalWorkerCount = 2;
 
-    this.initProgressAll = new WorkerProxy.InitProgressAll(); // Statistics of progress of all workers' initialization.
+    this.initProgressAll = new NeuralNetProgress.InitProgressAll(); // Statistics of progress of all workers' initialization.
 
     this.workerProxyArray = new Array( totalWorkerCount );
     for ( let i = 0; i < totalWorkerCount; ++i ) {
