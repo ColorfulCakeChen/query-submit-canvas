@@ -40,17 +40,11 @@ class Base {
    *
    * @param {string} weightsURL
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
-   *
-!!! game_object_id_array.length as totalWorkerCount.
-!!! Handle game object created and destroyed. Create and destroy web worker in needed.
-
-   * @param {number[]} game_object_id_array
-   *   The id for game objects.
    */
   init(
       tensorflowJsURL,
-      neuralNetConfig, totalWorkerCount, weightsURL
-//      game_object_id_array
+      neuralNetConfig,
+      weightsURL
   ) {
 
     this.tensorflowJsURL = tensorflowJsURL;
@@ -61,11 +55,15 @@ class Base {
 
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
-//!!! ...unfinished... According to logical CPU count, create so many web worker.
-//!!! ...unfinished... Perhaps, two web workers are sufficient.
-    // Our neural networks are learning by differential evolution. Differential evolution evaluates just two entities every time.
-    // The output of one neural network will contain action signals of all game obejcts. However, only half of the output will be used
-    // because one neural network only control one alignment of the game world.
+    // Two web workers are sufficient.
+    //
+    // Although we might want create as many web worker as logical CPU count, it might not need because our neural networks are
+    // learning by differential evolution. Differential evolution evaluates just two entities every time.
+    //
+    // Note: How could the two neural networks determine all the actions of so many game objects? The method is to let the output of one
+    // neural network contain all actions of all game obejcts. But only half of the output actions will be used because one neural network
+    // only control one alignment of the game world.
+    let totalWorkerCount = this.totalWorkerCount = 2;
 
     this.initProgressAll = new WorkerProxy.InitProgressAll(); // Statistics of progress of all workers' initialization.
 
