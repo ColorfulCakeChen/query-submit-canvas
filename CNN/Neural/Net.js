@@ -1,3 +1,4 @@
+//import * as NetProgress from "./NetProgress.js";
 import * as ConvBlock from "../Conv/Block.js";
 
 export { Config, Base };
