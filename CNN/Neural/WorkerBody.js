@@ -88,7 +88,7 @@ class WorkerBody {
   }
 
   /**
-   * Transfer scaled source typed-array data back to WorkerProxy, compute neural network, pass result back to WorkerProxy.
+   * Transfer scaled source typed-array data back to WorkerProxy, re-create source tensor, compute neural network, pass result back to WorkerProxy.
    *
    * @param {number} processingId
    *   The id of this processing. It is used when reporting processing resultso that WorkerProxy could find back corresponding promise.
@@ -97,7 +97,7 @@ class WorkerBody {
    *   The source typed-data to be processed. Its shape should be [ height, width, channel ] =
    * [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
    */
-  typedArray_TransferBack_processTensor( processingId, sourceTypedArray ) {
+  typedArray_transferBack_processTensor( processingId, sourceTypedArray ) {
     let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
 
     // Re-create (scaled) source tensor.
@@ -114,6 +114,24 @@ class WorkerBody {
   }
 
   /**
+   * Re-create source tensor, compute neural network, pass result back to WorkerProxy.
+   *
+   * It will not transfer source back to WorkerProxy. This is different from typedArray_TransferBack_processTensor().
+   *
+   * @param {number} processingId
+   *   The id of this processing. It is used when reporting processing resultso that WorkerProxy could find back corresponding promise.
+   *
+   * @param {Float32Array} sourceTypedArray
+   *   The source typed-data to be processed. Its shape should be [ height, width, channel ] =
+   * [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
+   */
+  typedArray_processTensor( processingId, sourceTypedArray ) {
+    let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
+    let scaledSourceTensor = tf.tensor3d( sourceTypedArray, shape ); // Re-create (scaled) source tensor.
+    this.processTensorAndDispose( processingId, scaledSourceTensor );
+  }
+
+  /**
    * Compute neural network, and pass result back to WorkerProxy.
    *
    * @param {number} processingId
@@ -125,7 +143,7 @@ class WorkerBody {
    * This tensor will be disposed when processing is done.
    */
   processTensorAndDispose( processingId, scaledSourceTensor ) {
-    
+
     // Note: scaledSourceTensor will be dispose because this.neuralNet is initialized with ( bKeepInputTensor == false ).
     let resultTensor3d = this.neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, true );
 
@@ -206,8 +224,12 @@ globalThis.onmessage = function( e ) {
       globalThis.workerBody.imageData_transferBack_processTensor( message.processingId, message.sourceImageData );
       break;
 
-    case "typedArray_TransferBack_processTensor": //{ command: "typedArray_TransferBack_processTensor", processingId, sourceTypedArray };
+    case "typedArray_transferBack_processTensor": //{ command: "typedArray_transferBack_processTensor", processingId, sourceTypedArray };
       globalThis.workerBody.typedArray_TransferBack_processTensor( message.processingId, message.sourceTypedArray );
+      break;
+
+    case "typedArray_processTensor": //{ command: "typedArray_processTensor", processingId, sourceTypedArray };
+      globalThis.workerBody.typedArray_processTensor( message.processingId, message.sourceTypedArray );
       break;
   }
 }
