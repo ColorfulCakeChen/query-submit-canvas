@@ -168,7 +168,7 @@ class Base {
    *   Return a promise which will be resolved when all worker pending promises of the same processingId are resolved. The promise
    * resolved with an array of typed-array. Every type-array comes from the output tensor of one worker's neural network.
    */
-  async processImageDataAsync( processingId, sourceImageData ) {
+  async imageData_transferBack_processTensor_async( processingId, sourceImageData ) {
 
     // Prepare promises and their function object (resolve and reject) in a map so that the promises can be found and resolved when processing is done.
     //
@@ -200,7 +200,7 @@ class Base {
    *   Return a promise which will be resolved when all worker pending promises of the same processingId are resolved. The promise
    * resolved with an array of typed-array. Every type-array comes from the output tensor of one worker's neural network.
    */
-  async processTypedArrayAsync( processingId, sourceTypedArray ) {
+  async typedArray_transferBack_processTensor_async( processingId, sourceTypedArray ) {
 
     // Prepare promises and their function object (resolve and reject) in a map so that the promises can be found and resolved when processing is done.
     //
