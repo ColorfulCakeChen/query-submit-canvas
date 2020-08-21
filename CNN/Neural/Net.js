@@ -60,7 +60,6 @@ class Config {
    */
   create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas ) {
 
-    // Using fromPixels() to get source image so that we can always dispose all tensors (including sourceTensor) except the returning tensor.
     let sourceTensor = tf.browser.fromPixels( source_ImageData_or_Canvas, this.sourceChannelCount );
 
     // If the size (height x width) is as expected, use it directly.
