@@ -129,7 +129,7 @@ class WorkerBody {
     // Note: scaledSourceTensor will be dispose because this.neuralNet is initialized with ( bKeepInputTensor == false ).
     let resultTensor3d = this.neuralNet.apply_and_destroy_or_keep( scaledSourceTensor, true );
 
-    let resultTypedArray = await resultTensor3d.data();
+    let resultTypedArray = resultTensor3d.dataSync(); // Download synchronously (because here is web worker).
     resultTensor3d.dispose(); // The result tensor should also be disposed.
 
     // Pass the output of neural network to WorkerProxy (and inform WorkerController).
