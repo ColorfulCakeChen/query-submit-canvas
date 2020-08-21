@@ -62,7 +62,7 @@ class WorkerBody {
    *   The image data to be processed. The size should be [ sourceImageData.height, sourceImageData.width ]
    * = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ] ]. And it should RGBA 4 channels.
    */
-  processImageData( processingId, sourceImageData ) {
+  imageData_transferBack_processTensor( processingId, sourceImageData ) {
 
     // Create (scaled) source image so that then neural network can process it.
     //
@@ -75,7 +75,7 @@ class WorkerBody {
     // which internally converts twice: from Uint8ClampedArray to Int32Array and from Int32Array to tensor3d.
     //
     // If passing typed-array (Float32Array), the next web worker could use it to re-create tensord3d directly.
-    let scaledSourceTensor = this.neuralNet.create_ScaledSourceTensor_from_ImageData_or_Canvas( sourceImageData );
+    let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_ImageData_or_Canvas( sourceImageData );
 
     // Download the scaledSourceTensor as typed-array (asynchronously), and transfer it back to WorkerProxy (and inform WorkerController).
     //
@@ -97,7 +97,7 @@ class WorkerBody {
    *   The source typed-data to be processed. Its shape should be [ height, width, channel ] =
    * [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ].
    */
-  processTypedArray( processingId, sourceTypedArray ) {
+  typedArray_TransferBack_processTensor( processingId, sourceTypedArray ) {
     let shape = [ this.neuralNet.sourceImageHeightWidth[ 0 ], this.neuralNet.sourceImageHeightWidth[ 1 ], this.neuralNet.config.sourceChannelCount ];
 
     // Re-create (scaled) source tensor.
@@ -202,12 +202,12 @@ globalThis.onmessage = function( e ) {
       globalThis.workerBody.disposeWorker();
       break;
 
-    case "processImageData": //{ command: "processImageData", processingId, sourceImageData };
-      globalThis.workerBody.processTensor( message.processingId, message.sourceImageData );
+    case "imageData_transferBack_processTensor": //{ command: "imageData_transferBack_processTensor", processingId, sourceImageData };
+      globalThis.workerBody.imageData_transferBack_processTensor( message.processingId, message.sourceImageData );
       break;
 
-    case "processTypedArray": //{ command: "processTypedArray", processingId, sourceTypedArray };
-      globalThis.workerBody.processTensor( message.processingId, message.sourceTypedArray );
+    case "typedArray_TransferBack_processTensor": //{ command: "typedArray_TransferBack_processTensor", processingId, sourceTypedArray };
+      globalThis.workerBody.typedArray_TransferBack_processTensor( message.processingId, message.sourceTypedArray );
       break;
   }
 }
