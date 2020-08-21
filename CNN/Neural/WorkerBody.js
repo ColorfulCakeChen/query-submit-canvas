@@ -26,19 +26,49 @@ class WorkerBody {
    * @param {string} weightsURL
    *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
    */
-  init( workerId = 0, neuralNetConfig, weightsURL ) {
+  init( workerId = 0, tensorflowJsURL, neuralNetConfig, weightsURL ) {
 
     if ( workerId < 0 )
       workerId = 0;
 
     this.workerId = workerId;
+    this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetConfig = neuralNetConfig;
     this.weightsURL = weightsURL;
 
     let bKeepInputTensor = false; // Because every web worker will copy the input, there is not necessary to keep input.
 
-    this.neuralNet = new Net();
+//!!! ...unfinished... global scope ? report progress ?
+
+    // If a specific library module does not existed, all libraries might have not yet been loaded. (i.e. this is the first time WorkerBody.init() is called.)
+    if ( !globalThis.NeuralNetProgress ) {
+
+      globalThis.NeuralNetProgress = await import( "./NetProgress.js" ); // Load progress library in globalThis.ValueMax scope dynamically.
+
+      this.initProgress = new NeuralNetProgress.InitProgress(); // The progress object could be created only after the progress library has been loaded.
+      this.initProgress.libraryDownload.total = 3; // There are 3 libraries should be loaded: NetProgress, tensorflow.js, NeuralNet.
+      this.initProgress.libraryDownload.accumulation = 1; // The library NetProgress has been loaded.
+
+//!!! ...unfinished... inform WorkerProxy progress changed.
+
+      importScripts( tensorflowJsURL ); // Load tensorflow javascript library in global scope.
+      this.initProgress.libraryDownload.accumulation = 2; // The library tensorflow.js has been loaded.
+
+      globalThis.NeuralNet = await import( "./Net.js" ); // Load neural network library in globalThis.NeuralNet scope dynamically.
+      this.initProgress.libraryDownload.accumulation = 3; // The library NeuralNet has been loaded.
+    }
+
+//!!! ...unfinished... the neuralNetConfig is still class NeuralNet.Config? Otherwise, the create_ScaledSourceTensor_from_ImageData_or_Canvas() will be lost.
+
+    this.neuralNet = new NeuralNet.Base();
     this.neuralNet.init( neuralNetConfig, bKeepInputTensor );
+
+//!!! ...unfinished... 
+    // Download and parse neural network weights. Also report downloading and parsing progress.
+
+//       this.initProgress.weightsDownload;
+//       this.initProgress.weightsParse;
+
   }
 
   disposeWorker() {
@@ -76,6 +106,9 @@ class WorkerBody {
     //
     // If passing typed-array (Float32Array), the next web worker could use it to re-create tensord3d directly.
     let scaledSourceTensor = this.neuralNetConfig.create_ScaledSourceTensor_from_ImageData_or_Canvas( sourceImageData );
+
+//!!! ...unfinished... If the this.neuralNetConfig (which is past through web worker message) is not real NeuralNet.Config, the following should be used.
+//    let scaledSourceTensor = NeuralNet.Config.create_ScaledSourceTensor_from_ImageData_or_Canvas.call( this.neuralNetConfig, sourceImageData );
 
     // Download the scaledSourceTensor as typed-array (asynchronously), and transfer it back to WorkerProxy (and inform WorkerController).
     //
@@ -190,30 +223,17 @@ class WorkerBody {
 
 
 if ( globalThis.document ) {
-  return; // In main document context (Not in worker context). Do nothing.
+  return; // In main document context (Not in worker context). Do nothing. (Should not happen)
 
 // In worker context. Register message handler.
-
-globalThis.workerBody = new WorkerBody();
 
 globalThis.onmessage = function( e ) {
   let message = e.data;
 
   switch ( message.command ) {
-
-
-//!!! ...unfinished...
-//    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, weightsURL, nextWorkerId };
     case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, weightsURL };
-      nextWorkerId: ( nextWorkerProxy ) ? nextWorkerProxy.workerId : null
-
-//!!! ...unfinished... global scope ? report progress ?
-      importScripts( message.tensorflowJsURL );          // Load tensorflow javascript library in global scope.
-      globalThis.NeuralNet = await import( "./Net.js" ); // Load neural network library in globalThis.NeuralNet scope.
-
-//!!! ...unfinished...
-///      globalThis.workerBody.init( message.workerId, message.neuralNetConfig, message.weightsURL, message.nextWorkerId );
-      globalThis.workerBody.init( message.workerId, message.neuralNetConfig, message.weightsURL );
+      globalThis.workerBody = new WorkerBody();
+      globalThis.workerBody.init( message.workerId, message.tensorflowJsURL, message.neuralNetConfig, message.weightsURL );
       break;
 
     case "disposeWorker": //{ command: "disposeWorker" };
@@ -225,7 +245,7 @@ globalThis.onmessage = function( e ) {
       break;
 
     case "typedArray_transferBack_processTensor": //{ command: "typedArray_transferBack_processTensor", processingId, sourceTypedArray };
-      globalThis.workerBody.typedArray_TransferBack_processTensor( message.processingId, message.sourceTypedArray );
+      globalThis.workerBody.typedArray_transferBack_processTensor( message.processingId, message.sourceTypedArray );
       break;
 
     case "typedArray_processTensor": //{ command: "typedArray_processTensor", processingId, sourceTypedArray };
