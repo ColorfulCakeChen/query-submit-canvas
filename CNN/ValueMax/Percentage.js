@@ -19,7 +19,7 @@ class Base {
     return 0;
   }
 
-  /** @return Always is 100. */
+  /** @return Always is 100. Sub-class should NOT override this method. */
   get max() {
     return 100;
   }
