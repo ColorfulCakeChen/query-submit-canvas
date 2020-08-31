@@ -232,6 +232,22 @@ class Base {
   }
 
   /**
+   * Handle messages from the progress of initialization of web workers.
+   */
+  on_reportInitProgress( message ) {
+//!!! ...unfinished...
+    switch ( message.subCommand ) {
+      case "restAccumulation": //{ command: "reportInitProgress", subCommand: "restAccumulation", workerId, ,  };
+        //this.on_initProgress_restAccumulation( message.workerId, ,  );
+        break;
+
+      case "libraryDownload": //{ command: "reportInitProgress", subCommand: "libraryDownload", workerId, ,  };
+        //this.on_initProgress_libraryDownload( message.workerId, ,  );
+        break;
+    }
+  }
+
+  /**
    * Called when the scaled source typed-array from web worker is received.
    */
   on_transferBackSourceTypedArray( workerId, processingId, sourceTypedArray ) {
@@ -290,14 +306,9 @@ class Base {
     let message = e.data;
 
     switch ( message.command ) {
-      case "initLibraryProgressReport": //{ command: "initLibraryProgressReport", workerId, ,  };
-//!!! ...unfinished...
-        //this.initLibraryProgress_onReport( message.workerId, ,  );
-        break;
-
-      case "initNeuralNetProgressReport": //{ command: "initNeuralNetProgressReport", workerId, ,  };
 //!!! ...unfinished... 
-        //this.initNeuralNetProgress_onReport( message.workerId, ,  );
+      case "reportInitProgress": //{ command: "reportInitProgress", subCommand, workerId, ,  };
+        this.on_reportInitProgress( message );
         break;
 
       case "transferBackSourceTypedArray": //{ command: "transferBackSourceTypedArray", workerId, processingId, sourceTypedArray };
