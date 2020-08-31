@@ -91,6 +91,12 @@ class WorkerBody {
     close();
   }
 
+//!!! Regular Expression for get text inside html table markup:
+//
+//  /(?<=<table[^>]*>.*)(?<=>)[^<]+(?=<)(?=.*</table>)/g
+//
+// It can be used to parsing weights data from Google Sheets published html.
+
   /**
    * Convert source image data to tensor3d, scale it, transfer scaled source typed-array back to WorkerProxy, compute neural network,
    * pass result back to WorkerProxy.
