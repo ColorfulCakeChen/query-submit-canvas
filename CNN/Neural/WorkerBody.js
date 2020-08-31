@@ -47,7 +47,15 @@ class WorkerBody {
 
       this.initProgress = new NeuralNetProgress.InitProgress(); // The progress object could be created only after the progress library has been loaded.
       this.initProgress.libraryDownload.total = 3; // There are 3 libraries should be loaded: NetProgress, tensorflow.js, NeuralNet.
-      this.initProgress.libraryDownload.accumulation = 0;
+
+      this.initProgress.weightsDownload.total = 1; // There are ??? 1 weights file will be loaded.
+
+//!!! How to know this? According to neural net architecture? It will be known only after it has been downloaded.
+      this.initProgress.weightsParse.total = 10000; // There are ??? weights will be parsed.
+
+//!!! It seems that the libraryDownload and weightsDownload should not be included.
+// Because the weightsParse.total is unknown when downloading library and weights, it not possible to set total of every progress at one time.
+
 
       ++this.initProgress.libraryDownload.accumulation; // The library NetProgress has been loaded.
 
@@ -225,17 +233,30 @@ class WorkerBody {
 //       this.initProgress.weightsDownload;
 //       this.initProgress.weightsParse;
 
+//       this.initProgress.libraryDownload.total = 3; // There are 3 libraries should be loaded: NetProgress, tensorflow.js, NeuralNet.
+//       this.initProgress.libraryDownload.accumulation = 0;
+
+  /** Inform WorkerProxy to set total of every progress of initProgress. */
+  reportInitProgress_setTotal() {
+    let message = { command: "reportInitProgress", subCommand: "setTotal", workerId: this.workerId,
+      libraryDownload: this.initProgress.libraryDownload.total,
+      weightsDownload: this.initProgress.weightsDownload.total,
+      weightsParse: this.initProgress.weightsParse.total,
+    };
+    postMessage( message );
+  }
+
   /** Inform WorkerProxy to reset initProgress. */
-  initProgress_restAccumulation_postMessage() {
-    let message = { command: "initProgress_restAccumulation", workerId: this.workerId };
+  reportInitProgress_restAccumulation() {
+    let message = { command: "reportInitProgress", subCommand: "restAccumulation", workerId: this.workerId };
     postMessage( message );
   }
 
   /** Inform WorkerProxy to advance initProgress.libraryDownload. */
-  initProgress_libraryDownload_postMessage() {
+  reportInitProgress_libraryDownload() {
 //    let message = { command: "initProgress_libraryDownload", workerId: this.workerId, total: this.initProgress.libraryDownload.total, accumulation: this.initProgress.libraryDownload.accumulation };
 //    let message = { command: "initProgress_libraryDownload", workerId: this.workerId, initProgress: this.initProgress.libraryDownload };
-    let message = { command: "initProgress_libraryDownload", workerId: this.workerId, total: this.initProgress.libraryDownload.total, accumulation: this.initProgress.libraryDownload.accumulation };
+    let message = { command: "reportInitProgress", subCommand: "libraryDownload", workerId: this.workerId, total: this.initProgress.libraryDownload.total, accumulation: this.initProgress.libraryDownload.accumulation };
     postMessage( message );
   }
 }
