@@ -31,9 +31,9 @@ class Base {
     // A Google Sheets published html web page is mainly a html table. A possible parsing method is using lookbehind and lookahead. 
     // For example, "(?<=<table[^>]*>.*)(?<=>)[^<]+(?=<)(?=.*</table>)". However, some browser (e.g. safari) does not support lookbehind
     // regular expression. So it is more reliable to use the capture grouping method.
-    this.tdRegExpString =
+    this.tdExtractingRegExpString =
         "<td[^>]*>"         // Only searching <td> tag. (Note: Ignore <th> tag because it records row number of the sheet.)
-      +   "(?:<div[^>]*>)?" // Sometimes there is a <div> tag surrounding the <td> tag. Ignore it.
+      +   "(?:<div[^>]*>)?" // Sometimes there is a <div> tag surrounding the <td> tag. Skip it.
       +     "([^<]*)"       // This is the <td> tag's text which will be extracted (by capture group 1). 
       +   "(?:</div>)?"
       + "</td>"
@@ -43,7 +43,36 @@ class Base {
 //  let extractedLinesByCells = String( sourceHTMLText ).replace( r, "$1\n" );
   }
 
-  downloadSummary( progress ) {
+  async downloadSummary( progress ) {
+    let response = await fetch( this.summaryURL );
+
+    let tdRegExp = RegExp( this.tdExtractingRegExpString, "g" );
+    let matches = response.text().matchAll( tdRegExp );
+
+    // Only capture group 1 is used.
+
+    let match = matches.next();
+    if ( !match.done ) {
+      this.PopulationSize = Number.parseInt( match.value[ 1 ], 10 );
+
+      match = match.next();
+      if ( !match.done ) {
+        this.EntityWeightCount = Number.parseInt( match.value[ 1 ], 10 );
+
+        match = match.next();
+        if ( !match.done ) {
+          this.EntityChromosomeCount = Number.parseInt( match.value[ 1 ], 10 );
+
+          match = match.next();
+//!!! ...unfinished... gid and versus ids.
+        }
+      }
+    }
+
+//    for ( let match of matches ) {
+
+
+//!!! ...unfinished... report progress.
   }
 
   downloadEntity( progress ) {
