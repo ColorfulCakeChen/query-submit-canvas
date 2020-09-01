@@ -52,22 +52,28 @@ class Base {
     // Only capture group 1 is used.
 
     let match = matches.next();
-    if ( !match.done ) {
-      this.PopulationSize = Number.parseInt( match.value[ 1 ], 10 );
+    if ( match.done )
+      return;
 
-      match = match.next();
-      if ( !match.done ) {
-        this.EntityWeightCount = Number.parseInt( match.value[ 1 ], 10 );
+    this.PopulationSize = Number.parseInt( match.value[ 1 ], 10 );
 
-        match = match.next();
-        if ( !match.done ) {
-          this.EntityChromosomeCount = Number.parseInt( match.value[ 1 ], 10 );
+    match = match.next();
+    if ( match.done )
+      return;
 
-          match = match.next();
+    this.EntityWeightCount = Number.parseInt( match.value[ 1 ], 10 );
+
+    match = match.next();
+    if ( match.done )
+      return;
+
+    this.EntityChromosomeCount = Number.parseInt( match.value[ 1 ], 10 );
+
+    match = match.next();
+    if ( match.done )
+      return;
+
 //!!! ...unfinished... gid and versus ids.
-        }
-      }
-    }
 
 //    for ( let match of matches ) {
 
