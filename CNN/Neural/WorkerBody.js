@@ -97,6 +97,12 @@ class WorkerBody {
 //
 // It can be used to parsing weights data from Google Sheets published html. Problem: safari browser does not support lookbehind regular expression.
 
+//!!! Regular Expression for get text inside html table data (with or without div) markup:
+//
+//  <td[^>]*>(?:<div[^>]*>)?([^<]*)(?:</div>)?</td>
+//
+// The capture group 1 is one cell of one column of google sheet.
+
   /**
    * Convert source image data to tensor3d, scale it, transfer scaled source typed-array back to WorkerProxy, compute neural network,
    * pass result back to WorkerProxy.
