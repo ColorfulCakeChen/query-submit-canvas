@@ -46,6 +46,7 @@ class Base {
   async downloadSummary( progress ) {
     let response = await fetch( this.summaryURL );
 
+//!!! ...unfinished... could re-use regexp?
     let tdRegExp = RegExp( this.tdExtractingRegExpString, "g" );
     let matches = response.text().matchAll( tdRegExp );
 
@@ -57,20 +58,17 @@ class Base {
 
     this.PopulationSize = Number.parseInt( match.value[ 1 ], 10 );
 
-    match = match.next();
-    if ( match.done )
+    if ( ( match = match.next() ).done )
       return;
 
     this.EntityWeightCount = Number.parseInt( match.value[ 1 ], 10 );
 
-    match = match.next();
-    if ( match.done )
+    if ( ( match = match.next() ).done )
       return;
 
     this.EntityChromosomeCount = Number.parseInt( match.value[ 1 ], 10 );
 
-    match = match.next();
-    if ( match.done )
+    if ( ( match = match.next() ).done )
       return;
 
 //!!! ...unfinished... gid and versus ids.
