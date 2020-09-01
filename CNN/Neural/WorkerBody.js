@@ -99,7 +99,8 @@ class WorkerBody {
 
 //!!! Regular Expression for get text inside html table data (with or without div) markup:
 //
-//  <td[^>]*>(?:<div[^>]*>)?([^<]*)(?:</div>)?</td>
+//  let r = RegExp( "<td[^>]*>(?:<div[^>]*>)?([^<]*)(?:</div>)?</td>", "g" );
+//  let extractedLinesByCells = String( sourceHTMLText ).replace( r, "$1\n" );
 //
 // The capture group 1 is one cell of one column of google sheet.
 
