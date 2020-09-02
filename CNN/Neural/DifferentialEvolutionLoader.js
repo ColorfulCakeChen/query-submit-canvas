@@ -43,31 +43,29 @@ class Base {
 
 //  let r = RegExp( "<td[^>]*>(?:<div[^>]*>)?([^<]*)(?:</div>)?</td>", "g" );
 //  let extractedLinesByCells = String( sourceHTMLText ).replace( r, "$1\n" );
+
+    // The regular expression string for Replacing the "nnn" of "gid=nnn" inside the published web page URL.
+    this.gidReplacingRegExpString = "(gid=)\d+";
+    this.gidReplacingRegExp = RegExp( this.gidReplacingRegExpString );
   }
 
   async downloadSummary( progress ) {
     let response = await fetch( this.summaryURL );
 
     let matches = response.text().matchAll( this.tdTextExtractingRegExp );
-
-    // Only capture group 1 is used.
-
-    let match = matches.next();
+    let match = matches.next();    // Only capture group 1 will be used.
     if ( match.done )
       return;
 
     this.PopulationSize = Number.parseInt( match.value[ 1 ], 10 );
-
     if ( ( match = match.next() ).done )
       return;
 
     this.EntityWeightCount = Number.parseInt( match.value[ 1 ], 10 );
-
     if ( ( match = match.next() ).done )
       return;
 
     this.EntityChromosomeCount = Number.parseInt( match.value[ 1 ], 10 );
-
     if ( ( match = match.next() ).done )
       return;
 
@@ -80,6 +78,12 @@ class Base {
   }
 
   downloadEntity( progress ) {
+
+//!!! ...unfinished... Which gid number should be used.
+//    let gid = ???;
+    let replaceContext = `$1${gid}`;
+    let url = this.summaryURL.replace( this.gidReplacingRegExp, replaceContext );
+  
     // Parent and offspring.
   }
 
