@@ -31,13 +31,15 @@ class Base {
     // A Google Sheets published html web page is mainly a html table. A possible parsing method is using lookbehind and lookahead. 
     // For example, "(?<=<table[^>]*>.*)(?<=>)[^<]+(?=<)(?=.*</table>)". However, some browser (e.g. safari) does not support lookbehind
     // regular expression. So it is more reliable to use the capture grouping method.
-    this.tdExtractingRegExpString =
+    this.tdTextExtractingRegExpString =
         "<td[^>]*>"         // Only searching <td> tag. (Note: Ignore <th> tag because it records row number of the sheet.)
       +   "(?:<div[^>]*>)?" // Sometimes there is a <div> tag surrounding the <td> tag. Skip it.
       +     "([^<]*)"       // This is the <td> tag's text which will be extracted (by capture group 1). 
       +   "(?:</div>)?"
       + "</td>"
     ;
+
+    this.tdTextExtractingRegExp = RegExp( this.tdTextExtractingRegExpString, "g" ); // Could be re-used by String.matchAll().
 
 //  let r = RegExp( "<td[^>]*>(?:<div[^>]*>)?([^<]*)(?:</div>)?</td>", "g" );
 //  let extractedLinesByCells = String( sourceHTMLText ).replace( r, "$1\n" );
@@ -46,9 +48,7 @@ class Base {
   async downloadSummary( progress ) {
     let response = await fetch( this.summaryURL );
 
-//!!! ...unfinished... could re-use regexp?
-    let tdRegExp = RegExp( this.tdExtractingRegExpString, "g" );
-    let matches = response.text().matchAll( tdRegExp );
+    let matches = response.text().matchAll( this.tdTextExtractingRegExp );
 
     // Only capture group 1 is used.
 
