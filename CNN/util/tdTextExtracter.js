@@ -1,12 +1,11 @@
-
-export { Base };
+export default tdTextExtracter;
 
 /**
  * Extract html table cell text from html string. This could be used to extract text from Google Sheets' published html web page.
  *
  *
  */
-class Base {
+class tdTextExtracter {
 
 //  constructor() {
 //  }
@@ -22,8 +21,8 @@ class Base {
    * (e.g. <td>...</td>). If the td tag contains a div tag (e.g. <td><div>...</div></td>), the captured group 1 of every match is the text
    * of the html div tag.
    */
-  static getExtractIterator( htmlString ) {
-    let matches = htmlString.matchAll( Base.tdTextExtractingRegExp );
+  static getIterator( htmlString ) {
+    let matches = htmlString.matchAll( tdTextExtracter.tdTextExtractingRegExp );
     return matches;
   }
 
@@ -36,7 +35,7 @@ class Base {
  * For example, "(?<=<table[^>]*>.*)(?<=>)[^<]+(?=<)(?=.*</table>)". However, some browser (e.g. safari) does not support lookbehind
  * regular expression. So it is more reliable to use the capture grouping method.
  */
-Base.tdTextExtractingRegExpString =
+tdTextExtracter.tdTextExtractingRegExpString =
     "<td[^>]*>"         // Only searching <td> tag. (Note: Ignore <th> tag because it records row number of the sheet.)
   +   "(?:<div[^>]*>)?" // Sometimes there is a <div> tag surrounding the <td> tag. Skip it.
   +     "([^<]*)"       // This is the <td> tag's text which will be extracted (by capture group 1). 
@@ -48,5 +47,5 @@ Base.tdTextExtractingRegExpString =
 //  let extractedLinesByCells = String( sourceHTMLText ).replace( r, "$1\n" );
 
 /** Could be re-used by String.matchAll(). */
-Base.tdTextExtractingRegExp = RegExp( Base.tdTextExtractingRegExpString, "g" );
+tdTextExtracter.tdTextExtractingRegExp = RegExp( tdTextExtracter.tdTextExtractingRegExpString, "g" );
 
