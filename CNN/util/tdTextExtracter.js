@@ -21,7 +21,7 @@ class tdTextExtracter {
    * (e.g. <td>...</td>). If the td tag contains a div tag (e.g. <td><div>...</div></td>), the captured group 1 of every match is the text
    * of the html div tag.
    */
-  static getIterator( htmlString ) {
+  static createIterator( htmlString ) {
     let matches = htmlString.matchAll( tdTextExtracter.tdTextExtractingRegExp );
     return matches;
   }
