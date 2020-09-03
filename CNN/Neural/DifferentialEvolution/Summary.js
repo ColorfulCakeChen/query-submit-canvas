@@ -38,9 +38,6 @@ class Base {
    */
   constructor() {
 
-    // Regular expression for replacing the "nnn" of "gid=nnn" inside the published web page URL.
-    this.gidReplacingRegExp = RegExp( "(gid=)(\d+)", "g" );
-
     // Regular expression for splitting gid and every versus.
     this.gid_Versus_SplitRegExp = RegExp( "|", "g" );
 
@@ -49,6 +46,9 @@ class Base {
 
     // Regular expression for splitting ids of entity, parent generation, offspring generation.
     this.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp = RegExp( "_", "g" );
+
+    // Regular expression for replacing the "nnn" of "gid=nnn" inside the published web page URL.
+    this.gidReplacingRegExp = RegExp( "(gid=)(\d+)", "g" );
   }
 
   /**
@@ -67,38 +67,57 @@ class Base {
 
     let response = await fetch( this.summaryURL );
 
-    let matches = tdTextExtracter.Base.createIterator( response.text() );
-    let match = matches.next();    // Only capture group 1 will be used.
-    if ( match.done )
+    let lineMatches = tdTextExtracter.Base.createIterator( response.text() ); // Only capture group 1 will be used.
+    let lineMatch;
+
+    if ( ( lineMatch = lineMatches.next() ).done )
       return;
 
-    this.PopulationSize = Number.parseInt( match.value[ 1 ], 10 );
+    this.PopulationSize = Number.parseInt( lineMatch.value[ 1 ], 10 );
 
-    if ( ( match = matches.next() ).done )
+    if ( ( lineMatch = lineMatches.next() ).done )
       return;
 
-    this.EntityChromosomeCount = Number.parseInt( match.value[ 1 ], 10 );
+    this.EntityChromosomeCount = Number.parseInt( lineMatch.value[ 1 ], 10 );
 
-    if ( ( match = matches.next() ).done )
+    if ( ( lineMatch = lineMatches.next() ).done )
       return;
 
-    this.ChromosomeWeightCount = Number.parseInt( match.value[ 1 ], 10 );
+    this.ChromosomeWeightCount = Number.parseInt( lineMatch.value[ 1 ], 10 );
     this.EntityWeightCount = this.EntityChromosomeCount * this.ChromosomeWeightCount; // So many weights in one entity.
 
-    if ( ( match = matches.next() ).done )
-      return;
+    this.gid_versus_array = [];
+    while ( !( lineMatch = lineMatch.next() ).done ) {
 
-//!!! ...unfinished... gid and versus ids.
-    if ( ( match = matches.next() ).done )
-      return;
+      let versus_string_array = lineMatch.value[ 1 ].split( this.gid_Versus_SplitRegExp ); // Split the text of a td tag.
+      if ( versus_string_array.length <= 1 )
+        continue; // At least, should be 2. The first one is gid, the second (and after) are versus ids (with win counts)
 
-//!!! ...unfinished... gid and versus ids.
+      // Got gid.
+      let gid_versus = {
+        gid: versus_string_array[ 0 ], // In fact, element 0 is gid.
+        versus: new Array( versus_string_array.length - 1 ) // All other elements are versus ids (with win counts).
+      };
 
-    // versus id
-    //   EntityNo_ParentGenerationNo_OffspringGenerationNo
+      this.gid_versus_array.push( gid_versus );
 
-//    for ( let match of matches ) {
+      // Parse every versus (i.e. EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount)
+      for ( let i = 1; i < versus_string_array.length; ++i ) {
+        let versus_parts = versus_string_array[ i ].split( this.VersusId_WinCount_SplittingRegExp );
 
+        // Got winCount.
+        let versus = { winCount: Number.parseInt( versus_parts[ 1 ], 10 ) };
+        gid_versus.versus[ i - 1 ] = versus;
+
+        let versusId = versus_parts[ 0 ];
+        let versusId_parts = versusId.split( this.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp );
+
+        // Got id of entity, parentGeneration, offspringGeneration.
+        versus.entityNo = versusId_parts[ 0 ];
+        versus.parentGenerationNo = versusId_parts[ 1 ];
+        versus.offspringGenerationNo = versusId_parts[ 2 ];
+      }
+    }
 
 //!!! ...unfinished... report progress.
   }
