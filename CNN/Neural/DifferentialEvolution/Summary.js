@@ -1,5 +1,5 @@
 import * as NetProgress from "../NetProgress.js";
-import tdTextExtracter from "../../util/tdTextExtracter.js";
+import * as tdTextExtracter from "../../util/tdTextExtracter.js";
 
 export { NetProgress, Base };
 
@@ -35,7 +35,7 @@ class Base {
   async downloadSummary( progress ) {
     let response = await fetch( this.summaryURL );
 
-    let matches = tdTextExtracter.createIterator( response.text() );
+    let matches = tdTextExtracter.Base.createIterator( response.text() );
     let match = matches.next();    // Only capture group 1 will be used.
     if ( match.done )
       return;
