@@ -38,9 +38,17 @@ class Base {
    */
   constructor() {
 
-    // The regular expression string for Replacing the "nnn" of "gid=nnn" inside the published web page URL.
-    this.gidReplacingRegExpString = "(gid=)(\d+)";
-    this.gidReplacingRegExp = RegExp( this.gidReplacingRegExpString );
+    // Regular expression for replacing the "nnn" of "gid=nnn" inside the published web page URL.
+    this.gidReplacingRegExp = RegExp( "(gid=)(\d+)", "g" );
+
+    // Regular expression for splitting gid and every versus.
+    this.gid_Versus_SplitRegExp = RegExp( "|", "g" );
+
+    // Regular expression for splitting versus id and win count
+    this.VersusId_WinCount_SplittingRegExp = RegExp( ":", "g" );
+
+    // Regular expression for splitting ids of entity, parent generation, offspring generation.
+    this.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp = RegExp( "_", "g" );
   }
 
   /**
@@ -65,18 +73,25 @@ class Base {
       return;
 
     this.PopulationSize = Number.parseInt( match.value[ 1 ], 10 );
+
     if ( ( match = matches.next() ).done )
       return;
 
     this.EntityChromosomeCount = Number.parseInt( match.value[ 1 ], 10 );
+
     if ( ( match = matches.next() ).done )
       return;
 
     this.ChromosomeWeightCount = Number.parseInt( match.value[ 1 ], 10 );
+    this.EntityWeightCount = this.EntityChromosomeCount * this.ChromosomeWeightCount; // So many weights in one entity.
+
     if ( ( match = matches.next() ).done )
       return;
 
-    this.EntityWeightCount = this.EntityChromosomeCount * this.ChromosomeWeightCount; // How many weights in one entity?
+//!!! ...unfinished... gid and versus ids.
+    if ( ( match = matches.next() ).done )
+      return;
+
 //!!! ...unfinished... gid and versus ids.
 
     // versus id
