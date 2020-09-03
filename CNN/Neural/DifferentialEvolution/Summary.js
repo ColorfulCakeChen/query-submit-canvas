@@ -1,4 +1,5 @@
-import * as NetProgress from "./NetProgress.js";
+import * as NetProgress from "../NetProgress.js";
+import tdTextExtracter from "../../util/tdTextExtracter.js";
 
 export { NetProgress, Base };
 
@@ -26,50 +27,48 @@ class Base {
     // resource sharing (CORS) while its published web page tsv (or csv) does not.
     this.summaryURL = summaryURL;
 
-    // The regular expression string for extracting one cell (i.e. the text of the html table "td" tag).
-    //
-    // A Google Sheets published html web page is mainly a html table. A possible parsing method is using lookbehind and lookahead. 
-    // For example, "(?<=<table[^>]*>.*)(?<=>)[^<]+(?=<)(?=.*</table>)". However, some browser (e.g. safari) does not support lookbehind
-    // regular expression. So it is more reliable to use the capture grouping method.
-    this.tdTextExtractingRegExpString =
-        "<td[^>]*>"         // Only searching <td> tag. (Note: Ignore <th> tag because it records row number of the sheet.)
-      +   "(?:<div[^>]*>)?" // Sometimes there is a <div> tag surrounding the <td> tag. Skip it.
-      +     "([^<]*)"       // This is the <td> tag's text which will be extracted (by capture group 1). 
-      +   "(?:</div>)?"
-      + "</td>"
-    ;
-
-    this.tdTextExtractingRegExp = RegExp( this.tdTextExtractingRegExpString, "g" ); // Could be re-used by String.matchAll().
-
-//  let r = RegExp( "<td[^>]*>(?:<div[^>]*>)?([^<]*)(?:</div>)?</td>", "g" );
-//  let extractedLinesByCells = String( sourceHTMLText ).replace( r, "$1\n" );
-
     // The regular expression string for Replacing the "nnn" of "gid=nnn" inside the published web page URL.
-    this.gidReplacingRegExpString = "(gid=)\d+";
+    this.gidReplacingRegExpString = "(gid=)(\d+)";
     this.gidReplacingRegExp = RegExp( this.gidReplacingRegExpString );
   }
 
   async downloadSummary( progress ) {
     let response = await fetch( this.summaryURL );
 
-    let matches = response.text().matchAll( this.tdTextExtractingRegExp );
+    let matches = tdTextExtracter.createIterator( response.text() );
     let match = matches.next();    // Only capture group 1 will be used.
     if ( match.done )
       return;
 
-    this.PopulationSize = Number.parseInt( match.value[ 1 ], 10 );
-    if ( ( match = match.next() ).done )
+    // The format of differential evolution summary page is the following:
+    //
+    //   PopulationSize
+    //   EntityWeightCount
+    //   EntityChromosomeCount
+    //   gid|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|...
+    //   gid|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|...
+    //   gid|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|...
+    //     :
+    //     :
+    //
+
+    this.PopulationSize = Number.parseInt( match.value[ 1 ], 10 ); // How many entities in the differential evolution?
+    if ( ( match = matches.next() ).done )
       return;
 
-    this.EntityWeightCount = Number.parseInt( match.value[ 1 ], 10 );
-    if ( ( match = match.next() ).done )
+    this.EntityWeightCount = Number.parseInt( match.value[ 1 ], 10 ); // How many weights in one entity?
+    if ( ( match = matches.next() ).done )
       return;
 
-    this.EntityChromosomeCount = Number.parseInt( match.value[ 1 ], 10 );
-    if ( ( match = match.next() ).done )
+    this.EntityChromosomeCount = Number.parseInt( match.value[ 1 ], 10 ); // How many weights in one chromsome?
+    if ( ( match = matches.next() ).done )
       return;
 
+    this.
 //!!! ...unfinished... gid and versus ids.
+
+    // versus id
+    //   EntityNo_ParentGenerationNo_OffspringGenerationNo
 
 //    for ( let match of matches ) {
 
