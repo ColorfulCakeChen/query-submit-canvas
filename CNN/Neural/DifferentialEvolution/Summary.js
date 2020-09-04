@@ -96,7 +96,7 @@ class Base {
     this.gid_versus_array = [];
     while ( !( lineMatch = lineMatch.next() ).done ) {
       let gid_versus = new gid_Versus.Base();
-      gid_versus.setByParse( lineMatch.value[ 1 ] ); // Split the text of a td tag.
+      gid_versus.set_ByParse( lineMatch.value[ 1 ], null ); // Split the text of a td tag. The 2nd parameter is null so that the prefix is viewed as gid.
       this.gid_versus_array.push( gid_versus );
     }
 
