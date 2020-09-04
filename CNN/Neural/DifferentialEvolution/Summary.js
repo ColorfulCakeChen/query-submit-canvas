@@ -1,131 +1,10 @@
 import * as NetProgress from "../NetProgress.js";
 import * as tdTextExtracter from "../../util/tdTextExtracter.js";
+import * as VersusId_WinCount from "./VersusId_WinCount.js";
+import * as gid_Versus from "./gid_Versus.js";
 import * as Versus from "./Versus.js";
 
-export { NetProgress, VersusId_WinCount, gid_Versus, Base };
-
-/**
- * @member {string} versusIdString               The versus id string (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
- * @member {string} entityNoString               The entity id string of the versus.
- * @member {number} entityNo                     The entity id number of the versus.
- * @member {string} parentGenerationNoString     The parent generation id string of the entity of the versus.
- * @member {number} parentGenerationNo           The parent generation id number of the entity of the versus.
- * @member {string} offspringGenerationNoString  The offspring generation id string of the entity of the versus.
- * @member {number} offspringGenerationNo        The offspring generation id number of the entity of the versus.
- * @member {string} winCountString               The win count string of parent generation of the entity of the versus.
- * @member {number} winCount                     The win count number of parent generation of the entity of the versus.
- */
-class VersusId_WinCount {
-
-  /**
-   *
-   */
-  constructor( versusIdString, entityNoString, parentGenerationNoString, offspringGenerationNoString, winCountString ) {
-    this.versusIdString = versusIdString;
-    this.entityNoString = entityNoString;
-    this.entityNo = Number.parseInt( entityNoString, 10 );
-    this.parentGenerationNoString = parentGenerationNoString;
-    this.parentGenerationNo = Number.parseInt( parentGenerationNoString, 10 );
-    this.offspringGenerationNoString = offspringGenerationNoString;
-    this.offspringGenerationNo = Number.parseInt( offspringGenerationNoString, 10 );
-    this.winCountString = winCountString;
-    this.winCount = Number.parseInt( winCountString, 10 );
-  }
-
-  /**
-   * Create and return a VersusId_WinCount by parsing the specified string.
-   *
-   * @param {string} versusId_winCount_string
-   *   The string contains versus id and win count (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount).
-   */
-  static createByParse( versusId_winCount_string ) {
-
-    // Split the versus id and win count.
-    //
-    //   EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount
-    //
-    // They are separated by colon (:).
-    let versus_parts = versusId_winCount_string.split( VersusId_WinCount.VersusId_WinCount_SplittingRegExp );
-
-    // Split the versus id inside. Got id of entity, parentGeneration, offspringGeneration.
-    //
-    //   EntityNo_ParentGenerationNo_OffspringGenerationNo
-    //
-    // They are separated by underline (_).
-    let versusId_parts = versus.versusId.split( VersusId_WinCount.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp );
-
-    return new VersusId_WinCount( versus_parts[ 0 ], versusId_parts[ 0 ], versusId_parts[ 1 ], versusId_parts[ 2 ] );
-  }
-
-}
-
-// Regular expression for splitting versus id and win count.
-VersusId_WinCount.VersusId_WinCount_SplittingRegExp = RegExp( ":", "g" );
-
-// Regular expression for splitting ids of entity, parent generation, offspring generation.
-VersusId_WinCount.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp = RegExp( "_", "g" );
-
-
-/**
- * @member {string} gidString
- *   The id of the published Google Sheet. The sheet contains entity weights of one to more versus.
- *
- * @member {VersusId_WinCount[]} VersusId_WinCount_Array
- *   All the versus belong to the gid.
- *
- *
- */
-class gid_Versus {
-
-//   /**
-//    *
-//    */
-//   constructor( gidString, versusCount ) {
-//     this.gidString = gidString;
-//     this.versus = new Array( versusCount );
-//   }
-
-  /**
-   * Create and return a gid_Versus by parsing the specified string.
-   *
-   * @param {string} gid_Versus_string
-   *   The string contains gid, versus ids and win counts
-   * (e.g. gid|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|...).
-   */
-  setByParse( gid_Versus_string ) {
-
-    this.dispose();
-
-    // Split the text of a td tag.
-    //
-    //   gid|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|...
-    //
-    // They are separated by vertical bar (|).
-    let string_array = gid_Versus_string.split( gid_Versus.gid_Versus_SplittingRegExp );
-    if ( string_array.length < 1 )
-      return; // Nothing in the string.
-
-    // 1. Got gid. (Element 0 is gid.)
-    this.gidString = string_array[ 0 ];
-    this.gid = Number.parseInt( this.gidString, 10 );
-
-    // 2. Parse all other elements as versus.
-    this.VersusId_WinCount_Array = new Array( string_array.length - 1 ); // All other elements are versus ids (with win counts).
-    for ( let i = 1; i < string_array.length; ++i ) {
-      this.VersusId_WinCount_Array[ i - 1 ] = VersusId_WinCount.createByParse( string_array[ i ] );
-    }
-  }
-
-  dispose() {
-    this.gid = null;
-    this.VersusId_WinCount_Array = null;
-  }
-
-}
-
-// Regular expression for splitting gid and every versus.
-gid_Versus.gid_Versus_SplittingRegExp = RegExp( "|", "g" );
-
+export { NetProgress, Base };
 
 /**
  * Download differential evolution summary and individual versus (entity vs entity) from network (a publish html of Google Sheets).
@@ -216,7 +95,7 @@ class Base {
     // 4. Parse every gid and their corresponding versus ids (with win counts).
     this.gid_versus_array = [];
     while ( !( lineMatch = lineMatch.next() ).done ) {
-      let gid_versus = new gid_Versus();
+      let gid_versus = new gid_Versus.Base();
       gid_versus.setByParse( lineMatch.value[ 1 ] ); // Split the text of a td tag.
       this.gid_versus_array.push( gid_versus );
     }
