@@ -39,7 +39,7 @@ class Base {
   constructor() {
 
     // Regular expression for splitting gid and every versus.
-    this.gid_Versus_SplitRegExp = RegExp( "|", "g" );
+    this.gid_Versus_SplittingRegExp = RegExp( "|", "g" );
 
     // Regular expression for splitting versus id and win count
     this.VersusId_WinCount_SplittingRegExp = RegExp( ":", "g" );
@@ -73,46 +73,65 @@ class Base {
     if ( ( lineMatch = lineMatches.next() ).done )
       return;
 
+    // 1.
     this.PopulationSize = Number.parseInt( lineMatch.value[ 1 ], 10 );
 
     if ( ( lineMatch = lineMatches.next() ).done )
       return;
 
+    // 2.
     this.EntityChromosomeCount = Number.parseInt( lineMatch.value[ 1 ], 10 );
 
     if ( ( lineMatch = lineMatches.next() ).done )
       return;
 
+    // 3.
     this.ChromosomeWeightCount = Number.parseInt( lineMatch.value[ 1 ], 10 );
-    this.EntityWeightCount = this.EntityChromosomeCount * this.ChromosomeWeightCount; // So many weights in one entity.
+    this.EntityWeightCount = this.EntityChromosomeCount * this.ChromosomeWeightCount; // There are how many weights in one entity.
 
+    // 4. Parse every gid and their corresponding versus ids (with win counts).
     this.gid_versus_array = [];
     while ( !( lineMatch = lineMatch.next() ).done ) {
 
-      let versus_string_array = lineMatch.value[ 1 ].split( this.gid_Versus_SplitRegExp ); // Split the text of a td tag.
+      // Split the text of a td tag.
+      //
+      //   gid|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|...
+      //
+      // They are separated by vertical bar (|).
+      let versus_string_array = lineMatch.value[ 1 ].split( this.gid_Versus_SplittingRegExp );
       if ( versus_string_array.length <= 1 )
         continue; // At least, should be 2. The first one is gid, the second (and after) are versus ids (with win counts)
 
-      // Got gid.
+      // 4.1 Got gid.
       let gid_versus = {
-        gid: versus_string_array[ 0 ], // In fact, element 0 is gid.
+        gid: versus_string_array[ 0 ], // Element 0 is gid.
         versus: new Array( versus_string_array.length - 1 ) // All other elements are versus ids (with win counts).
       };
 
       this.gid_versus_array.push( gid_versus );
 
-      // Parse every versus (i.e. EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount)
+      // 4.2 Parse every versus.
       for ( let i = 1; i < versus_string_array.length; ++i ) {
+
+        // Split the versus id and win count.
+        //
+        //   EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount
+        //
+        // They are separated by colon (:).
         let versus_parts = versus_string_array[ i ].split( this.VersusId_WinCount_SplittingRegExp );
 
-        // Got winCount.
-        let versus = { winCount: Number.parseInt( versus_parts[ 1 ], 10 ) };
+        // 4.2.1 Got versus id and win count.
+        let versus = { versusId: versus_parts[ 0 ], winCount: Number.parseInt( versus_parts[ 1 ], 10 ) };
         gid_versus.versus[ i - 1 ] = versus;
 
-        let versusId = versus_parts[ 0 ];
-        let versusId_parts = versusId.split( this.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp );
+        // Split the versus id inside.
+        //
+        //   EntityNo_ParentGenerationNo_OffspringGenerationNo
+        //
+        // They are separated by underline (_).
+        let versusId_parts = versus.versusId.split( this.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp );
 
-        // Got id of entity, parentGeneration, offspringGeneration.
+        // 4.2.2 Got id of entity, parentGeneration, offspringGeneration.
         versus.entityNo = versusId_parts[ 0 ];
         versus.parentGenerationNo = versusId_parts[ 1 ];
         versus.offspringGenerationNo = versusId_parts[ 2 ];
