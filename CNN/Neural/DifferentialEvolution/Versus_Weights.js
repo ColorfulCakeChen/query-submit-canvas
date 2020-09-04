@@ -1,5 +1,7 @@
 import * as NetProgress from "../NetProgress.js";
 import * as tdTextExtracter from "../../util/tdTextExtracter.js";
+import * as gid_Versus from "./gid_Versus.js";
+import * as VersusId_WinCount from "./VersusId_WinCount.js";
 
 export { NetProgress, Base };
 
