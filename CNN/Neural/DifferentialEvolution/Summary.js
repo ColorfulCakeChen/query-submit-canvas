@@ -2,7 +2,7 @@ import * as NetProgress from "../NetProgress.js";
 import * as tdTextExtracter from "../../util/tdTextExtracter.js";
 import * as Versus from "./Versus.js";
 
-export { NetProgress, Base };
+export { NetProgress, VersusId_WinCount, gid_Versus, Base };
 
 /**
  * @member {string} versusIdString               The versus id string (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
