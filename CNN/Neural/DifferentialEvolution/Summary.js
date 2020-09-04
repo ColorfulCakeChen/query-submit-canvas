@@ -70,21 +70,62 @@ VersusId_WinCount.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingReg
  * @member {string} gidString
  *   The id of the published Google Sheet. The sheet contains entity weights of one to more versus.
  *
- * @member {string} versus
- *
+ * @member {VersusId_WinCount[]} VersusId_WinCount_Array
+ *   All the versus belong to the gid.
  *
  *
  */
-class gid_versus {
+class gid_Versus {
+
+//   /**
+//    *
+//    */
+//   constructor( gidString, versusCount ) {
+//     this.gidString = gidString;
+//     this.versus = new Array( versusCount );
+//   }
 
   /**
+   * Create and return a gid_Versus by parsing the specified string.
    *
+   * @param {string} gid_Versus_string
+   *   The string contains gid, versus ids and win counts
+   * (e.g. gid|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|...).
    */
-  constructor( gidString, versusCount ) {
-    this.gidString = gidString;
-    this.versus = new Array( versusCount );
+  setByParse( gid_Versus_string ) {
+
+    this.dispose();
+
+    // Split the text of a td tag.
+    //
+    //   gid|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|...
+    //
+    // They are separated by vertical bar (|).
+    let string_array = gid_Versus_string.split( gid_Versus.gid_Versus_SplittingRegExp );
+    if ( string_array.length < 1 )
+      return; // Nothing in the string.
+
+    // 1. Got gid. (Element 0 is gid.)
+    this.gidString = string_array[ 0 ];
+    this.gid = Number.parseInt( this.gidString, 10 );
+
+    // 2. Parse all other elements as versus.
+    this.VersusId_WinCount_Array = new Array( string_array.length - 1 ); // All other elements are versus ids (with win counts).
+    for ( let i = 1; i < string_array.length; ++i ) {
+      this.VersusId_WinCount_Array[ i - 1 ] = VersusId_WinCount.createByParse( string_array[ i ] );
+    }
   }
+
+  dispose() {
+    this.gid = null;
+    this.VersusId_WinCount_Array = null;
+  }
+
 }
+
+// Regular expression for splitting gid and every versus.
+gid_Versus.gid_Versus_SplittingRegExp = RegExp( "|", "g" );
+
 
 /**
  * Download differential evolution summary and individual versus (entity vs entity) from network (a publish html of Google Sheets).
@@ -175,28 +216,9 @@ class Base {
     // 4. Parse every gid and their corresponding versus ids (with win counts).
     this.gid_versus_array = [];
     while ( !( lineMatch = lineMatch.next() ).done ) {
-
-      // Split the text of a td tag.
-      //
-      //   gid|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount|...
-      //
-      // They are separated by vertical bar (|).
-      let versus_string_array = lineMatch.value[ 1 ].split( Base.gid_Versus_SplittingRegExp );
-      if ( versus_string_array.length <= 1 )
-        continue; // At least, should be 2. The first one is gid, the second (and after) are versus ids (with win counts)
-
-      // 4.1 Got gid.
-      let gid_versus = {
-        gid: versus_string_array[ 0 ], // Element 0 is gid.
-        VersusId_WinCount_Array: new Array( versus_string_array.length - 1 ) // All other elements are versus ids (with win counts).
-      };
-
+      let gid_versus = new gid_Versus();
+      gid_versus.setByParse( lineMatch.value[ 1 ] ); // Split the text of a td tag.
       this.gid_versus_array.push( gid_versus );
-
-      // 4.2 Parse every versus.
-      for ( let i = 1; i < versus_string_array.length; ++i ) {
-        gid_versus.VersusId_WinCount_Array[ i - 1 ] = VersusId_WinCount.createByParse( versus_string_array[ i ] );
-      }
     }
 
 //!!! ...unfinished... report progress.
@@ -213,9 +235,6 @@ class Base {
   }
 
 }
-
-// Regular expression for splitting gid and every versus.
-Base.gid_Versus_SplittingRegExp = RegExp( "|", "g" );
 
 // Regular expression for replacing the "nnn" of "gid=nnn" inside the published web page URL.
 Base.gidReplacingRegExp = RegExp( "(gid=)(\d+)", "g" );
