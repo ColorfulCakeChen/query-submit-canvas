@@ -57,7 +57,9 @@ class Base {
    *
    * @param {string} strActivationNameAtBlockEnd
    *   The activation function name after the convolution of the last PointDepthPoint's pointwise2ActivationName of this block. One of the following
-   * "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos".
+   * "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If the output of this block needs to be any arbitrary value, it is recommended
+   * not to use activation at the end of this block (i.e. strActivationNameAtBlockEnd == "" (or null)) so that it will not be restricted by the
+   * range of the activation function.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
