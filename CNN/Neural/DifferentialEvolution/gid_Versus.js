@@ -55,7 +55,7 @@ class Base {
 
     // 2. Parse all other elements as versus.
     for ( let i = firstVersusIndex; i < string_array.length; ++i ) {
-      this.VersusId_WinCount_Array[ i - firstVersusIndex ] = VersusId_WinCount.Base.createByParse( string_array[ i ] );
+      this.VersusId_WinCount_Array[ i - firstVersusIndex ] = VersusId_WinCount.Base.create_By_VersusId_WinCount_String( string_array[ i ] );
     }
   }
 
