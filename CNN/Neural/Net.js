@@ -3,6 +3,12 @@ import * as ConvBlock from "../Conv/Block.js";
 
 export { Config, Base };
 
+//!!! ...unfinished... should have a parameter control whether there is activation function at the last layer of every block?
+//
+// If the output of neural network needs to be arbitrary value, the last layer of every block should not have activation function
+// (i.e. should be affine (= linear + bias) ).
+//
+
 /**
  * A neural network's configuration.
  *
