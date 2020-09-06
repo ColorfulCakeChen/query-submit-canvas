@@ -17,6 +17,12 @@ export { Base };
  * @member {number} outputChannelCount
  *   The output channel count of this block's last step.
  *
+ * @member {PointDepthPoint.Base} step0
+ *   The first step computation of this block.
+ *
+ * @member {PointDepthPoint.Base} stepLast
+ *   The last step computation of this block. It may be the same as this.step0 when there is only one step inside this block.
+ *
  * @see ChannelShuffler.ConcatGather
  */
 class Base {
@@ -164,6 +170,7 @@ class Base {
         bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
       );
 
+      this.stepLast = step0;
       this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
       this.outputChannelCount = step0.outputChannelCount;
 
@@ -303,6 +310,12 @@ class Base {
 
           this.steps1After[ i ] = step;
         }
+
+        if ( 1 == stepCountPerBlock ) {
+          this.stepLast = this.step0; // If there is only one step, it is also the last step.
+        } else {
+          this.stepLast = this.steps1After[ this.steps1After.length - 1 ]; // Shortcut to the last step.
+        }
       }
     }
   }
@@ -333,6 +346,8 @@ class Base {
       }
       this.steps1After = null;
     }
+
+    this.stepLast = null; // It has already de disposed by this.step0 or this.steps1After.
   }
 
   /** Process input, destroy input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.)
