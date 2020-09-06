@@ -214,7 +214,7 @@ class Base {
           pointwise2Bias = false;
           pointwise2ActivationName = null;                   // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
 
-          // Since pointwise2ActivationName is always null in MobileNetV2, the strActivationNameAtBlockEnd is never used.
+          // Since pointwise2ActivationName is always null in MobileNetV2, the strActivationNameAtBlockEnd is never used in MobileNetV2.
         }
 
         // If ( pointwise1ChannelCount < pointwise2ChannelCount ), similiar to ResNet.
