@@ -55,6 +55,10 @@ class Base {
    * @param {string} strActivationName
    *   The activation function name after the convolution. One of the following "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos".
    *
+   * @param {string} strActivationNameAtBlockEnd
+   *   The activation function name after the convolution of the last PointDepthPoint's pointwise2ActivationName of this block. One of the following
+   * "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos".
+   *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
    *
@@ -65,7 +69,7 @@ class Base {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, strActivationName,
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, strActivationName, strActivationNameAtBlockEnd,
     bKeepInputTensor
   ) {
 
@@ -115,6 +119,9 @@ class Base {
 
     this.bBias = bBias;
     this.strActivationName = strActivationName;
+    this.strActivationNameAtBlockEnd = strActivationNameAtBlockEnd;
+
+//!!! ...unfinished... using strActivationNameAtBlockEnd according to whether is the last PointDepthPoint of this block.
 
     let pointwise1Bias = bBias;
     let pointwise1ActivationName = strActivationName;
