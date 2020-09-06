@@ -207,7 +207,7 @@ class Base {
       + `${ ( block0.step0.bPointwise2 && block0.step0.bPointwise2Bias ) ? ( "_PBias2" ) : "" }`
       + `${ ( block0.step0.bPointwise2 && block0.step0.pointwise2ActivationFunction ) ? ( "_" + block0.step0.pointwise2ActivationName ) : "" }`
 
-        config.strActivationNameAtBlockEnd,
+      + `${ ( config.strActivationNameAtBlockEnd ) ? ( "_" + config.strActivationNameAtBlockEnd ) : "" }`
 
       + `__Block_${this.blockCount}`
       + `__Step_${config.stepCountPerBlock}`
