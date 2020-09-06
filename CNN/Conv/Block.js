@@ -152,6 +152,10 @@ class Base {
       let depthwiseStrides = 1;
       let depthwisePad = "valid";     // so that shrinking sourceHeight a little.
 
+      // This is the last step of this block (i.e. at-block-end) because ( stepCountPerBlock <= 0 ) means there is only one step inside this block.
+      // And a different activation function may be used after pointwise2 convolution.
+      pointwise2ActivationName = strActivationNameAtBlockEnd;
+
       let step0 = this.step0 = new PointDepthPoint.Base();
       step0.init(
         sourceChannelCount,
@@ -192,12 +196,20 @@ class Base {
           depthwiseBias = false;
           depthwiseActivationName = null;                    // In ShuffleNetV2, depthwise convolution does not have activation function.
 
+          // If there is only one step, this is the last step of this block (i.e. at-block-end) and a different activation function may be
+          // used after pointwise2 convolution.
+          if ( 1 == stepCountPerBlock ) {
+            pointwise2ActivationName = strActivationNameAtBlockEnd;
+          }
+
         } else {                                             // MobileNetV1, or MobileNetV2.
           pointwise2ChannelCount = sourceChannelCount * 2;   // The output channel count of step 0 of MobileNetV2 is twice as input.
 
           // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
           pointwise2Bias = false;
           pointwise2ActivationName = null;                   // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
+
+          // Since pointwise2ActivationName is always null in MobileNetV2, the strActivationNameAtBlockEnd is never used.
         }
 
         // If ( pointwise1ChannelCount < pointwise2ChannelCount ), similiar to ResNet.
@@ -272,9 +284,15 @@ class Base {
           this.concatGather.init( sourceConcatenatedShape, outputGroupCount );
         }
 
-        this.steps1After = new Array( stepCountPerBlock - 1 );  // "-1" because this array does not include step0.
+        this.steps1After = new Array( stepCountPerBlock - 1 );  // "- 1" because this array does not include step0.
 
         for ( let i = 0; i < this.steps1After.length; ++i ) {
+
+          // If this is the last step of this block (i.e. at-block-end), a different activation function may be used after pointwise2 convolution.
+          if ( i == ( this.steps1After.length - 1 ) ) {
+            pointwise2ActivationName = strActivationNameAtBlockEnd;
+          }
+
           let step = new PointDepthPoint.Base();
           step.init(
             channelCount_pointwise1Before,
