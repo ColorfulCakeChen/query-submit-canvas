@@ -203,9 +203,10 @@ class Base {
         + `${ ( step0.bPointwise2 && step0.bPointwise2Bias ) ? ( "_PBias2" ) : "" }`
         + `${ ( step0.bPointwise2 && step0.pointwise2ActivationFunction ) ? ( "_" + step0.pointwise2ActivationName ) : "" }`
 
-//If there is not pointwise2 ?
-      
         // If there are more (than 1) steps, show the activation function name (if exists) of the last step.
+        //
+        // Note: Is it possible that there is not pointwise2 convolution? No, it is not possible (for our Conv/Block.js).
+        // So the last activation function must be the activation function the last step's pointwise2 convolution.
         + `${ ( config.stepCountPerBlock > 1 ) ?
                 ( ( stepLast.bPointwise2 && stepLast.pointwise2ActivationFunction ) ? ( "_" + stepLast.pointwise2ActivationName ) : "" ) : "" }`
 
