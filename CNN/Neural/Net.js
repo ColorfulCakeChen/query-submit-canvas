@@ -3,10 +3,11 @@ import * as ConvBlock from "../Conv/Block.js";
 
 export { Config, Base };
 
-//!!! ...unfinished... should have a parameter control whether there is activation function at the last layer of every block?
+//!!! ...unfinished...
+// should have a parameter control whether the last PointDepthPoint.pointwise2ActivationName of every block is null?
 //
-// If the output of neural network needs to be arbitrary value, the last layer of every block should not have activation function
-// (i.e. should be affine (= linear + bias) ).
+// If the output of neural network needs to be arbitrary value, the last PointDepthPoint's pointwise2 of every block should not
+// have activation function so that it could achieve affine (= linear + bias) transformation.
 //
 
 /**
