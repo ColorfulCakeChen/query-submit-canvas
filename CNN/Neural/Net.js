@@ -3,13 +3,6 @@ import * as ConvBlock from "../Conv/Block.js";
 
 export { Config, Base };
 
-//!!! ...unfinished...
-// should have a parameter control whether the last PointDepthPoint.pointwise2ActivationName of every block is null?
-//
-// If the output of neural network needs to be arbitrary value, the last PointDepthPoint's pointwise2 of every block should not
-// have activation function so that it could achieve affine (= linear + bias) transformation.
-//
-
 /**
  * A neural network's configuration.
  *
@@ -191,27 +184,37 @@ class Base {
     }
 
     let block0 = this.blocks[ 0 ];
+    {
+      let step0 = block0.step0;
+      let stepLast = block0.stepLast;
 
-    // e.g. "C24_24__DConv_101x101_DBias_RELU__PConv_PBias_RELU__Block_1__Step_1"
-    this.structure = `C${config.sourceChannelCount}_${config.channelCountBlock0}`
+      // e.g. "C24_24__DConv_101x101_DBias_RELU__PConv_PBias_RELU__Block_1__Step_1"
+      this.structure = `C${config.sourceChannelCount}_${config.channelCountBlock0}`
 
-      + `${ ( block0.step0.bPointwise1 ) ? "__PConv1(x" + config.pointwise1ChannelCountRate + ")" : "" }`
-      + `${ ( block0.step0.bPointwise1 && block0.step0.bPointwise1Bias ) ? ( "_PBias1" ) : "" }`
-      + `${ ( block0.step0.bPointwise1 && block0.step0.pointwise1ActivationFunction ) ? ( "_" + block0.step0.pointwise1ActivationName ) : "" }`
+        + `${ ( step0.bPointwise1 ) ? "__PConv1(x" + config.pointwise1ChannelCountRate + ")" : "" }`
+        + `${ ( step0.bPointwise1 && step0.bPointwise1Bias ) ? ( "_PBias1" ) : "" }`
+        + `${ ( step0.bPointwise1 && step0.pointwise1ActivationFunction ) ? ( "_" + step0.pointwise1ActivationName ) : "" }`
 
-      + `${ ( block0.step0.bDepthwise ) ? `__D${config.strAvgMaxConv}_${config.depthwiseFilterHeight}x${config.depthwiseFilterHeight}` : "" }`
-      + `${ ( block0.step0.bDepthwise && block0.step0.bDepthwiseBias ) ? ( "_DBias" ) : "" }`
-      + `${ ( block0.step0.bDepthwise && block0.step0.depthwiseActivationFunction ) ? ( "_" + config.strActivationName ) : "" }`
+        + `${ ( step0.bDepthwise ) ? `__D${config.strAvgMaxConv}_${config.depthwiseFilterHeight}x${config.depthwiseFilterHeight}` : "" }`
+        + `${ ( step0.bDepthwise && step0.bDepthwiseBias ) ? ( "_DBias" ) : "" }`
+        + `${ ( step0.bDepthwise && step0.depthwiseActivationFunction ) ? ( "_" + config.strActivationName ) : "" }`
 
-      + `${ ( block0.step0.bPointwise2 ) ? "__PConv2" : "" }`
-      + `${ ( block0.step0.bPointwise2 && block0.step0.bPointwise2Bias ) ? ( "_PBias2" ) : "" }`
-      + `${ ( block0.step0.bPointwise2 && block0.step0.pointwise2ActivationFunction ) ? ( "_" + block0.step0.pointwise2ActivationName ) : "" }`
+        + `${ ( step0.bPointwise2 ) ? "__PConv2" : "" }`
+        + `${ ( step0.bPointwise2 && step0.bPointwise2Bias ) ? ( "_PBias2" ) : "" }`
+        + `${ ( step0.bPointwise2 && step0.pointwise2ActivationFunction ) ? ( "_" + step0.pointwise2ActivationName ) : "" }`
 
-      + `__Block_${this.blockCount}`
-      + `__Step_${config.stepCountPerBlock}`
-      + `${ ( config.bChannelShuffler ) ? "__Shuffle" : ( ( config.stepCountPerBlock > 0 ) ? "__AddInput" : "" ) }`
-      //+ `${ ( bKeepInputTensor ) ? "__KeepInput" : "" }`
-    ;
+//If there is not pointwise2 ?
+      
+        // If there are more (than 1) steps, show the activation function name (if exists) of the last step.
+        + `${ ( config.stepCountPerBlock > 1 ) ?
+                ( ( stepLast.bPointwise2 && stepLast.pointwise2ActivationFunction ) ? ( "_" + stepLast.pointwise2ActivationName ) : "" ) : "" }`
+
+        + `__${this.blockCount}_Block`
+        + `__${config.stepCountPerBlock}_Step`
+        + `${ ( config.bChannelShuffler ) ? "__Shuffle" : ( ( config.stepCountPerBlock > 0 ) ? "__AddInput" : "" ) }`
+        //+ `${ ( bKeepInputTensor ) ? "__KeepInput" : "" }`
+      ;
+    }
 
     this.sourceImageHeightWidth = [ block0.sourceHeight, block0.sourceWidth ];
   }
