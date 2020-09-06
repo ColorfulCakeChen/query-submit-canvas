@@ -13,10 +13,21 @@ export { VersusId_WinCount };
  */
 class Base {
 
+//   /**
+//    *
+//    */
+//   constructor( versusIdString, entityNoString, parentGenerationNoString, offspringGenerationNoString, winCountString ) {
+//     this.set( versusIdString, entityNoString, parentGenerationNoString, offspringGenerationNoString, winCountString );
+//   }
+
   /**
-   *
+   * @param {string} versusIdString               The versus id string (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
+   * @param {string} entityNoString               The entity id string of the versus.
+   * @param {string} parentGenerationNoString     The parent generation id string of the entity of the versus.
+   * @param {string} offspringGenerationNoString  The offspring generation id string of the entity of the versus.
+   * @param {string} winCountString               The win count string of parent generation of the entity of the versus.
    */
-  constructor( versusIdString, entityNoString, parentGenerationNoString, offspringGenerationNoString, winCountString ) {
+  set( versusIdString, entityNoString, parentGenerationNoString, offspringGenerationNoString, winCountString ) {
     this.versusIdString = versusIdString;
     this.entityNoString = entityNoString;
     this.entityNo = Number.parseInt( entityNoString, 10 );
@@ -29,34 +40,51 @@ class Base {
   }
 
   /**
-   * Create and return a VersusId_WinCount by parsing the specified string.
    *
-   * @param {string} versusId_winCount_string
-   *   The string contains versus id and win count (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount).
+   * @param {string} versusIdString               The versus id string (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
+   * @param {string} winCountString               The win count string of parent generation of the entity of the versus.
    */
-  static createByParse( versusId_winCount_string ) {
-
-    // Split the versus id and win count.
-    //
-    //   EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount
-    //
-    // They are separated by colon (:).
-    let versus_parts = versusId_winCount_string.split( VersusId_WinCount.VersusId_WinCount_SplittingRegExp );
+  set_By_VersusIdString_WinCountString( versusIdString, winCountString ) {
 
     // Split the versus id inside. Got id of entity, parentGeneration, offspringGeneration.
     //
     //   EntityNo_ParentGenerationNo_OffspringGenerationNo
     //
     // They are separated by underline (_).
-    let versusId_parts = versus.versusId.split( VersusId_WinCount.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp );
+    let versusId_parts = versusIdString.versusId.split( Base.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp );
 
-    return new VersusId_WinCount( versus_parts[ 0 ], versusId_parts[ 0 ], versusId_parts[ 1 ], versusId_parts[ 2 ] );
+    this.set( versusIdString, versusId_parts[ 0 ], versusId_parts[ 1 ], versusId_parts[ 2 ], winCountString );
   }
 
+  /**
+   * @param {string} versusId_winCount_string
+   *   The string contains versus id and win count (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount).
+   */
+  set_By_VersusId_WinCount_String( versusId_winCount_string ) {
+
+    // Split the versus id and win count.
+    //
+    //   EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount
+    //
+    // They are separated by colon (:).
+    let versusId_winCount_string_array = versusId_winCount_string.split( Base.VersusId_WinCount_SplittingRegExp );
+
+    this.set_By_VersusIdString_WinCountString( versusId_winCount_string_array[ 0 ], versusId_winCount_string_array[ 1 ] );
+  }
+
+  /**
+   * Create and return a VersusId_WinCount by parsing the specified string.
+   *
+   * @param {string} versusId_winCount_string
+   *   The string contains versus id and win count (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo:WinCount).
+   */
+  static create_By_VersusId_WinCount_String( versusId_winCount_string ) {
+    return ( new VersusId_WinCount() ).set_By_VersusId_WinCount_String( versusId_winCount_string );
+  }
 }
 
-// Regular expression for splitting versus id and win count.
+/** Regular expression for splitting versus id and win count. */
 Base.VersusId_WinCount_SplittingRegExp = RegExp( ":", "g" );
 
-// Regular expression for splitting ids of entity, parent generation, offspring generation.
+/** Regular expression for splitting ids of entity, parent generation, offspring generation. */
 Base.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp = RegExp( "_", "g" );
