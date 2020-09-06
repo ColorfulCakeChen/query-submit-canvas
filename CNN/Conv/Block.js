@@ -123,8 +123,6 @@ class Base {
     this.strActivationName = strActivationName;
     this.strActivationNameAtBlockEnd = strActivationNameAtBlockEnd;
 
-//!!! ...unfinished... using strActivationNameAtBlockEnd according to whether is the last PointDepthPoint of this block.
-
     let pointwise1Bias = bBias;
     let pointwise1ActivationName = strActivationName;
     let depthwiseBias = bBias;
