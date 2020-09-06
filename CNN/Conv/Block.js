@@ -53,7 +53,7 @@ class Base {
    *   If true, there will be a bias after every convolution.
    *
    * @param {string} strActivationName
-   *   The activation function name after the convolution. One of the following "", "relu", "relu6", "sigmoid", "tanh", "sin".
+   *   The activation function name after the convolution. One of the following "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos".
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
