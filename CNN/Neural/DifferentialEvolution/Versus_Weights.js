@@ -118,7 +118,7 @@ class Base {
    * @param {ValueMax.Percentage} progressToAdvance
    *   This method will report progress to the progressToAdvance.
    */
-  async fetch( versusURL, progressToAdvance ) {
+  async fetchAndReport( versusURL, progressToAdvance ) {
 
     // Why using published html web page instead of tsv (or csv)? This is because Google Sheets' published html web page support cross-origin
     // resource sharing (CORS) while its published web page tsv (or csv) does not.
@@ -148,38 +148,28 @@ class Base {
     this.gid_Versus = new gid_Versus.Base();
     this.gid_versus.set_ByString( lineMatch.value[ 1 ], gidString ); // Split the text of a td tag.
 
-    // 4. Parse every gid and their corresponding versus ids (with win counts).
+    // 4. Parse every gid and their corresponding weights (of chromosomes of parent and offspring).
     this.enitiyChromosomesArray = new Array( this.gid_versus.VersusId_WinCount_Array.length );
     for ( let i = 0; ( i < this.enitiyChromosomesArray.length ) && ( !lineMatch.done ); ++i, ( lineMatch = lineMatch.next() ) ) {
       let entityNo = this.gid_versus.VersusId_WinCount_Array[ i ].entityNo;
       let enitiyChromosomes = this.enitiyChromosomesArray[ i ] = new EnitiyChromosomes( entityNo, this.entityChromosomeCount );
 
-//!!!
-      enitiyChromosomes.parentChromosomes[ ] = ;
-      enitiyChromosomes.offspringChromosomes[ ] = ;
+      // The parent's chromosomes of the entity.
+      for ( let k = 0; ( k < this.entityChromosomeCount ) && ( !lineMatch.done ); ++k, ( lineMatch = lineMatch.next() ) ) {
+        enitiyChromosomes.parentChromosomes[ k ] = lineMatch.value[ 1 ];
+      }
+    }
 
-      gid_versus.set_ByString( lineMatch.value[ 1 ], null ); // Split the text of a td tag. The 2nd parameter is null so that the prefix is viewed as gid.
-      this.gid_versus_array.push( gid_versus );
+    for ( let i = 0; ( i < this.enitiyChromosomesArray.length ) && ( !lineMatch.done ); ++i, ( lineMatch = lineMatch.next() ) ) {
+      let enitiyChromosomes = this.enitiyChromosomesArray[ i ];
+
+      // The offspring's chromosomes of the entity.
+      for ( let k = 0; ( k < this.entityChromosomeCount ) && ( !lineMatch.done ); ++k, ( lineMatch = lineMatch.next() ) ) {
+        enitiyChromosomes.offspringChromosomes[ k ] = lineMatch.value[ 1 ];
+      }
     }
 
 //!!! ...unfinished... report progress.
-    
-
-//!!! ...unfinished... Which gid number should be used.
-//    let gid = ???;
-    let replaceContext = `$1${gid}`;
-    let url = this.summaryURL.replace( this.gidReplacingRegExp, replaceContext );
-
-    let response = await fetch( url );
-
-    let matches = tdTextExtracter.Base.createIterator( response.text() );
-    let match = matches.next();    // Only capture group 1 will be used.
-    if ( match.done )
-      return;
-
-//!!! ...unfinished...
-
-    // Parent and offspring.
   }
 
 }
