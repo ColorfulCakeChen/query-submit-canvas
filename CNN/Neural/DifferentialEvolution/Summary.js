@@ -103,15 +103,19 @@ class Base {
 //!!! ...unfinished... report progress.
   }
 
-  downloadEntity( progress ) {
+  /**
+   *
+   */
+  downloadVersusWeights( progress ) {
 
 //!!! ...unfinished... Which gid number should be used.
 //    let gid = ???;
     let replaceContext = `$1${gid}`;
-    let url = this.summaryURL.replace( Base.gidReplacingRegExp, replaceContext );
+    let versusURL = this.summaryURL.replace( Base.gidReplacingRegExp, replaceContext );
   
     // Parent and offspring.
     let Versus_Weights = new Versus_Weights.Base( this.entityChromosomeCount );
+    Versus_Weights.fetchAndReport( versusURL, progress );
 
 //!!! ...unfinished... report progress.
   }
