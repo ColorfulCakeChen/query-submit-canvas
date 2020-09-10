@@ -2,7 +2,7 @@ import * as NetProgress from "../NetProgress.js";
 import * as tdTextExtracter from "../../util/tdTextExtracter.js";
 import * as VersusId_WinCount from "./VersusId_WinCount.js";
 import * as gid_Versus from "./gid_Versus.js";
-import * as Versus from "./Versus.js";
+import * as Versus_Weights from "./Versus_Weights.js";
 
 export { NetProgress, Base };
 
@@ -31,16 +31,16 @@ export { NetProgress, Base };
  *     - A versus contains versus id (EntityNo_ParentGenerationNo_OffspringGenerationNo) and its WinCount which are separated by colon (:).
  *     - A versus id contains EntityNo, ParentGenerationNo, OffspringGenerationNo which are separated by underline (_).
  *
- * @member {number} PopulationSize
+ * @member {number} populationSize
  *   There are how many entities in the differential evolution.
  *
- * @member {number} EntityChromosomeCount
+ * @member {number} entityChromosomeCount
  *   There are how many chromsomes in one entity.
  *
- * @member {number} ChromosomeWeightCount
+ * @member {number} chromosomeWeightCount
  *   There are how many weights in one chromsome.
  *
- * @member {number} EntityWeightCount
+ * @member {number} entityWeightCount
  *   There are how many weights in one entity. It equals to ( this.EntityChromosomeCount * this.ChromosomeWeightCount ).
  *
  * @member {number} gid_versus_array
@@ -77,20 +77,20 @@ class Base {
       return;
 
     // 1.
-    this.PopulationSize = Number.parseInt( lineMatch.value[ 1 ], 10 );
+    this.populationSize = Number.parseInt( lineMatch.value[ 1 ], 10 );
 
     if ( ( lineMatch = lineMatches.next() ).done )
       return;
 
     // 2.
-    this.EntityChromosomeCount = Number.parseInt( lineMatch.value[ 1 ], 10 );
+    this.entityChromosomeCount = Number.parseInt( lineMatch.value[ 1 ], 10 );
 
     if ( ( lineMatch = lineMatches.next() ).done )
       return;
 
     // 3.
-    this.ChromosomeWeightCount = Number.parseInt( lineMatch.value[ 1 ], 10 );
-    this.EntityWeightCount = this.EntityChromosomeCount * this.ChromosomeWeightCount; // There are how many weights in one entity.
+    this.chromosomeWeightCount = Number.parseInt( lineMatch.value[ 1 ], 10 );
+    this.entityWeightCount = this.entityChromosomeCount * this.chromosomeWeightCount; // There are how many weights in one entity.
 
     // 4. Parse every gid and their corresponding versus ids (with win counts).
     this.gid_versus_array = [];
@@ -111,6 +111,9 @@ class Base {
     let url = this.summaryURL.replace( Base.gidReplacingRegExp, replaceContext );
   
     // Parent and offspring.
+    let Versus_Weights = new Versus_Weights.Base( this.entityChromosomeCount );
+
+//!!! ...unfinished... report progress.
   }
 
 }
