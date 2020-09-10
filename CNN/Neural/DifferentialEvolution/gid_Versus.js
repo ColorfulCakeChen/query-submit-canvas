@@ -71,7 +71,7 @@ class Base {
    * @param {string} gidString
    *   If null, the first part of gid_Versus_string will be viewed as gid. Otherwise, all gid_Versus_string will be viewed as versus.
    */
-  set_ByParse( gid_Versus_string, gidString ) {
+  set_ByString( gid_Versus_string, gidString ) {
 
     // Split the text (if gidString is null):
     //
