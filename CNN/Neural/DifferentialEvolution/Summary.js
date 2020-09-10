@@ -68,7 +68,7 @@ class Base {
     // resource sharing (CORS) while its published web page tsv (or csv) does not.
     this.summaryURL = summaryURL;
 
-    let response = await fetch( this.summaryURL );
+    let response = await fetch( summaryURL );
 
     let lineMatches = tdTextExtracter.Base.createIterator( response.text() ); // Only capture group 1 will be used.
     let lineMatch;
