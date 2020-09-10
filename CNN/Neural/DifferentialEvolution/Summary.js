@@ -22,14 +22,14 @@ export { NetProgress, Base };
  *     :
  * </code>
  *
- * The PopulationSize represents how many entities in the differential evolution.
- * The EntityChromosomeCount represents how many chromsomes in one entity.
- * The ChromosomeWeightCount represents how many weights in one chromsome.
+ *   - The PopulationSize represents how many entities in the differential evolution.
+ *   - The EntityChromosomeCount represents how many chromsomes in one entity.
+ *   - The ChromosomeWeightCount represents how many weights in one chromsome.
  *
- * The gid is the Google Sheet's id which will be used to form the url when download every individual versus.
- * Every gid contains one or more versus which are separated by vertical bar (|).
- * A versus contains versus id (EntityNo_ParentGenerationNo_OffspringGenerationNo) and its WinCount which are separated by colon (:).
- * A versus id contains EntityNo, ParentGenerationNo, OffspringGenerationNo which are separated by underline (_).
+ *   - The gid is the Google Sheet's id which will be used to compose the url when download every individual weights (entity versus entity).
+ *   - Every gid contains one or more versus which are separated by vertical bar (|).
+ *   - A versus contains versus id (EntityNo_ParentGenerationNo_OffspringGenerationNo) and its WinCount which are separated by colon (:).
+ *   - A versus id contains EntityNo, ParentGenerationNo, OffspringGenerationNo which are separated by underline (_).
  *
  * @member {number} PopulationSize
  *   There are how many entities in the differential evolution.
