@@ -205,10 +205,11 @@ class Base {
 
         // If there are more (than 1) steps, show the activation function name (if exists) of the last step.
         //
-        // Note: Is it possible that there is not pointwise2 convolution? No, it is not possible (for our Conv/Block.js).
-        // So the last activation function must be the activation function the last step's pointwise2 convolution.
+        // Note: Is it possible that a step does not have the pointwise2 convolution?
+        // Although the Conv/PointDepthPoint.js might have no pointwise2 convolution, the Conv/Block.js always has pointwise2 convolution.
+        // So, the last activation function always is the activation function of the last step's pointwise2 convolution.
         + `${ ( config.stepCountPerBlock > 1 ) ?
-                ( ( stepLast.bPointwise2 && stepLast.pointwise2ActivationFunction ) ? ( "_" + stepLast.pointwise2ActivationName ) : "" ) : "" }`
+                ( ( stepLast.bPointwise2 && stepLast.pointwise2ActivationFunction ) ? ( "_" + stepLast.pointwise2ActivationName ) : "_NoLastActivation" ) : "" }`
 
         + `__${this.blockCount}_Block`
         + `__${config.stepCountPerBlock}_Step`
