@@ -5,6 +5,14 @@ import * as VersusId_WinCount from "./VersusId_WinCount.js";
 
 export { NetProgress, Base };
 
+
+/**
+ * .
+ *
+ */
+class {
+}
+
 /**
  * Download differential evolution individual weights (entity vs entity) from network (a publish html of Google Sheets).
  *
@@ -42,21 +50,21 @@ export { NetProgress, Base };
  *   EntityNoM_Offspring_ChromosomeN
  * </code>
  *
- * The PopulationSize represents how many entities in the differential evolution.
- * The EntityChromosomeCount represents how many chromsomes in one entity.
- * The ChromosomeWeightCount represents how many weights in one chromsome.
+ *   - The gid is the id (which is used in the URL) of the Google Sheet.
+ *   - The ExportSheetNo is the array index of the Google Sheet. This is mainly used by server. Client (downloader) can ignore this value.
+ *   - The 3rd line list all versus published in this web page.
+ *     - A versus contains versus id (EntityNo_ParentGenerationNo_OffspringGenerationNo) and its WinCount which are separated by colon (:).
+ *     - A versus id contains EntityNo, ParentGenerationNo, OffspringGenerationNo which are separated by underline (_).
+ *   - List all chromosomes of the parent of every entity.
+ *   - List all chromosomes of the offspring of every entity.
  *
- * The gid is the Google Sheet's id which will be used to form the url when download every individual versus.
- * Every gid contains one or more versus which are separated by vertical bar (|).
- * A versus contains versus id (EntityNo_ParentGenerationNo_OffspringGenerationNo) and its WinCount which are separated by colon (:).
- * A versus id contains EntityNo, ParentGenerationNo, OffspringGenerationNo which are separated by underline (_).
+ * @member {gid_Versus.Base} gid_Versus
+ *   The gid and related versus id (with win count).
  *
- * @member {number} PopulationSize
- *   There are how many entities in the differential evolution.
+ * @member {number} ExportSheetNo
+ *   The array index of the published Google Sheet.
  *
- * @member {number} EntityChromosomeCount
- *   There are how many chromsomes in one entity.
- *
+!!! 
  * @member {number} ChromosomeWeightCount
  *   There are how many weights in one chromsome.
  *
