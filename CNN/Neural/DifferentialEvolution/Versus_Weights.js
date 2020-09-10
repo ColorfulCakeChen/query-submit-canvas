@@ -3,15 +3,41 @@ import * as tdTextExtracter from "../../util/tdTextExtracter.js";
 import * as gid_Versus from "./gid_Versus.js";
 import * as VersusId_WinCount from "./VersusId_WinCount.js";
 
-export { NetProgress, Base };
+export { NetProgress, EnitiyParentOffspringChromosomes, Base };
 
 
 /**
  * .
  *
+ * @member {number} enitiyNo
+ *   The id of the published entity.
+ *
+ * @member {number} entityChromosomeCount
+ *   There are how many chromsomes in the parent (or offspring) of one entity.
+ *
+ * @member {string[]} parentChromosomes
+ *   The chromosomes of the parent of the published entity.
+ *
+ * @member {string[]} offspringChromosomes
+ *   The chromosomes of the offspring of the published entity.
+ *
  */
-class {
+class EnitiyChromosomes {
+
+  /**
+   *
+   */
+  constructor( enitiyNo, entityChromosomeCount ) {
+    this.enitiyNo = enitiyNo;
+    this.parentChromosomes = new Array( entityChromosomeCount );
+    this.offspringChromosomes = new Array( entityChromosomeCount );
+  }
+
+  get entityChromosomeCount {
+    return this.parentChromosomes.length;
+  }
 }
+
 
 /**
  * Download differential evolution individual weights (entity vs entity) from network (a publish html of Google Sheets).
@@ -58,42 +84,86 @@ class {
  *   - List all chromosomes of the parent of every entity.
  *   - List all chromosomes of the offspring of every entity.
  *
+ * @member {number} entityChromosomeCount
+ *   There are how many chromsomes in the parent (or offspring) of one entity.
+ *
  * @member {gid_Versus.Base} gid_Versus
  *   The gid and related versus id (with win count).
  *
- * @member {number} ExportSheetNo
+ * @member {number} exportSheetNo
  *   The array index of the published Google Sheet.
  *
-!!! 
- * @member {number} ChromosomeWeightCount
- *   There are how many weights in one chromsome.
- *
- * @member {number} EntityWeightCount
- *   There are how many weights in one entity. It equals to ( this.EntityChromosomeCount * this.ChromosomeWeightCount ).
- *
- * @member {number} gid_versus_array
- *   There are how many weights in one entity. It equals to ( this.EntityChromosomeCount * this.ChromosomeWeightCount ).
+ * @member {EnitiyChromosomes[]} enitiyChromosomesArray
+ *   All entities' parent and offspring chromsomes.
  *
  */
 class Base {
 
-//  constructor() {
-//  }
-
   /**
-   *
-   * @param versusURL
-   *   The published (should be html, not tsv, not csv) web page URL of the versus sheet of the differential evolution Google Sheets. For example:
-   * "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzA4SXUR5VyPmJ1cLEkNMiJgfb28zzgp4HtwoBlumIIOTkL_y7mgPldqaGtsunIq5eTu5QndluyFcV/pubhtml?gid=0&single=true".
-   * The "gid=0" inside the URL will be replaced with different number when downloading other published sheet.
+   * @param {number} entityChromosomeCount
+   *   There are how many chromsomes in the parent (or offspring) of one entity.
    */
-  init( versusURL ) {
-
-    this.versusURL = versusURL;
-
+  constructor( entityChromosomeCount ) {
+    this.entityChromosomeCount = entityChromosomeCount;
   }
 
-  async downloadEntity( progress ) {
+  /**
+   * Fetch and extract.
+   *
+   * @param {string} versusURL
+   *   The published (should be html, not tsv, not csv) web page URL of the versus sheet of the differential evolution Google Sheets. For example:
+   * "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzA4SXUR5VyPmJ1cLEkNMiJgfb28zzgp4HtwoBlumIIOTkL_y7mgPldqaGtsunIq5eTu5QndluyFcV/pubhtml?gid=474257400&single=true".
+   * The "gid=474257400" inside the URL should be the same as the 1st line of the table of the web page.
+   *
+   * @param {ValueMax.Percentage} progressToAdvance
+   *   This method will report progress to the progressToAdvance.
+   */
+  async fetch( versusURL, progressToAdvance ) {
+
+    // Why using published html web page instead of tsv (or csv)? This is because Google Sheets' published html web page support cross-origin
+    // resource sharing (CORS) while its published web page tsv (or csv) does not.
+    this.versusURL = versusURL;
+
+    let response = await fetch( versusURL );
+
+    let lineMatches = tdTextExtracter.Base.createIterator( response.text() ); // Only capture group 1 will be used.
+    let lineMatch;
+
+    if ( ( lineMatch = lineMatches.next() ).done )
+      return;
+
+    // 1. Parse gid.
+    let gidString = lineMatch.value[ 1 ];
+
+    if ( ( lineMatch = lineMatches.next() ).done )
+      return;
+
+    // 2.
+    this.exportSheetNo = Number.parseInt( lineMatch.value[ 1 ], 10 );
+
+    if ( ( lineMatch = lineMatches.next() ).done )
+      return;
+
+    // 3. Parse corresponding versus ids (with win counts).
+    this.gid_Versus = new gid_Versus.Base();
+    this.gid_versus.set_ByString( lineMatch.value[ 1 ], gidString ); // Split the text of a td tag.
+
+    // 4. Parse every gid and their corresponding versus ids (with win counts).
+    this.enitiyChromosomesArray = new Array( this.gid_versus.VersusId_WinCount_Array.length );
+    for ( let i = 0; ( i < this.enitiyChromosomesArray.length ) && ( !lineMatch.done ); ++i, ( lineMatch = lineMatch.next() ) ) {
+      let entityNo = this.gid_versus.VersusId_WinCount_Array[ i ].entityNo;
+      let enitiyChromosomes = this.enitiyChromosomesArray[ i ] = new EnitiyChromosomes( entityNo, this.entityChromosomeCount );
+
+//!!!
+      enitiyChromosomes.parentChromosomes[ ] = ;
+      enitiyChromosomes.offspringChromosomes[ ] = ;
+
+      gid_versus.set_ByString( lineMatch.value[ 1 ], null ); // Split the text of a td tag. The 2nd parameter is null so that the prefix is viewed as gid.
+      this.gid_versus_array.push( gid_versus );
+    }
+
+//!!! ...unfinished... report progress.
+    
 
 //!!! ...unfinished... Which gid number should be used.
 //    let gid = ???;
