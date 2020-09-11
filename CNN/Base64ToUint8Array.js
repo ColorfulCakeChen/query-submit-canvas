@@ -1,4 +1,4 @@
-export { decoder };
+export { decoder_FromArrayBuffer, decoder_FromUint8Array };
 
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
