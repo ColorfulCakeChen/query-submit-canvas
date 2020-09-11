@@ -1,4 +1,4 @@
-import * as Base64ArrayBufferToUint8Array from "../Base64ArrayBufferToUint8Array.js";
+import * as Base64ToUint8Array from "../Base64ToUint8Array.js";
 import * as PartTime from "../PartTime.js";
 import * as Random from "../Random.js";
 import * as ScriptLoader from "../ScriptLoader.js";
@@ -139,7 +139,7 @@ function test() {
   for (let i = 0; i < testCases.length; ++i) {
     let testCase = testCases[ i ];
 
-    let decoder = Base64ArrayBufferToUint8Array.decoder(
+    let decoder = Base64ToUint8Array.decoder_FromArrayBuffer(
         testCase.source, testCase.skipLineCount, progress, progress.childProgressParts[ i ], testCase.suspendByteCount);
 
     let testPromise = PartTime.forOf(
