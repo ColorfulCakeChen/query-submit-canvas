@@ -31,6 +31,9 @@ export { NetProgress, Base };
  *     - A versus contains versus id (EntityNo_ParentGenerationNo_OffspringGenerationNo) and its WinCount which are separated by colon (:).
  *     - A versus id contains EntityNo, ParentGenerationNo, OffspringGenerationNo which are separated by underline (_).
  *
+ * @member {TextEncoder} textEncoder
+ *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder can work.
+ *
  * @member {number} populationSize
  *   There are how many entities in the differential evolution.
  *
@@ -52,6 +55,7 @@ class Base {
    *
    */
   constructor() {
+    this.textEncoder = new TextEncoder(); // For converting string to Uint8Array. For Base64 decoder.
   }
 
   /**
@@ -114,9 +118,10 @@ class Base {
     let versusURL = this.summaryURL.replace( Base.gidReplacingRegExp, replaceContext );
   
     // Parent and offspring.
-    let Versus_Weights = new Versus_Weights.Base( this.entityChromosomeCount );
+    let Versus_Weights = new Versus_Weights.Base( this.entityChromosomeCount, this.textEncoder );
     Versus_Weights.fetchAndReport( versusURL, progress );
 
+    
 //!!! ...unfinished... report progress.
   }
 
