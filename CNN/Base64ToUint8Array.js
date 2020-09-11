@@ -48,8 +48,40 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Yield ( value = progressToYield ) when ( done = false ).
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* decoder(
+function* decoder_FromArrayBuffer(
   sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount) {
+
+  let sourceBase64Uint8Array = new Uint8Array( sourceBase64ArrayBuffer );
+  return decoder_FromUint8Array( sourceBase64Uint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+}
+
+/**
+ *
+ * @param {Uint8Array} sourceBase64Uint8Array
+ *   The input base64 data as Uint8Array. If the last bytes not enough 4 bytes, they will be discarded (will
+ * not be decoded). If an input byte is not a legal base64 code (i.e. not A..Z, a..z, 0..9, +, /, -, _), the
+ * byte will be skipped (as if it does not exist). So the input bytes can be separated by new line character
+ * (which will be skipped and ignored).
+ *
+ * @param {Uint32} skipLineCount
+ *   Skip how many lines in the source before decoding.
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressToYield
+ *   Return this when every time yield. Usually, this is the container of the progressToAdvance.
+ *
+ * @param {ValueMax.Percentage.Concrete}  progressToAdvance
+ *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
+ *
+ * @param {Uint32} suspendByteCount
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
+ *   Default is 1024 bytes.
+ *
+ * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
+ *   Yield ( value = progressToYield ) when ( done = false ).
+ *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
+ */
+function* decoder_FromUint8Array(
+  sourceBase64Uint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount) {
 
   // 0. Initialize.
 
@@ -58,8 +90,12 @@ function* decoder(
   if ((suspendByteCount | 0) <= 0)
     suspendByteCount = 1024;
 
-  let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
-  let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
+//   //let sourceBase64ArrayBuffer = sourceBase64Uint8Array.buffer;
+//   let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
+//   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
+
+  let sourceByteLength = sourceBase64Uint8Array.length;
+  let sourceBytes = sourceBase64Uint8Array;
 
   // Initialize progress.
   progressToAdvance = progressToAdvance || {};  // If null, using a dummy object instead.
