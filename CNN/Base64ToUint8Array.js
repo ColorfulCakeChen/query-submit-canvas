@@ -48,11 +48,12 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Yield ( value = progressToYield ) when ( done = false ).
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* decoder_FromArrayBuffer(
+function decoder_FromArrayBuffer(
   sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount) {
 
   let sourceBase64Uint8Array = new Uint8Array( sourceBase64ArrayBuffer );
-  return decoder_FromUint8Array( sourceBase64Uint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+  let decoder = decoder_FromUint8Array( sourceBase64Uint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+  return decoder;
 }
 
 /**
