@@ -24,6 +24,7 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
 }
 
 /**
+ * Got a generator for Base64 decoding from an ArrayBufffer.
  *
  * @param {ArrayBuffer} sourceBase64ArrayBuffer
  *   The input base64 data as ArrayBuffer. If the last bytes not enough 4 bytes, they will be discarded (will
@@ -57,6 +58,7 @@ function decoder_FromArrayBuffer(
 }
 
 /**
+ * Got a generator for Base64 decoding from an Uint8Array.
  *
  * @param {Uint8Array} sourceBase64Uint8Array
  *   The input base64 data as Uint8Array. If the last bytes not enough 4 bytes, they will be discarded (will
