@@ -2,8 +2,10 @@ import * as NetProgress from "../NetProgress.js";
 import * as tdTextExtracter from "../../util/tdTextExtracter.js";
 import * as gid_Versus from "./gid_Versus.js";
 import * as VersusId_WinCount from "./VersusId_WinCount.js";
+import * as Base64ToUint8Array from "../../Base64ToUint8Array.js";
+import * as PartTime from "../../PartTime.js";
 
-export { NetProgress, EnitiyParentOffspringChromosomes, Base };
+export { NetProgress, EnitiyChromosomes, Base };
 
 
 /**
@@ -12,14 +14,11 @@ export { NetProgress, EnitiyParentOffspringChromosomes, Base };
  * @member {number} enitiyNo
  *   The id of the published entity.
  *
- * @member {number} entityChromosomeCount
- *   There are how many chromsomes in the parent (or offspring) of one entity.
+ * @member {Uint8Array} parentChromosome
+ *   The Base64 decoded chromosome of the parent of the published entity.
  *
- * @member {string[]} parentChromosomes
- *   The chromosomes of the parent of the published entity.
- *
- * @member {string[]} offspringChromosomes
- *   The chromosomes of the offspring of the published entity.
+ * @member {Uint8Array} offspringChromosome
+ *   The Base64 decoded chromosome of the offspring of the published entity.
  *
  */
 class EnitiyChromosomes {
@@ -27,15 +26,53 @@ class EnitiyChromosomes {
   /**
    *
    */
-  constructor( enitiyNo, entityChromosomeCount ) {
+//  constructor( enitiyNo, entityChromosomeCount ) {
+  constructor( enitiyNo ) {
     this.enitiyNo = enitiyNo;
-    this.parentChromosomes = new Array( entityChromosomeCount );
-    this.offspringChromosomes = new Array( entityChromosomeCount );
+//     this.parentChromosomes = new Array( entityChromosomeCount );
+//     this.offspringChromosomes = new Array( entityChromosomeCount );
   }
 
-  get entityChromosomeCount {
-    return this.parentChromosomes.length;
+  /**
+   * Join the string array, convert to Uint8Array, decode as Base64, result in another Uint8Array.
+   *
+   * @param {string[]} chromosomeArray
+   *   All chromosomes of one entity's parent (or offspring).
+   *
+   * @param {TextEncoder} textEncoder
+   *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder can work.
+   */
+  static decode_Base64_StringArray_To_Uint8Array( chromosomeArray, textEncoder ) {
+
+    let chromosomeString = chromosomeArray.join( "" );
+    let chromosomeUint8Array = textEncoder.encode( chromosomeString );
+
+    let skipLineCount = 0;
+    let progressToYield = ???;
+    let progressToAdvance = ???;
+//???
+    let suspendByteCount = 1024;
+
+    let decoder = Base64ToUint8Array.decoder_FromUint8Array(
+      chromosomeUint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+
+    let progressReceiver = ???;
+    let delayMilliseconds = 0;
+
+//???
+    let testPromise = PartTime.forOf(
+      decoder,
+      (valueMax) => { progressReceiver.setValueMax(valueMax); /* Report progress to UI. */ },
+      delayMilliseconds
+    ).then(r => {
+      progressReceiver.informDone(r); /* Inform UI progress done. */
+    });
+
   }
+
+//   get entityChromosomeCount {
+//     return this.parentChromosomes.length;
+//   }
 }
 
 
@@ -87,6 +124,9 @@ class EnitiyChromosomes {
  * @member {number} entityChromosomeCount
  *   There are how many chromsomes in the parent (or offspring) of one entity.
  *
+ * @member {TextEncoder} textEncoder
+ *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder can work.
+ *
  * @member {gid_Versus.Base} gid_Versus
  *   The gid and related versus id (with win count).
  *
@@ -100,11 +140,10 @@ class EnitiyChromosomes {
 class Base {
 
   /**
-   * @param {number} entityChromosomeCount
-   *   There are how many chromsomes in the parent (or offspring) of one entity.
    */
-  constructor( entityChromosomeCount ) {
+  constructor( entityChromosomeCount, textEncoder ) {
     this.entityChromosomeCount = entityChromosomeCount;
+    this.textEncoder = textEncoder;
   }
 
   /**
@@ -150,24 +189,42 @@ class Base {
 
     // 4. Parse every gid and their corresponding weights (of chromosomes of parent and offspring).
     this.enitiyChromosomesArray = new Array( this.gid_versus.VersusId_WinCount_Array.length );
+    
+    let chromosomeArray = new Array( this.entityChromosomeCount );  // All chromosomes of one entity's parent (or offspring).
+
+    // All parent's chromosomes of all entities.
     for ( let i = 0; ( i < this.enitiyChromosomesArray.length ) && ( !lineMatch.done ); ++i, ( lineMatch = lineMatch.next() ) ) {
       let entityNo = this.gid_versus.VersusId_WinCount_Array[ i ].entityNo;
       let enitiyChromosomes = this.enitiyChromosomesArray[ i ] = new EnitiyChromosomes( entityNo, this.entityChromosomeCount );
 
       // The parent's chromosomes of the entity.
-      for ( let k = 0; ( k < this.entityChromosomeCount ) && ( !lineMatch.done ); ++k, ( lineMatch = lineMatch.next() ) ) {
-        enitiyChromosomes.parentChromosomes[ k ] = lineMatch.value[ 1 ];
+      {
+        let k;
+        for ( k = 0; ( k < this.entityChromosomeCount ) && ( !lineMatch.done ); ++k, ( lineMatch = lineMatch.next() ) ) {
+          chromosomeArray[ k ] = lineMatch.value[ 1 ];
+        }
+        chromosomeArray.fill( null, k ); // For not enough chromosome, keep them null.
+        enitiyChromosomes.parentChromosome = EnitiyChromosomes.decode_Base64_StringArray_To_Uint8Array( chromosomeArray, this.textEncoder );
       }
     }
 
+    // All offspring's chromosomes of all entities.
     for ( let i = 0; ( i < this.enitiyChromosomesArray.length ) && ( !lineMatch.done ); ++i, ( lineMatch = lineMatch.next() ) ) {
       let enitiyChromosomes = this.enitiyChromosomesArray[ i ];
 
       // The offspring's chromosomes of the entity.
-      for ( let k = 0; ( k < this.entityChromosomeCount ) && ( !lineMatch.done ); ++k, ( lineMatch = lineMatch.next() ) ) {
-        enitiyChromosomes.offspringChromosomes[ k ] = lineMatch.value[ 1 ];
+      {
+        let k;
+        for ( k = 0; ( k < this.entityChromosomeCount ) && ( !lineMatch.done ); ++k, ( lineMatch = lineMatch.next() ) ) {
+          chromosomeArray[ k ] = lineMatch.value[ 1 ];
+        }
+        chromosomeArray.fill( null, k ); // For not enough chromosome, keep them null.
+        enitiyChromosomes.offspringChromosome = EnitiyChromosomes.decode_Base64_StringArray_To_Uint8Array( chromosomeArray, this.textEncoder );
       }
     }
+
+    // 
+//!!! ...unfinished... to neural network.
 
 //!!! ...unfinished... report progress.
   }
