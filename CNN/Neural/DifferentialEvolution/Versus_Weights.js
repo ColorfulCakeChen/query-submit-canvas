@@ -146,6 +146,8 @@ class Base {
     this.textEncoder = textEncoder;
   }
 
+//!!! ...unfinished... change to async generator.
+
   /**
    * Fetch and extract.
    *
