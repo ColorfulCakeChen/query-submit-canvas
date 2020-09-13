@@ -73,8 +73,9 @@ class Base {
     this.summaryURL = summaryURL;
 
     let response = await fetch( summaryURL );
+    let responseText = await response.text();
 
-    let lineMatches = tdTextExtracter.Base.createIterator( response.text() ); // Only capture group 1 will be used.
+    let lineMatches = tdTextExtracter.Base.createIterator( responseText ); // Only capture group 1 will be used.
     let lineMatch;
 
     if ( ( lineMatch = lineMatches.next() ).done )
