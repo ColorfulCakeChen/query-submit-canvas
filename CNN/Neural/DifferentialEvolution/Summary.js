@@ -58,6 +58,8 @@ class Base {
     this.textEncoder = new TextEncoder(); // For converting string to Uint8Array. For Base64 decoder.
   }
 
+//!!! ...unfinished... change to async generator.
+
   /**
    * Fetch and extract.
    *
