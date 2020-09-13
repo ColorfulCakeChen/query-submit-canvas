@@ -33,6 +33,13 @@ class EnitiyChromosomes {
 //     this.offspringChromosomes = new Array( entityChromosomeCount );
   }
 
+//!!! ...unfinished... change to async generator. Use the following to pause netween values.
+//
+//       // make a pause between values, wait for something
+//       await new Promise(resolve => setTimeout(resolve, 1000));
+//
+//!!! ...unfinished... But always asynchronous (even if it could be synchronous) seems hurts performance.
+
   /**
    * Join the string array, convert to Uint8Array, decode as Base64, result in another Uint8Array.
    *
