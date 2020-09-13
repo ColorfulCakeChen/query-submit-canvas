@@ -4,7 +4,7 @@ export {forOf};
  * Periodically call generator.next() by setTimeout() until ( generator.next().done == true ). The generator
  * will generate in part-time. Just like a for..of loop but executes in part-time.
  *
- * This seems like for-await-of. This accepts synchronus generator while for-await-of accepts asynchronus generator.
+ * This seems like for-await-of. This could accept synchronus or asynchronus generator, while for-await-of only accepts asynchronus generator.
  *
  *
  * @param {iterator}  generator         The generator.next() will be called periodically until done.
