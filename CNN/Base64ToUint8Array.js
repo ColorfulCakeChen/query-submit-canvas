@@ -46,8 +46,10 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
  *   Default is 1024 bytes.
  *
- * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
+ * @yields {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressToYield ) when ( done = false ).
+ *
+ * @yields {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function *decoder_FromStringArray(
@@ -87,8 +89,10 @@ function *decoder_FromStringArray(
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
  *   Default is 1024 bytes.
  *
- * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
+ * @yields {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressToYield ) when ( done = false ).
+ *
+ * @yields {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function decoder_FromArrayBuffer(
@@ -121,8 +125,10 @@ function decoder_FromArrayBuffer(
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
  *   Default is 1024 bytes.
  *
- * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
+ * @yields {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressToYield ) when ( done = false ).
+ *
+ * @yields {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function* decoder_FromUint8Array(
