@@ -1,4 +1,17 @@
-export {forOf};
+export { sleep, forOf };
+
+/**
+ * A wrapper for setTimeout( , delayMilliseconds ).
+ *
+ * @param {integer}
+ *   delayMilliseconds The delay time (in milliseconds) when the (returned) promise will be resolved.
+ *
+ * @return {promise}
+ *   A promise resolved with undefined.
+ */
+async function sleep( delayMilliseconds = 0 ) {
+  return new Promise( resolve => setTimeout( resolve, delayMilliseconds ) );
+}
 
 /**
  * Periodically call generator.next() by setTimeout() until ( generator.next().done == true ). The generator
