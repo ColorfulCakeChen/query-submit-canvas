@@ -24,6 +24,48 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
 }
 
 /**
+ * Got a generator for Base64 decoding from an array of Base64 encoded string.
+ * Join the string array, convert to Uint8Array, decode as Base64, result in another Uint8Array.
+ *
+ * @param {string[]} sourceBase64EncodedStringArray
+ *   Every element of the array is a string whose content is base64 encoded text.
+ *
+ * @param {TextEncoder} textEncoder
+ *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder can work.
+ *
+ * @param {Uint32} skipLineCount
+ *   Skip how many lines in the source before decoding.
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressToYield
+ *   Return this when every time yield. Usually, this is the root container of the progressToAdvance.
+ *
+ * @param {ValueMax.Percentage.Concrete}  progressToAdvance
+ *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
+ *
+ * @param {Uint32} suspendByteCount
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
+ *   Default is 1024 bytes.
+ *
+ * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
+ *   Yield ( value = progressToYield ) when ( done = false ).
+ *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
+ */
+function *decoder_FromStringArray(
+  sourceBase64EncodedStringArray, textEncoder, skipLineCount, progressToYield, progressToAdvance, suspendByteCount ) {
+
+//!!! ...unfinished... where to accumulate the extra progress for join and textEncode?
+
+  let base64EncodedStringLong = sourceBase64EncodedStringArray.join( "" );
+  let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );
+
+  let base64Decoder = decoder_FromUint8Array(
+    base64EncodedUint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+
+  let base64DecodedUint8Array = yield *base64Decoder;
+  return base64DecodedUint8Array;
+}
+
+/**
  * Got a generator for Base64 decoding from an ArrayBufffer.
  *
  * @param {ArrayBuffer} sourceBase64ArrayBuffer
@@ -50,7 +92,7 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function decoder_FromArrayBuffer(
-  sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount) {
+  sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount ) {
 
   let sourceBase64Uint8Array = new Uint8Array( sourceBase64ArrayBuffer );
   let decoder = decoder_FromUint8Array( sourceBase64Uint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
@@ -84,7 +126,7 @@ function decoder_FromArrayBuffer(
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function* decoder_FromUint8Array(
-  sourceBase64Uint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount) {
+  sourceBase64Uint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount ) {
 
   // 0. Initialize.
 
@@ -92,10 +134,6 @@ function* decoder_FromUint8Array(
   // Note: Bitwising OR with zero is for converting to integer (if it is undefined or null).
   if ((suspendByteCount | 0) <= 0)
     suspendByteCount = 1024;
-
-//   //let sourceBase64ArrayBuffer = sourceBase64Uint8Array.buffer;
-//   let sourceByteLength = sourceBase64ArrayBuffer.byteLength;
-//   let sourceBytes = new Uint8Array( sourceBase64ArrayBuffer );
 
   let sourceByteLength = sourceBase64Uint8Array.length;
   let sourceBytes = sourceBase64Uint8Array;
