@@ -47,23 +47,28 @@ class EnitiyChromosomes {
    *
    * @param {ValueMax.Percentage.Concrete} progressToAdvance
    *   Increase this when every time progress advanced. It will be initialized to zero when decoder starting.
+   *
+   * @yield {ValueMax.Percentage.Aggregate or Uint8Array}
+   *   Yield ( value = progressToYield ) when ( done = false ).
+   *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
    */
   static *decoder_Base64_StringArray_To_Uint8Array( base64EncodedStringArray, textEncoder, progressToYield, progressToAdvance ) {
 
     progressToAdvance.total = ???;
     progressToAdvance.accumulation = ???0;
 
-    let base64EncodedStringLong = base64EncodedStringArray.join( "" );
-    let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );
+//     let base64EncodedStringLong = base64EncodedStringArray.join( "" );
+//     let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );
 
     let skipLineCount = 0;
 //???
     let suspendByteCount = 1024;
 
-    let base64Decoder = Base64ToUint8Array.decoder_FromUint8Array(
-      base64EncodedUint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+    let base64Decoder = Base64ToUint8Array.decoder_FromStringArray(
+      base64EncodedStringArray, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
 
     let base64DecodedUint8Array = yield *base64Decoder;
+    return base64DecodedUint8Array;
 
 
     let delayMilliseconds = 0;
