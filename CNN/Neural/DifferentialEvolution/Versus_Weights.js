@@ -36,8 +36,8 @@ class EnitiyChromosomes {
   /**
    * Join the string array, convert to Uint8Array, decode as Base64, result in another Uint8Array.
    *
-   * @param {string[]} chromosomeArray
-   *   All chromosomes of one entity's parent (or offspring).
+   * @param {string[]} base64EncodedStringArray
+   *   Every element of base64EncodedStringArray is a string whose content is base64 encoded text.
    *
    * @param {TextEncoder} textEncoder
    *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder can work.
@@ -48,25 +48,29 @@ class EnitiyChromosomes {
    * @param {ValueMax.Percentage.Concrete} progressToAdvance
    *   Increase this when every time progress advanced. It will be initialized to zero when decoder starting.
    */
-  static async *decoder_Base64_StringArray_To_Uint8Array( chromosomeArray, textEncoder, progressToYield, progressToAdvance ) {
+  static *decoder_Base64_StringArray_To_Uint8Array( base64EncodedStringArray, textEncoder, progressToYield, progressToAdvance ) {
 
     progressToAdvance.total = ???;
     progressToAdvance.accumulation = ???0;
 
-    let chromosomeString = chromosomeArray.join( "" );
-    let chromosomeUint8Array = textEncoder.encode( chromosomeString );
+    let base64EncodedStringLong = base64EncodedStringArray.join( "" );
+    let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );
 
     let skipLineCount = 0;
 //???
     let suspendByteCount = 1024;
 
     let base64Decoder = Base64ToUint8Array.decoder_FromUint8Array(
-      chromosomeUint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+      base64EncodedUint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+
+    let base64DecodedUint8Array = yield *base64Decoder;
+
 
     let delayMilliseconds = 0;
 
 //!!! ...unfinished... But always asynchronous (even if it could be synchronous) seems hurts performance.
 //     for await ( let progress of base64Decoder ) {
+//       let { progress, done } = base64Decoder.next();
 //       await PartTime.sleep( delayMilliseconds );
 //     }
 
