@@ -55,7 +55,10 @@ class EnitiyChromosomes {
    * @param {ValueMax.Percentage.Concrete} progressToAdvance
    *   Increase this when every time progress advanced. It will be initialized to zero when decoder starting.
    */
-  static decode_Base64_StringArray_To_Uint8Array( chromosomeArray, textEncoder, progressToYield, progressToAdvance ) {
+  static async *decoder_Base64_StringArray_To_Uint8Array( chromosomeArray, textEncoder, progressToYield, progressToAdvance ) {
+
+    progressToAdvance.total = ???;
+    progressToAdvance.accumulation = ???0;
 
     let chromosomeString = chromosomeArray.join( "" );
     let chromosomeUint8Array = textEncoder.encode( chromosomeString );
@@ -67,17 +70,28 @@ class EnitiyChromosomes {
     let decoder = Base64ToUint8Array.decoder_FromUint8Array(
       chromosomeUint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
 
-    let progressReceiver = ???;
     let delayMilliseconds = 0;
-
-//???
-    let testPromise = PartTime.forOf(
+    let chromosomeUint8Array_Base64Decoded = await PartTime.forOf(
       decoder,
-      (valueMax) => { progressReceiver.setValueMax(valueMax); /* Report progress to UI. */ },
+      ( valueMax ) => {
+//!!!
+        progressReceiver.setValueMax(valueMax); // Report progress to outer progress.
+      },
       delayMilliseconds
-    ).then(r => {
-      progressReceiver.informDone(r); /* Inform UI progress done. */
-    });
+    );
+
+//!!!
+//     let progressReceiver = ???;
+//     let delayMilliseconds = 0;
+//
+// //???
+//     let testPromise = PartTime.forOf(
+//       decoder,
+//       (valueMax) => { progressReceiver.setValueMax(valueMax); /* Report progress to UI. */ },
+//       delayMilliseconds
+//     ).then(r => {
+//       progressReceiver.informDone(r); /* Inform UI progress done. */
+//     });
 
   }
 
@@ -173,8 +187,10 @@ class Base {
    * @param {ValueMax.Percentage.Concrete} progressToAdvance
    *   Increase this when every time progress advanced. It will be initialized to zero when decoder starting.
    *
+   * @return {async generator}
+   *   Return am asynchronous 
    */
-  async fetchAndReport( versusURL, progressToYield, progressToAdvance ) {
+  async *fetcher( versusURL, progressToYield, progressToAdvance ) {
 
     // Why using published html web page instead of tsv (or csv)? This is because Google Sheets' published html web page support cross-origin
     // resource sharing (CORS) while its published web page tsv (or csv) does not.
