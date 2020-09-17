@@ -115,7 +115,7 @@ class Aggregate extends Base {
     }
 
     if ( maxSum <= 0 )
-      return 0; // Return zero if the total is illegal.
+      return 0; // Return zero if the total is illegal. (to avoid divide by zero.)
 
     let percentage = ( valueSum / maxSum ) * 100;
     return percentage;
