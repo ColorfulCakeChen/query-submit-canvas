@@ -33,13 +33,6 @@ class EnitiyChromosomes {
 //     this.offspringChromosomes = new Array( entityChromosomeCount );
   }
 
-//!!! ...unfinished... change to async generator. Use the following to pause netween values.
-//
-//       // make a pause between values, wait for something
-//       await new Promise(resolve => setTimeout(resolve, 1000));
-//
-//!!! ...unfinished... But always asynchronous (even if it could be synchronous) seems hurts performance.
-
   /**
    * Join the string array, convert to Uint8Array, decode as Base64, result in another Uint8Array.
    *
@@ -67,13 +60,20 @@ class EnitiyChromosomes {
 //???
     let suspendByteCount = 1024;
 
-    let decoder = Base64ToUint8Array.decoder_FromUint8Array(
+    let base64Decoder = Base64ToUint8Array.decoder_FromUint8Array(
       chromosomeUint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
 
     let delayMilliseconds = 0;
+
+//!!! ...unfinished... But always asynchronous (even if it could be synchronous) seems hurts performance.
+//     for await ( let progress of base64Decoder ) {
+//       await PartTime.sleep( delayMilliseconds );
+//     }
+
     let chromosomeUint8Array_Base64Decoded = await PartTime.forOf(
-      decoder,
+      base64Decoder,
       ( valueMax ) => {
+        yield 
 //!!!
         progressReceiver.setValueMax(valueMax); // Report progress to outer progress.
       },
