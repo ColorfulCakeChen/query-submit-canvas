@@ -48,15 +48,19 @@ class EnitiyChromosomes {
    *
    * @param {TextEncoder} textEncoder
    *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder can work.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressToYield
+   *   Return this when every time yield. Usually, this is the root container of the progressToAdvance.
+   *
+   * @param {ValueMax.Percentage.Concrete} progressToAdvance
+   *   Increase this when every time progress advanced. It will be initialized to zero when decoder starting.
    */
-  static decode_Base64_StringArray_To_Uint8Array( chromosomeArray, textEncoder ) {
+  static decode_Base64_StringArray_To_Uint8Array( chromosomeArray, textEncoder, progressToYield, progressToAdvance ) {
 
     let chromosomeString = chromosomeArray.join( "" );
     let chromosomeUint8Array = textEncoder.encode( chromosomeString );
 
     let skipLineCount = 0;
-    let progressToYield = ???;
-    let progressToAdvance = ???;
 //???
     let suspendByteCount = 1024;
 
@@ -163,10 +167,14 @@ class Base {
    * "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzA4SXUR5VyPmJ1cLEkNMiJgfb28zzgp4HtwoBlumIIOTkL_y7mgPldqaGtsunIq5eTu5QndluyFcV/pubhtml?gid=474257400&single=true".
    * The "gid=474257400" inside the URL should be the same as the 1st line of the table of the web page.
    *
-   * @param {ValueMax.Percentage} progressToAdvance
-   *   This method will report progress to the progressToAdvance.
+   * @param {ValueMax.Percentage.Aggregate} progressToYield
+   *   Return this when every time yield. Usually, this is the root container of the progressToAdvance.
+   *
+   * @param {ValueMax.Percentage.Concrete} progressToAdvance
+   *   Increase this when every time progress advanced. It will be initialized to zero when decoder starting.
+   *
    */
-  async fetchAndReport( versusURL, progressToAdvance ) {
+  async fetchAndReport( versusURL, progressToYield, progressToAdvance ) {
 
     // Why using published html web page instead of tsv (or csv)? This is because Google Sheets' published html web page support cross-origin
     // resource sharing (CORS) while its published web page tsv (or csv) does not.
