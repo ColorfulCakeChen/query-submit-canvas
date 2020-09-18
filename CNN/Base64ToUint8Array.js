@@ -42,15 +42,15 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Return this when every time yield. Usually, this is the root container of the progressParent.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   This should be some descendant of progressRoot. A new progressToAdvance will be created and added to progressParent. 
- * The progressToAdvance will be increased when every time advanced.
+ *   This should be progressRoot or some descendant of progressRoot. A new progressToAdvance will be created and added to
+ * progressParent. The progressToAdvance will be increased when every time advanced.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
  *   Default is 1024 bytes.
  *
  * @yields {ValueMax.Percentage.Aggregate}
- *   Yield ( value = progressToYield ) when ( done = false ).
+ *   Yield ( value = progressRoot ) when ( done = false ).
  *
  * @yields {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
@@ -58,10 +58,16 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
 function *decoder_FromStringArray(
   sourceBase64EncodedStringArray, textEncoder, skipLineCount, progressRoot, progressParent, suspendByteCount ) {
 
-//!!! ...unfinished... where to accumulate the extra progress for join and textEncode?
+//!!! ...unfinished... ( progressToAdvance / progressParent ) ratio seems too large...
+
+//   let progressToAdvance = new ValueMax.Percentage.Concrete( 2 );
+//   progressParent.addChild( progressToAdvance );
 
   let base64EncodedStringLong = sourceBase64EncodedStringArray.join( "" );
+//  ++progressToAdvance.accumulation;
+    
   let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );
+//   ++progressToAdvance.accumulation;
 
   let base64Decoder = decoder_FromUint8Array(
     base64EncodedUint8Array, skipLineCount, progressRoot, progressParent, suspendByteCount );
@@ -86,15 +92,15 @@ function *decoder_FromStringArray(
  *   Return this when every time yield. Usually, this is the root container of the progressParent.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   This should be some descendant of progressRoot. A new progressToAdvance will be created and added to progressParent. 
- * The progressToAdvance will be increased when every time advanced.
+ *   This should be progressRoot or some descendant of progressRoot. A new progressToAdvance will be created and added to
+ * progressParent. The progressToAdvance will be increased when every time advanced.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
  *   Default is 1024 bytes.
  *
  * @yields {ValueMax.Percentage.Aggregate}
- *   Yield ( value = progressToYield ) when ( done = false ).
+ *   Yield ( value = progressRoot ) when ( done = false ).
  *
  * @yields {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
@@ -123,15 +129,15 @@ function decoder_FromArrayBuffer(
  *   Return this when every time yield. Usually, this is the root container of the progressParent.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   This should be some descendant of progressRoot. A new progressToAdvance will be created and added to progressParent. 
- * The progressToAdvance will be increased when every time advanced.
+ *   This should be progressRoot or some descendant of progressRoot. A new progressToAdvance will be created and added to
+ * progressParent. The progressToAdvance will be increased when every time advanced.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
  *   Default is 1024 bytes.
  *
  * @yields {ValueMax.Percentage.Aggregate}
- *   Yield ( value = progressToYield ) when ( done = false ).
+ *   Yield ( value = progressRoot ) when ( done = false ).
  *
  * @yields {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
@@ -150,11 +156,7 @@ function* decoder_FromUint8Array(
   let sourceBytes = sourceBase64Uint8Array;
 
   // Initialize progress.
-  let progressToAdvance = new ValueMax.Percentage.Concrete();
-//  progressToAdvance = progressToAdvance || {};  // If null, using a dummy object instead.
-  progressToAdvance.accumulation = 0;
-  progressToAdvance.total = sourceByteLength;
-
+  let progressToAdvance = new ValueMax.Percentage.Concrete( sourceByteLength );
   progressParent.addChild( progressToAdvance );
 
   // It is important that the nextYieldAccumulation is not greater than source length, so that
