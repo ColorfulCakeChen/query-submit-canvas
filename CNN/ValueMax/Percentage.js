@@ -31,10 +31,16 @@ class Base {
  * The Concrete.max always returns 100. The Concrete.value returns number berween [0, 100] inclusive.
  */
 class Concrete extends Base {
-  constructor() {
+  /**
+   * @param {number} total
+   *   The possible maximum value of this.accumulation. If negative, indicates not initialized. This is different from this.max.
+   * The this.max is always 100. The this.total, however, could be zero or any positive value. If this.total is zero, the
+   * this.value will always 100 (otherwise, will divide by zero).
+   */
+  constructor( total = -1 ) {
     super();
     this.accumulation = 0;
-    this.total = -1; // Negative indicates not initialized.
+    this.total = total; // Negative indicates not initialized.
   }
 
   /** Reset this.accumulation to 0. */
