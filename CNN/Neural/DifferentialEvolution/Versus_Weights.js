@@ -1,9 +1,10 @@
-import * as NetProgress from "../NetProgress.js";
+//import * as NetProgress from "../NetProgress.js";
 import * as tdTextExtracter from "../../util/tdTextExtracter.js";
 import * as gid_Versus from "./gid_Versus.js";
 import * as VersusId_WinCount from "./VersusId_WinCount.js";
 import * as Base64ToUint8Array from "../../Base64ToUint8Array.js";
-import * as PartTime from "../../PartTime.js";
+import * as ValueMax from "./ValueMax.js";
+//import * as PartTime from "../../PartTime.js";
 
 export { NetProgress, EnitiyChromosomes, Base };
 
@@ -42,11 +43,12 @@ class EnitiyChromosomes {
    * @param {TextEncoder} textEncoder
    *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder can work.
    *
-   * @param {ValueMax.Percentage.Aggregate} progressToYield
-   *   Return this when every time yield. Usually, this is the root container of the progressToAdvance.
+   * @param {ValueMax.Percentage.Aggregate} progressRoot
+   *   Return this when every time yield. Usually, this is the root container of the progressParent.
    *
-   * @param {ValueMax.Percentage.Concrete} progressToAdvance
-   *   Increase this when every time progress advanced. It will be initialized to zero when decoder starting.
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   This should be progressRoot or some descendant of progressRoot. A new progressToAdvance will be created and added to
+   * progressParent. The progressToAdvance will be increased when every time advanced.
    *
    * @yields {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressToYield ) when ( done = false ).
@@ -54,10 +56,11 @@ class EnitiyChromosomes {
    * @yields {Uint8Array}
    *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
    */
-  static *decoder_Base64_StringArray_To_Uint8Array( base64EncodedStringArray, textEncoder, progressToYield, progressToAdvance ) {
+  static *decoder_Base64_StringArray_To_Uint8Array( base64EncodedStringArray, textEncoder, progressRoot, progressParent ) {
 
-    progressToAdvance.total = ???;
-    progressToAdvance.accumulation = ???0;
+    // Initialize progress.
+    let progressToAdvance = new ValueMax.Percentage.Concrete( ??? );
+    progressParent.addChild( progressToAdvance );
 
 //     let base64EncodedStringLong = base64EncodedStringArray.join( "" );
 //     let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );
@@ -67,7 +70,7 @@ class EnitiyChromosomes {
     let suspendByteCount = 1024;
 
     let base64Decoder = Base64ToUint8Array.decoder_FromStringArray(
-      base64EncodedStringArray, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+      base64EncodedStringArray, skipLineCount, progressRoot, progressParent, suspendByteCount );
 
     let base64DecodedUint8Array = yield *base64Decoder;
     return base64DecodedUint8Array;
