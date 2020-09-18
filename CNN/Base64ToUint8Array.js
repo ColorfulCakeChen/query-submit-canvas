@@ -1,3 +1,5 @@
+import * as ValueMax from "./ValueMax.js";
+
 export { decoder_FromArrayBuffer, decoder_FromUint8Array };
 
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -36,11 +38,12 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
- * @param {ValueMax.Percentage.Aggregate} progressToYield
- *   Return this when every time yield. Usually, this is the root container of the progressToAdvance.
+ * @param {ValueMax.Percentage.Aggregate} progressRoot
+ *   Return this when every time yield. Usually, this is the root container of the progressParent.
  *
- * @param {ValueMax.Percentage.Concrete}  progressToAdvance
- *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   This should be some descendant of progressRoot. A new progressToAdvance will be created and added to progressParent. 
+ * The progressToAdvance will be increased when every time advanced.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
@@ -53,7 +56,7 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function *decoder_FromStringArray(
-  sourceBase64EncodedStringArray, textEncoder, skipLineCount, progressToYield, progressToAdvance, suspendByteCount ) {
+  sourceBase64EncodedStringArray, textEncoder, skipLineCount, progressRoot, progressParent, suspendByteCount ) {
 
 //!!! ...unfinished... where to accumulate the extra progress for join and textEncode?
 
@@ -61,7 +64,7 @@ function *decoder_FromStringArray(
   let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );
 
   let base64Decoder = decoder_FromUint8Array(
-    base64EncodedUint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+    base64EncodedUint8Array, skipLineCount, progressRoot, progressParent, suspendByteCount );
 
   let base64DecodedUint8Array = yield *base64Decoder;
   return base64DecodedUint8Array;
@@ -79,11 +82,12 @@ function *decoder_FromStringArray(
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
- * @param {ValueMax.Percentage.Aggregate} progressToYield
- *   Return this when every time yield. Usually, this is the root container of the progressToAdvance.
+ * @param {ValueMax.Percentage.Aggregate} progressRoot
+ *   Return this when every time yield. Usually, this is the root container of the progressParent.
  *
- * @param {ValueMax.Percentage.Concrete}  progressToAdvance
- *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   This should be some descendant of progressRoot. A new progressToAdvance will be created and added to progressParent. 
+ * The progressToAdvance will be increased when every time advanced.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
@@ -96,10 +100,10 @@ function *decoder_FromStringArray(
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function decoder_FromArrayBuffer(
-  sourceBase64ArrayBuffer, skipLineCount, progressToYield, progressToAdvance, suspendByteCount ) {
+  sourceBase64ArrayBuffer, skipLineCount, progressRoot, progressParent, suspendByteCount ) {
 
   let sourceBase64Uint8Array = new Uint8Array( sourceBase64ArrayBuffer );
-  let decoder = decoder_FromUint8Array( sourceBase64Uint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount );
+  let decoder = decoder_FromUint8Array( sourceBase64Uint8Array, skipLineCount, progressRoot, progressParent, suspendByteCount );
   return decoder;
 }
 
@@ -115,11 +119,12 @@ function decoder_FromArrayBuffer(
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
- * @param {ValueMax.Percentage.Aggregate} progressToYield
- *   Return this when every time yield. Usually, this is the container of the progressToAdvance.
+ * @param {ValueMax.Percentage.Aggregate} progressRoot
+ *   Return this when every time yield. Usually, this is the root container of the progressParent.
  *
- * @param {ValueMax.Percentage.Concrete}  progressToAdvance
- *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   This should be some descendant of progressRoot. A new progressToAdvance will be created and added to progressParent. 
+ * The progressToAdvance will be increased when every time advanced.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
@@ -132,7 +137,7 @@ function decoder_FromArrayBuffer(
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function* decoder_FromUint8Array(
-  sourceBase64Uint8Array, skipLineCount, progressToYield, progressToAdvance, suspendByteCount ) {
+  sourceBase64Uint8Array, skipLineCount, progressRoot, progressParent, suspendByteCount ) {
 
   // 0. Initialize.
 
@@ -145,9 +150,12 @@ function* decoder_FromUint8Array(
   let sourceBytes = sourceBase64Uint8Array;
 
   // Initialize progress.
-  progressToAdvance = progressToAdvance || {};  // If null, using a dummy object instead.
+  let progressToAdvance = new ValueMax.Percentage.Concrete();
+//  progressToAdvance = progressToAdvance || {};  // If null, using a dummy object instead.
   progressToAdvance.accumulation = 0;
   progressToAdvance.total = sourceByteLength;
+
+  progressParent.addChild( progressToAdvance );
 
   // It is important that the nextYieldAccumulation is not greater than source length, so that
   // it can be used as boundary checking to reduce checking times and increase performance.
@@ -189,7 +197,7 @@ function* decoder_FromUint8Array(
       // Every suspendByteCount, release CPU time (and report progress).
       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
         nextYieldAccumulation = Math.min(sourceByteLength, progressToAdvance.accumulation + suspendByteCount);
-        yield progressToYield;
+        yield progressRoot;
       }
     }
   }
@@ -266,7 +274,7 @@ function* decoder_FromUint8Array(
       // Every suspendByteCount, release CPU time (and report progress).
       if (progressToAdvance.accumulation >= nextYieldAccumulation) {
         nextYieldAccumulation = Math.min(sourceByteLength, progressToAdvance.accumulation + suspendByteCount);
-        yield progressToYield;
+        yield progressRoot;
       }
 
     }
@@ -280,7 +288,7 @@ function* decoder_FromUint8Array(
   // the length of resultBytes may be less than targetBytes.
   let resultBytes = new Uint8Array( targetArrayBuffer, 0, resultByteCount );
 
-  yield progressToYield; // Report the progress has been done (100%).
+  yield progressRoot; // Report the progress has been done (100%).
 
   return resultBytes;
 }
