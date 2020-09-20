@@ -58,19 +58,26 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
 function *decoder_FromStringArray(
   sourceBase64EncodedStringArray, textEncoder, skipLineCount, progressRoot, progressParent, suspendByteCount ) {
 
-//!!! ...unfinished... ( progressToAdvance / progressParent ) ratio seems too large...
+  // The ( progressToAdvance / progressParent ) ratio (50%) seems a little too large. But it is
+  // reasonable in fact because the string Array.join() and TextEncoder.encode() both will scan
+  // all input text. This is just the same as the Base64 decoder (i.e. scanning all input text).
 
-//   let progressToAdvance = new ValueMax.Percentage.Concrete( 2 );
-//   progressParent.addChild( progressToAdvance );
+  let progressToAdvance = new ValueMax.Percentage.Concrete( 2 ); // For this function (i.e. Array.join() and TextEncoder.encode()).
+  let progressParentNew = new ValueMax.Percentage.Aggregate();  // For next sub function (i.e. Base64 decoder).
+
+  progressParent.addChild( progressToAdvance );   // 50%
+  progressParent.addChild( progressParentNew );  // 50%
 
   let base64EncodedStringLong = sourceBase64EncodedStringArray.join( "" );
-//  ++progressToAdvance.accumulation;
-    
+  ++progressToAdvance.accumulation; // 25%
+  yield progressRoot;
+
   let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );
-//   ++progressToAdvance.accumulation;
+  ++progressToAdvance.accumulation; // 25%
+  yield progressRoot;
 
   let base64Decoder = decoder_FromUint8Array(
-    base64EncodedUint8Array, skipLineCount, progressRoot, progressParent, suspendByteCount );
+    base64EncodedUint8Array, skipLineCount, progressRoot, progressParentNew, suspendByteCount );
 
   let base64DecodedUint8Array = yield *base64Decoder;
   return base64DecodedUint8Array;
