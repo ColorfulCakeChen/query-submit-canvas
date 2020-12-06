@@ -4,11 +4,29 @@ export {Base, Concrete, Aggregate};
  * The base class for representing progress as number berween [0, 100] inclusive. Acceptable by Receiver.Base.
  *
  * The max() always returns 100. The value() returns number berween [0, 100] inclusive.
+ *
+ * @member {Percentage.Base} parent The direct parent Percentage.Base of this Percentage.Base.
  */
 class Base {
 
+  /**
+   * @param {Percentage.Base} parent The direct parent Percentage.Base of this Percentage.Base.
+   */
+  Base( parent = null ) {
+    this.parent = parent;
+  }
+
   /** Dummy. Do nothing. Sub-class should override this method. */
   resetAccumulation() {
+  }
+
+  /**
+   * @return {Percentage.Base} The root Percentage.Base of the whole Percentage hierarchy. The root's value() represents the whole percentage.
+   */
+  getRoot() {
+    if ( this.parent )
+      return this.parent.getRoot();
+    return this; // If no parent, this is the root.
   }
 
   /**
@@ -32,13 +50,16 @@ class Base {
  */
 class Concrete extends Base {
   /**
+   * @param {Percentage.Base} parent
+   *   The direct parent Percentage.Base of this Percentage.Base.
+   *
    * @param {number} total
    *   The possible maximum value of this.accumulation. If negative, indicates not initialized. This is different from this.max.
    * The this.max is always 100. The this.total, however, could be zero or any positive value. If this.total is zero, the
    * this.value will always 100 (otherwise, will divide by zero).
    */
-  constructor( total = -1 ) {
-    super();
+  constructor( parent = null, total = -1 ) {
+    super( parent );
     this.accumulation = 0;
     this.total = total; // Negative indicates not initialized.
   }
@@ -72,18 +93,30 @@ class Concrete extends Base {
  */
 class Aggregate extends Base {
   /**
-   * @param {Percentage.Base[]} children An array of Percentage which will be aggregate.
+   * @param {Percentage.Base} parent
+   *   The direct parent Percentage.Base of this Percentage.Base.
+   *
+   * @param {Percentage.Base[]} children
+   *   An array of Percentage which will be aggregate. Their parent will be set to this object.
    */
-  constructor(children = []) {
-    super();
+  constructor( parent = null, children = [] ) {
+    super( parent );
     this.childProgressParts = children;
+
+    for ( let i = 0; i < this.childProgressParts.length; ++i ) {
+      let progressPart = this.childProgressParts[ i ];
+      if ( progressPart )
+        progressPart.parent = this;
+    }
   }
 
   /**
-   * @param {Percentage.Base} progressPart Another Progress.Percentage object.
+   * @param {Percentage.Base} progressPart
+   *   Another Progress.Percentage object. Its parent will be set to this object.
    */
-  addChild(progressPart) {
-    this.childProgressParts.push(progressPart);
+  addChild( progressPart ) {
+    this.childProgressParts.push( progressPart );
+    progressPart.parent = this;
   }
 
   /** Reset all children's this.accumulation to 0. */
