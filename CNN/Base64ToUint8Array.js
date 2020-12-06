@@ -38,6 +38,9 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
+ 
+!!! ...unfinished... should get by getRoot() and keep it in local variable for every time yielding.
+
  * @param {ValueMax.Percentage.Aggregate} progressRoot
  *   Return this when every time yield. Usually, this is the root container of the progressParent.
  *
