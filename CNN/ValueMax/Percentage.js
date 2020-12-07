@@ -1,4 +1,4 @@
-export {Base, Concrete, Aggregate};
+export { Base, Concrete, Aggregate };
 
 /**
  * The base class for representing progress as number berween [0, 100] inclusive. Acceptable by Receiver.Base.
@@ -31,22 +31,22 @@ class Base {
 
   /**
    * Dummy.
-   * @return Always return 0. Sub-class should override this method.
+   * @return {number} Always 0. Sub-class should override this method.
    */
-  get value() {
+  get valuePercentage() {
     return 0;
   }
 
-  /** @return Always is 100. Sub-class should NOT override this method. */
-  get max() {
+  /** @return {number} Always 100. Sub-class should NOT override this method. */
+  get maxPercentage() {
     return 100;
   }
 }
 
 /**
- * Aggregate all progress and represents them as percentag. Acceptable by Receiver.Base.
+ * Collect value and max and represents them as percentag.
  *
- * The Concrete.max always returns 100. The Concrete.value returns number berween [0, 100] inclusive.
+ * The Concrete.maxPercentage always returns 100. The Concrete.valuePercentage returns number berween [0, 100] inclusive.
  */
 class Concrete extends Base {
   /**
@@ -70,17 +70,17 @@ class Concrete extends Base {
   }
 
   /**
-   * @return
+   * @return {number}
    *   The progress as number between [0, 100] inclusive.
    *   Always 0, if this.total is negative.
    *   Always 100, if this.total is zero.
    *   Otherwise, return the ratio of ( this.accumulation / this.total ).
    */
-  get value() {
+  get valuePercentage() {
     if (this.total < 0)
-      return 0;   // Return 0 if total is not initialized. Otherwise, the Aggregate.value will immediately 100.
+      return 0;   // Return 0 if total is not initialized. Otherwise, the Aggregate.valuePercentage will immediately 100.
     if (this.total == 0)
-      return 100; // Return 100 if total is indeed zero. Otherwise, the Aggregate.value will never 100.
+      return 100; // Return 100 if total is indeed zero. Otherwise, the Aggregate.valuePercentage will never 100.
 
     let accumulation = Math.max(0, Math.min(this.accumulation, this.total)); // Restrict between [0, total].
     let percentage = ( accumulation / this.total ) * 100;
@@ -115,6 +115,8 @@ class Aggregate extends Base {
    *   Another Progress.Percentage object. Its parent will be set to this object.
    */
   addChild( progressPart ) {
+    if ( !progressPart )
+      return;
     this.childProgressParts.push( progressPart );
     progressPart.parent = this;
   }
@@ -130,9 +132,9 @@ class Aggregate extends Base {
   }
 
   /**
-   * @return The average of all children progress as number between [0, 100] inclusive.
+   * @return {number} The sum of all children's ( valuePercentage / maxPercentage ) as number between [0, 100] inclusive.
    */
-  get value() {
+  get valuePercentage() {
     let valueSum = 0, maxSum = 0;
 
     // Use integer array index is faster than iterator.
@@ -142,11 +144,11 @@ class Aggregate extends Base {
       if ( !progressPart )
         continue;
 
-      let partMax = progressPart.max;
+      let partMax = progressPart.maxPercentage;
       if ( partMax <= 0 )
         continue; // Skip illegal progress.
 
-      let partValue = progressPart.value;
+      let partValue = progressPart.valuePercentage;
       partValue = Math.max( 0, Math.min( partValue, partMax ) ); // Restrict between [0, partMax].
 
       valueSum += partValue;
