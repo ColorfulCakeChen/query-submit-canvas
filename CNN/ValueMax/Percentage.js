@@ -82,7 +82,7 @@ class Concrete extends Base {
    */
   get valuePercentage() {
     if (this.max < 0)
-      return 0;   // If max is not negative (i.e. initialized), return 0 (to avoid Aggregate.valuePercentage immediately 100).
+      return 0;   // If max is negative (i.e. not initialized), return 0 (to avoid Aggregate.valuePercentage immediately 100).
     if (this.max == 0)
       return 100; // If max is indeed zero, return 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
 
@@ -105,12 +105,12 @@ class Aggregate extends Base {
    */
   constructor( parent = null, children = [] ) {
     super( parent );
-    this.childProgressParts = children;
+    this.children = children;
 
-    for ( let i = 0; i < this.childProgressParts.length; ++i ) {
-      let progressPart = this.childProgressParts[ i ];
-      if ( progressPart )
-        progressPart.parent = this;
+    for ( let i = 0; i < this.children.length; ++i ) {
+      let child = this.children[ i ];
+      if ( child )
+        child.parent = this;
     }
   }
 
@@ -118,19 +118,19 @@ class Aggregate extends Base {
    * @param {Percentage.Base} progressPart
    *   Another Progress.Percentage object. Its parent will be set to this object.
    */
-  addChild( progressPart ) {
-    if ( !progressPart )
+  addChild( child ) {
+    if ( !child )
       return;
-    this.childProgressParts.push( progressPart );
-    progressPart.parent = this;
+    this.children.push( child );
+    child.parent = this;
   }
 
   /** Reset all children's this.value to 0. */
   resetValue() {
-    for ( let i = 0; i < this.childProgressParts.length; ++i ) {
-      let progressPart = this.childProgressParts[ i ];
-      if ( progressPart ) {
-        progressPart.resetValue();
+    for ( let i = 0; i < this.children.length; ++i ) {
+      let child = this.children[ i ];
+      if ( child ) {
+        child.resetValue();
       }
     }
   }
@@ -142,17 +142,17 @@ class Aggregate extends Base {
     let valueSum = 0, maxSum = 0;
 
     // Use integer array index is faster than iterator.
-    //for (let progressPart of this.childProgressParts) {
-    for ( let i = 0; i < this.childProgressParts.length; ++i ) {
-      let progressPart = this.childProgressParts[ i ];
-      if ( !progressPart )
+    //for (let child of this.children) {
+    for ( let i = 0; i < this.children.length; ++i ) {
+      let child = this.children[ i ];
+      if ( !child )
         continue;
 
-      let partMax = progressPart.maxPercentage;
+      let partMax = child.maxPercentage;
       if ( partMax <= 0 )
-        continue; // Skip illegal progress.
+        continue; // Skip illegal progress. (This is impossible because maxPercentage is always 100.)
 
-      let partValue = progressPart.valuePercentage;
+      let partValue = child.valuePercentage;
       partValue = Math.max( 0, Math.min( partValue, partMax ) ); // Restrict between [0, partMax].
 
       valueSum += partValue;
