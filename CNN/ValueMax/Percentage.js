@@ -53,16 +53,16 @@ class Base {
  */
 class Concrete extends Base {
   /**
-   * @param {Percentage.Base} parent
-   *   The direct parent Percentage.Base of this Percentage.Concrete.
-   *
    * @param {number} max
    *   The possible maximum value of this.value. If negative, indicates not initialized. This is different from maxPercentage.
    * The maxPercentage is always 100. The this.max, however, could be zero or any positive value. If max is negative, the
    * the valuePercentage will always be 0 (to avoid Aggregate.valuePercentage immediately 100). If max is zero, the
    * valuePercentage will always be 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
+   *
+   * @param {Percentage.Base} parent
+   *   The direct parent Percentage.Base of this Percentage.Concrete.
    */
-  constructor( parent = null, max = -1 ) {
+  constructor( max = -1, parent = null ) {
     super( parent );
     this.value = 0;
     this.max = max; // Negative indicates not initialized.
@@ -103,7 +103,7 @@ class Aggregate extends Base {
    * @param {Percentage.Base[]} children
    *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
    */
-  constructor( parent = null, children = [] ) {
+  constructor( children = [], parent = null ) {
     super( parent );
     this.children = children;
 
