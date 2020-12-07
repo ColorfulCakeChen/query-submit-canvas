@@ -17,7 +17,7 @@ class Base {
   }
 
   /** Dummy. Do nothing. Sub-class should override this method. */
-  resetAccumulation() {
+  resetValue() {
   }
 
   /**
@@ -51,22 +51,23 @@ class Base {
 class Concrete extends Base {
   /**
    * @param {Percentage.Base} parent
-   *   The direct parent Percentage.Base of this Percentage.Base.
+   *   The direct parent Percentage.Base of this Percentage.Concrete.
    *
-   * @param {number} total
-   *   The possible maximum value of this.accumulation. If negative, indicates not initialized. This is different from this.max.
-   * The this.max is always 100. The this.total, however, could be zero or any positive value. If this.total is zero, the
-   * this.value will always 100 (otherwise, will divide by zero).
+   * @param {number} max
+   *   The possible maximum value of this.value. If negative, indicates not initialized. This is different from this.maxPercentage.
+   * The this.maxPercentage is always 100. The this.max, however, could be zero or any positive value. If max is negative, the
+   * the valuePercentage will always be 0 (to avoid Aggregate.valuePercentage immediately 100). If max is zero, the
+   * valuePercentage will always be 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
    */
-  constructor( parent = null, total = -1 ) {
+  constructor( parent = null, max = -1 ) {
     super( parent );
-    this.accumulation = 0;
-    this.total = total; // Negative indicates not initialized.
+    this.value = 0;
+    this.max = max; // Negative indicates not initialized.
   }
 
-  /** Reset this.accumulation to 0. */
-  resetAccumulation() {
-    this.accumulation = 0;
+  /** Reset this.value to 0. */
+  resetValue() {
+    this.value = 0;
   }
 
   /**
@@ -77,27 +78,27 @@ class Concrete extends Base {
    *   Otherwise, return the ratio of ( this.accumulation / this.total ).
    */
   get valuePercentage() {
-    if (this.total < 0)
-      return 0;   // Return 0 if total is not initialized. Otherwise, the Aggregate.valuePercentage will immediately 100.
-    if (this.total == 0)
-      return 100; // Return 100 if total is indeed zero. Otherwise, the Aggregate.valuePercentage will never 100.
+    if (this.max < 0)
+      return 0;   // If max is not negative (i.e. initialized), return 0 (to avoid Aggregate.valuePercentage immediately 100).
+    if (this.max == 0)
+      return 100; // If max is indeed zero, return 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
 
-    let accumulation = Math.max(0, Math.min(this.accumulation, this.total)); // Restrict between [0, total].
-    let percentage = ( accumulation / this.total ) * 100;
+    let value = Math.max( 0, Math.min( this.value, this.max ) ); // Restrict between [0, total].
+    let percentage = ( value / this.max ) * 100;
     return percentage;
   }
 }
 
 /**
- * Aggregate all children progress and represents them as percentage.
+ * Aggregate all children ( valuePercentage / maxPercentage ) and represents them as percentage.
  */
 class Aggregate extends Base {
   /**
    * @param {Percentage.Base} parent
-   *   The direct parent Percentage.Base of this Percentage.Base.
+   *   The direct parent Percentage.Base of this Percentage.Aggregate.
    *
    * @param {Percentage.Base[]} children
-   *   An array of Percentage which will be aggregate. Their parent will be set to this object.
+   *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
    */
   constructor( parent = null, children = [] ) {
     super( parent );
@@ -121,12 +122,12 @@ class Aggregate extends Base {
     progressPart.parent = this;
   }
 
-  /** Reset all children's this.accumulation to 0. */
-  resetAccumulation() {
+  /** Reset all children's this.value to 0. */
+  resetValue() {
     for ( let i = 0; i < this.childProgressParts.length; ++i ) {
       let progressPart = this.childProgressParts[ i ];
       if ( progressPart ) {
-        progressPart.resetAccumulation();
+        progressPart.resetValue();
       }
     }
   }
