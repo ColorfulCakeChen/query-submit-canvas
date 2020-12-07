@@ -12,7 +12,7 @@ class Base {
   /**
    * @param {Percentage.Base} parent The direct parent Percentage.Base of this Percentage.Base.
    */
-  Base( parent = null ) {
+  constructor( parent = null ) {
     this.parent = parent;
   }
 
