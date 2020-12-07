@@ -109,19 +109,12 @@ let testCases = [
 /** Aggregate all progress about downloading, JSON parsing, characters scanning, and weights scanning.  */
 class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
-    let children = [
-//      new ValueMax.Percentage.Concrete(), // Increased when downloading from network.
-//      new ValueMax.Percentage.Concrete(), // Increased when parsing the downloaded data to Uint8Array.
-    ];
-
+    let children = new Array( testCases.length );
     for (let i = 0; i < testCases.length; ++i) {
-      children.push(new ValueMax.Percentage.Concrete()); // Increased when parsing the downloaded data to Uint8Array.
+      children[ i ] = new ValueMax.Percentage.Aggregate(); // Increased when parsing the downloaded data to Uint8Array.
     }
 
     super(children);
-
-//    [this.download, this.uint8Array] = children;
-//    [this.uint8Array] = children;
   }
 }
 
@@ -144,10 +137,10 @@ function test() {
 
     let testPromise = PartTime.forOf(
       decoder,
-      (valueMax) => { progressReceiver.setValueMax(valueMax); /* Report progress to UI. */ },
+      (valueMax) => { progressReceiver.setValueMax(valueMax); }, // Report progress to UI.
       delayMilliseconds
     ).then(r => {
-      progressReceiver.informDone(r); /* Inform UI progress done. */
+      progressReceiver.informDone(r); // Inform UI progress done.
       tf.util.assert(
         r.toString() == testCase.result.toString(),
         `[${i}]`
