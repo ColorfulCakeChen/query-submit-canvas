@@ -140,7 +140,7 @@ function test() {
     let testCase = testCases[ i ];
 
     let decoder = Base64ToUint8Array.decoder_FromArrayBuffer(
-        testCase.source, testCase.skipLineCount, progress, progress.children[ i ], testCase.suspendByteCount);
+        testCase.source, testCase.skipLineCount, progress.children[ i ], testCase.suspendByteCount);
 
     let testPromise = PartTime.forOf(
       decoder,
