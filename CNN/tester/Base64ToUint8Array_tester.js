@@ -113,7 +113,7 @@ class Progress extends ValueMax.Percentage.Aggregate {
 //      new ValueMax.Percentage.Concrete(), // Increased when downloading from network.
 //      new ValueMax.Percentage.Concrete(), // Increased when parsing the downloaded data to Uint8Array.
     ];
-    
+
     for (let i = 0; i < testCases.length; ++i) {
       children.push(new ValueMax.Percentage.Concrete()); // Increased when parsing the downloaded data to Uint8Array.
     }
@@ -126,7 +126,7 @@ class Progress extends ValueMax.Percentage.Aggregate {
 }
 
 window.addEventListener("load", event => {
-  ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js").then(test); });
+  ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.7.0/dist/tf.min.js").then(test); });
 
 function test() {
   console.log("Base64 decode testing...");
@@ -140,7 +140,7 @@ function test() {
     let testCase = testCases[ i ];
 
     let decoder = Base64ToUint8Array.decoder_FromArrayBuffer(
-        testCase.source, testCase.skipLineCount, progress, progress.childProgressParts[ i ], testCase.suspendByteCount);
+        testCase.source, testCase.skipLineCount, progress, progress.children[ i ], testCase.suspendByteCount);
 
     let testPromise = PartTime.forOf(
       decoder,
