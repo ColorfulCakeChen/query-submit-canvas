@@ -3,10 +3,20 @@ export {Base, HTMLProgress};
 /** Do nothing when receives value, max and done. */
 class Base {
   /**
-   * Handle current value and maximum value.
-   * @param {object} valueMax An object with property valuePercentage and maxPercentage. e.g. { valuePercentage: 20, maxPercentage: 100 }
+   * @param {number} value The current value.
+   * @param {number} max   The maximum value.
    */
-  setValueMax(valueMax) {}
+  setValueMax( value, max ) {}
+
+  /**
+   * @param {number} value The current value.
+   */
+  setValue( value ) {}
+
+  /**
+   * @param {number} max   The maximum value.
+   */
+  setMax( max ) {}
 
   /**
    * Inform the process is done.
@@ -32,6 +42,32 @@ class HTMLProgress extends Base {
   setValueMax(valueMax) {
     this.htmlProgress.value = valueMax.valuePercentage;
     this.htmlProgress.max = valueMax.maxPercentage;
+  }
+
+  /**
+   * Set HTMLProgressElement.value and HTMLProgressElement.max to value and max.
+   * @param {number} value The current value.
+   * @param {number} max   The maximum value.
+   */
+  setValueMax( value, max ) {
+    this.htmlProgress.value = value;
+    this.htmlProgress.max = max;
+  }
+
+  /**
+   * Set HTMLProgressElement.value to value.
+   * @param {number} value The current value.
+   */
+  setValue( value ) {
+    this.htmlProgress.value = value;
+  }
+
+  /**
+   * HTMLProgressElement.max max.
+   * @param {number} max   The maximum value.
+   */
+  setMax( max ) {
+    this.htmlProgress.max = max;
   }
 
   /** Call HTMLProgressElement.onclick(). */
