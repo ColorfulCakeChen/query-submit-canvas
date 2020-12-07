@@ -73,9 +73,9 @@ class Concrete extends Base {
   /**
    * @return {number}
    *   The progress as number between [0, 100] inclusive.
-   *   Always 0, if this.total is negative.
-   *   Always 100, if this.total is zero.
-   *   Otherwise, return the ratio of ( this.accumulation / this.total ).
+   *   Always 0, if this.max is negative.
+   *   Always 100, if this.max is zero.
+   *   Otherwise, return the ratio of ( this.value / this.max ).
    */
   get valuePercentage() {
     if (this.max < 0)
