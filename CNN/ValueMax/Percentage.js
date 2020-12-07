@@ -3,7 +3,7 @@ export { Base, Concrete, Aggregate };
 /**
  * The base class for representing valuePercentage as number berween [0, 100] inclusive. Acceptable by Receiver.Base.
  *
- * The maxPercentage always returns 100. The valuePercentage() returns number berween [0, 100] inclusive.
+ * The maxPercentage always returns 100. The valuePercentage returns number berween [0, 100] inclusive.
  *
  * @member {Percentage.Base} parent The direct parent Percentage.Base of this Percentage.Base.
  */
