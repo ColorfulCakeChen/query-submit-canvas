@@ -1,9 +1,9 @@
 export { Base, Concrete, Aggregate };
 
 /**
- * The base class for representing progress as number berween [0, 100] inclusive. Acceptable by Receiver.Base.
+ * The base class for representing valuePercentage as number berween [0, 100] inclusive. Acceptable by Receiver.Base.
  *
- * The max() always returns 100. The value() returns number berween [0, 100] inclusive.
+ * The maxPercentage always returns 100. The valuePercentage() returns number berween [0, 100] inclusive.
  *
  * @member {Percentage.Base} parent The direct parent Percentage.Base of this Percentage.Base.
  */
@@ -44,9 +44,12 @@ class Base {
 }
 
 /**
- * Collect value and max and represents them as percentag.
+ * Collect value and max and represents them as percentage.
  *
  * The Concrete.maxPercentage always returns 100. The Concrete.valuePercentage returns number berween [0, 100] inclusive.
+ *
+ * @member {number} value A positive number between [ 0, max ]. Usually, caller will increase it.
+ * @member {number} max   A positive number indicates the maximum value of this.value.
  */
 class Concrete extends Base {
   /**
@@ -54,8 +57,8 @@ class Concrete extends Base {
    *   The direct parent Percentage.Base of this Percentage.Concrete.
    *
    * @param {number} max
-   *   The possible maximum value of this.value. If negative, indicates not initialized. This is different from this.maxPercentage.
-   * The this.maxPercentage is always 100. The this.max, however, could be zero or any positive value. If max is negative, the
+   *   The possible maximum value of this.value. If negative, indicates not initialized. This is different from maxPercentage.
+   * The maxPercentage is always 100. The this.max, however, could be zero or any positive value. If max is negative, the
    * the valuePercentage will always be 0 (to avoid Aggregate.valuePercentage immediately 100). If max is zero, the
    * valuePercentage will always be 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
    */
@@ -157,7 +160,7 @@ class Aggregate extends Base {
     }
 
     if ( maxSum <= 0 )
-      return 0; // Return zero if the total is illegal. (to avoid divide by zero.)
+      return 0; // Return zero if the total max is illegal. (to avoid divide by zero.)
 
     let percentage = ( valueSum / maxSum ) * 100;
     return percentage;
