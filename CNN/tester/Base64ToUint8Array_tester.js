@@ -137,7 +137,7 @@ function test() {
 
     let testPromise = PartTime.forOf(
       decoder,
-      (valueMax) => { progressReceiver.setValueMax(valueMax); }, // Report progress to UI.
+      ( valueMax ) => { progressReceiver.setValueMax( valueMax.valuePercentage, valueMax.maxPercentage ); }, // Report progress to UI.
       delayMilliseconds
     ).then(r => {
       progressReceiver.informDone(r); // Inform UI progress done.
