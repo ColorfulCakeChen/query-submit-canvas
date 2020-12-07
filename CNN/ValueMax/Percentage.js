@@ -10,10 +10,10 @@ export { Base, Concrete, Aggregate };
 class Base {
 
   /**
-   * @param {Percentage.Base} parent The direct parent Percentage.Base of this Percentage.Base.
+   *
    */
-  constructor( parent = null ) {
-    this.parent = parent;
+  constructor() {
+    this.parent = null;
   }
 
   /** Dummy. Do nothing. Sub-class should override this method. */
@@ -21,7 +21,7 @@ class Base {
   }
 
   /**
-   * @return {Percentage.Base} The root Percentage.Base of the whole Percentage hierarchy. The root's value() represents the whole percentage.
+   * @return {Percentage.Base} The root Percentage.Base of the whole Percentage hierarchy. The root's valuePercentage represents the whole percentage.
    */
   getRoot() {
     if ( this.parent )
@@ -58,12 +58,9 @@ class Concrete extends Base {
    * The maxPercentage is always 100. The this.max, however, could be zero or any positive value. If max is negative, the
    * the valuePercentage will always be 0 (to avoid Aggregate.valuePercentage immediately 100). If max is zero, the
    * valuePercentage will always be 100 (to avoid divide by zero and avoid Aggregate.valuePercentage never 100).
-   *
-   * @param {Percentage.Base} parent
-   *   The direct parent Percentage.Base of this Percentage.Concrete.
    */
-  constructor( max = -1, parent = null ) {
-    super( parent );
+  constructor( max = -1 ) {
+    super();
     this.value = 0;
     this.max = max; // Negative indicates not initialized.
   }
@@ -97,14 +94,11 @@ class Concrete extends Base {
  */
 class Aggregate extends Base {
   /**
-   * @param {Percentage.Base} parent
-   *   The direct parent Percentage.Base of this Percentage.Aggregate.
-   *
    * @param {Percentage.Base[]} children
    *   An array of Percentage.Base which will be aggregated. Their parent will be set to this Percentage.Aggregate.
    */
-  constructor( children = [], parent = null ) {
-    super( parent );
+  constructor( children = [] ) {
+    super();
     this.children = children;
 
     for ( let i = 0; i < this.children.length; ++i ) {
@@ -115,8 +109,8 @@ class Aggregate extends Base {
   }
 
   /**
-   * @param {Percentage.Base} progressPart
-   *   Another Progress.Percentage object. Its parent will be set to this object.
+   * @param {Percentage.Base} child
+   *   Another Percentage.Base object. Its parent will be set to this object.
    */
   addChild( child ) {
     if ( !child )
