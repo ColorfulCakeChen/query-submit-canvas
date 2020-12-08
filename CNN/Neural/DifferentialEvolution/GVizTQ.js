@@ -1,7 +1,7 @@
 export { URLComposerCSV };
 
 /**
- * Compose a URL for downloading cells data (as .CSV format) from a Google Sheets by using Google Visualzation Table Query.
+ * Compose a URL for downloading cells data (as .CSV format) from a Google Sheets by using Google Visualzation Table Query API.
  * The target spreadsheet should be shared by either "Public on the web" or "Anyone with the link".
  *
  * (GVizTQ = Google Visualzation Table Query)
@@ -27,7 +27,8 @@ export { URLComposerCSV };
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range='Evolution.Param'!B17&headers=0&tqx=out:csv
  *
  */
-class URLComposerCSV {
+class UrlComposer {
+
   /**
    * If sheetId is null, sheetName is null, and no sheet name in the range's A1 notation, the first (most left) visible sheet
    * inside the spreadsheet will be used.
@@ -59,6 +60,23 @@ class URLComposerCSV {
    * @see {@link https://developers.google.com/chart/interactive/docs/querylanguage}
    */
   constructor( spreadsheetId, range, headers = 0, sheetId = null, sheetName = null ) {
+    this.spreadsheetId = spreadsheetId;
+    this.range = range;
+    this.headers = headers;
+    this.sheetId = sheetId;
+    this.sheetName = sheetName;
   }
 
+  getCsvUrl() {
+    // Because sheetId could be 0, it should be checked by comparing to null directly (i.e. should no use ( !this.sheetId )).
+    let url = `${URLComposer.spreadsheetUrlPrefix}/${this.spreadsheetId}/gviz/tq?&tqx=out:csv${
+      ( this.sheetId != null ) ? `&gid=${this.sheetId}` : `${
+      ( this.sheetName != null ) ? `&sheet=${this.sheetName}` : "" }` }${
+      ( this.range != null ) ? `&range=${this.range}` : "" }&headers=${this.headers}`;
+
+    return url;
+  }
 }
+
+/** The web address of Google Sheets. */
+URLComposer.spreadsheetUrlPrefix = "https://docs.google.com/spreadsheets/d";
