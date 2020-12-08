@@ -1,15 +1,18 @@
 export { UrlComposer };
 
 /**
- * Compose a URL for downloading cells data (as .CSV format) from a Google Sheets by using Google Visualzation Table Query API.
- * The target spreadsheet should be shared by either "Public on the web" or "Anyone with the link".
+ * Compose a URL for downloading cells data (as JSON or .CSV format) from a Google Sheets by using Google Visualzation Table Query
+ * API. The target spreadsheet should be shared by either "Public on the web" or "Anyone with the link".
  *
  * (GVizTQ = Google Visualzation Table Query)
  *
  * The follwoings are some composed examples:
  *
  * @example
- * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range=AH59:AJ98&tqx=out:csv
+ * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range=A1&tqx=out:json;responseHandler:SetData
+ *
+ * @example
+ * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range=Aa&tqx=out:csv
  *
  * @example
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?gid=816353147&range=AH59:AK98&headers=0&tqx=out:csv
@@ -46,6 +49,10 @@ class UrlComposer {
    * @param {number} headers
    *   The component after the "headers=". It means how many header rows. It should be an zero or positive integer.
    *
+   * @param {string} responseHandler
+   *   The function name of JSON content handler. Only meaningful when the content is downloaded as JSONP format. This
+   * responseHandler name will be prepended in front of the downloaded content.
+   *
    * @param {number} sheetId
    *   The component after the "gid=". If the sheetName is used (or the sheet name in the range's A1 notation is specified),
    * keep this sheetId null (or undefined).
@@ -59,22 +66,58 @@ class UrlComposer {
    * @see {@link https://developers.google.com/chart/interactive/docs/spreadsheets}
    * @see {@link https://developers.google.com/chart/interactive/docs/querylanguage}
    */
-  constructor( spreadsheetId, range, headers = 0, sheetId = null, sheetName = null ) {
+  constructor( spreadsheetId, range, headers = 0, responseHandler = null, sheetId = null, sheetName = null ) {
     this.spreadsheetId = spreadsheetId;
     this.range = range;
     this.headers = headers;
+    this.responseHandler = responseHandler;
     this.sheetId = sheetId;
     this.sheetName = sheetName;
   }
 
-  getCsvUrl() {
+  /**
+   * @param {string} outputFormat
+   *   Specify the data format when downloading the returned url. It should be null or "json" or "csv" or "html". If null, there
+   * will be no format specified in the generated url (means default format, usually same as "json").
+   *
+   * @return {string} The url for downloading the target as specified format.
+   */
+  getUrl_forFormat( outputFormat ) {
     // Because sheetId could be 0, it should be checked by comparing to null directly (i.e. should no use ( !this.sheetId )).
-    let url = `${URLComposer.spreadsheetUrlPrefix}/${this.spreadsheetId}/${URLComposer.GoogleVisualizationTableQueryUrlPostfix}?&tqx=out:csv${
+    let url = `${URLComposer.spreadsheetUrlPrefix}/${this.spreadsheetId}/${
+
+      URLComposer.GoogleVisualizationTableQueryUrlPostfix}?tqx=version:${
+      URLComposer.GoogleVisualizationTableQueryAPIVersion}${
+      ( outputFormat != null ) ? `;out:${outputFormat}` : "" }${
+      ( this.responseHandler != null ) ? `;responseHandler=${this.responseHandler}` : "" }${
+
       ( this.sheetId != null ) ? `&gid=${this.sheetId}` : `${
       ( this.sheetName != null ) ? `&sheet=${this.sheetName}` : "" }` }${
       ( this.range != null ) ? `&range=${this.range}` : "" }&headers=${this.headers}`;
 
     return url;
+  }
+
+  /**
+   * @return {string} The url for downloading the target as JSONP format.
+   */
+  getUrl_forJSON() {
+    //return this.getUrl_forFormat( "json" );
+    return this.getUrl_forFormat( null ); // Because default format is "json".
+  }
+
+  /**
+   * @return {string} The url for downloading the target as CSV format.
+   */
+  getUrl_forCSV() {
+    return this.getUrl_forFormat( "csv" );
+  }
+
+  /**
+   * @return {string} The url for downloading the target as HTML format.
+   */
+  getUrl_forHTML() {
+    return this.getUrl_forFormat( "html" );
   }
 }
 
@@ -83,3 +126,6 @@ URLComposer.spreadsheetUrlPrefix = "https://docs.google.com/spreadsheets/d";
 
 /** The url postfix of Google Visualization Table Query. */
 URLComposer.GoogleVisualizationTableQueryUrlPostfix = "gviz/tq";
+
+/** The version of Google Visualization Table Query API. */
+URLComposer.GoogleVisualizationTableQueryAPIVersion = "0.6";
