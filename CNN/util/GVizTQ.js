@@ -9,10 +9,12 @@ export { UrlComposer };
  * The follwoings are some composed examples:
  *
  * @example
+ * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range=A1&tqx=version:0.6;responseHandler:SetData
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range=A1&tqx=out:json;responseHandler:SetData
  *
  * @example
- * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range=Aa&tqx=out:csv
+ * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range=A1&tqx=out:csv
+ * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range=A1&tqx=out:html
  *
  * @example
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?gid=816353147&range=AH59:AK98&headers=0&tqx=out:csv
@@ -84,10 +86,10 @@ class UrlComposer {
    */
   getUrl_forFormat( outputFormat ) {
     // Because sheetId could be 0, it should be checked by comparing to null directly (i.e. should no use ( !this.sheetId )).
-    let url = `${URLComposer.spreadsheetUrlPrefix}/${this.spreadsheetId}/${
+    let url = `${UrlComposer.spreadsheetUrlPrefix}/${this.spreadsheetId}/${
 
-      URLComposer.GoogleVisualizationTableQueryUrlPostfix}?tqx=version:${
-      URLComposer.GoogleVisualizationTableQueryAPIVersion}${
+      UrlComposer.GoogleVisualizationTableQueryUrlPostfix}?tqx=version:${
+      UrlComposer.GoogleVisualizationTableQueryAPIVersion}${
       ( outputFormat != null ) ? `;out:${outputFormat}` : "" }${
       ( this.responseHandler != null ) ? `;responseHandler=${this.responseHandler}` : "" }${
 
@@ -122,10 +124,10 @@ class UrlComposer {
 }
 
 /** The url prefix of Google Sheets. */
-URLComposer.spreadsheetUrlPrefix = "https://docs.google.com/spreadsheets/d";
+UrlComposer.spreadsheetUrlPrefix = "https://docs.google.com/spreadsheets/d";
 
 /** The url postfix of Google Visualization Table Query. */
-URLComposer.GoogleVisualizationTableQueryUrlPostfix = "gviz/tq";
+UrlComposer.GoogleVisualizationTableQueryUrlPostfix = "gviz/tq";
 
 /** The version of Google Visualization Table Query API. */
-URLComposer.GoogleVisualizationTableQueryAPIVersion = "0.6";
+UrlComposer.GoogleVisualizationTableQueryAPIVersion = "0.6";
