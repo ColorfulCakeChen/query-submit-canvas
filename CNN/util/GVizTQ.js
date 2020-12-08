@@ -85,7 +85,7 @@ class UrlComposer {
    * @return {string} The url for downloading the target as specified format.
    */
   getUrl_forFormat( outputFormat ) {
-    // Because sheetId could be 0, it should be checked by comparing to null directly (i.e. should no use ( !this.sheetId )).
+    // Because sheetId could be 0, it should be checked by comparing to null directly (i.e. should not use ( !this.sheetId )).
     let url = `${UrlComposer.spreadsheetUrlPrefix}/${this.spreadsheetId}/${
 
       UrlComposer.GoogleVisualizationTableQueryUrlPostfix}?tqx=version:${
