@@ -1,19 +1,33 @@
-export { URLComposer };
+export { URLComposerCSV };
 
 /**
+ * Compose a URL for downloading cells data (as .CSV format) from a Google Sheets by using Google Visualzation Table Query.
+ * The target spreadsheet should be shared by either "Public on the web" or "Anyone with the link".
+ *
  * (GVizTQ = Google Visualzation Table Query)
  *
+ * The follwoings are some composed examples:
+ *
+ * @example
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range=AH59:AJ98&tqx=out:csv
  *
+ * @example
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?gid=816353147&range=AH59:AK98&headers=0&tqx=out:csv
  *
+ * @example
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?gid=1504323928&range=B17&headers=0&tqx=out:csv
+ *
+ * @example
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?sheet=Evolution.Param&range=B17&headers=0&tqx=out:csv
+ *
+ * @example
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range=Evolution.Param!B17&headers=0&tqx=out:csv
+ *
+ * @example
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range='Evolution.Param'!B17&headers=0&tqx=out:csv
  *
  */
-class CSVURLComposer {
+class URLComposerCSV {
   /**
    * If sheetId is null, sheetName is null, and no sheet name in the range's A1 notation, the first (most left) visible sheet
    * inside the spreadsheet will be used.
