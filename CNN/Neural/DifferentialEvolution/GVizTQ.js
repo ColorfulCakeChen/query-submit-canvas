@@ -1,4 +1,4 @@
-export { URLComposerCSV };
+export { UrlComposer };
 
 /**
  * Compose a URL for downloading cells data (as .CSV format) from a Google Sheets by using Google Visualzation Table Query API.
@@ -69,7 +69,7 @@ class UrlComposer {
 
   getCsvUrl() {
     // Because sheetId could be 0, it should be checked by comparing to null directly (i.e. should no use ( !this.sheetId )).
-    let url = `${URLComposer.spreadsheetUrlPrefix}/${this.spreadsheetId}/gviz/tq?&tqx=out:csv${
+    let url = `${URLComposer.spreadsheetUrlPrefix}/${this.spreadsheetId}/${URLComposer.GoogleVisualizationTableQueryUrlPostfix}?&tqx=out:csv${
       ( this.sheetId != null ) ? `&gid=${this.sheetId}` : `${
       ( this.sheetName != null ) ? `&sheet=${this.sheetName}` : "" }` }${
       ( this.range != null ) ? `&range=${this.range}` : "" }&headers=${this.headers}`;
@@ -78,5 +78,8 @@ class UrlComposer {
   }
 }
 
-/** The web address of Google Sheets. */
+/** The url prefix of Google Sheets. */
 URLComposer.spreadsheetUrlPrefix = "https://docs.google.com/spreadsheets/d";
+
+/** The url postfix of Google Visualization Table Query. */
+URLComposer.GoogleVisualizationTableQueryUrlPostfix = "gviz/tq";
