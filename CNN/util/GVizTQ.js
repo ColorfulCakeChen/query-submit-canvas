@@ -121,6 +121,36 @@ class UrlComposer {
   getUrl_forHTML() {
     return this.getUrl_forFormat( "html" );
   }
+
+  /**
+   * Evaluate JSONP string by JSON.parse().
+   *
+   * A JSONP string looks like:
+   * @example
+   *   Handler( ... );
+   *
+   * This method will find the position of the first "(" and the last ")". Extract the string between these two positions.
+   * Parsing it by JSON.parse().
+   *
+   * @param {string} strJSONP
+   *   The JSONP string to be parsed.
+   *
+   * @return {Object|value}
+   *   Return the JSON parsed result. Return null, if left parenthesis or right parenthesis is not found.
+   */
+  static evalJSONP( strJSONP ) {
+    let beginIndex = strJSONP.indexOf( "(" );
+    if ( beginIndex < 0 )
+      return null;  // left parenthesis is not found.
+
+    let endIndex = strJSONP.lastIndexOf( ")" );
+    if ( endIndex < 0 )
+      return null;  // right parenthesis is not found.
+
+    let strJSON = strJSONP.slice( beginIndex + 1, endIndex ); // "+ 1" for the next position of the left parenthesis.
+    let result = JSON.parse( strJSON );
+    return result;
+  }
 }
 
 /** The url prefix of Google Sheets. */
