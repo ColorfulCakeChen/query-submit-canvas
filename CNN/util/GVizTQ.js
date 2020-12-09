@@ -86,16 +86,16 @@ class UrlComposer {
    */
   getUrl_forFormat( outputFormat ) {
     // Because sheetId could be 0, it should be checked by comparing to null directly (i.e. should not use ( !this.sheetId )).
-    let url = `${UrlComposer.spreadsheetUrlPrefix}/${this.spreadsheetId}/${
+    let url = `${UrlComposer.spreadsheetUrlPrefix}/${encodeURIComponent(this.spreadsheetId)}/${
 
       UrlComposer.GoogleVisualizationTableQueryUrlPostfix}?tqx=version:${
       UrlComposer.GoogleVisualizationTableQueryAPIVersion}${
-      ( outputFormat != null ) ? `;out:${outputFormat}` : "" }${
-      ( this.responseHandler != null ) ? `;responseHandler=${this.responseHandler}` : "" }${
+      ( outputFormat != null ) ? `;out:${encodeURIComponent(outputFormat)}` : "" }${
+      ( this.responseHandler != null ) ? `;responseHandler=${encodeURIComponent(this.responseHandler)}` : "" }${
 
-      ( this.sheetId != null ) ? `&gid=${this.sheetId}` : `${
-      ( this.sheetName != null ) ? `&sheet=${this.sheetName}` : "" }` }${
-      ( this.range != null ) ? `&range=${this.range}` : "" }&headers=${this.headers}`;
+      ( this.sheetId != null ) ? `&gid=${encodeURIComponent(this.sheetId)}` : `${
+      ( this.sheetName != null ) ? `&sheet=${encodeURIComponent(this.sheetName)}` : "" }` }${
+      ( this.range != null ) ? `&range=${encodeURIComponent(this.range)}` : "" }&headers=${encodeURIComponent(this.headers)}`;
 
     return url;
   }
