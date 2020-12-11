@@ -152,6 +152,32 @@ class UrlComposer {
     let result = JSON.parse( strJSON );
     return result;
   }
+
+  /**
+   * Collects gvizDataTable.rows[ n ].c[ m ].v into a two dimension (column-major) array. The outer array has m inner
+   * sub-arrays (corresponding to m columns). Every inner sub-array has n elements (corresponding to n rows).
+   *
+   * @param {DataTable} gvizDataTable
+   *   The DataTable object of Google Visualization API.
+   *
+   * @return {array[]}
+   *   Return a two dimension (column-major) array. Return null if failed.
+   */
+  static dataTableToColumnMajorArray( gvizDataTable ) {
+    if ( !gvizDataTable )
+      return null;
+
+    let columnArray = new Array( gvizDataTable.cols.length );
+    for ( let columnNo = 0; columnNo < columnArray.length; ++columnNo ) {
+      let rowArray = new Array( gvizDataTable.rows.length );
+      for ( let rowNo = 0; rowNo < rowArray.length; ++rowNo ) {
+        rowArray[ rowNo ] = gvizDataTable.rows[ rowNo ].c[ columnNo ].v; // Always value (.v), ignore formatted value string (.f).
+      }
+    }
+
+    return columnArray;
+  }
+
 }
 
 /** The url prefix of Google Sheets. */
