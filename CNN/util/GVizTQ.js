@@ -169,7 +169,7 @@ class UrlComposer {
 
     let columnArray = new Array( gvizDataTable.cols.length );
     for ( let columnNo = 0; columnNo < columnArray.length; ++columnNo ) {
-      let rowArray = new Array( gvizDataTable.rows.length );
+      let rowArray = columnArray[ columnNo ] = new Array( gvizDataTable.rows.length );
       for ( let rowNo = 0; rowNo < rowArray.length; ++rowNo ) {
         rowArray[ rowNo ] = gvizDataTable.rows[ rowNo ].c[ columnNo ].v; // Always value (.v), ignore formatted value string (.f).
       }
