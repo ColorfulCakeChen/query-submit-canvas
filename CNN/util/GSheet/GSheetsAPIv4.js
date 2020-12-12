@@ -1,3 +1,5 @@
+import * as ValueMax from "../../ValueMax.js";
+
 export { UrlComposer };
 
 /**
@@ -42,23 +44,50 @@ class UrlComposer {
   }
 
   /**
-   * Compose the URL (according this object's data members), download it as JSON format, extract data as a two dimension (column-major) array.
+   * A generator for composing the URL (according this object's data members), downloading it as JSON format, extracting
+   * data as a two dimension (column-major) array.
    *
-   * @return {array[]}
-   *   Return a two dimension (column-major) array. Return null if failed.
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
+   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   *
+   * @yield {ValueMax.Percentage.Aggregate}
+   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *
+   * @yield {array[]}
+   *   Yield ( value = a two dimension (column-major) array ) when ( done = true ) successfully.
+   *   Yield ( value = null ) when ( done = true ) failed.
    */
-  async fetch_JSON_ColumnMajorArray() {
-    let url = this.getUrl_forJSON( "COLUMNS" );  // column-major.
+  async *fetcher_JSON_ColumnMajorArray() {
+    let progressRoot = progressParent.getRoot();
+    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( 3 ) );
+
     try {
+      // 1. Compose URL and download it as column-major JSON.
+      let url = this.getUrl_forJSON( "COLUMNS" );
       let response = await fetch( url );
+
+      ++progressToAdvance.value; // 33%
+      yield progressRoot;
+
       if ( !response.ok )
         return null;
 
-      let json = await response.json();  // Google Sheets API v4 returns JSON.
+      // 2. Google Sheets API v4 returns JSON.
+      let json = await response.json();
+
+      ++progressToAdvance.value; // 33%
+      yield progressRoot;
+
       if ( !json )
         return null;
 
-      let columnMajorArray = json.values;  // Already column major. Return it directly.
+      // 3. Since already downloaded as column major. Uses it directly.
+      let columnMajorArray = json.values;
+
+      ++progressToAdvance.value; // 33%
+      yield progressRoot;
+
       return columnMajorArray;
 
     } catch ( e ) {
