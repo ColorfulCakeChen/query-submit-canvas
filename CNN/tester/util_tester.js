@@ -1,20 +1,8 @@
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
-import * as GVizTQ_tester from "./GVizTQ_tester.js";
+import * as GSheet_tester from "./GSheet_tester.js";
 import * as ScriptLoader from "../ScriptLoader.js";
 import * as ValueMax from "../ValueMax.js";
 
-
-/** Aggregate all progress about testing.  */
-class Progress extends ValueMax.Percentage.Aggregate {
-  constructor() {
-    let children = new Array( 2 );
-    for (let i = 0; i < children.length; ++i) {
-      children[ i ] = new ValueMax.Percentage.Aggregate();
-    }
-
-    super(children);
-  }
-}
 
 window.addEventListener("load", event => {
   ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.7.0/dist/tf.min.js").then(test); });
@@ -23,7 +11,11 @@ function test() {
   console.log("util testing...");
   let delayMilliseconds = 1000;
 
-  let progress = new Progress();
+  // Aggregate all progress about util_tester.
+  let progress = new ValueMax.Percentage.Aggregate();
+  let progress_Base64ToUint8Array_tester = progress.addChild( new ValueMax.Percentage.Aggregate() );
+  let progress_GSheet_tester = progress.addChild( new ValueMax.Percentage.Aggregate() );
+
   let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
 /*
@@ -55,4 +47,6 @@ function test() {
     console.log("util testing... Done.");
   });
 */
+
+//!!! ...unfinished... test case by multipler web worker?
 }
