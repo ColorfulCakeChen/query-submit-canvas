@@ -24,7 +24,7 @@ export { Base };
  * (possible scaled) source image data back to this WorkerController, and keep computing neural network at the same. And then, this
  * WorkerController will transfer the source image data to the next worker as soon as possible.
  *
- * Finally, this WorkerProxyController collects all web workers' processTensor() results in a promise. The promise will resolve with an
+ * Finally, this WorkerProxies collects all web workers' processTensor() results in a promise. The promise will resolve with an
  * array of typed-array. Every typed-array is the output of one neural network.
  */
 class Base {
