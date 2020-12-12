@@ -16,9 +16,10 @@ class Base {
     this.parent = null;
   }
 
-  /** Dummy. Do nothing. Sub-class should override this method. */
-  resetValue() {
-  }
+//!!! (2020/12/12 Remarked) This object is tended to be created new every time. There is no need to reset.
+//   /** Dummy. Do nothing. Sub-class should override this method. */
+//   resetValue() {
+//   }
 
   /**
    * @return {Percentage.Base} The root Percentage.Base of the whole Percentage hierarchy. The root's valuePercentage represents the whole percentage.
@@ -65,10 +66,11 @@ class Concrete extends Base {
     this.max = max; // Negative indicates not initialized.
   }
 
-  /** Reset this.value to 0. */
-  resetValue() {
-    this.value = 0;
-  }
+//!!! (2020/12/12 Remarked) This object is tended to be created new every time. There is no need to reset.
+//   /** Reset this.value to 0. */
+//   resetValue() {
+//     this.value = 0;
+//   }
 
   /**
    * @return {number}
@@ -111,23 +113,27 @@ class Aggregate extends Base {
   /**
    * @param {Percentage.Base} child
    *   Another Percentage.Base object. Its parent will be set to this object.
+   *
+   * @return {Percentage.Base} Return the child for cascading easily.
    */
   addChild( child ) {
     if ( !child )
-      return;
+      return null;
     this.children.push( child );
     child.parent = this;
+    return child;
   }
 
-  /** Reset all children's this.value to 0. */
-  resetValue() {
-    for ( let i = 0; i < this.children.length; ++i ) {
-      let child = this.children[ i ];
-      if ( child ) {
-        child.resetValue();
-      }
-    }
-  }
+//!!! (2020/12/12 Remarked) This object is tended to be created new every time. There is no need to reset.
+//   /** Reset all children's this.value to 0. */
+//   resetValue() {
+//     for ( let i = 0; i < this.children.length; ++i ) {
+//       let child = this.children[ i ];
+//       if ( child ) {
+//         child.resetValue();
+//       }
+//     }
+//   }
 
   /**
    * @return {number} The sum of all children's ( valuePercentage / maxPercentage ) as number between [0, 100] inclusive.
