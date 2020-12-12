@@ -36,13 +36,23 @@ class Fetcher {
   }
 
   /**
-   * Compose the URL (according this object's data members), download it as JSON format, extract data as a two dimension (column-major) array.
+   * A generator for composing the URL (according this object's data members), downloading it as JSON format, extracting
+   * data as a two dimension (column-major) array.
    *
-   * @return {array[]}
-   *   Return a two dimension (column-major) array. Return null if failed.
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
+   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   *
+   * @yield {ValueMax.Percentage.Aggregate}
+   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *
+   * @yield {array[]}
+   *   Yield ( value = a two dimension (column-major) array ) when ( done = true ) successfully.
+   *   Yield ( value = null ) when ( done = true ) failed.
    */
-  async fetch_JSON_ColumnMajorArray() {
-    return this.urlComposer.fetch_JSON_ColumnMajorArray();
+  async *fetcher_JSON_ColumnMajorArray( progressParent ) {
+    let columnMajorArray = yield *this.urlComposer.fetcher_JSON_ColumnMajorArray( progressParent );
+    return columnMajorArray;
   }
 
 }
