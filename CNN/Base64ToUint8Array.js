@@ -1,6 +1,6 @@
-import * as ValueMax from "./ValueMax.js";
-
 export { decoder_FromArrayBuffer, decoder_FromUint8Array };
+
+import * as ValueMax from "./ValueMax.js";
 
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
