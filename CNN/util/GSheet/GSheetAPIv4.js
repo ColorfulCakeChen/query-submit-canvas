@@ -19,7 +19,7 @@ class UrlComposer {
    * If no sheet name in the range's A1 notation, the first (most left) visible sheet inside the spreadsheet will be used.
    *
    * @param {string} spreadsheetId
-   *   The component after the "https://docs.google.com/spreadsheets/d/".
+   *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/") of the spreadsheet to be accessed.
    *
    * @param {string} range
    *   The cells' A1 notation of the cells. It describes the (name and) range of the sheet inside the spreadsheet.
@@ -33,6 +33,7 @@ class UrlComposer {
    *
    * @see {@link https://developers.google.com/sheets/api/guides/concepts}
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get}
+   * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values}
    */
   constructor( spreadsheetId, range, APIKey ) {
     this.spreadsheetId = spreadsheetId;
@@ -41,48 +42,43 @@ class UrlComposer {
   }
 
   /**
+   * Compose the URL (according this object's data members), download it as JSON format, extract data as a two dimension (column-major) array.
+   *
+   * @return {array[]}
+   *   Return a two dimension (column-major) array. Return null if failed.
+   */
+  async fetch_JSON_ColumnMajorArray() {
+    let url = this.getUrl_forJSON();  // majorDimension = "COLUMNS"
+    try {
+      let response = await fetch( url );
+      if ( !response.ok )
+        return null;
+
+      let json = await response.json();  // Google Sheets API v4 returns JSON.
+      if ( !json )
+        return null;
+
+      let columnMajorArray = json.values;  // Already column major. Return it directly.
+      return columnMajorArray;
+
+    } catch ( e ) {
+      return null;
+    }
+  }
+
+  /**
    * @param {string} majorDimension
    *   The major dimension of the arrangement for the downloaded json data. It could be "ROWS" or "COLUMNS". If null, the same as "ROWS".
    *
    * @return {string} The url for downloading the target as json format.
    */
-  getUrl_forRead( majorDimension = "COLUMNS" ) {
+  getUrl_forJSON( majorDimension = "COLUMNS" ) {
     let url = `${UrlComposer.spreadsheetUrlPrefix}/${encodeURIComponent(this.spreadsheetId)}/values/${
       encodeURIComponent(this.range)}?${
       ( majorDimension != null ) ? `majorDimension=${encodeURIComponent(majorDimension)}&` : "" }key=${encodeURIComponent(this.APIKey)}`
       ;
 
     return url;
-  }
-
-  /**
-   * If ( valueRange.majorDimension == "ROWS" ), collects valueRange.values[ n ][ m ] into a two dimension (column-major) array.
-   * The outer array has m inner sub-arrays (corresponding to m columns). Every inner sub-array has n elements (corresponding to n rows).
-   *
-   * @param {object} valueRange
-   *   The spreadsheets.values resource object of Google Sheets API v4.
-   *
-   * @return {array[]}
-   *   Return a two dimension (column-major) array. Return null if failed.
-   *
-   * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values}
-   */
-  static ValueRange_To_ColumnMajorArray( valueRange ) {
-    if ( !valueRange )
-      return null;
-
-    if ( "COLUMNS" == valueRange.majorDimension )
-      return valueRange.values;  // Already column major. Return the two dimension array directly.
-
-    let columnArray = new Array( valueRange.values.length );
-    for ( let columnNo = 0; columnNo < columnArray.length; ++columnNo ) {
-      let rowArray = columnArray[ columnNo ] = new Array( valueRange.values[ .rows.length );
-      for ( let rowNo = 0; rowNo < rowArray.length; ++rowNo ) {
-        rowArray[ rowNo ] = gvizDataTable.rows[ rowNo ].c[ columnNo ].v; // Always value (.v), ignore formatted value string (.f).
-      }
-    }
-
-    return columnArray;
   }
 
 }
