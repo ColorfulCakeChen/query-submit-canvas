@@ -26,7 +26,7 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
 }
 
 /**
- * Got a generator for Base64 decoding from an array of Base64 encoded string.
+ * Generator for Base64 decoding from an array of Base64 encoded string.
  * Join the string array, convert to Uint8Array, decode as Base64, result in another Uint8Array.
  *
  * @param {string[]} sourceBase64EncodedStringArray
@@ -52,7 +52,7 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function *decoder_FromStringArray(
+function* decoder_FromStringArray(
   sourceBase64EncodedStringArray, textEncoder, skipLineCount, progressParent, suspendByteCount ) {
 
   let progressRoot = progressParent.getRoot();
@@ -83,7 +83,7 @@ function *decoder_FromStringArray(
 }
 
 /**
- * Got a generator for Base64 decoding from an ArrayBufffer.
+ * Generator for Base64 decoding from an ArrayBufffer.
  *
  * @param {ArrayBuffer} sourceBase64ArrayBuffer
  *   The input base64 data as ArrayBuffer. If the last bytes not enough 4 bytes, they will be discarded (will
@@ -108,16 +108,18 @@ function *decoder_FromStringArray(
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function decoder_FromArrayBuffer(
+function* decoder_FromArrayBuffer(
   sourceBase64ArrayBuffer, skipLineCount, progressParent, suspendByteCount ) {
 
   let sourceBase64Uint8Array = new Uint8Array( sourceBase64ArrayBuffer );
-  let decoder = decoder_FromUint8Array( sourceBase64Uint8Array, skipLineCount, progressParent, suspendByteCount );
-  return decoder;
+  let base64Decoder = decoder_FromUint8Array( sourceBase64Uint8Array, skipLineCount, progressParent, suspendByteCount );
+
+  let base64DecodedUint8Array = yield *base64Decoder;
+  return base64DecodedUint8Array;
 }
 
 /**
- * Got a generator for Base64 decoding from an Uint8Array.
+ * Generator for Base64 decoding from an Uint8Array.
  *
  * @param {Uint8Array} sourceBase64Uint8Array
  *   The input base64 data as Uint8Array. If the last bytes not enough 4 bytes, they will be discarded (will
