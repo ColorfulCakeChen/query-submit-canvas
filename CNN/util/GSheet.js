@@ -1,12 +1,12 @@
 import * as GVizTQ from "./GSheet/GVizTQ.js";
 import * as GSheetsAPIv4 from "./GSheet/GSheetsAPIv4.js";
 
-export { Url };
+export { UrlComposer };
 
 /**
  * Fetch data from Google Sheets.
  */
-class Fetcher {
+class UrlComposer {
 
   /**
    * If no sheet name in the range's A1 notation, the first (most left) visible sheet inside the spreadsheet will be used.
@@ -36,7 +36,7 @@ class Fetcher {
   }
 
   /**
-   * A generator for composing the URL (according this object's data members), downloading it as JSON format, extracting
+   * Generator for composing the URL (according this object's data members), downloading it as JSON format, extracting
    * data as a two dimension (column-major) array.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -50,8 +50,9 @@ class Fetcher {
    *   Yield ( value = a two dimension (column-major) array ) when ( done = true ) successfully.
    *   Yield ( value = null ) when ( done = true ) failed.
    */
-  async *fetcher_JSON_ColumnMajorArray( progressParent ) {
-    let columnMajorArray = yield *this.urlComposer.fetcher_JSON_ColumnMajorArray( progressParent );
+  async* fetcher_JSON_ColumnMajorArray( progressParent ) {
+    let fetcher = this.urlComposer.fetcher_JSON_ColumnMajorArray( progressParent );
+    let columnMajorArray = yield *fetcher;
     return columnMajorArray;
   }
 
