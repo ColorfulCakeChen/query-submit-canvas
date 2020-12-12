@@ -39,9 +39,8 @@ let table_base64_Uint8_to_index = new Array(256); // Faster than using Uint8Arra
  *   Skip how many lines in the source before decoding.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   This should be progressRoot or some descendant of progressRoot. A new progressToAdvance will be created and added to
- * progressParent. The created progressToAdvance will be increased when every time advanced. The progressParent.getRoot()
- * will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
+ * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
@@ -96,9 +95,8 @@ function *decoder_FromStringArray(
  *   Skip how many lines in the source before decoding.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   This should be progressRoot or some descendant of progressRoot. A new progressToAdvance will be created and added to
- * progressParent. The created progressToAdvance will be increased when every time advanced. The progressParent.getRoot()
- * will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
+ * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
@@ -131,9 +129,8 @@ function decoder_FromArrayBuffer(
  *   Skip how many lines in the source before decoding.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   This should be progressRoot or some descendant of progressRoot. A new progressToAdvance will be created and added to
- * progressParent. The created progressToAdvance will be increased when every time advanced. The progressParent.getRoot()
- * will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
+ * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
  *
  * @param {Uint32} suspendByteCount
  *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting progress).
