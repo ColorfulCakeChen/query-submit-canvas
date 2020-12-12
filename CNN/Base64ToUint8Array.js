@@ -61,11 +61,11 @@ function *decoder_FromStringArray(
   // reasonable in fact because the string Array.join() and TextEncoder.encode() both will scan
   // all input text. This is just the same as the Base64 decoder (i.e. scanning all input text).
 
-  let progressToAdvance = new ValueMax.Percentage.Concrete( 2 ); // For this function (i.e. Array.join() and TextEncoder.encode()).
-  let progressParentNew = new ValueMax.Percentage.Aggregate();   // For next sub function (i.e. Base64 decoder).
+  // 50% for this function (i.e. Array.join() and TextEncoder.encode()).
+  let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( 2 ) );
 
-  progressParent.addChild( progressToAdvance ); // 50%
-  progressParent.addChild( progressParentNew ); // 50%
+  // 50% for next sub function (i.e. Base64 decoder).
+  let progressParentNew = progressParent.addChild( new ValueMax.Percentage.Aggregate() );
 
   let base64EncodedStringLong = sourceBase64EncodedStringArray.join( "" );
   ++progressToAdvance.value; // 25%
@@ -157,8 +157,7 @@ function* decoder_FromUint8Array(
 
   // Initialize progress.
   let progressRoot = progressParent.getRoot();
-  let progressToAdvance = new ValueMax.Percentage.Concrete( sourceByteLength );
-  progressParent.addChild( progressToAdvance );
+  let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( sourceByteLength ) );
 
   // It is important that the nextYieldValue is not greater than source length, so that
   // it can be used as boundary checking to reduce checking times and increase performance.
