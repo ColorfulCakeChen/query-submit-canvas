@@ -21,15 +21,15 @@ class Url {
    *   - "Books!D8:D" refers to the column D of sheet named "Books" from rows 8 to the last rows.
    *   - "'Name has space'!7:10" refers to the rows 7 to 10 of sheet named "Name has space".
    *
-   * @param {string} APIKey
+   * @param {string} apiKey
    *   The API key string for accessing the spreadsheet. If not null, Google Sheets API v4 will be used. If null, Google
    * Visualization Table Query API will be used.
    *
    * @see {@link https://developers.google.com/sheets/api/guides/concepts}
    */
-  constructor( spreadsheetId, range, APIKey ) {
-    if ( APIKey ) {
-      this.urlComposer = new GSheetsAPIv4.UrlComposer( spreadsheetId, range, APIKey );
+  constructor( spreadsheetId, range, apiKey = null ) {
+    if ( apiKey ) {
+      this.urlComposer = new GSheetsAPIv4.UrlComposer( spreadsheetId, range, apiKey );
     } else {
       this.urlComposer = new GVizTQ.UrlComposer( spreadsheetId, range );
     }
