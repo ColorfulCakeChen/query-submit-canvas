@@ -28,7 +28,7 @@ class UrlComposer {
    *   - "Books!D8:D" refers to the column D of sheet named "Books" from rows 8 to the last rows.
    *   - "'Name has space'!7:10" refers to the rows 7 to 10 of sheet named "Name has space".
    *
-   * @param {string} APIKey
+   * @param {string} apiKey
    *   The API key string for accessing the spreadsheet.
    *
    * @see {@link https://developers.google.com/sheets/api/guides/concepts}
@@ -48,7 +48,7 @@ class UrlComposer {
    *   Return a two dimension (column-major) array. Return null if failed.
    */
   async fetch_JSON_ColumnMajorArray() {
-    let url = this.getUrl_forJSON();  // majorDimension = "COLUMNS"
+    let url = this.getUrl_forJSON( "COLUMNS" );  // column-major.
     try {
       let response = await fetch( url );
       if ( !response.ok )
@@ -72,7 +72,7 @@ class UrlComposer {
    *
    * @return {string} The url for downloading the target as json format.
    */
-  getUrl_forJSON( majorDimension = "COLUMNS" ) {
+  getUrl_forJSON( majorDimension = null ) {
     let url = `${UrlComposer.spreadsheetUrlPrefix}/${encodeURIComponent(this.spreadsheetId)}/values/${
       encodeURIComponent(this.range)}?${
       ( majorDimension != null ) ? `majorDimension=${encodeURIComponent(majorDimension)}&` : "" }key=${encodeURIComponent(this.apiKey)}`
