@@ -88,18 +88,18 @@ class UrlComposer {
     let url = this.getUrl_forJSON();
     try {
       let response = await fetch( url );
-      if ( response.ok )
+      if ( !response.ok )
         return null;
 
-      let text = await response.text();
+      let text = await response.text();  // Google Visualization Table Query returns JSONP (not JSON).
       if ( !text )
         return null;
 
-      let json = UrlComposer.evalJSONP( text );
+      let json = UrlComposer.evalJSONP( text );  // Try to evaluate is as JSON.
       if ( !json )
         return null;
 
-      let columnMajorArray = UrlComposer.dataTableToColumnMajorArray( json.table );
+      let columnMajorArray = UrlComposer.dataTableToColumnMajorArray( json.table ); // Collect into column-major array.
       return columnMajorArray;
 
     } catch ( e ) {
