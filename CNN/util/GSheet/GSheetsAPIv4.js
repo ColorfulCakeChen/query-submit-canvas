@@ -35,10 +35,10 @@ class UrlComposer {
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get}
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values}
    */
-  constructor( spreadsheetId, range, APIKey ) {
+  constructor( spreadsheetId, range, apiKey ) {
     this.spreadsheetId = spreadsheetId;
     this.range = range;
-    this.APIKey = APIKey;
+    this.apiKey = apiKey;
   }
 
   /**
@@ -75,7 +75,7 @@ class UrlComposer {
   getUrl_forJSON( majorDimension = "COLUMNS" ) {
     let url = `${UrlComposer.spreadsheetUrlPrefix}/${encodeURIComponent(this.spreadsheetId)}/values/${
       encodeURIComponent(this.range)}?${
-      ( majorDimension != null ) ? `majorDimension=${encodeURIComponent(majorDimension)}&` : "" }key=${encodeURIComponent(this.APIKey)}`
+      ( majorDimension != null ) ? `majorDimension=${encodeURIComponent(majorDimension)}&` : "" }key=${encodeURIComponent(this.apiKey)}`
       ;
 
     return url;
