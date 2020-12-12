@@ -1,3 +1,5 @@
+export { test };
+
 import * as Base64ToUint8Array from "../Base64ToUint8Array.js";
 import * as PartTime from "../PartTime.js";
 import * as Random from "../Random.js";
@@ -121,11 +123,18 @@ class Progress extends ValueMax.Percentage.Aggregate {
 window.addEventListener("load", event => {
   ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.7.0/dist/tf.min.js").then(test); });
 
-function test() {
+/**
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
+ * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+ *
+ */
+function test( progressParent ) {
   console.log("Base64 decode testing...");
   let delayMilliseconds = 1000;
 
-  let progress = new Progress();
+  let progress = progressParent.addChild( new Progress() );
   let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
   let testPromiseAll = [];
