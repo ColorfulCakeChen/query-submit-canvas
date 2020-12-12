@@ -81,7 +81,7 @@ class UrlComposer {
   }
 
   /**
-   * A generator for composing the URL (according this object's data members), downloading it as JSON format, extracting
+   * Generator for composing the URL (according this object's data members), downloading it as JSON format, extracting
    * data as a two dimension (column-major) array.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -95,7 +95,7 @@ class UrlComposer {
    *   Yield ( value = a two dimension (column-major) array ) when ( done = true ) successfully.
    *   Yield ( value = null ) when ( done = true ) failed.
    */
-  async *fetcher_JSON_ColumnMajorArray( progressParent ) {
+  async* fetcher_JSON_ColumnMajorArray( progressParent ) {
     let progressRoot = progressParent.getRoot();
     let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( 4 ) );
 
