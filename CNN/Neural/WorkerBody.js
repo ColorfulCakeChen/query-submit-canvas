@@ -23,10 +23,13 @@ class WorkerBody {
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
    *
-   * @param {string} weightsURL
-   *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
+   * @param {string} weightsSpreadsheetId
+   *   The Google Sheets spreadsheetId of neural network weights. Every worker will load weights from the spreadsheet to initialize one neural network.
+   *
+   * @param {string} weightsAPIKey
+   *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
    */
-  init( workerId = 0, tensorflowJsURL, neuralNetConfig, weightsURL ) {
+  init( workerId = 0, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey ) {
 
     if ( workerId < 0 )
       workerId = 0;
@@ -34,7 +37,8 @@ class WorkerBody {
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetConfig = neuralNetConfig;
-    this.weightsURL = weightsURL;
+    this.weightsSpreadsheetId = weightsSpreadsheetId;
+    this.weightsAPIKey = weightsAPIKey;
 
     let bKeepInputTensor = false; // Because every web worker will copy the input, there is not necessary to keep input.
 
@@ -285,9 +289,10 @@ globalThis.onmessage = function( e ) {
   let message = e.data;
 
   switch ( message.command ) {
-    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, weightsURL };
+    case "init": //{ command: "init", workerId, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey };
       globalThis.workerBody = new WorkerBody();
-      globalThis.workerBody.init( message.workerId, message.tensorflowJsURL, message.neuralNetConfig, message.weightsURL );
+      globalThis.workerBody.init(
+        message.workerId, message.tensorflowJsURL, message.neuralNetConfig, message.weightsSpreadsheetId, message.weightsAPIKey );
       break;
 
     case "disposeWorker": //{ command: "disposeWorker" };
