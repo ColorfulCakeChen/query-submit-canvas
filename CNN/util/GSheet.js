@@ -4,9 +4,9 @@ import * as GSheetsAPIv4 from "./GSheet/GSheetsAPIv4.js";
 export { Url };
 
 /**
- * 
+ * Fetch data from Google Sheets.
  */
-class Url {
+class Fetcher {
 
   /**
    * If no sheet name in the range's A1 notation, the first (most left) visible sheet inside the spreadsheet will be used.
