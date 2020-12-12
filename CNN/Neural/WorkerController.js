@@ -38,18 +38,18 @@ class Base {
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
    *
-   * @param {string} weightsURL
-   *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
+   * @param {string} weightsSpreadsheetId
+   *   The Google Sheets spreadsheetId of neural network weights. Every worker will load weights from the spreadsheet to initialize one neural network.
+   *
+   * @param {string} weightsAPIKey
+   *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
    */
-  init(
-      tensorflowJsURL,
-      neuralNetConfig,
-      weightsURL
-  ) {
+  init( tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey ) {
 
     this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetConfig = neuralNetConfig;
-    this.weightsURL = weightsURL;
+    this.weightsSpreadsheetId = weightsSpreadsheetId;
+    this.weightsAPIKey = weightsAPIKey;
 
     this.processingId = -1; // The current processing id. Negative means processTensor() has not been called. Every processTensor() call will use a new id.
 
