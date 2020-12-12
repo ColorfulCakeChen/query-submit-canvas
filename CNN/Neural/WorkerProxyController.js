@@ -24,13 +24,13 @@ export { Base };
  * (possible scaled) source image data back to this WorkerController, and keep computing neural network at the same. And then, this
  * WorkerController will transfer the source image data to the next worker as soon as possible.
  *
- * Finally, this WorkerController collects all web workers' processTensor() results in a promise. The promise will resolve with an array
- * of typed-array. Every typed-array is the output of one neural network.
+ * Finally, this WorkerProxyController collects all web workers' processTensor() results in a promise. The promise will resolve with an
+ * array of typed-array. Every typed-array is the output of one neural network.
  */
 class Base {
 
   /**
-   * Initialize this worker controller. It will create two web workers and inform them to create a neural network per worker.
+   * Initialize this worker proxy controller. It will create two web workers and inform them to create a neural network per worker.
    *
    * @param {string} tensorflowJsURL
    *   The URL of tensorflow javascript library. Every worker will load the library from the URL.
@@ -71,8 +71,8 @@ class Base {
     for ( let i = 0; i < totalWorkerCount; ++i ) {
       let initProgress = this.initProgressAll.childrren[ i ];
       let workerProxy = this.workerProxyArray[ i ] = new WorkerProxy.Base();
-      workerProxy.init( i, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress );
-    } 
+      workerProxy.init( i, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey, initProgress );
+    }
 
     this.processTensorPromiseArray = new Array( totalWorkerCount ); // Pre-allocation for reducing re-allocation.
   }
