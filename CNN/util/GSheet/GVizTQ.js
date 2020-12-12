@@ -40,7 +40,7 @@ class UrlComposer {
    * inside the spreadsheet will be used.
    *
    * @param {string} spreadsheetId
-   *   The component after the "https://docs.google.com/spreadsheets/d/".
+   *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/") of the spreadsheet to be accessed.
    *
    * @param {string} range
    *   The cells' A1 notation of the cells. It describes the (name and) range of the sheet inside the spreadsheet.
@@ -50,7 +50,7 @@ class UrlComposer {
    *   - "'Name has space'!7:10" refers to the rows 7 to 10 of sheet named "Name has space".
    *
    * @param {number} headers
-   *   The component after the "headers=". It means how many header rows. It should be an zero or positive integer.
+   *   The component after the "headers=". It means how many header rows. It should be zero or a positive integer.
    *
    * @param {string} responseHandler
    *   The function name of JSON content handler. Only meaningful when the content is downloaded as JSONP format. This
