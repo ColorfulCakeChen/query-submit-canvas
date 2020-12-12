@@ -1,6 +1,6 @@
-import * as ValueMax from "../../ValueMax.js";
-
 export { UrlComposer };
+
+import * as ValueMax from "../../ValueMax.js";
 
 /**
  * Compose a URL for downloading cells data (as JSON or .CSV format) from a Google Sheets by using Google Visualzation Table Query
