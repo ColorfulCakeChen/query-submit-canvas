@@ -1,7 +1,7 @@
+export { UrlComposer };
+
 import * as GVizTQ from "./GSheet/GVizTQ.js";
 import * as GSheetsAPIv4 from "./GSheet/GSheetsAPIv4.js";
-
-export { UrlComposer };
 
 /**
  * Fetch data from Google Sheets.
