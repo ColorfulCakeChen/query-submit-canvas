@@ -79,6 +79,35 @@ class UrlComposer {
   }
 
   /**
+   * Compose the URL (according this object's data members), download it as JSON format, extract data as a two dimension (column-major) array.
+   *
+   * @return {array[]}
+   *   Return a two dimension (column-major) array. Return null if failed.
+   */
+  async fetch_JSON_ColumnMajorArray() {
+    let url = this.getUrl_forJSON();
+    try {
+      let response = await fetch( url );
+      if ( response.ok )
+        return null;
+
+      let text = await response.text();
+      if ( !text )
+        return null;
+
+      let json = UrlComposer.evalJSONP( text );
+      if ( !json )
+        return null;
+
+      let columnMajorArray = UrlComposer.dataTableToColumnMajorArray( json.table );
+      return columnMajorArray;
+
+    } catch ( e ) {
+      return null;
+    }
+  }
+
+  /**
    * @param {string} outputFormat
    *   Specify the data format when downloading the returned url. It should be null or "json" or "csv" or "html". If null, there
    * will be no format specified in the generated url (means default format, usually same as "json").
@@ -96,7 +125,8 @@ class UrlComposer {
 
       ( this.sheetId != null ) ? `&gid=${encodeURIComponent(this.sheetId)}` : `${
       ( this.sheetName != null ) ? `&sheet=${encodeURIComponent(this.sheetName)}` : "" }` }${
-      ( this.range != null ) ? `&range=${encodeURIComponent(this.range)}` : "" }&headers=${encodeURIComponent(this.headers)}`;
+      ( this.range != null ) ? `&range=${encodeURIComponent(this.range)}` : "" }&headers=${encodeURIComponent(this.headers)}`
+      ;
 
     return url;
   }
@@ -105,7 +135,6 @@ class UrlComposer {
    * @return {string} The url for downloading the target as JSONP format.
    */
   getUrl_forJSON() {
-    //return this.getUrl_forFormat( "json" );
     return this.getUrl_forFormat( null ); // Because default format is "json".
   }
 
