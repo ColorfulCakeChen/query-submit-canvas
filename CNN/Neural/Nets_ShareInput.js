@@ -1,5 +1,5 @@
 import * as Net from "./Net.js";
-import * as WorkerController from "./WorkerController.js";
+import * as WorkerProxies from "./WorkerProxies.js";
 
 export { Config } from "./Net.js";
 export { Base };
@@ -41,10 +41,11 @@ class Base {
     if ( bWebWorker ) {
 //!!! ...unfinished...
       let totalWorkerCount = neuralNetCount;
-      let weightsURL = "???";
+      let weightsSpreadsheetId = "???";
+      let weightsAPIKey = "???";
 
-      let workerController = this.workerController = new WorkerController.Base(); // Create the controller of web workers.
-      workerController.init( neuralNetConfig, totalWorkerCount, weightsURL );     // Create all web workers.
+      let workerProxies = this.workerProxies = new WorkerProxies.Base(); // Create the controller of web workers.
+      workerProxies.init( neuralNetConfig, totalWorkerCount, weightsSpreadsheetId, weightsAPIKey ); // Create all web workers.
 
     } else {
 
@@ -78,9 +79,9 @@ class Base {
       this.neuralNetArray = null;
     }
 
-    if ( this.workerController ) {
-      this.workerController.disposeWorkers();
-      this.workerController = null;
+    if ( this.workerProxies ) {
+      this.workerProxies.disposeWorkers();
+      this.workerProxies = null;
     }
   }
 
@@ -167,7 +168,7 @@ class Base {
       let sourceImageData = ctx.getImageData( 0, 0, sourceCanvas.width, sourceCanvas.height );
 
 //!!!???
-      this.workerController.processTensor( sourceImageData, resultArray );
+      this.workerProxies.processTensor( sourceImageData, resultArray );
 
       // Promise.allSettled( [ ... ] );
 
