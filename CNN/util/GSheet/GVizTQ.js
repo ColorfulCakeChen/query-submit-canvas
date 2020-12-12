@@ -100,7 +100,7 @@ class UrlComposer {
     let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( 4 ) );
 
     try {
-      // 1. Compose URL and download it.
+      // 1. Compose URL and download it as JSONP.
       let url = this.getUrl_forJSON();
       let response = await fetch( url );
 
