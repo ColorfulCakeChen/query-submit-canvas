@@ -69,17 +69,21 @@ class Base {
    * @param {Net.Config} neuralNetConfig
    *   The configuration of the neural network which will be created by this web worker.
    *
-   * @param {string} weightsURL
-   *   The URL of neural network weights. Every worker will load weights from the URL to initialize one neural network.
+   * @param {string} weightsSpreadsheetId
+   *   The Google Sheets spreadsheetId of neural network weights. Every worker will load weights from the spreadsheet to initialize one neural network.
+   *
+   * @param {string} weightsAPIKey
+   *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
    *
    * @param {NeuralNetProgress.InitProgress} initProgress
    *   This worker proxy will modify initProgress to report its web worker's initialization progress.
    */
-  init( workerId, tensorflowJsURL, neuralNetConfig, weightsURL, initProgress ) {
+  init( workerId, tensorflowJsURL, neuralNetConfig, weightsSpreadsheetId, weightsAPIKey, initProgress ) {
     this.workerId = workerId;
     this.tensorflowJsURL = tensorflowJsURL;
     this.neuralNetConfig = neuralNetConfig;
-    this.weightsURL = weightsURL;
+    this.weightsSpreadsheetId = weightsSpreadsheetId;
+    this.weightsAPIKey = weightsAPIKey;
     this.initProgress = initProgress;
 
     // Every worker has a result pending promise map. The key of the map is processing id. The value of the map is a ProcessRelayPromises.
@@ -101,7 +105,8 @@ class Base {
       workerId: workerId,
       tensorflowJsURL: tensorflowJsURL,
       neuralNetConfig: neuralNetConfig,
-      weightsURL: weightsURL
+      weightsSpreadsheetId: weightsSpreadsheetId,
+      weightsAPIKey: weightsAPIKey
     };
 
     worker.postMessage( message );  // Inform the worker to initialize.
