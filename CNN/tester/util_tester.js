@@ -2,7 +2,7 @@ import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as GSheet_tester from "./GSheet_tester.js";
 import * as ScriptLoader from "../ScriptLoader.js";
 import * as ValueMax from "../ValueMax.js";
-
+import * as PartTime from "../PartTime.js";
 
 window.addEventListener("load", event => {
   ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.7.0/dist/tf.min.js").then(test); });
