@@ -18,35 +18,28 @@ function test() {
 
   let progressReceiver = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy("TestProgressBar");
 
-/*
-  let testPromiseAll = [];
-  for (let i = 0; i < testCases.length; ++i) {
-    let testCase = testCases[ i ];
+//   for await ( let progressRoot of Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester ) ) {
+//   }
 
-    let decoder = Base64ToUint8Array.decoder_FromArrayBuffer(
-        testCase.source, testCase.skipLineCount, progress.children[ i ], testCase.suspendByteCount);
-
-    let testPromise = PartTime.forOf(
-      decoder,
-      ( valueMax ) => { progressReceiver.setValueMax( valueMax.valuePercentage, valueMax.maxPercentage ); }, // Report progress to UI.
-      delayMilliseconds
-    ).then(r => {
-      progressReceiver.informDone(r); // Inform UI progress done.
-      tf.util.assert(
-        r.toString() == testCase.result.toString(),
-        `[${i}]`
-          + ` Skip ${testCase.skipLineCount} lines.`
-          + ` suspendByteCount=${testCase.suspendByteCount}.`
-          + ` ${testCase.note} [${r}] != [${testCase.result}]`);
-    });
-
-    testPromiseAll.push( testPromise );
+  function* testerAll() {
+    yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
+    yield* GSheet_tester.tester( progress_GSheet_tester );
   }
 
-  Promise.all(testPromiseAll).then(values => {
+  let tester = testerAll();
+
+  let testPromise = PartTime.forOf(
+    tester,
+    ( progressRoot ) => { progressReceiver.setValueMax( progressRoot.valuePercentage, progressRoot.maxPercentage ); }, // Report progress to UI.
+    delayMilliseconds
+  ).then(r => {
+  });
+
+//   progressReceiver.informDone(r); // Inform UI progress done.
+
+  testPromise.then(values => {
     console.log("util testing... Done.");
   });
-*/
 
 //!!! ...unfinished... test case by multipler web worker?
 }
