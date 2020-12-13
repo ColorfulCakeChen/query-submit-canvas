@@ -3,6 +3,21 @@ export { tester };
 import * as GSheet from "../util/GSheet.js";
 import * as ValueMax from "../ValueMax.js";
 
+/*
+class TestCase {
+  constructor( spreadsheetId, range, apiKey ) {
+    this.source = source;
+    this.skipLineCount = skipLineCount;
+    this.result = result;
+    this.suspendByteCount = suspendByteCount;
+    this.note = note;
+  }
+}
+
+let testCases = [
+  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 1, emptyUint8Array, undefined, "Empty. Not enough lines." ),
+*/
+
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -11,4 +26,21 @@ import * as ValueMax from "../ValueMax.js";
  *
  */
 function* tester( progressParent ) {
+  console.log("GSheet download testing...");
+
+//  let progress = progressParent.addChild( new ValueMax.Percentage.Aggregate() );
+
+  let spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
+  let range = "A:A";
+  let apiKey = "AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU";
+
+  // Without API key.
+  let tester1 = new GSheet.UrlComposer( spreadsheetId, range );
+
+  // With API key.
+  let tester2 = new GSheet.UrlComposer( spreadsheetId, range, apiKey );
+
+//!!! ...unfinished... (2020/12/13)
+
+//  console.log("GSheet download testing... Done.");
 }
