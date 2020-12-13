@@ -120,9 +120,6 @@ class Progress extends ValueMax.Percentage.Aggregate {
   }
 }
 
-window.addEventListener("load", event => {
-  ScriptLoader.createPromise("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.7.0/dist/tf.min.js").then(test); });
-
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
