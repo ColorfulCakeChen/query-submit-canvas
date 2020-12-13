@@ -1,4 +1,4 @@
-export { test };
+export { tester };
 
 import * as GSheet from "../util/GSheet.js";
 import * as ValueMax from "../ValueMax.js";
@@ -10,5 +10,5 @@ import * as ValueMax from "../ValueMax.js";
  * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
  *
  */
-function test( progressParent ) {
+function* tester( progressParent ) {
 }
