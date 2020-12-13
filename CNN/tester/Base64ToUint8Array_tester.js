@@ -1,4 +1,4 @@
-export { test };
+export { tester };
 
 import * as Base64ToUint8Array from "../Base64ToUint8Array.js";
 import * as PartTime from "../PartTime.js";
@@ -130,6 +130,31 @@ window.addEventListener("load", event => {
  * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
  *
  */
+function* tester( progressParent ) {
+  console.log("Base64 decode testing...");
+
+  let progress = progressParent.addChild( new Progress() );
+
+  for (let i = 0; i < testCases.length; ++i) {
+    let testCase = testCases[ i ];
+
+    let decoder = Base64ToUint8Array.decoder_FromArrayBuffer(
+        testCase.source, testCase.skipLineCount, progress.children[ i ], testCase.suspendByteCount);
+
+    let r = yield* decoder;
+   
+    tf.util.assert(
+      r.toString() == testCase.result.toString(),
+      `[${i}]`
+        + ` Skip ${testCase.skipLineCount} lines.`
+        + ` suspendByteCount=${testCase.suspendByteCount}.`
+        + ` ${testCase.note} [${r}] != [${testCase.result}]`);
+  }
+
+  console.log("Base64 decode testing... Done.");
+}
+
+/*!!! Old (2020/12/13 Remarked)
 function test( progressParent ) {
   console.log("Base64 decode testing...");
   let delayMilliseconds = 1000;
@@ -165,3 +190,4 @@ function test( progressParent ) {
     console.log("Base64 decode testing... Done.");
   });
 }
+*/
