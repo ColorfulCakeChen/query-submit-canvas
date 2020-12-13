@@ -1,7 +1,6 @@
 export { tester };
 
 import * as Base64ToUint8Array from "../Base64ToUint8Array.js";
-import * as PartTime from "../PartTime.js";
 import * as Random from "../Random.js";
 import * as ScriptLoader from "../ScriptLoader.js";
 import * as ValueMax from "../ValueMax.js";
