@@ -9,7 +9,7 @@ window.addEventListener("load", event => {
 
 function test() {
   console.log("util testing...");
-  let delayMilliseconds = 1000;
+  let delayMilliseconds = 100;
 
   // Aggregate all progress about util_tester.
   let progress = new ValueMax.Percentage.Aggregate();
