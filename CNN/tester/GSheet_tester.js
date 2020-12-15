@@ -28,7 +28,8 @@ let testCases = [
 function* tester( progressParent ) {
   console.log("GSheet download testing...");
 
-//  let progress = progressParent.addChild( new ValueMax.Percentage.Aggregate() );
+  let progress1 = progressParent.addChild( new ValueMax.Percentage.Aggregate() );
+  let progress2 = progressParent.addChild( new ValueMax.Percentage.Aggregate() );
 
   let spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let range = "A:A";
@@ -36,9 +37,20 @@ function* tester( progressParent ) {
 
   // Without API key.
   let tester1 = new GSheet.UrlComposer( spreadsheetId, range );
+  let fetcher1 = tester1.fetcher_JSON_ColumnMajorArray( progress1 );
+  let result1 = yield* fetcher1;
 
   // With API key.
   let tester2 = new GSheet.UrlComposer( spreadsheetId, range, apiKey );
+  let fetcher2 = tester2.fetcher_JSON_ColumnMajorArray( progress2 );
+  let result2 = yield* fetcher2;
+
+  // Compare results: should the same.
+  {
+    tf.util.assert(
+      result1.toString() == result2.toString(),
+        ` ${result1} != ${result2}`);
+  }
 
 //!!! ...unfinished... (2020/12/13)
 
