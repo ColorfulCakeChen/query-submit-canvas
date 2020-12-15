@@ -25,7 +25,7 @@ let testCases = [
  * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
  *
  */
-function* tester( progressParent ) {
+async function* tester( progressParent ) {
   console.log("GSheet download testing...");
 
   let progress1 = progressParent.addChild( new ValueMax.Percentage.Aggregate() );
@@ -38,12 +38,12 @@ function* tester( progressParent ) {
   // Without API key.
   let tester1 = new GSheet.UrlComposer( spreadsheetId, range );
   let fetcher1 = tester1.fetcher_JSON_ColumnMajorArray( progress1 );
-  let result1 = await yield* fetcher1;
+  let result1 = yield* fetcher1;
 
   // With API key.
   let tester2 = new GSheet.UrlComposer( spreadsheetId, range, apiKey );
   let fetcher2 = tester2.fetcher_JSON_ColumnMajorArray( progress2 );
-  let result2 = await yield* fetcher2;
+  let result2 = yield* fetcher2;
 
   // Compare results: should the same.
   {
