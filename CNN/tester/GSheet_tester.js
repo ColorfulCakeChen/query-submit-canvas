@@ -52,7 +52,5 @@ async function* tester( progressParent ) {
         ` ${result1} != ${result2}`);
   }
 
-//!!! ...unfinished... (2020/12/13)
-
   console.log("GSheet download testing... Done.");
 }
