@@ -58,7 +58,7 @@ class UrlComposer {
    *   Yield ( value = a two dimension (column-major) array ) when ( done = true ) successfully.
    *   Yield ( value = null ) when ( done = true ) failed.
    */
-  async* fetcher_JSON_ColumnMajorArray() {
+  async* fetcher_JSON_ColumnMajorArray( progressParent ) {
     let progressRoot = progressParent.getRoot();
     let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( 3 ) );
 
