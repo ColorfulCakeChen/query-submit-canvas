@@ -21,7 +21,7 @@ function test() {
 //   for await ( let progressRoot of Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester ) ) {
 //   }
 
-  function* testerAll() {
+  async function* testerAll() {
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
     yield* GSheet_tester.tester( progress_GSheet_tester );
   }
