@@ -54,5 +54,5 @@ function* tester( progressParent ) {
 
 //!!! ...unfinished... (2020/12/13)
 
-//  console.log("GSheet download testing... Done.");
+  console.log("GSheet download testing... Done.");
 }
