@@ -33,7 +33,7 @@ export { Base, Params };
  *
  * @member {number[]} shape
  *   The weights shape (element count for every dimension). The shape.length is dimension. If ( shape.length == 0 ),
- * it is 0-dimension (i.e. scalar). Theinitialization will fail (i.e. ( isValid() == false ) ) if shape is too large
+ * it is 0-dimension (i.e. scalar). The initialization will fail (i.e. ( isValid() == false ) ) if shape is too large
  * (or NaN) (exceeds the defaultInput (or, privilegeInput if not null) bounding).
  *
  * @member {Float32Array} weights
