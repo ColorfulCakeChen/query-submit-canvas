@@ -179,7 +179,7 @@ class Params extends Base {
    *
    * @param {Float32Array|Array} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
-   * inputFloat32Array. When not null, it should have parameterCountExtracted elements (i.e. the count of null values
+   * inputFloat32Array. When not null, it should have parameterCountExtracted elements (i.e. the count of non-null values
    * of parameterMap).
    *
    * @return {boolean} Return false, if initialization failed.
@@ -191,7 +191,7 @@ class Params extends Base {
     this.weightsModified = this.parameterMap = null; // So that distinguishable if re-initialization failed.
 
     if ( !parameterMap )
-      return false;  // Don not know what parameters to be used or extracted.
+      return false;  // Do not know what parameters to be used or extracted.
 
     let inChannels = parameterMap.get( Params.Keys.inChannels );
     if ( !inChannels )
