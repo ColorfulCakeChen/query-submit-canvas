@@ -6,7 +6,8 @@ export { Base };
  *   - NxN depthwise convolution: change channel count. (channel multiplier)
  *   - 1x1 pointwise convolution: change channel count. (shrink)
  *
- * Every convolution (no matter pointwise or depthwise) could exist or not exist. If exists, it could have or have no bias and activation function.
+ * Every convolution (no matter pointwise or depthwise) could exist or not exist. If exists, it could have or have no bias and
+ * activation function.
  *
  * @member {number} channelCount_pointwise1After_depthwiseBefore
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals expansionChannelCount.
@@ -145,11 +146,14 @@ class Base {
     }
 
     // The depthwise operation.
-    this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = false;
+
+    this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false;               // Assume no depthwise.
+    this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // So no channel multiplier.
+
     this.depthwiseFilterHeight = depthwiseFilterHeight;
     this.depthwiseFilterWidth = depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
-
     this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
+
     if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
       if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
@@ -165,12 +169,12 @@ class Base {
         }
       }
 
-      this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // same because no channel multiplier.
-
     } else {
       if ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
         this.bDepthwise = this.bDepthwiseConv = true;
-        this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier;
+
+        this.channelCount_depthwiseAfter_pointwise2Before
+          = this.channelCount_pointwise1After_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier;
 
         this.depthwiseFiltersShape
           = [ depthwiseFilterHeight, this.depthwiseFilterWidth,
@@ -186,8 +190,6 @@ class Base {
         }
 
       } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
-        this.bDepthwise = this.bDepthwiseConv = false;
-        this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // same because no channel multiplier.
       }
     }
 
