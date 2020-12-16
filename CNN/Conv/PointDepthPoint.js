@@ -1,12 +1,12 @@
 export { Base };
 
 /**
- * One step of one block of convolution neural network. There are at most three convolution inside this object.
+ * One step of one block of convolution neural network. There are at most three convolutions inside this object.
  *   - 1x1 pointwise convolution: change channel count. (exapnd)
  *   - NxN depthwise convolution: change channel count. (channel multiplier)
  *   - 1x1 pointwise convolution: change channel count. (shrink)
  *
- * The second pointwise convolution is always existed. It, however, may or may not have bias and activation function.
+ * Every convolution (no matter pointwise or depthwise) could exist or not exist. If exists, it could have or have no bias and activation function.
  *
  * @member {number} channelCount_pointwise1After_depthwiseBefore
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals expansionChannelCount.
@@ -40,7 +40,7 @@ class Base {
    *   If true, there will be a bias after pointwise convolution. If ( pointwise1ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise1ActivationName
-   *   The activation function name after the first 1x1 pointwise convolution. One of the following "" (or null), "relu", "relu6", "sigmoid",
+   *   The activation function name after the first pointwise convolution. One of the following "" (or null), "relu", "relu6", "sigmoid",
    * "tanh", "sin", "cos". If ( pointwise1ChannelCount == 0 ), this activation function will also be ignored.
    *
    * @param {number} depthwiseFilterHeight
@@ -64,18 +64,18 @@ class Base {
    * "cos".
    *
    * @param {number} pointwise2ChannelCount
-   *   The output channel count of the second 1x1 pointwise convolution. If 0, there will be no pointwise convolution before depthwise convolution.
+   *   The output channel count of the second pointwise convolution. If 0, there will be no pointwise convolution after depthwise convolution.
    *
    * @param {boolean} bPointwise2Bias
-   *   If true, there will be a bias after the second 1x1 pointwise convolution. If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
+   *   If true, there will be a bias after the second pointwise convolution. If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise2ActivationName
-   *   The activation function name after the second 1x1 pointwise convolution. One of the following "" (or null), "relu", "relu6", "sigmoid",
+   *   The activation function name after the second pointwise convolution. One of the following "" (or null), "relu", "relu6", "sigmoid",
    * "tanh", "sin", "cos". If ( pointwise2ChannelCount == 0 ), this activation function will also be ignored.
    *
    * @param {boolean} bAddInputToOutput
-   *   If true and ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be added
-   * to output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
+   *   If true and ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be
+   * added to output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
@@ -89,7 +89,7 @@ class Base {
     bKeepInputTensor
   ) {
 
-    this.disposeTensors();
+    this.disposeTensors();  // Also initialize some member function to no_operation().
 
     let bShouldAddInputToOutput = false;
     if (   ( bAddInputToOutput )          // MobileNetV2 should add input to output, so should not destroy input tensor (otherwise can not add it).
@@ -148,30 +148,33 @@ class Base {
     this.depthwiseFilterWidth = depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
-    if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+    if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
       if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
         switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
           case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep; break;
           case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep; break;
+          default:     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = false; break;
         }
         bAlreadyKeepInputTensor = true;
       } else {                                                              // will dispose inputTensor.
         switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
           case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
           case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
+          default:     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = false; break;
         }
       }
 
-      this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // depthwise without channel multiplier.
+      this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // same because no channel multiplier.
 
     } else {
-      if ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) {
+      if ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
         this.bDepthwise = this.bDepthwiseConv = true;
         this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier;
 
         this.depthwiseFiltersShape
-          = [ depthwiseFilterHeight, this.depthwiseFilterWidth, this.channelCount_pointwise1After_depthwiseBefore, depthwise_AvgMax_Or_ChannelMultiplier ];
+          = [ depthwiseFilterHeight, this.depthwiseFilterWidth,
+              this.channelCount_pointwise1After_depthwiseBefore, depthwise_AvgMax_Or_ChannelMultiplier ];
 
         this.depthwiseFiltersTensor4d = Base.generateTensor( this.depthwiseFiltersShape );
 
@@ -182,9 +185,9 @@ class Base {
           this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy;
         }
 
-      } else {
-        this.bDepthwise = this.bDepthwiseConv = false;  // e.g. zero or negative number
-        this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // No depthwise (so that no channel multiplier).
+      } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
+        this.bDepthwise = this.bDepthwiseConv = false;
+        this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // same because no channel multiplier.
       }
     }
 
