@@ -1,12 +1,12 @@
 export { Base };
 
 /**
- * One step of one block of testing filters. There are at most three convolution inside this object.
+ * One step of one block of convolution neural network. There are at most three convolution inside this object.
  *   - 1x1 pointwise convolution: change channel count. (exapnd)
  *   - NxN depthwise convolution: change channel count. (channel multiplier)
  *   - 1x1 pointwise convolution: change channel count. (shrink)
  *
- * The second pointwise convolution is always existed. It, however, may have or not bias and activation function.
+ * The second pointwise convolution is always existed. It, however, may or may not have bias and activation function.
  *
  * @member {number} channelCount_pointwise1After_depthwiseBefore
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals expansionChannelCount.
