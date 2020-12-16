@@ -44,24 +44,25 @@ class Base {
    * "tanh", "sin", "cos". If ( pointwise1ChannelCount == 0 ), this activation function will also be ignored.
    *
    * @param {number} depthwiseFilterHeight
-   *   The height (and width) of depthwise convolution's filter.
+   *   The height (and width) of depthwise convolution's filter. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
    *
    * @param {string|number} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
    * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
    *
    * @param {number} depthwiseStrides
-   *   The strides of depthwise convolution.
+   *   The strides of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this strides will also be ignored.
    *
    * @param {string} depthwisePad
-   *   The padding of depthwise convolution. "valid" or "same".
+   *   The padding of depthwise convolution. "valid" or "same". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this pad will also be ignored.
    *
    * @param {boolean} bDepthwiseBias
-   *   If true, there will be a bias after depthwise convolution.
+   *   If true, there will be a bias after depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be
+   * ignored.
    *
    * @param {string} depthwiseActivationName
    *   The activation function name after depthwise convolution. One of the following "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin",
-   * "cos".
+   * "cos". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation will also be ignored.
    *
    * @param {number} pointwise2ChannelCount
    *   The output channel count of the second pointwise convolution. If 0, there will be no pointwise convolution after depthwise convolution.
