@@ -15,8 +15,8 @@ export { Base, Params };
  * initialization will fail (i.e. ( isValid() == false ) ).
  *
  * @member {number} defaultByteOffsetEnd
- *   The weights[] ends at defaultInput's defaultByteOffsetEnd (relative to defaultInput.buffer,
- * not to defaultInput.byteOffset) exclusively.
+ *   The weights[] ends at defaultInput's defaultByteOffsetEnd (not inclusive) (relative to
+ * defaultInput.buffer, not to defaultInput.byteOffset).
  *
  * @member {Float32Array} privilegeInput
  *   The privilege input Float32Array. If not null, its content will be interpret as weights and
@@ -28,8 +28,8 @@ export { Base, Params };
  * initialization will fail (i.e. ( isValid() == false ) ).
  *
  * @member {number} privilegeByteOffsetEnd
- *   The weights[] ends at privilegeInput's privilegeByteOffsetEnd (relative to privilegeInput.buffer,
- * not to privilegeInput.byteOffset) exclusively.
+ *   The weights[] ends at privilegeInput's privilegeByteOffsetEnd (not inclusive) (relative
+ * to privilegeInput.buffer, not to privilegeInput.byteOffset).
  *
  * @member {number[]} shape
  *   The weights shape (element count for every dimension). The shape.length is dimension. If ( shape.length == 0 ),
@@ -62,7 +62,7 @@ class Base {
     let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
 
     let input, byteOffsetBegin;
-    let byteOffsetEnd; // Exclusive. As the next filter's begin.
+    let byteOffsetEnd; // Not inclusive. It will be used as the next filter's beginning.
 
     if ( privilegeInput ) {       // privilegeInput first.
 
