@@ -4,7 +4,7 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
 export { Base };
 
 /**
- * Implement a block of ( depthwise convolution and  pointwise convolution ) or ShuffleNetV2 (with 2 output channel groups) or MobileNetV1
+ * Implement a block of ( depthwise convolution and pointwise convolution ) or ShuffleNetV2 (with 2 output channel groups) or MobileNetV1
  * or MobileNetV2.
  *
  *
