@@ -90,7 +90,7 @@ class Base {
     bKeepInputTensor
   ) {
 
-    this.disposeTensors();  // Also initialize some member function to no_operation().
+    this.disposeTensors();  // Also initialize some member function pointers to no_operation().
 
     let bShouldAddInputToOutput = false;
     if (   ( bAddInputToOutput )          // MobileNetV2 should add input to output, so should not destroy input tensor (otherwise can not add it).
@@ -145,6 +145,7 @@ class Base {
     }
 
     // The depthwise operation.
+    this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = false;
     this.depthwiseFilterHeight = depthwiseFilterHeight;
     this.depthwiseFilterWidth = depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
 
@@ -155,14 +156,12 @@ class Base {
         switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
           case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep; break;
           case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep; break;
-          default:     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = false; break;
         }
         bAlreadyKeepInputTensor = true;
       } else {                                                              // will dispose inputTensor.
         switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
           case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
           case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
-          default:     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = false; break;
         }
       }
 
