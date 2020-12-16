@@ -145,7 +145,7 @@ class Params extends Base {
    * The parameterMap should have at least:
    *
    * - Params.Keys.inChannels
-   *   {number} There will be how many input channels. (Input channel count)
+   *   {number} There will be how many input channels. (Input channel count) (By specifying)
    *
    *
    * The parameterMap could also have (and any other custom key-value pairs):
