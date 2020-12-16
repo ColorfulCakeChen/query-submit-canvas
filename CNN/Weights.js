@@ -234,11 +234,12 @@ class Params extends Base {
     //
     // Do not modify the original array data. When backtracking (to try another neural network layer
     // configuration), the original data is necessary.
-    this.weightsModified = new Float32Array( this.weights );
 //!!! (2020/12/16 Remarked) Loop is faster than function call.
+//     this.weightsModified = new Float32Array( this.weights );
 //     this.weightsModified.forEach( ( element, i, array ) => array[ i ] = Base.toPositiveInteger( element ) );
+    this.weightsModified = new Float32Array( this.weights.length );
     for ( let i = 0; i < this.weightsModified.length; ++i ) {
-      this.weightsModified[ i ] = Base.toPositiveInteger( this.weightsModified[ i ] );
+      this.weightsModified[ i ] = Base.toPositiveInteger( this.weights[ i ] );
     }
 
     // Extract (by evolution) values from array into map.
