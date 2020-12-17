@@ -143,6 +143,10 @@ class Base {
 
       return resultArray;
     }
+
+//!!! ...unfinished... (2020/12/17) The outer caller (after using the returned resultArray) might use tf.tidy() for guarding memory leak.
+//!!! ...unfinished... (2020/12/17) The web worker for computing neural network should use tf.tidy() too.
+
   }
 
 
