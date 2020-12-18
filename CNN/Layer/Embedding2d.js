@@ -44,12 +44,6 @@ class Params extends Weights.Params {
  * Every input channel has one embedding vocabulary table. Every embedding vocabulary table has
  * vocabularyCountPerInputChannel vocabularies. Every vocabulary has channelMultiplier embedding channels.
  *
-!!!???
- * @member {Array of number} inputScaleToSize
- *   Scale the height and width of the input image to size [ inputScaleToHeight, inputScaleToWidth ]
- * (in pixels) before convoluting. For text input, the inputScaleToHeight should be 1. If null, there will be
- * no scaling when apply_and_destroy_or_keep().
- *
  * @member {number} vocabularyCountPerInputChannel
  *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
  * every input channel has a vocabulary table). For an image data (R-G-B-A four channels), there will be 256
@@ -98,8 +92,6 @@ class Layer {
   * initer(
     progressParent,
     inputFloat32Array, byteOffsetBegin,
-//!!!???
-    inputScaleToSize,
     inChannels, vocabularyCountPerInputChannel, channelMultiplier = null,
     bKeepInputTensor
   ) {
@@ -120,9 +112,6 @@ class Layer {
 
     disposeTensors();
     this.params = this.vocabularyTables = null; // So that distinguishable if re-initialization failed.
-
-//!!!???
-    this.inputScaleToSize = inputScaleToSize;
 
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bKeepInputTensor = bKeepInputTensor;
@@ -208,7 +197,7 @@ class Layer {
   /** Release tf.tensor. */
   disposeTensors() {
     if ( this.vocabularyTablesTensor2dArray ) {
-      tf.dispose( this.vocabularyTablesTensor2dArray );
+      Layer.disposeTensorArray_NotNull( this.vocabularyTablesTensor2dArray );
       this.vocabularyTablesTensor2dArray = null;
     }
   }
@@ -219,13 +208,12 @@ class Layer {
    * @param {tf.tensor3d} inputTensor3d
    *   A tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with this.inChannels
    * (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
-   * so that they can be used as tf.gather()'s indices.
+   * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), this inputTensor3d
+   * will be disposed. If ( this.bKeepInputTensor == true ), this inputTensor3d will be kept.
    *
    * @return {tf.tensor3d} The predicted output as tensor3d. Return null, if failed (e.g. out of GPU memory).
    */
   apply_and_destroy_or_keep( inputTensor3d ) {
-
-//!!! ...unfinished... destroy inputTensor3d ?
 
     // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
     // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
@@ -244,7 +232,6 @@ class Layer {
     // In fact, the result is still tensor3d but has only one channel.
     const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( splitCount, theLastAxisId );
 
-//!!! ...unfinished...
     try {
       let embeddedTensor3dArray = new Array( vocabularyIndicesOneChannelTensor3dArray.length );
 
@@ -263,116 +250,30 @@ class Layer {
 
         // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
         let predictResult = tf.concat( embeddedTensor3dArray, theLastAxisId );
+
+//!!! ...unfinished... could using function pointer to avoid conditional-branching?
+        if ( !this.bKeepInputTensor )
+          inputTensor3d.dispose();
+
         return predictResult;
 
       } catch ( e ) {
-???
+        throw e;
+
       } finally {
-        Layer.disposeTensorArray_NotNull( embeddedTensor3dArray );
+        Layer.disposeTensorArray_NotNull( embeddedTensor3dArray ); // Avoid tensors' memory leakage.
         //embeddedTensor3dArray = null;
       }
 
     } catch ( e ) {
-???
+      throw e;
+
     } finally {
-      Layer.disposeTensorArray_NotNull( vocabularyIndicesOneChannelTensor3dArray );
+      Layer.disposeTensorArray_NotNull( vocabularyIndicesOneChannelTensor3dArray ); // Avoid tensors' memory leakage.
       //vocabularyIndicesOneChannelTensor3dArray = null;
     }
 
-//!!! ...unfinished...
-//!!! (2020/05/16 Remarked) ...Old... Already residual connection when init().
-//         // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
-//         let embeddedTensor3dArray = [];
-//         for ( let i = 0; i < splitCount; ++i ) {
-//           // Include the original input channel as residual connection.        
-//           let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ i ];
-//           embeddedTensor3dArray.push( oneChannelTensor3d );
-//
-//           // Every tensor2d (i.e. one channel) will be expanded to tensor3d (i.e. multiple channels).
-//           const multipleChannelTensor3d = this.vocabularyTablesTensor2dArray[ i ].gather( oneChannelTensor3d );
-//           embeddedTensor3dArray.push( multipleChannelTensor3d );
-//         }
-
-      } catch ( e ) {
-      }
-    });
-
 //!!! ...unfinished... squeeze-and-excitation.
-
-    return predictResult;
-
-
-/*Old !!! (2020/12/18 Remarked) remove tidy() 
-    const predictResult = tf.tidy( "Embedding2d.Layer.predict", () => {
-      try {
-
-//!!! ...unfinished... dtype int32 resizeBilinear() result which dtype?
-
-        // Scale input into specific size.
-        let scaledInput;
-        if (   ( !this.inputScaleToSize )                                       // No scaling information.
-            || (   ( this.inputScaleToSize[ 0 ] == inputTensor3d.shape[ 0 ] )   // Or, already same size.
-                && ( this.inputScaleToSize[ 1 ] == inputTensor3d.shape[ 1 ] ) )
-           ) {
-          scaledInput = inputTensor3d;
-        } else {
-          // Otherwise, scaling by using ( alignCorners == true ) for better looking when visualizing.
-          scaledInput = inputTensor3d.resizeBilinear( inputTensor3d, this.inputScaleToSize, true );
-        }
-
-        // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
-        // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
-        // results in an array [ r, g, b, a ] which has 4 tensor3d (in fact, they should be
-        // viewed as tensor1d).
-        let theLastAxisId = ( scaledInput.shape.length - 1 );  // Or, ( scaledInput.rank - 1 )
-
-        // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
-        //
-        // This should be the same as this.inChannels.
-        let splitCount = scaledInput.shape[ theLastAxisId ];
-
-        // Extract vocabulary indices from input. (In fact, the result is still tensor3d but has only one channel.)
-        const vocabularyIndicesOneChannelTensor3dArray = tf.tidy( "VocabularyIndicesArray", () => {
-
-          // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
-          // And then convert to integer, so that they can be used as tf.gather()'s indices.
-          return scaledInput.split( splitCount, theLastAxisId ).map( t => t.cast('int32') );
-        });
-
-        // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
-        // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
-        //
-        // Note: this.vocabularyTablesTensor2dArray[] already be prefixed vocabulary id (when init()). So it
-        // has residual connection in advance.
-        const embeddedTensor3dArray = vocabularyIndicesOneChannelTensor3dArray.map(
-          ( oneChannelTensor3d, channelIndex ) => {
-            return this.vocabularyTablesTensor2dArray[ channelIndex ].gather( oneChannelTensor3d );
-        });
-
-//!!! (2020/05/16 Remarked) ...Old... Already residual connection when init().
-//         // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
-//         let embeddedTensor3dArray = [];
-//         for ( let i = 0; i < splitCount; ++i ) {
-//           // Include the original input channel as residual connection.        
-//           let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ i ];
-//           embeddedTensor3dArray.push( oneChannelTensor3d );
-//
-//           // Every tensor2d (i.e. one channel) will be expanded to tensor3d (i.e. multiple channels).
-//           const multipleChannelTensor3d = this.vocabularyTablesTensor2dArray[ i ].gather( oneChannelTensor3d );
-//           embeddedTensor3dArray.push( multipleChannelTensor3d );
-//         }
-
-//!!! ...unfinished... squeeze-and-excitation.
-
-        // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
-        return tf.concat( embeddedTensor3dArray, theLastAxisId );
-
-      } catch ( e ) {
-      }
-    });
-
-    return predictResult;
-*/
   }
 
   /**
