@@ -136,7 +136,7 @@ class Layer {
             // This is a residual connection for embedding layer. This concatenating uses some GPU memory space.
             // It, however, reduces some calculation time when predict() because the residual connection is already
             // created in advance (here).
-            const vocabularyTableWithId = vocabularyIdsTensor2d.concat( vocabularyTable );
+            const vocabularyTableWithId = vocabularyIdsTensor2d.concat( vocabularyTable, theLastAxisId );
             return vocabularyTableWithId;
           });
         });
