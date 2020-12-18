@@ -83,29 +83,27 @@ class Config {
     // Otherwise, resize to the default size (height x width) which is the input image size used for training the neural network.
     //
     // ( alignCorners = true ) for visual image resizing.
+    let scaledSourceTensorFloat32;
     try {
-      let scaledSourceTensorFloat32 = tf.image.resizeBilinear( sourceTensor, this.sourceHeightWidth, true );
-      sourceTensor.dispose();
-
-      // Convert to int32 if necessary. (Because the tf.resize() result's dtype is float32.)
-      if ( bForceInt32 ) {
-        try {
-          let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( 'int32' );
-          return scaledSourceTensorInt32;
-
-        } finally {
-          scaledSourceTensorFloat32.dispose();
-        }
-
-      } else {
-        return scaledSourceTensorFloat32;
-      }
-
+      scaledSourceTensorFloat32 = tf.image.resizeBilinear( sourceTensor, this.sourceHeightWidth, true );
+    } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
     } finally {
       sourceTensor.dispose();
     }
 
-    return null; // e.g. out of (GPU) memory.
+    if ( !bForceInt32 ) {
+      return scaledSourceTensorFloat32;
+
+    // Convert to int32 if necessary. (Because the tf.resize() result's dtype is float32.)
+    try {
+      let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( 'int32' );
+      return scaledSourceTensorInt32;
+    } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
+    } finally {
+      scaledSourceTensorFloat32.dispose();
+    }
   }
 
   /** The channel count of the first block (Block 0). */
