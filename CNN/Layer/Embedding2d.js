@@ -233,6 +233,7 @@ class Layer {
     const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( splitCount, theLastAxisId );
 
     try {
+//!!! ...unfinished... could re-use this array shell (without re-allocating every time apply_and_destroy_or_keep() is called)?
       let embeddedTensor3dArray = new Array( vocabularyIndicesOneChannelTensor3dArray.length );
 
       try {
