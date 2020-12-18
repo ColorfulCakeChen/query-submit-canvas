@@ -192,7 +192,7 @@ class Layer {
         // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
         // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
         // results in an array [ r, g, b, a ] which has 4 tensor3d (in fact, they should be
-        // viewed as tensor1D).
+        // viewed as tensor1d).
         let theLastAxisId = ( scaledInput.shape.length - 1 );  // Or, ( scaledInput.rank - 1 )
 
         // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
