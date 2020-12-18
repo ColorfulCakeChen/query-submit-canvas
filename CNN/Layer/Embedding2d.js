@@ -44,6 +44,7 @@ class Params extends Weights.Params {
  * Every input channel has one embedding vocabulary table. Every embedding vocabulary table has
  * vocabularyCountPerInputChannel vocabularies. Every vocabulary has channelMultiplier embedding channels.
  *
+!!!???
  * @member {Array of number} inputScaleToSize
  *   Scale the height and width of the input image to size [ inputScaleToHeight, inputScaleToWidth ]
  * (in pixels) before convoluting. For text input, the inputScaleToHeight should be 1. If null, there will be
@@ -93,7 +94,9 @@ class Layer {
   * initer(
     progressParent,
     inputFloat32Array, byteOffsetBegin,
-    inputScaleToSize, inChannels, vocabularyCountPerInputChannel, channelMultiplier = null ) {
+//!!!???
+    inputScaleToSize,
+    inChannels, vocabularyCountPerInputChannel, channelMultiplier = null ) {
 
     // Estimate the maximum value of progress.
     let progressMax =
@@ -112,6 +115,7 @@ class Layer {
     disposeTensors();
     this.params = this.vocabularyTables = null; // So that distinguishable if re-initialization failed.
 
+//!!!???
     this.inputScaleToSize = inputScaleToSize;
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
 
@@ -143,7 +147,7 @@ class Layer {
     // Build tf.tensor of vocabulary tables.
     try {
       // Create vocabulary id list (tensor2d). (for concatenating with vocabulary table)
-      let numberSequencer = new Array( vocabularyCountPerInputChannel ).keys(); // A generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
+      let numberSequencer = new Array( vocabularyCountPerInputChannel ).keys(); // Generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
       const idsTensor2d = tf.tensor2d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1 ] );
 
       try {
