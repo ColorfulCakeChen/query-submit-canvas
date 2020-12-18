@@ -48,7 +48,7 @@ class Params extends Weights.Params {
  * @member {Array of number} inputScaleToSize
  *   Scale the height and width of the input image to size [ inputScaleToHeight, inputScaleToWidth ]
  * (in pixels) before convoluting. For text input, the inputScaleToHeight should be 1. If null, there will be
- * no scaling when predict().
+ * no scaling when apply_and_destroy_or_keep().
  *
  * @member {number} vocabularyCountPerInputChannel
  *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
@@ -84,6 +84,10 @@ class Layer {
    * embedding channels. The outChannels (output channel count) is always depending on channelMultiplier and equal
    * to ( inChannels * channelMultiplier ). If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
+   * @param {boolean} bKeepInputTensor
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
+   * For another example, the input image should be shared across many neural networks.
+   *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
@@ -96,7 +100,9 @@ class Layer {
     inputFloat32Array, byteOffsetBegin,
 //!!!???
     inputScaleToSize,
-    inChannels, vocabularyCountPerInputChannel, channelMultiplier = null ) {
+    inChannels, vocabularyCountPerInputChannel, channelMultiplier = null,
+    bKeepInputTensor
+  ) {
 
     // Estimate the maximum value of progress.
     let progressMax =
@@ -117,7 +123,9 @@ class Layer {
 
 //!!!???
     this.inputScaleToSize = inputScaleToSize;
+
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
+    this.bKeepInputTensor = bKeepInputTensor;
 
     this.params = new Params();
     if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
@@ -162,8 +170,8 @@ class Layer {
             // Concatenate vocabulary id prefix vocabulary table.
             //
             // This is a residual connection for embedding layer. This concatenating uses some GPU memory space.
-            // It, however, reduces some calculation time when predict() because the residual connection is already
-            // created in advance (here).
+            // It, however, reduces some calculation time when apply_and_destroy_or_keep() because the residual
+            // connection is already created in advance (here).
             this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, theLastAxisId );
           } catch ( e ) {
             return false; // e.g. out of (GPU) memory.
@@ -209,12 +217,92 @@ class Layer {
    * Process the input and produce output by using the weights of this neural network layer.
    *
    * @param {tf.tensor3d} inputTensor3d
-   *   A tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with
-   * this.inChannels (e.g. 4 for r-g-b-a, or 1 for text) channels.
+   *   A tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with this.inChannels
+   * (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
+   * so that they can be used as tf.gather()'s indices.
    *
    * @return {tf.tensor3d} The predicted output as tensor3d. Return null, if failed (e.g. out of GPU memory).
    */
-  predict( inputTensor3d ) {
+  apply_and_destroy_or_keep( inputTensor3d ) {
+
+//!!! ...unfinished... destroy inputTensor3d ?
+
+    // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
+    // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
+    // results in an array [ r, g, b, a ] which has 4 tensor3d (in fact, they should be
+    // viewed as tensor1d).
+    let theLastAxisId = ( inputTensor3d.shape.length - 1 );  // Or, ( inputTensor3d.rank - 1 )
+
+    // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+    //
+    // This should be the same as this.inChannels.
+    let splitCount = inputTensor3d.shape[ theLastAxisId ];
+
+    // Extract vocabulary indices from input.
+    //
+    // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
+    // In fact, the result is still tensor3d but has only one channel.
+    const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( splitCount, theLastAxisId );
+
+//!!! ...unfinished...
+    try {
+      let embeddedTensor3dArray = new Array( vocabularyIndicesOneChannelTensor3dArray.length );
+
+      try {
+
+        // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
+        // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
+        //
+        // Note: this.vocabularyTablesTensor2dArray[] already be prefixed vocabulary id (when init()). So it
+        // has residual connection in advance.
+        for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor3dArray.length; ++channelIndex ) {
+          let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ channelIndex ];
+          let embeddedTensor3d = this.vocabularyTablesTensor2dArray[ channelIndex ].gather( oneChannelTensor3d );
+          embeddedTensor3dArray[ channelIndex ] = embeddedTensor3d;
+        }
+
+        // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
+        let predictResult = tf.concat( embeddedTensor3dArray, theLastAxisId );
+        return predictResult;
+
+      } catch ( e ) {
+???
+      } finally {
+        Layer.disposeTensorArray_NotNull( embeddedTensor3dArray );
+        //embeddedTensor3dArray = null;
+      }
+
+    } catch ( e ) {
+???
+    } finally {
+      Layer.disposeTensorArray_NotNull( vocabularyIndicesOneChannelTensor3dArray );
+      //vocabularyIndicesOneChannelTensor3dArray = null;
+    }
+
+//!!! ...unfinished...
+//!!! (2020/05/16 Remarked) ...Old... Already residual connection when init().
+//         // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
+//         let embeddedTensor3dArray = [];
+//         for ( let i = 0; i < splitCount; ++i ) {
+//           // Include the original input channel as residual connection.        
+//           let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ i ];
+//           embeddedTensor3dArray.push( oneChannelTensor3d );
+//
+//           // Every tensor2d (i.e. one channel) will be expanded to tensor3d (i.e. multiple channels).
+//           const multipleChannelTensor3d = this.vocabularyTablesTensor2dArray[ i ].gather( oneChannelTensor3d );
+//           embeddedTensor3dArray.push( multipleChannelTensor3d );
+//         }
+
+      } catch ( e ) {
+      }
+    });
+
+//!!! ...unfinished... squeeze-and-excitation.
+
+    return predictResult;
+
+
+/*Old !!! (2020/12/18 Remarked) remove tidy() 
     const predictResult = tf.tidy( "Embedding2d.Layer.predict", () => {
       try {
 
@@ -284,6 +372,25 @@ class Layer {
     });
 
     return predictResult;
+*/
+  }
+
+  /**
+   * Release an array of tf.tensor.
+   *
+   * This method is a little like tf.dispose() but can only handle one-layer array. But it should be faster than
+   * tf.dispose( an_array ) because no dynamic memory allocation.
+   *
+   * @param {tf.tensor[]} tensorArray
+   *   An array contains tf.tensor to be disposed. The tensorArray itself can not be null (for reducing conditional-branch
+   * to improve performance). It can not have nested array. Its element must be either tf.tensor or null.
+   */
+  static disposeTensorArray_NotNull( tensorArray ) {
+    for ( let i = 0; i < tensorArray.length; ++i ) {
+      let t = tensorArray[ i ];
+      if ( t )
+        t.dispose();
+    }
   }
 
   get byteOffsetBegin() { return this.params.defaultByteOffsetBegin; }
