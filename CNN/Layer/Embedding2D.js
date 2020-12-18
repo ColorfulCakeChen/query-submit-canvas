@@ -152,8 +152,6 @@ class Layer {
     if ( this.vocabularyTablesTensor2DArray )
       if ( this.vocabularyTablesTensor2DArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
         if ( this.vocabularyTablesTensor2DArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
-          
-          this.vocabularyTablesTensors
           return true;
     return false;
   }
