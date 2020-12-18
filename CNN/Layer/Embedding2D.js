@@ -56,7 +56,7 @@ class Params extends Weights.Params {
  *
  * @member {number} embeddingChannelCountPerInputChannel
  *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
- * embedding channels. This is same as the this.params.channelMultiplier.
+ * embedding channels. This is the same as the this.params.channelMultiplier.
  */
 class Layer {
 
@@ -137,7 +137,7 @@ class Layer {
             // It, however, reduces some calculation time when predict() because the residual connection is already
             // created in advance (here).
             const vocabularyTableWithId = vocabularyIdsTensor2d.concat( vocabularyTable );
-            retrun vocabularyTableWithId;
+            return vocabularyTableWithId;
           });
         });
       });
