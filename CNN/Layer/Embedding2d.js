@@ -113,18 +113,11 @@ class Layer {
     }
 
     // Build tf.tensor of vocabulary tables.
+/*!!! (2020/12/18 Remarked for without tidy()
     try {
       this.vocabularyTablesTensor2dArray = tf.tidy( "Embedding2d.Layer.init.vocabularyTablesTensor2dArray", () => {
 
         let theLastAxisId = ( vocabularyTableShape.length - 1 ); // e.g. will be 1 for tensor2d.
-
-//!!! ...unfinished... (2020/12/18 Remarked) may create tensor2d directly without expandDims()
-//         // Create vocabulary id list. (tensor1d)
-//         const vocabularyIdsTensor1d
-//           = tf.linspace( 0, ( vocabularyCountPerInputChannel - 1 ), vocabularyCountPerInputChannel );
-//
-//         // Convert vocabulary id list to tensor2d. (for concatenating with vocabulary table)
-//         const vocabularyIdsTensor2d = vocabularyIdsTensor1d.expandDims( theLastAxisId );
 
         // A generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
         let zeroBaseNumberSequenceGenerator = Array( vocabularyCountPerInputChannel ).keys();
@@ -148,6 +141,44 @@ class Layer {
           });
         });
       });
+    } catch ( e ) {
+      return false; // e.g. out of (GPU) memory.
+    }
+*/
+
+    try {
+      // Create vocabulary id list (tensor2d). (for concatenating with vocabulary table)
+      let numberSequencer = new Array( vocabularyCountPerInputChannel ).keys(); // A generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
+      const idsTensor2d = tf.tensor2d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1 ] );
+
+      try {
+        let theLastAxisId = ( vocabularyTableShape.length - 1 ); // e.g. will be 1 for tensor2d.
+        this.vocabularyTablesTensor2dArray = new Array( this.vocabularyTables.length );
+        for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
+
+          // Create an embedding vocabulary table (without vocabulary id).
+          const vocabularyTableTensor2dWithoutIds = tf.tensor2d( this.vocabularyTables[ i ], vocabularyTableShape );
+
+          try {
+            // Concatenate vocabulary id prefix vocabulary table.
+            //
+            // This is a residual connection for embedding layer. This concatenating uses some GPU memory space.
+            // It, however, reduces some calculation time when predict() because the residual connection is already
+            // created in advance (here).
+            this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, theLastAxisId );
+          } catch ( e ) {
+            return false; // e.g. out of (GPU) memory.
+          } finally {
+            vocabularyTableTensor2dWithoutIds.dispose();
+          }
+        }
+
+      } catch ( e ) {
+        return false; // e.g. out of (GPU) memory.
+      } finally {
+        idsTensor2d.dispose();
+      }
+
     } catch ( e ) {
       return false; // e.g. out of (GPU) memory.
     }
