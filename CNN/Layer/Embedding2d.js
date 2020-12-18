@@ -118,12 +118,19 @@ class Layer {
 
         let theLastAxisId = ( vocabularyTableShape.length - 1 ); // e.g. will be 1 for tensor2d.
 
-        // Create vocabulary id list. (tensor1d)
-        const vocabularyIdsTensor1d
-          = tf.linspace( 0, ( vocabularyCountPerInputChannel - 1 ), vocabularyCountPerInputChannel );
+//!!! ...unfinished... (2020/12/18 Remarked) may create tensor2d directly without expandDims()
+//         // Create vocabulary id list. (tensor1d)
+//         const vocabularyIdsTensor1d
+//           = tf.linspace( 0, ( vocabularyCountPerInputChannel - 1 ), vocabularyCountPerInputChannel );
+//
+//         // Convert vocabulary id list to tensor2d. (for concatenating with vocabulary table)
+//         const vocabularyIdsTensor2d = vocabularyIdsTensor1d.expandDims( theLastAxisId );
 
-        // Convert vocabulary id list to tensor2d. (for concatenating with vocabulary table)
-        const vocabularyIdsTensor2d = vocabularyIdsTensor1d.expandDims( theLastAxisId );
+        // A generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
+        let zeroBaseNumberSequenceGenerator = Array( vocabularyCountPerInputChannel ).keys();
+
+        // Create vocabulary id list (tensor2d). (for concatenating with vocabulary table)
+        const vocabularyIdsTensor2d = tf.tensor2d( [ ...zeroBaseNumberSequenceGenerator ], [ vocabularyCountPerInputChannel, 1 ] );
 
         return this.vocabularyTables.map( ( vocabularyTable, i ) => {
           return tf.tidy( "Embedding2d.Layer.init.vocabularyTableWithId", () => {
@@ -176,6 +183,8 @@ class Layer {
   predict( inputTensor3d ) {
     const predictResult = tf.tidy( "Embedding2d.Layer.predict", () => {
       try {
+
+//!!! ...unfinished... dtype int32 resizeBilinear() result which dtype?
 
         // Scale input into specific size.
         let scaledInput;
