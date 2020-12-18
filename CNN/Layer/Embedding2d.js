@@ -205,7 +205,7 @@ class Layer {
 
           // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
           // And then convert to integer, so that they can be used as tf.gather()'s indices.
-          return scaledInput.split( splitCount, theLastAxisId ).map( t => t.toInt() );
+          return scaledInput.split( splitCount, theLastAxisId ).map( t => t.cast('int32') );
         });
 
         // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
