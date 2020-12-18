@@ -62,24 +62,50 @@ class Config {
    * @param {ImageData|HTMLCanvasElement} source_ImageData_or_Canvas
    *   The image or canvas which provides image.
    *
+   * @param {boolean} bForceInt32
+   *   If true, the dtype of the returned tf.tensor3d will guaranteed to be int32. Otherwise, the dtype of the returned tf.tensor3d
+   * may be int32 or float32 (if resized). This is useful if the result will be used by an embedding layer (which only accepts
+   * integer input).
+   *
    * @return {tf.tensor3d}
    *   Return the tensor3d which is the scaled image from canvas. Its size will be this.sourceImageHeightWidth. Its channel count
    * will be this.config.sourceChannelCount.
    */
-  create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas ) {
+  create_ScaledSourceTensor_from_ImageData_or_Canvas( source_ImageData_or_Canvas, bForceInt32 ) {
 
-    let sourceTensor = tf.browser.fromPixels( source_ImageData_or_Canvas, this.sourceChannelCount );
+    let sourceTensor = tf.browser.fromPixels( source_ImageData_or_Canvas, this.sourceChannelCount ); // dtype will be int32.
 
-    // If the size (height x width) is as expected, use it directly.
+    // If the size (height x width) is as expected, use it directly. (dtype will still be int32.)
     if (   ( sourceTensor.shape[ 0 ] == this.sourceHeight )
         && ( sourceTensor.shape[ 1 ] == this.sourceWidth  ) )
       return sourceTensor;
 
     // Otherwise, resize to the default size (height x width) which is the input image size used for training the neural network.
-    let scaledSourceTensor = tf.image.resizeBilinear( sourceTensor, this.sourceHeightWidth, true ); // ( alignCorners = true ) for visual image resizing.
-    sourceTensor.dispose();
+    //
+    // ( alignCorners = true ) for visual image resizing.
+    try {
+      let scaledSourceTensorFloat32 = tf.image.resizeBilinear( sourceTensor, this.sourceHeightWidth, true );
+      sourceTensor.dispose();
 
-    return scaledSourceTensor;
+      // Convert to int32 if necessary. (Because the tf.resize() result's dtype is float32.)
+      if ( bForceInt32 ) {
+        try {
+          let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( 'int32' );
+          return scaledSourceTensorInt32;
+
+        } finally {
+          scaledSourceTensorFloat32.dispose();
+        }
+
+      } else {
+        return scaledSourceTensorFloat32;
+      }
+
+    } finally {
+      sourceTensor.dispose();
+    }
+
+    return null; // e.g. out of (GPU) memory.
   }
 
   /** The channel count of the first block (Block 0). */
