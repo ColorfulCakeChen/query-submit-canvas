@@ -81,6 +81,7 @@ class Base {
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
+   * For another example, the input image should be shared across many neural networks.
    */
   init(
     channelCount_pointwise1Before,
