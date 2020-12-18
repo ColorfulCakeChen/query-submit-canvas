@@ -1,6 +1,7 @@
-import * as Weights from "../Weights.js";
-
 export { Params, Layer };
+
+import * as ValueMax from "../ValueMax.js";
+import * as Weights from "../Weights.js";
 
 /**
  * Embedding (2d) layer parameters.
@@ -61,6 +62,12 @@ class Params extends Weights.Params {
 class Layer {
 
   /**
+   * Generator for initializing this object.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
+   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   *
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpret as weights.
    *
@@ -76,11 +83,26 @@ class Layer {
    * embedding channels. The outChannels (output channel count) is always depending on channelMultiplier and equal
    * to ( inChannels * channelMultiplier ). If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @return {boolean} Return false, if initialization failed.
+   * @yield {ValueMax.Percentage.Aggregate}
+   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *
+   * @yield {boolean}
+   *   Yield ( value = true ) when ( done = true ) successfully.
+   *   Yield ( value = false ) when ( done = true ) failed.
    */
-  init(
+  * initer(
+    progressParent,
     inputFloat32Array, byteOffsetBegin,
     inputScaleToSize, inChannels, vocabularyCountPerInputChannel, channelMultiplier = null ) {
+
+    // Estimate the maximum value of progress.
+    let progressMax =
+      1             // for extracting parameters from inputFloat32Array.
+      + inChannels  // for extracting vocabulary table of every input channel from inputFloat32Array.
+      + inChannels; // for building vocabulary table tensor2d of every input channel.
+
+    let progressRoot = progressParent.getRoot();
+    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
 
 //!!! ...unfinished...
 // inverted residual connection (by add or by concatenate) ? (dense net)
@@ -97,10 +119,13 @@ class Layer {
     if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
       return false;
 
+    ++progressToAdvance.value;
+    yield progressRoot;  // Parameters extracted. Report progress.
+
     let embeddingChannelCountPerInputChannel = this.embeddingChannelCountPerInputChannel; // The real channelMultiplier.
     let vocabularyTableShape = [ vocabularyCountPerInputChannel, embeddingChannelCountPerInputChannel ];
 
-    // Extract data of vocabulary tables.
+    // Extract data of vocabulary tables from inputFloat32Array.
     this.vocabularyTables = new Array( inChannels );
     {
       let nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
@@ -109,43 +134,13 @@ class Layer {
         if ( !this.vocabularyTables[ i ].init( inputFloat32Array, nextByteOffsetBegin, null, 0, vocabularyTableShape ) )
           return false;  // e.g. input array do not have enough data.
         nextByteOffsetBegin = this.vocabularyTables[ i ].defaultByteOffsetEnd;
+
+        ++progressToAdvance.value;
+        yield progressRoot;  // One vocabulary table extracted. Report progress.
       }
     }
 
     // Build tf.tensor of vocabulary tables.
-/*!!! (2020/12/18 Remarked for without tidy()
-    try {
-      this.vocabularyTablesTensor2dArray = tf.tidy( "Embedding2d.Layer.init.vocabularyTablesTensor2dArray", () => {
-
-        let theLastAxisId = ( vocabularyTableShape.length - 1 ); // e.g. will be 1 for tensor2d.
-
-        // A generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
-        let zeroBaseNumberSequenceGenerator = Array( vocabularyCountPerInputChannel ).keys();
-
-        // Create vocabulary id list (tensor2d). (for concatenating with vocabulary table)
-        const vocabularyIdsTensor2d = tf.tensor2d( [ ...zeroBaseNumberSequenceGenerator ], [ vocabularyCountPerInputChannel, 1 ] );
-
-        return this.vocabularyTables.map( ( vocabularyTable, i ) => {
-          return tf.tidy( "Embedding2d.Layer.init.vocabularyTableWithId", () => {
-
-            // Create an embedding vocabulary table (without vocabulary id).
-            const vocabularyTable = tf.tensor2d( vocabularyTable, vocabularyTableShape );
-
-            // Concatenate vocabulary id prefix vocabulary table.
-            //
-            // This is a residual connection for embedding layer. This concatenating uses some GPU memory space.
-            // It, however, reduces some calculation time when predict() because the residual connection is already
-            // created in advance (here).
-            const vocabularyTableWithId = vocabularyIdsTensor2d.concat( vocabularyTable, theLastAxisId );
-            return vocabularyTableWithId;
-          });
-        });
-      });
-    } catch ( e ) {
-      return false; // e.g. out of (GPU) memory.
-    }
-*/
-
     try {
       // Create vocabulary id list (tensor2d). (for concatenating with vocabulary table)
       let numberSequencer = new Array( vocabularyCountPerInputChannel ).keys(); // A generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
@@ -171,6 +166,9 @@ class Layer {
           } finally {
             vocabularyTableTensor2dWithoutIds.dispose();
           }
+
+          ++progressToAdvance.value;
+          yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
         }
 
       } catch ( e ) {
@@ -183,9 +181,10 @@ class Layer {
       return false; // e.g. out of (GPU) memory.
     }
 
-    return true;
+    return true; // Initialized successfully.
   }
 
+  /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
   isValid() {
     if ( this.vocabularyTablesTensor2dArray )
       if ( this.vocabularyTablesTensor2dArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
