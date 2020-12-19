@@ -44,6 +44,15 @@ class Params extends Weights.Params {
  * of weighted sum, bias and activation function). This implies:
  *   - It may use more (CPU or GPU) memory, but may use less (CPU or GPU) computation.
  *   - It can only achieve channel expansion, and can not achieve channel aggregation. (because no weighted sum)
+ *   - It can only handle integer input (i.e. int32, not float32).
+ *
+ * It is useful as the first layer of text or image processing because their inputs are all integer (e.g. character codes,
+ * word indices, color codes, etc).
+ *
+ * This object always accepts tensor3d (dtype = int32).
+ *   - The axis 0 is height. (Image height) (Text lines and usually only 1 line.)
+ *   - The axis 1 is width. (Image width) (Text length (e.g. character count).)
+ *   - The axis 2 is channel. (Image color channel) (Text character code channel and usually only 1 channel.)
  *
  * An embedding layer contains one params (this.params) and inChannels embedding vocabulary tables.
  *   - Every input channel has one embedding vocabulary table.
