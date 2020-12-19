@@ -40,9 +40,17 @@ class Params extends Weights.Params {
 
 
 /**
+ * Embedding could achieve non-linear mapping (just like any perceptron). But it is achieved by lookup table (instead
+ * of weighted sum, bias and activation function). This implies:
+ *   - It may use more (CPU or GPU) memory, but may use less (CPU or GPU) computation.
+ *   - It can only achieve channel expansion, and can not achieve channel aggregation. (because no weighted sum)
+ *
  * An embedding layer contains one params (this.params) and inChannels embedding vocabulary tables.
- * Every input channel has one embedding vocabulary table. Every embedding vocabulary table has
- * vocabularyCountPerInputChannel vocabularies. Every vocabulary has channelMultiplier embedding channels.
+ *   - Every input channel has one embedding vocabulary table.
+ *   - Every embedding vocabulary table has vocabularyCountPerInputChannel vocabularies.
+ *   - Every vocabulary has channelMultiplier embedding channels.
+ *
+ *
  *
  * @member {number} vocabularyCountPerInputChannel
  *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
@@ -214,6 +222,8 @@ class Layer {
    * @return {tf.tensor3d} The predicted output as tensor3d. Return null, if failed (e.g. out of GPU memory).
    */
   apply_and_destroy_or_keep( inputTensor3d ) {
+
+//!!! ...unfinished... could use gahter, gather, concat instead of split, gather, concat?
 
     // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
     // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
