@@ -5,6 +5,7 @@ import * as TensorTools from "../util/TensorTools.js";
  * Test different channel shuffle implementation for CNN ShuffleNet.
  *
  * @see {@link https://jsperf.com/colorfulcakechen-cnn-channel-shuffle}
+ * @see {@link https://www.measurethat.net/Benchmarks//colorfulcakechen-cnn-channel-shuffle}
  */
 
 /**
@@ -122,11 +123,12 @@ class HeightWidthDepthGroup {
   
 }
 
+function init() {
+  globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( 110, 110, 24, 8 ); // height, width, depth, groupCount
+  globalThis.testSet_110x110x24_g4 = new HeightWidthDepthGroup( 110, 110, 24, 4 );
+  globalThis.testSet_110x110x24_g3 = new HeightWidthDepthGroup( 110, 110, 24, 3 );
+  globalThis.testSet_110x110x24_g2 = new HeightWidthDepthGroup( 110, 110, 24, 2 );
+  globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( 110, 110, 24, 1 );
+}
 
-globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( 110, 110, 24, 8 ); // height, width, depth, groupCount
-globalThis.testSet_110x110x24_g4 = new HeightWidthDepthGroup( 110, 110, 24, 4 );
-globalThis.testSet_110x110x24_g3 = new HeightWidthDepthGroup( 110, 110, 24, 3 );
-globalThis.testSet_110x110x24_g2 = new HeightWidthDepthGroup( 110, 110, 24, 2 );
-globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( 110, 110, 24, 1 );
-
-
+tf.ready().then( init );
