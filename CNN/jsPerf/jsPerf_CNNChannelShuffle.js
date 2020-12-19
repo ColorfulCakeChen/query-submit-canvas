@@ -1,4 +1,4 @@
-import * as ChannelShuffler from "../Layer/ChannelShuffler.js";
+import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as TensorTools from "../util/TensorTools.js";
 
 /**
