@@ -1,3 +1,5 @@
+export { init };
+
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as TensorTools from "../util/TensorTools.js";
 
@@ -131,4 +133,4 @@ function init() {
   globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( 110, 110, 24, 1 );
 }
 
-tf.ready().then( init );
+//tf.ready().then( init );
