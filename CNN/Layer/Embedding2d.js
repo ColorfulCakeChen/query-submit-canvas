@@ -44,10 +44,12 @@ class Params extends Weights.Params {
  * of weighted sum, bias and activation function). This implies:
  *   - It may use more (CPU or GPU) memory, but may use less (CPU or GPU) computation.
  *   - It can only achieve channel expansion, and can not achieve channel aggregation. (because no weighted sum)
+ *   - It can only represent context-independent (not context-dependent) information. (because no weighted sum)
  *   - It can only handle integer input (i.e. int32, not float32).
  *
  * It is useful as the first layer of text or image processing because their inputs are all integer (e.g. character codes,
- * word indices, color codes, etc).
+ * word indices, color codes, etc). And, the first layer only needs carry context-independent information (and all the other
+ * layers after it will produce context-dependent information).
  *
  * This object always accepts tensor3d (dtype = int32).
  *   - The axis 0 is height. (Image height) (Text lines and usually only 1 line.)
