@@ -322,5 +322,8 @@ class Layer {
   get byteOffsetEnd()   { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
 
   get inChannels()                           { return this.params.inChannels; }
-  get embeddingChannelCountPerInputChannel() { return this.params.channelMultiplier; }
+  
+//!!! ...unfinished...  Because residual connection is added, the channel count will be one more.
+  get channelMultiplier()                    { return this.params.channelMultiplier; }
+  get embeddingChannelCountPerInputChannel() { return this.params.channelMultiplier ; }
 }
