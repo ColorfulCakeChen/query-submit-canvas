@@ -180,6 +180,8 @@ class Layer {
             // This is a residual connection for embedding layer. This concatenating uses some GPU memory space.
             // It, however, reduces some calculation time when apply_and_destroy_or_keep() because the residual
             // connection is already created in advance (here).
+            //
+            // Why is it (the vocabulary id) residual connection? Because the data of every input channel is just vocabulary id, too.
             this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, theLastAxisId );
           } catch ( e ) {
             return false; // e.g. out of (GPU) memory.
