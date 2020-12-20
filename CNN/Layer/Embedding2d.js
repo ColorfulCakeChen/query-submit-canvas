@@ -5,14 +5,16 @@ import * as Weights from "../Weights.js";
 
 /**
  * Embedding (2d) layer parameters.
+ *
+ * @member {number} outChannels
+ *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
  */
 class Params extends Weights.Params {
 
   /**
    * @param {number} channelMultiplier
-   *   Every input channel will be expanded into so many embedding channels. The outChannels (output channel count)
-   * is always depending on channelMultiplier and equal to ( inChannels * channelMultiplier ). If null, it will be
-   * extracted from inputFloat32Array (i.e. by evolution).
+   *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
+   * embedding channels. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
    * @return {boolean} Return false, if initialization failed.
    *
@@ -79,6 +81,9 @@ class Params extends Weights.Params {
  * @member {number} channelMultiplier
  *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
  * embedding channels. It could be viewed as embeddingChannelCountPerInputChannel.
+ *
+ * @member {number} outChannels
+ *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
  */
 class Base {
 
@@ -101,8 +106,7 @@ class Base {
    *
    * @param {number} channelMultiplier
    *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
-   * embedding channels. The outChannels (output channel count) is always depending on channelMultiplier and equal
-   * to ( inChannels * channelMultiplier ). If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * embedding channels. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
