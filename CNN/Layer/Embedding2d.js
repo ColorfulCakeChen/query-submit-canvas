@@ -182,6 +182,11 @@ class Base {
       }
     }
 
+    // For tensor3d, the last axis id will be 2.
+    //
+    // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
+    let lastAxisId = this.lastAxisId = ( vocabularyTableShape_toExtract.length - 1 );
+
     // Build tf.tensor of vocabulary tables.
     try {
       this.vocabularyTablesTensor3dArray = new Array( this.vocabularyTables.length );
@@ -194,14 +199,13 @@ class Base {
         const idsTensor3d = tf.tensor3d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1, 1 ] );
 
         try {
-          let theLastAxisId = ( vocabularyTableShape_toExtract.length - 1 ); // e.g. will be 2 for tensor3d.
           for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
 
             // Create an embedding vocabulary table (without vocabulary id).
             const vocabularyTableTensor3dWithoutIds = tf.tensor3d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
 
             try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
-              this.vocabularyTablesTensor3dArray[ i ] = idsTensor3d.concat( vocabularyTableTensor3dWithoutIds, theLastAxisId );
+              this.vocabularyTablesTensor3dArray[ i ] = idsTensor3d.concat( vocabularyTableTensor3dWithoutIds, lastAxisId );
 
             } finally {
               vocabularyTableTensor3dWithoutIds.dispose();
@@ -229,6 +233,16 @@ class Base {
     } catch ( e ) {
       return false; // e.g. out of (GPU) memory.
     }
+
+    // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+    //
+    // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
+    // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
+    // results in an array [ r, g, b, a ] which has 4 tensor3d (in fact, they should be
+    // viewed as tensor1d).
+    //
+    // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
+    this.splitCount = this.inChannels;
 
     return true; // Initialized successfully.
   }
@@ -265,22 +279,26 @@ class Base {
 
 //!!! ...unfinished... could use gahter, gather, concat instead of split, gather, concat?
 
+    // e.g. will be 2 for tensor3d.
+    //
+    // This should be the same as ( inputTensor3d.shape.length - 1 ) or ( inputTensor3d.rank - 1 ).
+    let lastAxisId = this.lastAxisId;
+
+    // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+    //
     // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
     // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
     // results in an array [ r, g, b, a ] which has 4 tensor3d (in fact, they should be
     // viewed as tensor1d).
-    let theLastAxisId = ( inputTensor3d.shape.length - 1 );  // Or, ( inputTensor3d.rank - 1 )
-
-    // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
     //
-    // This should be the same as this.inChannels.
-    let splitCount = inputTensor3d.shape[ theLastAxisId ];
+    // This should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ lastAxisId ] ).
+    let splitCount = this.splitCount;
 
     // Extract vocabulary indices from input.
     //
     // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
     // In fact, the result is still tensor3d but has only one channel.
-    const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( splitCount, theLastAxisId );
+    const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( splitCount, lastAxisId );
 
 //!!! ...unfinished... could using function pointer to avoid conditional-branching?
     if ( !this.bKeepInputTensor )
@@ -300,7 +318,7 @@ class Base {
         }
 
         // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
-        let predictResult = tf.concat( embeddedTensor3dArray, theLastAxisId );
+        let predictResult = tf.concat( embeddedTensor3dArray, lastAxisId );
         return predictResult;
 
       } catch ( e ) {
