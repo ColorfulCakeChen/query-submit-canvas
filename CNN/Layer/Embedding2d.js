@@ -284,21 +284,13 @@ class Base {
     // This should be the same as ( inputTensor3d.shape.length - 1 ) or ( inputTensor3d.rank - 1 ).
     let lastAxisId = this.lastAxisId;
 
-    // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
-    //
-    // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
-    // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
-    // results in an array [ r, g, b, a ] which has 4 tensor3d (in fact, they should be
-    // viewed as tensor1d).
-    //
-    // This should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ lastAxisId ] ).
-    let splitCount = this.splitCount;
-
     // Extract vocabulary indices from input.
     //
     // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
     // In fact, the result is still tensor3d but has only one channel.
-    const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( splitCount, lastAxisId );
+    //
+    // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ lastAxisId ] ).
+    const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( this.splitCount, lastAxisId );
 
 //!!! ...unfinished... could using function pointer to avoid conditional-branching?
     if ( !this.bKeepInputTensor )
