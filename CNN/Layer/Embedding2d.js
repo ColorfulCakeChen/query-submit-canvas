@@ -154,7 +154,6 @@ class Base {
     if ( channelMultiplier < 1 )
       return false; // At least, there should be one embedding channel.
 
-    //let vocabularyTableShape = [ vocabularyCountPerInputChannel, channelMultiplier ];
     let vocabularyTableShape_toExtract;
     if ( bEmbedVocabularyId ) {
       // If there will be an auto-generated vocabulary id embedding channel, extract one less channels from data.
@@ -181,34 +180,46 @@ class Base {
 
     // Build tf.tensor of vocabulary tables.
     try {
-      // Create vocabulary id list (tensor2d). (for concatenating with vocabulary table)
-      let numberSequencer = new Array( vocabularyCountPerInputChannel ).keys(); // Generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
-      const idsTensor2d = tf.tensor2d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1 ] );
+      this.vocabularyTablesTensor2dArray = new Array( this.vocabularyTables.length );
 
-      try {
-        let theLastAxisId = ( vocabularyTableShape_toExtract.length - 1 ); // e.g. will be 1 for tensor2d.
-        this.vocabularyTablesTensor2dArray = new Array( this.vocabularyTables.length );
-        for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
+      // Need to prefix vocabulary id channel.
+      if ( bEmbedVocabularyId ) {
 
-          // Create an embedding vocabulary table (without vocabulary id).
-          const vocabularyTableTensor2dWithoutIds = tf.tensor2d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
+        // Create vocabulary id list (tensor2d). (for concatenating with vocabulary table)
+        let numberSequencer = new Array( vocabularyCountPerInputChannel ).keys(); // Generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
+        const idsTensor2d = tf.tensor2d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1 ] );
 
-          if ( bEmbedVocabularyId ) {
+        try {
+          let theLastAxisId = ( vocabularyTableShape_toExtract.length - 1 ); // e.g. will be 1 for tensor2d.
+          for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
+
+            // Create an embedding vocabulary table (without vocabulary id).
+            const vocabularyTableTensor2dWithoutIds = tf.tensor2d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
+
             try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
               this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, theLastAxisId );
+
             } finally {
               vocabularyTableTensor2dWithoutIds.dispose();
             }
-          } else { // No vocabulary id.
-            this.vocabularyTablesTensor2dArray[ i ] = vocabularyTableTensor2dWithoutIds;
+
+            ++progressToAdvance.value;
+            yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
           }
+
+        } finally {
+          idsTensor2d.dispose();
+        }
+
+      } else { // No need to prefix vocabulary id channel.
+
+        for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
+          // Create an embedding vocabulary table (without vocabulary id).
+          this.vocabularyTablesTensor2dArray[ i ] = tf.tensor2d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
 
           ++progressToAdvance.value;
           yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
         }
-
-      } finally {
-        idsTensor2d.dispose();
       }
 
     } catch ( e ) {
