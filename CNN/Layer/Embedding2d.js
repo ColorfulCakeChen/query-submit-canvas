@@ -161,10 +161,10 @@ class Base {
     let vocabularyTableShape_toExtract;
     if ( bEmbedVocabularyId ) {
       // If there will be an auto-generated vocabulary id embedding channel, extract one less channels from data.
-      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier - 1 ];
+      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier - 1 ];
     } else {
       // Otherwise, all embedding channels are extracted from data.
-      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier ];
+      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ];
     }
 
     // Extract data of vocabulary tables from inputFloat32Array.
