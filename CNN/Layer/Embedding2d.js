@@ -1,4 +1,4 @@
-export { Params, Layer };
+export { Params, Base };
 
 import * as ValueMax from "../ValueMax.js";
 import * as Weights from "../Weights.js";
@@ -73,7 +73,7 @@ class Params extends Weights.Params {
  *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
  * embedding channels. This is the same as the this.params.channelMultiplier.
  */
-class Layer {
+class Base {
 
   /**
    * Generator for initializing this object.
@@ -96,6 +96,13 @@ class Layer {
    *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
    * embedding channels. The outChannels (output channel count) is always depending on channelMultiplier and equal
    * to ( inChannels * channelMultiplier ). If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *
+   * @param {boolean} bEmbedVocabularyId
+   *   If true, one of embedding channels will be an auto-generated vocabulary id (i.e. 0, 1, 2, ...). So only
+   * ( channelMultiplier - 1 ) embedding channels will be extracted from inputFloat32Array. The extra vocabulary id
+   * channel achieves residual connection. Residual connection means apply_and_destroy_or_keep() will append (concatenate)
+   * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
+   * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
@@ -218,7 +225,7 @@ class Layer {
   /** Release tf.tensor. */
   disposeTensors() {
     if ( this.vocabularyTablesTensor2dArray ) {
-      Layer.disposeTensorArray_NotNull( this.vocabularyTablesTensor2dArray );
+      Base.disposeTensorArray_NotNull( this.vocabularyTablesTensor2dArray );
       this.vocabularyTablesTensor2dArray = null;
     }
   }
@@ -285,7 +292,7 @@ class Layer {
         throw e;
 
       } finally {
-        Layer.disposeTensorArray_NotNull( embeddedTensor3dArray ); // Avoid tensors' memory leakage.
+        Base.disposeTensorArray_NotNull( embeddedTensor3dArray ); // Avoid tensors' memory leakage.
         //embeddedTensor3dArray = null;
       }
 
@@ -293,7 +300,7 @@ class Layer {
       throw e;
 
     } finally {
-      Layer.disposeTensorArray_NotNull( vocabularyIndicesOneChannelTensor3dArray ); // Avoid tensors' memory leakage.
+      Base.disposeTensorArray_NotNull( vocabularyIndicesOneChannelTensor3dArray ); // Avoid tensors' memory leakage.
       //vocabularyIndicesOneChannelTensor3dArray = null;
     }
 
@@ -325,5 +332,6 @@ class Layer {
   
 //!!! ...unfinished...  Because residual connection is added, the channel count will be one more.
   get channelMultiplier()                    { return this.params.channelMultiplier; }
+  get channelMultiplier_IncludeResidualConnection() { return this.params.channelMultiplier + 1; }
   get embeddingChannelCountPerInputChannel() { return this.params.channelMultiplier ; }
 }
