@@ -63,6 +63,13 @@ class Params extends Weights.Params {
  *
  *
  *
+ * @member {boolean} bEmbedVocabularyId
+ *   If true, one of embedding channels will be an auto-generated vocabulary id (i.e. 0, 1, 2, ...). So only
+ * ( channelMultiplier - 1 ) embedding channels will be extracted from inputFloat32Array. The extra vocabulary id
+ * channel achieves residual connection. Residual connection means apply_and_destroy_or_keep() will append (concatenate)
+ * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
+ * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
+ *
  * @member {number} vocabularyCountPerInputChannel
  *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
  * every input channel has a vocabulary table). For an image data (R-G-B-A four channels), there will be 256
@@ -97,13 +104,6 @@ class Base {
    * embedding channels. The outChannels (output channel count) is always depending on channelMultiplier and equal
    * to ( inChannels * channelMultiplier ). If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {boolean} bEmbedVocabularyId
-   *   If true, one of embedding channels will be an auto-generated vocabulary id (i.e. 0, 1, 2, ...). So only
-   * ( channelMultiplier - 1 ) embedding channels will be extracted from inputFloat32Array. The extra vocabulary id
-   * channel achieves residual connection. Residual connection means apply_and_destroy_or_keep() will append (concatenate)
-   * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
-   * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
-   *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
    * For another example, the input image should be shared across many neural networks.
@@ -118,7 +118,8 @@ class Base {
   * initer(
     progressParent,
     inputFloat32Array, byteOffsetBegin,
-    inChannels, vocabularyCountPerInputChannel, channelMultiplier = null,
+    inChannels, vocabularyCountPerInputChannel = 256, channelMultiplier = null,
+    bEmbedVocabularyId = true,
     bKeepInputTensor
   ) {
 
@@ -140,6 +141,7 @@ class Base {
     this.params = this.vocabularyTables = null; // So that distinguishable if re-initialization failed.
 
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
+    this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
 
     this.params = new Params();
@@ -150,7 +152,18 @@ class Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
     let embeddingChannelCountPerInputChannel = this.embeddingChannelCountPerInputChannel; // The real channelMultiplier.
-    let vocabularyTableShape = [ vocabularyCountPerInputChannel, embeddingChannelCountPerInputChannel ];
+    if ( embeddingChannelCountPerInputChannel < 1 )
+      return false; // At least, there should be one embedding channel.
+
+    //let vocabularyTableShape = [ vocabularyCountPerInputChannel, embeddingChannelCountPerInputChannel ];
+    let vocabularyTableShape_toExtract;
+    if ( bEmbedVocabularyId ) {
+      // If there will be an auto-generated vocabulary id embedding channel, extract one less channels from data.
+      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, embeddingChannelCountPerInputChannel - 1 ];
+    } else {
+      // Otherwise, all embedding channels are extracted from data.
+      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, embeddingChannelCountPerInputChannel ];
+    }
 
     // Extract data of vocabulary tables from inputFloat32Array.
     this.vocabularyTables = new Array( inChannels );
@@ -158,7 +171,7 @@ class Base {
       let nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
       for ( let i = 0; i < inChannels; ++i ) {
         this.vocabularyTables[ i ] = new Weights.Base();
-        if ( !this.vocabularyTables[ i ].init( inputFloat32Array, nextByteOffsetBegin, null, 0, vocabularyTableShape ) )
+        if ( !this.vocabularyTables[ i ].init( inputFloat32Array, nextByteOffsetBegin, null, 0, vocabularyTableShape_toExtract ) )
           return false;  // e.g. input array do not have enough data.
         nextByteOffsetBegin = this.vocabularyTables[ i ].defaultByteOffsetEnd;
 
@@ -174,26 +187,23 @@ class Base {
       const idsTensor2d = tf.tensor2d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1 ] );
 
       try {
-        let theLastAxisId = ( vocabularyTableShape.length - 1 ); // e.g. will be 1 for tensor2d.
+        let theLastAxisId = ( vocabularyTableShape_toExtract.length - 1 ); // e.g. will be 1 for tensor2d.
         this.vocabularyTablesTensor2dArray = new Array( this.vocabularyTables.length );
         for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
 
           // Create an embedding vocabulary table (without vocabulary id).
-          const vocabularyTableTensor2dWithoutIds = tf.tensor2d( this.vocabularyTables[ i ], vocabularyTableShape );
+          const vocabularyTableTensor2dWithoutIds = tf.tensor2d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
 
-          try {
-            // Concatenate vocabulary id prefix vocabulary table.
-            //
-            // This is a residual connection for embedding layer. This concatenating uses some GPU memory space.
-            // It, however, reduces some calculation time when apply_and_destroy_or_keep() because the residual
-            // connection is already created in advance (here).
-            //
-            // Why is it (the vocabulary id) residual connection? Because the data of every input channel is just vocabulary id, too.
-            this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, theLastAxisId );
-          } catch ( e ) {
-            return false; // e.g. out of (GPU) memory.
-          } finally {
-            vocabularyTableTensor2dWithoutIds.dispose();
+          if ( bEmbedVocabularyId ) {
+            try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
+              this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, theLastAxisId );
+            } catch ( e ) {
+              return false; // e.g. out of (GPU) memory.
+            } finally {
+              vocabularyTableTensor2dWithoutIds.dispose();
+            }
+          } else { // No vocabulary id.
+            this.vocabularyTablesTensor2dArray[ i ] = vocabularyTableTensor2dWithoutIds;
           }
 
           ++progressToAdvance.value;
