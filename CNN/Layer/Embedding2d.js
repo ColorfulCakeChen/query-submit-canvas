@@ -184,42 +184,42 @@ class Base {
 
     // Build tf.tensor of vocabulary tables.
     try {
-      this.vocabularyTablesTensor2dArray = new Array( this.vocabularyTables.length );
+      this.vocabularyTablesTensor3dArray = new Array( this.vocabularyTables.length );
 
       // Need to prefix vocabulary id channel.
       if ( bEmbedVocabularyId ) {
 
-        // Create vocabulary id list (tensor2d). (for concatenating with vocabulary table)
+        // Create vocabulary id list (tensor3d). (for concatenating with vocabulary table)
         let numberSequencer = new Array( vocabularyCountPerInputChannel ).keys(); // Generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
-        const idsTensor2d = tf.tensor2d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1 ] );
+        const idsTensor3d = tf.tensor3d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1, 1 ] );
 
         try {
-          let theLastAxisId = ( vocabularyTableShape_toExtract.length - 1 ); // e.g. will be 1 for tensor2d.
+          let theLastAxisId = ( vocabularyTableShape_toExtract.length - 1 ); // e.g. will be 2 for tensor3d.
           for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
 
             // Create an embedding vocabulary table (without vocabulary id).
-            const vocabularyTableTensor2dWithoutIds = tf.tensor2d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
+            const vocabularyTableTensor3dWithoutIds = tf.tensor3d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
 
             try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
-              this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, theLastAxisId );
+              this.vocabularyTablesTensor3dArray[ i ] = idsTensor3d.concat( vocabularyTableTensor3dWithoutIds, theLastAxisId );
 
             } finally {
-              vocabularyTableTensor2dWithoutIds.dispose();
+              vocabularyTableTensor3dWithoutIds.dispose();
             }
 
             ++progressToAdvance.value;
-            yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
+            yield progressRoot;  // One vocabulary table tensor3d built. Report progress.
           }
 
         } finally {
-          idsTensor2d.dispose();
+          idsTensor3d.dispose();
         }
 
       } else { // No need to prefix vocabulary id channel.
 
         for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
           // Create an embedding vocabulary table (without vocabulary id).
-          this.vocabularyTablesTensor2dArray[ i ] = tf.tensor2d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
+          this.vocabularyTablesTensor3dArray[ i ] = tf.tensor3d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
 
           ++progressToAdvance.value;
           yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
@@ -235,18 +235,18 @@ class Base {
 
   /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
   isValid() {
-    if ( this.vocabularyTablesTensor2dArray )
-      if ( this.vocabularyTablesTensor2dArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
-        if ( this.vocabularyTablesTensor2dArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
+    if ( this.vocabularyTablesTensor3dArray )
+      if ( this.vocabularyTablesTensor3dArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
+        if ( this.vocabularyTablesTensor3dArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
           return true;
     return false;
   }
 
   /** Release tf.tensor. */
   disposeTensors() {
-    if ( this.vocabularyTablesTensor2dArray ) {
-      Base.disposeTensorArray_NotNull( this.vocabularyTablesTensor2dArray );
-      this.vocabularyTablesTensor2dArray = null;
+    if ( this.vocabularyTablesTensor3dArray ) {
+      Base.disposeTensorArray_NotNull( this.vocabularyTablesTensor3dArray );
+      this.vocabularyTablesTensor3dArray = null;
     }
   }
 
@@ -282,6 +282,10 @@ class Base {
     // In fact, the result is still tensor3d but has only one channel.
     const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( splitCount, theLastAxisId );
 
+//!!! ...unfinished... could using function pointer to avoid conditional-branching?
+    if ( !this.bKeepInputTensor )
+      inputTensor3d.dispose();
+
     try {
 //!!! ...unfinished... could re-use this array shell (without re-allocating every time apply_and_destroy_or_keep() is called)?
       let embeddedTensor3dArray = new Array( vocabularyIndicesOneChannelTensor3dArray.length );
@@ -290,22 +294,13 @@ class Base {
 
         // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
         // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
-        //
-        // Note: this.vocabularyTablesTensor2dArray[] already be prefixed vocabulary id (when init()). So it
-        // has residual connection in advance.
         for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor3dArray.length; ++channelIndex ) {
           let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ channelIndex ];
-          let embeddedTensor3d = this.vocabularyTablesTensor2dArray[ channelIndex ].gather( oneChannelTensor3d );
-          embeddedTensor3dArray[ channelIndex ] = embeddedTensor3d;
+          embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor3dArray[ channelIndex ].gather( oneChannelTensor3d );
         }
 
         // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
         let predictResult = tf.concat( embeddedTensor3dArray, theLastAxisId );
-
-//!!! ...unfinished... could using function pointer to avoid conditional-branching?
-        if ( !this.bKeepInputTensor )
-          inputTensor3d.dispose();
-
         return predictResult;
 
       } catch ( e ) {
