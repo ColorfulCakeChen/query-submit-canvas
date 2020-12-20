@@ -76,9 +76,9 @@ class Params extends Weights.Params {
  * vocabularies per input channel because every channel is represented by one byte (8 bits) which has 2^8 = 256 kinds
  * of possible values.
  *
- * @member {number} embeddingChannelCountPerInputChannel
+ * @member {number} channelMultiplier
  *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
- * embedding channels. This is the same as the this.params.channelMultiplier.
+ * embedding channels. It could be viewed as embeddingChannelCountPerInputChannel.
  */
 class Base {
 
@@ -118,8 +118,7 @@ class Base {
   * initer(
     progressParent,
     inputFloat32Array, byteOffsetBegin,
-    inChannels, vocabularyCountPerInputChannel = 256, channelMultiplier = null,
-    bEmbedVocabularyId = true,
+    inChannels, channelMultiplier = null, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor
   ) {
 
@@ -151,18 +150,18 @@ class Base {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-    let embeddingChannelCountPerInputChannel = this.embeddingChannelCountPerInputChannel; // The real channelMultiplier.
-    if ( embeddingChannelCountPerInputChannel < 1 )
+    let channelMultiplier = this.channelMultiplier; // The real channelMultiplier. May be specified or extracted.
+    if ( channelMultiplier < 1 )
       return false; // At least, there should be one embedding channel.
 
-    //let vocabularyTableShape = [ vocabularyCountPerInputChannel, embeddingChannelCountPerInputChannel ];
+    //let vocabularyTableShape = [ vocabularyCountPerInputChannel, channelMultiplier ];
     let vocabularyTableShape_toExtract;
     if ( bEmbedVocabularyId ) {
       // If there will be an auto-generated vocabulary id embedding channel, extract one less channels from data.
-      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, embeddingChannelCountPerInputChannel - 1 ];
+      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier - 1 ];
     } else {
       // Otherwise, all embedding channels are extracted from data.
-      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, embeddingChannelCountPerInputChannel ];
+      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier ];
     }
 
     // Extract data of vocabulary tables from inputFloat32Array.
@@ -338,10 +337,7 @@ class Base {
   get byteOffsetBegin() { return this.params.defaultByteOffsetBegin; }
   get byteOffsetEnd()   { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
 
-  get inChannels()                           { return this.params.inChannels; }
-  
-//!!! ...unfinished...  Because residual connection is added, the channel count will be one more.
-  get channelMultiplier()                    { return this.params.channelMultiplier; }
-  get channelMultiplier_IncludeResidualConnection() { return this.params.channelMultiplier + 1; }
-  get embeddingChannelCountPerInputChannel() { return this.params.channelMultiplier ; }
+  get inChannels()        { return this.params.inChannels; }
+  get channelMultiplier() { return this.params.channelMultiplier; }
+  get outChannels()       { return this.params.outChannels; }
 }
