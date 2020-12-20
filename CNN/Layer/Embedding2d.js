@@ -63,18 +63,18 @@ class Params extends Weights.Params {
  *
  *
  *
+ * @member {number} vocabularyCountPerInputChannel
+ *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
+ * every input channel has a vocabulary table). For an image data (R-G-B-A four channels), there will be 256
+ * vocabularies per input channel because every channel is represented by one byte (8 bits) which has 2^8 = 256 kinds
+ * of possible values.
+ *
  * @member {boolean} bEmbedVocabularyId
  *   If true, one of embedding channels will be an auto-generated vocabulary id (i.e. 0, 1, 2, ...). So only
  * ( channelMultiplier - 1 ) embedding channels will be extracted from inputFloat32Array. The extra vocabulary id
  * channel achieves residual connection. Residual connection means apply_and_destroy_or_keep() will append (concatenate)
  * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
  * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
- *
- * @member {number} vocabularyCountPerInputChannel
- *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
- * every input channel has a vocabulary table). For an image data (R-G-B-A four channels), there will be 256
- * vocabularies per input channel because every channel is represented by one byte (8 bits) which has 2^8 = 256 kinds
- * of possible values.
  *
  * @member {number} channelMultiplier
  *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
@@ -196,8 +196,6 @@ class Base {
           if ( bEmbedVocabularyId ) {
             try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
               this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, theLastAxisId );
-            } catch ( e ) {
-              return false; // e.g. out of (GPU) memory.
             } finally {
               vocabularyTableTensor2dWithoutIds.dispose();
             }
@@ -209,8 +207,6 @@ class Base {
           yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
         }
 
-      } catch ( e ) {
-        return false; // e.g. out of (GPU) memory.
       } finally {
         idsTensor2d.dispose();
       }
