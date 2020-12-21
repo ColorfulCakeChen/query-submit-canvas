@@ -6,6 +6,5 @@ export { init };
 /**
  * How to test async procedure in MeasureThat?
  *
-???
- * @see {@link https://www.measurethat.net/Benchmarks/Show/10945/8/colorfulcakechen-measure-that-async}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/10948/0/colorfulcakechen-measure-that-async}
  */
