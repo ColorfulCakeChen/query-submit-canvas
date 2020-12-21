@@ -154,6 +154,9 @@ class Base {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
+//!!! ...unfinished... How about negative or zero channelMultiplier when by evolution?
+// Return input as output immediately? What about keep or destroy input?
+
     let channelMultiplier = this.channelMultiplier; // The real channelMultiplier. May be specified or extracted.
     if ( channelMultiplier < 1 )
       return false; // At least, there should be one embedding channel.
