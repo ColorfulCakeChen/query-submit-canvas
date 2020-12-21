@@ -156,6 +156,10 @@ class Base {
 
 //!!! ...unfinished... How about negative or zero channelMultiplier when by evolution?
 // Return input as output immediately? What about keep or destroy input?
+//
+// Perhaps:
+//   For ( channelMultiplier < 1 ) and ( bKeepInputTensor == false ), return input (as output) immediately.
+//   For ( channelMultiplier < 1 ) and ( bKeepInputTensor == true  ), return a copy of input (as output) immediately.
 
     let channelMultiplier = this.channelMultiplier; // The real channelMultiplier. May be specified or extracted.
     if ( channelMultiplier < 1 )
