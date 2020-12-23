@@ -288,10 +288,24 @@ class ConcatGather {
   concatGather( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
-    let tArray = this.gather( concatenatedTensor );
+    let shuffledSplitedTensorArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
+    for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
+      // shuffle and split by gather (one operation achieves two operations).
+      shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather( this.shuffledChannelIndicesTensor1dArray[ i ], this.shuffleInfo.lastAxisId );
+    }
+    return shuffledSplitedTensorArray;
+
     concatenatedTensor.dispose();
 
-    return tArray;
+    return shuffledSplitedTensorArray;
+
+//!!! (2020/12/23 Remarked) Remove function call for improving performance.
+//     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+//
+//     let tArray = this.gather( concatenatedTensor );
+//     concatenatedTensor.dispose();
+/
+//     return tArray;
 
 //!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
 //     return tf.tidy( "ChannelShuffler.ConcatGather.concatGather", () => {
