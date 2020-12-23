@@ -148,7 +148,51 @@ class HeightWidthDepthGroup {
         `ConcatGatherUnsorted() != PointwiseConv()`);
     });
   }
-  
+
+  testDifferentDisposeStrategy() {
+    let functionTable = [
+      this.concatPointwiseConv.concatGather_dispose_direct_call_for_dispose,
+      this.concatPointwiseConv.concatGather_dispose_finally_call_for_dispose,
+
+      this.concatPointwiseConv.concatGather_dispose_direct_call_map_dispose,
+      this.concatPointwiseConv.concatGather_dispose_finally_call_map_dispose,
+
+      this.concatPointwiseConv.concatGather_dispose_direct_call_map_tidy,
+      this.concatPointwiseConv.concatGather_dispose_finally_call_map_tidy,
+
+      this.concatPointwiseConv.concatGather_dispose_direct_for,
+      this.concatPointwiseConv.concatGather_dispose_finally_for,
+
+      this.concatPointwiseConv.concatGather_dispose_direct_map,
+      this.concatPointwiseConv.concatGather_dispose_finally_map,
+
+      this.concatPointwiseConv.concatGather_tidy_map,
+    ];
+
+    tf.tidy( () => {
+      let memoryInfoPrev = tf.memory();
+
+      let funcPrev;
+      let tArrayPrev;
+
+      for ( let i = 0; i < functionTable.length; ++i ) {
+        let func = functionTable[ i ];
+        let tArray = func( this.dataTensor3dArray );
+
+        let memoryInfo = tf.memory();
+        tf.util.assert( memoryInfo.numTensors == ( memoryInfoPrev.numTensors + tArray.length ), `${func.name}() memory leak`);
+
+        if ( tArrayPrev ) {
+          tf.util.assert(
+            TensorTools.Comparator.isTensorArrayEqual( tArrayPrev, tArray ),
+            `${funcPrev.name}() != ${func.name}()`);
+        }
+
+        memoryInfoPrev = memoryInfo;
+        funcPrev = func;
+        tArrayPrev = tArray;
+      }
+    });
 }
 
 function init() {
