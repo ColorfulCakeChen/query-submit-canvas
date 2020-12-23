@@ -88,19 +88,19 @@ class HeightWidthDepthGroup {
 
       let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
       let memoryInfo1 = tf.memory();
-      tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `ConcatReshapeTransposeReshapeSplit() memory leak`);
+      tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + t1Array.length ), `ConcatReshapeTransposeReshapeSplit() memory leak`);
 
       let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
       let memoryInfo2 = tf.memory();
-      tf.util.assert( memoryInfo2.numTensors == ( memoryInfo1.numTensors + 1 ), `ConcatGatherUnsorted() memory leak`);
+      tf.util.assert( memoryInfo2.numTensors == ( memoryInfo1.numTensors + t2Array.length ), `ConcatGatherUnsorted() memory leak`);
 
       let t3Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
       let memoryInfo3 = tf.memory();
-      tf.util.assert( memoryInfo3.numTensors == ( memoryInfo2.numTensors + 1 ), `SplitConcatSortedShared() memory leak`);
+      tf.util.assert( memoryInfo3.numTensors == ( memoryInfo2.numTensors + t3Array.length ), `SplitConcatSortedShared() memory leak`);
 
       let t4Array = this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
       let memoryInfo4 = tf.memory();
-      tf.util.assert( memoryInfo4.numTensors == ( memoryInfo3.numTensors + 1 ), `PointwiseConv() memory leak`);
+      tf.util.assert( memoryInfo4.numTensors == ( memoryInfo3.numTensors + t4Array.length ), `PointwiseConv() memory leak`);
 
 
       tf.util.assert(
