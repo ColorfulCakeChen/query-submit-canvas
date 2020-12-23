@@ -124,12 +124,29 @@ class HeightWidthDepthGroup {
   
 }
 
-async function init() {
+function init() {
   globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( 110, 110, 24, 8 ); // height, width, depth, groupCount
   globalThis.testSet_110x110x24_g4 = new HeightWidthDepthGroup( 110, 110, 24, 4 );
   globalThis.testSet_110x110x24_g3 = new HeightWidthDepthGroup( 110, 110, 24, 3 );
   globalThis.testSet_110x110x24_g2 = new HeightWidthDepthGroup( 110, 110, 24, 2 );
   globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( 110, 110, 24, 1 );
+}
+
+function disposeTensors() {
+  if ( globalThis.testSet_110x110x24_g8 )
+    globalThis.testSet_110x110x24_g8.disposeTensors();
+
+  if ( globalThis.testSet_110x110x24_g4 )
+    globalThis.testSet_110x110x24_g4.disposeTensors();
+
+  if ( globalThis.testSet_110x110x24_g3 )
+    globalThis.testSet_110x110x24_g3.disposeTensors();
+
+  if ( globalThis.testSet_110x110x24_g2 )
+    globalThis.testSet_110x110x24_g2.disposeTensors();
+
+  if ( globalThis.testSet_110x110x24_g1 )
+    globalThis.testSet_110x110x24_g1.disposeTensors();
 }
 
 //tf.ready().then( init );
