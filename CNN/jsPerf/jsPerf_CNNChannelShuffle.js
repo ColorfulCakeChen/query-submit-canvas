@@ -59,22 +59,26 @@ class HeightWidthDepthGroup {
 
   // Test concat-reshape-transpose-reshape-split
   test_ConcatReshapeTransposeReshapeSplit() {
-    this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
+    let shuffledArray = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
+    tf.dispose( shuffledArray );
   }
 
   // Test concat-gather (Unsorted)
   test_ConcatGatherUnsorted() {
-    this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
+    let shuffledArray = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
+    tf.dispose( shuffledArray );
   }
 
   // Test split-concat (Sorted Shared)
   test_SplitConcatSortedShared() {
-    this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
+    let shuffledArray = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
+    tf.dispose( shuffledArray );
   }
 
   // Test concat-pointwise-convolution
   test_ConcatPointwiseConv() {
-    this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
+    let shuffledArray = this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
+    tf.dispose( shuffledArray );
   }
 
   // Testing whether the results of different implementation are the same.
