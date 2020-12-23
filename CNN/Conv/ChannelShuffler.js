@@ -478,15 +478,15 @@ class SplitConcat {
  *
  * Interestingly, although it looks like the most computing intensively (because many multiplications),
  * it is usually the fastest method (faster than concat-reshape-transpose-reshape-split, concat-gather,
- * split-concat) in desktop computer. Even in mobile, it is still the second fatest method (just slower
+ * split-concat) in WebGL backend. Even in CPU backend, it is still the second fatest method (just slower
  * than concat-gather).
  *
- * In desktop computer, the concat-gather method usually is the second fastest method (slower than this
+ * In WebGL backend, the concat-gather method usually is the second fastest method (slower than this
  * pointwise-convolution method). Only when output group is one (i.e. no group; all one group), the
  * concat-gather method beats (i.e. is fatser than) this pointwise-convolution method.
  *
- * In both desktop and mobile, the less the output group count is, the faster the shuffling is. That is, one
- * output group is faster than two (and four, eight, ...) output group. This behavior is the same as the
+ * In both WebGL and CPU backend, the less the output group count is, the faster the shuffling is. That is,
+ * one output group is faster than two (and four, eight, ...) output group. This behavior is the same as the
  * other shuffling method.
  *
  *
@@ -579,14 +579,22 @@ class ConcatPointwiseConv {
    * last dimensions are shuffled.
    */
   gather( concatenatedTensor ) {
-    return tf.tidy( "ChannelShuffler.PointwiseConv.gather", () => {
+    let shuffledSplitedTensorArray = new Array( this.filtersTensor4dArray.length );
+    for ( let i = 0; i < this.shuffledSplitedTensorArray.length; ++i ) {
       // shuffle and split by pointwise convolution (one operation achieves two operations).
-      let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
-        filtersTensor4d =>
-          concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
-      );
-      return shuffledSplitedTensorArray;
-    });
+      shuffledSplitedTensorArray[ i ] = concatenatedTensor.conv2d( this.filtersTensor4dArray[ i ], 1, "valid" );
+    }
+    return shuffledSplitedTensorArray;
+
+//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
+//     return tf.tidy( "ChannelShuffler.PointwiseConv.gather", () => {
+//       // shuffle and split by pointwise convolution (one operation achieves two operations).
+//       let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
+//         filtersTensor4d =>
+//           concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
+//       );
+//       return shuffledSplitedTensorArray;
+//     });
   }
 
   /**
@@ -600,16 +608,24 @@ class ConcatPointwiseConv {
    * last dimensions are shuffled.
    */
   concatGather( tensorArray ) {
-    return tf.tidy( "ChannelShuffler.PointwiseConv.concatGather", () => {
-      let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
-      // shuffle and split by pointwise convolution (one operation achieves two operations).
-      let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
-        filtersTensor4d =>
-          concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
-      );
-      return shuffledSplitedTensorArray;
-    });
+    let shuffledSplitedTensorArray = this.gather( concatenatedTensor );
+    concatenatedTensor.dispose();
+
+    return shuffledSplitedTensorArray;
+
+//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
+//     return tf.tidy( "ChannelShuffler.PointwiseConv.concatGather", () => {
+//       let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+//
+//       // shuffle and split by pointwise convolution (one operation achieves two operations).
+//       let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
+//         filtersTensor4d =>
+//           concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
+//       );
+//       return shuffledSplitedTensorArray;
+//     });
   }
 
 }
