@@ -379,53 +379,95 @@ class SplitConcat {
    * last dimensions are shuffled.
    */
   splitConcat( tensorArray ) {
-    return tf.tidy( "ChannelShuffler.SplitConcat.splitConcat", () => {
 
-      // Become local variables for reducing access time.
-      let lastAxisId = this.shuffleInfo.lastAxisId;
-      let channelCountPerGroup = this.shuffleInfo.channelCountPerGroup;
+    // Become local variables for reducing access time.
+    let lastAxisId = this.shuffleInfo.lastAxisId;
+    let channelCountPerGroup = this.shuffleInfo.channelCountPerGroup;
 
-      // Every element will be a single channel tensor3d.
-      let singleChannelTensorArray = this.singleChannelTensorArray; // Use shared pre-allocate memory for speeding up.
-      singleChannelTensorArray.length = 0; // Empty the array.
+    // Every element will be a single channel tensor3d.
+    let singleChannelTensorArray = this.singleChannelTensorArray; // Use shared pre-allocate memory for speeding up.
+    singleChannelTensorArray.length = 0; // Empty the array.
 
-      // Split every group (a multiple channels tensor3d) into many single channel tensor3d.
-      for ( let tensor of tensorArray ) {
-        singleChannelTensorArray.push( ...tensor.split( channelCountPerGroup, lastAxisId ) );
+    // Split every group (a multiple channels tensor3d) into many single channel tensor3d.
+    for ( let i = 0; i < tensorArray.length; ++i ) {
+      let tensor = tensorArray[ i ];
+      singleChannelTensorArray.push( ...tensor.split( channelCountPerGroup, lastAxisId ) );
+    }
+
+    // An array for many single channel tensor3d of one group.
+    //
+    // Shared and re-used multiple times to reduce memory re-allocation.
+    let tensorArrayForOneGroup = this.tensorArrayForOneGroup;
+
+    // Shuffle (by re-arrange) and concat.
+    let resultArray = new Array( this.shuffledChannelIndicesArray.length );
+    for ( let i = 0; i < this.shuffledChannelIndicesArray.length; ++i ) {
+      let shuffledChannelIndices = this.shuffledChannelIndicesArray[ i ];
+
+      for ( let j = 0; j < shuffledChannelIndices.length; ++j ) {
+        tensorArrayForOneGroup[ j ] = singleChannelTensorArray[ shuffledChannelIndices[ j ] ]; // The shuffledChannelIndices[ j ] is channelIndex.
       }
 
-      // An array for many single channel tensor3d of one group.
-      //
-      // Shared and re-used multiple times to reduce memory re-allocation.
-      let tensorArrayForOneGroup = this.tensorArrayForOneGroup;
+      resultArray[ i ] = tf.concat( tensorArrayForOneGroup, lastAxisId );
+    }
 
-      // shuffle and split by concat (one operation achieves two operations).
-      return this.shuffledChannelIndicesArray.map( ( shuffledChannelIndices ) => {
-//!!! Using a loop instead. (to reduce function call overhead)
-//         shuffledChannelIndices.forEach( ( channelIndex, i ) => {
+    // Release temporary single channel tensors.
+    for ( let i = 0; i < singleChannelTensorArray.length; ++i ) {
+      singleChannelTensorArray[ i ].dispose();
+    }
+
+    // Although singleChannelTensorArray[] and tensorArrayForOneGroup[] still have tensors, they are disposed tensors and should not be used.
+
+    return resultArray;
+
+//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
+//     return tf.tidy( "ChannelShuffler.SplitConcat.splitConcat", () => {
+//
+//       // Become local variables for reducing access time.
+//       let lastAxisId = this.shuffleInfo.lastAxisId;
+//       let channelCountPerGroup = this.shuffleInfo.channelCountPerGroup;
+//
+//       // Every element will be a single channel tensor3d.
+//       let singleChannelTensorArray = this.singleChannelTensorArray; // Use shared pre-allocate memory for speeding up.
+//       singleChannelTensorArray.length = 0; // Empty the array.
+//
+//       // Split every group (a multiple channels tensor3d) into many single channel tensor3d.
+//       for ( let tensor of tensorArray ) {
+//         singleChannelTensorArray.push( ...tensor.split( channelCountPerGroup, lastAxisId ) );
+//       }
+//
+//       // An array for many single channel tensor3d of one group.
+//       //
+//       // Shared and re-used multiple times to reduce memory re-allocation.
+//       let tensorArrayForOneGroup = this.tensorArrayForOneGroup;
+//
+//       // shuffle and split by concat (one operation achieves two operations).
+//       return this.shuffledChannelIndicesArray.map( ( shuffledChannelIndices ) => {
+// //!!! Using a loop instead. (to reduce function call overhead)
+// //         shuffledChannelIndices.forEach( ( channelIndex, i ) => {
+// //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
+// //         });
+//
+// //!!! Use for-of instead. (to reduce array member access overhead)
+// //         let arrayLength = tensorArrayForOneGroup.length;
+// //         for ( let i = 0; i < arrayLength; ++i ) {
+// //           // The shuffledChannelIndices[ i ] is channelIndex.
+// //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ shuffledChannelIndices[ i ] ];
+// //         }
+//
+//         // Using for-of could be a better method.
+//         //
+//         // If using shuffledChannelIndices.forEach(), there is a function call overhead.
+//         // If using for ( i = 0; ... ) and shuffledChannelIndices[ i ], there is a array member access overhead.
+//         let i = 0;
+//         for ( let channelIndex of shuffledChannelIndices ) {
 //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
-//         });
-
-//!!! Use for-of instead. (to reduce array member access overhead)
-//         let arrayLength = tensorArrayForOneGroup.length;
-//         for ( let i = 0; i < arrayLength; ++i ) {
-//           // The shuffledChannelIndices[ i ] is channelIndex.
-//           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ shuffledChannelIndices[ i ] ];
+//           ++i;
 //         }
-
-        // Using for-of could be a better method.
-        //
-        // If using shuffledChannelIndices.forEach(), there is a function call overhead.
-        // If using for ( i = 0; ... ) and shuffledChannelIndices[ i ], there is a array member access overhead.
-        let i = 0;
-        for ( let channelIndex of shuffledChannelIndices ) {
-          tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
-          ++i;
-        }
-
-        return tf.concat( tensorArrayForOneGroup, lastAxisId );
-      });
-    });
+//
+//         return tf.concat( tensorArrayForOneGroup, lastAxisId );
+//       });
+//     });
   }
 
 }
