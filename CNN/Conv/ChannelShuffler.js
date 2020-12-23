@@ -275,6 +275,35 @@ class ConcatGather {
 //     });
   }
 
+  gather_dispose_for( concatenatedTensor ) {
+    let shuffledSplitedTensorArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
+    for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
+      // shuffle and split by gather (one operation achieves two operations).
+      shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather( this.shuffledChannelIndicesTensor1dArray[ i ], this.shuffleInfo.lastAxisId );
+    }
+    return shuffledSplitedTensorArray;
+  }
+
+  gather_dispose_map( concatenatedTensor ) {
+    // shuffle and split by gather (one operation achieves two operations).
+    let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+      shuffledChannelIndicesTensor1d =>
+        concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
+    );
+    return shuffledSplitedTensorArray;
+  }
+
+  gather_tidy_map( concatenatedTensor ) {
+    return tf.tidy( "ChannelShuffler.ConcatGather.gather", () => {
+      // shuffle and split by gather (one operation achieves two operations).
+      let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+        shuffledChannelIndicesTensor1d =>
+          concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
+      );
+      return shuffledSplitedTensorArray;
+    });
+  }
+
   /**
    * Concatenate, permute and split the input tensor by concat-gather.
    *
@@ -323,6 +352,136 @@ class ConcatGather {
 //       );
 //       return shuffledSplitedTensorArray;
 //     });
+  }
+
+
+  concatGather_dispose_direct_call_dispose_for( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let shuffledSplitedTensorArray = this.gather_dispose_for( concatenatedTensor );
+    concatenatedTensor.dispose();
+    return shuffledSplitedTensorArray;
+  }
+
+  concatGather_dispose_finally_call_dispose_for( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    try {
+      let shuffledSplitedTensorArray = this.gather_dispose_for( concatenatedTensor );
+      return shuffledSplitedTensorArray;
+    } finally {
+      concatenatedTensor.dispose();
+    }
+  }
+
+
+  concatGather_dispose_direct_call_dispose_map( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let shuffledSplitedTensorArray = this.gather_dispose_map( concatenatedTensor );
+    concatenatedTensor.dispose();
+    return shuffledSplitedTensorArray;
+  }
+
+  concatGather_dispose_finally_call_dispose_map( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    try {
+      let shuffledSplitedTensorArray = this.gather_dispose_map( concatenatedTensor );
+      return shuffledSplitedTensorArray;
+    } finally {
+      concatenatedTensor.dispose();
+    }
+  }
+
+
+  concatGather_dispose_direct_call_tidy_map( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let shuffledSplitedTensorArray = this.gather_tidy_map( concatenatedTensor );
+    concatenatedTensor.dispose();
+    return shuffledSplitedTensorArray;
+  }
+
+  concatGather_dispose_finally_call_tidy_map( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    try {
+      let shuffledSplitedTensorArray = this.gather_tidy_map( concatenatedTensor );
+      return shuffledSplitedTensorArray;
+    } finally {
+      concatenatedTensor.dispose();
+    }
+  }
+
+
+  concatGather_dispose_direct_for( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
+    let shuffledSplitedTensorArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
+    for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
+      // shuffle and split by gather (one operation achieves two operations).
+      shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather( this.shuffledChannelIndicesTensor1dArray[ i ], this.shuffleInfo.lastAxisId );
+    }
+    concatenatedTensor.dispose();
+
+    return shuffledSplitedTensorArray;
+  }
+
+  concatGather_dispose_finally_for( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
+    try {
+      let shuffledSplitedTensorArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
+      for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
+        // shuffle and split by gather (one operation achieves two operations).
+        shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather( this.shuffledChannelIndicesTensor1dArray[ i ], this.shuffleInfo.lastAxisId );
+      }
+
+      return shuffledSplitedTensorArray;
+
+    } finally {
+      concatenatedTensor.dispose();
+    }
+  }
+
+
+  concatGather_dispose_direct_map( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
+    // shuffle and split by gather (one operation achieves two operations).
+    let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+      shuffledChannelIndicesTensor1d =>
+        concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
+    );
+
+    concatenatedTensor.dispose();
+
+    return shuffledSplitedTensorArray;
+  }
+
+  concatGather_dispose_finally_map( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
+    try {
+      // shuffle and split by gather (one operation achieves two operations).
+      let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+        shuffledChannelIndicesTensor1d =>
+          concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
+      );
+      return shuffledSplitedTensorArray;
+
+    } finally {
+      concatenatedTensor.dispose();
+    }
+  }
+
+
+  concatGather_tidy_map( tensorArray ) {
+    return tf.tidy( "ChannelShuffler.ConcatGather.concatGather", () => {
+      let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
+      // shuffle and split by gather (one operation achieves two operations).
+      let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+        shuffledChannelIndicesTensor1d =>
+          concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
+      );
+      return shuffledSplitedTensorArray;
+    });
   }
 
 }
@@ -616,7 +775,7 @@ class ConcatPointwiseConv {
 //     });
   }
 
-  gather_for_dispose( concatenatedTensor ) {
+  gather_dispose_for( concatenatedTensor ) {
     let shuffledSplitedTensorArray = new Array( this.filtersTensor4dArray.length );
     for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
       // shuffle and split by pointwise convolution (one operation achieves two operations).
@@ -625,7 +784,7 @@ class ConcatPointwiseConv {
     return shuffledSplitedTensorArray;
   }
 
-  gather_map_dispose( concatenatedTensor ) {
+  gather_dispose_map( concatenatedTensor ) {
     // shuffle and split by pointwise convolution (one operation achieves two operations).
     let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
       filtersTensor4d =>
@@ -634,7 +793,7 @@ class ConcatPointwiseConv {
     return shuffledSplitedTensorArray;
   }
 
-  gather_map_tidy( concatenatedTensor ) {
+  gather_tidy_map( concatenatedTensor ) {
     return tf.tidy( "ChannelShuffler.PointwiseConv.gather", () => {
       // shuffle and split by pointwise convolution (one operation achieves two operations).
       let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
@@ -676,45 +835,48 @@ class ConcatPointwiseConv {
 //     });
   }
 
-  concatGather_dispose_direct_call_for_dispose( tensorArray ) {
+
+  concatGather_dispose_direct_call_dispose_for( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
-    let shuffledSplitedTensorArray = this.gather_for_dispose( concatenatedTensor );
+    let shuffledSplitedTensorArray = this.gather_dispose_for( concatenatedTensor );
     concatenatedTensor.dispose();
 
     return shuffledSplitedTensorArray;
   }
 
-  concatGather_dispose_finally_call_for_dispose( tensorArray ) {
+  concatGather_dispose_finally_call_dispose_for( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     try {
-      let shuffledSplitedTensorArray = this.gather_for_dispose( concatenatedTensor );
+      let shuffledSplitedTensorArray = this.gather_dispose_for( concatenatedTensor );
       return shuffledSplitedTensorArray;
     } finally {
       concatenatedTensor.dispose();
     }
   }
 
-  concatGather_dispose_direct_call_map_dispose( tensorArray ) {
+
+  concatGather_dispose_direct_call_dispose_map( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
-    let shuffledSplitedTensorArray = this.gather_map_dispose( concatenatedTensor );
+    let shuffledSplitedTensorArray = this.gather_dispose_map( concatenatedTensor );
     concatenatedTensor.dispose();
 
     return shuffledSplitedTensorArray;
   }
 
-  concatGather_dispose_finally_call_map_dispose( tensorArray ) {
+  concatGather_dispose_finally_call_dispose_map( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     try {
-      let shuffledSplitedTensorArray = this.gather_map_dispose( concatenatedTensor );
+      let shuffledSplitedTensorArray = this.gather_dispose_map( concatenatedTensor );
       return shuffledSplitedTensorArray;
     } finally {
       concatenatedTensor.dispose();
     }
   }
+
 
   concatGather_dispose_direct_call_map_tidy( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
@@ -735,6 +897,7 @@ class ConcatPointwiseConv {
       concatenatedTensor.dispose();
     }
   }
+
 
   concatGather_dispose_direct_for( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
@@ -767,6 +930,7 @@ class ConcatPointwiseConv {
     }
   }
 
+
   concatGather_dispose_direct_map( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
@@ -796,6 +960,7 @@ class ConcatPointwiseConv {
       concatenatedTensor.dispose();
     }
   }
+
 
   concatGather_tidy_map( tensorArray ) {
     return tf.tidy( "ChannelShuffler.PointwiseConv.concatGather", () => {
