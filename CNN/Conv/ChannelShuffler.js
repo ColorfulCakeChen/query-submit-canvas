@@ -288,11 +288,17 @@ class ConcatGather {
   concatGather( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
-    let shuffledSplitedTensorArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
-    for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
-      // shuffle and split by gather (one operation achieves two operations).
-      shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather( this.shuffledChannelIndicesTensor1dArray[ i ], this.shuffleInfo.lastAxisId );
-    }
+//     let shuffledSplitedTensorArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
+//     for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
+//       // shuffle and split by gather (one operation achieves two operations).
+//       shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather( this.shuffledChannelIndicesTensor1dArray[ i ], this.shuffleInfo.lastAxisId );
+//     }
+
+    // shuffle and split by gather (one operation achieves two operations).
+    let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+      shuffledChannelIndicesTensor1d =>
+        concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
+    );
 
     concatenatedTensor.dispose();
 
