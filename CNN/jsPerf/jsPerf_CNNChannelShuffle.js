@@ -1,4 +1,4 @@
-export { init };
+export { init, disposeTensors };
 
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as TensorTools from "../util/TensorTools.js";
