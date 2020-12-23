@@ -133,20 +133,30 @@ function init() {
 }
 
 function disposeTensors() {
-  if ( globalThis.testSet_110x110x24_g8 )
+  if ( globalThis.testSet_110x110x24_g8 ) {
     globalThis.testSet_110x110x24_g8.disposeTensors();
+    globalThis.testSet_110x110x24_g8 = null;
+  }
 
-  if ( globalThis.testSet_110x110x24_g4 )
+  if ( globalThis.testSet_110x110x24_g4 ) {
     globalThis.testSet_110x110x24_g4.disposeTensors();
+    globalThis.testSet_110x110x24_g4 = null;
+  }
 
-  if ( globalThis.testSet_110x110x24_g3 )
+  if ( globalThis.testSet_110x110x24_g3 ) {
     globalThis.testSet_110x110x24_g3.disposeTensors();
+    globalThis.testSet_110x110x24_g3 = null;
+  }
 
-  if ( globalThis.testSet_110x110x24_g2 )
+  if ( globalThis.testSet_110x110x24_g2 ) {
     globalThis.testSet_110x110x24_g2.disposeTensors();
+    globalThis.testSet_110x110x24_g2 = null;
+  }
 
-  if ( globalThis.testSet_110x110x24_g1 )
+  if ( globalThis.testSet_110x110x24_g1 ) {
     globalThis.testSet_110x110x24_g1.disposeTensors();
+    globalThis.testSet_110x110x24_g1 = null;
+  }
 }
 
 //tf.ready().then( init );
