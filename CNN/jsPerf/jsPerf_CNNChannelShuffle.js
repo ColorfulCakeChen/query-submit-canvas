@@ -1,4 +1,4 @@
-export { init, testResultSame, disposeTensors };
+export { init, testResultSame, testDifferentDisposeStrategy, disposeTensors };
 
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as TensorTools from "../util/TensorTools.js";
@@ -209,6 +209,14 @@ function testResultSame() {
   globalThis.testSet_110x110x24_g3.testResultSame();
   globalThis.testSet_110x110x24_g2.testResultSame();
   globalThis.testSet_110x110x24_g1.testResultSame();
+}
+
+function testDifferentDisposeStrategy() {
+  globalThis.testSet_110x110x24_g8.testDifferentDisposeStrategy();
+  globalThis.testSet_110x110x24_g4.testDifferentDisposeStrategy();
+  globalThis.testSet_110x110x24_g3.testDifferentDisposeStrategy();
+  globalThis.testSet_110x110x24_g2.testDifferentDisposeStrategy();
+  globalThis.testSet_110x110x24_g1.testDifferentDisposeStrategy();
 }
 
 function disposeTensors() {
