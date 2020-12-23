@@ -194,6 +194,7 @@ class HeightWidthDepthGroup {
         tArrayPrev = tArray;
       }
     });
+  }
 }
 
 function init() {
