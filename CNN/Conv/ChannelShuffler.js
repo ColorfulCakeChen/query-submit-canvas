@@ -881,7 +881,7 @@ class ConcatPointwiseConv {
   concatGather_dispose_direct_call_tidy_map( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
-    let shuffledSplitedTensorArray = this.gather_map_tidy( concatenatedTensor );
+    let shuffledSplitedTensorArray = this.gather_tidy_map( concatenatedTensor );
     concatenatedTensor.dispose();
 
     return shuffledSplitedTensorArray;
@@ -891,7 +891,7 @@ class ConcatPointwiseConv {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     try {
-      let shuffledSplitedTensorArray = this.gather_map_tidy( concatenatedTensor );
+      let shuffledSplitedTensorArray = this.gather_tidy_map( concatenatedTensor );
       return shuffledSplitedTensorArray;
     } finally {
       concatenatedTensor.dispose();
