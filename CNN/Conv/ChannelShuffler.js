@@ -80,12 +80,23 @@ class ShuffleInfo {
    *   A shuffled tensor. Its size is the same as concatenatedTensor but its last dimension is shuffled.
    */
   reshapeTransposeReshape( concatenatedTensor ) {
-    return tf.tidy( "ChannelShuffler.ShuffleInfo.reshapeTransposeReshape", () => {
-      return concatenatedTensor
-        .reshape( this.intermediateShape )
-        .transpose( this.transposePermutation )
-        .reshape( this.concatenatedShape );
-    });
+    let t1 = concatenatedTensor.reshape( this.intermediateShape );
+
+    let t2 = t1.transpose( this.transposePermutation );
+    t1.dispose();
+
+    let t3 = t2.reshape( this.concatenatedShape );
+    t2.dispose();
+
+    return t3;
+
+//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
+//     return tf.tidy( "ChannelShuffler.ShuffleInfo.reshapeTransposeReshape", () => {
+//       return concatenatedTensor
+//         .reshape( this.intermediateShape )
+//         .transpose( this.transposePermutation )
+//         .reshape( this.concatenatedShape );
+//     });
   }
 
   /**
@@ -99,13 +110,21 @@ class ShuffleInfo {
    * last dimensions are shuffled.
    */
   reshapeTransposeReshapeSplit( concatenatedTensor ) {
-    return tf.tidy( "ChannelShuffler.ShuffleInfo.reshapeTransposeReshapeSplit", () => {
-      return concatenatedTensor
-        .reshape( this.intermediateShape )
-        .transpose( this.transposePermutation )
-        .reshape( this.concatenatedShape )
-        .split( this.outputGroupCount, this.lastAxisId );
-    });
+    let t = this.reshapeTransposeReshape( concatenatedTensor );
+
+    let tArray = t.split( this.outputGroupCount, this.lastAxisId );
+    t.dispose();
+
+    return tArray;
+
+//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
+//     return tf.tidy( "ChannelShuffler.ShuffleInfo.reshapeTransposeReshapeSplit", () => {
+//       return concatenatedTensor
+//         .reshape( this.intermediateShape )
+//         .transpose( this.transposePermutation )
+//         .reshape( this.concatenatedShape )
+//         .split( this.outputGroupCount, this.lastAxisId );
+//     });
   }
 
   /**
@@ -119,12 +138,20 @@ class ShuffleInfo {
    * last dimensions are shuffled.
    */
   concatReshapeTransposeReshape( tensorArray ) {
-    return tf.tidy( "ChannelShuffler.ShuffleInfo.concatReshapeTransposeReshape", () => {
-      return tf.concat( tensorArray, this.lastAxisId )
-        .reshape( this.intermediateShape )
-        .transpose( this.transposePermutation )
-        .reshape( this.concatenatedShape );
-    });
+    let concatenatedTensor = tf.concat( tensorArray, this.lastAxisId );
+
+    let t = this.reshapeTransposeReshape( concatenatedTensor );
+    concatenatedTensor.dispose();
+
+    return t;
+
+//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
+//     return tf.tidy( "ChannelShuffler.ShuffleInfo.concatReshapeTransposeReshape", () => {
+//       return tf.concat( tensorArray, this.lastAxisId )
+//         .reshape( this.intermediateShape )
+//         .transpose( this.transposePermutation )
+//         .reshape( this.concatenatedShape );
+//     });
   }
 
   /**
@@ -138,13 +165,21 @@ class ShuffleInfo {
    * last dimensions are shuffled.
    */
   concatReshapeTransposeReshapeSplit( tensorArray ) {
-    return tf.tidy( "ChannelShuffler.ShuffleInfo.concatReshapeTransposeReshapeSplit", () => {
-      return tf.concat( tensorArray, this.lastAxisId )
-        .reshape( this.intermediateShape )
-        .transpose( this.transposePermutation )
-        .reshape( this.concatenatedShape )
-        .split( this.outputGroupCount, this.lastAxisId );
-    });
+    let concatenatedTensor = tf.concat( tensorArray, this.lastAxisId );
+
+    let t = this.reshapeTransposeReshapeSplit( concatenatedTensor );
+    concatenatedTensor.dispose();
+
+    return t;
+
+//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
+//     return tf.tidy( "ChannelShuffler.ShuffleInfo.concatReshapeTransposeReshapeSplit", () => {
+//       return tf.concat( tensorArray, this.lastAxisId )
+//         .reshape( this.intermediateShape )
+//         .transpose( this.transposePermutation )
+//         .reshape( this.concatenatedShape )
+//         .split( this.outputGroupCount, this.lastAxisId );
+//     });
   }
 
 }
