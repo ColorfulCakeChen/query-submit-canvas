@@ -6,7 +6,7 @@ import * as TensorTools from "../util/TensorTools.js";
 /**
  * Test different channel shuffle implementation for CNN ShuffleNet.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/10945/13/colorfulcakechen-cnn-channel-shuffler-0faaacfd48ff64bed}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/10945/16/colorfulcakechen-cnn-channel-shuffler-6cb696633cf508477}
  */
 
 /**
