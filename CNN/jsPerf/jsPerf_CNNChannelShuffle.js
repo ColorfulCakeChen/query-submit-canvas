@@ -1,4 +1,4 @@
-export { init, disposeTensors };
+export { init, testResultSame, disposeTensors };
 
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as TensorTools from "../util/TensorTools.js";
@@ -6,7 +6,7 @@ import * as TensorTools from "../util/TensorTools.js";
 /**
  * Test different channel shuffle implementation for CNN ShuffleNet.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/10945/8/colorfulcakechen-cnn-channel-shuffler-710e45540d80fbc3c}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/10945/9/colorfulcakechen-cnn-channel-shuffler-cf328d1847fabd52a}
  */
 
 /**
@@ -59,39 +59,45 @@ class HeightWidthDepthGroup {
 
   // Test concat-reshape-transpose-reshape-split
   test_ConcatReshapeTransposeReshapeSplit() {
-    tf.tidy( () => {
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
-    });
+    this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
   }
 
   // Test concat-gather (Unsorted)
   test_ConcatGatherUnsorted() {
-    tf.tidy( () => {
-      this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
-    });
+    this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
   }
 
   // Test split-concat (Sorted Shared)
   test_SplitConcatSortedShared() {
-    tf.tidy( () => {
-      this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
-    });
+    this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
   }
 
   // Test concat-pointwise-convolution
   test_ConcatPointwiseConv() {
-    tf.tidy( () => {
-      this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
-    });
+    this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
   }
 
   // Testing whether the results of different implementation are the same.
   testResultSame() {
     tf.tidy( () => {
+      let memoryInfo0 = tf.memory();
+
       let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
+      let memoryInfo1 = tf.memory();
+      tf.util.assert( memoryInfo1.numTensors == memoryInfo0.numTensors, `ConcatReshapeTransposeReshapeSplit() memory leak`);
+
       let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
+      let memoryInfo2 = tf.memory();
+      tf.util.assert( memoryInfo2.numTensors == memoryInfo1.numTensors, `ConcatGatherUnsorted() memory leak`);
+
       let t3Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
+      let memoryInfo3 = tf.memory();
+      tf.util.assert( memoryInfo3.numTensors == memoryInfo2.numTensors, `SplitConcatSortedShared() memory leak`);
+
       let t4Array = this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
+      let memoryInfo4 = tf.memory();
+      tf.util.assert( memoryInfo4.numTensors == memoryInfo3.numTensors, `PointwiseConv() memory leak`);
+
 
       tf.util.assert(
         TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ),
@@ -130,6 +136,14 @@ function init() {
   globalThis.testSet_110x110x24_g3 = new HeightWidthDepthGroup( 110, 110, 24, 3 );
   globalThis.testSet_110x110x24_g2 = new HeightWidthDepthGroup( 110, 110, 24, 2 );
   globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( 110, 110, 24, 1 );
+}
+
+function testResultSame() {
+  globalThis.testSet_110x110x24_g8.testResultSame();
+  globalThis.testSet_110x110x24_g4.testResultSame();
+  globalThis.testSet_110x110x24_g3.testResultSame();
+  globalThis.testSet_110x110x24_g2.testResultSame();
+  globalThis.testSet_110x110x24_g1.testResultSame();
 }
 
 function disposeTensors() {
