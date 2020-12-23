@@ -167,10 +167,10 @@ class ShuffleInfo {
   concatReshapeTransposeReshapeSplit( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.lastAxisId );
 
-    let t = this.reshapeTransposeReshapeSplit( concatenatedTensor );
+    let tArray = this.reshapeTransposeReshapeSplit( concatenatedTensor );
     concatenatedTensor.dispose();
 
-    return t;
+    return tArray;
 
 //!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
 //     return tf.tidy( "ChannelShuffler.ShuffleInfo.concatReshapeTransposeReshapeSplit", () => {
@@ -257,14 +257,22 @@ class ConcatGather {
    * last dimensions are shuffled.
    */
   gather( concatenatedTensor ) {
-    return tf.tidy( "ChannelShuffler.ConcatGather.gather", () => {
+    let shuffledSplitedTensorArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
+    for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
       // shuffle and split by gather (one operation achieves two operations).
-      let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
-        shuffledChannelIndicesTensor1d =>
-          concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
-      );
-      return shuffledSplitedTensorArray;
-    });
+      shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather( this.shuffledChannelIndicesTensor1dArray[ i ], this.shuffleInfo.lastAxisId );
+    }
+    return shuffledSplitedTensorArray;
+
+//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
+//     return tf.tidy( "ChannelShuffler.ConcatGather.gather", () => {
+//       // shuffle and split by gather (one operation achieves two operations).
+//       let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+//         shuffledChannelIndicesTensor1d =>
+//           concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
+//       );
+//       return shuffledSplitedTensorArray;
+//     });
   }
 
   /**
@@ -278,16 +286,24 @@ class ConcatGather {
    * last dimensions are shuffled.
    */
   concatGather( tensorArray ) {
-    return tf.tidy( "ChannelShuffler.ConcatGather.concatGather", () => {
-      let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
-      // shuffle and split by gather (one operation achieves two operations).
-      let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
-        shuffledChannelIndicesTensor1d =>
-          concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
-      );
-      return shuffledSplitedTensorArray;
-    });
+    let tArray = this.gather( concatenatedTensor );
+    concatenatedTensor.dispose();
+
+    return tArray;
+
+//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
+//     return tf.tidy( "ChannelShuffler.ConcatGather.concatGather", () => {
+//       let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+//
+//       // shuffle and split by gather (one operation achieves two operations).
+//       let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+//         shuffledChannelIndicesTensor1d =>
+//           concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
+//       );
+//       return shuffledSplitedTensorArray;
+//     });
   }
 
 }
