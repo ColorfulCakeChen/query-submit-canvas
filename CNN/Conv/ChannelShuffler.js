@@ -293,7 +293,6 @@ class ConcatGather {
       // shuffle and split by gather (one operation achieves two operations).
       shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather( this.shuffledChannelIndicesTensor1dArray[ i ], this.shuffleInfo.lastAxisId );
     }
-    return shuffledSplitedTensorArray;
 
     concatenatedTensor.dispose();
 
@@ -304,7 +303,7 @@ class ConcatGather {
 //
 //     let tArray = this.gather( concatenatedTensor );
 //     concatenatedTensor.dispose();
-/
+//
 //     return tArray;
 
 //!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
