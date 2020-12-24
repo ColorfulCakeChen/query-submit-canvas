@@ -113,9 +113,6 @@ class HeightWidthDepthGroup {
   test_ConcatGatherUnsorted_dispose_dispose_finally_call_map()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_map( this.dataTensor3dArray ) ); }
   test_ConcatGatherUnsorted_dispose_direct_call_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_map( this.dataTensor3dArray ) ); }
 
-//   test_ConcatGatherUnsorted_dispose_finally_call_tidy_map()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_tidy_map( this.dataTensor3dArray ) ); }
-//   test_ConcatGatherUnsorted_dispose_direct_call_tidy_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_tidy_map( this.dataTensor3dArray ) ); }
-
   test_ConcatGatherUnsorted_dispose_finally_loop() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_loop( this.dataTensor3dArray ) ); }
   test_ConcatGatherUnsorted_dispose_direct_loop() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_loop( this.dataTensor3dArray ) ); }
 
@@ -130,9 +127,6 @@ class HeightWidthDepthGroup {
 
   test_ConcatPointwiseConv_dispose_finally_call_map()  { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_call_map( this.dataTensor3dArray ) ); }
   test_ConcatPointwiseConv_dispose_direct_call_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_call_map( this.dataTensor3dArray ) ); }
-
-//   test_ConcatPointwiseConv_dispose_finally_call_tidy_map()  { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_call_tidy_map( this.dataTensor3dArray ) ); }
-//   test_ConcatPointwiseConv_dispose_direct_call_tidy_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_call_tidy_map( this.dataTensor3dArray ) ); }
 
   test_ConcatPointwiseConv_dispose_finally_loop() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_loop( this.dataTensor3dArray ) ); }
   test_ConcatPointwiseConv_dispose_direct_loop() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_loop( this.dataTensor3dArray ) ); }
@@ -230,9 +224,6 @@ class HeightWidthDepthGroup {
       this.concatGatherUnsorted.concatGather_dispose_finally_call_map,
       this.concatGatherUnsorted.concatGather_dispose_direct_call_map,
 
-//       this.concatGatherUnsorted.concatGather_dispose_finally_call_tidy_map,
-//       this.concatGatherUnsorted.concatGather_dispose_direct_call_tidy_map,
-
       this.concatGatherUnsorted.concatGather_dispose_finally_loop,
       this.concatGatherUnsorted.concatGather_dispose_direct_loop,
 
@@ -251,9 +242,6 @@ class HeightWidthDepthGroup {
 
       this.concatPointwiseConv.concatGather_dispose_finally_call_map,
       this.concatPointwiseConv.concatGather_dispose_direct_call_map,
-
-//       this.concatPointwiseConv.concatGather_dispose_finally_call_tidy_map,
-//       this.concatPointwiseConv.concatGather_dispose_direct_call_tidy_map,
 
       this.concatPointwiseConv.concatGather_dispose_finally_loop,
       this.concatPointwiseConv.concatGather_dispose_direct_loop,
