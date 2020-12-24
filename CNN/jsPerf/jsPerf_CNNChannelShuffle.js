@@ -83,40 +83,64 @@ class HeightWidthDepthGroup {
     tf.dispose( shuffledArray );
   }
 
-  test_ConcatPointwiseConv_dispose_direct_call_dispose_for()  { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_call_dispose_for( this.dataTensor3dArray ) ); }
-  test_ConcatPointwiseConv_dispose_finally_call_dispose_for() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_call_dispose_for( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally_call_dispose_finally( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally_call_dispose_finally( this.dataTensor3dArray ) ); }
 
-  test_ConcatPointwiseConv_dispose_direct_call_dispose_map()  { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_call_dispose_map( this.dataTensor3dArray ) ); }
-  test_ConcatPointwiseConv_dispose_finally_call_dispose_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_call_dispose_map( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_finally( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_finally( this.dataTensor3dArray ) ); }
 
-  test_ConcatPointwiseConv_dispose_direct_call_tidy_map()  { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_call_tidy_map( this.dataTensor3dArray ) ); }
-  test_ConcatPointwiseConv_dispose_finally_call_tidy_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_call_tidy_map( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_direct( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_direct( this.dataTensor3dArray ) ); }
 
-  test_ConcatPointwiseConv_dispose_direct_for() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_for( this.dataTensor3dArray ) ); }
-  test_ConcatPointwiseConv_dispose_finally_for() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_for( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally( this.dataTensor3dArray ) ); }
 
-  test_ConcatPointwiseConv_dispose_direct_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_map( this.dataTensor3dArray ) ); }
-  test_ConcatPointwiseConv_dispose_finally_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_map( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct( this.dataTensor3dArray ) ); }
 
-  test_ConcatPointwiseConv_tidy_map() { tf.dispose( this.concatPointwiseConv.concatGather_tidy_map( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_tidy()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_tidy( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_tidy()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_tidy( this.dataTensor3dArray ) ); }
+
+  test_ConcatReshapeTransposeReshapeSplit_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally( this.dataTensor3dArray ) ); }
+  test_ConcatReshapeTransposeReshapeSplit_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct( this.dataTensor3dArray ) ); }
+
+  test_ConcatReshapeTransposeReshapeSplit_tidy()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_tidy( this.dataTensor3dArray ) ); }
 
 
-  test_ConcatGatherUnsorted_dispose_direct_call_dispose_for()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_dispose_for( this.dataTensor3dArray ) ); }
-  test_ConcatGatherUnsorted_dispose_finally_call_dispose_for() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_dispose_for( this.dataTensor3dArray ) ); }
+  test_ConcatGatherUnsorted_dispose_finally_call_loop()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_loop( this.dataTensor3dArray ) ); }
+  test_ConcatGatherUnsorted_dispose_direct_call_loop() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_loop( this.dataTensor3dArray ) ); }
 
-  test_ConcatGatherUnsorted_dispose_direct_call_dispose_map()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_dispose_map( this.dataTensor3dArray ) ); }
-  test_ConcatGatherUnsorted_dispose_finally_call_dispose_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_dispose_map( this.dataTensor3dArray ) ); }
+  test_ConcatGatherUnsorted_dispose_dispose_finally_call_map()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_map( this.dataTensor3dArray ) ); }
+  test_ConcatGatherUnsorted_dispose_direct_call_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_map( this.dataTensor3dArray ) ); }
 
-  test_ConcatGatherUnsorted_dispose_direct_call_tidy_map()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_tidy_map( this.dataTensor3dArray ) ); }
-  test_ConcatGatherUnsorted_dispose_finally_call_tidy_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_tidy_map( this.dataTensor3dArray ) ); }
+  test_ConcatGatherUnsorted_dispose_finally_call_tidy_map()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_tidy_map( this.dataTensor3dArray ) ); }
+  test_ConcatGatherUnsorted_dispose_direct_call_tidy_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_tidy_map( this.dataTensor3dArray ) ); }
 
-  test_ConcatGatherUnsorted_dispose_direct_for() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_for( this.dataTensor3dArray ) ); }
-  test_ConcatGatherUnsorted_dispose_finally_for() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_for( this.dataTensor3dArray ) ); }
+  test_ConcatGatherUnsorted_dispose_finally_loop() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_loop( this.dataTensor3dArray ) ); }
+  test_ConcatGatherUnsorted_dispose_direct_loop() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_loop( this.dataTensor3dArray ) ); }
 
-  test_ConcatGatherUnsorted_dispose_direct_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_map( this.dataTensor3dArray ) ); }
   test_ConcatGatherUnsorted_dispose_finally_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_map( this.dataTensor3dArray ) ); }
+  test_ConcatGatherUnsorted_dispose_direct_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_map( this.dataTensor3dArray ) ); }
 
   test_ConcatGatherUnsorted_tidy_map() { tf.dispose( this.concatGatherUnsorted.concatGather_tidy_map( this.dataTensor3dArray ) ); }
+
+
+  test_ConcatPointwiseConv_dispose_finally_call_loop()  { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_call_loop( this.dataTensor3dArray ) ); }
+  test_ConcatPointwiseConv_dispose_direct_call_loop() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_call_loop( this.dataTensor3dArray ) ); }
+
+  test_ConcatPointwiseConv_dispose_finally_call_map()  { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_call_map( this.dataTensor3dArray ) ); }
+  test_ConcatPointwiseConv_dispose_direct_call_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_call_map( this.dataTensor3dArray ) ); }
+
+//   test_ConcatPointwiseConv_dispose_finally_call_tidy_map()  { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_call_tidy_map( this.dataTensor3dArray ) ); }
+//   test_ConcatPointwiseConv_dispose_direct_call_tidy_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_call_tidy_map( this.dataTensor3dArray ) ); }
+
+  test_ConcatPointwiseConv_dispose_finally_loop() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_loop( this.dataTensor3dArray ) ); }
+  test_ConcatPointwiseConv_dispose_direct_loop() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_loop( this.dataTensor3dArray ) ); }
+
+  test_ConcatPointwiseConv_dispose_finally_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_map( this.dataTensor3dArray ) ); }
+  test_ConcatPointwiseConv_dispose_direct_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_map( this.dataTensor3dArray ) ); }
+
+  test_ConcatPointwiseConv_tidy_map() { tf.dispose( this.concatPointwiseConv.concatGather_tidy_map( this.dataTensor3dArray ) ); }
 
 
   // Testing whether the results of different implementation are the same.
