@@ -170,22 +170,50 @@ class HeightWidthDepthGroup {
     });
   }
 
+  testDifferentDisposeStrategy_ConcatReshapeTransposeReshapeSplit() {
+    let functionTable = [
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally_call_dispose_finally,
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally_call_dispose_finally,
+
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_finally,
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_finally,
+
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_direct,
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_direct,
+
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally,
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally,
+
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct,
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct,
+
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_tidy,
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_tidy,
+
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally,
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct,
+
+      this.shuffleInfo.concatReshapeTransposeReshapeSplit_tidy,
+    ];
+    this.testDifferentDisposeStrategy( functionTable );
+  }
+
   testDifferentDisposeStrategy_ConcatGatherUnsorted() {
     let functionTable = [
-      this.concatGatherUnsorted.concatGather_dispose_direct_call_dispose_for,
-      this.concatGatherUnsorted.concatGather_dispose_finally_call_dispose_for,
+      this.concatGatherUnsorted.concatGather_dispose_finally_call_loop,
+      this.concatGatherUnsorted.concatGather_dispose_direct_call_loop,
 
-      this.concatGatherUnsorted.concatGather_dispose_direct_call_dispose_map,
-      this.concatGatherUnsorted.concatGather_dispose_finally_call_dispose_map,
+      this.concatGatherUnsorted.concatGather_dispose_finally_call_map,
+      this.concatGatherUnsorted.concatGather_dispose_direct_call_map,
 
-      this.concatGatherUnsorted.concatGather_dispose_direct_call_tidy_map,
-      this.concatGatherUnsorted.concatGather_dispose_finally_call_tidy_map,
+//       this.concatGatherUnsorted.concatGather_dispose_finally_call_tidy_map,
+//       this.concatGatherUnsorted.concatGather_dispose_direct_call_tidy_map,
 
-      this.concatGatherUnsorted.concatGather_dispose_direct_for,
-      this.concatGatherUnsorted.concatGather_dispose_finally_for,
+      this.concatGatherUnsorted.concatGather_dispose_finally_loop,
+      this.concatGatherUnsorted.concatGather_dispose_direct_loop,
 
-      this.concatGatherUnsorted.concatGather_dispose_direct_map,
       this.concatGatherUnsorted.concatGather_dispose_finally_map,
+      this.concatGatherUnsorted.concatGather_dispose_direct_map,
 
       this.concatGatherUnsorted.concatGather_tidy_map,
     ];
@@ -194,20 +222,20 @@ class HeightWidthDepthGroup {
 
   testDifferentDisposeStrategy_ConcatPointwiseConv() {
     let functionTable = [
-      this.concatPointwiseConv.concatGather_dispose_direct_call_dispose_for,
-      this.concatPointwiseConv.concatGather_dispose_finally_call_dispose_for,
+      this.concatPointwiseConv.concatGather_dispose_finally_call_loop,
+      this.concatPointwiseConv.concatGather_dispose_direct_call_loop,
 
-      this.concatPointwiseConv.concatGather_dispose_direct_call_dispose_map,
-      this.concatPointwiseConv.concatGather_dispose_finally_call_dispose_map,
+      this.concatPointwiseConv.concatGather_dispose_finally_call_map,
+      this.concatPointwiseConv.concatGather_dispose_direct_call_map,
 
-      this.concatPointwiseConv.concatGather_dispose_direct_call_tidy_map,
-      this.concatPointwiseConv.concatGather_dispose_finally_call_tidy_map,
+//       this.concatPointwiseConv.concatGather_dispose_finally_call_tidy_map,
+//       this.concatPointwiseConv.concatGather_dispose_direct_call_tidy_map,
 
-      this.concatPointwiseConv.concatGather_dispose_direct_for,
-      this.concatPointwiseConv.concatGather_dispose_finally_for,
+      this.concatPointwiseConv.concatGather_dispose_finally_loop,
+      this.concatPointwiseConv.concatGather_dispose_direct_loop,
 
-      this.concatPointwiseConv.concatGather_dispose_direct_map,
       this.concatPointwiseConv.concatGather_dispose_finally_map,
+      this.concatPointwiseConv.concatGather_dispose_direct_map,
 
       this.concatPointwiseConv.concatGather_tidy_map,
     ];
@@ -215,6 +243,7 @@ class HeightWidthDepthGroup {
   }
 
   testDifferentDisposeStrategy_All() {
+    this.testDifferentDisposeStrategy_ConcatReshapeTransposeReshapeSplit();
     this.testDifferentDisposeStrategy_ConcatGatherUnsorted();
     this.testDifferentDisposeStrategy_ConcatPointwiseConv();
   }
@@ -297,5 +326,3 @@ function disposeTensors() {
     globalThis.testSet_110x110x24_g1 = null;
   }
 }
-
-//tf.ready().then( init );
