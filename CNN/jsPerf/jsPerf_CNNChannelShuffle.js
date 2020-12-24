@@ -214,7 +214,7 @@ class HeightWidthDepthGroup {
 
       this.shuffleInfo.concatReshapeTransposeReshapeSplit_tidy,
     ];
-    this.testDifferentDisposeStrategy( functionTable );
+    this.testDifferentDisposeStrategy( functionTable, this.shuffleInfo );
   }
 
   testDifferentDisposeStrategy_ConcatGatherUnsorted() {
@@ -233,7 +233,7 @@ class HeightWidthDepthGroup {
 
       this.concatGatherUnsorted.concatGather_tidy_map,
     ];
-    this.testDifferentDisposeStrategy( functionTable );
+    this.testDifferentDisposeStrategy( functionTable, this.concatGatherUnsorted );
   }
 
   testDifferentDisposeStrategy_ConcatPointwiseConv() {
@@ -252,7 +252,7 @@ class HeightWidthDepthGroup {
 
       this.concatPointwiseConv.concatGather_tidy_map,
     ];
-    this.testDifferentDisposeStrategy( functionTable );
+    this.testDifferentDisposeStrategy( functionTable, this.concatPointwiseConv );
   }
 
   testDifferentDisposeStrategy_All() {
@@ -261,7 +261,7 @@ class HeightWidthDepthGroup {
     this.testDifferentDisposeStrategy_ConcatPointwiseConv();
   }
 
-  testDifferentDisposeStrategy( functionTable ) {
+  testDifferentDisposeStrategy( functionTable, thisArg ) {
     tf.tidy( () => {
       let funcPrev;
       let tArrayPrev;
@@ -270,7 +270,7 @@ class HeightWidthDepthGroup {
         let func = functionTable[ i ];
 
         let memoryInfoPrev = tf.memory();
-        let tArray = func( this.dataTensor3dArray );
+        let tArray = func.call( thisArg, this.dataTensor3dArray );
         let memoryInfo = tf.memory();
 
         tf.util.assert( memoryInfo.numTensors == ( memoryInfoPrev.numTensors + tArray.length ), `${func.name}() memory leak`);
