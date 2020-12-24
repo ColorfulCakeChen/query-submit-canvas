@@ -113,8 +113,8 @@ class HeightWidthDepthGroup {
   test_ConcatGatherUnsorted_dispose_dispose_finally_call_map()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_map( this.dataTensor3dArray ) ); }
   test_ConcatGatherUnsorted_dispose_direct_call_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_map( this.dataTensor3dArray ) ); }
 
-  test_ConcatGatherUnsorted_dispose_finally_call_tidy_map()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_tidy_map( this.dataTensor3dArray ) ); }
-  test_ConcatGatherUnsorted_dispose_direct_call_tidy_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_tidy_map( this.dataTensor3dArray ) ); }
+//   test_ConcatGatherUnsorted_dispose_finally_call_tidy_map()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_tidy_map( this.dataTensor3dArray ) ); }
+//   test_ConcatGatherUnsorted_dispose_direct_call_tidy_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_tidy_map( this.dataTensor3dArray ) ); }
 
   test_ConcatGatherUnsorted_dispose_finally_loop() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_loop( this.dataTensor3dArray ) ); }
   test_ConcatGatherUnsorted_dispose_direct_loop() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_loop( this.dataTensor3dArray ) ); }
