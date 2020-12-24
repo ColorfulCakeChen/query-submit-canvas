@@ -562,23 +562,12 @@ class ConcatGather {
 
   gather_map( concatenatedTensor ) {
     // shuffle and split by gather (one operation achieves two operations).
-    let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
+    return this.shuffledChannelIndicesTensor1dArray.map(
       shuffledChannelIndicesTensor1d =>
         concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
     );
-    return shuffledSplitedTensorArray;
   }
 
-//   gather_tidy_map( concatenatedTensor ) {
-//     return tf.tidy( "ChannelShuffler.ConcatGather.gather", () => {
-//       // shuffle and split by gather (one operation achieves two operations).
-//       let shuffledSplitedTensorArray = this.shuffledChannelIndicesTensor1dArray.map(
-//         shuffledChannelIndicesTensor1d =>
-//           concatenatedTensor.gather( shuffledChannelIndicesTensor1d, this.shuffleInfo.lastAxisId )
-//       );
-//       return shuffledSplitedTensorArray;
-//     });
-//   }
 
   /**
    * Concatenate, permute and split the input tensor by concat-gather.
@@ -592,10 +581,10 @@ class ConcatGather {
    */
   concatGather_dispose_finally_call_loop( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
     try {
-//       let shuffledSplitedTensorArray = this.gather_loop( concatenatedTensor );
-//       return shuffledSplitedTensorArray;
       return this.gather_loop( concatenatedTensor );
+
     } finally {
       concatenatedTensor.dispose();
     }
@@ -603,18 +592,20 @@ class ConcatGather {
 
   concatGather_dispose_direct_call_loop( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
     let shuffledSplitedTensorArray = this.gather_loop( concatenatedTensor );
     concatenatedTensor.dispose();
+
     return shuffledSplitedTensorArray;
   }
 
 
   concatGather_dispose_finally_call_map( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
     try {
-//       let shuffledSplitedTensorArray = this.gather_map( concatenatedTensor );
-//       return shuffledSplitedTensorArray;
       return this.gather_map( concatenatedTensor );
+
     } finally {
       concatenatedTensor.dispose();
     }
@@ -622,28 +613,12 @@ class ConcatGather {
 
   concatGather_dispose_direct_call_map( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+
     let shuffledSplitedTensorArray = this.gather_map( concatenatedTensor );
     concatenatedTensor.dispose();
+
     return shuffledSplitedTensorArray;
   }
-
-
-//   concatGather_dispose_finally_call_tidy_map( tensorArray ) {
-//     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
-//     try {
-//       let shuffledSplitedTensorArray = this.gather_tidy_map( concatenatedTensor );
-//       return shuffledSplitedTensorArray;
-//     } finally {
-//       concatenatedTensor.dispose();
-//     }
-//   }
-
-//   concatGather_dispose_direct_call_tidy_map( tensorArray ) {
-//     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
-//     let shuffledSplitedTensorArray = this.gather_tidy_map( concatenatedTensor );
-//     concatenatedTensor.dispose();
-//     return shuffledSplitedTensorArray;
-//   }
 
 
   concatGather_dispose_finally_loop( tensorArray ) {
@@ -671,6 +646,7 @@ class ConcatGather {
       // shuffle and split by gather (one operation achieves two operations).
       shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather( this.shuffledChannelIndicesTensor1dArray[ i ], this.shuffleInfo.lastAxisId );
     }
+
     concatenatedTensor.dispose();
 
     return shuffledSplitedTensorArray;
@@ -738,6 +714,10 @@ class ConcatGather {
  *
  * @member {number[][]} shuffledChannelIndicesArray
  *   The look up table for tf.gather()'s channel index. This table is composed of array of integers.
+ *
+ * @member {function} splitConcat
+ *   Concatenate, permute and split the input tensor by split-concat-gather. It is a function pointer to one of
+ * this.splitConcat_XXX().
  */
 class SplitConcat {
 
@@ -780,6 +760,8 @@ class SplitConcat {
       concatGather.disposeTensors(); // Always release the look up table (by tensor1d).
     }
 
+    this.splitConcat = this.splitConcat_loop;
+
     return initOk;
   }
 
@@ -793,7 +775,7 @@ class SplitConcat {
    *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
    * last dimensions are shuffled.
    */
-  splitConcat( tensorArray ) {
+  splitConcat_loop( tensorArray ) {
 
     // Become local variables for reducing access time.
     let lastAxisId = this.shuffleInfo.lastAxisId;
@@ -834,55 +816,56 @@ class SplitConcat {
     // Although singleChannelTensorArray[] and tensorArrayForOneGroup[] still have tensors, they are disposed tensors and should not be used.
 
     return resultArray;
+  }
 
-//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
-//     return tf.tidy( "ChannelShuffler.SplitConcat.splitConcat", () => {
-//
-//       // Become local variables for reducing access time.
-//       let lastAxisId = this.shuffleInfo.lastAxisId;
-//       let channelCountPerGroup = this.shuffleInfo.channelCountPerGroup;
-//
-//       // Every element will be a single channel tensor3d.
-//       let singleChannelTensorArray = this.singleChannelTensorArray; // Use shared pre-allocate memory for speeding up.
-//       singleChannelTensorArray.length = 0; // Empty the array.
-//
-//       // Split every group (a multiple channels tensor3d) into many single channel tensor3d.
-//       for ( let tensor of tensorArray ) {
-//         singleChannelTensorArray.push( ...tensor.split( channelCountPerGroup, lastAxisId ) );
-//       }
-//
-//       // An array for many single channel tensor3d of one group.
-//       //
-//       // Shared and re-used multiple times to reduce memory re-allocation.
-//       let tensorArrayForOneGroup = this.tensorArrayForOneGroup;
-//
-//       // shuffle and split by concat (one operation achieves two operations).
-//       return this.shuffledChannelIndicesArray.map( ( shuffledChannelIndices ) => {
-// //!!! Using a loop instead. (to reduce function call overhead)
-// //         shuffledChannelIndices.forEach( ( channelIndex, i ) => {
-// //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
-// //         });
-//
-// //!!! Use for-of instead. (to reduce array member access overhead)
-// //         let arrayLength = tensorArrayForOneGroup.length;
-// //         for ( let i = 0; i < arrayLength; ++i ) {
-// //           // The shuffledChannelIndices[ i ] is channelIndex.
-// //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ shuffledChannelIndices[ i ] ];
-// //         }
-//
-//         // Using for-of could be a better method.
-//         //
-//         // If using shuffledChannelIndices.forEach(), there is a function call overhead.
-//         // If using for ( i = 0; ... ) and shuffledChannelIndices[ i ], there is a array member access overhead.
-//         let i = 0;
-//         for ( let channelIndex of shuffledChannelIndices ) {
+  splitConcat_tidy( tensorArray ) {
+    return tf.tidy( "ChannelShuffler.SplitConcat.splitConcat", () => {
+
+      // Become local variables for reducing access time.
+      let lastAxisId = this.shuffleInfo.lastAxisId;
+      let channelCountPerGroup = this.shuffleInfo.channelCountPerGroup;
+
+      // Every element will be a single channel tensor3d.
+      let singleChannelTensorArray = this.singleChannelTensorArray; // Use shared pre-allocate memory for speeding up.
+      singleChannelTensorArray.length = 0; // Empty the array.
+
+      // Split every group (a multiple channels tensor3d) into many single channel tensor3d.
+      for ( let tensor of tensorArray ) {
+        singleChannelTensorArray.push( ...tensor.split( channelCountPerGroup, lastAxisId ) );
+      }
+
+      // An array for many single channel tensor3d of one group.
+      //
+      // Shared and re-used multiple times to reduce memory re-allocation.
+      let tensorArrayForOneGroup = this.tensorArrayForOneGroup;
+
+      // shuffle and split by concat (one operation achieves two operations).
+      return this.shuffledChannelIndicesArray.map( ( shuffledChannelIndices ) => {
+//!!! Using a loop instead. (to reduce function call overhead)
+//         shuffledChannelIndices.forEach( ( channelIndex, i ) => {
 //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
-//           ++i;
+//         });
+
+//!!! Use for-of instead. (to reduce array member access overhead)
+//         let arrayLength = tensorArrayForOneGroup.length;
+//         for ( let i = 0; i < arrayLength; ++i ) {
+//           // The shuffledChannelIndices[ i ] is channelIndex.
+//           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ shuffledChannelIndices[ i ] ];
 //         }
-//
-//         return tf.concat( tensorArrayForOneGroup, lastAxisId );
-//       });
-//     });
+
+        // Using for-of could be a better method.
+        //
+        // If using shuffledChannelIndices.forEach(), there is a function call overhead.
+        // If using for ( i = 0; ... ) and shuffledChannelIndices[ i ], there is a array member access overhead.
+        let i = 0;
+        for ( let channelIndex of shuffledChannelIndices ) {
+          tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
+          ++i;
+        }
+
+        return tf.concat( tensorArrayForOneGroup, lastAxisId );
+      });
+    });
   }
 
 }
@@ -893,12 +876,10 @@ class SplitConcat {
  *
  * Interestingly, although it looks like the most computing intensively (because many multiplications),
  * it is usually the fastest method (faster than concat-reshape-transpose-reshape-split, concat-gather,
- * split-concat) in WebGL backend. Even in CPU backend, it is still the second fatest method (just slower
- * than concat-gather).
+ * split-concat) no matter in WebGL backend or CPU backend.
  *
- * In WebGL backend, the concat-gather method usually is the second fastest method (slower than this
- * pointwise-convolution method). Only when output group is one (i.e. no group; all one group), the
- * concat-gather method beats (i.e. is fatser than) this pointwise-convolution method.
+ * Only when output group is one (i.e. no group; all one group), this pointwise-convolution method
+ * may become second fastest.
  *
  * In both WebGL and CPU backend, the less the output group count is, the faster the shuffling is. That is,
  * one output group is faster than two (and four, eight, ...) output group. This behavior is the same as the
@@ -1014,23 +995,11 @@ class ConcatPointwiseConv {
 
   gather_map( concatenatedTensor ) {
     // shuffle and split by pointwise convolution (one operation achieves two operations).
-    let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
+    return this.filtersTensor4dArray.map(
       filtersTensor4d =>
         concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
     );
-    return shuffledSplitedTensorArray;
   }
-
-//   gather_tidy_map( concatenatedTensor ) {
-//     return tf.tidy( "ChannelShuffler.PointwiseConv.gather", () => {
-//       // shuffle and split by pointwise convolution (one operation achieves two operations).
-//       let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
-//         filtersTensor4d =>
-//           concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
-//       );
-//       return shuffledSplitedTensorArray;
-//     });
-//   }
 
   /**
    * Concatenate, permute and split the input tensor by concat-gather.
@@ -1046,9 +1015,8 @@ class ConcatPointwiseConv {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     try {
-//       let shuffledSplitedTensorArray = this.gather_loop( concatenatedTensor );
-//       return shuffledSplitedTensorArray;
       return this.gather_loop( concatenatedTensor );
+
     } finally {
       concatenatedTensor.dispose();
     }
@@ -1068,9 +1036,8 @@ class ConcatPointwiseConv {
     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     try {
-//       let shuffledSplitedTensorArray = this.gather_map( concatenatedTensor );
-//       return shuffledSplitedTensorArray;
       return this.gather_map( concatenatedTensor );
+
     } finally {
       concatenatedTensor.dispose();
     }
@@ -1084,28 +1051,6 @@ class ConcatPointwiseConv {
 
     return shuffledSplitedTensorArray;
   }
-
-
-//   concatGather_dispose_finally_call_tidy_map( tensorArray ) {
-//     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
-//
-//     try {
-// //       let shuffledSplitedTensorArray = this.gather_tidy_map( concatenatedTensor );
-// //       return shuffledSplitedTensorArray;
-//       return this.gather_tidy_map( concatenatedTensor );
-//     } finally {
-//       concatenatedTensor.dispose();
-//     }
-//   }
-//
-//   concatGather_dispose_direct_call_tidy_map( tensorArray ) {
-//     let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
-//
-//     let shuffledSplitedTensorArray = this.gather_tidy_map( concatenatedTensor );
-//     concatenatedTensor.dispose();
-//
-//     return shuffledSplitedTensorArray;
-//   }
 
 
   concatGather_dispose_finally_loop( tensorArray ) {
@@ -1145,14 +1090,6 @@ class ConcatPointwiseConv {
 
     try {
       // shuffle and split by pointwise convolution (one operation achieves two operations).
-
-//       let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
-//         filtersTensor4d =>
-//           concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
-//       );
-//
-//       return shuffledSplitedTensorArray;
-
       return this.filtersTensor4dArray.map(
         filtersTensor4d =>
           concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
@@ -1182,15 +1119,11 @@ class ConcatPointwiseConv {
       let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
       // shuffle and split by pointwise convolution (one operation achieves two operations).
-      let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
+      return this.filtersTensor4dArray.map(
         filtersTensor4d =>
           concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
       );
-      return shuffledSplitedTensorArray;
     });
   }
 
 }
-
-//!!!
-// named as Pipe.ChannelShuffler ?
