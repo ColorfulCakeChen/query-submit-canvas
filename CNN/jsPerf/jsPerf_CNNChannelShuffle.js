@@ -262,17 +262,17 @@ class HeightWidthDepthGroup {
   }
 
   testDifferentDisposeStrategy( functionTable ) {
-    let memoryInfoPrev = tf.memory();
+    tf.tidy( () => {
+      let funcPrev;
+      let tArrayPrev;
 
-    let funcPrev;
-    let tArrayPrev;
-
-    for ( let i = 0; i < functionTable.length; ++i ) {
-      tf.tidy( () => {
+      for ( let i = 0; i < functionTable.length; ++i ) {
         let func = functionTable[ i ];
-        let tArray = func( this.dataTensor3dArray );
 
+        let memoryInfoPrev = tf.memory();
+        let tArray = func( this.dataTensor3dArray );
         let memoryInfo = tf.memory();
+
         tf.util.assert( memoryInfo.numTensors == ( memoryInfoPrev.numTensors + tArray.length ), `${func.name}() memory leak`);
 
         if ( tArrayPrev ) {
@@ -281,11 +281,12 @@ class HeightWidthDepthGroup {
             `${funcPrev.name}() != ${func.name}()`);
         }
 
-        memoryInfoPrev = memoryInfo;
+        tf.dispose( tArrayPrev );
+
         funcPrev = func;
         tArrayPrev = tArray;
-      });
-    }
+      }
+    });
   }
 }
 
