@@ -262,13 +262,13 @@ class HeightWidthDepthGroup {
   }
 
   testDifferentDisposeStrategy( functionTable ) {
-    tf.tidy( () => {
-      let memoryInfoPrev = tf.memory();
+    let memoryInfoPrev = tf.memory();
 
-      let funcPrev;
-      let tArrayPrev;
+    let funcPrev;
+    let tArrayPrev;
 
-      for ( let i = 0; i < functionTable.length; ++i ) {
+    for ( let i = 0; i < functionTable.length; ++i ) {
+      tf.tidy( () => {
         let func = functionTable[ i ];
         let tArray = func( this.dataTensor3dArray );
 
@@ -284,8 +284,8 @@ class HeightWidthDepthGroup {
         memoryInfoPrev = memoryInfo;
         funcPrev = func;
         tArrayPrev = tArray;
-      }
-    });
+      });
+    }
   }
 }
 
