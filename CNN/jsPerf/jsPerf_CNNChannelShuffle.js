@@ -41,10 +41,6 @@ class HeightWidthDepthGroup {
       return dataTensor3d.split( groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
     });
 
-    this.shuffleInfo = new ChannelShuffler.ShuffleInfo( this.concatenatedShape, groupCount );
-    ( this.concatGatherUnsorted = new ChannelShuffler.ConcatGather() ).init( this.concatenatedShape, groupCount );
-    ( this.splitConcatSortedShared = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount );
-    ( this.concatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv() ).init( this.concatenatedShape, groupCount );
   }
 
   disposeTensors() {
@@ -53,11 +49,38 @@ class HeightWidthDepthGroup {
       this.dataTensor3dArray = null;
     }
 
-    if ( this.concatGatherUnsorted )
-      this.concatGatherUnsorted.disposeTensors();
+    this.shufflers_release();
+  }
 
-    if ( this.concatPointwiseConv )
+  shufflers_init() {
+    this.shufflers_release();
+
+    this.shuffleInfo = new ChannelShuffler.ShuffleInfo( this.concatenatedShape, this.groupCount );
+    ( this.concatGatherUnsorted = new ChannelShuffler.ConcatGather() ).init( this.concatenatedShape, this.groupCount );
+    ( this.splitConcatSortedShared = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, this.groupCount );
+    ( this.concatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv() ).init( this.concatenatedShape, this.groupCount );
+  }
+
+  shufflers_release() {
+    if ( this.shuffleInfo ) {
+      this.shuffleInfo.disposeTensors();
+      this.shuffleInfo = null;
+    }
+
+    if ( this.concatGatherUnsorted ) {
+      this.concatGatherUnsorted.disposeTensors();
+      this.concatGatherUnsorted = null;
+    }
+
+    if ( this.splitConcatSortedShared ) {
+      this.splitConcatSortedShared.disposeTensors();
+      this.splitConcatSortedShared = null;
+    }
+
+    if ( this.concatPointwiseConv ) {
       this.concatPointwiseConv.disposeTensors();
+      this.concatPointwiseConv = null;
+    }
   }
 
   // Test concat-reshape-transpose-reshape-split
@@ -140,6 +163,18 @@ class HeightWidthDepthGroup {
 
   // Testing whether the results of different implementation are the same.
   testResultSame() {
+    tf.tidy( () => {
+      // Test memory leakage of channel shufflers.
+      let memoryInfoPre = tf.memory();
+      this.shufflers_init();
+      this.shufflers_release();
+      let memoryInfo = tf.memory();
+
+      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors ), `Channel shufflers memory leak.`);
+    });
+
+    this.shufflers_init();  // (Should outside tidy() for preventing from tensors being disposed.
+
     tf.tidy( () => {
       let memoryInfo0 = tf.memory();
 
