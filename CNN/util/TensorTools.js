@@ -31,7 +31,7 @@ class Comparator {
       return false;
 
     for ( let i = 0; i < tensorArray1.length; ++i ) {  // Compare every element of each tensor.
-      let allElementEqual = tf.tidy( "ChannelShuffler.Layer.isTensorArrayEqual", () => {
+      let allElementEqual = tf.tidy( "TensorTools.Comparator.isTensorArrayEqual", () => {
         let everyElementEqualTensor1d = tensorArray1[ i ].equal( tensorArray2[ i ] );
         let allElementEqualTensor1d = everyElementEqualTensor1d.all();
         return allElementEqualTensor1d.arraySync(); // 0: false. 1: true.
