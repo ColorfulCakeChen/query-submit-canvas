@@ -58,7 +58,8 @@ class HeightWidthDepth {
       }
 
       for ( let i = this.weightsByteOffsetBegin; i < wieghtsArrayLength; ++i ) { // Make-up the embedding weight values.
-        this.weightsFloat32Array[ i ] = ( i - this.weightsByteOffsetBegin );
+        //this.weightsFloat32Array[ i ] = ( i - this.weightsByteOffsetBegin );
+        this.weightsFloat32Array[ i ] = Math.random() * 10;
       }
     }
   }
@@ -100,6 +101,48 @@ class HeightWidthDepth {
     }
   }
 
+  /** Check the Embedding2d's result.
+   *
+   * @param {tf.tensor3d} inputTensor3d
+   *   The input of the Embedding2d's apply_and_destroy_or_keep().
+   *
+   * @param {tf.tensor3d} resultTensor3d
+   *   The output of the Embedding2d's apply_and_destroy_or_keep().
+   */
+  compareResult_byArray( inputTensor3d, resultTensor3d ) {
+    let channelArray = tf.tidy( () => {
+//      // Split out every channel.
+//       let lastAxisId = inputTensor3d.shape.length - 1;
+//       let inChannels = inputTensor3d.shape[ lastAxisId ];
+//
+//       let channelTensor3dArray = inputTensor3d.split( inChannels, lastAxisId );
+//       let channelArray = channelTensor3dArray.map( ( oneChannelTensor3d ) => oneChannelTensor3d.dataSync() );
+//       return channelArray;
+
+      let inputChannelArray = inputTensor3d.arraySync();
+      let resultChannelArray = resultTensor3d.arraySync();
+
+      for ( let y = 0; y < inputChannelArray.length; ++y ) {
+        let columnValues = inputChannelArray[ y ];
+
+        for ( let x = 0; x < columnValues.length; ++x ) {
+          let channelValues = columnValues[ x ];
+
+          for ( let c = 0; c < channelValues.length; ++c ) {
+            let channelValue = channelValues[ c ];
+
+            let lookUpAt = this.weightsByteOffsetBegin + ( channelValue * ??? );
+            this.weightsFloat32Array[ lookUpAt ];
+
+//!!! ...unfinished...
+      for ( let i = 0; i < this.weightsByteOffsetBegin; ++i ) { // Make-up the un-used weight values.
+        this.weightsFloat32Array[ i ] = -i;
+
+    });
+//!!! ...unfinished...
+  }
+
+//!!! ...unfinished...
   // Test concat-reshape-transpose-reshape-split
   test_ConcatReshapeTransposeReshapeSplit() {
     let shuffledArray = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
@@ -139,21 +182,13 @@ class HeightWidthDepth {
     tf.tidy( () => {
       let memoryInfo0 = tf.memory();
 
-      let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
+      let t = this.embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
       let memoryInfo1 = tf.memory();
-      tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + t1Array.length ), `ConcatReshapeTransposeReshapeSplit() memory leak`);
+      tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `apply_and_destroy_or_keep() memory leak.`);
 
-      let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
-      let memoryInfo2 = tf.memory();
-      tf.util.assert( memoryInfo2.numTensors == ( memoryInfo1.numTensors + t2Array.length ), `ConcatGatherUnsorted() memory leak`);
 
-      let t3Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
-      let memoryInfo3 = tf.memory();
-      tf.util.assert( memoryInfo3.numTensors == ( memoryInfo2.numTensors + t3Array.length ), `SplitConcatSortedShared() memory leak`);
-
-      let t4Array = this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
-      let memoryInfo4 = tf.memory();
-      tf.util.assert( memoryInfo4.numTensors == ( memoryInfo3.numTensors + t4Array.length ), `PointwiseConv() memory leak`);
+      t.
+//!!!
 
 
       tf.util.assert(
@@ -225,6 +260,8 @@ class HeightWidthDepth {
 // }
 
 function init() {
+//!!! ...unfinished... test zero or negative channelMultiplier.
+
   globalThis.testSet_110x110x24_cm8 = new HeightWidthDepth( 110, 110, 24, 8 ); // height, width, depth, channelMultiplier
   globalThis.testSet_110x110x24_cm4 = new HeightWidthDepth( 110, 110, 24, 4 );
   globalThis.testSet_110x110x24_cm3 = new HeightWidthDepth( 110, 110, 24, 3 );
