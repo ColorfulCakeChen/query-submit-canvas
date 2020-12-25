@@ -548,6 +548,11 @@ class ConcatGather {
       tf.dispose( this.shuffledChannelIndicesTensor1dArray );
       this.shuffledChannelIndicesTensor1dArray = null;
     }
+
+    if ( this.shuffleInfo ) {
+      this.shuffleInfo.disposeTensors();
+      this.shuffleInfo = null;
+    }
   }
 
   /**
@@ -742,7 +747,7 @@ class SplitConcat {
    */
   init( concatenatedShape, outputGroupCount ) {
 
-    this.shuffleInfo = null; // So that distinguishable if re-initialization failed.
+    this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     let concatGather = new ConcatGather();
     let initOk = concatGather.init( concatenatedShape, outputGroupCount );
@@ -772,6 +777,14 @@ class SplitConcat {
     this.splitConcat = this.splitConcat_loop;
 
     return initOk;
+  }
+
+  /** Release tf.tensor. */
+  disposeTensors() {
+    if ( this.shuffleInfo ) {
+      this.shuffleInfo.disposeTensors();
+      this.shuffleInfo = null;
+    }
   }
 
   /**
@@ -925,8 +938,7 @@ class ConcatPointwiseConv {
    */
   init( concatenatedShape, outputGroupCount ) {
 
-    this.disposeTensors();
-    this.shuffleInfo = null; // So that distinguishable if re-initialization failed.
+    this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     let concatGather = new ConcatGather();
     let initOk = concatGather.init( concatenatedShape, outputGroupCount );
@@ -982,6 +994,11 @@ class ConcatPointwiseConv {
     if ( this.filtersTensor4dArray ) {
       tf.dispose( this.filtersTensor4dArray );
       this.filtersTensor4dArray = null;
+    }
+
+    if ( this.shuffleInfo ) {
+      this.shuffleInfo.disposeTensors();
+      this.shuffleInfo = null;
     }
   }
 
