@@ -54,6 +54,8 @@ class ShuffleInfo {
 
   constructor( concatenatedShape, outputGroupCount ) {
 
+    this.disposeTensors(); // So that distinguishable if re-initialization failed.
+
     outputGroupCount = Math.trunc( outputGroupCount || 1 );
     if ( outputGroupCount < 1 )
       outputGroupCount = 1; // At least one (means: no shuffle and split (i.e. just concatenate only)).
@@ -88,6 +90,13 @@ class ShuffleInfo {
 //!!!
     //this.concatReshapeTransposeReshape = ;
     this.concatReshapeTransposeReshapeSplit = this.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally_call_dispose_finally;
+  }
+
+  /** Release tf.tensor. */
+  disposeTensors() {
+    // No tensors to be disposed.
+
+    this.transposePermutation = null;
   }
 
   /**
