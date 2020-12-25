@@ -41,12 +41,26 @@ class HeightWidthDepth {
       return dataTensor3d;
     });
 
-    this.weightsFloat32Array = new Float32Array( [
-      9, 8, 7, // Un-used
-
-    ] );
-
     this.weightsByteOffsetBegin = 3; // Skip the un-used.
+    this.vocabularyCountPerInputChannel = 256;
+    this.bEmbedVocabularyId = true;
+    this.bKeepInputTensor = false;
+
+    let wieghtsArrayLength = 
+      this.weightsByteOffsetBegin // Skip the un-used.
+        + ( depth * this.vocabularyCountPerInputChannel )
+      ;
+
+    this.weightsFloat32Array = new Float32Array( wieghtsArrayLength );
+    {
+      for ( let i = 0; i < this.weightsByteOffsetBegin; ++i ) { // Make-up the un-used weight values.
+        this.weightsFloat32Array[ i ] = -i;
+      }
+
+      for ( let i = this.weightsByteOffsetBegin; i < wieghtsArrayLength; ++i ) { // Make-up the embedding weight values.
+        this.weightsFloat32Array[ i ] = ( i - this.weightsByteOffsetBegin );
+      }
+    }
   }
 
   disposeTensors() {
@@ -64,7 +78,13 @@ class HeightWidthDepth {
     this.embedding2d = new Embedding2d.Base();
     {
       let progress = new ValueMax.Percentage.Aggregate();
-      let initer = embedding2d.initer( this.progress, this.weightsFloat32Array, this.weightsByteOffsetBegin, this.depth, this.channelMultiplier );
+      let initer = this.embedding2d.initer(
+        this.progress, this.weightsFloat32Array, this.weightsByteOffsetBegin, this.depth, this.channelMultiplier,
+        this.vocabularyCountPerInputChannel,
+        this.bEmbedVocabularyId,
+        this.bKeepInputTensor
+      );
+
       let initerNext;
       while ( ! ( ( initerNext = initer.next() ).done ) ) {
         //initerNext.value; // progressRoot
@@ -170,11 +190,11 @@ class HeightWidthDepth {
 //     ];
 //     this.testDifferentDisposeStrategy( functionTable, this.shuffleInfo );
 //   }
-//
-//   testDifferentDisposeStrategy_All() {
+
+   testDifferentDisposeStrategy_All() {
 //     this.testDifferentDisposeStrategy_ConcatReshapeTransposeReshapeSplit();
-//   }
-//
+   }
+
 //   testDifferentDisposeStrategy( functionTable, thisArg ) {
 //     tf.tidy( () => {
 //       let funcPrev;
