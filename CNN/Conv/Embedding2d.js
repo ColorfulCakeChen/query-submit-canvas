@@ -357,7 +357,10 @@ class Base {
     }
   }
 
+  /** @return {number} The position which is started (inclusive) to extract from inputFloat32Array by initer(). */
   get byteOffsetBegin() { return this.params.defaultByteOffsetBegin; }
+
+  /** @return {number} The position which is ended to (non-inclusive) extract from inputFloat32Array by initer(). */
   get byteOffsetEnd()   { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
 
   get inChannels()        { return this.params.inChannels; }
