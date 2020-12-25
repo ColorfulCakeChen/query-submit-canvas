@@ -170,7 +170,7 @@ class HeightWidthDepthGroup {
       this.shufflers_release();
       let memoryInfo = tf.memory();
 
-      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors ), `Channel shufflers memory leak.`);
+      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Channel shufflers memory leak.`);
     });
 
     this.shufflers_init();  // (Should outside tidy() for preventing from tensors being disposed.
