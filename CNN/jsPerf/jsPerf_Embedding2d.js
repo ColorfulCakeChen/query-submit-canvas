@@ -1,6 +1,7 @@
 export { init, testResultSame, testDifferentDisposeStrategy_All, disposeTensors };
 
-import * as ChannelShuffler from "../Conv/Embedding2d.js";
+import * as ValueMax from "../ValueMax.js";
+import * as Embedding2d from "../Conv/Embedding2d.js";
 import * as TensorTools from "../util/TensorTools.js";
 
 /**
@@ -12,7 +13,7 @@ import * as TensorTools from "../util/TensorTools.js";
 /**
  * A test set.
  */
-class HeightWidthDepthGroup {
+class HeightWidthDepth {
 
   /**
    * @param {number} height            image height
@@ -21,6 +22,8 @@ class HeightWidthDepthGroup {
    * @param {number} channelMultiplier Every input channel expands into how many channels.
    */
   constructor( height, width, depth, channelMultiplier ) {
+
+    this.disposeTensors();
 
     this.height = height;
     this.width = width;
@@ -38,23 +41,43 @@ class HeightWidthDepthGroup {
       return dataTensor3d;
     });
 
-    this.shuffleInfo = new ChannelShuffler.ShuffleInfo( this.concatenatedShape, groupCount );
-    ( this.concatGatherUnsorted = new ChannelShuffler.ConcatGather() ).init( this.concatenatedShape, groupCount );
-    ( this.splitConcatSortedShared = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, groupCount );
-    ( this.concatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv() ).init( this.concatenatedShape, groupCount );
+    this.weightsFloat32Array = new Float32Array( [
+      9, 8, 7, // Un-used
+
+    ] );
+
+    this.weightsByteOffsetBegin = 3; // Skip the un-used.
   }
 
   disposeTensors() {
-    if ( this.dataTensor3dArray ) {
-      tf.dispose( this.dataTensor3dArray );
-      this.dataTensor3dArray = null;
+    if ( this.dataTensor3d ) {
+      this.dataTensor3d.dispose();
+      this.dataTensor3d = null;
     }
 
-    if ( this.concatGatherUnsorted )
-      this.concatGatherUnsorted.disposeTensors();
+    this.embedding2d_release();
+  }
 
-    if ( this.concatPointwiseConv )
-      this.concatPointwiseConv.disposeTensors();
+  ebedding2d_init() {
+    this.embedding2d_release();
+
+    this.embedding2d = new Embedding2d.Base();
+    {
+      let progress = new ValueMax.Percentage.Aggregate();
+      let initer = embedding2d.initer( this.progress, this.weightsFloat32Array, this.weightsByteOffsetBegin, this.depth, this.channelMultiplier );
+      let initerNext;
+      while ( ! ( ( initerNext = initer.next() ).done ) ) {
+        //initerNext.value; // progressRoot
+      }
+      //initerNext.value; // Initialize successfully or failed.
+    }
+  }
+
+  embedding2d_release() {
+    if ( this.embedding2d ) {
+      this.embedding2d.disposeTensors();
+      this.embedding2d = null;
+    }
   }
 
   // Test concat-reshape-transpose-reshape-split
@@ -81,62 +104,18 @@ class HeightWidthDepthGroup {
     tf.dispose( shuffledArray );
   }
 
-  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally_call_dispose_finally( this.dataTensor3dArray ) ); }
-  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally_call_dispose_finally( this.dataTensor3dArray ) ); }
-
-  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_finally( this.dataTensor3dArray ) ); }
-  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_finally( this.dataTensor3dArray ) ); }
-
-  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_direct( this.dataTensor3dArray ) ); }
-  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_direct( this.dataTensor3dArray ) ); }
-
-  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally( this.dataTensor3dArray ) ); }
-  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally( this.dataTensor3dArray ) ); }
-
-  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct( this.dataTensor3dArray ) ); }
-  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct( this.dataTensor3dArray ) ); }
-
-  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_call_tidy()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_tidy( this.dataTensor3dArray ) ); }
-  test_ConcatReshapeTransposeReshapeSplit_dispose_direct_call_tidy()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_tidy( this.dataTensor3dArray ) ); }
-
-  test_ConcatReshapeTransposeReshapeSplit_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally( this.dataTensor3dArray ) ); }
-  test_ConcatReshapeTransposeReshapeSplit_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct( this.dataTensor3dArray ) ); }
-
-  test_ConcatReshapeTransposeReshapeSplit_tidy()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_tidy( this.dataTensor3dArray ) ); }
-
-
-  test_ConcatGatherUnsorted_dispose_finally_call_loop()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_loop( this.dataTensor3dArray ) ); }
-  test_ConcatGatherUnsorted_dispose_direct_call_loop() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_loop( this.dataTensor3dArray ) ); }
-
-  test_ConcatGatherUnsorted_dispose_dispose_finally_call_map()  { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_call_map( this.dataTensor3dArray ) ); }
-  test_ConcatGatherUnsorted_dispose_direct_call_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_call_map( this.dataTensor3dArray ) ); }
-
-  test_ConcatGatherUnsorted_dispose_finally_loop() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_loop( this.dataTensor3dArray ) ); }
-  test_ConcatGatherUnsorted_dispose_direct_loop() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_loop( this.dataTensor3dArray ) ); }
-
-  test_ConcatGatherUnsorted_dispose_finally_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_finally_map( this.dataTensor3dArray ) ); }
-  test_ConcatGatherUnsorted_dispose_direct_map() { tf.dispose( this.concatGatherUnsorted.concatGather_dispose_direct_map( this.dataTensor3dArray ) ); }
-
-  test_ConcatGatherUnsorted_tidy_map() { tf.dispose( this.concatGatherUnsorted.concatGather_tidy_map( this.dataTensor3dArray ) ); }
-
-
-  test_ConcatPointwiseConv_dispose_finally_call_loop()  { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_call_loop( this.dataTensor3dArray ) ); }
-  test_ConcatPointwiseConv_dispose_direct_call_loop() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_call_loop( this.dataTensor3dArray ) ); }
-
-  test_ConcatPointwiseConv_dispose_finally_call_map()  { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_call_map( this.dataTensor3dArray ) ); }
-  test_ConcatPointwiseConv_dispose_direct_call_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_call_map( this.dataTensor3dArray ) ); }
-
-  test_ConcatPointwiseConv_dispose_finally_loop() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_loop( this.dataTensor3dArray ) ); }
-  test_ConcatPointwiseConv_dispose_direct_loop() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_loop( this.dataTensor3dArray ) ); }
-
-  test_ConcatPointwiseConv_dispose_finally_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_finally_map( this.dataTensor3dArray ) ); }
-  test_ConcatPointwiseConv_dispose_direct_map() { tf.dispose( this.concatPointwiseConv.concatGather_dispose_direct_map( this.dataTensor3dArray ) ); }
-
-  test_ConcatPointwiseConv_tidy_map() { tf.dispose( this.concatPointwiseConv.concatGather_tidy_map( this.dataTensor3dArray ) ); }
-
-
   // Testing whether the results of different implementation are the same.
   testResultSame() {
+    tf.tidy( () => { // Test memory leakage of embedding2d.
+      let memoryInfoPre = tf.memory();
+      this.ebedding2d_init();
+      this.ebedding2d_release();
+      let memoryInfo = tf.memory();
+      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Channel shufflers memory leak.`);
+    });
+
+    this.ebedding2d_init();  // (Should outside tidy() for preventing from tensors being disposed.
+
     tf.tidy( () => {
       let memoryInfo0 = tf.memory();
 
@@ -186,154 +165,85 @@ class HeightWidthDepthGroup {
     });
   }
 
-  testDifferentDisposeStrategy_ConcatReshapeTransposeReshapeSplit() {
-    let functionTable = [
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally_call_dispose_finally,
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally_call_dispose_finally,
-
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_finally,
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_finally,
-
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct_call_dispose_direct,
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct_call_dispose_direct,
-
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally,
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_finally,
-
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_direct,
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_dispose_direct,
-
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_call_tidy,
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct_call_tidy,
-
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally,
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct,
-
-      this.shuffleInfo.concatReshapeTransposeReshapeSplit_tidy,
-    ];
-    this.testDifferentDisposeStrategy( functionTable, this.shuffleInfo );
-  }
-
-  testDifferentDisposeStrategy_ConcatGatherUnsorted() {
-    let functionTable = [
-      this.concatGatherUnsorted.concatGather_dispose_finally_call_loop,
-      this.concatGatherUnsorted.concatGather_dispose_direct_call_loop,
-
-      this.concatGatherUnsorted.concatGather_dispose_finally_call_map,
-      this.concatGatherUnsorted.concatGather_dispose_direct_call_map,
-
-      this.concatGatherUnsorted.concatGather_dispose_finally_loop,
-      this.concatGatherUnsorted.concatGather_dispose_direct_loop,
-
-      this.concatGatherUnsorted.concatGather_dispose_finally_map,
-      this.concatGatherUnsorted.concatGather_dispose_direct_map,
-
-      this.concatGatherUnsorted.concatGather_tidy_map,
-    ];
-    this.testDifferentDisposeStrategy( functionTable, this.concatGatherUnsorted );
-  }
-
-  testDifferentDisposeStrategy_ConcatPointwiseConv() {
-    let functionTable = [
-      this.concatPointwiseConv.concatGather_dispose_finally_call_loop,
-      this.concatPointwiseConv.concatGather_dispose_direct_call_loop,
-
-      this.concatPointwiseConv.concatGather_dispose_finally_call_map,
-      this.concatPointwiseConv.concatGather_dispose_direct_call_map,
-
-      this.concatPointwiseConv.concatGather_dispose_finally_loop,
-      this.concatPointwiseConv.concatGather_dispose_direct_loop,
-
-      this.concatPointwiseConv.concatGather_dispose_finally_map,
-      this.concatPointwiseConv.concatGather_dispose_direct_map,
-
-      this.concatPointwiseConv.concatGather_tidy_map,
-    ];
-    this.testDifferentDisposeStrategy( functionTable, this.concatPointwiseConv );
-  }
-
-  testDifferentDisposeStrategy_All() {
-    this.testDifferentDisposeStrategy_ConcatReshapeTransposeReshapeSplit();
-    this.testDifferentDisposeStrategy_ConcatGatherUnsorted();
-    this.testDifferentDisposeStrategy_ConcatPointwiseConv();
-  }
-
-  testDifferentDisposeStrategy( functionTable, thisArg ) {
-    tf.tidy( () => {
-      let funcPrev;
-      let tArrayPrev;
-
-      for ( let i = 0; i < functionTable.length; ++i ) {
-        let func = functionTable[ i ];
-
-        let memoryInfoPrev = tf.memory();
-        let tArray = func.call( thisArg, this.dataTensor3dArray );
-        let memoryInfo = tf.memory();
-
-        tf.util.assert( memoryInfo.numTensors == ( memoryInfoPrev.numTensors + tArray.length ), `${func.name}() memory leak`);
-
-        if ( tArrayPrev ) {
-          tf.util.assert(
-            TensorTools.Comparator.isTensorArrayEqual( tArrayPrev, tArray ),
-            `${funcPrev.name}() != ${func.name}()`);
-        }
-
-        tf.dispose( tArrayPrev );
-
-        funcPrev = func;
-        tArrayPrev = tArray;
-      }
-    });
-  }
-}
+//   testDifferentDisposeStrategy_ConcatReshapeTransposeReshapeSplit() {
+//     let functionTable = [
+//     ];
+//     this.testDifferentDisposeStrategy( functionTable, this.shuffleInfo );
+//   }
+//
+//   testDifferentDisposeStrategy_All() {
+//     this.testDifferentDisposeStrategy_ConcatReshapeTransposeReshapeSplit();
+//   }
+//
+//   testDifferentDisposeStrategy( functionTable, thisArg ) {
+//     tf.tidy( () => {
+//       let funcPrev;
+//       let tArrayPrev;
+//
+//       for ( let i = 0; i < functionTable.length; ++i ) {
+//         let func = functionTable[ i ];
+//
+//         let memoryInfoPrev = tf.memory();
+//         let tArray = func.call( thisArg, this.dataTensor3dArray );
+//         let memoryInfo = tf.memory();
+//
+//         tf.util.assert( memoryInfo.numTensors == ( memoryInfoPrev.numTensors + tArray.length ), `${func.name}() memory leak`);
+//
+//         if ( tArrayPrev ) {
+//           tf.util.assert(
+//             TensorTools.Comparator.isTensorArrayEqual( tArrayPrev, tArray ),
+//             `${funcPrev.name}() != ${func.name}()`);
+//         }
+//
+//         tf.dispose( tArrayPrev );
+//
+//         funcPrev = func;
+//         tArrayPrev = tArray;
+//       }
+//     });
+//   }
+// }
 
 function init() {
-  globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( 110, 110, 24, 8 ); // height, width, depth, groupCount
-  globalThis.testSet_110x110x24_g4 = new HeightWidthDepthGroup( 110, 110, 24, 4 );
-  globalThis.testSet_110x110x24_g3 = new HeightWidthDepthGroup( 110, 110, 24, 3 );
-  globalThis.testSet_110x110x24_g2 = new HeightWidthDepthGroup( 110, 110, 24, 2 );
-  globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( 110, 110, 24, 1 );
+  globalThis.testSet_110x110x24_cm8 = new HeightWidthDepth( 110, 110, 24, 8 ); // height, width, depth, channelMultiplier
+  globalThis.testSet_110x110x24_cm4 = new HeightWidthDepth( 110, 110, 24, 4 );
+  globalThis.testSet_110x110x24_cm3 = new HeightWidthDepth( 110, 110, 24, 3 );
+  globalThis.testSet_110x110x24_cm2 = new HeightWidthDepth( 110, 110, 24, 2 );
+  globalThis.testSet_110x110x24_cm1 = new HeightWidthDepth( 110, 110, 24, 1 );
+
+  globalThis.testSet_110x110x24_All = [
+    globalThis.testSet_110x110x24_cm8,
+    globalThis.testSet_110x110x24_cm4,
+    globalThis.testSet_110x110x24_cm3,
+    globalThis.testSet_110x110x24_cm2,
+    globalThis.testSet_110x110x24_cm1,
+  ];
 }
 
 function testResultSame() {
-  globalThis.testSet_110x110x24_g8.testResultSame();
-  globalThis.testSet_110x110x24_g4.testResultSame();
-  globalThis.testSet_110x110x24_g3.testResultSame();
-  globalThis.testSet_110x110x24_g2.testResultSame();
-  globalThis.testSet_110x110x24_g1.testResultSame();
+  for ( let i = 0; i < globalThis.testSet_110x110x24_All.length; ++i ) {
+    let testSet = globalThis.testSet_110x110x24_All[ i ];
+    testSet.testResultSame();
+  }
 }
 
 function testDifferentDisposeStrategy_All() {
-  globalThis.testSet_110x110x24_g8.testDifferentDisposeStrategy_All();
-  globalThis.testSet_110x110x24_g4.testDifferentDisposeStrategy_All();
-  globalThis.testSet_110x110x24_g3.testDifferentDisposeStrategy_All();
-  globalThis.testSet_110x110x24_g2.testDifferentDisposeStrategy_All();
-  globalThis.testSet_110x110x24_g1.testDifferentDisposeStrategy_All();
+  for ( let i = 0; i < globalThis.testSet_110x110x24_All.length; ++i ) {
+    let testSet = globalThis.testSet_110x110x24_All[ i ];
+    testSet.testDifferentDisposeStrategy_All();
+  }
 }
 
 function disposeTensors() {
-  if ( globalThis.testSet_110x110x24_g8 ) {
-    globalThis.testSet_110x110x24_g8.disposeTensors();
-    globalThis.testSet_110x110x24_g8 = null;
+  for ( let i = 0; i < globalThis.testSet_110x110x24_All.length; ++i ) {
+    let testSet = globalThis.testSet_110x110x24_All[ i ];
+    testSet.disposeTensors();
   }
 
-  if ( globalThis.testSet_110x110x24_g4 ) {
-    globalThis.testSet_110x110x24_g4.disposeTensors();
-    globalThis.testSet_110x110x24_g4 = null;
-  }
-
-  if ( globalThis.testSet_110x110x24_g3 ) {
-    globalThis.testSet_110x110x24_g3.disposeTensors();
-    globalThis.testSet_110x110x24_g3 = null;
-  }
-
-  if ( globalThis.testSet_110x110x24_g2 ) {
-    globalThis.testSet_110x110x24_g2.disposeTensors();
-    globalThis.testSet_110x110x24_g2 = null;
-  }
-
-  if ( globalThis.testSet_110x110x24_g1 ) {
-    globalThis.testSet_110x110x24_g1.disposeTensors();
-    globalThis.testSet_110x110x24_g1 = null;
-  }
+  globalThis.testSet_110x110x24_g8
+    = globalThis.testSet_110x110x24_g4
+    = globalThis.testSet_110x110x24_g3
+    = globalThis.testSet_110x110x24_g2
+    = globalThis.testSet_110x110x24_g1
+    = null;
 }
