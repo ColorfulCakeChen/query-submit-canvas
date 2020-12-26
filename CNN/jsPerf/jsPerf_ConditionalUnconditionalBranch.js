@@ -207,6 +207,7 @@ class TestSet {
     this.test_UnconditionalBranchArrayLoopIterator();
     this.test_UnconditionalBranchArrayLoopForEach();
     this.test_UnconditionalBranchArrayLoopMap();
+    this.test_UnconditionalBranchArrayLoopIndexNewArray();
   }
  
 }
