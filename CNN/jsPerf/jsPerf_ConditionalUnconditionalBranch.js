@@ -195,6 +195,18 @@ class TestSet {
     }
   }
 
+  test_UnconditionalBranchArrayLoopIndexLocalNewArray() {
+    let p = 1;
+    let r;
+
+    let count = this.arrayOp.length;
+    let rArray = new Array( count );
+    for ( let i = 0; i < count; ++i ) {
+      rArray[ i ] = this.arrayOp[ i ];
+      r = rArray[ i ]( p );
+    }
+  }
+
   // Testing whether the results of different implementation are the same. Also, pre-compile the codes.
   async testCaseLoader() {
     this.test_ConditionalBranch();
@@ -208,6 +220,7 @@ class TestSet {
     this.test_UnconditionalBranchArrayLoopForEach();
     this.test_UnconditionalBranchArrayLoopMap();
     this.test_UnconditionalBranchArrayLoopIndexNewArray();
+    this.test_UnconditionalBranchArrayLoopIndexLocalNewArray();
   }
  
 }
