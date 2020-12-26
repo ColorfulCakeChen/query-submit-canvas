@@ -3,7 +3,7 @@
 /**
  * Test performancce of conditional and unconditional branch.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/9224/1/colorfulcakechen-conditional-unconditional-branch-4b63f}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/9224/2/colorfulcakechen-conditional-unconditional-branch-8982e}
  */
 
 /**
