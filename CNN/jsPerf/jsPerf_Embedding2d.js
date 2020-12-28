@@ -197,13 +197,13 @@ class HeightWidthDepth {
   testCorrectness() {
     tf.tidy( () => { // Test memory leakage of embedding2d.
       let memoryInfoPre = tf.memory();
-      this.ebedding2d_init();
-      this.ebedding2d_release();
+      this.embedding2d_init();
+      this.embedding2d_release();
       let memoryInfo = tf.memory();
       tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Channel shufflers memory leak.`);
     });
 
-    this.ebedding2d_init();  // (Should outside tidy() for preventing from tensors being disposed.
+    this.embedding2d_init();  // (Should outside tidy() for preventing from tensors being disposed.
 
     tf.tidy( () => {
       let memoryInfo0 = tf.memory();
