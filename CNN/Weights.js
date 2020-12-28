@@ -262,6 +262,7 @@ class Params extends Base {
     if ( outChannelsOriginal ) {
       if ( !Number.isFinite( outChannelsOriginal ) ) {
         let channelMultiplier = this.channelMultiplier;   // May be specified or extracted.
+//!!! ...unfinished... what if ( channelMultiplier <= 0 ) ?
         let outChannels = inChannels * channelMultiplier;
         this.parameterMap.set( Params.Keys.outChannels, outChannels );
       } else {
