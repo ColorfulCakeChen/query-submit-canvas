@@ -44,6 +44,7 @@ class HeightWidthDepth {
     this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
     this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
     this.vocabularyCountPerInputChannel = 256;
+//!!! ...unfinished... test ( bEmbedVocabularyId == false )
     this.bEmbedVocabularyId = true;
     this.bKeepInputTensor = true; // Otherwise, this.dataTensor3d will be destroyed.
 
