@@ -177,7 +177,7 @@ class Base {
     // 2. Vocabulary Table Shape
     let vocabularyTableShape_toExtract = null; // Assume no embedding channel.
 
-    let channelMultiplier = this.channelMultiplier; // The real channelMultiplier. May be specified or extracted.
+    channelMultiplier = this.channelMultiplier; // The real (adjusted) channelMultiplier. May be specified or extracted.
     if ( channelMultiplier < 1 ) { // 2.1 channelMultiplier is zero or negative. (could happen by evolution.)
 
       if ( bKeepInputTensor )
