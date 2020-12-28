@@ -1,8 +1,8 @@
-export { init, testResultSame, testDifferentDisposeStrategy_All, disposeTensors };
+export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeTensors };
 
 import * as ValueMax from "../ValueMax.js";
 import * as Embedding2d from "../Conv/Embedding2d.js";
-import * as TensorTools from "../util/TensorTools.js";
+//import * as TensorTools from "../util/TensorTools.js";
 
 /**
  * Test CNN Embedding2d.
@@ -102,7 +102,8 @@ class HeightWidthDepth {
     }
   }
 
-  /** Check the Embedding2d's result.
+  /**
+   * Check the Embedding2d's output by look up weights according to input.
    *
    * @param {tf.tensor3d} inputTensor3d
    *   The input of the Embedding2d's apply_and_destroy_or_keep(). Its dtype should be int32.
@@ -166,32 +167,14 @@ class HeightWidthDepth {
   }
 
 //!!! ...unfinished...
-  // Test concat-reshape-transpose-reshape-split
-  test_ConcatReshapeTransposeReshapeSplit() {
-    let shuffledArray = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
-    tf.dispose( shuffledArray );
-  }
-
-  // Test concat-gather (Unsorted)
-  test_ConcatGatherUnsorted() {
-    let shuffledArray = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
-    tf.dispose( shuffledArray );
-  }
-
-  // Test split-concat (Sorted Shared)
-  test_SplitConcatSortedShared() {
-    let shuffledArray = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
-    tf.dispose( shuffledArray );
-  }
-
-  // Test concat-pointwise-convolution
-  test_ConcatPointwiseConv() {
-    let shuffledArray = this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
-    tf.dispose( shuffledArray );
-  }
+//   // Test concat-reshape-transpose-reshape-split
+//   test_ConcatReshapeTransposeReshapeSplit() {
+//     let shuffledArray = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
+//     tf.dispose( shuffledArray );
+//   }
 
   // Testing whether the results of different implementation are the same.
-  testResultSame() {
+  testCorrectness() {
     tf.tidy( () => { // Test memory leakage of embedding2d.
       let memoryInfoPre = tf.memory();
       this.ebedding2d_init();
@@ -260,6 +243,8 @@ class HeightWidthDepth {
 // }
 
 function init() {
+  disposeTensors();
+
 //!!! ...unfinished... test zero or negative channelMultiplier.
 
   globalThis.testSet_110x110x24_cm8 = new HeightWidthDepth( 110, 110, 24, 8 ); // height, width, depth, channelMultiplier
@@ -277,10 +262,10 @@ function init() {
   ];
 }
 
-function testResultSame() {
+function testCorrectness() {
   for ( let i = 0; i < globalThis.testSet_110x110x24_All.length; ++i ) {
     let testSet = globalThis.testSet_110x110x24_All[ i ];
-    testSet.testResultSame();
+    testSet.testCorrectness();
   }
 }
 
@@ -292,9 +277,14 @@ function testDifferentDisposeStrategy_All() {
 }
 
 function disposeTensors() {
-  for ( let i = 0; i < globalThis.testSet_110x110x24_All.length; ++i ) {
-    let testSet = globalThis.testSet_110x110x24_All[ i ];
-    testSet.disposeTensors();
+  if ( globalThis.testSet_110x110x24_All ) {
+    for ( let i = 0; i < globalThis.testSet_110x110x24_All.length; ++i ) {
+      let testSet = globalThis.testSet_110x110x24_All[ i ];
+      if ( testSet )
+        testSet.disposeTensors();
+    }
+
+    globalThis.testSet_110x110x24_All = null;
   }
 
   globalThis.testSet_110x110x24_g8
