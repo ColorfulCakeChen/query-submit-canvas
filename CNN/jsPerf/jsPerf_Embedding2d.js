@@ -42,7 +42,7 @@ class HeightWidthDepth {
     });
 
     this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
-    this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTE_PER_ELEMENT; // Skip the un-used. (in byte count)
+    this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
     this.vocabularyCountPerInputChannel = 256;
     this.bEmbedVocabularyId = true;
     this.bKeepInputTensor = true; // Otherwise, this.dataTensor3d will be destroyed.
@@ -150,7 +150,7 @@ class HeightWidthDepth {
               + `( ${outputChannelArray.length} != ( ${inputChannelArray.length} * ${this.channelMultiplier} ) )`);
 
           // Input Channel
-          for ( let inputChannelIndex = 0; inputChannelIndex < channelArray.length; ++inputChannelIndex ) {
+          for ( let inputChannelIndex = 0; inputChannelIndex < inputChannelArray.length; ++inputChannelIndex ) {
             let inputChannelValue = inputChannelArray[ inputChannelIndex ]; // Int32
 
             // The embedding vocabulary table beginning of the input channel.
