@@ -105,14 +105,23 @@ class HeightWidthDepth {
   /**
    * Check the Embedding2d's output by look up weights according to input.
    *
+   * @param {Embedding2d.Base} embedding2d
+   *   The object which implemets embedding logic.
+   *
    * @param {tf.tensor3d} inputTensor3d
    *   The input of the Embedding2d's apply_and_destroy_or_keep(). Its dtype should be int32.
    *
    * @param {tf.tensor3d} outputTensor3d
    *   The output of the Embedding2d's apply_and_destroy_or_keep(). Its dtype should be float32.
    */
-  check_Input_Output_WeightsTable( inputTensor3d, outputTensor3d ) {
+  check_Input_Output_WeightsTable( embedding2d, inputTensor3d, outputTensor3d ) {
     tf.tidy( () => {
+
+      let channelMultiplier_forExtract;
+      if ( embedding2d.bEmbedVocabularyId )
+        channelMultiplier_forExtract = this.channelMultiplier - 1; // less one because the channel will be auto-generated vocabulary id.
+      else
+        channelMultiplier_forExtract = this.channelMultiplier;
 
       let inputRowArray = inputTensor3d.arraySync();
       let outputRowArray = outputTensor3d.arraySync();
@@ -121,7 +130,7 @@ class HeightWidthDepth {
           `Row count of embedding output and input should be the same. ( ${outputRowArray.length} != ${inputRowArray.length} )`);
 
       // The float32 count of an embedding vocabulary table of one input channel.
-      let float32CountPerTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
+      let float32CountPerTable = channelMultiplier_forExtract * this.vocabularyCountPerInputChannel;
 
       // Height
       for ( let y = 0; y < inputRowArray.length; ++y ) {
@@ -152,12 +161,23 @@ class HeightWidthDepth {
             for ( let outputChannelIndex = 0; outputChannelIndex < this.channelMultiplier; ++outputChannelIndex ) {
               let outputChannelValueFromOutput = inputChannelArray[ outputChannelIndex ]; // Float32
 
-              let lookUpAtElementOffset = lookUpAtElementOffsetBase + outputChannelIndex;
-              let outputChannelValueFromTable = this.weightsFloat32Array[ lookUpAtElementOffset ]; // Float32
+              if ( ( embedding2d.bEmbedVocabularyId ) && ( outputChannelIndex == 0 ) ) {
+                // When ( bEmbedVocabularyId == true ), the first output channel should be auto-generated vocabulary id
+                // (i.e. should be the same as the input channel value).
+                tf.util.assert( outputChannelValueFromOutput == inputChannelValue,
+                  `Channel value of output should be vocabulary id. `
+                    + `( ${outputChannelValueFromOutput} != ${inputChannelValue} )`);
 
-              tf.util.assert( outputChannelValueFromOutput == outputChannelValueFromTable,
-                `Channel value of output and table should match. `
-                  + `( ${outputChannelValueFromOutput} != ${outputChannelValueFromTable} )`);
+              } else {
+
+                let lookUpAtElementOffset = lookUpAtElementOffsetBase + outputChannelIndex;
+                let outputChannelValueFromTable = this.weightsFloat32Array[ lookUpAtElementOffset ]; // Float32
+
+                tf.util.assert( outputChannelValueFromOutput == outputChannelValueFromTable,
+                  `Channel value of output and table should match. `
+                    + `( ${outputChannelValueFromOutput} != ${outputChannelValueFromTable} )`);
+              }
+
             }
           }
         }
