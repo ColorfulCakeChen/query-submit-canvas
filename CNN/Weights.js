@@ -205,8 +205,15 @@ class Params extends Base {
     {
       let i = 0;
       for ( let [ key, value ] of parameterMap ) {
-        // A null value means it should be extracted from inputFloat32Array or fixedWeights (i.e. by evolution).
-        if ( !value ) {
+
+//!!! (2020/12/28 Remarked) should distinguosh from 0 and null (undefined).
+//         // A null value means it should be extracted from inputFloat32Array or fixedWeights (i.e. by evolution).
+//         if ( !value ) {
+
+        // A null (or undefined) value means it should be extracted from inputFloat32Array or fixedWeights (i.e. by evolution).
+        //
+        // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
+        if ( null == value ) {
           arrayIndexMap.set( key, i ); // Record the index to this.weightsModified[].
           ++i;
         }
