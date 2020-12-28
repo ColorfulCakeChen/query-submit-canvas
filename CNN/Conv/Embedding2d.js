@@ -325,15 +325,9 @@ class Base {
         let predictResult = tf.concat( embeddedTensor3dArray, lastAxisId );
         return predictResult;
 
-      } catch ( e ) {
-        throw e;
-
       } finally {
         Base.disposeTensorArray_ArrayCouldNotNull_ElementCouldNotNull( embeddedTensor3dArray );
       }
-
-    } catch ( e ) {
-      throw e;
 
     } finally {
       Base.disposeTensorArray_ArrayCouldNotNull_ElementCouldNotNull( vocabularyIndicesOneChannelTensor3dArray );
