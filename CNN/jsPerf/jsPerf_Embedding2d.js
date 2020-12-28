@@ -41,23 +41,24 @@ class HeightWidthDepth {
       return dataTensor3d;
     });
 
-    this.weightsByteOffsetBegin = 3; // Skip the un-used.
+    this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
+    this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTE_PER_ELEMENT; // Skip the un-used. (in byte count)
     this.vocabularyCountPerInputChannel = 256;
     this.bEmbedVocabularyId = true;
     this.bKeepInputTensor = false;
 
     let wieghtsArrayLength = 
-      this.weightsByteOffsetBegin // Skip the un-used.
+      this.weightsElementOffsetBegin // Skip the un-used.
         + ( depth * this.vocabularyCountPerInputChannel )
       ;
 
     this.weightsFloat32Array = new Float32Array( wieghtsArrayLength );
     {
-      for ( let i = 0; i < this.weightsByteOffsetBegin; ++i ) { // Make-up the un-used weight values.
+      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
         this.weightsFloat32Array[ i ] = -i;
       }
 
-      for ( let i = this.weightsByteOffsetBegin; i < wieghtsArrayLength; ++i ) { // Make-up the embedding weight values.
+      for ( let i = this.weightsElementOffsetBegin; i < wieghtsArrayLength; ++i ) { // Make-up the embedding weight values.
         //this.weightsFloat32Array[ i ] = ( i - this.weightsByteOffsetBegin );
         this.weightsFloat32Array[ i ] = Math.random() * 10;
       }
@@ -104,12 +105,12 @@ class HeightWidthDepth {
   /** Check the Embedding2d's result.
    *
    * @param {tf.tensor3d} inputTensor3d
-   *   The input of the Embedding2d's apply_and_destroy_or_keep().
+   *   The input of the Embedding2d's apply_and_destroy_or_keep(). Its dtype should be int32.
    *
-   * @param {tf.tensor3d} resultTensor3d
-   *   The output of the Embedding2d's apply_and_destroy_or_keep().
+   * @param {tf.tensor3d} outputTensor3d
+   *   The output of the Embedding2d's apply_and_destroy_or_keep(). Its dtype should be float32.
    */
-  compareResult_byArray( inputTensor3d, resultTensor3d ) {
+  compareResult_byArray( inputTensor3d, outputTensor3d ) {
     let channelArray = tf.tidy( () => {
 //      // Split out every channel.
 //       let lastAxisId = inputTensor3d.shape.length - 1;
@@ -119,20 +120,41 @@ class HeightWidthDepth {
 //       let channelArray = channelTensor3dArray.map( ( oneChannelTensor3d ) => oneChannelTensor3d.dataSync() );
 //       return channelArray;
 
-      let inputChannelArray = inputTensor3d.arraySync();
-      let resultChannelArray = resultTensor3d.arraySync();
+      let inputRowArray = inputTensor3d.arraySync();
+      let outputRowArray = outputTensor3d.arraySync();
 
-      for ( let y = 0; y < inputChannelArray.length; ++y ) {
-        let columnValues = inputChannelArray[ y ];
+      tf.util.assert( outputRowArray.length == inputRowArray.length, `Row count should be the same for embedding input and output.`);
 
-        for ( let x = 0; x < columnValues.length; ++x ) {
-          let channelValues = columnValues[ x ];
+      // The float32 count of an embedding vocabulary table of one input channel.
+      let float32CountPerTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
 
-          for ( let c = 0; c < channelValues.length; ++c ) {
-            let channelValue = channelValues[ c ];
+//       // The byte count of an embedding vocabulary table of one input channel.
+//       let byteCountPerTable = float32CountPerTable * Float32Array.BYTE_PER_ELEMENT;
 
-            let lookUpAt = this.weightsByteOffsetBegin + ( channelValue * ??? );
-            this.weightsFloat32Array[ lookUpAt ];
+      for ( let y = 0; y < inputRowArray.length; ++y ) {
+        let inputColumnArray = inputRowArray[ y ];
+        let outputColumnArray = outputRowArray[ y ];
+
+        tf.util.assert( outputColumnArray.length == inputColumnArray.length, `Column count should be the same for embedding input and output.`);
+
+        for ( let x = 0; x < inputColumnArray.length; ++x ) {
+          let inputChannelArray = inputColumnArray[ x ];
+          let outputChannelArray = outputColumnArray[ x ];
+!!!
+          tf.util.assert( outputChannelArray.length == ( inputChannelArray.length * this.channelMultiplier ),
+              `Column count should be the same for embedding input and output.`);
+
+          for ( let inputChannelIndex = 0; inputChannelIndex < channelArray.length; ++inputChannelIndex ) {
+            let inputChannelValue = inputChannelArray[ inputChannelIndex ]; // Int32
+
+            // The embedding vocabulary table beginning of the input channel.
+            let vocabularyTableElementOffsetBegin = ( inputChannelIndex * float32CountPerTable );
+            let lookUpAtElementOffsetBase = ( this.weightsElementOffsetBegin + vocabularyTableElementOffsetBegin );
+
+            for ( let outputChannelIndex = 0; outputChannelIndex < this.channelMultiplier; ++outputChannelIndex ) {
+              let lookUpAtElementOffset = lookUpAtElementOffsetBase + outputChannelIndex;
+
+              let outputChannelValue = this.weightsFloat32Array[ lookUpAtElementOffset ];
 
 //!!! ...unfinished...
       for ( let i = 0; i < this.weightsByteOffsetBegin; ++i ) { // Make-up the un-used weight values.
