@@ -93,11 +93,10 @@ class Params extends Weights.Params {
  * @member {function} apply_and_destroy_or_keep
  *   Process the input and produce output by looking up the weights of this embedding layer. This is a function pointer
  * to one of keep_input_return_copy(), return_input_directly(), apply_and_destroy_or_keep_SplitGatherConcat().
- * It inputs a tensor3d data (e.g. height-width-color for color image,
- * or 1-width-1 for text) with this.inChannels (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype
- * must be int32 (i.e. can not be float32) so that they can be used as tf.gather()'s indices. If
- * ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If ( this.bKeepInputTensor == true ),
- * the inputTensor3d will be kept.
+ * It inputs a tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with this.inChannels
+ * (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
+ * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), the inputTensor3d
+ * will be disposed. If ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
  */
 class Base {
 
