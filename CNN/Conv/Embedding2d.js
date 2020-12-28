@@ -430,7 +430,7 @@ class Base {
 
     for ( let i = 0; i < embeddedTensor3dArray.length; ++i ) { // Release intermediate temporary tensors.
       embeddedTensor3dArray[ i ].dispose();
-      embeddedTensor3dArray[ i ] = null; // So that it is cleared when next time re-using.
+      embeddedTensor3dArray[ i ] = null; // So that it is cleared when next time re-used.
     }
 
     return predictResult;
