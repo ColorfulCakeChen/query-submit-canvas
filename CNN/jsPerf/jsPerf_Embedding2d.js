@@ -110,43 +110,36 @@ class HeightWidthDepth {
    * @param {tf.tensor3d} outputTensor3d
    *   The output of the Embedding2d's apply_and_destroy_or_keep(). Its dtype should be float32.
    */
-  compareResult_byArray( inputTensor3d, outputTensor3d ) {
-    let channelArray = tf.tidy( () => {
-//      // Split out every channel.
-//       let lastAxisId = inputTensor3d.shape.length - 1;
-//       let inChannels = inputTensor3d.shape[ lastAxisId ];
-//
-//       let channelTensor3dArray = inputTensor3d.split( inChannels, lastAxisId );
-//       let channelArray = channelTensor3dArray.map( ( oneChannelTensor3d ) => oneChannelTensor3d.dataSync() );
-//       return channelArray;
+  compareInputOutput_toWeightsTable( inputTensor3d, outputTensor3d ) {
+    tf.tidy( () => {
 
       let inputRowArray = inputTensor3d.arraySync();
       let outputRowArray = outputTensor3d.arraySync();
 
       tf.util.assert( outputRowArray.length == inputRowArray.length,
-          `Row count of embedding output and input should be the same. (${outputRowArray.length} != ${inputRowArray.length})`);
+          `Row count of embedding output and input should be the same. ( ${outputRowArray.length} != ${inputRowArray.length} )`);
 
       // The float32 count of an embedding vocabulary table of one input channel.
       let float32CountPerTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
 
-//       // The byte count of an embedding vocabulary table of one input channel.
-//       let byteCountPerTable = float32CountPerTable * Float32Array.BYTE_PER_ELEMENT;
-
+      // Height
       for ( let y = 0; y < inputRowArray.length; ++y ) {
         let inputColumnArray = inputRowArray[ y ];
         let outputColumnArray = outputRowArray[ y ];
 
         tf.util.assert( outputColumnArray.length == inputColumnArray.length,
-          `Column count of embedding output and input should be the same. (${outputColumnArray.length} != ${inputColumnArray.length})`);
+          `Column count of embedding output and input should be the same. ( ${outputColumnArray.length} != ${inputColumnArray.length} )`);
 
+        // Width
         for ( let x = 0; x < inputColumnArray.length; ++x ) {
           let inputChannelArray = inputColumnArray[ x ];
           let outputChannelArray = outputColumnArray[ x ];
 
           tf.util.assert( outputChannelArray.length == ( inputChannelArray.length * this.channelMultiplier ),
-            `Channel count of embedding output and input does not match. `
+            `Channel count of embedding output and input should match. `
               + `( ${outputChannelArray.length} != ( ${inputChannelArray.length} * ${this.channelMultiplier} ) )`);
 
+          // Input Channel
           for ( let inputChannelIndex = 0; inputChannelIndex < channelArray.length; ++inputChannelIndex ) {
             let inputChannelValue = inputChannelArray[ inputChannelIndex ]; // Int32
 
@@ -154,17 +147,22 @@ class HeightWidthDepth {
             let vocabularyTableElementOffsetBegin = ( inputChannelIndex * float32CountPerTable );
             let lookUpAtElementOffsetBase = ( this.weightsElementOffsetBegin + vocabularyTableElementOffsetBegin );
 
+            // Output Channel
             for ( let outputChannelIndex = 0; outputChannelIndex < this.channelMultiplier; ++outputChannelIndex ) {
+              let outputChannelValueFromOutput = inputChannelArray[ outputChannelIndex ]; // Float32
+
               let lookUpAtElementOffset = lookUpAtElementOffsetBase + outputChannelIndex;
+              let outputChannelValueFromTable = this.weightsFloat32Array[ lookUpAtElementOffset ]; // Float32
 
-              let outputChannelValue = this.weightsFloat32Array[ lookUpAtElementOffset ];
-
-//!!! ...unfinished...
-      for ( let i = 0; i < this.weightsByteOffsetBegin; ++i ) { // Make-up the un-used weight values.
-        this.weightsFloat32Array[ i ] = -i;
-
+              tf.util.assert( outputChannelValueFromOutput == outputChannelValueFromTable,
+                `Channel value of output and table should match. `
+                  + `( ${outputChannelValueFromOutput} != ${outputChannelValueFromTable} )`);
+            }
+          }
+        }
+      }
     });
-//!!! ...unfinished...
+
   }
 
 //!!! ...unfinished...
