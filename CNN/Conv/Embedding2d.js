@@ -84,6 +84,11 @@ class Params extends Weights.Params {
  *
  * @member {number} outChannels
  *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
+ *
+!!!
+ * @member {function} apply_and_destroy_or_keep
+ *   Process the input and produce output by looking up the weights of this embedding layer. This is a function pointer
+ * to one of 
  */
 class Base {
 
@@ -126,11 +131,13 @@ class Base {
     bKeepInputTensor
   ) {
 
+    // 0. Prepare
+
     // Estimate the maximum value of progress.
     let progressMax =
       1             // for extracting parameters from inputFloat32Array.
       + inChannels  // for extracting vocabulary table of every input channel from inputFloat32Array.
-      + inChannels; // for building vocabulary table tensor2d of every input channel.
+      + inChannels; // for building vocabulary table tensor3d of every input channel.
 
     let progressRoot = progressParent.getRoot();
     let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
@@ -147,6 +154,7 @@ class Base {
     this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
 
+    // 1. Extract parameters.
     this.params = new Params();
     if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
       return false;
@@ -154,27 +162,36 @@ class Base {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-//!!! ...unfinished... How about negative or zero channelMultiplier when by evolution?
-// Return input as output immediately? What about keep or destroy input?
-//
-// Perhaps:
-//   For ( channelMultiplier < 1 ) and ( bKeepInputTensor == false ), return input (as output) immediately.
-//   For ( channelMultiplier < 1 ) and ( bKeepInputTensor == true  ), return a copy of input (as output) immediately.
+    // 2. Vocabulary Table Shape
+    let vocabularyTableShape_toExtract = null; // Assume no embedding channel.
 
     let channelMultiplier = this.channelMultiplier; // The real channelMultiplier. May be specified or extracted.
-    if ( channelMultiplier < 1 )
-      return false; // At least, there should be one embedding channel.
+    if ( channelMultiplier < 1 ) { // 2.1 channelMultiplier is zero or negative. (could happen by evolution.)
 
-    let vocabularyTableShape_toExtract;
-    if ( bEmbedVocabularyId ) {
-      // If there will be an auto-generated vocabulary id embedding channel, extract one less channels from data.
-      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier - 1 ];
-    } else {
-      // Otherwise, all embedding channels are extracted from data.
-      vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ];
+      if ( bKeepInputTensor )
+        // 2.1.1 For ( channelMultiplier < 1 ) and ( bKeepInputTensor == true  ), return a copy of input (as output) immediately.        
+        this.apply_and_destroy_or_keep = Base.keep_input_return_copy;
+      else
+        // 2.1.2 For ( channelMultiplier < 1 ) and ( bKeepInputTensor == false ), return input (as output) immediately.
+        this.apply_and_destroy_or_keep = Base.return_input_directly;
+
+    } else { // 2.2 channelMultiplier is positive.
+
+      this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_SplitGatherConcat;
+
+      if ( bEmbedVocabularyId ) {
+        // 2.2.1 If there will be an auto-generated vocabulary id embedding channel, extract one less channels from data.
+        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier - 1 ];
+      } else {
+        // 2.2.2 Otherwise, all embedding channels are extracted from data.
+        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ];
+      }
     }
 
-    // Extract data of vocabulary tables from inputFloat32Array.
+    // 3. Extract data of vocabulary tables from inputFloat32Array.
+    //
+    // Even if ( channelMultiplier < 1 ) (i.e. ( null == vocabularyTableShape_toExtract ) ), this.vocabularyTables[]
+    // should still be created so that this.byteOffsetEnd() could work correctly.
     this.vocabularyTables = new Array( inChannels );
     {
       let nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
@@ -189,57 +206,70 @@ class Base {
       }
     }
 
-    // For tensor3d, the last axis id will be 2.
-    //
-    // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
-    let lastAxisId = this.lastAxisId = ( vocabularyTableShape_toExtract.length - 1 );
+    // 4. Build tensor3d[] of vocabulary tables.
 
-    // Build tf.tensor of vocabulary tables.
-    try {
-      this.vocabularyTablesTensor3dArray = new Array( this.vocabularyTables.length );
+    // 4.1 If ( channelMultiplier >= 1 ), build tensor3d[] of vocabulary tables.
+    if ( vocabularyTableShape_toExtract ) {
 
-      // Need to prefix vocabulary id channel.
-      if ( bEmbedVocabularyId ) {
+      // For tensor3d, the last axis id will be 2.
+      //
+      // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
+      let lastAxisId = this.lastAxisId = ( vocabularyTableShape_toExtract.length - 1 );
 
-        // Create vocabulary id list (tensor3d). (for concatenating with vocabulary table)
-        let numberSequencer = new Array( vocabularyCountPerInputChannel ).keys(); // Generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
-        const idsTensor3d = tf.tensor3d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1, 1 ] );
+      // Build tf.tensor of vocabulary tables.
+      try {
+        this.vocabularyTablesTensor3dArray = new Array( this.vocabularyTables.length );
 
-        try {
-          for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
+        // Need to prefix vocabulary id channel.
+        if ( bEmbedVocabularyId ) {
 
-            // Create an embedding vocabulary table (without vocabulary id).
-            const vocabularyTableTensor3dWithoutIds = tf.tensor3d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
+          // Create vocabulary id list (tensor3d). (for concatenating with vocabulary table)
+          let numberSequencer = new Array( vocabularyCountPerInputChannel ).keys(); // Generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
+          const idsTensor3d = tf.tensor3d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1, 1 ] );
 
-            try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
-              this.vocabularyTablesTensor3dArray[ i ] = idsTensor3d.concat( vocabularyTableTensor3dWithoutIds, lastAxisId );
+          try {
+            for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
 
-            } finally {
-              vocabularyTableTensor3dWithoutIds.dispose();
+              // Create an embedding vocabulary table (without vocabulary id).
+              const vocabularyTableTensor3dWithoutIds = tf.tensor3d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
+
+              try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
+                this.vocabularyTablesTensor3dArray[ i ] = idsTensor3d.concat( vocabularyTableTensor3dWithoutIds, lastAxisId );
+
+              } finally {
+                vocabularyTableTensor3dWithoutIds.dispose();
+              }
+
+              ++progressToAdvance.value;
+              yield progressRoot;  // One vocabulary table tensor3d built. Report progress.
             }
 
-            ++progressToAdvance.value;
-            yield progressRoot;  // One vocabulary table tensor3d built. Report progress.
+          } finally {
+            idsTensor3d.dispose();
           }
 
-        } finally {
-          idsTensor3d.dispose();
+        } else { // No need to prefix vocabulary id channel.
+
+          for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
+            // Create an embedding vocabulary table (without vocabulary id).
+            this.vocabularyTablesTensor3dArray[ i ] = tf.tensor3d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
+
+            ++progressToAdvance.value;
+            yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
+          }
         }
 
-      } else { // No need to prefix vocabulary id channel.
-
-        for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
-          // Create an embedding vocabulary table (without vocabulary id).
-          this.vocabularyTablesTensor3dArray[ i ] = tf.tensor3d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
-
-          ++progressToAdvance.value;
-          yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
-        }
+      } catch ( e ) {
+        return false; // e.g. out of (GPU) memory.
       }
 
-    } catch ( e ) {
-      return false; // e.g. out of (GPU) memory.
+    // 4.2 When ( channelMultiplier < 1 ), there is no need to build this.vocabularyTablesTensor3dArray[].
+    } else {
+      progressToAdvance.value += inChannels; // Report progress as it built directly.
+      yield progressRoot;
     }
+
+    // 5. Prepare other auxiliary data members.
 
     // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
     //
@@ -262,11 +292,29 @@ class Base {
 
   /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
   isValid() {
-    if ( this.vocabularyTablesTensor3dArray )
-      if ( this.vocabularyTablesTensor3dArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
-        if ( this.vocabularyTablesTensor3dArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
-          return true;
-    return false;
+
+    if ( this.channelMultiplier < 1 ) {
+
+      // The vocabulary tables (from initer()'s inputFloat32Array) should always exist, even if channelMultiplier is zero or negative.
+      //
+      // But there will be no this.vocabularyTablesTensor3dArray[] because apply_and_destroy_or_keep() will just return output as input.
+      if ( this.vocabularyTables )
+        if ( this.vocabularyTables[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
+          if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
+            return true;
+
+      return false;
+
+    } else {
+
+      // If channelMultiplier is positive, the tensor3d of vocabulary tables should exists.
+      if ( this.vocabularyTablesTensor3dArray )
+        if ( this.vocabularyTablesTensor3dArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
+          if ( this.vocabularyTablesTensor3dArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
+            return true;
+
+      return false;
+    }
   }
 
   /** Release tf.tensor. */
@@ -275,10 +323,45 @@ class Base {
       tf.dispose( this.vocabularyTablesTensor3dArray );
       this.vocabularyTablesTensor3dArray = null;
     }
+
+    this.embeddedTensor3dArray = null;
   }
 
   /**
-   * Process the input and produce output by using the weights of this neural network layer.
+   * Return a copy of input (as output) immediately. Used for ( channelMultiplier < 1 ) and ( bKeepInputTensor == true  ).
+   *
+   * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
+   *
+   * @param {tf.tensor3d} inputTensor3d
+   *   A tensor3d data. This inputTensor3d will be kept (i.e. not disposed).
+   *
+   * @return {tf.tensor3d} The copy of input. Return null, if input is null. Throw exception, if failed (e.g. out of GPU memory).
+   */
+  static keep_input_return_copy( inputTensor3d ) {
+    if ( inputTensor3d )
+      return inputTensor3d.clone();
+    return null;
+  }
+
+  /**
+   * Return the input (as output) directly immediately. Used for ( channelMultiplier < 1 ) and ( bKeepInputTensor == false ).
+   *
+   * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
+   *
+   * @param {tf.tensor3d} inputTensor3d
+   *   A tensor3d data. It should be viewed as already disposed by this method. However, in fact, it is returned as output
+   * directly.
+   *
+   * @return {tf.tensor3d} The same as input.
+   */
+  static return_input_directly( inputTensor3d ) {
+    return inputTensor3d;
+  }
+
+  /**
+   * Process the input and produce output by looking up the weights of this embedding layer.
+   *
+   * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
    *
    * @param {tf.tensor3d} inputTensor3d
    *   A tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with this.inChannels
@@ -286,9 +369,9 @@ class Base {
    * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), this inputTensor3d
    * will be disposed. If ( this.bKeepInputTensor == true ), this inputTensor3d will be kept.
    *
-   * @return {tf.tensor3d} The predicted output as tensor3d. Return null, if failed (e.g. out of GPU memory).
+   * @return {tf.tensor3d} The predicted output as tensor3d. Throw exception, if failed (e.g. out of GPU memory).
    */
-  apply_and_destroy_or_keep( inputTensor3d ) {
+  static apply_and_destroy_or_keep_SplitGatherConcat( inputTensor3d ) {
 
 //!!! ...unfinished... could use gahter, gather, concat instead of split, gather, concat?
 
