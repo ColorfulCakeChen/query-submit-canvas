@@ -74,7 +74,7 @@ class HeightWidthDepth {
     this.embedding2d_release();
   }
 
-  ebedding2d_init() {
+  embedding2d_init() {
     this.embedding2d_release();
 
     this.embedding2d = new Embedding2d.Base();
