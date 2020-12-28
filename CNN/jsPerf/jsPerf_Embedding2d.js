@@ -260,7 +260,8 @@ class HeightWidthDepth {
 //       }
 //     });
 //   }
-// }
+
+}
 
 function init() {
   disposeTensors();
