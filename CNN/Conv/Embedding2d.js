@@ -414,29 +414,52 @@ class Base {
 
     this.destroy_or_keep_input( inputTensor3d ); // Destroy or keep input according to ( this.bKeepInputTensor ).
 
-    try {
-      let embeddedTensor3dArray = this.embeddedTensor3dArray; // Using pre-allocated array as local variable to improving performance.
+    let embeddedTensor3dArray = this.embeddedTensor3dArray; // Using pre-allocated array as local variable to improving performance.
 
-      try {
+    // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
+    // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
+    for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor3dArray.length; ++channelIndex ) {
+      let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ channelIndex ];
+      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor3dArray[ channelIndex ].gather( oneChannelTensor3d );
 
-        // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
-        // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
-        for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor3dArray.length; ++channelIndex ) {
-          let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ channelIndex ];
-          embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor3dArray[ channelIndex ].gather( oneChannelTensor3d );
-        }
-
-        // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
-        let predictResult = tf.concat( embeddedTensor3dArray, lastAxisId );
-        return predictResult;
-
-      } finally {
-        Base.disposeTensorArray_ArrayCouldNotNull_ElementCouldNotNull( embeddedTensor3dArray );
-      }
-
-    } finally {
-      Base.disposeTensorArray_ArrayCouldNotNull_ElementCouldNotNull( vocabularyIndicesOneChannelTensor3dArray );
+      oneChannelTensor3d.dispose(); // Release intermediate temporary tensor as soon as possible for reducing memory footprint.
     }
+
+    // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
+    let predictResult = tf.concat( embeddedTensor3dArray, lastAxisId );
+
+    for ( let i = 0; i < embeddedTensor3dArray.length; ++i ) { // Release intermediate temporary tensors.
+      embeddedTensor3dArray[ i ].dispose();
+      embeddedTensor3dArray[ i ] = null; // So that it is cleared when next time re-using.
+    }
+
+    return predictResult;
+
+
+//!!! (2020/12/28 Remarked) Change to dispose as soon as possible for reducing memory footprint.
+//     try {
+//       let embeddedTensor3dArray = this.embeddedTensor3dArray; // Using pre-allocated array as local variable to improving performance.
+//
+//       try {
+//
+//         // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
+//         // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
+//         for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor3dArray.length; ++channelIndex ) {
+//           let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ channelIndex ];
+//           embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor3dArray[ channelIndex ].gather( oneChannelTensor3d );
+//         }
+//
+//         // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
+//         let predictResult = tf.concat( embeddedTensor3dArray, lastAxisId );
+//         return predictResult;
+//
+//       } finally {
+//         Base.disposeTensorArray_ArrayCouldNotNull_ElementCouldNotNull( embeddedTensor3dArray );
+//       }
+//
+//     } finally {
+//       Base.disposeTensorArray_ArrayCouldNotNull_ElementCouldNotNull( vocabularyIndicesOneChannelTensor3dArray );
+//     }
 
 //!!! ...unfinished... squeeze-and-excitation.
   }
