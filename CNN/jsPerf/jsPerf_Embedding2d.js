@@ -266,13 +266,15 @@ class HeightWidthDepth {
 function init() {
   disposeTensors();
 
-//!!! ...unfinished... test zero or negative channelMultiplier.
+  // (cm = channel multiplier)
 
   globalThis.testSet_110x110x24_cm8 = new HeightWidthDepth( 110, 110, 24, 8 ); // height, width, depth, channelMultiplier
   globalThis.testSet_110x110x24_cm4 = new HeightWidthDepth( 110, 110, 24, 4 );
   globalThis.testSet_110x110x24_cm3 = new HeightWidthDepth( 110, 110, 24, 3 );
   globalThis.testSet_110x110x24_cm2 = new HeightWidthDepth( 110, 110, 24, 2 );
   globalThis.testSet_110x110x24_cm1 = new HeightWidthDepth( 110, 110, 24, 1 );
+  globalThis.testSet_110x110x24_cm0 = new HeightWidthDepth( 110, 110, 24, 0 );
+  globalThis.testSet_110x110x24_cmNegative = new HeightWidthDepth( 110, 110, 24, -1 );
 
   globalThis.testSet_110x110x24_All = [
     globalThis.testSet_110x110x24_cm8,
@@ -280,6 +282,8 @@ function init() {
     globalThis.testSet_110x110x24_cm3,
     globalThis.testSet_110x110x24_cm2,
     globalThis.testSet_110x110x24_cm1,
+    globalThis.testSet_110x110x24_cm0,
+    globalThis.testSet_110x110x24_cmNegative
   ];
 }
 
@@ -308,10 +312,12 @@ function disposeTensors() {
     globalThis.testSet_110x110x24_All = null;
   }
 
-  globalThis.testSet_110x110x24_g8
-    = globalThis.testSet_110x110x24_g4
-    = globalThis.testSet_110x110x24_g3
-    = globalThis.testSet_110x110x24_g2
-    = globalThis.testSet_110x110x24_g1
+  globalThis.testSet_110x110x24_cm8
+    = globalThis.testSet_110x110x24_cm4
+    = globalThis.testSet_110x110x24_cm3
+    = globalThis.testSet_110x110x24_cm2
+    = globalThis.testSet_110x110x24_cm1
+    = globalThis.testSet_110x110x24_cm0
+    = globalThis.testSet_110x110x24_cmNegative
     = null;
 }
