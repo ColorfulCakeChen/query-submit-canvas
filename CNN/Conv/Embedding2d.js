@@ -140,7 +140,7 @@ class Base {
 // squeeze-and-excitation ?
 // Shuffled Grouped Pointwise Convolution ... ? (by tf.gather() ?)
 
-    disposeTensors();
+    this.disposeTensors();
     this.params = this.vocabularyTables = null; // So that distinguishable if re-initialization failed.
 
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
@@ -251,6 +251,12 @@ class Base {
     // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
     this.splitCount = this.inChannels;
 
+    // This is an intermediate temporary array. It collects the results of every looking (vocabulary table) up. They will be
+    // concatenated into one tensor3d as apply_and_destroy_or_keep()'s result.
+    //
+    // Pre-allocate this array shell (instead of re-allocating every time apply_and_destroy_or_keep()) for improving performance.
+    this.embeddedTensor3dArray = new Array( this.splitCount );
+
     return true; // Initialized successfully.
   }
 
@@ -266,7 +272,7 @@ class Base {
   /** Release tf.tensor. */
   disposeTensors() {
     if ( this.vocabularyTablesTensor3dArray ) {
-      Base.disposeTensorArray_NotNull( this.vocabularyTablesTensor3dArray );
+      tf.dispose( this.vocabularyTablesTensor3dArray );
       this.vocabularyTablesTensor3dArray = null;
     }
   }
@@ -304,8 +310,7 @@ class Base {
       inputTensor3d.dispose();
 
     try {
-//!!! ...unfinished... could re-use this array shell (without re-allocating every time apply_and_destroy_or_keep() is called)?
-      let embeddedTensor3dArray = new Array( vocabularyIndicesOneChannelTensor3dArray.length );
+      let embeddedTensor3dArray = this.embeddedTensor3dArray; // Using pre-allocated array as local variable to improving performance.
 
       try {
 
@@ -324,16 +329,14 @@ class Base {
         throw e;
 
       } finally {
-        Base.disposeTensorArray_NotNull( embeddedTensor3dArray ); // Avoid tensors' memory leakage.
-        //embeddedTensor3dArray = null;
+        Base.disposeTensorArray_ArrayCouldNotNull_ElementCouldNotNull( embeddedTensor3dArray );
       }
 
     } catch ( e ) {
       throw e;
 
     } finally {
-      Base.disposeTensorArray_NotNull( vocabularyIndicesOneChannelTensor3dArray ); // Avoid tensors' memory leakage.
-      //vocabularyIndicesOneChannelTensor3dArray = null;
+      Base.disposeTensorArray_ArrayCouldNotNull_ElementCouldNotNull( vocabularyIndicesOneChannelTensor3dArray );
     }
 
 //!!! ...unfinished... squeeze-and-excitation.
@@ -342,18 +345,17 @@ class Base {
   /**
    * Release an array of tf.tensor.
    *
-   * This method is a little like tf.dispose() but can only handle one-layer array. But it should be faster than
-   * tf.dispose( an_array ) because no dynamic memory allocation.
+   * This method is a little like tf.dispose() but can only handle one-layer and non-null array (and non-null element). But
+   * it should be faster than tf.dispose( an_array ) because no dynamic memory allocation.
    *
    * @param {tf.tensor[]} tensorArray
-   *   An array contains tf.tensor to be disposed. The tensorArray itself can not be null (for reducing conditional-branch
-   * to improve performance). It can not have nested array. Its element must be either tf.tensor or null.
+   *   An array contains tf.tensor to be disposed. Both the tensorArray itself and its elements can not be null (for reducing
+   * conditional-branch to improving performance). It can not have nested array. Its element must be tf.tensor (and can not
+   * be null).
    */
-  static disposeTensorArray_NotNull( tensorArray ) {
+  static disposeTensorArray_ArrayCouldNotNull_ElementCouldNotNull( tensorArray ) {
     for ( let i = 0; i < tensorArray.length; ++i ) {
-      let t = tensorArray[ i ];
-      if ( t )
-        t.dispose();
+      tensorArray[ i ].dispose();
     }
   }
 
