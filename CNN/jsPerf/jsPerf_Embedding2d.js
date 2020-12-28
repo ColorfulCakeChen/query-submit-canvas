@@ -48,9 +48,13 @@ class HeightWidthDepth {
     this.bEmbedVocabularyId = true;
     this.bKeepInputTensor = true; // Otherwise, this.dataTensor3d will be destroyed.
 
+    let channelMultiplierEstimated = channelMultiplier;
+    if ( channelMultiplierEstimated < 1 )
+      channelMultiplierEstimated = 1;
+
     let wieghtsArrayLength = 
       this.weightsElementOffsetBegin // Skip the un-used.
-        + ( depth * this.vocabularyCountPerInputChannel )
+        + ( depth * ( this.vocabularyCountPerInputChannel * channelMultiplierEstimated ) ) 
       ;
 
     this.weightsFloat32Array = new Float32Array( wieghtsArrayLength );
