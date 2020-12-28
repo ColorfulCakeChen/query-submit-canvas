@@ -167,11 +167,11 @@ class HeightWidthDepth {
   }
 
 //!!! ...unfinished...
-//   // Test concat-reshape-transpose-reshape-split
-//   test_ConcatReshapeTransposeReshapeSplit() {
-//     let shuffledArray = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
-//     tf.dispose( shuffledArray );
-//   }
+  // Test apply by split-gather-concat and dispose by finally.
+  test_SplitGatherConcat_dispose_finally() {
+    let outputTensor3d = this.embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
+    outputTensor3d.dispose();
+  }
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
