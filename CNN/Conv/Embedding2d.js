@@ -6,6 +6,7 @@ import * as Weights from "../Weights.js";
 /**
  * Embedding (2d) layer parameters.
  *
+//!!! ...unfinished... what if ( channelMultiplier <= 0 ) ?
  * @member {number} outChannels
  *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
  */
@@ -85,9 +86,18 @@ class Params extends Weights.Params {
  * @member {number} outChannels
  *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
  *
+ * @member {function} destroy_or_keep_input
+ *   This is a function pointer to one of destroy_input(), keep_input(). If ( this.bKeepInputTensor == false ),
+ * it pointer to destroy_input(). If ( this.bKeepInputTensor == true ), it pointer to keep_input().
+ *
  * @member {function} apply_and_destroy_or_keep
  *   Process the input and produce output by looking up the weights of this embedding layer. This is a function pointer
  * to one of keep_input_return_copy(), return_input_directly(), apply_and_destroy_or_keep_SplitGatherConcat().
+ * It inputs a tensor3d data (e.g. height-width-color for color image,
+ * or 1-width-1 for text) with this.inChannels (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype
+ * must be int32 (i.e. can not be float32) so that they can be used as tf.gather()'s indices. If
+ * ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If ( this.bKeepInputTensor == true ),
+ * the inputTensor3d will be kept.
  */
 class Base {
 
@@ -152,6 +162,11 @@ class Base {
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
+
+    if ( bKeepInputTensor )
+      this.destroy_or_keep_input = Base.keep_input;
+    else
+      this.destroy_or_keep_input = Base.destroy_input;
 
     // 1. Extract parameters.
     this.params = new Params();
@@ -326,6 +341,18 @@ class Base {
     this.embeddedTensor3dArray = null;
   }
 
+  /** Do nothing. */
+  static keep_input( inputTensor3d ) {
+  }
+
+  /**
+   * @param {tf.tensor3d} inputTensor3d
+   *   A tensor3d data. It will be disposed.
+   */
+  static destroy_input( inputTensor3d ) {
+    inputTensor3d.dispose();
+  }
+
   /**
    * Return a copy of input (as output) immediately. Used for ( channelMultiplier < 1 ) and ( bKeepInputTensor == true  ).
    *
@@ -387,9 +414,7 @@ class Base {
     // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ lastAxisId ] ).
     const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( this.splitCount, lastAxisId );
 
-//!!! ...unfinished... could using function pointer to avoid conditional-branching?
-    if ( !this.bKeepInputTensor )
-      inputTensor3d.dispose();
+    this.destroy_or_keep_input( inputTensor3d ); // Destroy or keep input according to ( this.bKeepInputTensor ).
 
     try {
       let embeddedTensor3dArray = this.embeddedTensor3dArray; // Using pre-allocated array as local variable to improving performance.
