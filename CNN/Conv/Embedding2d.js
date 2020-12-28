@@ -85,10 +85,9 @@ class Params extends Weights.Params {
  * @member {number} outChannels
  *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
  *
-!!!
  * @member {function} apply_and_destroy_or_keep
  *   Process the input and produce output by looking up the weights of this embedding layer. This is a function pointer
- * to one of 
+ * to one of keep_input_return_copy(), return_input_directly(), apply_and_destroy_or_keep_SplitGatherConcat().
  */
 class Base {
 
