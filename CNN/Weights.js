@@ -151,7 +151,8 @@ class Params extends Base {
    * The parameterMap could also have (and any other custom key-value pairs):
    *
    * - Params.Keys.channelMultiplier
-   *   {number} Every input channel will be expanded into how many channels.
+   *   {number} Every input channel will be expanded into how many channels. (No matter how it is determined, it will
+   *   always be forcibly adjusted to positive integer.)
    *     - If not null, it will be used instead of extracting from inputFloat32Array or fixedWeights. (By specifying)
    *     - If null, extracted from inputFloat32Array or fixedWeights. (By evolution)
    *
@@ -205,11 +206,6 @@ class Params extends Base {
     {
       let i = 0;
       for ( let [ key, value ] of parameterMap ) {
-
-//!!! (2020/12/28 Remarked) should distinguosh from 0 and null (undefined).
-//         // A null value means it should be extracted from inputFloat32Array or fixedWeights (i.e. by evolution).
-//         if ( !value ) {
-
         // A null (or undefined) value means it should be extracted from inputFloat32Array or fixedWeights (i.e. by evolution).
         //
         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
@@ -241,9 +237,6 @@ class Params extends Base {
     //
     // Do not modify the original array data. When backtracking (to try another neural network layer
     // configuration), the original data is necessary.
-//!!! (2020/12/16 Remarked) Loop is faster than function call.
-//     this.weightsModified = new Float32Array( this.weights );
-//     this.weightsModified.forEach( ( element, i, array ) => array[ i ] = Base.toPositiveInteger( element ) );
     this.weightsModified = new Float32Array( this.weights.length );
     for ( let i = 0; i < this.weightsModified.length; ++i ) {
       this.weightsModified[ i ] = Base.toPositiveInteger( this.weights[ i ] );
@@ -254,6 +247,16 @@ class Params extends Base {
       this.parameterMap.set( key, this.weightsModified[ arrayIndex ] );
     }
 
+    // Restrict channelMultiplier to positive integer.
+    //
+    // If it is zero or negative, the outChannels (= inChannels * channelMultiplier ) will be strange value.
+    // Strange outChannels value will affect the parameters extraction of the next neural network layer.
+    let channelMultiplier = this.channelMultiplier;   // May be specified or extracted.
+    if ( channelMultiplier < 1 ) {
+      channelMultiplier = 1;
+      this.parameterMap.set( Params.Keys.channelMultiplier, channelMultiplier );
+    }
+
     // If original parameterMap has output channel count and its value is infinity, its value will depend
     // on channelMultiplier (i.e. by channelMultiplier).
     //
@@ -261,8 +264,6 @@ class Params extends Base {
     let outChannelsOriginal = parameterMap.get( Params.Keys.outChannels );
     if ( outChannelsOriginal ) {
       if ( !Number.isFinite( outChannelsOriginal ) ) {
-        let channelMultiplier = this.channelMultiplier;   // May be specified or extracted.
-//!!! ...unfinished... what if ( channelMultiplier <= 0 ) ?
         let outChannels = inChannels * channelMultiplier;
         this.parameterMap.set( Params.Keys.outChannels, outChannels );
       } else {
