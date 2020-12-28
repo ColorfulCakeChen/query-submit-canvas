@@ -6,7 +6,6 @@ import * as Weights from "../Weights.js";
 /**
  * Embedding (2d) layer parameters.
  *
-//!!! ...unfinished... what if ( channelMultiplier <= 0 ) ?
  * @member {number} outChannels
  *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
  */
