@@ -110,7 +110,7 @@ class HeightWidthDepth {
    * @param {tf.tensor3d} outputTensor3d
    *   The output of the Embedding2d's apply_and_destroy_or_keep(). Its dtype should be float32.
    */
-  compareInputOutput_toWeightsTable( inputTensor3d, outputTensor3d ) {
+  check_Input_Output_WeightsTable( inputTensor3d, outputTensor3d ) {
     tf.tidy( () => {
 
       let inputRowArray = inputTensor3d.arraySync();
@@ -205,41 +205,18 @@ class HeightWidthDepth {
     tf.tidy( () => {
       let memoryInfo0 = tf.memory();
 
-      let t = this.embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
+      // Test memory leak of embedding apply.
+      let outputTensor3d = this.embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
       let memoryInfo1 = tf.memory();
-      tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `apply_and_destroy_or_keep() memory leak.`);
+      tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `Embedding2d.apply_and_destroy_or_keep() memory leak.`);
 
+      // Test correctness of embedding apply.
+      this.check_Input_Output_WeightsTable( this.dataTensor3d, outputTensor3d );
 
-      t.
 //!!!
-
-
-      tf.util.assert(
-        TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ),
-        `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()`);
-
-//!!! Sorted never equal to Unsorted. 
 //       tf.util.assert(
-//         ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ),
-//         `ConcatGatherUnsorted() != SplitConcatSortedShared()`);
-
-      // Because the sorted will never equal to unsorted, try to compare their sum.
-      // (Using average may be have some floating-point error.)
-      tf.tidy( () => {
-//         let t2MeanArray = t2Array.map( t => t.mean() );
-//         let t3MeanArray = t3Array.map( t => t.mean() );
-        let lastAxisId = t2Array[ 0 ].rank - 1;
-        let t2SumArray = t2Array.map( t => t.sum( lastAxisId ) );
-        let t3SumArray = t3Array.map( t => t.sum( lastAxisId ) );
-
-        tf.util.assert(
-          TensorTools.Comparator.isTensorArrayEqual( t2SumArray, t3SumArray ),
-          `ConcatGatherUnsorted() != SplitConcatSortedShared()`);
-      });
-
-      tf.util.assert(
-        TensorTools.Comparator.isTensorArrayEqual( t2Array, t4Array ),
-        `ConcatGatherUnsorted() != PointwiseConv()`);
+//         TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ),
+//         `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()`);
     });
   }
 
