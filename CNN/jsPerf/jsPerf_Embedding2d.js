@@ -123,7 +123,8 @@ class HeightWidthDepth {
       let inputRowArray = inputTensor3d.arraySync();
       let outputRowArray = outputTensor3d.arraySync();
 
-      tf.util.assert( outputRowArray.length == inputRowArray.length, `Row count should be the same for embedding input and output.`);
+      tf.util.assert( outputRowArray.length == inputRowArray.length,
+          `Row count of embedding output and input should be the same. (${outputRowArray.length} != ${inputRowArray.length})`);
 
       // The float32 count of an embedding vocabulary table of one input channel.
       let float32CountPerTable = this.channelMultiplier * this.vocabularyCountPerInputChannel;
@@ -135,14 +136,16 @@ class HeightWidthDepth {
         let inputColumnArray = inputRowArray[ y ];
         let outputColumnArray = outputRowArray[ y ];
 
-        tf.util.assert( outputColumnArray.length == inputColumnArray.length, `Column count should be the same for embedding input and output.`);
+        tf.util.assert( outputColumnArray.length == inputColumnArray.length,
+          `Column count of embedding output and input should be the same. (${outputColumnArray.length} != ${inputColumnArray.length})`);
 
         for ( let x = 0; x < inputColumnArray.length; ++x ) {
           let inputChannelArray = inputColumnArray[ x ];
           let outputChannelArray = outputColumnArray[ x ];
-!!!
+
           tf.util.assert( outputChannelArray.length == ( inputChannelArray.length * this.channelMultiplier ),
-              `Column count should be the same for embedding input and output.`);
+            `Channel count of embedding output and input does not match. `
+              + `( ${outputChannelArray.length} != ( ${inputChannelArray.length} * ${this.channelMultiplier} ) )`);
 
           for ( let inputChannelIndex = 0; inputChannelIndex < channelArray.length; ++inputChannelIndex ) {
             let inputChannelValue = inputChannelArray[ inputChannelIndex ]; // Int32
