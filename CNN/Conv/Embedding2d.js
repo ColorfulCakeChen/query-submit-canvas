@@ -293,10 +293,10 @@ class Base {
     // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
     this.splitCount = this.inChannels;
 
-    // For tensor3d, the splitted axis id the last axis id (and will be 2).
+    // For tensor3d, the splitted axis id is the last axis id (i.e. 2).
     //
     // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
-    this.splitAxisId = ( this.inChannels - 1 );
+    this.splitAxisId = 2;
 
     // The followings are intermediate temporary arrays. Pre-allocate these array shells (instead of re-allocating every
     // time apply_and_destroy_or_keep()) for improving performance.
