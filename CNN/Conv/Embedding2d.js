@@ -223,10 +223,10 @@ class Base {
     // 4.1 If ( channelMultiplier >= 1 ), build tensor3d[] of vocabulary tables.
     if ( vocabularyTableShape_toExtract ) {
 
-      // For tensor3d, the last axis id will be 2.
+      // For tensor2d, the last axis id will be 1.
       //
       // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
-      let lastAxisId = this.lastAxisId = ( vocabularyTableShape_toExtract.length - 1 );
+      let concatAxisId = this.concatAxisId = ( vocabularyTableShape_toExtract.length - 1 );
 
       // Build tf.tensor of vocabulary tables.
       try {
@@ -246,7 +246,7 @@ class Base {
               const vocabularyTableTensor2dWithoutIds = tf.tensor2d( this.vocabularyTables[ i ].weights, vocabularyTableShape_toExtract );
 
               try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
-                this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, lastAxisId );
+                this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, concatAxisId );
 
               } finally {
                 vocabularyTableTensor2dWithoutIds.dispose();
@@ -293,11 +293,25 @@ class Base {
     // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
     this.splitCount = this.inChannels;
 
-    // This is an intermediate temporary array. It collects the results of every looking (vocabulary table) up. They will be
-    // concatenated into one tensor3d as apply_and_destroy_or_keep()'s result.
+    // For tensor3d, the last axis id will be 2.
     //
-    // Pre-allocate this array shell (instead of re-allocating every time apply_and_destroy_or_keep()) for improving performance.
-    this.embeddedTensor3dArray = new Array( this.splitCount );
+    // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
+    this.splitAxisId = ( this.inChannels - 1 );
+
+    // The followings are intermediate temporary arrays. Pre-allocate these array shells (instead of re-allocating every
+    // time apply_and_destroy_or_keep()) for improving performance.
+    {
+      // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They will be used to look up vocabulary table.
+      this.vocabularyIndicesOneChannelTensor2dArray = new Array( this.splitCount );
+
+      // The first 2 dimension of apply_and_destroy_or_keep()'s inputTensor3d. When the input is splitted and reduce to tensor2d,
+      // their shape should be this. It is used for reshape from tensor3d to tensor2d.
+      this.inputTensor2dShape = new Array( 2 );
+
+      // For collecting the results of every looking (vocabulary table) up. They will be concatenated into one tensor3d as
+      // apply_and_destroy_or_keep()'s result.
+      this.embeddedTensor3dArray = new Array( this.splitCount );
+    }
 
     return true; // Initialized successfully.
   }
@@ -399,18 +413,51 @@ class Base {
 
 //!!! ...unfinished... could use gahter, gather, concat instead of split, gather, concat?
 
-    // e.g. will be 2 for tensor3d.
+    // e.g. will be 1 for tensor2d.
     //
-    // This should be the same as ( inputTensor3d.shape.length - 1 ) or ( inputTensor3d.rank - 1 ).
-    let lastAxisId = this.lastAxisId;
+    // This is the last axis id of vocabulary table (tensor2d). It is the last second axis of inputTensor3d (tensor3d).
+    let concatAxisId = this.concatAxisId;
+
+    // Using pre-allocated array as local variable to improving performance.
+    let vocabularyIndicesOneChannelTensor2dArray = this.vocabularyIndicesOneChannelTensor2dArray;
+
+//!!! could use unstack?
+//     // Extract vocabulary indices from input.
+//     //
+//     // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
+//     // In fact, the result is still tensor3d but has only one channel.
+//     //
+//     // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ concatAxisId ] ).
+//     const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.unstack( this.splitCount, concatAxisId );
 
     // Extract vocabulary indices from input.
-    //
-    // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
-    // In fact, the result is still tensor3d but has only one channel.
-    //
-    // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ lastAxisId ] ).
-    const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( this.splitCount, lastAxisId );
+    {
+      // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
+      // In fact, the result is still tensor3d but has only one channel.
+      //
+      // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ this.splitAxisId ] ).
+      const oneChannelTensor3dArray = inputTensor3d.split( this.splitCount, this.splitAxisId );
+
+      let inputTensor2dShape = this.inputTensor2dShape;
+      inputTensor2dShape[ 0 ] = inputTensor3d.shape[ 0 ];
+      inputTensor2dShape[ 1 ] = inputTensor3d.shape[ 1 ];
+
+      // The splitted of input is still tensor3d but has only one channel. Reshape it to tensor2d so that the
+      // resule of tf.gather() will be tensor3d.
+      for ( let i = 0; i < ; ++i ) {
+        vocabularyIndicesOneChannelTensor2dArray[ i ] = oneChannelTensor3dArray[ i ].reshape( inputTensor2dShape );
+        oneChannelTensor3dArray[ i ].dispose();
+      }
+    }
+
+//!!! (2020/12/30 Remarked) should use tf.unstack() so that the rank will reduce one (i.e. tensor3d to tensor2d).
+//     // Extract vocabulary indices from input.
+//     //
+//     // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
+//     // In fact, the result is still tensor3d but has only one channel.
+//     //
+//     // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ concatAxisId ] ).
+//     const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( this.splitCount, this.splitAxisId );
 
     this.destroy_or_keep_input( inputTensor3d ); // Destroy or keep input according to ( this.bKeepInputTensor ).
 
@@ -418,15 +465,15 @@ class Base {
 
     // Embedding (looking up different vocabulary tables according to channel index of vocabulary indices).
     // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
-    for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor3dArray.length; ++channelIndex ) {
-      let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ channelIndex ];
-      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor2dArray[ channelIndex ].gather( oneChannelTensor3d );
+    for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor2dArray.length; ++channelIndex ) {
+      let oneChannelTensor2d = vocabularyIndicesOneChannelTensor2dArray[ channelIndex ];
+      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor2dArray[ channelIndex ].gather( oneChannelTensor2d );
 
-      oneChannelTensor3d.dispose(); // Release intermediate temporary tensor as soon as possible for reducing memory footprint.
+      oneChannelTensor2d.dispose(); // Release intermediate temporary tensor as soon as possible for reducing memory footprint.
     }
 
     // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
-    let predictResult = tf.concat( embeddedTensor3dArray, lastAxisId );
+    let predictResult = tf.concat( embeddedTensor3dArray, concatAxisId );
 
     for ( let i = 0; i < embeddedTensor3dArray.length; ++i ) { // Release intermediate temporary tensors.
       embeddedTensor3dArray[ i ].dispose();
@@ -450,7 +497,7 @@ class Base {
 //         }
 //
 //         // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
-//         let predictResult = tf.concat( embeddedTensor3dArray, lastAxisId );
+//         let predictResult = tf.concat( embeddedTensor3dArray, concatAxisId );
 //         return predictResult;
 //
 //       } finally {
