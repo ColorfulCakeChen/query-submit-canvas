@@ -220,7 +220,7 @@ class HeightWidthDepth {
       tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `Embedding2d.apply_and_destroy_or_keep() memory leak.`);
 
       // Test correctness of embedding apply.
-      this.check_Input_Output_WeightsTable( this.dataTensor3d, outputTensor3d );
+      this.check_Input_Output_WeightsTable( this.embedding2d, this.dataTensor3d, outputTensor3d );
 
 //!!!
 //       tf.util.assert(
