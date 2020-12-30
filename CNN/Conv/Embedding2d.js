@@ -293,7 +293,7 @@ class Base {
     // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
     this.splitCount = this.inChannels;
 
-    // For tensor3d, the last axis id will be 2.
+    // For tensor3d, the splitted axis id the last axis id (and will be 2).
     //
     // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
     this.splitAxisId = ( this.inChannels - 1 );
@@ -438,6 +438,8 @@ class Base {
       // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ this.splitAxisId ] ).
       const oneChannelTensor3dArray = inputTensor3d.split( this.splitCount, this.splitAxisId );
 
+      this.destroy_or_keep_input( inputTensor3d ); // Destroy or keep input according to ( this.bKeepInputTensor ).
+
       let inputTensor2dShape = this.inputTensor2dShape;
       inputTensor2dShape[ 0 ] = inputTensor3d.shape[ 0 ];
       inputTensor2dShape[ 1 ] = inputTensor3d.shape[ 1 ];
@@ -458,8 +460,8 @@ class Base {
 //     //
 //     // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ concatAxisId ] ).
 //     const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( this.splitCount, this.splitAxisId );
-
-    this.destroy_or_keep_input( inputTensor3d ); // Destroy or keep input according to ( this.bKeepInputTensor ).
+//
+//    this.destroy_or_keep_input( inputTensor3d ); // Destroy or keep input according to ( this.bKeepInputTensor ).
 
     let embeddedTensor3dArray = this.embeddedTensor3dArray; // Using pre-allocated array as local variable to improving performance.
 
@@ -470,6 +472,7 @@ class Base {
       embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor2dArray[ channelIndex ].gather( oneChannelTensor2d );
 
       oneChannelTensor2d.dispose(); // Release intermediate temporary tensor as soon as possible for reducing memory footprint.
+      vocabularyIndicesOneChannelTensor2dArray[ channelIndex ] = null; // So that it is cleared when next time re-used.
     }
 
     // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
