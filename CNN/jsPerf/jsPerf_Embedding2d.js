@@ -36,8 +36,9 @@ class HeightWidthDepth {
 
     this.dataTensor3d = tf.tidy( () => {
       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
+      let dataTensor1dInt32 = dataTensor1d.cast( "int32" ); // Embedding accepts integer input only.
 
-      let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
+      let dataTensor3d = dataTensor1dInt32.reshape( [ height, width, depth ] );
       return dataTensor3d;
     });
 
