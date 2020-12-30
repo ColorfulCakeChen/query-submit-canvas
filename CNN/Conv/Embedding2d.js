@@ -243,7 +243,7 @@ class Base {
             for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
 
               // Create an embedding vocabulary table (without vocabulary id).
-              const vocabularyTableTensor3dWithoutIds = tf.tensor3d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
+              const vocabularyTableTensor3dWithoutIds = tf.tensor3d( this.vocabularyTables[ i ].weights, vocabularyTableShape_toExtract );
 
               try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
                 this.vocabularyTablesTensor3dArray[ i ] = idsTensor3d.concat( vocabularyTableTensor3dWithoutIds, lastAxisId );
