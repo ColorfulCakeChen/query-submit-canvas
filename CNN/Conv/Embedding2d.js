@@ -193,10 +193,10 @@ class Base {
 
       if ( bEmbedVocabularyId ) {
         // 2.2.1 If there will be an auto-generated vocabulary id embedding channel, extract one less channels from data.
-        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier - 1 ];
+        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier - 1 ];
       } else {
         // 2.2.2 Otherwise, all embedding channels are extracted from data.
-        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ];
+        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier ];
       }
     }
 
@@ -230,26 +230,26 @@ class Base {
 
       // Build tf.tensor of vocabulary tables.
       try {
-        this.vocabularyTablesTensor3dArray = new Array( this.vocabularyTables.length );
+        this.vocabularyTablesTensor2dArray = new Array( this.vocabularyTables.length );
 
         // Need to prefix vocabulary id channel.
         if ( bEmbedVocabularyId ) {
 
-          // Create vocabulary id list (tensor3d). (for concatenating with vocabulary table)
+          // Create vocabulary id list (tensor2d). (for concatenating with vocabulary table)
           let numberSequencer = new Array( vocabularyCountPerInputChannel ).keys(); // Generator: 0, 1, 2, ..., ( vocabularyCountPerInputChannel - 1 )
-          const idsTensor3d = tf.tensor3d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1, 1 ] );
+          const idsTensor2d = tf.tensor2d( [ ...numberSequencer ], [ vocabularyCountPerInputChannel, 1 ] );
 
           try {
             for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
 
               // Create an embedding vocabulary table (without vocabulary id).
-              const vocabularyTableTensor3dWithoutIds = tf.tensor3d( this.vocabularyTables[ i ].weights, vocabularyTableShape_toExtract );
+              const vocabularyTableTensor2dWithoutIds = tf.tensor2d( this.vocabularyTables[ i ].weights, vocabularyTableShape_toExtract );
 
               try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
-                this.vocabularyTablesTensor3dArray[ i ] = idsTensor3d.concat( vocabularyTableTensor3dWithoutIds, lastAxisId );
+                this.vocabularyTablesTensor2dArray[ i ] = idsTensor2d.concat( vocabularyTableTensor2dWithoutIds, lastAxisId );
 
               } finally {
-                vocabularyTableTensor3dWithoutIds.dispose();
+                vocabularyTableTensor2dWithoutIds.dispose();
               }
 
               ++progressToAdvance.value;
@@ -257,14 +257,14 @@ class Base {
             }
 
           } finally {
-            idsTensor3d.dispose();
+            idsTensor2d.dispose();
           }
 
         } else { // No need to prefix vocabulary id channel.
 
           for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
             // Create an embedding vocabulary table (without vocabulary id).
-            this.vocabularyTablesTensor3dArray[ i ] = tf.tensor3d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
+            this.vocabularyTablesTensor2dArray[ i ] = tf.tensor2d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
 
             ++progressToAdvance.value;
             yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
@@ -275,7 +275,7 @@ class Base {
         return false; // e.g. out of (GPU) memory.
       }
 
-    // 4.2 When ( channelMultiplier < 1 ), there is no need to build this.vocabularyTablesTensor3dArray[].
+    // 4.2 When ( channelMultiplier < 1 ), there is no need to build this.vocabularyTablesTensor2dArray[].
     } else {
       progressToAdvance.value += inChannels; // Report progress as it built directly.
       yield progressRoot;
@@ -309,7 +309,7 @@ class Base {
 
       // The vocabulary tables (from initer()'s inputFloat32Array) should always exist, even if channelMultiplier is zero or negative.
       //
-      // But there will be no this.vocabularyTablesTensor3dArray[] because apply_and_destroy_or_keep() will just return output as input.
+      // But there will be no this.vocabularyTablesTensor2dArray[] because apply_and_destroy_or_keep() will just return output as input.
       if ( this.vocabularyTables )
         if ( this.vocabularyTables[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
           if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
@@ -320,9 +320,9 @@ class Base {
     } else {
 
       // If channelMultiplier is positive, the tensor3d of vocabulary tables should exists.
-      if ( this.vocabularyTablesTensor3dArray )
-        if ( this.vocabularyTablesTensor3dArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
-          if ( this.vocabularyTablesTensor3dArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
+      if ( this.vocabularyTablesTensor2dArray )
+        if ( this.vocabularyTablesTensor2dArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
+          if ( this.vocabularyTablesTensor2dArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
             return true;
 
       return false;
@@ -331,9 +331,9 @@ class Base {
 
   /** Release tf.tensor. */
   disposeTensors() {
-    if ( this.vocabularyTablesTensor3dArray ) {
-      tf.dispose( this.vocabularyTablesTensor3dArray );
-      this.vocabularyTablesTensor3dArray = null;
+    if ( this.vocabularyTablesTensor2dArray ) {
+      tf.dispose( this.vocabularyTablesTensor2dArray );
+      this.vocabularyTablesTensor2dArray = null;
     }
 
     this.embeddedTensor3dArray = null;
@@ -420,7 +420,7 @@ class Base {
     // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
     for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor3dArray.length; ++channelIndex ) {
       let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ channelIndex ];
-      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor3dArray[ channelIndex ].gather( oneChannelTensor3d );
+      embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor2dArray[ channelIndex ].gather( oneChannelTensor3d );
 
       oneChannelTensor3d.dispose(); // Release intermediate temporary tensor as soon as possible for reducing memory footprint.
     }
@@ -446,7 +446,7 @@ class Base {
 //         // Every tensor3d (one channel) will be expanded to tensor3d (multiple channels).
 //         for ( let channelIndex = 0; channelIndex < vocabularyIndicesOneChannelTensor3dArray.length; ++channelIndex ) {
 //           let oneChannelTensor3d = vocabularyIndicesOneChannelTensor3dArray[ channelIndex ];
-//           embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor3dArray[ channelIndex ].gather( oneChannelTensor3d );
+//           embeddedTensor3dArray[ channelIndex ] = this.vocabularyTablesTensor2dArray[ channelIndex ].gather( oneChannelTensor3d );
 //         }
 //
 //         // Concatenate along the last axis, so that it is still tensor3d but with embedded (more) channels in the last axis.
