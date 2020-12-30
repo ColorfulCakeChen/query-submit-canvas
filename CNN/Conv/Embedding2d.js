@@ -412,6 +412,8 @@ class Base {
   static apply_and_destroy_or_keep_SplitGatherConcat( inputTensor3d ) {
 
 //!!! ...unfinished... could use gahter, gather, concat instead of split, gather, concat?
+//!!! ...unfinished... could use unstack, gather, stack instead of split, gather, concat?
+//!!! ...unfinished... could use oneHot, pointwise convolution instead of split, gather, concat?
 
     // e.g. will be 1 for tensor2d.
     //
@@ -446,7 +448,7 @@ class Base {
 
       // The splitted of input is still tensor3d but has only one channel. Reshape it to tensor2d so that the
       // resule of tf.gather() will be tensor3d.
-      for ( let i = 0; i < ; ++i ) {
+      for ( let i = 0; i < oneChannelTensor3dArray.length; ++i ) {
         vocabularyIndicesOneChannelTensor2dArray[ i ] = oneChannelTensor3dArray[ i ].reshape( inputTensor2dShape );
         oneChannelTensor3dArray[ i ].dispose();
       }
