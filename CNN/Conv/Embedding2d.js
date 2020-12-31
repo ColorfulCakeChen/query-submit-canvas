@@ -264,7 +264,7 @@ class Base {
 
           for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
             // Create an embedding vocabulary table (without vocabulary id).
-            this.vocabularyTablesTensor2dArray[ i ] = tf.tensor2d( this.vocabularyTables[ i ], vocabularyTableShape_toExtract );
+            this.vocabularyTablesTensor2dArray[ i ] = tf.tensor2d( this.vocabularyTables[ i ].weights, vocabularyTableShape_toExtract );
 
             ++progressToAdvance.value;
             yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
