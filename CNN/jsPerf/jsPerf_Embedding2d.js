@@ -182,6 +182,15 @@ class HeightWidthDepth {
           for ( let inputChannelIndex = 0; inputChannelIndex < inputChannelArray.length; ++inputChannelIndex ) {
             let inputChannelValue = inputChannelArray[ inputChannelIndex ]; // Int32
 
+            // The embedding vocabulary table beginning of the input channel.
+            let vocabularyTableOffset = ( inputChannelIndex * float32CountPerTable );
+
+            // The embedding vocabulary element beginning of the vocabulary table.
+            let vocabularyTableElementOffset = ( inputChannelValue * channelMultiplier_forExtract );
+
+            // The embedding vocabulary element channel beginning of the vocabulary element.
+            let vocabularyTableElementChannelOffsetBase = ( this.weightsElementOffsetBegin + vocabularyTableOffset + vocabularyTableElementOffset );
+
             // Output Channel
             for ( let outputChannelIndexOffset = 0; outputChannelIndexOffset < this.channelMultiplier; ++outputChannelIndexOffset ) {
               let outputChannelIndexBase = ( inputChannelIndex * this.channelMultiplier );
@@ -196,11 +205,7 @@ class HeightWidthDepth {
                     + `( ${outputChannelValueFromOutput} != ${inputChannelValue} )`);
 
               } else {
-
-                // The embedding vocabulary table beginning of the input channel.
-                let vocabularyTableElementOffsetBegin = ( inputChannelIndex * float32CountPerTable );
-                let lookUpAtElementOffsetBase = ( this.weightsElementOffsetBegin + vocabularyTableElementOffsetBegin );
-                let lookUpAtElementOffset = lookUpAtElementOffsetBase + outputChannelIndexOffset;
+                let lookUpAtElementOffset = vocabularyTableElementChannelOffsetBase + outputChannelIndexOffset;
 
                 // When ( bEmbedVocabularyId == true ), every this.channelMultiplier output channel is auto-generated vocabulary
                 // id. So the table offset should count start from 1 (not 0) (i.e. ignore ( outputChannelIndexOffset == 0 ) ).
