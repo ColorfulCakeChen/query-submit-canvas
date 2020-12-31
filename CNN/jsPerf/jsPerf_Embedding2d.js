@@ -80,34 +80,54 @@ class HeightWidthDepth {
     this.embedding2d_release();
   }
 
+  /**
+   * @return {Embedding2d.Base} The created embedding object.
+   */
+  embedding2d_create( bEmbedVocabularyId, bKeepInputTensor ) {
+
+    let embedding2d = new Embedding2d.Base();
+
+    let progress = new ValueMax.Percentage.Aggregate();
+    let initer = this.embedding2d.initer(
+      progress, this.weightsFloat32Array, this.weightsByteOffsetBegin, this.depth, this.channelMultiplier,
+      this.vocabularyCountPerInputChannel,
+      bEmbedVocabularyId,
+      bKeepInputTensor
+    );
+
+    let initerNext;
+    while ( ! ( ( initerNext = initer.next() ).done ) ) {
+      //initerNext.value; // progressRoot
+    }
+    let bInitOk = initerNext.value; // Initialize successfully or failed.
+
+    tf.util.assert( ( bInitOk == true ),
+        `Failed to initialize embedding2d object. (bEmbedVocabularyId=${bEmbedVocabularyId}, bKeepInputTensor=${bKeepInputTensor})`);
+
+    return embedding2d;
+  }
+
   embedding2d_init() {
     this.embedding2d_release();
 
-    this.embedding2d = new Embedding2d.Base();
-    {
-      let progress = new ValueMax.Percentage.Aggregate();
-      let initer = this.embedding2d.initer(
-        progress, this.weightsFloat32Array, this.weightsByteOffsetBegin, this.depth, this.channelMultiplier,
-        this.vocabularyCountPerInputChannel,
-        this.bEmbedVocabularyId,
-        this.bKeepInputTensor
-      );
+    this.embedding2d_without_EmbedVocabularyId = this.embedding2d_create(
+      false, // bEmbedVocabularyId
+      this.bKeepInputTensor );
 
-      let initerNext;
-      while ( ! ( ( initerNext = initer.next() ).done ) ) {
-        //initerNext.value; // progressRoot
-      }
-      let bInitOk = initerNext.value; // Initialize successfully or failed.
-
-      tf.util.assert( ( bInitOk == true ),
-          `Failed to initialize embedding2d object.`);
-    }
+    this.embedding2d_with_EmbedVocabularyId = this.embedding2d_create(
+      true,  // bEmbedVocabularyId
+      this.bKeepInputTensor );
   }
 
   embedding2d_release() {
-    if ( this.embedding2d ) {
-      this.embedding2d.disposeTensors();
-      this.embedding2d = null;
+    if ( this.embedding2d_without_EmbedVocabularyId ) {
+      this.embedding2d_without_EmbedVocabularyId.disposeTensors();
+      this.embedding2d_without_EmbedVocabularyId = null;
+    }
+
+    if ( this.embedding2d_with_EmbedVocabularyId ) {
+      this.embedding2d_with_EmbedVocabularyId.disposeTensors();
+      this.embedding2d_with_EmbedVocabularyId = null;
     }
   }
 
@@ -204,11 +224,11 @@ class HeightWidthDepth {
   }
 
 //!!! ...unfinished...
-  // Test apply by split-gather-concat and dispose by finally.
-  test_SplitGatherConcat() {
-    let outputTensor3d = this.embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
-    outputTensor3d.dispose();
-  }
+//   // Test apply by split-gather-concat and dispose by finally.
+//   test_SplitGatherConcat() {
+//     let outputTensor3d = this.embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
+//     outputTensor3d.dispose();
+//   }
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
@@ -217,7 +237,7 @@ class HeightWidthDepth {
       this.embedding2d_init();
       this.embedding2d_release();
       let memoryInfo = tf.memory();
-      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Channel shufflers memory leak.`);
+      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Embedding2d memory leak.`);
     });
 
     this.embedding2d_init();  // (Should outside tidy() for preventing from tensors being disposed.
@@ -225,13 +245,25 @@ class HeightWidthDepth {
     tf.tidy( () => {
       let memoryInfo0 = tf.memory();
 
-      // Test memory leak of embedding apply.
-      let outputTensor3d = this.embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
-      let memoryInfo1 = tf.memory();
-      tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `Embedding2d.apply_and_destroy_or_keep() memory leak.`);
+      // Different embededing object.
+      let embedding2d_list = [
+        this.embedding2d_without_EmbedVocabularyId,
+        this.embedding2d_with_EmbedVocabularyId
+      ];
 
-      // Test correctness of embedding apply.
-      this.check_Input_Output_WeightsTable( this.embedding2d, this.dataTensor3d, outputTensor3d );
+      for ( let i = 0; i < embedding2d_list.length; ++i ) {
+        let embedding2d = embedding2d_list[ i ];
+        
+        // Test memory leak of embedding apply.
+        let outputTensor3d = embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
+        let memoryInfo1 = tf.memory();
+        tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `Embedding2d.apply_and_destroy_or_keep() memory leak.`);
+
+        // Test correctness of embedding apply.
+        this.check_Input_Output_WeightsTable( embedding2d, this.dataTensor3d, outputTensor3d );
+
+        outputTensor3d.dispose();
+      }
 
 //!!!
 //       tf.util.assert(
