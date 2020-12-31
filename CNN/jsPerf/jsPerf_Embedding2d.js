@@ -170,6 +170,7 @@ class HeightWidthDepth {
             for ( let outputChannelIndex = 0; outputChannelIndex < this.channelMultiplier; ++outputChannelIndex ) {
               let outputChannelValueFromOutput = outputChannelArray[ outputChannelIndex ]; // Float32
 
+//!!!
               if ( ( embedding2d.bEmbedVocabularyId ) && ( outputChannelIndex == 0 ) ) {
                 // When ( bEmbedVocabularyId == true ), the first output channel should be auto-generated vocabulary id
                 // (i.e. should be the same as the input channel value).
@@ -180,6 +181,13 @@ class HeightWidthDepth {
               } else {
 
                 let lookUpAtElementOffset = lookUpAtElementOffsetBase + outputChannelIndex;
+
+                // When ( bEmbedVocabularyId == true ), the first output channel is auto-generated vocabulary id.
+                // So the table offset should count start from 1 (not 0).
+                if ( embedding2d.bEmbedVocabularyId ) {
+                  lookUpAtElementOffset -= 1;
+                }
+
                 let outputChannelValueFromTable = this.weightsFloat32Array[ lookUpAtElementOffset ]; // Float32
 
                 tf.util.assert( outputChannelValueFromOutput == outputChannelValueFromTable,
