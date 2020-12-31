@@ -148,9 +148,9 @@ class HeightWidthDepth {
 
       let channelMultiplier_forExtract; // How many channels (of per input channel) are extracted from table raw data.
       if ( embedding2d.bEmbedVocabularyId )
-        channelMultiplier_forExtract = this.channelMultiplier - 1; // less one because the channel will be auto-generated vocabulary id.
+        channelMultiplier_forExtract = embedding2d.channelMultiplier - 1; // less one because the channel will be auto-generated vocabulary id.
       else
-        channelMultiplier_forExtract = this.channelMultiplier;
+        channelMultiplier_forExtract = embedding2d.channelMultiplier;
 
       let inputRowArray = inputTensor3d.arraySync();
       let outputRowArray = outputTensor3d.arraySync();
@@ -174,9 +174,9 @@ class HeightWidthDepth {
           let inputChannelArray = inputColumnArray[ x ];
           let outputChannelArray = outputColumnArray[ x ];
 
-          tf.util.assert( outputChannelArray.length == ( inputChannelArray.length * this.channelMultiplier ),
+          tf.util.assert( outputChannelArray.length == ( inputChannelArray.length * embedding2d.channelMultiplier ),
             `Channel count of embedding output and input should match. `
-              + `( ${outputChannelArray.length} != ( ${inputChannelArray.length} * ${this.channelMultiplier} ) )`);
+              + `( ${outputChannelArray.length} != ( ${inputChannelArray.length} * ${embedding2d.channelMultiplier} ) )`);
 
           // Input Channel
           for ( let inputChannelIndex = 0; inputChannelIndex < inputChannelArray.length; ++inputChannelIndex ) {
@@ -192,13 +192,13 @@ class HeightWidthDepth {
             let vocabularyTableElementChannelOffsetBase = ( this.weightsElementOffsetBegin + vocabularyTableOffset + vocabularyTableElementOffset );
 
             // Output Channel
-            for ( let outputChannelIndexOffset = 0; outputChannelIndexOffset < this.channelMultiplier; ++outputChannelIndexOffset ) {
-              let outputChannelIndexBase = ( inputChannelIndex * this.channelMultiplier );
+            for ( let outputChannelIndexOffset = 0; outputChannelIndexOffset < embedding2d.channelMultiplier; ++outputChannelIndexOffset ) {
+              let outputChannelIndexBase = ( inputChannelIndex * embedding2d.channelMultiplier );
               let outputChannelIndex = outputChannelIndexBase + outputChannelIndexOffset;
               let outputChannelValueFromOutput = outputChannelArray[ outputChannelIndex ]; // Float32
 
               if ( ( embedding2d.bEmbedVocabularyId ) && ( outputChannelIndexOffset == 0 ) ) {
-                // When ( bEmbedVocabularyId == true ), every this.channelMultiplier output channel should be auto-generated
+                // When ( bEmbedVocabularyId == true ), every embedding2d.channelMultiplier output channel should be auto-generated
                 // vocabulary id (i.e. should be the same as the input channel value).
                 tf.util.assert( outputChannelValueFromOutput == inputChannelValue,
                   `Channel value of output should be vocabulary id. `
@@ -207,7 +207,7 @@ class HeightWidthDepth {
               } else {
                 let lookUpAtElementOffset = vocabularyTableElementChannelOffsetBase + outputChannelIndexOffset;
 
-                // When ( bEmbedVocabularyId == true ), every this.channelMultiplier output channel is auto-generated vocabulary
+                // When ( bEmbedVocabularyId == true ), every embedding2d.channelMultiplier output channel is auto-generated vocabulary
                 // id. So the table offset should count start from 1 (not 0) (i.e. ignore ( outputChannelIndexOffset == 0 ) ).
                 if ( embedding2d.bEmbedVocabularyId ) {
                   lookUpAtElementOffset -= 1;
@@ -217,8 +217,9 @@ class HeightWidthDepth {
 
                 tf.util.assert( outputChannelValueFromOutput == outputChannelValueFromTable,
                   `Channel value of output and table should match. `
-                    + `( ${outputChannelValueFromOutput} != ${outputChannelValueFromTable} )`
-                    + `At ( y, x, inputChannelIndex, outputChannelIndexOffset ) = (${y}, ${x}, ${inputChannelIndex}, ${outputChannelIndexOffset})`
+                    + `( ${outputChannelValueFromOutput} != ${outputChannelValueFromTable} ) `
+                    + `at ( y, x, inputChannelIndex, outputChannelIndexOffset ) = (${y}, ${x}, ${inputChannelIndex}, ${outputChannelIndexOffset}) `
+                    + `( channelMultiplier = ${embedding2d.channelMultiplier} )`
                 );
               }
 
