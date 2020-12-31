@@ -165,7 +165,7 @@ class HeightWidthDepth {
 
             // Output Channel
             for ( let outputChannelIndex = 0; outputChannelIndex < this.channelMultiplier; ++outputChannelIndex ) {
-              let outputChannelValueFromOutput = inputChannelArray[ outputChannelIndex ]; // Float32
+              let outputChannelValueFromOutput = outputChannelArray[ outputChannelIndex ]; // Float32
 
               if ( ( embedding2d.bEmbedVocabularyId ) && ( outputChannelIndex == 0 ) ) {
                 // When ( bEmbedVocabularyId == true ), the first output channel should be auto-generated vocabulary id
