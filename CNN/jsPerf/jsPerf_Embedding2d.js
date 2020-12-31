@@ -34,20 +34,29 @@ class HeightWidthDepth {
 
     this.concatenatedShape = [ height, width, depth ];
 
-    this.dataTensor3d = tf.tidy( () => {
-      let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
-      let dataTensor1dInt32 = dataTensor1d.cast( "int32" ); // Embedding accepts integer input only.
-
-      let dataTensor3d = dataTensor1dInt32.reshape( [ height, width, depth ] );
-      return dataTensor3d;
-    });
-
     this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
     this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
     this.vocabularyCountPerInputChannel = 256;
 //!!! ...unfinished... test ( bEmbedVocabularyId == false )
     this.bEmbedVocabularyId = true;
     this.bKeepInputTensor = true; // Otherwise, this.dataTensor3d will be destroyed.
+
+    this.dataTensor3d = tf.tidy( () => {
+      // Make-up the input data. They should between [ 0, this.vocabularyCountPerInputChannel ).
+      let inputData = new Array( this.valueCount );
+      for ( let i = 0; i < inputData.length; ++i ) {
+        inputData[ i ] = Math.floor( Math.random() * this.vocabularyCountPerInputChannel );
+      }
+
+//!!! Wrong! element value should between [ 0, this.vocabularyCountPerInputChannel )
+//       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
+//       let dataTensor1dInt32 = dataTensor1d.cast( "int32" ); // Embedding accepts integer input only.
+
+      let dataTensor1dInt32 = tf.tensor1d( inputData, "int32" ); // Embedding accepts integer input only.
+
+      let dataTensor3d = dataTensor1dInt32.reshape( [ height, width, depth ] );
+      return dataTensor3d;
+    });
 
     let channelMultiplierEstimated = channelMultiplier;
     if ( channelMultiplierEstimated < 1 )
