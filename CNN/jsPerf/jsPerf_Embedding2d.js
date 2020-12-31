@@ -119,26 +119,6 @@ class HeightWidthDepth {
   embedding2d_init() {
     this.embedding2d_release();
 
-    this.embedding2d_without_EmbedVocabularyId_not_KeepInputTensor = this.embedding2d_create(
-      false, // bEmbedVocabularyId
-      false  // bKeepInputTensor
-    );
-
-    this.embedding2d_with_EmbedVocabularyId_not_KeepInputTensor = this.embedding2d_create(
-      true,  // bEmbedVocabularyId
-      false  // bKeepInputTensor
-    );
-
-    this.embedding2d_without_EmbedVocabularyId_KeepInputTensor = this.embedding2d_create(
-      false, // bEmbedVocabularyId
-      true   // bKeepInputTensor
-    );
-
-    this.embedding2d_with_EmbedVocabularyId_KeepInputTensor = this.embedding2d_create(
-      true,  // bEmbedVocabularyId
-      true   // bKeepInputTensor
-    );
-
     // Different embededing objects.
     this.embedding2d_list = [
       this.embedding2d_create(
@@ -289,7 +269,7 @@ class HeightWidthDepth {
       this.embedding2d_init();
       this.embedding2d_release();
       let memoryInfo = tf.memory();
-      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Embedding2d memory leak.`);
+      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Embedding2d init/release memory leak.`);
     });
 
     this.embedding2d_init();  // (Should outside tidy() for preventing from tensors being disposed.
