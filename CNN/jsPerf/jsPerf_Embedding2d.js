@@ -65,8 +65,8 @@ class HeightWidthDepth {
       }
 
       for ( let i = this.weightsElementOffsetBegin; i < wieghtsArrayLength; ++i ) { // Make-up the embedding weight values.
-        //this.weightsFloat32Array[ i ] = ( i - this.weightsByteOffsetBegin );
-        this.weightsFloat32Array[ i ] = Math.random() * 10;
+        this.weightsFloat32Array[ i ] = ( i - this.weightsByteOffsetBegin );  // For debugging more easily.
+//        this.weightsFloat32Array[ i ] = Math.random() * 10;
       }
     }
   }
