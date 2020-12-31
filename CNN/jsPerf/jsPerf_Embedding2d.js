@@ -38,8 +38,8 @@ class HeightWidthDepth {
     this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
     this.vocabularyCountPerInputChannel = 256;
 //!!! ...unfinished... test ( bEmbedVocabularyId == false )
-    this.bEmbedVocabularyId = true;
-    this.bKeepInputTensor = true; // Otherwise, this.dataTensor3d will be destroyed.
+//     this.bEmbedVocabularyId = true;
+//     this.bKeepInputTensor = true; // Otherwise, this.dataTensor3d will be destroyed.
 
     this.dataTensor3d = tf.tidy( () => {
       // Make-up the input data. They should between [ 0, this.vocabularyCountPerInputChannel ).
@@ -119,24 +119,60 @@ class HeightWidthDepth {
   embedding2d_init() {
     this.embedding2d_release();
 
-    this.embedding2d_without_EmbedVocabularyId = this.embedding2d_create(
+    this.embedding2d_without_EmbedVocabularyId_not_KeepInputTensor = this.embedding2d_create(
       false, // bEmbedVocabularyId
-      this.bKeepInputTensor );
+      false  // bKeepInputTensor
+    );
 
-    this.embedding2d_with_EmbedVocabularyId = this.embedding2d_create(
+    this.embedding2d_with_EmbedVocabularyId_not_KeepInputTensor = this.embedding2d_create(
       true,  // bEmbedVocabularyId
-      this.bKeepInputTensor );
+      false  // bKeepInputTensor
+    );
+
+    this.embedding2d_without_EmbedVocabularyId_KeepInputTensor = this.embedding2d_create(
+      false, // bEmbedVocabularyId
+      true   // bKeepInputTensor
+    );
+
+    this.embedding2d_with_EmbedVocabularyId_KeepInputTensor = this.embedding2d_create(
+      true,  // bEmbedVocabularyId
+      true   // bKeepInputTensor
+    );
+
+    // Different embededing objects.
+    this.embedding2d_list = [
+      this.embedding2d_create(
+        false, // bEmbedVocabularyId
+        false  // bKeepInputTensor
+      ),
+
+      this.embedding2d_create(
+        true,  // bEmbedVocabularyId
+        false  // bKeepInputTensor
+      ),
+
+      // The embedding for performance testing should ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
+      this.embedding2d =
+      this.embedding2d_create(
+        false, // bEmbedVocabularyId
+        true   // bKeepInputTensor
+      ),
+
+      this.embedding2d_create(
+        true,  // bEmbedVocabularyId
+        true   // bKeepInputTensor
+      ),
+    ];
+
   }
 
   embedding2d_release() {
-    if ( this.embedding2d_without_EmbedVocabularyId ) {
-      this.embedding2d_without_EmbedVocabularyId.disposeTensors();
-      this.embedding2d_without_EmbedVocabularyId = null;
-    }
-
-    if ( this.embedding2d_with_EmbedVocabularyId ) {
-      this.embedding2d_with_EmbedVocabularyId.disposeTensors();
-      this.embedding2d_with_EmbedVocabularyId = null;
+    if ( this.embedding2d_list ) {
+      for ( let i = 0; i < this.embedding2d_list.length; ++i ) {
+        let embedding2d = this.embedding2d_list[ i ];
+        embedding2d.disposeTensors();
+      }
+      this.embedding2d_list = this.embedding2d = null;
     }
   }
 
@@ -240,10 +276,9 @@ class HeightWidthDepth {
 
   }
 
-//!!! ...unfinished...
   // Test apply by split-gather-concat and dispose by finally.
   test_SplitGatherConcat() {
-    let outputTensor3d = this.embedding2d_with_EmbedVocabularyId.apply_and_destroy_or_keep( this.dataTensor3d );
+    let outputTensor3d = this.embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
 
@@ -260,19 +295,19 @@ class HeightWidthDepth {
     this.embedding2d_init();  // (Should outside tidy() for preventing from tensors being disposed.
 
     tf.tidy( () => {
-      let memoryInfo0 = tf.memory();
+      for ( let i = 0; i < this.embedding2d_list.length; ++i ) {
+        let embedding2d = this.embedding2d_list[ i ];
 
-      // Different embededing object.
-      let embedding2d_list = [
-        this.embedding2d_without_EmbedVocabularyId,
-        this.embedding2d_with_EmbedVocabularyId
-      ];
+        let inputTensor3d;
+        if ( embedding2d.bKeepInputTensor ) {
+          inputTensor3d = this.dataTensor3d;
+        } else {
+          inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
+        }
 
-      for ( let i = 0; i < embedding2d_list.length; ++i ) {
-        let embedding2d = embedding2d_list[ i ];
-        
         // Test memory leak of embedding apply.
-        let outputTensor3d = embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
+        let memoryInfo0 = tf.memory();
+        let outputTensor3d = embedding2d.apply_and_destroy_or_keep( inputTensor3d );
         let memoryInfo1 = tf.memory();
         tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `Embedding2d.apply_and_destroy_or_keep() memory leak.`);
 
@@ -334,56 +369,57 @@ function init() {
 
   // (cm = channel multiplier)
 
-  globalThis.testSet_110x110x24_cm8 = new HeightWidthDepth( 110, 110, 24, 8 ); // height, width, depth, channelMultiplier
-  globalThis.testSet_110x110x24_cm4 = new HeightWidthDepth( 110, 110, 24, 4 );
-  globalThis.testSet_110x110x24_cm3 = new HeightWidthDepth( 110, 110, 24, 3 );
-  globalThis.testSet_110x110x24_cm2 = new HeightWidthDepth( 110, 110, 24, 2 );
-  globalThis.testSet_110x110x24_cm1 = new HeightWidthDepth( 110, 110, 24, 1 );
-  globalThis.testSet_110x110x24_cm0 = new HeightWidthDepth( 110, 110, 24, 0 );
-  globalThis.testSet_110x110x24_cmNegative = new HeightWidthDepth( 110, 110, 24, -1 );
+  let depth = 8; //24;
+  globalThis.testSet_110x110x8_cm8 = new HeightWidthDepth( 110, 110, depth, 8 ); // height, width, depth, channelMultiplier
+  globalThis.testSet_110x110x8_cm4 = new HeightWidthDepth( 110, 110, depth, 4 );
+  globalThis.testSet_110x110x8_cm3 = new HeightWidthDepth( 110, 110, depth, 3 );
+  globalThis.testSet_110x110x8_cm2 = new HeightWidthDepth( 110, 110, depth, 2 );
+  globalThis.testSet_110x110x8_cm1 = new HeightWidthDepth( 110, 110, depth, 1 );
+  globalThis.testSet_110x110x8_cm0 = new HeightWidthDepth( 110, 110, depth, 0 );
+  globalThis.testSet_110x110x8_cmNegative = new HeightWidthDepth( 110, 110, depth, -1 );
 
-  globalThis.testSet_110x110x24_All = [
-    globalThis.testSet_110x110x24_cm8,
-    globalThis.testSet_110x110x24_cm4,
-    globalThis.testSet_110x110x24_cm3,
-    globalThis.testSet_110x110x24_cm2,
-    globalThis.testSet_110x110x24_cm1,
-    globalThis.testSet_110x110x24_cm0,
-    globalThis.testSet_110x110x24_cmNegative
+  globalThis.testSet_110x110x8_All = [
+    globalThis.testSet_110x110x8_cm8,
+    globalThis.testSet_110x110x8_cm4,
+    globalThis.testSet_110x110x8_cm3,
+    globalThis.testSet_110x110x8_cm2,
+    globalThis.testSet_110x110x8_cm1,
+    globalThis.testSet_110x110x8_cm0,
+    globalThis.testSet_110x110x8_cmNegative
   ];
 }
 
 function testCorrectness() {
-  for ( let i = 0; i < globalThis.testSet_110x110x24_All.length; ++i ) {
-    let testSet = globalThis.testSet_110x110x24_All[ i ];
+  for ( let i = 0; i < globalThis.testSet_110x110x8_All.length; ++i ) {
+    let testSet = globalThis.testSet_110x110x8_All[ i ];
     testSet.testCorrectness();
   }
 }
 
 function testDifferentDisposeStrategy_All() {
-  for ( let i = 0; i < globalThis.testSet_110x110x24_All.length; ++i ) {
-    let testSet = globalThis.testSet_110x110x24_All[ i ];
+  for ( let i = 0; i < globalThis.testSet_110x110x8_All.length; ++i ) {
+    let testSet = globalThis.testSet_110x110x8_All[ i ];
     testSet.testDifferentDisposeStrategy_All();
   }
 }
 
 function disposeTensors() {
-  if ( globalThis.testSet_110x110x24_All ) {
-    for ( let i = 0; i < globalThis.testSet_110x110x24_All.length; ++i ) {
-      let testSet = globalThis.testSet_110x110x24_All[ i ];
+  if ( globalThis.testSet_110x110x8_All ) {
+    for ( let i = 0; i < globalThis.testSet_110x110x8_All.length; ++i ) {
+      let testSet = globalThis.testSet_110x110x8_All[ i ];
       if ( testSet )
         testSet.disposeTensors();
     }
 
-    globalThis.testSet_110x110x24_All = null;
+    globalThis.testSet_110x110x8_All = null;
   }
 
-  globalThis.testSet_110x110x24_cm8
-    = globalThis.testSet_110x110x24_cm4
-    = globalThis.testSet_110x110x24_cm3
-    = globalThis.testSet_110x110x24_cm2
-    = globalThis.testSet_110x110x24_cm1
-    = globalThis.testSet_110x110x24_cm0
-    = globalThis.testSet_110x110x24_cmNegative
+  globalThis.testSet_110x110x8_cm8
+    = globalThis.testSet_110x110x8_cm4
+    = globalThis.testSet_110x110x8_cm3
+    = globalThis.testSet_110x110x8_cm2
+    = globalThis.testSet_110x110x8_cm1
+    = globalThis.testSet_110x110x8_cm0
+    = globalThis.testSet_110x110x8_cmNegative
     = null;
 }
