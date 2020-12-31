@@ -97,7 +97,10 @@ class HeightWidthDepth {
       while ( ! ( ( initerNext = initer.next() ).done ) ) {
         //initerNext.value; // progressRoot
       }
-      //initerNext.value; // Initialize successfully or failed.
+      let bInitOk = initerNext.value; // Initialize successfully or failed.
+
+      tf.util.assert( ( bInitOk == true ),
+          `Failed to initialize embedding2d object.`);
     }
   }
 
