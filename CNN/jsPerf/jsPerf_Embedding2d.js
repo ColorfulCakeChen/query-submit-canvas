@@ -241,11 +241,11 @@ class HeightWidthDepth {
   }
 
 //!!! ...unfinished...
-//   // Test apply by split-gather-concat and dispose by finally.
-//   test_SplitGatherConcat() {
-//     let outputTensor3d = this.embedding2d.apply_and_destroy_or_keep( this.dataTensor3d );
-//     outputTensor3d.dispose();
-//   }
+  // Test apply by split-gather-concat and dispose by finally.
+  test_SplitGatherConcat() {
+    let outputTensor3d = this.embedding2d_with_EmbedVocabularyId.apply_and_destroy_or_keep( this.dataTensor3d );
+    outputTensor3d.dispose();
+  }
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
