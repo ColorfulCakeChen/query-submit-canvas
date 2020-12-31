@@ -37,9 +37,6 @@ class HeightWidthDepth {
     this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
     this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
     this.vocabularyCountPerInputChannel = 256;
-//!!! ...unfinished... test ( bEmbedVocabularyId == false )
-//     this.bEmbedVocabularyId = true;
-//     this.bKeepInputTensor = true; // Otherwise, this.dataTensor3d will be destroyed.
 
     this.dataTensor3d = tf.tidy( () => {
       // Make-up the input data. They should between [ 0, this.vocabularyCountPerInputChannel ).
@@ -47,10 +44,6 @@ class HeightWidthDepth {
       for ( let i = 0; i < inputData.length; ++i ) {
         inputData[ i ] = Math.floor( Math.random() * this.vocabularyCountPerInputChannel );
       }
-
-//!!! Wrong! element value should between [ 0, this.vocabularyCountPerInputChannel )
-//       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
-//       let dataTensor1dInt32 = dataTensor1d.cast( "int32" ); // Embedding accepts integer input only.
 
       let dataTensor1dInt32 = tf.tensor1d( inputData, "int32" ); // Embedding accepts integer input only.
 
@@ -278,6 +271,8 @@ class HeightWidthDepth {
       for ( let i = 0; i < this.embedding2d_list.length; ++i ) {
         let embedding2d = this.embedding2d_list[ i ];
 
+        let memoryInfo0 = tf.memory();
+
         let inputTensor3d;
         if ( embedding2d.bKeepInputTensor ) {
           inputTensor3d = this.dataTensor3d;
@@ -286,7 +281,6 @@ class HeightWidthDepth {
         }
 
         // Test memory leak of embedding apply.
-        let memoryInfo0 = tf.memory();
         let outputTensor3d = embedding2d.apply_and_destroy_or_keep( inputTensor3d );
         let memoryInfo1 = tf.memory();
         tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `Embedding2d.apply_and_destroy_or_keep() memory leak.`);
