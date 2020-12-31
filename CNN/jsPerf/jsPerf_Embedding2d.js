@@ -343,14 +343,11 @@ function init() {
   globalThis.testSet_110x110x24_cmNegative = new HeightWidthDepth( 110, 110, 24, -1 );
 
   globalThis.testSet_110x110x24_All = [
-//!!! temp for debug more easily.
-    globalThis.testSet_110x110x24_cm1,
-
     globalThis.testSet_110x110x24_cm8,
     globalThis.testSet_110x110x24_cm4,
     globalThis.testSet_110x110x24_cm3,
     globalThis.testSet_110x110x24_cm2,
-//    globalThis.testSet_110x110x24_cm1,
+    globalThis.testSet_110x110x24_cm1,
     globalThis.testSet_110x110x24_cm0,
     globalThis.testSet_110x110x24_cmNegative
   ];
