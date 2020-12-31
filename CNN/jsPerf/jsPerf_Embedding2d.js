@@ -217,7 +217,9 @@ class HeightWidthDepth {
 
                 tf.util.assert( outputChannelValueFromOutput == outputChannelValueFromTable,
                   `Channel value of output and table should match. `
-                    + `( ${outputChannelValueFromOutput} != ${outputChannelValueFromTable} )`);
+                    + `( ${outputChannelValueFromOutput} != ${outputChannelValueFromTable} )`
+                    + `At ( y, x, inputChannelIndex, outputChannelIndexOffset ) = (${y}, ${x}, ${inputChannelIndex}, ${outputChannelIndexOffset})`
+                );
               }
 
             }
