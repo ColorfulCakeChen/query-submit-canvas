@@ -126,7 +126,7 @@ class HeightWidthDepth {
   check_Input_Output_WeightsTable( embedding2d, inputTensor3d, outputTensor3d ) {
     tf.tidy( () => {
 
-      let channelMultiplier_forExtract;
+      let channelMultiplier_forExtract; // How many channels (of per input channel) are extracted from table raw data.
       if ( embedding2d.bEmbedVocabularyId )
         channelMultiplier_forExtract = this.channelMultiplier - 1; // less one because the channel will be auto-generated vocabulary id.
       else
@@ -162,28 +162,28 @@ class HeightWidthDepth {
           for ( let inputChannelIndex = 0; inputChannelIndex < inputChannelArray.length; ++inputChannelIndex ) {
             let inputChannelValue = inputChannelArray[ inputChannelIndex ]; // Int32
 
-            // The embedding vocabulary table beginning of the input channel.
-            let vocabularyTableElementOffsetBegin = ( inputChannelIndex * float32CountPerTable );
-            let lookUpAtElementOffsetBase = ( this.weightsElementOffsetBegin + vocabularyTableElementOffsetBegin );
-
             // Output Channel
-            for ( let outputChannelIndex = 0; outputChannelIndex < this.channelMultiplier; ++outputChannelIndex ) {
+            for ( let outputChannelIndexOffset = 0; outputChannelIndexOffset < this.channelMultiplier; ++outputChannelIndexOffset ) {
+              let outputChannelIndexBase = ( inputChannelIndex * this.channelMultiplier );
+              let outputChannelIndex = outputChannelIndexBase + outputChannelIndexOffset;
               let outputChannelValueFromOutput = outputChannelArray[ outputChannelIndex ]; // Float32
 
-//!!!
-              if ( ( embedding2d.bEmbedVocabularyId ) && ( outputChannelIndex == 0 ) ) {
-                // When ( bEmbedVocabularyId == true ), the first output channel should be auto-generated vocabulary id
-                // (i.e. should be the same as the input channel value).
+              if ( ( embedding2d.bEmbedVocabularyId ) && ( outputChannelIndexOffset == 0 ) ) {
+                // When ( bEmbedVocabularyId == true ), every this.channelMultiplier output channel should be auto-generated
+                // vocabulary id (i.e. should be the same as the input channel value).
                 tf.util.assert( outputChannelValueFromOutput == inputChannelValue,
                   `Channel value of output should be vocabulary id. `
                     + `( ${outputChannelValueFromOutput} != ${inputChannelValue} )`);
 
               } else {
 
-                let lookUpAtElementOffset = lookUpAtElementOffsetBase + outputChannelIndex;
+                // The embedding vocabulary table beginning of the input channel.
+                let vocabularyTableElementOffsetBegin = ( inputChannelIndex * float32CountPerTable );
+                let lookUpAtElementOffsetBase = ( this.weightsElementOffsetBegin + vocabularyTableElementOffsetBegin );
+                let lookUpAtElementOffset = lookUpAtElementOffsetBase + outputChannelIndexOffset;
 
-                // When ( bEmbedVocabularyId == true ), the first output channel is auto-generated vocabulary id.
-                // So the table offset should count start from 1 (not 0).
+                // When ( bEmbedVocabularyId == true ), every this.channelMultiplier output channel is auto-generated vocabulary
+                // id. So the table offset should count start from 1 (not 0) (i.e. ignore ( outputChannelIndexOffset == 0 ) ).
                 if ( embedding2d.bEmbedVocabularyId ) {
                   lookUpAtElementOffset -= 1;
                 }
