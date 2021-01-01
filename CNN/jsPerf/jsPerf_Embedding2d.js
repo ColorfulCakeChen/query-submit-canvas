@@ -85,7 +85,7 @@ class HeightWidthDepth {
   /**
    * @return {Embedding2d.Base} The created embedding object.
    */
-  embedding2d_create( bEmbedVocabularyId, bKeepInputTensor ) {
+  embedding2d_create( bEmbedVocabularyId, bKeepInputTensor, bVocabularyTableUseTensor2d ) {
 
     let embedding2d = new Embedding2d.Base();
 
@@ -94,7 +94,8 @@ class HeightWidthDepth {
       progress, this.weightsFloat32Array, this.weightsByteOffsetBegin, this.depth, this.channelMultiplier,
       this.vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bVocabularyTableUseTensor2d
     );
 
     let initerNext;
@@ -104,7 +105,12 @@ class HeightWidthDepth {
     let bInitOk = initerNext.value; // Initialize successfully or failed.
 
     tf.util.assert( ( bInitOk == true ),
-        `Failed to initialize embedding2d object. (bEmbedVocabularyId=${bEmbedVocabularyId}, bKeepInputTensor=${bKeepInputTensor})`);
+        `Failed to initialize embedding2d object. ( `
+        + `bEmbedVocabularyId=${bEmbedVocabularyId}, `
+        + `bKeepInputTensor=${bKeepInputTensor}, `
+        + `bVocabularyTableUseTensor2d=${bVocabularyTableUseTensor2d}`
+        + ` )`
+    );
 
     return embedding2d;
   }
