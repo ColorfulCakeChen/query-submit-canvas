@@ -258,7 +258,7 @@ class HeightWidthDepth {
   }
 
   // Test apply by split-gather-concat-reshape (i.e. vocabulary table is tensor3d).
-  test_SplitReshapeGatherConcat() {
+  test_SplitGatherConcatReshape() {
     let outputTensor3d = this.embedding2d_SplitGatherConcatReshape.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
