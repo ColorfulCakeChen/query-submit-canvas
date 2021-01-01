@@ -224,9 +224,10 @@ class Base {
     if ( vocabularyTableShape_toExtract ) {
 
       // For tensor2d, the last axis id will be 1.
-      //
-      // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
-      let concatAxisId = this.concatAxisId = ( vocabularyTableShape_toExtract.length - 1 );
+//       //
+//       // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
+//       let concatAxisId = this.concatAxisId = ( vocabularyTableShape_toExtract.length - 1 );
+      let concatAxisId = ( vocabularyTableShape_toExtract.length - 1 );
 
       // Build tf.tensor of vocabulary tables.
       try {
@@ -415,10 +416,10 @@ class Base {
 //!!! ...unfinished... could use unstack, gather, stack instead of split, gather, concat?
 //!!! ...unfinished... could use oneHot, pointwise convolution instead of split, gather, concat?
 
-    // e.g. will be 1 for tensor2d.
-    //
-    // This is the last axis id of vocabulary table (tensor2d). It is the last second axis of inputTensor3d (tensor3d).
-    let concatAxisId = this.concatAxisId;
+//     // e.g. will be 1 for tensor2d.
+//     //
+//     // This is the last axis id of vocabulary table (tensor2d). It is the last second axis of inputTensor3d (tensor3d).
+//     let concatAxisId = this.concatAxisId;
 
     // Using pre-allocated array as local variable to improving performance.
     let vocabularyIndicesOneChannelTensor2dArray = this.vocabularyIndicesOneChannelTensor2dArray;
