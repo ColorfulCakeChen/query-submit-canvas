@@ -183,7 +183,14 @@ class Base {
     let vocabularyTableShape_toExtract = null; // Assume no embedding channel.
 
     channelMultiplier = this.channelMultiplier; // The real (adjusted) channelMultiplier. May be specified or extracted.
-    if ( channelMultiplier < 1 ) { // 2.1 channelMultiplier is zero or negative. (could happen by evolution.)
+
+    // 2.1 Shortcut operation.
+    if ( // If channelMultiplier is illegal (i.e. zero or negative). (could happen by evolution.)
+           ( channelMultiplier < 1 )
+
+        // Or, if there is only one output channel per input channel and the only one output channel is just vocabulary id.
+        || ( ( channelMultiplier == 1 ) & ( bEmbedVocabularyId ) )
+       ) {
 
       if ( bKeepInputTensor )
         // 2.1.1 For ( channelMultiplier < 1 ) and ( bKeepInputTensor == true  ), return a copy of input (as output) immediately.        
