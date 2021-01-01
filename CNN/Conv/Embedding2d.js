@@ -250,7 +250,7 @@ class Base {
 
           // The shape of vocabulary id list (tensor3d or tensor2d) looks almost like the shape of vocabulary table.
           // Except the last dimension is always one.
-          let idsTensorShape = new Array( vocabularyTableShape_toExtract );
+          let idsTensorShape = vocabularyTableShape_toExtract.slice(); // copy it.
           idsTensorShape[ idsTensorShape.length - 1 ] = 1;
 
           // Create vocabulary id list. (for concatenating with vocabulary table)
@@ -319,10 +319,10 @@ class Base {
     // The followings are intermediate temporary arrays. Pre-allocate these array shells (instead of re-allocating every
     // time apply_and_destroy_or_keep()) for improving performance.
     {
-      // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They will be used to look up vocabulary table.
-      this.vocabularyIndicesOneChannelTensor2dArray = new Array( this.splitCount );
-
       if ( bVocabularyTableUseTensor2d ) {
+        // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They will be used to look up vocabulary table.
+        this.vocabularyIndicesOneChannelTensor2dArray = new Array( this.splitCount );
+
         // The first 2 dimension of apply_and_destroy_or_keep()'s inputTensor3d. When the input is splitted and reduce to tensor2d,
         // their shape should be this. It is used for reshape from tensor3d to tensor2d.
         //
