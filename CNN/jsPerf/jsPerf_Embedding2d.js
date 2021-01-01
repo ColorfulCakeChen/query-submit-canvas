@@ -119,10 +119,10 @@ class HeightWidthDepth {
       this.embedding2d_create( false, false, false ),
       this.embedding2d_create(  true, false, false ),
 
-      // The embedding for performance testing should:
+      // The embedding (vocabulary tabe tensor3d)  for performance testing should:
       //   - ( bEmbedVocabularyId == false ). Otherwise, shortcut operation (i.e. return directly) will be used when ( channelMultiplier == 1 ).
       //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
-      this.embedding2d_SplitReshapeGatherConcat =
+      this.embedding2d_SplitGatherConcatReshape =
       this.embedding2d_create( false,  true, false ),
       this.embedding2d_create(  true,  true, false ),
 
@@ -130,10 +130,10 @@ class HeightWidthDepth {
       this.embedding2d_create( false, false,  true ),
       this.embedding2d_create(  true, false,  true ),
 
-      // The embedding for performance testing should:
+      // The embedding (vocabulary tabe tensor2d) for performance testing should:
       //   - ( bEmbedVocabularyId == false ). Otherwise, shortcut operation (i.e. return directly) will be used when ( channelMultiplier == 1 ).
       //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
-      this.embedding2d_SplitGatherConcatReshape =
+      this.embedding2d_SplitReshapeGatherConcat =
       this.embedding2d_create( false,  true,  true ),
       this.embedding2d_create(  true,  true,  true ),
 
@@ -251,15 +251,15 @@ class HeightWidthDepth {
 
   }
 
-  // Test apply by split-reshape-gather-concat (i.e. vocabulary table is tensor2d).
-  test_SplitReshapeGatherConcat() {
-    let outputTensor3d = this.embedding2d_SplitReshapeGatherConcat.apply_and_destroy_or_keep( this.dataTensor3d );
-    outputTensor3d.dispose();
-  }
-
   // Test apply by split-gather-concat-reshape (i.e. vocabulary table is tensor3d).
   test_SplitReshapeGatherConcat() {
     let outputTensor3d = this.embedding2d_SplitGatherConcatReshape.apply_and_destroy_or_keep( this.dataTensor3d );
+    outputTensor3d.dispose();
+  }
+
+  // Test apply by split-reshape-gather-concat (i.e. vocabulary table is tensor2d).
+  test_SplitReshapeGatherConcat() {
+    let outputTensor3d = this.embedding2d_SplitReshapeGatherConcat.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
 
