@@ -7,7 +7,7 @@ import * as Embedding2d from "../Conv/Embedding2d.js";
 /**
  * Test CNN Embedding2d.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11003/36/colorfulcakechen-cnn-embedding2d-82562e2428ad3498818f7b}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11003/51/colorfulcakechen-cnn-embedding2d-12160d0804f17bced0a1cf}
  */
 
 /**
