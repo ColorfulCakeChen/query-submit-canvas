@@ -318,10 +318,11 @@ class Base {
     // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
     this.splitCount = this.inChannels;
 
-    // For tensor3d, the splitted axis id is the last axis id (i.e. 2).
-    //
-    // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
-    this.splitAxisId = 2;
+//!!! (2021/01/03 Modified) Use constant directly.
+//     // For tensor3d, the splitted axis id is the last axis id (i.e. 2).
+//     //
+//     // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
+//     this.splitAxisId = 2;
 
     // The followings are intermediate temporary arrays. Pre-allocate these array shells (instead of re-allocating every
     // time apply_and_destroy_or_keep()) for improving performance.
@@ -460,10 +461,11 @@ class Base {
     // Using pre-allocated array as local variable to improving performance.
     let vocabularyIndicesOneChannelTensor2dArray = this.vocabularyIndicesOneChannelTensor2dArray;
 
-    // For tensor3d, the splitted axis id is the last axis id (i.e. 2).
-    //
-    // Use pre-calculated value for improving performance of apply_and_destroy_or_keep().
-    let splitAxisId = this.splitAxisId;
+//!!! (2021/01/03 Modified) Use constant directly.
+//     // For tensor3d, the splitted axis id is the last axis id (i.e. 2).
+//     //
+//     // Use pre-calculated value for improving performance of apply_and_destroy_or_keep().
+//     let splitAxisId = this.splitAxisId;
 
 //!!! could use unstack?
 //     // Extract vocabulary indices from input.
@@ -476,11 +478,15 @@ class Base {
 
     // Extract vocabulary indices from input.
     {
-      // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
+      // The input is tensor3d, the last axis id (for splitting) is 2 (= 3 - 1).
+      //
+      // Split along the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
       // In fact, the result is still tensor3d but has only one channel.
       //
-      // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ splitAxisId ] ).
-      const oneChannelTensor3dArray = inputTensor3d.split( this.splitCount, splitAxisId );
+      // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ inputTensor3d.shape.length - 1 ] ).
+//!!! (2021/01/03 Modified) Use constant directly.
+//      const oneChannelTensor3dArray = inputTensor3d.split( this.splitCount, splitAxisId );
+      const oneChannelTensor3dArray = inputTensor3d.split( this.splitCount, 2 );
 
       this.destroy_or_keep_input( inputTensor3d ); // Destroy or keep input according to ( this.bKeepInputTensor ).
 
@@ -522,7 +528,11 @@ class Base {
     }
 
     // Concatenate along the last axis, so that it becomes tensor3d and with embedded (more) channels in the last axis.
-    let predictResult = tf.concat( embeddedTensor3dArray, splitAxisId );
+    //
+    // The result of tensor2d.gather( tensor2d ) are tensor3d, so their last axis is 2 (= 3 - 1).
+//!!! (2021/01/03 Modified) Use constant directly.
+//    let predictResult = tf.concat( embeddedTensor3dArray, splitAxisId );
+    let predictResult = tf.concat( embeddedTensor3dArray, 2 );
 
     for ( let i = 0; i < embeddedTensor3dArray.length; ++i ) { // Release intermediate temporary tensors.
       embeddedTensor3dArray[ i ].dispose();
@@ -569,18 +579,23 @@ class Base {
 //!!! ...unfinished... could use unstack, gather, stack instead of split, gather, concat?
 //!!! ...unfinished... could use oneHot, pointwise convolution instead of split, gather, concat?
 
-    // For tensor3d, the splitted axis id is the last axis id (i.e. 2).
-    //
-    // Use pre-calculated value for improving performance of apply_and_destroy_or_keep().
-    let splitAxisId = this.splitAxisId;
+//!!! (2021/01/03 Modified) Use constant directly.
+//     // For tensor3d, the splitted axis id is the last axis id (i.e. 2).
+//     //
+//     // Use pre-calculated value for improving performance of apply_and_destroy_or_keep().
+//     let splitAxisId = this.splitAxisId;
 
     // Extract vocabulary indices from input.
     //
-    // Split the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
+    // The input is tensor3d, the last axis id (for splitting) is 2 (= 3 - 1).
+    //
+    // Split along the last axis (of input) as many as the shape size (of the last axis) (i.e. become tensor2d).
     // In fact, the result is still tensor3d but has only one channel.
     //
-    // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ splitAxisId ] ).
-    const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( this.splitCount, splitAxisId );
+    // The splitCount should be the same as ( this.inChannels ) or ( inputTensor3d.shape[ inputTensor3d.shape.length - 1 ] ).
+//!!! (2021/01/03 Modified) Use constant directly.
+//    const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( this.splitCount, splitAxisId );
+    const vocabularyIndicesOneChannelTensor3dArray = inputTensor3d.split( this.splitCount, 2 );
 
     this.destroy_or_keep_input( inputTensor3d ); // Destroy or keep input according to ( this.bKeepInputTensor ).
 
@@ -602,7 +617,11 @@ class Base {
     }
 
     // Concatenate along the last axis, so that it becomes tensor3d and with embedded (more) channels in the last axis.
-    let concatResult = tf.concat( embeddedTensor3dArray, splitAxisId );
+    //
+    // The result of tensor3d.gather( tensor3d ) are tensor5d, so their last axis is 4 (= 5 - 1).
+//!!! (2021/01/03 Modified) wrong! embeddedTensor3dArray[] are tensor5d, the last axis should be 4.
+//    let concatResult = tf.concat( embeddedTensor3dArray, splitAxisId );
+    let concatResult = tf.concat( embeddedTensor3dArray, 4 );
 
     for ( let i = 0; i < embeddedTensor3dArray.length; ++i ) { // Release intermediate temporary tensors.
       embeddedTensor3dArray[ i ].dispose();
