@@ -113,6 +113,12 @@ class Base {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
+   * @param {number} height
+   *   The height of apply_and_destroy_or_keep()'s input tensor.
+   *
+   * @param {number} width
+   *   The width of apply_and_destroy_or_keep()'s input tensor.
+   *
    * @param {number} inChannels
    *   The input channel count.
    *
@@ -137,6 +143,7 @@ class Base {
   * initer(
     progressParent,
     inputFloat32Array, byteOffsetBegin,
+    height, width,
     inChannels, channelMultiplier = null, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor,
     bVocabularyTableUseTensor2d
@@ -163,6 +170,8 @@ class Base {
     this.disposeTensors();
     this.params = this.vocabularyTables = null; // So that distinguishable if re-initialization failed.
 
+    this.height = height;
+    this.width = width;
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
@@ -317,7 +326,9 @@ class Base {
             // Channel 3: ( channelValue + ( 3 * vocabularyCountPerInputChannel ) )
             let numberSequencer = new Array( inChannels ).keys(); // Generator: 0, 1, 2, ..., ( inChannels - 1 )
             let channelValueOffset = [ ...numberSequencer ].map( x => x * vocabularyCountPerInputChannel );
-            this.channelValueOffsetTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" );
+            const onePixelTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
+            this.channelValueOffsetTensor3d = onePixelTensor3d.tile( [ height, width ] ); // All pixels. Otherwise, broadcast seems slow.
+            onePixelTensor3d.diopose();
           }
 
           ++progressToAdvance.value;
@@ -498,6 +509,7 @@ class Base {
    */
   static apply_and_destroy_or_keep_AddGatherReshape( inputTensor3d ) {
 
+//!!! Broadcasting seems slow.
     // Shifting vocabulary indices of input. (Broadcasting is used.)
     const vocabularyIndicesTensor3d = inputTensor3d.add( this.channelValueOffsetTensor3d );
 
