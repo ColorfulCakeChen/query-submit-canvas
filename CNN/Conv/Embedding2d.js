@@ -311,7 +311,7 @@ class Base {
             // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
             // indexing the one merged vocabulary table tensor4d.
             let numberSequencer = new Array( inChannels ).keys(); // Generator: 0, 1, 2, ..., ( inChannels - 1 )
-            this.channelValueOffsetTensor3d = tf.tensor3d( [ ...numberSequencer ], [ 1, 1, inChannels ] );
+            this.channelValueOffsetTensor3d = tf.tensor3d( [ ...numberSequencer ], [ 1, 1, inChannels ], "int32" );
           }
 
           ++progressToAdvance.value;
