@@ -91,7 +91,8 @@ class HeightWidthDepth {
 
     let progress = new ValueMax.Percentage.Aggregate();
     let initer = embedding2d.initer(
-      progress, this.weightsFloat32Array, this.weightsByteOffsetBegin, this.depth, this.channelMultiplier,
+      progress, this.weightsFloat32Array, this.weightsByteOffsetBegin,
+      this.height, this.width, this.depth, this.channelMultiplier,
       this.vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
       bKeepInputTensor,
@@ -367,59 +368,59 @@ function init() {
   // (cm = channel multiplier)
 
   let depth = 8; //24;
-  globalThis.testSet_110x110x8_cm16 = new HeightWidthDepth( 110, 110, depth, 16 ); // height, width, depth, channelMultiplier
-  globalThis.testSet_110x110x8_cm8 = new HeightWidthDepth( 110, 110, depth, 8 );
-  globalThis.testSet_110x110x8_cm4 = new HeightWidthDepth( 110, 110, depth, 4 );
-  globalThis.testSet_110x110x8_cm3 = new HeightWidthDepth( 110, 110, depth, 3 );
-  globalThis.testSet_110x110x8_cm2 = new HeightWidthDepth( 110, 110, depth, 2 );
-  globalThis.testSet_110x110x8_cm1 = new HeightWidthDepth( 110, 110, depth, 1 );
-  globalThis.testSet_110x110x8_cm0 = new HeightWidthDepth( 110, 110, depth, 0 );
-  globalThis.testSet_110x110x8_cmNegative = new HeightWidthDepth( 110, 110, depth, -1 );
+  globalThis.testSet_110x120x8_cm16 = new HeightWidthDepth( 110, 120, depth, 16 ); // height, width, depth, channelMultiplier
+  globalThis.testSet_110x120x8_cm8 = new HeightWidthDepth( 110, 120, depth, 8 );
+  globalThis.testSet_110x120x8_cm4 = new HeightWidthDepth( 110, 120, depth, 4 );
+  globalThis.testSet_110x120x8_cm3 = new HeightWidthDepth( 110, 120, depth, 3 );
+  globalThis.testSet_110x120x8_cm2 = new HeightWidthDepth( 110, 120, depth, 2 );
+  globalThis.testSet_110x120x8_cm1 = new HeightWidthDepth( 110, 120, depth, 1 );
+  globalThis.testSet_110x120x8_cm0 = new HeightWidthDepth( 110, 120, depth, 0 );
+  globalThis.testSet_110x120x8_cmNegative = new HeightWidthDepth( 110, 120, depth, -1 );
 
-  globalThis.testSet_110x110x8_All = [
-    globalThis.testSet_110x110x8_cm16,
-    globalThis.testSet_110x110x8_cm8,
-    globalThis.testSet_110x110x8_cm4,
-    globalThis.testSet_110x110x8_cm3,
-    globalThis.testSet_110x110x8_cm2,
-    globalThis.testSet_110x110x8_cm1,
-    globalThis.testSet_110x110x8_cm0,
-    globalThis.testSet_110x110x8_cmNegative
+  globalThis.testSet_110x120x8_All = [
+    globalThis.testSet_110x120x8_cm16,
+    globalThis.testSet_110x120x8_cm8,
+    globalThis.testSet_110x120x8_cm4,
+    globalThis.testSet_110x120x8_cm3,
+    globalThis.testSet_110x120x8_cm2,
+    globalThis.testSet_110x120x8_cm1,
+    globalThis.testSet_110x120x8_cm0,
+    globalThis.testSet_110x120x8_cmNegative
   ];
 }
 
 function testCorrectness() {
-  for ( let i = 0; i < globalThis.testSet_110x110x8_All.length; ++i ) {
-    let testSet = globalThis.testSet_110x110x8_All[ i ];
+  for ( let i = 0; i < globalThis.testSet_110x120x8_All.length; ++i ) {
+    let testSet = globalThis.testSet_110x120x8_All[ i ];
     testSet.testCorrectness();
   }
 }
 
 function testDifferentDisposeStrategy_All() {
-  for ( let i = 0; i < globalThis.testSet_110x110x8_All.length; ++i ) {
-    let testSet = globalThis.testSet_110x110x8_All[ i ];
+  for ( let i = 0; i < globalThis.testSet_110x120x8_All.length; ++i ) {
+    let testSet = globalThis.testSet_110x120x8_All[ i ];
     testSet.testDifferentDisposeStrategy_All();
   }
 }
 
 function disposeTensors() {
-  if ( globalThis.testSet_110x110x8_All ) {
-    for ( let i = 0; i < globalThis.testSet_110x110x8_All.length; ++i ) {
-      let testSet = globalThis.testSet_110x110x8_All[ i ];
+  if ( globalThis.testSet_110x120x8_All ) {
+    for ( let i = 0; i < globalThis.testSet_110x120x8_All.length; ++i ) {
+      let testSet = globalThis.testSet_110x120x8_All[ i ];
       if ( testSet )
         testSet.disposeTensors();
     }
 
-    globalThis.testSet_110x110x8_All = null;
+    globalThis.testSet_110x120x8_All = null;
   }
 
-  globalThis.testSet_110x110x8_cm16
-    = globalThis.testSet_110x110x8_cm8
-    = globalThis.testSet_110x110x8_cm4
-    = globalThis.testSet_110x110x8_cm3
-    = globalThis.testSet_110x110x8_cm2
-    = globalThis.testSet_110x110x8_cm1
-    = globalThis.testSet_110x110x8_cm0
-    = globalThis.testSet_110x110x8_cmNegative
+  globalThis.testSet_110x120x8_cm16
+    = globalThis.testSet_110x120x8_cm8
+    = globalThis.testSet_110x120x8_cm4
+    = globalThis.testSet_110x120x8_cm3
+    = globalThis.testSet_110x120x8_cm2
+    = globalThis.testSet_110x120x8_cm1
+    = globalThis.testSet_110x120x8_cm0
+    = globalThis.testSet_110x120x8_cmNegative
     = null;
 }
