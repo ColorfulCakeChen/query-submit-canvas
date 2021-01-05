@@ -207,8 +207,8 @@ class Base {
         this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_SplitReshapeGatherConcat; // When vocabulary tables are tensor2d.
         vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier ];
       } else {
-        this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_AddGatherReshape; // When vocabulary table is one merged tensor4d.
-        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ]; // Every (sub) small vocabulary table is tensor3d.
+        this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_AddGatherReshape; // When vocabulary table is one merged tensor2d.
+        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier ];
 //!!! (2021/01/05 Remarked) SplitGatherConcatReshape is slower than SplitReshapeGatherConcat.
 //        this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_SplitGatherConcatReshape; // When vocabulary tables are tensor3d.
 //        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ];
@@ -300,18 +300,24 @@ class Base {
           }
         }
 
-        // 4.1.2 Build one merged vocabulary table tensor4d for all input channels.
+        // 4.1.2 Build one merged longer vocabulary table tensor2d for all input channels.
         {
           if ( !bVocabularyTableUseTensor2d ) {
-            this.vocabularyTableTensor4d = tf.stack( this.vocabularyTablesTensorArray, concatAxisId );
+            this.vocabularyTableTensor2d = tf.concat( this.vocabularyTablesTensorArray, 0 );
 
             tf.dispose( this.vocabularyTablesTensorArray );
             this.vocabularyTablesTensorArray = null;
 
             // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
-            // indexing the one merged vocabulary table tensor4d.
+            // indexing the one merged longer vocabulary table tensor2d.
+            //
+            // Channel 0: ( channelValue + ( 0 * vocabularyCountPerInputChannel ) )
+            // Channel 1: ( channelValue + ( 1 * vocabularyCountPerInputChannel ) )
+            // Channel 2: ( channelValue + ( 2 * vocabularyCountPerInputChannel ) )
+            // Channel 3: ( channelValue + ( 3 * vocabularyCountPerInputChannel ) )
             let numberSequencer = new Array( inChannels ).keys(); // Generator: 0, 1, 2, ..., ( inChannels - 1 )
-            this.channelValueOffsetTensor3d = tf.tensor3d( [ ...numberSequencer ], [ 1, 1, inChannels ], "int32" );
+            let channelValueOffset = [ ...numberSequencer ].map( x => x * vocabularyCountPerInputChannel );
+            this.channelValueOffsetTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" );
           }
 
           ++progressToAdvance.value;
@@ -402,8 +408,8 @@ class Base {
           if ( this.vocabularyTablesTensorArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
             return true;
 
-      // Or, the one merged tensor4d of vocabulary table should exists.
-      if ( ( this.vocabularyTableTensor4d ) && ( this.channelValueOffsetTensor3d ) )
+      // Or, the one merged longer tensor2d of vocabulary table should exists.
+      if ( ( this.vocabularyTableTensor2d ) && ( this.channelValueOffsetTensor3d ) )
         return true;
 
       return false;
@@ -417,9 +423,9 @@ class Base {
       this.vocabularyTablesTensorArray = null;
     }
 
-    if ( this.vocabularyTableTensor4d ) {
-      this.vocabularyTableTensor4d.dispose();
-      this.vocabularyTableTensor4d = null;
+    if ( this.vocabularyTableTensor2d ) {
+      this.vocabularyTableTensor2d.dispose();
+      this.vocabularyTableTensor2d = null;
     }
 
     if ( this.channelValueOffsetTensor3d ) {
@@ -501,13 +507,13 @@ class Base {
     outputTensor3dShape[ 0 ] = inputTensor3d.shape[ 0 ];
     outputTensor3dShape[ 1 ] = inputTensor3d.shape[ 1 ];
 
-    // Gather along the axis id 2 (= 3 - 1). Because the axis id 3 is come from every sub (small) vocabulary table.
+    // Gather along the first axis.
     //
-    // tensor4d.gather( tensor3d ) results to tensor7d.
-    const gatherTensor4d = this.vocabularyTableTensor4d.gather( vocabularyIndicesTensor3d, 2 );
+    // tensor2d.gather( tensor3d ) results to tensor4d.
+    const gatherTensor4d = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
     vocabularyIndicesTensor3d.dispose();
 
-    // Reshape tensor7d to tensor3d.
+    // Reshape tensor4d to tensor3d.
     const predictTensor3d = gatherTensor4d.reshape( outputTensor3dShape );
     gatherTensor4d.dispose();
 
