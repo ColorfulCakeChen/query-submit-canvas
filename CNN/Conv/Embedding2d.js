@@ -327,7 +327,7 @@ class Base {
             let numberSequencer = new Array( inChannels ).keys(); // Generator: 0, 1, 2, ..., ( inChannels - 1 )
             let channelValueOffset = [ ...numberSequencer ].map( x => x * vocabularyCountPerInputChannel );
             const onePixelTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
-            this.channelValueOffsetTensor3d = onePixelTensor3d.tile( [ height, width ] ); // All pixels. Otherwise, broadcast seems slow.
+            this.channelValueOffsetTensor3d = onePixelTensor3d.tile( [ height, width, 1 ] ); // All pixels.
             onePixelTensor3d.diopose();
           }
 
