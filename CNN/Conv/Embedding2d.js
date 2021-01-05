@@ -208,7 +208,7 @@ class Base {
         vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier ];
       } else {
         this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_AddGatherReshape; // When vocabulary table is one merged tensor4d.
-        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ]; // Every small vocabulary table is tensor3d
+        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ]; // Every (sub) small vocabulary table is tensor3d.
 //!!! (2021/01/05 Remarked) SplitGatherConcatReshape is slower than SplitReshapeGatherConcat.
 //        this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_SplitGatherConcatReshape; // When vocabulary tables are tensor3d.
 //        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ];
@@ -331,20 +331,20 @@ class Base {
 
     // 5. Prepare other auxiliary data members.
 
-    // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
-    //
-    // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
-    // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
-    // results in an array [ r, g, b, a ] which has 4 tensor3d (in fact, they should be
-    // viewed as tensor1d).
-    //
-    // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
-    this.splitCount = inChannels;
-
     // The followings are intermediate temporary arrays. Pre-allocate these array shells (instead of re-allocating every
     // time apply_and_destroy_or_keep()) for improving performance.
     {
       if ( bVocabularyTableUseTensor2d ) {
+        // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
+        //
+        // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
+        // axis is a 4 color (r-g-b-a) channel. Splitting along the last axis (the color channel)
+        // results in an array [ r, g, b, a ] which has 4 tensor3d (in fact, they should be
+        // viewed as tensor1d).
+        //
+        // This is pre-calculated for improving performance of apply_and_destroy_or_keep().
+        this.splitCount = inChannels;
+
         // For collecting the rank reduced tensor2d (from the splitted inputTensor3d). They will be used to look up vocabulary table.
         this.vocabularyIndicesOneChannelTensor2dArray = new Array( this.splitCount );
 
@@ -476,7 +476,19 @@ class Base {
   }
 
   /**
-   * (Used when vocabulary tables are one merged tensor3d.)
+   * (Used when vocabulary tables are one merged tensor4d.)
+   *
+   * Process the input and produce output by looking up the weights of this embedding layer.
+   *
+   * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
+   *
+   * @param {tf.tensor3d} inputTensor3d
+   *   A tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with this.inChannels
+   * (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
+   * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), this inputTensor3d
+   * will be disposed. If ( this.bKeepInputTensor == true ), this inputTensor3d will be kept.
+   *
+   * @return {tf.tensor3d} The predicted output as tensor3d. Throw exception, if failed (e.g. out of GPU memory).
    */
   static apply_and_destroy_or_keep_AddGatherReshape( inputTensor3d ) {
 
@@ -489,8 +501,10 @@ class Base {
     outputTensor3dShape[ 0 ] = inputTensor3d.shape[ 0 ];
     outputTensor3dShape[ 1 ] = inputTensor3d.shape[ 1 ];
 
+    // Gather along the axis id 2 (= 3 - 1). Because the axis id 3 is come from every sub (small) vocabulary table.
+    //
     // tensor4d.gather( tensor3d ) results to tensor7d.
-    const gatherTensor4d = this.vocabularyTableTensor4d.gather( vocabularyIndicesTensor3d );
+    const gatherTensor4d = this.vocabularyTableTensor4d.gather( vocabularyIndicesTensor3d, 2 );
     vocabularyIndicesTensor3d.dispose();
 
     // Reshape tensor7d to tensor3d.
@@ -504,17 +518,6 @@ class Base {
 
   /**
    * (Used when vocabulary tables are tensor3d.)
-   * Process the input and produce output by looking up the weights of this embedding layer.
-   *
-   * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
-   *
-   * @param {tf.tensor3d} inputTensor3d
-   *   A tensor3d data (e.g. height-width-color for color image, or 1-width-1 for text) with this.inChannels
-   * (e.g. 4 for r-g-b-a, or 1 for text) channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
-   * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), this inputTensor3d
-   * will be disposed. If ( this.bKeepInputTensor == true ), this inputTensor3d will be kept.
-   *
-   * @return {tf.tensor3d} The predicted output as tensor3d. Throw exception, if failed (e.g. out of GPU memory).
    */
   static apply_and_destroy_or_keep_SplitReshapeGatherConcat( inputTensor3d ) {
 
