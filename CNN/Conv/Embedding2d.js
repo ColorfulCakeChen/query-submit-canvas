@@ -302,12 +302,12 @@ class Base {
 
         // 4.1.2 Build one merged vocabulary table tensor4d for all input channels.
         {
-          if ( bVocabularyTableUseTensor2d ) {
+          if ( !bVocabularyTableUseTensor2d ) {
             this.vocabularyTableTensor4d = tf.stack( this.vocabularyTablesTensorArray, concatAxisId );
 
             tf.dispose( this.vocabularyTablesTensorArray );
             this.vocabularyTablesTensorArray = null;
-//!!!
+
             // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
             // indexing the one merged vocabulary table tensor4d.
             let numberSequencer = new Array( inChannels ).keys(); // Generator: 0, 1, 2, ..., ( inChannels - 1 )
