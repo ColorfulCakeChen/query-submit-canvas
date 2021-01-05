@@ -207,11 +207,11 @@ class Base {
         this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_SplitReshapeGatherConcat; // When vocabulary tables are tensor2d.
         vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier ];
       } else {
-        this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_AddGatherReshape; // When vocabulary tables are one merged tensor3d.
-        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier ];
+        this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_AddGatherReshape; // When vocabulary table is one merged tensor4d.
+        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ]; // Every small vocabulary table is tensor3d
 //!!! (2021/01/05 Remarked) SplitGatherConcatReshape is slower than SplitReshapeGatherConcat.
-//         this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_SplitGatherConcatReshape; // When vocabulary tables are tensor3d.
-//         vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ];
+//        this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_SplitGatherConcatReshape; // When vocabulary tables are tensor3d.
+//        vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, 1, channelMultiplier ];
       }
 
       if ( bEmbedVocabularyId ) {
