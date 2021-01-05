@@ -360,7 +360,6 @@ class Base {
 
       } else {
 
-//!!! (2021/01/05 Remarked) SplitGatherConcatReshape is slower than SplitReshapeGatherConcat.
         // The 3 dimension of apply_and_destroy_or_keep()'s outputTensor3d. When the input is splitted to tensor3d and the
         // vocabulary tables are tensor3d, the result of tf.gather() will be tensor5d. This shape is used for reshape the
         // output from tensor5d to tensor3d.
@@ -635,7 +634,7 @@ class Base {
 // //!!! ...unfinished... squeeze-and-excitation.
 //   }
 
-    /**
+  /**
    * Release an array of tf.tensor.
    *
    * This method is a little like tf.dispose() but can only handle one-layer and non-null array (and non-null element). But
