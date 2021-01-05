@@ -128,7 +128,8 @@ class HeightWidthDepth {
       // The embedding (vocabulary tabe tensor3d)  for performance testing should:
       //   - ( bEmbedVocabularyId == false ). Otherwise, shortcut operation (i.e. return directly) will be used when ( channelMultiplier == 1 ).
       //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
-      this.embedding2d_SplitGatherConcatReshape =
+//      this.embedding2d_SplitGatherConcatReshape =
+      this.embedding2d_AddGatherReshape =
       this.embedding2d_create( false,  true, false ),
       this.embedding2d_create(  true,  true, false ),
 
@@ -257,9 +258,9 @@ class HeightWidthDepth {
 
   }
 
-  // Test apply by split-gather-concat-reshape (i.e. vocabulary table is tensor3d).
+  // Test apply by add-gather-reshape (i.e. vocabulary table is one merged tensor4d).
   test_SplitGatherConcatReshape() {
-    let outputTensor3d = this.embedding2d_SplitGatherConcatReshape.apply_and_destroy_or_keep( this.dataTensor3d );
+    let outputTensor3d = this.embedding2d_AddGatherReshape.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
 
@@ -268,6 +269,13 @@ class HeightWidthDepth {
     let outputTensor3d = this.embedding2d_SplitReshapeGatherConcat.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
+
+//!!! (2021/01/05 Remarked) SplitGatherConcatReshape is slower than SplitReshapeGatherConcat.
+//   // Test apply by split-gather-concat-reshape (i.e. vocabulary table is tensor3d).
+//   test_SplitGatherConcatReshape() {
+//     let outputTensor3d = this.embedding2d_SplitGatherConcatReshape.apply_and_destroy_or_keep( this.dataTensor3d );
+//     outputTensor3d.dispose();
+//   }
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
