@@ -328,7 +328,7 @@ class Base {
             let channelValueOffset = [ ...numberSequencer ].map( x => x * vocabularyCountPerInputChannel );
             const onePixelTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
             this.channelValueOffsetTensor3d = onePixelTensor3d.tile( [ height, width, 1 ] ); // All pixels.
-            onePixelTensor3d.diopose();
+            onePixelTensor3d.dispose();
           }
 
           ++progressToAdvance.value;
