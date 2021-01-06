@@ -85,7 +85,7 @@ class HeightWidthDepth {
   /**
    * @return {Embedding2d.Base} The created embedding object.
    */
-  embedding2d_create( bEmbedVocabularyId, bKeepInputTensor, bVocabularyTableUseTensor2d ) {
+  embedding2d_create( bEmbedVocabularyId, bKeepInputTensor, bSplitReshapeGatherConcat ) {
 
     let embedding2d = new Embedding2d.Base();
 
@@ -96,7 +96,7 @@ class HeightWidthDepth {
       this.vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
       bKeepInputTensor,
-      bVocabularyTableUseTensor2d
+      bSplitReshapeGatherConcat
     );
 
     let initerNext;
@@ -105,13 +105,18 @@ class HeightWidthDepth {
     }
     let bInitOk = initerNext.value; // Initialize successfully or failed.
 
-    tf.util.assert( ( bInitOk == true ),
-        `Failed to initialize embedding2d object. ( `
+    let parametersDescription = `( `
         + `bEmbedVocabularyId=${bEmbedVocabularyId}, `
         + `bKeepInputTensor=${bKeepInputTensor}, `
-        + `bVocabularyTableUseTensor2d=${bVocabularyTableUseTensor2d}`
+        + `bSplitReshapeGatherConcat=${bSplitReshapeGatherConcat}`
         + ` )`
-    );
+    ;
+
+    tf.util.assert( ( embedding2d.isValid() == bInitOk ),
+        `Embedding2d validation state (${embedding2d.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
+
+    tf.util.assert( ( bInitOk == true ),
+        `Failed to initialize embedding2d object.  ${parametersDescription}`);
 
     return embedding2d;
   }
@@ -370,7 +375,7 @@ function init() {
   // (cm = channel multiplier)
 
   let depth = 8; //24;
-  globalThis.testSet_110x120x8_cm32 = new HeightWidthDepth( 110, 120, depth, 64 ); // height, width, depth, channelMultiplier
+  globalThis.testSet_110x120x8_cm32 = new HeightWidthDepth( 110, 120, depth, 32 ); // height, width, depth, channelMultiplier
   globalThis.testSet_110x120x8_cm16 = new HeightWidthDepth( 110, 120, depth, 16 );
   globalThis.testSet_110x120x8_cm8 = new HeightWidthDepth( 110, 120, depth, 8 );
   globalThis.testSet_110x120x8_cm4 = new HeightWidthDepth( 110, 120, depth, 4 );
