@@ -370,7 +370,8 @@ function init() {
   // (cm = channel multiplier)
 
   let depth = 8; //24;
-  globalThis.testSet_110x120x8_cm16 = new HeightWidthDepth( 110, 120, depth, 16 ); // height, width, depth, channelMultiplier
+  globalThis.testSet_110x120x8_cm64 = new HeightWidthDepth( 110, 120, depth, 64 ); // height, width, depth, channelMultiplier
+  globalThis.testSet_110x120x8_cm16 = new HeightWidthDepth( 110, 120, depth, 16 );
   globalThis.testSet_110x120x8_cm8 = new HeightWidthDepth( 110, 120, depth, 8 );
   globalThis.testSet_110x120x8_cm4 = new HeightWidthDepth( 110, 120, depth, 4 );
   globalThis.testSet_110x120x8_cm3 = new HeightWidthDepth( 110, 120, depth, 3 );
@@ -380,6 +381,7 @@ function init() {
   globalThis.testSet_110x120x8_cmNegative = new HeightWidthDepth( 110, 120, depth, -1 );
 
   globalThis.testSet_110x120x8_All = [
+    globalThis.testSet_110x120x8_cm64,
     globalThis.testSet_110x120x8_cm16,
     globalThis.testSet_110x120x8_cm8,
     globalThis.testSet_110x120x8_cm4,
@@ -416,7 +418,8 @@ function disposeTensors() {
     globalThis.testSet_110x120x8_All = null;
   }
 
-  globalThis.testSet_110x120x8_cm16
+  globalThis.testSet_110x120x8_cm64
+    = globalThis.testSet_110x120x8_cm16
     = globalThis.testSet_110x120x8_cm8
     = globalThis.testSet_110x120x8_cm4
     = globalThis.testSet_110x120x8_cm3
