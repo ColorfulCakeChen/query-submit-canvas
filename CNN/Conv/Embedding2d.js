@@ -523,6 +523,32 @@ class Base {
 //!!! ...unfinished... squeeze-and-excitation.
   }
 
+//!!! (2021/01/06 Temp) for testing performance without Add.
+  /**
+   * (Used when vocabulary tables are one merged tensor4d.)
+   */
+  temp_apply_and_destroy_or_keep_GatherReshape( inputTensor3d ) {
+
+    let outputTensor3dShape = this.outputTensor3dShape; // Use pre-calculated array for improving performance.
+    outputTensor3dShape[ 0 ] = inputTensor3d.shape[ 0 ];
+    outputTensor3dShape[ 1 ] = inputTensor3d.shape[ 1 ];
+
+    // Gather along the first axis.
+    //
+    // tensor2d.gather( tensor3d ) results to tensor4d.
+    const gatherTensor4d = this.vocabularyTableTensor2d.gather( inputTensor3d, 0 );
+ 
+    this.destroy_or_keep_input( inputTensor3d ); // Destroy or keep input according to ( this.bKeepInputTensor ).
+
+    // Reshape tensor4d to tensor3d.
+    const predictTensor3d = gatherTensor4d.reshape( outputTensor3dShape );
+    gatherTensor4d.dispose();
+
+    return predictTensor3d;
+
+//!!! ...unfinished... squeeze-and-excitation.
+  }
+
   /**
    * (Used when vocabulary tables are tensor3d.)
    *
