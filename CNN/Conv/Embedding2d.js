@@ -389,15 +389,13 @@ class Base {
     // If vocabulary table tensor does not exist (so that apply_and_destroy_or_keep() will just return output as input).
     //
     // (e.g. channelMultiplier is zero or negative, or ( ( channelMultiplier == 1 ) && ( bEmbedVocabularyId ) ) )
-    if ( this.vocabularyTableShape_toExtract ) {
+    if ( null == this.vocabularyTableShape_toExtract ) {
 
       // The vocabulary tables (from initer()'s inputFloat32Array) should always exist.
       if ( this.vocabularyTables )
         if ( this.vocabularyTables[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
           if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
             return true;
-
-      return false;
 
     // If vocabulary table tensor exists. (e.g. channelMultiplier is positive and ( bEmbedVocabularyId == false )).
     } else {
@@ -411,9 +409,9 @@ class Base {
       // Or, the one merged longer tensor2d of vocabulary table (and channel value offset tensor3d) should exists.
       if ( ( this.vocabularyTableTensor2d ) && ( this.channelValueOffsetTensor3d ) )
         return true;
-
-      return false;
     }
+
+    return false;
   }
 
   /** Release tf.tensor. */
