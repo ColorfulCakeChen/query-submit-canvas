@@ -326,9 +326,13 @@ class Base {
             // Channel 3: ( channelValue + ( 3 * vocabularyCountPerInputChannel ) )
             let numberSequencer = new Array( inChannels ).keys(); // Generator: 0, 1, 2, ..., ( inChannels - 1 )
             let channelValueOffset = [ ...numberSequencer ].map( x => x * vocabularyCountPerInputChannel );
-            const onePixelTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
-            this.channelValueOffsetTensor3d = onePixelTensor3d.tile( [ height, width, 1 ] ); // All pixels.
-            onePixelTensor3d.dispose();
+
+//!!! (2021/01/06 Temp Remarked) for testing adding by broadcasting.
+//             const onePixelTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
+//             this.channelValueOffsetTensor3d = onePixelTensor3d.tile( [ height, width, 1 ] ); // All pixels.
+//             onePixelTensor3d.dispose();
+
+            this.channelValueOffsetTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
           }
 
           ++progressToAdvance.value;
