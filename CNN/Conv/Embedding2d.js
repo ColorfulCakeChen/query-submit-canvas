@@ -23,9 +23,7 @@ class Params extends Weights.Params {
   init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null ) {
 
 //!!! ...unfinished...
-// inverted residual connection (by add or by concatenate) ? (dense net)
 // squeeze-and-excitation ?
-// Shuffled Grouped Pointwise Convolution ... ? (by tf.gather() ?)
 
     let parameterMap = new Map( [
       [ Weights.Params.Keys.inChannels,        inChannels ],
@@ -124,8 +122,9 @@ class Base {
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
    * For another example, the input image should be shared across many neural networks.
    *
-   * @param {boolean} bVocabularyTableUseTensor2d
-   *   If true, the vocabulary table will be built as tf.tensor2d. Otherwise, the vocabulary table will be built as tf.tensor3d.
+   * @param {boolean} bSplitReshapeGatherConcat
+   *   If true, the vocabulary table will be built as multiple tf.tensor2d and using split-reshape-gather-concat operation (usually slower).
+   * Otherwise, the vocabulary table will be built as one merged longer tf.tensor2d and using add-gather-reshape (usually faster).
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
@@ -139,7 +138,7 @@ class Base {
     inputFloat32Array, byteOffsetBegin,
     inChannels, channelMultiplier = null, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor,
-    bVocabularyTableUseTensor2d
+    bSplitReshapeGatherConcat
   ) {
 
     // 0. Prepare
@@ -156,9 +155,7 @@ class Base {
     let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
 
 //!!! ...unfinished...
-// inverted residual connection (by add or by concatenate) ? (dense net)
 // squeeze-and-excitation ?
-// Shuffled Grouped Pointwise Convolution ... ? (by tf.gather() ?)
 
     this.disposeTensors();
     this.params = this.vocabularyTables = null; // So that distinguishable if re-initialization failed.
@@ -166,7 +163,7 @@ class Base {
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
-    this.bVocabularyTableUseTensor2d = bVocabularyTableUseTensor2d;
+    this.bSplitReshapeGatherConcat = bSplitReshapeGatherConcat;
 
     if ( bKeepInputTensor )
       this.destroy_or_keep_input = Base.keep_input;
@@ -191,7 +188,7 @@ class Base {
            ( channelMultiplier < 1 )
 
         // Or, if there is only one output channel per input channel and the only one output channel is just vocabulary id.
-        || ( ( channelMultiplier == 1 ) & ( bEmbedVocabularyId ) )
+        || ( ( channelMultiplier == 1 ) && ( bEmbedVocabularyId ) )
        ) {
 
       if ( bKeepInputTensor )
@@ -203,7 +200,7 @@ class Base {
 
     } else { // 2.2 channelMultiplier is positive.
 
-      if ( bVocabularyTableUseTensor2d ) {
+      if ( bSplitReshapeGatherConcat ) {
         this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_SplitReshapeGatherConcat; // When vocabulary tables are tensor2d.
         vocabularyTableShape_toExtract = [ vocabularyCountPerInputChannel, channelMultiplier ];
       } else {
@@ -222,6 +219,8 @@ class Base {
         // 2.2.2 Otherwise, all embedding channels are extracted from data.
       }
     }
+
+    this.vocabularyTableShape_toExtract = vocabularyTableShape_toExtract;
 
     // 3. Extract data of vocabulary tables from inputFloat32Array.
     //
@@ -302,7 +301,7 @@ class Base {
 
         // 4.1.2 Build one merged longer vocabulary table tensor2d for all input channels.
         {
-          if ( !bVocabularyTableUseTensor2d ) {
+          if ( !bSplitReshapeGatherConcat ) {
             this.vocabularyTableTensor2d = tf.concat( this.vocabularyTablesTensorArray, 0 );
 
             tf.dispose( this.vocabularyTablesTensorArray );
@@ -341,7 +340,7 @@ class Base {
     // The followings are intermediate temporary arrays. Pre-allocate these array shells (instead of re-allocating every
     // time apply_and_destroy_or_keep()) for improving performance.
     {
-      if ( bVocabularyTableUseTensor2d ) {
+      if ( bSplitReshapeGatherConcat ) {
         // For a 4 color (r-g-b-a) channel image, splitCount will be 4.
         //
         // For example, suppose input is a color image (i.e. height-width-color tensor3d). The last
@@ -387,11 +386,12 @@ class Base {
   /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
   isValid() {
 
-    if ( this.channelMultiplier < 1 ) {
+    // If vocabulary table tensor does not exist (so that apply_and_destroy_or_keep() will just return output as input).
+    //
+    // (e.g. channelMultiplier is zero or negative, or ( ( channelMultiplier == 1 ) && ( bEmbedVocabularyId ) ) )
+    if ( this.vocabularyTableShape_toExtract ) {
 
-      // The vocabulary tables (from initer()'s inputFloat32Array) should always exist, even if channelMultiplier is zero or negative.
-      //
-      // But there will be no this.vocabularyTablesTensorArray[] because apply_and_destroy_or_keep() will just return output as input.
+      // The vocabulary tables (from initer()'s inputFloat32Array) should always exist.
       if ( this.vocabularyTables )
         if ( this.vocabularyTables[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
           if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
@@ -399,17 +399,16 @@ class Base {
 
       return false;
 
+    // If vocabulary table tensor exists. (e.g. channelMultiplier is positive and ( bEmbedVocabularyId == false )).
     } else {
 
-      // If channelMultiplier is positive.
-
-      // The tensor3d (or tensor2d) of vocabulary tables should exists.
+      // The tensor2d (or tensor3d) of vocabulary tables should exists.
       if ( this.vocabularyTablesTensorArray )
         if ( this.vocabularyTablesTensorArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
           if ( this.vocabularyTablesTensorArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
             return true;
 
-      // Or, the one merged longer tensor2d of vocabulary table should exists.
+      // Or, the one merged longer tensor2d of vocabulary table (and channel value offset tensor3d) should exists.
       if ( ( this.vocabularyTableTensor2d ) && ( this.channelValueOffsetTensor3d ) )
         return true;
 
@@ -437,6 +436,8 @@ class Base {
     if ( this.embeddedTensor3dArray ) {
       this.embeddedTensor3dArray = null;
     }
+
+    this.vocabularyTableShape_toExtract = null;
   }
 
   /** Do nothing. */
@@ -483,7 +484,7 @@ class Base {
   }
 
   /**
-   * (Used when vocabulary tables are one merged tensor4d.)
+   * (Used when vocabulary tables are one merged tensor2d. This is faster than SplitReshapeGatherConcat.)
    *
    * Process the input and produce output by looking up the weights of this embedding layer.
    *
@@ -513,32 +514,6 @@ class Base {
     // tensor2d.gather( tensor3d ) results to tensor4d.
     const gatherTensor4d = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
     vocabularyIndicesTensor3d.dispose();
-
-    // Reshape tensor4d to tensor3d.
-    const predictTensor3d = gatherTensor4d.reshape( outputTensor3dShape );
-    gatherTensor4d.dispose();
-
-    return predictTensor3d;
-
-//!!! ...unfinished... squeeze-and-excitation.
-  }
-
-//!!! (2021/01/06 Temp) for testing performance without Add.
-  /**
-   * (Used when vocabulary tables are one merged tensor4d.)
-   */
-  temp_apply_and_destroy_or_keep_GatherReshape( inputTensor3d ) {
-
-    let outputTensor3dShape = this.outputTensor3dShape; // Use pre-calculated array for improving performance.
-    outputTensor3dShape[ 0 ] = inputTensor3d.shape[ 0 ];
-    outputTensor3dShape[ 1 ] = inputTensor3d.shape[ 1 ];
-
-    // Gather along the first axis.
-    //
-    // tensor2d.gather( tensor3d ) results to tensor4d.
-    const gatherTensor4d = this.vocabularyTableTensor2d.gather( inputTensor3d, 0 );
- 
-    this.destroy_or_keep_input( inputTensor3d ); // Destroy or keep input according to ( this.bKeepInputTensor ).
 
     // Reshape tensor4d to tensor3d.
     const predictTensor3d = gatherTensor4d.reshape( outputTensor3dShape );
@@ -672,22 +647,6 @@ class Base {
 // //!!! ...unfinished... squeeze-and-excitation.
 //   }
 
-  /**
-   * Release an array of tf.tensor.
-   *
-   * This method is a little like tf.dispose() but can only handle one-layer and non-null array (and non-null element). But
-   * it should be faster than tf.dispose( an_array ) because no dynamic memory allocation.
-   *
-   * @param {tf.tensor[]} tensorArray
-   *   An array contains tf.tensor to be disposed. Both the tensorArray itself and its elements can not be null (for reducing
-   * conditional-branch to improving performance). It can not have nested array. Its element must be tf.tensor (and can not
-   * be null).
-   */
-  static disposeTensorArray_ArrayCouldNotNull_ElementCouldNotNull( tensorArray ) {
-    for ( let i = 0; i < tensorArray.length; ++i ) {
-      tensorArray[ i ].dispose();
-    }
-  }
 
   /** @return {number} The position which is started (inclusive) to extract from inputFloat32Array by initer(). */
   get byteOffsetBegin() { return this.params.defaultByteOffsetBegin; }
