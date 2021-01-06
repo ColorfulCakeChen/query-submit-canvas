@@ -92,7 +92,7 @@ class HeightWidthDepth {
     let progress = new ValueMax.Percentage.Aggregate();
     let initer = embedding2d.initer(
       progress, this.weightsFloat32Array, this.weightsByteOffsetBegin,
-      this.height, this.width, this.depth, this.channelMultiplier,
+      this.depth, this.channelMultiplier,
       this.vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
       bKeepInputTensor,
