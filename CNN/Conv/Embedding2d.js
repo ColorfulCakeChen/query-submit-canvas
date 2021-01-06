@@ -113,12 +113,6 @@ class Base {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
-   * @param {number} height
-   *   The height of apply_and_destroy_or_keep()'s input tensor.
-   *
-   * @param {number} width
-   *   The width of apply_and_destroy_or_keep()'s input tensor.
-   *
    * @param {number} inChannels
    *   The input channel count.
    *
@@ -143,7 +137,6 @@ class Base {
   * initer(
     progressParent,
     inputFloat32Array, byteOffsetBegin,
-    height, width,
     inChannels, channelMultiplier = null, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor,
     bVocabularyTableUseTensor2d
@@ -170,8 +163,6 @@ class Base {
     this.disposeTensors();
     this.params = this.vocabularyTables = null; // So that distinguishable if re-initialization failed.
 
-    this.height = height;
-    this.width = width;
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
@@ -320,18 +311,13 @@ class Base {
             // Build a tensor3d for shifting every value of every input channels of inputTensor3d. So that they can be used for
             // indexing the one merged longer vocabulary table tensor2d.
             //
-            // Channel 0: ( channelValue + ( 0 * vocabularyCountPerInputChannel ) )
-            // Channel 1: ( channelValue + ( 1 * vocabularyCountPerInputChannel ) )
-            // Channel 2: ( channelValue + ( 2 * vocabularyCountPerInputChannel ) )
-            // Channel 3: ( channelValue + ( 3 * vocabularyCountPerInputChannel ) )
+            // Channel                  0: ( channelValue + (                  0 * vocabularyCountPerInputChannel ) )
+            // Channel                  1: ( channelValue + (                  1 * vocabularyCountPerInputChannel ) )
+            // Channel                  2: ( channelValue + (                  2 * vocabularyCountPerInputChannel ) )
+            //   :
+            // Channel ( inChannels - 1 ): ( channelValue + ( ( inChannels - 1 ) * vocabularyCountPerInputChannel ) )
             let numberSequencer = new Array( inChannels ).keys(); // Generator: 0, 1, 2, ..., ( inChannels - 1 )
             let channelValueOffset = [ ...numberSequencer ].map( x => x * vocabularyCountPerInputChannel );
-
-//!!! (2021/01/06 Temp Remarked) for testing adding by broadcasting.
-//             const onePixelTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
-//             this.channelValueOffsetTensor3d = onePixelTensor3d.tile( [ height, width, 1 ] ); // All pixels.
-//             onePixelTensor3d.dispose();
-
             this.channelValueOffsetTensor3d = tf.tensor3d( channelValueOffset, [ 1, 1, inChannels ], "int32" ); // One pixel.
           }
 
@@ -513,7 +499,6 @@ class Base {
    */
   static apply_and_destroy_or_keep_AddGatherReshape( inputTensor3d ) {
 
-//!!! Broadcasting seems slow.
     // Shifting vocabulary indices of input. (Broadcasting is used.)
     const vocabularyIndicesTensor3d = inputTensor3d.add( this.channelValueOffsetTensor3d );
 
@@ -540,6 +525,8 @@ class Base {
 
   /**
    * (Used when vocabulary tables are tensor3d.)
+   *
+   * This is slower than AddGatherReshape. It may due to the splitting and concatenating operation.
    */
   static apply_and_destroy_or_keep_SplitReshapeGatherConcat( inputTensor3d ) {
 
@@ -607,7 +594,7 @@ class Base {
 //   /**
 //    * (Used when vocabulary tables are tensor3d.)
 //    *
-//    * This is slower than apply_and_destroy_or_keep_SplitReshapeGatherConcat().
+//    * This is slower than SplitReshapeGatherConcat.
 //    */
 //   static apply_and_destroy_or_keep_SplitGatherConcatReshape( inputTensor3d ) {
 //
