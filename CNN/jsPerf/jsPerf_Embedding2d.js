@@ -268,9 +268,9 @@ class HeightWidthDepth {
 
   // Test apply by split-reshape-gather-concat (i.e. vocabulary table is tensor2d).
   test_SplitReshapeGatherConcat() {
-    let outputTensor3d = this.embedding2d_AddGatherReshape.temp_apply_and_destroy_or_keep_GatherReshape( this.dataTensor3d );
 //!!! (2021/01/06 Temp) for testing performance without Add.
-//    let outputTensor3d = this.embedding2d_SplitReshapeGatherConcat.apply_and_destroy_or_keep( this.dataTensor3d );
+//    let outputTensor3d = this.embedding2d_AddGatherReshape.temp_apply_and_destroy_or_keep_GatherReshape( this.dataTensor3d );
+    let outputTensor3d = this.embedding2d_SplitReshapeGatherConcat.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
 
