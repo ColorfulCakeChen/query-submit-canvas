@@ -7,7 +7,7 @@ import * as Embedding2d from "../Conv/Embedding2d.js";
 /**
  * Test CNN Embedding2d.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11003/67/colorfulcakechen-cnn-embedding2d-fe258a10844a9106e96f8f}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11003/68/colorfulcakechen-cnn-embedding2d-0c13fd3f9b264a9604dc45}
  */
 
 /**
@@ -260,7 +260,7 @@ class HeightWidthDepth {
 
   }
 
-  // Test apply by add-gather-reshape (i.e. vocabulary table is one merged tensor4d).
+  // Test apply by add-gather-reshape (i.e. vocabulary table is one merged longer tensor2d).
   test_AddGatherReshape() {
     let outputTensor3d = this.embedding2d_AddGatherReshape.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
