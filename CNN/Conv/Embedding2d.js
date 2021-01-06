@@ -393,8 +393,8 @@ class Base {
 
       // The vocabulary tables (from initer()'s inputFloat32Array) should always exist.
       if ( this.vocabularyTables )
-        if ( this.vocabularyTables[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
-          if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
+        if ( this.vocabularyTables[ this.params.inChannels - 1 ] )
+          if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table should be valid.
             return true;
 
     // If vocabulary table tensor exists. (e.g. channelMultiplier is positive and ( bEmbedVocabularyId == false )).
@@ -402,8 +402,7 @@ class Base {
 
       // The tensor2d (or tensor3d) of vocabulary tables should exists.
       if ( this.vocabularyTablesTensorArray )
-        if ( this.vocabularyTablesTensorArray[ this.params.inChannels - 1 ] ) // At least, there should be one vocabulary table.
-          if ( this.vocabularyTablesTensorArray[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table is valid.
+        if ( this.vocabularyTablesTensorArray[ this.params.inChannels - 1 ] )  // the last vocabulary table should be valid.
             return true;
 
       // Or, the one merged longer tensor2d of vocabulary table (and channel value offset tensor3d) should exists.
