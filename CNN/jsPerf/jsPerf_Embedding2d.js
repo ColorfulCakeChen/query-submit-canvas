@@ -115,8 +115,11 @@ class HeightWidthDepth {
     tf.util.assert( ( embedding2d.isValid() == bInitOk ),
         `Embedding2d validation state (${embedding2d.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
-    tf.util.assert( ( bInitOk == true ),
+    tf.util.assert( ( true == bInitOk ),
         `Failed to initialize embedding2d object.  ${parametersDescription}`);
+
+    tf.util.assert( ( 100 == progress.value ),
+        `Progress (${progress.value}) should be 100 when initializing embedding2d object successfully. ${parametersDescription}`);
 
     return embedding2d;
   }
