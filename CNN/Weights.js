@@ -219,7 +219,8 @@ class Params extends Base {
         // A function value means it should be extracted from inputFloat32Array (or fixedWeights), and
         // using the function as converter. (i.e. by evolution)
         if ( ( typeof value ) === "function" ) {
-          arrayIndexMap.set( key, { arrayIndex: i, converterFunction: value } ); // Record the index (into this.weightsModified[]) and the converter.
+          // Record the index (into this.weightsModified[]) and the converter.
+          arrayIndexMap.set( key, { arrayIndex: i, converterFunction: value } );
           ++i;
         }
       }
