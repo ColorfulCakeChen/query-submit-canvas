@@ -174,11 +174,13 @@ class Params extends Base {
    *
    * @param {Map} parameterMap
    *   Describe what parameters to be used or extracted. The keys of parameterMap will be viewed as parameter names.
-   * The values of parameterMap will be viewed as parameter values. If the value of a [ key, value ] entry is null,
-   * the parameter's value will be extracted from inputFloat32Array or fixedWeights (i.e. by evolution). Otherwise,
-   * the parameter's value will be the value of the [ key, value ] entry (i.e. by specifying).
+   * The values of parameterMap will be viewed as parameter values or converter. If the value of a [ key, value ] entry is:
+   *   - function: a value will be extracted from inputFloat32Array (or fixedWeights), and past into the function. The
+   *               returned value of the function will become the parameter's value. (i.e. by evolution)
+   *   - null: the same as using Base.toPositiveInteger() as function. (i.e. by evolution)
+   *   - Otherwise: the value will be used as the parameter's value directly. (i.e. by specifying)
    *
-   * @param {Float32Array|Array} fixedWeights
+   * @param {(Float32Array|number[])} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
    * inputFloat32Array. When not null, it should have parameterCountExtracted elements (i.e. the count of non-null values
    * of parameterMap).
@@ -206,11 +208,18 @@ class Params extends Base {
     {
       let i = 0;
       for ( let [ key, value ] of parameterMap ) {
-        // A null (or undefined) value means it should be extracted from inputFloat32Array or fixedWeights (i.e. by evolution).
+        // A null (or undefined) value means it should be extracted from inputFloat32Array or fixedWeights, and
+        // using Base.toPositiveInteger() as converter function. (i.e. by evolution)
         //
         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
         if ( null == value ) {
-          arrayIndexMap.set( key, i ); // Record the index to this.weightsModified[].
+          value = Base.toPositiveInteger;
+        }
+
+        // A function value means it should be extracted from inputFloat32Array (or fixedWeights), and
+        // using the function as converter. (i.e. by evolution)
+        if ( ( typeof value ) === "function" ) {
+          arrayIndexMap.set( key, { arrayIndex: i, converterFunction: value } ); // Record the index (into this.weightsModified[]) and the converter.
           ++i;
         }
       }
@@ -242,9 +251,11 @@ class Params extends Base {
       this.weightsModified[ i ] = Base.toPositiveInteger( this.weights[ i ] );
     }
 
-    // Extract (by evolution) values from array into map.
-    for ( let [ key, arrayIndex ] of arrayIndexMap ) {
-      this.parameterMap.set( key, this.weightsModified[ arrayIndex ] );
+    // Extract (by evolution) values from array, convert it, and put back into map.
+    for ( let [ key, { arrayIndex, converterFunction } ] of arrayIndexMap ) {
+      let extractedValue = this.weightsModified[ arrayIndex ];
+      let convertedValue = converterFunction( extractedValue );
+      this.parameterMap.set( key, convertedValue );
     }
 
     // Restrict channelMultiplier to positive integer.
