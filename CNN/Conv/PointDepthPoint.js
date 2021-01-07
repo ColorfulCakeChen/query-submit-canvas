@@ -1,4 +1,44 @@
-export { Base };
+export { Params, Base };
+
+import * as ValueMax from "../ValueMax.js";
+import * as Weights from "../Weights.js";
+
+/**
+ * Pointwise-depthwise-pointwise convolution layer parameters.
+ *
+//!!! ...unfinished...
+ * @member {number} outChannels
+ *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
+ */
+class Params extends Weights.Params {
+
+  /**
+   * @param {number} channelMultiplier
+   *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
+   * embedding channels. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *
+   * @return {boolean} Return false, if initialization failed.
+   *
+   * @override
+   */
+  init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null ) {
+
+//!!! ...unfinished...
+// squeeze-and-excitation ?
+
+    let parameterMap = new Map( [
+      [ Weights.Params.Keys.inChannels,        inChannels ],
+      [ Weights.Params.Keys.channelMultiplier, channelMultiplier ],
+
+      // For an embedding layer, its output channel count always depends on channelMultiplier.
+      [ Weights.Params.Keys.outChannels,       Infinity ],
+    ] );
+
+    return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
+  }
+
+}
+
 
 /**
  * One step of one block of convolution neural network. There are at most three convolutions inside this object.
@@ -31,6 +71,19 @@ export { Base };
 class Base {
 
   /**
+   * Generator for initializing this object.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
+   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   *
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpret as weights.
+   *
+   * @param {number} byteOffsetBegin
+   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
+   * (not to the inputFloat32Array.byteOffset).
+   *
    * @param {number} channelCount_pointwise1Before
    *   The channel count of input image.
    *
@@ -82,8 +135,17 @@ class Base {
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
    * For another example, the input image should be shared across many neural networks.
+   *
+   * @yield {ValueMax.Percentage.Aggregate}
+   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *
+   * @yield {boolean}
+   *   Yield ( value = true ) when ( done = true ) successfully.
+   *   Yield ( value = false ) when ( done = true ) failed.
    */
-  init(
+  * initer(
+    progressParent,
+    inputFloat32Array, byteOffsetBegin,
     channelCount_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
     depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
@@ -92,7 +154,32 @@ class Base {
     bKeepInputTensor
   ) {
 
+    // 0. Prepare
+
+    // Estimate the maximum value of progress.
+    let progressMax =
+//!!! ...unfinished...
+      1             // for extracting parameters from inputFloat32Array.
+      + inChannels  // for extracting vocabulary table of every input channel from inputFloat32Array.
+      + inChannels  // for building vocabulary table tensor3d of every input channel.
+      + 1           // for building one merged vocabulary table tensor3d for all input channels.
+      ;
+
+    let progressRoot = progressParent.getRoot();
+    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
+
     this.disposeTensors();  // Also initialize some member function pointers to no_operation().
+
+    // 1. Extract parameters.
+    this.params = new Params();
+//!!! ...unfinished...
+    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
+      return false;
+
+    ++progressToAdvance.value;
+    yield progressRoot;  // Parameters extracted. Report progress.
+
+    // 2. ???
 
     let bShouldAddInputToOutput = false;
     if (   ( bAddInputToOutput )          // MobileNetV2 should add input to output, so should not destroy input tensor (otherwise can not add it).
@@ -266,6 +353,44 @@ class Base {
     }
   }
 
+// !!! (2021/01/07) ...unfinished...
+//   /**
+//    * Initialize this object by calling initer() and advance the generator by loop until done.
+//    *
+//    * @param {ValueMax.Percentage.Aggregate} progressParent
+//    *   If null, a temporary progress object will be created.
+//    *
+//    * @return {boolean}
+//    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
+//    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
+//    */
+//   init(
+//     progressParent,
+//     inputFloat32Array, byteOffsetBegin,
+//     inChannels, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+//     bKeepInputTensor,
+//     bSplitReshapeGatherConcat
+//   ) {
+//
+//     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
+//
+//     let initer = this.initer(
+//       progressParent,
+//       inputFloat32Array, byteOffsetBegin,
+//       inChannels, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+//       bKeepInputTensor,
+//       bSplitReshapeGatherConcat
+//     );
+//
+//     let initerNext;
+//     do {
+//       initerNext = initer.next();
+//     } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.getRoot().
+//
+//     let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
+//     return bInitOk;
+//   }
+
   /** Convert activation function name to function object. */
   static getActivationFunction( strActivationName ) {
     switch ( strActivationName ) {
@@ -339,6 +464,11 @@ class Base {
     this.pfn_pointwise1Conv =     this.pfn_pointwise1Bias = this.pfn_pointwise1Activation =
     this.pfn_depthwiseOperation = this.pfn_depthwiseBias =  this.pfn_depthwiseActivation =
     this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.no_operation;
+
+    this.params
+//!!! ...unfinished...
+//      = this.???
+      = null;
   }
 
   /** (Just return inputTensor without doing anything.) */
@@ -492,6 +622,52 @@ class Base {
     return t0;
   }
 
-  /** The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After. */
+  /** @return {number} The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After. */
   get outputChannelCount() { return this.channelCount_pointwise2After; }
+
+//!!! ...unfinished...
+
+  /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
+  isValid() {
+
+//     // If vocabulary table tensor does not exist (so that apply_and_destroy_or_keep() will just return output as input).
+//     //
+//     // (e.g. channelMultiplier is zero or negative, or ( ( channelMultiplier == 1 ) && ( bEmbedVocabularyId ) ) )
+//     if ( null == this.vocabularyTableShape_toExtract ) {
+
+//       // The vocabulary tables (from initer()'s inputFloat32Array) should always exist.
+//       if ( this.vocabularyTables )
+//         if ( this.vocabularyTables[ this.params.inChannels - 1 ] )
+//           if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table should be valid.
+//             return true;
+
+//     // If vocabulary table tensor exists. (e.g. channelMultiplier is positive and ( bEmbedVocabularyId == false )).
+//     } else {
+
+//       // The tensor2d (or tensor3d) of vocabulary tables should exists.
+//       if ( this.vocabularyTablesTensorArray )
+//         if ( this.vocabularyTablesTensorArray[ this.params.inChannels - 1 ] )  // the last vocabulary table should be valid.
+//             return true;
+
+//       // Or, the one merged longer tensor2d of vocabulary table (and channel value offset tensor3d) should exists.
+//       if ( ( this.vocabularyTableTensor2d ) && ( this.channelValueOffsetTensor3d ) )
+//         return true;
+//     }
+
+    return false;
+  }
+
+  /** @return {number} The position which is started (inclusive) to extract from inputFloat32Array by initer(). */
+  get byteOffsetBegin() { return this.params.defaultByteOffsetBegin; }
+
+//!!! ...unfinished...
+  /** @return {number} The position which is ended to (non-inclusive) extract from inputFloat32Array by initer(). */
+  get byteOffsetEnd()   { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
+
+//!!! ...unfinished...
+  get inChannels()        { return this.params.inChannels; }
+  get channelMultiplier() { return this.params.channelMultiplier; }
+
+  /** @return {number} The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After. */
+  get outChannels()       { return this.params.outChannels; }
 }
