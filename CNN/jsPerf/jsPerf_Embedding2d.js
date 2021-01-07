@@ -90,7 +90,24 @@ class HeightWidthDepth {
     let embedding2d = new Embedding2d.Base();
 
     let progress = new ValueMax.Percentage.Aggregate();
-    let initer = embedding2d.initer(
+//!!! (2021/01/07 Remarked) all init() directly.
+//     let initer = embedding2d.initer(
+//       progress, this.weightsFloat32Array, this.weightsByteOffsetBegin,
+//       this.depth, this.channelMultiplier,
+//       this.vocabularyCountPerInputChannel,
+//       bEmbedVocabularyId,
+//       bKeepInputTensor,
+//       bSplitReshapeGatherConcat
+//     );
+//
+//     let initerNext;
+//     while ( ! ( ( initerNext = initer.next() ).done ) ) {
+//       //initerNext.value; // progressRoot
+//     }
+//     let bInitOk = initerNext.value; // Initialize successfully or failed.
+
+    // Initialize successfully or failed.
+    let bInitOk = embedding2d.init(
       progress, this.weightsFloat32Array, this.weightsByteOffsetBegin,
       this.depth, this.channelMultiplier,
       this.vocabularyCountPerInputChannel,
@@ -98,12 +115,6 @@ class HeightWidthDepth {
       bKeepInputTensor,
       bSplitReshapeGatherConcat
     );
-
-    let initerNext;
-    while ( ! ( ( initerNext = initer.next() ).done ) ) {
-      //initerNext.value; // progressRoot
-    }
-    let bInitOk = initerNext.value; // Initialize successfully or failed.
 
     let parametersDescription = `( `
         + `bEmbedVocabularyId=${bEmbedVocabularyId}, `
