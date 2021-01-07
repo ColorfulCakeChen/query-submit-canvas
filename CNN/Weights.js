@@ -97,9 +97,22 @@ class Base {
     return true;     // Success.
   }
 
-  /** @return {number} Return the absolute value of the trucated value. */
+  /** @return {number} Return the absolute value of the trucated value (i.e. integer). */
   static toZeroPositiveInteger( v ) {
     return Math.abs( Math.trunc( v ) );
+  }
+
+  /**
+   * @return {number} Return the trucated value (i.e. integer). The returned value is forcibly between min and max (as integer too).
+   */
+  static toIntegerRange( value, min, max ) {
+    let valueMin = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
+    let valueMax = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
+    let valueKinds = ( valueMax - valueMin ) + 1; // How many possible integer between them.
+
+    // Because remainder always sign of dividend, force the dividend to zeor or positive for processing easily.
+    let result = valueMin + ( Base.toPositiveInteger( value ) % valueKinds );
+    return result;
   }
 
   /** @return Return true, if initialization is success (i.e. ( this.weights != null )). */
