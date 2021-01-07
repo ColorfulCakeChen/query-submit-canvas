@@ -157,8 +157,7 @@ class Base {
 //!!! ...unfinished...
 // squeeze-and-excitation ?
 
-    this.disposeTensors();
-    this.params = this.vocabularyTables = null; // So that distinguishable if re-initialization failed.
+    this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
@@ -420,6 +419,30 @@ class Base {
     return bInitOk;
   }
 
+  /** Release tf.tensor. */
+  disposeTensors() {
+    if ( this.vocabularyTablesTensorArray ) {
+      tf.dispose( this.vocabularyTablesTensorArray );
+      this.vocabularyTablesTensorArray = null;
+    }
+
+    if ( this.vocabularyTableTensor2d ) {
+      this.vocabularyTableTensor2d.dispose();
+      this.vocabularyTableTensor2d = null;
+    }
+
+    if ( this.channelValueOffsetTensor3d ) {
+      this.channelValueOffsetTensor3d.dispose();
+      this.channelValueOffsetTensor3d = null;
+    }
+
+    if ( this.embeddedTensor3dArray ) {
+      this.embeddedTensor3dArray = null;
+    }
+
+    this.params = this.vocabularyTables = this.vocabularyTableShape_toExtract = null;
+  }
+
   /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
   isValid() {
 
@@ -448,30 +471,6 @@ class Base {
     }
 
     return false;
-  }
-
-  /** Release tf.tensor. */
-  disposeTensors() {
-    if ( this.vocabularyTablesTensorArray ) {
-      tf.dispose( this.vocabularyTablesTensorArray );
-      this.vocabularyTablesTensorArray = null;
-    }
-
-    if ( this.vocabularyTableTensor2d ) {
-      this.vocabularyTableTensor2d.dispose();
-      this.vocabularyTableTensor2d = null;
-    }
-
-    if ( this.channelValueOffsetTensor3d ) {
-      this.channelValueOffsetTensor3d.dispose();
-      this.channelValueOffsetTensor3d = null;
-    }
-
-    if ( this.embeddedTensor3dArray ) {
-      this.embeddedTensor3dArray = null;
-    }
-
-    this.vocabularyTableShape_toExtract = null;
   }
 
   /** Do nothing. */
