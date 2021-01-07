@@ -98,7 +98,7 @@ class Base {
   }
 
   /** @return {number} Return the absolute value of the trucated value. */
-  static toPositiveInteger( v ) {
+  static toZeroPositiveInteger( v ) {
     return Math.abs( Math.trunc( v ) );
   }
 
@@ -177,7 +177,7 @@ class Params extends Base {
    * The values of parameterMap will be viewed as parameter values or converter. If the value of a [ key, value ] entry is:
    *   - function: a value will be extracted from inputFloat32Array (or fixedWeights), and past into the function. The
    *               returned value of the function will become the parameter's value. (i.e. by evolution)
-   *   - null: the same as using Base.toPositiveInteger() as function. (i.e. by evolution)
+   *   - null: the same as using Base.toZeroPositiveInteger() as function. (i.e. by evolution)
    *   - Otherwise: the value will be used as the parameter's value directly. (i.e. by specifying)
    *
    * @param {(Float32Array|number[])} fixedWeights
@@ -191,7 +191,7 @@ class Params extends Base {
    */
   init( inputFloat32Array, byteOffsetBegin, parameterMap, fixedWeights = null ) {
 
-    this.weightsModified = this.parameterMap = null; // So that distinguishable if re-initialization failed.
+    this.weightsModified = this.parameterMapModified = null; // So that distinguishable if re-initialization failed.
 
     if ( !parameterMap )
       return false;  // Do not know what parameters to be used or extracted.
@@ -200,7 +200,7 @@ class Params extends Base {
     if ( !inChannels )
       return false;  // At least, there should be a (required) parameter (i.e. input channel count).
 
-    this.parameterMap = new Map( parameterMap );  // Copy so that the original map will not be modified.
+    this.parameterMapModified = new Map( parameterMap );  // Copy so that the original map will not be modified.
 
     // Collect what parameters should be extracted from input array (rather than use values in the parameterMap).
     // At the same time, its array index will also be recorded for extracting its value from array.
@@ -209,11 +209,11 @@ class Params extends Base {
       let i = 0;
       for ( let [ key, value ] of parameterMap ) {
         // A null (or undefined) value means it should be extracted from inputFloat32Array or fixedWeights, and
-        // using Base.toPositiveInteger() as converter function. (i.e. by evolution)
+        // using Base.toZeroPositiveInteger() as converter function. (i.e. by evolution)
         //
         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
         if ( null == value ) {
-          value = Base.toPositiveInteger;
+          value = Base.toZeroPositiveInteger;
         }
 
         // A function value means it should be extracted from inputFloat32Array (or fixedWeights), and
@@ -245,18 +245,21 @@ class Params extends Base {
 
     // Copy and convert to integer.
     //
-    // Do not modify the original array data. When backtracking (to try another neural network layer
-    // configuration), the original data is necessary.
+    // Do not modify the original array data, because the original data is necessary when backtracking (to try
+    // another neural network layer configuration)
     this.weightsModified = new Float32Array( this.weights.length );
-    for ( let i = 0; i < this.weightsModified.length; ++i ) {
-      this.weightsModified[ i ] = Base.toPositiveInteger( this.weights[ i ] );
-    }
 
-    // Extract (by evolution) values from array, convert it, and put back into map.
+//!!! (2021/01/07 Modified) Using custom converter function.
+//     for ( let i = 0; i < this.weightsModified.length; ++i ) {
+//       this.weightsModified[ i ] = Base.toZeroPositiveInteger( this.weights[ i ] );
+//     }
+
+    // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
     for ( let [ key, { arrayIndex, converterFunction } ] of arrayIndexMap ) {
-      let extractedValue = this.weightsModified[ arrayIndex ];
+      let extractedValue = this.weights[ arrayIndex ];
       let convertedValue = converterFunction( extractedValue );
-      this.parameterMap.set( key, convertedValue );
+      this.weightsModified[ arrayIndex ] = convertedValue; // Record in array.
+      this.parameterMapModified.set( key, convertedValue ); // Record in map, too.
     }
 
     // Restrict channelMultiplier to positive integer.
@@ -266,7 +269,7 @@ class Params extends Base {
     let channelMultiplier = this.channelMultiplier;   // May be specified or extracted.
     if ( channelMultiplier < 1 ) {
       channelMultiplier = 1;
-      this.parameterMap.set( Params.Keys.channelMultiplier, channelMultiplier );
+      this.parameterMapModified.set( Params.Keys.channelMultiplier, channelMultiplier );
     }
 
     // If original parameterMap has output channel count and its value is infinity, its value will depend
@@ -277,7 +280,7 @@ class Params extends Base {
     if ( outChannelsOriginal ) {
       if ( !Number.isFinite( outChannelsOriginal ) ) {
         let outChannels = inChannels * channelMultiplier;
-        this.parameterMap.set( Params.Keys.outChannels, outChannels );
+        this.parameterMapModified.set( Params.Keys.outChannels, outChannels );
       } else {
         // Use the original value in parameterMap as output channel count (i.e. by specifying).
       }
@@ -290,13 +293,13 @@ class Params extends Base {
   }
 
   get parameterCountExtracted() { return this.weightCount; }
-  get parameterCount()          { return this.parameterMap.size; }
+  get parameterCount()          { return this.parameterMapModified.size; }
 
   // Most kinds of layers have these parameters.
 
-  get inChannels()        { return this.parameterMap.get( Params.Keys.inChannels ); }
-  get channelMultiplier() { return this.parameterMap.get( Params.Keys.channelMultiplier ); }
-  get outChannels()       { return this.parameterMap.get( Params.Keys.outChannels ); }
+  get inChannels()        { return this.parameterMapModified.get( Params.Keys.inChannels ); }
+  get channelMultiplier() { return this.parameterMapModified.get( Params.Keys.channelMultiplier ); }
+  get outChannels()       { return this.parameterMapModified.get( Params.Keys.outChannels ); }
 }
 
 /**
