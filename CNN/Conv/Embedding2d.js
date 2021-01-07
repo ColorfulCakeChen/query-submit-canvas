@@ -689,5 +689,7 @@ class Base {
 
   get inChannels()        { return this.params.inChannels; }
   get channelMultiplier() { return this.params.channelMultiplier; }
+
+  /** @return {number} The output channel count after embedding. */
   get outChannels()       { return this.params.outChannels; }
 }
