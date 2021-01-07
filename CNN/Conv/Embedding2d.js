@@ -76,6 +76,15 @@ class Params extends Weights.Params {
  * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
  * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
  *
+ * @member {number} byteOffsetBegin
+ *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by initer().
+ *
+ * @member {number} byteOffsetEnd
+ *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer().
+ *
+ * @member {number} inChannels
+ *   Input channel count.
+ *
  * @member {number} channelMultiplier
  *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
  * embedding channels. It could be viewed as embeddingChannelCountPerInputChannel.
@@ -681,15 +690,10 @@ class Base {
 //   }
 
 
-  /** @return {number} The position which is started (inclusive) to extract from inputFloat32Array by initer(). */
-  get byteOffsetBegin() { return this.params.defaultByteOffsetBegin; }
-
-  /** @return {number} The position which is ended to (non-inclusive) extract from inputFloat32Array by initer(). */
-  get byteOffsetEnd()   { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
+  get byteOffsetBegin()   { return this.params.defaultByteOffsetBegin; }
+  get byteOffsetEnd()     { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
 
   get inChannels()        { return this.params.inChannels; }
   get channelMultiplier() { return this.params.channelMultiplier; }
-
-  /** @return {number} The output channel count after embedding. */
   get outChannels()       { return this.params.outChannels; }
 }
