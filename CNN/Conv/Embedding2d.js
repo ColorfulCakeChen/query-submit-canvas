@@ -383,6 +383,43 @@ class Base {
     return true; // Initialized successfully.
   }
 
+  /**
+   * Initialize this object by calling initer() and advance the generator by loop until done.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   If null, a temporary progress object will be created.
+   *
+   * @return {boolean}
+   *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
+   *   Return false if failed (and progressParent.valuePercentage will be less than 100).
+   */
+  init(
+    progressParent,
+    inputFloat32Array, byteOffsetBegin,
+    inChannels, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+    bKeepInputTensor,
+    bSplitReshapeGatherConcat
+  ) {
+
+    progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
+
+    let initer = this.initer(
+      progressParent,
+      inputFloat32Array, byteOffsetBegin,
+      inChannels, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      bKeepInputTensor,
+      bSplitReshapeGatherConcat
+    );
+
+    let initerNext;
+    do {
+      initerNext = initer.next();
+    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.getRoot().
+
+    let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
+    return bInitOk;
+  }
+
   /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
   isValid() {
 
