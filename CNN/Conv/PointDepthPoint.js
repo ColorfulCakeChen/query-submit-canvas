@@ -30,14 +30,66 @@ class Params extends Weights.Params {
       [ Weights.Params.Keys.inChannels,        inChannels ],
       [ Weights.Params.Keys.channelMultiplier, channelMultiplier ],
 
-      // For an embedding layer, its output channel count always depends on channelMultiplier.
-      [ Weights.Params.Keys.outChannels,       Infinity ],
+      // The output channel count of pointwise-depthwise-pointwise convolution layer is a dynamic parameter.
+      // It can not be easily determined from single parameter. It will be computed from multiple parameters.
+      // So it is not defined here.
+      //[ Weights.Params.Keys.outChannels,     ??? ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
+  /**
+   * @return {string}
+   *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
+   */
+  static toActivationName( value ) {
+    let i = Base.toPositiveInteger( value ) % ( Params.ActivationNames.length );
+    return Params.ActivationNames[ i ];
+  }
+
+  /** @return {number} Convert number value into an integer suitable for depthwise convolution filter size. */
+  static todepthwiseFilterHeight( value ) {
+    let valueMin = 2; // At least 2, because depthwise filter size as ( 0 * 0 ) or ( 1 * 1 ) are meaningless.
+    let valueMax = 9; // Avoid too large filter for performance.
+    return Base.toIntegerRange( value, valueMin, valueMax );
+  }
+
+//!!! ...unfinished... Convert number value into every kinds of parameters.
+//    *
+//    * @param {(string|number)} depthwise_AvgMax_Or_ChannelMultiplier
+//    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
+//    * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
+//    *
+//    * @param {number} depthwiseStrides
+//    *   The strides of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this strides will also be ignored.
+//    *
+//    * @param {string} depthwisePad
+//    *   The padding of depthwise convolution. "valid" or "same". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this pad will also be ignored.
+//    *
+//    * @param {boolean} bDepthwiseBias
+//    *   If true, there will be a bias after depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be
+//    * ignored.
+
 }
+
+Params.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" ];
+
+//!!! ...unfinished... any modifying of Params.Keys will afftecs Weights.Params.Keys because it is shared.
+/**
+ * Define parameter keys.
+ *
+ * They are (static) symbol objects used as keys of Params.init()'s parameterMap. They can be seen inside Map when
+ * debugging, and are faster than string (or String object) when Map's key comparing.
+ */
+// Params.Keys.inChannels =        Symbol("inChannels");
+// Params.Keys.channelMultiplier = Symbol("channelMultiplier");
+// Params.Keys.outChannels =       Symbol("outChannels");
+//
+// Params.Keys.dilationHeight =    Symbol("dilationHeight");
+// Params.Keys.dilationWidth =     Symbol("dilationWidth");
+// Params.Keys.filterHeight =      Symbol("filterHeight");
+// Params.Keys.filterWidth =       Symbol("filterWidth");
 
 
 /**
@@ -48,6 +100,24 @@ class Params extends Weights.Params {
  *
  * Every convolution (no matter pointwise or depthwise) could exist or not exist. If exists, it could have or have no bias and
  * activation function.
+ *
+ * @member {number} byteOffsetBegin
+ *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by initer().
+ *
+ * @member {number} byteOffsetEnd
+ *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer().
+ *
+ * @member {number} inChannels
+ *   Input channel count. This is the same as this.channelCount_pointwise1Before (from initer()).
+ *
+//!!! ...unfinished...
+ * @member {number} channelMultiplier
+ *   ??? Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
+ * embedding channels. It could be viewed as embeddingChannelCountPerInputChannel.
+ *
+ * @member {number} outChannels
+ *   The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After.
+ *
  *
  * @member {number} channelCount_pointwise1After_depthwiseBefore
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals expansionChannelCount.
@@ -94,13 +164,13 @@ class Base {
    *   If true, there will be a bias after pointwise convolution. If ( pointwise1ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise1ActivationName
-   *   The activation function name after the first pointwise convolution. One of the following "" (or null), "relu", "relu6", "sigmoid",
+   *   The activation function name after the first pointwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid",
    * "tanh", "sin", "cos". If ( pointwise1ChannelCount == 0 ), this activation function will also be ignored.
    *
    * @param {number} depthwiseFilterHeight
    *   The height (and width) of depthwise convolution's filter. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
    *
-   * @param {string|number} depthwise_AvgMax_Or_ChannelMultiplier
+   * @param {(string|number)} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
    * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
    *
@@ -115,7 +185,7 @@ class Base {
    * ignored.
    *
    * @param {string} depthwiseActivationName
-   *   The activation function name after depthwise convolution. One of the following "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin",
+   *   The activation function name after depthwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin",
    * "cos". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation will also be ignored.
    *
    * @param {number} pointwise2ChannelCount
@@ -125,7 +195,7 @@ class Base {
    *   If true, there will be a bias after the second pointwise convolution. If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise2ActivationName
-   *   The activation function name after the second pointwise convolution. One of the following "" (or null), "relu", "relu6", "sigmoid",
+   *   The activation function name after the second pointwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid",
    * "tanh", "sin", "cos". If ( pointwise2ChannelCount == 0 ), this activation function will also be ignored.
    *
    * @param {boolean} bAddInputToOutput
@@ -622,9 +692,6 @@ class Base {
     return t0;
   }
 
-  /** @return {number} The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After. */
-  get outputChannelCount() { return this.channelCount_pointwise2After; }
-
 //!!! ...unfinished...
 
   /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
@@ -657,17 +724,14 @@ class Base {
     return false;
   }
 
-  /** @return {number} The position which is started (inclusive) to extract from inputFloat32Array by initer(). */
-  get byteOffsetBegin() { return this.params.defaultByteOffsetBegin; }
+  get byteOffsetBegin()   { return this.params.defaultByteOffsetBegin; }
 
 //!!! ...unfinished...
-  /** @return {number} The position which is ended to (non-inclusive) extract from inputFloat32Array by initer(). */
-  get byteOffsetEnd()   { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
+  get byteOffsetEnd()     { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
 
 //!!! ...unfinished...
   get inChannels()        { return this.params.inChannels; }
   get channelMultiplier() { return this.params.channelMultiplier; }
-
-  /** @return {number} The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After. */
-  get outChannels()       { return this.params.outChannels; }
+//  get outChannels()       { return this.params.outChannels; }
+  get outChannels() { return this.channelCount_pointwise2After; }
 }
