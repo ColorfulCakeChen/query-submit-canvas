@@ -60,11 +60,17 @@ class Params extends Weights.Params {
     return Params.toIntegerRange( value, valueMin, valueMax );
   }
 
+  /**
+   * @return {(string|number)}
+   *   Convert number value into integer between [ 0, 66 ]. If 65, return string "Avg". If 66, return string "Max".
+   * Otherwise, return the zero or positive integer as channel multiplier.
+   */
+  static toDepthwise_AvgMax_Or_ChannelMultiplier( value ) {
+    let i = Params.toIntegerZeroPositive( value ) % ( Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array.length );
+    return Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array[ i ];
+  }
+
 //!!! ...unfinished... Convert number value into every kinds of parameters.
-//    *
-//    * @param {(string|number)} depthwise_AvgMax_Or_ChannelMultiplier
-//    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
-//    * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
 //    *
 //    * @param {number} depthwiseStrides
 //    *   The strides of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this strides will also be ignored.
@@ -79,6 +85,10 @@ class Params extends Weights.Params {
 }
 
 Params.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" ];
+
+// "64" is possible channel multiplier kinds (1 to 64). Avoid too large channel multiplier. Otherwise, performance may be poor.
+// "+1" is for channel multiplier equals 0 (means no depthwise operation).
+Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ), "Avg", "Max" ];
 
 //!!! ...unfinished... any modifying of Params.Keys will afftecs Weights.Params.Keys because it is shared.
 /**
