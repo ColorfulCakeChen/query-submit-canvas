@@ -2,6 +2,7 @@ export { Params, Base };
 
 import * as ValueMax from "../ValueMax.js";
 import * as Weights from "../Weights.js";
+import * as ReturnOrClone from "./ReturnOrClone.js";
 
 /**
  * Embedding (2d) layer parameters.
@@ -104,7 +105,7 @@ class Params extends Weights.Params {
  * so that they can be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), the inputTensor3d
  * will be disposed. If ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
  */
-class Base {
+class Base extends ReturnOrClone.Base {
 
   /**
    * Generator for initializing this object.
@@ -494,36 +495,37 @@ class Base {
     inputTensor3d.dispose();
   }
 
-  /**
-   * Return a copy of input (as output) immediately. Used for ( channelMultiplier < 1 ) and ( bKeepInputTensor == true  ).
-   *
-   * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
-   *
-   * @param {tf.tensor3d} inputTensor3d
-   *   A tensor3d data. This inputTensor3d will be kept (i.e. not disposed).
-   *
-   * @return {tf.tensor3d} The copy of input. Return null, if input is null. Throw exception, if failed (e.g. out of GPU memory).
-   */
-  static keep_input_return_copy( inputTensor3d ) {
-    if ( inputTensor3d )
-      return inputTensor3d.clone();
-    return null;
-  }
-
-  /**
-   * Return the input (as output) directly immediately. Used for ( channelMultiplier < 1 ) and ( bKeepInputTensor == false ).
-   *
-   * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
-   *
-   * @param {tf.tensor3d} inputTensor3d
-   *   A tensor3d data. It should be viewed as already disposed by this method. However, in fact, it is returned as output
-   * directly.
-   *
-   * @return {tf.tensor3d} The same as input.
-   */
-  static return_input_directly( inputTensor3d ) {
-    return inputTensor3d;
-  }
+//!!! (2021/01/08 Remarked) Move to base class ReturnOrClone.
+//   /**
+//    * Return a copy of input (as output) immediately. Used for ( channelMultiplier < 1 ) and ( bKeepInputTensor == true  ).
+//    *
+//    * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
+//    *
+//    * @param {tf.tensor3d} inputTensor3d
+//    *   A tensor3d data. This inputTensor3d will be kept (i.e. not disposed).
+//    *
+//    * @return {tf.tensor3d} The copy of input. Return null, if input is null. Throw exception, if failed (e.g. out of GPU memory).
+//    */
+//   static keep_input_return_copy( inputTensor3d ) {
+//     if ( inputTensor3d )
+//       return inputTensor3d.clone();
+//     return null;
+//   }
+//
+//   /**
+//    * Return the input (as output) directly immediately. Used for ( channelMultiplier < 1 ) and ( bKeepInputTensor == false ).
+//    *
+//    * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
+//    *
+//    * @param {tf.tensor3d} inputTensor3d
+//    *   A tensor3d data. It should be viewed as already disposed by this method. However, in fact, it is returned as output
+//    * directly.
+//    *
+//    * @return {tf.tensor3d} The same as input.
+//    */
+//   static return_input_directly( inputTensor3d ) {
+//     return inputTensor3d;
+//   }
 
   /**
    * (Used when vocabulary tables are one merged tensor2d. This is faster than SplitReshapeGatherConcat.)
