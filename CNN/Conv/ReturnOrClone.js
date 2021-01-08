@@ -26,12 +26,10 @@ class Base {
    *   A tensor data. This inputTensor will be kept (i.e. not disposed).
    *
    * @return {tf.tensor}
-   *   The copy of input. Return null, if input is null. Throw exception, if failed (e.g. out of GPU memory).
+   *   Return the copy of input. Throw exception if failed (e.g. input is null, or out of GPU memory).
    */
   static keep_input_return_copy( inputTensor ) {
-    if ( inputTensor )
-      return inputTensor.clone();
-    return null;
+    return inputTensor.clone();
   }
 
 }
