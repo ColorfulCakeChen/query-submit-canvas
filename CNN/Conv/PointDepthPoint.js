@@ -2,6 +2,7 @@ export { Params, Base };
 
 import * as ValueMax from "../ValueMax.js";
 import * as Weights from "../Weights.js";
+import * as ReturnOrClone from "./ReturnOrClone.js";
 
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
@@ -142,7 +143,7 @@ Params.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" 
  * calls one of apply_and_destroy_AddInputToOutput(), apply_and_keep_AddInputToOutput(), apply_and_destroy_or_keep_NoSkipConnection() according
  * to the init()'s parameters.
  */
-class Base {
+class Base extends ReturnOrClone.Base {
 
   /**
    * Generator for initializing this object.
@@ -319,15 +320,31 @@ class Base {
     if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
       if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
-        switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-          case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep; break;
-          case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep; break;
+        if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
+//!!! ...unfinished...
+          switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+            case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.keep_input_return_copy; break;
+            case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.keep_input_return_copy; break;
+          }
+        } else {
+          switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+            case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep; break;
+            case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep; break;
+          }
         }
         bAlreadyKeepInputTensor = true;
       } else {                                                              // will dispose inputTensor.
-        switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-          case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
-          case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
+        if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
+//!!! ...unfinished...
+          switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+            case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.return_input_directly; break;
+            case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.return_input_directly; break;
+          }
+        } else {
+          switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+            case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
+            case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
+          }
         }
       }
 
@@ -537,7 +554,7 @@ class Base {
 
     this.pfn_pointwise1Conv =     this.pfn_pointwise1Bias = this.pfn_pointwise1Activation =
     this.pfn_depthwiseOperation = this.pfn_depthwiseBias =  this.pfn_depthwiseActivation =
-    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.no_operation;
+    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.return_input_directly;
 
     this.params
 //!!! ...unfinished...
@@ -545,8 +562,9 @@ class Base {
       = null;
   }
 
-  /** (Just return inputTensor without doing anything.) */
-  static no_operation( inputTensor ) { return inputTensor; }
+//!!! (2021/01/08 Remarked) Moved to base class ReturnOrClone.
+//   /** (Just return inputTensor without doing anything.) */
+//   static no_operation( inputTensor ) { return inputTensor; }
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv_and_keep( inputTensor ) {
