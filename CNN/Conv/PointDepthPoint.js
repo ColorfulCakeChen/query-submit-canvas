@@ -45,7 +45,7 @@ class Params extends Weights.Params {
    *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
    */
   static toActivationName( value ) {
-    return Params.toArrayElement( value, Params.ActivationNames );
+    return Params.toArrayElement( value, Params.ConverterHelper.ActivationNames );
   }
 
   /** @return {number} Convert number value into an integer suitable for depthwise convolution filter size. */
@@ -64,7 +64,7 @@ class Params extends Weights.Params {
    *   Convert number value into integer between [ 0, 64 ] as channel multiplier, or string "Avg", or string "Max".
    */
   static toDepthwise_AvgMax_Or_ChannelMultiplier( value ) {
-    return Params.toArrayElement( value, Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
+    return Params.toArrayElement( value, Params.ConverterHelper.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
   }
 
   /** @return {number} Convert number value into an integer suitable for depthwise strides. */
@@ -75,28 +75,29 @@ class Params extends Weights.Params {
 
   /** @return {string} Convert number value into 0 or 1. Return "valid" if 0. Return "same" if 1. */
   static toDepthwisePadTypeString( value ) {
-    return Params.toArrayElement( value, Params.DepthwisePadTypeStringArray );
+    return Params.toArrayElement( value, Params.ConverterHelper.DepthwisePadTypeStringArray );
   }
 
 }
 
-Params.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" ];
+Params.ConverterHelper = {};
+Params.ConverterHelper.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" ];
 
 // "64" is possible channel multiplier kinds (1 to 64). Avoid too large channel multiplier. Otherwise, performance may be poor.
 // "+1" is for channel multiplier equals 0 (means no depthwise operation).
-Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ).keys(), "Avg", "Max" ];
-Params.DepthwisePadTypeStringArray = [ "valid", "same" ];
+Params.ConverterHelper.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ).keys(), "Avg", "Max" ];
+Params.ConverterHelper.DepthwisePadTypeStringArray = [ "valid", "same" ];
 
 
 //!!! ...unfinished... any modifying of Params.Keys will afftecs Weights.Params.Keys because it is shared.
 /**
  * Define parameter keys.
  *
- * They are (static) symbol objects used as keys of Params.init()'s parameterMap. They can be seen inside Map when
- * debugging, and are faster than string (or String object) when Map's key comparing.
+ * Define new namespace for avoiding modify Params.Keys directly (because Weights.Params.Keys is shared by all derived sub class).
  */
- Params.PointDepthPoint.Keys.pointwise1ChannelCount =        Symbol("pointwise1ChannelCount");
-// Params.Keys.channelMultiplier = Symbol("channelMultiplier");
+Params.PointDepthPoint = { Keys: {} };
+Params.PointDepthPoint.Keys.pointwise1ChannelCount =        Symbol("pointwise1ChannelCount");
+//Params.Keys.channelMultiplier = Symbol("channelMultiplier");
 // Params.Keys.outChannels =       Symbol("outChannels");
 //
 // Params.Keys.dilationHeight =    Symbol("dilationHeight");
@@ -339,6 +340,13 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1FiltersTensor4d = Base.generateTensor( this.pointwise1FiltersShape );
 
       if ( bShouldAddInputToOutput ) { // If MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
+//!!! ...unfinished...
+// What if can not add-input-to-output because ( channelCount_pointwise1Before != this.channelCount_pointwise2After ) finally?
+// The input will not be disposed even if it should be.
+//
+// Which one should keep input if ( bPointwise1 == false ) or ( bDepthwise == false ) or ( bPointwise2 == false )
+// when ( bShouldAddInputToOutput == true )?
+
         this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;    // will NOT dispose inputTensor.
         bAlreadyKeepInputTensor = true;
       } else {
@@ -482,6 +490,9 @@ class Base extends ReturnOrClone.Base {
     this.bShouldAddInputToOutput = bShouldAddInputToOutput;
 
     this.bKeepInputTensor = bKeepInputTensor;
+
+//!!! ...unfinished...
+// If ( channelCount_pointwise1Before != this.channelCount_pointwise2After ), should not add-input-to-output.
 
     if ( bShouldAddInputToOutput ) { // If MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
       // Should also ( channelCount_pointwise1Before == this.channelCount_pointwise2After ). Otherwise, the result will be wrong.
@@ -739,7 +750,9 @@ class Base extends ReturnOrClone.Base {
 
   /** The input will be added to output for achieving skip connection. The inputTensor will be disposed. */
   static apply_and_destroy_AddInputToOutput( inputTensor ) {
-    let t = Base.apply_and_keep_AddInputToOutput.call( this, inputTensor );
+//!!! (2021/01/08 Remarked) Use this.XXX() should be enough.
+//    let t = Base.apply_and_keep_AddInputToOutput.call( this, inputTensor );
+    let t = this.apply_and_keep_AddInputToOutput( inputTensor );
     inputTensor.dispose();
     return t;
   }
