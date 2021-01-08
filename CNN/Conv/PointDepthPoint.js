@@ -45,8 +45,7 @@ class Params extends Weights.Params {
    *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
    */
   static toActivationName( value ) {
-    let i = Params.toIntegerZeroPositive( value ) % ( Params.ActivationNames.length );
-    return Params.ActivationNames[ i ];
+    return Params.toArrayElement( value, Params.ActivationNames );
   }
 
   /** @return {number} Convert number value into an integer suitable for depthwise convolution filter size. */
@@ -55,9 +54,9 @@ class Params extends Weights.Params {
     //
     // For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
     // For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
-    let valueMin = 1;
-    let valueMax = 9; // Avoid too large filter size. Otherwise, performance may be poor.
-    return Params.toIntegerRange( value, valueMin, valueMax );
+    //
+    // Avoid too large filter size. Otherwise, performance may be poor.
+    return Params.toIntegerRange( value, 1, 9 );
   }
 
   /**
@@ -66,27 +65,19 @@ class Params extends Weights.Params {
    * Otherwise, return the zero or positive integer as channel multiplier.
    */
   static toDepthwise_AvgMax_Or_ChannelMultiplier( value ) {
-    let i = Params.toIntegerZeroPositive( value ) % ( Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array.length );
-    return Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array[ i ];
+    return Params.toArrayElement( value, Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
   }
 
   /** @return {number} Convert number value into an integer suitable for depthwise strides. */
   static toDepthwiseStrides( value ) {
-    let valueMin = 1; // At least, strides should be 1.
-    let valueMax = 2; // Avoid too large strides. Otherwise, too many data will be skipped.
-    return Params.toIntegerRange( value, valueMin, valueMax );
+    // At least, strides should be 1. But avoid too large strides. Otherwise, too many data will be skipped.
+    return Params.toIntegerRange( value, 1, 2 );
   }
 
   /** @return {string} Convert number value into 0 or 1. Return "valid" if 0. Return "same" if 1. */
-  static toDepthwisePad( value ) {
-    let i = Params.toIntegerZeroPositive( value ) % ( Params.DepthwisePadArray.length );
-    return Params.DepthwisePadArray[ i ];
-  }
-
-  /** @return {boolean} Convert number value into 0 or 1. Return false if 0. Return true if 1. */
-  static toDepthwiseBias( value ) {
-    let i = Params.toIntegerZeroPositive( value ) % ( Params.DepthwiseBiasArray.length );
-    return Params.DepthwiseBiasArray[ i ];
+  static toDepthwisePadTypeString( value ) {
+    let i = Params.toIntegerZeroPositive( value ) % ( Params.DepthwisePadTypeStringArray.length );
+    return Params.DepthwisePadTypeStringArray[ i ];
   }
 
 }
@@ -96,8 +87,7 @@ Params.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" 
 // "64" is possible channel multiplier kinds (1 to 64). Avoid too large channel multiplier. Otherwise, performance may be poor.
 // "+1" is for channel multiplier equals 0 (means no depthwise operation).
 Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ), "Avg", "Max" ];
-Params.DepthwisePadArray = [ "valid", "same" ];
-Params.DepthwiseBiasArray = [ false, true ];
+Params.DepthwisePadTypeStringArray = [ "valid", "same" ];
 
 
 //!!! ...unfinished... any modifying of Params.Keys will afftecs Weights.Params.Keys because it is shared.
@@ -107,7 +97,7 @@ Params.DepthwiseBiasArray = [ false, true ];
  * They are (static) symbol objects used as keys of Params.init()'s parameterMap. They can be seen inside Map when
  * debugging, and are faster than string (or String object) when Map's key comparing.
  */
-// Params.Keys.inChannels =        Symbol("inChannels");
+ Params.PointDepthPoint.Keys.pointwise1ChannelCount =        Symbol("pointwise1ChannelCount");
 // Params.Keys.channelMultiplier = Symbol("channelMultiplier");
 // Params.Keys.outChannels =       Symbol("outChannels");
 //
@@ -115,6 +105,52 @@ Params.DepthwiseBiasArray = [ false, true ];
 // Params.Keys.dilationWidth =     Symbol("dilationWidth");
 // Params.Keys.filterHeight =      Symbol("filterHeight");
 // Params.Keys.filterWidth =       Symbol("filterWidth");
+
+//!!! ...unfinished... 
+//    * @param {number} pointwise1ChannelCount
+//    *   The output channel count of the first pointwise convolution. If 0, there will be no pointwise convolution before depthwise convolution.
+//    *
+//    * @param {boolean} bPointwise1Bias
+//    *   If true, there will be a bias after pointwise convolution. If ( pointwise1ChannelCount == 0 ), this bias will also be ignored.
+//    *
+//    * @param {string} pointwise1ActivationName
+//    *   The activation function name after the first pointwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid",
+//    * "tanh", "sin", "cos". If ( pointwise1ChannelCount == 0 ), this activation function will also be ignored.
+//    *
+//    * @param {number} depthwiseFilterHeight
+//    *   The height (and width) of depthwise convolution's filter. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
+//    *
+//    * @param {(string|number)} depthwise_AvgMax_Or_ChannelMultiplier
+//    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
+//    * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
+//    *
+//    * @param {number} depthwiseStrides
+//    *   The strides of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this strides will also be ignored.
+//    *
+//    * @param {string} depthwisePad
+//    *   The padding of depthwise convolution. "valid" or "same". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this pad will also be ignored.
+//    *
+//    * @param {boolean} bDepthwiseBias
+//    *   If true, there will be a bias after depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be
+//    * ignored.
+//    *
+//    * @param {string} depthwiseActivationName
+//    *   The activation function name after depthwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin",
+//    * "cos". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation will also be ignored.
+//    *
+//    * @param {number} pointwise2ChannelCount
+//    *   The output channel count of the second pointwise convolution. If 0, there will be no pointwise convolution after depthwise convolution.
+//    *
+//    * @param {boolean} bPointwise2Bias
+//    *   If true, there will be a bias after the second pointwise convolution. If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
+//    *
+//    * @param {string} pointwise2ActivationName
+//    *   The activation function name after the second pointwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid",
+//    * "tanh", "sin", "cos". If ( pointwise2ChannelCount == 0 ), this activation function will also be ignored.
+//    *
+//    * @param {boolean} bAddInputToOutput
+//    *   If true and ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be
+//    * added to output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
 
 
 /**
