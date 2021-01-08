@@ -84,7 +84,7 @@ Params.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" 
 
 // "64" is possible channel multiplier kinds (1 to 64). Avoid too large channel multiplier. Otherwise, performance may be poor.
 // "+1" is for channel multiplier equals 0 (means no depthwise operation).
-Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ), "Avg", "Max" ];
+Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ).keys(), "Avg", "Max" ];
 Params.DepthwisePadTypeStringArray = [ "valid", "same" ];
 
 
