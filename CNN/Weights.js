@@ -124,6 +124,18 @@ class Base {
     return ( ( Math.trunc( value ) % 2 ) != 0 );
   }
 
+  /**
+   * @param {(number[]|string[])} lookUpArray
+   *   The value will be converted into zero or positive integer. Use it as array index. Return lookUpArray[ index ].
+   *
+   * @return {string}
+   *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
+   */
+  static toArrayElement( value, lookUpArray ) {
+    let i = Base.toIntegerZeroPositive( value ) % lookUpArray.length;
+    return lookUpArray[ i ];
+  }
+
   /** @return Return true, if initialization is success (i.e. ( this.weights != null )). */
   isValid()                      { return ( this.weights ) ? true : false; }
 
