@@ -98,7 +98,7 @@ class Base {
   }
 
   /** @return {number} Return the absolute value of the trucated value (i.e. integer). */
-  static toZeroPositiveInteger( v ) {
+  static toIntegerZeroPositive( v ) {
     return Math.abs( Math.trunc( v ) );
   }
 
@@ -110,8 +110,8 @@ class Base {
     let valueMax = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
     let valueKinds = ( valueMax - valueMin ) + 1; // How many possible integer between them.
 
-    // Because remainder always sign of dividend, force the dividend to zeor or positive for processing easily.
-    let result = valueMin + ( Base.toPositiveInteger( value ) % valueKinds );
+    // Because remainder always has the same sign as dividend, force the dividend to zeor or positive for processing easily.
+    let result = valueMin + ( Base.toIntegerZeroPositive( value ) % valueKinds );
     return result;
   }
 
@@ -190,7 +190,7 @@ class Params extends Base {
    * The values of parameterMap will be viewed as parameter values or converter. If the value of a [ key, value ] entry is:
    *   - function: a value will be extracted from inputFloat32Array (or fixedWeights), and past into the function. The
    *               returned value of the function will become the parameter's value. (i.e. by evolution)
-   *   - null: the same as using Base.toZeroPositiveInteger() as function. (i.e. by evolution)
+   *   - null: the same as using Base.toIntegerZeroPositive() as function. (i.e. by evolution)
    *   - Otherwise: the value will be used as the parameter's value directly. (i.e. by specifying)
    *
    * @param {(Float32Array|number[])} fixedWeights
@@ -222,11 +222,11 @@ class Params extends Base {
       let i = 0;
       for ( let [ key, value ] of parameterMap ) {
         // A null (or undefined) value means it should be extracted from inputFloat32Array or fixedWeights, and
-        // using Base.toZeroPositiveInteger() as converter function. (i.e. by evolution)
+        // using Base.toIntegerZeroPositive() as converter function. (i.e. by evolution)
         //
         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
         if ( null == value ) {
-          value = Base.toZeroPositiveInteger;
+          value = Base.toIntegerZeroPositive;
         }
 
         // A function value means it should be extracted from inputFloat32Array (or fixedWeights), and
@@ -264,7 +264,7 @@ class Params extends Base {
 
 //!!! (2021/01/07 Modified) Using custom converter function.
 //     for ( let i = 0; i < this.weightsModified.length; ++i ) {
-//       this.weightsModified[ i ] = Base.toZeroPositiveInteger( this.weights[ i ] );
+//       this.weightsModified[ i ] = Base.toIntegerZeroPositive( this.weights[ i ] );
 //     }
 
     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
