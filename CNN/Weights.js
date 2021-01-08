@@ -115,6 +115,15 @@ class Base {
     return result;
   }
 
+  /** @return {boolean} Convert number value into false or true. */
+  static toBoolean( value ) {
+    // If value is not integer, the remainder will always not zero. So convert it to integer first.
+    //
+    // According to negative or positive, the remainder could be one of [ -1, 0, +1 ].
+    // So simply check it whether is 0 (instead of check both -1 and +1), could result in false or true.
+    return ( ( Math.trunc( value ) % 2 ) != 0 );
+  }
+
   /** @return Return true, if initialization is success (i.e. ( this.weights != null )). */
   isValid()                      { return ( this.weights ) ? true : false; }
 
