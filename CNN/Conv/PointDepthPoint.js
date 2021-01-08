@@ -318,32 +318,30 @@ class Base extends ReturnOrClone.Base {
     this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
 
     if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
+       this.bDepthwise = true;
 
       if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
+        this.pfn_depthwiseOperation = Base.keep_input_return_copy; // Just clone input if 1x1 or illegal pooling type (i.e. not AVG, not MAX).
+
         if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
-//!!! ...unfinished...
-          switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-            case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.keep_input_return_copy; break;
-            case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.keep_input_return_copy; break;
-          }
+          // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
         } else {
           switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-            case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep; break;
-            case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep; break;
+            case "Avg": this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep; break;
+            case "Max": this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep; break;
           }
         }
         bAlreadyKeepInputTensor = true;
+
       } else {                                                              // will dispose inputTensor.
+        this.pfn_depthwiseOperation = Base.return_input_directly; // Just return input if 1x1 or illegal pooling type (i.e. not AVG, not MAX).
+
         if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
-//!!! ...unfinished...
-          switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-            case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.return_input_directly; break;
-            case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.return_input_directly; break;
-          }
+          // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
         } else {
           switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-            case "Avg":  this.bDepthwise = this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
-            case "Max":  this.bDepthwise = this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
+            case "Avg": this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
+            case "Max": this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
           }
         }
       }
