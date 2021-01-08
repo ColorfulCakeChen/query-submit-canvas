@@ -52,7 +52,7 @@ class Params extends Weights.Params {
   static toDepthwiseFilterHeight( value ) {
     // At least 1, because depthwise filter size ( 0 * 0 ) is meaningless.
     //
-    // For avg pooling or max pooling, it is still meaningless even if filter size is ( 1 * 1 ).
+    // For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
     // For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
     let valueMin = 1;
     let valueMax = 9; // Avoid too large filter size. Otherwise, performance may be poor.
