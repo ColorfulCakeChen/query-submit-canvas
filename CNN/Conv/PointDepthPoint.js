@@ -61,8 +61,7 @@ class Params extends Weights.Params {
 
   /**
    * @return {(string|number)}
-   *   Convert number value into integer between [ 0, 66 ]. If 65, return string "Avg". If 66, return string "Max".
-   * Otherwise, return the zero or positive integer as channel multiplier.
+   *   Convert number value into integer between [ 0, 64 ] as channel multiplier, or string "Avg", or string "Max".
    */
   static toDepthwise_AvgMax_Or_ChannelMultiplier( value ) {
     return Params.toArrayElement( value, Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
@@ -76,8 +75,7 @@ class Params extends Weights.Params {
 
   /** @return {string} Convert number value into 0 or 1. Return "valid" if 0. Return "same" if 1. */
   static toDepthwisePadTypeString( value ) {
-    let i = Params.toIntegerZeroPositive( value ) % ( Params.DepthwisePadTypeStringArray.length );
-    return Params.DepthwisePadTypeStringArray[ i ];
+    return Params.toArrayElement( value, Params.DepthwisePadTypeStringArray );
   }
 
 }
