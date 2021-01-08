@@ -70,17 +70,24 @@ class Params extends Weights.Params {
     return Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array[ i ];
   }
 
-//!!! ...unfinished... Convert number value into every kinds of parameters.
-//    *
-//    * @param {number} depthwiseStrides
-//    *   The strides of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this strides will also be ignored.
-//    *
-//    * @param {string} depthwisePad
-//    *   The padding of depthwise convolution. "valid" or "same". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this pad will also be ignored.
-//    *
-//    * @param {boolean} bDepthwiseBias
-//    *   If true, there will be a bias after depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be
-//    * ignored.
+  /** @return {number} Convert number value into an integer suitable for depthwise strides. */
+  static toDepthwiseStrides( value ) {
+    let valueMin = 1; // At least, strides should be 1.
+    let valueMax = 2; // Avoid too large strides. Otherwise, too many data will be skipped.
+    return Params.toIntegerRange( value, valueMin, valueMax );
+  }
+
+  /** @return {string} Convert number value into 0 or 1. Return "valid" if 0. Return "same" if 1. */
+  static toDepthwisePad( value ) {
+    let i = Params.toIntegerZeroPositive( value ) % ( Params.DepthwisePadArray.length );
+    return Params.DepthwisePadArray[ i ];
+  }
+
+  /** @return {boolean} Convert number value into 0 or 1. Return false if 0. Return true if 1. */
+  static toDepthwiseBias( value ) {
+    let i = Params.toIntegerZeroPositive( value ) % ( Params.DepthwiseBiasArray.length );
+    return Params.DepthwiseBiasArray[ i ];
+  }
 
 }
 
@@ -89,6 +96,9 @@ Params.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" 
 // "64" is possible channel multiplier kinds (1 to 64). Avoid too large channel multiplier. Otherwise, performance may be poor.
 // "+1" is for channel multiplier equals 0 (means no depthwise operation).
 Params.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ), "Avg", "Max" ];
+Params.DepthwisePadArray = [ "valid", "same" ];
+Params.DepthwiseBiasArray = [ false, true ];
+
 
 //!!! ...unfinished... any modifying of Params.Keys will afftecs Weights.Params.Keys because it is shared.
 /**
