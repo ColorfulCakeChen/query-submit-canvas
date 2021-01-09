@@ -217,6 +217,12 @@ class Base extends ReturnOrClone.Base {
    * @param {number} channelCount_pointwise1Before
    *   The channel count of input image.
    *
+
+//!!! ...unfinished... If negative, the channel count will be the same as input channel count (i.e. equal to channelCount_pointwise1Before).
+// And will be added with the input if it is the last layer of this PointDepthPoint.
+//
+//!!! ...unfinished... What if ( depthwiseStrides != 1 ) or ( depthwisePad != "same" ) ?
+
    * @param {number} pointwise1ChannelCount
    *   The output channel count of the first pointwise convolution. If 0, there will be no pointwise convolution before depthwise convolution.
    *
@@ -341,7 +347,8 @@ class Base extends ReturnOrClone.Base {
 
       if ( bShouldAddInputToOutput ) { // If MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
 //!!! ...unfinished...
-// What if can not add-input-to-output because ( channelCount_pointwise1Before != this.channelCount_pointwise2After ) finally?
+// What if can not add-input-to-output because ( channelCount_pointwise1Before != this.channelCount_pointwise2After )
+// or ( depthwiseStrides != 1 ) or ( depthwisePad != "same" ) finally?
 // The input will not be disposed even if it should be.
 //
 // Which one should keep input if ( bPointwise1 == false ) or ( bDepthwise == false ) or ( bPointwise2 == false )
