@@ -9,8 +9,9 @@ export { Base };
  *
  *
  * @member {function} apply_and_destroy_or_keep
- *   This is a method. It has an parameter inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed.
- * It returns a new tf.tensor3d. All other tensors (including inputTensor) will be disposed. In fact, this method calls one of
+ *   This is a method. It has an parameter inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which
+ * will be processed. It returns a new tf.tensor3d. All other tensors will be disposed. But inputTensor could be kept
+ * (if ( bKeepInputTensor == true ) ) or disposed (if ( bKeepInputTensor == false ) ). In fact, this method calls one of
  * apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput(), apply_and_destroy_or_keep_ChannelShuffle(),
  * apply_and_destroy_or_keep_AddInputToOutput() according to the init()'s parameters.
  *
