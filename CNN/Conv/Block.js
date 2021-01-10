@@ -182,7 +182,7 @@ class Base {
       // The special of a block's step 0 are:
       //   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2) (by depthwise convolution with strides = 2)
       //   - Double channels. (by concat if ShuffleNetV2. by second pointwise if MobileNetV2.)
-      //   - Expand channels by channelMultiplier of depthwise convolution. (Both ShuffleNetV2 and MobileNetV2 do not have this. It is added by us only.)
+      //   - Expand channels by channelMultiplier of depthwise convolution. (Both ShuffleNetV2 and MobileNetV2 do not have this. It is added by us.)
       let step0, step0Branch;
       {
         let depthwise_AvgMax_Or_ChannelMultiplier;
