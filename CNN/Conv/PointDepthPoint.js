@@ -355,7 +355,7 @@ class Base extends ReturnOrClone.Base {
 // when ( bShouldAddInputToOutput == true )?
 //
 // Usually, only the following combination is used (and legal):
-//   ( bAddInputToOutput ==  true ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( channelCount_pointwise1Before != this.channelCount_pointwise2After )
+//   ( bAddInputToOutput ==  true ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
 //   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" )
 //   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "valid" )
 //   ( bAddInputToOutput == false ) && ( depthwiseStrides == 2 ) && ( depthwisePad == "same" )
