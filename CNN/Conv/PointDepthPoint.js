@@ -353,6 +353,15 @@ class Base extends ReturnOrClone.Base {
 //
 // Which one should keep input if ( bPointwise1 == false ) or ( bDepthwise == false ) or ( bPointwise2 == false )
 // when ( bShouldAddInputToOutput == true )?
+//
+// Usually, only the following combination is used (and legal):
+//   ( depthwiseStrides == 1 ) && ( depthwisePad == "valid" ) && ( bAddInputToOutput == false )
+//   ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( bAddInputToOutput == false )
+//   ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( bAddInputToOutput == true )
+//   ( depthwiseStrides == 2 ) && ( depthwisePad == "same" ) && ( bAddInputToOutput == false )
+//   ( depthwiseStrides == 2 ) && ( depthwisePad == "same" ) && ( bAddInputToOutput == true )
+//
+//
 
         this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;    // will NOT dispose inputTensor.
         bAlreadyKeepInputTensor = true;
