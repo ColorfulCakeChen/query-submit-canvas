@@ -359,7 +359,6 @@ class Base extends ReturnOrClone.Base {
 //   ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( bAddInputToOutput == false )
 //   ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( bAddInputToOutput == true )
 //   ( depthwiseStrides == 2 ) && ( depthwisePad == "same" ) && ( bAddInputToOutput == false )
-//   ( depthwiseStrides == 2 ) && ( depthwisePad == "same" ) && ( bAddInputToOutput == true )
 //
 //
 
