@@ -520,6 +520,35 @@ class Base extends ReturnOrClone.Base {
     } else {
       this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
     }
+
+
+//!!! ...unfinished... (2021/01/11 New Method)
+
+    // Although caller could request add-input-to-output, it may or may not doable.
+    this.bAddInputToOutput = bAddInputToOutput;
+    if ( bAddInputToOutput ) {
+
+      // Only if the dimension of output is the same as the dimension of input, it is possible to add-input-to-output.
+      //
+      // Only if stride is "1" and pad is "same", the dimension 0 (height) and 1 (width) of the output will be the same as input.
+      // Only if output channel is equals to input channel, the dimension 2 (channel) of the output will be the same as input.
+      if (   ( depthwiseStrides == 1 )
+          && ( depthwisePad == "same" )
+          && ( channelCount_pointwise1Before == this.channelCount_pointwise2After ) ) {
+
+        this.bShouldAddInputToOutput = true;
+
+//!!! ...unfinished...
+      } else {
+        // Since it is not possible to add-input-to-output, it should not be done.
+        this.bShouldAddInputToOutput = false;
+      }
+    }
+//   ( bAddInputToOutput ==  true ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
+//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" )
+//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "valid" )
+//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 2 ) && ( depthwisePad == "same" )
+
   }
 
 // !!! (2021/01/07) ...unfinished...
