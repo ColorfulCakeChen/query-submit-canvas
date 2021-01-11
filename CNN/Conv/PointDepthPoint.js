@@ -317,6 +317,7 @@ class Base extends ReturnOrClone.Base {
 
     // 2. ???
 
+//!!! ...unfinished... (2021/01/11) already move to the end of this function.
     let bShouldAddInputToOutput = false;
     if (   ( bAddInputToOutput )          // MobileNetV2 should add input to output, so should not destroy input tensor (otherwise can not add it).
         && ( depthwiseStrides == 1 ) ) {  // However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
@@ -345,6 +346,7 @@ class Base extends ReturnOrClone.Base {
 
       this.pointwise1FiltersTensor4d = Base.generateTensor( this.pointwise1FiltersShape );
 
+//!!! ...unfinished... (2021/01/11) already move to the end of this function.
       if ( bShouldAddInputToOutput ) { // If MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
 //!!! ...unfinished...
 // What if can not add-input-to-output because ( channelCount_pointwise1Before != this.channelCount_pointwise2After )
@@ -397,6 +399,7 @@ class Base extends ReturnOrClone.Base {
     if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
        this.bDepthwise = true;
 
+//!!! ...unfinished... (2021/01/11) already move to the end of this function.
       if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
         this.pfn_depthwiseOperation = Base.keep_input_return_copy; // Just clone input if 1x1 or illegal pooling type (i.e. not AVG, not MAX).
 
@@ -436,6 +439,7 @@ class Base extends ReturnOrClone.Base {
 
         this.depthwiseFiltersTensor4d = Base.generateTensor( this.depthwiseFiltersShape );
 
+//!!! ...unfinished... (2021/01/11) already move to the end of this function.
         if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
           this.pfn_depthwiseOperation = Base.depthwiseConv_and_keep;
           bAlreadyKeepInputTensor = true;
@@ -482,6 +486,7 @@ class Base extends ReturnOrClone.Base {
 
       this.pointwise2FiltersTensor4d = Base.generateTensor( this.pointwise2FiltersShape );
 
+//!!! ...unfinished... (2021/01/11) already move to the end of this function.
       if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
         this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep;
         bAlreadyKeepInputTensor = true;
@@ -539,6 +544,39 @@ class Base extends ReturnOrClone.Base {
         this.bShouldAddInputToOutput = true;
 
 //!!! ...unfinished...
+        // Find out the first existed operation. Change it to "Xxx_keep" version. So that the
+        // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
+        if ( this.pfn_pointwise1Conv != Base.no_operation ) {
+          this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;    // will NOT dispose inputTensor.
+
+        } else if ( this.pfn_depthwiseOperation != Base.no_operation ) {
+          switch ( this.pfn_depthwiseOperation ) {
+            case Base.return_input_directly:
+              this.pfn_depthwiseOperation = Base.keep_input_return_copy; // Just clone input if 1x1 or illegal pooling type (i.e. not AVG, not MAX).
+
+//!!! ...unfinished... if there are Base.depthwiseBias_and_keep and Base.depthwiseActivation_and_keep,
+//              could keep ( this.pfn_depthwiseOperation == Base.keep_input_return_copy )
+//
+//               this.pfn_depthwiseBias = Base.depthwiseBias_and_destroy;
+//               this.pfn_depthwiseActivation = Base.depthwiseActivation_and_destroy;
+
+              break;
+
+            case Base.depthwiseAvg_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep;  break;
+            case Base.depthwiseMax_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep;  break;
+            case Base.depthwiseConv_and_destroy: this.pfn_depthwiseOperation = Base.depthwiseConv_and_keep; break;
+            default:
+              tf.util.assert( false, `Unknown depthwise operation. ${this.pfn_depthwiseOperation}` );
+              break;
+          }
+
+        } else if ( this.pfn_pointwise2Conv != Base.no_operation ) {
+          this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep;
+
+        } else {
+//!!! ...unfinished...
+        }
+
       } else {
         // Since it is not possible to add-input-to-output, it should not be done.
         this.bShouldAddInputToOutput = false;
@@ -670,12 +708,14 @@ class Base extends ReturnOrClone.Base {
   }
 
   /**
-   * This method returns nothing. This is different from ReturnOrClone.return_input_directly() which will return input.
-   * This method is used for distinguishing from whether an operation does or does not exist.
+   * This method is just the same as ReturnOrClone.return_input_directly(). They all return input immediately.
+   * The reason why needs this method is for distinguishing from whether an operation:
+   *   - does not exist, or
+   *   - does exists but just return input directly.
    *
-   * @return {unefined} Just return nothing without doing anything.
+   * @return {unefined} Just return input without doing anything.
    */
-  static no_operation( inputTensor ) {}
+  static no_operation( inputTensor ) { return inputTensor; }
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv_and_keep( inputTensor ) {
