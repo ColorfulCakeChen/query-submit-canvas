@@ -632,7 +632,7 @@ class Base extends ReturnOrClone.Base {
 
     this.pfn_pointwise1Conv =     this.pfn_pointwise1Bias = this.pfn_pointwise1Activation =
     this.pfn_depthwiseOperation = this.pfn_depthwiseBias =  this.pfn_depthwiseActivation =
-    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.return_input_directly;
+    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.no_operation;
 
     this.params
 //!!! ...unfinished...
@@ -640,9 +640,13 @@ class Base extends ReturnOrClone.Base {
       = null;
   }
 
-//!!! (2021/01/08 Remarked) Moved to base class ReturnOrClone.
-//   /** (Just return inputTensor without doing anything.) */
-//   static no_operation( inputTensor ) { return inputTensor; }
+  /**
+   * This method returns nothing. This is different from ReturnOrClone.return_input_directly() which will return input.
+   * This method is used for distinguishing from whether an operation does or does not exist.
+   *
+   * @return {unefined} Just return nothing without doing anything.
+   */
+  static no_operation( inputTensor ) {}
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv_and_keep( inputTensor ) {
