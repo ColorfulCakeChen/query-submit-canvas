@@ -507,6 +507,8 @@ class Base extends ReturnOrClone.Base {
     }
 
     this.bAddInputToOutput = bAddInputToOutput;
+
+//!!! ...unfinished... should be removed
     this.bShouldAddInputToOutput = bShouldAddInputToOutput;
 
     this.bKeepInputTensor = bKeepInputTensor;
@@ -527,19 +529,27 @@ class Base extends ReturnOrClone.Base {
     }
 
 
-//!!! ...unfinished... (2021/01/11 New Method)
+//!!! ...unfinished... (2021/01/11 New Method) What about ( bKeepInputTensor == true ) ?
 
-    // Although caller could request add-input-to-output, it may or may not doable.
-    this.bAddInputToOutput = bAddInputToOutput;
-    if ( bAddInputToOutput ) {
+    // If:
+    //   - caller request keep-input, or
+    //   - caller request add-input-to-output, and some criteria matched.
+    // Then:
+    //   - change the first operration from "Xxx_destroy" to "Xxx_keep".
+    if (    ( bKeepInputTensor )
 
-      // Only if the dimension of output is the same as the dimension of input, it is possible to add-input-to-output.
-      //
-      // Only if stride is "1" and pad is "same", the dimension 0 (height) and 1 (width) of the output will be the same as input.
-      // Only if output channel is equals to input channel, the dimension 2 (channel) of the output will be the same as input.
-      if (   ( depthwiseStrides == 1 )
-          && ( depthwisePad == "same" )
-          && ( channelCount_pointwise1Before == this.channelCount_pointwise2After ) ) {
+        // Although caller could request add-input-to-output, it may or may not doable.
+        // Only if the dimension of output is the same as the dimension of input, it is possible to add-input-to-output.
+        //
+        // Only if stride is "1" and pad is "same", the dimension 0 (height) and 1 (width) of the output will be the same as input.
+        // Only if output channel is equals to input channel, the dimension 2 (channel) of the output will be the same as input.
+         || (   ( bAddInputToOutput )
+             && (   ( depthwiseStrides == 1 )
+                 && ( depthwisePad == "same" )
+                 && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
+                )
+            )
+       ) {
 
         this.bShouldAddInputToOutput = true;
 
@@ -552,13 +562,14 @@ class Base extends ReturnOrClone.Base {
         } else if ( this.pfn_depthwiseOperation != Base.no_operation ) {
           switch ( this.pfn_depthwiseOperation ) {
             case Base.return_input_directly:
-              this.pfn_depthwiseOperation = Base.keep_input_return_copy; // Just clone input if 1x1 or illegal pooling type (i.e. not AVG, not MAX).
+              // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
+              this.pfn_depthwiseOperation = Base.keep_input_return_copy;
 
 //!!! ...unfinished... if there are Base.depthwiseBias_and_keep and Base.depthwiseActivation_and_keep,
 //              could keep ( this.pfn_depthwiseOperation == Base.keep_input_return_copy )
 //
-//               this.pfn_depthwiseBias = Base.depthwiseBias_and_destroy;
-//               this.pfn_depthwiseActivation = Base.depthwiseActivation_and_destroy;
+//               this.pfn_depthwiseBias = Base.depthwiseBias_and_???destroy;
+//               this.pfn_depthwiseActivation = Base.depthwiseActivation_and_???destroy;
 
               break;
 
