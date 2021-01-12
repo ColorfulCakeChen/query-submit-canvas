@@ -578,44 +578,6 @@ class Base extends ReturnOrClone.Base {
 //     return bInitOk;
 //   }
 
-  /** Convert activation function name to function object. */
-  static getActivationFunction( strActivationName ) {
-    switch ( strActivationName ) {
-      case "relu":    return tf.relu;    break;
-      case "relu6":   return tf.relu6;   break;
-      case "sigmoid": return tf.sigmoid; break;
-      case "tanh":    return tf.tanh;    break;
-      case "sin":     return tf.sin;     break;
-      case "cos":     return tf.cos;     break;
-      //default:
-    }
-    return null;
-  }
-
-  /**
-   * @param {number[]} newTensorShape
-   *   The returned tensor's shape. If null, same as zero size.
-   *
-   * @return {tf.tensor4d|tf.tensor3d}
-   *   Return a tensor4d or tensor3d acccording to newTensorShape. If size of newTensorShape is zero, return null.
-   */
-  static generateTensor( newTensorShape ) {
-    return tf.tidy( () => {
-
-      let valueCount = 0;
-      if ( newTensorShape )
-        valueCount = tf.util.sizeFromShape( newTensorShape );
-
-      let tensor1d, tensorNew = null;
-      if ( valueCount ) {
-        tensor1d = tf.range( 0, valueCount, 1 );
-        tensorNew = tensor1d.reshape( newTensorShape );
-      }
-
-      return tensorNew;
-    });
-  }
-
   /** Release all tensors. */
   disposeTensors() {
     if ( this.pointwise1FiltersTensor4d ) {
@@ -656,6 +618,44 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished...
 //      = this.???
       = null;
+  }
+
+  /** Convert activation function name to function object. */
+  static getActivationFunction( strActivationName ) {
+    switch ( strActivationName ) {
+      case "relu":    return tf.relu;    break;
+      case "relu6":   return tf.relu6;   break;
+      case "sigmoid": return tf.sigmoid; break;
+      case "tanh":    return tf.tanh;    break;
+      case "sin":     return tf.sin;     break;
+      case "cos":     return tf.cos;     break;
+      //default:
+    }
+    return null;
+  }
+
+  /**
+   * @param {number[]} newTensorShape
+   *   The returned tensor's shape. If null, same as zero size.
+   *
+   * @return {tf.tensor4d|tf.tensor3d}
+   *   Return a tensor4d or tensor3d acccording to newTensorShape. If size of newTensorShape is zero, return null.
+   */
+  static generateTensor( newTensorShape ) {
+    return tf.tidy( () => {
+
+      let valueCount = 0;
+      if ( newTensorShape )
+        valueCount = tf.util.sizeFromShape( newTensorShape );
+
+      let tensor1d, tensorNew = null;
+      if ( valueCount ) {
+        tensor1d = tf.range( 0, valueCount, 1 );
+        tensorNew = tensor1d.reshape( newTensorShape );
+      }
+
+      return tensorNew;
+    });
   }
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
