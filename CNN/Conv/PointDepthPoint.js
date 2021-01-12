@@ -195,8 +195,8 @@ Params.PointDepthPoint.Keys.pointwise1ChannelCount =        Symbol("pointwise1Ch
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has a parameter inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed.
  * It returns a new tf.tensor3d. All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method
- * calls one of apply_and_destroy_AddInputToOutput(), apply_and_keep_AddInputToOutput(), apply_and_destroy_or_keep_NoSkipConnection() according
- * to the init()'s parameters.
+ * calls one of apply_and_destroy_AddInputToOutput(), apply_and_keep_AddInputToOutput(), apply_and_destroy_or_keep_NoSkipConnection(),
+ * return_input_directly(), keep_input_return_copy() according to the initer()'s parameters.
  */
 class Base extends ReturnOrClone.Base {
 
@@ -507,10 +507,6 @@ class Base extends ReturnOrClone.Base {
     }
 
     this.bAddInputToOutput = bAddInputToOutput;
-
-//!!! ...unfinished... should be removed
-    this.bShouldAddInputToOutput = bShouldAddInputToOutput;
-
     this.bKeepInputTensor = bKeepInputTensor;
 
     // Although caller could request add-input-to-output, it may or may not doable.
@@ -532,7 +528,20 @@ class Base extends ReturnOrClone.Base {
 //   ( bAddInputToOutput == false ) && ( depthwiseStrides == 2 ) && ( depthwisePad == "same" )
 
 
-//!!! ...unfinished... (2021/01/11 New Method)
+    // Determine which apply_Xxx() function should be used.
+    //
+    // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
+    // because the adjustment might also need to select different apply_Xxx() function.
+    if ( bShouldAddInputToOutput ) {
+
+      if ( bKeepInputTensor )
+        this.apply_and_destroy_or_keep = Base.apply_and_keep_AddInputToOutput;    // will NOT dispose inputTensor.
+      else
+        this.apply_and_destroy_or_keep = Base.apply_and_destroy_AddInputToOutput; // will dispose inputTensor.
+
+    } else {
+      this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
+    }
 
     // If:
     //   - caller request keep-input, or
@@ -566,7 +575,7 @@ class Base extends ReturnOrClone.Base {
           case Base.depthwiseMax_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep;  break;
           case Base.depthwiseConv_and_destroy: this.pfn_depthwiseOperation = Base.depthwiseConv_and_keep; break;
           default:
-            tf.util.assert( false, `Unknown depthwise operation. ${this.pfn_depthwiseOperation}` );
+            tf.util.assert( false, `Unknown depthwise operation. (${this.pfn_depthwiseOperation})` );
             break;
         }
 
@@ -574,23 +583,20 @@ class Base extends ReturnOrClone.Base {
         this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep;
 
       } else {
-//!!! ...unfinished...
+
+        // Since there is no operation at all (i.e. no pointwise1, no depthwise, no pointwise2), let's forget
+        // add-input-to-output (because it is not meaningful in this case). Just according to whether needs
+        // keep-input, change the total operation to return input directly or return clone of input directly.
+        if ( bKeepInputTensor ) {
+          this.apply_and_destroy_or_keep = Base.keep_input_return_copy;
+        } else {
+          this.apply_and_destroy_or_keep = Base.return_input_directly;
+        }
+
       }
 
     } else {
-      // Since it is not required to keep-input or not possible to add-input-to-output, it is not necessary to use "Xxx_keep" operation.
-    }
-
-    // Determine which apply_Xxx() function should be used.
-    if ( bShouldAddInputToOutput ) {
-
-      if ( bKeepInputTensor )
-        this.apply_and_destroy_or_keep = Base.apply_and_keep_AddInputToOutput;    // will NOT dispose inputTensor.
-      else
-        this.apply_and_destroy_or_keep = Base.apply_and_destroy_AddInputToOutput; // will dispose inputTensor.
-
-    } else {
-      this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
+      // Since it is not required to keep-input and not possible to add-input-to-output, it is not necessary to use "Xxx_keep" operation.
     }
 
   }
@@ -705,9 +711,7 @@ class Base extends ReturnOrClone.Base {
 
     this.pfn_pointwise1Conv =     this.pfn_pointwise1Bias = this.pfn_pointwise1Activation =
     this.pfn_depthwiseOperation = this.pfn_depthwiseBias =  this.pfn_depthwiseActivation =
-//!!! (2021/01/12 Remarked) Use boolean flag to distinguish instead of function pointer.
-//    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.no_operation;
-    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = ReturnOrClone.return_input_directly;
+    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.return_input_directly;
 
     this.params
 //!!! ...unfinished...
