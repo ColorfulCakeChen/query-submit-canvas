@@ -532,7 +532,7 @@ class Base extends ReturnOrClone.Base {
 //   ( bAddInputToOutput == false ) && ( depthwiseStrides == 2 ) && ( depthwisePad == "same" )
 
 
-//!!! ...unfinished... (2021/01/11 New Method) What about ( bKeepInputTensor == true ) ?
+//!!! ...unfinished... (2021/01/11 New Method)
 
     // If:
     //   - caller request keep-input, or
@@ -543,13 +543,12 @@ class Base extends ReturnOrClone.Base {
     // For example, if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
     if ( ( bKeepInputTensor ) || ( bShouldAddInputToOutput ) ) {
 
-//!!! ...unfinished...
       // Find out the first existed operation. Change it to "Xxx_keep" version. So that the
       // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
-      if ( this.pfn_pointwise1Conv != Base.no_operation ) {
+      if ( this.bPointwise1 ) {
         this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;    // will NOT dispose inputTensor.
 
-      } else if ( this.pfn_depthwiseOperation != Base.no_operation ) {
+      } else if ( this.bDepthwise ) {
         switch ( this.pfn_depthwiseOperation ) {
           case Base.return_input_directly:
             // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
@@ -571,7 +570,7 @@ class Base extends ReturnOrClone.Base {
             break;
         }
 
-      } else if ( this.pfn_pointwise2Conv != Base.no_operation ) {
+      } else if ( this.bPointwise2 ) {
         this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep;
 
       } else {
@@ -706,7 +705,9 @@ class Base extends ReturnOrClone.Base {
 
     this.pfn_pointwise1Conv =     this.pfn_pointwise1Bias = this.pfn_pointwise1Activation =
     this.pfn_depthwiseOperation = this.pfn_depthwiseBias =  this.pfn_depthwiseActivation =
-    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.no_operation;
+//!!! (2021/01/12 Remarked) Use boolean flag to distinguish instead of function pointer.
+//    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.no_operation;
+    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = ReturnOrClone.return_input_directly;
 
     this.params
 //!!! ...unfinished...
@@ -714,15 +715,16 @@ class Base extends ReturnOrClone.Base {
       = null;
   }
 
-  /**
-   * This method is just the same as ReturnOrClone.return_input_directly(). They all return input immediately.
-   * The reason why needs this method is for distinguishing from whether an operation:
-   *   - does not exist, or
-   *   - does exists but just return input directly.
-   *
-   * @return {unefined} Just return input without doing anything.
-   */
-  static no_operation( inputTensor ) { return inputTensor; }
+//!!! (2021/01/12 Remarked) Use boolean flag to distinguish instead of function pointer.
+//   /**
+//    * This method is just the same as ReturnOrClone.return_input_directly(). They all return input immediately.
+//    * The reason why needs this method is for distinguishing from whether an operation:
+//    *   - does not exist, or
+//    *   - does exists but just return input directly.
+//    *
+//    * @return {unefined} Just return input without doing anything.
+//    */
+//   static no_operation( inputTensor ) { return inputTensor; }
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv_and_keep( inputTensor ) {
