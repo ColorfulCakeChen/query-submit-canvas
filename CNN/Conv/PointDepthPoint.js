@@ -534,7 +534,8 @@ class Base extends ReturnOrClone.Base {
       }
 
     } else {
-      // Since it is not required to keep-input and not possible to add-input-to-output, it is not necessary to use "Xxx_keep" operation.
+      // Since it is not required to keep-input and not possible to add-input-to-output, it is not necessary to
+      // use "Xxx_keep" operation. Using "Xxx_destroy" operation is sufficient.
     }
 
     return true;
