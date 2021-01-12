@@ -493,32 +493,32 @@ class Base extends ReturnOrClone.Base {
       // Find out the first existed operation. Change it to "Xxx_keep" version. So that the
       // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
       if ( this.bPointwise1 ) {
-        this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;    // will NOT dispose inputTensor.
+        this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep; // will NOT dispose inputTensor.
 
       } else if ( this.bDepthwise ) {
         switch ( this.pfn_depthwiseOperation ) {
-          case Base.return_input_directly:
-            // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-            this.pfn_depthwiseOperation = Base.keep_input_return_copy;
 
 //!!! ...unfinished... if there are Base.depthwiseBias_and_keep and Base.depthwiseActivation_and_keep,
-//              could keep ( this.pfn_depthwiseOperation == Base.keep_input_return_copy )
+//              could keep ( this.pfn_depthwiseOperation == Base.return_input_directly )
 //
 //               this.pfn_depthwiseBias = Base.depthwiseBias_and_???destroy;
 //               this.pfn_depthwiseActivation = Base.depthwiseActivation_and_???destroy;
-
-            break;
+//
+          // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
+          case Base.return_input_directly:     this.pfn_depthwiseOperation = Base.keep_input_return_copy; break;
 
           case Base.depthwiseAvg_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep;  break;
           case Base.depthwiseMax_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep;  break;
           case Base.depthwiseConv_and_destroy: this.pfn_depthwiseOperation = Base.depthwiseConv_and_keep; break;
-          default:
+
+          // Just clone input if unknown depthwise operation.
+          default:                             this.pfn_depthwiseOperation = Base.keep_input_return_copy;
             tf.util.assert( false, `Unknown depthwise operation. (${this.pfn_depthwiseOperation})` );
             break;
         }
 
       } else if ( this.bPointwise2 ) {
-        this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep;
+        this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep; // will NOT dispose inputTensor.
 
       } else {
 
@@ -537,6 +537,7 @@ class Base extends ReturnOrClone.Base {
       // Since it is not required to keep-input and not possible to add-input-to-output, it is not necessary to use "Xxx_keep" operation.
     }
 
+    return true;
   }
 
 // !!! (2021/01/07) ...unfinished...
@@ -656,17 +657,6 @@ class Base extends ReturnOrClone.Base {
 //      = this.???
       = null;
   }
-
-//!!! (2021/01/12 Remarked) Use boolean flag to distinguish instead of function pointer.
-//   /**
-//    * This method is just the same as ReturnOrClone.return_input_directly(). They all return input immediately.
-//    * The reason why needs this method is for distinguishing from whether an operation:
-//    *   - does not exist, or
-//    *   - does exists but just return input directly.
-//    *
-//    * @return {unefined} Just return input without doing anything.
-//    */
-//   static no_operation( inputTensor ) { return inputTensor; }
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv_and_keep( inputTensor ) {
