@@ -317,17 +317,6 @@ class Base extends ReturnOrClone.Base {
 
     // 2. ???
 
-//!!! ...unfinished... (2021/01/11) already move to the end of this function.
-    let bShouldAddInputToOutput = false;
-    if (   ( bAddInputToOutput )          // MobileNetV2 should add input to output, so should not destroy input tensor (otherwise can not add it).
-        && ( depthwiseStrides == 1 ) ) {  // However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
-      bShouldAddInputToOutput = true;
-    }
-
-    // Record whether already keep input tensor.
-    // Only first operation could or not dispose input according to bKeepInputTensor.
-    let bAlreadyKeepInputTensor = false;
-
     this.channelCount_pointwise1Before = channelCount_pointwise1Before;
 
     // The first 1x1 pointwise convolution.
@@ -345,35 +334,7 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1BiasesShape =       [ 1, 1, this.channelCount_pointwise1After_depthwiseBefore ];
 
       this.pointwise1FiltersTensor4d = Base.generateTensor( this.pointwise1FiltersShape );
-
-//!!! ...unfinished... (2021/01/11) already move to the end of this function.
-      if ( bShouldAddInputToOutput ) { // If MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
-//!!! ...unfinished...
-// What if can not add-input-to-output because ( channelCount_pointwise1Before != this.channelCount_pointwise2After )
-// or ( depthwiseStrides != 1 ) or ( depthwisePad != "same" ) finally?
-// The input will not be disposed even if it should be.
-//
-// Which one should keep input if ( bPointwise1 == false ) or ( bDepthwise == false ) or ( bPointwise2 == false )
-// when ( bShouldAddInputToOutput == true )?
-//
-// Usually, only the following combination is used (and legal):
-//   ( bAddInputToOutput ==  true ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
-//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" )
-//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "valid" )
-//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 2 ) && ( depthwisePad == "same" )
-//
-//
-
-        this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;    // will NOT dispose inputTensor.
-        bAlreadyKeepInputTensor = true;
-      } else {
-        if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
-          this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;
-          bAlreadyKeepInputTensor = true;
-        } else {                                                              // will dispose inputTensor.
-          this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy;
-        }
-      }
+      this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
 
       if ( bPointwise1Bias ) {
         this.pointwise1BiasesTensor3d = Base.generateTensor( this.pointwise1BiasesShape );
@@ -399,30 +360,14 @@ class Base extends ReturnOrClone.Base {
     if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
        this.bDepthwise = true;
 
-//!!! ...unfinished... (2021/01/11) already move to the end of this function.
-      if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
-        this.pfn_depthwiseOperation = Base.keep_input_return_copy; // Just clone input if 1x1 or illegal pooling type (i.e. not AVG, not MAX).
+      this.pfn_depthwiseOperation = Base.return_input_directly; // Just return input if 1x1 or illegal pooling type (i.e. not AVG, not MAX).
 
-        if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
-          // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
-        } else {
-          switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-            case "Avg": this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep; break;
-            case "Max": this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep; break;
-          }
-        }
-        bAlreadyKeepInputTensor = true;
-
-      } else {                                                              // will dispose inputTensor.
-        this.pfn_depthwiseOperation = Base.return_input_directly; // Just return input if 1x1 or illegal pooling type (i.e. not AVG, not MAX).
-
-        if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
-          // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
-        } else {
-          switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-            case "Avg": this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
-            case "Max": this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
-          }
+      if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
+        // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
+      } else {
+        switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+          case "Avg": this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
+          case "Max": this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
         }
       }
 
@@ -439,13 +384,7 @@ class Base extends ReturnOrClone.Base {
 
         this.depthwiseFiltersTensor4d = Base.generateTensor( this.depthwiseFiltersShape );
 
-//!!! ...unfinished... (2021/01/11) already move to the end of this function.
-        if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
-          this.pfn_depthwiseOperation = Base.depthwiseConv_and_keep;
-          bAlreadyKeepInputTensor = true;
-        } else {                                                              // will dispose inputTensor.
-          this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy;
-        }
+        this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy; // will dispose inputTensor.
 
       } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
       }
@@ -486,13 +425,7 @@ class Base extends ReturnOrClone.Base {
 
       this.pointwise2FiltersTensor4d = Base.generateTensor( this.pointwise2FiltersShape );
 
-//!!! ...unfinished... (2021/01/11) already move to the end of this function.
-      if ( ( bKeepInputTensor ) && ( bAlreadyKeepInputTensor == false ) ) { // will NOT dispose inputTensor.
-        this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep;
-        bAlreadyKeepInputTensor = true;
-      } else {                                                              // will dispose inputTensor.
-        this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy;
-      }
+      this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy; // will dispose inputTensor.
 
       if ( bPointwise2Bias ) {
         this.pointwise2BiasesTensor3d = Base.generateTensor( this.pointwise2BiasesShape );
@@ -514,6 +447,10 @@ class Base extends ReturnOrClone.Base {
     //
     // Only if stride is "1" and pad is "same", the dimension 0 (height) and 1 (width) of the output will be the same as input.
     // Only if output channel is equals to input channel, the dimension 2 (channel) of the output will be the same as input.
+    //
+    // For example:
+    //   - if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
+    //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
     let bShouldAddInputToOutput = this.bShouldAddInputToOutput
      = (   ( bAddInputToOutput )
         && (   ( depthwiseStrides == 1 )
@@ -522,6 +459,7 @@ class Base extends ReturnOrClone.Base {
            )
        );
 
+// Usually, only the following combination is used (and legal):
 //   ( bAddInputToOutput ==  true ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
 //   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" )
 //   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "valid" )
@@ -548,8 +486,8 @@ class Base extends ReturnOrClone.Base {
     //   - caller request add-input-to-output, and some criteria matched.
     // Then:
     //   - change the first operation from "Xxx_destroy" to "Xxx_keep".
+    //   - change the total operation if no first operation exists.
     //
-    // For example, if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
     if ( ( bKeepInputTensor ) || ( bShouldAddInputToOutput ) ) {
 
       // Find out the first existed operation. Change it to "Xxx_keep" version. So that the
