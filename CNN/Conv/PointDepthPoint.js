@@ -513,11 +513,77 @@ class Base extends ReturnOrClone.Base {
 
     this.bKeepInputTensor = bKeepInputTensor;
 
-//!!! ...unfinished...
-// If ( channelCount_pointwise1Before != this.channelCount_pointwise2After ), should not add-input-to-output.
+    // Although caller could request add-input-to-output, it may or may not doable.
+    // Only if the dimension of output is the same as the dimension of input, it is possible to add-input-to-output.
+    //
+    // Only if stride is "1" and pad is "same", the dimension 0 (height) and 1 (width) of the output will be the same as input.
+    // Only if output channel is equals to input channel, the dimension 2 (channel) of the output will be the same as input.
+    let bShouldAddInputToOutput = this.bShouldAddInputToOutput
+     = (   ( bAddInputToOutput )
+        && (   ( depthwiseStrides == 1 )
+            && ( depthwisePad == "same" )
+            && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
+           )
+       );
 
-    if ( bShouldAddInputToOutput ) { // If MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
-      // Should also ( channelCount_pointwise1Before == this.channelCount_pointwise2After ). Otherwise, the result will be wrong.
+//   ( bAddInputToOutput ==  true ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
+//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" )
+//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "valid" )
+//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 2 ) && ( depthwisePad == "same" )
+
+
+//!!! ...unfinished... (2021/01/11 New Method) What about ( bKeepInputTensor == true ) ?
+
+    // If:
+    //   - caller request keep-input, or
+    //   - caller request add-input-to-output, and some criteria matched.
+    // Then:
+    //   - change the first operation from "Xxx_destroy" to "Xxx_keep".
+    //
+    // For example, if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
+    if ( ( bKeepInputTensor ) || ( bShouldAddInputToOutput ) ) {
+
+//!!! ...unfinished...
+      // Find out the first existed operation. Change it to "Xxx_keep" version. So that the
+      // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
+      if ( this.pfn_pointwise1Conv != Base.no_operation ) {
+        this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;    // will NOT dispose inputTensor.
+
+      } else if ( this.pfn_depthwiseOperation != Base.no_operation ) {
+        switch ( this.pfn_depthwiseOperation ) {
+          case Base.return_input_directly:
+            // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
+            this.pfn_depthwiseOperation = Base.keep_input_return_copy;
+
+//!!! ...unfinished... if there are Base.depthwiseBias_and_keep and Base.depthwiseActivation_and_keep,
+//              could keep ( this.pfn_depthwiseOperation == Base.keep_input_return_copy )
+//
+//               this.pfn_depthwiseBias = Base.depthwiseBias_and_???destroy;
+//               this.pfn_depthwiseActivation = Base.depthwiseActivation_and_???destroy;
+
+            break;
+
+          case Base.depthwiseAvg_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep;  break;
+          case Base.depthwiseMax_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep;  break;
+          case Base.depthwiseConv_and_destroy: this.pfn_depthwiseOperation = Base.depthwiseConv_and_keep; break;
+          default:
+            tf.util.assert( false, `Unknown depthwise operation. ${this.pfn_depthwiseOperation}` );
+            break;
+        }
+
+      } else if ( this.pfn_pointwise2Conv != Base.no_operation ) {
+        this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep;
+
+      } else {
+//!!! ...unfinished...
+      }
+
+    } else {
+      // Since it is not required to keep-input or not possible to add-input-to-output, it is not necessary to use "Xxx_keep" operation.
+    }
+
+    // Determine which apply_Xxx() function should be used.
+    if ( bShouldAddInputToOutput ) {
 
       if ( bKeepInputTensor )
         this.apply_and_destroy_or_keep = Base.apply_and_keep_AddInputToOutput;    // will NOT dispose inputTensor.
@@ -527,76 +593,6 @@ class Base extends ReturnOrClone.Base {
     } else {
       this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
     }
-
-
-//!!! ...unfinished... (2021/01/11 New Method) What about ( bKeepInputTensor == true ) ?
-
-    // If:
-    //   - caller request keep-input, or
-    //   - caller request add-input-to-output, and some criteria matched.
-    // Then:
-    //   - change the first operration from "Xxx_destroy" to "Xxx_keep".
-    if (    ( bKeepInputTensor )
-
-        // Although caller could request add-input-to-output, it may or may not doable.
-        // Only if the dimension of output is the same as the dimension of input, it is possible to add-input-to-output.
-        //
-        // Only if stride is "1" and pad is "same", the dimension 0 (height) and 1 (width) of the output will be the same as input.
-        // Only if output channel is equals to input channel, the dimension 2 (channel) of the output will be the same as input.
-         || (   ( bAddInputToOutput )
-             && (   ( depthwiseStrides == 1 )
-                 && ( depthwisePad == "same" )
-                 && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
-                )
-            )
-       ) {
-
-        this.bShouldAddInputToOutput = true;
-
-//!!! ...unfinished...
-        // Find out the first existed operation. Change it to "Xxx_keep" version. So that the
-        // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
-        if ( this.pfn_pointwise1Conv != Base.no_operation ) {
-          this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep;    // will NOT dispose inputTensor.
-
-        } else if ( this.pfn_depthwiseOperation != Base.no_operation ) {
-          switch ( this.pfn_depthwiseOperation ) {
-            case Base.return_input_directly:
-              // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-              this.pfn_depthwiseOperation = Base.keep_input_return_copy;
-
-//!!! ...unfinished... if there are Base.depthwiseBias_and_keep and Base.depthwiseActivation_and_keep,
-//              could keep ( this.pfn_depthwiseOperation == Base.keep_input_return_copy )
-//
-//               this.pfn_depthwiseBias = Base.depthwiseBias_and_???destroy;
-//               this.pfn_depthwiseActivation = Base.depthwiseActivation_and_???destroy;
-
-              break;
-
-            case Base.depthwiseAvg_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep;  break;
-            case Base.depthwiseMax_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep;  break;
-            case Base.depthwiseConv_and_destroy: this.pfn_depthwiseOperation = Base.depthwiseConv_and_keep; break;
-            default:
-              tf.util.assert( false, `Unknown depthwise operation. ${this.pfn_depthwiseOperation}` );
-              break;
-          }
-
-        } else if ( this.pfn_pointwise2Conv != Base.no_operation ) {
-          this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep;
-
-        } else {
-//!!! ...unfinished...
-        }
-
-      } else {
-        // Since it is not possible to add-input-to-output, it should not be done.
-        this.bShouldAddInputToOutput = false;
-      }
-    }
-//   ( bAddInputToOutput ==  true ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
-//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" )
-//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "valid" )
-//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 2 ) && ( depthwisePad == "same" )
 
   }
 
