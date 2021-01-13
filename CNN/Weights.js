@@ -137,11 +137,11 @@ class Base {
   }
 
   /**
-   * @return {any} If ( null == value ), return defaultValue. Otherwise, return value.
+   * @return {any} If ( null == value ), return secondValue. Otherwise, return value.
    */
-  static defaultValueIfNull( value, defaultValue ) {
+  static secondIfNull( value, secondValue ) {
     if ( null == value )
-      return defaultValue;
+      return secondValue;
     return value;
   }
 
