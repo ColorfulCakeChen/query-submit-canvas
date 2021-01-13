@@ -36,19 +36,19 @@ class Params extends Weights.Params {
 
     let parameterMap = new Map( [
 //!!! ...unfinished... inChannels can not null.
-      [ Weights.Params.Keys.inChannels,       Weights.Params.secondIfNull( channelCount_pointwise1Before, Params. ) ],
-      [ Params.Keys.pointwise1ChannelCount,   Weights.Params.secondIfNull( pointwise1ChannelCount,   Params.toPointwise1ChannelCount ) ],
-      [ Params.Keys.bPointwise1Bias,          Weights.Params.secondIfNull( bPointwise1Bias,          Weights.Params.toBoolean ) ],
-      [ Params.Keys.pointwise1ActivationName, Weights.Params.secondIfNull( pointwise1ActivationName, Params.toActivationName ) ],
-      [ Params.Keys.depthwiseFilterHeight,    Weights.Params.secondIfNull( depthwiseFilterHeight,    Params.toDepthwiseFilterHeight ) ],
-      [ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier, Weights.Params.secondIfNull( depthwise_AvgMax_Or_ChannelMultiplier, Params.toDepthwise_AvgMax_Or_ChannelMultiplier ) ],
-      [ Params.Keys.depthwiseStridesPad,      Weights.Params.secondIfNull( depthwiseStridesPad,      Params.toDepthwiseStridesPad ) ],
-      [ Params.Keys.bDepthwiseBias,           Weights.Params.secondIfNull( bDepthwiseBias,           Weights.Params.toBoolean ) ],
-      [ Params.Keys.depthwiseActivationName,  Weights.Params.secondIfNull( depthwiseActivationName,  Params.toActivationName ) ],
-      [ Params.Keys.pointwise2ChannelCount,   Weights.Params.secondIfNull( pointwise2ChannelCount,   Params.toPointwise2ChannelCount ) ],
-      [ Params.Keys.bPointwise2Bias,          Weights.Params.secondIfNull( bPointwise2Bias,          Weights.Params.toBoolean ) ],
-      [ Params.Keys.pointwise2ActivationName, Weights.Params.secondIfNull( pointwise2ActivationName, Params.toActivationName ) ],
-      [ Params.Keys.bAddInputToOutput,        Weights.Params.secondIfNull( bAddInputToOutput,        Weights.Params.toBoolean ) ],
+      [ Weights.Params.Keys.inChannels,       Weights.To.AnotherIfNull( channelCount_pointwise1Before, Params. ) ],
+      [ Params.Keys.pointwise1ChannelCount,   Weights.To.AnotherIfNull( pointwise1ChannelCount,   Params.toPointwise1ChannelCount ) ],
+      [ Params.Keys.bPointwise1Bias,          Weights.To.AnotherIfNull( bPointwise1Bias,          Weights.To.Boolean ) ],
+      [ Params.Keys.pointwise1ActivationName, Weights.To.AnotherIfNull( pointwise1ActivationName, Params.toActivationName ) ],
+      [ Params.Keys.depthwiseFilterHeight,    Weights.To.AnotherIfNull( depthwiseFilterHeight,    Params.toDepthwiseFilterHeight ) ],
+      [ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier, Weights.To.AnotherIfNull( depthwise_AvgMax_Or_ChannelMultiplier, Params.toDepthwise_AvgMax_Or_ChannelMultiplier ) ],
+      [ Params.Keys.depthwiseStridesPad,      Weights.To.AnotherIfNull( depthwiseStridesPad,      Params.toDepthwiseStridesPad ) ],
+      [ Params.Keys.bDepthwiseBias,           Weights.To.AnotherIfNull( bDepthwiseBias,           Weights.To.Boolean ) ],
+      [ Params.Keys.depthwiseActivationName,  Weights.To.AnotherIfNull( depthwiseActivationName,  Params.toActivationName ) ],
+      [ Params.Keys.pointwise2ChannelCount,   Weights.To.AnotherIfNull( pointwise2ChannelCount,   Params.toPointwise2ChannelCount ) ],
+      [ Params.Keys.bPointwise2Bias,          Weights.To.AnotherIfNull( bPointwise2Bias,          Weights.To.Boolean ) ],
+      [ Params.Keys.pointwise2ActivationName, Weights.To.AnotherIfNull( pointwise2ActivationName, Params.toActivationName ) ],
+      [ Params.Keys.bAddInputToOutput,        Weights.To.AnotherIfNull( bAddInputToOutput,        Weights.To.Boolean ) ],
 
       // The output channel count of pointwise-depthwise-pointwise convolution layer is a dynamic parameter.
       // It can not be easily determined from single parameter. It will be computed from multiple parameters.
@@ -60,16 +60,16 @@ class Params extends Weights.Params {
   }
 
   /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
-  static toPointwise1ChannelCount( value ) { return Weights.Params.toIntegerRange( value, 0, 10 * 1024 ); }
+  static toPointwise1ChannelCount( value ) { return Weights.To.IntegerRange( value, 0, 10 * 1024 ); }
 
   /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
-  static toPointwise2ChannelCount( value ) { return Weights.Params.toIntegerRange( value, 0, 10 * 1024 ); }
+  static toPointwise2ChannelCount( value ) { return Weights.To.IntegerRange( value, 0, 10 * 1024 ); }
 
   /**
    * @return {string}
    *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
    */
-  static toActivationName( value ) { return Weights.Params.toArrayElement( value, Params.ConverterHelper.ActivationNames ); }
+  static toActivationName( value ) { return Weights.To.ArrayElement( value, Params.ConverterHelper.ActivationNames ); }
 
   /** @return {number} Convert number value into an integer suitable for depthwise convolution filter size. */
   static toDepthwiseFilterHeight( value ) {
@@ -79,7 +79,7 @@ class Params extends Weights.Params {
     // For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
     //
     // Avoid too large filter size. Otherwise, performance may be poor.
-    return Weights.Params.toIntegerRange( value, 1, 9 );
+    return Weights.To.IntegerRange( value, 1, 9 );
   }
 
   /**
@@ -87,7 +87,7 @@ class Params extends Weights.Params {
    *   Convert number value into integer between [ 0, 64 ] as channel multiplier, or string "Avg", or string "Max".
    */
   static toDepthwise_AvgMax_Or_ChannelMultiplier( value ) {
-    return Weights.Params.toArrayElement( value, Params.ConverterHelper.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
+    return Weights.To.ArrayElement( value, Params.ConverterHelper.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
   }
 
 //!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
@@ -104,7 +104,7 @@ class Params extends Weights.Params {
 
   /** @return {number} Convert number value into an integer between [ 0, 2 ]. */
   static toDepthwiseStridesPad( value ) {
-    return Weights.Params.toIntegerRange( value, 0, 2 );
+    return Weights.To.IntegerRange( value, 0, 2 );
   }
 
 }
