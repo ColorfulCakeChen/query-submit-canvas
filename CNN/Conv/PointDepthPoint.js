@@ -37,19 +37,18 @@ class Params extends Weights.Params {
     let parameterMap = new Map( [
 //!!! ...unfinished... inChannels can not null.
       [ Weights.Params.Keys.inChannels,       Weights.Params.secondIfNull( channelCount_pointwise1Before, Params. ) ],
-      [ Params.Keys.pointwise1ChannelCount,   Weights.Params.secondIfNull( pointwise1ChannelCount, Params.toPointwise1ChannelCount ) ],
-      [ Params.Keys.bPointwise1Bias,          Weights.Params.secondIfNull( bPointwise1Bias, Params.toBoolean ) ],
+      [ Params.Keys.pointwise1ChannelCount,   Weights.Params.secondIfNull( pointwise1ChannelCount,   Params.toPointwise1ChannelCount ) ],
+      [ Params.Keys.bPointwise1Bias,          Weights.Params.secondIfNull( bPointwise1Bias,          Weights.Params.toBoolean ) ],
       [ Params.Keys.pointwise1ActivationName, Weights.Params.secondIfNull( pointwise1ActivationName, Params.toActivationName ) ],
-      [ Params.Keys.depthwiseFilterHeight,    Weights.Params.secondIfNull( depthwiseFilterHeight, Params.toDepthwiseFilterHeight ) ],
-      [ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier, Params.secondIfNull( depthwise_AvgMax_Or_ChannelMultiplier, Params.toDepthwise_AvgMax_Or_ChannelMultiplier ) ],
-      [ Params.Keys.depthwiseStridesPad,      Weights.Params.secondIfNull( depthwiseStridesPad, Params.toDepthwiseStridesPad ) ],
-      [ Params.Keys.bDepthwiseBias,           Weights.Params.secondIfNull( bDepthwiseBias, Params.toBoolean ) ],
-      [ Params.Keys.depthwiseActivationName,  Weights.Params.secondIfNull( depthwiseActivationName, Params.toActivationName ) ],
-      [ Params.Keys.pointwise2ChannelCount,   Weights.Params.secondIfNull( pointwise2ChannelCount, Params.toPointwise2ChannelCount ) ],
-      [ Params.Keys.bPointwise2Bias,          Weights.Params.secondIfNull( bPointwise2Bias, Params.toBoolean ) ],
+      [ Params.Keys.depthwiseFilterHeight,    Weights.Params.secondIfNull( depthwiseFilterHeight,    Params.toDepthwiseFilterHeight ) ],
+      [ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier, Weights.Params.secondIfNull( depthwise_AvgMax_Or_ChannelMultiplier, Params.toDepthwise_AvgMax_Or_ChannelMultiplier ) ],
+      [ Params.Keys.depthwiseStridesPad,      Weights.Params.secondIfNull( depthwiseStridesPad,      Params.toDepthwiseStridesPad ) ],
+      [ Params.Keys.bDepthwiseBias,           Weights.Params.secondIfNull( bDepthwiseBias,           Weights.Params.toBoolean ) ],
+      [ Params.Keys.depthwiseActivationName,  Weights.Params.secondIfNull( depthwiseActivationName,  Params.toActivationName ) ],
+      [ Params.Keys.pointwise2ChannelCount,   Weights.Params.secondIfNull( pointwise2ChannelCount,   Params.toPointwise2ChannelCount ) ],
+      [ Params.Keys.bPointwise2Bias,          Weights.Params.secondIfNull( bPointwise2Bias,          Weights.Params.toBoolean ) ],
       [ Params.Keys.pointwise2ActivationName, Weights.Params.secondIfNull( pointwise2ActivationName, Params.toActivationName ) ],
-      [ Params.Keys.bAddInputToOutput,        Weights.Params.secondIfNull( bAddInputToOutput, Params.toBoolean ) ],
-
+      [ Params.Keys.bAddInputToOutput,        Weights.Params.secondIfNull( bAddInputToOutput,        Weights.Params.toBoolean ) ],
 
       // The output channel count of pointwise-depthwise-pointwise convolution layer is a dynamic parameter.
       // It can not be easily determined from single parameter. It will be computed from multiple parameters.
@@ -70,9 +69,7 @@ class Params extends Weights.Params {
    * @return {string}
    *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
    */
-  static toActivationName( value ) {
-    return Weights.Params.toArrayElement( value, Params.ConverterHelper.ActivationNames );
-  }
+  static toActivationName( value ) { return Weights.Params.toArrayElement( value, Params.ConverterHelper.ActivationNames ); }
 
   /** @return {number} Convert number value into an integer suitable for depthwise convolution filter size. */
   static toDepthwiseFilterHeight( value ) {
@@ -112,6 +109,7 @@ class Params extends Weights.Params {
 
 }
 
+/** Define parameter converter helper data. */
 Params.ConverterHelper = {};
 Params.ConverterHelper.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" ];
 
@@ -122,13 +120,7 @@ Params.ConverterHelper.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new A
 //!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
 //Params.ConverterHelper.DepthwisePadTypeStringArray = [ "valid", "same" ];
 
-
-//!!! ...unfinished... any modifying of Params.Keys will afftecs Weights.Params.Keys because it is shared.
-/**
- * Define parameter keys.
- *
- * Define new namespace for avoiding modify Params.Keys directly (because Weights.Params.Keys is shared by all derived sub class).
- */
+/** Define parameter keys. */
 Params.Keys = {};
 Params.Keys.pointwise1ChannelCount =   Symbol("pointwise1ChannelCount");
 Params.Keys.bPointwise1Bias =          Symbol("bPointwise1Bias");
