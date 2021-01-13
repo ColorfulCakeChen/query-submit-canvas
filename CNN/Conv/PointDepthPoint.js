@@ -14,6 +14,7 @@ import * as ReturnOrClone from "./ReturnOrClone.js";
 class Params extends Weights.Params {
 
   /**
+//!!! ...unfinished...
    * @param {number} channelMultiplier
    *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
    * embedding channels. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -22,14 +23,33 @@ class Params extends Weights.Params {
    *
    * @override
    */
-  init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null ) {
+  init( inputFloat32Array, byteOffsetBegin,
+    channelCount_pointwise1Before,
+    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+    bAddInputToOutput,
+  ) {
 
 //!!! ...unfinished...
 // squeeze-and-excitation ?
 
     let parameterMap = new Map( [
-      [ Weights.Params.Keys.inChannels,        inChannels ],
-      [ Weights.Params.Keys.channelMultiplier, channelMultiplier ],
+//!!! ...unfinished... inChannels can not null.
+      [ Params.PointDepthPoint.Keys.inChannels,               Params.secondIfNull( channelCount_pointwise1Before, Params. ) ],
+      [ Params.PointDepthPoint.Keys.pointwise1ChannelCount,   Params.secondIfNull( pointwise1ChannelCount, Params.toPointwise1ChannelCount ) ],
+      [ Params.PointDepthPoint.Keys.bPointwise1Bias,          Params.secondIfNull( bPointwise1Bias, Params.toBoolean ) ],
+      [ Params.PointDepthPoint.Keys.pointwise1ActivationName, Params.secondIfNull( pointwise1ActivationName, Params.toActivationName ) ],
+      [ Params.PointDepthPoint.Keys.depthwiseFilterHeight,    Params.secondIfNull( depthwiseFilterHeight, Params.toDepthwiseFilterHeight ) ],
+      [ Params.PointDepthPoint.Keys.depthwise_AvgMax_Or_ChannelMultiplier, Params.secondIfNull( depthwise_AvgMax_Or_ChannelMultiplier, Params.toDepthwise_AvgMax_Or_ChannelMultiplier ) ],
+      [ Params.PointDepthPoint.Keys.depthwiseStridesPad,      Params.secondIfNull( depthwiseStridesPad, Params.toDepthwiseStridesPad ) ],
+      [ Params.PointDepthPoint.Keys.bDepthwiseBias,           Params.secondIfNull( bDepthwiseBias, Params.toBoolean ) ],
+      [ Params.PointDepthPoint.Keys.depthwiseActivationName,  Params.secondIfNull( depthwiseActivationName, Params.toActivationName ) ],
+      [ Params.PointDepthPoint.Keys.pointwise2ChannelCount,   Params.secondIfNull( pointwise2ChannelCount, Params.toPointwise2ChannelCount ) ],
+      [ Params.PointDepthPoint.Keys.bPointwise2Bias,          Params.secondIfNull( bPointwise2Bias, Params.toBoolean ) ],
+      [ Params.PointDepthPoint.Keys.pointwise2ActivationName, Params.secondIfNull( pointwise2ActivationName, Params.toActivationName ) ],
+      [ Params.PointDepthPoint.Keys.bAddInputToOutput,        Params.secondIfNull( bAddInputToOutput, Params.toBoolean ) ],
+
 
       // The output channel count of pointwise-depthwise-pointwise convolution layer is a dynamic parameter.
       // It can not be easily determined from single parameter. It will be computed from multiple parameters.
@@ -39,6 +59,12 @@ class Params extends Weights.Params {
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
+
+  /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
+  static toPointwise1ChannelCount( value ) { return Params.toIntegerRange( value, 0, 10 * 1024 ); }
+
+  /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
+  static toPointwise2ChannelCount( value ) { return Params.toIntegerRange( value, 0, 10 * 1024 ); }
 
   /**
    * @return {string}
