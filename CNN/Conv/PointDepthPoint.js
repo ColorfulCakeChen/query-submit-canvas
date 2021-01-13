@@ -67,15 +67,21 @@ class Params extends Weights.Params {
     return Params.toArrayElement( value, Params.ConverterHelper.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
   }
 
-  /** @return {number} Convert number value into an integer suitable for depthwise strides. */
-  static toDepthwiseStrides( value ) {
-    // At least, strides should be 1. But avoid too large strides. Otherwise, too many data will be skipped.
-    return Params.toIntegerRange( value, 1, 2 );
-  }
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//   /** @return {number} Convert number value into an integer suitable for depthwise strides. */
+//   static toDepthwiseStrides( value ) {
+//     // At least, strides should be 1. But avoid too large strides. Otherwise, too many data will be skipped.
+//     return Params.toIntegerRange( value, 1, 2 );
+//   }
+//
+//   /** @return {string} Convert number value into 0 or 1. Return "valid" if 0. Return "same" if 1. */
+//   static toDepthwisePadTypeString( value ) {
+//     return Params.toArrayElement( value, Params.ConverterHelper.DepthwisePadTypeStringArray );
+//   }
 
-  /** @return {string} Convert number value into 0 or 1. Return "valid" if 0. Return "same" if 1. */
-  static toDepthwisePadTypeString( value ) {
-    return Params.toArrayElement( value, Params.ConverterHelper.DepthwisePadTypeStringArray );
+  /** @return {number} Convert number value into an integer between [ 0, 2 ]. */
+  static toDepthwiseStridesPad( value ) {
+    return Params.toIntegerRange( value, 0, 2 );
   }
 
 }
@@ -123,11 +129,7 @@ Params.PointDepthPoint.Keys.pointwise1ChannelCount =        Symbol("pointwise1Ch
 //    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
 //    * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
 //    *
-//    * @param {number} depthwiseStrides
-//    *   The strides of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this strides will also be ignored.
-//    *
-//    * @param {string} depthwisePad
-//    *   The padding of depthwise convolution. "valid" or "same". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this pad will also be ignored.
+//    * @param {number} depthwiseStridesPad
 //    *
 //    * @param {boolean} bDepthwiseBias
 //    *   If true, there will be a bias after depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be
@@ -240,11 +242,20 @@ class Base extends ReturnOrClone.Base {
    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
    * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
    *
-   * @param {number} depthwiseStrides
-   *   The strides of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this strides will also be ignored.
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//    * @param {number} depthwiseStrides
+//    *   The strides of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this strides will also be ignored.
+//    *
+//    * @param {string} depthwisePad
+//    *   The padding of depthwise convolution. "valid" or "same". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this pad will also be ignored.
    *
-   * @param {string} depthwisePad
-   *   The padding of depthwise convolution. "valid" or "same". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this pad will also be ignored.
+   * @param {number} depthwiseStridesPad
+   *   The strides and padding of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this depthwiseStridesPad
+   * will also be ignored. It has three possible value:
+   *   - 0: means ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" )
+   *   - 1: means ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
+   *   - 2: means ( depthwiseStrides == 2 ) and ( depthwisePad == "same" )
+   * Default is 1 because ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) is a pre-condition for ( bAddInputToOutput = true ).
    *
    * @param {boolean} bDepthwiseBias
    *   If true, there will be a bias after depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be
@@ -265,8 +276,8 @@ class Base extends ReturnOrClone.Base {
    * "tanh", "sin", "cos". If ( pointwise2ChannelCount == 0 ), this activation function will also be ignored.
    *
    * @param {boolean} bAddInputToOutput
-   *   If true and ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be
-   * added to output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
+   *   If true and ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ),
+   * the inputTensor will be added to output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
@@ -284,7 +295,9 @@ class Base extends ReturnOrClone.Base {
     inputFloat32Array, byteOffsetBegin,
     channelCount_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
+    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     bAddInputToOutput,
     bKeepInputTensor
@@ -390,8 +403,17 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
-    this.depthwiseStrides = depthwiseStrides;
-    this.depthwisePad = depthwisePad;
+    this.depthwiseStridesPad = depthwiseStridesPad;
+    switch ( depthwiseStridesPad ) {
+      case 0:  this.depthwiseStrides = 1; this.depthwisePad = "valid"; break;
+      default:
+      case 1:  this.depthwiseStrides = 1; this.depthwisePad = "same";  break;
+      case 2:  this.depthwiseStrides = 2; this.depthwisePad = "same";  break;
+    }
+
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//     this.depthwiseStrides = depthwiseStrides;
+//     this.depthwisePad = depthwisePad;
     this.bDepthwiseBias = bDepthwiseBias;
     this.depthwiseActivationName = depthwiseActivationName;
     this.depthwiseActivationFunction = Base.getActivationFunction( depthwiseActivationName );
@@ -453,18 +475,11 @@ class Base extends ReturnOrClone.Base {
     //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
     let bShouldAddInputToOutput = this.bShouldAddInputToOutput
      = (   ( bAddInputToOutput )
-        && (   ( depthwiseStrides == 1 )
-            && ( depthwisePad == "same" )
+        && (   ( this.depthwiseStrides == 1 )
+            && ( this.depthwisePad == "same" )
             && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
            )
        );
-
-// Usually, only the following combination is used (and legal):
-//   ( bAddInputToOutput ==  true ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" ) && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
-//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "same" )
-//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 1 ) && ( depthwisePad == "valid" )
-//   ( bAddInputToOutput == false ) && ( depthwiseStrides == 2 ) && ( depthwisePad == "same" )
-
 
     // Determine which apply_Xxx() function should be used.
     //
