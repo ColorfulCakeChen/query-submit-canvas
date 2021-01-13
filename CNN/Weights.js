@@ -136,6 +136,15 @@ class Base {
     return lookUpArray[ i ];
   }
 
+  /**
+   * @return {any} If ( null == value ), return defaultValue. Otherwise, return value.
+   */
+  static defaultValueIfNull( value, defaultValue ) {
+    if ( null == value )
+      return defaultValue;
+    return value;
+  }
+
   /** @return Return true, if initialization is success (i.e. ( this.weights != null )). */
   isValid()                      { return ( this.weights ) ? true : false; }
 
