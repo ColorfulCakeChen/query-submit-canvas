@@ -130,7 +130,7 @@ class To {
 
   /** @return {boolean} Convert number value into false or true. */
   static Boolean( value ) {
-    // If value is not integer, the remainder will always not zero. So convert it to integer first.
+    // If value is not an integer, the remainder will always not zero. So convert it to integer first.
     //
     // According to negative or positive, the remainder could be one of [ -1, 0, +1 ].
     // So simply check it whether is 0 (instead of check both -1 and +1), could result in false or true.
@@ -138,11 +138,13 @@ class To {
   }
 
   /**
-   * @param {(number[]|string[])} lookUpArray
-   *   The value will be converted into zero or positive integer. Use it as array index. Return lookUpArray[ index ].
+   * @param {any[]} lookUpArray
+   *   The value will be converted into an integer between [ 0, lookUpArray.length ). Use it as array index.
+   * Return lookUpArray[ index ].
    *
-   * @return {string}
-   *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
+   * @return {any}
+   *   Convert number value into an integer between [ 0, lookUpArray.length ). Use it as array index. Return
+   * the looked up element value.
    */
   static ArrayElement( value, lookUpArray ) {
     let i = To.IntegerZeroPositive( value ) % lookUpArray.length;
