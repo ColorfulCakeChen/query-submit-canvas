@@ -351,15 +351,7 @@ class Params extends Base {
  * They are (static) symbol objects used as keys of Params.init()'s parameterMap. They can be seen inside Map when
  * debugging, and are faster than string (or String object) when Map's key comparing.
  */
-Params.Keys = class {
-//   // Although they are functions, they should not be called. They are (static function) objects used as keys of
-//   // Params.init()'s parameterMap. Using function object (rather than general object) so that the (function) name
-//   // can be seen inside Map when debugging. Using function object (rather than string or String object) so that
-//   // Map's key comparing is faster.
-//   static inChannels()        {}
-//   static channelMultiplier() {}
-//   static outChannels()       {}
-}
+Params.Keys = {};
 
 Params.Keys.inChannels =        Symbol("inChannels");
 Params.Keys.channelMultiplier = Symbol("channelMultiplier");
