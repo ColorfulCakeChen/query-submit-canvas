@@ -255,7 +255,7 @@ class Base extends ReturnOrClone.Base {
    *   - 0: means ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" )
    *   - 1: means ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
    *   - 2: means ( depthwiseStrides == 2 ) and ( depthwisePad == "same" )
-   * Default is 1 because ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) is a pre-condition for ( bAddInputToOutput = true ).
+   * Default is 1 because ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) is a pre-condition for ( bAddInputToOutput == true ).
    *
    * @param {boolean} bDepthwiseBias
    *   If true, there will be a bias after depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be
