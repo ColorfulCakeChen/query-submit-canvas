@@ -36,19 +36,19 @@ class Params extends Weights.Params {
 
     let parameterMap = new Map( [
 //!!! ...unfinished... inChannels can not null.
-      [ Params.PointDepthPoint.Keys.inChannels,               Params.secondIfNull( channelCount_pointwise1Before, Params. ) ],
-      [ Params.PointDepthPoint.Keys.pointwise1ChannelCount,   Params.secondIfNull( pointwise1ChannelCount, Params.toPointwise1ChannelCount ) ],
-      [ Params.PointDepthPoint.Keys.bPointwise1Bias,          Params.secondIfNull( bPointwise1Bias, Params.toBoolean ) ],
-      [ Params.PointDepthPoint.Keys.pointwise1ActivationName, Params.secondIfNull( pointwise1ActivationName, Params.toActivationName ) ],
-      [ Params.PointDepthPoint.Keys.depthwiseFilterHeight,    Params.secondIfNull( depthwiseFilterHeight, Params.toDepthwiseFilterHeight ) ],
-      [ Params.PointDepthPoint.Keys.depthwise_AvgMax_Or_ChannelMultiplier, Params.secondIfNull( depthwise_AvgMax_Or_ChannelMultiplier, Params.toDepthwise_AvgMax_Or_ChannelMultiplier ) ],
-      [ Params.PointDepthPoint.Keys.depthwiseStridesPad,      Params.secondIfNull( depthwiseStridesPad, Params.toDepthwiseStridesPad ) ],
-      [ Params.PointDepthPoint.Keys.bDepthwiseBias,           Params.secondIfNull( bDepthwiseBias, Params.toBoolean ) ],
-      [ Params.PointDepthPoint.Keys.depthwiseActivationName,  Params.secondIfNull( depthwiseActivationName, Params.toActivationName ) ],
-      [ Params.PointDepthPoint.Keys.pointwise2ChannelCount,   Params.secondIfNull( pointwise2ChannelCount, Params.toPointwise2ChannelCount ) ],
-      [ Params.PointDepthPoint.Keys.bPointwise2Bias,          Params.secondIfNull( bPointwise2Bias, Params.toBoolean ) ],
-      [ Params.PointDepthPoint.Keys.pointwise2ActivationName, Params.secondIfNull( pointwise2ActivationName, Params.toActivationName ) ],
-      [ Params.PointDepthPoint.Keys.bAddInputToOutput,        Params.secondIfNull( bAddInputToOutput, Params.toBoolean ) ],
+      [ Weights.Params.Keys.inChannels,       Weights.Params.secondIfNull( channelCount_pointwise1Before, Params. ) ],
+      [ Params.Keys.pointwise1ChannelCount,   Weights.Params.secondIfNull( pointwise1ChannelCount, Params.toPointwise1ChannelCount ) ],
+      [ Params.Keys.bPointwise1Bias,          Weights.Params.secondIfNull( bPointwise1Bias, Params.toBoolean ) ],
+      [ Params.Keys.pointwise1ActivationName, Weights.Params.secondIfNull( pointwise1ActivationName, Params.toActivationName ) ],
+      [ Params.Keys.depthwiseFilterHeight,    Weights.Params.secondIfNull( depthwiseFilterHeight, Params.toDepthwiseFilterHeight ) ],
+      [ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier, Params.secondIfNull( depthwise_AvgMax_Or_ChannelMultiplier, Params.toDepthwise_AvgMax_Or_ChannelMultiplier ) ],
+      [ Params.Keys.depthwiseStridesPad,      Weights.Params.secondIfNull( depthwiseStridesPad, Params.toDepthwiseStridesPad ) ],
+      [ Params.Keys.bDepthwiseBias,           Weights.Params.secondIfNull( bDepthwiseBias, Params.toBoolean ) ],
+      [ Params.Keys.depthwiseActivationName,  Weights.Params.secondIfNull( depthwiseActivationName, Params.toActivationName ) ],
+      [ Params.Keys.pointwise2ChannelCount,   Weights.Params.secondIfNull( pointwise2ChannelCount, Params.toPointwise2ChannelCount ) ],
+      [ Params.Keys.bPointwise2Bias,          Weights.Params.secondIfNull( bPointwise2Bias, Params.toBoolean ) ],
+      [ Params.Keys.pointwise2ActivationName, Weights.Params.secondIfNull( pointwise2ActivationName, Params.toActivationName ) ],
+      [ Params.Keys.bAddInputToOutput,        Weights.Params.secondIfNull( bAddInputToOutput, Params.toBoolean ) ],
 
 
       // The output channel count of pointwise-depthwise-pointwise convolution layer is a dynamic parameter.
@@ -61,17 +61,17 @@ class Params extends Weights.Params {
   }
 
   /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
-  static toPointwise1ChannelCount( value ) { return Params.toIntegerRange( value, 0, 10 * 1024 ); }
+  static toPointwise1ChannelCount( value ) { return Weights.Params.toIntegerRange( value, 0, 10 * 1024 ); }
 
   /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
-  static toPointwise2ChannelCount( value ) { return Params.toIntegerRange( value, 0, 10 * 1024 ); }
+  static toPointwise2ChannelCount( value ) { return Weights.Params.toIntegerRange( value, 0, 10 * 1024 ); }
 
   /**
    * @return {string}
    *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
    */
   static toActivationName( value ) {
-    return Params.toArrayElement( value, Params.ConverterHelper.ActivationNames );
+    return Weights.Params.toArrayElement( value, Params.ConverterHelper.ActivationNames );
   }
 
   /** @return {number} Convert number value into an integer suitable for depthwise convolution filter size. */
@@ -82,7 +82,7 @@ class Params extends Weights.Params {
     // For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
     //
     // Avoid too large filter size. Otherwise, performance may be poor.
-    return Params.toIntegerRange( value, 1, 9 );
+    return Weights.Params.toIntegerRange( value, 1, 9 );
   }
 
   /**
@@ -90,7 +90,7 @@ class Params extends Weights.Params {
    *   Convert number value into integer between [ 0, 64 ] as channel multiplier, or string "Avg", or string "Max".
    */
   static toDepthwise_AvgMax_Or_ChannelMultiplier( value ) {
-    return Params.toArrayElement( value, Params.ConverterHelper.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
+    return Weights.Params.toArrayElement( value, Params.ConverterHelper.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
   }
 
 //!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
@@ -107,7 +107,7 @@ class Params extends Weights.Params {
 
   /** @return {number} Convert number value into an integer between [ 0, 2 ]. */
   static toDepthwiseStridesPad( value ) {
-    return Params.toIntegerRange( value, 0, 2 );
+    return Weights.Params.toIntegerRange( value, 0, 2 );
   }
 
 }
@@ -118,7 +118,9 @@ Params.ConverterHelper.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh
 // "64" is possible channel multiplier kinds (1 to 64). Avoid too large channel multiplier. Otherwise, performance may be poor.
 // "+1" is for channel multiplier equals 0 (means no depthwise operation).
 Params.ConverterHelper.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ).keys(), "Avg", "Max" ];
-Params.ConverterHelper.DepthwisePadTypeStringArray = [ "valid", "same" ];
+
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//Params.ConverterHelper.DepthwisePadTypeStringArray = [ "valid", "same" ];
 
 
 //!!! ...unfinished... any modifying of Params.Keys will afftecs Weights.Params.Keys because it is shared.
@@ -127,58 +129,19 @@ Params.ConverterHelper.DepthwisePadTypeStringArray = [ "valid", "same" ];
  *
  * Define new namespace for avoiding modify Params.Keys directly (because Weights.Params.Keys is shared by all derived sub class).
  */
-Params.PointDepthPoint = { Keys: {} };
-Params.PointDepthPoint.Keys.pointwise1ChannelCount =        Symbol("pointwise1ChannelCount");
-//Params.Keys.channelMultiplier = Symbol("channelMultiplier");
-// Params.Keys.outChannels =       Symbol("outChannels");
-//
-// Params.Keys.dilationHeight =    Symbol("dilationHeight");
-// Params.Keys.dilationWidth =     Symbol("dilationWidth");
-// Params.Keys.filterHeight =      Symbol("filterHeight");
-// Params.Keys.filterWidth =       Symbol("filterWidth");
-
-//!!! ...unfinished... 
-//    * @param {number} pointwise1ChannelCount
-//    *   The output channel count of the first pointwise convolution. If 0, there will be no pointwise convolution before depthwise convolution.
-//    *
-//    * @param {boolean} bPointwise1Bias
-//    *   If true, there will be a bias after pointwise convolution. If ( pointwise1ChannelCount == 0 ), this bias will also be ignored.
-//    *
-//    * @param {string} pointwise1ActivationName
-//    *   The activation function name after the first pointwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid",
-//    * "tanh", "sin", "cos". If ( pointwise1ChannelCount == 0 ), this activation function will also be ignored.
-//    *
-//    * @param {number} depthwiseFilterHeight
-//    *   The height (and width) of depthwise convolution's filter. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
-//    *
-//    * @param {(string|number)} depthwise_AvgMax_Or_ChannelMultiplier
-//    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
-//    * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
-//    *
-//    * @param {number} depthwiseStridesPad
-//    *
-//    * @param {boolean} bDepthwiseBias
-//    *   If true, there will be a bias after depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be
-//    * ignored.
-//    *
-//    * @param {string} depthwiseActivationName
-//    *   The activation function name after depthwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin",
-//    * "cos". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation will also be ignored.
-//    *
-//    * @param {number} pointwise2ChannelCount
-//    *   The output channel count of the second pointwise convolution. If 0, there will be no pointwise convolution after depthwise convolution.
-//    *
-//    * @param {boolean} bPointwise2Bias
-//    *   If true, there will be a bias after the second pointwise convolution. If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
-//    *
-//    * @param {string} pointwise2ActivationName
-//    *   The activation function name after the second pointwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid",
-//    * "tanh", "sin", "cos". If ( pointwise2ChannelCount == 0 ), this activation function will also be ignored.
-//    *
-//    * @param {boolean} bAddInputToOutput
-//    *   If true and ( depthwiseStrides == 1 ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be
-//    * added to output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
-
+Params.Keys = {};
+Params.Keys.pointwise1ChannelCount =   Symbol("pointwise1ChannelCount");
+Params.Keys.bPointwise1Bias =          Symbol("bPointwise1Bias");
+Params.Keys.pointwise1ActivationName = Symbol("pointwise1ActivationName");
+Params.Keys.depthwiseFilterHeight =    Symbol("depthwiseFilterHeight");
+Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier = Symbol("depthwise_AvgMax_Or_ChannelMultiplier");
+Params.Keys.depthwiseStridesPad =      Symbol("depthwiseStridesPad");
+Params.Keys.bDepthwiseBias =           Symbol("bDepthwiseBias");
+Params.Keys.depthwiseActivationName =  Symbol("depthwiseActivationName");
+Params.Keys.pointwise2ChannelCount =   Symbol("pointwise2ChannelCount");
+Params.Keys.bPointwise2Bias =          Symbol("bPointwise2Bias");
+Params.Keys.pointwise2ActivationName = Symbol("pointwise2ActivationName");
+Params.Keys.bAddInputToOutput =        Symbol("bAddInputToOutput");
 
 /**
  * One step of one block of convolution neural network. There are at most three convolutions inside this object.
