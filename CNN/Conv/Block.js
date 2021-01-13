@@ -154,8 +154,10 @@ class Base {
         pointwise2ChannelCount = sourceChannelCount;           // The output channel count of average (or max) pooling is the same as input channel count.
       }
 
-      let depthwiseStrides = 1;
-      let depthwisePad = "valid";     // so that shrinking sourceHeight a little.
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//       let depthwiseStrides = 1;
+//       let depthwisePad = "valid";     // so that shrinking sourceHeight a little.
+      let depthwiseStridesPad = 0; // ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" ) so that shrinking sourceHeight a little.
 
       // This is the last step of this block (i.e. at-block-end) because ( stepCountPerBlock <= 0 ) means there is only one step inside this block.
       // And a different activation function may be used after pointwise2 convolution.
@@ -165,7 +167,9 @@ class Base {
       step0.init(
         sourceChannelCount,
         pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationName,
-        depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//        depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+        depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, depthwiseBias, depthwiseActivationName,
         pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
         false, // It is not possible to add-input-to-output, because ( depthwisePad == "valid" ).
         bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
@@ -191,8 +195,12 @@ class Base {
         else
           depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
 
-        let depthwiseStrides = 2;  // Step 0 is responsibile for halving input's height (and width).
-        let depthwisePad = "same";
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//         let depthwiseStrides = 2;  // Step 0 is responsibile for halving input's height (and width).
+//         let depthwisePad = "same";
+
+        // Step 0 is responsibile for halving input's height (and width).
+        let depthwiseStridesPad = 2; // ( depthwiseStrides == 2 ) and ( depthwisePad == "same" )
 
         let pointwise1ChannelCount, pointwise2ChannelCount;
         if ( bChannelShuffler ) {                            // ShuffleNetV2.
@@ -227,7 +235,9 @@ class Base {
         step0.init(
           sourceChannelCount,
           pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationName,
-          depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//          depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+          depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, depthwiseBias, depthwiseActivationName,
           pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
           false, // In MobileNet2, step 0 is not possible, because output channel count is tiwce as input. In ShuffleNetV2, it is not necessary. So, false.
           bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
@@ -241,7 +251,9 @@ class Base {
           step0Branch.init(
             sourceChannelCount,
             0, false, "", // ShuffleNetV2 Step0's branch does not have the first 1x1 pointwise convolution before depthwise convolution ( strides = 2 ).
-            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, depthwiseBias, depthwiseActivationName,
             pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
             false, // Since there is channel shuffler, there is not necessary to add input to output.
             true   // This is the only case that must keep input tensor, because the input tensor need be re-used by the main path of setp 0.
@@ -267,8 +279,12 @@ class Base {
         else
           depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
 
-        let depthwiseStrides = 1;  // Force to 1, because only step 0 should halve input's height (and width).
-        let depthwisePad = "same";
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//         let depthwiseStrides = 1;  // Force to 1, because only step 0 should halve input's height (and width).
+//         let depthwisePad = "same";
+
+        // Force to ( depthwiseStrides == 1 ), because only step 0 (i.e. not here) should halve input's height (and width).
+        let depthwiseStridesPad = 1; // ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
 
         // In ShuffleNetV2, the input channel count of step 1 (2, 3, ...) is the concatenated output channel count of the
         // main and branch of step 0. However, they will be splitted (by channel shuffler) into two channel groups. So every
@@ -303,7 +319,9 @@ class Base {
           step.init(
             channelCount_pointwise1Before,
             pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationName,
-            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
+//            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, depthwiseBias, depthwiseActivationName,
+            depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, depthwiseBias, depthwiseActivationName,
             pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
             this.bAddInputToOutput,
             false // No matter bKeepInputTensor, all steps (except step 0) should not keep input tensor.
