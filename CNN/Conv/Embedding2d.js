@@ -28,13 +28,20 @@ class Params extends Weights.Params {
 
     let parameterMap = new Map( [
       [ Weights.Params.Keys.inChannels,        inChannels ],
-      [ Weights.Params.Keys.channelMultiplier, channelMultiplier ],
+      [ Weights.Params.Keys.channelMultiplier, Weights.Params.secondIfNull( channelMultiplier, Params.toChannelMultiplier ) ],
 
       // For an embedding layer, its output channel count always depends on channelMultiplier.
       [ Weights.Params.Keys.outChannels,       Infinity ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
+  }
+
+  /** @return {number} Convert number value into an integer between [ 1, 1024 ]. */
+  static toChannelMultiplier( value ) {
+    // At least 1, because chanel count 0 is meaningless.
+    // Avoid too large vocabulary channel multiplier. Otherwise, performance may be poor.
+    return Weights.Params.toIntegerRange( value, 1, 1024 );
   }
 
 }
