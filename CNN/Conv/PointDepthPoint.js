@@ -6,10 +6,6 @@ import * as ReturnOrClone from "./ReturnOrClone.js";
 
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
- *
-//!!! ...unfinished...
- * @member {number} outChannels
- *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
  */
 class Params extends Weights.Params {
 
@@ -24,7 +20,6 @@ class Params extends Weights.Params {
    * @override
    */
   init( inputFloat32Array, byteOffsetBegin,
-    channelCount_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
     depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
@@ -35,8 +30,6 @@ class Params extends Weights.Params {
 // squeeze-and-excitation ?
 
     let parameterMap = new Map( [
-//!!! ...unfinished... inChannels can not null.
-      [ Weights.Params.Keys.inChannels,       channelCount_pointwise1Before ],
       [ Params.Keys.pointwise1ChannelCount,   Weights.To.AnotherIfNull( pointwise1ChannelCount,   Params.To.Pointwise1ChannelCount ) ],
       [ Params.Keys.bPointwise1Bias,          Weights.To.AnotherIfNull( bPointwise1Bias,          Weights.To.Boolean ) ],
       [ Params.Keys.pointwise1ActivationName, Weights.To.AnotherIfNull( pointwise1ActivationName, Params.To.ActivationName ) ],
@@ -49,11 +42,6 @@ class Params extends Weights.Params {
       [ Params.Keys.bPointwise2Bias,          Weights.To.AnotherIfNull( bPointwise2Bias,          Weights.To.Boolean ) ],
       [ Params.Keys.pointwise2ActivationName, Weights.To.AnotherIfNull( pointwise2ActivationName, Params.To.ActivationName ) ],
       [ Params.Keys.bAddInputToOutput,        Weights.To.AnotherIfNull( bAddInputToOutput,        Weights.To.Boolean ) ],
-
-      // The output channel count of pointwise-depthwise-pointwise convolution layer is a dynamic parameter.
-      // It can not be easily determined from single parameter. It will be computed from multiple parameters.
-      // So it is not defined here.
-      //[ Weights.Params.Keys.outChannels,     ??? ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
@@ -157,14 +145,8 @@ Params.Keys.bAddInputToOutput =        Symbol("bAddInputToOutput");
  * @member {number} inChannels
  *   Input channel count. This is the same as this.channelCount_pointwise1Before (from initer()).
  *
-//!!! ...unfinished...
- * @member {number} channelMultiplier
- *   ??? Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
- * embedding channels. It could be viewed as embeddingChannelCountPerInputChannel.
- *
  * @member {number} outChannels
- *   The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After.
- *
+ *   The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After (from initer()).
  *
  * @member {number} channelCount_pointwise1After_depthwiseBefore
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals expansionChannelCount.
@@ -227,13 +209,6 @@ class Base extends ReturnOrClone.Base {
    *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
    * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
    *
-//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
-//    * @param {number} depthwiseStrides
-//    *   The strides of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this strides will also be ignored.
-//    *
-//    * @param {string} depthwisePad
-//    *   The padding of depthwise convolution. "valid" or "same". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this pad will also be ignored.
-   *
    * @param {number} depthwiseStridesPad
    *   The strides and padding of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this depthwiseStridesPad
    * will also be ignored. It has three possible value:
@@ -280,8 +255,6 @@ class Base extends ReturnOrClone.Base {
     inputFloat32Array, byteOffsetBegin,
     channelCount_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
-//    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStrides, depthwisePad, bDepthwiseBias, depthwiseActivationName,
     depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     bAddInputToOutput,
@@ -306,8 +279,14 @@ class Base extends ReturnOrClone.Base {
 
     // 1. Extract parameters.
     this.params = new Params();
-//!!! ...unfinished...
-    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
+    let bParamsInitOk
+      = this.params.init( inputFloat32Array, byteOffsetBegin,
+          pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+          depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+          pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+          bAddInputToOutput );
+
+    if ( !bParamsInitOk )
       return false;
 
     ++progressToAdvance.value;
@@ -396,9 +375,6 @@ class Base extends ReturnOrClone.Base {
       case 2:  this.depthwiseStrides = 2; this.depthwisePad = "same";  break;
     }
 
-//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
-//     this.depthwiseStrides = depthwiseStrides;
-//     this.depthwisePad = depthwisePad;
     this.bDepthwiseBias = bDepthwiseBias;
     this.depthwiseActivationName = depthwiseActivationName;
     this.depthwiseActivationFunction = Base.getActivationFunction( depthwiseActivationName );
@@ -846,9 +822,23 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished...
   get byteOffsetEnd()     { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
 
-//!!! ...unfinished...
-  get inChannels()        { return this.params.inChannels; }
-  get channelMultiplier() { return this.params.channelMultiplier; }
-//  get outChannels()       { return this.params.outChannels; }
-  get outChannels() { return this.channelCount_pointwise2After; }
+  get inChannels()               { return this.channelCount_pointwise1Before; }
+
+  get pointwise1ChannelCount()   { return this.params.pointwise1ChannelCount ); }
+  get bPointwise1Bias()          { return this.params.bPointwise1Bias ); }
+  get pointwise1ActivationName() { return this.params.pointwise1ActivationName ); }
+
+  get depthwiseFilterHeight()    { return this.params.depthwiseFilterHeight ); }
+  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.params.depthwise_AvgMax_Or_ChannelMultiplier ); }
+  get depthwiseStridesPad()      { return this.params.depthwiseStridesPad ); }
+  get bDepthwiseBias()           { return this.params.bDepthwiseBias ); }
+  get depthwiseActivationName()  { return this.params.depthwiseActivationName ); }
+
+  get pointwise2ChannelCount()   { return this.params.pointwise2ChannelCount ); }
+  get bPointwise2Bias()          { return this.params.bPointwise2Bias ); }
+  get pointwise2ActivationName() { return this.params.pointwise2ActivationName ); }
+
+  get bAddInputToOutput()        { return this.params.bAddInputToOutput ); }
+
+  get outChannels()              { return this.channelCount_pointwise2After; }
 }
