@@ -31,10 +31,12 @@ export { Base, To, Params };
  *   The weights[] ends at privilegeInput's privilegeByteOffsetEnd (not inclusive) (relative
  * to privilegeInput.buffer, not to privilegeInput.byteOffset).
  *
- * @member {number[]} shape
- *   The weights shape (element count for every dimension). The shape.length is dimension. If ( shape.length == 0 ),
- * it is 0-dimension (i.e. scalar). The initialization will fail (i.e. ( isValid() == false ) ) if shape is too large
- * (or NaN) (exceeds the defaultInput (or, privilegeInput if not null) bounding).
+ * @member {(number[]|number|null)} shape
+ *   The weights shape (element count for every dimension). The shape could be an array, and the shape.length represents
+ * dimension. The shape could also be a scalar (0-dimension shape), i.e. ( shape.length == 0 ) is legal and means
+ * extracting so many elements from defaultInput or privilegeInput. If shape is too large (exceeds the defaultInput
+ * (or, privilegeInput if not null) bounding) or shape is NaN, the initialization will fail (i.e. ( isValid() == false ) ).
+ * The shape could be null, and means extracting zero element (i.e. extracting nothing) from defaultInput or privilegeInput.
  *
  * @member {Float32Array} weights
  *  The values. It is a reference (sub-range) to the underlying defaultInput (or privilegeInput).
