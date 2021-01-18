@@ -183,6 +183,17 @@ class Base extends ReturnOrClone.Base {
     this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     this.inChannels = inChannels;
+
+   // Restrict channelMultiplier to positive integer.
+    //
+    // If it is not null (i.e. by specifying (not by evolution) so will not be restricted by Params.init()) but
+    // is zero or negative, adjust it to positive. Otherwise, the outChannels (= inChannels * channelMultiplier )
+    // will be strange value. Strange outChannels value will affect the parameters extraction of the next neural
+    // network layer.
+    if ( ( null != channelMultiplier ) && ( channelMultiplier < 1 ) ) {
+      channelMultiplier = 1;
+    }
+
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
