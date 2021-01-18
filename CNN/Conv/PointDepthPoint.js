@@ -181,7 +181,8 @@ class Base extends ReturnOrClone.Base {
    * (not to the inputFloat32Array.byteOffset).
    *
    * @param {number} channelCount_pointwise1Before
-   *   The channel count of input image.
+   *   The channel count of apply_and_destroy_or_keep()'s input image. This should always be specified and can not be null
+   * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
    *
 
 //!!! ...unfinished... If negative, the channel count will be the same as input channel count (i.e. equal to channelCount_pointwise1Before).
@@ -190,55 +191,66 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... What if ( depthwiseStrides != 1 ) or ( depthwisePad != "same" ) ?
 
    * @param {number} pointwise1ChannelCount
-   *   The output channel count of the first pointwise convolution. If 0, there will be no pointwise convolution before depthwise convolution.
+   *   The output channel count of the first pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If 0, there will be no pointwise convolution before depthwise convolution.
    *
    * @param {boolean} bPointwise1Bias
-   *   If true, there will be a bias after pointwise convolution. If ( pointwise1ChannelCount == 0 ), this bias will also be ignored.
+   *   If true, there will be a bias after pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If ( pointwise1ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise1ActivationName
-   *   The activation function name after the first pointwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid",
-   * "tanh", "sin", "cos". If ( pointwise1ChannelCount == 0 ), this activation function will also be ignored.
+   *   The activation function name after the first pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e.
+   * by evolution). One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( pointwise1ChannelCount == 0 ),
+   *  this activation function will also be ignored.
    *
    * @param {number} depthwiseFilterHeight
-   *   The height (and width) of depthwise convolution's filter. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
+   *   The height (and width) of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
    *
    * @param {(string|number)} depthwise_AvgMax_Or_ChannelMultiplier
-   *   Depthwise operation. If "Avg", average pooling. If "Max", max pooling. If positive integer number, depthwise convolution and the number
-   * indicates channel multiplier of depthwise convolution. If 0, there will be no depthwise operation.
+   *   Depthwise operation. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If "Avg", average pooling.
+   * If "Max", max pooling. If positive integer number, depthwise convolution and the number indicates channel multiplier of
+   * depthwise convolution. If 0, there will be no depthwise operation.
    *
    * @param {number} depthwiseStridesPad
-   *   The strides and padding of depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this depthwiseStridesPad
-   * will also be ignored. It has three possible value:
+   *   The strides and padding of depthwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this depthwiseStridesPad will also be ignored. It has three possible value:
    *   - 0: means ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" )
    *   - 1: means ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
    *   - 2: means ( depthwiseStrides == 2 ) and ( depthwisePad == "same" )
    * Default is 1 because ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) is a pre-condition for ( bAddInputToOutput == true ).
    *
    * @param {boolean} bDepthwiseBias
-   *   If true, there will be a bias after depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be
-   * ignored.
+   *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true, there will be a bias after depthwise convolution.
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be ignored.
    *
    * @param {string} depthwiseActivationName
-   *   The activation function name after depthwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin",
-   * "cos". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation will also be ignored.
+   *   The activation function name after depthwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ),
+   * this activation will also be ignored.
    *
    * @param {number} pointwise2ChannelCount
-   *   The output channel count of the second pointwise convolution. If 0, there will be no pointwise convolution after depthwise convolution.
+   *   The output channel count of the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If 0, there will be no pointwise convolution after depthwise convolution.
    *
    * @param {boolean} bPointwise2Bias
-   *   If true, there will be a bias after the second pointwise convolution. If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
+   *   If true, there will be a bias after the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by
+   * evolution). If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise2ActivationName
-   *   The activation function name after the second pointwise convolution. One of the following: "" (or null), "relu", "relu6", "sigmoid",
-   * "tanh", "sin", "cos". If ( pointwise2ChannelCount == 0 ), this activation function will also be ignored.
+   *   The activation function name after the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by
+   * evolution). One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( pointwise2ChannelCount == 0 ),
+   * this activation function will also be ignored.
    *
    * @param {boolean} bAddInputToOutput
-   *   If true and ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ),
-   * the inputTensor will be added to output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
+   *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true and ( depthwiseStrides == 1 ) and
+   * ( depthwisePad == "same" ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be added to
+   * output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
-   * For another example, the input image should be shared across many neural networks.
+   * For another example, the input image should be shared across many neural networks. If it is null, it will be viewed as falsy
+   * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
