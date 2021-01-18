@@ -1,4 +1,4 @@
-export { Params, Base };
+export { Params, To, Base };
 
 import * as ValueMax from "../ValueMax.js";
 import * as Weights from "../Weights.js";
@@ -28,7 +28,7 @@ class Params extends Weights.Params {
 
     let parameterMap = new Map( [
       [ Weights.Params.Keys.inChannels,        inChannels ],
-      [ Weights.Params.Keys.channelMultiplier, Weights.To.AnotherIfNull( channelMultiplier, Params.toChannelMultiplier ) ],
+      [ Weights.Params.Keys.channelMultiplier, Weights.To.AnotherIfNull( channelMultiplier, Params.To.ChannelMultiplier ) ],
 
       // For an embedding layer, its output channel count always depends on channelMultiplier.
       [ Weights.Params.Keys.outChannels,       Infinity ],
@@ -36,9 +36,13 @@ class Params extends Weights.Params {
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
+}
+
+/** Define parameter converter helper. */
+Params.To = class {
 
   /** @return {number} Convert number value into an integer between [ 1, 1024 ]. */
-  static toChannelMultiplier( value ) {
+  static ChannelMultiplier( value ) {
     // At least 1, because chanel count 0 is meaningless.
     // Avoid too large vocabulary channel multiplier. Otherwise, performance may be poor.
     return Weights.To.IntegerRange( value, 1, 1024 );
