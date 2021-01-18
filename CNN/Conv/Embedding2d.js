@@ -710,7 +710,5 @@ class Base extends ReturnOrClone.Base {
   get byteOffsetBegin()   { return this.params.defaultByteOffsetBegin; }
   get byteOffsetEnd()     { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
 
-  get inChannels()        { return this.inChannels; }
   get channelMultiplier() { return this.params.channelMultiplier; }
-  get outChannels()       { return this.outChannels; }
 }
