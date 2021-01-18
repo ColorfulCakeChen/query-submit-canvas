@@ -197,25 +197,26 @@ class Params extends Base {
 
   /**
    *
-   * The parameterMap should have at least:
-   *
-   * - Params.Keys.inChannels
-   *   {number} There will be how many input channels. (Input channel count) (By specifying)
-   *
-   *
-   * The parameterMap could also have (and any other custom key-value pairs):
-   *
-   * - Params.Keys.channelMultiplier
-   *   {number} Every input channel will be expanded into how many channels. (No matter how it is determined, it will
-   *   always be forcibly adjusted to positive integer.)
-   *     - If not null, it will be used instead of extracting from inputFloat32Array or fixedWeights. (By specifying)
-   *     - If null, extracted from inputFloat32Array or fixedWeights. (By evolution)
-   *
-   * - Params.Keys.outChannels
-   *   {number} There will be how many output channels. (Output channel count)
-   *     - If Number.isFinite(), it will be used instead of extracting from inputFloat32Array or fixedWeights. (By specifying)
-   *     - If Infinity (Number.POSITIVE_INFINITY), it will be ( inChannels * channelMultiplier ). (By channelMultiplier)
-   *     - If null, extracted from inputFloat32Array or fixedWeights. (By evolution)
+//!!! (2021/01/18 Remarked) No need default parameter.
+//    * The parameterMap should have at least:
+//    *
+//    * - Params.Keys.inChannels
+//    *   {number} There will be how many input channels. (Input channel count) (By specifying)
+//    *
+//    *
+//    * The parameterMap could also have (and any other custom key-value pairs):
+//    *
+//    * - Params.Keys.channelMultiplier
+//    *   {number} Every input channel will be expanded into how many channels. (No matter how it is determined, it will
+//    *   always be forcibly adjusted to positive integer.)
+//    *     - If not null, it will be used instead of extracting from inputFloat32Array or fixedWeights. (By specifying)
+//    *     - If null, extracted from inputFloat32Array or fixedWeights. (By evolution)
+//    *
+//    * - Params.Keys.outChannels
+//    *   {number} There will be how many output channels. (Output channel count)
+//    *     - If Number.isFinite(), it will be used instead of extracting from inputFloat32Array or fixedWeights. (By specifying)
+//    *     - If Infinity (Number.POSITIVE_INFINITY), it will be ( inChannels * channelMultiplier ). (By channelMultiplier)
+//    *     - If null, extracted from inputFloat32Array or fixedWeights. (By evolution)
    *
    *
    * @param {Float32Array} inputFloat32Array
@@ -317,32 +318,33 @@ class Params extends Base {
       this.parameterMapModified.set( key, convertedValue ); // Record in map, too.
     }
 
-    // Restrict channelMultiplier to positive integer.
-    //
-    // If it is zero or negative, the outChannels (= inChannels * channelMultiplier ) will be strange value.
-    // Strange outChannels value will affect the parameters extraction of the next neural network layer.
-    let channelMultiplier = this.channelMultiplier;   // May be specified or extracted.
-    if ( channelMultiplier < 1 ) {
-      channelMultiplier = 1;
-      this.parameterMapModified.set( Params.Keys.channelMultiplier, channelMultiplier );
-    }
-
-    // If original parameterMap has output channel count and its value is infinity, its value will depend
-    // on channelMultiplier (i.e. by channelMultiplier).
-    //
-    // Usually, the embedding layer uses this behavior.
-    let outChannelsOriginal = parameterMap.get( Params.Keys.outChannels );
-    if ( outChannelsOriginal ) {
-      if ( !Number.isFinite( outChannelsOriginal ) ) {
-        let outChannels = inChannels * channelMultiplier;
-        this.parameterMapModified.set( Params.Keys.outChannels, outChannels );
-      } else {
-        // Use the original value in parameterMap as output channel count (i.e. by specifying).
-      }
-    } else {
-      // Either use the extracted value as output channel count (i.e. by evolution),
-      // or there is no output channel count in fact.
-    }
+//!!! (2021/01/18 Remarked) No need default parameter.
+//    // Restrict channelMultiplier to positive integer.
+//     //
+//     // If it is zero or negative, the outChannels (= inChannels * channelMultiplier ) will be strange value.
+//     // Strange outChannels value will affect the parameters extraction of the next neural network layer.
+//     let channelMultiplier = this.channelMultiplier;   // May be specified or extracted.
+//     if ( channelMultiplier < 1 ) {
+//       channelMultiplier = 1;
+//       this.parameterMapModified.set( Params.Keys.channelMultiplier, channelMultiplier );
+//     }
+//
+//     // If original parameterMap has output channel count and its value is infinity, its value will depend
+//     // on channelMultiplier (i.e. by channelMultiplier).
+//     //
+//     // Usually, the embedding layer uses this behavior.
+//     let outChannelsOriginal = parameterMap.get( Params.Keys.outChannels );
+//     if ( outChannelsOriginal ) {
+//       if ( !Number.isFinite( outChannelsOriginal ) ) {
+//         let outChannels = inChannels * channelMultiplier;
+//         this.parameterMapModified.set( Params.Keys.outChannels, outChannels );
+//       } else {
+//         // Use the original value in parameterMap as output channel count (i.e. by specifying).
+//       }
+//     } else {
+//       // Either use the extracted value as output channel count (i.e. by evolution),
+//       // or there is no output channel count in fact.
+//     }
 
     return bInitOk;
   }
@@ -350,11 +352,12 @@ class Params extends Base {
   get parameterCountExtracted() { return this.weightCount; }
   get parameterCount()          { return this.parameterMapModified.size; }
 
-  // Most kinds of layers have these parameters.
-
-  get inChannels()        { return this.parameterMapModified.get( Params.Keys.inChannels ); }
-  get channelMultiplier() { return this.parameterMapModified.get( Params.Keys.channelMultiplier ); }
-  get outChannels()       { return this.parameterMapModified.get( Params.Keys.outChannels ); }
+//!!! (2021/01/18 Remarked) No need default parameter.
+//  // Most kinds of layers have these parameters.
+//
+//   get inChannels()        { return this.parameterMapModified.get( Params.Keys.inChannels ); }
+//   get channelMultiplier() { return this.parameterMapModified.get( Params.Keys.channelMultiplier ); }
+//   get outChannels()       { return this.parameterMapModified.get( Params.Keys.outChannels ); }
 }
 
 /**
@@ -363,13 +366,14 @@ class Params extends Base {
  * They are (static) symbol objects used as keys of Params.init()'s parameterMap. They can be seen inside Map when
  * debugging, and are faster than string (or String object) when Map's key comparing.
  */
-Params.Keys = {};
-
-Params.Keys.inChannels =        Symbol("inChannels");
-Params.Keys.channelMultiplier = Symbol("channelMultiplier");
-Params.Keys.outChannels =       Symbol("outChannels");
-
-Params.Keys.dilationHeight =    Symbol("dilationHeight");
-Params.Keys.dilationWidth =     Symbol("dilationWidth");
-Params.Keys.filterHeight =      Symbol("filterHeight");
-Params.Keys.filterWidth =       Symbol("filterWidth");
+//!!! (2021/01/18 Remarked) No need default parameter.
+// Params.Keys = {};
+//
+// Params.Keys.inChannels =        Symbol("inChannels");
+// Params.Keys.channelMultiplier = Symbol("channelMultiplier");
+// Params.Keys.outChannels =       Symbol("outChannels");
+//
+// Params.Keys.dilationHeight =    Symbol("dilationHeight");
+// Params.Keys.dilationWidth =     Symbol("dilationWidth");
+// Params.Keys.filterHeight =      Symbol("filterHeight");
+// Params.Keys.filterWidth =       Symbol("filterWidth");
