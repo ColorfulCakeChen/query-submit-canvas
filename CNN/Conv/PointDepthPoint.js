@@ -1,4 +1,4 @@
-export { Params, Base };
+export { Params, To, Base };
 
 import * as ValueMax from "../ValueMax.js";
 import * as Weights from "../Weights.js";
@@ -59,6 +59,21 @@ class Params extends Weights.Params {
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
+  get pointwise1ChannelCount()                { return this.parameterMapModified.get( Params.Keys.pointwise1ChannelCount ); }
+  get bPointwise1Bias()                       { return this.parameterMapModified.get( Params.Keys.bPointwise1Bias ); }
+  get pointwise1ActivationName()              { return this.parameterMapModified.get( Params.Keys.pointwise1ActivationName ); }
+
+  get depthwiseFilterHeight()                 { return this.parameterMapModified.get( Params.Keys.depthwiseFilterHeight ); }
+  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier ); }
+  get depthwiseStridesPad()                   { return this.parameterMapModified.get( Params.Keys.depthwiseStridesPad ); }
+  get bDepthwiseBias()                        { return this.parameterMapModified.get( Params.Keys.bDepthwiseBias ); }
+  get depthwiseActivationName()               { return this.parameterMapModified.get( Params.Keys.depthwiseActivationName ); }
+
+  get pointwise2ChannelCount()                { return this.parameterMapModified.get( Params.Keys.pointwise2ChannelCount ); }
+  get bPointwise2Bias()                       { return this.parameterMapModified.get( Params.Keys.bPointwise2Bias ); }
+  get pointwise2ActivationName()              { return this.parameterMapModified.get( Params.Keys.pointwise2ActivationName ); }
+
+  get bAddInputToOutput()                     { return this.parameterMapModified.get( Params.Keys.bAddInputToOutput ); }
 }
 
 /** Define parameter converter helper. */
