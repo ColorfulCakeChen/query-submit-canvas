@@ -1,4 +1,4 @@
-export { Params, To, Base };
+export { Params, Base };
 
 import * as ValueMax from "../ValueMax.js";
 import * as Weights from "../Weights.js";
