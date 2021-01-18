@@ -6,9 +6,6 @@ import * as ReturnOrClone from "./ReturnOrClone.js";
 
 /**
  * Embedding (2d) layer parameters.
- *
- * @member {number} outChannels
- *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
  */
 class Params extends Weights.Params {
 
@@ -21,21 +18,19 @@ class Params extends Weights.Params {
    *
    * @override
    */
-  init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier = null ) {
+  init( inputFloat32Array, byteOffsetBegin, channelMultiplier = null ) {
 
 //!!! ...unfinished...
 // squeeze-and-excitation ?
 
     let parameterMap = new Map( [
-      [ Weights.Params.Keys.inChannels,        inChannels ],
-      [ Weights.Params.Keys.channelMultiplier, Weights.To.AnotherIfNull( channelMultiplier, Params.To.ChannelMultiplier ) ],
-
-      // For an embedding layer, its output channel count always depends on channelMultiplier.
-      [ Weights.Params.Keys.outChannels,       Infinity ],
+      [ Params.Keys.channelMultiplier, Weights.To.AnotherIfNull( channelMultiplier, Params.To.ChannelMultiplier ) ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
+
+  get channelMultiplier() { return this.parameterMapModified.get( Params.Keys.channelMultiplier ); }
 }
 
 /** Define parameter converter helper. */
@@ -50,6 +45,13 @@ Params.To = class {
 
 }
 
+/** Define parameter keys.
+ *
+ * They are (static) symbol objects used as keys of Params.init()'s parameterMap. They can be seen inside Map when
+ * debugging, and are faster than string (or String object) when Map's key comparing.
+ */
+Params.Keys = {};
+Params.Keys.channelMultiplier = Symbol("channelMultiplier");
 
 /**
  * Embedding could achieve non-linear mapping (just like any perceptron). But it is achieved by lookup table (instead
@@ -180,6 +182,7 @@ class Base extends ReturnOrClone.Base {
 
     this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
+    this.inChannels = inChannels;
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
@@ -192,7 +195,7 @@ class Base extends ReturnOrClone.Base {
 
     // 1. Extract parameters.
     this.params = new Params();
-    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, inChannels, channelMultiplier ) )
+    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, channelMultiplier ) )
       return false;
 
     ++progressToAdvance.value;
@@ -202,6 +205,7 @@ class Base extends ReturnOrClone.Base {
     let vocabularyTableShape_toExtract = null; // Assume no embedding channel.
 
     channelMultiplier = this.channelMultiplier; // The real (adjusted) channelMultiplier. May be specified or extracted.
+    this.outChannels = inChannels * channelMultiplier; // The output channel count always depends on channelMultiplier.
 
     // 2.1 Shortcut operation.
     if ( // If channelMultiplier is illegal (i.e. zero or negative). (could happen by evolution.)
@@ -706,7 +710,7 @@ class Base extends ReturnOrClone.Base {
   get byteOffsetBegin()   { return this.params.defaultByteOffsetBegin; }
   get byteOffsetEnd()     { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
 
-  get inChannels()        { return this.params.inChannels; }
+  get inChannels()        { return this.inChannels; }
   get channelMultiplier() { return this.params.channelMultiplier; }
-  get outChannels()       { return this.params.outChannels; }
+  get outChannels()       { return this.outChannels; }
 }
