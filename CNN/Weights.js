@@ -252,9 +252,10 @@ class Params extends Base {
     if ( !parameterMap )
       return false;  // Do not know what parameters to be used or extracted.
 
-    let inChannels = parameterMap.get( Params.Keys.inChannels );
-    if ( !inChannels )
-      return false;  // At least, there should be a (required) parameter (i.e. input channel count).
+//!!! (2021/01/18 Remarked) No need default parameter.
+//     let inChannels = parameterMap.get( Params.Keys.inChannels );
+//     if ( !inChannels )
+//       return false;  // At least, there should be a (required) parameter (i.e. input channel count).
 
     this.parameterMapModified = new Map( parameterMap );  // Copy so that the original map will not be modified.
 
