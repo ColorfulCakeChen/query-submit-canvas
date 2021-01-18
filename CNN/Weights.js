@@ -313,7 +313,7 @@ class Params extends Base {
     for ( let [ key, { arrayIndex, converterFunction } ] of arrayIndexMap ) {
       let extractedValue = this.weights[ arrayIndex ];
       let convertedValue = converterFunction( extractedValue );
-      this.weightsModified[ arrayIndex ] = convertedValue; // Record in array.
+      this.weightsModified[ arrayIndex ] = convertedValue;  // Record in array.
       this.parameterMapModified.set( key, convertedValue ); // Record in map, too.
     }
 
