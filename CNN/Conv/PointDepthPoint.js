@@ -362,7 +362,7 @@ class Base extends ReturnOrClone.Base {
 
       this.pfn_depthwiseOperation = Base.return_input_directly; // Just return input if 1x1 or illegal pooling type (i.e. not AVG, not MAX).
 
-      if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
+      if ( ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) ) {
         // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
       } else {
         switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
@@ -379,7 +379,7 @@ class Base extends ReturnOrClone.Base {
           = this.channelCount_pointwise1After_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier;
 
         this.depthwiseFiltersShape
-          = [ depthwiseFilterHeight, this.depthwiseFilterWidth,
+          = [ depthwiseFilterHeight, depthwiseFilterWidth,
               this.channelCount_pointwise1After_depthwiseBefore, depthwise_AvgMax_Or_ChannelMultiplier ];
 
         this.depthwiseFiltersTensor4d = Base.generateTensor( this.depthwiseFiltersShape );
@@ -399,7 +399,7 @@ class Base extends ReturnOrClone.Base {
 
     this.depthwiseActivationFunction = Base.getActivationFunction( depthwiseActivationName );
 
-    this.depthwiseFilterHeightWidth = [ depthwiseFilterHeight, this.depthwiseFilterWidth ];
+    this.depthwiseFilterHeightWidth = [ depthwiseFilterHeight, depthwiseFilterWidth ];
     this.depthwiseBiasesShape =       [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before ];
 
     if ( this.bDepthwise ) {
