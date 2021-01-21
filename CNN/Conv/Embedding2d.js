@@ -267,7 +267,7 @@ class Base extends ReturnOrClone.Base {
       for ( let i = 0; i < inChannels; ++i ) {
         this.vocabularyTables[ i ] = new Weights.Base();
         if ( !this.vocabularyTables[ i ].init( inputFloat32Array, nextByteOffsetBegin, null, 0, vocabularyTableShape_toExtract ) )
-          return false;  // e.g. input array do not have enough data.
+          return false;  // e.g. input array does not have enough data.
         nextByteOffsetBegin = this.vocabularyTables[ i ].defaultByteOffsetEnd;
 
         ++progressToAdvance.value;
@@ -356,7 +356,7 @@ class Base extends ReturnOrClone.Base {
           }
 
           ++progressToAdvance.value;
-          yield progressRoot;  // One merged  vocabulary table tensor2s built. Report progress.
+          yield progressRoot;  // One merged vocabulary table tensor2s built. Report progress.
         }
 
       } catch ( e ) {
