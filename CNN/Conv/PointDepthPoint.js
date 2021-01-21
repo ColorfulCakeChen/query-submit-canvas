@@ -274,11 +274,11 @@ class Base extends ReturnOrClone.Base {
 
     // Estimate the maximum value of progress.
     let progressMax =
-//!!! ...unfinished...
-      1             // for extracting parameters from inputFloat32Array.
-      + inChannels  // for extracting vocabulary table of every input channel from inputFloat32Array.
-      + inChannels  // for building vocabulary table tensor3d of every input channel.
-      + 1           // for building one merged vocabulary table tensor3d for all input channels.
+      1    // for extracting parameters from inputFloat32Array.
+      + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for extracting pointwise2 filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for all pointwise1-depthwise-pointwise2 filters (and biases) ready.
       ;
 
     let progressRoot = progressParent.getRoot();
@@ -286,6 +286,7 @@ class Base extends ReturnOrClone.Base {
 
     this.disposeTensors();  // Also initialize some member function pointers to no_operation().
 
+    this.nextByteOffsetBegin = byteOffsetBegin;
     this.channelCount_pointwise1Before = channelCount_pointwise1Before;
 
     // 1. Extract parameters.
@@ -298,7 +299,9 @@ class Base extends ReturnOrClone.Base {
           bAddInputToOutput );
 
     if ( !bParamsInitOk )
-      return false;
+      return false;  // e.g. input array does not have enough data.
+
+    this.nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
 
     // Get parameters' real (adjusted) values.
     {
@@ -322,9 +325,7 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-    // 2. ???
-
-    // The first 1x1 pointwise convolution.
+    // 2. The first 1x1 pointwise convolution.
     this.bPointwise1 = ( pointwise1ChannelCount > 0 );
     this.pointwise1ActivationFunction = Base.getActivationFunction( pointwise1ActivationName );
 
@@ -335,11 +336,29 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1FiltersShape =      [ 1, 1, this.channelCount_pointwise1Before, this.channelCount_pointwise1After_depthwiseBefore ];
       this.pointwise1BiasesShape =       [ 1, 1, this.channelCount_pointwise1After_depthwiseBefore ];
 
-      this.pointwise1FiltersTensor4d = Base.generateTensor( this.pointwise1FiltersShape );
+//!!! (2021/01/21 Remarked)
+//      this.pointwise1FiltersTensor4d = Base.generateTensor( this.pointwise1FiltersShape );
+
+      this.pointwise1FiltersWeights = new Weights.Base();
+      if ( !this.pointwise1FiltersWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.pointwise1FiltersShape ) )
+        return false;  // e.g. input array does not have enough data.
+
+      this.nextByteOffsetBegin = this.pointwise1FiltersWeights.defaultByteOffsetEnd;
+
+      this.pointwise1FiltersTensor4d = tf.tensor4d( this.pointwise1FiltersWeights, this.pointwise1FiltersShape );
       this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
 
       if ( bPointwise1Bias ) {
-        this.pointwise1BiasesTensor3d = Base.generateTensor( this.pointwise1BiasesShape );
+//!!! (2021/01/21 Remarked)
+//        this.pointwise1BiasesTensor3d = Base.generateTensor( this.pointwise1BiasesShape );
+
+        this.pointwise1BiasesWeights = new Weights.Base();
+        if ( !this.pointwise1BiasesWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.pointwise1BiasesShape ) )
+          return false;  // e.g. input array does not have enough data.
+
+        this.nextByteOffsetBegin = this.pointwise1BiasesWeights.defaultByteOffsetEnd;
+
+        this.pointwise1BiasesTensor3d = tf.tensor3d( this.pointwise1BiasesWeights, this.pointwise1BiasesShape );
         this.pfn_pointwise1Bias = Base.pointwise1Bias_and_destroy;
       }
 
@@ -350,7 +369,10 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise1After_depthwiseBefore = channelCount_pointwise1Before;  // No first 1x1 pointwise convolution.
     }
 
-    // The depthwise operation.
+    ++progressToAdvance.value;
+    yield progressRoot;  // pointwise1 filters was ready. Report progress.
+
+    // 3. The depthwise operation.
 
     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false;               // Assume no depthwise.
     this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // So no channel multiplier.
@@ -382,8 +404,16 @@ class Base extends ReturnOrClone.Base {
           = [ depthwiseFilterHeight, depthwiseFilterWidth,
               this.channelCount_pointwise1After_depthwiseBefore, depthwise_AvgMax_Or_ChannelMultiplier ];
 
-        this.depthwiseFiltersTensor4d = Base.generateTensor( this.depthwiseFiltersShape );
+//!!! (2021/01/21 Remarked)
+//        this.depthwiseFiltersTensor4d = Base.generateTensor( this.depthwiseFiltersShape );
 
+        this.depthwiseFiltersWeights = new Weights.Base();
+        if ( !this.depthwiseFiltersWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.depthwiseFiltersShape ) )
+          return false;  // e.g. input array does not have enough data.
+
+        this.nextByteOffsetBegin = this.depthwiseFiltersWeights.defaultByteOffsetEnd;
+
+        this.depthwiseFiltersTensor4d = tf.tensor4d( this.depthwiseFiltersWeights, this.depthwiseFiltersShape );
         this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy; // will dispose inputTensor.
 
       } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
@@ -404,7 +434,16 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bDepthwise ) {
       if ( bDepthwiseBias ) {
-        this.depthwiseBiasesTensor3d = Base.generateTensor( this.depthwiseBiasesShape );
+//!!! (2021/01/21 Remarked)
+//        this.depthwiseBiasesTensor3d = Base.generateTensor( this.depthwiseBiasesShape );
+
+        this.depthwiseBiasesWeights = new Weights.Base();
+        if ( !this.depthwiseBiasesWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.depthwiseBiasesShape ) )
+          return false;  // e.g. input array does not have enough data.
+
+        this.nextByteOffsetBegin = this.depthwiseBiasesWeights.defaultByteOffsetEnd;
+
+        this.depthwiseBiasesTensor3d = tf.tensor3d( this.depthwiseBiasesWeights, this.depthwiseBiasesShape );
         this.pfn_depthwiseBias = Base.depthwiseBias_and_destroy;
       }
 
@@ -412,7 +451,10 @@ class Base extends ReturnOrClone.Base {
         this.pfn_depthwiseActivation = Base.depthwiseActivation_and_destroy;
     }
 
-    // The second 1x1 pointwise convolution.
+    ++progressToAdvance.value;
+    yield progressRoot;  // depthwise filters was ready. Report progress.
+
+    // 4. The second 1x1 pointwise convolution.
     this.bPointwise2 = ( pointwise2ChannelCount > 0 );
     this.pointwise2ActivationFunction = Base.getActivationFunction( pointwise2ActivationName );
 
@@ -423,12 +465,29 @@ class Base extends ReturnOrClone.Base {
       this.pointwise2FiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before, this.channelCount_pointwise2After ];
       this.pointwise2BiasesShape =       [ 1, 1, this.channelCount_pointwise2After ];
 
-      this.pointwise2FiltersTensor4d = Base.generateTensor( this.pointwise2FiltersShape );
+//!!! (2021/01/21 Remarked)
+//      this.pointwise2FiltersTensor4d = Base.generateTensor( this.pointwise2FiltersShape );
 
+      this.pointwise2FiltersWeights = new Weights.Base();
+      if ( !this.pointwise2FiltersWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.pointwise2FiltersShape ) )
+        return false;  // e.g. input array does not have enough data.
+
+      this.nextByteOffsetBegin = this.pointwise2FiltersWeights.defaultByteOffsetEnd;
+
+      this.pointwise2FiltersTensor4d = tf.tensor4d( this.pointwise2FiltersWeights, this.pointwise2FiltersShape );
       this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy; // will dispose inputTensor.
 
       if ( bPointwise2Bias ) {
-        this.pointwise2BiasesTensor3d = Base.generateTensor( this.pointwise2BiasesShape );
+//!!! (2021/01/21 Remarked)
+//        this.pointwise2BiasesTensor3d = Base.generateTensor( this.pointwise2BiasesShape );
+
+        this.pointwise2BiasesWeights = new Weights.Base();
+        if ( !this.pointwise2BiasesWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.pointwise2BiasesShape ) )
+          return false;  // e.g. input array does not have enough data.
+
+        this.nextByteOffsetBegin = this.pointwise2BiasesWeights.defaultByteOffsetEnd;
+
+        this.pointwise2BiasesTensor3d = tf.tensor3d( this.pointwise2BiasesWeights, this.pointwise2BiasesShape );
         this.pfn_pointwise2Bias = Base.pointwise2Bias_and_destroy;
       }
 
@@ -439,6 +498,10 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise2After = this.channelCount_depthwiseAfter_pointwise2Before;
     }
 
+    ++progressToAdvance.value;
+    yield progressRoot;  // pointwise2 filters was ready. Report progress.
+
+    // 5. Configure correct function pointers according to whether keeping or destroying input tensor.
     this.bKeepInputTensor = bKeepInputTensor;
 
     // Although caller could request add-input-to-output, it may or may not doable.
@@ -530,6 +593,10 @@ class Base extends ReturnOrClone.Base {
       // use "Xxx_keep" operation. Using "Xxx_destroy" operation is sufficient.
     }
 
+    ++progressToAdvance.value;
+    yield progressRoot;  // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
+
+    this.bInitOk = true;
     return true;
   }
 
@@ -608,9 +675,13 @@ class Base extends ReturnOrClone.Base {
     this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.return_input_directly;
 
     this.params
-//!!! ...unfinished...
-//      = this.???
+      = this.pointwise1FiltersWeights = this.pointwise1BiasesWeights
+      = this.depthwiseFiltersWeights = this.depthwiseBiasesWeights
+      = this.pointwise2FiltersWeights = this.pointwise2BiasesWeights
       = null;
+
+    this.bInitOk = false;
+    this.nextByteOffsetBegin = -1; // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
   }
 
   /** Convert activation function name to function object. */
@@ -801,42 +872,15 @@ class Base extends ReturnOrClone.Base {
     return t0;
   }
 
-//!!! ...unfinished...
-
   /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
   isValid() {
-
-//     // If vocabulary table tensor does not exist (so that apply_and_destroy_or_keep() will just return output as input).
-//     //
-//     // (e.g. channelMultiplier is zero or negative, or ( ( channelMultiplier == 1 ) && ( bEmbedVocabularyId ) ) )
-//     if ( null == this.vocabularyTableShape_toExtract ) {
-
-//       // The vocabulary tables (from initer()'s inputFloat32Array) should always exist.
-//       if ( this.vocabularyTables )
-//         if ( this.vocabularyTables[ this.params.inChannels - 1 ] )
-//           if ( this.vocabularyTables[ this.params.inChannels - 1 ].isValid() )  // the last vocabulary table should be valid.
-//             return true;
-
-//     // If vocabulary table tensor exists. (e.g. channelMultiplier is positive and ( bEmbedVocabularyId == false )).
-//     } else {
-
-//       // The tensor2d (or tensor3d) of vocabulary tables should exists.
-//       if ( this.vocabularyTablesTensorArray )
-//         if ( this.vocabularyTablesTensorArray[ this.params.inChannels - 1 ] )  // the last vocabulary table should be valid.
-//             return true;
-
-//       // Or, the one merged longer tensor2d of vocabulary table (and channel value offset tensor3d) should exists.
-//       if ( ( this.vocabularyTableTensor2d ) && ( this.channelValueOffsetTensor3d ) )
-//         return true;
-//     }
-
-    return false;
+    return this.bInitOk;
   }
 
   get byteOffsetBegin()   { return this.params.defaultByteOffsetBegin; }
 
-//!!! ...unfinished...
-  get byteOffsetEnd()     { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
+  /** Where to extract next weights. Only meaningful when ( this.isValid() == true ). */
+  get byteOffsetEnd()     { return this.nextByteOffsetBegin; }
 
   get inChannels()               { return this.channelCount_pointwise1Before; }
 
