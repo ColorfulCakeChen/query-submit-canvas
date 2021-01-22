@@ -20,11 +20,12 @@ class TestCase {
    * @param {number[]} paramsInArray      parameters data which will be processed by PointDepthPoint.Params
    * @param {number[]} paramsOutArray     parameters data which should match the result of PointDepthPoint.Params
    *
-   * @param {number} imageIn.height            image height
-   * @param {number} imageIn.width             image width
-   * @param {number} imageIn.depth             image channel count
-   * @param {number[]} imageIn.dataArray       image data
-   * @param {number[]} imageOutArray           output image data
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
+!!!???
+   * @param {number[]} imageOutArray     Output image data
    */
   constructor(
     paramsInArray, paramsOutArray,
@@ -130,90 +131,144 @@ class TestCase {
       + `bAddInputToOutput=${bAddInputToOutput}`
     ;
 
+    let nextImageIn, next;
+
     // Pointwise1
-    this.pointwise1Result = TestCase.calcPointwise(
-      this.image.inArray, this.image.in.height, this.image.in.width, this.image.in.depth,
-      pointwise1ChannelCount, this.weights.pointwiseFiltersArray, bPointwise1Bias, this.weights.pointwiseBiasesArray, pointwise1ActivationName,
-      "Pointwise 1", this.params.description );
+    if ( pointwise1ChannelCount > 0 ) {
+      this.pointwise1Result = TestCase.calcPointwise(
+        this.image.inArray, this.image.in.height, this.image.in.width, this.image.in.depth,
+        pointwise1ChannelCount, this.weights.pointwiseFiltersArray, bPointwise1Bias, this.weights.pointwiseBiasesArray, pointwise1ActivationName,
+        "Pointwise 1", this.params.description );
+    }
 
 //!!! ...unfinished...
 
   }
 
   /**
-   * @param {number[]} inDataArray    The input image to be convoluted.
-   * @param {number}   inHeight       The height of the input image.
-   * @param {number}   inWidth        The width of the input image.
-   * @param {number}   inDepth        The depth of the input image.
-   * @param {string}   pointwiseName  A string for debug message of this convolution.
-   * @param {string}   parametersDesc A string for debug message of this point-depth-point.
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
+   * @param {string}   pointwiseName     A string for debug message of this convolution.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
    * @return {Float32Array}
    *   The result of the pointwise convolution, bias and activation.
    */
   static calcPointwise(
-    inDataArray, inHeight, inWidth, inDepth,
-    pointwiseChannelCount, pointwiseFiltersArray, bPointwise1Bias, pointwiseBiasesArray, pointwiseActivationName,
+    imageIn,
+    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationName,
     pointwiseName, parametersDesc ) {
 
-    tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == inDepth ),
+    tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
       `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
-        + `should match input image channel count (${inDepth}). (${parametersDesc})`);
+        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
-    let resultLength = ( inHeight * inWidth * pointwiseChannelCount );
-    let result = new Float32Array( resultLength );
+    let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
+    let imageOut = { height: imageIn.height, width: imageIn.width, depth: imageIn.depth, dataArray: new Float32Array( imageOutLength ) };
 
     // Pointwise Convolution
     for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
-      let filterIndexBase = ( outChannel * inDepth );
+      let filterIndexBase = ( outChannel * imageIn.depth );
 
-      for ( let y = 0; y < inHeight; ++y ) {
-        let indexBaseX = ( y * inWidth );
+      for ( let y = 0; y < imageIn.height; ++y ) {
+        let indexBaseX = ( y * imageIn.width );
 
-        for ( let x = 0; x < inWidth; ++x ) {
+        for ( let x = 0; x < imageIn.width; ++x ) {
           let indexBaseC = ( indexBaseX + x );
-          let inIndexBaseC  = ( indexBaseC * inDepth );
+          let inIndexBaseC  = ( indexBaseC * imageIn.depth );
           let outIndexBaseC = ( indexBaseC * pointwiseChannelCount );
 
-          for ( let inChannel = 0; inChannel < inDepth; ++inChannel ) {
+          for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
             let inIndex = inIndexBaseC + inChannel;
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + inChannel;
 
-            result[ outIndex ] = inDataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
+            imageOut.dataArray[ outIndex ] = imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
           }
         }
       }
     }
 
     // Bias
-//!!! ...unfinished...
+    TestCase.modifyByBias( newImage, pointwiseChannelCount, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
     // Activation
-//!!! ...unfinished...
+    TestCase.modifyByActivation( newImage, pointwiseChannelCount, pointwiseActivationName, parametersDesc );
+
+    return newImage;
   }
 
   /**
-   * @param {number[]} inDataArray    The input image to be convoluted.
-   * @param {number}   inHeight       The height of the input image.
-   * @param {number}   inWidth        The width of the input image.
-   * @param {number}   inDepth        The depth of the input image.
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
    * @param {boolean}  bBias          Whether add bias.
    * @param {number[]} biasesArray    The bias values.
    * @param {string}   biasName       A string for debug message of this bias.
    * @param {string}   parametersDesc A string for debug message of this point-depth-point.
    *
-   * @return {Float32Array}
-   *   The result of the pointwise convolution, bias and activation.
+   * @return {object}
+   *   Return imageIn which may or may not be added bias (according to bBias).
    */
-  static calcBias( inDataArray, inHeight, inWidth, inDepth, bBias, biasesArray, biasName, parametersDesc ) {
+  static modifyByBias( imageIn, bBias, biasesArray, biasName, parametersDesc ) {
 
-//!!! ...unfinished...
-    tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == inDepth ),
-      `${biasName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
-        + `should match input image channel count (${inDepth}). (${parametersDesc})`);
+    tf.util.assert( ( biasesArray.length == imageIn.depth ),
+      `${biasName} shape (${biasesArray.length}) `
+        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
-//!!! ...unfinished...
+    if ( !bBias )
+      return imageIn;
+
+    for ( let y = 0; y < imageIn.height; ++y ) {
+      let indexBaseX = ( y * imageIn.width );
+
+      for ( let x = 0; x < imageIn.width; ++x ) {
+        let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
+
+        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+          let inIndex = inIndexBaseC + inChannel;
+          imageIn.dataArray[ inIndex ] += biasesArray[ inChannel ];
+        }
+      }
+    }
+
+    return imageIn;
+  }
+
+  /**
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
+   * @param {string}   activationName The name string of this activation function.
+   * @param {string}   parametersDesc A string for debug message of this point-depth-point.
+   *
+   * @return {object}
+   *   Return imageIn which may or may not be activated.
+   */
+  static modifyByActivation( imageIn, activationName, parametersDesc ) {
+
+    let pfnActivation = PointDepthPoint.getActivationFunction( activationName );
+    if ( !pfnActivation )
+      return imageIn;
+
+    for ( let y = 0; y < imageIn.height; ++y ) {
+      let indexBaseX = ( y * imageIn.width );
+
+      for ( let x = 0; x < imageIn.width; ++x ) {
+        let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
+
+        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+          let inIndex = inIndexBaseC + inChannel;
+          imageIn.dataArray[ inIndex ] = pfnActivation( imageIn.dataArray[ inIndex ] );
+        }
+      }
+    }
+
+    return imageIn;
   }
 
 }
