@@ -600,43 +600,48 @@ class Base extends ReturnOrClone.Base {
     return true;
   }
 
-// !!! (2021/01/07) ...unfinished...
-//   /**
-//    * Initialize this object by calling initer() and advance the generator by loop until done.
-//    *
-//    * @param {ValueMax.Percentage.Aggregate} progressParent
-//    *   If null, a temporary progress object will be created.
-//    *
-//    * @return {boolean}
-//    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
-//    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
-//    */
-//   init(
-//     progressParent,
-//     inputFloat32Array, byteOffsetBegin,
-//     inChannels, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-//     bKeepInputTensor,
-//     bSplitReshapeGatherConcat
-//   ) {
-//
-//     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
-//
-//     let initer = this.initer(
-//       progressParent,
-//       inputFloat32Array, byteOffsetBegin,
-//       inChannels, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-//       bKeepInputTensor,
-//       bSplitReshapeGatherConcat
-//     );
-//
-//     let initerNext;
-//     do {
-//       initerNext = initer.next();
-//     } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.getRoot().
-//
-//     let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
-//     return bInitOk;
-//   }
+  /**
+   * Initialize this object by calling initer() and advance the generator by loop until done.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   If null, a temporary progress object will be created.
+   *
+   * @return {boolean}
+   *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
+   *   Return false if failed (and progressParent.valuePercentage will be less than 100).
+   */
+  init(
+    progressParent,
+    inputFloat32Array, byteOffsetBegin,
+    channelCount_pointwise1Before,
+    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+    bAddInputToOutput,
+    bKeepInputTensor
+  ) {
+
+    progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
+
+    let initer = this.initer(
+      progressParent,
+      inputFloat32Array, byteOffsetBegin,
+      channelCount_pointwise1Before,
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+      depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+      bAddInputToOutput,
+      bKeepInputTensor
+    );
+
+    let initerNext;
+    do {
+      initerNext = initer.next();
+    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.getRoot().
+
+    let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
+    return bInitOk;
+  }
 
   /** Release all tensors. */
   disposeTensors() {
@@ -698,29 +703,30 @@ class Base extends ReturnOrClone.Base {
     return null;
   }
 
-  /**
-   * @param {number[]} newTensorShape
-   *   The returned tensor's shape. If null, same as zero size.
-   *
-   * @return {tf.tensor4d|tf.tensor3d}
-   *   Return a tensor4d or tensor3d acccording to newTensorShape. If size of newTensorShape is zero, return null.
-   */
-  static generateTensor( newTensorShape ) {
-    return tf.tidy( () => {
-
-      let valueCount = 0;
-      if ( newTensorShape )
-        valueCount = tf.util.sizeFromShape( newTensorShape );
-
-      let tensor1d, tensorNew = null;
-      if ( valueCount ) {
-        tensor1d = tf.range( 0, valueCount, 1 );
-        tensorNew = tensor1d.reshape( newTensorShape );
-      }
-
-      return tensorNew;
-    });
-  }
+// !!! (2021/01/22 Remarked) Since there is already real tensor generator, this is no longer needed.
+//   /**
+//    * @param {number[]} newTensorShape
+//    *   The returned tensor's shape. If null, same as zero size.
+//    *
+//    * @return {tf.tensor4d|tf.tensor3d}
+//    *   Return a tensor4d or tensor3d acccording to newTensorShape. If size of newTensorShape is zero, return null.
+//    */
+//   static generateTensor( newTensorShape ) {
+//     return tf.tidy( () => {
+//
+//       let valueCount = 0;
+//       if ( newTensorShape )
+//         valueCount = tf.util.sizeFromShape( newTensorShape );
+//
+//       let tensor1d, tensorNew = null;
+//       if ( valueCount ) {
+//         tensor1d = tf.range( 0, valueCount, 1 );
+//         tensorNew = tensor1d.reshape( newTensorShape );
+//       }
+//
+//       return tensorNew;
+//     });
+//   }
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv_and_keep( inputTensor ) {
