@@ -40,9 +40,17 @@ class HeightWidthDepth {
     // pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     // bAddInputToOutput,
 
-    this.correctnessTestSet[] = [
-      [ 6, true, "cos", 3, 2, 0, true, "cos", 8, true, "cos", true ],
-    
+    this.testCases = [
+      { in: {
+          weightsArray:          [ 5.1,  1.1,   6.1, 3, 2, 3,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ],
+          weightsExtractedArray: [   5, true, "cos", 3, 2, 0, true, "cos", 8, true, "cos", true ],
+          height: 2, width: 2, depth: 4,
+          dataArray: [ ],
+        },
+        out: {
+          resultArray: [ ],
+        }
+      },
     ];
 
 
@@ -95,7 +103,7 @@ class HeightWidthDepth {
   }
 
   /**
-   * @return {PointDepthPoint.Base} The created embedding object.
+   * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
   pointDepthPoint_create(
     inputFloat32Array, byteOffsetBegin,
