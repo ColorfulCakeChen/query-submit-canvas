@@ -141,23 +141,27 @@ class HeightWidthDepth {
     // bAddInputToOutput,
     //
     this.testCases = [
-      { weights: {
-          params: {
-            inArray:  [ 2.1,  1.1,   6.1, 3.1, 2.1, 3.1,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ],
-            outArray: [   2, true, "cos",   3,   2,   0, true, "cos", 8, true, "cos", true ]
-          },
-          pointwise1Filters: [],
-          pointwise1Biases: [],
-          depthwiseFilters: [],
-          depthwiseBiases: [],
-          pointwise2Filters: [],
-          pointwise2Biases: [],
-        },
-        image: {
-          in: testInputData,
-          out: [ ],
-        }
-      },
+      new TestCase(
+        [ 2.1,  1.1,   6.1, 3.1, 2.1, 3.1,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ], // paramsInArray
+        [   2, true, "cos",   3,   2,   0, true, "cos", 8, true, "cos", true ], // paramsOutArray
+
+        // pointwise1FiltersArray
+        [],
+        // pointwise1BiasesArray
+        [],
+        // depthwiseFiltersArray
+        [],
+        // depthwiseBiasesArray
+        [],
+        // pointwise2FiltersArray
+        [],
+        // pointwise2BiasesArray
+        [],
+        // imageInArray
+        testInputData,
+        // imageOutArray
+        [ ],
+      ),
     ];
 
 
