@@ -34,21 +34,37 @@ class HeightWidthDepth {
 
 //!!! ...unfinished...
 
+    let testInputData = {
+      height: 3, width: 3, depth: 4,
+      dataArray: [
+        111, 112, 113, 114,  121, 122, 123, 124,  131, 132, 133, 134,
+        211, 212, 213, 214,  221, 222, 223, 224,  231, 232, 233, 234,
+        311, 312, 313, 314,  321, 322, 323, 324,  331, 332, 333, 334,
+//        411, 412, 413, 414,  421, 422, 423, 424,  431, 432, 433, 434,
+      ]
+    };
 
     // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
     // depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
     // pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     // bAddInputToOutput,
-
+    //
     this.testCases = [
-      { in: {
-          weightsArray:          [ 5.1,  1.1,   6.1, 3, 2, 3,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ],
-          weightsExtractedArray: [   5, true, "cos", 3, 2, 0, true, "cos", 8, true, "cos", true ],
-          height: 2, width: 2, depth: 4,
-          dataArray: [ ],
+      { weights: {
+          params: {
+            inArray:  [ 5.1,  1.1,   6.1, 3, 2, 3,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ],
+            outArray: [   5, true, "cos", 3, 2, 0, true, "cos", 8, true, "cos", true ]
+          },
+          pointwise1Filters: [],
+          pointwise1Biases: [],
+          depthwiseFilters: [],
+          depthwiseBiases: [],
+          pointwise2Filters: [],
+          pointwise2Biases: [],
         },
-        out: {
-          resultArray: [ ],
+        image: {
+          in: testInputData,
+          out: [ ],
         }
       },
     ];
