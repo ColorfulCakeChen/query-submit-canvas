@@ -254,6 +254,7 @@ class TestCase {
     let imageOutLength = ( imageIn.height * imageIn.width * depthwise_AvgMax_Or_ChannelMultiplier );
     let imageOut = { height: imageIn.height, width: imageIn.width, depth: imageIn.depth, dataArray: new Float32Array( imageOutLength ) };
 
+//!!! ...unfinished...
     // Depthwise Convolution
     for ( let outChannel = 0; outChannel < outChannelCount; ++outChannel ) {
       let filterIndexBase = ( outChannel * imageIn.depth );
