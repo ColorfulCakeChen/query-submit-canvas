@@ -44,7 +44,7 @@ class TestCase {
     };
 
     this.image = {
-      inArray:  imageInArray,
+      inArray:  imageIn.dataArray,
       outArray: imageOutArray
     };
 
@@ -124,7 +124,7 @@ class HeightWidthDepth {
 
 //!!! ...unfinished...
 
-    let testImagetData = {
+    let testImageData = {
       height: 3, width: 3, depth: 4,
       dataArray: [
         111, 112, 113, 114,  121, 122, 123, 124,  131, 132, 133, 134,
@@ -156,8 +156,8 @@ class HeightWidthDepth {
         [],
         // pointwise2BiasesArray
         [],
-        // imageInArray
-        testImagetData,
+        // imageIn
+        testImageData,
         // imageOutArray
         [ ],
       ),
