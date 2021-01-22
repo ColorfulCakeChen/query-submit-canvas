@@ -10,6 +10,97 @@ import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
  * @see {@link https://www.measurethat.net/Benchmarks/Show/}
  */
 
+
+/**
+ *
+ */
+class TestCase {
+
+  /**
+   * @param {number} height            image height
+   * @param {number} width             image width
+   * @param {number} depth             image channel count
+   */
+  constructor(
+    paramsInArray, paramsOutArray,
+    pointwise1FiltersArray, pointwise1BiasesArray,
+    depthwiseFiltersArray, depthwiseBiasesArray,
+    pointwise2FiltersArray, pointwise2BiasesArray,
+    imageInArray, imageOutArray
+  ) {
+    // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+    // depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+    // pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+    // bAddInputToOutput,
+    //
+    this.weights = {
+      params: {
+        inArray:  paramsInArray,
+        outArray: paramsOutArray
+      },
+      pointwise1Filters: pointwise1FiltersArray, pointwise1Biases: pointwise1BiasesArray,
+      depthwiseFilters:  depthwiseFiltersArray,  depthwiseBiases:  depthwiseBiasesArray,
+      pointwise2Filters: pointwise2FiltersArray, pointwise2Biases: pointwise2BiasesArray
+    };
+
+    this.image = {
+      inArray:  imageInArray,
+      outArray: imageOutArray
+    };
+
+    // Prepare weights source and offset into array. So that they can be accessed by loop.
+    let weightsSourceArray = this.weightsSourceArray = [];
+    {
+      let offset = 0;
+      
+      if ( paramsInArray ) {
+        weightsSourceArray.push( { offset: offset, weights: paramsInArray } );
+        offset += paramsInArray.length;
+      }
+
+      if ( pointwise1FiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise1FiltersArray } );
+        offset += pointwise1FiltersArray.length;
+      }
+
+      if ( pointwise1BiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise1BiasesArray } );
+        offset += pointwise1BiasesArray.length;
+      }
+
+      if ( depthwiseFiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: depthwiseFiltersArray } );
+        offset += depthwiseFiltersArray.length;
+      }
+
+      if ( depthwiseBiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: depthwiseBiasesArray } );
+        offset += depthwiseBiasesArray.length;
+      }
+
+      if ( pointwise2FiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise2FiltersArray } );
+        offset += pointwise2FiltersArray.length;
+      }
+
+      if ( pointwise2BiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise2BiasesArray } );
+        offset += pointwise2BiasesArray.length;
+      }
+
+      this.weightsTotalLength = offset;
+    }
+
+    // Concatenate this.weights into a Float32Array.
+    this.weightsFloat32Array = new Float32Array( this.weightsTotalLength );
+    for ( let i = 0; i < weightsSourceArray.length; ++i ) {
+      this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
+    }
+
+
+  }
+}
+
 /**
  * A test set.
  */
@@ -52,8 +143,8 @@ class HeightWidthDepth {
     this.testCases = [
       { weights: {
           params: {
-            inArray:  [ 5.1,  1.1,   6.1, 3, 2, 3,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ],
-            outArray: [   5, true, "cos", 3, 2, 0, true, "cos", 8, true, "cos", true ]
+            inArray:  [ 2.1,  1.1,   6.1, 3.1, 2.1, 3.1,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ],
+            outArray: [   2, true, "cos",   3,   2,   0, true, "cos", 8, true, "cos", true ]
           },
           pointwise1Filters: [],
           pointwise1Biases: [],
