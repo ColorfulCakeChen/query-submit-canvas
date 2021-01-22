@@ -17,22 +17,22 @@ import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 class TestCase {
 
   /**
-   * @param {number} height            image height
-   * @param {number} width             image width
-   * @param {number} depth             image channel count
+   * @param {number[]} paramsInArray      parameters data which will be processed by PointDepthPoint.Params
+   * @param {number[]} paramsOutArray     parameters data which should match the result of PointDepthPoint.Params
+   *
+   * @param {number} imageIn.height            image height
+   * @param {number} imageIn.width             image width
+   * @param {number} imageIn.depth             image channel count
+   * @param {number[]} imageIn.dataArray       image data
+   * @param {number[]} imageOutArray           output image data
    */
   constructor(
     paramsInArray, paramsOutArray,
     pointwise1FiltersArray, pointwise1BiasesArray,
     depthwiseFiltersArray, depthwiseBiasesArray,
     pointwise2FiltersArray, pointwise2BiasesArray,
-    imageInArray, imageOutArray
+    imageIn, imageOutArray
   ) {
-    // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    // depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-    // pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
-    // bAddInputToOutput,
-    //
     this.weights = {
       params: {
         inArray:  paramsInArray,
@@ -97,7 +97,6 @@ class TestCase {
       this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
     }
 
-
   }
 }
 
@@ -125,7 +124,7 @@ class HeightWidthDepth {
 
 //!!! ...unfinished...
 
-    let testInputData = {
+    let testImagetData = {
       height: 3, width: 3, depth: 4,
       dataArray: [
         111, 112, 113, 114,  121, 122, 123, 124,  131, 132, 133, 134,
@@ -158,7 +157,7 @@ class HeightWidthDepth {
         // pointwise2BiasesArray
         [],
         // imageInArray
-        testInputData,
+        testImagetData,
         // imageOutArray
         [ ],
       ),
