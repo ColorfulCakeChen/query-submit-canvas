@@ -131,10 +131,10 @@ class TestCase {
     ;
 
     // Pointwise1
-    this.pointwise1Result = this.calcPointwise(
+    this.pointwise1Result = TestCase.calcPointwise(
       this.image.inArray, this.image.in.height, this.image.in.width, this.image.in.depth,
-      "Pointwise 1", pointwise1ChannelCount, this.weights.pointwiseFiltersArray,
-      bPointwise1Bias, this.weights.pointwiseBiasesArray, pointwise1ActivationName );
+      pointwise1ChannelCount, this.weights.pointwiseFiltersArray, bPointwise1Bias, this.weights.pointwiseBiasesArray, pointwise1ActivationName,
+      "Pointwise 1", this.params.description );
 
 //!!! ...unfinished...
 
@@ -146,41 +146,76 @@ class TestCase {
    * @param {number}   inWidth        The width of the input image.
    * @param {number}   inDepth        The depth of the input image.
    * @param {string}   pointwiseName  A string for debug message of this convolution.
+   * @param {string}   parametersDesc A string for debug message of this point-depth-point.
    *
    * @return {Float32Array}
    *   The result of the pointwise convolution, bias and activation.
    */
-  calcPointwise(
+  static calcPointwise(
     inDataArray, inHeight, inWidth, inDepth,
-    pointwiseName, pointwiseChannelCount, pointwiseFiltersArray, bPointwise1Bias, pointwiseBiasesArray, pointwiseActivationName ) {
+    pointwiseChannelCount, pointwiseFiltersArray, bPointwise1Bias, pointwiseBiasesArray, pointwiseActivationName,
+    pointwiseName, parametersDesc ) {
 
     tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == inDepth ),
       `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
-        + `should match input image channel count (${inDepth}). (${this.params.description})`);
+        + `should match input image channel count (${inDepth}). (${parametersDesc})`);
 
     let resultLength = ( inHeight * inWidth * pointwiseChannelCount );
     let result = new Float32Array( resultLength );
 
+    // Pointwise Convolution
     for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
       let filterIndexBase = ( outChannel * inDepth );
 
       for ( let y = 0; y < inHeight; ++y ) {
-        let inIndexBaseX = ( y * inWidth );
+        let indexBaseX = ( y * inWidth );
 
         for ( let x = 0; x < inWidth; ++x ) {
-          let inIndexBaseC = ( ( inIndexBaseX + x ) * inDepth );
+          let indexBaseC = ( indexBaseX + x );
+          let inIndexBaseC  = ( indexBaseC * inDepth );
+          let outIndexBaseC = ( indexBaseC * pointwiseChannelCount );
 
           for ( let inChannel = 0; inChannel < inDepth; ++inChannel ) {
             let inIndex = inIndexBaseC + inChannel;
+            let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + inChannel;
 
-            let inDataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
-
-        //( outChannel * this.image.in.depth )
+            result[ outIndex ] = inDataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
+          }
+        }
       }
     }
+
+    // Bias
+//!!! ...unfinished...
+
+    // Activation
+//!!! ...unfinished...
   }
-      
+
+  /**
+   * @param {number[]} inDataArray    The input image to be convoluted.
+   * @param {number}   inHeight       The height of the input image.
+   * @param {number}   inWidth        The width of the input image.
+   * @param {number}   inDepth        The depth of the input image.
+   * @param {boolean}  bBias          Whether add bias.
+   * @param {number[]} biasesArray    The bias values.
+   * @param {string}   biasName       A string for debug message of this bias.
+   * @param {string}   parametersDesc A string for debug message of this point-depth-point.
+   *
+   * @return {Float32Array}
+   *   The result of the pointwise convolution, bias and activation.
+   */
+  static calcBias( inDataArray, inHeight, inWidth, inDepth, bBias, biasesArray, biasName, parametersDesc ) {
+
+//!!! ...unfinished...
+    tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == inDepth ),
+      `${biasName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
+        + `should match input image channel count (${inDepth}). (${parametersDesc})`);
+
+//!!! ...unfinished...
+  }
+
 }
 
 /**
