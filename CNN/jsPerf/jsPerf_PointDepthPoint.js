@@ -48,11 +48,14 @@ class TestCase {
       outArray: imageOutArray
     };
 
+    
+    this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
+
     // Prepare weights source and offset into array. So that they can be accessed by loop.
     let weightsSourceArray = this.weightsSourceArray = [];
     {
-      let offset = 0;
-      
+      let offset = this.weightsElementOffsetBegin;
+
       if ( paramsInArray ) {
         weightsSourceArray.push( { offset: offset, weights: paramsInArray } );
         offset += paramsInArray.length;
@@ -93,8 +96,14 @@ class TestCase {
 
     // Concatenate this.weights into a Float32Array.
     this.weightsFloat32Array = new Float32Array( this.weightsTotalLength );
-    for ( let i = 0; i < weightsSourceArray.length; ++i ) {
-      this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
+    {
+      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
+        this.weightsFloat32Array[ i ] = -i;
+      }
+
+      for ( let i = 0; i < weightsSourceArray.length; ++i ) {
+        this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
+      }
     }
 
   }
