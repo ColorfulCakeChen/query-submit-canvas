@@ -48,7 +48,7 @@ class TestCase {
       outArray: imageOutArray
     };
 
-    
+     // For testing not start at the offset 0.
     this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
 
     // Prepare weights source and offset into array. So that they can be accessed by loop.
