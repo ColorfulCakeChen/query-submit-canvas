@@ -24,7 +24,7 @@ class TestCase {
    * @param {number}   imageIn.width     Image width
    * @param {number}   imageIn.depth     Image channel count
    * @param {number[]} imageIn.dataArray Image data
-!!!???
+//!!! ...unfinished...
    * @param {number[]} imageOutArray     Output image data
    */
   constructor(
@@ -131,18 +131,35 @@ class TestCase {
       + `bAddInputToOutput=${bAddInputToOutput}`
     ;
 
-    let nextImageIn, next;
+    let nextImageIn = this.image.in;
 
     // Pointwise1
     if ( pointwise1ChannelCount > 0 ) {
-      this.pointwise1Result = TestCase.calcPointwise(
-        this.image.inArray, this.image.in.height, this.image.in.width, this.image.in.depth,
-        pointwise1ChannelCount, this.weights.pointwiseFiltersArray, bPointwise1Bias, this.weights.pointwiseBiasesArray, pointwise1ActivationName,
+      nextImageIn = TestCase.calcPointwise(
+        nextImageIn,
+        pointwise1ChannelCount, this.weights.pointwise1Filters, bPointwise1Bias, this.weights.pointwise1Biases, pointwise1ActivationName,
         "Pointwise 1", this.params.description );
     }
 
+    // Depthwise
+    if ( 0 != depthwise_AvgMax_Or_ChannelMultiplier ) {
 //!!! ...unfinished...
+      nextImageIn = TestCase.calcDepthwise(
+        nextImageIn,
+        depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad,
+        this.weights.depthwiseFilters, bDepthwiseBias, this.weights.depthwiseBiases, depthwiseActivationName,
+        "Depthwise", this.params.description );
+    }
 
+    // Pointwise2
+    if ( pointwise2ChannelCount > 0 ) {
+      nextImageIn = TestCase.calcPointwise(
+        nextImageIn,
+        pointwise2ChannelCount, this.weights.pointwise2Filters, bPointwise2Bias, this.weights.pointwise2Biases, pointwise2ActivationName,
+        "Pointwise 2", this.params.description );
+    }
+
+    return nextImageIn;
   }
 
   /**
@@ -150,6 +167,7 @@ class TestCase {
    * @param {number}   imageIn.width     Image width
    * @param {number}   imageIn.depth     Image channel count
    * @param {number[]} imageIn.dataArray Image data
+   * @param {boolean}  bBias             Whether add bias.
    * @param {string}   pointwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
@@ -192,12 +210,12 @@ class TestCase {
     }
 
     // Bias
-    TestCase.modifyByBias( newImage, pointwiseChannelCount, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
+    TestCase.modifyByBias( imageOut, pointwiseChannelCount, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
     // Activation
-    TestCase.modifyByActivation( newImage, pointwiseChannelCount, pointwiseActivationName, parametersDesc );
+    TestCase.modifyByActivation( imageOut, pointwiseChannelCount, pointwiseActivationName, parametersDesc );
 
-    return newImage;
+    return imageOut;
   }
 
   /**
@@ -205,10 +223,79 @@ class TestCase {
    * @param {number}   imageIn.width     Image width
    * @param {number}   imageIn.depth     Image channel count
    * @param {number[]} imageIn.dataArray Image data
-   * @param {boolean}  bBias          Whether add bias.
-   * @param {number[]} biasesArray    The bias values.
-   * @param {string}   biasName       A string for debug message of this bias.
-   * @param {string}   parametersDesc A string for debug message of this point-depth-point.
+   * @param {boolean}  bBias             Whether add bias.
+   * @param {string}   depthwiseName     A string for debug message of this convolution.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {Float32Array}
+   *   The result of the depthwise convolution, bias and activation.
+   */
+  static calcDepthwise(
+    imageIn,
+    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad,
+    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationName,
+    depthwiseName, parametersDesc ) {
+
+    let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
+
+    if (   ( "Avg" === depthwise_AvgMax_Or_ChannelMultiplier )
+        || ( "Max" === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+      channelMultiplier = 1;
+    }
+//!!! ...unfinished...
+      
+    let outChannelCount = imageIn.depth * channelMultiplier;
+      
+//!!! ...unfinished...
+    tf.util.assert( ( ( depthwiseFiltersArray.length / outChannelCount ) == imageIn.depth ),
+      `${depthwiseName} filters shape ( ${depthwiseFiltersArray.length} / ${outChannelCount} ) `
+        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+
+    let imageOutLength = ( imageIn.height * imageIn.width * depthwise_AvgMax_Or_ChannelMultiplier );
+    let imageOut = { height: imageIn.height, width: imageIn.width, depth: imageIn.depth, dataArray: new Float32Array( imageOutLength ) };
+
+    // Depthwise Convolution
+    for ( let outChannel = 0; outChannel < outChannelCount; ++outChannel ) {
+      let filterIndexBase = ( outChannel * imageIn.depth );
+
+      for ( let y = 0; y < imageIn.height; ++y ) {
+        let indexBaseX = ( y * imageIn.width );
+
+        for ( let x = 0; x < imageIn.width; ++x ) {
+          let indexBaseC = ( indexBaseX + x );
+          let inIndexBaseC  = ( indexBaseC * imageIn.depth );
+          let outIndexBaseC = ( indexBaseC * pointwiseChannelCount );
+
+          for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+            let inIndex = inIndexBaseC + inChannel;
+            let outIndex = outIndexBaseC + outChannel;
+            let filterIndex = filterIndexBase + inChannel;
+
+//!!! ...unfinished...
+            imageOut.dataArray[ outIndex ] = imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
+          }
+        }
+      }
+    }
+
+    // Bias
+    TestCase.modifyByBias( imageOut, pointwiseChannelCount, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
+
+    // Activation
+    TestCase.modifyByActivation( imageOut, pointwiseChannelCount, pointwiseActivationName, parametersDesc );
+
+    return imageOut;
+  }
+
+  /**
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
+   * @param {boolean}  bBias             Whether add bias.
+   * @param {number[]} biasesArray       The bias values.
+   * @param {string}   biasName          A string for debug message of this bias.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
    * @return {object}
    *   Return imageIn which may or may not be added bias (according to bBias).
