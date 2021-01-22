@@ -131,33 +131,12 @@ class TestCase {
     ;
 
     // Pointwise1
+    this.pointwise1Result = this.calcPointwise(
+      this.image.inArray, this.image.in.height, this.image.in.width, this.image.in.depth,
+      "Pointwise 1", pointwise1ChannelCount, this.weights.pointwiseFiltersArray,
+      bPointwise1Bias, this.weights.pointwiseBiasesArray, pointwise1ActivationName );
 
-    tf.util.assert( ( ( this.weights.pointwise1Filters.length / pointwise1ChannelCount ) == this.image.in.depth ),
-      `Pointwise 1 filters shape ( ${this.weights.pointwise1Filters.length} / ${pointwise1ChannelCount} ) `
-        + `should match input image channel count (${this.image.in.depth}). (${this.params.description})`);
-
-    let ( this.image.in.height * this.image.in.width * pointwise1ChannelCount );
-    this.pointwise1Result = new Float32Array(  );
-    for ( let outChannel = 0; outChannel < pointwise1ChannelCount; ++outChannel ) {
-      let filterIndexBase = ( outChannel * this.image.in.depth );
-
-      for ( let y = 0; y < this.image.in.height; ++y ) {
-        let inIndexBaseX = ( y * this.image.in.width );
-
-        for ( let x = 0; x < this.image.in.width; ++x ) {
-          let inIndexBaseC = ( ( inIndexBaseX + x ) * this.image.in.depth );
-
-          for ( let inChannel = 0; inChannel < this.image.in.depth; ++inChannel ) {
-            let inIndex = inIndexBaseC + inChannel;
-            let filterIndex = filterIndexBase + inChannel;
-
-            let this.image.inArray[ inIndex ] * this.weights.pointwise1Filters[ filterIndex ];
-
-        //( outChannel * this.image.in.depth )
-          }
-        }
-      }
-    }
+//!!! ...unfinished...
 
   }
 
@@ -173,7 +152,7 @@ class TestCase {
    */
   calcPointwise(
     inDataArray, inHeight, inWidth, inDepth,
-    pointwiseName, pointwiseChannelCount, pointwiseFiltersArray, pointwiseBiasesArray, pointwiseActivationName ) {
+    pointwiseName, pointwiseChannelCount, pointwiseFiltersArray, bPointwise1Bias, pointwiseBiasesArray, pointwiseActivationName ) {
 
     tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == inDepth ),
       `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
