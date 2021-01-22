@@ -44,11 +44,11 @@ class TestCase {
     };
 
     this.image = {
-      inArray:  imageIn.dataArray,
+      in:  imageIn,
       outArray: imageOutArray
     };
 
-     // For testing not start at the offset 0.
+    // For testing not start at the offset 0.
     this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
 
     // Prepare weights source and offset into array. So that they can be accessed by loop.
@@ -105,8 +105,103 @@ class TestCase {
         this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
       }
     }
+  }
+
+  /** According to this.weights.params.outArray and this.image.inArray, calculate this.image.outArray.
+   */ 
+  calcResult() {
+    // Assume the paramsOutArray is correct. Unpack it into parameters.
+    let [
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+      depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+      bAddInputToOutput
+    ] = this.weights.params.outArray;
+
+    // Create description for debug easily.
+    this.params.description =
+        `pointwise1ChannelCount=${pointwise1ChannelCount}, bPointwise1Bias=${bPointwise1Bias}, pointwise1ActivationName=${pointwise1ActivationName}, `
+      + `depthwiseFilterHeight=${depthwiseFilterHeight}, `
+      + `depthwise_AvgMax_Or_ChannelMultiplier=${depthwise_AvgMax_Or_ChannelMultiplier}, `
+      + `depthwiseStridesPad=${depthwiseStridesPad}, `
+      + `bDepthwiseBias=${bDepthwiseBias}, `
+      + `depthwiseActivationName=${depthwiseActivationName}, `
+      + `pointwise2ChannelCount=${pointwise2ChannelCount}, bPointwise2Bias=${bPointwise2Bias}, pointwise2ActivationName=${pointwise2ActivationName}, `
+      + `bAddInputToOutput=${bAddInputToOutput}`
+    ;
+
+    // Pointwise1
+
+    tf.util.assert( ( ( this.weights.pointwise1Filters.length / pointwise1ChannelCount ) == this.image.in.depth ),
+      `Pointwise 1 filters shape ( ${this.weights.pointwise1Filters.length} / ${pointwise1ChannelCount} ) `
+        + `should match input image channel count (${this.image.in.depth}). (${this.params.description})`);
+
+    let ( this.image.in.height * this.image.in.width * pointwise1ChannelCount );
+    this.pointwise1Result = new Float32Array(  );
+    for ( let outChannel = 0; outChannel < pointwise1ChannelCount; ++outChannel ) {
+      let filterIndexBase = ( outChannel * this.image.in.depth );
+
+      for ( let y = 0; y < this.image.in.height; ++y ) {
+        let inIndexBaseX = ( y * this.image.in.width );
+
+        for ( let x = 0; x < this.image.in.width; ++x ) {
+          let inIndexBaseC = ( ( inIndexBaseX + x ) * this.image.in.depth );
+
+          for ( let inChannel = 0; inChannel < this.image.in.depth; ++inChannel ) {
+            let inIndex = inIndexBaseC + inChannel;
+            let filterIndex = filterIndexBase + inChannel;
+
+            let this.image.inArray[ inIndex ] * this.weights.pointwise1Filters[ filterIndex ];
+
+        //( outChannel * this.image.in.depth )
+          }
+        }
+      }
+    }
 
   }
+
+  /**
+   * @param {number[]} inDataArray    The input image to be convoluted.
+   * @param {number}   inHeight       The height of the input image.
+   * @param {number}   inWidth        The width of the input image.
+   * @param {number}   inDepth        The depth of the input image.
+   * @param {string}   pointwiseName  A string for debug message of this convolution.
+   *
+   * @return {Float32Array}
+   *   The result of the pointwise convolution, bias and activation.
+   */
+  calcPointwise(
+    inDataArray, inHeight, inWidth, inDepth,
+    pointwiseName, pointwiseChannelCount, pointwiseFiltersArray, pointwiseBiasesArray, pointwiseActivationName ) {
+
+    tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == inDepth ),
+      `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
+        + `should match input image channel count (${inDepth}). (${this.params.description})`);
+
+    let resultLength = ( inHeight * inWidth * pointwiseChannelCount );
+    let result = new Float32Array( resultLength );
+
+    for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
+      let filterIndexBase = ( outChannel * inDepth );
+
+      for ( let y = 0; y < inHeight; ++y ) {
+        let inIndexBaseX = ( y * inWidth );
+
+        for ( let x = 0; x < inWidth; ++x ) {
+          let inIndexBaseC = ( ( inIndexBaseX + x ) * inDepth );
+
+          for ( let inChannel = 0; inChannel < inDepth; ++inChannel ) {
+            let inIndex = inIndexBaseC + inChannel;
+            let filterIndex = filterIndexBase + inChannel;
+
+            let inDataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
+
+        //( outChannel * this.image.in.depth )
+      }
+    }
+  }
+      
 }
 
 /**
@@ -133,6 +228,12 @@ class HeightWidthDepth {
 
 //!!! ...unfinished...
 
+    // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+    // depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+    // pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+    // bAddInputToOutput,
+    //
+
     let testImageData = {
       height: 3, width: 3, depth: 4,
       dataArray: [
@@ -142,21 +243,20 @@ class HeightWidthDepth {
 //        411, 412, 413, 414,  421, 422, 423, 424,  431, 432, 433, 434,
       ]
     };
-
-    // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    // depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-    // pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
-    // bAddInputToOutput,
-    //
     this.testCases = [
       new TestCase(
         [ 2.1,  1.1,   6.1, 3.1, 2.1, 3.1,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ], // paramsInArray
         [   2, true, "cos",   3,   2,   0, true, "cos", 8, true, "cos", true ], // paramsOutArray
 
         // pointwise1FiltersArray
-        [],
+        // = [  450,  900,   490,  980,   530, 1060,
+        //      850, 1610,   890, 1780,   930, 1860,
+        //     1250, 2500,   ]
+        [ 1, 1, 1, 1,  2, 2, 2, 2 ],
+
         // pointwise1BiasesArray
-        [],
+        [ 3, 4 ],
+
         // depthwiseFiltersArray
         [],
         // depthwiseBiasesArray
