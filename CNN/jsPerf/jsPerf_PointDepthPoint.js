@@ -261,11 +261,14 @@ class TestCase {
     let stridesHeight = depthwiseStrides;
     let stridesWidth = depthwiseStrides;
 
+    let dilationHeight = 1;
+    let dilationWidth = 1;
+
     let imageOutHeight, imageOutWidth;
     switch ( depthwisePad ) {
-      case "valid": // When ( pad == "valid" ), the convolution will be ignored even if the filter is partially outside input image.
-        imageOutHeight = Math.floor( ( imageIn.height - depthwiseFilterHeight + 1 ) / stridesHeight );
-        imageOutWidth =  Math.floor( ( imageIn.width  - depthwiseFilterWidth  + 1 ) / stridesWidth  );
+      case "valid": // When ( pad == "valid" ), the convolution will be ignored if the filter is partially outside input image.
+        imageOutHeight = Math.floor( ( ( imageIn.height - dilationHeight * ( depthwiseFilterHeight - 1 ) - 1 ) / stridesHeight ) + 1 );
+        imageOutWidth =  Math.floor( ( ( imageIn.width  - dilationWidth *  ( depthwiseFilterWidth  - 1 ) - 1 ) / stridesWidth  ) + 1 );
         break;
 
       case "same":
@@ -315,7 +318,7 @@ class TestCase {
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
 
 // No matter pad == "same" or "valid", if filter is totally outside input, ignore it.
-// When pad == "valid", if filter is partially outside input, ignore it.
+// When ( pad == "valid" ), the convolution will be ignored if the filter is partially outside input image.
 
 //    stridesHeight, stridesWidth = depthwiseStrides;
 //!!! ...unfinished... inX, inY out of bounding?
