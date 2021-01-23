@@ -297,6 +297,7 @@ class TestCase {
                 let outIndex = outIndexBaseSubC + outChannelSub;
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
 
+//!!! ...unfinished... inX, inY out of bounding?
 //!!! ...unfinished... strides ? pad ? avg ? max ?
 //!!! ...unfinished...
                 imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * depthwiseFiltersArray[ filterIndex ];
