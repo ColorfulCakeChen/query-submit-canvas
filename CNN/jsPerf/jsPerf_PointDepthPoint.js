@@ -304,13 +304,11 @@ class TestCase {
     // Depthwise Convolution
     for ( let outY = 0; outY < imageOutHeight; ++outY ) {
       let outIndexBaseX = ( outY * imageIn.width );
-//!!! ...unfinished... strides ?
-      let inYBase = imageInBeginY + outY - effectFilterHeightOffset;
+      let inYBase = imageInBeginY + ( outY * stridesHeight ) - effectFilterHeightOffset;
 
       for ( let outX = 0; outX < imageOutWidth; ++outX ) {
         let outIndexBaseC = ( ( outIndexBaseX + outX ) * imageOutDepth );
-//!!! ...unfinished... strides ?
-        let inXBase = imageInBeginX + outX - effectFilterWidthOffset;
+        let inXBase = imageInBeginX + ( outX * stridesWidth ) - effectFilterWidthOffset;
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
           let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
