@@ -265,19 +265,23 @@ class TestCase {
     let dilationHeight = 1;
     let dilationWidth = 1;
 
+    // Effect filter size (includes dilation).
+    let effectFilterHeight = dilationHeight * ( depthwiseFilterHeight - 1 ) + 1;
+    let effectFilterWidth =  dilationWidth  * ( depthwiseFilterWidth  - 1 ) + 1;
+
     // For accessing the input pixels around the filter.
-    let filterHeightOffset = Math.floor( ( depthwiseFilterHeight - 1 ) / 2 );
-    let filterWidthOffset =  Math.floor( ( depthwiseFilterWidth  - 1 ) / 2 );
+    let effectFilterHeightOffset = Math.floor( ( effectFilterHeight - 1 ) / 2 );
+    let effectFilterWidthOffset =  Math.floor( ( effectFilterWidth  - 1 ) / 2 );
 
     let imageOutHeight, imageOutWidth;
     let imageInBeginY, imageInBeginX;
 
     switch ( depthwisePad ) {
       case "valid": // When ( pad == "valid" ), the convolution will be ignored if the filter is partially outside input image.
-        imageOutHeight = Math.floor( ( ( imageIn.height - dilationHeight * ( depthwiseFilterHeight - 1 ) - 1 ) / stridesHeight ) + 1 );
-        imageOutWidth =  Math.floor( ( ( imageIn.width  - dilationWidth *  ( depthwiseFilterWidth  - 1 ) - 1 ) / stridesWidth  ) + 1 );
-        imageInBeginY = filterHeightOffset; // So that negative ( inX, inY ) will never happen.
-        imageInBeginX = filterWidthOffset;
+        imageOutHeight = Math.floor( ( ( imageIn.height - effectFilterHeight) / stridesHeight ) + 1 );
+        imageOutWidth =  Math.floor( ( ( imageIn.width  - effectFilterWidth ) / stridesWidth  ) + 1 );
+        imageInBeginY = effectFilterHeightOffset; // So that negative ( inX, inY ) will never happen.
+        imageInBeginX = effectFilterWidthOffset;
         break;
 
       case "same":
