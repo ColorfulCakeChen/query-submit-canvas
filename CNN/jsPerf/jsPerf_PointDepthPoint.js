@@ -236,13 +236,15 @@ class TestCase {
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationName,
     depthwiseName, parametersDesc ) {
 
-    let depthwiseFilterWidth = depthwiseFilterHeight;
-    let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
+    let depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
 
+    let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
     if (   ( "Avg" === depthwise_AvgMax_Or_ChannelMultiplier )
         || ( "Max" === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
       channelMultiplier = 1;
     }
+
+    let outChannelCount = imageIn.depth * channelMultiplier;
 
 //!!! ...unfinished... strides ? pad ? avg ? max ?
 
@@ -254,8 +256,6 @@ class TestCase {
       case 1:  depthwiseStrides = 1; depthwisePad = "same";  break;
       case 2:  depthwiseStrides = 2; depthwisePad = "same";  break;
     }
-
-    let outChannelCount = imageIn.depth * channelMultiplier;
 
     tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
       `${depthwiseName} filters shape `
@@ -297,6 +297,7 @@ class TestCase {
                 let outIndex = outIndexBaseSubC + outChannelSub;
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
 
+//!!! ...unfinished... strides ? pad ? avg ? max ?
 //!!! ...unfinished...
                 imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * depthwiseFiltersArray[ filterIndex ];
               }
@@ -306,12 +307,11 @@ class TestCase {
       }
     }
 
-//!!! ...unfinished...
     // Bias
-    TestCase.modifyByBias( imageOut, pointwiseChannelCount, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
+    TestCase.modifyByBias( imageOut, outChannelCount, bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
     // Activation
-    TestCase.modifyByActivation( imageOut, pointwiseChannelCount, pointwiseActivationName, parametersDesc );
+    TestCase.modifyByActivation( imageOut, outChannelCount, depthwiseActivationName, parametersDesc );
 
     return imageOut;
   }
