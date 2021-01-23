@@ -210,10 +210,10 @@ class TestCase {
     }
 
     // Bias
-    TestCase.modifyByBias( imageOut, pointwiseChannelCount, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
+    TestCase.modifyByBias( imageOut, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
     // Activation
-    TestCase.modifyByActivation( imageOut, pointwiseChannelCount, pointwiseActivationName, parametersDesc );
+    TestCase.modifyByActivation( imageOut, pointwiseActivationName, parametersDesc );
 
     return imageOut;
   }
@@ -244,7 +244,7 @@ class TestCase {
       channelMultiplier = 1;
     }
 
-    let outChannelCount = imageIn.depth * channelMultiplier;
+    let imageOutDepth = imageIn.depth * channelMultiplier;
 
 //!!! ...unfinished... strides ? pad ? avg ? max ?
 
@@ -261,13 +261,26 @@ class TestCase {
     let stridesHeight = depthwiseStrides;
     let stridesWidth = depthwiseStrides;
 
+    let imageOutHeight, imageOutWidth;
+    switch ( depthwisePad ) {
+      case "valid": // When ( pad == "valid" ), the convolution will be ignored even if the filter is partially outside input image.
+        imageOutHeight = Math.floor( ( imageIn.height - depthwiseFilterHeight + 1 ) / stridesHeight );
+        imageOutWidth =  Math.floor( ( imageIn.width  - depthwiseFilterWidth  + 1 ) / stridesWidth  );
+        break;
+
+      case "same":
+        imageOutHeight = imageIn.height;
+        imageOutWidth = imageIn.width;
+        break;
+    }
+
     tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
       `${depthwiseName} filters shape `
         + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
-    let imageOutLength = ( imageIn.height * imageIn.width * imageIn.depth * channelMultiplier );
-    let imageOut = { height: imageIn.height, width: imageIn.width, depth: imageIn.depth, dataArray: new Float32Array( imageOutLength ) };
+    let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth * channelMultiplier );
+    let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
 
 //!!! ...unfinished...
 
@@ -280,7 +293,7 @@ class TestCase {
       let outIndexBaseX = ( outY * imageIn.width );
 
       for ( let outX = 0; outX < imageIn.width; ++outX ) {
-        let outIndexBaseC = ( ( outIndexBaseX + outX ) * outChannelCount );
+        let outIndexBaseC = ( ( outIndexBaseX + outX ) * imageOutDepth );
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
           let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
@@ -294,7 +307,7 @@ class TestCase {
               let inX = outX + filterX - filterWidthOffset;
               let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
               let inIndex = inIndexBaseC + inChannel;
-              let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * outChannelCount );
+              let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
               let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
 
               for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
@@ -317,10 +330,10 @@ class TestCase {
     }
 
     // Bias
-    TestCase.modifyByBias( imageOut, outChannelCount, bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
+    TestCase.modifyByBias( imageOut, bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
     // Activation
-    TestCase.modifyByActivation( imageOut, outChannelCount, depthwiseActivationName, parametersDesc );
+    TestCase.modifyByActivation( imageOut, depthwiseActivationName, parametersDesc );
 
     return imageOut;
   }
