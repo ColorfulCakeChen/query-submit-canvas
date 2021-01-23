@@ -305,33 +305,31 @@ class TestCase {
     for ( let outY = 0; outY < imageOutHeight; ++outY ) {
       let outIndexBaseX = ( outY * imageIn.width );
 //!!! ...unfinished... strides ?
-      let inYBase = imageInBeginY + outY - filterHeightOffset;
+      let inYBase = imageInBeginY + outY - effectFilterHeightOffset;
 
       for ( let outX = 0; outX < imageOutWidth; ++outX ) {
         let outIndexBaseC = ( ( outIndexBaseX + outX ) * imageOutDepth );
 //!!! ...unfinished... strides ?
-        let inXBase = imageInBeginX + outX - filterWidthOffset;
+        let inXBase = imageInBeginX + outX - effectFilterWidthOffset;
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
           let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
 
-          for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
-            let inY = inYBase + filterY;
+          for ( let filterY = 0, dilationFilterY = 0; filterY < depthwiseFilterHeight; ++filterY, dilationFilterY += dilationHeight ) {
+            let inY = inYBase + dilationFilterY;
             if ( ( inY < 0 ) || ( inY >= imageIn.height ) )
                 continue; // Never access outside of input image.
 
             let inIndexBaseX = ( inY * imageIn.width );
-//!!! ...unfinished...  dilationHeight ?
             let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
-            for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
-              let inX = inXBase + filterX;
+            for ( let filterX = 0, dilationFilterX = 0; filterX < depthwiseFilterWidth; ++filterX, dilationFilterX += dilationWidth ) {
+              let inX = inXBase + dilationFilterX;
               if ( ( inX < 0 ) || ( inX >= imageIn.width ) )
                   continue; // Never access outside of input image.
 
               let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
               let inIndex = inIndexBaseC + inChannel;
-//!!! ...unfinished... dilationWidth ?
               let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
               let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
 
