@@ -236,44 +236,73 @@ class TestCase {
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationName,
     depthwiseName, parametersDesc ) {
 
+    let depthwiseFilterWidth = depthwiseFilterHeight;
     let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
 
     if (   ( "Avg" === depthwise_AvgMax_Or_ChannelMultiplier )
         || ( "Max" === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
       channelMultiplier = 1;
     }
-//!!! ...unfinished...
-      
+
+//!!! ...unfinished... strides ? pad ? avg ? max ?
+
+    // Strides and Padding.
+    let depthwiseStrides, depthwisePad;
+    switch ( depthwiseStridesPad ) {
+      case 0:  depthwiseStrides = 1; depthwisePad = "valid"; break;
+      default:
+      case 1:  depthwiseStrides = 1; depthwisePad = "same";  break;
+      case 2:  depthwiseStrides = 2; depthwisePad = "same";  break;
+    }
+
     let outChannelCount = imageIn.depth * channelMultiplier;
-      
-//!!! ...unfinished...
-    tf.util.assert( ( ( depthwiseFiltersArray.length / outChannelCount ) == imageIn.depth ),
-      `${depthwiseName} filters shape ( ${depthwiseFiltersArray.length} / ${outChannelCount} ) `
+
+    tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
+      `${depthwiseName} filters shape `
+        + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
-    let imageOutLength = ( imageIn.height * imageIn.width * depthwise_AvgMax_Or_ChannelMultiplier );
+    let imageOutLength = ( imageIn.height * imageIn.width * imageIn.depth * channelMultiplier );
     let imageOut = { height: imageIn.height, width: imageIn.width, depth: imageIn.depth, dataArray: new Float32Array( imageOutLength ) };
 
 //!!! ...unfinished...
+
+    // For accessing the input pixels around the filter.
+    let filterHeightOffset = Math.floor( ( depthwiseFilterHeight - 1 ) / 2 );
+    let filterWidthOffset = Math.floor( ( depthwiseFilterWidth - 1 ) / 2 );
+
     // Depthwise Convolution
-    for ( let outChannel = 0; outChannel < outChannelCount; ++outChannel ) {
-      let filterIndexBase = ( outChannel * imageIn.depth );
+    for ( let outY = 0; outY < imageIn.height; ++outY ) {
+      let outIndexBaseX = ( outY * imageIn.width );
 
-      for ( let y = 0; y < imageIn.height; ++y ) {
-        let indexBaseX = ( y * imageIn.width );
+      for ( let outX = 0; outX < imageIn.width; ++outX ) {
+        let outIndexBaseC = ( outIndexBaseX * outChannelCount );
 
-        for ( let x = 0; x < imageIn.width; ++x ) {
-          let indexBaseC = ( indexBaseX + x );
-          let inIndexBaseC  = ( indexBaseC * imageIn.depth );
-          let outIndexBaseC = ( indexBaseC * pointwiseChannelCount );
+        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+          let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
 
-          for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-            let inIndex = inIndexBaseC + inChannel;
-            let outIndex = outIndexBaseC + outChannel;
-            let filterIndex = filterIndexBase + inChannel;
+          for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
+
+            for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
+              let inY = outY + filterY - filterHeightOffset;
+              let inIndexBaseX = ( inY * imageIn.width );
+
+              for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
+                let inX = outX + filterX - filterWidthOffset;
+                let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
+                let inIndex = inIndexBaseC + inChannel;
+
+//!!!
+
+                let outIndex = outIndexBaseSubC + outChannelSub;
+
+                let filterIndexBase = ( outChannel * imageIn.depth );
+                let filterIndex = filterIndexBase + inChannel;
 
 //!!! ...unfinished...
-            imageOut.dataArray[ outIndex ] = imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
+                imageOut.dataArray[ outIndex ] = imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
+              }
+            }
           }
         }
       }
