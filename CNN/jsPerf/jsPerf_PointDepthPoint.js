@@ -257,6 +257,10 @@ class TestCase {
       case 2:  depthwiseStrides = 2; depthwisePad = "same";  break;
     }
 
+    // Assume strides width equals strides height.
+    let stridesHeight = depthwiseStrides;
+    let stridesWidth = depthwiseStrides;
+
     tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
       `${depthwiseName} filters shape `
         + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
@@ -297,6 +301,10 @@ class TestCase {
                 let outIndex = outIndexBaseSubC + outChannelSub;
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
 
+// No matter pad == "same" or "valid", if filter is totally outside input, ignore it.
+// When pad == "valid", if filter is partially outside input, ignore it.
+
+//    stridesHeight, stridesWidth = depthwiseStrides;
 //!!! ...unfinished... inX, inY out of bounding?
 //!!! ...unfinished... strides ? pad ? avg ? max ?
 //!!! ...unfinished...
