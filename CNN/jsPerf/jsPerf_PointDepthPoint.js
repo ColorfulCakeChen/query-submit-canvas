@@ -268,6 +268,7 @@ class TestCase {
     // Effect filter size (includes dilation).
     let effectFilterHeight = dilationHeight * ( depthwiseFilterHeight - 1 ) + 1;
     let effectFilterWidth =  dilationWidth  * ( depthwiseFilterWidth  - 1 ) + 1;
+    let effectFilterSize = effectFilterHeight * effectFilterWidth;
 
     // For accessing the input pixels around the filter.
     let effectFilterHeightOffset = Math.floor( ( effectFilterHeight - 1 ) / 2 );
@@ -298,6 +299,18 @@ class TestCase {
 
     let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth * channelMultiplier );
     let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
+
+    let divisorDataArray;
+    switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+      case "Avg": // Avg pooling
+        divisorDataArray = new Float32Array( imageOut.dataArray.length ); // Cumulate the divisor of every output pixel for average.
+        break;
+
+      case "Max": // Max pooling
+        imageOut.dataArray.fill( Number.NEGATIVE_INFINITY ); // So that any value is greater than initialized value.
+        break;
+    }
+      
 
 //!!! ...unfinished...
 
@@ -335,19 +348,32 @@ class TestCase {
                 let outIndex = outIndexBaseSubC + outChannelSub;
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-// No matter pad == "same" or "valid", if filter is totally outside input, ignore it.
-// When ( pad == "valid" ), the convolution will be ignored if the filter is partially outside input image.
+                switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+                  case "Avg": // Avg pooling
+//!!! ...unfinshed... should divide effect filter size (include dilation, exclude outside)
+                    imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ];
+//!!! ...unfinshed... how to include dilation?
+                    ++ ( divisorDataArray[ outIndex ] );
+                    break;
 
-//    stridesHeight, stridesWidth = depthwiseStrides;
-//!!! ...unfinished... inX, inY out of bounding?
-//!!! ...unfinished... strides ? pad ? avg ? max ?
-//!!! ...unfinished...
-                imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * depthwiseFiltersArray[ filterIndex ];
+                  case "Max": // Max pooling
+                    imageOut.dataArray[ outIndex ] = Math.max( imageOut.dataArray[ outIndex ], imageIn.dataArray[ inIndex ] );
+                    break;
+
+                  default: // Convolution
+                    imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * depthwiseFiltersArray[ filterIndex ];
+                    break;
+                }
               }
             }
           }
         }
       }
+    }
+
+    if ( "Avg" === depthwise_AvgMax_Or_ChannelMultiplier ) { // Avg pooling
+      for ( let i = 0; i < imageOut.dataArray.length; ++i ) {
+        imageOut.dataArray[ i ] /= divisorDataArray[ i ]; // So that every sum is averaged.
     }
 
     // Bias
@@ -357,6 +383,25 @@ class TestCase {
     TestCase.modifyByActivation( imageOut, depthwiseActivationName, parametersDesc );
 
     return imageOut;
+/* For test in console only.
+
+// Pass an array of values to create a vector.
+let x = tf.tensor3d( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [ 3, 3, 1 ] );
+//let x = tf.tensor3d( [ 1, 2, 3, 4 ], [ 2, 2, 1 ] );
+//x.print();
+
+//let filter = tf.tensor4d( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [ 3, 3, 1, 1 ] );
+let filter = tf.tensor4d( [ 1, 2, 3, 4 ], [ 2, 2, 1, 1 ] );
+//filter.print();
+
+let dilations = 2;
+let strides = 1;
+//let pad = "valid";
+let pad = "same";
+//let y = x.depthwiseConv2d( filter, strides, pad );
+let y = x.pool( filter.shape, "avg", pad, dilations, strides );
+y.print();
+*/
   }
 
   /**
