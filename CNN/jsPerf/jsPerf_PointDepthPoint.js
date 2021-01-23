@@ -311,23 +311,23 @@ class TestCase {
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
           let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
 
-//!!! ...unfinished... dilation ?
-          for ( let filterY = 0; filterY < depthwiseFilterHeight; filterY += dilationHeight ) {
+          for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
             let inY = inYBase + filterY;
             if ( ( inY < 0 ) || ( inY >= imageIn.height ) )
                 continue; // Never access outside of input image.
 
             let inIndexBaseX = ( inY * imageIn.width );
+//!!! ...unfinished...  dilationHeight ?
             let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
-//!!! ...unfinished... dilation ?
-            for ( let filterX = 0; filterX < depthwiseFilterWidth; filterX += dilationWidth ) {
+            for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
               let inX = inXBase + filterX;
               if ( ( inX < 0 ) || ( inX >= imageIn.width ) )
                   continue; // Never access outside of input image.
 
               let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
               let inIndex = inIndexBaseC + inChannel;
+//!!! ...unfinished... dilationWidth ?
               let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
               let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
 
