@@ -276,31 +276,29 @@ class TestCase {
       let outIndexBaseX = ( outY * imageIn.width );
 
       for ( let outX = 0; outX < imageIn.width; ++outX ) {
-        let outIndexBaseC = ( outIndexBaseX * outChannelCount );
+        let outIndexBaseC = ( ( outIndexBaseX + outX ) * outChannelCount );
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
           let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
 
-          for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
+          for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
+            let inY = outY + filterY - filterHeightOffset;
+            let inIndexBaseX = ( inY * imageIn.width );
+            let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
-            for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
-              let inY = outY + filterY - filterHeightOffset;
-              let inIndexBaseX = ( inY * imageIn.width );
+            for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
+              let inX = outX + filterX - filterWidthOffset;
+              let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
+              let inIndex = inIndexBaseC + inChannel;
+              let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * outChannelCount );
+              let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
 
-              for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
-                let inX = outX + filterX - filterWidthOffset;
-                let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
-                let inIndex = inIndexBaseC + inChannel;
-
-//!!!
-
+              for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
                 let outIndex = outIndexBaseSubC + outChannelSub;
-
-                let filterIndexBase = ( outChannel * imageIn.depth );
-                let filterIndex = filterIndexBase + inChannel;
+                let filterIndex = filterIndexBaseSubC + outChannelSub;
 
 //!!! ...unfinished...
-                imageOut.dataArray[ outIndex ] = imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
+                imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * depthwiseFiltersArray[ filterIndex ];
               }
             }
           }
@@ -308,6 +306,7 @@ class TestCase {
       }
     }
 
+//!!! ...unfinished...
     // Bias
     TestCase.modifyByBias( imageOut, pointwiseChannelCount, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
