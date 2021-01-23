@@ -261,19 +261,29 @@ class TestCase {
     let stridesHeight = depthwiseStrides;
     let stridesWidth = depthwiseStrides;
 
+    // Currently, we can only handle dilation = 1.
     let dilationHeight = 1;
     let dilationWidth = 1;
 
+    // For accessing the input pixels around the filter.
+    let filterHeightOffset = Math.floor( ( depthwiseFilterHeight - 1 ) / 2 );
+    let filterWidthOffset =  Math.floor( ( depthwiseFilterWidth  - 1 ) / 2 );
+
     let imageOutHeight, imageOutWidth;
+    let imageInBeginY, imageInBeginX;
+
     switch ( depthwisePad ) {
       case "valid": // When ( pad == "valid" ), the convolution will be ignored if the filter is partially outside input image.
         imageOutHeight = Math.floor( ( ( imageIn.height - dilationHeight * ( depthwiseFilterHeight - 1 ) - 1 ) / stridesHeight ) + 1 );
         imageOutWidth =  Math.floor( ( ( imageIn.width  - dilationWidth *  ( depthwiseFilterWidth  - 1 ) - 1 ) / stridesWidth  ) + 1 );
+        imageInBeginY = filterHeightOffset; // So that negative ( inX, inY ) will never happen.
+        imageInBeginX = filterWidthOffset;
         break;
 
       case "same":
         imageOutHeight = imageIn.height;
         imageOutWidth = imageIn.width;
+        imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will happen, but they will be viewed as zero value.
         break;
     }
 
@@ -287,27 +297,31 @@ class TestCase {
 
 //!!! ...unfinished...
 
-    // For accessing the input pixels around the filter.
-    let filterHeightOffset = Math.floor( ( depthwiseFilterHeight - 1 ) / 2 );
-    let filterWidthOffset = Math.floor( ( depthwiseFilterWidth - 1 ) / 2 );
-
     // Depthwise Convolution
-    for ( let outY = 0; outY < imageIn.height; ++outY ) {
+    for ( let outY = 0; outY < imageOutHeight; ++outY ) {
       let outIndexBaseX = ( outY * imageIn.width );
+      let inYBase = imageInBeginY + outY - filterHeightOffset;
 
-      for ( let outX = 0; outX < imageIn.width; ++outX ) {
+      for ( let outX = 0; outX < imageOutWidth; ++outX ) {
         let outIndexBaseC = ( ( outIndexBaseX + outX ) * imageOutDepth );
+        let inXBase = imageInBeginX + outX - filterWidthOffset;
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
           let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
 
           for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
-            let inY = outY + filterY - filterHeightOffset;
+            let inY = inYBase + filterY;
+            if ( ( inY < 0 ) || ( inY >= imageIn.height ) )
+                continue; // Never access outside of input image.
+
             let inIndexBaseX = ( inY * imageIn.width );
             let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
             for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
-              let inX = outX + filterX - filterWidthOffset;
+              let inX = inXBase + filterX;
+              if ( ( inX < 0 ) || ( inX >= imageIn.width ) )
+                  continue; // Never access outside of input image.
+
               let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
               let inIndex = inIndexBaseC + inChannel;
               let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
