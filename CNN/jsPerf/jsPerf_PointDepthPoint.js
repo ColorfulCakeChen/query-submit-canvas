@@ -348,7 +348,6 @@ class TestCase {
                     // This accumulation should be done after confirm ( inY, inX ) is inside the input image.
                     ++avgDivisor;
 
-//!!! ...unfinished...
                     // No need to compute the filter's dilation part (because it is always zero).
                     //
                     // This shortcut check should be done after avgDivisor has been increased, so that the filter dilation will
@@ -356,7 +355,7 @@ class TestCase {
                     if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                       continue;
 
-                    let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
+                    let inIndexBaseC = ( ( inIndexBaseX + inX ) * imageIn.depth );
                     let inIndex = inIndexBaseC + inChannel;
                     let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
                     let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
@@ -388,12 +387,6 @@ class TestCase {
         }
       }
     }
-
-//!!! (2021/01/24 Remarked) Move to inside loop.
-//     if ( "Avg" === depthwise_AvgMax_Or_ChannelMultiplier ) { // Avg pooling
-//       for ( let i = 0; i < imageOut.dataArray.length; ++i ) {
-//         imageOut.dataArray[ i ] /= divisorDataArray[ i ]; // So that every sum is averaged.
-//     }
 
     // Bias
     TestCase.modifyByBias( imageOut, bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
