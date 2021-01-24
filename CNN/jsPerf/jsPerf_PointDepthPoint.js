@@ -315,31 +315,37 @@ class TestCase {
 
           for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
             let outIndex = outIndexBaseSubC + outChannelSub;
-            let inY = inYBase - 1; // "-1" for letting the first "++inY" equals inYBase.
+//!!! (2021/01/24 Remarked)
+//            let inY = inYBase - 1; // "-1" for letting the first "++inY" equals inYBase.
 
             // For Avg pooling, the divisor is effect filter size which includes dilation but excludes input image outside.
             let avgDivisor = 0;
 
-            for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
-              for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY ) {
-                ++inY;
+            FilterYLoop:
+            for ( let filterY = 0, inY = inYBase; filterY < depthwiseFilterHeight; ++filterY ) {
+              for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY, ++inY ) {
+//!!! (2021/01/24 Remarked)
+//                ++inY;
                 if ( inY < 0 )
-                  continue;   // Never access outside of input image. Continue to find out non-negative input image y position.
+                  continue;          // Never access outside of input image. Continue to find out non-negative input image y position.
                 else if ( inY >= imageIn.height )
-                  break;      // Never access outside of input image. Break because it is impossible to find inside of input image.
+                  break FilterYLoop; // Never access outside of input image. Break because it is impossible to find inside of input image.
 
                 let inIndexBaseX = ( inY * imageIn.width );
                 let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
-                let inX = inXBase - 1; // "-1" for letting the first "++inX" equals inXBase.
+//!!! (2021/01/24 Remarked)
+//                let inX = inXBase - 1; // "-1" for letting the first "++inX" equals inXBase.
 
-                for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
-                  for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX ) {
-                    ++inX;
+                FilterXLoop:
+                for ( let filterX = 0, inX = inXBase; filterX < depthwiseFilterWidth; ++filterX ) {
+                  for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX, ++inX ) {
+//!!! (2021/01/24 Remarked)
+//                    ++inX;
                     if ( inX < 0 )
-                      continue;   // Never access outside of input image. Continue to find out non-negative input image x position.
+                      continue;          // Never access outside of input image. Continue to find out non-negative input image x position.
                     else if ( inX >= imageIn.width )
-                      break;      // Never access outside of input image. Break because it is impossible to find inside of input image.
+                      break FilterXLoop; // Never access outside of input image. Break because it is impossible to find inside of input image.
 
                     // For Avg pooling, the divisor should include filter dilation but exclude input image outside.
                     //
