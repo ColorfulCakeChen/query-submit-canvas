@@ -1,7 +1,7 @@
 export { TestCase };
 
-//import * as ValueMax from "../ValueMax.js";
-//import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
+import * as ValueMax from "../ValueMax.js";
+import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
 /**
@@ -25,7 +25,9 @@ class TestCase {
     pointwise1FiltersArray, pointwise1BiasesArray,
     depthwiseFiltersArray, depthwiseBiasesArray,
     pointwise2FiltersArray, pointwise2BiasesArray,
-    imageIn, imageOutArray
+    imageIn,
+//!!!
+    imageOutArray
   ) {
     this.weights = {
       params: {
@@ -39,11 +41,13 @@ class TestCase {
 
     this.image = {
       in:  imageIn,
+//!!!
       outArray: imageOutArray
     };
 
     // For testing not start at the offset 0.
     this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
+    this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
 
     // Prepare weights source and offset into array. So that they can be accessed by loop.
     let weightsSourceArray = this.weightsSourceArray = [];
@@ -95,10 +99,30 @@ class TestCase {
         this.weightsFloat32Array[ i ] = -i;
       }
 
-      for ( let i = 0; i < weightsSourceArray.length; ++i ) {
+      for ( let i = 0; i < weightsSourceArray.length; ++i ) { // Concatenate this.weights into a Float32Array.
         this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
       }
     }
+  }
+
+  test() {
+//!!! ...unfinished...
+    let pointDepthPoint = new PointDepthPoint.Base();
+
+    let progress = new ValueMax.Percentage.Aggregate();
+
+    // Initialize successfully or failed.
+    let bInitOk = pointDepthPoint.init(
+      progress, this.weightsFloat32Array, this.weightsByteOffsetBegin,
+
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+      depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+      bAddInputToOutput,
+
+      bKeepInputTensor
+    );
+
   }
 
   /** According to this.weights.params.outArray and this.image.inArray, calculate this.image.outArray.
