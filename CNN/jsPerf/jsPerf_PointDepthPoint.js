@@ -312,12 +312,10 @@ class TestCase {
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
           let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
-          let outIndex = outIndexBaseSubC;
 
           for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
-//            let outIndex = outIndexBaseSubC + outChannelSub;
-            ++outIndex;
-            let inY = inYBase;
+            let outIndex = outIndexBaseSubC + outChannelSub;
+            let inY = inYBase - 1; // "-1" for letting the first "++inY" equals inYBase.
 
             // For Avg pooling, the divisor is effect filter size which includes dilation but excludes input image outside.
             let avgDivisor = 0;
@@ -333,7 +331,7 @@ class TestCase {
                 let inIndexBaseX = ( inY * imageIn.width );
                 let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
-                let inX = inXBase;
+                let inX = inXBase - 1; // "-1" for letting the first "++inX" equals inXBase.
 
                 for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
                   for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX ) {
