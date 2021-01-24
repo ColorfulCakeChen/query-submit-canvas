@@ -143,7 +143,6 @@ class TestCase {
 
     // Depthwise
     if ( 0 != depthwise_AvgMax_Or_ChannelMultiplier ) {
-//!!! ...unfinished...
       nextImageIn = TestCase.calcDepthwise(
         nextImageIn,
         depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad,
@@ -246,8 +245,6 @@ class TestCase {
 
     let imageOutDepth = imageIn.depth * channelMultiplier;
 
-//!!! ...unfinished... strides ? pad ? avg ? max ?
-
     // Strides and Padding.
     let depthwiseStrides, depthwisePad;
     switch ( depthwiseStridesPad ) {
@@ -300,21 +297,9 @@ class TestCase {
     let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth * channelMultiplier );
     let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
 
-//!!! (2021/01/24 Remarked) Move to inside loop.
-//    let divisorDataArray;
-    switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-//!!! (2021/01/24 Remarked) Move to inside loop.
-//       case "Avg": // Avg pooling
-//         divisorDataArray = new Float32Array( imageOut.dataArray.length ); // Cumulate the divisor of every output pixel for average.
-//         break;
-
-      case "Max": // Max pooling
+    if ( "Max" === depthwise_AvgMax_Or_ChannelMultiplier ) { // Max pooling
         imageOut.dataArray.fill( Number.NEGATIVE_INFINITY ); // So that any value is greater than initialized value.
-        break;
     }
-
-
-//!!! ...unfinished...
 
     // Depthwise Convolution
     for ( let outY = 0; outY < imageOutHeight; ++outY ) {
@@ -327,52 +312,49 @@ class TestCase {
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
           let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
+          let outIndex = outIndexBaseSubC;
 
           for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
-            let outIndex = outIndexBaseSubC + outChannelSub;
-
-//!!! ...unfinshed... For Avg pooling, should divide effect filter size (include dilation, exclude outside).
-            let avgDivisor = 0;
+//            let outIndex = outIndexBaseSubC + outChannelSub;
+            ++outIndex;
             let inY = inYBase;
 
-//            for ( let filterY = 0, dilationFilterY = 0; filterY < depthwiseFilterHeight; ++filterY, dilationFilterY += dilationHeight ) {
-            for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
-//              let inY = inYBase + ( filterY * dilationHeight );
+            // For Avg pooling, the divisor is effect filter size which includes dilation but excludes input image outside.
+            let avgDivisor = 0;
 
-//!!! ...unfinshed...
+            for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
               for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY ) {
                 ++inY;
                 if ( inY < 0 )
                   continue;   // Never access outside of input image. Continue to find out non-negative input image y position.
-
-                if ( inY >= imageIn.height )
+                else if ( inY >= imageIn.height )
                   break;      // Never access outside of input image. Break because it is impossible to find inside of input image.
-
-                ++avgDivisor; // For Avg pooling, the divisor should include dilation but exclude outside input image.
-                if ( 0 != dilationFilterY )
-                  continue;   // No need to compute the filter's dilation part (because it is always zero).
 
                 let inIndexBaseX = ( inY * imageIn.width );
                 let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
-//!!! ...unfinshed...
                 let inX = inXBase;
 
-//                for ( let filterX = 0, dilationFilterX = 0; filterX < depthwiseFilterWidth; ++filterX, dilationFilterX += dilationWidth ) {
                 for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
-//                  let inX = inXBase + ( filterX * dilationWidth );
-
                   for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX ) {
                     ++inX;
                     if ( inX < 0 )
                       continue;   // Never access outside of input image. Continue to find out non-negative input image x position.
+                    else if ( inX >= imageIn.width )
+                      break;      // Never access outside of input image. Break because it is impossible to find inside of input image.
 
-                    if ( inX >= imageIn.width )
-                      continue;   // Never access outside of input image. Break because it is impossible to find inside of input image.
+                    // For Avg pooling, the divisor should include filter dilation but exclude input image outside.
+                    //
+                    // This accumulation should be done after confirm ( inY, inX ) is inside the input image.
+                    ++avgDivisor;
 
-                    ++avgDivisor; // For Avg pooling, the divisor should include dilation but exclude outside input image.
-                    if ( 0 != dilationFilterX )
-                      continue;   // No need to compute the filter's dilation part (because it is always zero).
+//!!! ...unfinished...
+                    // No need to compute the filter's dilation part (because it is always zero).
+                    //
+                    // This shortcut check should be done after avgDivisor has been increased, so that the filter dilation will
+                    // be included by avgDivisor.
+                    if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                      continue;
 
                     let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
                     let inIndex = inIndexBaseC + inChannel;
@@ -383,11 +365,7 @@ class TestCase {
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
                       case "Avg": // Avg pooling
-    //!!! ...unfinshed... should divide effect filter size (include dilation, exclude outside)
                         imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ];
-//!!! (2021/01/24 Remarked) Move to inside loop.
-//     //!!! ...unfinshed... how to include dilation?
-//                         ++ ( divisorDataArray[ outIndex ] );
                         break;
 
                       case "Max": // Max pooling
