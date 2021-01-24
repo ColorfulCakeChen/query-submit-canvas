@@ -326,26 +326,30 @@ class TestCase {
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
           let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
 
-          for ( let filterY = 0, dilationFilterY = 0; filterY < depthwiseFilterHeight; ++filterY, dilationFilterY += dilationHeight ) {
-            let inY = inYBase + dilationFilterY;
-            if ( ( inY < 0 ) || ( inY >= imageIn.height ) )
-                continue; // Never access outside of input image.
+          for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
+            let outIndex = outIndexBaseSubC + outChannelSub;
 
-            let inIndexBaseX = ( inY * imageIn.width );
-            let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
+//!!! ...unfinshed... For Avg pooling, should divide effect filter size (include dilation, exclude outside).
+            let divisor = ??;
 
-            for ( let filterX = 0, dilationFilterX = 0; filterX < depthwiseFilterWidth; ++filterX, dilationFilterX += dilationWidth ) {
-              let inX = inXBase + dilationFilterX;
-              if ( ( inX < 0 ) || ( inX >= imageIn.width ) )
+            for ( let filterY = 0, dilationFilterY = 0; filterY < depthwiseFilterHeight; ++filterY, dilationFilterY += dilationHeight ) {
+              let inY = inYBase + dilationFilterY;
+              if ( ( inY < 0 ) || ( inY >= imageIn.height ) )
                   continue; // Never access outside of input image.
 
-              let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
-              let inIndex = inIndexBaseC + inChannel;
-              let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
-              let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
+              let inIndexBaseX = ( inY * imageIn.width );
+              let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
-              for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
-                let outIndex = outIndexBaseSubC + outChannelSub;
+              for ( let filterX = 0, dilationFilterX = 0; filterX < depthwiseFilterWidth; ++filterX, dilationFilterX += dilationWidth ) {
+                let inX = inXBase + dilationFilterX;
+                if ( ( inX < 0 ) || ( inX >= imageIn.width ) )
+                    continue; // Never access outside of input image.
+
+                let inIndexBaseC  = ( ( inIndexBaseX + inX ) * imageIn.depth );
+                let inIndex = inIndexBaseC + inChannel;
+                let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
+                let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
+
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
 
                 switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
