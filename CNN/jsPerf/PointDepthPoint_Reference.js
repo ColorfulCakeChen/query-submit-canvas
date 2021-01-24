@@ -1,0 +1,478 @@
+export { TestCase };
+
+//import * as ValueMax from "../ValueMax.js";
+//import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
+//import * as TensorTools from "../util/TensorTools.js";
+
+/**
+ * Reference computation of class PointDepthPoint.Base.
+ */
+class TestCase {
+
+  /**
+   * @param {number[]} paramsInArray      parameters data which will be processed by PointDepthPoint.Params
+   * @param {number[]} paramsOutArray     parameters data which should match the result of PointDepthPoint.Params
+   *
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
+//!!! ...unfinished...
+   * @param {number[]} imageOutArray     Output image data
+   */
+  constructor(
+    paramsInArray, paramsOutArray,
+    pointwise1FiltersArray, pointwise1BiasesArray,
+    depthwiseFiltersArray, depthwiseBiasesArray,
+    pointwise2FiltersArray, pointwise2BiasesArray,
+    imageIn, imageOutArray
+  ) {
+    this.weights = {
+      params: {
+        inArray:  paramsInArray,
+        outArray: paramsOutArray
+      },
+      pointwise1Filters: pointwise1FiltersArray, pointwise1Biases: pointwise1BiasesArray,
+      depthwiseFilters:  depthwiseFiltersArray,  depthwiseBiases:  depthwiseBiasesArray,
+      pointwise2Filters: pointwise2FiltersArray, pointwise2Biases: pointwise2BiasesArray
+    };
+
+    this.image = {
+      in:  imageIn,
+      outArray: imageOutArray
+    };
+
+    // For testing not start at the offset 0.
+    this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
+
+    // Prepare weights source and offset into array. So that they can be accessed by loop.
+    let weightsSourceArray = this.weightsSourceArray = [];
+    {
+      let offset = this.weightsElementOffsetBegin;
+
+      if ( paramsInArray ) {
+        weightsSourceArray.push( { offset: offset, weights: paramsInArray } );
+        offset += paramsInArray.length;
+      }
+
+      if ( pointwise1FiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise1FiltersArray } );
+        offset += pointwise1FiltersArray.length;
+      }
+
+      if ( pointwise1BiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise1BiasesArray } );
+        offset += pointwise1BiasesArray.length;
+      }
+
+      if ( depthwiseFiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: depthwiseFiltersArray } );
+        offset += depthwiseFiltersArray.length;
+      }
+
+      if ( depthwiseBiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: depthwiseBiasesArray } );
+        offset += depthwiseBiasesArray.length;
+      }
+
+      if ( pointwise2FiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise2FiltersArray } );
+        offset += pointwise2FiltersArray.length;
+      }
+
+      if ( pointwise2BiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise2BiasesArray } );
+        offset += pointwise2BiasesArray.length;
+      }
+
+      this.weightsTotalLength = offset;
+    }
+
+    // Concatenate this.weights into a Float32Array.
+    this.weightsFloat32Array = new Float32Array( this.weightsTotalLength );
+    {
+      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
+        this.weightsFloat32Array[ i ] = -i;
+      }
+
+      for ( let i = 0; i < weightsSourceArray.length; ++i ) {
+        this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
+      }
+    }
+  }
+
+  /** According to this.weights.params.outArray and this.image.inArray, calculate this.image.outArray.
+   */ 
+  calcResult() {
+    // Assume the paramsOutArray is correct. Unpack it into parameters.
+    let [
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+      depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+      bAddInputToOutput
+    ] = this.weights.params.outArray;
+
+    // Create description for debug easily.
+    this.params.description =
+        `pointwise1ChannelCount=${pointwise1ChannelCount}, bPointwise1Bias=${bPointwise1Bias}, pointwise1ActivationName=${pointwise1ActivationName}, `
+      + `depthwiseFilterHeight=${depthwiseFilterHeight}, `
+      + `depthwise_AvgMax_Or_ChannelMultiplier=${depthwise_AvgMax_Or_ChannelMultiplier}, `
+      + `depthwiseStridesPad=${depthwiseStridesPad}, `
+      + `bDepthwiseBias=${bDepthwiseBias}, `
+      + `depthwiseActivationName=${depthwiseActivationName}, `
+      + `pointwise2ChannelCount=${pointwise2ChannelCount}, bPointwise2Bias=${bPointwise2Bias}, pointwise2ActivationName=${pointwise2ActivationName}, `
+      + `bAddInputToOutput=${bAddInputToOutput}`
+    ;
+
+    let nextImageIn = this.image.in;
+
+    // Pointwise1
+    if ( pointwise1ChannelCount > 0 ) {
+      nextImageIn = TestCase.calcPointwise(
+        nextImageIn,
+        pointwise1ChannelCount, this.weights.pointwise1Filters, bPointwise1Bias, this.weights.pointwise1Biases, pointwise1ActivationName,
+        "Pointwise 1", this.params.description );
+    }
+
+    // Depthwise
+    if ( 0 != depthwise_AvgMax_Or_ChannelMultiplier ) {
+      nextImageIn = TestCase.calcDepthwise(
+        nextImageIn,
+        depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad,
+        this.weights.depthwiseFilters, bDepthwiseBias, this.weights.depthwiseBiases, depthwiseActivationName,
+        "Depthwise", this.params.description );
+    }
+
+    // Pointwise2
+    if ( pointwise2ChannelCount > 0 ) {
+      nextImageIn = TestCase.calcPointwise(
+        nextImageIn,
+        pointwise2ChannelCount, this.weights.pointwise2Filters, bPointwise2Bias, this.weights.pointwise2Biases, pointwise2ActivationName,
+        "Pointwise 2", this.params.description );
+    }
+
+    return nextImageIn;
+  }
+
+  /**
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
+   * @param {boolean}  bBias             Whether add bias.
+   * @param {string}   pointwiseName     A string for debug message of this convolution.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {Float32Array}
+   *   The result of the pointwise convolution, bias and activation.
+   */
+  static calcPointwise(
+    imageIn,
+    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationName,
+    pointwiseName, parametersDesc ) {
+
+    tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
+      `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
+        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+
+    let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
+    let imageOut = { height: imageIn.height, width: imageIn.width, depth: imageIn.depth, dataArray: new Float32Array( imageOutLength ) };
+
+    // Pointwise Convolution
+    for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
+      let filterIndexBase = ( outChannel * imageIn.depth );
+
+      for ( let y = 0; y < imageIn.height; ++y ) {
+        let indexBaseX = ( y * imageIn.width );
+
+        for ( let x = 0; x < imageIn.width; ++x ) {
+          let indexBaseC = ( indexBaseX + x );
+          let inIndexBaseC  = ( indexBaseC * imageIn.depth );
+          let outIndexBaseC = ( indexBaseC * pointwiseChannelCount );
+
+          for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+            let inIndex = inIndexBaseC + inChannel;
+            let outIndex = outIndexBaseC + outChannel;
+            let filterIndex = filterIndexBase + inChannel;
+
+            imageOut.dataArray[ outIndex ] = imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
+          }
+        }
+      }
+    }
+
+    // Bias
+    TestCase.modifyByBias( imageOut, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
+
+    // Activation
+    TestCase.modifyByActivation( imageOut, pointwiseActivationName, parametersDesc );
+
+    return imageOut;
+  }
+
+  /**
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
+   * @param {boolean}  bBias             Whether add bias.
+   * @param {string}   depthwiseName     A string for debug message of this convolution.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {Float32Array}
+   *   The result of the depthwise convolution, bias and activation.
+   */
+  static calcDepthwise(
+    imageIn,
+    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad,
+    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationName,
+    depthwiseName, parametersDesc ) {
+
+    let depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
+
+    let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
+    if (   ( "Avg" === depthwise_AvgMax_Or_ChannelMultiplier )
+        || ( "Max" === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+      channelMultiplier = 1;
+    }
+
+    let imageOutDepth = imageIn.depth * channelMultiplier;
+
+    // Strides and Padding.
+    let depthwiseStrides, depthwisePad;
+    switch ( depthwiseStridesPad ) {
+      case 0:  depthwiseStrides = 1; depthwisePad = "valid"; break;
+      default:
+      case 1:  depthwiseStrides = 1; depthwisePad = "same";  break;
+      case 2:  depthwiseStrides = 2; depthwisePad = "same";  break;
+    }
+
+    // Assume strides width equals strides height.
+    let stridesHeight = depthwiseStrides;
+    let stridesWidth = depthwiseStrides;
+
+    // Currently, we can only handle dilation = 1.
+    let dilationHeight = 1;
+    let dilationWidth = 1;
+
+    // Effect filter size (includes dilation).
+    let effectFilterHeight = dilationHeight * ( depthwiseFilterHeight - 1 ) + 1;
+    let effectFilterWidth =  dilationWidth  * ( depthwiseFilterWidth  - 1 ) + 1;
+    let effectFilterSize = effectFilterHeight * effectFilterWidth;
+
+    // For accessing the input pixels around the filter.
+    let effectFilterHeightOffset = Math.floor( ( effectFilterHeight - 1 ) / 2 );
+    let effectFilterWidthOffset =  Math.floor( ( effectFilterWidth  - 1 ) / 2 );
+
+    let imageOutHeight, imageOutWidth;
+    let imageInBeginY, imageInBeginX;
+
+    switch ( depthwisePad ) {
+      case "valid": // When ( pad == "valid" ), the convolution will be ignored if the filter is partially outside input image.
+        imageOutHeight = Math.floor( ( ( imageIn.height - effectFilterHeight) / stridesHeight ) + 1 );
+        imageOutWidth =  Math.floor( ( ( imageIn.width  - effectFilterWidth ) / stridesWidth  ) + 1 );
+        imageInBeginY = effectFilterHeightOffset; // So that negative ( inX, inY ) will never happen.
+        imageInBeginX = effectFilterWidthOffset;
+        break;
+
+      case "same":
+        imageOutHeight = imageIn.height;
+        imageOutWidth = imageIn.width;
+        imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will happen, but they will be viewed as zero value.
+        break;
+    }
+
+    tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
+      `${depthwiseName} filters shape `
+        + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
+        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+
+    let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth * channelMultiplier );
+    let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
+
+    if ( "Max" === depthwise_AvgMax_Or_ChannelMultiplier ) { // Max pooling
+        imageOut.dataArray.fill( Number.NEGATIVE_INFINITY ); // So that any value is greater than initialized value.
+    }
+
+    // Depthwise Convolution
+    for ( let outY = 0; outY < imageOutHeight; ++outY ) {
+      let outIndexBaseX = ( outY * imageIn.width );
+      let inYBase = imageInBeginY + ( outY * stridesHeight ) - effectFilterHeightOffset;
+
+      for ( let outX = 0; outX < imageOutWidth; ++outX ) {
+        let outIndexBaseC = ( ( outIndexBaseX + outX ) * imageOutDepth );
+        let inXBase = imageInBeginX + ( outX * stridesWidth ) - effectFilterWidthOffset;
+
+        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+          let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
+
+          for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
+            let outIndex = outIndexBaseSubC + outChannelSub;
+
+            // For Avg pooling, the divisor is effect filter size which includes dilation but excludes input image outside.
+            let avgDivisor = 0;
+
+            FilterYLoop:
+            for ( let filterY = 0, inY = inYBase; filterY < depthwiseFilterHeight; ++filterY ) {
+              for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY, ++inY ) {
+                if ( inY < 0 )
+                  continue;          // Never access outside of input image. Continue to find out non-negative input image y position.
+                else if ( inY >= imageIn.height )
+                  break FilterYLoop; // Never access outside of input image. Break because it is impossible to find inside of input image.
+
+                let inIndexBaseX = ( inY * imageIn.width );
+                let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
+
+                FilterXLoop:
+                for ( let filterX = 0, inX = inXBase; filterX < depthwiseFilterWidth; ++filterX ) {
+                  for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX, ++inX ) {
+                    if ( inX < 0 )
+                      continue;          // Never access outside of input image. Continue to find out non-negative input image x position.
+                    else if ( inX >= imageIn.width )
+                      break FilterXLoop; // Never access outside of input image. Break because it is impossible to find inside of input image.
+
+                    // For Avg pooling, the divisor should include filter dilation but exclude input image outside.
+                    //
+                    // This accumulation should be done after confirm ( inY, inX ) is inside the input image.
+                    ++avgDivisor;
+
+                    // No need to compute the filter's dilation part (because it is always zero).
+                    //
+                    // This shortcut check should be done after avgDivisor has been increased, so that the filter dilation will
+                    // be included by avgDivisor.
+                    if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                      continue;
+
+                    let inIndexBaseC = ( ( inIndexBaseX + inX ) * imageIn.depth );
+                    let inIndex = inIndexBaseC + inChannel;
+                    let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
+                    let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
+
+                    let filterIndex = filterIndexBaseSubC + outChannelSub;
+
+                    switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+                      case "Avg": // Avg pooling
+                        imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ];
+                        break;
+
+                      case "Max": // Max pooling
+                        imageOut.dataArray[ outIndex ] = Math.max( imageOut.dataArray[ outIndex ], imageIn.dataArray[ inIndex ] );
+                        break;
+
+                      default: // Convolution
+                        imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * depthwiseFiltersArray[ filterIndex ];
+                        break;
+                    }
+                  }
+                }
+              }
+            }
+
+            if ( "Avg" === depthwise_AvgMax_Or_ChannelMultiplier ) { // Avg pooling
+              imageOut.dataArray[ i ] /= avgDivisor; // So that every sum is averaged.
+            }
+          }
+        }
+      }
+    }
+
+    // Bias
+    TestCase.modifyByBias( imageOut, bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
+
+    // Activation
+    TestCase.modifyByActivation( imageOut, depthwiseActivationName, parametersDesc );
+
+    return imageOut;
+/* For test in console only.
+
+// Pass an array of values to create a vector.
+let x = tf.tensor3d( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [ 3, 3, 1 ] );
+//let x = tf.tensor3d( [ 1, 2, 3, 4 ], [ 2, 2, 1 ] );
+//x.print();
+
+//let filter = tf.tensor4d( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [ 3, 3, 1, 1 ] );
+let filter = tf.tensor4d( [ 1, 2, 3, 4 ], [ 2, 2, 1, 1 ] );
+//filter.print();
+
+let dilations = 2;
+let strides = 1;
+//let pad = "valid";
+let pad = "same";
+//let y = x.depthwiseConv2d( filter, strides, pad );
+let y = x.pool( filter.shape, "avg", pad, dilations, strides );
+y.print();
+*/
+  }
+
+  /**
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
+   * @param {boolean}  bBias             Whether add bias.
+   * @param {number[]} biasesArray       The bias values.
+   * @param {string}   biasName          A string for debug message of this bias.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {object}
+   *   Return imageIn which may or may not be added bias (according to bBias).
+   */
+  static modifyByBias( imageIn, bBias, biasesArray, biasName, parametersDesc ) {
+
+    tf.util.assert( ( biasesArray.length == imageIn.depth ),
+      `${biasName} shape (${biasesArray.length}) `
+        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+
+    if ( !bBias )
+      return imageIn;
+
+    for ( let y = 0; y < imageIn.height; ++y ) {
+      let indexBaseX = ( y * imageIn.width );
+
+      for ( let x = 0; x < imageIn.width; ++x ) {
+        let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
+
+        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+          let inIndex = inIndexBaseC + inChannel;
+          imageIn.dataArray[ inIndex ] += biasesArray[ inChannel ];
+        }
+      }
+    }
+
+    return imageIn;
+  }
+
+  /**
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
+   * @param {string}   activationName The name string of this activation function.
+   * @param {string}   parametersDesc A string for debug message of this point-depth-point.
+   *
+   * @return {object}
+   *   Return imageIn which may or may not be activated.
+   */
+  static modifyByActivation( imageIn, activationName, parametersDesc ) {
+
+    let pfnActivation = PointDepthPoint.getActivationFunction( activationName );
+    if ( !pfnActivation )
+      return imageIn;
+
+    for ( let y = 0; y < imageIn.height; ++y ) {
+      let indexBaseX = ( y * imageIn.width );
+
+      for ( let x = 0; x < imageIn.width; ++x ) {
+        let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
+
+        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+          let inIndex = inIndexBaseC + inChannel;
+          imageIn.dataArray[ inIndex ] = pfnActivation( imageIn.dataArray[ inIndex ] );
+        }
+      }
+    }
+
+    return imageIn;
+  }
+
+}
