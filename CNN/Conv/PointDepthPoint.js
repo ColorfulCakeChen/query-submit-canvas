@@ -908,4 +908,28 @@ class Base extends ReturnOrClone.Base {
   get bAddInputToOutput()        { return this.params.bAddInputToOutput ); }
 
   get outChannels()              { return this.channelCount_pointwise2After; }
+
+  /** @return {string} The description string of all (adjusted) parameters of initer(). */
+  get parametersDescription() {
+    let str =
+        `pointwise1ChannelCount=${this.pointwise1ChannelCount}, `
+      + `bPointwise1Bias=${this.bPointwise1Bias}, `
+      + `pointwise1ActivationName=${this.pointwise1ActivationName}, `
+
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
+      + `depthwise_AvgMax_Or_ChannelMultiplier=${this.depthwise_AvgMax_Or_ChannelMultiplier}, `
+      + `depthwiseStridesPad=${this.depthwiseStridesPad}, `
+      + `bDepthwiseBias=${this.bDepthwiseBias}, `
+      + `depthwiseActivationName=${this.depthwiseActivationName}, `
+
+      + `pointwise2ChannelCount=${this.pointwise2ChannelCount}, `
+      + `bPointwise2Bias=${this.bPointwise2Bias}, `
+      + `pointwise2ActivationName=${this.pointwise2ActivationName}, `
+
+      + `bAddInputToOutput=${this.bAddInputToOutput}, `
+      + `bKeepInputTensor=${this.bKeepInputTensor}`
+    ;
+    return str;
+  }
+
 }
