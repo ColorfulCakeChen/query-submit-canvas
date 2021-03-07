@@ -884,12 +884,10 @@ class Base extends ReturnOrClone.Base {
     return this.bInitOk;
   }
 
-  get byteOffsetBegin()   { return this.params.defaultByteOffsetBegin; }
+  get byteOffsetBegin()          { return this.params.defaultByteOffsetBegin; }
 
   /** Where to extract next weights. Only meaningful when ( this.isValid() == true ). */
-  get byteOffsetEnd()     { return this.nextByteOffsetBegin; }
-
-  get inChannels()               { return this.channelCount_pointwise1Before; }
+  get byteOffsetEnd()            { return this.nextByteOffsetBegin; }
 
   get pointwise1ChannelCount()   { return this.params.pointwise1ChannelCount ); }
   get bPointwise1Bias()          { return this.params.bPointwise1Bias ); }
@@ -907,6 +905,7 @@ class Base extends ReturnOrClone.Base {
 
   get bAddInputToOutput()        { return this.params.bAddInputToOutput ); }
 
+  get inChannels()               { return this.channelCount_pointwise1Before; }
   get outChannels()              { return this.channelCount_pointwise2After; }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
