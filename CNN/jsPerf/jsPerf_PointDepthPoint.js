@@ -160,33 +160,25 @@ class HeightWidthDepth {
       bKeepInputTensor
     );
 
-    let parametersDescription = `( `
-      + `pointwise1ChannelCount=${pointwise1ChannelCount}, bPointwise1Bias=${bPointwise1Bias}, pointwise1ActivationName=${pointwise1ActivationName} `
-      + `depthwiseFilterHeight=${depthwiseFilterHeight}, `
-      + `depthwise_AvgMax_Or_ChannelMultiplier=${depthwise_AvgMax_Or_ChannelMultiplier}, `
-      + `depthwiseStridesPad=${depthwiseStridesPad}, `
-      + `bDepthwiseBias=${bDepthwiseBias}, `
-      + `depthwiseActivationName=${depthwiseActivationName}, `
-      + `pointwise2ChannelCount=${pointwise2ChannelCount}, bPointwise2Bias=${bPointwise2Bias}, pointwise2ActivationName=${pointwise2ActivationName}, `
-      + `bAddInputToOutput=${bAddInputToOutput}, `
-      + `bKeepInputTensor=${bKeepInputTensor} `
-      + `)`
-    ;
+    let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
     tf.util.assert( ( pointDepthPoint.isValid() == bInitOk ),
-        `PointDepthPoint validation state (${pointDepthPoint.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
+      `PointDepthPoint validation state (${pointDepthPoint.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
     tf.util.assert( ( true == bInitOk ),
-        `Failed to initialize pointDepthPoint object.  ${parametersDescription}`);
+      `Failed to initialize pointDepthPoint object.  ${parametersDescription}`);
 
     tf.util.assert( ( 100 == progress.valuePercentage ),
-        `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
+      `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.byteOffsetBegin == ),
+    tf.util.assert( ( pointDepthPoint.byteOffsetBegin == byteOffsetBegin ),
+      `PointDepthPoint parsing beginning position (${pointDepthPoint.byteOffsetBegin}) should be (${byteOffsetBegin}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.byteOffsetEnd
+    tf.util.assert( ( pointDepthPoint.byteOffsetEnd == inputFloat32Array.byteLength ),
+      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${inputFloat32Array.byteLength}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.inChannels
+    tf.util.assert( ( pointDepthPoint.inChannels == ),
+      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${inputFloat32Array.byteLength}). ${parametersDescription}`);
 
     tf.util.assert( ( pointDepthPoint.pointwise1ChannelCount
     tf.util.assert( ( pointDepthPoint.bPointwise1Bias
