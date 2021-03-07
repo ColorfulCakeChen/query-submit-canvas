@@ -147,46 +147,71 @@ class TestCase {
       bAddInputToOutput
     ] = this.weights.params.outArray;
 
-//!!! ...unfinished...
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
     tf.util.assert( ( pointDepthPoint.isValid() == bInitOk ),
       `PointDepthPoint validation state (${pointDepthPoint.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
     tf.util.assert( ( true == bInitOk ),
-      `Failed to initialize pointDepthPoint object.  ${parametersDescription}`);
+      `Failed to initialize pointDepthPoint object. ${parametersDescription}`);
 
     tf.util.assert( ( 100 == progress.valuePercentage ),
       `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.byteOffsetBegin == byteOffsetBegin ),
-      `PointDepthPoint parsing beginning position (${pointDepthPoint.byteOffsetBegin}) should be (${byteOffsetBegin}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.byteOffsetEnd == inputFloat32Array.byteLength ),
-      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${inputFloat32Array.byteLength}). ${parametersDescription}`);
+    tf.util.assert( ( pointDepthPoint.byteOffsetBegin == this.weightsByteOffsetBegin ),
+      `PointDepthPoint parsing beginning position (${pointDepthPoint.byteOffsetBegin}) should be (${this.weightsByteOffsetBegin}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.inChannels == ),
-      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${inputFloat32Array.byteLength}). ${parametersDescription}`);
+    tf.util.assert( ( pointDepthPoint.byteOffsetEnd == this.weightsFloat32Array.byteLength ),
+      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${this.weightsFloat32Array.byteLength}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.pointwise1ChannelCount
-    tf.util.assert( ( pointDepthPoint.bPointwise1Bias
-    tf.util.assert( ( pointDepthPoint.pointwise1ActivationName
 
-    tf.util.assert( ( pointDepthPoint.depthwiseFilterHeight
-    tf.util.assert( ( pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier
-    tf.util.assert( ( pointDepthPoint.depthwiseStridesPad
-    tf.util.assert( ( pointDepthPoint.bDepthwiseBias
-    tf.util.assert( ( pointDepthPoint.depthwiseActivationName
+    tf.util.assert( ( pointDepthPoint.inChannels == this.image.in.depth ),
+      `PointDepthPoint inChannels (${pointDepthPoint.inChannels}) should be (${this.image.in.depth}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.pointwise2ChannelCount
-    tf.util.assert( ( pointDepthPoint.bPointwise2Bias
-    tf.util.assert( ( pointDepthPoint.pointwise2ActivationName
 
-    tf.util.assert( ( pointDepthPoint.bAddInputToOutput
+    tf.util.assert( ( pointDepthPoint.pointwise1ChannelCount == pointwise1ChannelCount ),
+      `PointDepthPoint pointwise1ChannelCount (${pointDepthPoint.pointwise1ChannelCount}) should be (${pointwise1ChannelCount}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.outChannels
+    tf.util.assert( ( pointDepthPoint.bPointwise1Bias == bPointwise1Bias ),
+      `PointDepthPoint bPointwise1Bias (${pointDepthPoint.bPointwise1Bias}) should be (${bPointwise1Bias}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.bKeepInputTensor
+    tf.util.assert( ( pointDepthPoint.pointwise1ActivationName == pointwise1ActivationName ),
+      `PointDepthPoint pointwise1ActivationName (${pointDepthPoint.pointwise1ActivationName}) should be (${pointwise1ActivationName}). ${parametersDescription}`);
+
+
+    tf.util.assert( ( pointDepthPoint.depthwiseFilterHeight == depthwiseFilterHeight ),
+      `PointDepthPoint depthwiseFilterHeight (${pointDepthPoint.depthwiseFilterHeight}) should be (${depthwiseFilterHeight}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier == depthwise_AvgMax_Or_ChannelMultiplier ),
+      `PointDepthPoint depthwise_AvgMax_Or_ChannelMultiplier (${pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier}) should be (${depthwise_AvgMax_Or_ChannelMultiplier}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.depthwiseStridesPad == depthwiseStridesPad ),
+      `PointDepthPoint depthwiseStridesPad (${pointDepthPoint.depthwiseStridesPad}) should be (${depthwiseStridesPad}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bDepthwiseBias == bDepthwiseBias ),
+      `PointDepthPoint bDepthwiseBias (${pointDepthPoint.bDepthwiseBias}) should be (${bDepthwiseBias}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.depthwiseActivationName == depthwiseActivationName ),
+      `PointDepthPoint depthwiseActivationName (${pointDepthPoint.depthwiseActivationName}) should be (${depthwiseActivationName}). ${parametersDescription}`);
+
+
+    tf.util.assert( ( pointDepthPoint.pointwise2ChannelCount == pointwise2ChannelCount ),
+      `PointDepthPoint pointwise2ChannelCount (${pointDepthPoint.pointwise2ChannelCount}) should be (${pointwise2ChannelCount}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bPointwise2Bias == bPointwise2Bias ),
+      `PointDepthPoint bPointwise2Bias (${pointDepthPoint.bPointwise2Bias}) should be (${bPointwise2Bias}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.pointwise2ActivationName == pointwise2ActivationName ),
+      `PointDepthPoint pointwise2ActivationName (${pointDepthPoint.pointwise2ActivationName}) should be (${pointwise2ActivationName}). ${parametersDescription}`);
+
+
+    tf.util.assert( ( pointDepthPoint.bAddInputToOutput == bAddInputToOutput ),
+      `PointDepthPoint bAddInputToOutput (${pointDepthPoint.bAddInputToOutput}) should be (${bAddInputToOutput}). ${parametersDescription}`);
+
+
+    tf.util.assert( ( pointDepthPoint.bKeepInputTensor == bKeepInputTensor ),
+      `PointDepthPoint bKeepInputTensor (${pointDepthPoint.bKeepInputTensor}) should be (${bKeepInputTensor}). ${parametersDescription}`);
 
     return pointDepthPoint;
   }
@@ -240,6 +265,10 @@ class TestCase {
         pointwise2ChannelCount, this.weights.pointwise2Filters, bPointwise2Bias, this.weights.pointwise2Biases, pointwise2ActivationName,
         "Pointwise 2", this.params.description );
     }
+
+//!!! ...unfinished...
+    tf.util.assert( ( pointDepthPoint.outChannels == outChannels ),
+      `PointDepthPoint outChannels (${pointDepthPoint.outChannels}) should be (${outChannels}). ${parametersDescription}`);
 
     return nextImageIn;
   }
