@@ -201,7 +201,7 @@ class Base extends ReturnOrClone.Base {
    * @param {string} pointwise1ActivationName
    *   The activation function name after the first pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e.
    * by evolution). One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( pointwise1ChannelCount == 0 ),
-   *  this activation function will also be ignored.
+   * this activation function will also be ignored.
    *
    * @param {number} depthwiseFilterHeight
    *   The height (and width) of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
