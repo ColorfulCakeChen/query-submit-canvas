@@ -150,7 +150,7 @@ Params.Keys.bAddInputToOutput =        Symbol("bAddInputToOutput");
  * If ( pointwise1ChannelCount <= 0 ), it equals channelCount_expansionBefore.
  *
  * @member {number} channelCount_depthwiseAfter_pointwise2Before
- *   The channel count after the NxN depthwise convolution.  If ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
+ *   The channel count after the NxN depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
  * ( channelCount_pointwise1After_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier ). If "Avg" or "Max" or ( <= 0 ), it equals
  * channelCount_pointwise1After_depthwiseBefore.
  *
