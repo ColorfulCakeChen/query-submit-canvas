@@ -850,8 +850,9 @@ class Base extends ReturnOrClone.Base {
   /** The input will be added to output for achieving skip connection. The inputTensor will be disposed. */
   static apply_and_destroy_AddInputToOutput( inputTensor ) {
 //!!! (2021/01/08 Remarked) Use this.XXX() should be enough.
-//    let t = Base.apply_and_keep_AddInputToOutput.call( this, inputTensor );
-    let t = this.apply_and_keep_AddInputToOutput( inputTensor );
+    let t = Base.apply_and_keep_AddInputToOutput.call( this, inputTensor );
+//!!! (2021/03/07 Remarked) static method can not be called by this.XXX().
+//    let t = this.apply_and_keep_AddInputToOutput( inputTensor );
     inputTensor.dispose();
     return t;
   }
