@@ -174,7 +174,7 @@ class Base extends ReturnOrClone.Base {
    * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
    *
    * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpret as weights.
+   *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {number} byteOffsetBegin
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
