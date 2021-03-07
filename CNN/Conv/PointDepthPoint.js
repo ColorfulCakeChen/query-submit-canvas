@@ -146,8 +146,8 @@ Params.Keys.bAddInputToOutput =        Symbol("bAddInputToOutput");
  *   The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After (from initer()).
  *
  * @member {number} channelCount_pointwise1After_depthwiseBefore
- *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals expansionChannelCount.
- * If ( pointwise1ChannelCount <= 0 ), it equals channelCount_expansionBefore.
+ *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
+ * If ( pointwise1ChannelCount <= 0 ), it equals inChannels.
  *
  * @member {number} channelCount_depthwiseAfter_pointwise2Before
  *   The channel count after the NxN depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
@@ -155,7 +155,7 @@ Params.Keys.bAddInputToOutput =        Symbol("bAddInputToOutput");
  * channelCount_pointwise1After_depthwiseBefore.
  *
  * @member {number} channelCount_pointwise2After
- *   The channel count after the second 1x1 pointwise convolution. If ( pointwise2ChannelCount > 0 ), it equals pointwiseChannelCount.
+ *   The channel count after the second 1x1 pointwise convolution. If ( pointwise2ChannelCount > 0 ), it equals pointwise2ChannelCount.
  * If ( pointwise2ChannelCount <= 0 ), it equals channelCount_depthwiseAfter_pointwise2Before.
  *
  * @member {function} apply_and_destroy_or_keep
@@ -192,29 +192,29 @@ class Base extends ReturnOrClone.Base {
 
    * @param {number} pointwise1ChannelCount
    *   The output channel count of the first pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If 0, there will be no pointwise convolution before depthwise convolution.
+   * If 0 or negative, there will be no pointwise convolution before depthwise convolution.
    *
    * @param {boolean} bPointwise1Bias
    *   If true, there will be a bias after pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( pointwise1ChannelCount == 0 ), this bias will also be ignored.
+   * If ( pointwise1ChannelCount <= 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise1ActivationName
    *   The activation function name after the first pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e.
-   * by evolution). One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( pointwise1ChannelCount == 0 ),
+   * by evolution). One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( pointwise1ChannelCount <= 0 ),
    * this activation function will also be ignored.
    *
    * @param {number} depthwiseFilterHeight
    *   The height (and width) of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this will also be ignored.
    *
    * @param {(string|number)} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If "Avg", average pooling.
    * If "Max", max pooling. If positive integer number, depthwise convolution and the number indicates channel multiplier of
-   * depthwise convolution. If 0, there will be no depthwise operation.
+   * depthwise convolution. If 0 or negative, there will be no depthwise operation.
    *
    * @param {number} depthwiseStridesPad
    *   The strides and padding of depthwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this depthwiseStridesPad will also be ignored. It has three possible value:
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this depthwiseStridesPad will also be ignored. It has three possible value:
    *   - 0: means ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" )
    *   - 1: means ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
    *   - 2: means ( depthwiseStrides == 2 ) and ( depthwisePad == "same" )
@@ -222,24 +222,24 @@ class Base extends ReturnOrClone.Base {
    *
    * @param {boolean} bDepthwiseBias
    *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true, there will be a bias after depthwise convolution.
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be ignored.
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this bias will also be ignored.
    *
    * @param {string} depthwiseActivationName
    *   The activation function name after depthwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ),
+   * One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ),
    * this activation will also be ignored.
    *
    * @param {number} pointwise2ChannelCount
    *   The output channel count of the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If 0, there will be no pointwise convolution after depthwise convolution.
+   * If 0 or negative, there will be no pointwise convolution after depthwise convolution.
    *
    * @param {boolean} bPointwise2Bias
    *   If true, there will be a bias after the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by
-   * evolution). If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
+   * evolution). If ( pointwise2ChannelCount <= 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise2ActivationName
    *   The activation function name after the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by
-   * evolution). One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( pointwise2ChannelCount == 0 ),
+   * evolution). One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( pointwise2ChannelCount <= 0 ),
    * this activation function will also be ignored.
    *
    * @param {boolean} bAddInputToOutput
