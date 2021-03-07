@@ -243,9 +243,9 @@ class Base extends ReturnOrClone.Base {
    * this activation function will also be ignored.
    *
    * @param {boolean} bAddInputToOutput
-   *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true and ( depthwiseStrides == 1 ) and
-   * ( depthwisePad == "same" ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ), the inputTensor will be added to
-   * output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
+   *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true and ( depthwiseStridesPad == 1 ) ( i.e.
+   * ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ),
+   * the inputTensor will be added to the output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
