@@ -102,13 +102,6 @@ class HeightWidthDepth {
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
   pointDepthPoint_create(
-    inputFloat32Array, byteOffsetBegin,
-
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
-    bAddInputToOutput,
-
     bKeepInputTensor
   ) {
 
@@ -131,7 +124,7 @@ class HeightWidthDepth {
       this.pointDepthPoint_create( false ),
       // The pointDepthPoint for performance testing should:
       //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
-      this.pointDepthPoint =
+      this.pointDepthPoint_DConv =
       this.pointDepthPoint_create(  true ),
     ];
 
@@ -143,131 +136,44 @@ class HeightWidthDepth {
         let pointDepthPoint = this.pointDepthPoint_list[ i ];
         pointDepthPoint.disposeTensors();
       }
-      this.pointDepthPoint_list = this.pointDepthPoint = null;
+      this.pointDepthPoint_list = this.pointDepthPoint_DConv = null;
     }
   }
 
-//!!! ...unfinished...
   /**
-   * Check the Embedding2d's output by look up weights according to input.
+   * Check the PointDepthPoint's output according to input.
    *
-   * @param {Embedding2d.Base} embedding2d
-   *   The object which implemets embedding logic.
+   * @param {PointDepthPoint.Base} pointDepthPoint
+   *   The object which implemets PointDepthPoint logic.
    *
    * @param {tf.tensor3d} inputTensor3d
-   *   The input of the Embedding2d's apply_and_destroy_or_keep(). Its dtype should be int32.
+   *   The input of the PointDepthPoint's apply_and_destroy_or_keep().
    *
    * @param {tf.tensor3d} outputTensor3d
-   *   The output of the Embedding2d's apply_and_destroy_or_keep(). Its dtype should be float32.
+   *   The output of the PointDepthPoint's apply_and_destroy_or_keep().
    */
-  check_Input_Output_WeightsTable( embedding2d, inputTensor3d, outputTensor3d ) {
+  check_Input_Output_WeightsTable( pointDepthPoint, inputTensor3d, outputTensor3d ) {
     tf.tidy( () => {
 
-      let channelMultiplier_forExtract; // How many channels (of per input channel) are extracted from table raw data.
-      if ( embedding2d.bEmbedVocabularyId )
-        channelMultiplier_forExtract = embedding2d.channelMultiplier - 1; // less one because the channel will be auto-generated vocabulary id.
-      else
-        channelMultiplier_forExtract = embedding2d.channelMultiplier;
+      let testCase = this.testCases[ 0 ];
+      let outputArrayRef = testCase.calcResult();
 
-      let inputRowArray = inputTensor3d.arraySync();
-      let outputRowArray = outputTensor3d.arraySync();
+      let outputArray = outputTensor3d.dataSync();
 
-      tf.util.assert( outputRowArray.length == inputRowArray.length,
-          `Row count of embedding output and input should be the same. ( ${outputRowArray.length} != ${inputRowArray.length} )`);
+      tf.util.assert( outputArray.length == outputArrayRef.length,
+        `PointDepthPoint output length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} )`);
 
-      // The float32 count of an embedding vocabulary table of one input channel.
-      let float32CountPerTable = channelMultiplier_forExtract * this.vocabularyCountPerInputChannel;
-
-      // Height
-      for ( let y = 0; y < inputRowArray.length; ++y ) {
-        let inputColumnArray = inputRowArray[ y ];
-        let outputColumnArray = outputRowArray[ y ];
-
-        tf.util.assert( outputColumnArray.length == inputColumnArray.length,
-          `Column count of embedding output and input should be the same. ( ${outputColumnArray.length} != ${inputColumnArray.length} )`);
-
-        // Width
-        for ( let x = 0; x < inputColumnArray.length; ++x ) {
-          let inputChannelArray = inputColumnArray[ x ];
-          let outputChannelArray = outputColumnArray[ x ];
-
-          tf.util.assert( outputChannelArray.length == ( inputChannelArray.length * embedding2d.channelMultiplier ),
-            `Channel count of embedding output and input should match. `
-              + `( ${outputChannelArray.length} != ( ${inputChannelArray.length} * ${embedding2d.channelMultiplier} ) )`);
-
-          // Input Channel
-          for ( let inputChannelIndex = 0; inputChannelIndex < inputChannelArray.length; ++inputChannelIndex ) {
-            let inputChannelValue = inputChannelArray[ inputChannelIndex ]; // Int32
-
-            // The embedding vocabulary table beginning of the input channel.
-            let vocabularyTableOffset = ( inputChannelIndex * float32CountPerTable );
-
-            // The embedding vocabulary element beginning of the vocabulary table.
-            let vocabularyTableElementOffset = ( inputChannelValue * channelMultiplier_forExtract );
-
-            // The embedding vocabulary element channel beginning of the vocabulary element.
-            let vocabularyTableElementChannelOffsetBase = ( this.weightsElementOffsetBegin + vocabularyTableOffset + vocabularyTableElementOffset );
-
-            // Output Channel
-            for ( let outputChannelIndexOffset = 0; outputChannelIndexOffset < embedding2d.channelMultiplier; ++outputChannelIndexOffset ) {
-              let outputChannelIndexBase = ( inputChannelIndex * embedding2d.channelMultiplier );
-              let outputChannelIndex = outputChannelIndexBase + outputChannelIndexOffset;
-              let outputChannelValueFromOutput = outputChannelArray[ outputChannelIndex ]; // Float32
-
-              if ( ( embedding2d.bEmbedVocabularyId ) && ( outputChannelIndexOffset == 0 ) ) {
-                // When ( bEmbedVocabularyId == true ), every embedding2d.channelMultiplier output channel should be auto-generated
-                // vocabulary id (i.e. should be the same as the input channel value).
-                tf.util.assert( outputChannelValueFromOutput == inputChannelValue,
-                  `Channel value of output should be vocabulary id. `
-                    + `( ${outputChannelValueFromOutput} != ${inputChannelValue} )`);
-
-              } else {
-                let lookUpAtElementOffset = vocabularyTableElementChannelOffsetBase + outputChannelIndexOffset;
-
-                // When ( bEmbedVocabularyId == true ), every embedding2d.channelMultiplier output channel is auto-generated vocabulary
-                // id. So the table offset should count start from 1 (not 0) (i.e. ignore ( outputChannelIndexOffset == 0 ) ).
-                if ( embedding2d.bEmbedVocabularyId ) {
-                  lookUpAtElementOffset -= 1;
-                }
-
-                let outputChannelValueFromTable = this.weightsFloat32Array[ lookUpAtElementOffset ]; // Float32
-
-                tf.util.assert( outputChannelValueFromOutput == outputChannelValueFromTable,
-                  `Channel value of output and table should match. `
-                    + `( ${outputChannelValueFromOutput} != ${outputChannelValueFromTable} ) `
-                    + `at ( y, x, inputChannelIndex, outputChannelIndexOffset ) = (${y}, ${x}, ${inputChannelIndex}, ${outputChannelIndexOffset}) `
-                    + `( channelMultiplier = ${embedding2d.channelMultiplier} )`
-                );
-              }
-
-            }
-          }
-        }
-      }
+      tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
+        `PointDepthPoint output ( ${outputArray} ) should be ( ${outputArrayRef} )`);
     });
-
   }
 
-  // Test apply by add-gather-reshape (i.e. vocabulary table is one merged longer tensor2d).
-  test_AddGatherReshape() {
-    let outputTensor3d = this.embedding2d_AddGatherReshape.apply_and_destroy_or_keep( this.dataTensor3d );
+//!!! ...unfinished...
+  // Test apply by depthwise convolution.
+  test_DConv() {
+    let outputTensor3d = this.pointDepthPoint_DConv.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
-
-  // Test apply by split-reshape-gather-concat (i.e. vocabulary table is tensor2d).
-  test_SplitReshapeGatherConcat() {
-//!!! (2021/01/06 Temp) for testing performance without Add.
-//    let outputTensor3d = this.embedding2d_AddGatherReshape.temp_apply_and_destroy_or_keep_GatherReshape( this.dataTensor3d );
-    let outputTensor3d = this.embedding2d_SplitReshapeGatherConcat.apply_and_destroy_or_keep( this.dataTensor3d );
-    outputTensor3d.dispose();
-  }
-
-//!!! (2021/01/05 Remarked) SplitGatherConcatReshape is slower than SplitReshapeGatherConcat.
-//   // Test apply by split-gather-concat-reshape (i.e. vocabulary table is tensor3d).
-//   test_SplitGatherConcatReshape() {
-//     let outputTensor3d = this.embedding2d_SplitGatherConcatReshape.apply_and_destroy_or_keep( this.dataTensor3d );
-//     outputTensor3d.dispose();
-//   }
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
@@ -299,24 +205,13 @@ class HeightWidthDepth {
         let memoryInfo1 = tf.memory();
         tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `PointDepthPoint.apply_and_destroy_or_keep() memory leak.`);
 
-        // Test correctness of embedding apply.
+        // Test correctness of pointDepthPoint apply.
         this.check_Input_Output_WeightsTable( pointDepthPoint, this.dataTensor3d, outputTensor3d );
 
         outputTensor3d.dispose();
       }
-
-//!!!
-//       tf.util.assert(
-//         TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ),
-//         `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()`);
     });
   }
-
-//   testDifferentDisposeStrategy_ConcatReshapeTransposeReshapeSplit() {
-//     let functionTable = [
-//     ];
-//     this.testDifferentDisposeStrategy( functionTable, this.shuffleInfo );
-//   }
 
    testDifferentDisposeStrategy_All() {
 //     this.testDifferentDisposeStrategy_ConcatReshapeTransposeReshapeSplit();
