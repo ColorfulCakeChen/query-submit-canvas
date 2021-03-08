@@ -884,29 +884,29 @@ class Base extends ReturnOrClone.Base {
     return this.bInitOk;
   }
 
-  get byteOffsetBegin()          { return this.params.defaultByteOffsetBegin; }
+  get byteOffsetBegin()                       { return this.params.defaultByteOffsetBegin; }
 
   /** Where to extract next weights. Only meaningful when ( this.isValid() == true ). */
-  get byteOffsetEnd()            { return this.nextByteOffsetBegin; }
+  get byteOffsetEnd()                         { return this.nextByteOffsetBegin; }
 
-  get pointwise1ChannelCount()   { return this.params.pointwise1ChannelCount ); }
-  get bPointwise1Bias()          { return this.params.bPointwise1Bias ); }
-  get pointwise1ActivationName() { return this.params.pointwise1ActivationName ); }
+  get pointwise1ChannelCount()                { return this.params.pointwise1ChannelCount; }
+  get bPointwise1Bias()                       { return this.params.bPointwise1Bias; }
+  get pointwise1ActivationName()              { return this.params.pointwise1ActivationName; }
 
-  get depthwiseFilterHeight()    { return this.params.depthwiseFilterHeight ); }
-  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.params.depthwise_AvgMax_Or_ChannelMultiplier ); }
-  get depthwiseStridesPad()      { return this.params.depthwiseStridesPad ); }
-  get bDepthwiseBias()           { return this.params.bDepthwiseBias ); }
-  get depthwiseActivationName()  { return this.params.depthwiseActivationName ); }
+  get depthwiseFilterHeight()                 { return this.params.depthwiseFilterHeight; }
+  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.params.depthwise_AvgMax_Or_ChannelMultiplier; }
+  get depthwiseStridesPad()                   { return this.params.depthwiseStridesPad; }
+  get bDepthwiseBias()                        { return this.params.bDepthwiseBias; }
+  get depthwiseActivationName()               { return this.params.depthwiseActivationName; }
 
-  get pointwise2ChannelCount()   { return this.params.pointwise2ChannelCount ); }
-  get bPointwise2Bias()          { return this.params.bPointwise2Bias ); }
-  get pointwise2ActivationName() { return this.params.pointwise2ActivationName ); }
+  get pointwise2ChannelCount()                { return this.params.pointwise2ChannelCount; }
+  get bPointwise2Bias()                       { return this.params.bPointwise2Bias; }
+  get pointwise2ActivationName()              { return this.params.pointwise2ActivationName; }
 
-  get bAddInputToOutput()        { return this.params.bAddInputToOutput ); }
+  get bAddInputToOutput()                     { return this.params.bAddInputToOutput; }
 
-  get inChannels()               { return this.channelCount_pointwise1Before; }
-  get outChannels()              { return this.channelCount_pointwise2After; }
+  get inChannels()                            { return this.channelCount_pointwise1Before; }
+  get outChannels()                           { return this.channelCount_pointwise2After; }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
