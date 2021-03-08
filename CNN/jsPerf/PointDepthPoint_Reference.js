@@ -223,6 +223,7 @@ class TestCase {
   }
 
   /** According to this.weights.params.outArray and this.image.inArray, calculate this.image.outArray.
+   * @return {number[]} Return output image data as array.
    */ 
   calcResult() {
     // Assume the paramsOutArray is correct. Unpack it into parameters.
