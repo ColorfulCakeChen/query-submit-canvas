@@ -105,6 +105,8 @@ Params.To = class {
 Params.To.Data = {};
 Params.To.Data.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" ];
 
+//!!! (2021/03/08) ...unfinished... String can not be put into Float32Array.
+
 // "64" is possible channel multiplier kinds (1 to 64). Avoid too large channel multiplier. Otherwise, performance may be poor.
 // "+1" is for channel multiplier equals 0 (means no depthwise operation).
 Params.To.Data.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ).keys(), "Avg", "Max" ];
