@@ -348,7 +348,7 @@ class Base extends ReturnOrClone.Base {
 
       this.nextByteOffsetBegin = this.pointwise1FiltersWeights.defaultByteOffsetEnd;
 
-      this.pointwise1FiltersTensor4d = tf.tensor4d( this.pointwise1FiltersWeights, this.pointwise1FiltersShape );
+      this.pointwise1FiltersTensor4d = tf.tensor4d( this.pointwise1FiltersWeights.weights, this.pointwise1FiltersShape );
       this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
 
       if ( bPointwise1Bias ) {
@@ -361,7 +361,7 @@ class Base extends ReturnOrClone.Base {
 
         this.nextByteOffsetBegin = this.pointwise1BiasesWeights.defaultByteOffsetEnd;
 
-        this.pointwise1BiasesTensor3d = tf.tensor3d( this.pointwise1BiasesWeights, this.pointwise1BiasesShape );
+        this.pointwise1BiasesTensor3d = tf.tensor3d( this.pointwise1BiasesWeights.weights, this.pointwise1BiasesShape );
         this.pfn_pointwise1Bias = Base.pointwise1Bias_and_destroy;
       }
 
@@ -416,7 +416,7 @@ class Base extends ReturnOrClone.Base {
 
         this.nextByteOffsetBegin = this.depthwiseFiltersWeights.defaultByteOffsetEnd;
 
-        this.depthwiseFiltersTensor4d = tf.tensor4d( this.depthwiseFiltersWeights, this.depthwiseFiltersShape );
+        this.depthwiseFiltersTensor4d = tf.tensor4d( this.depthwiseFiltersWeights.weights, this.depthwiseFiltersShape );
         this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy; // will dispose inputTensor.
 
       } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
@@ -446,7 +446,7 @@ class Base extends ReturnOrClone.Base {
 
         this.nextByteOffsetBegin = this.depthwiseBiasesWeights.defaultByteOffsetEnd;
 
-        this.depthwiseBiasesTensor3d = tf.tensor3d( this.depthwiseBiasesWeights, this.depthwiseBiasesShape );
+        this.depthwiseBiasesTensor3d = tf.tensor3d( this.depthwiseBiasesWeights.weights, this.depthwiseBiasesShape );
         this.pfn_depthwiseBias = Base.depthwiseBias_and_destroy;
       }
 
@@ -477,7 +477,7 @@ class Base extends ReturnOrClone.Base {
 
       this.nextByteOffsetBegin = this.pointwise2FiltersWeights.defaultByteOffsetEnd;
 
-      this.pointwise2FiltersTensor4d = tf.tensor4d( this.pointwise2FiltersWeights, this.pointwise2FiltersShape );
+      this.pointwise2FiltersTensor4d = tf.tensor4d( this.pointwise2FiltersWeights.weights, this.pointwise2FiltersShape );
       this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy; // will dispose inputTensor.
 
       if ( bPointwise2Bias ) {
@@ -490,7 +490,7 @@ class Base extends ReturnOrClone.Base {
 
         this.nextByteOffsetBegin = this.pointwise2BiasesWeights.defaultByteOffsetEnd;
 
-        this.pointwise2BiasesTensor3d = tf.tensor3d( this.pointwise2BiasesWeights, this.pointwise2BiasesShape );
+        this.pointwise2BiasesTensor3d = tf.tensor3d( this.pointwise2BiasesWeights.weights, this.pointwise2BiasesShape );
         this.pfn_pointwise2Bias = Base.pointwise2Bias_and_destroy;
       }
 
