@@ -122,6 +122,8 @@ class TestCase {
       progress, this.weightsFloat32Array, this.weightsByteOffsetBegin,
       this.image.in.depth, // channelCount_pointwise1Before (i.e. inChannels)
 
+//!!! ...unfinished... Could be randomized some null some non-null?
+
       // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
 
       //pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
