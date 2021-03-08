@@ -27,18 +27,18 @@ class Params extends Weights.Params {
 // squeeze-and-excitation ?
 
     let parameterMap = new Map( [
-      [ Params.Keys.pointwise1ChannelCount,   Weights.To.AnotherIfNull( pointwise1ChannelCount,   Params.To.Pointwise1ChannelCount ) ],
-      [ Params.Keys.bPointwise1Bias,          Weights.To.AnotherIfNull( bPointwise1Bias,          Weights.To.Boolean ) ],
-      [ Params.Keys.pointwise1ActivationName, Weights.To.AnotherIfNull( pointwise1ActivationName, Params.To.ActivationName ) ],
-      [ Params.Keys.depthwiseFilterHeight,    Weights.To.AnotherIfNull( depthwiseFilterHeight,    Params.To.DepthwiseFilterHeight ) ],
-      [ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier, Weights.To.AnotherIfNull( depthwise_AvgMax_Or_ChannelMultiplier, Params.To.Depthwise_AvgMax_Or_ChannelMultiplier ) ],
-      [ Params.Keys.depthwiseStridesPad,      Weights.To.AnotherIfNull( depthwiseStridesPad,      Params.To.DepthwiseStridesPad ) ],
-      [ Params.Keys.bDepthwiseBias,           Weights.To.AnotherIfNull( bDepthwiseBias,           Weights.To.Boolean ) ],
-      [ Params.Keys.depthwiseActivationName,  Weights.To.AnotherIfNull( depthwiseActivationName,  Params.To.ActivationName ) ],
-      [ Params.Keys.pointwise2ChannelCount,   Weights.To.AnotherIfNull( pointwise2ChannelCount,   Params.To.Pointwise2ChannelCount ) ],
-      [ Params.Keys.bPointwise2Bias,          Weights.To.AnotherIfNull( bPointwise2Bias,          Weights.To.Boolean ) ],
-      [ Params.Keys.pointwise2ActivationName, Weights.To.AnotherIfNull( pointwise2ActivationName, Params.To.ActivationName ) ],
-      [ Params.Keys.bAddInputToOutput,        Weights.To.AnotherIfNull( bAddInputToOutput,        Weights.To.Boolean ) ],
+      [ Params.Keys.pointwise1ChannelCount,                [ pointwise1ChannelCount,                Params.To.Pointwise1ChannelCount ] ],
+      [ Params.Keys.bPointwise1Bias,                       [ bPointwise1Bias,                       Weights.To.Boolean ] ],
+      [ Params.Keys.pointwise1ActivationName,              [ pointwise1ActivationName,              Params.To.ActivationName ] ],
+      [ Params.Keys.depthwiseFilterHeight,                 [ depthwiseFilterHeight,                 Params.To.DepthwiseFilterHeight ] ],
+      [ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier, [ depthwise_AvgMax_Or_ChannelMultiplier, Params.To.Depthwise_AvgMax_Or_ChannelMultiplier ] ],
+      [ Params.Keys.depthwiseStridesPad,                   [ depthwiseStridesPad,                   Params.To.DepthwiseStridesPad ] ],
+      [ Params.Keys.bDepthwiseBias,                        [ bDepthwiseBias,                        Weights.To.Boolean ] ],
+      [ Params.Keys.depthwiseActivationName,               [ depthwiseActivationName,               Params.To.ActivationName ] ],
+      [ Params.Keys.pointwise2ChannelCount,                [ pointwise2ChannelCount,                Params.To.Pointwise2ChannelCount ] ],
+      [ Params.Keys.bPointwise2Bias,                       [ bPointwise2Bias,                       Weights.To.Boolean ] ],
+      [ Params.Keys.pointwise2ActivationName,              [ pointwise2ActivationName,              Params.To.ActivationName ] ],
+      [ Params.Keys.bAddInputToOutput,                     [ bAddInputToOutput,                     Weights.To.Boolean ] ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
