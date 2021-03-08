@@ -24,7 +24,7 @@ class Params extends Weights.Params {
 // squeeze-and-excitation ?
 
     let parameterMap = new Map( [
-      [ Params.Keys.channelMultiplier, Weights.To.AnotherIfNull( channelMultiplier, Params.To.ChannelMultiplier ) ],
+      [ Params.Keys.channelMultiplier, [ channelMultiplier, Params.To.ChannelMultiplier ] ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
