@@ -3,13 +3,13 @@ export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeTensors
 import * as ValueMax from "../ValueMax.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 //import * as TensorTools from "../util/TensorTools.js";
-import TestCase as TestCase from "./PointDepthPoint_Reference.js";
+import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 
 
 /**
  * Test CNN PointDepthPoint.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/1/colorfulcakechen-cnn-pointdepthpoint-27b06ac30b20e36832}
  */
 
 
@@ -53,7 +53,7 @@ class HeightWidthDepth {
       ]
     };
     this.testCases = [
-      new TestCase(
+      new PointDepthPoint_Reference.TestCase(
         [ 2.1,  1.1,   6.1, 3.1, 2.1, 3.1,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ], // paramsInArray
         [   2, true, "cos",   3,   2,   0, true, "cos", 8, true, "cos", true ], // paramsOutArray
 
@@ -81,44 +81,12 @@ class HeightWidthDepth {
       ),
     ];
 
-
-    this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
-    this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
-    this.vocabularyCountPerInputChannel = 256;
-
     this.dataTensor3d = tf.tidy( () => {
-      // Make-up the input data. They should between [ 0, this.vocabularyCountPerInputChannel ).
-      let inputData = new Array( this.valueCount );
-      for ( let i = 0; i < inputData.length; ++i ) {
-        inputData[ i ] = Math.floor( Math.random() * this.vocabularyCountPerInputChannel );
-      }
-
-      let dataTensor1dInt32 = tf.tensor1d( inputData, "int32" ); // Embedding accepts integer input only.
-
-      let dataTensor3d = dataTensor1dInt32.reshape( [ height, width, depth ] );
+      let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
+      let dataTensor3d = tf.tensor3d( testImageData.dataArray, shape );
       return dataTensor3d;
     });
 
-    let channelMultiplierEstimated = channelMultiplier;
-    if ( channelMultiplierEstimated < 1 )
-      channelMultiplierEstimated = 1;
-
-    let wieghtsArrayLength = 
-      this.weightsElementOffsetBegin // Skip the un-used.
-        + ( depth * ( this.vocabularyCountPerInputChannel * channelMultiplierEstimated ) ) 
-      ;
-
-    this.weightsFloat32Array = new Float32Array( wieghtsArrayLength );
-    {
-      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
-        this.weightsFloat32Array[ i ] = -i;
-      }
-
-      for ( let i = this.weightsElementOffsetBegin; i < wieghtsArrayLength; ++i ) { // Make-up the embedding weight values.
-        this.weightsFloat32Array[ i ] = ( i - this.weightsElementOffsetBegin );  // For debugging more easily.
-//        this.weightsFloat32Array[ i ] = Math.random() * 10;
-      }
-    }
   }
 
   disposeTensors() {
@@ -144,61 +112,8 @@ class HeightWidthDepth {
     bKeepInputTensor
   ) {
 
-    let pointDepthPoint = new PointDepthPoint.Base();
-
-    let progress = new ValueMax.Percentage.Aggregate();
-
-    // Initialize successfully or failed.
-    let bInitOk = pointDepthPoint.init(
-      progress, inputFloat32Array, byteOffsetBegin,
-
-      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-      depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
-      bAddInputToOutput,
-
-      bKeepInputTensor
-    );
-
-    let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
-
-    tf.util.assert( ( pointDepthPoint.isValid() == bInitOk ),
-      `PointDepthPoint validation state (${pointDepthPoint.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
-
-    tf.util.assert( ( true == bInitOk ),
-      `Failed to initialize pointDepthPoint object.  ${parametersDescription}`);
-
-    tf.util.assert( ( 100 == progress.valuePercentage ),
-      `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.byteOffsetBegin == byteOffsetBegin ),
-      `PointDepthPoint parsing beginning position (${pointDepthPoint.byteOffsetBegin}) should be (${byteOffsetBegin}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.byteOffsetEnd == inputFloat32Array.byteLength ),
-      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${inputFloat32Array.byteLength}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.inChannels == ),
-      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${inputFloat32Array.byteLength}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.pointwise1ChannelCount
-    tf.util.assert( ( pointDepthPoint.bPointwise1Bias
-    tf.util.assert( ( pointDepthPoint.pointwise1ActivationName
-
-    tf.util.assert( ( pointDepthPoint.depthwiseFilterHeight
-    tf.util.assert( ( pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier
-    tf.util.assert( ( pointDepthPoint.depthwiseStridesPad
-    tf.util.assert( ( pointDepthPoint.bDepthwiseBias
-    tf.util.assert( ( pointDepthPoint.depthwiseActivationName
-
-    tf.util.assert( ( pointDepthPoint.pointwise2ChannelCount
-    tf.util.assert( ( pointDepthPoint.bPointwise2Bias
-    tf.util.assert( ( pointDepthPoint.pointwise2ActivationName
-
-    tf.util.assert( ( pointDepthPoint.bAddInputToOutput
-
-    tf.util.assert( ( pointDepthPoint.outChannels
-
-    tf.util.assert( ( pointDepthPoint.bKeepInputTensor
+    let testCase = this.testCases[ 0 ];
+    let pointDepthPoint = testCase.pointDepthPoint_create( bKeepInputTensor );
 
     return pointDepthPoint;
   }
@@ -210,31 +125,14 @@ class HeightWidthDepth {
 
     // Different pointDepthPoint objects.
     //
-    // ( bEmbedVocabularyId, bKeepInputTensor, bSplitReshapeGatherConcat )
+    // ( bKeepInputTensor )
     this.pointDepthPoint_list = [
-      this.pointDepthPoint_create( false, false, false ),
-      this.embedding2d_create(  true, false, false ),
 
-      // The embedding (vocabulary tabe tensor3d) for performance testing should:
-      //   - ( bEmbedVocabularyId == false ). Otherwise, shortcut operation (i.e. return directly) will be used when ( channelMultiplier == 1 ).
+      this.pointDepthPoint_create( false ),
+      // The pointDepthPoint for performance testing should:
       //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
-//!!! (2021/01/05 Remarked) SplitGatherConcatReshape is slower than SplitReshapeGatherConcat.
-//      this.embedding2d_SplitGatherConcatReshape =
-      this.embedding2d_AddGatherReshape =
-      this.embedding2d_create( false,  true, false ),
-      this.embedding2d_create(  true,  true, false ),
-
-
-      this.embedding2d_create( false, false,  true ),
-      this.embedding2d_create(  true, false,  true ),
-
-      // The embedding (vocabulary tabe tensor2d) for performance testing should:
-      //   - ( bEmbedVocabularyId == false ). Otherwise, shortcut operation (i.e. return directly) will be used when ( channelMultiplier == 1 ).
-      //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
-      this.embedding2d_SplitReshapeGatherConcat =
-      this.embedding2d_create( false,  true,  true ),
-      this.embedding2d_create(  true,  true,  true ),
-
+      this.pointDepthPoint =
+      this.pointDepthPoint_create(  true ),
     ];
 
   }
@@ -373,36 +271,36 @@ class HeightWidthDepth {
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
-    tf.tidy( () => { // Test memory leakage of embedding2d.
+    tf.tidy( () => { // Test memory leakage of pointDepthPoint.
       let memoryInfoPre = tf.memory();
-      this.embedding2d_init();
-      this.embedding2d_release();
+      this.pointDepthPoint_init();
+      this.pointDepthPoint_release();
       let memoryInfo = tf.memory();
-      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `Embedding2d init/release memory leak.`);
+      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `PointDepthPoint init/release memory leak.`);
     });
 
-    this.embedding2d_init();  // (Should outside tidy() for preventing from tensors being disposed.
+    this.pointDepthPoint_init();  // (Should outside tidy() for preventing from tensors being disposed.
 
     tf.tidy( () => {
-      for ( let i = 0; i < this.embedding2d_list.length; ++i ) {
-        let embedding2d = this.embedding2d_list[ i ];
+      for ( let i = 0; i < this.pointDepthPoint_list.length; ++i ) {
+        let pointDepthPoint = this.pointDepthPoint_list[ i ];
 
         let memoryInfo0 = tf.memory();
 
         let inputTensor3d;
-        if ( embedding2d.bKeepInputTensor ) {
+        if ( pointDepthPoint.bKeepInputTensor ) {
           inputTensor3d = this.dataTensor3d;
         } else {
           inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
         }
 
         // Test memory leak of embedding apply.
-        let outputTensor3d = embedding2d.apply_and_destroy_or_keep( inputTensor3d );
+        let outputTensor3d = pointDepthPoint.apply_and_destroy_or_keep( inputTensor3d );
         let memoryInfo1 = tf.memory();
-        tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `Embedding2d.apply_and_destroy_or_keep() memory leak.`);
+        tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `PointDepthPoint.apply_and_destroy_or_keep() memory leak.`);
 
         // Test correctness of embedding apply.
-        this.check_Input_Output_WeightsTable( embedding2d, this.dataTensor3d, outputTensor3d );
+        this.check_Input_Output_WeightsTable( pointDepthPoint, this.dataTensor3d, outputTensor3d );
 
         outputTensor3d.dispose();
       }
@@ -457,29 +355,11 @@ class HeightWidthDepth {
 function init() {
   disposeTensors();
 
-  // (cm = channel multiplier)
-
-  let depth = 8; //24;
-  globalThis.testSet_110x120x8_cm32 = new HeightWidthDepth( 110, 120, depth, 32 ); // height, width, depth, channelMultiplier
-  globalThis.testSet_110x120x8_cm16 = new HeightWidthDepth( 110, 120, depth, 16 );
-  globalThis.testSet_110x120x8_cm8 = new HeightWidthDepth( 110, 120, depth, 8 );
-  globalThis.testSet_110x120x8_cm4 = new HeightWidthDepth( 110, 120, depth, 4 );
-  globalThis.testSet_110x120x8_cm3 = new HeightWidthDepth( 110, 120, depth, 3 );
-  globalThis.testSet_110x120x8_cm2 = new HeightWidthDepth( 110, 120, depth, 2 );
-  globalThis.testSet_110x120x8_cm1 = new HeightWidthDepth( 110, 120, depth, 1 );
-  globalThis.testSet_110x120x8_cm0 = new HeightWidthDepth( 110, 120, depth, 0 );
-  globalThis.testSet_110x120x8_cmNegative = new HeightWidthDepth( 110, 120, depth, -1 );
+  let depth = 8;
+  globalThis.testSet_110x120x8 = new HeightWidthDepth( 110, 120, depth ); // height, width, depth
 
   globalThis.testSet_110x120x8_All = [
-    globalThis.testSet_110x120x8_cm32,
-    globalThis.testSet_110x120x8_cm16,
-    globalThis.testSet_110x120x8_cm8,
-    globalThis.testSet_110x120x8_cm4,
-    globalThis.testSet_110x120x8_cm3,
-    globalThis.testSet_110x120x8_cm2,
-    globalThis.testSet_110x120x8_cm1,
-    globalThis.testSet_110x120x8_cm0,
-    globalThis.testSet_110x120x8_cmNegative
+    globalThis.testSet_110x120x8
   ];
 }
 
@@ -508,14 +388,6 @@ function disposeTensors() {
     globalThis.testSet_110x120x8_All = null;
   }
 
-  globalThis.testSet_110x120x8_cm32
-    = globalThis.testSet_110x120x8_cm16
-    = globalThis.testSet_110x120x8_cm8
-    = globalThis.testSet_110x120x8_cm4
-    = globalThis.testSet_110x120x8_cm3
-    = globalThis.testSet_110x120x8_cm2
-    = globalThis.testSet_110x120x8_cm1
-    = globalThis.testSet_110x120x8_cm0
-    = globalThis.testSet_110x120x8_cmNegative
+  globalThis.testSet_110x120x8
     = null;
 }
