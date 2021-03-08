@@ -215,6 +215,10 @@ class TestCase {
     tf.util.assert( ( pointDepthPoint.bKeepInputTensor == bKeepInputTensor ),
       `PointDepthPoint bKeepInputTensor (${pointDepthPoint.bKeepInputTensor}) should be (${bKeepInputTensor}). ${parametersDescription}`);
 
+//!!! ...unfinished...
+//     tf.util.assert( ( pointDepthPoint.outChannels == outChannels ),
+//       `PointDepthPoint outChannels (${pointDepthPoint.outChannels}) should be (${outChannels}). ${parametersDescription}`);
+
     return pointDepthPoint;
   }
 
@@ -267,10 +271,6 @@ class TestCase {
         pointwise2ChannelCount, this.weights.pointwise2Filters, bPointwise2Bias, this.weights.pointwise2Biases, pointwise2ActivationName,
         "Pointwise 2", this.params.description );
     }
-
-//!!! ...unfinished...
-    tf.util.assert( ( pointDepthPoint.outChannels == outChannels ),
-      `PointDepthPoint outChannels (${pointDepthPoint.outChannels}) should be (${outChannels}). ${parametersDescription}`);
 
     return nextImageIn;
   }
