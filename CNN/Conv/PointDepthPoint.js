@@ -96,16 +96,17 @@ Params.To = class {
   }
 
   /** @return {number} Convert number value into an integer between [ 0, 2 ]. */
-  static toDepthwiseStridesPad( value ) {
+  static DepthwiseStridesPad( value ) {
     return Weights.To.IntegerRange( value, 0, 2 );
   }
 }
 
 /** Define parameter converter helper data. */
 Params.To.Data = {};
+//!!! (2021/03/08) ...unfinished... String can not be put back into Float32Array.
 Params.To.Data.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" ];
 
-//!!! (2021/03/08) ...unfinished... String can not be put into Float32Array.
+//!!! (2021/03/08) ...unfinished... String can not be put back into Float32Array.
 
 // "64" is possible channel multiplier kinds (1 to 64). Avoid too large channel multiplier. Otherwise, performance may be poor.
 // "+1" is for channel multiplier equals 0 (means no depthwise operation).
