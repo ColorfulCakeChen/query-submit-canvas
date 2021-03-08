@@ -153,14 +153,15 @@ class To {
     return lookUpArray[ i ];
   }
 
-  /**
-   * @return {any} If ( null == value ), return anotherValue. Otherwise, return value.
-   */
-  static AnotherIfNull( value, anotherValue ) {
-    if ( null == value )
-      return anotherValue;
-    return value;
-  }
+//!!! (2021/03/08 Remarked) No longer need it.
+//   /**
+//    * @return {any} If ( null == value ), return anotherValue. Otherwise, return value.
+//    */
+//   static AnotherIfNull( value, anotherValue ) {
+//     if ( null == value )
+//       return anotherValue;
+//     return value;
+//   }
 
 }
 
@@ -168,9 +169,11 @@ class To {
 /**
  * The parameters for the weights of a neural network layer.
  *
- * @member {Map} parameterMap
- *   All parameters provided by this object. Its keys are the same as init()'s parameterMap. Its values are
- * combined from init()'s parameterMap and inputFloat32Array (or fixedWeights).
+ * @member {Map} parameterMapModified
+ *   All parameters provided by this object. Its entry is [ key, value ]. The key of the entry [ key, value ] is the same as
+ * the key of the init()'s parameterMap. The value of the entry [ key, value ] is parameter_value
+ * (i.e. not [ parameter_value, parameter_converter ] ) which is combined from the parameter_value of the init()'s parameterMap
+ * and inputFloat32Array (or fixedWeights).
  *
  * @member {number} parameterCountExtracted
  *   How many parameters are extracted from inputFloat32Array or fixedWeights in fact. Only existed if init()
@@ -197,27 +200,6 @@ class Params extends Base {
 
   /**
    *
-//!!! (2021/01/18 Remarked) No need default parameter.
-//    * The parameterMap should have at least:
-//    *
-//    * - Params.Keys.inChannels
-//    *   {number} There will be how many input channels. (Input channel count) (By specifying)
-//    *
-//    *
-//    * The parameterMap could also have (and any other custom key-value pairs):
-//    *
-//    * - Params.Keys.channelMultiplier
-//    *   {number} Every input channel will be expanded into how many channels. (No matter how it is determined, it will
-//    *   always be forcibly adjusted to positive integer.)
-//    *     - If not null, it will be used instead of extracting from inputFloat32Array or fixedWeights. (By specifying)
-//    *     - If null, extracted from inputFloat32Array or fixedWeights. (By evolution)
-//    *
-//    * - Params.Keys.outChannels
-//    *   {number} There will be how many output channels. (Output channel count)
-//    *     - If Number.isFinite(), it will be used instead of extracting from inputFloat32Array or fixedWeights. (By specifying)
-//    *     - If Infinity (Number.POSITIVE_INFINITY), it will be ( inChannels * channelMultiplier ). (By channelMultiplier)
-//    *     - If null, extracted from inputFloat32Array or fixedWeights. (By evolution)
-   *
    *
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpret as weights. It should have ( parameterCountExtractedAtLeast ) or
@@ -229,12 +211,16 @@ class Params extends Base {
    * (not to the inputFloat32Array.byteOffset).
    *
    * @param {Map} parameterMap
-   *   Describe what parameters to be used or extracted. The keys of parameterMap will be viewed as parameter names.
-   * The values of parameterMap will be viewed as parameter values or converter. If the value of a [ key, value ] entry is:
-   *   - function: a value will be extracted from inputFloat32Array (or fixedWeights), and past into the function. The
-   *               returned value of the function will become the parameter's value. (i.e. by evolution)
-   *   - null: the same as using To.IntegerZeroPositive() as function. (i.e. by evolution)
-   *   - Otherwise: the value will be used as the parameter's value directly. (i.e. by specifying)
+   *   Describe what parameters to be used or extracted.
+   *   - The key of this parameterMap's entry [ key, value ] will be viewed as parameter name.
+   *   - The value of this parameterMap's entry [ key, value ] should be an array [ parameter_value, parameter_converter ].
+   *     - If the parameter_value is non-null, it will be used as the parameter's value directly (i.e. by specifying)
+   *       and the parameter_converter will be ignored.
+   *     - If the parameter_value is null, the parameter's will be extracted from inputFloat32Array (or fixedWeights),
+   *       and past into the parameter_converter (viewed as a function). The returned value of the function will become the
+   *       parameter's value. (i.e. by evolution)
+   *   - If the value of this parameterMap's entry [ key, value ] is null, it will be viewed as an array
+   *      [ parameter_value, parameter_converter ] = [ null, To.IntegerZeroPositive ]. (i.e. by evolution)
    *
    * @param {(Float32Array|number[])} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
@@ -252,35 +238,59 @@ class Params extends Base {
     if ( !parameterMap )
       return false;  // Do not know what parameters to be used or extracted.
 
-//!!! (2021/01/18 Remarked) No need default parameter.
-//     let inChannels = parameterMap.get( Params.Keys.inChannels );
-//     if ( !inChannels )
-//       return false;  // At least, there should be a (required) parameter (i.e. input channel count).
-
-    this.parameterMapModified = new Map( parameterMap );  // Copy so that the original map will not be modified.
+    this.parameterMapModified = new Map; // Collect all parameters.
 
     // Collect what parameters should be extracted from input array (rather than use values in the parameterMap).
     // At the same time, its array index will also be recorded for extracting its value from array.
     let arrayIndexMap = new Map();
     {
       let i = 0;
-      for ( let [ key, value ] of parameterMap ) {
-        // A null (or undefined) value means it should be extracted from inputFloat32Array or fixedWeights, and
-        // using To.IntegerZeroPositive() as converter function. (i.e. by evolution)
+//!!! (2021/03/08 Remarked) Old Codes.
+//       for ( let [ key, value ] of parameterMap ) {
+//         // A null (or undefined) value means it should be extracted from inputFloat32Array or fixedWeights, and
+//         // using To.IntegerZeroPositive() as converter function. (i.e. by evolution)
+//         //
+//         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
+//         if ( null == value ) {
+//           value = To.IntegerZeroPositive;
+//         }
+//
+//         // A function value means it should be extracted from inputFloat32Array (or fixedWeights), and
+//         // using the function as converter. (i.e. by evolution)
+//         if ( ( typeof value ) === "function" ) {
+//           // Record the index (into this.weightsModified[]) and the converter.
+//           arrayIndexMap.set( key, { arrayIndex: i, converterFunction: value } );
+//           ++i;
+//         }
+//       }
+
+      let value, converter;
+      for ( let [ key, value_converter ] of parameterMap ) {
+
+        // A null (or undefined) value_converter means it should be extracted from inputFloat32Array or fixedWeights,
+        // and using To.IntegerZeroPositive() as converter function. (i.e. by evolution)
+        if ( null == value_converter ) {
+          value = null;
+          converter = To.IntegerZeroPositive;
+        } else {
+          value = value_converter[ 0 ];
+          converter = value_converter[ 1 ];
+        }
+
+        // A null value means it should be extracted from inputFloat32Array (or fixedWeights), and
+        // using the converter as converter function. (i.e. by evolution)
         //
         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
         if ( null == value ) {
-          value = To.IntegerZeroPositive;
-        }
-
-        // A function value means it should be extracted from inputFloat32Array (or fixedWeights), and
-        // using the function as converter. (i.e. by evolution)
-        if ( ( typeof value ) === "function" ) {
           // Record the index (into this.weightsModified[]) and the converter.
-          arrayIndexMap.set( key, { arrayIndex: i, converterFunction: value } );
+          arrayIndexMap.set( key, { arrayIndex: i, converterFunction: converter } );
           ++i;
+        } else {
+          // A non-null value means it is the parameter's value directly.
+          this.parameterMapModified.set( key, value );
         }
       }
+
     }
 
     let parameterCountExtracted = arrayIndexMap.size; // Determine how many parameters should be extracted from array.
@@ -306,11 +316,6 @@ class Params extends Base {
     // another neural network layer configuration)
     this.weightsModified = new Float32Array( this.weights.length );
 
-//!!! (2021/01/07 Modified) Using custom converter function.
-//     for ( let i = 0; i < this.weightsModified.length; ++i ) {
-//       this.weightsModified[ i ] = To.IntegerZeroPositive( this.weights[ i ] );
-//     }
-
     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
     for ( let [ key, { arrayIndex, converterFunction } ] of arrayIndexMap ) {
       let extractedValue = this.weights[ arrayIndex ];
@@ -319,62 +324,16 @@ class Params extends Base {
       this.parameterMapModified.set( key, convertedValue ); // Record in map, too.
     }
 
-//!!! (2021/01/18 Remarked) No need default parameter.
-//    // Restrict channelMultiplier to positive integer.
-//     //
-//     // If it is zero or negative, the outChannels (= inChannels * channelMultiplier ) will be strange value.
-//     // Strange outChannels value will affect the parameters extraction of the next neural network layer.
-//     let channelMultiplier = this.channelMultiplier;   // May be specified or extracted.
-//     if ( channelMultiplier < 1 ) {
-//       channelMultiplier = 1;
-//       this.parameterMapModified.set( Params.Keys.channelMultiplier, channelMultiplier );
-//     }
-//
-//     // If original parameterMap has output channel count and its value is infinity, its value will depend
-//     // on channelMultiplier (i.e. by channelMultiplier).
-//     //
-//     // Usually, the embedding layer uses this behavior.
-//     let outChannelsOriginal = parameterMap.get( Params.Keys.outChannels );
-//     if ( outChannelsOriginal ) {
-//       if ( !Number.isFinite( outChannelsOriginal ) ) {
-//         let outChannels = inChannels * channelMultiplier;
-//         this.parameterMapModified.set( Params.Keys.outChannels, outChannels );
-//       } else {
-//         // Use the original value in parameterMap as output channel count (i.e. by specifying).
-//       }
-//     } else {
-//       // Either use the extracted value as output channel count (i.e. by evolution),
-//       // or there is no output channel count in fact.
-//     }
-
     return bInitOk;
   }
 
+  /** @return {number} The count of the parameters extracted from inputFloat32Array. (i.e. by evolution) */
   get parameterCountExtracted() { return this.weightCount; }
+
+  /**
+   * @return {number}
+   *   The count of the all parameters (both directly given (i.e. by specifying) and extracted from inputFloat32Array (i.e. by evolution) ).
+   */
   get parameterCount()          { return this.parameterMapModified.size; }
 
-//!!! (2021/01/18 Remarked) No need default parameter.
-//  // Most kinds of layers have these parameters.
-//
-//   get inChannels()        { return this.parameterMapModified.get( Params.Keys.inChannels ); }
-//   get channelMultiplier() { return this.parameterMapModified.get( Params.Keys.channelMultiplier ); }
-//   get outChannels()       { return this.parameterMapModified.get( Params.Keys.outChannels ); }
 }
-
-/**
- * Define parameter keys.
- *
- * They are (static) symbol objects used as keys of Params.init()'s parameterMap. They can be seen inside Map when
- * debugging, and are faster than string (or String object) when Map's key comparing.
- */
-//!!! (2021/01/18 Remarked) No need default parameter.
-// Params.Keys = {};
-//
-// Params.Keys.inChannels =        Symbol("inChannels");
-// Params.Keys.channelMultiplier = Symbol("channelMultiplier");
-// Params.Keys.outChannels =       Symbol("outChannels");
-//
-// Params.Keys.dilationHeight =    Symbol("dilationHeight");
-// Params.Keys.dilationWidth =     Symbol("dilationWidth");
-// Params.Keys.filterHeight =      Symbol("filterHeight");
-// Params.Keys.filterWidth =       Symbol("filterWidth");
