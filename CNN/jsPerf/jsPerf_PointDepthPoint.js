@@ -97,10 +97,11 @@ class HeightWidthDepth {
         ],
 
         // pointwise2BiasesArray
-        [],
+        [ 200, 201, 202, 203, 204, 205, 206, 207 ],
 
         // imageIn
         testImageData,
+//!!!
         // imageOutArray
         [ ],
       ),
