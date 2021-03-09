@@ -54,9 +54,9 @@ class HeightWidthDepth {
     };
     this.testCases = [
       new PointDepthPoint_Reference.TestCase(
-//!!! (2021/03/09 Remarked) depthwise filter height 3.1 will become 4 (not 3).
-//        [ 2.1,  1.1,   6.1, 3.1, 2.1, 3.1,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ], // paramsInArray
-        [ 2.1,  1.1,   6.1, 2.1, 2.1, 3.1,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ], // paramsInArray
+        [ 2.1,  1.1,   6.1, 3.1, 2.1, 3.1,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ], // paramsInArray
+//!!! (2021/03/09 Remarked) Now, depthwise filter height 3.1 will become 3 (not 4).
+//        [ 2.1,  1.1,   6.1, 2.1, 2.1, 3.1,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ], // paramsInArray
         [   2, true, "cos",   3,   2,   0, true, "cos", 8, true, "cos", true ], // paramsOutArray
 
         // pointwise1FiltersArray
