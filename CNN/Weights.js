@@ -124,9 +124,25 @@ class To {
     let valueMin = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
     let valueMax = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
     let valueKinds = ( valueMax - valueMin ) + 1; // How many possible integer between them.
+    let valueInt = Math.trunc( value ); // Convert to an integer.
 
-    // Because remainder always has the same sign as dividend, force the dividend to zeor or positive for processing easily.
-    let result = valueMin + ( To.IntegerZeroPositive( value ) % valueKinds );
+//!!! (2021/03/09 Remarked) The result is wired when min and max have different sign.
+//     // Because remainder always has the same sign as dividend, force the dividend to zeor or positive for processing easily.
+//     let result = valueMin + ( To.IntegerZeroPositive( value ) % valueKinds );
+
+    // Rearrange valueInt between valueMin and valueMax fairly (in possibility).
+    //
+    // A1: Why not use remainder operator (%) directly?
+    // Q1: Because remainder always has the same sign as dividend, this can not handle the situation which valueMin and
+    //     valueMax have different sign.
+    //
+    // A2: Why not just restrict all value less than valueMin to valueMin and value greater than valueMax to valueMax?
+    // Q2: Although this could restrict value in range, it will skew the possibility of every value in the range.
+    //     Unfair possibility is harmful to evolution algorithm.
+    //
+    let quotient = ( valueInt - valueMin ) / valueKinds;
+    let quotientInt = Math.floor( quotient );  // So that negative value could be handled correctly.
+    let result = valueInt - ( quotientInt * valueKinds );
     return result;
   }
 
