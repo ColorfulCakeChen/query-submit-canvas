@@ -36,11 +36,15 @@ class Params extends Weights.Params {
 /** Define parameter converter helper. */
 Params.To = class {
 
-  /** @return {number} Convert number value into an integer between [ 1, 1024 ]. */
+//!!! (2021/03/10 Remarked)
+//  /** @return {number} Convert number value into an integer between [ 1, 1024 ]. */
+  /** @return {number} Convert number value into an integer between [ 1, 64 ]. */
   static ChannelMultiplier( value ) {
     // At least 1, because channel count 0 is meaningless.
     // Avoid too large vocabulary channel multiplier. Otherwise, performance may be poor.
-    return Weights.To.IntegerRange( value, 1, 1024 );
+//!!! (2021/03/10 Remarked)
+//    return Weights.To.IntegerRange( value, 1, 1024 );
+    return Weights.To.IntegerRange( value, 1, 64 );
   }
 
 }
