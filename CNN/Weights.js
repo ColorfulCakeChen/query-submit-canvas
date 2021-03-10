@@ -108,27 +108,24 @@ class Base {
 
 
 /**
- * Provides static methods for converting weight to parameter.
+ * Provides methods for converting weight to integer between min and max (both are integers).
  */
-class To {
+class IntegerRange {
 
-  /** @return {any} Return the input value directly. */
-  static Same( v ) {
-    return v;
-  }
-
-  /** @return {number} Return the absolute value of the trucated value (i.e. integer). */
-  static IntegerZeroPositive( v ) {
-    return Math.abs( Math.trunc( v ) );
+  /**
+   * @param {number} min The minimum value (as integer).
+   * @param {number} max The maximum value (as integer).
+   */
+  constructor( min, max ) {
+    this.valueMin = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
+    this.valueMax = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
+    this.valueKinds = ( this.valueMax - this.valueMin ) + 1; // How many possible integer between them.
   }
 
   /**
    * @return {number} Return the trucated value (i.e. integer). The returned value is forcibly between min and max (as integer too).
    */
-  static IntegerRange( value, min, max ) {
-    let valueMin = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
-    let valueMax = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
-    let valueKinds = ( valueMax - valueMin ) + 1; // How many possible integer between them.
+  adjust( value ) {
     let valueInt = Math.trunc( value ); // Convert to an integer.
 
 //!!! (2021/03/09 Remarked) The result is wierd when min and max have different sign.
@@ -145,11 +142,67 @@ class To {
     // Q2: Although this could restrict value in range, it will skew the probability of every value in the range.
     //     Unfair probability is harmful to evolution algorithm.
     //
-    let quotient = ( valueInt - valueMin ) / valueKinds;
+    let quotient = ( valueInt - this.valueMin ) / this.valueKinds;
     let quotientInt = Math.floor( quotient );  // So that negative value could be handled correctly.
-    let result = valueInt - ( quotientInt * valueKinds );
+    let result = valueInt - ( quotientInt * this.valueKinds );
     return result;
   }
+
+  /**
+   * @return {function}
+   *   Return a function object. When calling the returned function object with one value parameter, it will return
+   * the adjusted value which is retricted by this IntegerRange.
+   */
+  getAdjuster() {
+    return this.restrict.bind( this );
+  }
+}
+
+
+/**
+ * Provides static methods for converting weight to parameter.
+ */
+class To {
+
+  /** @return {any} Return the input value directly. */
+  static Same( v ) {
+    return v;
+  }
+
+  /** @return {number} Return the absolute value of the trucated value (i.e. integer). */
+  static IntegerZeroPositive( v ) {
+    return Math.abs( Math.trunc( v ) );
+  }
+
+//!!! (2021/03/10 Remarked) Using class IntegerRange instead.
+//   /**
+//    * @return {number} Return the trucated value (i.e. integer). The returned value is forcibly between min and max (as integer too).
+//    */
+//   static IntegerRange( value, min, max ) {
+//     let valueMin = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
+//     let valueMax = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
+//     let valueKinds = ( valueMax - valueMin ) + 1; // How many possible integer between them.
+//     let valueInt = Math.trunc( value ); // Convert to an integer.
+//
+// //!!! (2021/03/09 Remarked) The result is wierd when min and max have different sign.
+// //     // Because remainder always has the same sign as dividend, force the dividend to zeor or positive for processing easily.
+// //     let result = valueMin + ( To.IntegerZeroPositive( value ) % valueKinds );
+//
+//     // Rearrange valueInt between valueMin and valueMax fairly (in probability).
+//     //
+//     // A1: Why not use remainder operator (%) directly?
+//     // Q1: Because remainder always has the same sign as dividend, this can not handle the situation which valueMin and
+//     //     valueMax have different sign.
+//     //
+//     // A2: Why not just restrict all value less than valueMin to valueMin and value greater than valueMax to valueMax?
+//     // Q2: Although this could restrict value in range, it will skew the probability of every value in the range.
+//     //     Unfair probability is harmful to evolution algorithm.
+//     //
+//     let quotient = ( valueInt - valueMin ) / valueKinds;
+//     let quotientInt = Math.floor( quotient );  // So that negative value could be handled correctly.
+//     let result = valueInt - ( quotientInt * valueKinds );
+//     return result;
+//   }
 
   /** @return {boolean} Convert number value into false or true. */
   static Boolean( value ) {
