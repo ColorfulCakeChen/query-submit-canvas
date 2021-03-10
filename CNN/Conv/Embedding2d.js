@@ -38,7 +38,7 @@ Params.To = class {
 
   /** @return {number} Convert number value into an integer between [ 1, 1024 ]. */
   static ChannelMultiplier( value ) {
-    // At least 1, because chanel count 0 is meaningless.
+    // At least 1, because channel count 0 is meaningless.
     // Avoid too large vocabulary channel multiplier. Otherwise, performance may be poor.
     return Weights.To.IntegerRange( value, 1, 1024 );
   }
@@ -184,15 +184,16 @@ class Base extends ReturnOrClone.Base {
 
     this.inChannels = inChannels;
 
-   // Restrict channelMultiplier to positive integer.
-    //
-    // If it is not null (i.e. by specifying (not by evolution) so will not be restricted by Params.init()) but
-    // is zero or negative, adjust it to positive. Otherwise, the outChannels (= inChannels * channelMultiplier )
-    // will be strange value. Strange outChannels value will affect the parameters extraction of the next neural
-    // network layer.
-    if ( ( null != channelMultiplier ) && ( channelMultiplier < 1 ) ) {
-      channelMultiplier = 1;
-    }
+//!!! (2021/03/10 Remarked) Now, no matter whether is specified or extracted, all parameters will be restricted by adjuster function.
+//    // Restrict channelMultiplier to positive integer.
+//     //
+//     // If it is not null (i.e. by specifying (not by evolution) so will not be restricted by Params.init()) but
+//     // is zero or negative, adjust it to positive. Otherwise, the outChannels (= inChannels * channelMultiplier )
+//     // will be strange value. Strange outChannels value will affect the parameters extraction of the next neural
+//     // network layer.
+//     if ( ( null != channelMultiplier ) && ( channelMultiplier < 1 ) ) {
+//       channelMultiplier = 1;
+//     }
 
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
@@ -219,7 +220,7 @@ class Base extends ReturnOrClone.Base {
     this.outChannels = inChannels * channelMultiplier; // The output channel count always depends on channelMultiplier.
 
     // 2.1 Shortcut operation.
-    if ( // If channelMultiplier is illegal (i.e. zero or negative). (could happen by evolution.)
+    if ( // If channelMultiplier is illegal (i.e. zero or negative). (may happen by evolution.)
            ( channelMultiplier < 1 )
 
         // Or, if there is only one output channel per input channel and the only one output channel is just vocabulary id.
@@ -227,10 +228,10 @@ class Base extends ReturnOrClone.Base {
        ) {
 
       if ( bKeepInputTensor )
-        // 2.1.1 For ( channelMultiplier < 1 ) and ( bKeepInputTensor == true  ), return a copy of input (as output) immediately.        
+        // 2.1.1 For ( channelMultiplier <= 1 ) and ( bKeepInputTensor == true  ), return a copy of input (as output) immediately.        
         this.apply_and_destroy_or_keep = Base.keep_input_return_copy;
       else
-        // 2.1.2 For ( channelMultiplier < 1 ) and ( bKeepInputTensor == false ), return input (as output) immediately.
+        // 2.1.2 For ( channelMultiplier <= 1 ) and ( bKeepInputTensor == false ), return input (as output) immediately.
         this.apply_and_destroy_or_keep = Base.return_input_directly;
 
     } else { // 2.2 channelMultiplier is positive.
