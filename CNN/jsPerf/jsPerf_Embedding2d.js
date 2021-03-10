@@ -51,9 +51,12 @@ class HeightWidthDepth {
       return dataTensor3d;
     });
 
-    let channelMultiplierEstimated = channelMultiplier;
-    if ( channelMultiplierEstimated < 1 )
-      channelMultiplierEstimated = 1;
+//!!! (2021/03/10 Remarked)
+//     let channelMultiplierEstimated = channelMultiplier;
+//     if ( channelMultiplierEstimated < 1 )
+//       channelMultiplierEstimated = 1;
+    
+    let channelMultiplierEstimated = Embedding2d.Params.To.ChannelMultiplier( channelMultiplier );
 
     let wieghtsArrayLength = 
       this.weightsElementOffsetBegin // Skip the un-used.
@@ -90,21 +93,6 @@ class HeightWidthDepth {
     let embedding2d = new Embedding2d.Base();
 
     let progress = new ValueMax.Percentage.Aggregate();
-//!!! (2021/01/07 Remarked) all init() directly.
-//     let initer = embedding2d.initer(
-//       progress, this.weightsFloat32Array, this.weightsByteOffsetBegin,
-//       this.depth, this.channelMultiplier,
-//       this.vocabularyCountPerInputChannel,
-//       bEmbedVocabularyId,
-//       bKeepInputTensor,
-//       bSplitReshapeGatherConcat
-//     );
-//
-//     let initerNext;
-//     while ( ! ( ( initerNext = initer.next() ).done ) ) {
-//       //initerNext.value; // progressRoot
-//     }
-//     let bInitOk = initerNext.value; // Initialize successfully or failed.
 
     // Initialize successfully or failed.
     let bInitOk = embedding2d.init(
@@ -117,6 +105,7 @@ class HeightWidthDepth {
     );
 
     let parametersDescription = `( `
+        + `channelMultiplier=${this.channelMultiplier}, `
         + `bEmbedVocabularyId=${bEmbedVocabularyId}, `
         + `bKeepInputTensor=${bKeepInputTensor}, `
         + `bSplitReshapeGatherConcat=${bSplitReshapeGatherConcat}`
