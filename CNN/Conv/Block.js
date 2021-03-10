@@ -1,7 +1,7 @@
 import * as PointDepthPoint from "./PointDepthPoint.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
-export { Base };
+export { Base, PointDepthPoint };
 
 /**
  * Implement a block of ( depthwise convolution and pointwise convolution ) or ShuffleNetV2 (with 2 output channel groups) or MobileNetV1
@@ -59,14 +59,15 @@ class Base {
    * @param {boolean} bBias
    *   If true, there will be a bias after every convolution.
    *
-   * @param {string} strActivationName
-   *   The activation function name after the convolution. One of the following "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos".
+   * @param {string} nActivationId
+   *   The activation function id (PointDepthPoint.Params.Activation.Ids.Xxx) after the convolution. If null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution).
    *
-   * @param {string} strActivationNameAtBlockEnd
-   *   The activation function name after the convolution of the last PointDepthPoint's pointwise2ActivationName of this block. One of the following
-   * "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If the output of this block needs to be any arbitrary value, it is recommended
-   * not to use activation at the end of this block (i.e. strActivationNameAtBlockEnd == "" (or null)) so that it will not be restricted by the
-   * range of the activation function.
+   * @param {string} nActivationIdAtBlockEnd
+   *   The activation function id (PointDepthPoint.Params.Activation.Ids.Xxx) after the convolution of the last PointDepthPoint's
+   * pointwise2ActivationId of this block. If the output of this block needs to be any arbitrary value, it is recommended
+   * not to use activation at the end of this block (i.e. nActivationIdAtBlockEnd == PointDepthPoint.Params.Activation.Ids.NONE) so that
+   * it will not be restricted by the range of the activation function.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
@@ -78,7 +79,7 @@ class Base {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, strActivationName, strActivationNameAtBlockEnd,
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, nActivationId, nActivationIdAtBlockEnd,
     bKeepInputTensor
   ) {
 
@@ -127,15 +128,15 @@ class Base {
     this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
 
     this.bBias = bBias;
-    this.strActivationName = strActivationName;
-    this.strActivationNameAtBlockEnd = strActivationNameAtBlockEnd;
+    this.nActivationId = nActivationId;
+    this.nActivationIdAtBlockEnd = nActivationIdAtBlockEnd;
 
     let pointwise1Bias = bBias;
-    let pointwise1ActivationName = strActivationName;
+    let pointwise1ActivationId = nActivationId;
     let depthwiseBias = bBias;
-    let depthwiseActivationName = strActivationName;
+    let depthwiseActivationId = nActivationId;
     let pointwise2Bias = bBias;
-    let pointwise2ActivationName = strActivationName;
+    let pointwise2ActivationId = nActivationId;
 
     if ( stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
@@ -154,21 +155,18 @@ class Base {
         pointwise2ChannelCount = sourceChannelCount;           // The output channel count of average (or max) pooling is the same as input channel count.
       }
 
-//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
-//       let depthwiseStrides = 1;
-//       let depthwisePad = "valid";     // so that shrinking sourceHeight a little.
       let depthwiseStridesPad = 0; // ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" ) so that shrinking sourceHeight a little.
 
       // This is the last step of this block (i.e. at-block-end) because ( stepCountPerBlock <= 0 ) means there is only one step inside this block.
       // And a different activation function may be used after pointwise2 convolution.
-      pointwise2ActivationName = strActivationNameAtBlockEnd;
+      pointwise2ActivationId = nActivationIdAtBlockEnd;
 
       let step0 = this.step0 = new PointDepthPoint.Base();
       step0.init(
         sourceChannelCount,
-        pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationName,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationName,
-        pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
+        pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId,
+        pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationId,
         false, // It is not possible to add-input-to-output, because ( depthwisePad == "valid" ).
         bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
       );
@@ -193,10 +191,6 @@ class Base {
         else
           depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
 
-//!!! (2021/01/13 Modified) Combine both into depthwiseStridesPad
-//         let depthwiseStrides = 2;  // Step 0 is responsibile for halving input's height (and width).
-//         let depthwisePad = "same";
-
         // Step 0 is responsibile for halving input's height (and width).
         let depthwiseStridesPad = 2; // ( depthwiseStrides == 2 ) and ( depthwisePad == "same" )
 
@@ -206,12 +200,14 @@ class Base {
 
           // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
           depthwiseBias = false;
-          depthwiseActivationName = null;                    // In ShuffleNetV2, depthwise convolution does not have activation function.
+
+          // In ShuffleNetV2, depthwise convolution does not have activation function.
+          depthwiseActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
 
           // If there is only one step, this is the last step of this block (i.e. at-block-end) and a different activation function may be
           // used after pointwise2 convolution.
           if ( 1 == stepCountPerBlock ) {
-            pointwise2ActivationName = strActivationNameAtBlockEnd;
+            pointwise2ActivationId = nActivationIdAtBlockEnd;
           }
 
         } else {                                             // MobileNetV1, or MobileNetV2.
@@ -219,9 +215,11 @@ class Base {
 
           // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
           pointwise2Bias = false;
-          pointwise2ActivationName = null;                   // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
 
-          // Since pointwise2ActivationName is always null in MobileNetV2, the strActivationNameAtBlockEnd is never used in MobileNetV2.
+          // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.          
+          pointwise2ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+
+          // Since pointwise2ActivationId is always NONE in MobileNetV2, the nActivationIdAtBlockEnd is never used in MobileNetV2.
         }
 
         // If ( pointwise1ChannelCount < pointwise2ChannelCount ), similiar to ResNet.
@@ -232,9 +230,9 @@ class Base {
         step0 = this.step0 = new PointDepthPoint.Base();
         step0.init(
           sourceChannelCount,
-          pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationName,
-          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationName,
-          pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
+          pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
+          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId,
+          pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationId,
           false, // In MobileNet2, step 0 is not possible, because output channel count is tiwce as input. In ShuffleNetV2, it is not necessary. So, false.
           bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
         );
@@ -247,19 +245,22 @@ class Base {
           step0Branch.init(
             sourceChannelCount,
             0, false, "", // ShuffleNetV2 Step0's branch does not have the first 1x1 pointwise convolution before depthwise convolution ( strides = 2 ).
-            depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationName,
-            pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
+            depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId,
+            pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationId,
             false, // Since there is channel shuffler, there is not necessary to add input to output.
             true   // This is the only case that must keep input tensor, because the input tensor need be re-used by the main path of setp 0.
           );
 
-          this.concatTensorArray = new Array( 2 );  // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
+          // Pre-allocated array (with only two elements) for improving performance by reducing memory re-allocation.
+          this.concatTensorArray = new Array( 2 );
 
-          this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_ChannelShuffle; // Bind in step 0's logic, because step 1 (2, 3, ...) may not existed.
+          // Bind in step 0's logic, because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_ChannelShuffle;
           this.outputChannelCount = step0.outputChannelCount + step0Branch.outputChannelCount;
 
         } else {
-          this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_AddInputToOutput;  // Bind in step 0's logic, because step 1 (2, 3, ...) may not existed.
+          // Bind in step 0's logic, because step 1 (2, 3, ...) may not existed.
+          this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_AddInputToOutput;
           this.outputChannelCount = step0.outputChannelCount;
         }
       }
@@ -285,7 +286,9 @@ class Base {
         // In a word, they are all the same as step0.outputChannelCount.
         let channelCount_pointwise1Before = step0.outputChannelCount;
         let pointwise2ChannelCount = channelCount_pointwise1Before;  // Every step will output the same channel count as input.
-        let pointwise1ChannelCount = pointwise2ChannelCount * pointwise1ChannelCountRate;  // The first 1x1 pointwise convolution can change channel count.
+
+        // The first 1x1 pointwise convolution can change channel count.
+        let pointwise1ChannelCount = pointwise2ChannelCount * pointwise1ChannelCountRate;
 
         // In ShuffleNetV2, there is a channel shuffler in every step (except setp 0). It is shared by these steps in the same block.
         if ( bChannelShuffler ) {
@@ -302,15 +305,15 @@ class Base {
 
           // If this is the last step of this block (i.e. at-block-end), a different activation function may be used after pointwise2 convolution.
           if ( i == ( this.steps1After.length - 1 ) ) {
-            pointwise2ActivationName = strActivationNameAtBlockEnd;
+            pointwise2ActivationId = nActivationIdAtBlockEnd;
           }
 
           let step = new PointDepthPoint.Base();
           step.init(
             channelCount_pointwise1Before,
-            pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationName,
-            depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationName,
-            pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationName,
+            pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
+            depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId,
+            pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationId,
             this.bAddInputToOutput,
             false // No matter bKeepInputTensor, all steps (except step 0) should not keep input tensor.
           );
