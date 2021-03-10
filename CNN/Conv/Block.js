@@ -151,6 +151,7 @@ class Base {
         depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
         pointwise2ChannelCount = sourceChannelCount * depthwiseChannelMultiplierStep0;
       } else {
+//!!! ...unfinished... (2021/03/10) should become all number?
         depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
         pointwise2ChannelCount = sourceChannelCount;           // The output channel count of average (or max) pooling is the same as input channel count.
       }
@@ -189,6 +190,7 @@ class Base {
         if ( strAvgMaxConv == "Conv" )
           depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
         else
+//!!! ...unfinished... (2021/03/10) should become all number?
           depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
 
         // Step 0 is responsibile for halving input's height (and width).
@@ -272,6 +274,7 @@ class Base {
         if ( strAvgMaxConv == "Conv" )
           depthwise_AvgMax_Or_ChannelMultiplier = 1; // Force to 1, because only step 0 can have ( channelMultiplier > 1 ).
         else
+//!!! ...unfinished... (2021/03/10) should become all number?
           depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
 
         // Force to ( depthwiseStrides == 1 ), because only step 0 (i.e. not here) should halve input's height (and width).
