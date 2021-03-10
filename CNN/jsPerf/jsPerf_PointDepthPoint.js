@@ -37,9 +37,9 @@ class HeightWidthDepth {
 
 //!!! ...unfinished...
 
-    // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-    // pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+    // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+    // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    // pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
     // bAddInputToOutput,
     //
 
@@ -54,8 +54,14 @@ class HeightWidthDepth {
     };
     this.testCases = [
       new PointDepthPoint_Reference.TestCase(
-        [ 2.1,  1.1,   6.1, 2.1, 3.1, 3.1,  3.2,   6.2, 8,  5.3,   6.3,  7.4 ], // paramsInArray
-        [   2, true, "cos",   2,   3,   0, true, "cos", 8, true, "cos", true ], // paramsOutArray
+        [
+          2.1,  1.1, PointDepthPoint.Params.Activation.Ids.COS + 0.1,
+          2.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.Activation.Ids.RELU + 0.2,
+            8,  5.3, PointDepthPoint.Params.Activation.Ids.SIN + 0.3,  7.4 ], // paramsInArray
+
+        [   2, true, PointDepthPoint.Params.Activation.Ids.COS,
+            2,    3,  0, true, PointDepthPoint.Params.Activation.Ids.RELU,
+            8, true, PointDepthPoint.Params.Activation.Ids.SIN,       true ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
