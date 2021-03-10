@@ -112,6 +112,11 @@ class Base {
  */
 class To {
 
+  /** @return {any} Return the input value directly. */
+  static Same( v ) {
+    return v;
+  }
+
   /** @return {number} Return the absolute value of the trucated value (i.e. integer). */
   static IntegerZeroPositive( v ) {
     return Math.abs( Math.trunc( v ) );
@@ -126,7 +131,7 @@ class To {
     let valueKinds = ( valueMax - valueMin ) + 1; // How many possible integer between them.
     let valueInt = Math.trunc( value ); // Convert to an integer.
 
-//!!! (2021/03/09 Remarked) The result is wired when min and max have different sign.
+//!!! (2021/03/09 Remarked) The result is wierd when min and max have different sign.
 //     // Because remainder always has the same sign as dividend, force the dividend to zeor or positive for processing easily.
 //     let result = valueMin + ( To.IntegerZeroPositive( value ) % valueKinds );
 
@@ -229,14 +234,17 @@ class Params extends Base {
    * @param {Map} parameterMap
    *   Describe what parameters to be used or extracted.
    *   - The key of this parameterMap's entry [ key, value ] will be viewed as parameter name.
-   *   - The value of this parameterMap's entry [ key, value ] should be an array [ parameter_value, parameter_converter ].
-   *     - If the parameter_value is non-null, it will be used as the parameter's value directly (i.e. by specifying)
-   *       and the parameter_converter will be ignored.
-   *     - If the parameter_value is null, the parameter's will be extracted from inputFloat32Array (or fixedWeights),
-   *       and past into the parameter_converter (viewed as a function). The returned value of the function will become the
-   *       parameter's value. (i.e. by evolution)
-   *   - If the value of this parameterMap's entry [ key, value ] is null, it will be viewed as an array
-   *      [ parameter_value, parameter_converter ] = [ null, To.IntegerZeroPositive ]. (i.e. by evolution)
+   *   - The value of this parameterMap's entry [ key, value ] should be an array [ parameterValue, parameterAdjuster ].
+   *     - If ( null == value ), it will be viewed as an array [ parameterValue, parameterAdjuster ] = [ null, To.Same ].
+   *
+   *     - The parameterAdjuster is a function for adjusting the parameter value. If ( null == parameterAdjuster ),
+   *       the To.Same() will be used as adjuster function.
+   *
+   *     - If ( null != parameterValue ), the returned value of parameterAdjuster( parameterValue ) will be used as the
+   *       parameter's value. (i.e. by specifying)
+   *
+   *     - If ( null == parameterValue ), the parameter will be extracted from inputFloat32Array (or fixedWeights).The
+   *       returned value of parameterAdjuster( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
    *
    * @param {(Float32Array|number[])} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
@@ -261,49 +269,35 @@ class Params extends Base {
     let arrayIndexMap = new Map();
     {
       let i = 0;
-//!!! (2021/03/08 Remarked) Old Codes.
-//       for ( let [ key, value ] of parameterMap ) {
-//         // A null (or undefined) value means it should be extracted from inputFloat32Array or fixedWeights, and
-//         // using To.IntegerZeroPositive() as converter function. (i.e. by evolution)
-//         //
-//         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
-//         if ( null == value ) {
-//           value = To.IntegerZeroPositive;
-//         }
-//
-//         // A function value means it should be extracted from inputFloat32Array (or fixedWeights), and
-//         // using the function as converter. (i.e. by evolution)
-//         if ( ( typeof value ) === "function" ) {
-//           // Record the index (into this.weightsModified[]) and the converter.
-//           arrayIndexMap.set( key, { arrayIndex: i, converterFunction: value } );
-//           ++i;
-//         }
-//       }
 
-      let value, converter;
-      for ( let [ key, value_converter ] of parameterMap ) {
+      let parameterValue, parameterAdjuster;
+      for ( let [ key, value_and_adjuster ] of parameterMap ) {
 
-        // A null (or undefined) value_converter means it should be extracted from inputFloat32Array or fixedWeights,
-        // and using To.IntegerZeroPositive() as converter function. (i.e. by evolution)
-        if ( null == value_converter ) {
-          value = null;
-          converter = To.IntegerZeroPositive;
+        // A null (or undefined) value_and_adjuster means it should be extracted from inputFloat32Array or fixedWeights,
+        // and using To.Same() as adjuster function. (i.e. by evolution)
+        if ( null == value_and_adjuster ) {
+          parameterValue = null;
+          parameterAdjuster = To.Same;
         } else {
-          value = value_converter[ 0 ];
-          converter = value_converter[ 1 ];
+          parameterValue = value_and_adjuster[ 0 ];
+          parameterAdjuster = value_and_adjuster[ 1 ];
         }
 
-        // A null value means it should be extracted from inputFloat32Array (or fixedWeights), and
-        // using the converter as converter function. (i.e. by evolution)
+        // Always should have adjuster function. At least, using the-same-value function.
+        if ( null == parameterAdjuster )
+          parameterAdjuster = To.Same;
+
+        // A null parameterValue means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
         //
         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
-        if ( null == value ) {
-          // Record the index (into this.weightsModified[]) and the converter.
-          arrayIndexMap.set( key, { arrayIndex: i, converterFunction: converter } );
+        if ( null == parameterValue ) {
+          // Record the index (into this.weightsModified[]) and the adjuster.
+          arrayIndexMap.set( key, { arrayIndex: i, adjusterFunction: parameterAdjuster } );
           ++i;
         } else {
-          // A non-null value means it is the parameter's value directly.
-          this.parameterMapModified.set( key, value );
+          // A non-null value means it is the parameter's value (after adjusted).
+          let adjustedValue = parameterAdjuster( parameterValue );
+          this.parameterMapModified.set( key, adjustedValue );
         }
       }
 
@@ -326,18 +320,18 @@ class Params extends Base {
     if ( !bInitOk )
       return false;
 
-    // Copy and convert to integer.
+    // Copy the adjusted extracted weights.
     //
     // Do not modify the original array data, because the original data is necessary when backtracking (to try
-    // another neural network layer configuration)
+    // another neural network layer configuration.
     this.weightsModified = new Float32Array( this.weights.length );
 
     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
-    for ( let [ key, { arrayIndex, converterFunction } ] of arrayIndexMap ) {
+    for ( let [ key, { arrayIndex, adjusterFunction } ] of arrayIndexMap ) {
       let extractedValue = this.weights[ arrayIndex ];
-      let convertedValue = converterFunction( extractedValue );
-      this.weightsModified[ arrayIndex ] = convertedValue;  // Record in array.
-      this.parameterMapModified.set( key, convertedValue ); // Record in map, too.
+      let adjustedValue = adjusterFunction( extractedValue );
+      this.weightsModified[ arrayIndex ] = adjustedValue;  // Record in array.
+      this.parameterMapModified.set( key, adjustedValue ); // Record in map, too.
     }
 
     return bInitOk;
