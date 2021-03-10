@@ -18,7 +18,7 @@ class Params extends Weights.Params {
    */
   init( inputFloat32Array, byteOffsetBegin,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     bAddInputToOutput,
   ) {
@@ -30,8 +30,8 @@ class Params extends Weights.Params {
       [ Params.Keys.pointwise1ChannelCount,                [ pointwise1ChannelCount,                Params.To.Pointwise1ChannelCount ] ],
       [ Params.Keys.bPointwise1Bias,                       [ bPointwise1Bias,                       Weights.To.Boolean ] ],
       [ Params.Keys.pointwise1ActivationName,              [ pointwise1ActivationName,              Params.To.ActivationName ] ],
-      [ Params.Keys.depthwiseFilterHeight,                 [ depthwiseFilterHeight,                 Params.To.DepthwiseFilterHeight ] ],
       [ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier, [ depthwise_AvgMax_Or_ChannelMultiplier, Params.To.Depthwise_AvgMax_Or_ChannelMultiplier ] ],
+      [ Params.Keys.depthwiseFilterHeight,                 [ depthwiseFilterHeight,                 Params.To.DepthwiseFilterHeight ] ],
       [ Params.Keys.depthwiseStridesPad,                   [ depthwiseStridesPad,                   Params.To.DepthwiseStridesPad ] ],
       [ Params.Keys.bDepthwiseBias,                        [ bDepthwiseBias,                        Weights.To.Boolean ] ],
       [ Params.Keys.depthwiseActivationName,               [ depthwiseActivationName,               Params.To.ActivationName ] ],
@@ -48,8 +48,8 @@ class Params extends Weights.Params {
   get bPointwise1Bias()                       { return this.parameterMapModified.get( Params.Keys.bPointwise1Bias ); }
   get pointwise1ActivationName()              { return this.parameterMapModified.get( Params.Keys.pointwise1ActivationName ); }
 
-  get depthwiseFilterHeight()                 { return this.parameterMapModified.get( Params.Keys.depthwiseFilterHeight ); }
   get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier ); }
+  get depthwiseFilterHeight()                 { return this.parameterMapModified.get( Params.Keys.depthwiseFilterHeight ); }
   get depthwiseStridesPad()                   { return this.parameterMapModified.get( Params.Keys.depthwiseStridesPad ); }
   get bDepthwiseBias()                        { return this.parameterMapModified.get( Params.Keys.bDepthwiseBias ); }
   get depthwiseActivationName()               { return this.parameterMapModified.get( Params.Keys.depthwiseActivationName ); }
@@ -76,6 +76,14 @@ Params.To = class {
    */
   static ActivationName( value ) { return Weights.To.ArrayElement( value, Params.To.Data.ActivationNames ); }
 
+  /**
+   * @return {(string|number)}
+   *   Convert number value into integer between [ 0, 64 ] as channel multiplier, or string "Avg", or string "Max".
+   */
+  static Depthwise_AvgMax_Or_ChannelMultiplier( value ) {
+    return Weights.To.ArrayElement( value, Params.To.Data.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
+  }
+
   /** @return {number} Convert number value into an integer suitable for depthwise convolution filter size. */
   static DepthwiseFilterHeight( value ) {
     // At least 1, because depthwise filter size ( 0 * 0 ) is meaningless.
@@ -85,14 +93,6 @@ Params.To = class {
     //
     // Avoid too large filter size. Otherwise, performance may be poor.
     return Weights.To.IntegerRange( value, 1, 9 );
-  }
-
-  /**
-   * @return {(string|number)}
-   *   Convert number value into integer between [ 0, 64 ] as channel multiplier, or string "Avg", or string "Max".
-   */
-  static Depthwise_AvgMax_Or_ChannelMultiplier( value ) {
-    return Weights.To.ArrayElement( value, Params.To.Data.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
   }
 
   /** @return {number} Convert number value into an integer between [ 0, 2 ]. */
@@ -117,8 +117,8 @@ Params.Keys = {};
 Params.Keys.pointwise1ChannelCount =   Symbol("pointwise1ChannelCount");
 Params.Keys.bPointwise1Bias =          Symbol("bPointwise1Bias");
 Params.Keys.pointwise1ActivationName = Symbol("pointwise1ActivationName");
-Params.Keys.depthwiseFilterHeight =    Symbol("depthwiseFilterHeight");
 Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier = Symbol("depthwise_AvgMax_Or_ChannelMultiplier");
+Params.Keys.depthwiseFilterHeight =    Symbol("depthwiseFilterHeight");
 Params.Keys.depthwiseStridesPad =      Symbol("depthwiseStridesPad");
 Params.Keys.bDepthwiseBias =           Symbol("bDepthwiseBias");
 Params.Keys.depthwiseActivationName =  Symbol("depthwiseActivationName");
@@ -206,14 +206,14 @@ class Base extends ReturnOrClone.Base {
    * by evolution). One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( pointwise1ChannelCount <= 0 ),
    * this activation function will also be ignored.
    *
-   * @param {number} depthwiseFilterHeight
-   *   The height (and width) of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this will also be ignored.
-   *
    * @param {(string|number)} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If "Avg", average pooling.
    * If "Max", max pooling. If positive integer number, depthwise convolution and the number indicates channel multiplier of
    * depthwise convolution. If 0 or negative, there will be no depthwise operation.
+   *
+   * @param {number} depthwiseFilterHeight
+   *   The height (and width) of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this will also be ignored.
    *
    * @param {number} depthwiseStridesPad
    *   The strides and padding of depthwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -267,7 +267,7 @@ class Base extends ReturnOrClone.Base {
     inputFloat32Array, byteOffsetBegin,
     channelCount_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     bAddInputToOutput,
     bKeepInputTensor
@@ -297,7 +297,7 @@ class Base extends ReturnOrClone.Base {
     let bParamsInitOk
       = this.params.init( inputFloat32Array, byteOffsetBegin,
           pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-          depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
           pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
           bAddInputToOutput );
 
@@ -312,8 +312,8 @@ class Base extends ReturnOrClone.Base {
       bPointwise1Bias = this.bPointwise1Bias;
       pointwise1ActivationName = this.pointwise1ActivationName;
 
-      depthwiseFilterHeight = this.depthwiseFilterHeight;
       depthwise_AvgMax_Or_ChannelMultiplier = this.depthwise_AvgMax_Or_ChannelMultiplier;
+      depthwiseFilterHeight = this.depthwiseFilterHeight;
       depthwiseStridesPad = this.depthwiseStridesPad;
       bDepthwiseBias = this.bDepthwiseBias;
       depthwiseActivationName = this.depthwiseActivationName;
@@ -618,7 +618,7 @@ class Base extends ReturnOrClone.Base {
     inputFloat32Array, byteOffsetBegin,
     channelCount_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
     bAddInputToOutput,
     bKeepInputTensor
@@ -631,7 +631,7 @@ class Base extends ReturnOrClone.Base {
       inputFloat32Array, byteOffsetBegin,
       channelCount_pointwise1Before,
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-      depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
       pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
       bAddInputToOutput,
       bKeepInputTensor
@@ -896,8 +896,8 @@ class Base extends ReturnOrClone.Base {
   get bPointwise1Bias()                       { return this.params.bPointwise1Bias; }
   get pointwise1ActivationName()              { return this.params.pointwise1ActivationName; }
 
-  get depthwiseFilterHeight()                 { return this.params.depthwiseFilterHeight; }
   get depthwise_AvgMax_Or_ChannelMultiplier() { return this.params.depthwise_AvgMax_Or_ChannelMultiplier; }
+  get depthwiseFilterHeight()                 { return this.params.depthwiseFilterHeight; }
   get depthwiseStridesPad()                   { return this.params.depthwiseStridesPad; }
   get bDepthwiseBias()                        { return this.params.bDepthwiseBias; }
   get depthwiseActivationName()               { return this.params.depthwiseActivationName; }
@@ -918,8 +918,8 @@ class Base extends ReturnOrClone.Base {
       + `bPointwise1Bias=${this.bPointwise1Bias}, `
       + `pointwise1ActivationName=${this.pointwise1ActivationName}, `
 
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwise_AvgMax_Or_ChannelMultiplier=${this.depthwise_AvgMax_Or_ChannelMultiplier}, `
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseStridesPad=${this.depthwiseStridesPad}, `
       + `bDepthwiseBias=${this.bDepthwiseBias}, `
       + `depthwiseActivationName=${this.depthwiseActivationName}, `
