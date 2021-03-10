@@ -120,7 +120,10 @@ Params.Keys.pointwise2ActivationId =                Symbol("pointwise2Activation
 Params.Keys.bAddInputToOutput =                     Symbol("bAddInputToOutput");
 
 /** Define channel count range. */
+Params.pointwise1ChannelCount = {};
 Params.pointwise1ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
+
+Params.pointwise2ChannelCount = {};
 Params.pointwise2ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
 
 /** Define activation's id, name, function. */
@@ -151,9 +154,11 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNamesMap = new Map( [
  *
  * Avoid too large filter size. Otherwise, performance may be poor.
  */
+Params.depthwiseFilterHeight = {};
 Params.depthwiseFilterHeight.Range = new Weights.IntegerRange( 1, 9 );
 
 /** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
+Params.depthwiseStridesPad = {};
 Params.depthwiseStridesPad.Range = new Weights.IntegerRange( 0, 2 );
 
 
