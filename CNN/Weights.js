@@ -1,4 +1,4 @@
-export { Base, To, Params };
+export { Base, IntegerRange, To, Params };
 
 /**
  * A base class for extracting and keeping weights. It composes of a Float32Array and a shape. It can
