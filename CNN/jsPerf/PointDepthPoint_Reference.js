@@ -129,7 +129,7 @@ class TestCase {
       //pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
       null, null, null,
 
-      //depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+      //depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
       null, null, null, null, null,
 
       //pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
@@ -144,7 +144,7 @@ class TestCase {
     // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
     let [
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-      depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
       pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
       bAddInputToOutput
     ] = this.weights.params.outArray;
@@ -182,11 +182,11 @@ class TestCase {
       `PointDepthPoint pointwise1ActivationName (${pointDepthPoint.pointwise1ActivationName}) should be (${pointwise1ActivationName}). ${parametersDescription}`);
 
 
-    tf.util.assert( ( pointDepthPoint.depthwiseFilterHeight == depthwiseFilterHeight ),
-      `PointDepthPoint depthwiseFilterHeight (${pointDepthPoint.depthwiseFilterHeight}) should be (${depthwiseFilterHeight}). ${parametersDescription}`);
-
     tf.util.assert( ( pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier == depthwise_AvgMax_Or_ChannelMultiplier ),
       `PointDepthPoint depthwise_AvgMax_Or_ChannelMultiplier (${pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier}) should be (${depthwise_AvgMax_Or_ChannelMultiplier}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.depthwiseFilterHeight == depthwiseFilterHeight ),
+      `PointDepthPoint depthwiseFilterHeight (${pointDepthPoint.depthwiseFilterHeight}) should be (${depthwiseFilterHeight}). ${parametersDescription}`);
 
     tf.util.assert( ( pointDepthPoint.depthwiseStridesPad == depthwiseStridesPad ),
       `PointDepthPoint depthwiseStridesPad (${pointDepthPoint.depthwiseStridesPad}) should be (${depthwiseStridesPad}). ${parametersDescription}`);
@@ -229,7 +229,7 @@ class TestCase {
     // Assume the paramsOutArray is correct. Unpack it into parameters.
     let [
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-      depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
       pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
       bAddInputToOutput
     ] = this.weights.params.outArray;
@@ -237,8 +237,8 @@ class TestCase {
     // Create description for debug easily.
     this.params.description =
         `pointwise1ChannelCount=${pointwise1ChannelCount}, bPointwise1Bias=${bPointwise1Bias}, pointwise1ActivationName=${pointwise1ActivationName}, `
-      + `depthwiseFilterHeight=${depthwiseFilterHeight}, `
       + `depthwise_AvgMax_Or_ChannelMultiplier=${depthwise_AvgMax_Or_ChannelMultiplier}, `
+      + `depthwiseFilterHeight=${depthwiseFilterHeight}, `
       + `depthwiseStridesPad=${depthwiseStridesPad}, `
       + `bDepthwiseBias=${bDepthwiseBias}, `
       + `depthwiseActivationName=${depthwiseActivationName}, `
@@ -260,7 +260,7 @@ class TestCase {
     if ( 0 != depthwise_AvgMax_Or_ChannelMultiplier ) {
       nextImageIn = TestCase.calcDepthwise(
         nextImageIn,
-        depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad,
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
         this.weights.depthwiseFilters, bDepthwiseBias, this.weights.depthwiseBiases, depthwiseActivationName,
         "Depthwise", this.params.description );
     }
@@ -346,17 +346,17 @@ class TestCase {
    */
   static calcDepthwise(
     imageIn,
-    depthwiseFilterHeight, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationName,
     depthwiseName, parametersDesc ) {
-
-    let depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
 
     let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
     if (   ( "Avg" === depthwise_AvgMax_Or_ChannelMultiplier )
         || ( "Max" === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
       channelMultiplier = 1;
     }
+
+    let depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
 
     let imageOutDepth = imageIn.depth * channelMultiplier;
 
