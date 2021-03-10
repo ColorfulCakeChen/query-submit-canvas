@@ -126,13 +126,13 @@ class TestCase {
 
       // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
 
-      //pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+      //pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
       null, null, null,
 
-      //depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+      //depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
       null, null, null, null, null,
 
-      //pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+      //pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
       null, null, null,
 
       // bAddInputToOutput
@@ -143,9 +143,9 @@ class TestCase {
 
     // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
     let [
-      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
       bAddInputToOutput
     ] = this.weights.params.outArray;
 
@@ -178,8 +178,8 @@ class TestCase {
     tf.util.assert( ( pointDepthPoint.bPointwise1Bias == bPointwise1Bias ),
       `PointDepthPoint bPointwise1Bias (${pointDepthPoint.bPointwise1Bias}) should be (${bPointwise1Bias}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.pointwise1ActivationName == pointwise1ActivationName ),
-      `PointDepthPoint pointwise1ActivationName (${pointDepthPoint.pointwise1ActivationName}) should be (${pointwise1ActivationName}). ${parametersDescription}`);
+    tf.util.assert( ( pointDepthPoint.pointwise1ActivationId == pointwise1ActivationId ),
+      `PointDepthPoint pointwise1ActivationId (${pointDepthPoint.pointwise1ActivationId}) should be (${pointwise1ActivationId}). ${parametersDescription}`);
 
 
     tf.util.assert( ( pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier == depthwise_AvgMax_Or_ChannelMultiplier ),
@@ -194,8 +194,8 @@ class TestCase {
     tf.util.assert( ( pointDepthPoint.bDepthwiseBias == bDepthwiseBias ),
       `PointDepthPoint bDepthwiseBias (${pointDepthPoint.bDepthwiseBias}) should be (${bDepthwiseBias}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.depthwiseActivationName == depthwiseActivationName ),
-      `PointDepthPoint depthwiseActivationName (${pointDepthPoint.depthwiseActivationName}) should be (${depthwiseActivationName}). ${parametersDescription}`);
+    tf.util.assert( ( pointDepthPoint.depthwiseActivationId == depthwiseActivationId ),
+      `PointDepthPoint depthwiseActivationId (${pointDepthPoint.depthwiseActivationId}) should be (${depthwiseActivationId}). ${parametersDescription}`);
 
 
     tf.util.assert( ( pointDepthPoint.pointwise2ChannelCount == pointwise2ChannelCount ),
@@ -204,8 +204,8 @@ class TestCase {
     tf.util.assert( ( pointDepthPoint.bPointwise2Bias == bPointwise2Bias ),
       `PointDepthPoint bPointwise2Bias (${pointDepthPoint.bPointwise2Bias}) should be (${bPointwise2Bias}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.pointwise2ActivationName == pointwise2ActivationName ),
-      `PointDepthPoint pointwise2ActivationName (${pointDepthPoint.pointwise2ActivationName}) should be (${pointwise2ActivationName}). ${parametersDescription}`);
+    tf.util.assert( ( pointDepthPoint.pointwise2ActivationId == pointwise2ActivationId ),
+      `PointDepthPoint pointwise2ActivationId (${pointDepthPoint.pointwise2ActivationId}) should be (${pointwise2ActivationId}). ${parametersDescription}`);
 
 
     tf.util.assert( ( pointDepthPoint.bAddInputToOutput == bAddInputToOutput ),
@@ -228,9 +228,9 @@ class TestCase {
   calcResult() {
     // Assume the paramsOutArray is correct. Unpack it into parameters.
     let [
-      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
       bAddInputToOutput
     ] = this.weights.params.outArray;
 
@@ -252,7 +252,7 @@ class TestCase {
     if ( pointwise1ChannelCount > 0 ) {
       nextImageIn = TestCase.calcPointwise(
         nextImageIn,
-        pointwise1ChannelCount, this.weights.pointwise1Filters, bPointwise1Bias, this.weights.pointwise1Biases, pointwise1ActivationName,
+        pointwise1ChannelCount, this.weights.pointwise1Filters, bPointwise1Bias, this.weights.pointwise1Biases, pointwise1ActivationId,
         "Pointwise 1", this.params.description );
     }
 
@@ -261,7 +261,7 @@ class TestCase {
       nextImageIn = TestCase.calcDepthwise(
         nextImageIn,
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
-        this.weights.depthwiseFilters, bDepthwiseBias, this.weights.depthwiseBiases, depthwiseActivationName,
+        this.weights.depthwiseFilters, bDepthwiseBias, this.weights.depthwiseBiases, depthwiseActivationId,
         "Depthwise", this.params.description );
     }
 
@@ -269,7 +269,7 @@ class TestCase {
     if ( pointwise2ChannelCount > 0 ) {
       nextImageIn = TestCase.calcPointwise(
         nextImageIn,
-        pointwise2ChannelCount, this.weights.pointwise2Filters, bPointwise2Bias, this.weights.pointwise2Biases, pointwise2ActivationName,
+        pointwise2ChannelCount, this.weights.pointwise2Filters, bPointwise2Bias, this.weights.pointwise2Biases, pointwise2ActivationId,
         "Pointwise 2", this.params.description );
     }
 
@@ -290,7 +290,7 @@ class TestCase {
    */
   static calcPointwise(
     imageIn,
-    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationName,
+    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
     pointwiseName, parametersDesc ) {
 
     tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
@@ -327,7 +327,7 @@ class TestCase {
     TestCase.modifyByBias( imageOut, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
     // Activation
-    TestCase.modifyByActivation( imageOut, pointwiseActivationName, parametersDesc );
+    TestCase.modifyByActivation( imageOut, pointwiseActivationId, parametersDesc );
 
     return imageOut;
   }
@@ -347,7 +347,7 @@ class TestCase {
   static calcDepthwise(
     imageIn,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
-    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationName,
+    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
     depthwiseName, parametersDesc ) {
 
     let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
@@ -502,7 +502,7 @@ class TestCase {
     TestCase.modifyByBias( imageOut, bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
     // Activation
-    TestCase.modifyByActivation( imageOut, depthwiseActivationName, parametersDesc );
+    TestCase.modifyByActivation( imageOut, depthwiseActivationId, parametersDesc );
 
     return imageOut;
 /* For test in console only.
@@ -569,15 +569,15 @@ y.print();
    * @param {number}   imageIn.width     Image width
    * @param {number}   imageIn.depth     Image channel count
    * @param {number[]} imageIn.dataArray Image data
-   * @param {string}   activationName The name string of this activation function.
+   * @param {string}   nActivationId     The name string of this activation function.
    * @param {string}   parametersDesc A string for debug message of this point-depth-point.
    *
    * @return {object}
    *   Return imageIn which may or may not be activated.
    */
-  static modifyByActivation( imageIn, activationName, parametersDesc ) {
+  static modifyByActivation( imageIn, nActivationId, parametersDesc ) {
 
-    let pfnActivation = PointDepthPoint.getActivationFunction( activationName );
+    let pfnActivation = PointDepthPoint.getActivationFunction( nActivationId );
     if ( !pfnActivation )
       return imageIn;
 
