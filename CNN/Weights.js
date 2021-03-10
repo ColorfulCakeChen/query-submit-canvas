@@ -130,15 +130,15 @@ class To {
 //     // Because remainder always has the same sign as dividend, force the dividend to zeor or positive for processing easily.
 //     let result = valueMin + ( To.IntegerZeroPositive( value ) % valueKinds );
 
-    // Rearrange valueInt between valueMin and valueMax fairly (in possibility).
+    // Rearrange valueInt between valueMin and valueMax fairly (in probability).
     //
     // A1: Why not use remainder operator (%) directly?
     // Q1: Because remainder always has the same sign as dividend, this can not handle the situation which valueMin and
     //     valueMax have different sign.
     //
     // A2: Why not just restrict all value less than valueMin to valueMin and value greater than valueMax to valueMax?
-    // Q2: Although this could restrict value in range, it will skew the possibility of every value in the range.
-    //     Unfair possibility is harmful to evolution algorithm.
+    // Q2: Although this could restrict value in range, it will skew the probability of every value in the range.
+    //     Unfair probability is harmful to evolution algorithm.
     //
     let quotient = ( valueInt - valueMin ) / valueKinds;
     let quotientInt = Math.floor( quotient );  // So that negative value could be handled correctly.
