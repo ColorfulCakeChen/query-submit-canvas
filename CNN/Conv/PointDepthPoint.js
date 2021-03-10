@@ -65,60 +65,40 @@ class Params extends Weights.Params {
 Params.To = class {
 
   /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
-  static Pointwise1ChannelCount( value ) { return Weights.To.IntegerRange( value, 0, 10 * 1024 ); }
+  static Pointwise1ChannelCount( value ) { return Params.pointwise1ChannelCount.Range.adjust( value ); }
 
   /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
-  static Pointwise2ChannelCount( value ) { return Weights.To.IntegerRange( value, 0, 10 * 1024 ); }
-
-  /**
-   * @return {string}
-   *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
-   */
-  static ActivationId( value ) { return Weights.To.IntegerRange( value, 0, ( Params.Activation.Functions.length - 1 ) ); }
-
-//!!! (2021/03/10 Remarked) Using all number depthwise id instead.
-//   /**
-//    * @return {(string|number)}
-//    *   Convert number value into integer between [ 0, 64 ] as channel multiplier, or string "Avg", or string "Max".
-//    */
-//   static Depthwise_AvgMax_Or_ChannelMultiplier( value ) {
-//     return Weights.To.ArrayElement( value, Params.To.Data.Depthwise_AvgMax_Or_ChannelMultiplier_Array );
-//   }
+  static Pointwise2ChannelCount( value ) { return Params.pointwise1ChannelCount.Range.adjust( value  ); }
 
   /**
    * @return {number}
-   *   Convert number value into integer between [ -2, 64 ] representing depthwise operation:
+   *   Convert number value an integer between [ 0, 6 ]. It could be used as array index to looked up activation function name string.
+   */
+  static ActivationId( value ) { return Params.Activation.Ids.Range.adjust( value ); }
+
+  /**
+   * @return {number}
+   *   Convert number value into integer between [ -2, 32 ] representing depthwise operation:
    *   - -1: average pooling.
    *   - -2: maximum pooling.
    *   -  0: no depthwise operation.
-   *   - [ 1, 64 ]: depthwise convolution with channel multiplier between 1 and 64 (inclusive).
+   *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
    */
-  static Depthwise_AvgMax_Or_ChannelMultiplier( value ) {
-    return Weights.To.IntegerRange( value, -2, 64 );
-  }
+  static Depthwise_AvgMax_Or_ChannelMultiplier( value ) { return Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.Range.adjust( value ); }
 
-  /** @return {number} Convert number value into an integer suitable for depthwise convolution filter size. */
-  static DepthwiseFilterHeight( value ) {
-    // At least 1, because depthwise filter size ( 0 * 0 ) is meaningless.
-    //
-    // For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
-    // For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
-    //
-    // Avoid too large filter size. Otherwise, performance may be poor.
-    return Weights.To.IntegerRange( value, 1, 9 );
-  }
+  /** @return {number} Convert number value into an integer suitable for depthwise convolution filter size [ 1, 9 ]. */
+  static DepthwiseFilterHeight( value ) { return Params.depthwiseFilterHeight.Range.adjust( value ); }
 
   /** @return {number} Convert number value into an integer between [ 0, 2 ]. */
-  static DepthwiseStridesPad( value ) {
-    return Weights.To.IntegerRange( value, 0, 2 );
-  }
+  static DepthwiseStridesPad( value ) { return Params.depthwiseStridesPad.Range.adjust( value ); }
 }
 
-/** Define parameter converter helper data. */
-Params.To.Data = {};
-
-//!!! (2021/03/08) ...unfinished... String can not be put back into Float32Array.
-
+//!!! (2021/03/10 Remarked) Using all number depthwise id instead.
+// /** Define parameter converter helper data. */
+// Params.To.Data = {};
+//
+// //!!! (2021/03/08) ...unfinished... String can not be put back into Float32Array.
+//
 //!!! (2021/03/10 Remarked) Using all number depthwise id instead.
 // // "64" is possible channel multiplier kinds (1 to 64). Avoid too large channel multiplier. Otherwise, performance may be poor.
 // // "+1" is for channel multiplier equals 0 (means no depthwise operation).
@@ -139,20 +119,42 @@ Params.Keys.bPointwise2Bias =                       Symbol("bPointwise2Bias");
 Params.Keys.pointwise2ActivationId =                Symbol("pointwise2ActivationId");
 Params.Keys.bAddInputToOutput =                     Symbol("bAddInputToOutput");
 
+/** Define channel count range. */
+Params.pointwise1ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
+Params.pointwise2ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
+
 /** Define activation's id, name, function. */
 Params.Activation = {};
 Params.Activation.Ids =       {  NONE: 0, RELU: 1, RELU6: 2, SIGMOID: 3, TANH: 4, SIN: 5, COS: 6 };
 Params.Activation.Names =     [ "(none)",  "relu",  "relu6",  "sigmoid",  "tanh",  "sin",  "cos" ];
 Params.Activation.Functions = [     null, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ];
+Params.Activation.Ids.Range = new Weights.IntegerRange( 0, ( Params.Activation.Functions.length - 1 ) );
 
 /** Define depthwise operation's id, name. */
 Params.depthwise_AvgMax_Or_ChannelMultiplier = {};
+Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.Range = new Weights.IntegerRange( -2, 32 );
+//!!!
 Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids = { AVG: -2, MAX: -1, NONE: 0 };
 Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNamesMap = new Map( [
   [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG,     "avg" ],
   [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX,     "max" ],
   [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE, "(none)" ],
 ] );
+
+/** Define suitable value for depthwise convolution filter size.
+ *
+ * At least 1, because depthwise filter size ( 0 * 0 ) is meaningless.
+ *
+ * For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
+ * For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
+ *
+ * Avoid too large filter size. Otherwise, performance may be poor.
+ */
+Params.depthwiseFilterHeight.Range = new Weights.IntegerRange( 1, 9 );
+
+/** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
+Params.depthwiseStridesPad.Range = new Weights.IntegerRange( 0, 2 );
+
 
 /**
  * One step of one block of convolution neural network. There are at most three convolutions inside this object.
