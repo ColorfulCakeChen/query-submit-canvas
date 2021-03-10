@@ -132,9 +132,9 @@ Params.Activation.Ids.Range = new Weights.IntegerRange( 0, ( Params.Activation.F
 
 /** Define depthwise operation's id, name. */
 Params.depthwise_AvgMax_Or_ChannelMultiplier = {};
-Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.Range = new Weights.IntegerRange( -2, 32 );
 //!!! ...unfinished... (2021/03/10) may define keys with 1 to 32.
 Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids = { AVG: -2, MAX: -1, NONE: 0 };
+Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.Range = new Weights.IntegerRange( -2, 32 );
 //!!! ...unfinished... (2021/03/10) may define keys with 1 to 32.
 Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNamesMap = new Map( [
   [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG,     "avg" ],
