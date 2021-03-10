@@ -17,9 +17,13 @@ class Params extends Weights.Params {
    * @override
    */
   init( inputFloat32Array, byteOffsetBegin,
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+//!!! (2021/03/10 Remarked) Using activation number id instead.
+//     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
+//     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
+//     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
     bAddInputToOutput,
   ) {
 
@@ -29,15 +33,17 @@ class Params extends Weights.Params {
     let parameterMap = new Map( [
       [ Params.Keys.pointwise1ChannelCount,                [ pointwise1ChannelCount,                Params.To.Pointwise1ChannelCount ] ],
       [ Params.Keys.bPointwise1Bias,                       [ bPointwise1Bias,                       Weights.To.Boolean ] ],
-      [ Params.Keys.pointwise1ActivationName,              [ pointwise1ActivationName,              Params.To.ActivationName ] ],
+//!!! (2021/03/10 Remarked) Using activation number id instead.
+//      [ Params.Keys.pointwise1ActivationName,              [ pointwise1ActivationName,              Params.To.ActivationName ] ],
+      [ Params.Keys.pointwise1ActivationId,                [ pointwise1ActivationId,                Params.To.ActivationId ] ],
       [ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier, [ depthwise_AvgMax_Or_ChannelMultiplier, Params.To.Depthwise_AvgMax_Or_ChannelMultiplier ] ],
       [ Params.Keys.depthwiseFilterHeight,                 [ depthwiseFilterHeight,                 Params.To.DepthwiseFilterHeight ] ],
       [ Params.Keys.depthwiseStridesPad,                   [ depthwiseStridesPad,                   Params.To.DepthwiseStridesPad ] ],
       [ Params.Keys.bDepthwiseBias,                        [ bDepthwiseBias,                        Weights.To.Boolean ] ],
-      [ Params.Keys.depthwiseActivationName,               [ depthwiseActivationName,               Params.To.ActivationName ] ],
+      [ Params.Keys.depthwiseActivationId,                 [ depthwiseActivationId,                 Params.To.ActivationId ] ],
       [ Params.Keys.pointwise2ChannelCount,                [ pointwise2ChannelCount,                Params.To.Pointwise2ChannelCount ] ],
       [ Params.Keys.bPointwise2Bias,                       [ bPointwise2Bias,                       Weights.To.Boolean ] ],
-      [ Params.Keys.pointwise2ActivationName,              [ pointwise2ActivationName,              Params.To.ActivationName ] ],
+      [ Params.Keys.pointwise2ActivationId,                [ pointwise2ActivationId,                Params.To.ActivationId ] ],
       [ Params.Keys.bAddInputToOutput,                     [ bAddInputToOutput,                     Weights.To.Boolean ] ],
     ] );
 
@@ -46,17 +52,17 @@ class Params extends Weights.Params {
 
   get pointwise1ChannelCount()                { return this.parameterMapModified.get( Params.Keys.pointwise1ChannelCount ); }
   get bPointwise1Bias()                       { return this.parameterMapModified.get( Params.Keys.bPointwise1Bias ); }
-  get pointwise1ActivationName()              { return this.parameterMapModified.get( Params.Keys.pointwise1ActivationName ); }
+  get pointwise1ActivationId()                { return this.parameterMapModified.get( Params.Keys.pointwise1ActivationId ); }
 
   get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier ); }
   get depthwiseFilterHeight()                 { return this.parameterMapModified.get( Params.Keys.depthwiseFilterHeight ); }
   get depthwiseStridesPad()                   { return this.parameterMapModified.get( Params.Keys.depthwiseStridesPad ); }
   get bDepthwiseBias()                        { return this.parameterMapModified.get( Params.Keys.bDepthwiseBias ); }
-  get depthwiseActivationName()               { return this.parameterMapModified.get( Params.Keys.depthwiseActivationName ); }
+  get depthwiseActivationId()                 { return this.parameterMapModified.get( Params.Keys.depthwiseActivationId ); }
 
   get pointwise2ChannelCount()                { return this.parameterMapModified.get( Params.Keys.pointwise2ChannelCount ); }
   get bPointwise2Bias()                       { return this.parameterMapModified.get( Params.Keys.bPointwise2Bias ); }
-  get pointwise2ActivationName()              { return this.parameterMapModified.get( Params.Keys.pointwise2ActivationName ); }
+  get pointwise2ActivationId()                { return this.parameterMapModified.get( Params.Keys.pointwise2ActivationId ); }
 
   get bAddInputToOutput()                     { return this.parameterMapModified.get( Params.Keys.bAddInputToOutput ); }
 }
@@ -70,11 +76,18 @@ Params.To = class {
   /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
   static Pointwise2ChannelCount( value ) { return Weights.To.IntegerRange( value, 0, 10 * 1024 ); }
 
+//!!! (2021/03/10 Remarked) Using activation number id instead.
+//   /**
+//    * @return {string}
+//    *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
+//    */
+//   static ActivationName( value ) { return Weights.To.ArrayElement( value, Params.To.Data.ActivationNames ); }
+
   /**
    * @return {string}
    *   Convert number value into zero or positive integer. Use it as array index. Return the looked up activation function name string.
    */
-  static ActivationName( value ) { return Weights.To.ArrayElement( value, Params.To.Data.ActivationNames ); }
+  static ActivationId( value ) { return Weights.To.IntegerRange( value, 0, ( Params.Activation.Functions.length - 1 ) ); }
 
   /**
    * @return {(string|number)}
@@ -103,8 +116,9 @@ Params.To = class {
 
 /** Define parameter converter helper data. */
 Params.To.Data = {};
-//!!! (2021/03/08) ...unfinished... String can not be put back into Float32Array.
-Params.To.Data.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" ];
+//!!! (2021/03/10 Remarked) Using activation number id instead.
+// //!!! (2021/03/08) ...unfinished... String can not be put back into Float32Array.
+// Params.To.Data.ActivationNames = [ "", "relu", "relu6", "sigmoid", "tanh", "sin", "cos" ];
 
 //!!! (2021/03/08) ...unfinished... String can not be put back into Float32Array.
 
@@ -116,16 +130,27 @@ Params.To.Data.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64
 Params.Keys = {};
 Params.Keys.pointwise1ChannelCount =   Symbol("pointwise1ChannelCount");
 Params.Keys.bPointwise1Bias =          Symbol("bPointwise1Bias");
-Params.Keys.pointwise1ActivationName = Symbol("pointwise1ActivationName");
+Params.Keys.pointwise1ActivationId =   Symbol("pointwise1ActivationId");
 Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier = Symbol("depthwise_AvgMax_Or_ChannelMultiplier");
 Params.Keys.depthwiseFilterHeight =    Symbol("depthwiseFilterHeight");
 Params.Keys.depthwiseStridesPad =      Symbol("depthwiseStridesPad");
 Params.Keys.bDepthwiseBias =           Symbol("bDepthwiseBias");
-Params.Keys.depthwiseActivationName =  Symbol("depthwiseActivationName");
+Params.Keys.depthwiseActivationId =    Symbol("depthwiseActivationId");
 Params.Keys.pointwise2ChannelCount =   Symbol("pointwise2ChannelCount");
 Params.Keys.bPointwise2Bias =          Symbol("bPointwise2Bias");
-Params.Keys.pointwise2ActivationName = Symbol("pointwise2ActivationName");
+Params.Keys.pointwise2ActivationId =   Symbol("pointwise2ActivationId");
 Params.Keys.bAddInputToOutput =        Symbol("bAddInputToOutput");
+
+/** Define activation's id, name, function. */
+Params.Activation = {};
+Params.Activation.Ids =       {  NONE: 0, RELU: 1, RELU6: 2, SIGMOID: 3, TANH: 4, SIN: 5, COS: 6 };
+Params.Activation.Names =     [ "(none)",  "relu",  "relu6",  "sigmoid",  "tanh",  "sin",  "cos" ];
+Params.Activation.Functions = [     null, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ];
+
+//!!! ...unfinished...
+Prams.depthwise_AvgMax_Or_ChannelMultiplier = {
+//  1:
+};
 
 /**
  * One step of one block of convolution neural network. There are at most three convolutions inside this object.
@@ -201,10 +226,9 @@ class Base extends ReturnOrClone.Base {
    *   If true, there will be a bias after pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    * If ( pointwise1ChannelCount <= 0 ), this bias will also be ignored.
    *
-   * @param {string} pointwise1ActivationName
-   *   The activation function name after the first pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e.
-   * by evolution). One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( pointwise1ChannelCount <= 0 ),
-   * this activation function will also be ignored.
+   * @param {string} pointwise1ActivationId
+   *   The activation function id (Params.Activation.Ids.Xxx) after the first pointwise convolution. If null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution). If ( pointwise1ChannelCount <= 0 ), this activation function will also be ignored.
    *
    * @param {(string|number)} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If "Avg", average pooling.
@@ -227,10 +251,9 @@ class Base extends ReturnOrClone.Base {
    *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true, there will be a bias after depthwise convolution.
    * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this bias will also be ignored.
    *
-   * @param {string} depthwiseActivationName
-   *   The activation function name after depthwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ),
-   * this activation will also be ignored.
+   * @param {string} depthwiseActivationId
+   *   The activation function id (Params.Activation.Ids.Xxx) after depthwise convolution. If null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this activation function will also be ignored.
    *
    * @param {number} pointwise2ChannelCount
    *   The output channel count of the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -240,10 +263,9 @@ class Base extends ReturnOrClone.Base {
    *   If true, there will be a bias after the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by
    * evolution). If ( pointwise2ChannelCount <= 0 ), this bias will also be ignored.
    *
-   * @param {string} pointwise2ActivationName
-   *   The activation function name after the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by
-   * evolution). One of the following: "" (or null), "relu", "relu6", "sigmoid", "tanh", "sin", "cos". If ( pointwise2ChannelCount <= 0 ),
-   * this activation function will also be ignored.
+   * @param {string} pointwise2ActivationId
+   *   The activation function id (Params.Activation.Ids.Xxx) after the second pointwise convolution. If null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution). If ( pointwise2ChannelCount <= 0 ), this activation function will also be ignored.
    *
    * @param {boolean} bAddInputToOutput
    *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true and ( depthwiseStridesPad == 1 ) ( i.e.
@@ -266,9 +288,9 @@ class Base extends ReturnOrClone.Base {
     progressParent,
     inputFloat32Array, byteOffsetBegin,
     channelCount_pointwise1Before,
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
     bAddInputToOutput,
     bKeepInputTensor
   ) {
@@ -296,9 +318,9 @@ class Base extends ReturnOrClone.Base {
     this.params = new Params();
     let bParamsInitOk
       = this.params.init( inputFloat32Array, byteOffsetBegin,
-          pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-          pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+          pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+          pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
           bAddInputToOutput );
 
     if ( !bParamsInitOk )
@@ -310,17 +332,17 @@ class Base extends ReturnOrClone.Base {
     {
       pointwise1ChannelCount = this.pointwise1ChannelCount;
       bPointwise1Bias = this.bPointwise1Bias;
-      pointwise1ActivationName = this.pointwise1ActivationName;
+      pointwise1ActivationId = this.pointwise1ActivationId;
 
       depthwise_AvgMax_Or_ChannelMultiplier = this.depthwise_AvgMax_Or_ChannelMultiplier;
       depthwiseFilterHeight = this.depthwiseFilterHeight;
       depthwiseStridesPad = this.depthwiseStridesPad;
       bDepthwiseBias = this.bDepthwiseBias;
-      depthwiseActivationName = this.depthwiseActivationName;
+      depthwiseActivationId = this.depthwiseActivationId;
 
       pointwise2ChannelCount = this.pointwise2ChannelCount;
       bPointwise2Bias = this.bPointwise2Bias;
-      pointwise2ActivationName = this.pointwise2ActivationName;
+      pointwise2ActivationId = this.pointwise2ActivationId;
 
       bAddInputToOutput = this.bAddInputToOutput;
     }
@@ -330,7 +352,7 @@ class Base extends ReturnOrClone.Base {
 
     // 2. The first 1x1 pointwise convolution.
     this.bPointwise1 = ( pointwise1ChannelCount > 0 );
-    this.pointwise1ActivationFunction = Base.getActivationFunction( pointwise1ActivationName );
+    this.pointwise1ActivationFunction = Base.getActivationFunction( pointwise1ActivationId );
 
     if ( this.bPointwise1 ) {
       this.channelCount_pointwise1After_depthwiseBefore = pointwise1ChannelCount;
@@ -338,9 +360,6 @@ class Base extends ReturnOrClone.Base {
       //this.pointwise1FilterHeightWidth = [ 1, 1 ];
       this.pointwise1FiltersShape =      [ 1, 1, this.channelCount_pointwise1Before, this.channelCount_pointwise1After_depthwiseBefore ];
       this.pointwise1BiasesShape =       [ 1, 1, this.channelCount_pointwise1After_depthwiseBefore ];
-
-//!!! (2021/01/21 Remarked)
-//      this.pointwise1FiltersTensor4d = Base.generateTensor( this.pointwise1FiltersShape );
 
       this.pointwise1FiltersWeights = new Weights.Base();
       if ( !this.pointwise1FiltersWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.pointwise1FiltersShape ) )
@@ -352,9 +371,6 @@ class Base extends ReturnOrClone.Base {
       this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
 
       if ( bPointwise1Bias ) {
-//!!! (2021/01/21 Remarked)
-//        this.pointwise1BiasesTensor3d = Base.generateTensor( this.pointwise1BiasesShape );
-
         this.pointwise1BiasesWeights = new Weights.Base();
         if ( !this.pointwise1BiasesWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.pointwise1BiasesShape ) )
           return false;  // e.g. input array does not have enough data.
@@ -407,9 +423,6 @@ class Base extends ReturnOrClone.Base {
           = [ depthwiseFilterHeight, depthwiseFilterWidth,
               this.channelCount_pointwise1After_depthwiseBefore, depthwise_AvgMax_Or_ChannelMultiplier ];
 
-//!!! (2021/01/21 Remarked)
-//        this.depthwiseFiltersTensor4d = Base.generateTensor( this.depthwiseFiltersShape );
-
         this.depthwiseFiltersWeights = new Weights.Base();
         if ( !this.depthwiseFiltersWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.depthwiseFiltersShape ) )
           return false;  // e.g. input array does not have enough data.
@@ -430,16 +443,14 @@ class Base extends ReturnOrClone.Base {
       case 2:  this.depthwiseStrides = 2; this.depthwisePad = "same";  break;
     }
 
-    this.depthwiseActivationFunction = Base.getActivationFunction( depthwiseActivationName );
+    this.depthwiseActivationFunction = Base.getActivationFunction( depthwiseActivationId );
 
     this.depthwiseFilterHeightWidth = [ depthwiseFilterHeight, depthwiseFilterWidth ];
     this.depthwiseBiasesShape =       [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before ];
 
     if ( this.bDepthwise ) {
-      if ( bDepthwiseBias ) {
-//!!! (2021/01/21 Remarked)
-//        this.depthwiseBiasesTensor3d = Base.generateTensor( this.depthwiseBiasesShape );
 
+      if ( bDepthwiseBias ) {
         this.depthwiseBiasesWeights = new Weights.Base();
         if ( !this.depthwiseBiasesWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.depthwiseBiasesShape ) )
           return false;  // e.g. input array does not have enough data.
@@ -459,7 +470,7 @@ class Base extends ReturnOrClone.Base {
 
     // 4. The second 1x1 pointwise convolution.
     this.bPointwise2 = ( pointwise2ChannelCount > 0 );
-    this.pointwise2ActivationFunction = Base.getActivationFunction( pointwise2ActivationName );
+    this.pointwise2ActivationFunction = Base.getActivationFunction( pointwise2ActivationId );
 
     if ( this.bPointwise2 ) {
       this.channelCount_pointwise2After = pointwise2ChannelCount;
@@ -467,9 +478,6 @@ class Base extends ReturnOrClone.Base {
       //this.pointwise2FilterHeightWidth = [ 1, 1 ];
       this.pointwise2FiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before, this.channelCount_pointwise2After ];
       this.pointwise2BiasesShape =       [ 1, 1, this.channelCount_pointwise2After ];
-
-//!!! (2021/01/21 Remarked)
-//      this.pointwise2FiltersTensor4d = Base.generateTensor( this.pointwise2FiltersShape );
 
       this.pointwise2FiltersWeights = new Weights.Base();
       if ( !this.pointwise2FiltersWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.pointwise2FiltersShape ) )
@@ -481,9 +489,6 @@ class Base extends ReturnOrClone.Base {
       this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy; // will dispose inputTensor.
 
       if ( bPointwise2Bias ) {
-//!!! (2021/01/21 Remarked)
-//        this.pointwise2BiasesTensor3d = Base.generateTensor( this.pointwise2BiasesShape );
-
         this.pointwise2BiasesWeights = new Weights.Base();
         if ( !this.pointwise2BiasesWeights.init( inputFloat32Array, this.nextByteOffsetBegin, null, 0, this.pointwise2BiasesShape ) )
           return false;  // e.g. input array does not have enough data.
@@ -617,9 +622,9 @@ class Base extends ReturnOrClone.Base {
     progressParent,
     inputFloat32Array, byteOffsetBegin,
     channelCount_pointwise1Before,
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
     bAddInputToOutput,
     bKeepInputTensor
   ) {
@@ -630,9 +635,9 @@ class Base extends ReturnOrClone.Base {
       progressParent,
       inputFloat32Array, byteOffsetBegin,
       channelCount_pointwise1Before,
-      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationName,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationName,
-      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationName,
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
       bAddInputToOutput,
       bKeepInputTensor
     );
@@ -692,43 +697,25 @@ class Base extends ReturnOrClone.Base {
     this.nextByteOffsetBegin = -1; // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
   }
 
-  /** Convert activation function name to function object. */
-  static getActivationFunction( strActivationName ) {
-    switch ( strActivationName ) {
-      case "relu":    return tf.relu;    break;
-      case "relu6":   return tf.relu6;   break;
-      case "sigmoid": return tf.sigmoid; break;
-      case "tanh":    return tf.tanh;    break;
-      case "sin":     return tf.sin;     break;
-      case "cos":     return tf.cos;     break;
-      //default:
-    }
-    return null;
+  /** Convert activation function id to function object. */
+  static getActivationFunction( nActivationId ) {
+    let pfn = Params.Activation.Functions[ nActivationId ];
+    return pfn;
   }
 
-// !!! (2021/01/22 Remarked) Since there is already real tensor generator, this is no longer needed.
-//   /**
-//    * @param {number[]} newTensorShape
-//    *   The returned tensor's shape. If null, same as zero size.
-//    *
-//    * @return {tf.tensor4d|tf.tensor3d}
-//    *   Return a tensor4d or tensor3d acccording to newTensorShape. If size of newTensorShape is zero, return null.
-//    */
-//   static generateTensor( newTensorShape ) {
-//     return tf.tidy( () => {
-//
-//       let valueCount = 0;
-//       if ( newTensorShape )
-//         valueCount = tf.util.sizeFromShape( newTensorShape );
-//
-//       let tensor1d, tensorNew = null;
-//       if ( valueCount ) {
-//         tensor1d = tf.range( 0, valueCount, 1 );
-//         tensorNew = tensor1d.reshape( newTensorShape );
-//       }
-//
-//       return tensorNew;
-//     });
+//!!! (2021/03/10 Remarked) Using Params.Activation.Functions[] instead.
+//   /** Convert activation function name to function object. */
+//   static getActivationFunction( strActivationName ) {
+//     switch ( strActivationName ) {
+//       case "relu":    return tf.relu;    break;
+//       case "relu6":   return tf.relu6;   break;
+//       case "sigmoid": return tf.sigmoid; break;
+//       case "tanh":    return tf.tanh;    break;
+//       case "sin":     return tf.sin;     break;
+//       case "cos":     return tf.cos;     break;
+//       //default:
+//     }
+//     return null;
 //   }
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
@@ -894,17 +881,20 @@ class Base extends ReturnOrClone.Base {
 
   get pointwise1ChannelCount()                { return this.params.pointwise1ChannelCount; }
   get bPointwise1Bias()                       { return this.params.bPointwise1Bias; }
-  get pointwise1ActivationName()              { return this.params.pointwise1ActivationName; }
+  get pointwise1ActivationId()                { return this.params.pointwise1ActivationId; }
+  get pointwise1ActivationName()              { return Params.Activation.Names[ this.params.pointwise1ActivationId ]; }
 
   get depthwise_AvgMax_Or_ChannelMultiplier() { return this.params.depthwise_AvgMax_Or_ChannelMultiplier; }
   get depthwiseFilterHeight()                 { return this.params.depthwiseFilterHeight; }
   get depthwiseStridesPad()                   { return this.params.depthwiseStridesPad; }
   get bDepthwiseBias()                        { return this.params.bDepthwiseBias; }
-  get depthwiseActivationName()               { return this.params.depthwiseActivationName; }
+  get depthwiseActivationId()                 { return this.params.depthwiseActivationId; }
+  get depthwiseActivationName()               { return Params.Activation.Names[ this.params.depthwiseActivationId ]; }
 
   get pointwise2ChannelCount()                { return this.params.pointwise2ChannelCount; }
   get bPointwise2Bias()                       { return this.params.bPointwise2Bias; }
-  get pointwise2ActivationName()              { return this.params.pointwise2ActivationName; }
+  get pointwise2ActivationId()                { return this.params.pointwise2ActivationId; }
+  get pointwise2ActivationName()              { return Params.Activation.Names[ this.params.pointwise2ActivationId ]; }
 
   get bAddInputToOutput()                     { return this.params.bAddInputToOutput; }
 
