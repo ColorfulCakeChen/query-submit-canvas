@@ -120,8 +120,12 @@ Params.Keys.pointwise2ActivationId =                Symbol("pointwise2Activation
 Params.Keys.bAddInputToOutput =                     Symbol("bAddInputToOutput");
 
 //!!! ...unfinished... (2021/03/11)
-// Could define a class contains one parameter's key (symbol), range (and adjuster), ids (number), idToNameMap (number-string), nameToIdMap (string-number)?
+// Could define a class contains one parameter's key (symbol), range (and adjuster), ids (string?-number), idToNameMap (number-string), nameToIdMap (string-number)?
 // But all parameters' keys should be browsable by iterator.
+//
+// ids is already a kinds of string-number. Perhaps, nameToIdMap should be derived from ids automatically.
+//
+// Where is Functions?
 
 /** Define channel count range. */
 Params.pointwise1ChannelCount = {};
@@ -143,18 +147,19 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = {};
 Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids = { AVG: -2, MAX: -1, NONE: 0 };
 Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.Range = new Weights.IntegerRange( -2, 32 );
 //!!! ...unfinished... (2021/03/10) may define keys with 1 to 32.
+//??? should use ids' name (not another string).
 Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNameMap = new Map( [
   [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG,     "avg" ],
   [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX,     "max" ],
   [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE, "(none)" ],
 ] );
 //!!! ...unfinished... (2021/03/11) may define keys with 1 to 32.
-Params.depthwise_AvgMax_Or_ChannelMultiplier.NameToIdMap = new Map( [
-  [ "avg",    Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG ],
-  [ "max",    Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX ],
-//!!! ...unfinished... ???
-  [ "(none)", Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE ],
-] );
+// Params.depthwise_AvgMax_Or_ChannelMultiplier.NameToIdMap = new Map( [
+//   [ "avg",    Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG ],
+//   [ "max",    Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX ],
+// //!!! ...unfinished... ???
+//   [ "(none)", Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE ],
+// ] );
 
 
 /** Define suitable value for depthwise convolution filter size.
