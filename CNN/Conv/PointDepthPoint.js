@@ -119,6 +119,10 @@ Params.Keys.bPointwise2Bias =                       Symbol("bPointwise2Bias");
 Params.Keys.pointwise2ActivationId =                Symbol("pointwise2ActivationId");
 Params.Keys.bAddInputToOutput =                     Symbol("bAddInputToOutput");
 
+//!!! ...unfinished... (2021/03/11)
+// Could define a class contains one parameter's key name, range (and adjuster), ids, idToNameMap, nameToIdMap?
+// But all parameters' keys should be browsable by iterator.
+
 /** Define channel count range. */
 Params.pointwise1ChannelCount = {};
 Params.pointwise1ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
