@@ -139,11 +139,19 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = {};
 Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids = { AVG: -2, MAX: -1, NONE: 0 };
 Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.Range = new Weights.IntegerRange( -2, 32 );
 //!!! ...unfinished... (2021/03/10) may define keys with 1 to 32.
-Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNamesMap = new Map( [
+Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNameMap = new Map( [
   [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG,     "avg" ],
   [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX,     "max" ],
   [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE, "(none)" ],
 ] );
+//!!! ...unfinished... (2021/03/11) may define keys with 1 to 32.
+Params.depthwise_AvgMax_Or_ChannelMultiplier.NameToIdMap = new Map( [
+  [ "avg",    Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG ],
+  [ "max",    Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX ],
+//!!! ...unfinished... ???
+  [ "(none)", Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE ],
+] );
+
 
 /** Define suitable value for depthwise convolution filter size.
  *
@@ -946,7 +954,7 @@ class Base extends ReturnOrClone.Base {
     let depthwise_AvgMax_Or_ChannelMultiplier = this.depthwise_AvgMax_Or_ChannelMultiplier;
 
     // Look up whether has name (e.g. "avg", "max", "(none)").
-    let name = Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNamesMap.get( depthwise_AvgMax_Or_ChannelMultiplier );
+    let name = Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNameMap.get( depthwise_AvgMax_Or_ChannelMultiplier );
     if ( null == name ) { // No name means it represents channel multiplier number.
       name = depthwise_AvgMax_Or_ChannelMultiplier.toString(); // e.g. "1", "2", ..., "64"
     }
