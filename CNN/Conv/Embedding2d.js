@@ -37,14 +37,9 @@ class Params extends Weights.Params {
 Params.To = class {
 
 //!!! (2021/03/10 Remarked)
-//  /** @return {number} Convert number value into an integer between [ 1, 1024 ]. */
   /** @return {number} Convert number value into an integer between [ 1, 32 ]. */
   static ChannelMultiplier( value ) {
-    // At least 1, because channel count 0 is meaningless.
-    // Avoid too large vocabulary channel multiplier. Otherwise, performance may be poor.
-//!!! (2021/03/10 Remarked)
-//    return Weights.To.IntegerRange( value, 1, 1024 );
-    return Weights.To.IntegerRange( value, 1, 32 );
+    return Params.channelMultiplier.Range.adjust( value );
   }
 
 }
@@ -56,6 +51,13 @@ Params.To = class {
  */
 Params.Keys = {};
 Params.Keys.channelMultiplier = Symbol("channelMultiplier");
+
+/** Define channelMultiplier value range.
+ * At least 1, because channel count 0 is meaningless.
+ * Avoid too large vocabulary channel multiplier. Otherwise, performance may be poor.
+ */
+Params.channelMultiplier = {};
+Params.channelMultiplier.Range = new Weights.IntegerRange( 1, 32 );
 
 /**
  * Embedding could achieve non-linear mapping (just like any perceptron). But it is achieved by lookup table (instead
