@@ -120,7 +120,7 @@ Params.Keys.pointwise2ActivationId =                Symbol("pointwise2Activation
 Params.Keys.bAddInputToOutput =                     Symbol("bAddInputToOutput");
 
 //!!! ...unfinished... (2021/03/11)
-// Could define a class contains one parameter's key name, range (and adjuster), ids, idToNameMap, nameToIdMap?
+// Could define a class contains one parameter's key (symbol), range (and adjuster), ids (number), idToNameMap (number-string), nameToIdMap (string-number)?
 // But all parameters' keys should be browsable by iterator.
 
 /** Define channel count range. */
