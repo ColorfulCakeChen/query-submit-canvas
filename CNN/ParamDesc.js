@@ -1,4 +1,29 @@
-export { IntegerRange, Integer };
+export { IntegerRange, IntegerDesc, BooleanDesc };
+
+
+/**
+ * Provides methods for converting nothing (just return original value).
+ */
+class SameRange {
+
+  /** @return {any} Return the input value directly. */
+  adjust( value ) {
+    return value;
+  }
+
+  /**
+   * @return {function}
+   *   Return a function object. When calling the returned function object with one value parameter, it will return
+   * the adjusted value which is retricted by this object.
+   */
+  getAdjuster() {
+    return this.adjust.bind( this );
+  }
+}
+
+/** The only one SameRange instance. */
+SameRange.Singleton = new SameRange;
+
 
 /**
  * Provides methods for converting weight to integer between min and max (both are integers).
@@ -40,10 +65,65 @@ class IntegerRange {
   /**
    * @return {function}
    *   Return a function object. When calling the returned function object with one value parameter, it will return
-   * the adjusted value which is retricted by this IntegerRange.
+   * the adjusted value which is retricted by this object.
    */
   getAdjuster() {
-    return this.restrict.bind( this );
+    return this.adjust.bind( this );
+  }
+}
+
+
+/**
+ * Provides methods for converting weight to boolean.
+ */
+class BooleanRange {
+
+  /** @return {boolean} Convert number value into false or true. */
+  adjust( value ) {
+    // If value is not an integer, the remainder will always not zero. So convert it to integer first.
+    //
+    // According to negative or positive, the remainder could be one of [ -1, 0, +1 ].
+    // So simply check it whether is 0 (instead of check both -1 and +1), could result in false or true.
+    return ( ( Math.trunc( value ) % 2 ) != 0 );
+  }
+
+  /**
+   * @return {function}
+   *   Return a function object. When calling the returned function object with one value parameter, it will return
+   * the adjusted value which is retricted by this object.
+   */
+  getAdjuster() {
+    return this.adjust.bind( this );
+  }
+}
+
+/** The only one BooleanRange instance. */
+BooleanRange.Singleton = new BooleanRange;
+
+
+/**
+ * Describe some properties of a non-converting parameter.
+ *
+ * @member {string} paramName
+ *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
+ *
+ * @member {Symbol} paramNameKey
+ *   The unique key of the parameter. It is defined as Symbol(paramName).
+ *
+ * @member {SameRange} range
+ *   The range of the parameter's all possible values. It is an SameRange object.
+ *
+ */
+class SameDesc {
+
+  /**
+   *
+   */
+  constructor( paramName ) {
+    this.paramName = paramName;
+
+    this.paramNameKey = Symbol( paramName );
+    this.range = SameRange.Singleton;
   }
 }
 
@@ -65,14 +145,14 @@ class IntegerRange {
  * @member {Symbol} paramNameKey
  *   The unique key of the parameter. It is defined as Symbol(paramName).
  *
- * @member {IntegerRange} valueIntegerRange
+ * @member {IntegerRange} range
  *   The integer range of the parameter's all possible values. It is an IntegerRange object with ( min = valueIntegerMin )
  * and ( max = valueIntegerMax ).
  *
  * @member {string[]} valueNames
  *   The string names of the parameter's all named values. It is an array of strings. They should be all legal identifers too (i.e. A-Z,
  * a-z, 0-9 (not at first character), and "_"). They will become the properties' names of this.valueNameInteger. Note that
- * ( valueNames.length <= valueIntegerRange.kinds ). This means that only first valueNames.length values have names. So, it is possible
+ * ( valueNames.length <= range.kinds ). This means that only first valueNames.length values have names. So, it is possible
  * that all values are no names (when valueNames[] is empty).
  *
  * @member {number[]} valueIntegers
@@ -87,11 +167,8 @@ class IntegerRange {
  *   - ...
  *   - this.Ids[ valueNames[ ( valueNames.length - 1 ) ] ] = valueIntegers[ valueNames.length - 1 ] = ( valueIntegerMin + ( valueNames.length - 1 ) )
  *
- * 
- *
- *
  */
-class Integer {
+class IntegerDesc {
 
   /**
    *
@@ -110,7 +187,7 @@ class Integer {
     this.valueNames = valueNames;
 
     this.paramNameKey = Symbol( paramName );
-    this.valueIntegerRange = new IntegerRange( valueIntegerMin, valueIntegerMax );
+    this.range = new IntegerRange( valueIntegerMin, valueIntegerMax );
 
 //!!! (2021/03/14 Remarked) It is possible and legal.
 //     If ( valueIntegerMax != ( valueIntegerMin + ( valueNames.length - 1 ) ) ) {
@@ -119,11 +196,38 @@ class Integer {
 //       throw errMsg;
 //     }
 
-    this.valueIntegers = new Array( valueNames.length ); // ( valueNames.length <= valueIntegerRange.kinds )
+    this.valueIntegers = new Array( valueNames.length ); // ( valueNames.length <= range.kinds )
     this.Ids = {};
     for ( let i = 0; i < valueNames.length; ++i ) {
       this.Ids[ valueNames[ i ] ] = this.valueIntegers[ i ] = ( valueIntegerMin + i );
     }
 
+  }
+}
+
+
+/**
+ * Describe some properties of a boolean parameter.
+ *
+ * @member {string} paramName
+ *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
+ *
+ * @member {Symbol} paramNameKey
+ *   The unique key of the parameter. It is defined as Symbol(paramName).
+ *
+ * @member {BooleanRange} range
+ *   The boolean range of the parameter's all possible values. It is an BooleanRange object.
+ *
+ */
+class BooleanDesc {
+
+  /**
+   *
+   */
+  constructor( paramName ) {
+    this.paramName = paramName;
+
+    this.paramNameKey = Symbol( paramName );
+    this.range = BooleanRange.Singleton;
   }
 }
