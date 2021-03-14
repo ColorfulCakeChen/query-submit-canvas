@@ -1,6 +1,7 @@
 export { Params, Base };
 
 import * as ValueMax from "../ValueMax.js";
+import * as ParamDesc from "../ParamDesc.js";
 import * as Weights from "../Weights.js";
 import * as ReturnOrClone from "./ReturnOrClone.js";
 
@@ -128,12 +129,17 @@ Params.Keys.bAddInputToOutput =                     Symbol("bAddInputToOutput");
 // Where is Functions?
 
 /** Define channel count range. */
-Params.pointwise1ChannelCount = {};
-Params.pointwise1ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
+//!!! (2021/03/14 Remarked)
+// Params.pointwise1ChannelCount = {};
+// Params.pointwise1ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
+Params.pointwise1ChannelCount = new ParamDesc.IntegerDesc( "pointwise1ChannelCount", 0, 10 * 1024 );
 
-Params.pointwise2ChannelCount = {};
-Params.pointwise2ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
+//!!! (2021/03/14 Remarked)
+// Params.pointwise2ChannelCount = {};
+// Params.pointwise2ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
+Params.pointwise1ChannelCount = new ParamDesc.IntegerDesc( "pointwise2ChannelCount", 0, 10 * 1024 );
 
+//!!! ...unfinished... (2021/03/14)
 /** Define activation's id, name, function. */
 Params.Activation = {};
 Params.Activation.Ids =       {  NONE: 0, RELU: 1, RELU6: 2, SIGMOID: 3, TANH: 4, SIN: 5, COS: 6 };
