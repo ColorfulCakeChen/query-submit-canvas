@@ -196,6 +196,9 @@ class Params extends Base {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
+
+//!!! ...unfinished... (2021/03/14) the value should be one of ParamDesc.SameDesc, ParamDesc.IntegerDesc, ParamDesc.BooleanDesc
+
    * @param {Map} parameterMap
    *   Describe what parameters to be used or extracted.
    *   - The key of this parameterMap's entry [ key, value ] will be viewed as parameter name.
@@ -234,6 +237,8 @@ class Params extends Base {
     let arrayIndexMap = new Map();
     {
       let i = 0;
+
+//!!! ...unfinished... (2021/03/14) call XxxDesc.adjust()
 
       let parameterValue, parameterAdjuster;
       for ( let [ key, value_and_adjuster ] of parameterMap ) {
@@ -291,6 +296,7 @@ class Params extends Base {
     // another neural network layer configuration.
     this.weightsModified = new Float32Array( this.weights.length );
 
+//!!! ...unfinished... (2021/03/14) call XxxDesc.adjust()
     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
     for ( let [ key, { arrayIndex, adjusterFunction } ] of arrayIndexMap ) {
       let extractedValue = this.weights[ arrayIndex ];
