@@ -174,36 +174,7 @@ class To {
     return Math.abs( Math.trunc( v ) );
   }
 
-//!!! (2021/03/10 Remarked) Using class IntegerRange instead.
-//   /**
-//    * @return {number} Return the trucated value (i.e. integer). The returned value is forcibly between min and max (as integer too).
-//    */
-//   static IntegerRange( value, min, max ) {
-//     let valueMin = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
-//     let valueMax = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
-//     let valueKinds = ( valueMax - valueMin ) + 1; // How many possible integer between them.
-//     let valueInt = Math.trunc( value ); // Convert to an integer.
-//
-// //!!! (2021/03/09 Remarked) The result is wierd when min and max have different sign.
-// //     // Because remainder always has the same sign as dividend, force the dividend to zeor or positive for processing easily.
-// //     let result = valueMin + ( To.IntegerZeroPositive( value ) % valueKinds );
-//
-//     // Rearrange valueInt between valueMin and valueMax fairly (in probability).
-//     //
-//     // A1: Why not use remainder operator (%) directly?
-//     // Q1: Because remainder always has the same sign as dividend, this can not handle the situation which valueMin and
-//     //     valueMax have different sign.
-//     //
-//     // A2: Why not just restrict all value less than valueMin to valueMin and value greater than valueMax to valueMax?
-//     // Q2: Although this could restrict value in range, it will skew the probability of every value in the range.
-//     //     Unfair probability is harmful to evolution algorithm.
-//     //
-//     let quotient = ( valueInt - valueMin ) / valueKinds;
-//     let quotientInt = Math.floor( quotient );  // So that negative value could be handled correctly.
-//     let result = valueInt - ( quotientInt * valueKinds );
-//     return result;
-//   }
-
+//!!! (2021/03/14) Perhaps, could be replaced by IntegerRange( 0, 1 )?
   /** @return {boolean} Convert number value into false or true. */
   static Boolean( value ) {
     // If value is not an integer, the remainder will always not zero. So convert it to integer first.
@@ -227,16 +198,66 @@ class To {
     return lookUpArray[ i ];
   }
 
-//!!! (2021/03/08 Remarked) No longer need it.
-//   /**
-//    * @return {any} If ( null == value ), return anotherValue. Otherwise, return value.
-//    */
-//   static AnotherIfNull( value, anotherValue ) {
-//     if ( null == value )
-//       return anotherValue;
-//     return value;
-//   }
+}
 
+
+//!!! ...unfinished... (2021/03/14)
+// Could define a class contains one parameter's key (symbol), range (and adjuster), ids (string?-number), idToNameMap (number-string), nameToIdMap (string-number)?
+// But all parameters' keys should be browsable by iterator.
+//
+// ids is already a kinds of string-number. Perhaps, nameToIdMap should be derived from ids automatically.
+//
+// Where is Functions? What about boolean and Same()?
+
+/**
+ * Describe some properties of a parameter.
+ *
+ * @member {Symbol} key
+ *   The unique key of the parameter. It is defined as Symbol(paramName).
+ *
+ * @member {number[]} valueIntegers
+ *   The integers of the parameter's all possible values.
+ *
+ * @member {Object} valueNameInteger
+ *   An object contains the parameter's all possible values. It is just like a Map, but could be accessed by dot (.) operator
+ * (not by .get() method). The this.valueNameInteger.valueName will be valueInteger. Or, the this.valueNameInteger[ valueName ]
+ * will be valueInteger.
+ *
+ * @member {IntegerRange} range
+ *   The integer range of the parameter's all possible values. It is an IntegerRange object with ( min = valueIntegerMin )
+ * and ( max = valueIntegerMin + ( valueNames.length - 1 ) ) ).
+ *
+ * 
+ *
+ *
+ */
+class ParamDesc {
+
+  /**
+   *
+   * @param {string} paramName
+   *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
+   *
+   * @param {string[]} valueNames
+   *   The string names of the parameter's all possible values. It is an array of strings. They should be all legal identifers too (i.e. A-Z,
+   * a-z, 0-9 (not at first character), and "_"). They will become the properties' names of this.valueNameInteger.
+   *
+   * @param {number} valueIntegerMin
+   *   The first (i.e. minimum) integer of the parameter's all possible values. It will be combined with valueNames.length and valueNames[]
+   * to define this.valueNameInteger
+   *   - this.valueNameInteger[ valueNames[ 0 ] ] = ( valueIntegerMin + 0 )
+   *   - this.valueNameInteger[ valueNames[ 1 ] ] = ( valueIntegerMin + 1 )
+   *   - ...
+   *   - this.valueNameInteger[ valueNames[ ( valueNames.length - 1 ) ] ] = ( valueIntegerMin + ( valueNames.length - 1 ) )
+   *
+//!!! ...unfinished... (2021/03/14)
+   * @param {Symbol} key
+   *   The key of the parameter.
+   */
+  constructor(
+    name, key
+  ) {
+  }
 }
 
 
