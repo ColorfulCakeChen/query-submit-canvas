@@ -210,7 +210,7 @@ class To {
 // Where is Functions? What about boolean and Same()?
 
 /**
- * Describe some properties of a parameter.
+ * Describe some properties of an integer parameter.
  *
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
@@ -224,7 +224,7 @@ class To {
  *
  * @member {IntegerRange} valueIntegerRange
  *   The integer range of the parameter's all possible values. It is an IntegerRange object with ( min = valueIntegerMin )
- * and ( max = valueIntegerMin + ( valueNames.length - 1 ) ) ).
+ * and ( max = valueIntegerMax = valueIntegerMin + ( valueNames.length - 1 ) ) ).
  *
  * @member {number[]} valueIntegers
  *   The integers of the parameter's all possible values.
@@ -239,25 +239,33 @@ class To {
  *
  *
  */
-class ParamDesc {
+class ParamDescInteger {
 
   /**
    *
    * @param {number} valueIntegerMin
    *   The first (i.e. minimum) integer of the parameter's all possible values. It will be combined with valueNames.length and valueNames[]
-   * to define this.valueNameInteger
+   * to define this.valueNameInteger:
    *   - this.valueNameInteger[ valueNames[ 0 ] ] = ( valueIntegerMin + 0 )
    *   - this.valueNameInteger[ valueNames[ 1 ] ] = ( valueIntegerMin + 1 )
    *   - ...
    *   - this.valueNameInteger[ valueNames[ ( valueNames.length - 1 ) ] ] = ( valueIntegerMin + ( valueNames.length - 1 ) )
    *
+   * @param {number} valueIntegerMax
+   *   The last (i.e. maximum) integer of the parameter's all possible values. It should equal ( valueIntegerMin + ( valueNames.length - 1 ) ).
    */
-  constructor( paramName, valueNames, valueIntegerMin ) {
+  constructor( paramName, valueIntegerMin, valueIntegerMax, valueNames ) {
     this.paramName = paramName;
     this.valueNames = valueNames;
 
     this.paramNameKey = Symbol( paramName );
-    this.valueIntegerRange = new IntegerRange( valueIntegerMin, valueIntegerMin + ( valueNames.length - 1 ) );
+    this.valueIntegerRange = new IntegerRange( valueIntegerMin, valueIntegerMax );
+
+    If ( valueIntegerMax != ( valueIntegerMin + ( valueNames.length - 1 ) ) ) {
+      let errMsg = `ParamDescInteger: ( valueIntegerMax = ${valueIntegerMax} )`
+        + ` should equal ( valueIntegerMin + ( valueNames.length - 1 ) ) = ( ${valueIntegerMin} + ( ${valueNames.length} - 1 ) )`;
+      throw errMsg;
+    }
 
     this.valueIntegers = new Array( valueNames.length );
     this.valueNameInteger = {};
