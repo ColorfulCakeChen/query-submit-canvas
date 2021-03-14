@@ -1,4 +1,4 @@
-export { Base, IntegerRange, To, Params };
+export { Base, IntegerRange, To, ParamDesc, Params };
 
 /**
  * A base class for extracting and keeping weights. It composes of a Float32Array and a shape. It can
@@ -212,20 +212,28 @@ class To {
 /**
  * Describe some properties of a parameter.
  *
- * @member {Symbol} key
+ * @member {string} paramName
+ *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
+ *
+ * @member {Symbol} paramNameKey
  *   The unique key of the parameter. It is defined as Symbol(paramName).
+ *
+ * @member {string[]} valueNames
+ *   The string names of the parameter's all possible values. It is an array of strings. They should be all legal identifers too (i.e. A-Z,
+ * a-z, 0-9 (not at first character), and "_"). They will become the properties' names of this.valueNameInteger.
+ *
+ * @member {IntegerRange} valueIntegerRange
+ *   The integer range of the parameter's all possible values. It is an IntegerRange object with ( min = valueIntegerMin )
+ * and ( max = valueIntegerMin + ( valueNames.length - 1 ) ) ).
  *
  * @member {number[]} valueIntegers
  *   The integers of the parameter's all possible values.
  *
+//!!! ...unfinished... (2021/03/14) named as Ids?
  * @member {Object} valueNameInteger
  *   An object contains the parameter's all possible values. It is just like a Map, but could be accessed by dot (.) operator
  * (not by .get() method). The this.valueNameInteger.valueName will be valueInteger. Or, the this.valueNameInteger[ valueName ]
  * will be valueInteger.
- *
- * @member {IntegerRange} range
- *   The integer range of the parameter's all possible values. It is an IntegerRange object with ( min = valueIntegerMin )
- * and ( max = valueIntegerMin + ( valueNames.length - 1 ) ) ).
  *
  * 
  *
@@ -235,13 +243,6 @@ class ParamDesc {
 
   /**
    *
-   * @param {string} paramName
-   *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
-   *
-   * @param {string[]} valueNames
-   *   The string names of the parameter's all possible values. It is an array of strings. They should be all legal identifers too (i.e. A-Z,
-   * a-z, 0-9 (not at first character), and "_"). They will become the properties' names of this.valueNameInteger.
-   *
    * @param {number} valueIntegerMin
    *   The first (i.e. minimum) integer of the parameter's all possible values. It will be combined with valueNames.length and valueNames[]
    * to define this.valueNameInteger
@@ -250,13 +251,21 @@ class ParamDesc {
    *   - ...
    *   - this.valueNameInteger[ valueNames[ ( valueNames.length - 1 ) ] ] = ( valueIntegerMin + ( valueNames.length - 1 ) )
    *
-//!!! ...unfinished... (2021/03/14)
-   * @param {Symbol} key
-   *   The key of the parameter.
    */
-  constructor(
-    name, key
-  ) {
+  constructor( paramName, valueNames, valueIntegerMin ) {
+    this.paramName = paramName;
+    this.valueNames = valueNames;
+
+    this.paramNameKey = Symbol( paramName );
+    this.valueIntegerRange = new IntegerRange( valueIntegerMin, valueIntegerMin + ( valueNames.length - 1 ) );
+
+    this.valueIntegers = new Array( valueNames.length );
+    this.valueNameInteger = {};
+    for ( let i = 0; i < valueNames.length; ++i ) {
+//!!! ...unfinished... (2021/03/14) Ids???
+      this.valueNameInteger[ valueNames[ i ] ] = this.valueIntegers[ i ] = ( valueIntegerMin + i );
+    }
+
   }
 }
 
