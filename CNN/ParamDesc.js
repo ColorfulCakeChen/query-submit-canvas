@@ -10,9 +10,9 @@ class IntegerRange {
    * @param {number} max The maximum value (as integer).
    */
   constructor( min, max ) {
-    this.valueMin = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
-    this.valueMax = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
-    this.valueKinds = ( this.valueMax - this.valueMin ) + 1; // How many possible integer between them.
+    this.min = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
+    this.max = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
+    this.kinds = ( this.max - this.min ) + 1; // How many possible integer between them.
   }
 
   /**
@@ -21,23 +21,19 @@ class IntegerRange {
   adjust( value ) {
     let valueInt = Math.trunc( value ); // Convert to an integer.
 
-//!!! (2021/03/09 Remarked) The result is wierd when min and max have different sign.
-//     // Because remainder always has the same sign as dividend, force the dividend to zeor or positive for processing easily.
-//     let result = valueMin + ( To.IntegerZeroPositive( value ) % valueKinds );
-
-    // Rearrange valueInt between valueMin and valueMax fairly (in probability).
+    // Rearrange valueInt between min and max fairly (in probability).
     //
     // A1: Why not use remainder operator (%) directly?
-    // Q1: Because remainder always has the same sign as dividend, this can not handle the situation which valueMin and
-    //     valueMax have different sign.
+    // Q1: Because remainder always has the same sign as dividend, this can not handle the situation which min and
+    //     max have different sign.
     //
-    // A2: Why not just restrict all value less than valueMin to valueMin and value greater than valueMax to valueMax?
+    // A2: Why not just restrict all value less than min to valueMin and value greater than max to max?
     // Q2: Although this could restrict value in range, it will skew the probability of every value in the range.
-    //     Unfair probability is harmful to evolution algorithm.
+    //     Unfair probability could be harmful to evolution algorithm.
     //
-    let quotient = ( valueInt - this.valueMin ) / this.valueKinds;
+    let quotient = ( valueInt - this.min ) / this.kinds;
     let quotientInt = Math.floor( quotient );  // So that negative value could be handled correctly.
-    let result = valueInt - ( quotientInt * this.valueKinds );
+    let result = valueInt - ( quotientInt * this.kinds );
     return result;
   }
 
@@ -69,22 +65,31 @@ class IntegerRange {
  * @member {Symbol} paramNameKey
  *   The unique key of the parameter. It is defined as Symbol(paramName).
  *
- * @member {string[]} valueNames
- *   The string names of the parameter's all possible values. It is an array of strings. They should be all legal identifers too (i.e. A-Z,
- * a-z, 0-9 (not at first character), and "_"). They will become the properties' names of this.valueNameInteger.
- *
  * @member {IntegerRange} valueIntegerRange
  *   The integer range of the parameter's all possible values. It is an IntegerRange object with ( min = valueIntegerMin )
- * and ( max = valueIntegerMax = valueIntegerMin + ( valueNames.length - 1 ) ) ).
+ * and ( max = valueIntegerMax ).
+ *
+ * @member {string[]} valueNames
+ *   The string names of the parameter's all named values. It is an array of strings. They should be all legal identifers too (i.e. A-Z,
+ * a-z, 0-9 (not at first character), and "_"). They will become the properties' names of this.valueNameInteger. Note that
+ * ( valueNames.length <= valueIntegerRange.kinds ). This means that only first valueNames.length values have names. So, it is possible
+ * that all values are no name (when valueNames[] is empty).
  *
  * @member {number[]} valueIntegers
- *   The integers of the parameter's all possible values.
+ *   The integer values of the parameter's all named values. ( valueIntegers.length == valueNames.length == valueNameInteger.lenth ).
  *
 //!!! ...unfinished... (2021/03/14) named as Ids?
  * @member {Object} valueNameInteger
- *   An object contains the parameter's all possible values. It is just like a Map, but could be accessed by dot (.) operator
+ *   An object contains the parameter's all named values. It is just like a Map, but could be accessed by dot (.) operator
  * (not by .get() method). The this.valueNameInteger.valueName will be valueInteger. Or, the this.valueNameInteger[ valueName ]
- * will be valueInteger.
+ * will be valueInteger. It will be combined with valueNames.length and valueNames[]
+ * to define this.valueNameInteger:
+ *   - this.valueNameInteger[ valueNames[ 0 ] ] = valueIntegers[ 0 ] = ( valueIntegerMin + 0 )
+ *   - this.valueNameInteger[ valueNames[ 1 ] ] = valueIntegers[ 1 ] = ( valueIntegerMin + 1 )
+ *   - ...
+ *   - this.valueNameInteger[ valueNames[ ( valueNames.length - 1 ) ] ]
+ *       = valueIntegers[ valueNames.length - 1 ]
+ *       = ( valueIntegerMin + ( valueNames.length - 1 ) )
  *
  * 
  *
@@ -95,12 +100,7 @@ class Integer {
   /**
    *
    * @param {number} valueIntegerMin
-   *   The first (i.e. minimum) integer of the parameter's all possible values. It will be combined with valueNames.length and valueNames[]
-   * to define this.valueNameInteger:
-   *   - this.valueNameInteger[ valueNames[ 0 ] ] = ( valueIntegerMin + 0 )
-   *   - this.valueNameInteger[ valueNames[ 1 ] ] = ( valueIntegerMin + 1 )
-   *   - ...
-   *   - this.valueNameInteger[ valueNames[ ( valueNames.length - 1 ) ] ] = ( valueIntegerMin + ( valueNames.length - 1 ) )
+   *   The first (i.e. minimum) integer of the parameter's all possible values.
    *
    * @param {number} valueIntegerMax
    *   The last (i.e. maximum) integer of the parameter's all possible values. It should equal ( valueIntegerMin + ( valueNames.length - 1 ) ).
