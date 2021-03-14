@@ -114,25 +114,26 @@ class Base {
  */
 class To {
 
-  /** @return {any} Return the input value directly. */
-  static Same( v ) {
-    return v;
-  }
+//!!! (2021/03/14) become SameRange.
+//   /** @return {any} Return the input value directly. */
+//   static Same( v ) {
+//     return v;
+//   }
 
   /** @return {number} Return the absolute value of the trucated value (i.e. integer). */
   static IntegerZeroPositive( v ) {
     return Math.abs( Math.trunc( v ) );
   }
 
-//!!! (2021/03/14) Perhaps, could be replaced by IntegerRange( 0, 1 )?
-  /** @return {boolean} Convert number value into false or true. */
-  static Boolean( value ) {
-    // If value is not an integer, the remainder will always not zero. So convert it to integer first.
-    //
-    // According to negative or positive, the remainder could be one of [ -1, 0, +1 ].
-    // So simply check it whether is 0 (instead of check both -1 and +1), could result in false or true.
-    return ( ( Math.trunc( value ) % 2 ) != 0 );
-  }
+//!!! (2021/03/14) become BooleanRange.
+//   /** @return {boolean} Convert number value into false or true. */
+//   static Boolean( value ) {
+//     // If value is not an integer, the remainder will always not zero. So convert it to integer first.
+//     //
+//     // According to negative or positive, the remainder could be one of [ -1, 0, +1 ].
+//     // So simply check it whether is 0 (instead of check both -1 and +1), could result in false or true.
+//     return ( ( Math.trunc( value ) % 2 ) != 0 );
+//   }
 
   /**
    * @param {any[]} lookUpArray
