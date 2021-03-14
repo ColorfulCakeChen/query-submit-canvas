@@ -73,23 +73,19 @@ class IntegerRange {
  *   The string names of the parameter's all named values. It is an array of strings. They should be all legal identifers too (i.e. A-Z,
  * a-z, 0-9 (not at first character), and "_"). They will become the properties' names of this.valueNameInteger. Note that
  * ( valueNames.length <= valueIntegerRange.kinds ). This means that only first valueNames.length values have names. So, it is possible
- * that all values are no name (when valueNames[] is empty).
+ * that all values are no names (when valueNames[] is empty).
  *
  * @member {number[]} valueIntegers
  *   The integer values of the parameter's all named values. ( valueIntegers.length == valueNames.length == valueNameInteger.lenth ).
  *
-//!!! ...unfinished... (2021/03/14) named as Ids?
- * @member {Object} valueNameInteger
+ * @member {Object} Ids
  *   An object contains the parameter's all named values. It is just like a Map, but could be accessed by dot (.) operator
- * (not by .get() method). The this.valueNameInteger.valueName will be valueInteger. Or, the this.valueNameInteger[ valueName ]
- * will be valueInteger. It will be combined with valueNames.length and valueNames[]
- * to define this.valueNameInteger:
- *   - this.valueNameInteger[ valueNames[ 0 ] ] = valueIntegers[ 0 ] = ( valueIntegerMin + 0 )
- *   - this.valueNameInteger[ valueNames[ 1 ] ] = valueIntegers[ 1 ] = ( valueIntegerMin + 1 )
+ * (not by .get() method). The this.Ids.valueName will be valueInteger. Or, the this.Ids[ valueName ]
+ * will be valueInteger. That is:
+ *   - this.Ids[ valueNames[ 0 ] ] = valueIntegers[ 0 ] = ( valueIntegerMin + 0 )
+ *   - this.Ids[ valueNames[ 1 ] ] = valueIntegers[ 1 ] = ( valueIntegerMin + 1 )
  *   - ...
- *   - this.valueNameInteger[ valueNames[ ( valueNames.length - 1 ) ] ]
- *       = valueIntegers[ valueNames.length - 1 ]
- *       = ( valueIntegerMin + ( valueNames.length - 1 ) )
+ *   - this.Ids[ valueNames[ ( valueNames.length - 1 ) ] ] = valueIntegers[ valueNames.length - 1 ] = ( valueIntegerMin + ( valueNames.length - 1 ) )
  *
  * 
  *
@@ -107,22 +103,26 @@ class Integer {
    */
   constructor( paramName, valueIntegerMin, valueIntegerMax, valueNames ) {
     this.paramName = paramName;
+
+    if ( !valueNames )
+      valueNames = []; // ( valueNames == null ), means all values are no names.
+
     this.valueNames = valueNames;
 
     this.paramNameKey = Symbol( paramName );
     this.valueIntegerRange = new IntegerRange( valueIntegerMin, valueIntegerMax );
 
-    If ( valueIntegerMax != ( valueIntegerMin + ( valueNames.length - 1 ) ) ) {
-      let errMsg = `ParamDescInteger: ( valueIntegerMax = ${valueIntegerMax} )`
-        + ` should equal ( valueIntegerMin + ( valueNames.length - 1 ) ) = ( ${valueIntegerMin} + ( ${valueNames.length} - 1 ) )`;
-      throw errMsg;
-    }
+//!!! (2021/03/14 Remarked) It is possible and legal.
+//     If ( valueIntegerMax != ( valueIntegerMin + ( valueNames.length - 1 ) ) ) {
+//       let errMsg = `ParamDescInteger: ( valueIntegerMax = ${valueIntegerMax} )`
+//         + ` should equal ( valueIntegerMin + ( valueNames.length - 1 ) ) = ( ${valueIntegerMin} + ( ${valueNames.length} - 1 ) )`;
+//       throw errMsg;
+//     }
 
-    this.valueIntegers = new Array( valueNames.length );
-    this.valueNameInteger = {};
+    this.valueIntegers = new Array( valueNames.length ); // ( valueNames.length <= valueIntegerRange.kinds )
+    this.Ids = {};
     for ( let i = 0; i < valueNames.length; ++i ) {
-//!!! ...unfinished... (2021/03/14) Ids???
-      this.valueNameInteger[ valueNames[ i ] ] = this.valueIntegers[ i ] = ( valueIntegerMin + i );
+      this.Ids[ valueNames[ i ] ] = this.valueIntegers[ i ] = ( valueIntegerMin + i );
     }
 
   }
