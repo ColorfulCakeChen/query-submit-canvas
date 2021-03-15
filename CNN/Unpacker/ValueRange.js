@@ -21,7 +21,7 @@ class Same {
   }
 }
 
-/** The only one ParamRange.Same instance. */
+/** The only one ValueRange.Same instance. */
 Same.Singleton = new Same;
 
 
@@ -41,7 +41,7 @@ class Bool extends Same {
 
 }
 
-/** The only one ParamRange.Bool instance. */
+/** The only one ValueRange.Bool instance. */
 Bool.Singleton = new Bool;
 
 
