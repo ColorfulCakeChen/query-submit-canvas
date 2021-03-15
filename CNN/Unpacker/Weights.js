@@ -116,26 +116,10 @@ class Base {
  */
 class To {
 
-//!!! (2021/03/14) become SameRange.
-//   /** @return {any} Return the input value directly. */
-//   static Same( v ) {
-//     return v;
-//   }
-
   /** @return {number} Return the absolute value of the trucated value (i.e. integer). */
   static IntegerZeroPositive( v ) {
     return Math.abs( Math.trunc( v ) );
   }
-
-//!!! (2021/03/14) become BooleanRange.
-//   /** @return {boolean} Convert number value into false or true. */
-//   static Boolean( value ) {
-//     // If value is not an integer, the remainder will always not zero. So convert it to integer first.
-//     //
-//     // According to negative or positive, the remainder could be one of [ -1, 0, +1 ].
-//     // So simply check it whether is 0 (instead of check both -1 and +1), could result in false or true.
-//     return ( ( Math.trunc( value ) % 2 ) != 0 );
-//   }
 
   /**
    * @param {any[]} lookUpArray
@@ -158,10 +142,9 @@ class To {
  * The parameters for the weights of a neural network layer.
  *
  * @member {Map} parameterMapModified
- *   All parameters provided by this object. Its entry is [ key, value ]. The key of the entry [ key, value ] is the same as
- * the key of the init()'s parameterMap. The value of the entry [ key, value ] is parameter_value
- * (i.e. not [ parameter_value, parameter_converter ] ) which is combined from the parameter_value of the init()'s parameterMap
- * and inputFloat32Array (or fixedWeights).
+ *   All parameters provided by this object. Its entry is [ key, value ]. The key of the entry [ key, value ] is a ParamDesc.Xxx object
+ * (the same as the key of the init()'s parameterMap). The value of the entry [ key, value ] is adjusted parameter value
+ * which is combined from the value of the init()'s parameterMap and inputFloat32Array (or fixedWeights).
  *
  * @member {number} parameterCountExtracted
  *   How many parameters are extracted from inputFloat32Array or fixedWeights in fact. Only existed if init()
@@ -171,18 +154,9 @@ class To {
  *   Always ( parameterMap.size ). This is the total parameter count provided by this object
  * if init() successfully.
  *
- * @member {number} inChannels
- *   The input channel count of this neural network layer.
- *
- * @member {number} channelMultiplier
- *   Every input channel will be expanded into how many channels.
- *
- * @member {number} outChannels
- *   The output channel count of this neural network layer.
- *
  * @member {Float32Array} weightsModified
- *  The copied extracted values. They are copied from inputFloat32Array or fixedWeights, and then converted
- * to positive integer. Its length will be the same as parameterCountExtracted.
+ *  The copied extracted values. They are copied from inputFloat32Array or fixedWeights, and then adjusted by
+ * ParamDesc.valueDesc.range.adjust(). Its length will be the same as parameterCountExtracted.
  */
 class Params extends Base {
 
@@ -239,38 +213,6 @@ class Params extends Base {
     {
       let i = 0;
 
-//!!! (2021/03/15 Remarked) call XxxDesc.range.adjust()
-//       let parameterValue, parameterAdjuster;
-//       for ( let [ key, value_and_adjuster ] of parameterMap ) {
-//
-//         // A null (or undefined) value_and_adjuster means it should be extracted from inputFloat32Array or fixedWeights,
-//         // and using To.Same() as adjuster function. (i.e. by evolution)
-//         if ( null == value_and_adjuster ) {
-//           parameterValue = null;
-//           parameterAdjuster = To.Same;
-//         } else {
-//           parameterValue = value_and_adjuster[ 0 ];
-//           parameterAdjuster = value_and_adjuster[ 1 ];
-//         }
-//
-//         // Always should have adjuster function. At least, using the-same-value function.
-//         if ( null == parameterAdjuster )
-//           parameterAdjuster = To.Same;
-//
-//         // A null parameterValue means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
-//         //
-//         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
-//         if ( null == parameterValue ) {
-//           // Record the index (into this.weightsModified[]) and the adjuster.
-//           arrayIndexMap.set( key, { arrayIndex: i, adjusterFunction: parameterAdjuster } );
-//           ++i;
-//         } else {
-//           // A non-null value means it is the parameter's value (after adjusted).
-//           let adjustedValue = parameterAdjuster( parameterValue );
-//           this.parameterMapModified.set( key, adjustedValue );
-//         }
-//       }
-
       for ( let [ paramDesc, value ] of parameterMap ) {
 
         // A null value means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
@@ -278,7 +220,9 @@ class Params extends Base {
         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
         if ( null == value ) {
           // Record the index (into this.weightsModified[]) and the adjuster.
-          arrayIndexMap.set( paramDesc.key, { arrayIndex: i, paramDesc: paramDesc } );
+//!!! (2021/03/15 Remarked) Using paramDesc as key directly.
+//          arrayIndexMap.set( paramDesc.key, { arrayIndex: i, paramDesc: paramDesc } );
+          arrayIndexMap.set( paramDesc, i );
           ++i;
         } else {
           // A non-null value means it is the parameter's value (which should also be adjusted).
@@ -312,17 +256,17 @@ class Params extends Base {
     // another neural network layer configuration.
     this.weightsModified = new Float32Array( this.weights.length );
 
-//!!! (2021/03/15 Remarked) call XxxDesc.range.adjust()
+//!!! (2021/03/15 Remarked) Using paramDesc as key directly.
 //     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
-//     for ( let [ key, { arrayIndex, adjusterFunction } ] of arrayIndexMap ) {
+//     for ( let [ key, { arrayIndex, paramDesc } ] of arrayIndexMap ) {
 //       let extractedValue = this.weights[ arrayIndex ];
-//       let adjustedValue = adjusterFunction( extractedValue );
+//       let adjustedValue = paramDesc.valueDesc.range.adjust( extractedValue );
 //       this.weightsModified[ arrayIndex ] = adjustedValue;  // Record in array.
 //       this.parameterMapModified.set( key, adjustedValue ); // Record in map, too.
 //     }
 
     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
-    for ( let [ key, { arrayIndex, paramDesc } ] of arrayIndexMap ) {
+    for ( let [ paramDesc, arrayIndex ] of arrayIndexMap ) {
       let extractedValue = this.weights[ arrayIndex ];
       let adjustedValue = paramDesc.valueDesc.range.adjust( extractedValue );
       this.weightsModified[ arrayIndex ] = adjustedValue;  // Record in array.
