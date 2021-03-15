@@ -1,7 +1,8 @@
 export { Params, Base };
 
 import * as ValueMax from "../ValueMax.js";
-import * as Weights from "../Weights.js";
+import * as ParamDesc from "../Unpacker/ParamDesc.js";
+import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone from "./ReturnOrClone.js";
 
 /**
@@ -24,40 +25,23 @@ class Params extends Weights.Params {
 // squeeze-and-excitation ?
 
     let parameterMap = new Map( [
-      [ Params.Keys.channelMultiplier, [ channelMultiplier, Params.To.ChannelMultiplier ] ],
+      [ Params.channelMultiplier, channelMultiplier ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
-  get channelMultiplier() { return this.parameterMapModified.get( Params.Keys.channelMultiplier ); }
+  get channelMultiplier() { return this.parameterMapModified.get( Params.channelMultiplier ); }
 }
 
-/** Define parameter converter helper. */
-Params.To = class {
-
-//!!! (2021/03/10 Remarked)
-  /** @return {number} Convert number value into an integer between [ 1, 32 ]. */
-  static ChannelMultiplier( value ) {
-    return Params.channelMultiplier.Range.adjust( value );
-  }
-
-}
-
-/** Define parameter keys.
- *
- * They are (static) symbol objects used as keys of Params.init()'s parameterMap. They can be seen inside Map when
- * debugging, and are faster than string (or String object) when Map's key comparing.
- */
-Params.Keys = {};
-Params.Keys.channelMultiplier = Symbol("channelMultiplier");
 
 /** Define channelMultiplier value range.
+ *
  * At least 1, because channel count 0 is meaningless.
  * Avoid too large vocabulary channel multiplier. Otherwise, performance may be poor.
  */
-Params.channelMultiplier = {};
-Params.channelMultiplier.Range = new Weights.IntegerRange( 1, 32 );
+Params.channelMultiplier = new ParamDesc.Int( "channelMultiplier", 1, 32 );
+
 
 /**
  * Embedding could achieve non-linear mapping (just like any perceptron). But it is achieved by lookup table (instead
