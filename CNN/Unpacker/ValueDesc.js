@@ -20,6 +20,9 @@ class Same {
   }
 }
 
+/** The only one ValueDesc.Same instance. */
+Same.Singleton = new Same;
+
 
 /**
  * Describe some properties of a boolean parameter.
@@ -37,6 +40,9 @@ class Bool {
     this.range = ValueRange.Bool.Singleton;
   }
 }
+
+/** The only one ValueDesc.Bool instance. */
+Bool.Singleton = new Bool;
 
 
 //!!! ...unfinished... (2021/03/14)
