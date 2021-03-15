@@ -1,7 +1,8 @@
 export { Base, To, Params };
 
 // import * as ParamDesc from "./ParamDesc.js";
-// import * as ParamRange from "./ParamRange.js";
+// import * as ValueDesc from "./ValueDesc.js";
+// import * as ValueRange from "./ValueRange.js";
 
 /**
  * A base class for extracting and keeping weights. It composes of a Float32Array and a shape. It can
@@ -197,16 +198,14 @@ class Params extends Base {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
-
-//!!! ...unfinished... (2021/03/14) the value should be one of ParamDesc.Same, ParamDesc.Int, ParamDesc.Bool
-
    * @param {Map} parameterMap
    *   Describe what parameters to be used or extracted.
-   *   - The key of this parameterMap's entry [ key, value ] should be a ParamDesc.Xxx object (one of ParamDesc.Same,
-   *      ParamDesc.Bool, ParamDesc.Int) describing the parameter.
+   *   - The key of this parameterMap's entry [ key, value ] should be a ParamDesc.Xxx object (one of ParamDesc.Base,
+   *       ParamDesc.Same, ParamDesc.Bool) describing the parameter.
    *
-   *     - The key.range should be a ParamRange.Xxx object (one of ParamRange.Same, ParamRange.Bool, ParamRange.Int).
-   *       The key.range.adjust() is a function for adjusting the parameter value.
+   *     - The key.valueDesc should be a ValueDesc.Xxx object (one of ValueDesc.Same, ValueDesc.Bool, ValueDesc.Int).
+   *       The key.valueDesc.range should be a ValueRange.Xxx object (one of ValueRange.Same, ValueRange.Bool, ValueRange.Int).
+   *       The key.valueDesc.range.adjust() is a function for adjusting the parameter value.
    *
    *   - The value of this parameterMap's entry [ key, value ]:
    *
@@ -214,7 +213,7 @@ class Params extends Base {
    *       value. (i.e. by specifying)
    *
    *     - If ( null == value ), the parameter will be extracted from inputFloat32Array (or fixedWeights).The
-   *       returned value of key.range.adjust( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
+   *       returned value of key.valueDesc.range.adjust( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
    *
    * @param {(Float32Array|number[])} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
@@ -283,7 +282,7 @@ class Params extends Base {
           ++i;
         } else {
           // A non-null value means it is the parameter's value (which should also be adjusted).
-          let adjustedValue = paramDesc.range.adjust( value );
+          let adjustedValue = paramDesc.valueDesc.range.adjust( value );
           this.parameterMapModified.set( paramDesc, adjustedValue );
         }
       }
@@ -325,7 +324,7 @@ class Params extends Base {
     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
     for ( let [ key, { arrayIndex, paramDesc } ] of arrayIndexMap ) {
       let extractedValue = this.weights[ arrayIndex ];
-      let adjustedValue = paramDesc.range.adjust( extractedValue );
+      let adjustedValue = paramDesc.valueDesc.range.adjust( extractedValue );
       this.weightsModified[ arrayIndex ] = adjustedValue;  // Record in array.
       this.parameterMapModified.set( key, adjustedValue ); // Record in map, too.
     }
