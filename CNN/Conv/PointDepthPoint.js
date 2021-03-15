@@ -1,15 +1,16 @@
 export { Params, Base };
 
 import * as ValueMax from "../ValueMax.js";
-// import * as ParamDesc from "../Unpacker/ParamDesc.js";
-// import * as Weights from "../Weights.js";
-import * as Unpacker from "../Unpacker.js";
+//import * as ValueRange from "../Unpacker/ValueRange.js";
+import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as ParamDesc from "../Unpacker/ParamDesc.js";
+import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone from "./ReturnOrClone.js";
 
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
  */
-class Params extends Unpacker.Weights.Params {
+class Params extends Weights.Params {
 
   /**
    * If parameter's value is null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -29,89 +30,57 @@ class Params extends Unpacker.Weights.Params {
 // squeeze-and-excitation ?
 
     let parameterMap = new Map( [
-      [ Params.Keys.pointwise1ChannelCount,                [ pointwise1ChannelCount,                Params.To.Pointwise1ChannelCount ] ],
-      [ Params.Keys.bPointwise1Bias,                       [ bPointwise1Bias,                       Weights.To.Boolean ] ],
-      [ Params.Keys.pointwise1ActivationId,                [ pointwise1ActivationId,                Params.To.ActivationId ] ],
-      [ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier, [ depthwise_AvgMax_Or_ChannelMultiplier, Params.To.Depthwise_AvgMax_Or_ChannelMultiplier ] ],
-      [ Params.Keys.depthwiseFilterHeight,                 [ depthwiseFilterHeight,                 Params.To.DepthwiseFilterHeight ] ],
-      [ Params.Keys.depthwiseStridesPad,                   [ depthwiseStridesPad,                   Params.To.DepthwiseStridesPad ] ],
-      [ Params.Keys.bDepthwiseBias,                        [ bDepthwiseBias,                        Weights.To.Boolean ] ],
-      [ Params.Keys.depthwiseActivationId,                 [ depthwiseActivationId,                 Params.To.ActivationId ] ],
-      [ Params.Keys.pointwise2ChannelCount,                [ pointwise2ChannelCount,                Params.To.Pointwise2ChannelCount ] ],
-      [ Params.Keys.bPointwise2Bias,                       [ bPointwise2Bias,                       Weights.To.Boolean ] ],
-      [ Params.Keys.pointwise2ActivationId,                [ pointwise2ActivationId,                Params.To.ActivationId ] ],
-      [ Params.Keys.bAddInputToOutput,                     [ bAddInputToOutput,                     Weights.To.Boolean ] ],
+      [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
+      [ Params.bPointwise1Bias,                       bPointwise1Bias ],
+      [ Params.pointwise1ActivationId,                pointwise1ActivationId ],
+      [ Params.depthwise_AvgMax_Or_ChannelMultiplier, depthwise_AvgMax_Or_ChannelMultiplier ],
+      [ Params.depthwiseFilterHeight,                 depthwiseFilterHeight ],
+      [ Params.depthwiseStridesPad,                   depthwiseStridesPad ],
+      [ Params.bDepthwiseBias,                        bDepthwiseBias ],
+      [ Params.depthwiseActivationId,                 depthwiseActivationId ],
+      [ Params.pointwise2ChannelCount,                pointwise2ChannelCount ],
+      [ Params.bPointwise2Bias,                       bPointwise2Bias ],
+      [ Params.pointwise2ActivationId,                pointwise2ActivationId ],
+      [ Params.bAddInputToOutput,                     bAddInputToOutput ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
-  get pointwise1ChannelCount()                { return this.parameterMapModified.get( Params.Keys.pointwise1ChannelCount ); }
-  get bPointwise1Bias()                       { return this.parameterMapModified.get( Params.Keys.bPointwise1Bias ); }
-  get pointwise1ActivationId()                { return this.parameterMapModified.get( Params.Keys.pointwise1ActivationId ); }
+  get pointwise1ChannelCount()                { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
+  get bPointwise1Bias()                       { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
+  get pointwise1ActivationId()                { return this.parameterMapModified.get( Params.pointwise1ActivationId ); }
 
-  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier ); }
-  get depthwiseFilterHeight()                 { return this.parameterMapModified.get( Params.Keys.depthwiseFilterHeight ); }
-  get depthwiseStridesPad()                   { return this.parameterMapModified.get( Params.Keys.depthwiseStridesPad ); }
-  get bDepthwiseBias()                        { return this.parameterMapModified.get( Params.Keys.bDepthwiseBias ); }
-  get depthwiseActivationId()                 { return this.parameterMapModified.get( Params.Keys.depthwiseActivationId ); }
+  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
+  get depthwiseFilterHeight()                 { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
+  get depthwiseStridesPad()                   { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
+  get bDepthwiseBias()                        { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
+  get depthwiseActivationId()                 { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
 
-  get pointwise2ChannelCount()                { return this.parameterMapModified.get( Params.Keys.pointwise2ChannelCount ); }
-  get bPointwise2Bias()                       { return this.parameterMapModified.get( Params.Keys.bPointwise2Bias ); }
-  get pointwise2ActivationId()                { return this.parameterMapModified.get( Params.Keys.pointwise2ActivationId ); }
+  get pointwise2ChannelCount()                { return this.parameterMapModified.get( Params.pointwise2ChannelCount ); }
+  get bPointwise2Bias()                       { return this.parameterMapModified.get( Params.bPointwise2Bias ); }
+  get pointwise2ActivationId()                { return this.parameterMapModified.get( Params.pointwise2ActivationId ); }
 
-  get bAddInputToOutput()                     { return this.parameterMapModified.get( Params.Keys.bAddInputToOutput ); }
+  get bAddInputToOutput()                     { return this.parameterMapModified.get( Params.bAddInputToOutput ); }
 }
 
-/** Define parameter converter helper. */
-Params.To = class {
 
-  /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
-  static Pointwise1ChannelCount( value ) { return Params.pointwise1ChannelCount.Range.adjust( value ); }
+// Define parameter descriptions.
 
-  /** @return {number} Convert number value into an integer between [ 0, 10 * 1024 ]. */
-  static Pointwise2ChannelCount( value ) { return Params.pointwise1ChannelCount.Range.adjust( value  ); }
+Params.pointwise1ChannelCount = new ParamDesc.Int(                "pointwise1ChannelCount", 0, ( 10 * 1024 ) );
+Params.bPointwise1Bias =        new ParamDesc.Bool(               "bPointwise1Bias" );
+Params.pointwise1ActivationId = new ParamDesc.ActivationFunction( "pointwise1ActivationId" );
 
-  /**
-   * @return {number}
-   *   Convert number value an integer between [ 0, 6 ]. It could be used as array index to looked up activation function name string.
-   */
-  static ActivationId( value ) { return Params.Activation.Ids.Range.adjust( value ); }
-
-  /**
-   * @return {number}
-   *   Convert number value into integer between [ -2, 32 ] representing depthwise operation:
-   *   - -1: average pooling.
-   *   - -2: maximum pooling.
-   *   -  0: no depthwise operation.
-   *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
-   */
-  static Depthwise_AvgMax_Or_ChannelMultiplier( value ) { return Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.Range.adjust( value ); }
-
-  /** @return {number} Convert number value into an integer suitable for depthwise convolution filter size [ 1, 9 ]. */
-  static DepthwiseFilterHeight( value ) { return Params.depthwiseFilterHeight.Range.adjust( value ); }
-
-  /** @return {number} Convert number value into an integer between [ 0, 2 ]. */
-  static DepthwiseStridesPad( value ) { return Params.depthwiseStridesPad.Range.adjust( value ); }
-}
-
-//!!! (2021/03/10 Remarked) Using all number depthwise id instead.
-// /** Define parameter converter helper data. */
-// Params.To.Data = {};
-//
-// //!!! (2021/03/08) ...unfinished... String can not be put back into Float32Array.
-//
-//!!! (2021/03/10 Remarked) Using all number depthwise id instead.
-// // "64" is possible channel multiplier kinds (1 to 64). Avoid too large channel multiplier. Otherwise, performance may be poor.
-// // "+1" is for channel multiplier equals 0 (means no depthwise operation).
-// Params.To.Data.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ).keys(), "Avg", "Max" ];
-
-/** Define parameter descriptions. */
-Params.pointwise1ChannelCount =      new Unpacker.ParamDesc.Int(  "pointwise1ChannelCount", 0, ( 10 * 1024 ) );
-Params.bPointwise1Bias =             new Unpacker.ParamDesc.Bool( "bPointwise1Bias" );
-Params.Keys.pointwise1ActivationId =                Symbol("pointwise1ActivationId");
-
-Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier = Symbol("depthwise_AvgMax_Or_ChannelMultiplier");
+/** Define depthwise operation's id, range, name.
+ *
+ * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
+ *   - -1: average pooling. (AVG)
+ *   - -2: maximum pooling. (MAX)
+ *   -  0: no depthwise operation. (NONE)
+ *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
+ */
+Params.depthwise_AvgMax_Or_ChannelMultiplier
+  = new ParamDesc.Base("depthwise_AvgMax_Or_ChannelMultiplier"), new ValueDesc.Int( -2, 32, [ "AVG", "MAX", "NONE" ] );
 
 /** Define suitable value for depthwise convolution filter size.
  *
@@ -122,60 +91,19 @@ Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier = Symbol("depthwise_AvgMax_Or_
  *
  * Avoid too large filter size. Otherwise, performance may be poor.
  */
-Params.depthwiseFilterHeight =     new Unpacker.ParamDesc.Int( "depthwiseFilterHeight", 1, 9 );
+Params.depthwiseFilterHeight =  new ParamDesc.Int( "depthwiseFilterHeight", 1, 9 );
 
 /** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
-Params.depthwiseStridesPad =       new Unpacker.ParamDesc.Int( "depthwiseStridesPad",   0, 2 );
+Params.depthwiseStridesPad =    new ParamDesc.Int( "depthwiseStridesPad",   0, 2 );
 
-Params.bDepthwiseBias =            new Unpacker.ParamDesc.Bool( "bDepthwiseBias" );
-Params.Keys.depthwiseActivationId =                 Symbol("depthwiseActivationId");
+Params.bDepthwiseBias =         new ParamDesc.Bool(               "bDepthwiseBias" );
+Params.depthwiseActivationId =  new ParamDesc.ActivationFunction( "depthwiseActivationId" );
 
-Params.pointwise2ChannelCount =                new Unpacker.ParamDesc.Int(  "pointwise2ChannelCount", 0, ( 10 * 1024 ) );
-Params.bPointwise2Bias =                       new Unpacker.ParamDesc.Bool( "bPointwise2Bias" );
-Params.Keys.pointwise2ActivationId =                Symbol("pointwise2ActivationId");
-Params.Keys.bAddInputToOutput =                     Symbol("bAddInputToOutput");
+Params.pointwise2ChannelCount = new ParamDesc.Int(                "pointwise2ChannelCount", 0, ( 10 * 1024 ) );
+Params.bPointwise2Bias =        new ParamDesc.Bool(               "bPointwise2Bias" );
+Params.pointwise2ActivationId = new ParamDesc.ActivationFunction( "pointwise2ActivationId" );
 
-//!!! ...unfinished... (2021/03/11)
-// Could define a class contains one parameter's key (symbol), range (and adjuster), ids (string?-number), idToNameMap (number-string), nameToIdMap (string-number)?
-// But all parameters' keys should be browsable by iterator.
-//
-// ids is already a kinds of string-number. Perhaps, nameToIdMap should be derived from ids automatically.
-//
-// Where is Functions?
-
-//!!! (2021/03/15 Remarked) defined as ValueDesc.
-// /** Define activation's id, name, function. */
-// Params.Activation = {};
-// Params.Activation.Ids =       {  NONE: 0, RELU: 1, RELU6: 2, SIGMOID: 3, TANH: 4, SIN: 5, COS: 6 };
-// Params.Activation.Names =     [ "(none)",  "relu",  "relu6",  "sigmoid",  "tanh",  "sin",  "cos" ];
-// Params.Activation.Functions = [     null, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ];
-// Params.Activation.Ids.Range = new Weights.IntegerRange( 0, ( Params.Activation.Functions.length - 1 ) );
-
-//!!! ...unfinished... (2021/03/15) should share ValueDesc between different paramKey
-/** Define activation's id, name, function. */
-Params.Activation = new ValueDesc.Int( 0, 6,
-  [ "NONE",  "RELU",  "RELU6",  "SIGMOID",  "TANH",  "SIN",  "COS" ],
-  [   null, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ] );
-
-/** Define depthwise operation's id, name. */
-Params.depthwise_AvgMax_Or_ChannelMultiplier = {};
-//!!! ...unfinished... (2021/03/10) may define keys with 1 to 32.
-Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids = { AVG: -2, MAX: -1, NONE: 0 };
-Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.Range = new Weights.IntegerRange( -2, 32 );
-//!!! ...unfinished... (2021/03/10) may define keys with 1 to 32.
-//??? should use ids' name (not another string).
-Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNameMap = new Map( [
-  [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG,     "avg" ],
-  [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX,     "max" ],
-  [ Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE, "(none)" ],
-] );
-//!!! ...unfinished... (2021/03/11) may define keys with 1 to 32.
-// Params.depthwise_AvgMax_Or_ChannelMultiplier.NameToIdMap = new Map( [
-//   [ "avg",    Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG ],
-//   [ "max",    Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX ],
-// //!!! ...unfinished... ???
-//   [ "(none)", Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE ],
-// ] );
+Params.bAddInputToOutput =      new ParamDesc.Bool("bAddInputToOutput");
 
 
 /**
