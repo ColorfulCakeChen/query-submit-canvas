@@ -1,4 +1,4 @@
-export { Base, Same, Bool, Int };
+export { Base, Same, Bool, Int, ActivationFunction };
 
 import * as ValueDesc from "./ValueDesc.js";
 
