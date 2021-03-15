@@ -1,6 +1,43 @@
-export { Int };
+export { Same, Bool, Int };
 
 import * as ValueRange from "./ValueRange.js";
+
+
+/**
+ * Describe some properties of a non-converting parameter.
+ *
+ * @member {ValueRange.Same} range
+ *   The range of the parameter's all possible values. It is a ValueRange.Same object.
+ *
+ */
+class Same {
+
+  /**
+   *
+   */
+  constructor() {
+    this.range = ValueRange.Same.Singleton;
+  }
+}
+
+
+/**
+ * Describe some properties of a boolean parameter.
+ *
+ * @member {ValueRange.Bool} range
+ *   The boolean range of the parameter's all possible values. It is a ValueRange.Bool object.
+ *
+ */
+class Bool {
+
+  /**
+   *
+   */
+  constructor() {
+    this.range = ValueRange.Bool.Singleton;
+  }
+}
+
 
 //!!! ...unfinished... (2021/03/14)
 // Could define a class contains one parameter's key (symbol), range (and adjuster), ids (string?-number), idToNameMap (number-string), nameToIdMap (string-number)?
@@ -13,8 +50,8 @@ import * as ValueRange from "./ValueRange.js";
 /**
  * Describe some properties of an integer parameter.
  *
- * @member {ParamRange.Int} range
- *   The integer range of the parameter's all possible values. It is an IntegerRange object with ( min = valueIntegerMin )
+ * @member {ValueRange.Int} range
+ *   The integer range of the parameter's all possible values. It is an ValueRange.Int object with ( min = valueIntegerMin )
  * and ( max = valueIntegerMax ).
  *
  * @member {string[]} valueNames
