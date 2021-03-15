@@ -57,13 +57,13 @@ class HeightWidthDepth {
     this.testCases = [
       new PointDepthPoint_Reference.TestCase(
         [
-          2.1,  1.1, ValueDesc.ActivationFunction.Ids.COS + 0.1,
-          2.1,  3.1, 3.1,  3.2, ValueDesc.ActivationFunction.Ids.RELU + 0.2,
-            8,  5.3, ValueDesc.ActivationFunction.Ids.SIN + 0.3,  7.4 ], // paramsInArray
+          2.1,  1.1, Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+          2.1,  3.1, 3.1,  3.2, Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
+            8,  5.3, Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,  7.4 ], // paramsInArray
 
-        [   2, true, ValueDesc.ActivationFunction.Ids.COS,
-            2,    3,  0, true, ValueDesc.ActivationFunction.Ids.RELU,
-            8, true, ValueDesc.ActivationFunction.Ids.SIN,       true ], // paramsOutArray
+        [   2, true, Params.pointwise1ActivationId.valueDesc.Ids.COS,
+            2,    3,  0, true, Params.depthwiseActivationId.valueDesc.Ids.RELU,
+            8, true, Params.pointwise1ActivationId.valueDesc.Ids.SIN,       true ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
