@@ -55,6 +55,7 @@ class Int extends Same {
    * @param {number} max The maximum value (as integer).
    */
   constructor( min, max ) {
+    super();
     this.min = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
     this.max = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
     this.kinds = ( this.max - this.min ) + 1; // How many possible integer between them.
