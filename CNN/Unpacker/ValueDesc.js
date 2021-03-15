@@ -132,3 +132,6 @@ class ActivationFunction extends Int {
   }
 
 }
+
+/** The only one ValueDesc.ActivationFunction instance. */
+ActivationFunction.Singleton = new ActivationFunction;
