@@ -1,6 +1,7 @@
 export { Base, To, Params };
 
-//import * as ParamDesc from "./ParamDesc.js";
+// import * as ParamDesc from "./ParamDesc.js";
+// import * as ParamRange from "./ParamRange.js";
 
 /**
  * A base class for extracting and keeping weights. It composes of a Float32Array and a shape. It can
@@ -197,22 +198,23 @@ class Params extends Base {
    * (not to the inputFloat32Array.byteOffset).
    *
 
-//!!! ...unfinished... (2021/03/14) the value should be one of ParamDesc.SameDesc, ParamDesc.IntegerDesc, ParamDesc.BooleanDesc
+//!!! ...unfinished... (2021/03/14) the value should be one of ParamDesc.Same, ParamDesc.Int, ParamDesc.Bool
 
    * @param {Map} parameterMap
    *   Describe what parameters to be used or extracted.
-   *   - The key of this parameterMap's entry [ key, value ] will be viewed as parameter name.
-   *   - The value of this parameterMap's entry [ key, value ] should be an array [ parameterValue, parameterAdjuster ].
-   *     - If ( null == value ), it will be viewed as an array [ parameterValue, parameterAdjuster ] = [ null, To.Same ].
+   *   - The key of this parameterMap's entry [ key, value ] should be a ParamDesc.Xxx object (one of ParamDesc.Same,
+   *      ParamDesc.Bool, ParamDesc.Int) describing the parameter.
    *
-   *     - The parameterAdjuster is a function for adjusting the parameter value. If ( null == parameterAdjuster ),
-   *       the To.Same() will be used as adjuster function.
+   *     - The key.range should be a ParamRange.Xxx object (one of ParamRange.Same, ParamRange.Bool, ParamRange.Int).
+   *       The key.range.adjust() is a function for adjusting the parameter value.
    *
-   *     - If ( null != parameterValue ), the returned value of parameterAdjuster( parameterValue ) will be used as the
-   *       parameter's value. (i.e. by specifying)
+   *   - The value of this parameterMap's entry [ key, value ]:
    *
-   *     - If ( null == parameterValue ), the parameter will be extracted from inputFloat32Array (or fixedWeights).The
-   *       returned value of parameterAdjuster( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
+   *     - If ( null != value ), the returned value of key.range.adjust( value ) will be used as the parameter's
+   *       value. (i.e. by specifying)
+   *
+   *     - If ( null == value ), the parameter will be extracted from inputFloat32Array (or fixedWeights).The
+   *       returned value of key.range.adjust( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
    *
    * @param {(Float32Array|number[])} fixedWeights
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
@@ -238,36 +240,51 @@ class Params extends Base {
     {
       let i = 0;
 
-//!!! ...unfinished... (2021/03/14) call XxxDesc.adjust()
+//!!! (2021/03/15 Remarked) call XxxDesc.range.adjust()
+//       let parameterValue, parameterAdjuster;
+//       for ( let [ key, value_and_adjuster ] of parameterMap ) {
+//
+//         // A null (or undefined) value_and_adjuster means it should be extracted from inputFloat32Array or fixedWeights,
+//         // and using To.Same() as adjuster function. (i.e. by evolution)
+//         if ( null == value_and_adjuster ) {
+//           parameterValue = null;
+//           parameterAdjuster = To.Same;
+//         } else {
+//           parameterValue = value_and_adjuster[ 0 ];
+//           parameterAdjuster = value_and_adjuster[ 1 ];
+//         }
+//
+//         // Always should have adjuster function. At least, using the-same-value function.
+//         if ( null == parameterAdjuster )
+//           parameterAdjuster = To.Same;
+//
+//         // A null parameterValue means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
+//         //
+//         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
+//         if ( null == parameterValue ) {
+//           // Record the index (into this.weightsModified[]) and the adjuster.
+//           arrayIndexMap.set( key, { arrayIndex: i, adjusterFunction: parameterAdjuster } );
+//           ++i;
+//         } else {
+//           // A non-null value means it is the parameter's value (after adjusted).
+//           let adjustedValue = parameterAdjuster( parameterValue );
+//           this.parameterMapModified.set( key, adjustedValue );
+//         }
+//       }
 
-      let parameterValue, parameterAdjuster;
-      for ( let [ key, value_and_adjuster ] of parameterMap ) {
+      for ( let [ paramDesc, value ] of parameterMap ) {
 
-        // A null (or undefined) value_and_adjuster means it should be extracted from inputFloat32Array or fixedWeights,
-        // and using To.Same() as adjuster function. (i.e. by evolution)
-        if ( null == value_and_adjuster ) {
-          parameterValue = null;
-          parameterAdjuster = To.Same;
-        } else {
-          parameterValue = value_and_adjuster[ 0 ];
-          parameterAdjuster = value_and_adjuster[ 1 ];
-        }
-
-        // Always should have adjuster function. At least, using the-same-value function.
-        if ( null == parameterAdjuster )
-          parameterAdjuster = To.Same;
-
-        // A null parameterValue means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
+        // A null value means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
         //
         // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
-        if ( null == parameterValue ) {
+        if ( null == value ) {
           // Record the index (into this.weightsModified[]) and the adjuster.
-          arrayIndexMap.set( key, { arrayIndex: i, adjusterFunction: parameterAdjuster } );
+          arrayIndexMap.set( paramDesc.key, { arrayIndex: i, paramDesc: paramDesc } );
           ++i;
         } else {
-          // A non-null value means it is the parameter's value (after adjusted).
-          let adjustedValue = parameterAdjuster( parameterValue );
-          this.parameterMapModified.set( key, adjustedValue );
+          // A non-null value means it is the parameter's value (which should also be adjusted).
+          let adjustedValue = paramDesc.range.adjust( value );
+          this.parameterMapModified.set( paramDesc, adjustedValue );
         }
       }
 
@@ -296,11 +313,19 @@ class Params extends Base {
     // another neural network layer configuration.
     this.weightsModified = new Float32Array( this.weights.length );
 
-//!!! ...unfinished... (2021/03/14) call XxxDesc.adjust()
+//!!! (2021/03/15 Remarked) call XxxDesc.range.adjust()
+//     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
+//     for ( let [ key, { arrayIndex, adjusterFunction } ] of arrayIndexMap ) {
+//       let extractedValue = this.weights[ arrayIndex ];
+//       let adjustedValue = adjusterFunction( extractedValue );
+//       this.weightsModified[ arrayIndex ] = adjustedValue;  // Record in array.
+//       this.parameterMapModified.set( key, adjustedValue ); // Record in map, too.
+//     }
+
     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
-    for ( let [ key, { arrayIndex, adjusterFunction } ] of arrayIndexMap ) {
+    for ( let [ key, { arrayIndex, paramDesc } ] of arrayIndexMap ) {
       let extractedValue = this.weights[ arrayIndex ];
-      let adjustedValue = adjusterFunction( extractedValue );
+      let adjustedValue = paramDesc.range.adjust( extractedValue );
       this.weightsModified[ arrayIndex ] = adjustedValue;  // Record in array.
       this.parameterMapModified.set( key, adjustedValue ); // Record in map, too.
     }
