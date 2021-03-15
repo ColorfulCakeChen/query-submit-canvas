@@ -50,16 +50,40 @@ class Params extends Weights.Params {
   get pointwise1ChannelCount()                { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
   get bPointwise1Bias()                       { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
   get pointwise1ActivationId()                { return this.parameterMapModified.get( Params.pointwise1ActivationId ); }
+  get pointwise1ActivationName() {
+    return Params.pointwise1ActivationId.valueDesc.integerToNameMap.get( this.pointwise1ActivationId );
+  }
 
+  /** @return {number} The number version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
+
+  /** @return {string} The string version of the depthwise opertion. */
+  get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
+    let integerValue = this.depthwise_AvgMax_Or_ChannelMultiplier;
+
+    // Look up whether has name (e.g. "AVG", "MAX", "NONE").
+    let name = Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.integerToNameMap.get( integerValue );
+    if ( null == name ) { // No name means it represents channel multiplier number.
+      name = integerValue.toString(); // e.g. "1", "2", ..., "64"
+    }
+
+    return name;
+  }
+
   get depthwiseFilterHeight()                 { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
   get depthwiseStridesPad()                   { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
   get bDepthwiseBias()                        { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
   get depthwiseActivationId()                 { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
+  get depthwiseActivationName() {
+    return Params.depthwiseActivationId.valueDesc.integerToNameMap.get( this.depthwiseActivationId );
+  }
 
   get pointwise2ChannelCount()                { return this.parameterMapModified.get( Params.pointwise2ChannelCount ); }
   get bPointwise2Bias()                       { return this.parameterMapModified.get( Params.bPointwise2Bias ); }
   get pointwise2ActivationId()                { return this.parameterMapModified.get( Params.pointwise2ActivationId ); }
+  get pointwise2ActivationName() {
+    return Params.pointwise2ActivationId.valueDesc.integerToNameMap.get( this.pointwise2ActivationId );
+  }
 
   get bAddInputToOutput()                     { return this.parameterMapModified.get( Params.bAddInputToOutput ); }
 }
@@ -880,34 +904,24 @@ class Base extends ReturnOrClone.Base {
   get pointwise1ChannelCount()                { return this.params.pointwise1ChannelCount; }
   get bPointwise1Bias()                       { return this.params.bPointwise1Bias; }
   get pointwise1ActivationId()                { return this.params.pointwise1ActivationId; }
-  get pointwise1ActivationName()              { return Params.Activation.Names[ this.params.pointwise1ActivationId ]; }
+  get pointwise1ActivationName()              { return this.params.pointwise1ActivationName; }
 
   /** @return {number} The number version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier() { return this.params.depthwise_AvgMax_Or_ChannelMultiplier; }
 
   /** @return {string} The string version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
-    let depthwise_AvgMax_Or_ChannelMultiplier = this.depthwise_AvgMax_Or_ChannelMultiplier;
-
-    // Look up whether has name (e.g. "avg", "max", "(none)").
-    let name = Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNameMap.get( depthwise_AvgMax_Or_ChannelMultiplier );
-    if ( null == name ) { // No name means it represents channel multiplier number.
-      name = depthwise_AvgMax_Or_ChannelMultiplier.toString(); // e.g. "1", "2", ..., "64"
-    }
-
-    return name;
-  }
+  get depthwise_AvgMax_Or_ChannelMultiplier_Name() { return this.params.depthwise_AvgMax_Or_ChannelMultiplier_Name; }
   
   get depthwiseFilterHeight()                 { return this.params.depthwiseFilterHeight; }
   get depthwiseStridesPad()                   { return this.params.depthwiseStridesPad; }
   get bDepthwiseBias()                        { return this.params.bDepthwiseBias; }
   get depthwiseActivationId()                 { return this.params.depthwiseActivationId; }
-  get depthwiseActivationName()               { return Params.Activation.Names[ this.params.depthwiseActivationId ]; }
+  get depthwiseActivationName()               { return this.params.depthwiseActivationName; }
 
   get pointwise2ChannelCount()                { return this.params.pointwise2ChannelCount; }
   get bPointwise2Bias()                       { return this.params.bPointwise2Bias; }
   get pointwise2ActivationId()                { return this.params.pointwise2ActivationId; }
-  get pointwise2ActivationName()              { return Params.Activation.Names[ this.params.pointwise2ActivationId ]; }
+  get pointwise2ActivationName()              { return this.params.pointwise2ActivationName; }
 
   get bAddInputToOutput()                     { return this.params.bAddInputToOutput; }
 
