@@ -6,6 +6,17 @@ import * as ValueDesc from "./ValueDesc.js";
 /**
  * Describe some properties of a parameter.
  *
+ * Q: Why are there ValueDesc and ParamDesc two layers?
+ * A: Let different parameter descriptions (ParamDesc) share the same value description (ValueDesc).
+ *    It is especially useful for integer parameter ( new ParamDesc.Base( paramName, new ValueDesc.Int() ) ).
+ *    For non-converting and boolean parameter, using ParamDesc.Same and ParamDesc.Bool is enough.
+ *
+ * @example
+ * let fruitKinds = new ValueDesc.Int( 0, 2, [ APPLE, ORANGE, BANANA ] );
+ * Params.lunch = new ParamDesc.Base( "lunch", fruitKinds );
+ * Params.dinner = new ParamDesc.Base( "dinner", fruitKinds );
+ *
+ *
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
