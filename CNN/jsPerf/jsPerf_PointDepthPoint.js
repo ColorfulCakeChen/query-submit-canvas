@@ -1,6 +1,7 @@
 export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeTensors };
 
 import * as ValueMax from "../ValueMax.js";
+import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 //import * as TensorTools from "../util/TensorTools.js";
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
@@ -55,13 +56,13 @@ class HeightWidthDepth {
     this.testCases = [
       new PointDepthPoint_Reference.TestCase(
         [
-          2.1,  1.1, PointDepthPoint.Params.Activation.Ids.COS + 0.1,
-          2.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.Activation.Ids.RELU + 0.2,
-            8,  5.3, PointDepthPoint.Params.Activation.Ids.SIN + 0.3,  7.4 ], // paramsInArray
+          2.1,  1.1, ParamDesc.ActivationFunction.Ids.COS + 0.1,
+          2.1,  3.1, 3.1,  3.2, ParamDesc.ActivationFunction.Ids.RELU + 0.2,
+            8,  5.3, ParamDesc.ActivationFunction.Ids.SIN + 0.3,  7.4 ], // paramsInArray
 
-        [   2, true, PointDepthPoint.Params.Activation.Ids.COS,
-            2,    3,  0, true, PointDepthPoint.Params.Activation.Ids.RELU,
-            8, true, PointDepthPoint.Params.Activation.Ids.SIN,       true ], // paramsOutArray
+        [   2, true, ParamDesc.ActivationFunction.Ids.COS,
+            2,    3,  0, true, ParamDesc.ActivationFunction.Ids.RELU,
+            8, true, ParamDesc.ActivationFunction.Ids.SIN,       true ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
