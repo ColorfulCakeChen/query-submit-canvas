@@ -20,6 +20,7 @@ import * as ValueDesc from "./ValueDesc.js";
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
+//!!! ...unfinished... (2021/03/15) Perhaps, there is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
  * @member {Symbol} paramNameKey
  *   The unique key of the parameter. It is defined as Symbol(paramName).
  *
@@ -47,6 +48,7 @@ class Base {
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
+//!!! ...unfinished... (2021/03/15) Perhaps, there is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
  * @member {Symbol} paramNameKey
  *   The unique key of the parameter. It is defined as Symbol(paramName).
  *
@@ -68,6 +70,7 @@ class Same extends Base {
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
+//!!! ...unfinished... (2021/03/15) Perhaps, there is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
  * @member {Symbol} paramNameKey
  *   The unique key of the parameter. It is defined as Symbol(paramName).
  *
@@ -89,6 +92,7 @@ class Bool extends Base {
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
+//!!! ...unfinished... (2021/03/15) Perhaps, there is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
  * @member {Symbol} paramNameKey
  *   The unique key of the parameter. It is defined as Symbol(paramName).
  *
@@ -110,6 +114,7 @@ class Int extends Base {
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
+//!!! ...unfinished... (2021/03/15) Perhaps, there is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
  * @member {Symbol} paramNameKey
  *   The unique key of the parameter. It is defined as Symbol(paramName).
  *
@@ -123,4 +128,3 @@ class ActivationFunction extends Base {
     super( paramName, ValueDesc.ActivationFunction.Singleton );
   }
 }
-
