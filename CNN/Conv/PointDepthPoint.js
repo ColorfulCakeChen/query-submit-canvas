@@ -1,14 +1,15 @@
 export { Params, Base };
 
 import * as ValueMax from "../ValueMax.js";
-import * as ParamDesc from "../ParamDesc.js";
-import * as Weights from "../Weights.js";
+// import * as ParamDesc from "../Unpacker/ParamDesc.js";
+// import * as Weights from "../Weights.js";
+import * as Unpacker from "../Unpacker.js";
 import * as ReturnOrClone from "./ReturnOrClone.js";
 
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
  */
-class Params extends Weights.Params {
+class Params extends Unpacker.Weights.Params {
 
   /**
    * If parameter's value is null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -105,18 +106,32 @@ Params.To = class {
 // // "+1" is for channel multiplier equals 0 (means no depthwise operation).
 // Params.To.Data.Depthwise_AvgMax_Or_ChannelMultiplier_Array = [ ... new Array( 64 + 1 ).keys(), "Avg", "Max" ];
 
-/** Define parameter keys. */
-Params.Keys = {};
-Params.Keys.pointwise1ChannelCount =                Symbol("pointwise1ChannelCount");
-Params.Keys.bPointwise1Bias =                       Symbol("bPointwise1Bias");
+/** Define parameter descriptions. */
+Params.pointwise1ChannelCount =      new Unpacker.ParamDesc.Int(  "pointwise1ChannelCount", 0, ( 10 * 1024 ) );
+Params.bPointwise1Bias =             new Unpacker.ParamDesc.Bool( "bPointwise1Bias" );
 Params.Keys.pointwise1ActivationId =                Symbol("pointwise1ActivationId");
+
 Params.Keys.depthwise_AvgMax_Or_ChannelMultiplier = Symbol("depthwise_AvgMax_Or_ChannelMultiplier");
-Params.Keys.depthwiseFilterHeight =                 Symbol("depthwiseFilterHeight");
-Params.Keys.depthwiseStridesPad =                   Symbol("depthwiseStridesPad");
-Params.Keys.bDepthwiseBias =                        Symbol("bDepthwiseBias");
+
+/** Define suitable value for depthwise convolution filter size.
+ *
+ * At least 1, because depthwise filter size ( 0 * 0 ) is meaningless.
+ *
+ * For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
+ * For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
+ *
+ * Avoid too large filter size. Otherwise, performance may be poor.
+ */
+Params.depthwiseFilterHeight =     new Unpacker.ParamDesc.Int( "depthwiseFilterHeight", 1, 9 );
+
+/** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
+Params.depthwiseStridesPad =       new Unpacker.ParamDesc.Int( "depthwiseStridesPad",   0, 2 );
+
+Params.bDepthwiseBias =            new Unpacker.ParamDesc.Bool( "bDepthwiseBias" );
 Params.Keys.depthwiseActivationId =                 Symbol("depthwiseActivationId");
-Params.Keys.pointwise2ChannelCount =                Symbol("pointwise2ChannelCount");
-Params.Keys.bPointwise2Bias =                       Symbol("bPointwise2Bias");
+
+Params.pointwise2ChannelCount =                new Unpacker.ParamDesc.Int(  "pointwise2ChannelCount", 0, ( 10 * 1024 ) );
+Params.bPointwise2Bias =                       new Unpacker.ParamDesc.Bool( "bPointwise2Bias" );
 Params.Keys.pointwise2ActivationId =                Symbol("pointwise2ActivationId");
 Params.Keys.bAddInputToOutput =                     Symbol("bAddInputToOutput");
 
@@ -128,24 +143,19 @@ Params.Keys.bAddInputToOutput =                     Symbol("bAddInputToOutput");
 //
 // Where is Functions?
 
-/** Define channel count range. */
-//!!! (2021/03/14 Remarked)
-// Params.pointwise1ChannelCount = {};
-// Params.pointwise1ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
-Params.pointwise1ChannelCount = new ParamDesc.IntegerDesc( "pointwise1ChannelCount", 0, 10 * 1024 );
+//!!! (2021/03/15 Remarked) defined as ValueDesc.
+// /** Define activation's id, name, function. */
+// Params.Activation = {};
+// Params.Activation.Ids =       {  NONE: 0, RELU: 1, RELU6: 2, SIGMOID: 3, TANH: 4, SIN: 5, COS: 6 };
+// Params.Activation.Names =     [ "(none)",  "relu",  "relu6",  "sigmoid",  "tanh",  "sin",  "cos" ];
+// Params.Activation.Functions = [     null, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ];
+// Params.Activation.Ids.Range = new Weights.IntegerRange( 0, ( Params.Activation.Functions.length - 1 ) );
 
-//!!! (2021/03/14 Remarked)
-// Params.pointwise2ChannelCount = {};
-// Params.pointwise2ChannelCount.Range = new Weights.IntegerRange( 0, 10 * 1024 );
-Params.pointwise1ChannelCount = new ParamDesc.IntegerDesc( "pointwise2ChannelCount", 0, 10 * 1024 );
-
-//!!! ...unfinished... (2021/03/14)
+//!!! ...unfinished... (2021/03/15) should share ValueDesc between different paramKey
 /** Define activation's id, name, function. */
-Params.Activation = {};
-Params.Activation.Ids =       {  NONE: 0, RELU: 1, RELU6: 2, SIGMOID: 3, TANH: 4, SIN: 5, COS: 6 };
-Params.Activation.Names =     [ "(none)",  "relu",  "relu6",  "sigmoid",  "tanh",  "sin",  "cos" ];
-Params.Activation.Functions = [     null, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ];
-Params.Activation.Ids.Range = new Weights.IntegerRange( 0, ( Params.Activation.Functions.length - 1 ) );
+Params.Activation = new ValueDesc.Int( 0, 6,
+  [ "NONE",  "RELU",  "RELU6",  "SIGMOID",  "TANH",  "SIN",  "COS" ],
+  [   null, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ] );
 
 /** Define depthwise operation's id, name. */
 Params.depthwise_AvgMax_Or_ChannelMultiplier = {};
@@ -166,23 +176,6 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier.IdToNameMap = new Map( [
 // //!!! ...unfinished... ???
 //   [ "(none)", Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE ],
 // ] );
-
-
-/** Define suitable value for depthwise convolution filter size.
- *
- * At least 1, because depthwise filter size ( 0 * 0 ) is meaningless.
- *
- * For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
- * For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
- *
- * Avoid too large filter size. Otherwise, performance may be poor.
- */
-Params.depthwiseFilterHeight = {};
-Params.depthwiseFilterHeight.Range = new Weights.IntegerRange( 1, 9 );
-
-/** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
-Params.depthwiseStridesPad = {};
-Params.depthwiseStridesPad.Range = new Weights.IntegerRange( 0, 2 );
 
 
 /**
