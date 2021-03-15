@@ -55,8 +55,8 @@ class HeightWidthDepth {
 //     let channelMultiplierEstimated = channelMultiplier;
 //     if ( channelMultiplierEstimated < 1 )
 //       channelMultiplierEstimated = 1;
-    
-    let channelMultiplierEstimated = Embedding2d.Params.To.ChannelMultiplier( channelMultiplier );
+
+    let channelMultiplierEstimated = Embedding2d.Params.channelMultiplier.valueDesc.range.adjust( channelMultiplier );
 
     let wieghtsArrayLength = 
       this.weightsElementOffsetBegin // Skip the un-used.
