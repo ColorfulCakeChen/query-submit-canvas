@@ -1,4 +1,4 @@
-export { Same, Bool, Int };
+export { Int };
 
 import * as ValueRange from "./ValueRange.js";
 
