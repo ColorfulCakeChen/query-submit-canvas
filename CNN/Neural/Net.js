@@ -14,8 +14,8 @@ export { Config, Base };
  *   - depthwiseFilterHeight: 3
  *   - depthwiseChannelMultiplierBlock0Step0: 1
  *   - bBias: false
- *   - nActivationId: ConvBlock.PointDepthPoint.Params.Activation.Ids.COS
- *   - nActivationIdAtBlockEnd: ConvBlock.PointDepthPoint.Params.Activation.Ids.NONE
+ *   - nActivationId: ParamDesc.ActivationFunction.Ids.COS
+ *   - nActivationIdAtBlockEnd: ParamDesc.ActivationFunction.Ids.NONE
  *
  * The cosine activation function can achieve impilcit bias. This is because depthwise and pointwise convolution can easily achieve zero
  * and ( cos( 0 ) == 1 ). A constant value (e.g. 1) becomes the bias of the next convolution. So there is not necessary to use explicit bias
@@ -25,7 +25,7 @@ export { Config, Base };
  * RGBA 4 channels faster than RGB 3 channels.
  *
  * The last PointDepthPoint's pointwise2 of every block without activation function
- * (i.e. nActivationIdAtBlockEnd == ConvBlock.PointDepthPoint.Params.Activation.Ids.NONE) could let the output of neural network be any
+ * (i.e. nActivationIdAtBlockEnd == ParamDesc.ActivationFunction.Ids.NONE) could let the output of neural network be any
  * arbitrary value because it will not be restricted by the range of the activation function.
  */
 class Config {
@@ -41,8 +41,8 @@ class Config {
     bChannelShuffler = true,
     pointwise1ChannelCountRate = 1,
     strAvgMaxConv = "Conv", depthwiseFilterHeight = 3, depthwiseChannelMultiplierBlock0Step0 = 1, bBias = false,
-    nActivationId = ConvBlock.PointDepthPoint.Params.Activation.Ids.COS,
-    nActivationIdAtBlockEnd = ConvBlock.PointDepthPoint.Params.Activation.Ids.NONE )
+    nActivationId = ParamDesc.ActivationFunction.Ids.COS,
+    nActivationIdAtBlockEnd = ParamDesc.ActivationFunction.Ids.NONE )
   {
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
