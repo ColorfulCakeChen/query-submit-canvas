@@ -1,4 +1,4 @@
-export { Base, Same, Bool };
+export { Base, Same, Bool, Int };
 
 import * as ValueDesc from "./ValueDesc.js";
 
@@ -56,9 +56,6 @@ class Base {
  */
 class Same extends Base {
 
-  /**
-   *
-   */
   constructor( paramName ) {
     super( paramName, ValueDesc.Same.Singleton );
   }
@@ -80,11 +77,50 @@ class Same extends Base {
  */
 class Bool extends Base {
 
-  /**
-   *
-   */
   constructor( paramName ) {
     super( paramName, ValueDesc.Bool.Singleton );
+  }
+}
+
+
+/**
+ * Describe some properties of an integer parameter.
+ *
+ * @member {string} paramName
+ *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
+ *
+ * @member {Symbol} paramNameKey
+ *   The unique key of the parameter. It is defined as Symbol(paramName).
+ *
+ * @member {ValueDesc.Int} valueDesc
+ *   The boolean range of the parameter's all possible values. It is an ValueDesc.Bool object.
+ *
+ */
+class Int extends Base {
+
+  constructor( paramName, valueIntegerMin, valueIntegerMax, valueNames = [], valueObjects = [] ) {
+    super( paramName, new ValueDesc.Int( valueIntegerMin, valueIntegerMax, valueNames, valueObjects ) );
+  }
+}
+
+
+/**
+ * Describe some properties of an activation function parameter.
+ *
+ * @member {string} paramName
+ *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
+ *
+ * @member {Symbol} paramNameKey
+ *   The unique key of the parameter. It is defined as Symbol(paramName).
+ *
+ * @member {ValueDesc.ActivationFunction} valueDesc
+ *   The boolean range of the parameter's all possible values. It is an ValueDesc.ActivationFunction object.
+ *
+ */
+class ActivationFunction extends Base {
+
+  constructor( paramName ) {
+    super( paramName, ValueDesc.ActivationFunction.Singleton );
   }
 }
 
