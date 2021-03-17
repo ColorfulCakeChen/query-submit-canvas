@@ -363,17 +363,14 @@ class TestCase {
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
     depthwiseName, parametersDesc ) {
 
-    if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
+    if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
       return imageIn; // No depthwise operation.
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 )?
       
     let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
-//!!! (2021/03/17 Remarked) Using ValueDesc instead.
-//     if (   ( "Avg" === depthwise_AvgMax_Or_ChannelMultiplier )
-//         || ( "Max" === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
-    if (   ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
-        || ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+    if (   ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
+        || ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
       channelMultiplier = 1;
     }
 
@@ -433,9 +430,8 @@ class TestCase {
     let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth * channelMultiplier );
     let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
 
-//!!! (2021/03/17 Remarked) Using ValueDesc instead.
-//    if ( "Max" === depthwise_AvgMax_Or_ChannelMultiplier ) { // Max pooling
-    if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) { // Max pooling
+    // Max pooling
+    if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
         imageOut.dataArray.fill( Number.NEGATIVE_INFINITY ); // So that any value is greater than initialized value.
     }
 
@@ -513,9 +509,8 @@ class TestCase {
               }
             }
 
-//!!! (2021/03/17 Remarked) Using ValueDesc instead.
-//            if ( "Avg" === depthwise_AvgMax_Or_ChannelMultiplier ) { // Avg pooling
-            if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) { // Avg pooling
+            // Avg pooling
+            if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
               imageOut.dataArray[ i ] /= avgDivisor; // So that every sum is averaged.
             }
           }
