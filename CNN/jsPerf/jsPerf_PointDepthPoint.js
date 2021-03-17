@@ -56,7 +56,7 @@ class HeightWidthDepth {
     };
 
     this.testCases = [
-      // Test Case 0: pointwise1 (no bias)
+      // Test Case 0: pointwise1 (4-to-1 channel, no bias)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
@@ -69,23 +69,42 @@ class HeightWidthDepth {
 
         // pointwise1FiltersArray
         [
-//           11, 12, 13, 14,
-//           21, 22, 23, 24,
+          1,
+          0,
+          0,
+          0,
+        ],
+
+        [],             // pointwise1BiasesArray
+        [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+        testImageData   // imageIn
+      ),
+
+      // Test Case 1: pointwise1 (4-to-2 channel, no bias)
+      new PointDepthPoint_Reference.TestCase(
+        [
+          2.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
+          0.1,   3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
+          0.2,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+
+        [   2, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
+            0,     3,  0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
+            0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+
+        // pointwise1FiltersArray
+        [
           1, 0,
           0, 0,
           0, 1,
           0, 0
         ],
 
-        // pointwise1BiasesArray
-//        [ 3, 4 ],
-        [],
-
+        [],             // pointwise1BiasesArray
         [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
         testImageData   // imageIn
       ),
 
-      // Test Case 1: pointwise1 (bias, activation)
+      // Test Case 2: pointwise1 (bias, activation)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -98,8 +117,10 @@ class HeightWidthDepth {
 
         // pointwise1FiltersArray
         [
-          11, 12, 13, 14,
-          21, 22, 23, 24,
+          11, 21,
+          12, 22,
+          13, 23,
+          14, 24,
         ],
 
         // pointwise1BiasesArray
@@ -109,7 +130,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 2: depthwise (channelMultiplier = 1)
+      // Test Case 3: depthwise (channelMultiplier = 1)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -142,7 +163,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 3 (pointwise1, depthwise, pointwise2, AddInputToOutput)
+      // Test Case 4 (pointwise1, depthwise, pointwise2, AddInputToOutput)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -155,8 +176,10 @@ class HeightWidthDepth {
 
         // pointwise1FiltersArray
         [
-          11, 12, 13, 14,
-          21, 22, 23, 24,
+          11, 21,
+          12, 22,
+          13, 23,
+          14, 24,
         ],
 
         // pointwise1BiasesArray
