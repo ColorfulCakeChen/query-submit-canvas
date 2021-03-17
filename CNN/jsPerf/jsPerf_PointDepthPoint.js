@@ -71,8 +71,10 @@ class HeightWidthDepth {
         [
 //           11, 12, 13, 14,
 //           21, 22, 23, 24,
-          1, 0, 0, 0,
-          0, 0, 1, 0
+          1, 0,
+          0, 0,
+          0, 1,
+          0, 0
         ],
 
         // pointwise1BiasesArray
