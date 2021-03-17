@@ -187,7 +187,8 @@ class HeightWidthDepth {
     tf.tidy( () => {
 
       let testCase = this.testCases[ 0 ];
-      let outputArrayRef = testCase.calcResult();
+      let imageOutRef = testCase.calcResult();
+      let outputArrayRef = imageOutRef.dataArray;
 
       let outputArray = outputTensor3d.dataSync();
 
