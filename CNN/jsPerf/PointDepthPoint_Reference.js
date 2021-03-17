@@ -18,8 +18,6 @@ class TestCase {
    * @param {number}   imageIn.width     Image width
    * @param {number}   imageIn.depth     Image channel count
    * @param {number[]} imageIn.dataArray Image data
-//!!! ...unfinished...
-   * @param {number[]} imageOutArray     Output image data
    */
   constructor(
     paramsInArray, paramsOutArray,
@@ -42,8 +40,6 @@ class TestCase {
 
     this.image = {
       in:  imageIn,
-//!!!
-      outArray: imageOutArray
     };
 
     // For testing not start at the offset 0.
