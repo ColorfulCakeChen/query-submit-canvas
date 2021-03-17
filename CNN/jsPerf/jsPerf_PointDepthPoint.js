@@ -60,11 +60,11 @@ class HeightWidthDepth {
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
           0.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,  7.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
 
         [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
             0,    3,  0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       true ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
@@ -84,11 +84,11 @@ class HeightWidthDepth {
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           0.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,  7.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
 
         [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             0,    3,  0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       true ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
@@ -108,11 +108,11 @@ class HeightWidthDepth {
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           1.1,  3.1, 3.1,   0.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,  7.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   4.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             1,    3,   0, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       true ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
 
         [], [], // pointwise1FiltersArray, pointwise1BiasesArray
 
@@ -136,7 +136,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 3
+      // Test Case 3 (pointwise1, depthwise, pointwise2, AddInputToOutput)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -282,6 +282,7 @@ class HeightWidthDepth {
 
     for ( let i = 0; i < this.testCases.length; ++i ) {
       let testCase = this.testCases[ i ];
+      console.log( `PointDepthPoint testCaseIndex = ${1}` );
 
       for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
         let bKeepInputTensor = ( nKeepInputTensor != 0 );
