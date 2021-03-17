@@ -54,6 +54,7 @@ class HeightWidthDepth {
 //        411, 412, 413, 414,  421, 422, 423, 424,  431, 432, 433, 434,
       ]
     };
+
     this.testCases = [
       // Test Case 0: pointwise1 (no bias)
       new PointDepthPoint_Reference.TestCase(
@@ -68,8 +69,9 @@ class HeightWidthDepth {
 
         // pointwise1FiltersArray
         [
-          11, 12, 13, 14,
-          21, 22, 23, 24,
+//           11, 12, 13, 14,
+//           21, 22, 23, 24,
+          1, 0, 0, 0
         ],
 
         // pointwise1BiasesArray
