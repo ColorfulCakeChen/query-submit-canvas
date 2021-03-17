@@ -324,8 +324,8 @@ class TestCase {
 
           for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
             let outIndex = outIndexBaseC + outChannel;
-            let filterIndexBase = ( outChannel * imageIn.depth );
-            let filterIndex = filterIndexBase + inChannel;
+            let filterIndexBase = ( inChannel * pointwiseChannelCount );
+            let filterIndex = filterIndexBase + outChannel;
 
             imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
           }
