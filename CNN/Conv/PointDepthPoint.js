@@ -175,8 +175,9 @@ Params.bAddInputToOutput =      new ParamDesc.Bool("bAddInputToOutput");
  *
  * @member {number} channelCount_depthwiseAfter_pointwise2Before
  *   The channel count after the NxN depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
- * ( channelCount_pointwise1After_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier ). If "Avg" or "Max" or ( <= 0 ), it equals
- * channelCount_pointwise1After_depthwiseBefore.
+ * ( channelCount_pointwise1After_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier ). If
+ * Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG (-2) or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX (-1)
+ * or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE (0), it equals channelCount_pointwise1After_depthwiseBefore.
  *
  * @member {number} channelCount_pointwise2After
  *   The channel count after the second 1x1 pointwise convolution. If ( pointwise2ChannelCount > 0 ), it equals pointwise2ChannelCount.
@@ -229,9 +230,9 @@ class Base extends ReturnOrClone.Base {
    * @param {number} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If non-null, it should be
    * integer between [ -2, 64 ]:
-   *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG (-2): average pooling.
-   *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX (-1): max pooling.
-   *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.NONE (0): there will be no depthwise operation.
+   *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG (-2): average pooling.
+   *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX (-1): max pooling.
+   *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE (0): there will be no depthwise operation.
    *   - positive integer between [ 1, 64 ]: depthwise convolution and the number indicates channel multiplier.
    *
    * @param {number} depthwiseFilterHeight
