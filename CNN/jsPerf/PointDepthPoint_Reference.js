@@ -555,13 +555,14 @@ y.print();
    * @param {number[]} imageIn.dataArray  Input image data
    * @param {string}   parametersDesc     A string for debug message of this point-depth-point.
    *
-   * @return {Float32Array}
-   *   The additive result. If no additive, it will return the imageOut.dataArray directly.
+   * @return {object}
+   *   Return imageOut. If no additive, it will be the original imageOut. If additive, the imageOut.dataArray will be replaced with
+   * new data.
    */
   static modifyByInput( imageOut, bAddInputToOutput, imageIn, parametersDesc ) {
 
     if ( !bAddInputToOutput )
-      return imageOut.dataArray;
+      return imageOut;
 
     tf.util.assert( ( imageIn.height == imageOut.height ),
       `When ( bAddInputToOutput == true ), imageIn.height ( ${imageIn.height} ) `
