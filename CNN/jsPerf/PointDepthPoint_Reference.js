@@ -597,12 +597,12 @@ y.print();
    */
   static modifyByBias( imageIn, bBias, biasesArray, biasName, parametersDesc ) {
 
+    if ( !bBias )
+      return imageIn;
+
     tf.util.assert( ( biasesArray.length == imageIn.depth ),
       `${biasName} shape (${biasesArray.length}) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
-
-    if ( !bBias )
-      return imageIn;
 
     for ( let y = 0; y < imageIn.height; ++y ) {
       let indexBaseX = ( y * imageIn.width );
