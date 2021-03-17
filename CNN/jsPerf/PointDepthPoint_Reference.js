@@ -280,6 +280,9 @@ class TestCase {
         "Pointwise 2", this.paramsOutDescription );
     }
 
+    // Residual Connection.
+    nextImageIn = TestCase.modifyByInput( nextImageIn, bAddInputToOutput, this.image.in, this.paramsOutDescription ) {
+
     return nextImageIn;
   }
 
@@ -538,6 +541,44 @@ let pad = "same";
 let y = x.pool( filter.shape, "avg", pad, dilations, strides );
 y.print();
 */
+  }
+
+  /**
+   * @param {number}   imageOut.height    Output image height
+   * @param {number}   imageOut.width     Output image width
+   * @param {number}   imageOut.depth     Output image channel count
+   * @param {number[]} imageOut.dataArray Output image data
+   * @param {boolean}  bAddInputToOutput  Whether add input to output.
+   * @param {number}   imageIn.height     Input image height
+   * @param {number}   imageIn.width      Input image width
+   * @param {number}   imageIn.depth      Input image channel count
+   * @param {number[]} imageIn.dataArray  Input image data
+   * @param {string}   parametersDesc     A string for debug message of this point-depth-point.
+   *
+   * @return {Float32Array}
+   *   The additive result. If no additive, it will return the imageOut.dataArray directly.
+   */
+  static modifyByInput( imageOut, bAddInputToOutput, imageIn, parametersDesc ) {
+
+    if ( !bAddInputToOutput )
+      return imageOut.dataArray;
+
+    tf.util.assert( ( imageIn.height == imageOut.height ),
+      `When ( bAddInputToOutput == true ), imageIn.height ( ${imageIn.height} ) `
+        + `should match imageOut.height ( ${imageOut.height} ). (${parametersDesc})`);
+
+    tf.util.assert( ( imageIn.width == imageOut.width ),
+      `When ( bAddInputToOutput == true ), imageIn.width ( ${imageIn.width} ) `
+        + `should match imageOut.width ( ${imageOut.width} ). (${parametersDesc})`);
+
+    tf.util.assert( ( imageIn.depth == imageOut.depth ),
+      `When ( bAddInputToOutput == true ), imageIn.depth ( ${imageIn.depth} ) `
+        + `should match imageOut.depth ( ${imageOut.depth} ). (${parametersDesc})`);
+
+    let resultArray = imageIn.dataArray.map( ( value, i ) => ( imageOut.dataArray[ i ] + value ) );
+    imageOut.dataArray = resultArray;
+
+    return imageOut;
   }
 
   /**
