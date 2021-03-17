@@ -249,13 +249,13 @@ class TestCase {
 
     // Create description for debug easily.
     this.params.description =
-        `pointwise1ChannelCount=${pointwise1ChannelCount}, bPointwise1Bias=${bPointwise1Bias}, pointwise1ActivationName=${pointwise1ActivationName}, `
+        `pointwise1ChannelCount=${pointwise1ChannelCount}, bPointwise1Bias=${bPointwise1Bias}, `// pointwise1ActivationName=${pointwise1ActivationName}, `
       + `depthwise_AvgMax_Or_ChannelMultiplier=${depthwise_AvgMax_Or_ChannelMultiplier}, `
       + `depthwiseFilterHeight=${depthwiseFilterHeight}, `
       + `depthwiseStridesPad=${depthwiseStridesPad}, `
-      + `bDepthwiseBias=${bDepthwiseBias}, `
+//      + `bDepthwiseBias=${bDepthwiseBias}, `
       + `depthwiseActivationName=${depthwiseActivationName}, `
-      + `pointwise2ChannelCount=${pointwise2ChannelCount}, bPointwise2Bias=${bPointwise2Bias}, pointwise2ActivationName=${pointwise2ActivationName}, `
+      + `pointwise2ChannelCount=${pointwise2ChannelCount}, bPointwise2Bias=${bPointwise2Bias}, `//pointwise2ActivationName=${pointwise2ActivationName}, `
       + `bAddInputToOutput=${bAddInputToOutput}`
     ;
 
