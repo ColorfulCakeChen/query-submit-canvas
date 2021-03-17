@@ -427,7 +427,7 @@ class TestCase {
         + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
-    let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth * channelMultiplier );
+    let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth );
     let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
 
     // Max pooling
