@@ -294,6 +294,8 @@ class HeightWidthDepth {
         let bKeepInputTensor = ( nKeepInputTensor != 0 );
 
         tf.tidy( () => {
+          let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
+
           let inputTensor3d;
           let tensorNumDifference_apply_before_after;
           if ( bKeepInputTensor ) {
@@ -304,7 +306,6 @@ class HeightWidthDepth {
             tensorNumDifference_apply_before_after = 0;
           }
 
-          let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
           let pointDepthPoint = testCase.pointDepthPoint_create( bKeepInputTensor );
 
           let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
@@ -317,12 +318,11 @@ class HeightWidthDepth {
           // Test correctness of pointDepthPoint apply.
           this.check_Input_Output_WeightsTable( i, pointDepthPoint, this.dataTensor3d, outputTensor3d );
 
+          outputTensor3d.dispose();
           pointDepthPoint.disposeTensors();
           let memoryInfo_afterDispose = tf.memory();
 
           tf.util.assert( memoryInfo_beforeCreate.numTensors == memoryInfo_afterDispose.numTensors, `PointDepthPoint create/dispose memory leak.`);
-
-          outputTensor3d.dispose();
         });
       }
     }
