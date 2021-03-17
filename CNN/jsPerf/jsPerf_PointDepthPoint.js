@@ -263,10 +263,10 @@ class HeightWidthDepth {
       let outputArray = outputTensor3d.dataSync();
 
       tf.util.assert( outputArray.length == outputArrayRef.length,
-        `PointDepthPoint output length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} )`);
+        `PointDepthPoint output length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). (testCaseIndex = ${testCaseIndex} )`);
 
       tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
-        `PointDepthPoint output ( ${outputArray} ) should be ( ${outputArrayRef} )`);
+        `PointDepthPoint output ( ${outputArray} ) should be ( ${outputArrayRef} ). (testCaseIndex = ${testCaseIndex} )`);
     });
   }
 
