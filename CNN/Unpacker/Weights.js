@@ -270,7 +270,7 @@ class Params extends Base {
       let extractedValue = this.weights[ arrayIndex ];
       let adjustedValue = paramDesc.valueDesc.range.adjust( extractedValue );
       this.weightsModified[ arrayIndex ] = adjustedValue;  // Record in array.
-      this.parameterMapModified.set( key, adjustedValue ); // Record in map, too.
+      this.parameterMapModified.set( paramDesc, adjustedValue ); // Record in map, too.
     }
 
     return bInitOk;
