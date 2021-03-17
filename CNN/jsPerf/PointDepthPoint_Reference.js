@@ -248,7 +248,7 @@ class TestCase {
     ] = this.weights.params.outArray;
 
     // Create description for debug easily.
-    this.params.description =
+    this.paramsOutDescription =
         `pointwise1ChannelCount=${pointwise1ChannelCount}, bPointwise1Bias=${bPointwise1Bias}, `// pointwise1ActivationName=${pointwise1ActivationName}, `
       + `depthwise_AvgMax_Or_ChannelMultiplier=${depthwise_AvgMax_Or_ChannelMultiplier}, `
       + `depthwiseFilterHeight=${depthwiseFilterHeight}, `
@@ -266,7 +266,7 @@ class TestCase {
       nextImageIn = TestCase.calcPointwise(
         nextImageIn,
         pointwise1ChannelCount, this.weights.pointwise1Filters, bPointwise1Bias, this.weights.pointwise1Biases, pointwise1ActivationId,
-        "Pointwise 1", this.params.description );
+        "Pointwise 1", this.paramsOutDescription );
     }
 
     // Depthwise
@@ -275,7 +275,7 @@ class TestCase {
         nextImageIn,
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
         this.weights.depthwiseFilters, bDepthwiseBias, this.weights.depthwiseBiases, depthwiseActivationId,
-        "Depthwise", this.params.description );
+        "Depthwise", this.paramsOutDescription );
     }
 
     // Pointwise2
@@ -283,7 +283,7 @@ class TestCase {
       nextImageIn = TestCase.calcPointwise(
         nextImageIn,
         pointwise2ChannelCount, this.weights.pointwise2Filters, bPointwise2Bias, this.weights.pointwise2Biases, pointwise2ActivationId,
-        "Pointwise 2", this.params.description );
+        "Pointwise 2", this.paramsOutDescription );
     }
 
     return nextImageIn;
