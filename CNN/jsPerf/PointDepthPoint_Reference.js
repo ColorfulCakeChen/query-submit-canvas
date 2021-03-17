@@ -492,11 +492,11 @@ class TestCase {
                     let filterIndex = filterIndexBaseSubC + outChannelSub;
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-                      case "Avg": // Avg pooling
+                      case PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG: // Avg pooling
                         imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ];
                         break;
 
-                      case "Max": // Max pooling
+                      case PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX: // Max pooling
                         imageOut.dataArray[ outIndex ] = Math.max( imageOut.dataArray[ outIndex ], imageIn.dataArray[ inIndex ] );
                         break;
 
