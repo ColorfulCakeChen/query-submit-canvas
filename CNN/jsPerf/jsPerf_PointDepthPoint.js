@@ -266,7 +266,7 @@ class HeightWidthDepth {
       let outputArray = outputTensor3d.dataSync();
 
       let parametersDescription = pointDepthPoint.parametersDescription;
-      let strNote = `( testCaseIndex = ${testCaseIndex}, ${parametersDescription} )`;
+      let strNote = `( testCaseIndex=${testCaseIndex}, ${parametersDescription} )`;
 
       tf.util.assert( outputArray.length == outputArrayRef.length,
         `PointDepthPoint output length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
