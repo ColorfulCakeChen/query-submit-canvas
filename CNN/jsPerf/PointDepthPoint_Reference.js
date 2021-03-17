@@ -311,20 +311,20 @@ class TestCase {
     let imageOut = { height: imageIn.height, width: imageIn.width, depth: pointwiseChannelCount, dataArray: new Float32Array( imageOutLength ) };
 
     // Pointwise Convolution
-    for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
-      let filterIndexBase = ( outChannel * imageIn.depth );
+    for ( let y = 0; y < imageIn.height; ++y ) {
+      let indexBaseX = ( y * imageIn.width );
 
-      for ( let y = 0; y < imageIn.height; ++y ) {
-        let indexBaseX = ( y * imageIn.width );
+      for ( let x = 0; x < imageIn.width; ++x ) {
+        let indexBaseC = ( indexBaseX + x );
+        let inIndexBaseC  = ( indexBaseC * imageIn.depth );
+        let outIndexBaseC = ( indexBaseC * pointwiseChannelCount );
 
-        for ( let x = 0; x < imageIn.width; ++x ) {
-          let indexBaseC = ( indexBaseX + x );
-          let inIndexBaseC  = ( indexBaseC * imageIn.depth );
-          let outIndexBaseC = ( indexBaseC * pointwiseChannelCount );
-          let outIndex = outIndexBaseC + outChannel;
+        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+          let inIndex = inIndexBaseC + inChannel;
 
-          for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-            let inIndex = inIndexBaseC + inChannel;
+          for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
+            let outIndex = outIndexBaseC + outChannel;
+            let filterIndexBase = ( outChannel * imageIn.depth );
             let filterIndex = filterIndexBase + inChannel;
 
             imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
