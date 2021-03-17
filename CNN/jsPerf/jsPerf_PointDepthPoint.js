@@ -260,14 +260,14 @@ class HeightWidthDepth {
   check_Input_Output_WeightsTable( testCaseIndex, pointDepthPoint, inputTensor3d, outputTensor3d ) {
     tf.tidy( () => {
 
+      let parametersDescription = pointDepthPoint.parametersDescription;
+      let strNote = `( testCaseIndex=${testCaseIndex}, ${parametersDescription} )`;
+
       let testCase = this.testCases[ testCaseIndex ];
       let imageOutRef = testCase.calcResult();
       let outputArrayRef = imageOutRef.dataArray;
 
       let outputArray = outputTensor3d.dataSync();
-
-      let parametersDescription = pointDepthPoint.parametersDescription;
-      let strNote = `( testCaseIndex=${testCaseIndex}, ${parametersDescription} )`;
 
       tf.util.assert( outputArray.length == outputArrayRef.length,
         `PointDepthPoint output length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
