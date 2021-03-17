@@ -592,8 +592,9 @@ y.print();
    * @param {string}   nActivationId     The name string of this activation function.
    * @param {string}   parametersDesc A string for debug message of this point-depth-point.
    *
-   * @return {object}
-   *   Return imageIn which may or may not be activated.
+   * @return {Float32Array}
+   *   The result of the activation function. Its .dataArray may be just the imageIn.dataArray directly (when no activation function).
+   * Or, its .dataArray may be a new Float32Array (when has activation function).
    */
   static modifyByActivation( imageIn, nActivationId, parametersDesc ) {
 
@@ -601,18 +602,25 @@ y.print();
     if ( !pfnActivation )
       return imageIn;
 
-    for ( let y = 0; y < imageIn.height; ++y ) {
-      let indexBaseX = ( y * imageIn.width );
+//!!! (2021/03/17 Remarked) Using tensor directly.
+//     for ( let y = 0; y < imageIn.height; ++y ) {
+//       let indexBaseX = ( y * imageIn.width );
+//
+//       for ( let x = 0; x < imageIn.width; ++x ) {
+//         let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
+//
+//         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+//           let inIndex = inIndexBaseC + inChannel;
+//           imageIn.dataArray[ inIndex ] = pfnActivation( imageIn.dataArray[ inIndex ] );
+//         }
+//       }
+//     }
 
-      for ( let x = 0; x < imageIn.width; ++x ) {
-        let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
-
-        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-          let inIndex = inIndexBaseC + inChannel;
-          imageIn.dataArray[ inIndex ] = pfnActivation( imageIn.dataArray[ inIndex ] );
-        }
-      }
-    }
+    // Because pfnActivation is function of tensorflow.js, it process tf.tensor (i.e. not a single value).
+    // Let it process the whole input (as an Array) directly.
+    let tensorOut = pfnActivation( imageIn.dataArray )
+    imageIn.dataArray = tensorOut.dataSync();
+    tensorOut.dispose();
 
     return imageIn;
   }
