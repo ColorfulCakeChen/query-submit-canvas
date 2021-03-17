@@ -311,7 +311,7 @@ class TestCase {
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
-    let imageOut = { height: imageIn.height, width: imageIn.width, depth: imageIn.depth, dataArray: new Float32Array( imageOutLength ) };
+    let imageOut = { height: imageIn.height, width: imageIn.width, depth: pointwiseChannelCount, dataArray: new Float32Array( imageOutLength ) };
 
     // Pointwise Convolution
     for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
