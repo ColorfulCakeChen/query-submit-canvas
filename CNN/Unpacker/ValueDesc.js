@@ -110,7 +110,7 @@ class Int {
     for ( let i = 0; i < valueObjects.length; ++i ) {
       let integerId = ( valueIntegerMin + i );
       let object = valueObjects[ i ];
-      this.integerToNameMap.set( integerId, object );
+      this.integerToObjectMap.set( integerId, object );
     }
   }
 }
