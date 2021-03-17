@@ -397,21 +397,6 @@ class Base extends ReturnOrClone.Base {
 
     let depthwiseFilterWidth = this.depthwiseFilterWidth = depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
 
-//!!! (2021/03/10 Remarked) Now, all are numbers.
-//    if ( Number.isNaN( depthwise_AvgMax_Or_ChannelMultiplier ) ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
-//       this.bDepthwise = true;
-//
-//       this.pfn_depthwiseOperation = Base.return_input_directly; // Just return input if 1x1 or illegal pooling type (i.e. not AVG, not MAX).
-//
-//       if ( ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) ) {
-//         // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
-//       } else {
-//         switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-//           case "Avg": this.bDepthwiseAvg = true; this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy; break;
-//           case "Max": this.bDepthwiseMax = true; this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy; break;
-//         }
-//       }
-
     if ( depthwise_AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
       // if 1x1 AVG pooling, or 1x1 MAX pooling, or illegal pooling type (i.e. not AVG, not MAX):
@@ -721,24 +706,9 @@ class Base extends ReturnOrClone.Base {
 
   /** Convert activation function id to function object. */
   static getActivationFunction( nActivationId ) {
-    let pfn = Params.Activation.Functions[ nActivationId ];
+    let pfn = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
     return pfn;
   }
-
-//!!! (2021/03/10 Remarked) Using Params.Activation.Functions[] instead.
-//   /** Convert activation function name to function object. */
-//   static getActivationFunction( strActivationName ) {
-//     switch ( strActivationName ) {
-//       case "relu":    return tf.relu;    break;
-//       case "relu6":   return tf.relu6;   break;
-//       case "sigmoid": return tf.sigmoid; break;
-//       case "tanh":    return tf.tanh;    break;
-//       case "sin":     return tf.sin;     break;
-//       case "cos":     return tf.cos;     break;
-//       //default:
-//     }
-//     return null;
-//   }
 
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv_and_keep( inputTensor ) {
