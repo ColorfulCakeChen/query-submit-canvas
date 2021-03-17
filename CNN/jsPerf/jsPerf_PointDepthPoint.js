@@ -55,6 +55,88 @@ class HeightWidthDepth {
       ]
     };
     this.testCases = [
+      // Test Case 0: pointwise1 (bias)
+      new PointDepthPoint_Reference.TestCase(
+        [
+          2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
+          0.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
+          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,  7.4 ], // paramsInArray
+
+        [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
+            0,    3,  0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
+            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       true ], // paramsOutArray
+
+        // pointwise1FiltersArray
+        [
+          11, 12, 13, 14,
+          21, 22, 23, 24,
+        ],
+
+        // pointwise1BiasesArray
+        [ 3, 4 ],
+
+        [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+        testImageData   // imageIn
+      ),
+
+      // Test Case 1: pointwise1 (bias, activation)
+      new PointDepthPoint_Reference.TestCase(
+        [
+          2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+          0.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
+          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,  7.4 ], // paramsInArray
+
+        [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+            0,    3,  0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
+            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       true ], // paramsOutArray
+
+        // pointwise1FiltersArray
+        [
+          11, 12, 13, 14,
+          21, 22, 23, 24,
+        ],
+
+        // pointwise1BiasesArray
+        [ 3, 4 ],
+
+        [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+        testImageData   // imageIn
+      ),
+
+      // Test Case 2: depthwise (channelMultiplier = 1)
+      new PointDepthPoint_Reference.TestCase(
+        [
+          0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+          1.1,  3.1, 3.1,   0.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
+          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,  7.4 ], // paramsInArray
+
+        [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+            1,    3,   0, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
+            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       true ], // paramsOutArray
+
+        [], [], // pointwise1FiltersArray, pointwise1BiasesArray
+
+        // depthwiseFiltersArray
+        [
+          1111, 1112, 1121, 1122, //1131, 1132, 1141, 1142, //1151, 1152, 1161, 1162, 1171, 1172, 1181, 1182, 1191, 1192,
+          1211, 1212, 1221, 1222, //1231, 1232, 1241, 1242, //1251, 1252, 1261, 1262, 1271, 1272, 1281, 1282, 1291, 1292,
+          1311, 1312, 1321, 1322, //1331, 1332, 1341, 1342, //1351, 1352, 1361, 1362, 1371, 1372, 1381, 1382, 1391, 1392,
+
+          2111, 2112, 2121, 2122, //2131, 2132, 2141, 2142, //2151, 2152, 2161, 2162, 2171, 2172, 2181, 2182, 2191, 2192,
+          2211, 2212, 2221, 2222, //2231, 2232, 2241, 2242, //2251, 2252, 2261, 2262, 2271, 2272, 2281, 2282, 2291, 2292,
+          2311, 2312, 2321, 2322, //2331, 2332, 2341, 2342, //2351, 2352, 2361, 2362, 2371, 2372, 2381, 2382, 2391, 2392,
+
+          3111, 3112, 3121, 3122, //3131, 3132, 3141, 3142, //3151, 3152, 3161, 3162, 3171, 3172, 3181, 3182, 3191, 3192,
+          3211, 3212, 3221, 3222, //3231, 3232, 3241, 3242, //3251, 3252, 3261, 3262, 3271, 3272, 3281, 3282, 3291, 3292,
+          3311, 3312, 3321, 3322, //3331, 3332, 3341, 3342, //3351, 3352, 3361, 3362, 3371, 3372, 3381, 3382, 3391, 3392,
+        ],
+
+        [], [], [], // depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+
+        testImageData   // imageIn
+      ),
+
+      // Test Case 3
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -105,10 +187,7 @@ class HeightWidthDepth {
         [ 201, 202, 203, 204, 205, 206, 207, 208 ],
 
         // imageIn
-        testImageData,
-//!!!
-        // imageOutArray
-        [ ],
+        testImageData
       ),
     ];
 
@@ -126,24 +205,11 @@ class HeightWidthDepth {
       this.dataTensor3d = null;
     }
 
-    this.pointDepthPoint_release();
+    this.pointDepthPoint_PerformanceTest_release();
   }
 
-  /**
-   * @return {PointDepthPoint.Base} The created pointDepthPoint object.
-   */
-  pointDepthPoint_create(
-    bKeepInputTensor
-  ) {
-
-    let testCase = this.testCases[ 0 ];
-    let pointDepthPoint = testCase.pointDepthPoint_create( bKeepInputTensor );
-
-    return pointDepthPoint;
-  }
-
-  pointDepthPoint_init() {
-    this.pointDepthPoint_release();
+  pointDepthPoint_PerformanceTest_init() {
+    this.pointDepthPoint_PerformanceTest_release();
 
 //!!! ...unfinished...
 
@@ -152,16 +218,17 @@ class HeightWidthDepth {
     // ( bKeepInputTensor )
     this.pointDepthPoint_list = [
 
-      this.pointDepthPoint_create( false ),
+//!!! ...unfinished... (2021/03/17) Use different test case for performance testing.
+      this.testCases[ 0 ].pointDepthPoint_create( false ),
       // The pointDepthPoint for performance testing should:
       //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
       this.pointDepthPoint_DConv =
-      this.pointDepthPoint_create(  true ),
+      this.testCases[ 0 ].pointDepthPoint_create(  true ),
     ];
 
   }
 
-  pointDepthPoint_release() {
+  pointDepthPoint_PerformanceTest_release() {
     if ( this.pointDepthPoint_list ) {
       for ( let i = 0; i < this.pointDepthPoint_list.length; ++i ) {
         let pointDepthPoint = this.pointDepthPoint_list[ i ];
@@ -174,6 +241,9 @@ class HeightWidthDepth {
   /**
    * Check the PointDepthPoint's output according to input.
    *
+   * @param {number} testCaseIndex
+   *   The index of array this.testCases[].
+   *
    * @param {PointDepthPoint.Base} pointDepthPoint
    *   The object which implemets PointDepthPoint logic.
    *
@@ -183,10 +253,10 @@ class HeightWidthDepth {
    * @param {tf.tensor3d} outputTensor3d
    *   The output of the PointDepthPoint's apply_and_destroy_or_keep().
    */
-  check_Input_Output_WeightsTable( pointDepthPoint, inputTensor3d, outputTensor3d ) {
+  check_Input_Output_WeightsTable( testCaseIndex, pointDepthPoint, inputTensor3d, outputTensor3d ) {
     tf.tidy( () => {
 
-      let testCase = this.testCases[ 0 ];
+      let testCase = this.testCases[ testCaseIndex ];
       let imageOutRef = testCase.calcResult();
       let outputArrayRef = imageOutRef.dataArray;
 
@@ -209,40 +279,52 @@ class HeightWidthDepth {
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
-    tf.tidy( () => { // Test memory leakage of pointDepthPoint.
-      let memoryInfoPre = tf.memory();
-      this.pointDepthPoint_init();
-      this.pointDepthPoint_release();
-      let memoryInfo = tf.memory();
-      tf.util.assert( memoryInfoPre.numTensors == memoryInfo.numTensors, `PointDepthPoint init/release memory leak.`);
-    });
-
-    this.pointDepthPoint_init();  // (Should outside tidy() for preventing from tensors being disposed.
 
     tf.tidy( () => {
-      for ( let i = 0; i < this.pointDepthPoint_list.length; ++i ) {
-        let pointDepthPoint = this.pointDepthPoint_list[ i ];
+      for ( let i = 0; i < this.testCases.length; ++i ) {
+        let testCase = this.testCases[ i ];
+        
+        for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
+          let bKeepInputTensor = ( nKeepInputTensor != 0 );
 
-        let memoryInfo0 = tf.memory();
+          tf.tidy( () => { // Test memory leakage of pointDepthPoint create/dispose.
+            let memoryInfo_beforeCreate = tf.memory();
+            let pointDepthPoint = testCase.pointDepthPoint_create( bKeepInputTensor );
+            pointDepthPoint.dispose();
+            let memoryInfo_afterDispose = tf.memory();
+            tf.util.assert( memoryInfo_beforeCreate.numTensors == memoryInfo_afterDispose.numTensors, `PointDepthPoint create/dispose memory leak.`);
+          });
 
-        let inputTensor3d;
-        if ( pointDepthPoint.bKeepInputTensor ) {
-          inputTensor3d = this.dataTensor3d;
-        } else {
-          inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
+          tf.tidy( () => {
+            let pointDepthPoint = testCase.pointDepthPoint_create( bKeepInputTensor );
+
+            let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
+
+            let inputTensor3d;
+            if ( pointDepthPoint.bKeepInputTensor ) {
+              inputTensor3d = this.dataTensor3d;
+            } else {
+              inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
+            }
+
+            let outputTensor3d = pointDepthPoint.apply_and_destroy_or_keep( inputTensor3d );
+            let memoryInfo_apply_after = tf.memory();
+
+            tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + 1 ),
+              `PointDepthPoint.apply_and_destroy_or_keep() memory leak.`);
+
+            // Test correctness of pointDepthPoint apply.
+            this.check_Input_Output_WeightsTable( i, pointDepthPoint, this.dataTensor3d, outputTensor3d );
+
+            outputTensor3d.dispose();
+            pointDepthPoint.dispose();
+          });
         }
-
-        // Test memory leak of embedding apply.
-        let outputTensor3d = pointDepthPoint.apply_and_destroy_or_keep( inputTensor3d );
-        let memoryInfo1 = tf.memory();
-        tf.util.assert( memoryInfo1.numTensors == ( memoryInfo0.numTensors + 1 ), `PointDepthPoint.apply_and_destroy_or_keep() memory leak.`);
-
-        // Test correctness of pointDepthPoint apply.
-        this.check_Input_Output_WeightsTable( pointDepthPoint, this.dataTensor3d, outputTensor3d );
-
-        outputTensor3d.dispose();
       }
     });
+
+    // After correctness testing done, create all PointDepthPoint for performance testing.
+    this.pointDepthPoint_PerformanceTest_init();
   }
 
    testDifferentDisposeStrategy_All() {
