@@ -75,7 +75,8 @@ class HeightWidthDepth {
         ],
 
         // pointwise1BiasesArray
-        [ 3, 4 ],
+//        [ 3, 4 ],
+        [],
 
         [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
         testImageData   // imageIn
