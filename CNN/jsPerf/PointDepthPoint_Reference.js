@@ -253,8 +253,8 @@ class TestCase {
       + `depthwise_AvgMax_Or_ChannelMultiplier=${depthwise_AvgMax_Or_ChannelMultiplier}, `
       + `depthwiseFilterHeight=${depthwiseFilterHeight}, `
       + `depthwiseStridesPad=${depthwiseStridesPad}, `
-//      + `bDepthwiseBias=${bDepthwiseBias}, `
-      + `depthwiseActivationName=${depthwiseActivationName}, `
+      + `bDepthwiseBias=${bDepthwiseBias}, `
+//      + `depthwiseActivationName=${depthwiseActivationName}, `
       + `pointwise2ChannelCount=${pointwise2ChannelCount}, bPointwise2Bias=${bPointwise2Bias}, `//pointwise2ActivationName=${pointwise2ActivationName}, `
       + `bAddInputToOutput=${bAddInputToOutput}`
     ;
