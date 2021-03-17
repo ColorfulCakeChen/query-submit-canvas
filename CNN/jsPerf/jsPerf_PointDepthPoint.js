@@ -282,7 +282,7 @@ class HeightWidthDepth {
 
     for ( let i = 0; i < this.testCases.length; ++i ) {
       let testCase = this.testCases[ i ];
-      console.log( `PointDepthPoint testCaseIndex = ${1}` );
+      console.log( `PointDepthPoint testCaseIndex = ${i}` );
 
       for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
         let bKeepInputTensor = ( nKeepInputTensor != 0 );
