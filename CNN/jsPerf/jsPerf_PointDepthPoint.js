@@ -315,7 +315,7 @@ class HeightWidthDepth {
           this.check_Input_Output_WeightsTable( i, pointDepthPoint, this.dataTensor3d, outputTensor3d );
 
           outputTensor3d.dispose();
-          pointDepthPoint.dispose();
+          pointDepthPoint.disposeTensors();
           let memoryInfo_afterDispose = tf.memory();
 
           tf.util.assert( memoryInfo_beforeCreate.numTensors == memoryInfo_afterDispose.numTensors, `PointDepthPoint create/dispose memory leak.`);
