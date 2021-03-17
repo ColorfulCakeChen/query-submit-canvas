@@ -1,6 +1,7 @@
 export { TestCase };
 
 import * as ValueMax from "../ValueMax.js";
+import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 //import * as TensorTools from "../util/TensorTools.js";
 
@@ -171,7 +172,7 @@ class TestCase {
     tf.util.assert( ( pointDepthPoint.inChannels == this.image.in.depth ),
       `PointDepthPoint inChannels (${pointDepthPoint.inChannels}) should be (${this.image.in.depth}). ${parametersDescription}`);
 
-
+    // pointwise1 parameters.
     tf.util.assert( ( pointDepthPoint.pointwise1ChannelCount == pointwise1ChannelCount ),
       `PointDepthPoint pointwise1ChannelCount (${pointDepthPoint.pointwise1ChannelCount}) should be (${pointwise1ChannelCount}). ${parametersDescription}`);
 
@@ -181,7 +182,11 @@ class TestCase {
     tf.util.assert( ( pointDepthPoint.pointwise1ActivationId == pointwise1ActivationId ),
       `PointDepthPoint pointwise1ActivationId (${pointDepthPoint.pointwise1ActivationId}) should be (${pointwise1ActivationId}). ${parametersDescription}`);
 
+    let pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise1ActivationId );
+    tf.util.assert( ( pointDepthPoint.pointwise1ActivationName == pointwise1ActivationName ),
+      `PointDepthPoint pointwise1ActivationName (${pointDepthPoint.pointwise1ActivationName}) should be (${pointwise1ActivationName}). ${parametersDescription}`);
 
+    // depthwise parameters.
     tf.util.assert( ( pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier == depthwise_AvgMax_Or_ChannelMultiplier ),
       `PointDepthPoint depthwise_AvgMax_Or_ChannelMultiplier (${pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier}) should be (${depthwise_AvgMax_Or_ChannelMultiplier}). ${parametersDescription}`);
 
@@ -197,7 +202,11 @@ class TestCase {
     tf.util.assert( ( pointDepthPoint.depthwiseActivationId == depthwiseActivationId ),
       `PointDepthPoint depthwiseActivationId (${pointDepthPoint.depthwiseActivationId}) should be (${depthwiseActivationId}). ${parametersDescription}`);
 
+    let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( depthwiseActivationId );
+    tf.util.assert( ( pointDepthPoint.depthwiseActivationName == depthwiseActivationName ),
+      `PointDepthPoint depthwiseActivationName (${pointDepthPoint.depthwiseActivationName}) should be (${depthwiseActivationName}). ${parametersDescription}`);
 
+    // pointwise2 parameters.
     tf.util.assert( ( pointDepthPoint.pointwise2ChannelCount == pointwise2ChannelCount ),
       `PointDepthPoint pointwise2ChannelCount (${pointDepthPoint.pointwise2ChannelCount}) should be (${pointwise2ChannelCount}). ${parametersDescription}`);
 
@@ -207,7 +216,11 @@ class TestCase {
     tf.util.assert( ( pointDepthPoint.pointwise2ActivationId == pointwise2ActivationId ),
       `PointDepthPoint pointwise2ActivationId (${pointDepthPoint.pointwise2ActivationId}) should be (${pointwise2ActivationId}). ${parametersDescription}`);
 
+    let pointwise2ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise2ActivationId );
+    tf.util.assert( ( pointDepthPoint.pointwise2ActivationName == pointwise2ActivationName ),
+      `PointDepthPoint pointwise2ActivationName (${pointDepthPoint.pointwise2ActivationName}) should be (${pointwise2ActivationName}). ${parametersDescription}`);
 
+    // Other parameters.
     tf.util.assert( ( pointDepthPoint.bAddInputToOutput == bAddInputToOutput ),
       `PointDepthPoint bAddInputToOutput (${pointDepthPoint.bAddInputToOutput}) should be (${bAddInputToOutput}). ${parametersDescription}`);
 
