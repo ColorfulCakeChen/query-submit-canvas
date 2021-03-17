@@ -24,9 +24,7 @@ class TestCase {
     pointwise1FiltersArray, pointwise1BiasesArray,
     depthwiseFiltersArray, depthwiseBiasesArray,
     pointwise2FiltersArray, pointwise2BiasesArray,
-    imageIn,
-//!!!
-    imageOutArray
+    imageIn
   ) {
     this.weights = {
       params: {
@@ -39,7 +37,7 @@ class TestCase {
     };
 
     this.image = {
-      in:  imageIn,
+      in:  imageIn
     };
 
     // For testing not start at the offset 0.
