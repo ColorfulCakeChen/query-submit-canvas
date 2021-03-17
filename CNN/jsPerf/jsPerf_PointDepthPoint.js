@@ -61,9 +61,9 @@ class HeightWidthDepth {
           2.1,  3.1, 3.1,  3.2, Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
             8,  5.3, Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,  7.4 ], // paramsInArray
 
-        [   2, true, Params.pointwise1ActivationId.valueDesc.Ids.COS,
-            2,    3,  0, true, Params.depthwiseActivationId.valueDesc.Ids.RELU,
-            8, true, Params.pointwise1ActivationId.valueDesc.Ids.SIN,       true ], // paramsOutArray
+        [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+            2,    3,  0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
+            8, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       true ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
