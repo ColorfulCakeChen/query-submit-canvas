@@ -281,7 +281,7 @@ class TestCase {
     }
 
     // Residual Connection.
-    nextImageIn = TestCase.modifyByInput( nextImageIn, bAddInputToOutput, this.image.in, this.paramsOutDescription ) {
+    nextImageIn = TestCase.modifyByInput( nextImageIn, bAddInputToOutput, this.image.in, this.paramsOutDescription );
 
     return nextImageIn;
   }
