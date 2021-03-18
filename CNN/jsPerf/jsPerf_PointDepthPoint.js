@@ -130,7 +130,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 3: depthwise (channelMultiplier = 1)
+      // Test Case 3: depthwise (channelMultiplier = 1, strides = 1, pad = same, AddInputToOutput)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -163,15 +163,15 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 4: depthwise (channelMultiplier = 2)
+      // Test Case 4: depthwise (channelMultiplier = 2, strides = 2, pad = same)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
-          2.1,  3.1, 3.1,   0.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
+          2.1,  3.1, 5.1,   0.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
           0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   4.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-            2,    3,   0, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
+            2,    3,   2, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
             0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
 
         [], [], // pointwise1FiltersArray, pointwise1BiasesArray
@@ -196,7 +196,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 5 (pointwise1, depthwise, pointwise2)
+      // Test Case 5 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = valid), pointwise2)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU6 + 0.1,
@@ -220,22 +220,21 @@ class HeightWidthDepth {
 
         // depthwiseFiltersArray
         [
-          1111, 1112, 1121, 1122, //1131, 1132, 1141, 1142, //1151, 1152, 1161, 1162, 1171, 1172, 1181, 1182, 1191, 1192,
-          1211, 1212, 1221, 1222, //1231, 1232, 1241, 1242, //1251, 1252, 1261, 1262, 1271, 1272, 1281, 1282, 1291, 1292,
-          1311, 1312, 1321, 1322, //1331, 1332, 1341, 1342, //1351, 1352, 1361, 1362, 1371, 1372, 1381, 1382, 1391, 1392,
+          1111, 1112, 1121, 1122,
+          1211, 1212, 1221, 1222,
+          1311, 1312, 1321, 1322,
 
-          2111, 2112, 2121, 2122, //2131, 2132, 2141, 2142, //2151, 2152, 2161, 2162, 2171, 2172, 2181, 2182, 2191, 2192,
-          2211, 2212, 2221, 2222, //2231, 2232, 2241, 2242, //2251, 2252, 2261, 2262, 2271, 2272, 2281, 2282, 2291, 2292,
-          2311, 2312, 2321, 2322, //2331, 2332, 2341, 2342, //2351, 2352, 2361, 2362, 2371, 2372, 2381, 2382, 2391, 2392,
+          2111, 2112, 2121, 2122,
+          2211, 2212, 2221, 2222,
+          2311, 2312, 2321, 2322,
 
-          3111, 3112, 3121, 3122, //3131, 3132, 3141, 3142, //3151, 3152, 3161, 3162, 3171, 3172, 3181, 3182, 3191, 3192,
-          3211, 3212, 3221, 3222, //3231, 3232, 3241, 3242, //3251, 3252, 3261, 3262, 3271, 3272, 3281, 3282, 3291, 3292,
-          3311, 3312, 3321, 3322, //3331, 3332, 3341, 3342, //3351, 3352, 3361, 3362, 3371, 3372, 3381, 3382, 3391, 3392,
+          3111, 3112, 3121, 3122,
+          3211, 3212, 3221, 3222,
+          3311, 3312, 3321, 3322,
         ],
 
         // depthwiseBiasesArray
-        [ 101, 102, 103, 104, //105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115
-        ],
+        [ 101, 102, 103, 104 ],
 
         // pointwise2FiltersArray
         [
@@ -256,7 +255,7 @@ class HeightWidthDepth {
         testImageData
       ),
 
-      // Test Case 6 (pointwise1, depthwise, pointwise2, AddInputToOutput)
+      // Test Case 6 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2, AddInputToOutput)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU + 0.1,
@@ -279,23 +278,23 @@ class HeightWidthDepth {
         [ 3, 4 ],
 
         // depthwiseFiltersArray
+        // (If value too large (out of float32 range), the result will strange. So, use smaller value.)
         [
-          1111, -1112,  1121,  1122, //1131, 1132, 1141, 1142, //1151, 1152, 1161, 1162, 1171, 1172, 1181, 1182, 1191, 1192,
-          1211,  1212,  1221,  1222, //1231, 1232, 1241, 1242, //1251, 1252, 1261, 1262, 1271, 1272, 1281, 1282, 1291, 1292,
-          1311,  1312,  1321,  1322, //1331, 1332, 1341, 1342, //1351, 1352, 1361, 1362, 1371, 1372, 1381, 1382, 1391, 1392,
+          11, -21,  31,  41,
+          12,  22,  32,  42,
+          13,  23,  33,  43,
 
-          2111,  2112,  2121,  2122, //2131, 2132, 2141, 2142, //2151, 2152, 2161, 2162, 2171, 2172, 2181, 2182, 2191, 2192,
-          2211,  2212,  2221, -2222, //2231, 2232, 2241, 2242, //2251, 2252, 2261, 2262, 2271, 2272, 2281, 2282, 2291, 2292,
-          2311,  2312,  2321,  2322, //2331, 2332, 2341, 2342, //2351, 2352, 2361, 2362, 2371, 2372, 2381, 2382, 2391, 2392,
+          14,  24,  34,  44,
+          15,  25,  35, -45,
+          16,  26,  36,  46,
 
-          3111,  3112,  3121,  3122, //3131, 3132, 3141, 3142, //3151, 3152, 3161, 3162, 3171, 3172, 3181, 3182, 3191, 3192,
-          3211,  3212,  3221,  3222, //3231, 3232, 3241, 3242, //3251, 3252, 3261, 3262, 3271, 3272, 3281, 3282, 3291, 3292,
-          3311,  3312, -3321,  3322, //3331, 3332, 3341, 3342, //3351, 3352, 3361, 3362, 3371, 3372, 3381, 3382, 3391, 3392,
+          17,  27,  37,  47,
+          18,  28,  38,  48,
+          19,  29, -39,  49,
         ],
 
         // depthwiseBiasesArray
-        [ 101, 102, 103, 104, //105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115
-        ],
+        [ 101, 102, 103, 104 ],
 
         // pointwise2FiltersArray
         [
