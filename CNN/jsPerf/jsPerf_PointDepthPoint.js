@@ -201,11 +201,11 @@ class HeightWidthDepth {
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           2.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
-            8,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,  7.4 ], // paramsInArray
+            8,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
 
         [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             2,    3,   0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
-            8, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       true ], // paramsOutArray
+            8, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
