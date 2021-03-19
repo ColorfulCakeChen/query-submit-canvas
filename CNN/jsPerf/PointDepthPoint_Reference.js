@@ -455,7 +455,9 @@ class TestCase {
 
     // Depthwise Convolution
     for ( let outY = 0; outY < imageOutHeight; ++outY ) {
-      let outIndexBaseX = ( outY * imageIn.width );
+//!!! (2021/03/19 Remarked)
+//      let outIndexBaseX = ( outY * imageIn.width );
+      let outIndexBaseX = ( outY * imageOutWidth );
       let inYBase = imageInBeginY + ( outY * stridesHeight ) - effectFilterHeightOffset;
 
       for ( let outX = 0; outX < imageOutWidth; ++outX ) {
