@@ -70,14 +70,14 @@ class HeightWidthDepth {
 
         // pointwise1FiltersArray
         [
-          -11,  21,
-           12,  22,
-           13,  23,
-           14, -24,
+          -1,  3,
+           2,  1,
+           3,  4,
+           4, -2,
         ],
 
         // pointwise1BiasesArray
-        [ 3, 4 ],
+        [ 3, -4 ],
 
         // depthwiseFiltersArray
         // (If value too large (out of float32 range), the result will strange. So, use smaller and negative value.)
