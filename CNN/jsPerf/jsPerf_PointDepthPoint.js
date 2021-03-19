@@ -575,12 +575,13 @@ class HeightWidthDepth {
           // Test correctness of pointDepthPoint apply.
           this.check_Input_Output_WeightsTable( i, pointDepthPoint, this.dataTensor3d, outputTensor3d );
 
-          outputTensor3d.dispose();
           pointDepthPoint.disposeTensors();
           let memoryInfo_afterDispose = tf.memory();
 
-          tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors - tensorNumDifference_apply_before_after ),
+          tf.util.assert( memoryInfo_afterDispose.numTensors == memoryInfo_beforeCreate.numTensors,
             `PointDepthPoint create/dispose memory leak.`);
+
+          outputTensor3d.dispose();
         });
       }
     }
