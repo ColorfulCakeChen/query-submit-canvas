@@ -82,17 +82,17 @@ class HeightWidthDepth {
         // depthwiseFiltersArray
         // (If value too large (out of float32 range), the result will strange. So, use smaller and negative value.)
         [
-           11, -21, -31, -41,
-           12,  22,  32,  42,
-          -13,  23, -33, -43,
+           1, -1, -1, -1,
+           2,  2,  2,  2,
+          -3,  3, -3, -3,
 
-           14, -24, -34,  44,
-          -15, -25, -35, -45,
-           16,  26,  36, -46,
+           4, -4, -4,  4,
+          -5, -5, -5, -5,
+           6,  6,  6, -6,
 
-           17,  27, -37,  47,
-          -18, -28,  38, -48,
-          -19,  29, -39,  49,
+           7,  7, -7,  7,
+          -8, -8,  8, -8,
+          -9,  9, -9,  9,
         ],
 
         // depthwiseBiasesArray
