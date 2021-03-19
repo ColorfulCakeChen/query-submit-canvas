@@ -65,7 +65,7 @@ class HeightWidthDepth {
           0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE + 0.3,  6.4 ], // paramsInArray
 
         [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
-            2,    3,   1, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
+            0,    3,   1, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
             0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,      false ], // paramsOutArray
 
         // pointwise1FiltersArray
