@@ -557,7 +557,7 @@ class HeightWidthDepth {
 //!!! (2021/03/19 Test always clone.
           if ( bKeepInputTensor ) {
             inputTensor3d = this.dataTensor3d.clone();
-            tensorNumDifference_apply_before_after = 2;
+            tensorNumDifference_apply_before_after = 0;
           } else {
             inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
             tensorNumDifference_apply_before_after = 0;
