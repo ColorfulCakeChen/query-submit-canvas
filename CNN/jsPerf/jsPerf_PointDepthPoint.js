@@ -539,7 +539,7 @@ class HeightWidthDepth {
       console.log( `PointDepthPoint testCaseIndex = ${i}` );
 
       for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
-        let bKeepInputTensor = ( nKeepInputTensor != 0 );
+        let bKeepInputTensor = !( nKeepInputTensor != 0 );
 
         tf.tidy( () => {
           let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
