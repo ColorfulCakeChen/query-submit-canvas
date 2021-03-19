@@ -578,7 +578,7 @@ class HeightWidthDepth {
           pointDepthPoint.disposeTensors();
           let memoryInfo_afterDispose = tf.memory();
 
-          tf.util.assert( memoryInfo_afterDispose.numTensors == memoryInfo_beforeCreate.numTensors,
+          tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
             `PointDepthPoint create/dispose memory leak.`);
 
           outputTensor3d.dispose();
@@ -600,8 +600,7 @@ class HeightWidthDepth {
 //       let tArrayPrev;
 //
 //       for ( let i = 0; i < functionTable.length; ++i ) {
-//         let func = functionTable[ i ];
-//
+//         let func = functionTable[ i ];//
 //         let memoryInfoPrev = tf.memory();
 //         let tArray = func.call( thisArg, this.dataTensor3dArray );
 //         let memoryInfo = tf.memory();
