@@ -51,7 +51,6 @@ class HeightWidthDepth {
         111, 112, 113, 114,  121, 122, 123, 124,  131, 132, 133, 134,  141, 142, 143, 144,  151, 152, 153, 154,
         211, 212, 213, 214,  221, 222, 223, 224,  231, 232, 233, 234,  241, 242, 243, 244,  251, 252, 253, 254,
         311, 312, 313, 314,  321, 322, 323, 324,  331, 332, 333, 334,  341, 342, 343, 344,  351, 352, 353, 354,
-//        411, 412, 413, 414,  421, 422, 423, 424,  431, 432, 433, 434,
       ]
     };
 
@@ -546,9 +545,19 @@ class HeightWidthDepth {
 
           let inputTensor3d;
           let tensorNumDifference_apply_before_after;
+//!!! (20210/03/19 Temp Remarked)
+//           if ( bKeepInputTensor ) {
+//             inputTensor3d = this.dataTensor3d;
+//             tensorNumDifference_apply_before_after = 1;
+//           } else {
+//             inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
+//             tensorNumDifference_apply_before_after = 0;
+//           }
+
+//!!! (2021/03/19 Test always clone.
           if ( bKeepInputTensor ) {
-            inputTensor3d = this.dataTensor3d;
-            tensorNumDifference_apply_before_after = 1;
+            inputTensor3d = this.dataTensor3d.clone();
+            tensorNumDifference_apply_before_after = 2;
           } else {
             inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
             tensorNumDifference_apply_before_after = 0;
