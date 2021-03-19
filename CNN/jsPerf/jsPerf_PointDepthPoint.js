@@ -57,16 +57,77 @@ class HeightWidthDepth {
 
     this.testCases = [
 
-      // Test Case 0 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2, AddInputToOutput)
+      // Test Case 0 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2)
+      new PointDepthPoint_Reference.TestCase(
+        [
+          0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
+          2.1,  3.1, 4.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
+          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE + 0.3,  6.4 ], // paramsInArray
+
+        [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
+            2,    3,   1, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
+            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,      false ], // paramsOutArray
+
+        // pointwise1FiltersArray
+        [
+//           -1,  3,
+//            2,  1,
+//            3,  4,
+//            4, -2,
+        ],
+
+        // pointwise1BiasesArray
+        [
+//           3, -4
+        ],
+
+        // depthwiseFiltersArray
+        // (If value too large (out of float32 range), the result will strange. So, use smaller and negative value.)
+        [
+           1, -9, -5,  7,
+           2,  8,  4,  1,
+          -3,  7, -6,  9,
+
+           4, -6,  8, -2,
+           5,  5, -7, -3,
+           6,  4,  9,  5,
+
+           7,  3, -3,  4,
+          -8,  2,  1, -8,
+          -9,  1, -2,  6,
+        ],
+
+        // depthwiseBiasesArray
+        [ 101, 102, 103, 104 ],
+
+        // pointwise2FiltersArray
+        // (Some negative so that the result will not too large (out of float32 range). Otherwise, the result will strange.)
+        [
+//            1,  5,  9,  3,
+//            2,  6,  0,  4,
+//            3,  7,  1,  5,
+//            4,  8,  2,  6,
+        ],
+
+        // pointwise2BiasesArray
+        [
+//           201, 202, 203, 204
+        ],
+
+        // imageIn
+        testImageData
+      ),
+
+      // Test Case 1 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2, AddInputToOutput)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
           2.1,  3.1, 4.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
-          4.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE + 0.3,  6.4 ], // paramsInArray
+          4.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE + 0.3,  7.4 ], // paramsInArray
 
         [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
             2,    3,   1, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
-            4, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,      false ], // paramsOutArray
+            4, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,       true ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
@@ -114,7 +175,7 @@ class HeightWidthDepth {
         testImageData
       ),
 
-      // Test Case 0: depthwise (channelMultiplier = 1, strides = 1, pad = valid)
+      // Test Case 2: depthwise (channelMultiplier = 1, strides = 1, pad = valid)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -147,7 +208,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 1: depthwise (channelMultiplier = 1, strides = 1, pad = same)
+      // Test Case 3: depthwise (channelMultiplier = 1, strides = 1, pad = same)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -180,7 +241,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 2: depthwise (channelMultiplier = 1, strides = 1, pad = same, AddInputToOutput)
+      // Test Case 4: depthwise (channelMultiplier = 1, strides = 1, pad = same, AddInputToOutput)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -213,7 +274,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 3: depthwise (channelMultiplier = 2, strides = 2, pad = same)
+      // Test Case 5: depthwise (channelMultiplier = 2, strides = 2, pad = same)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -246,7 +307,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 4: pointwise1 (4-to-1 channel, no bias)
+      // Test Case 6: pointwise1 (4-to-1 channel, no bias)
       new PointDepthPoint_Reference.TestCase(
         [
           1.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
@@ -270,7 +331,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 5: pointwise1 (4-to-2 channel, no bias)
+      // Test Case 7: pointwise1 (4-to-2 channel, no bias)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
@@ -294,7 +355,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 6: pointwise1 (4-to-2 channel, bias, activation)
+      // Test Case 8: pointwise1 (4-to-2 channel, bias, activation)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -320,7 +381,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 7 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = valid), pointwise2)
+      // Test Case 9 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = valid), pointwise2)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU + 0.1,
