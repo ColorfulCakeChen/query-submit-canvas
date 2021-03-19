@@ -402,7 +402,7 @@ class TestCase {
     let effectFilterWidthOffset =  Math.floor( ( effectFilterWidth  - 1 ) / 2 );
 
     let padHeight = 0, padHeightTop = 0, padHeightBottom = 0, padWidth = 0, padWidthLeft = 0, padWidthRight = 0;
-    let imageInBeginY = 0, imageInBeginX = 0;
+    let imageInBeginY = 0, imageInBeginX = 0; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. ( pad == "same" )
 
 //!!! (2021/03/19 Remarked) Only if ( strides == 1 ) and ( pad == "same" ), the output image ( height, width ) equals input image ( height, width ).
 //     switch ( depthwisePad ) {
