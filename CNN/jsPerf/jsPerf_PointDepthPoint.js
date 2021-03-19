@@ -579,7 +579,7 @@ class HeightWidthDepth {
           pointDepthPoint.disposeTensors();
           let memoryInfo_afterDispose = tf.memory();
 
-          tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
+          tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors - tensorNumDifference_apply_before_after ),
             `PointDepthPoint create/dispose memory leak.`);
         });
       }
