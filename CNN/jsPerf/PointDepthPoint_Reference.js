@@ -401,8 +401,8 @@ class TestCase {
     let effectFilterHeightOffset = Math.floor( ( effectFilterHeight - 1 ) / 2 );
     let effectFilterWidthOffset =  Math.floor( ( effectFilterWidth  - 1 ) / 2 );
 
-    let imageOutHeight, imageOutWidth;
-    let imageInBeginY, imageInBeginX;
+    let padHeight = 0, padHeightTop = 0, padHeightBottom = 0, padWidth = 0, padWidthLeft = 0, padWidthRight = 0;
+    let imageInBeginY = 0, imageInBeginX = 0;
 
 //!!! (2021/03/19 Remarked) Only if ( strides == 1 ) and ( pad == "same" ), the output image ( height, width ) equals input image ( height, width ).
 //     switch ( depthwisePad ) {
@@ -421,29 +421,7 @@ class TestCase {
 //         break;
 //     }
 
-//!!! (2021/03/19 Remarked) seems not this way.
-//     {
-//       if ( ( stridesHeight == 1 ) && ( depthwisePad == "same" ) ) {
-//         imageOutHeight = imageIn.height;
-//         imageInBeginY = 0; // So that negative ( inX, inY ) will happen, but they will be viewed as zero value.
-//       } else {
-//         // If ( strides != 1 ), even if ( pad == "same" ), the output image height does not equal input image height.
-//         imageOutHeight = Math.floor( ( ( imageIn.height - effectFilterHeight) / stridesHeight ) + 1 );
-//         imageInBeginY = effectFilterHeightOffset; // So that negative ( inX, inY ) will never happen.
-//       }
-//
-//       if ( ( stridesWidth == 1 ) && ( depthwisePad == "same" ) ) {
-//         imageOutWidth = imageIn.width;
-//         imageInBeginX = 0; // So that negative ( inX, inY ) will happen, but they will be viewed as zero value.
-//       } else {
-//         // If ( strides != 1 ), even if ( pad == "same" ), the output image width does not equal input image width.
-//         imageOutWidth =  Math.floor( ( ( imageIn.width  - effectFilterWidth ) / stridesWidth  ) + 1 );
-//         imageInBeginX = effectFilterWidthOffset; // So that negative ( inX, inY ) will never happen.
-//       }
-//     }
-
     // Determine padding number around the input image height and width.
-    let padHeight = 0, padHeightTop = 0, padHeightBottom = 0, padWidth = 0, padWidthLeft = 0, padWidthRight = 0;
     if ( depthwisePad == "same" ) {
       padHeight = effectFilterHeight - 1; // So that the output height will be the same as input height.
       let padHeightHalf = padHeight / 2;
@@ -454,12 +432,13 @@ class TestCase {
       let padWidthHalf = padWidth / 2;
       padWidthLeft    = Math.ceil(  padWidthHalf );
       padWidthRight   = Math.floor( padWidthHalf );
+
+      imageInBeginY = padHeightTop; // So that negative ( inX, inY ) will never happen.
+      imageInBeginX = padWidthLeft;
     }
 
-    imageOutHeight = Math.floor( ( ( imageIn.height + padHeight - effectFilterHeight) / stridesHeight ) + 1 );
-    imageOutWidth =  Math.floor( ( ( imageIn.width  + padWidth  - effectFilterWidth ) / stridesWidth  ) + 1 );
-    imageInBeginY = padHeightTop; // So that negative ( inX, inY ) will never happen.
-    imageInBeginX = padWidthLeft;
+    let imageOutHeight = Math.floor( ( ( imageIn.height + padHeight - effectFilterHeight) / stridesHeight ) + 1 );
+    let imageOutWidth =  Math.floor( ( ( imageIn.width  + padWidth  - effectFilterWidth ) / stridesWidth  ) + 1 );
 
     tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
       `${depthwiseName} filters shape `
