@@ -60,12 +60,12 @@ class HeightWidthDepth {
       // Test Case 0 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2, AddInputToOutput)
       new PointDepthPoint_Reference.TestCase(
         [
-          2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU + 0.1,
-          2.1,  3.1, 4.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
+          2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
+          2.1,  3.1, 4.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
           4.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.RELU + 0.3,  7.4 ], // paramsInArray
 
-        [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,
-            2,    3,   1, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
+        [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
+            2,    3,   1, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
             4, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,       true ], // paramsOutArray
 
         // pointwise1FiltersArray
@@ -101,10 +101,10 @@ class HeightWidthDepth {
         // pointwise2FiltersArray
         // (Some negative so that the result will not too large (out of float32 range). Otherwise, the result will strange.)
         [
-           11, -21, -31,  41,
-          -12,  22, -32,  42,
-          -13, -23,  33, -43,
-           14,  24,  34, -44,
+           11, -21,  31,  41,
+          -12,  22,  32,  42,
+           13,  23,  33, -43,
+           14,  24, -34,  44,
 //           15, 25, 35, 45,
 //           16, 26, 36, 46,
 //           17, 27, 37, 47,
