@@ -56,6 +56,68 @@ class HeightWidthDepth {
     };
 
     this.testCases = [
+
+      // Test Case 0 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2, AddInputToOutput)
+      new PointDepthPoint_Reference.TestCase(
+        [
+          2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU + 0.1,
+          2.1,  3.1, 4.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
+          4.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.RELU + 0.3,  7.4 ], // paramsInArray
+
+        [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,
+            2,    3,   1, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
+            4, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,       true ], // paramsOutArray
+
+        // pointwise1FiltersArray
+        [
+          -11,  21,
+           12,  22,
+           13,  23,
+           14, -24,
+        ],
+
+        // pointwise1BiasesArray
+        [ 3, 4 ],
+
+        // depthwiseFiltersArray
+        // (If value too large (out of float32 range), the result will strange. So, use smaller and negative value.)
+        [
+           11, -21,  31,  41,
+           12,  22, -32,  42,
+          -13,  23,  33,  43,
+
+           14, -24,  34, -44,
+           15,  25, -35, -45,
+           16,  26,  36, -46,
+
+          -17,  27,  37,  47,
+           18, -28,  38,  48,
+          -19,  29, -39,  49,
+        ],
+
+        // depthwiseBiasesArray
+        [ 101, 102, 103, 104 ],
+
+        // pointwise2FiltersArray
+        // (Some negative so that the result will not too large (out of float32 range). Otherwise, the result will strange.)
+        [
+           11, -21, -31,  41,
+          -12,  22, -32,  42,
+          -13, -23,  33, -43,
+           14,  24,  34, -44,
+//           15, 25, 35, 45,
+//           16, 26, 36, 46,
+//           17, 27, 37, 47,
+//           18, 28, 38, 48,
+        ],
+
+        // pointwise2BiasesArray
+        [ 201, 202, 203, 204 ], //205, 206, 207, 208 ],
+
+        // imageIn
+        testImageData
+      ),
+
       // Test Case 0: depthwise (channelMultiplier = 1, strides = 1, pad = valid)
       new PointDepthPoint_Reference.TestCase(
         [
@@ -316,67 +378,6 @@ class HeightWidthDepth {
 
         // pointwise2BiasesArray
         [ 201, 202, 203, 204, 205, 206, 207, 208 ],
-
-        // imageIn
-        testImageData
-      ),
-
-      // Test Case 8 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2, AddInputToOutput)
-      new PointDepthPoint_Reference.TestCase(
-        [
-          2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU + 0.1,
-          2.1,  3.1, 4.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
-          4.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.RELU + 0.3,  7.4 ], // paramsInArray
-
-        [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,
-            2,    3,   1, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
-            4, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,       true ], // paramsOutArray
-
-        // pointwise1FiltersArray
-        [
-          -11,  21,
-           12,  22,
-           13,  23,
-           14, -24,
-        ],
-
-        // pointwise1BiasesArray
-        [ 3, 4 ],
-
-        // depthwiseFiltersArray
-        // (If value too large (out of float32 range), the result will strange. So, use smaller value.)
-        [
-          11, -21,  31,  41,
-          12,  22,  32,  42,
-          13,  23,  33,  43,
-
-          14,  24,  34,  44,
-          15,  25,  35, -45,
-          16,  26,  36,  46,
-
-          17,  27,  37,  47,
-          18,  28,  38,  48,
-          19,  29, -39,  49,
-        ],
-
-        // depthwiseBiasesArray
-        [ 101, 102, 103, 104 ],
-
-        // pointwise2FiltersArray
-        // (Some negative so that the result will not too large (out of float32 range). Otherwise, the result will strange.)
-        [
-           11,  21, -31,  41,
-          -12,  22,  32,  42,
-           13, -23,  33,  43,
-           14,  24,  34, -44,
-//           15, 25, 35, 45,
-//           16, 26, 36, 46,
-//           17, 27, 37, 47,
-//           18, 28, 38, 48,
-        ],
-
-        // pointwise2BiasesArray
-        [ 201, 202, 203, 204 ], //205, 206, 207, 208 ],
 
         // imageIn
         testImageData
