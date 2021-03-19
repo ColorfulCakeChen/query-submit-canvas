@@ -323,20 +323,20 @@ class HeightWidthDepth {
       // Test Case 7 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = valid), pointwise2)
       new PointDepthPoint_Reference.TestCase(
         [
-          2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU6 + 0.1,
+          2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU + 0.1,
           2.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
             8,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.RELU + 0.3,   6.4 ], // paramsInArray
 
-        [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU6,
+        [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,
             2,    3,   0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
             8, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,       false ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
-           11,  21,
-           12, -22,
-          -13,  23,
-           14,  24,
+           1,  4,
+           2,  3,
+          -3, -2,
+           4,  1,
         ],
 
         // pointwise1BiasesArray
