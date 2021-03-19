@@ -404,19 +404,41 @@ class TestCase {
     let imageOutHeight, imageOutWidth;
     let imageInBeginY, imageInBeginX;
 
-    switch ( depthwisePad ) {
-      case "valid": // When ( pad == "valid" ), the convolution will be ignored if the filter is partially outside input image.
-        imageOutHeight = Math.floor( ( ( imageIn.height - effectFilterHeight) / stridesHeight ) + 1 );
-        imageOutWidth =  Math.floor( ( ( imageIn.width  - effectFilterWidth ) / stridesWidth  ) + 1 );
-        imageInBeginY = effectFilterHeightOffset; // So that negative ( inX, inY ) will never happen.
-        imageInBeginX = effectFilterWidthOffset;
-        break;
+//!!! (2021/03/19 Remarked) Only if ( strides == 1 ) and ( pad == "same" ), the output image ( height, width ) equals input image ( height, width ).
+//     switch ( depthwisePad ) {
+//       case "valid": // When ( pad == "valid" ), the convolution will be ignored if the filter is partially outside input image.
+//         imageOutHeight = Math.floor( ( ( imageIn.height - effectFilterHeight) / stridesHeight ) + 1 );
+//         imageOutWidth =  Math.floor( ( ( imageIn.width  - effectFilterWidth ) / stridesWidth  ) + 1 );
+//         imageInBeginY = effectFilterHeightOffset; // So that negative ( inX, inY ) will never happen.
+//         imageInBeginX = effectFilterWidthOffset;
+//         break;
+//
+//       case "same":
+// //!!! ...unfinished... Only if ( strides == 1 ) and ( pad == "same" ), the output image ( height, width ) equals input image ( height, width ).
+//         imageOutHeight = imageIn.height;
+//         imageOutWidth = imageIn.width;
+//         imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will happen, but they will be viewed as zero value.
+//         break;
+//     }
 
-      case "same":
+    {
+      if ( ( stridesHeight == 1 ) && ( depthwisePad == "same" ) ) {
         imageOutHeight = imageIn.height;
+        imageInBeginY = 0; // So that negative ( inX, inY ) will happen, but they will be viewed as zero value.
+      } else {
+        // If ( strides != 1 ), even if ( pad == "same" ), the output image height does not equal input image height.
+        imageOutHeight = Math.floor( ( ( imageIn.height - effectFilterHeight) / stridesHeight ) + 1 );
+        imageInBeginY = effectFilterHeightOffset; // So that negative ( inX, inY ) will never happen.
+      }
+
+      if ( ( stridesWidth == 1 ) && ( depthwisePad == "same" ) ) {
         imageOutWidth = imageIn.width;
-        imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will happen, but they will be viewed as zero value.
-        break;
+        imageInBeginX = 0; // So that negative ( inX, inY ) will happen, but they will be viewed as zero value.
+      } else {
+        // If ( strides != 1 ), even if ( pad == "same" ), the output image width does not equal input image width.
+        imageOutWidth =  Math.floor( ( ( imageIn.width  - effectFilterWidth ) / stridesWidth  ) + 1 );
+        imageInBeginX = effectFilterWidthOffset; // So that negative ( inX, inY ) will never happen.
+      }
     }
 
     tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
