@@ -534,8 +534,6 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
 
-    tf.tidy( () => {
-
     for ( let i = 0; i < this.testCases.length; ++i ) {
       let testCase = this.testCases[ i ];
       console.log( `PointDepthPoint testCaseIndex = ${i}` );
@@ -543,7 +541,7 @@ class HeightWidthDepth {
       for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
         let bKeepInputTensor = ( nKeepInputTensor != 0 );
 
-//        tf.tidy( () => {
+        tf.tidy( () => {
           let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
 
           let inputTensor3d;
@@ -573,11 +571,9 @@ class HeightWidthDepth {
           let memoryInfo_afterDispose = tf.memory();
 
           tf.util.assert( memoryInfo_beforeCreate.numTensors == memoryInfo_afterDispose.numTensors, `PointDepthPoint create/dispose memory leak.`);
-//        });
+        });
       }
     }
-
-    });
 
     // After correctness testing done, create all PointDepthPoint for performance testing.
     this.pointDepthPoint_PerformanceTest_init();
