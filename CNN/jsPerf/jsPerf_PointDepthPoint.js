@@ -83,14 +83,14 @@ class HeightWidthDepth {
         // (If value too large (out of float32 range), the result will strange. So, use smaller and negative value.)
         [
            11, -21, -31, -41,
-           12,  22, -32,  42,
-          -13, -23, -33, -43,
+           12,  22,  32,  42,
+          -13,  23, -33, -43,
 
-           14, -24, -34, -44,
+           14, -24, -34,  44,
           -15, -25, -35, -45,
            16,  26,  36, -46,
 
-          -17,  27, -37,  47,
+           17,  27, -37,  47,
           -18, -28,  38, -48,
           -19,  29, -39,  49,
         ],
@@ -101,18 +101,14 @@ class HeightWidthDepth {
         // pointwise2FiltersArray
         // (Some negative so that the result will not too large (out of float32 range). Otherwise, the result will strange.)
         [
-          -11, -21,  31,  41,
-          -12,  22, -32,  42,
-           13, -23,  33, -43,
-           14,  24, -34, -44,
-//           15, 25, 35, 45,
-//           16, 26, 36, 46,
-//           17, 27, 37, 47,
-//           18, 28, 38, 48,
+          -1, -5,  9,  3,
+          -2,  6,  0,  4,
+           3, -7, -1, -5,
+           4,  8, -2, -6,
         ],
 
         // pointwise2BiasesArray
-        [ 201, 202, 203, 204 ], //205, 206, 207, 208 ],
+        [ 201, 202, 203, 204 ],
 
         // imageIn
         testImageData
