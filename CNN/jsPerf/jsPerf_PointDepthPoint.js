@@ -11,7 +11,7 @@ import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 /**
  * Test CNN PointDepthPoint.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/1/colorfulcakechen-cnn-pointdepthpoint-27b06ac30b20e36832}
+ * @see {@link htts://www.measurethat.net/Benchmarks/Show/11973/1/colorfulcakechen-cnn-pointdepthpoint-27b06ac30b20e36832}
  */
 
 
@@ -101,10 +101,10 @@ class HeightWidthDepth {
         // pointwise2FiltersArray
         // (Some negative so that the result will not too large (out of float32 range). Otherwise, the result will strange.)
         [
-          -1, -5,  9,  3,
-          -2,  6,  0,  4,
-           3, -7, -1, -5,
-           4,  8, -2, -6,
+           1,  5,  9,  3,
+           2,  6,  0,  4,
+           3,  7,  1,  5,
+           4,  8,  2,  6,
         ],
 
         // pointwise2BiasesArray
