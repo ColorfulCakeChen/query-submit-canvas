@@ -55,6 +55,23 @@ class HeightWidthDepth {
     };
 
     this.testCases = [
+      // Test Case 0: depthwise (channelMultiplier = avg pooling, strides = 1, pad = valid)
+      new PointDepthPoint_Reference.TestCase(
+        [
+          0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+          PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,  3.1, 3.1,   0.2, 0 + 0.2,
+          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+
+        [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,    3,   0, false, 0,
+            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+
+        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
+        [], [], [], [], [], [],
+
+        testImageData   // imageIn
+      ),
+
       // Test Case 0: depthwise (channelMultiplier = max pooling, strides = 1, pad = valid)
       new PointDepthPoint_Reference.TestCase(
         [
