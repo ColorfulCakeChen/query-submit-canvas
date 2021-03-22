@@ -748,39 +748,39 @@ class HeightWidthDepth {
 function init() {
   disposeTensors();
 
-  let depth = 8;
-  globalThis.testSet_110x120x8 = new HeightWidthDepth( 110, 120, depth ); // height, width, depth
+  let depth = 4;
+  globalThis.testSet_110x120x4 = new HeightWidthDepth( 110, 120, depth ); // height, width, depth
 
-  globalThis.testSet_110x120x8_All = [
-    globalThis.testSet_110x120x8
+  globalThis.testSet_110x120x4_All = [
+    globalThis.testSet_110x120x4
   ];
 }
 
 function testCorrectness() {
-  for ( let i = 0; i < globalThis.testSet_110x120x8_All.length; ++i ) {
-    let testSet = globalThis.testSet_110x120x8_All[ i ];
+  for ( let i = 0; i < globalThis.testSet_110x120x4_All.length; ++i ) {
+    let testSet = globalThis.testSet_110x120x4_All[ i ];
     testSet.testCorrectness();
   }
 }
 
 function testDifferentDisposeStrategy_All() {
-  for ( let i = 0; i < globalThis.testSet_110x120x8_All.length; ++i ) {
-    let testSet = globalThis.testSet_110x120x8_All[ i ];
+  for ( let i = 0; i < globalThis.testSet_110x120x4_All.length; ++i ) {
+    let testSet = globalThis.testSet_110x120x4_All[ i ];
     testSet.testDifferentDisposeStrategy_All();
   }
 }
 
 function disposeTensors() {
-  if ( globalThis.testSet_110x120x8_All ) {
-    for ( let i = 0; i < globalThis.testSet_110x120x8_All.length; ++i ) {
-      let testSet = globalThis.testSet_110x120x8_All[ i ];
+  if ( globalThis.testSet_110x120x4_All ) {
+    for ( let i = 0; i < globalThis.testSet_110x120x4_All.length; ++i ) {
+      let testSet = globalThis.testSet_110x120x4_All[ i ];
       if ( testSet )
         testSet.disposeTensors();
     }
 
-    globalThis.testSet_110x120x8_All = null;
+    globalThis.testSet_110x120x4_All = null;
   }
 
-  globalThis.testSet_110x120x8
+  globalThis.testSet_110x120x4
     = null;
 }
