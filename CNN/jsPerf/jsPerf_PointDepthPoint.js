@@ -570,7 +570,7 @@ class HeightWidthDepth {
     this.dataTensor3d = tf.tidy( () => {
       let shape = [ this.height, this.width, this.depth ];
       let length = tf.util.sizeFromShape( shape );
-      let t = tf.range( 1, length, 1 );
+      let t = tf.range( 0, length, 1 );
       let dataTensor3d = tf.reshape( t, shape );
       return dataTensor3d;
     });
@@ -583,11 +583,9 @@ class HeightWidthDepth {
     this.pointDepthPoint_list = [
 
 //!!! ...unfinished... (2021/03/17) Use different test case for performance testing.
-      this.testCases[ 0 ].pointDepthPoint_create( false ),
       // The pointDepthPoint for performance testing should:
       //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
-      this.pointDepthPoint_DConv =
-      this.testCases[ 15 ].pointDepthPoint_create(  true ),
+      this.pointDepthPoint_DConv = this.testCases[ 15 ].pointDepthPoint_create(  true ),
     ];
 
   }
