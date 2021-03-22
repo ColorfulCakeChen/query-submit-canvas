@@ -224,7 +224,7 @@ class Base extends ReturnOrClone.Base {
    * If ( pointwise1ChannelCount <= 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise1ActivationId
-   *   The activation function id (Params.Activation.Ids.Xxx) after the first pointwise convolution. If null, it will be extracted from
+   *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution. If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution). If ( pointwise1ChannelCount <= 0 ), this activation function will also be ignored.
    *
    * @param {number} depthwise_AvgMax_Or_ChannelMultiplier
@@ -252,7 +252,7 @@ class Base extends ReturnOrClone.Base {
    * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this bias will also be ignored.
    *
    * @param {string} depthwiseActivationId
-   *   The activation function id (Params.Activation.Ids.Xxx) after depthwise convolution. If null, it will be extracted from
+   *   The activation function id (Params.depthwiseActivationId.Ids.Xxx) after depthwise convolution. If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this activation function will also be ignored.
    *
    * @param {number} pointwise2ChannelCount
@@ -264,7 +264,7 @@ class Base extends ReturnOrClone.Base {
    * evolution). If ( pointwise2ChannelCount <= 0 ), this bias will also be ignored.
    *
    * @param {string} pointwise2ActivationId
-   *   The activation function id (Params.Activation.Ids.Xxx) after the second pointwise convolution. If null, it will be extracted from
+   *   The activation function id (Params.pointwise2ActivationId.Ids.Xxx) after the second pointwise convolution. If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution). If ( pointwise2ChannelCount <= 0 ), this activation function will also be ignored.
    *
    * @param {boolean} bAddInputToOutput
@@ -408,12 +408,12 @@ class Base extends ReturnOrClone.Base {
         // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
       } else {
         switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-          case Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.AVG:
+          case Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG:
             this.bDepthwise = this.bDepthwiseAvg = true;
             this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy;
             break;
 
-          case Params.depthwise_AvgMax_Or_ChannelMultiplier.Ids.MAX:
+          case Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX:
             this.bDepthwise = this.bDepthwiseMax = true;
             this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy;
             break;
