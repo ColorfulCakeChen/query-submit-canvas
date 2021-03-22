@@ -441,10 +441,13 @@ class TestCase {
     let imageOutHeight = Math.floor( ( ( imageIn.height + padHeight - effectFilterHeight) / stridesHeight ) + 1 );
     let imageOutWidth =  Math.floor( ( ( imageIn.width  + padWidth  - effectFilterWidth ) / stridesWidth  ) + 1 );
 
-    tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
-      `${depthwiseName} filters shape `
-        + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
-        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+    // If not AVG, MAX, NONE, the filters shape should match input image channel count.
+    if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+      tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
+        `${depthwiseName} filters shape `
+          + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
+          + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+    }
 
     let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth );
     let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
