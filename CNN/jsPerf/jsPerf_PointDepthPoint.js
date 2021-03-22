@@ -72,7 +72,41 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 0: depthwise (channelMultiplier = max pooling, strides = 1, pad = valid)
+      // Test Case 1: depthwise (channelMultiplier = avg pooling, strides = 1, pad = same)
+      new PointDepthPoint_Reference.TestCase(
+        [
+          0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+          PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,  3.1, 4.1,   0.2, 0 + 0.2,
+          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+
+        [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,    3,   1, false, 0,
+            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+
+        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
+        [], [], [], [], [], [],
+
+        testImageData   // imageIn
+      ),
+
+      // Test Case 2: depthwise (channelMultiplier = avg pooling, strides = 2, pad = same)
+      new PointDepthPoint_Reference.TestCase(
+        [
+          0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+          PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,  3.1, 5.1,   0.2, 0 + 0.2,
+          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+
+        [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,    3,   2, false, 0,
+            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+
+        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
+        [], [], [], [], [], [],
+
+        testImageData   // imageIn
+      ),
+
+      // Test Case 3: depthwise (channelMultiplier = max pooling, strides = 1, pad = valid)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -89,7 +123,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 1: depthwise (channelMultiplier = max pooling, strides = 1, pad = same)
+      // Test Case 4: depthwise (channelMultiplier = max pooling, strides = 1, pad = same)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -106,7 +140,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 2: depthwise (channelMultiplier = max pooling, strides = 2, pad = same)
+      // Test Case 5: depthwise (channelMultiplier = max pooling, strides = 2, pad = same)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -123,7 +157,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 3 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2)
+      // Test Case 6 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
@@ -184,7 +218,7 @@ class HeightWidthDepth {
         testImageData
       ),
 
-      // Test Case 4 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2, AddInputToOutput)
+      // Test Case 7 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2, AddInputToOutput)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
@@ -241,7 +275,7 @@ class HeightWidthDepth {
         testImageData
       ),
 
-      // Test Case 5: depthwise (channelMultiplier = 1, strides = 1, pad = valid)
+      // Test Case 8: depthwise (channelMultiplier = 1, strides = 1, pad = valid)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -274,7 +308,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 6: depthwise (channelMultiplier = 1, strides = 1, pad = same)
+      // Test Case 9: depthwise (channelMultiplier = 1, strides = 1, pad = same)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -307,7 +341,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 7: depthwise (channelMultiplier = 1, strides = 1, pad = same, AddInputToOutput)
+      // Test Case 10: depthwise (channelMultiplier = 1, strides = 1, pad = same, AddInputToOutput)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -340,7 +374,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 8: depthwise (channelMultiplier = 2, strides = 2, pad = same)
+      // Test Case 11: depthwise (channelMultiplier = 2, strides = 2, pad = same)
       new PointDepthPoint_Reference.TestCase(
         [
           0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -373,7 +407,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 9: pointwise1 (4-to-1 channel, no bias)
+      // Test Case 12: pointwise1 (4-to-1 channel, no bias)
       new PointDepthPoint_Reference.TestCase(
         [
           1.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
@@ -397,7 +431,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 10: pointwise1 (4-to-2 channel, no bias)
+      // Test Case 13: pointwise1 (4-to-2 channel, no bias)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
@@ -421,7 +455,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 11: pointwise1 (4-to-2 channel, bias, activation)
+      // Test Case 14: pointwise1 (4-to-2 channel, bias, activation)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
@@ -447,7 +481,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
-      // Test Case 12: (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = valid), pointwise2)
+      // Test Case 15: (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = valid), pointwise2)
       new PointDepthPoint_Reference.TestCase(
         [
           2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU + 0.1,
@@ -540,7 +574,7 @@ class HeightWidthDepth {
       // The pointDepthPoint for performance testing should:
       //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
       this.pointDepthPoint_DConv =
-      this.testCases[ 0 ].pointDepthPoint_create(  true ),
+      this.testCases[ 15 ].pointDepthPoint_create(  true ),
     ];
 
   }
