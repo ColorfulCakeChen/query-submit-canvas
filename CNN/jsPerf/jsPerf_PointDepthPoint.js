@@ -542,6 +542,7 @@ class HeightWidthDepth {
       ),
     ];
 
+    // Small input image for correctness testing.
     this.dataTensor3d = tf.tidy( () => {
       let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
       let dataTensor3d = tf.tensor3d( testImageData.dataArray, shape );
@@ -560,7 +561,19 @@ class HeightWidthDepth {
   }
 
   pointDepthPoint_PerformanceTest_init() {
-    this.pointDepthPoint_PerformanceTest_release();
+//!!! (2021//03/22 Remarked) Release dataTensor3d too.
+//    this.pointDepthPoint_PerformanceTest_release();
+
+    this.disposeTensors();
+
+    // Larger input image for performance testing.
+    this.dataTensor3d = tf.tidy( () => {
+      let shape = [ this.height, this.width, this.depth ];
+      let length = tf.util.sizeFromShape( shape );
+      let t = tf.range( 1, length, 1 );
+      let dataTensor3d = tf.reshape( t, shape );
+      return dataTensor3d;
+    });
 
 //!!! ...unfinished...
 
@@ -634,56 +647,66 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
 
-    for ( let i = 0; i < this.testCases.length; ++i ) {
-      let testCase = this.testCases[ i ];
-      console.log( `PointDepthPoint testCaseIndex = ${i}` );
+    for ( let testCaseIndex = 0; testCaseIndex < this.testCases.length; ++testCaseIndex ) {
+      try {
+        let testCase = this.testCases[ testCaseIndex ];
 
-      for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
-        let bKeepInputTensor = ( nKeepInputTensor != 0 );
+        for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
+          let bKeepInputTensor = ( nKeepInputTensor != 0 );
 
-        tf.tidy( () => {
+          try {
+            tf.tidy( () => {
 
-          let inputTensor3d;
-          let tensorNumDifference_apply_before_after;
-//!!! (20210/03/19 Temp Remarked)
-//           if ( bKeepInputTensor ) {
-//             inputTensor3d = this.dataTensor3d;
-//             tensorNumDifference_apply_before_after = 1;
-//           } else {
-//             inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
-//             tensorNumDifference_apply_before_after = 0;
-//           }
+              let inputTensor3d;
+              let tensorNumDifference_apply_before_after;
+  //!!! (20210/03/19 Temp Remarked)
+              if ( bKeepInputTensor ) {
+                inputTensor3d = this.dataTensor3d;
+                tensorNumDifference_apply_before_after = 1;
+              } else {
+                inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
+                tensorNumDifference_apply_before_after = 0;
+              }
 
-//!!! (2021/03/19 Test always clone.
-          if ( bKeepInputTensor ) {
-            inputTensor3d = this.dataTensor3d.clone();
-            tensorNumDifference_apply_before_after = 1;
-          } else {
-            inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
-            tensorNumDifference_apply_before_after = 0;
+  //!!! (2021/03/19 Test always clone.
+  //             if ( bKeepInputTensor ) {
+  //               inputTensor3d = this.dataTensor3d.clone();
+  //               tensorNumDifference_apply_before_after = 1;
+  //             } else {
+  //               inputTensor3d = this.dataTensor3d.clone(); // Otherwise, this.dataTensor3d will be destroyed. 
+  //               tensorNumDifference_apply_before_after = 0;
+  //             }
+
+              let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
+              let pointDepthPoint = testCase.pointDepthPoint_create( bKeepInputTensor );
+
+              let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
+              let outputTensor3d = pointDepthPoint.apply_and_destroy_or_keep( inputTensor3d );
+              let memoryInfo_apply_after = tf.memory();
+
+              tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
+                `PointDepthPoint.apply_and_destroy_or_keep() memory leak.`);
+
+              // Test correctness of pointDepthPoint apply.
+              this.check_Input_Output_WeightsTable( testCaseIndex, pointDepthPoint, this.dataTensor3d, outputTensor3d );
+
+              pointDepthPoint.disposeTensors();
+              let memoryInfo_afterDispose = tf.memory();
+
+              tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
+                `PointDepthPoint create/dispose memory leak.`);
+
+              outputTensor3d.dispose();
+            });
+          } catch ( e ) {
+            console.log( `bKeepInputTensor=${bKeepInputTensor}` );
+            throw e;
           }
-
-          let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-          let pointDepthPoint = testCase.pointDepthPoint_create( bKeepInputTensor );
-
-          let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
-          let outputTensor3d = pointDepthPoint.apply_and_destroy_or_keep( inputTensor3d );
-          let memoryInfo_apply_after = tf.memory();
-
-          tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-            `PointDepthPoint.apply_and_destroy_or_keep() memory leak.`);
-
-          // Test correctness of pointDepthPoint apply.
-          this.check_Input_Output_WeightsTable( i, pointDepthPoint, this.dataTensor3d, outputTensor3d );
-
-          pointDepthPoint.disposeTensors();
-          let memoryInfo_afterDispose = tf.memory();
-
-          tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
-            `PointDepthPoint create/dispose memory leak.`);
-
-          outputTensor3d.dispose();
-        });
+        }
+      } catch ( e ) {
+        let backendName = tf.getBackend();
+        console.log( `backendName=${backendName}, PointDepthPoint testCaseIndex = ${testCaseIndex}` );
+        throw e;
       }
     }
 
