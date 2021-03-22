@@ -539,7 +539,7 @@ class TestCase {
 
             // Avg pooling
             if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
-              imageOut.dataArray[ i ] /= avgDivisor; // So that every sum is averaged.
+              imageOut.dataArray[ outIndex ] /= avgDivisor; // So that every sum is averaged.
             }
           }
         }
