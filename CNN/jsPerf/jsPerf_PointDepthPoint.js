@@ -701,7 +701,7 @@ class HeightWidthDepth {
         4.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,           3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
@@ -718,7 +718,7 @@ class HeightWidthDepth {
         4.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX - 0.6,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,           3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
