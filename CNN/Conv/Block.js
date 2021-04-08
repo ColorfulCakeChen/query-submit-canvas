@@ -24,7 +24,7 @@ export { Base, PointDepthPoint };
  * @member {PointDepthPoint.Base} stepLast
  *   The last step computation of this block. It may be the same as this.step0 when there is only one step inside this block.
  *
- * @see ChannelShuffler.ConcatGather
+ * @see ChannelShuffler.ConcatPointwiseConv
  */
 class Base {
 
@@ -292,6 +292,8 @@ class Base {
 
         // The first 1x1 pointwise convolution can change channel count.
         let pointwise1ChannelCount = pointwise2ChannelCount * pointwise1ChannelCountRate;
+
+//!!! (2021/04/08) ...unfinished... Using ChannelShuffler.ConcatPointwiseConv instead.
 
         // In ShuffleNetV2, there is a channel shuffler in every step (except setp 0). It is shared by these steps in the same block.
         if ( bChannelShuffler ) {
