@@ -37,8 +37,6 @@ class HeightWidthDepth {
 
     this.concatenatedShape = [ height, width, depth ];
 
-//!!! ...unfinished...
-
     // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     // pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
@@ -169,6 +167,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
+//!!! ...unfinished...
 //!!! (2021/04/08) Temp for testing Tensorflow.js bug (When in "webgl" backend and image width is odd, the second run of tf.conv2d() may be wrong.)
       // Test Case 6 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2)
       new PointDepthPoint_Reference.TestCase(
@@ -573,8 +572,6 @@ class HeightWidthDepth {
   }
 
   pointDepthPoint_PerformanceTest_init() {
-//!!! (2021//03/22 Remarked) Release dataTensor3d too.
-//    this.pointDepthPoint_PerformanceTest_release();
 
     let pointwise_4to8_FiltersArray =
     [
@@ -606,6 +603,24 @@ class HeightWidthDepth {
     let depthwise_8to16_BiasesArray =
     [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ];
 
+    let depthwise_8to8_FiltersArray =
+    [
+       1, -9, -5,  7,  2,  8,  4,  1,
+       2,  8,  4,  1, -3,  7, -6,  9,
+      -3,  7, -6,  9,  4, -6,  8, -2,
+
+       4, -6,  8, -2,  5,  5, -7, -3,
+       5,  5, -7, -3,  6,  4,  9,  5,
+       6,  4,  9,  5,  7,  3, -3,  4,
+
+       7,  3, -3,  4, -8,  2,  1, -8,
+      -8,  2,  1, -8, -9,  1, -2,  6,
+      -9,  1, -2,  6,  1, -9, -5,  7,
+    ];
+
+    let depthwise_8to8_BiasesArray =
+    [ 101, 102, 103, 104, 105, 106, 107, 108, ];
+
     let pointwise_16to4_FiltersArray =
     [
       11, 21, 31, 41,
@@ -626,10 +641,22 @@ class HeightWidthDepth {
       26, 36, 46, 56,
     ];
 
-    let pointwise_16to4_BiasesArray =
+    let pointwise_8to4_FiltersArray =
+    [
+      11, 21, 31, 41,
+      12, 22, 32, 42,
+      13, 23, 33, 43,
+      14, 24, 34, 44,
+      15, 25, 35, 45,
+      16, 26, 36, 46,
+      17, 27, 37, 47,
+      18, 28, 38, 48,
+    ];
+
+    let pointwise_Xto4_BiasesArray =
     [ 201, 202, 203, 204, ];
 
-
+    // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
     this.disposeTensors();
 
     // Larger input image for performance testing.
@@ -649,6 +676,57 @@ class HeightWidthDepth {
 
 //!!! ...unfinished...
 
+    // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 1, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
+    let testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
+    new PointDepthPoint_Reference.TestCase(
+      [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+        1.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
+        4.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
+
+      [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          1,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          4,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+
+      pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
+      depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
+      pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
+      this.testPerformance_ImageData
+    );
+
+    // Test Case: (pointwise1 (bias, COS), depthwise (avg pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
+    let testCase_pointwise1_4to8_bias_COS_depthwise_avg_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
+    new PointDepthPoint_Reference.TestCase(
+      [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
+        4.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
+
+      [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          4,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+
+      pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
+      [], [], //depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
+      pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
+      this.testPerformance_ImageData
+    );
+
+    // Test Case: (pointwise1 (bias, COS), depthwise (max pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
+    let testCase_pointwise1_4to8_bias_COS_depthwise_max_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
+    new PointDepthPoint_Reference.TestCase(
+      [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX - 0.6,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
+        4.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
+
+      [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX - 0.6,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          4,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+
+      pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
+      [], [], //depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
+      pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
+      this.testPerformance_ImageData
+    );
+
     // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     let testCase_pointwise1_4to8_bias_COS_depthwise_8to16_strides_1_pad_same_bias_COS_pointwise2_16to4_bias_COS_AddInputToOutput =
     new PointDepthPoint_Reference.TestCase(
@@ -662,7 +740,7 @@ class HeightWidthDepth {
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, depthwise_8to16_BiasesArray,
-      pointwise_16to4_FiltersArray, pointwise_16to4_BiasesArray,
+      pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
       this.testPerformance_ImageData
     );
 
@@ -679,7 +757,7 @@ class HeightWidthDepth {
 
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
-      pointwise_16to4_FiltersArray, [], //pointwise_16to4_BiasesArray,
+      pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
       this.testPerformance_ImageData
     );
 
@@ -696,7 +774,7 @@ class HeightWidthDepth {
 
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
-      pointwise_16to4_FiltersArray, [], //pointwise_16to4_BiasesArray,
+      pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
       this.testPerformance_ImageData
     );
 
@@ -706,18 +784,29 @@ class HeightWidthDepth {
     // ( bKeepInputTensor )
     this.pointDepthPoint_list = [
 
-//!!! ...unfinished... (2021/03/17) Use different test case for performance testing.
       // The pointDepthPoint for performance testing should:
       //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
-      this.pointDepthPoint_DConv_bias_COS_AddInputToOutput
+      this.pointDepthPoint_DConv_1_bias_COS_AddInputToOutput
+        = testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput
+          .pointDepthPoint_create(  true ),
+
+      this.pointDepthPoint_Avg_bias_COS_AddInputToOutput
+        = testCase_pointwise1_4to8_bias_COS_depthwise_avg_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput
+          .pointDepthPoint_create(  true ),
+
+      this.pointDepthPoint_Max_bias_COS_AddInputToOutput
+        = testCase_pointwise1_4to8_bias_COS_depthwise_max_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput
+          .pointDepthPoint_create(  true ),
+
+      this.pointDepthPoint_DConv_2_bias_COS_AddInputToOutput
         = testCase_pointwise1_4to8_bias_COS_depthwise_8to16_strides_1_pad_same_bias_COS_pointwise2_16to4_bias_COS_AddInputToOutput
           .pointDepthPoint_create(  true ),
 
-      this.pointDepthPoint_DConv_COS_AddInputToOutput
+      this.pointDepthPoint_DConv_2_COS_AddInputToOutput
         = testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS_AddInputToOutput
           .pointDepthPoint_create(  true ),
 
-      this.pointDepthPoint_DConv_COS
+      this.pointDepthPoint_DConv_2_COS
         = testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS
           .pointDepthPoint_create(  true ),
 
@@ -736,7 +825,7 @@ class HeightWidthDepth {
   }
 
   /**
-   * Check the PointDepthPoint's output according to input.
+   * Check the PointDepthPoint's output according to input (for correctness testing).
    *
    * @param {number} testCaseIndex
    *   The index of array this.testCases[].
@@ -772,18 +861,33 @@ class HeightWidthDepth {
 
 //!!! ...unfinished...
   // Test apply by depthwise convolution.
-  test_DConv_bias_COS_AddInputToOutput() {
-    let outputTensor3d = this.pointDepthPoint_DConv_bias_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3d );
+  test_DConv_1_bias_COS_AddInputToOutput() {
+    let outputTensor3d = this.pointDepthPoint_DConv_1_bias_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
 
-  test_DConv_COS_AddInputToOutput() {
-    let outputTensor3d = this.pointDepthPoint_DConv_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3d );
+  test_Avg_bias_COS_AddInputToOutput() {
+    let outputTensor3d = this.pointDepthPoint_Avg_bias_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
 
-  test_DConv_COS() {
-    let outputTensor3d = this.pointDepthPoint_DConv_COS.apply_and_destroy_or_keep( this.dataTensor3d );
+  test_Max_bias_COS_AddInputToOutput() {
+    let outputTensor3d = this.pointDepthPoint_Max_bias_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3d );
+    outputTensor3d.dispose();
+  }
+
+  test_DConv_2_bias_COS_AddInputToOutput() {
+    let outputTensor3d = this.pointDepthPoint_DConv_2_bias_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3d );
+    outputTensor3d.dispose();
+  }
+
+  test_DConv_2_COS_AddInputToOutput() {
+    let outputTensor3d = this.pointDepthPoint_DConv_2_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3d );
+    outputTensor3d.dispose();
+  }
+
+  test_DConv_2_COS() {
+    let outputTensor3d = this.pointDepthPoint_DConv_2_COS.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
 
