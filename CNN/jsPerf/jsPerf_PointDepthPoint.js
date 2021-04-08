@@ -585,7 +585,7 @@ class HeightWidthDepth {
     ];
 
     let pointwise_4to8_BiasesArray =
-    [ 3, 4, 5, 6, 7, 8, 9, 10 ];
+    [ 3, 4, 5, 6, 7, 8, 9, 10, ];
 
     // (If value too large (out of float32 range), the result will strange. So, use smaller and negative value.)
     let depthwise_8to16_FiltersArray =
@@ -604,7 +604,7 @@ class HeightWidthDepth {
     ];
 
     let depthwise_8to16_BiasesArray =
-    [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116 ];
+    [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ];
 
     let pointwise_16to4_FiltersArray =
     [
@@ -623,11 +623,11 @@ class HeightWidthDepth {
       23, 33, 43, 53,
       24, 34, 44, 54,
       25, 35, 45, 55,
-      26, 36, 46, 56
+      26, 36, 46, 56,
     ];
 
     let pointwise_16to4_BiasesArray
-    [ 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216 ];
+    [ 201, 202, 203, 204, ];
 
 
     this.disposeTensors();
@@ -638,6 +638,12 @@ class HeightWidthDepth {
       let length = tf.util.sizeFromShape( shape );
       let t = tf.range( 0, length, 1 );
       let dataTensor3d = tf.reshape( t, shape );
+
+      this.testPerformance_ImageData = {
+        height: this.height, width: this.width, depth: this.depth,
+        dataArray: dataTensor3d.dataSync()
+      };
+
       return dataTensor3d;
     });
 
@@ -657,7 +663,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, depthwise_8to16_BiasesArray,
       pointwise_16to4_FiltersArray, pointwise_16to4_BiasesArray,
-      this.testCorrectness_ImageData // imageIn (Not used here)
+      this.testPerformance_ImageData
     );
 
     // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS), AddInputToOutput)
@@ -674,7 +680,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
       pointwise_16to4_FiltersArray, [], //pointwise_16to4_BiasesArray,
-      this.testCorrectness_ImageData // imageIn (Not used here)
+      this.testPerformance_ImageData
     );
 
     // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS))
@@ -691,7 +697,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
       pointwise_16to4_FiltersArray, [], //pointwise_16to4_BiasesArray,
-      this.testCorrectness_ImageData // imageIn (Not used here)
+      this.testPerformance_ImageData
     );
 
 
