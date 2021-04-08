@@ -626,7 +626,7 @@ class HeightWidthDepth {
       26, 36, 46, 56,
     ];
 
-    let pointwise_16to4_BiasesArray
+    let pointwise_16to4_BiasesArray =
     [ 201, 202, 203, 204, ];
 
 
