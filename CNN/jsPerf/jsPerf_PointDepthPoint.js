@@ -689,7 +689,7 @@ class HeightWidthDepth {
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
-      pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
+      pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
       this.testPerformance_ImageData
     );
 
@@ -706,7 +706,7 @@ class HeightWidthDepth {
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       [], [], //depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
-      pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
+      pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
       this.testPerformance_ImageData
     );
 
@@ -723,7 +723,7 @@ class HeightWidthDepth {
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       [], [], //depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
-      pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
+      pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
       this.testPerformance_ImageData
     );
 
