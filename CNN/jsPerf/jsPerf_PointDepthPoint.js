@@ -11,7 +11,7 @@ import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 /**
  * Test CNN PointDepthPoint.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/109/colorfulcakechen-cnn-pointdepthpoint-b3e198b4ad26e0ff3e}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/122/colorfulcakechen-cnn-pointdepthpoint-77ca91712718628d7d}
  */
 
 
@@ -157,6 +157,7 @@ class HeightWidthDepth {
         testImageData   // imageIn
       ),
 
+//!!! (2021/04/08) Temp for testing Tensorflow.js bug (When in "webgl" backend and image width is odd, the second run of tf.conv2d() may be wrong.)
       // Test Case 6 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2)
       new PointDepthPoint_Reference.TestCase(
         [
