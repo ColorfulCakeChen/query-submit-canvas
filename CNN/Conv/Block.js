@@ -395,6 +395,8 @@ class Base {
 
 //!!! ...unfinished... Compare performance to call concatGather.concatGather() directly.
 
+//!!! (2021/04/08) ...unfinished... Using ChannelShuffler.ConcatPointwiseConv instead.
+
     let lastAxisId = this.concatGather.shuffleInfo.lastAxisId;
 
     // There are exactly two output channel groups, take them out from array. (for reducing array access cost.)
