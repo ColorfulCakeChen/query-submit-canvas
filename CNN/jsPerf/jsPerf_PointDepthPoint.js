@@ -648,7 +648,7 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
         2.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-          8,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
+        4.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
@@ -665,7 +665,7 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [ 8.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
         2.1,   3.1, 4.1,   2.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-          8,   4.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
+        4.1,   4.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
 
       [   8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
@@ -682,7 +682,7 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [ 8.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
         2.1,   3.1, 4.1,   2.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-          8,   4.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   6.4 ], // paramsInArray
+        4.1,   4.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   6.4 ], // paramsInArray
 
       [   8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
