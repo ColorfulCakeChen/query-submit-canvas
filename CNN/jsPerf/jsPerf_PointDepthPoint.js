@@ -998,9 +998,11 @@ function init() {
   disposeTensors();
 
   let depth = 4;
-//!!! (2021/04/08) Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
 //  globalThis.testSet_110x120x4 = new HeightWidthDepth( 110, 120, depth ); // height, width, depth
-  globalThis.testSet_110x120x4 = new HeightWidthDepth( 135, 270, depth ); // height, width, depth
+
+  // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
+  // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
+  globalThis.testSet_110x120x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
 
   globalThis.testSet_110x120x4_All = [
     globalThis.testSet_110x120x4
