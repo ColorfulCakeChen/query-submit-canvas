@@ -714,7 +714,6 @@ class HeightWidthDepth {
       this.pointDepthPoint_DConv_COS
         = testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS
           .pointDepthPoint_create(  true ),
-    let  =
 
     ];
 
