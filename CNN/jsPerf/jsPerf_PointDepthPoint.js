@@ -998,7 +998,9 @@ function init() {
   disposeTensors();
 
   let depth = 4;
-  globalThis.testSet_110x120x4 = new HeightWidthDepth( 110, 120, depth ); // height, width, depth
+//!!! (2021/04/08) Try mobile phone's resolution 2160 * 1080
+//  globalThis.testSet_110x120x4 = new HeightWidthDepth( 110, 120, depth ); // height, width, depth
+  globalThis.testSet_110x120x4 = new HeightWidthDepth( 1080, 2160, depth ); // height, width, depth (mobile phone's resolution 2160 * 1080)
 
   globalThis.testSet_110x120x4_All = [
     globalThis.testSet_110x120x4
