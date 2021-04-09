@@ -1,10 +1,11 @@
-export { Base, Same, Bool, Int, ActivationFunction };
+export { Base, Same, Bool, Int, ActivationFunction, AvgMax_Or_ChannelMultiplier };
 
 import * as ValueDesc from "./ValueDesc.js";
 
 
 /**
  * Describe some properties of a parameter.
+ * Usually, a ParamDesc object is also be used as the unique key of a parameter.
  *
  * Q: Why are there ValueDesc and ParamDesc two layers?
  * A: Let different parameter descriptions (ParamDesc) share the same value description (ValueDesc).
@@ -20,10 +21,6 @@ import * as ValueDesc from "./ValueDesc.js";
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
-//!!! ...unfinished... (2021/03/15) Perhaps, there is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
- * @member {Symbol} paramNameKey
- *   The unique key of the parameter. It is defined as Symbol(paramName).
- *
  * @member {ValueDesc.Xxx} valueDesc
  *   The description of the parameter's all possible values. It should be a ValueDesc.Xxx object (one of ValueDesc.Same,
  * ValueDesc.Bool, ValueDesc.Int). For example, ValueDesc.Same.Singleton, ValueDesc.Bool.Singleton.
@@ -36,7 +33,8 @@ class Base {
    */
   constructor( paramName, valueDesc ) {
     this.paramName = paramName;
-    this.paramNameKey = Symbol( paramName );
+    // (2021/04/09 Remarked) There is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
+    //this.paramNameKey = Symbol( paramName );
     this.valueDesc = valueDesc;
   }
 }
@@ -47,10 +45,6 @@ class Base {
  *
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
- *
-//!!! ...unfinished... (2021/03/15) Perhaps, there is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
- * @member {Symbol} paramNameKey
- *   The unique key of the parameter. It is defined as Symbol(paramName).
  *
  * @member {ValueDesc.Same} valueDesc
  *   The range of the parameter's all possible values. It is an ValueDesc.Same object.
@@ -70,10 +64,6 @@ class Same extends Base {
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
-//!!! ...unfinished... (2021/03/15) Perhaps, there is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
- * @member {Symbol} paramNameKey
- *   The unique key of the parameter. It is defined as Symbol(paramName).
- *
  * @member {ValueDesc.Bool} valueDesc
  *   The boolean range of the parameter's all possible values. It is an ValueDesc.Bool object.
  *
@@ -92,12 +82,8 @@ class Bool extends Base {
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
-//!!! ...unfinished... (2021/03/15) Perhaps, there is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
- * @member {Symbol} paramNameKey
- *   The unique key of the parameter. It is defined as Symbol(paramName).
- *
  * @member {ValueDesc.Int} valueDesc
- *   The boolean range of the parameter's all possible values. It is an ValueDesc.Bool object.
+ *   The integer range of the parameter's all possible values. It is an ValueDesc.Bool object.
  *
  */
 class Int extends Base {
@@ -114,13 +100,8 @@ class Int extends Base {
  * @member {string} paramName
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
-//!!! ...unfinished... (2021/03/15) Perhaps, there is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
- * @member {Symbol} paramNameKey
- *   The unique key of the parameter. It is defined as Symbol(paramName).
- *
  * @member {ValueDesc.ActivationFunction} valueDesc
- *   The boolean range of the parameter's all possible values. It is an ValueDesc.ActivationFunction object.
- *
+ *   The range of the parameter's all possible values. It is an ValueDesc.ActivationFunction object.
  */
 class ActivationFunction extends Base {
 
@@ -128,3 +109,21 @@ class ActivationFunction extends Base {
     super( paramName, ValueDesc.ActivationFunction.Singleton );
   }
 }
+
+
+/**
+ * Describe some properties of an depthwise operation parameter.
+ *
+ * @member {string} paramName
+ *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
+ *
+ * @member {ValueDesc.AvgMax_Or_ChannelMultiplier} valueDesc
+ *   The range of the parameter's all possible values. It is an ValueDesc.ActivationFunction object.
+ */
+class AvgMax_Or_ChannelMultiplier extends Base {
+
+  constructor( paramName ) {
+    super( paramName, ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton );
+  }
+}
+
