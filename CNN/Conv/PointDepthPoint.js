@@ -47,45 +47,31 @@ class Params extends Weights.Params {
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
-  get pointwise1ChannelCount()                { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
-  get bPointwise1Bias()                       { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
-  get pointwise1ActivationId()                { return this.parameterMapModified.get( Params.pointwise1ActivationId ); }
-  get pointwise1ActivationName() {
-    return Params.pointwise1ActivationId.valueDesc.integerToNameMap.get( this.pointwise1ActivationId );
-  }
+  get pointwise1ChannelCount()   { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
+  get bPointwise1Bias()          { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
+  get pointwise1ActivationId()   { return this.parameterMapModified.get( Params.pointwise1ActivationId ); }
+  get pointwise1ActivationName() { return Params.pointwise1ActivationId.getStringOfValue( this.pointwise1ActivationId ); }
 
   /** @return {number} The number version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
 
   /** @return {string} The string version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
-    let integerValue = this.depthwise_AvgMax_Or_ChannelMultiplier;
-
-    // Look up whether has name (e.g. "AVG", "MAX", "NONE").
-    let name = Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.integerToNameMap.get( integerValue );
-    if ( null == name ) { // No name means it represents channel multiplier number.
-      name = integerValue.toString(); // e.g. "1", "2", ..., "64"
-    }
-
-    return name;
+    return Params.depthwise_AvgMax_Or_ChannelMultiplier.getStringOfValue( this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
 
-  get depthwiseFilterHeight()                 { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
-  get depthwiseStridesPad()                   { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
-  get bDepthwiseBias()                        { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
-  get depthwiseActivationId()                 { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
-  get depthwiseActivationName() {
-    return Params.depthwiseActivationId.valueDesc.integerToNameMap.get( this.depthwiseActivationId );
-  }
+  get depthwiseFilterHeight()    { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
+  get depthwiseStridesPad()      { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
+  get bDepthwiseBias()           { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
+  get depthwiseActivationId()    { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
+  get depthwiseActivationName()  { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
 
-  get pointwise2ChannelCount()                { return this.parameterMapModified.get( Params.pointwise2ChannelCount ); }
-  get bPointwise2Bias()                       { return this.parameterMapModified.get( Params.bPointwise2Bias ); }
-  get pointwise2ActivationId()                { return this.parameterMapModified.get( Params.pointwise2ActivationId ); }
-  get pointwise2ActivationName() {
-    return Params.pointwise2ActivationId.valueDesc.integerToNameMap.get( this.pointwise2ActivationId );
-  }
+  get pointwise2ChannelCount()   { return this.parameterMapModified.get( Params.pointwise2ChannelCount ); }
+  get bPointwise2Bias()          { return this.parameterMapModified.get( Params.bPointwise2Bias ); }
+  get pointwise2ActivationId()   { return this.parameterMapModified.get( Params.pointwise2ActivationId ); }
+  get pointwise2ActivationName() { return Params.pointwise2ActivationId.getStringOfValue( this.pointwise2ActivationId ); }
 
-  get bAddInputToOutput()                     { return this.parameterMapModified.get( Params.bAddInputToOutput ); }
+  get bAddInputToOutput()        { return this.parameterMapModified.get( Params.bAddInputToOutput ); }
 }
 
 
