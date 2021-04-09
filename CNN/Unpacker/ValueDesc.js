@@ -113,6 +113,19 @@ class Int {
       this.integerToObjectMap.set( integerId, object );
     }
   }
+
+  /**
+   * @return {string}
+   *   Return the name of the integerValue. If no name, return the string of the integer value (e.g. "1", "2", ..., "64").
+   */
+  getStringOfInt( integerValue ) {
+    let name = this.integerToNameMap.get( integerValue ); // Look up whether has name (e.g. "AVG", "MAX", "NONE").
+    if ( null == name ) {
+      name = integerValue.toString();
+    }
+    return name;
+  }
+
 }
 
 
