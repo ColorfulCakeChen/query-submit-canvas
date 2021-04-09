@@ -15,6 +15,11 @@ class Same {
   constructor() {
     this.range = ValueRange.Same.Singleton;
   }
+
+  /** @return {string} Return the string value. */
+  getStringOf( value ) {
+    return value.toString();
+  }
 }
 
 /** The only one ValueDesc.Same instance. */
@@ -32,6 +37,11 @@ class Bool {
 
   constructor() {
     this.range = ValueRange.Bool.Singleton;
+  }
+
+  /** @return {string} Return the string value. */
+  getStringOf( value ) {
+    return value.toString();
   }
 }
 
@@ -118,7 +128,7 @@ class Int {
    * @return {string}
    *   Return the name of the integerValue. If no name, return the string of the integer value (e.g. "1", "2", ..., "64").
    */
-  getStringOfInt( integerValue ) {
+  getStringOf( integerValue ) {
     let name = this.integerToNameMap.get( integerValue ); // Look up whether has name (e.g. "AVG", "MAX", "NONE").
     if ( null == name ) {
       name = integerValue.toString();
