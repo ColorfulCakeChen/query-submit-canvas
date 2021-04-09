@@ -104,7 +104,10 @@ Params.pointwise1ActivationId = new ParamDesc.ActivationFunction( "pointwise1Act
  *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
  */
 Params.depthwise_AvgMax_Or_ChannelMultiplier
-  = new ParamDesc.Base( "depthwise_AvgMax_Or_ChannelMultiplier", new ValueDesc.Int( -2, 32, [ "AVG", "MAX", "NONE" ] ) );
+//!!! (2021/04/09 Remarked) Using ParamDesc.AvgMax_Or_ChannelMultiplier directly.
+//  = new ParamDesc.Base( "depthwise_AvgMax_Or_ChannelMultiplier", new ValueDesc.Int( -2, 32, [ "AVG", "MAX", "NONE" ] ) );
+  = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwise_AvgMax_Or_ChannelMultiplier" );
+
 
 /** Define suitable value for depthwise convolution filter size.
  *
