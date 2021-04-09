@@ -246,6 +246,10 @@ class Base {
    * not to use activation at the end of this block (i.e. nActivationIdAtBlockEnd == PointDepthPoint.Params.Activation.Ids.NONE) so that
    * it will not be restricted by the range of the activation function.
    *
+//!!! ...unfinished...
+//!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1)?
+          // Since pointwise2ActivationId is always NONE in MobileNetV2 (i.e. ( bChannelShuffler == false ), the nActivationIdAtBlockEnd is never used in MobileNetV2.
+   *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). If it is null, it will be viewed as falsy
    * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
@@ -351,6 +355,7 @@ class Base {
       let pointwise1ChannelCount = 0; // no pointwise convolution before depthwise convolution.
       let pointwise2ChannelCount;
 
+//!!! ...unfinished... (2021/04/09) What if ( depthwiseChannelMultiplierStep0 == 0 )? The image will not be halven.
       let depthwise_AvgMax_Or_ChannelMultiplier;
       if ( strAvgMaxConv == "Conv" ) { // Depthwise convolution.
         depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
@@ -391,7 +396,7 @@ class Base {
       //   - Expand channels by channelMultiplier of depthwise convolution. (Both ShuffleNetV2 and MobileNetV2 do not have this. It is added by us.)
       let step0, step0Branch;
       {
-//!!! ...unfinished... (2021/04/09) What if ( depthwiseChannelMultiplierStep0 == 0 ) ?
+//!!! ...unfinished... (2021/04/09) What if ( depthwiseChannelMultiplierStep0 == 0 )? The image will not be halven.
         let depthwise_AvgMax_Or_ChannelMultiplier;
         if ( strAvgMaxConv == "Conv" )
           depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
@@ -423,6 +428,8 @@ class Base {
 
           // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
           pointwise2Bias = false;
+
+//!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1)?
 
           // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.          
           pointwise2ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
@@ -476,7 +483,7 @@ class Base {
       // Step 1, 2, 3, ...
       if ( stepCountPerBlock > 0 ) {
 
-//!!! ...unfinished... (2021/04/09) What if ( depthwiseChannelMultiplierStep0 == 0 ) ?
+//!!! ...unfinished... (2021/04/09) What if ( depthwiseChannelMultiplierStep0 == 0 )? It seems ok here (i.e. it is ok in non-step0).
 
         let depthwise_AvgMax_Or_ChannelMultiplier;
         if ( strAvgMaxConv == "Conv" )
@@ -518,6 +525,14 @@ class Base {
 
           // If this is the last step of this block (i.e. at-block-end), a different activation function may be used after pointwise2 convolution.
           if ( i == ( this.steps1After.length - 1 ) ) {
+
+//!!! ...unfinished... (2021/04/09) In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
+// Since pointwise2ActivationId is always NONE in MobileNetV2, the nActivationIdAtBlockEnd is never used in MobileNetV2.
+// But how to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1)?
+//
+//             // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
+//             pointwise2ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+
             pointwise2ActivationId = nActivationIdAtBlockEnd;
           }
 
