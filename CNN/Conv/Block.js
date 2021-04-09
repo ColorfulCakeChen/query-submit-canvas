@@ -57,103 +57,40 @@ class Params extends Weights.Params {
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
-  get pointwise1ChannelCount()                { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
-  get bPointwise1Bias()                       { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
-  get pointwise1ActivationId()                { return this.parameterMapModified.get( Params.pointwise1ActivationId ); }
-  get pointwise1ActivationName() {
-    return Params.pointwise1ActivationId.valueDesc.integerToNameMap.get( this.pointwise1ActivationId );
-  }
+  get sourceHeight()                        { return this.parameterMapModified.get( Params.sourceHeight ); }
+  get sourceWidth()                         { return this.parameterMapModified.get( Params.sourceWidth ); }
+  get sourceChannelCount()                  { return this.parameterMapModified.get( Params.sourceChannelCount ); }
+  get stepCountPerBlock()                   { return this.parameterMapModified.get( Params.stepCountPerBlock ); }
+  get bChannelShuffler()                    { return this.parameterMapModified.get( Params.bChannelShuffler ); }
+  get pointwise1ChannelCountRate()          { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
 
-  /** @return {number} The number version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
+  /** @return {number} The number version of the step0's depthwise opertion. */
+  get depthwiseChannelMultiplierStep0()     { return this.parameterMapModified.get( Params.depthwiseChannelMultiplierStep0 ); }
 
-  /** @return {string} The string version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
-    let integerValue = this.depthwise_AvgMax_Or_ChannelMultiplier;
+  /** @return {string} The string version of the step0's depthwise opertion. */
+  get depthwiseChannelMultiplierStep0Name() { return Params.depthwiseChannelMultiplierStep0.getStringOfValue( this.depthwiseChannelMultiplierStep0 ); }
 
-    // Look up whether has name (e.g. "AVG", "MAX", "NONE").
-    let name = Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.integerToNameMap.get( integerValue );
-    if ( null == name ) { // No name means it represents channel multiplier number.
-      name = integerValue.toString(); // e.g. "1", "2", ..., "64"
-    }
-
-    return name;
-  }
-
-  get depthwiseFilterHeight()                 { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
-  get depthwiseStridesPad()                   { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
-  get bDepthwiseBias()                        { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
-  get depthwiseActivationId()                 { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
-  get depthwiseActivationName() {
-    return Params.depthwiseActivationId.valueDesc.integerToNameMap.get( this.depthwiseActivationId );
-  }
-
-  get pointwise2ChannelCount()                { return this.parameterMapModified.get( Params.pointwise2ChannelCount ); }
-  get bPointwise2Bias()                       { return this.parameterMapModified.get( Params.bPointwise2Bias ); }
-  get pointwise2ActivationId()                { return this.parameterMapModified.get( Params.pointwise2ActivationId ); }
-  get pointwise2ActivationName() {
-    return Params.pointwise2ActivationId.valueDesc.integerToNameMap.get( this.pointwise2ActivationId );
-  }
-
-  get bAddInputToOutput()                     { return this.parameterMapModified.get( Params.bAddInputToOutput ); }
+  get depthwiseFilterHeight()               { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
+  get bBias()                               { return this.parameterMapModified.get( Params.bBias ); }
+  get nActivationId()                       { return this.parameterMapModified.get( Params.nActivationId ); }
+  get nActivationId()                       { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
+  get nActivationIdAtBlockEndId()           { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
+  get nActivationIdAtBlockEndName()         { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
 }
 
 
 // Define parameter descriptions.
-
-//!!! ...unfinished...
-//     sourceHeight, sourceWidth, sourceChannelCount,
-//     stepCountPerBlock,
-//     bChannelShuffler,
-//     pointwise1ChannelCountRate,
-//     strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, nActivationId, nActivationIdAtBlockEnd,
-
-Params.sourceHeight =               new ParamDesc.Int(                "sourceHeight",       1, ( 10 * 1024 ) );
-Params.sourceWidth =                new ParamDesc.Int(                "sourceWidth",        1, ( 10 * 1024 ) );
-Params.sourceChannelCount =         new ParamDesc.Int(                "sourceChannelCount", 1, ( 10 * 1024 ) );
-Params.stepCountPerBlock =          new ParamDesc.Int(                "stepCountPerBlock",  0, ( 10 * 1024 ) );
-Params.bChannelShuffler =           new ParamDesc.Bool(               "bChannelShuffler" );
-
-Params.pointwise1ChannelCountRate = new ParamDesc.Int(        "pointwise1ChannelCountRate", 1, 2 );
-
-Params.bBias =                      new ParamDesc.Bool(               "bBias" );
-Params.nActivationId =              new ParamDesc.ActivationFunction( "nActivationId" );
-Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction( "nActivationIdAtBlockEnd" );
-
-
-/** Define depthwise operation's id, range, name.
- *
- * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
- *   - -1: average pooling. (AVG)
- *   - -2: maximum pooling. (MAX)
- *   -  0: no depthwise operation. (NONE)
- *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
- */
-Params.depthwise_AvgMax_Or_ChannelMultiplier
-  = new ParamDesc.Base( "depthwise_AvgMax_Or_ChannelMultiplier", new ValueDesc.Int( -2, 32, [ "AVG", "MAX", "NONE" ] ) );
-
-/** Define suitable value for depthwise convolution filter size.
- *
- * At least 1, because depthwise filter size ( 0 * 0 ) is meaningless.
- *
- * For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
- * For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
- *
- * Avoid too large filter size. Otherwise, performance may be poor.
- */
-Params.depthwiseFilterHeight =  new ParamDesc.Int( "depthwiseFilterHeight", 1, 9 );
-
-/** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
-Params.depthwiseStridesPad =    new ParamDesc.Int( "depthwiseStridesPad",   0, 2 );
-
-Params.bDepthwiseBias =         new ParamDesc.Bool(               "bDepthwiseBias" );
-Params.depthwiseActivationId =  new ParamDesc.ActivationFunction( "depthwiseActivationId" );
-
-Params.pointwise2ChannelCount = new ParamDesc.Int(                "pointwise2ChannelCount", 0, ( 10 * 1024 ) );
-Params.bPointwise2Bias =        new ParamDesc.Bool(               "bPointwise2Bias" );
-Params.pointwise2ActivationId = new ParamDesc.ActivationFunction( "pointwise2ActivationId" );
-
-Params.bAddInputToOutput =      new ParamDesc.Bool("bAddInputToOutput");
+Params.sourceHeight =                    new ParamDesc.Int(                         "sourceHeight",               1, ( 10 * 1024 ) );
+Params.sourceWidth =                     new ParamDesc.Int(                         "sourceWidth",                1, ( 10 * 1024 ) );
+Params.sourceChannelCount =              new ParamDesc.Int(                         "sourceChannelCount",         1, ( 10 * 1024 ) );
+Params.stepCountPerBlock =               new ParamDesc.Int(                         "stepCountPerBlock",          0, ( 10 * 1024 ) );
+Params.bChannelShuffler =                new ParamDesc.Bool(                        "bChannelShuffler" );
+Params.pointwise1ChannelCountRate =      new ParamDesc.Int(                         "pointwise1ChannelCountRate", 1,             2 );
+Params.depthwiseChannelMultiplierStep0 = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwiseChannelMultiplierStep0" );
+Params.depthwiseFilterHeight =           new ParamDesc.Int(                         "depthwiseFilterHeight",      1,             9 );
+Params.bBias =                           new ParamDesc.Bool(                        "bBias" );
+Params.nActivationId =                   new ParamDesc.ActivationFunction(          "nActivationId" );
+Params.nActivationIdAtBlockEnd =         new ParamDesc.ActivationFunction(          "nActivationIdAtBlockEnd" );
 
 
 /**
