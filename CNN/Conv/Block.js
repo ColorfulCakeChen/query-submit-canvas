@@ -178,7 +178,7 @@ class Base {
    * it will not be restricted by the range of the activation function.
    *
 //!!! ...unfinished...
-//!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1)?
+//!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1 )?
           // Since pointwise2ActivationId is always NONE in MobileNetV2 (i.e. ( bChannelShuffler == false ), the nActivationIdAtBlockEnd is never used in MobileNetV2.
    *
    * @param {boolean} bKeepInputTensor
@@ -389,7 +389,7 @@ class Base {
           // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
           pointwise2Bias = false;
 
-//!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1)?
+//!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1 )?
 
           // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.          
           pointwise2ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
