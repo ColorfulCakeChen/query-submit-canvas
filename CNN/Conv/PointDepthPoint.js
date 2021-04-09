@@ -218,11 +218,11 @@ class Base extends ReturnOrClone.Base {
    *
    * @param {number} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If non-null, it should be
-   * integer between [ -2, 64 ]:
+   * integer between [ -2, 32 ]:
    *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG (-2): average pooling.
    *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX (-1): max pooling.
    *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE (0): there will be no depthwise operation.
-   *   - positive integer between [ 1, 64 ]: depthwise convolution and the number indicates channel multiplier.
+   *   - positive integer between [ 1, 32 ]: depthwise convolution and the number indicates channel multiplier.
    *
    * @param {number} depthwiseFilterHeight
    *   The height (and width) of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
