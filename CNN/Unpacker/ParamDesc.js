@@ -37,6 +37,14 @@ class Base {
     //this.paramNameKey = Symbol( paramName );
     this.valueDesc = valueDesc;
   }
+
+  /**
+   * @return {string}
+   *   Return the value's string (or name if it has).
+   */
+  getStringOfValue( value ) {
+    return this.valueDesc.getStringOf( value );
+  }
 }
 
 
