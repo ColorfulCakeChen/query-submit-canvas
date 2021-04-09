@@ -1,7 +1,160 @@
+export { Base, PointDepthPoint };
+
+import * as ValueMax from "../ValueMax.js";
+//import * as ValueRange from "../Unpacker/ValueRange.js";
+import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as ParamDesc from "../Unpacker/ParamDesc.js";
+import * as Weights from "../Unpacker/Weights.js";
+//import * as ReturnOrClone from "./ReturnOrClone.js";
 import * as PointDepthPoint from "./PointDepthPoint.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
-export { Base, PointDepthPoint };
+/**
+ * Convolution block parameters.
+ */
+class Params extends Weights.Params {
+
+  /**
+   * If a parameter's value is null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *
+   * @return {boolean} Return false, if initialization failed.
+   *
+   * @override
+   */
+  init( inputFloat32Array, byteOffsetBegin,
+
+    sourceHeight, sourceWidth, sourceChannelCount,
+    stepCountPerBlock,
+    bChannelShuffler,
+    pointwise1ChannelCountRate,
+    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, nActivationId, nActivationIdAtBlockEnd,
+
+//!!! ...unfinished...
+    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
+    bAddInputToOutput,
+  ) {
+
+//!!! ...unfinished...
+// squeeze-and-excitation ?
+
+    let parameterMap = new Map( [
+      [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
+      [ Params.bPointwise1Bias,                       bPointwise1Bias ],
+      [ Params.pointwise1ActivationId,                pointwise1ActivationId ],
+      [ Params.depthwise_AvgMax_Or_ChannelMultiplier, depthwise_AvgMax_Or_ChannelMultiplier ],
+      [ Params.depthwiseFilterHeight,                 depthwiseFilterHeight ],
+      [ Params.depthwiseStridesPad,                   depthwiseStridesPad ],
+      [ Params.bDepthwiseBias,                        bDepthwiseBias ],
+      [ Params.depthwiseActivationId,                 depthwiseActivationId ],
+      [ Params.pointwise2ChannelCount,                pointwise2ChannelCount ],
+      [ Params.bPointwise2Bias,                       bPointwise2Bias ],
+      [ Params.pointwise2ActivationId,                pointwise2ActivationId ],
+      [ Params.bAddInputToOutput,                     bAddInputToOutput ],
+    ] );
+
+    return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
+  }
+
+  get pointwise1ChannelCount()                { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
+  get bPointwise1Bias()                       { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
+  get pointwise1ActivationId()                { return this.parameterMapModified.get( Params.pointwise1ActivationId ); }
+  get pointwise1ActivationName() {
+    return Params.pointwise1ActivationId.valueDesc.integerToNameMap.get( this.pointwise1ActivationId );
+  }
+
+  /** @return {number} The number version of the depthwise opertion. */
+  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
+
+  /** @return {string} The string version of the depthwise opertion. */
+  get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
+    let integerValue = this.depthwise_AvgMax_Or_ChannelMultiplier;
+
+    // Look up whether has name (e.g. "AVG", "MAX", "NONE").
+    let name = Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.integerToNameMap.get( integerValue );
+    if ( null == name ) { // No name means it represents channel multiplier number.
+      name = integerValue.toString(); // e.g. "1", "2", ..., "64"
+    }
+
+    return name;
+  }
+
+  get depthwiseFilterHeight()                 { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
+  get depthwiseStridesPad()                   { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
+  get bDepthwiseBias()                        { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
+  get depthwiseActivationId()                 { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
+  get depthwiseActivationName() {
+    return Params.depthwiseActivationId.valueDesc.integerToNameMap.get( this.depthwiseActivationId );
+  }
+
+  get pointwise2ChannelCount()                { return this.parameterMapModified.get( Params.pointwise2ChannelCount ); }
+  get bPointwise2Bias()                       { return this.parameterMapModified.get( Params.bPointwise2Bias ); }
+  get pointwise2ActivationId()                { return this.parameterMapModified.get( Params.pointwise2ActivationId ); }
+  get pointwise2ActivationName() {
+    return Params.pointwise2ActivationId.valueDesc.integerToNameMap.get( this.pointwise2ActivationId );
+  }
+
+  get bAddInputToOutput()                     { return this.parameterMapModified.get( Params.bAddInputToOutput ); }
+}
+
+
+// Define parameter descriptions.
+
+//!!! ...unfinished...
+//     sourceHeight, sourceWidth, sourceChannelCount,
+//     stepCountPerBlock,
+//     bChannelShuffler,
+//     pointwise1ChannelCountRate,
+//     strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, nActivationId, nActivationIdAtBlockEnd,
+
+Params.sourceHeight =               new ParamDesc.Int(                "sourceHeight",       1, ( 10 * 1024 ) );
+Params.sourceWidth =                new ParamDesc.Int(                "sourceWidth",        1, ( 10 * 1024 ) );
+Params.sourceChannelCount =         new ParamDesc.Int(                "sourceChannelCount", 1, ( 10 * 1024 ) );
+Params.stepCountPerBlock =          new ParamDesc.Int(                "stepCountPerBlock",  0, ( 10 * 1024 ) );
+Params.bChannelShuffler =           new ParamDesc.Bool(               "bChannelShuffler" );
+
+Params.pointwise1ChannelCountRate = new ParamDesc.Int(        "pointwise1ChannelCountRate", 1, 2 );
+
+Params.bBias =                      new ParamDesc.Bool(               "bBias" );
+Params.nActivationId =              new ParamDesc.ActivationFunction( "nActivationId" );
+Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction( "nActivationIdAtBlockEnd" );
+
+
+/** Define depthwise operation's id, range, name.
+ *
+ * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
+ *   - -1: average pooling. (AVG)
+ *   - -2: maximum pooling. (MAX)
+ *   -  0: no depthwise operation. (NONE)
+ *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
+ */
+Params.depthwise_AvgMax_Or_ChannelMultiplier
+  = new ParamDesc.Base( "depthwise_AvgMax_Or_ChannelMultiplier", new ValueDesc.Int( -2, 32, [ "AVG", "MAX", "NONE" ] ) );
+
+/** Define suitable value for depthwise convolution filter size.
+ *
+ * At least 1, because depthwise filter size ( 0 * 0 ) is meaningless.
+ *
+ * For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
+ * For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
+ *
+ * Avoid too large filter size. Otherwise, performance may be poor.
+ */
+Params.depthwiseFilterHeight =  new ParamDesc.Int( "depthwiseFilterHeight", 1, 9 );
+
+/** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
+Params.depthwiseStridesPad =    new ParamDesc.Int( "depthwiseStridesPad",   0, 2 );
+
+Params.bDepthwiseBias =         new ParamDesc.Bool(               "bDepthwiseBias" );
+Params.depthwiseActivationId =  new ParamDesc.ActivationFunction( "depthwiseActivationId" );
+
+Params.pointwise2ChannelCount = new ParamDesc.Int(                "pointwise2ChannelCount", 0, ( 10 * 1024 ) );
+Params.bPointwise2Bias =        new ParamDesc.Bool(               "bPointwise2Bias" );
+Params.pointwise2ActivationId = new ParamDesc.ActivationFunction( "pointwise2ActivationId" );
+
+Params.bAddInputToOutput =      new ParamDesc.Bool("bAddInputToOutput");
+
 
 /**
  * Implement a block of ( depthwise convolution and pointwise convolution ) or ShuffleNetV2 (with 2 output channel groups) or MobileNetV1
@@ -29,14 +182,32 @@ export { Base, PointDepthPoint };
 class Base {
 
   /**
-   * @param sourceHeight        The height of the source image which will be processed by apply_and_destroy_or_keep().
-   * @param sourceWidth         The width of the source image which will be processed by apply_and_destroy_or_keep().
-   * @param sourceChannelCount  The channel count of the source image.
+   * Generator for initializing this object.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
+   * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
+   *
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @param {number} byteOffsetBegin
+   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
+   * (not to the inputFloat32Array.byteOffset).
+   *
+   * @param {number} sourceHeight
+   *   The height of the source image which will be processed by apply_and_destroy_or_keep().
+   *
+   * @param {number} sourceWidth
+   *   The width of the source image which will be processed by apply_and_destroy_or_keep().
+   *
+   * @param {number} sourceChannelCount
+   *   The channel count of the source image. It may be the output channel count of the previous convolution block, so it could be large.
    *
    * @param {number} stepCountPerBlock
    *   If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
    * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
-   * (halve height x width) and use ( stageCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
+   * (halve height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
    *
    * @param {boolean} bChannelShuffler
    *   If true, will like ShuffleNetV2 (i.e. split and concat channels). If false, will like MobileNetV1 or MobileNetV2 (i.e. add input to output).
@@ -50,9 +221,15 @@ class Base {
    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will like MobileNetV1.
    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate > 1 ), will like MobileNetV2.
    *
+
+//!!! ...unfinished...
+
    * @param strAvgMaxConv
    *   Depthwise operation. "Avg" or "Max" or "Conv" for average pooling, max pooling, depthwise convolution.
    *
+
+//!!! ...unfinished...
+
    * @param {number} depthwiseChannelMultiplierStep0
    *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor.
    *
@@ -70,11 +247,23 @@ class Base {
    * it will not be restricted by the range of the activation function.
    *
    * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). If it is null, it will be viewed as falsy
+   * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *
+   * @yield {ValueMax.Percentage.Aggregate}
+   *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
+   *
+   * @yield {boolean}
+   *   Yield ( value = true ) when ( done = true ) successfully.
+   *   Yield ( value = false ) when ( done = true ) failed.
    *
    * @see PointDepthPoint.Base.init()
    */
-  init(
+  * initer(
+    progressParent,
+    inputFloat32Array, byteOffsetBegin,
+
+//!!! ...unfinished...
     sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
@@ -82,6 +271,22 @@ class Base {
     strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, nActivationId, nActivationIdAtBlockEnd,
     bKeepInputTensor
   ) {
+
+    // 0. Prepare
+
+//!!! ...unfinished...
+    // Estimate the maximum value of progress.
+    let progressMax =
+      1    // for extracting parameters from inputFloat32Array.
+      + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for extracting pointwise2 filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for all pointwise1-depthwise-pointwise2 filters (and biases) ready.
+      ;
+
+    let progressRoot = progressParent.getRoot();
+    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
+
 
     this.disposeTensors();
 
@@ -123,7 +328,7 @@ class Base {
 
     let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
     this.depthwiseFilterHeight = depthwiseFilterHeight;
-    this.depthwiseFilterWidth = depthwiseFilterWidth;
+    this.depthwiseFilterWidth =  depthwiseFilterWidth;
 
     this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
 
@@ -180,12 +385,13 @@ class Base {
 
       // Step 0.
       //
-      // The special of a block's step 0 are:
+      // The special points of a block's step 0 are:
       //   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2) (by depthwise convolution with strides = 2)
-      //   - Double channels. (by concat if ShuffleNetV2. by second pointwise if MobileNetV2.)
+      //   - Double channels. (By concat if ShuffleNetV2. By second pointwise if MobileNetV2.)
       //   - Expand channels by channelMultiplier of depthwise convolution. (Both ShuffleNetV2 and MobileNetV2 do not have this. It is added by us.)
       let step0, step0Branch;
       {
+//!!! ...unfinished... (2021/04/09) What if ( depthwiseChannelMultiplierStep0 == 0 ) ?
         let depthwise_AvgMax_Or_ChannelMultiplier;
         if ( strAvgMaxConv == "Conv" )
           depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
@@ -270,6 +476,8 @@ class Base {
       // Step 1, 2, 3, ...
       if ( stepCountPerBlock > 0 ) {
 
+//!!! ...unfinished... (2021/04/09) What if ( depthwiseChannelMultiplierStep0 == 0 ) ?
+
         let depthwise_AvgMax_Or_ChannelMultiplier;
         if ( strAvgMaxConv == "Conv" )
           depthwise_AvgMax_Or_ChannelMultiplier = 1; // Force to 1, because only step 0 can have ( channelMultiplier > 1 ).
@@ -333,6 +541,50 @@ class Base {
         }
       }
     }
+  }
+
+  /**
+   * Initialize this object by calling initer() and advance the generator by loop until done.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   If null, a temporary progress object will be created.
+   *
+   * @return {boolean}
+   *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
+   *   Return false if failed (and progressParent.valuePercentage will be less than 100).
+   */
+  init(
+    progressParent,
+    inputFloat32Array, byteOffsetBegin,
+//!!! ...unfinished...
+    channelCount_pointwise1Before,
+    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
+    bAddInputToOutput,
+    bKeepInputTensor
+  ) {
+
+    progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
+
+    let initer = this.initer(
+      progressParent,
+      inputFloat32Array, byteOffsetBegin,
+      channelCount_pointwise1Before,
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
+      bAddInputToOutput,
+      bKeepInputTensor
+    );
+
+    let initerNext;
+    do {
+      initerNext = initer.next();
+    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.getRoot().
+
+    let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
+    return bInitOk;
   }
 
   disposeTensors() {
