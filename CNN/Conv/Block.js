@@ -1,4 +1,4 @@
-export { Base, PointDepthPoint };
+export { Params, Base, PointDepthPoint };
 
 import * as ValueMax from "../ValueMax.js";
 //import * as ValueRange from "../Unpacker/ValueRange.js";
@@ -22,36 +22,25 @@ class Params extends Weights.Params {
    * @override
    */
   init( inputFloat32Array, byteOffsetBegin,
-
     sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, nActivationId, nActivationIdAtBlockEnd,
-
-//!!! ...unfinished...
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-    bAddInputToOutput,
+    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd
   ) {
 
-//!!! ...unfinished...
-// squeeze-and-excitation ?
-
     let parameterMap = new Map( [
-      [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
-      [ Params.bPointwise1Bias,                       bPointwise1Bias ],
-      [ Params.pointwise1ActivationId,                pointwise1ActivationId ],
-      [ Params.depthwise_AvgMax_Or_ChannelMultiplier, depthwise_AvgMax_Or_ChannelMultiplier ],
-      [ Params.depthwiseFilterHeight,                 depthwiseFilterHeight ],
-      [ Params.depthwiseStridesPad,                   depthwiseStridesPad ],
-      [ Params.bDepthwiseBias,                        bDepthwiseBias ],
-      [ Params.depthwiseActivationId,                 depthwiseActivationId ],
-      [ Params.pointwise2ChannelCount,                pointwise2ChannelCount ],
-      [ Params.bPointwise2Bias,                       bPointwise2Bias ],
-      [ Params.pointwise2ActivationId,                pointwise2ActivationId ],
-      [ Params.bAddInputToOutput,                     bAddInputToOutput ],
+      [ Params.sourceHeight,                     sourceHeight ],
+      [ Params.sourceWidth,                      sourceWidth ],
+      [ Params.sourceChannelCount,               sourceChannelCount ],
+      [ Params.stepCountPerBlock,                stepCountPerBlock ],
+      [ Params.bChannelShuffler,                 bChannelShuffler ],
+      [ Params.pointwise1ChannelCountRate,       pointwise1ChannelCountRate ],
+      [ Params.depthwiseChannelMultiplierStep0,  depthwiseChannelMultiplierStep0 ],
+      [ Params.depthwiseFilterHeight,            depthwiseFilterHeight ],
+      [ Params.bBias,                            bBias ],
+      [ Params.nActivationId,                    nActivationId ],
+      [ Params.nActivationIdAtBlockEnd,          nActivationIdAtBlockEnd ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
@@ -198,18 +187,19 @@ class Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    *
-   * @see PointDepthPoint.Base.init()
+   * @see PointDepthPoint.Base.initer()
    */
   * initer(
     progressParent,
     inputFloat32Array, byteOffsetBegin,
 
-//!!! ...unfinished...
     sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierStep0, bBias, nActivationId, nActivationIdAtBlockEnd,
+//!!! ...unfinished...
+    strAvgMaxConv,
+    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
     bKeepInputTensor
   ) {
 
@@ -504,6 +494,8 @@ class Base {
    * @return {boolean}
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
+   *
+   * @see PointDepthPoint.Base.init()
    */
   init(
     progressParent,
