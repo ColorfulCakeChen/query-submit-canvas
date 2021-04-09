@@ -13,7 +13,7 @@ import * as ReturnOrClone from "./ReturnOrClone.js";
 class Params extends Weights.Params {
 
   /**
-   * If parameter's value is null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If a parameter's value is null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
    * @return {boolean} Return false, if initialization failed.
    *
