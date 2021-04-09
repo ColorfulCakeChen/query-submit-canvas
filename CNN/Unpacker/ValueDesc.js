@@ -117,7 +117,7 @@ class Int {
 
 
 /**
- * Describe some properties of a activation function parameter.
+ * Describe activation function parameter's id, range, name.
  *
  *
  * It could be shared between different parameter description.
@@ -135,3 +135,23 @@ class ActivationFunction extends Int {
 
 /** The only one ValueDesc.ActivationFunction instance. */
 ActivationFunction.Singleton = new ActivationFunction;
+
+
+/** Describe depthwise operation's id, range, name.
+ *
+ * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
+ *   - -1: average pooling. (AVG)
+ *   - -2: maximum pooling. (MAX)
+ *   -  0: no depthwise operation. (NONE)
+ *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
+ */
+class AvgMax_Or_ChannelMultiplier extends Int {
+
+  constructor() {
+    super( -2, 32, [ "AVG", "MAX", "NONE" ] );
+  }
+
+}
+
+/** The only one ValueDesc.AvgMax_Or_ChannelMultiplier instance. */
+AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
