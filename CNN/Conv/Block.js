@@ -157,7 +157,12 @@ class Base {
 //!!! ...unfinished...
 
    * @param {number} depthwiseChannelMultiplierStep0
-   *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor.
+   *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor. If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution). If non-null, it should be integer between [ -2, 32 ]:
+   *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.AVG (-2): average pooling.
+   *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.MAX (-1): max pooling.
+   *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0): there will be no depthwise operation.
+   *   - positive integer between [ 1, 32 ]: depthwise convolution and the number indicates channel multiplier.
    *
    * @param {boolean} bBias
    *   If true, there will be a bias after every convolution.
@@ -197,8 +202,8 @@ class Base {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-//!!! ...unfinished...
-    strAvgMaxConv,
+//!!! (2021/04/09 Remarked) Become all number.
+//    strAvgMaxConv,
     depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
     bKeepInputTensor
   ) {
@@ -255,7 +260,8 @@ class Base {
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
 
-    this.strAvgMaxConv = strAvgMaxConv;
+//!!! (2021/04/09 Remarked) Become all number.
+//    this.strAvgMaxConv = strAvgMaxConv;
 
     let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
     this.depthwiseFilterHeight = depthwiseFilterHeight;
@@ -282,15 +288,29 @@ class Base {
       let pointwise1ChannelCount = 0; // no pointwise convolution before depthwise convolution.
       let pointwise2ChannelCount;
 
-//!!! ...unfinished... (2021/04/09) What if ( depthwiseChannelMultiplierStep0 == 0 )? The image will not be halven.
-      let depthwise_AvgMax_Or_ChannelMultiplier;
-      if ( strAvgMaxConv == "Conv" ) { // Depthwise convolution.
-        depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
+//!!! (2021/04/09 Remarked) become all number.
+//       let depthwise_AvgMax_Or_ChannelMultiplier;
+//       if ( strAvgMaxConv == "Conv" ) { // Depthwise convolution.
+//         depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
+//         pointwise2ChannelCount = sourceChannelCount * depthwiseChannelMultiplierStep0;
+//       } else {
+// //!!! ...unfinished... (2021/03/10) should become all number?
+//         depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
+//         pointwise2ChannelCount = sourceChannelCount;           // The output channel count of average (or max) pooling is the same as input channel count.
+//       }
+
+      let depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
+      if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) { // Depthwise convolution.
         pointwise2ChannelCount = sourceChannelCount * depthwiseChannelMultiplierStep0;
-      } else {
-//!!! ...unfinished... (2021/03/10) should become all number?
-        depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
-        pointwise2ChannelCount = sourceChannelCount;           // The output channel count of average (or max) pooling is the same as input channel count.
+
+      } else if ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ) { // No depthwise operation.
+        // In step0, it can not have no depthwise operation. Otherwise, the image will not be shrinked a little.
+        // So, force to 1 at least.
+        depthwise_AvgMax_Or_ChannelMultiplier = 1;
+        pointwise2ChannelCount = sourceChannelCount; // The output channel count of ( channelMultiplier == 1 ) is the same as input channel count.
+
+      } else {                                       // Avg pooling, or Max pooling.
+        pointwise2ChannelCount = sourceChannelCount; // The output channel count of average (or max) pooling is the same as input channel count.
       }
 
       let depthwiseStridesPad = 0; // ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" ) so that shrinking sourceHeight a little.
@@ -323,13 +343,26 @@ class Base {
       //   - Expand channels by channelMultiplier of depthwise convolution. (Both ShuffleNetV2 and MobileNetV2 do not have this. It is added by us.)
       let step0, step0Branch;
       {
-//!!! ...unfinished... (2021/04/09) What if ( depthwiseChannelMultiplierStep0 == 0 )? The image will not be halven.
-        let depthwise_AvgMax_Or_ChannelMultiplier;
-        if ( strAvgMaxConv == "Conv" )
-          depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
-        else
-//!!! ...unfinished... (2021/03/10) should become all number?
-          depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
+//!!! ...unfinished... (2021/04/09) Become all number.
+//        let depthwise_AvgMax_Or_ChannelMultiplier;
+//         if ( strAvgMaxConv == "Conv" )
+//           depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
+//         else
+//           depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
+
+        let depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
+        if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {         // Depthwise convolution.
+          // Do nothing. Keep going.
+
+        } else if ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ) { // No depthwise operation.
+          // In step0, it can not have no depthwise operation. Otherwise, the image will not be halven.
+          // So, force to 1 at least.
+          depthwise_AvgMax_Or_ChannelMultiplier = 1;
+
+        } else {                                                   // Avg pooling, or Max pooling.
+          // Do nothing. Keep going.
+
+        }
 
         // Step 0 is responsibile for halving input's height (and width).
         let depthwiseStridesPad = 2; // ( depthwiseStrides == 2 ) and ( depthwisePad == "same" )
@@ -410,14 +443,27 @@ class Base {
       // Step 1, 2, 3, ...
       if ( stepCountPerBlock > 0 ) {
 
-//!!! ...unfinished... (2021/04/09) What if ( depthwiseChannelMultiplierStep0 == 0 )? It seems ok here (i.e. it is ok in non-step0).
+//!!! (2021/04/09 Remarked) Become all number.
+//         let depthwise_AvgMax_Or_ChannelMultiplier;
+//         if ( strAvgMaxConv == "Conv" )
+//           depthwise_AvgMax_Or_ChannelMultiplier = 1; // Force to 1, because only step 0 can have ( channelMultiplier > 1 ).
+//         else
+//           depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
 
-        let depthwise_AvgMax_Or_ChannelMultiplier;
-        if ( strAvgMaxConv == "Conv" )
-          depthwise_AvgMax_Or_ChannelMultiplier = 1; // Force to 1, because only step 0 can have ( channelMultiplier > 1 ).
-        else
-//!!! ...unfinished... (2021/03/10) should become all number?
-          depthwise_AvgMax_Or_ChannelMultiplier = strAvgMaxConv; // "Avg" or "Max".
+        let depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0;
+        if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) { // Depthwise convolution.
+          // In non-step0, it can not expand channel. Only step 0 can have ( channelMultiplier > 1 ).
+          // So, force to 1.
+          depthwise_AvgMax_Or_ChannelMultiplier = 1;
+
+        } else if ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ) { // No depthwise operation.
+          // In non-step0, it can have no depthwise operation.
+          // So, do nothing. Keep going.
+
+        } else { // Avg pooling, or Max pooling.
+          // Do nothing. Keep going.
+
+        }
 
         // Force to ( depthwiseStrides == 1 ), because only step 0 (i.e. not here) should halve input's height (and width).
         let depthwiseStridesPad = 1; // ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
@@ -500,12 +546,11 @@ class Base {
   init(
     progressParent,
     inputFloat32Array, byteOffsetBegin,
-//!!! ...unfinished...
-    channelCount_pointwise1Before,
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-    bAddInputToOutput,
+    sourceHeight, sourceWidth, sourceChannelCount,
+    stepCountPerBlock,
+    bChannelShuffler,
+    pointwise1ChannelCountRate,
+    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
     bKeepInputTensor
   ) {
 
@@ -514,11 +559,11 @@ class Base {
     let initer = this.initer(
       progressParent,
       inputFloat32Array, byteOffsetBegin,
-      channelCount_pointwise1Before,
-      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-      bAddInputToOutput,
+      sourceHeight, sourceWidth, sourceChannelCount,
+      stepCountPerBlock,
+      bChannelShuffler,
+      pointwise1ChannelCountRate,
+      depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
       bKeepInputTensor
     );
 
