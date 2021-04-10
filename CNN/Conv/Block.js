@@ -22,7 +22,8 @@ class Params extends Weights.Params {
    * @override
    */
   init( inputFloat32Array, byteOffsetBegin,
-    sourceHeight, sourceWidth, sourceChannelCount,
+//!!! (2021/04/10 Remarked) They can not be evolved.
+//    sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
@@ -30,9 +31,10 @@ class Params extends Weights.Params {
   ) {
 
     let parameterMap = new Map( [
-      [ Params.sourceHeight,                     sourceHeight ],
-      [ Params.sourceWidth,                      sourceWidth ],
-      [ Params.sourceChannelCount,               sourceChannelCount ],
+//!!! (2021/04/10 Remarked) They can not be evolved.
+//       [ Params.sourceHeight,                     sourceHeight ],
+//       [ Params.sourceWidth,                      sourceWidth ],
+//       [ Params.sourceChannelCount,               sourceChannelCount ],
       [ Params.stepCountPerBlock,                stepCountPerBlock ],
       [ Params.bChannelShuffler,                 bChannelShuffler ],
       [ Params.pointwise1ChannelCountRate,       pointwise1ChannelCountRate ],
@@ -46,9 +48,11 @@ class Params extends Weights.Params {
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
-  get sourceHeight()                        { return this.parameterMapModified.get( Params.sourceHeight ); }
-  get sourceWidth()                         { return this.parameterMapModified.get( Params.sourceWidth ); }
-  get sourceChannelCount()                  { return this.parameterMapModified.get( Params.sourceChannelCount ); }
+//!!! (2021/04/10 Remarked) They can not be evolved.
+//   get sourceHeight()                        { return this.parameterMapModified.get( Params.sourceHeight ); }
+//   get sourceWidth()                         { return this.parameterMapModified.get( Params.sourceWidth ); }
+//   get sourceChannelCount()                  { return this.parameterMapModified.get( Params.sourceChannelCount ); }
+
   get stepCountPerBlock()                   { return this.parameterMapModified.get( Params.stepCountPerBlock ); }
   get bChannelShuffler()                    { return this.parameterMapModified.get( Params.bChannelShuffler ); }
   get pointwise1ChannelCountRate()          { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
@@ -69,9 +73,12 @@ class Params extends Weights.Params {
 
 
 // Define parameter descriptions.
-Params.sourceHeight =                    new ParamDesc.Int(                         "sourceHeight",               1, ( 10 * 1024 ) );
-Params.sourceWidth =                     new ParamDesc.Int(                         "sourceWidth",                1, ( 10 * 1024 ) );
-Params.sourceChannelCount =              new ParamDesc.Int(                         "sourceChannelCount",         1, ( 10 * 1024 ) );
+
+//!!! (2021/04/10 Remarked) They can not be evolved.
+// Params.sourceHeight =                    new ParamDesc.Int(                         "sourceHeight",               1, ( 10 * 1024 ) );
+// Params.sourceWidth =                     new ParamDesc.Int(                         "sourceWidth",                1, ( 10 * 1024 ) );
+// Params.sourceChannelCount =              new ParamDesc.Int(                         "sourceChannelCount",         1, ( 10 * 1024 ) );
+
 Params.stepCountPerBlock =               new ParamDesc.Int(                         "stepCountPerBlock",          0, ( 10 * 1024 ) );
 Params.bChannelShuffler =                new ParamDesc.Bool(                        "bChannelShuffler" );
 Params.pointwise1ChannelCountRate =      new ParamDesc.Int(                         "pointwise1ChannelCountRate", 1,             2 );
@@ -122,36 +129,36 @@ class Base {
    * (not to the inputFloat32Array.byteOffset).
    *
    * @param {number} sourceHeight
-   *   The height of the source image which will be processed by apply_and_destroy_or_keep().
+   *   The height of the source image which will be processed by apply_and_destroy_or_keep(). This should always be specified and can
+   * not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
    *
    * @param {number} sourceWidth
-   *   The width of the source image which will be processed by apply_and_destroy_or_keep().
+   *   The width of the source image which will be processed by apply_and_destroy_or_keep().c This should always be specified and can
+   * not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
    *
    * @param {number} sourceChannelCount
    *   The channel count of the source image. It may be the output channel count of the previous convolution block, so it could be large.
+   * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
    *
    * @param {number} stepCountPerBlock
-   *   If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
+   *   There are how many step inside this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If zero or
+   * negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
    * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
    * (halve height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
    *
    * @param {boolean} bChannelShuffler
-   *   If true, will like ShuffleNetV2 (i.e. split and concat channels). If false, will like MobileNetV1 or MobileNetV2 (i.e. add input to output).
-   * If ( stepCountPerBlock <= 0 ), this flag will be ignored.
+   *   If true, will like ShuffleNetV2 (i.e. split and concat channels). If false, will like MobileNetV1 or MobileNetV2 (i.e. add input
+   * to output). If null, it will be extracted from inputFloat32Array (i.e. by evolution). If ( stepCountPerBlock <= 0 ), this flag
+   * will be ignored.
    *
    * @param {number} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
-   * That is, pointwise1ChannelCount = ( pointwise2ChannelCount * pointwise1ChannelCountRate ).
+   * That is, pointwise1ChannelCount = ( pointwise2ChannelCount * pointwise1ChannelCountRate ). If null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution).
    *   - If ( stepCountPerBlock <= 0 ), this rate will be ignored because there will be no first 1x1 pointwise.
    *   - If ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 1 ), will like ShuffleNetV2.
    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will like MobileNetV1.
    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate > 1 ), will like MobileNetV2.
-   *
-
-//!!! ...unfinished...
-
-   * @param strAvgMaxConv
-   *   Depthwise operation. "Avg" or "Max" or "Conv" for average pooling, max pooling, depthwise convolution.
    *
 
 //!!! ...unfinished...
@@ -165,17 +172,18 @@ class Base {
    *   - positive integer between [ 1, 32 ]: depthwise convolution and the number indicates channel multiplier.
    *
    * @param {boolean} bBias
-   *   If true, there will be a bias after every convolution.
+   *   If true, there will be a bias after every convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
    * @param {string} nActivationId
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution. If null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution).
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution. If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
    *
    * @param {string} nActivationIdAtBlockEnd
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
-   * pointwise2ActivationId of this block. If the output of this block needs to be any arbitrary value, it is recommended
-   * not to use activation at the end of this block (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that
-   * it will not be restricted by the range of the activation function.
+   * pointwise2ActivationId of this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If the output of
+   * this block needs to be any arbitrary value, it is recommended not to use activation at the end of this block
+   * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
+   * of the activation function.
    *
 //!!! ...unfinished...
 //!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1 )?
@@ -206,24 +214,6 @@ class Base {
     bKeepInputTensor
   ) {
 
-    // 0. Prepare
-
-//!!! ...unfinished...
-    // Estimate the maximum value of progress.
-    let progressMax =
-      1    // for extracting parameters from inputFloat32Array.
-      + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
-      + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
-      + 1  // for extracting pointwise2 filters (and biases) from inputFloat32Array and building tensors.
-      + 1  // for all pointwise1-depthwise-pointwise2 filters (and biases) ready.
-      ;
-
-    let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
-
-
-    this.disposeTensors();
-
     // Both MobileNetV3 and ShuffleNetV2:
     //   - They all do not use (depthwise convolution) channelMultiplier.
     //   - They all use 1x1 (pointwise) convolution to expand channel count.
@@ -245,11 +235,68 @@ class Base {
     // In ShuffleNetV2, convolution A (with activation), convolution B (without activation) and convolution C (with activation) never
     // change channel count. When there is necessary to increase output channel count (usually in step 0 of a block), it expands channel
     // count by concatenating two shrinked (halven) height x width.
-    //
+
+
+    // 0. Prepare
+
+//!!! ...unfinished...
+    // Estimate the maximum value of progress.
+    let progressMax =
+      1    // for extracting parameters from inputFloat32Array.
+      + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for extracting pointwise2 filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for all pointwise1-depthwise-pointwise2 filters (and biases) ready.
+      ;
+
+    let progressRoot = progressParent.getRoot();
+    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
+
+    this.disposeTensors();
+
+    this.nextByteOffsetBegin = byteOffsetBegin;
 
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
+
+//!!! ...unfinished...
+    // 1. Extract parameters.
+    this.params = new Params();
+    let bParamsInitOk
+      = this.params.init( inputFloat32Array, byteOffsetBegin,
+          pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+          pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
+          bAddInputToOutput );
+
+    if ( !bParamsInitOk )
+      return false;  // e.g. input array does not have enough data.
+
+    this.nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
+
+//!!! ...unfinished...
+    // Get parameters' real (adjusted) values.
+    {
+      pointwise1ChannelCount = this.pointwise1ChannelCount;
+      bPointwise1Bias = this.bPointwise1Bias;
+      pointwise1ActivationId = this.pointwise1ActivationId;
+
+      depthwise_AvgMax_Or_ChannelMultiplier = this.depthwise_AvgMax_Or_ChannelMultiplier;
+      depthwiseFilterHeight = this.depthwiseFilterHeight;
+      depthwiseStridesPad = this.depthwiseStridesPad;
+      bDepthwiseBias = this.bDepthwiseBias;
+      depthwiseActivationId = this.depthwiseActivationId;
+
+      pointwise2ChannelCount = this.pointwise2ChannelCount;
+      bPointwise2Bias = this.bPointwise2Bias;
+      pointwise2ActivationId = this.pointwise2ActivationId;
+
+      bAddInputToOutput = this.bAddInputToOutput;
+    }
+
+    ++progressToAdvance.value;
+    yield progressRoot;  // Parameters extracted. Report progress.
 
     this.stepCountPerBlock = stepCountPerBlock;
 
