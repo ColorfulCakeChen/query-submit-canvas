@@ -48,47 +48,55 @@ export { Base, To, Params };
 class Base {
 
   /**
+   * Just record the parameters without checking them. Please call init() to finish extracting.
+   */ 
+  constructor( defaultInput, defaultByteOffsetBegin, privilegeInput = null, privilegeByteOffsetBegin = 0, shape = null ) {
+    this.defaultInput =             defaultInput;
+    this.defaultByteOffsetBegin =   defaultByteOffsetBegin;
+    this.privilegeInput =           privilegeInput;
+    this.privilegeByteOffsetBegin = privilegeByteOffsetBegin;
+    this.shape =                    shape;
+  }
+
+  /**
    * Create Float32Array weights[] over the defaultInput (or privilegeInput) according to the specific
-   * byteOffsetBegin, shape, and weightConverter.
+   * byteOffsetBegin and shape.
    *
    * The defaultInput and privilegeInput can not both be null. If one of them is null, the non-null is used.
    * If both are non-null, the privilegeInput will be used.
    *
    * @return {boolean} Return false, if initialization failed.
    */ 
-  init( defaultInput, defaultByteOffsetBegin, privilegeInput, privilegeByteOffsetBegin, shape ) {
+  init() {
 
-    this.defaultInput =   defaultInput;
-    this.privilegeInput = privilegeInput;
-    this.shape =          shape;
     this.weights =        null;   // So that ( isValid() == false ) if re-initialization failed.
 
-    //let weightCount =     ( shape ) ? shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue ) : 0;
-    let weightCount =     ( shape ) ? tf.util.sizeFromShape( shape ) : 0; // It can handle ( 0 == shape.length ) (i.e. scalar).
+    //let weightCount =     ( this.shape ) ? this.shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue ) : 0;
+    let weightCount =     ( this.shape ) ? tf.util.sizeFromShape( this.shape ) : 0; // It can handle ( 0 == shape.length ) (i.e. scalar).
     let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
 
     let input, byteOffsetBegin;
     let byteOffsetEnd; // Not inclusive. It will be used as the next filter's beginning.
 
-    if ( privilegeInput ) {       // privilegeInput first.
+    if ( this.privilegeInput ) {       // privilegeInput first.
 
-      if ( privilegeByteOffsetBegin < privilegeInput.byteOffset )
+      if ( this.privilegeByteOffsetBegin < this.privilegeInput.byteOffset )
         return false;  // Failed, the privilege beginning position is illegal (less than bounding).
 
-      input = privilegeInput;
-      byteOffsetBegin = this.privilegeByteOffsetBegin = privilegeByteOffsetBegin;
-      byteOffsetEnd =   this.privilegeByteOffsetEnd =   privilegeByteOffsetBegin + weightByteCount;
-      this.defaultByteOffsetBegin = this.defaultByteOffsetEnd = defaultByteOffsetBegin; // Stay at beginning for not used.
+      input = this.privilegeInput;
+      byteOffsetBegin = this.privilegeByteOffsetBegin;
+      byteOffsetEnd =   this.privilegeByteOffsetEnd = this.privilegeByteOffsetBegin + weightByteCount;
+      this.defaultByteOffsetEnd = this.defaultByteOffsetBegin; // Stay at beginning for not used.
 
-    } else if ( defaultInput ) {  // defaultInput second.
+    } else if ( this.defaultInput ) {  // defaultInput second.
 
-      if ( defaultByteOffsetBegin < defaultInput.byteOffset )
+      if ( this.defaultByteOffsetBegin < this.defaultInput.byteOffset )
         return false;  // Failed, the default beginning position is illegal (less than bounding).
 
-      input = defaultInput;
-      byteOffsetBegin = this.defaultByteOffsetBegin = defaultByteOffsetBegin;
-      byteOffsetEnd =   this.defaultByteOffsetEnd =   defaultByteOffsetBegin + weightByteCount;
-      this.privilegeByteOffsetBegin = this.privilegeByteOffsetEnd = privilegeByteOffsetBegin; // Stay at beginning for not used.
+      input = this.defaultInput;
+      byteOffsetBegin = this.defaultByteOffsetBegin;
+      byteOffsetEnd =   this.defaultByteOffsetEnd = this.defaultByteOffsetBegin + weightByteCount;
+      this.privilegeByteOffsetEnd = this.privilegeByteOffsetBegin; // Stay at beginning for not used.
 
     } else {
       return false;  // Failed, both privilege and default input are null.
@@ -193,48 +201,9 @@ class Params extends Base {
    *   If null, extract parameters from inputFloat32Array. If not null, extract parameters from it instead of
    * inputFloat32Array. When not null, it should have parameterCountExtracted elements (i.e. the count of non-null values
    * of parameterMap).
-   *
-   * @return {boolean} Return false, if initialization failed.
-   *
-   * @override
    */
-  init( inputFloat32Array, byteOffsetBegin, parameterMap, fixedWeights = null ) {
-
-    this.weightsModified = this.parameterMapModified = null; // So that distinguishable if re-initialization failed.
-
-    if ( !parameterMap )
-      return false;  // Do not know what parameters to be used or extracted.
-
-    this.parameterMapModified = new Map; // Collect all parameters.
-
-    // Collect what parameters should be extracted from input array (rather than use values in the parameterMap).
-    // At the same time, its array index will also be recorded for extracting its value from array.
-    let arrayIndexMap = new Map();
-    {
-      let i = 0;
-
-      for ( let [ paramDesc, value ] of parameterMap ) {
-
-        // A null value means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
-        //
-        // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
-        if ( null == value ) {
-          // Record the index (into this.weightsModified[]) and the adjuster.
-//!!! (2021/03/15 Remarked) Using paramDesc as key directly.
-//          arrayIndexMap.set( paramDesc.key, { arrayIndex: i, paramDesc: paramDesc } );
-          arrayIndexMap.set( paramDesc, i );
-          ++i;
-        } else {
-          // A non-null value means it is the parameter's value (which should also be adjusted).
-          let adjustedValue = paramDesc.valueDesc.range.adjust( value );
-          this.parameterMapModified.set( paramDesc, adjustedValue );
-        }
-      }
-
-    }
-
-    let parameterCountExtracted = arrayIndexMap.size; // Determine how many parameters should be extracted from array.
-
+  constructor( inputFloat32Array, byteOffsetBegin, parameterMap, fixedWeights = null ) {
+    
     // If has fixedWeights, use it as priviledge input.
     let privilegeInput;
     if ( fixedWeights ) {
@@ -244,9 +213,62 @@ class Params extends Base {
         privilegeInput = new Float32Array( fixedWeights );  // Convert to Float32Array.
     }
 
-    // Extract a block of input array.
-    let bInitOk = super.init( inputFloat32Array, byteOffsetBegin, privilegeInput, 0, [ parameterCountExtracted ] );
+    let privilegeByteOffsetBegin = 0; // fixedWeights always be extracted at the beginning.
 
+    let parameterMapModified, arrayIndexMap, parameterCountExtracted;
+    if ( parameterMap ) {
+
+      parameterMapModified = new Map; // Collect all parameters.
+
+      // Collect what parameters should be extracted from input array (rather than use values in the parameterMap).
+      // At the same time, its array index will also be recorded for extracting its value from array.
+      arrayIndexMap = new Map();
+      {
+        let i = 0;
+
+        for ( let [ paramDesc, value ] of parameterMap ) {
+
+          // A null value means it should be extracted from inputFloat32Array (or fixedWeights). (i.e. by evolution)
+          //
+          // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
+          if ( null == value ) {
+            // Record the index (into this.weightsModified[]) and the adjuster.
+            arrayIndexMap.set( paramDesc, i );
+            ++i;
+          } else {
+            // A non-null value means it is the parameter's value (which should also be adjusted).
+            let adjustedValue = paramDesc.valueDesc.range.adjust( value );
+            parameterMapModified.set( paramDesc, adjustedValue );
+          }
+        }
+
+      }
+
+      parameterCountExtracted = arrayIndexMap.size; // Determine how many parameters should be extracted from array.
+    }
+
+    super( inputFloat32Array, byteOffsetBegin, privilegeInput, privilegeByteOffsetBegin, [ parameterCountExtracted ] );
+
+    this.parameterMap = parameterMap;
+    this.parameterMapModified = parameterMapModified;
+    this.arrayIndexMap = arrayIndexMap;
+  }
+
+  /**
+   * Extract parameters from inputFloat32Array.
+   *
+   * @return {boolean} Return false, if initialization failed.
+   *
+   * @override
+   */
+  init() {
+
+    this.weightsModified = null; // So that distinguishable if re-initialization failed.
+
+    if ( !this.parameterMap )
+      return false;  // Do not know what parameters to be used or extracted.
+
+    let bInitOk = super.init(); // Extract a block of input array.
     if ( !bInitOk )
       return false;
 
@@ -256,17 +278,8 @@ class Params extends Base {
     // another neural network layer configuration.
     this.weightsModified = new Float32Array( this.weights.length );
 
-//!!! (2021/03/15 Remarked) Using paramDesc as key directly.
-//     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
-//     for ( let [ key, { arrayIndex, paramDesc } ] of arrayIndexMap ) {
-//       let extractedValue = this.weights[ arrayIndex ];
-//       let adjustedValue = paramDesc.valueDesc.range.adjust( extractedValue );
-//       this.weightsModified[ arrayIndex ] = adjustedValue;  // Record in array.
-//       this.parameterMapModified.set( key, adjustedValue ); // Record in map, too.
-//     }
-
     // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
-    for ( let [ paramDesc, arrayIndex ] of arrayIndexMap ) {
+    for ( let [ paramDesc, arrayIndex ] of this.arrayIndexMap ) {
       let extractedValue = this.weights[ arrayIndex ];
       let adjustedValue = paramDesc.valueDesc.range.adjust( extractedValue );
       this.weightsModified[ arrayIndex ] = adjustedValue;  // Record in array.
