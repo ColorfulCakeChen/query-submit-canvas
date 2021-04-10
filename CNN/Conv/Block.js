@@ -197,14 +197,12 @@ class Base {
   * initer(
     progressParent,
     inputFloat32Array, byteOffsetBegin,
-
     sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-//!!! (2021/04/09 Remarked) Become all number.
-//    strAvgMaxConv,
-    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
+    depthwiseChannelMultiplierStep0, depthwiseFilterHeight,
+    bBias, nActivationId, nActivationIdAtBlockEnd,
     bKeepInputTensor
   ) {
 
@@ -232,7 +230,7 @@ class Base {
     //   - They all use 1x1 (pointwise) convolution before depthwise convolution.
     //   - They all use activation function after first pointwise convolution.
     //   - They all use depthwise convolution with ( pad = "same" ).
-    //   - They all use depthwise convolution with ( strides = 2 ) for shrinking (halving) height x weight.
+    //   - They all use depthwise convolution with ( strides = 2 ) for shrinking (halving) height x width.
     //   - They all do not use bias after pointwise and depthwise convolution.
     //
     // Inisde one of their block, three convolutions are used:
@@ -246,11 +244,15 @@ class Base {
     //
     // In ShuffleNetV2, convolution A (with activation), convolution B (without activation) and convolution C (with activation) never
     // change channel count. When there is necessary to increase output channel count (usually in step 0 of a block), it expands channel
-    // count by concatenating two shrinked (halven) height x weight.
+    // count by concatenating two shrinked (halven) height x width.
     //
 
+    this.sourceHeight = sourceHeight;
+    this.sourceWidth = sourceWidth;
+    this.sourceChannelCount = sourceChannelCount;
+
     this.stepCountPerBlock = stepCountPerBlock;
-      
+
 //!!! ...unfinished... (2021/04/10)
 // Perhaps, Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0) (no depthwise operation) could be viewed as ( bChannelShuffler == true ).
 // Because it is not possible to change depthwiseChannelMultiplier in ShuffleNetV2 (it is always ( depthwiseChannelMultiplier == 1 )).
@@ -259,20 +261,6 @@ class Base {
 
     this.bChannelShuffler = bChannelShuffler;
     this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
-    this.bKeepInputTensor = bKeepInputTensor;
-
-    this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
-
-    this.sourceHeight = sourceHeight;
-    this.sourceWidth = sourceWidth;
-    this.sourceChannelCount = sourceChannelCount;
-
-//!!! (2021/04/09 Remarked) Become all number.
-//    this.strAvgMaxConv = strAvgMaxConv;
-
-    let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
-    this.depthwiseFilterHeight = depthwiseFilterHeight;
-    this.depthwiseFilterWidth =  depthwiseFilterWidth;
 
 //!!! ...unfinished... (2021/04/10) Place this adjustment after Params.init().
     // The depthwise channel multipler of the step 0 can not be  Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0).
@@ -283,9 +271,17 @@ class Base {
 
     this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
 
+    let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
+    this.depthwiseFilterHeight = depthwiseFilterHeight;
+    this.depthwiseFilterWidth =  depthwiseFilterWidth;
+
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nActivationIdAtBlockEnd = nActivationIdAtBlockEnd;
+
+    this.bKeepInputTensor = bKeepInputTensor;
+
+    this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
     let pointwise1Bias = bBias;
     let pointwise1ActivationId = nActivationId;
