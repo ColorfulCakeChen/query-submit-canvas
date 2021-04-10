@@ -240,8 +240,8 @@ class Base extends ReturnOrClone.Base {
     {
       let nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
       for ( let i = 0; i < inChannels; ++i ) {
-        this.vocabularyTables[ i ] = new Weights.Base();
-        if ( !this.vocabularyTables[ i ].init( inputFloat32Array, nextByteOffsetBegin, null, 0, vocabularyTableShape_toExtract ) )
+        this.vocabularyTables[ i ] = new Weights.Base( this.params.defaultInput, nextByteOffsetBegin, null, 0, vocabularyTableShape_toExtract );
+        if ( !this.vocabularyTables[ i ].init() )
           return false;  // e.g. input array does not have enough data.
         nextByteOffsetBegin = this.vocabularyTables[ i ].defaultByteOffsetEnd;
 
