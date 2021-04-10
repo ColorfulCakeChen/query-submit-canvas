@@ -114,26 +114,28 @@ class TestCase {
 
     // Initialize successfully or failed.
     let bInitOk = pointDepthPoint.init(
-      progress, this.weightsFloat32Array, this.weightsByteOffsetBegin,
+      progress,
       this.image.in.depth, // channelCount_pointwise1Before (i.e. inChannels)
+      bKeepInputTensor,
 
 //!!! ...unfinished... Could be randomized some null some non-null?
+      new PointDepthPoint.Params( this.weightsFloat32Array, this.weightsByteOffsetBegin,
 
-      // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
+        // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
 
-      //pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-      null, null, null,
+        //pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+        null, null, null,
 
-      //depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-      null, null, null, null, null,
+        //depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+        null, null, null, null, null,
 
-      //pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-      null, null, null,
+        //pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
+        null, null, null,
 
-      // bAddInputToOutput
-      null,
+        // bAddInputToOutput
+        null
+      )
 
-      bKeepInputTensor
     );
 
     // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
