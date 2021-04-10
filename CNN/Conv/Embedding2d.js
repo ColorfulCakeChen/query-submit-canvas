@@ -132,7 +132,7 @@ class Base extends ReturnOrClone.Base {
    * Otherwise, the vocabulary table will be built as one merged longer tf.tensor2d and using add-gather-reshape (usually faster).
    *
    * @param {Params} params
-   *   A Params object. The params.init() should have not been called. It will be called to extract parameters.
+   *   A Params object. The params.extract() will be called to extract parameters.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
@@ -181,7 +181,7 @@ class Base extends ReturnOrClone.Base {
 
     // 1. Extract parameters.
     this.params = params;
-    if ( !this.params.init() )
+    if ( !this.params.extract() )
       return false;
 
     ++progressToAdvance.value;
@@ -241,7 +241,7 @@ class Base extends ReturnOrClone.Base {
       let nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
       for ( let i = 0; i < inChannels; ++i ) {
         this.vocabularyTables[ i ] = new Weights.Base( this.params.defaultInput, nextByteOffsetBegin, null, 0, vocabularyTableShape_toExtract );
-        if ( !this.vocabularyTables[ i ].init() )
+        if ( !this.vocabularyTables[ i ].extract() )
           return false;  // e.g. input array does not have enough data.
         nextByteOffsetBegin = this.vocabularyTables[ i ].defaultByteOffsetEnd;
 
