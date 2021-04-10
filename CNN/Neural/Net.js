@@ -195,6 +195,8 @@ class Base {
     {
       let block = new ConvBlock.Base();
       block.init(
+//!!! ...unfinished... (2021/04/10) Every block's input image size (height * width * channelCount) should be different.
+// It should depend on the output image size of the previous block.
         config.sourceHeight, config.sourceWidth, nextBlockInputChannelCount,
         config.stepCountPerBlock,
         config.bChannelShuffler,
