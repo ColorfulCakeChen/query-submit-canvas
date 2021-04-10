@@ -292,13 +292,17 @@ class Base extends ReturnOrClone.Base {
     this.channelCount_pointwise1Before = channelCount_pointwise1Before;
 
     // 1. Extract parameters.
-    this.params = params;
-    let bParamsExtractOk= this.params.extract();
-    if ( !bParamsExtractOk )
+    if ( !params )
+      return false;
+
+    this.byteOffsetEnd = this.byteOffsetBegin = params.defaultByteOffsetBegin;
+
+    if ( !params.extract() )
       return false;  // e.g. input array does not have enough data.
 
-    this.nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
+    this.byteOffsetEnd = this.nextByteOffsetBegin = params.defaultByteOffsetEnd;
 
+//!!! ...unfinished... (2021/04/10) Do not keep this.params so that the inputFloat32Array could be released.
     // Get parameters' real (adjusted) values.
     let pointwise1ChannelCount = this.pointwise1ChannelCount;
     let bPointwise1Bias = this.bPointwise1Bias;
@@ -813,6 +817,8 @@ class Base extends ReturnOrClone.Base {
   isValid() {
     return this.bInitOk;
   }
+
+//!!! ...unfinished... (2021/04/10) Do not keep this.params so that the inputFloat32Array could be released.
 
   get byteOffsetBegin()                       { return this.params.defaultByteOffsetBegin; }
 
