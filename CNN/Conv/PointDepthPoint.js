@@ -289,7 +289,6 @@ class Base extends ReturnOrClone.Base {
 
     this.disposeTensors();  // Also initialize some member function pointers to no_operation().
 
-    this.nextByteOffsetBegin = byteOffsetBegin;
     this.channelCount_pointwise1Before = channelCount_pointwise1Before;
 
     // 1. Extract parameters.
@@ -596,30 +595,11 @@ class Base extends ReturnOrClone.Base {
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
-  init(
-    progressParent,
-    inputFloat32Array, byteOffsetBegin,
-    channelCount_pointwise1Before,
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-    bAddInputToOutput,
-    bKeepInputTensor
-  ) {
+  init( progressParent, channelCount_pointwise1Before, bKeepInputTensor, params ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer(
-      progressParent,
-      inputFloat32Array, byteOffsetBegin,
-      channelCount_pointwise1Before,
-      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-      bAddInputToOutput,
-      bKeepInputTensor
-    );
-
+    let initer = this.initer( progressParent, channelCount_pointwise1Before, bKeepInputTensor, params );
     let initerNext;
     do {
       initerNext = initer.next();
