@@ -11,15 +11,18 @@ import * as ReturnOrClone from "./ReturnOrClone.js";
 class Params extends Weights.Params {
 
   /**
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpret as weights.
+   *
+   * @param {number} byteOffsetBegin
+   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
+   * (not to the inputFloat32Array.byteOffset).
+   *
    * @param {number} channelMultiplier
    *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
    * embedding channels. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   *
-   * @return {boolean} Return false, if initialization failed.
-   *
-   * @override
    */
-  init( inputFloat32Array, byteOffsetBegin, channelMultiplier = null ) {
+  constructor( inputFloat32Array, byteOffsetBegin, channelMultiplier ) {
 
 //!!! ...unfinished...
 // squeeze-and-excitation ?
@@ -28,7 +31,7 @@ class Params extends Weights.Params {
       [ Params.channelMultiplier, channelMultiplier ],
     ] );
 
-    return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
+    super( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
   get channelMultiplier() { return this.parameterMapModified.get( Params.channelMultiplier ); }
@@ -117,19 +120,8 @@ class Base extends ReturnOrClone.Base {
    *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
    * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
    *
-   * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpret as weights.
-   *
-   * @param {number} byteOffsetBegin
-   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
-   * (not to the inputFloat32Array.byteOffset).
-   *
    * @param {number} inChannels
    *   The input channel count.
-   *
-   * @param {number} channelMultiplier
-   *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
-   * embedding channels. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
@@ -138,6 +130,9 @@ class Base extends ReturnOrClone.Base {
    * @param {boolean} bSplitReshapeGatherConcat
    *   If true, the vocabulary table will be built as multiple tf.tensor2d and using split-reshape-gather-concat operation (usually slower).
    * Otherwise, the vocabulary table will be built as one merged longer tf.tensor2d and using add-gather-reshape (usually faster).
+   *
+   * @param {Params} params
+   *   A Params object. The params.init() should have not been called. It will be called to extract parameters.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
@@ -148,10 +143,10 @@ class Base extends ReturnOrClone.Base {
    */
   * initer(
     progressParent,
-    inputFloat32Array, byteOffsetBegin,
-    inChannels, channelMultiplier = null, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
+    inChannels, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
     bKeepInputTensor,
-    bSplitReshapeGatherConcat
+    bSplitReshapeGatherConcat,
+    params
   ) {
 
     // 0. Prepare
@@ -174,17 +169,6 @@ class Base extends ReturnOrClone.Base {
 
     this.inChannels = inChannels;
 
-//!!! (2021/03/10 Remarked) Now, no matter whether is specified or extracted, all parameters will be restricted by adjuster function.
-//    // Restrict channelMultiplier to positive integer.
-//     //
-//     // If it is not null (i.e. by specifying (not by evolution) so will not be restricted by Params.init()) but
-//     // is zero or negative, adjust it to positive. Otherwise, the outChannels (= inChannels * channelMultiplier )
-//     // will be strange value. Strange outChannels value will affect the parameters extraction of the next neural
-//     // network layer.
-//     if ( ( null != channelMultiplier ) && ( channelMultiplier < 1 ) ) {
-//       channelMultiplier = 1;
-//     }
-
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
@@ -196,8 +180,8 @@ class Base extends ReturnOrClone.Base {
       this.destroy_or_keep_input = Base.destroy_input;
 
     // 1. Extract parameters.
-    this.params = new Params();
-    if ( !this.params.init( inputFloat32Array, byteOffsetBegin, channelMultiplier ) )
+    this.params = params;
+    if ( !this.params.init() )
       return false;
 
     ++progressToAdvance.value;
@@ -206,7 +190,7 @@ class Base extends ReturnOrClone.Base {
     // 2. Vocabulary Table Shape
     let vocabularyTableShape_toExtract = null; // Assume no embedding channel.
 
-    channelMultiplier = this.channelMultiplier; // The real (adjusted) channelMultiplier. May be specified or extracted.
+    let channelMultiplier = this.channelMultiplier; // The real (adjusted) channelMultiplier. May be specified or extracted.
     this.outChannels = inChannels * channelMultiplier; // The output channel count always depends on channelMultiplier.
 
     // 2.1 Shortcut operation.
@@ -421,20 +405,20 @@ class Base extends ReturnOrClone.Base {
    */
   init(
     progressParent,
-    inputFloat32Array, byteOffsetBegin,
-    inChannels, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+    inChannels, vocabularyCountPerInputChannel, bEmbedVocabularyId,
     bKeepInputTensor,
-    bSplitReshapeGatherConcat
+    bSplitReshapeGatherConcat,
+    params
   ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
     let initer = this.initer(
       progressParent,
-      inputFloat32Array, byteOffsetBegin,
-      inChannels, channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      inChannels, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor,
-      bSplitReshapeGatherConcat
+      bSplitReshapeGatherConcat,
+      params
     );
 
     let initerNext;
