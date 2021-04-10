@@ -96,12 +96,13 @@ class HeightWidthDepth {
 
     // Initialize successfully or failed.
     let bInitOk = embedding2d.init(
-      progress, this.weightsFloat32Array, this.weightsByteOffsetBegin,
-      this.depth, this.channelMultiplier,
+      progress,
+      this.depth,
       this.vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
       bKeepInputTensor,
-      bSplitReshapeGatherConcat
+      bSplitReshapeGatherConcat,
+      new Embedding2d.Params( this.weightsFloat32Array, this.weightsByteOffsetBegin, this.channelMultiplier )
     );
 
     let parametersDescription = `( `
