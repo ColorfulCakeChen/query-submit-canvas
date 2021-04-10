@@ -180,9 +180,15 @@ class Base extends ReturnOrClone.Base {
       this.destroy_or_keep_input = Base.destroy_input;
 
     // 1. Extract parameters.
-    this.params = params;
-    if ( !this.params.extract() )
+    if ( !params )
       return false;
+
+    this.byteOffsetEnd = this.byteOffsetBegin = params.defaultByteOffsetBegin;
+
+    if ( !params.extract() )
+      return false;
+
+    this.byteOffsetEnd = params.defaultByteOffsetEnd;
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
@@ -190,7 +196,7 @@ class Base extends ReturnOrClone.Base {
     // 2. Vocabulary Table Shape
     let vocabularyTableShape_toExtract = null; // Assume no embedding channel.
 
-    let channelMultiplier = this.channelMultiplier; // The real (adjusted) channelMultiplier. May be specified or extracted.
+    let channelMultiplier = this.channelMultiplier = params.channelMultiplier; // The real (adjusted) channelMultiplier. May be specified or extracted.
     this.outChannels = inChannels * channelMultiplier; // The output channel count always depends on channelMultiplier.
 
     // 2.1 Shortcut operation.
@@ -230,24 +236,23 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
-    this.vocabularyTableShape_toExtract = vocabularyTableShape_toExtract;
-
     // 3. Extract data of vocabulary tables from inputFloat32Array.
     //
-    // Even if ( channelMultiplier < 1 ) (i.e. ( null == vocabularyTableShape_toExtract ) ), this.vocabularyTables[]
-    // should still be created so that this.byteOffsetEnd() could work correctly.
-    this.vocabularyTables = new Array( inChannels );
+    // If ( channelMultiplier < 1 ) (i.e. ( null == vocabularyTableShape_toExtract ) ), this vocabularyTables[] may not need to be created.
+    let vocabularyTables = new Array( inChannels );
     {
-      let nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
+      let nextByteOffsetBegin = params.defaultByteOffsetEnd;
       for ( let i = 0; i < inChannels; ++i ) {
-        this.vocabularyTables[ i ] = new Weights.Base( this.params.defaultInput, nextByteOffsetBegin, null, 0, vocabularyTableShape_toExtract );
-        if ( !this.vocabularyTables[ i ].extract() )
+        vocabularyTables[ i ] = new Weights.Base( params.defaultInput, nextByteOffsetBegin, null, 0, vocabularyTableShape_toExtract );
+        if ( !vocabularyTables[ i ].extract() )
           return false;  // e.g. input array does not have enough data.
-        nextByteOffsetBegin = this.vocabularyTables[ i ].defaultByteOffsetEnd;
+        nextByteOffsetBegin = vocabularyTables[ i ].defaultByteOffsetEnd;
 
         ++progressToAdvance.value;
         yield progressRoot;  // One vocabulary table extracted. Report progress.
       }
+
+      this.byteOffsetEnd = nextByteOffsetBegin;
     }
 
     // 4. Build tensor3d[] (or tensor2d[]) of vocabulary tables.
@@ -261,7 +266,7 @@ class Base extends ReturnOrClone.Base {
 
       // Build tf.tensor of vocabulary tables.
       try {
-        this.vocabularyTablesTensorArray = new Array( this.vocabularyTables.length ); // could be tensor3d or tensor2d.
+        this.vocabularyTablesTensorArray = new Array( vocabularyTables.length ); // could be tensor3d or tensor2d.
 
         // 4.1.1
 
@@ -278,10 +283,10 @@ class Base extends ReturnOrClone.Base {
           const idsTensor = tf.tensor( [ ...numberSequencer ], idsTensorShape ); // could be tensor3d or tensor2d.
 
           try {
-            for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
+            for ( let i = 0; i < vocabularyTables.length; ++i ) {
 
               // Create an embedding vocabulary table (without vocabulary id).
-              const vocabularyTableTensorWithoutIds = tf.tensor( this.vocabularyTables[ i ].weights, vocabularyTableShape_toExtract ); // 2d or 3d
+              const vocabularyTableTensorWithoutIds = tf.tensor( vocabularyTables[ i ].weights, vocabularyTableShape_toExtract ); // 2d or 3d
 
               try { // Concatenate vocabulary id prefix vocabulary table (as residual connection).
                 this.vocabularyTablesTensorArray[ i ] = idsTensor.concat( vocabularyTableTensorWithoutIds, concatAxisId );
@@ -300,9 +305,9 @@ class Base extends ReturnOrClone.Base {
 
         } else { // No need to prefix vocabulary id channel.
 
-          for ( let i = 0; i < this.vocabularyTables.length; ++i ) {
+          for ( let i = 0; i < vocabularyTables.length; ++i ) {
             // Create an embedding vocabulary table (without vocabulary id).
-            this.vocabularyTablesTensorArray[ i ] = tf.tensor( this.vocabularyTables[ i ].weights, vocabularyTableShape_toExtract ); // 2d or 3d
+            this.vocabularyTablesTensorArray[ i ] = tf.tensor( vocabularyTables[ i ].weights, vocabularyTableShape_toExtract ); // 2d or 3d
 
             ++progressToAdvance.value;
             yield progressRoot;  // One vocabulary table tensor2d built. Report progress.
@@ -390,6 +395,8 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
+    this.bValid = true;
+
     return true; // Initialized successfully.
   }
 
@@ -451,37 +458,40 @@ class Base extends ReturnOrClone.Base {
       this.embeddedTensor3dArray = null;
     }
 
-    this.params = this.vocabularyTables = this.vocabularyTableShape_toExtract = null;
+    this.bValid = false;
   }
 
   /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
   isValid() {
+    return this.bValid;
 
-    // If vocabulary table tensor does not exist (so that apply_and_destroy_or_keep() will just return output as input).
-    //
-    // (e.g. channelMultiplier is zero or negative, or ( ( channelMultiplier == 1 ) && ( bEmbedVocabularyId ) ) )
-    if ( null == this.vocabularyTableShape_toExtract ) {
+//!!! (2021/04/10 Remarked) Do not keep params. Otherwise, the inputFloat32Array will not be released.
+//!!! Using this.bValid instead.
+//     // If vocabulary table tensor does not exist (so that apply_and_destroy_or_keep() will just return output as input).
+//     //
+//     // (e.g. channelMultiplier is zero or negative, or ( ( channelMultiplier == 1 ) && ( bEmbedVocabularyId ) ) )
+//     if ( null == this.vocabularyTableShape_toExtract ) {
+//
+//       // The vocabulary tables (from initer()'s inputFloat32Array) should always exist.
+//       if ( this.vocabularyTables )
+//         if ( this.vocabularyTables[ this.inChannels - 1 ] )
+//           if ( this.vocabularyTables[ this.inChannels - 1 ].isValid() )  // the last vocabulary table should be valid.
+//             return true;
+//
+//     // If vocabulary table tensor exists. (e.g. channelMultiplier is positive and ( bEmbedVocabularyId == false )).
+//     } else {
+//
+//       // The tensor2d (or tensor3d) of vocabulary tables should exists.
+//       if ( this.vocabularyTablesTensorArray )
+//         if ( this.vocabularyTablesTensorArray[ this.inChannels - 1 ] )  // the last vocabulary table should be valid.
+//             return true;
+//
+//       // Or, the one merged longer tensor2d of vocabulary table (and channel value offset tensor3d) should exists.
+//       if ( ( this.vocabularyTableTensor2d ) && ( this.channelValueOffsetTensor3d ) )
+//         return true;
+//     }
 
-      // The vocabulary tables (from initer()'s inputFloat32Array) should always exist.
-      if ( this.vocabularyTables )
-        if ( this.vocabularyTables[ this.inChannels - 1 ] )
-          if ( this.vocabularyTables[ this.inChannels - 1 ].isValid() )  // the last vocabulary table should be valid.
-            return true;
-
-    // If vocabulary table tensor exists. (e.g. channelMultiplier is positive and ( bEmbedVocabularyId == false )).
-    } else {
-
-      // The tensor2d (or tensor3d) of vocabulary tables should exists.
-      if ( this.vocabularyTablesTensorArray )
-        if ( this.vocabularyTablesTensorArray[ this.inChannels - 1 ] )  // the last vocabulary table should be valid.
-            return true;
-
-      // Or, the one merged longer tensor2d of vocabulary table (and channel value offset tensor3d) should exists.
-      if ( ( this.vocabularyTableTensor2d ) && ( this.channelValueOffsetTensor3d ) )
-        return true;
-    }
-
-    return false;
+//     return false;
   }
 
   /** Do nothing. */
@@ -495,38 +505,6 @@ class Base extends ReturnOrClone.Base {
   static destroy_input( inputTensor3d ) {
     inputTensor3d.dispose();
   }
-
-//!!! (2021/01/08 Remarked) Move to base class ReturnOrClone.
-//   /**
-//    * Return a copy of input (as output) immediately. Used for ( channelMultiplier < 1 ) and ( bKeepInputTensor == true  ).
-//    *
-//    * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
-//    *
-//    * @param {tf.tensor3d} inputTensor3d
-//    *   A tensor3d data. This inputTensor3d will be kept (i.e. not disposed).
-//    *
-//    * @return {tf.tensor3d} The copy of input. Return null, if input is null. Throw exception, if failed (e.g. out of GPU memory).
-//    */
-//   static keep_input_return_copy( inputTensor3d ) {
-//     if ( inputTensor3d )
-//       return inputTensor3d.clone();
-//     return null;
-//   }
-//
-//   /**
-//    * Return the input (as output) directly immediately. Used for ( channelMultiplier < 1 ) and ( bKeepInputTensor == false ).
-//    *
-//    * It should not be called directly. It should be called through this.apply_and_destroy_or_keep().
-//    *
-//    * @param {tf.tensor3d} inputTensor3d
-//    *   A tensor3d data. It should be viewed as already disposed by this method. However, in fact, it is returned as output
-//    * directly.
-//    *
-//    * @return {tf.tensor3d} The same as input.
-//    */
-//   static return_input_directly( inputTensor3d ) {
-//     return inputTensor3d;
-//   }
 
   /**
    * (Used when vocabulary tables are one merged tensor2d. This is faster than SplitReshapeGatherConcat.)
@@ -692,9 +670,4 @@ class Base extends ReturnOrClone.Base {
 // //!!! ...unfinished... squeeze-and-excitation.
 //   }
 
-
-  get byteOffsetBegin()   { return this.params.defaultByteOffsetBegin; }
-  get byteOffsetEnd()     { return this.vocabularyTables[ this.params.inChannels - 1 ].defaultByteOffsetEnd; }
-
-  get channelMultiplier() { return this.params.channelMultiplier; }
 }
