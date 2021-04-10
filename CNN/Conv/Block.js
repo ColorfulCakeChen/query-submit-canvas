@@ -250,6 +250,13 @@ class Base {
     //
 
     this.stepCountPerBlock = stepCountPerBlock;
+      
+//!!! ...unfinished... (2021/04/10)
+// Perhaps, Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0) (no depthwise operation) could be viewed as ( bChannelShuffler == true ).
+// Because it is not possible to change depthwiseChannelMultiplier in ShuffleNetV2 (it is always ( depthwiseChannelMultiplier == 1 )).
+// (WRONG! it is possible to change depthwiseChannelMultiplier in ShuffleNetV2.)
+// This could also reduce one parameter (drop the bChannelShuffler parameter).
+
     this.bChannelShuffler = bChannelShuffler;
     this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
     this.bKeepInputTensor = bKeepInputTensor;
@@ -470,7 +477,7 @@ class Base {
 
         // In ShuffleNetV2, the input channel count of step 1 (2, 3, ...) is the concatenated output channel count of the
         // main and branch of step 0. However, they will be splitted (by channel shuffler) into two channel groups. So every
-        // channel group has just only half of canatenated channel count of step 0 (i.e. not including the step0Branch).
+        // channel group has just only half of concatenated channel count of step 0 (i.e. not including the step0Branch).
         //
         // In MobileNetV2, the input channel count of step 1 (2, 3, ...) is the output channel count of the step 0.
         //
@@ -481,15 +488,18 @@ class Base {
         // The first 1x1 pointwise convolution can change channel count.
         let pointwise1ChannelCount = pointwise2ChannelCount * pointwise1ChannelCountRate;
 
-//!!! (2021/04/08) ...unfinished... Using ChannelShuffler.ConcatPointwiseConv instead.
-
         // In ShuffleNetV2, there is a channel shuffler in every step (except setp 0). It is shared by these steps in the same block.
         if ( bChannelShuffler ) {
           let concatenatedChannelCount = step0.outputChannelCount + step0Branch.outputChannelCount;
           let sourceConcatenatedShape = this.sourceConcatenatedShape = [ sourceHeight, sourceWidth, concatenatedChannelCount ];
           let outputGroupCount = 2; // ShuffleNetV2 always uses two (depthwise convolution) groups.
+
+//!!! (2021/04/10) ...unfinished... Using ChannelShuffler.ConcatPointwiseConv instead.
           this.concatGather = new ChannelShuffler.ConcatGather();
           this.concatGather.init( sourceConcatenatedShape, outputGroupCount );
+
+          this.concatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv();
+          this.concatPointwiseConv.init( sourceConcatenatedShape, outputGroupCount );
         }
 
         this.steps1After = new Array( stepCountPerBlock - 1 );  // "- 1" because this array does not include step0.
@@ -577,9 +587,15 @@ class Base {
   }
 
   disposeTensors() {
+//!!! (2021/04/10) ...unfinished... Using ChannelShuffler.ConcatPointwiseConv instead.
     if ( this.concatGather ) {
       this.concatGather.disposeTensors();
       this.concatGather = null;
+    }
+
+    if ( this.concatPointwiseConv ) {
+      this.concatPointwiseConv.disposeTensors();
+      this.concatPointwiseConv = null;
     }
 
     if ( this.concatTensorArray ) {
