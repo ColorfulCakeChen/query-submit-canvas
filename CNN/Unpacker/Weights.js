@@ -48,7 +48,7 @@ export { Base, To, Params };
 class Base {
 
   /**
-   * Just record the parameters without checking them. Please call init() to finish extracting.
+   * Just record the parameters without checking them. Please call extract() to finish extracting.
    */ 
   constructor( defaultInput, defaultByteOffsetBegin, privilegeInput = null, privilegeByteOffsetBegin = 0, shape = null ) {
     this.defaultInput =             defaultInput;
@@ -65,14 +65,14 @@ class Base {
    * The defaultInput and privilegeInput can not both be null. If one of them is null, the non-null is used.
    * If both are non-null, the privilegeInput will be used.
    *
-   * @return {boolean} Return false, if initialization failed.
+   * @return {boolean} Return false, if extraction failed.
    */ 
-  init() {
+  extract() {
 
-    this.weights =        null;   // So that ( isValid() == false ) if re-initialization failed.
+    this.weights = null;   // So that ( isValid() == false ) if re-extraction failed.
 
-    //let weightCount =     ( this.shape ) ? this.shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue ) : 0;
-    let weightCount =     ( this.shape ) ? tf.util.sizeFromShape( this.shape ) : 0; // It can handle ( 0 == shape.length ) (i.e. scalar).
+    //let weightCount = ( this.shape ) ? this.shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue ) : 0;
+    let weightCount = ( this.shape ) ? tf.util.sizeFromShape( this.shape ) : 0; // It can handle ( 0 == shape.length ) (i.e. scalar).
     let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
 
     let input, byteOffsetBegin;
@@ -257,18 +257,18 @@ class Params extends Base {
   /**
    * Extract parameters from inputFloat32Array.
    *
-   * @return {boolean} Return false, if initialization failed.
+   * @return {boolean} Return false, if extraction failed.
    *
    * @override
    */
-  init() {
+  extract() {
 
     this.weightsModified = null; // So that distinguishable if re-initialization failed.
 
     if ( !this.parameterMap )
       return false;  // Do not know what parameters to be used or extracted.
 
-    let bInitOk = super.init(); // Extract a block of input array.
+    let bInitOk = super.extract(); // Extract a block of input array.
     if ( !bInitOk )
       return false;
 
