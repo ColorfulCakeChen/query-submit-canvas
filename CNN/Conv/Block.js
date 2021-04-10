@@ -168,13 +168,13 @@ class Base {
    *   If true, there will be a bias after every convolution.
    *
    * @param {string} nActivationId
-   *   The activation function id (PointDepthPoint.Params.Activation.Ids.Xxx) after the convolution. If null, it will be extracted from
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution. If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
    *
    * @param {string} nActivationIdAtBlockEnd
-   *   The activation function id (PointDepthPoint.Params.Activation.Ids.Xxx) after the convolution of the last PointDepthPoint's
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
    * pointwise2ActivationId of this block. If the output of this block needs to be any arbitrary value, it is recommended
-   * not to use activation at the end of this block (i.e. nActivationIdAtBlockEnd == PointDepthPoint.Params.Activation.Ids.NONE) so that
+   * not to use activation at the end of this block (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that
    * it will not be restricted by the range of the activation function.
    *
 //!!! ...unfinished...
@@ -230,14 +230,14 @@ class Base {
     //   - They all do not use (depthwise convolution) channelMultiplier.
     //   - They all use 1x1 (pointwise) convolution to expand channel count.
     //   - They all use 1x1 (pointwise) convolution before depthwise convolution.
-    //   - They all do not use activation function after depthwise convolution.
-    //   - They all use depthwise convolution with ( pad = "same").
+    //   - They all use activation function after first pointwise convolution.
+    //   - They all use depthwise convolution with ( pad = "same" ).
     //   - They all use depthwise convolution with ( strides = 2 ) for shrinking (halving) height x weight.
     //   - They all do not use bias after pointwise and depthwise convolution.
     //
     // Inisde one of their block, three convolutions are used:
     //   A) 1x1 (pointwise) convolution, with activation.
-    //   B) depthwise convolution, without activation.
+    //   B) depthwise convolution, (ShuffleNetV2) without or (MobileNetV2) with activation.
     //   C) 1x1 (pointwise) convolution, (ShuffleNetV2) with or (MobileNetV2) without activation.
     //
     // In MobileNetV3, convolution A expands channel count (with activation), convolution C shrinks channel count (without activation).
@@ -322,8 +322,8 @@ class Base {
 
       let depthwiseStridesPad = 0; // ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" ) so that shrinking sourceHeight a little.
 
-      // This is the last step of this block (i.e. at-block-end) because ( stepCountPerBlock <= 0 ) means there is only one step inside this block.
-      // And a different activation function may be used after pointwise2 convolution.
+      // This is the last step of this block (i.e. at-block-end) because ( stepCountPerBlock <= 0 ) means there is only one step inside
+      // this block. And a different activation function may be used after pointwise2 convolution.
       pointwise2ActivationId = nActivationIdAtBlockEnd;
 
       let step0 = this.step0 = new PointDepthPoint.Base();
@@ -384,12 +384,6 @@ class Base {
           // In ShuffleNetV2, depthwise convolution does not have activation function.
           depthwiseActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
 
-          // If there is only one step, this is the last step of this block (i.e. at-block-end) and a different activation function may be
-          // used after pointwise2 convolution.
-          if ( 1 == stepCountPerBlock ) {
-            pointwise2ActivationId = nActivationIdAtBlockEnd;
-          }
-
         } else {                                             // MobileNetV1, or MobileNetV2.
           pointwise2ChannelCount = sourceChannelCount * 2;   // The output channel count of step 0 of MobileNetV2 is twice as input.
 
@@ -398,10 +392,18 @@ class Base {
 
 //!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1 )?
 
-          // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.          
+          // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function in default.
+          //
+          // But it could be changed by nActivationIdAtBlockEnd for the last step of the block.
           pointwise2ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+        }
 
-          // Since pointwise2ActivationId is always NONE in MobileNetV2, the nActivationIdAtBlockEnd is never used in MobileNetV2.
+        // If there is only one step, this (step 0) is also the last step of this block (i.e. at-block-end) and a different activation
+        // function may be used after pointwise2 convolution.
+        //
+        // Even if in MobileNetV2 (pointwise2 convolution does not have activation function in default), this is still true.
+        if ( 1 == stepCountPerBlock ) {
+          pointwise2ActivationId = nActivationIdAtBlockEnd;
         }
 
         // If ( pointwise1ChannelCount < pointwise2ChannelCount ), similiar to ResNet.
@@ -506,16 +508,11 @@ class Base {
 
         for ( let i = 0; i < this.steps1After.length; ++i ) {
 
-          // If this is the last step of this block (i.e. at-block-end), a different activation function may be used after pointwise2 convolution.
+          // If this is the last step of this block (i.e. at-block-end), a different activation function may be used after
+          // pointwise2 convolution.
+          //
+          // Even if in MobileNetV2 (pointwise2 convolution does not have activation function in default), this is still true.
           if ( i == ( this.steps1After.length - 1 ) ) {
-
-//!!! ...unfinished... (2021/04/09) In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
-// Since pointwise2ActivationId is always NONE in MobileNetV2, the nActivationIdAtBlockEnd is never used in MobileNetV2.
-// But how to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1)?
-//
-//             // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function.
-//             pointwise2ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
-
             pointwise2ActivationId = nActivationIdAtBlockEnd;
           }
 
