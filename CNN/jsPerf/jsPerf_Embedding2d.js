@@ -122,6 +122,25 @@ class HeightWidthDepth {
     tf.util.assert( ( 100 == progress.valuePercentage ),
         `Progress (${progress.valuePercentage}) should be 100 when initializing embedding2d object successfully. ${parametersDescription}`);
 
+
+    tf.util.assert( ( embedding2d.byteOffsetBegin == this.weightsByteOffsetBegin ),
+      `Embedding2d parsing beginning position (${embedding2d.byteOffsetBegin}) should be (${this.weightsByteOffsetBegin}). ${parametersDescription}`);
+
+    tf.util.assert( ( embedding2d.byteOffsetEnd == this.weightsFloat32Array.byteLength ),
+      `Embedding2d parsing ending position (${embedding2d.byteOffsetEnd}) should be (${this.weightsFloat32Array.byteLength}). ${parametersDescription}`);
+
+
+    tf.util.assert( ( embedding2d.outChannels == this.depth ),
+      `Embedding2d inChannels (${embedding2d.outChannels}) should be (${this.depth}). ${parametersDescription}`);
+
+    tf.util.assert( ( embedding2d.channelMultiplier == this.channelMultiplier ),
+      `Embedding2d channelMultiplier (${embedding2d.channelMultiplier}) should be (${this.channelMultiplier}). ${parametersDescription}`);
+
+    let outChannels = ( this.depth * this.channelMultiplier );
+    tf.util.assert( ( embedding2d.outChannels == outChannels ),
+      `Embedding2d outChannels (${embedding2d.outChannels}) should be (${outChannels}). ${parametersDescription}`);
+
+
     return embedding2d;
   }
 
@@ -378,16 +397,18 @@ function init() {
 
   // (cm = channel multiplier)
 
+  let height = 108; //110
+  let width = 192;  //120
   let depth = 8; //24;
-  globalThis.testSet_110x120x8_cm32 = new HeightWidthDepth( 110, 120, depth, 32 ); // height, width, depth, channelMultiplier
-  globalThis.testSet_110x120x8_cm16 = new HeightWidthDepth( 110, 120, depth, 16 );
-  globalThis.testSet_110x120x8_cm8 = new HeightWidthDepth( 110, 120, depth, 8 );
-  globalThis.testSet_110x120x8_cm4 = new HeightWidthDepth( 110, 120, depth, 4 );
-  globalThis.testSet_110x120x8_cm3 = new HeightWidthDepth( 110, 120, depth, 3 );
-  globalThis.testSet_110x120x8_cm2 = new HeightWidthDepth( 110, 120, depth, 2 );
-  globalThis.testSet_110x120x8_cm1 = new HeightWidthDepth( 110, 120, depth, 1 );
-  globalThis.testSet_110x120x8_cm0 = new HeightWidthDepth( 110, 120, depth, 0 );
-  globalThis.testSet_110x120x8_cmNegative = new HeightWidthDepth( 110, 120, depth, -1 );
+  globalThis.testSet_110x120x8_cm32 = new HeightWidthDepth( height, width, depth, 32 ); // height, width, depth, channelMultiplier
+  globalThis.testSet_110x120x8_cm16 = new HeightWidthDepth( height, width, depth, 16 );
+  globalThis.testSet_110x120x8_cm8 = new HeightWidthDepth( height, width, depth, 8 );
+  globalThis.testSet_110x120x8_cm4 = new HeightWidthDepth( height, width, depth, 4 );
+  globalThis.testSet_110x120x8_cm3 = new HeightWidthDepth( height, width, depth, 3 );
+  globalThis.testSet_110x120x8_cm2 = new HeightWidthDepth( height, width, depth, 2 );
+  globalThis.testSet_110x120x8_cm1 = new HeightWidthDepth( height, width, depth, 1 );
+  globalThis.testSet_110x120x8_cm0 = new HeightWidthDepth( height, width, depth, 0 );
+  globalThis.testSet_110x120x8_cmNegative = new HeightWidthDepth( height, width, depth, -1 );
 
   globalThis.testSet_110x120x8_All = [
     globalThis.testSet_110x120x8_cm32,
