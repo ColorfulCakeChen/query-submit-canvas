@@ -147,8 +147,9 @@ class HeightWidthDepth {
     tf.util.assert( ( embedding2d.inChannels == this.depth ),
       `Embedding2d inChannels (${embedding2d.outChannels}) should be (${this.depth}). ${parametersDescription}`);
 
-    tf.util.assert( ( embedding2d.channelMultiplier == this.channelMultiplier ),
-      `Embedding2d channelMultiplier (${embedding2d.channelMultiplier}) should be (${this.channelMultiplier}). ${parametersDescription}`);
+    let channelMultiplierAdjusted = Embedding2d.Params.channelMultiplier.valueDesc.range.adjust( this.channelMultiplier );
+    tf.util.assert( ( embedding2d.channelMultiplier == channelMultiplierAdjusted ),
+      `Embedding2d channelMultiplier (${embedding2d.channelMultiplier}) should be (${channelMultiplierAdjusted}). ${parametersDescription}`);
 
     let outChannels = ( this.depth * this.channelMultiplier );
     tf.util.assert( ( embedding2d.outChannels == outChannels ),
