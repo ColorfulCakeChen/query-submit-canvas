@@ -950,7 +950,6 @@ class HeightWidthDepth {
     let outputTensor3d = this.pointDepthPoint_P128_bias_COS_P128_bias.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
-      this.
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
