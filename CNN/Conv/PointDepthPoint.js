@@ -334,7 +334,7 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1FiltersShape =      [ 1, 1, this.channelCount_pointwise1Before, this.channelCount_pointwise1After_depthwiseBefore ];
       this.pointwise1BiasesShape =       [ 1, 1, this.channelCount_pointwise1After_depthwiseBefore ];
 
-      this.pointwise1FiltersWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, null, 0, this.pointwise1FiltersShape );
+      this.pointwise1FiltersWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.pointwise1FiltersShape );
       if ( !this.pointwise1FiltersWeights.extract() )
         return false;  // e.g. input array does not have enough data.
 
@@ -344,7 +344,7 @@ class Base extends ReturnOrClone.Base {
       this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
 
       if ( bPointwise1Bias ) {
-        this.pointwise1BiasesWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, null, 0, this.pointwise1BiasesShape );
+        this.pointwise1BiasesWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.pointwise1BiasesShape );
         if ( !this.pointwise1BiasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
@@ -404,7 +404,7 @@ class Base extends ReturnOrClone.Base {
           = [ depthwiseFilterHeight, depthwiseFilterWidth,
               this.channelCount_pointwise1After_depthwiseBefore, depthwise_AvgMax_Or_ChannelMultiplier ];
 
-        this.depthwiseFiltersWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, null, 0, this.depthwiseFiltersShape );
+        this.depthwiseFiltersWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.depthwiseFiltersShape );
         if ( !this.depthwiseFiltersWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
@@ -432,7 +432,7 @@ class Base extends ReturnOrClone.Base {
     if ( this.bDepthwise ) {
 
       if ( bDepthwiseBias ) {
-        this.depthwiseBiasesWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, null, 0, this.depthwiseBiasesShape );
+        this.depthwiseBiasesWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.depthwiseBiasesShape );
         if ( !this.depthwiseBiasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
@@ -460,7 +460,7 @@ class Base extends ReturnOrClone.Base {
       this.pointwise2FiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before, this.channelCount_pointwise2After ];
       this.pointwise2BiasesShape =       [ 1, 1, this.channelCount_pointwise2After ];
 
-      this.pointwise2FiltersWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, null, 0, this.pointwise2FiltersShape );
+      this.pointwise2FiltersWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.pointwise2FiltersShape );
       if ( !this.pointwise2FiltersWeights.extract() )
         return false;  // e.g. input array does not have enough data.
 
@@ -470,7 +470,7 @@ class Base extends ReturnOrClone.Base {
       this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy; // will dispose inputTensor.
 
       if ( bPointwise2Bias ) {
-        this.pointwise2BiasesWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, null, 0, this.pointwise2BiasesShape );
+        this.pointwise2BiasesWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.pointwise2BiasesShape );
         if ( !this.pointwise2BiasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
