@@ -11,7 +11,7 @@ import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 /**
  * Test CNN PointDepthPoint.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/133/colorfulcakechen-cnn-pointdepthpoint-ee5cc620ee933ca2d9}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/144/colorfulcakechen-cnn-pointdepthpoint-8b96be794f92522de1}
  */
 
 
@@ -603,6 +603,9 @@ class HeightWidthDepth {
     let depthwise_8to16_BiasesArray =
     [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ];
 
+    let depthwise_4to128_FiltersArray = [ ... new Array( 3 * 3 * 4 * 32 ).keys() ]; // filterHeight * filterWidth * inChannel * channelMultiplier
+    let depthwise_Xto128_BiasesArray =  [ ... new Array(         4 * 32 ).keys() ]; // inChannel * channelMultiplier
+
     let depthwise_8to8_FiltersArray =
     [
        1, -9, -5,  7,  2,  8,  4,  1,
@@ -653,8 +656,12 @@ class HeightWidthDepth {
       18, 28, 38, 48,
     ];
 
+    let pointwise_128to128_FiltersArray = [ ... new Array( 128 * 128 ).keys() ]; // inChannel * outChannel
+
     let pointwise_Xto4_BiasesArray =
     [ 201, 202, 203, 204, ];
+
+    let pointwise_Xto128_BiasesArray =    [ ... new Array( 128 ).keys() ];       // outChannel
 
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
     this.disposeTensors();
@@ -685,7 +692,7 @@ class HeightWidthDepth {
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           1,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+          4,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
@@ -702,7 +709,7 @@ class HeightWidthDepth {
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,           3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+          4,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
@@ -719,7 +726,7 @@ class HeightWidthDepth {
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,           3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+          4,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
@@ -736,7 +743,7 @@ class HeightWidthDepth {
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+          4,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, depthwise_8to16_BiasesArray,
@@ -753,7 +760,7 @@ class HeightWidthDepth {
 
       [   8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+          4, false, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
 
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
@@ -770,11 +777,28 @@ class HeightWidthDepth {
 
       [   8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,       false ], // paramsOutArray
+          4, false, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,       false ], // paramsOutArray
 
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
       pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
+      this.testPerformance_ImageData
+    );
+
+    // Test Case: (pointwise1 (none), depthwise (channelMultiplier = 32, strides = 1, pad = same, bias, COS), pointwise2 (bias))
+    let testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias =
+    new PointDepthPoint_Reference.TestCase(
+      [  0.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+        32.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
+        32.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   6.4 ], // paramsInArray
+
+      [    0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+          32,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          32,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE,      false ], // paramsOutArray
+
+      [], [], //pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
+      depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
+      pointwise_128to128_FiltersArray, pointwise_Xto128_BiasesArray,
       this.testPerformance_ImageData
     );
 
@@ -808,6 +832,10 @@ class HeightWidthDepth {
 
       this.pointDepthPoint_DConv_2_COS
         = testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS
+          .pointDepthPoint_create(  true ),
+
+      this.pointDepthPoint_DConv_32_bias_COS_P128_bias
+        = testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias
           .pointDepthPoint_create(  true ),
 
     ];
@@ -888,6 +916,11 @@ class HeightWidthDepth {
 
   test_DConv_2_COS() {
     let outputTensor3d = this.pointDepthPoint_DConv_2_COS.apply_and_destroy_or_keep( this.dataTensor3d );
+    outputTensor3d.dispose();
+  }
+
+  test_DConv_32_bias_COS_P128_bias() {
+    let outputTensor3d = this.pointDepthPoint_DConv_32_bias_COS_P128_bias.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
 
