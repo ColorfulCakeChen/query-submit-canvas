@@ -788,13 +788,13 @@ class HeightWidthDepth {
     // Test Case: (pointwise1 (none), depthwise (channelMultiplier = 32, strides = 1, pad = same, bias, COS), pointwise2 (bias))
     let testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias =
     new PointDepthPoint_Reference.TestCase(
-      [  0.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
-        32.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        32.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   6.4 ], // paramsInArray
+      [   0.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+         32.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
+        128.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   6.4 ], // paramsInArray
 
-      [    0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-          32,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          32,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE,      false ], // paramsOutArray
+      [     0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+           32,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          128,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE,      false ], // paramsOutArray
 
       [], [], //pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
