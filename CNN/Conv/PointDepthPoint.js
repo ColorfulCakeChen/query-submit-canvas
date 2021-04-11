@@ -313,7 +313,8 @@ class Base extends ReturnOrClone.Base {
     if ( !params.extract() )
       return false;  // e.g. input array does not have enough data.
 
-    this.byteOffsetEnd = this.nextByteOffsetBegin = params.defaultByteOffsetEnd;
+    // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
+    this.byteOffsetEnd = params.defaultByteOffsetEnd;
 
     // Get parameters' real (adjusted) values.
     //
@@ -352,21 +353,21 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1FiltersShape =      [ 1, 1, this.channelCount_pointwise1Before, this.channelCount_pointwise1After_depthwiseBefore ];
       this.pointwise1BiasesShape =       [ 1, 1, this.channelCount_pointwise1After_depthwiseBefore ];
 
-      this.pointwise1FiltersWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.pointwise1FiltersShape );
+      this.pointwise1FiltersWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise1FiltersShape );
       if ( !this.pointwise1FiltersWeights.extract() )
         return false;  // e.g. input array does not have enough data.
 
-      this.nextByteOffsetBegin = this.pointwise1FiltersWeights.defaultByteOffsetEnd;
+      this.byteOffsetEnd = this.pointwise1FiltersWeights.defaultByteOffsetEnd;
 
       this.pointwise1FiltersTensor4d = tf.tensor4d( this.pointwise1FiltersWeights.weights, this.pointwise1FiltersShape );
       this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
 
       if ( this.bPointwise1Bias ) {
-        this.pointwise1BiasesWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.pointwise1BiasesShape );
+        this.pointwise1BiasesWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise1BiasesShape );
         if ( !this.pointwise1BiasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
-        this.nextByteOffsetBegin = this.pointwise1BiasesWeights.defaultByteOffsetEnd;
+        this.byteOffsetEnd = this.pointwise1BiasesWeights.defaultByteOffsetEnd;
 
         this.pointwise1BiasesTensor3d = tf.tensor3d( this.pointwise1BiasesWeights.weights, this.pointwise1BiasesShape );
         this.pfn_pointwise1Bias = Base.pointwise1Bias_and_destroy;
@@ -422,11 +423,11 @@ class Base extends ReturnOrClone.Base {
           = [ this.depthwiseFilterHeight, this.depthwiseFilterWidth,
               this.channelCount_pointwise1After_depthwiseBefore, this.depthwise_AvgMax_Or_ChannelMultiplier ];
 
-        this.depthwiseFiltersWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.depthwiseFiltersShape );
+        this.depthwiseFiltersWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.depthwiseFiltersShape );
         if ( !this.depthwiseFiltersWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
-        this.nextByteOffsetBegin = this.depthwiseFiltersWeights.defaultByteOffsetEnd;
+        this.byteOffsetEnd = this.depthwiseFiltersWeights.defaultByteOffsetEnd;
 
         this.depthwiseFiltersTensor4d = tf.tensor4d( this.depthwiseFiltersWeights.weights, this.depthwiseFiltersShape );
         this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy; // will dispose inputTensor.
@@ -450,11 +451,11 @@ class Base extends ReturnOrClone.Base {
     if ( this.bDepthwise ) {
 
       if ( this.bDepthwiseBias ) {
-        this.depthwiseBiasesWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.depthwiseBiasesShape );
+        this.depthwiseBiasesWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.depthwiseBiasesShape );
         if ( !this.depthwiseBiasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
-        this.nextByteOffsetBegin = this.depthwiseBiasesWeights.defaultByteOffsetEnd;
+        this.byteOffsetEnd = this.depthwiseBiasesWeights.defaultByteOffsetEnd;
 
         this.depthwiseBiasesTensor3d = tf.tensor3d( this.depthwiseBiasesWeights.weights, this.depthwiseBiasesShape );
         this.pfn_depthwiseBias = Base.depthwiseBias_and_destroy;
@@ -478,21 +479,21 @@ class Base extends ReturnOrClone.Base {
       this.pointwise2FiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before, this.channelCount_pointwise2After ];
       this.pointwise2BiasesShape =       [ 1, 1, this.channelCount_pointwise2After ];
 
-      this.pointwise2FiltersWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.pointwise2FiltersShape );
+      this.pointwise2FiltersWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise2FiltersShape );
       if ( !this.pointwise2FiltersWeights.extract() )
         return false;  // e.g. input array does not have enough data.
 
-      this.nextByteOffsetBegin = this.pointwise2FiltersWeights.defaultByteOffsetEnd;
+      this.byteOffsetEnd = this.pointwise2FiltersWeights.defaultByteOffsetEnd;
 
       this.pointwise2FiltersTensor4d = tf.tensor4d( this.pointwise2FiltersWeights.weights, this.pointwise2FiltersShape );
       this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy; // will dispose inputTensor.
 
       if ( this.bPointwise2Bias ) {
-        this.pointwise2BiasesWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.pointwise2BiasesShape );
+        this.pointwise2BiasesWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise2BiasesShape );
         if ( !this.pointwise2BiasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
-        this.nextByteOffsetBegin = this.pointwise2BiasesWeights.defaultByteOffsetEnd;
+        this.byteOffsetEnd = this.pointwise2BiasesWeights.defaultByteOffsetEnd;
 
         this.pointwise2BiasesTensor3d = tf.tensor3d( this.pointwise2BiasesWeights.weights, this.pointwise2BiasesShape );
         this.pfn_pointwise2Bias = Base.pointwise2Bias_and_destroy;
@@ -672,8 +673,8 @@ class Base extends ReturnOrClone.Base {
       = this.pointwise2FiltersWeights = this.pointwise2BiasesWeights
       = null;
 
+    this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
-    this.nextByteOffsetBegin = -1; // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
   }
 
   /** Convert activation function id to function object. */
