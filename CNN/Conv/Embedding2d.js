@@ -243,7 +243,7 @@ class Base extends ReturnOrClone.Base {
     {
       let nextByteOffsetBegin = params.defaultByteOffsetEnd;
       for ( let i = 0; i < inChannels; ++i ) {
-        vocabularyTables[ i ] = new Weights.Base( params.defaultInput, nextByteOffsetBegin, null, 0, vocabularyTableShape_toExtract );
+        vocabularyTables[ i ] = new Weights.Base( params.defaultInput, nextByteOffsetBegin, vocabularyTableShape_toExtract );
         if ( !vocabularyTables[ i ].extract() )
           return false;  // e.g. input array does not have enough data.
         nextByteOffsetBegin = vocabularyTables[ i ].defaultByteOffsetEnd;
