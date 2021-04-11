@@ -656,6 +656,7 @@ class HeightWidthDepth {
       18, 28, 38, 48,
     ];
 
+    let pointwise_4to128_FiltersArray =   [ ... new Array(   4 * 128 ).keys() ]; // inChannel * outChannel
     let pointwise_128to128_FiltersArray = [ ... new Array( 128 * 128 ).keys() ]; // inChannel * outChannel
 
     let pointwise_Xto4_BiasesArray =
@@ -802,6 +803,23 @@ class HeightWidthDepth {
       this.testPerformance_ImageData
     );
 
+    // Test Case: (pointwise1 (bias, COS), depthwise (none), pointwise2 (bias))
+    let testCase_pointwise1_4to128_bias_COS_depthwise_none_COS_pointwise2_128to128_bias =
+    new PointDepthPoint_Reference.TestCase(
+      [ 128.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
+          0.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
+        128.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE + 0.3,   6.4 ], // paramsInArray
+
+      [   128,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+            0,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          128,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE,       false ], // paramsOutArray
+
+      pointwise_4to128_FiltersArray, pointwise_Xto128_BiasesArray,
+      [], [], //depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
+      pointwise_128to128_FiltersArray, [], //pointwise_Xto128_BiasesArray,
+      this.testPerformance_ImageData
+    );
+
 
     // Different pointDepthPoint objects.
     //
@@ -836,6 +854,10 @@ class HeightWidthDepth {
 
       this.pointDepthPoint_DConv_32_bias_COS_P128_bias
         = testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias
+          .pointDepthPoint_create(  true ),
+
+      this.pointDepthPoint_P128_bias_COS_P128_bias
+        = testCase_pointwise1_4to128_bias_COS_depthwise_none_COS_pointwise2_128to128_bias
           .pointDepthPoint_create(  true ),
 
     ];
@@ -923,6 +945,12 @@ class HeightWidthDepth {
     let outputTensor3d = this.pointDepthPoint_DConv_32_bias_COS_P128_bias.apply_and_destroy_or_keep( this.dataTensor3d );
     outputTensor3d.dispose();
   }
+
+  test_P128_bias_COS_P128_bias() {
+    let outputTensor3d = this.pointDepthPoint_P128_bias_COS_P128_bias.apply_and_destroy_or_keep( this.dataTensor3d );
+    outputTensor3d.dispose();
+  }
+      this.
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
