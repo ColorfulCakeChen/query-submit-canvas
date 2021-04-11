@@ -95,6 +95,7 @@ class HeightWidthDepth {
     let progress = new ValueMax.Percentage.Aggregate();
 
     // Initialize successfully or failed.
+    let params = new Embedding2d.Params( this.weightsFloat32Array, this.weightsByteOffsetBegin, this.channelMultiplier );
     let bInitOk = embedding2d.init(
       progress,
       this.depth,
@@ -102,7 +103,7 @@ class HeightWidthDepth {
       bEmbedVocabularyId,
       bKeepInputTensor,
       bSplitReshapeGatherConcat,
-      new Embedding2d.Params( this.weightsFloat32Array, this.weightsByteOffsetBegin, this.channelMultiplier )
+      params
     );
 
     let parametersDescription = `( `
@@ -117,7 +118,7 @@ class HeightWidthDepth {
         `Embedding2d validation state (${embedding2d.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
     tf.util.assert( ( true == bInitOk ),
-        `Failed to initialize embedding2d object.  ${parametersDescription}`);
+        `Failed to initialize embedding2d object. ${parametersDescription}`);
 
     tf.util.assert( ( 100 == progress.valuePercentage ),
         `Progress (${progress.valuePercentage}) should be 100 when initializing embedding2d object successfully. ${parametersDescription}`);
@@ -126,9 +127,22 @@ class HeightWidthDepth {
     tf.util.assert( ( embedding2d.byteOffsetBegin == this.weightsByteOffsetBegin ),
       `Embedding2d parsing beginning position (${embedding2d.byteOffsetBegin}) should be (${this.weightsByteOffsetBegin}). ${parametersDescription}`);
 
-    tf.util.assert( ( embedding2d.byteOffsetEnd == this.weightsFloat32Array.byteLength ),
-      `Embedding2d parsing ending position (${embedding2d.byteOffsetEnd}) should be (${this.weightsFloat32Array.byteLength}). ${parametersDescription}`);
+    {
+      let channelMultiplier_forExtract; // How many channels (of per input channel) are extracted from table raw data.
+      if ( embedding2d.bEmbedVocabularyId )
+        channelMultiplier_forExtract = embedding2d.channelMultiplier - 1; // less one because the channel will be auto-generated vocabulary id.
+      else
+        channelMultiplier_forExtract = embedding2d.channelMultiplier;
 
+      // The float32 count of an embedding vocabulary table of one input channel.
+      let float32CountPerTable = channelMultiplier_forExtract * this.vocabularyCountPerInputChannel;
+      let byteCountPerTable = float32CountPerTable * Float32Array.BYTES_PER_ELEMENT;
+      let byteCountAllTables = byteCountPerTable * this.depth;
+      let byteOffsetEnd = this.weightsByteOffsetBegin + byteCountAllTables;
+
+      tf.util.assert( ( embedding2d.byteOffsetEnd == byteOffsetEnd ),
+        `Embedding2d parsing ending position (${embedding2d.byteOffsetEnd}) should be (${byteOffsetEnd}). ${parametersDescription}`);
+    }
 
     tf.util.assert( ( embedding2d.inChannels == this.depth ),
       `Embedding2d inChannels (${embedding2d.outChannels}) should be (${this.depth}). ${parametersDescription}`);
