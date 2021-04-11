@@ -130,7 +130,7 @@ class HeightWidthDepth {
       `Embedding2d parsing ending position (${embedding2d.byteOffsetEnd}) should be (${this.weightsFloat32Array.byteLength}). ${parametersDescription}`);
 
 
-    tf.util.assert( ( embedding2d.outChannels == this.depth ),
+    tf.util.assert( ( embedding2d.inChannels == this.depth ),
       `Embedding2d inChannels (${embedding2d.outChannels}) should be (${this.depth}). ${parametersDescription}`);
 
     tf.util.assert( ( embedding2d.channelMultiplier == this.channelMultiplier ),
