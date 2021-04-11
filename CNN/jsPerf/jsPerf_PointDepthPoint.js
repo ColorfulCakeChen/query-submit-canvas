@@ -816,7 +816,7 @@ class HeightWidthDepth {
 
       pointwise_4to128_FiltersArray, pointwise_Xto128_BiasesArray,
       [], [], //depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
-      pointwise_128to128_FiltersArray, [], //pointwise_Xto128_BiasesArray,
+      pointwise_128to128_FiltersArray, pointwise_Xto128_BiasesArray,
       this.testPerformance_ImageData
     );
 
