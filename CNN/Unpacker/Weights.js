@@ -22,6 +22,13 @@ export { Base, To, Params };
  *   The weights[] ends at defaultInput's defaultByteOffsetEnd (not inclusive) (relative to
  * defaultInput.buffer, not to defaultInput.byteOffset).
  *
+ * @member {(number[]|number|null)} shape
+ *   The weights shape (element count for every dimension). The shape could be an array, and the shape.length represents
+ * dimension. The shape could also be a scalar (0-dimension shape), i.e. ( shape.length == 0 ) is legal and means
+ * extracting so many elements from defaultInput or privilegeInput. If shape is too large (exceeds the defaultInput
+ * (or, privilegeInput if not null) bounding) or shape is NaN, the initialization will fail (i.e. ( isValid() == false ) ).
+ * The shape could be null, and means extracting zero element (i.e. extracting nothing) from defaultInput or privilegeInput.
+ *
  * @member {Float32Array} privilegeInput
  *   The privilege input Float32Array. If not null, its content will be interpret as weights and
  * the content of defaultInput will be ignored.
@@ -35,28 +42,20 @@ export { Base, To, Params };
  *   The weights[] ends at privilegeInput's privilegeByteOffsetEnd (not inclusive) (relative
  * to privilegeInput.buffer, not to privilegeInput.byteOffset).
  *
- * @member {(number[]|number|null)} shape
- *   The weights shape (element count for every dimension). The shape could be an array, and the shape.length represents
- * dimension. The shape could also be a scalar (0-dimension shape), i.e. ( shape.length == 0 ) is legal and means
- * extracting so many elements from defaultInput or privilegeInput. If shape is too large (exceeds the defaultInput
- * (or, privilegeInput if not null) bounding) or shape is NaN, the initialization will fail (i.e. ( isValid() == false ) ).
- * The shape could be null, and means extracting zero element (i.e. extracting nothing) from defaultInput or privilegeInput.
- *
  * @member {Float32Array} weights
  *  The values. It is a reference (sub-range) to the underlying defaultInput (or privilegeInput).
  */
 class Base {
 
-//!!! ...unfinished... (2021/04/11) Move shape to front privilegeXxx (less use).
   /**
    * Just record the parameters without checking them. Please call extract() to finish extracting.
    */ 
-  constructor( defaultInput, defaultByteOffsetBegin, privilegeInput = null, privilegeByteOffsetBegin = 0, shape = null ) {
+  constructor( defaultInput, defaultByteOffsetBegin, shape = null, privilegeInput = null, privilegeByteOffsetBegin = 0 ) {
     this.defaultInput =             defaultInput;
     this.defaultByteOffsetBegin =   defaultByteOffsetBegin;
+    this.shape =                    shape;
     this.privilegeInput =           privilegeInput;
     this.privilegeByteOffsetBegin = privilegeByteOffsetBegin;
-    this.shape =                    shape;
   }
 
   /**
@@ -204,7 +203,7 @@ class Params extends Base {
    * of parameterMap).
    */
   constructor( inputFloat32Array, byteOffsetBegin, parameterMap, fixedWeights = null ) {
-    
+
     // If has fixedWeights, use it as priviledge input.
     let privilegeInput;
     if ( fixedWeights ) {
@@ -248,7 +247,7 @@ class Params extends Base {
       parameterCountExtracted = arrayIndexMap.size; // Determine how many parameters should be extracted from array.
     }
 
-    super( inputFloat32Array, byteOffsetBegin, privilegeInput, privilegeByteOffsetBegin, [ parameterCountExtracted ] );
+    super( inputFloat32Array, byteOffsetBegin, [ parameterCountExtracted ], privilegeInput, privilegeByteOffsetBegin );
 
     this.parameterMap = parameterMap;
     this.parameterMapModified = parameterMapModified;
