@@ -47,6 +47,7 @@ export { Base, To, Params };
  */
 class Base {
 
+//!!! ...unfinished... (2021/04/11) Move shape to front privilegeXxx (less use).
   /**
    * Just record the parameters without checking them. Please call extract() to finish extracting.
    */ 
