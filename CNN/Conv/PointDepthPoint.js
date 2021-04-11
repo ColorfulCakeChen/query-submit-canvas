@@ -35,9 +35,10 @@ class Params extends Weights.Params {
    *   If true, there will be a bias after pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    * If ( pointwise1ChannelCount <= 0 ), this bias will also be ignored.
    *
-   * @param {string} pointwise1ActivationId
-   *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution. If null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution). If ( pointwise1ChannelCount <= 0 ), this activation function will also be ignored.
+   * @param {number} pointwise1ActivationId
+   *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution. If null,
+   * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise1ChannelCount <= 0 ), this activation function
+   * will also be ignored.
    *
    * @param {number} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If non-null, it should be
@@ -63,9 +64,10 @@ class Params extends Weights.Params {
    *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true, there will be a bias after depthwise convolution.
    * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this bias will also be ignored.
    *
-   * @param {string} depthwiseActivationId
-   *   The activation function id (Params.depthwiseActivationId.Ids.Xxx) after depthwise convolution. If null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this activation function will also be ignored.
+   * @param {number} depthwiseActivationId
+   *   The activation function id (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution. If null, it will be
+   * extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this activation function
+   * will also be ignored.
    *
    * @param {number} pointwise2ChannelCount
    *   The output channel count of the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -75,9 +77,10 @@ class Params extends Weights.Params {
    *   If true, there will be a bias after the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by
    * evolution). If ( pointwise2ChannelCount <= 0 ), this bias will also be ignored.
    *
-   * @param {string} pointwise2ActivationId
-   *   The activation function id (Params.pointwise2ActivationId.Ids.Xxx) after the second pointwise convolution. If null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution). If ( pointwise2ChannelCount <= 0 ), this activation function will also be ignored.
+   * @param {number} pointwise2ActivationId
+   *   The activation function id (Params.pointwise2ActivationId.valueDesc.Ids.Xxx) after the second pointwise convolution. If null,
+   * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise2ChannelCount <= 0 ), this activation function
+   *will also be ignored.
    *
    * @param {boolean} bAddInputToOutput
    *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true and ( depthwiseStridesPad == 1 ) ( i.e.
@@ -155,10 +158,7 @@ Params.pointwise1ActivationId = new ParamDesc.ActivationFunction( "pointwise1Act
  *   -  0: no depthwise operation. (NONE)
  *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
  */
-Params.depthwise_AvgMax_Or_ChannelMultiplier
-//!!! (2021/04/09 Remarked) Using ParamDesc.AvgMax_Or_ChannelMultiplier directly.
-//  = new ParamDesc.Base( "depthwise_AvgMax_Or_ChannelMultiplier", new ValueDesc.Int( -2, 32, [ "AVG", "MAX", "NONE" ] ) );
-  = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwise_AvgMax_Or_ChannelMultiplier" );
+Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwise_AvgMax_Or_ChannelMultiplier" );
 
 
 /** Define suitable value for depthwise convolution filter size.
@@ -198,10 +198,14 @@ Params.bAddInputToOutput =      new ParamDesc.Bool("bAddInputToOutput");
  *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by initer().
  *
  * @member {number} byteOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer().
+ *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
+ * Only meaningful when ( this.isValid() == true ).
  *
  * @member {boolean} bPointwise1
  *   If true, the first pointwise convolution exist.
+ *
+ * @member {string} pointwise1ActivationName
+ *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution.
  *
  * @member {boolean} bDepthwise
  *   If true, the depthwise convolution (or average pooling, or maximum pooling) exist.
@@ -215,8 +219,17 @@ Params.bAddInputToOutput =      new ParamDesc.Bool("bAddInputToOutput");
  * @member {boolean} bDepthwiseConv
  *   If true, the depthwise convolution exist.
  *
+ * @member {string} depthwise_AvgMax_Or_ChannelMultiplier_Name
+ *   Depthwise operation name.
+ *
+ * @member {string} depthwiseActivationName
+ *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution.
+ *
  * @member {boolean} bPointwise2
  *   If true, the second pointwise convolution exist.
+ *
+ * @member {string} pointwise2ActivationName
+ *   The activation function id (Params.pointwise2ActivationId.valueDesc.Ids.Xxx) after the second pointwise convolution.
  *
  * @member {number} inChannels
  *   Input channel count. This is the same as this.channelCount_pointwise1Before (from initer()).
@@ -302,39 +315,44 @@ class Base extends ReturnOrClone.Base {
 
     this.byteOffsetEnd = this.nextByteOffsetBegin = params.defaultByteOffsetEnd;
 
-//!!! ...unfinished... (2021/04/10) Do not keep this.params so that the inputFloat32Array could be released.
     // Get parameters' real (adjusted) values.
-    let pointwise1ChannelCount = this.pointwise1ChannelCount;
-    let bPointwise1Bias = this.bPointwise1Bias;
-    let pointwise1ActivationId = this.pointwise1ActivationId;
+    //
+    // Do not keep params in this.params so that the inputFloat32Array could be released.
+    this.pointwise1ChannelCount = params.pointwise1ChannelCount;
+    this.bPointwise1Bias = params.bPointwise1Bias;
+    this.pointwise1ActivationId = params.pointwise1ActivationId;
+    this.pointwise1ActivationName = params.pointwise1ActivationName;
 
-    let depthwise_AvgMax_Or_ChannelMultiplier = this.depthwise_AvgMax_Or_ChannelMultiplier;
-    let depthwiseFilterHeight = this.depthwiseFilterHeight;
-    let depthwiseStridesPad = this.depthwiseStridesPad;
-    let bDepthwiseBias = this.bDepthwiseBias;
-    let depthwiseActivationId = this.depthwiseActivationId;
+    this.depthwise_AvgMax_Or_ChannelMultiplier = params.depthwise_AvgMax_Or_ChannelMultiplier;
+    this.depthwise_AvgMax_Or_ChannelMultiplier_Name = params.depthwise_AvgMax_Or_ChannelMultiplier_Name;
+    this.depthwiseFilterHeight = params.depthwiseFilterHeight;
+    this.depthwiseStridesPad = params.depthwiseStridesPad;
+    this.bDepthwiseBias = params.bDepthwiseBias;
+    this.depthwiseActivationId = params.depthwiseActivationId;
+    this.depthwiseActivationName = params.depthwiseActivationName;
 
-    let pointwise2ChannelCount = this.pointwise2ChannelCount;
-    let bPointwise2Bias = this.bPointwise2Bias;
-    let pointwise2ActivationId = this.pointwise2ActivationId;
+    this.pointwise2ChannelCount = params.pointwise2ChannelCount;
+    this.bPointwise2Bias = params.bPointwise2Bias;
+    this.pointwise2ActivationId = params.pointwise2ActivationId;
+    this.pointwise2ActivationName = params.pointwise2ActivationName;
 
-    let bAddInputToOutput = this.bAddInputToOutput;
+    this.bAddInputToOutput = params.bAddInputToOutput;
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
     // 2. The first 1x1 pointwise convolution.
-    this.bPointwise1 = ( pointwise1ChannelCount > 0 );
-    this.pointwise1ActivationFunction = Base.getActivationFunction( pointwise1ActivationId );
+    this.bPointwise1 = ( this.pointwise1ChannelCount > 0 );
+    this.pointwise1ActivationFunction = Base.getActivationFunction( this.pointwise1ActivationId );
 
     if ( this.bPointwise1 ) {
-      this.channelCount_pointwise1After_depthwiseBefore = pointwise1ChannelCount;
+      this.channelCount_pointwise1After_depthwiseBefore = this.pointwise1ChannelCount;
 
       //this.pointwise1FilterHeightWidth = [ 1, 1 ];
       this.pointwise1FiltersShape =      [ 1, 1, this.channelCount_pointwise1Before, this.channelCount_pointwise1After_depthwiseBefore ];
       this.pointwise1BiasesShape =       [ 1, 1, this.channelCount_pointwise1After_depthwiseBefore ];
 
-      this.pointwise1FiltersWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.pointwise1FiltersShape );
+      this.pointwise1FiltersWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.pointwise1FiltersShape );
       if ( !this.pointwise1FiltersWeights.extract() )
         return false;  // e.g. input array does not have enough data.
 
@@ -343,8 +361,8 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1FiltersTensor4d = tf.tensor4d( this.pointwise1FiltersWeights.weights, this.pointwise1FiltersShape );
       this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
 
-      if ( bPointwise1Bias ) {
-        this.pointwise1BiasesWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.pointwise1BiasesShape );
+      if ( this.bPointwise1Bias ) {
+        this.pointwise1BiasesWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.pointwise1BiasesShape );
         if ( !this.pointwise1BiasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
@@ -369,18 +387,18 @@ class Base extends ReturnOrClone.Base {
     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false;               // Assume no depthwise.
     this.channelCount_depthwiseAfter_pointwise2Before = this.channelCount_pointwise1After_depthwiseBefore; // So no channel multiplier.
 
-    let depthwiseFilterWidth = this.depthwiseFilterWidth = depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
+    this.depthwiseFilterWidth = this.depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
 
-    if ( depthwise_AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
+    if ( this.depthwise_AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
       // if 1x1 AVG pooling, or 1x1 MAX pooling, or illegal pooling type (i.e. not AVG, not MAX):
       //   - As no depthwise operation (i.e. ( this.bDepthwise == true ) )
       //   - Just return input (i.e. ( this.pfn_depthwiseOperation == Base.return_input_directly ) )
 
-      if ( ( 1 == depthwiseFilterHeight ) && ( 1 == depthwiseFilterWidth ) ) {
+      if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
         // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
       } else {
-        switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
+        switch ( this.depthwise_AvgMax_Or_ChannelMultiplier ) {
           case Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG:
             this.bDepthwise = this.bDepthwiseAvg = true;
             this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy;
@@ -394,17 +412,17 @@ class Base extends ReturnOrClone.Base {
       }
 
     } else {
-      if ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
+      if ( this.depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
         this.bDepthwise = this.bDepthwiseConv = true;
 
         this.channelCount_depthwiseAfter_pointwise2Before
-          = this.channelCount_pointwise1After_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier;
+          = this.channelCount_pointwise1After_depthwiseBefore * this.depthwise_AvgMax_Or_ChannelMultiplier;
 
         this.depthwiseFiltersShape
-          = [ depthwiseFilterHeight, depthwiseFilterWidth,
-              this.channelCount_pointwise1After_depthwiseBefore, depthwise_AvgMax_Or_ChannelMultiplier ];
+          = [ this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+              this.channelCount_pointwise1After_depthwiseBefore, this.depthwise_AvgMax_Or_ChannelMultiplier ];
 
-        this.depthwiseFiltersWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.depthwiseFiltersShape );
+        this.depthwiseFiltersWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.depthwiseFiltersShape );
         if ( !this.depthwiseFiltersWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
@@ -417,22 +435,22 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
-    switch ( depthwiseStridesPad ) {
+    switch ( this.depthwiseStridesPad ) {
       case 0:  this.depthwiseStrides = 1; this.depthwisePad = "valid"; break;
       default:
       case 1:  this.depthwiseStrides = 1; this.depthwisePad = "same";  break;
       case 2:  this.depthwiseStrides = 2; this.depthwisePad = "same";  break;
     }
 
-    this.depthwiseActivationFunction = Base.getActivationFunction( depthwiseActivationId );
+    this.depthwiseActivationFunction = Base.getActivationFunction( this.depthwiseActivationId );
 
-    this.depthwiseFilterHeightWidth = [ depthwiseFilterHeight, depthwiseFilterWidth ];
+    this.depthwiseFilterHeightWidth = [ this.depthwiseFilterHeight, this.depthwiseFilterWidth ];
     this.depthwiseBiasesShape =       [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before ];
 
     if ( this.bDepthwise ) {
 
-      if ( bDepthwiseBias ) {
-        this.depthwiseBiasesWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.depthwiseBiasesShape );
+      if ( this.bDepthwiseBias ) {
+        this.depthwiseBiasesWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.depthwiseBiasesShape );
         if ( !this.depthwiseBiasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
@@ -450,17 +468,17 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // depthwise filters was ready. Report progress.
 
     // 4. The second 1x1 pointwise convolution.
-    this.bPointwise2 = ( pointwise2ChannelCount > 0 );
-    this.pointwise2ActivationFunction = Base.getActivationFunction( pointwise2ActivationId );
+    this.bPointwise2 = ( this.pointwise2ChannelCount > 0 );
+    this.pointwise2ActivationFunction = Base.getActivationFunction( this.pointwise2ActivationId );
 
     if ( this.bPointwise2 ) {
-      this.channelCount_pointwise2After = pointwise2ChannelCount;
+      this.channelCount_pointwise2After = this.pointwise2ChannelCount;
 
       //this.pointwise2FilterHeightWidth = [ 1, 1 ];
       this.pointwise2FiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before, this.channelCount_pointwise2After ];
       this.pointwise2BiasesShape =       [ 1, 1, this.channelCount_pointwise2After ];
 
-      this.pointwise2FiltersWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.pointwise2FiltersShape );
+      this.pointwise2FiltersWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.pointwise2FiltersShape );
       if ( !this.pointwise2FiltersWeights.extract() )
         return false;  // e.g. input array does not have enough data.
 
@@ -469,8 +487,8 @@ class Base extends ReturnOrClone.Base {
       this.pointwise2FiltersTensor4d = tf.tensor4d( this.pointwise2FiltersWeights.weights, this.pointwise2FiltersShape );
       this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy; // will dispose inputTensor.
 
-      if ( bPointwise2Bias ) {
-        this.pointwise2BiasesWeights = new Weights.Base( this.params.defaultInput, this.nextByteOffsetBegin, this.pointwise2BiasesShape );
+      if ( this.bPointwise2Bias ) {
+        this.pointwise2BiasesWeights = new Weights.Base( params.defaultInput, this.nextByteOffsetBegin, this.pointwise2BiasesShape );
         if ( !this.pointwise2BiasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
@@ -503,7 +521,7 @@ class Base extends ReturnOrClone.Base {
     //   - if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
     //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
     let bShouldAddInputToOutput = this.bShouldAddInputToOutput
-     = (   ( bAddInputToOutput )
+     = (   ( this.bAddInputToOutput )
         && (   ( this.depthwiseStrides == 1 )
             && ( this.depthwisePad == "same" )
             && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
@@ -649,8 +667,7 @@ class Base extends ReturnOrClone.Base {
     this.pfn_depthwiseOperation = this.pfn_depthwiseBias =  this.pfn_depthwiseActivation =
     this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.return_input_directly;
 
-    this.params
-      = this.pointwise1FiltersWeights = this.pointwise1BiasesWeights
+    this.pointwise1FiltersWeights = this.pointwise1BiasesWeights
       = this.depthwiseFiltersWeights = this.depthwiseBiasesWeights
       = this.pointwise2FiltersWeights = this.pointwise2BiasesWeights
       = null;
@@ -817,37 +834,6 @@ class Base extends ReturnOrClone.Base {
   isValid() {
     return this.bInitOk;
   }
-
-//!!! ...unfinished... (2021/04/10) Do not keep this.params so that the inputFloat32Array could be released.
-
-  get byteOffsetBegin()                       { return this.params.defaultByteOffsetBegin; }
-
-  /** Where to extract next weights. Only meaningful when ( this.isValid() == true ). */
-  get byteOffsetEnd()                         { return this.nextByteOffsetBegin; }
-
-  get pointwise1ChannelCount()                { return this.params.pointwise1ChannelCount; }
-  get bPointwise1Bias()                       { return this.params.bPointwise1Bias; }
-  get pointwise1ActivationId()                { return this.params.pointwise1ActivationId; }
-  get pointwise1ActivationName()              { return this.params.pointwise1ActivationName; }
-
-  /** @return {number} The number version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier() { return this.params.depthwise_AvgMax_Or_ChannelMultiplier; }
-
-  /** @return {string} The string version of the depthwise opertion. */
-  get depthwise_AvgMax_Or_ChannelMultiplier_Name() { return this.params.depthwise_AvgMax_Or_ChannelMultiplier_Name; }
-  
-  get depthwiseFilterHeight()                 { return this.params.depthwiseFilterHeight; }
-  get depthwiseStridesPad()                   { return this.params.depthwiseStridesPad; }
-  get bDepthwiseBias()                        { return this.params.bDepthwiseBias; }
-  get depthwiseActivationId()                 { return this.params.depthwiseActivationId; }
-  get depthwiseActivationName()               { return this.params.depthwiseActivationName; }
-
-  get pointwise2ChannelCount()                { return this.params.pointwise2ChannelCount; }
-  get bPointwise2Bias()                       { return this.params.bPointwise2Bias; }
-  get pointwise2ActivationId()                { return this.params.pointwise2ActivationId; }
-  get pointwise2ActivationName()              { return this.params.pointwise2ActivationName; }
-
-  get bAddInputToOutput()                     { return this.params.bAddInputToOutput; }
 
   get inChannels()                            { return this.channelCount_pointwise1Before; }
   get outChannels()                           { return this.channelCount_pointwise2After; }
