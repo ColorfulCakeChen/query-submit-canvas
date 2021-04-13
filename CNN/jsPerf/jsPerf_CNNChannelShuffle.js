@@ -1,6 +1,7 @@
 export { init, testResultSame, testDifferentDisposeStrategy_All, disposeTensors };
 
-import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
+//import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
+import * as ChannelShuffler from "../Conv/ChannelShuffler_PerformanceTest.js";
 import * as TensorTools from "../util/TensorTools.js";
 
 /**
