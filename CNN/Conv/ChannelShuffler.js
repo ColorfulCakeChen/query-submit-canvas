@@ -87,11 +87,6 @@ class ShuffleInfo {
       transposePermutation.push( last1, last2 );
     }
 
-//!!! (2021/04/13) Try single finally to reduce memory footprint.
-//     this.reshapeTransposeReshape = this.reshapeTransposeReshape_dispose_finally;
-//     this.reshapeTransposeReshapeSplit = this.reshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally;
-//     this.concatReshapeTransposeReshape = this.concatReshapeTransposeReshape_dispose_direct_call;
-//     this.concatReshapeTransposeReshapeSplit = this.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally_call_dispose_finally;
     this.reshapeTransposeReshape = this.reshapeTransposeReshape_dispose_finally_calls;
     this.reshapeTransposeReshapeSplit = this.reshapeTransposeReshapeSplit_dispose_finally_calls;
     this.concatReshapeTransposeReshape = this.concatReshapeTransposeReshape_dispose_finally_calls;
@@ -106,7 +101,6 @@ class ShuffleInfo {
   }
 
 
-//!!! (2021/04/13) Try single finally to reduce memory footprint.
   /** Not dispose the input. */
   reshape_to_intermediateShape_keep_input( t ) {
     return t.reshape( this.intermediateShape );
@@ -114,7 +108,7 @@ class ShuffleInfo {
 
   reshape_to_intermediateShape_dispose_input( t ) {
     try {
-      return this.reshape_to_intermediateShape_keep_input( t );
+      return t.reshape( this.intermediateShape );
     } finally {
       t.dispose();
     }
@@ -144,7 +138,6 @@ class ShuffleInfo {
     }
   }
 
-//!!! (2021/04/13) Try single finally to reduce memory footprint.
   /**
    * Permute the input tensor by reshape-transpose-reshape.
    *
@@ -216,6 +209,9 @@ class ShuffleInfo {
     let t3 = this.reshape_to_concatenatedShape_dispose_input( t2 );
     let t4 = this.split_to_outputGroupCount_along_lastAxisId_dispose_input( t3 );
     return t4;
+
+    // Because every single function try-finally to release tensor, the memory footprint could be reduced.
+    // If using nested try-finally in one function to release tensors, the memory footprint will be larger.
   }
 
 }
