@@ -36,6 +36,7 @@ export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv };
  *   After reshaped to intermediateShape, the (concatenated) input will be transposed according to this
  * transposePermutation (so that they are shuffled).
  *
+ *
  * @member {function} reshapeTransposeReshape
  *   Permute the input tensor by reshape-transpose-reshape. It is a function pointer to one of this.reshapeTransposeReshape_XXX().
  *
@@ -380,8 +381,6 @@ class ShuffleInfo {
     let concatenatedTensor = tf.concat( tensorArray, this.lastAxisId );
 
     try {
-//       let tArray = this.reshapeTransposeReshapeSplit_tidy( concatenatedTensor );
-//       return tArray;
       return this.reshapeTransposeReshapeSplit_tidy( concatenatedTensor );
 
     } finally {
@@ -411,8 +410,6 @@ class ShuffleInfo {
           let t3 = t2.reshape( this.concatenatedShape );
 
           try {
-//             let tArray = t3.split( this.outputGroupCount, this.lastAxisId );
-//             return tArray;
             return t3.split( this.outputGroupCount, this.lastAxisId );
 
           } finally {
