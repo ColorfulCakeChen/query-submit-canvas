@@ -430,21 +430,29 @@ class Base {
           pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
           depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId,
           pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationId,
-          false, // In MobileNet2, step 0 is not possible, because output channel count is tiwce as input. In ShuffleNetV2, it is not necessary. So, false.
+
+          // In MobileNet2, step 0 is not possible, because output channel count is tiwce as input.
+          // In ShuffleNetV2, the skipping connection is achieved by concatenating.
+          // So, it is not necessary to add input to output.
+          false,
           bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
         );
 
         // Step0's branch (ShuffleNetV2)
         //
-        // The step 0 of ShuffleNetV2 has a branch for halving height and width by depthwise convolution without 1x1 (pointwise) convolution in front of it.
+        // The step 0 of ShuffleNetV2 has a branch which also halves the height and width by depthwise convolution. And it does not have
+        // the first 1x1 (pointwise) convolution. But it has the second 1x1 (pointwise) convolution.
         if ( bChannelShuffler ) {
           this.step0Branch = step0Branch = new PointDepthPoint.Base();
           step0Branch.init(
             sourceChannelCount,
-            0, false, "", // ShuffleNetV2 Step0's branch does not have the first 1x1 pointwise convolution before depthwise convolution ( strides = 2 ).
+
+            // ShuffleNetV2 Step0's branch does not have the first 1x1 pointwise convolution before depthwise convolution ( strides = 2 ).
+            0, false, ValueDesc.ActivationFunction.Singleton.Ids.NONE,
+
             depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId,
             pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationId,
-            false, // Since there is channel shuffler, there is not necessary to add input to output.
+            false, // In ShuffleNetV2, the skipping connection is achieved by concatenating. So, it is not necessary to add input to output.
             true   // This is the only case that must keep input tensor, because the input tensor need be re-used by the main path of setp 0.
           );
 
