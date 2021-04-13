@@ -642,20 +642,34 @@ class Base {
 
 //!!! ...unfinished... (2021/04/13) (Our) Adjusted ShuffleNetV2:
 //  
-// Since channel shuffler is achieved by pointwise convolution, it may be possible to combine the pointwise2 convolution
-// (after depthwise convolution) and the pointwise convolution (channel shuffler). That is:
+// Since channel shuffler could achieved efficiently by pointwise convolution, it may be possible to combine the pointwise2
+// convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
 //   - Concatenate the output of depthwise convolution and the other output group.
-//   - Pointwise convolve to generate output group 1.
-//   - Pointwise convolve to generate output group 2.
+//   - Pointwise convolution to generate output group 1.
+//   - Pointwise convolution to generate output group 2.
 //
 // In order to achieve it, there is a pre-condition: the pointwise2 convolution (after depthwise convolution) do not
 // have bias and activation function. The reason is that the channel shuffler (achieved by pointwise convolution) uses
 // only pointwise convolution without bias and activation function.
 //
 //
-// If the poitwise1 convolution (of every step (include step 0 too)) could be discarded, the step 0 could be achieved
-// by only depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS), concat, twice pointwise2 convolution
-// (no bias, no activation function) The twice pointwise2 convolution achieves not only pointwise convolution but also channel shuffler.
+// If the poitwise1 convolution (of every step (include step 0 too)) could be discarded, the step 0 and step 0's branch could
+// be achieved simultaneously by:
+//   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS).
+//   - concat.
+//   - twice pointwise2 convolution (no bias, no activation function).
+//
+// Note that the depthwise convolution (channelMultipler = 2, strides = 2) combines two depthwise convolution
+// (channelMultipler = 1, strides = 2) of step 0 and step 0's branch. So, it is one less depthwise convolution.
+//
+//
+// And, the step 1 (, 2, 3, ...) could be achieved by:
+//   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
+//   - concat.
+//   - twice pointwise2 convolution (no bias, no activation function).
+//
+// Note that the twice pointwise2 convolution (no bias, no activation function) achieves not only pointwise convolution but
+// also channel shuffler. So, it is one less one pointwise convolution.
 //
 
   /** Process input, destroy input, return result. (For ShuffleNetV2.)
