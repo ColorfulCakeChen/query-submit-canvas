@@ -632,6 +632,17 @@ class Base {
     return this.step0.apply_and_destroy_or_keep( inputTensor );
   }
 
+//!!! ...unfinished... (2021/04/13)
+// Since channel shuffler is achieved by pointwise convolution, it may be possible to combine the pointwise2 convolution
+// (after depthwise convolution) and the pointwise convolution (channel shuffler). That is:
+//   - Concatenate the output of depthwise convolution and the other output group.
+//   - Pointwise convolve to generate output group 1.
+//   - Pointwise convolve to generate output group 2.
+//
+// In order to achieve it, there is a pre-condition: the pointwise2 convolution (after depthwise convolution) do not
+// have bias and activation function. The reason is that the channel shuffler (achieved by pointwise convolution) uses
+// only pointwise convolution without bias and activation function.
+
   /** Process input, destroy input, return result. (For ShuffleNetV2.)
    *
    * @param {Block} this
