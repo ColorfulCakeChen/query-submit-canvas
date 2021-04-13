@@ -43,11 +43,12 @@ export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv };
  *   Permute and split the input tensor by reshape-transpose-reshape-split. It is a function pointer to one of
  * this.reshapeTransposeReshapeSplit_XXX().
  *
-//!!!
  * @member {function} concatReshapeTransposeReshape
+ *   Concatenate and permute the input tensor by concat-reshape-transpose-reshape. It is a function pointer to one of
+ * this.concatReshapeTransposeReshape_XXX().
  *
  * @member {function} concatReshapeTransposeReshapeSplit
- * Concatenate, permute and split the input tensor by concat-reshape-transpose-reshape-split. It is a function pointer to one of
+ *   Concatenate, permute and split the input tensor by concat-reshape-transpose-reshape-split. It is a function pointer to one of
  * this.concatReshapeTransposeReshapeSplit_XXX().
  */
 class ShuffleInfo {
@@ -87,14 +88,13 @@ class ShuffleInfo {
 
     this.reshapeTransposeReshape = this.reshapeTransposeReshape_dispose_finally;
     this.reshapeTransposeReshapeSplit = this.reshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally;
-//!!!
-    //this.concatReshapeTransposeReshape = ;
+    this.concatReshapeTransposeReshape = this.concatReshapeTransposeReshape_dispose_direct_call;
     this.concatReshapeTransposeReshapeSplit = this.concatReshapeTransposeReshapeSplit_dispose_finally_call_dispose_finally_call_dispose_finally;
   }
 
   /** Release tf.tensor. */
   disposeTensors() {
-    // No tensors to be disposed.
+    // No tensors need to be disposed.
 
     this.transposePermutation = null;
   }
@@ -115,8 +115,6 @@ class ShuffleInfo {
       let t2 = t1.transpose( this.transposePermutation );
 
       try {
-//         let t3 = t2.reshape( this.concatenatedShape );
-//         return t3;
         return t2.reshape( this.concatenatedShape );
 
       } finally {
@@ -163,8 +161,6 @@ class ShuffleInfo {
     let t = this.reshapeTransposeReshape_dispose_finally( concatenatedTensor );
 
     try {
-//       let tArray = t.split( this.outputGroupCount, this.lastAxisId );
-//       return tArray;
       return t.split( this.outputGroupCount, this.lastAxisId );
 
     } finally {
@@ -176,8 +172,6 @@ class ShuffleInfo {
     let t = this.reshapeTransposeReshape_dispose_direct( concatenatedTensor );
 
     try {
-//       let tArray = t.split( this.outputGroupCount, this.lastAxisId );
-//       return tArray;
       return t.split( this.outputGroupCount, this.lastAxisId );
 
     } finally {
@@ -213,8 +207,6 @@ class ShuffleInfo {
         let t3 = t2.reshape( this.concatenatedShape );
 
         try {
-//           let tArray = t3.split( this.outputGroupCount, this.lastAxisId );
-//           return tArray;
           return t3.split( this.outputGroupCount, this.lastAxisId );
 
         } finally {
@@ -265,21 +257,13 @@ class ShuffleInfo {
    *   A shuffled tensor. Its total channel count is the same as concatenated tensorArray, but their
    * last dimensions are shuffled.
    */
-  concatReshapeTransposeReshape( tensorArray ) {
+  concatReshapeTransposeReshape_dispose_direct_call( tensorArray ) {
     let concatenatedTensor = tf.concat( tensorArray, this.lastAxisId );
 
     let t = this.reshapeTransposeReshape( concatenatedTensor );
     concatenatedTensor.dispose();
 
     return t;
-
-//!!! (2020/12/23 Remarked) Remove tidy() for improving performance.
-//     return tf.tidy( "ChannelShuffler.ShuffleInfo.concatReshapeTransposeReshape", () => {
-//       return tf.concat( tensorArray, this.lastAxisId )
-//         .reshape( this.intermediateShape )
-//         .transpose( this.transposePermutation )
-//         .reshape( this.concatenatedShape );
-//     });
   }
 
   /**
