@@ -100,6 +100,54 @@ class ShuffleInfo {
     this.transposePermutation = null;
   }
 
+//!!! (2021/04/13) Try single finally to reduce memory footprint.
+  static reshape_to_intermediateShape_dispose_input( t ) {
+    try {
+      return t.reshape( this.intermediateShape );
+    } finally {
+      t.dispose();
+    }
+  }
+
+  static transpose_accordingTo_transposePermutation_dispose_input( t ) {
+    try {
+      return t.transpose( this.transposePermutation );
+    } finally {
+      t.dispose();
+    }
+  }
+
+  static reshape_to_concatenatedShape_dispose_input( t ) {
+    try {
+      return t.reshape( this.concatenatedShape );
+    } finally {
+      t.dispose();
+    }
+  }
+
+  static split_to_outputGroupCount_along_lastAxisId_dispose_input( t ) {
+    try {
+      return t.split( this.outputGroupCount, this.lastAxisId );
+    } finally {
+      t.dispose();
+    }
+  }
+
+//!!!
+  concatReshapeTransposeReshapeSplit_dispose_finally_calls( tensorArray ) {
+    let concatenatedTensor = tf.concat( tensorArray, this.lastAxisId );
+
+    let t1 = this.reshape_to_intermediateShape_dispose_input( concatenatedTensor );
+    let t2 = this.transpose_accordingTo_transposePermutation_dispose_input( t1 );
+    let t3 = this.reshape_to_concatenatedShape_dispose_input( t2 );
+    let t4 = this.split_to_outputGroupCount_along_lastAxisId_dispose_input( t3 );
+    return t4;
+  }
+  
+
+
+  
+  
   /**
    * Permute the input tensor by reshape-transpose-reshape.
    *
