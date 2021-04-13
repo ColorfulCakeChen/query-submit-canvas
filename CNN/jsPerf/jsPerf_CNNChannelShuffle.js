@@ -128,6 +128,7 @@ class HeightWidthDepthGroup {
   test_ConcatReshapeTransposeReshapeSplit_dispose_finally()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally( this.dataTensor3dArray ) ); }
   test_ConcatReshapeTransposeReshapeSplit_dispose_direct()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_direct( this.dataTensor3dArray ) ); }
 
+  test_ConcatReshapeTransposeReshapeSplit_dispose_finally_calls()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_dispose_finally_calls( this.dataTensor3dArray ) ); }
   test_ConcatReshapeTransposeReshapeSplit_tidy()  { tf.dispose( this.shuffleInfo.concatReshapeTransposeReshapeSplit_tidy( this.dataTensor3dArray ) ); }
 
 
