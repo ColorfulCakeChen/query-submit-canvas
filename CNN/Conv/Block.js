@@ -656,20 +656,30 @@ class Base {
 // If the poitwise1 convolution (of every step (include step 0 too)) could be discarded, the step 0 and step 0's branch could
 // be achieved simultaneously by:
 //   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS).
-//   - concat.
+//   - No need to concatenate because the above operation already double channel count.
 //   - twice pointwise2 convolution (no bias, no activation function).
-//
-// Note that the depthwise convolution (channelMultipler = 2, strides = 2) combines two depthwise convolution
-// (channelMultipler = 1, strides = 2) of step 0 and step 0's branch. So, it is one less depthwise convolution.
-//
 //
 // And, the step 1 (, 2, 3, ...) could be achieved by:
 //   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
-//   - concat.
+//   - concatenate.
 //   - twice pointwise2 convolution (no bias, no activation function).
 //
-// Note that the twice pointwise2 convolution (no bias, no activation function) achieves not only pointwise convolution but
-// also channel shuffler. So, it is one less one pointwise convolution.
+// And, the last step of the block could be achieved by:
+//   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
+//   - concatenate.
+//   - once pointwise2 convolution (no bias, no activation function).
+//
+// Note that:
+//   - The depthwise convolution (channelMultipler = 2, strides = 2) of step 0 achieves simultaneously two depthwise
+//     convolution (channelMultipler = 1, strides = 2) of step 0 and step 0's branch. So, it is one less depthwise
+//     convolution, and one less concatenating.
+//
+//   - The twice pointwise2 convolution (no bias, no activation function) achieves not only pointwise convolution but
+//     also channel shuffling. So, it is one less pointwise convolution.
+//
+//   - The once pointwise2 convolution (no bias, no activation function) of last step achieves simultaneously pointwise
+//     convolution, channel shuffling, and concatenating. So, it is not only one less pointwise convolution, but also
+//     one less concatenating.
 //
 
   /** Process input, destroy input, return result. (For ShuffleNetV2.)
