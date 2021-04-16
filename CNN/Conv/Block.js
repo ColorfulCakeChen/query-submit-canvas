@@ -649,8 +649,8 @@ class Base {
 //   - Pointwise convolution to generate output group 2.
 //
 // In order to achieve it, there is a pre-condition: the pointwise2 convolution (after depthwise convolution) do not
-// have bias and activation function. The reason is that the channel shuffler (achieved by pointwise convolution) uses
-// only pointwise convolution without bias and activation function.
+// have bias and activation function. The reason is that the channel shuffler (when achieved by pointwise convolution)
+// uses only pointwise convolution without bias and activation function.
 //
 //
 // If the poitwise1 convolution (of every step (include step 0 too)) could be discarded, the step 0 and step 0's branch could
