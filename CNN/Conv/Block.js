@@ -674,16 +674,16 @@ class Base {
 //     convolution (channelMultipler = 1, strides = 2) of step 0 and step 0's branch. So, it is one less depthwise
 //     convolution, and one less concatenating.
 //
-//   - The twice pointwise2 convolution (no bias, no activation function) achieves not only pointwise convolution but
-//     also channel shuffling. So, it is one less pointwise convolution.
+//   - The twice pointwise2 convolution (no bias, no activation function, every has same as block's input channel count)
+//     achieves not only pointwise convolution but also channel shuffling. So, it is one less pointwise convolution.
 //
-//   - The once pointwise2 convolution (no bias, no activation function) of last step achieves simultaneously pointwise
-//     convolution, channel shuffling, and concatenating. So, it is not only one less pointwise convolution, but also
-//     one less concatenating.
+//   - The once pointwise2 convolution (no bias, no activation function, has double of block's input channel count) of
+//     last step achieves simultaneously pointwise convolution, channel shuffling, and concatenating. So, it is not only
+//     one less pointwise convolution, but also one less concatenating.
 //
-//   - Although the pointwise1 convolution is discarded and the pointwise2 convolution does not have bias and activation,
-//     the depthwise convolution (with bias and COS as activation function) and pointwise2 convolution together compose
-//     an effective Fourier series which should have enough expressive power for approximating any function.
+//   - Although the pointwise1 convolution is discarded and the pointwise2 convolution does not have bias and activation
+//     function, the depthwise convolution (with bias and COS as activation function) and pointwise2 convolution together
+//     compose an effective Fourier series which should have enough expressive power for approximating any function.
 //
 //
 
