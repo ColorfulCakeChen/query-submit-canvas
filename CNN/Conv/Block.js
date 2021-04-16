@@ -681,6 +681,11 @@ class Base {
 //     convolution, channel shuffling, and concatenating. So, it is not only one less pointwise convolution, but also
 //     one less concatenating.
 //
+//   - Although the pointwise1 convolution is discarded and the pointwise2 convolution does not have bias and activation,
+//     the depthwise convolution (with bias and COS as activation function) and pointwise2 convolution together compose
+//     an effective Fourier series which should have enough expressive power for approximating any function.
+//
+//
 
   /** Process input, destroy input, return result. (For ShuffleNetV2.)
    *
