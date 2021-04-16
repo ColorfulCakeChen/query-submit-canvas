@@ -659,12 +659,12 @@ class Base {
 //   - No need to concatenate because the above operation already double channel count.
 //   - twice pointwise2 convolution (no bias, no activation function, every has same as block's input channel count).
 //
-// And, the step 1 (, 2, 3, ...) could be achieved by:
+// And, the step 1 (, 2, 3, ..., ( n - 2 ) ) could be achieved by:
 //   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
 //   - concatenate.
 //   - twice pointwise2 convolution (no bias, no activation function, every has same as block's input channel count).
 //
-// And, the last step of the block could be achieved by:
+// And, the last step (i.e. step ( n - 1 ) ) of the block could be achieved by:
 //   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
 //   - concatenate.
 //   - once pointwise2 convolution (no bias, no activation function, has double of block's input channel count).
