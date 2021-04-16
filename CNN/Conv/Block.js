@@ -657,17 +657,17 @@ class Base {
 // be achieved simultaneously by:
 //   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS).
 //   - No need to concatenate because the above operation already double channel count.
-//   - twice pointwise2 convolution (no bias, no activation function).
+//   - twice pointwise2 convolution (no bias, no activation function, every has same as block's input channel count).
 //
 // And, the step 1 (, 2, 3, ...) could be achieved by:
 //   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
 //   - concatenate.
-//   - twice pointwise2 convolution (no bias, no activation function).
+//   - twice pointwise2 convolution (no bias, no activation function, every has same as block's input channel count).
 //
 // And, the last step of the block could be achieved by:
 //   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
 //   - concatenate.
-//   - once pointwise2 convolution (no bias, no activation function).
+//   - once pointwise2 convolution (no bias, no activation function, has double of block's input channel count).
 //
 // Note that:
 //   - The depthwise convolution (channelMultipler = 2, strides = 2) of step 0 achieves simultaneously two depthwise
