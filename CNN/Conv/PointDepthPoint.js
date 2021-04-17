@@ -269,9 +269,10 @@ Params.outputTensorCount =      new ParamDesc.Int(                "outputTensorC
  * If ( pointwise2ChannelCount <= 0 ), it equals channelCount_depthwiseAfter_pointwise2Before.
  *
  * @member {function} apply_and_destroy_or_keep
- *   This is a method. It has a parameter inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed.
- * It returns a new tf.tensor3d. All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method
- * calls one of apply_and_destroy_AddInputToOutput(), apply_and_keep_AddInputToOutput(), apply_and_destroy_or_keep_NoSkipConnection(),
+ *   This is a method. It has two parameters inputTensors and outputTensors. The inputTensors (tf.tensor3d[]) represents the images
+ * ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed one or two tf.tensor3d as the result.
+ * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
+ * apply_and_destroy_AddInputToOutput(), apply_and_keep_AddInputToOutput(), apply_and_destroy_or_keep_NoSkipConnection(),
  * return_input_directly(), keep_input_return_copy() according to the initer()'s parameters.
  */
 class Base extends ReturnOrClone.Base {
@@ -849,7 +850,7 @@ class Base extends ReturnOrClone.Base {
 
 
   /** The input will be added to output for achieving skip connection. The inputTensor will be kept (not disposed).*/
-  static apply_and_keep_AddInputToOutput( inputTensor ) {
+  static apply_and_keep_AddInputToOutput( inputTensors, outputTensors ) {
     let t0, t1;
 
     // The first 1x1 pointwise convolution.
@@ -877,14 +878,25 @@ class Base extends ReturnOrClone.Base {
   }
 
   /** The input will be added to output for achieving skip connection. The inputTensor will be disposed. */
-  static apply_and_destroy_AddInputToOutput( inputTensor ) {
+  static apply_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
     let t = Base.apply_and_keep_AddInputToOutput.call( this, inputTensor );
     inputTensor.dispose();
     return t;
   }
 
-  /** The input will not be added to output (i.e. no residual connection). */
-  static apply_and_destroy_or_keep_NoSkipConnection( inputTensor ) {
+  /**
+   * The input will not be added to output (i.e. no residual connection).
+   *
+   * @param {tf.tensor[]} inputTensors
+   *   An array of tensors. If ( this.inputTensorCount == 0 ) or ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
+   * If ( this.inputTensorCount == 2 ), the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
+   *
+   * @param {tf.tensor[]} outputTensors
+   *   An array for returning the result (output) tensors. If ( this.outputTensorCount == 0 ) or ( this.outputTensorCount == 1 ),
+   * the outputTensors[ 0 ] will be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will
+   * be the result.
+   */
+  static apply_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
 
     // The first 1x1 pointwise convolution.
@@ -911,6 +923,12 @@ class Base extends ReturnOrClone.Base {
   }
 
   get inChannels()                            { return this.channelCount_pointwise1Before; }
+  
+  /**
+   * @return {number}
+   *   The channel count of output tensor. If there are two output tensor (i.e. ( outputTensorCount == 2 ) ), every one of them has
+   * this channel count.
+   */
   get outChannels()                           { return this.channelCount_pointwise2After; }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
@@ -930,7 +948,10 @@ class Base extends ReturnOrClone.Base {
       + `bPointwise2Bias=${this.bPointwise2Bias}, `
       + `pointwise2ActivationName=${this.pointwise2ActivationName}, `
 
+      + `inputTensorCount=${this.inputTensorCount}, `
+      + `outputTensorCount=${this.outputTensorCount}, `
       + `bAddInputToOutput=${this.bAddInputToOutput}, `
+
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
     return str;
