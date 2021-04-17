@@ -362,6 +362,20 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1FiltersTensor4d = tf.tensor4d( this.pointwise1FiltersWeights.weights, this.pointwise1FiltersShape );
       this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
 
+//!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
+//      this.operationArray.push( Base.pointwise1Conv.bind( this,  ) );
+      this.operationArray.push( Base.pointwise1Conv );
+//!!! Should determine destroyInputSingle() or destroyInputArray() according to ?
+      this.operationArray.push( Base.destroyInputSingle );
+      this.operationArray.push( Base.destroyInputArray );
+//!!!
+      this.pfn_lastPrev = ;
+      this.pfn_pointwise1ConvPrev =     this.pfn_pointwise1BiasPrev = this.pfn_pointwise1ActivationPrev =
+      this.pfn_depthwiseOperationPrev = this.pfn_depthwiseBiasPrev =  this.pfn_depthwiseActivationPrev =
+      this.pfn_pointwise2ConvPrev =     this.pfn_pointwise2BiasPrev = this.pfn_pointwise2ActivationPrev =
+      this.pfn_outputPrev;
+
+
       if ( this.bPointwise1Bias ) {
         this.pointwise1BiasesWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise1BiasesShape );
         if ( !this.pointwise1BiasesWeights.extract() )
@@ -553,6 +567,11 @@ class Base extends ReturnOrClone.Base {
     //
     if ( ( bKeepInputTensor ) || ( bShouldAddInputToOutput ) ) {
 
+//!!! ...unfinished... (2021/04/17)
+//!!! Should move this.operationArray[ 1 ] (i.e. destroyInputSingle() or destroyInputArray()) to position before Base.addInputToOutput.
+//       this.operationArray[ 1 ];
+//       this.operationArray.slpice(  );
+
       // Find out the first existed operation. Change it to "Xxx_keep" version. So that the
       // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
       if ( this.bPointwise1 ) {
@@ -664,6 +683,19 @@ class Base extends ReturnOrClone.Base {
       this.pointwise2BiasesTensor3d = null;
     }
 
+//!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
+    this.operationInput = null;
+    this.operationArray = [];
+    this.operationParams = [];  // Every operation takes input parameters from this array.
+    this.operationReturns = []; // Every operation puts returned values into this array.
+//???
+    this.pfn_head = this.pfn_lastPrev =
+    this.pfn_pointwise1ConvPrev =     this.pfn_pointwise1BiasPrev = this.pfn_pointwise1ActivationPrev =
+    this.pfn_depthwiseOperationPrev = this.pfn_depthwiseBiasPrev =  this.pfn_depthwiseActivationPrev =
+    this.pfn_pointwise2ConvPrev =     this.pfn_pointwise2BiasPrev = this.pfn_pointwise2ActivationPrev =
+    this.pfn_addInputToOutputPrev =   this.pfn_destroyInputPrev =   this.pfn_outputPrev = Base.return_input_directly;
+
+
     this.pfn_pointwise1Conv =     this.pfn_pointwise1Bias = this.pfn_pointwise1Activation =
     this.pfn_depthwiseOperation = this.pfn_depthwiseBias =  this.pfn_depthwiseActivation =
     this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.return_input_directly;
@@ -683,10 +715,28 @@ class Base extends ReturnOrClone.Base {
     return pfn;
   }
 
+
+//!!! ...unfinished... (2021/04/17) Using this.operationArray, this.operationParams, this.operationReturns for skipping non-existed operation.
+  static destroyInputSingle() {
+    this.operationInput.dispose();
+  }
+
+  static destroyInputArray() {
+    this.operationInput[ 0 ].dispose();
+    this.operationInput[ 1 ].dispose();
+  }
+
   /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
+//!!! ...unfinished... (2021/04/17) Using this.operationArray, this.operationParams, this.operationReturns for skipping non-existed operation.
+  static pointwise1Conv() {
+    this.operationReturns[ 0 ] = tf.conv2d( this.operationParams[ 0 ], this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+//!!! What about this.operationReturns[ 1 ] ?
+  }
+
   static pointwise1Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
   }
+
 
   static pointwise1Conv_and_destroy( inputTensor ) {
     let t = tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" );
@@ -773,6 +823,11 @@ class Base extends ReturnOrClone.Base {
     inputTensor.dispose();
     return t;
   }
+
+
+//!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
+//  this.operationInput = ???;
+
 
   /** The input will be added to output for achieving skip connection. The inputTensor will be kept (not disposed).*/
   static apply_and_keep_AddInputToOutput( inputTensor ) {
