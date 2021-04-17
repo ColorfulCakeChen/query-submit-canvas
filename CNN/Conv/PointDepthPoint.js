@@ -80,19 +80,37 @@ class Params extends Weights.Params {
    * @param {number} pointwise2ActivationId
    *   The activation function id (Params.pointwise2ActivationId.valueDesc.Ids.Xxx) after the second pointwise convolution. If null,
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise2ChannelCount <= 0 ), this activation function
-   *will also be ignored.
+   * will also be ignored.
    *
-   * @param {boolean} bAddInputToOutput
-   *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true and ( depthwiseStridesPad == 1 ) ( i.e.
-   * ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ),
-   * the inputTensor will be added to the output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
+
+//!!! ...unfinished... (2021/04/17) addInputToOutput (0), oneInput (1), twoInput (2), 
+
+   * @param {boolean} inputTensorCount
+   *   Describe how many input tensors should be past into apply_and_destroy(). the If null, it will be extracted from inputFloat32Array
+   * (i.e. by evolution).
+   *   - 0: One input. It will be added to output if ( depthwiseStridesPad == 1 ) ( i.e. ( depthwiseStrides == 1 )
+   *        and ( depthwisePad == "same" ) ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ). This could achieve
+   *        the residual connection of MobileNetV2.
+   *   - 1: One input. It will not be added to output.
+   *   - 2: Two input. They will not be added to output. The second input will not be processed by pointwise1 convolution, depthwise
+   *        operation. But the second input will be concatenated with the result of depthwise operation. And then the concatenated
+   *        result will be processed by pointwise2 convolution.
+   *
+
+//!!! (2021/04/17 Remarked) replaced by inputTensorCount.
+//    * @param {boolean} bAddInputToOutput
+//    *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true and ( depthwiseStridesPad == 1 ) ( i.e.
+//    * ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ),
+//    * the inputTensor will be added to the output in apply_and_destroy(). This could achieve the residual connection of MobileNetV2.
    *
    */
   constructor( inputFloat32Array, byteOffsetBegin,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-    bAddInputToOutput,
+    inputTensorCount
+//!!! (2021/04/17 Remarked) replaced by inputTensorCount.
+//    bAddInputToOutput,
   ) {
 
 //!!! ...unfinished...
@@ -110,7 +128,9 @@ class Params extends Weights.Params {
       [ Params.pointwise2ChannelCount,                pointwise2ChannelCount ],
       [ Params.bPointwise2Bias,                       bPointwise2Bias ],
       [ Params.pointwise2ActivationId,                pointwise2ActivationId ],
-      [ Params.bAddInputToOutput,                     bAddInputToOutput ],
+      [ Params.inputTensorCount,                      inputTensorCount ],
+//!!! (2021/04/17 Remarked) replaced by inputTensorCount.
+//      [ Params.bAddInputToOutput,                     bAddInputToOutput ],
     ] );
 
     return super( inputFloat32Array, byteOffsetBegin, parameterMap );
@@ -140,7 +160,9 @@ class Params extends Weights.Params {
   get pointwise2ActivationId()   { return this.parameterMapModified.get( Params.pointwise2ActivationId ); }
   get pointwise2ActivationName() { return Params.pointwise2ActivationId.getStringOfValue( this.pointwise2ActivationId ); }
 
-  get bAddInputToOutput()        { return this.parameterMapModified.get( Params.bAddInputToOutput ); }
+  get inputTensorCount()         { return this.parameterMapModified.get( Params.inputTensorCount ); }
+//!!! (2021/04/17 Remarked) replaced by inputTensorCount.
+//  get bAddInputToOutput()        { return this.parameterMapModified.get( Params.bAddInputToOutput ); }
 }
 
 
@@ -182,7 +204,9 @@ Params.pointwise2ChannelCount = new ParamDesc.Int(                "pointwise2Cha
 Params.bPointwise2Bias =        new ParamDesc.Bool(               "bPointwise2Bias" );
 Params.pointwise2ActivationId = new ParamDesc.ActivationFunction( "pointwise2ActivationId" );
 
-Params.bAddInputToOutput =      new ParamDesc.Bool("bAddInputToOutput");
+Params.inputTensorCount =       new ParamDesc.Int(                "inputTensorCount", 0, 2 ) );
+//!!! (2021/04/17 Remarked) replaced by inputTensorCount.
+//Params.bAddInputToOutput =      new ParamDesc.Bool("bAddInputToOutput");
 
 
 /**
@@ -337,7 +361,8 @@ class Base extends ReturnOrClone.Base {
     this.pointwise2ActivationId = params.pointwise2ActivationId;
     this.pointwise2ActivationName = params.pointwise2ActivationName;
 
-    this.bAddInputToOutput = params.bAddInputToOutput;
+    this.inputTensorCount = params.inputTensorCount;
+    this.bAddInputToOutput = ( 0 == this.inputTensorCount );
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
