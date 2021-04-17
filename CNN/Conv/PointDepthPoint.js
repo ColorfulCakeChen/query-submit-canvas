@@ -513,28 +513,48 @@ class Base extends ReturnOrClone.Base {
       this.pointwise2FiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before, this.channelCount_pointwise2After ];
       this.pointwise2BiasesShape =       [ 1, 1, this.channelCount_pointwise2After ];
 
-      this.pointwise2FiltersWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise2FiltersShape );
-      if ( !this.pointwise2FiltersWeights.extract() )
-        return false;  // e.g. input array does not have enough data.
+      this.pointwise2FiltersWeightsArray = new Array( this.outputTensorCount );
+      this.pointwise2FiltersTensor4dArray = new Array( this.outputTensorCount );
 
-      this.byteOffsetEnd = this.pointwise2FiltersWeights.defaultByteOffsetEnd;
+      this.pointwise2BiasesWeightsArray = new Array( this.outputTensorCount );
+      this.pointwise2BiasesTensor3dArray = new Array( this.outputTensorCount );
 
-      this.pointwise2FiltersTensor4d = tf.tensor4d( this.pointwise2FiltersWeights.weights, this.pointwise2FiltersShape );
-      this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy; // will dispose inputTensor.
+      for ( let i = 0; i < this.outputTensorCount; ++i ) {
 
-      if ( this.bPointwise2Bias ) {
-        this.pointwise2BiasesWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise2BiasesShape );
-        if ( !this.pointwise2BiasesWeights.extract() )
+        let pointwise2FiltersWeights = this.pointwise2FiltersWeightsArray[ i ]
+              = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise2FiltersShape );
+
+        if ( !pointwise2FiltersWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
-        this.byteOffsetEnd = this.pointwise2BiasesWeights.defaultByteOffsetEnd;
+        this.byteOffsetEnd = pointwise2FiltersWeights.defaultByteOffsetEnd;
+  
+        let pointwise2FiltersTensor4d = this.pointwise2FiltersTensor4dArray[ i ]
+              = tf.tensor4d( pointwise2FiltersWeights.weights, this.pointwise2FiltersShape );
 
-        this.pointwise2BiasesTensor3d = tf.tensor3d( this.pointwise2BiasesWeights.weights, this.pointwise2BiasesShape );
-        this.pfn_pointwise2Bias = Base.pointwise2Bias_and_destroy;
+//!!! ...unfinished... (2021/04/17) What if two output tensors?
+        this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy; // will dispose inputTensor.
+
+        if ( this.bPointwise2Bias ) {
+          let pointwise2BiasesWeights = this.pointwise2BiasesWeightsArray[ i ]
+                = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise2BiasesShape );
+
+          if ( !pointwise2BiasesWeights.extract() )
+            return false;  // e.g. input array does not have enough data.
+
+          this.byteOffsetEnd = pointwise2BiasesWeights.defaultByteOffsetEnd;
+
+          let pointwise2BiasesTensor3d = this.pointwise2BiasesTensor3dArray[ i ]
+                = tf.tensor3d( pointwise2BiasesWeights.weights, this.pointwise2BiasesShape );
+
+//!!! ...unfinished... (2021/04/17) What if two output tensors?
+          this.pfn_pointwise2Bias = Base.pointwise2Bias_and_destroy;
+        }
+
+//!!! ...unfinished... (2021/04/17) What if two output tensors?
+        if ( this.pointwise2ActivationFunction )
+          this.pfn_pointwise2Activation = Base.pointwise2Activation_and_destroy;
       }
-
-      if ( this.pointwise2ActivationFunction )
-        this.pfn_pointwise2Activation = Base.pointwise2Activation_and_destroy;
 
     } else {
       this.channelCount_pointwise2After = this.channelCount_depthwiseAfter_pointwise2Before;
@@ -620,6 +640,7 @@ class Base extends ReturnOrClone.Base {
         }
 
       } else if ( this.bPointwise2 ) {
+//!!! ...unfinished... (2021/04/17) What if two output tensors?
         this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep; // will NOT dispose inputTensor.
 
       } else {
@@ -693,14 +714,14 @@ class Base extends ReturnOrClone.Base {
       this.depthwiseBiasesTensor3d = null;
     }
 
-    if ( this.pointwise2FiltersTensor4d ) {
-      tf.dispose( this.pointwise2FiltersTensor4d );
-      this.pointwise2FiltersTensor4d = null;
+    if ( this.pointwise2FiltersTensor4dArray ) {
+      tf.dispose( this.pointwise2FiltersTensor4dArray );
+      this.pointwise2FiltersTensor4dArray = null;
     }
 
-    if ( this.pointwise2BiasesTensor3d ) {
-      tf.dispose( this.pointwise2BiasesTensor3d );
-      this.pointwise2BiasesTensor3d = null;
+    if ( this.pointwise2BiasesTensor3dArray ) {
+      tf.dispose( this.pointwise2BiasesTensor3dArray );
+      this.pointwise2BiasesTensor3dArray = null;
     }
 
 //!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
@@ -722,7 +743,7 @@ class Base extends ReturnOrClone.Base {
 
     this.pointwise1FiltersWeights = this.pointwise1BiasesWeights
       = this.depthwiseFiltersWeights = this.depthwiseBiasesWeights
-      = this.pointwise2FiltersWeights = this.pointwise2BiasesWeights
+      = this.pointwise2FiltersWeightsArray = this.pointwise2BiasesWeightsArray
       = null;
 
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
@@ -820,6 +841,8 @@ class Base extends ReturnOrClone.Base {
     inputTensor.dispose();
     return t;
   }
+
+//!!! ...unfinished... (2021/04/17) What if two output tensors?
 
   /** Second 1x1 pointwise convolution. */
   static pointwise2Conv_and_keep( inputTensor ) {
