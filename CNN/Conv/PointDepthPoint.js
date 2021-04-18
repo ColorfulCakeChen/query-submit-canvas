@@ -23,15 +23,15 @@ class Params extends Weights.Params {
    * (not to the inputFloat32Array.byteOffset).
    *
    * @param {number} pointwise1ChannelCount
-   *   The output channel count of the first pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *   The output channel count of the pointwise1 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    * If 0, there will be no pointwise convolution before depthwise convolution.
    *
    * @param {boolean} bPointwise1Bias
-   *   If true, there will be a bias after pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *   If true, there will be a bias after pointwise1 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    * If ( pointwise1ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {number} pointwise1ActivationId
-   *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution. If null,
+   *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the pointwise1 convolution. If null,
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise1ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
@@ -64,17 +64,31 @@ class Params extends Weights.Params {
    * extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation function
    * will also be ignored.
    *
-   * @param {number} pointwise2ChannelCount
-   *   The output channel count of the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If 0 or negative, there will be no pointwise convolution after depthwise convolution.
+   * @param {number} pointwise21ChannelCount
+   *   The output channel count of the first pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution.
    *
-   * @param {boolean} bPointwise2Bias
-   *   If true, there will be a bias after the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by
-   * evolution). If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
+   * @param {boolean} bPointwise21Bias
+   *   If true, there will be a bias after the first pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
+   * evolution). If ( pointwise21ChannelCount == 0 ), this bias will also be ignored.
    *
-   * @param {number} pointwise2ActivationId
-   *   The activation function id (Params.pointwise2ActivationId.valueDesc.Ids.Xxx) after the second pointwise convolution. If null,
-   * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise2ChannelCount == 0 ), this activation function
+   * @param {number} pointwise21ActivationId
+   *   The activation function id (Params.pointwise21ActivationId.valueDesc.Ids.Xxx) after the first pointwise1 convolution. If null,
+   * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise21ChannelCount == 0 ), this activation function
+   * will also be ignored.
+   *
+   * @param {number} pointwise22ChannelCount
+   *   The output channel count of the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution.
+   * This second pointwise2 convolution This could achieve some kinds of channel shuffling of ShuffleNetV2.
+   *
+   * @param {boolean} bPointwise22Bias
+   *   If true, there will be a bias after the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
+   * evolution). If ( pointwise22ChannelCount == 0 ), this bias will also be ignored.
+   *
+   * @param {number} pointwise21ActivationId
+   *   The activation function id (Params.pointwise22ActivationId.valueDesc.Ids.Xxx) after the second pointwise2 convolution. If null,
+   * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise22ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
    * @param {number} inputTensorCount
@@ -88,20 +102,13 @@ class Params extends Weights.Params {
    *        operation. But the second input will be concatenated with the result of depthwise operation. And then the concatenated
    *        result will be processed by pointwise2 convolution.
    *
-   * @param {number} outputTensorCount
-   *   How many output tensors should be returned by apply_and_destroy(). the If null, it will be extracted from inputFloat32Array
-   * (i.e. by evolution).
-   *   - 1: One output.
-   *   - 2: Two output. The second output will be generated by applying another pointwise2 convolution which has same
-   *        pointwise2ChannelCount, bPointwise2Bias and pointwise2ActivationId but with different filter and bias weights. This could
-   *        achieve channel shuffling of ShuffleNetV2.
-   *
    */
   constructor( inputFloat32Array, byteOffsetBegin,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-    pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-    inputTensorCount, outputTensorCount
+    pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+    inputTensorCount
   ) {
 
 //!!! ...unfinished...
@@ -116,20 +123,22 @@ class Params extends Weights.Params {
       [ Params.depthwiseStridesPad,                   depthwiseStridesPad ],
       [ Params.bDepthwiseBias,                        bDepthwiseBias ],
       [ Params.depthwiseActivationId,                 depthwiseActivationId ],
-      [ Params.pointwise2ChannelCount,                pointwise2ChannelCount ],
-      [ Params.bPointwise2Bias,                       bPointwise2Bias ],
-      [ Params.pointwise2ActivationId,                pointwise2ActivationId ],
+      [ Params.pointwise21ChannelCount,               pointwise21ChannelCount ],
+      [ Params.bPointwise21Bias,                      bPointwise21Bias ],
+      [ Params.pointwise21ActivationId,               pointwise21ActivationId ],
+      [ Params.pointwise22ChannelCount,               pointwise22ChannelCount ],
+      [ Params.bPointwise22Bias,                      bPointwise22Bias ],
+      [ Params.pointwise22ActivationId,               pointwise22ActivationId ],
       [ Params.inputTensorCount,                      inputTensorCount ],
-      [ Params.outputTensorCount,                     outputTensorCount ],
     ] );
 
     return super( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
-  get pointwise1ChannelCount()   { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
-  get bPointwise1Bias()          { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
-  get pointwise1ActivationId()   { return this.parameterMapModified.get( Params.pointwise1ActivationId ); }
-  get pointwise1ActivationName() { return Params.pointwise1ActivationId.getStringOfValue( this.pointwise1ActivationId ); }
+  get pointwise1ChannelCount()    { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
+  get bPointwise1Bias()           { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
+  get pointwise1ActivationId()    { return this.parameterMapModified.get( Params.pointwise1ActivationId ); }
+  get pointwise1ActivationName()  { return Params.pointwise1ActivationId.getStringOfValue( this.pointwise1ActivationId ); }
 
   /** @return {number} The number version of the depthwise opertion. */
   get depthwise_AvgMax_Or_ChannelMultiplier() { return this.parameterMapModified.get( Params.depthwise_AvgMax_Or_ChannelMultiplier ); }
@@ -139,19 +148,23 @@ class Params extends Weights.Params {
     return Params.depthwise_AvgMax_Or_ChannelMultiplier.getStringOfValue( this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
 
-  get depthwiseFilterHeight()    { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
-  get depthwiseStridesPad()      { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
-  get bDepthwiseBias()           { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
-  get depthwiseActivationId()    { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
-  get depthwiseActivationName()  { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
+  get depthwiseFilterHeight()     { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
+  get depthwiseStridesPad()       { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
+  get bDepthwiseBias()            { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
+  get depthwiseActivationId()     { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
+  get depthwiseActivationName()   { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
 
-  get pointwise2ChannelCount()   { return this.parameterMapModified.get( Params.pointwise2ChannelCount ); }
-  get bPointwise2Bias()          { return this.parameterMapModified.get( Params.bPointwise2Bias ); }
-  get pointwise2ActivationId()   { return this.parameterMapModified.get( Params.pointwise2ActivationId ); }
-  get pointwise2ActivationName() { return Params.pointwise2ActivationId.getStringOfValue( this.pointwise2ActivationId ); }
+  get pointwise21ChannelCount()   { return this.parameterMapModified.get( Params.pointwise21ChannelCount ); }
+  get bPointwise21Bias()          { return this.parameterMapModified.get( Params.bPointwise21Bias ); }
+  get pointwise21ActivationId()   { return this.parameterMapModified.get( Params.pointwise21ActivationId ); }
+  get pointwise21ActivationName() { return Params.pointwise21ActivationId.getStringOfValue( this.pointwise21ActivationId ); }
 
-  get inputTensorCount()         { return this.parameterMapModified.get( Params.inputTensorCount ); }
-  get outputTensorCount()        { return this.parameterMapModified.get( Params.outputTensorCount ); }
+  get pointwise22ChannelCount()   { return this.parameterMapModified.get( Params.pointwise22ChannelCount ); }
+  get bPointwise22Bias()          { return this.parameterMapModified.get( Params.bPointwise22Bias ); }
+  get pointwise22ActivationId()   { return this.parameterMapModified.get( Params.pointwise22ActivationId ); }
+  get pointwise22ActivationName() { return Params.pointwise22ActivationId.getStringOfValue( this.pointwise22ActivationId ); }
+
+  get inputTensorCount()          { return this.parameterMapModified.get( Params.inputTensorCount ); }
 }
 
 
@@ -189,12 +202,144 @@ Params.depthwiseStridesPad =    new ParamDesc.Int( "depthwiseStridesPad",   0, 2
 Params.bDepthwiseBias =         new ParamDesc.Bool(               "bDepthwiseBias" );
 Params.depthwiseActivationId =  new ParamDesc.ActivationFunction( "depthwiseActivationId" );
 
-Params.pointwise2ChannelCount = new ParamDesc.Int(                "pointwise2ChannelCount", 0, ( 10 * 1024 ) );
-Params.bPointwise2Bias =        new ParamDesc.Bool(               "bPointwise2Bias" );
-Params.pointwise2ActivationId = new ParamDesc.ActivationFunction( "pointwise2ActivationId" );
+Params.pointwise21ChannelCount = new ParamDesc.Int(                "pointwise21ChannelCount", 0, ( 10 * 1024 ) );
+Params.bPointwise21Bias =        new ParamDesc.Bool(               "bPointwise21Bias" );
+Params.pointwise21ActivationId = new ParamDesc.ActivationFunction( "pointwise21ActivationId" );
+
+Params.pointwise22ChannelCount = new ParamDesc.Int(                "pointwise22ChannelCount", 0, ( 10 * 1024 ) );
+Params.bPointwise22Bias =        new ParamDesc.Bool(               "bPointwise22Bias" );
+Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22ActivationId" );
 
 Params.inputTensorCount =       new ParamDesc.Int(                "inputTensorCount",  0, 2 ) );
-Params.outputTensorCount =      new ParamDesc.Int(                "outputTensorCount", 1, 2 ) );
+
+
+/**
+ * Handle initialization of pointwise convolution (1x1 conv2d), bias and activation.
+ */
+class Pointwise {
+
+  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, inputFloat32Array, byteOffsetBegin ) {
+    this.inputChannelCount = inputChannelCount;
+    this.outputChannelCount = outputChannelCount;
+    this.bBias = bBias;
+    this.nActivationId = nActivationId;
+    this.inputFloat32Array = inputFloat32Array;
+    this.byteOffsetBegin = byteOffsetBegin;
+  }
+
+  init() {
+    this.bPointwise = ( this.outputChannelCount > 0 );
+    this.pfnActivationFunction = Base.getActivationFunction( this.nActivationId );
+
+    if ( this.bPointwise ) {
+
+      //this.filterHeightWidth = [ 1, 1 ];
+      this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
+      this.biasesShape =       [ 1, 1, this.outputChannelCount ];
+
+      this.filtersWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
+      if ( !this.filtersWeights.extract() )
+        return false;  // e.g. input array does not have enough data.
+
+      this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
+
+      this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
+      this.pfnConv = Pointwise.Conv_and_destroy; // will dispose inputTensor.
+
+      if ( this.bBias ) {
+        this.biasesWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
+        if ( !this.pointwise1BiasesWeights.extract() )
+          return false;  // e.g. input array does not have enough data.
+
+        this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
+
+        this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.pointwise1BiasesShape );
+
+        if ( this.pfnActivation )
+          this.pfnConvBiasActivation = Pointwise.ConvBiasActivation_and_destroy_or_keep;
+        else
+          this.pfnConvBiasActivation = Pointwise.ConvBias_and_destroy_or_keep;
+
+      } else {
+
+        if ( this.pfnActivation )
+          this.pfnConvBiasActivation = Pointwise.ConvActivation_and_destroy_or_keep;
+         else
+          this.pfnConvBiasActivation = Pointwise.Conv_and_destroy_or_keep;
+
+      }
+
+    } else {
+      this.pfnConv = Base.return_input_directly;
+      this.pfnConvBiasActivation = Pointwise.Conv_and_destroy_or_keep;
+    }
+
+    this.bInitOk = true;
+  }
+
+  disposeTensors() {
+    if ( this.filtersTensor4d ) {
+      tf.dispose( this.filtersTensor4d );
+      this.filtersTensor4d = null;
+    }
+
+    if ( this.biasesTensor3d ) {
+      tf.dispose( this.biasesTensor3d );
+      this.biasesTensor3d = null;
+    }
+
+    this.filtersWeights = this.biasesWeights = this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
+    this.byteOffsetBegin = this.byteOffsetEnd = -1;
+    this.bInitOk = false;
+  }
+
+  /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
+  static Conv_and_keep( inputTensor ) {
+    return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+  }
+
+  static Conv_and_destroy( inputTensor ) {
+    let t = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
+    inputTensor.dispose();
+    return t;
+  }
+
+  /** Pointwise Convolution, Bias and Activation. */
+  static Conv_and_destroy_or_keep( inputTensor ) {
+    return this.pfnConv( inputTensor );
+  }
+
+  static ConvBias_and_destroy_or_keep( inputTensor ) {
+    let t0 = this.pfnConv( inputTensor );
+
+    let t1 = tf.add( t0, this.biasesTensor3d );
+    t0.dispose();
+
+    return t1;
+  }
+
+  static ConvActivation_and_destroy_or_keep( inputTensor ) {
+    let t0 = this.pfnConv( inputTensor );
+
+    let t1 = this.pfnActivation( t0 );
+    t0.dispose();
+
+    return t1;
+  }
+
+  static ConvBiasActivation_and_destroy_or_keep( inputTensor ) {
+    let t0 = this.pfnConv( inputTensor );
+
+    let t1 = tf.add( t0, this.biasesTensor3d );
+    t0.dispose();
+
+    t0 = this.pfnActivation( t1 );
+    t1.dispose();
+
+    return t0;
+  }
+
+}
 
 
 /**
@@ -214,7 +359,7 @@ Params.outputTensorCount =      new ParamDesc.Int(                "outputTensorC
  * Only meaningful when ( this.isValid() == true ).
  *
  * @member {boolean} bPointwise1
- *   If true, the first pointwise convolution exist.
+ *   If true, the pointwise1 convolution exist.
  *
  * @member {string} pointwise1ActivationName
  *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution.
@@ -238,14 +383,25 @@ Params.outputTensorCount =      new ParamDesc.Int(                "outputTensorC
  *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution.
  *
  * @member {boolean} bPointwise2
- *   If true, the second pointwise convolution exist.
+ *   If true, the pointwise2 convolution exist.
  *
- * @member {string} pointwise2ActivationName
- *   The activation function id (Params.pointwise2ActivationId.valueDesc.Ids.Xxx) after the second pointwise convolution.
+ * @member {boolean} bPointwise21
+ *   If true, the first pointwise2 convolution exist.
+ *
+ * @member {boolean} bPointwise22
+ *   If true, the second pointwise2 convolution exist.
+ *
+ * @member {string} pointwise21ActivationName
+ *   The activation function id (Params.pointwise21ActivationId.valueDesc.Ids.Xxx) after the first pointwise2 convolution.
+ *
+ * @member {string} pointwise22ActivationName
+ *   The activation function id (Params.pointwise22ActivationId.valueDesc.Ids.Xxx) after the second pointwise2 convolution.
  *
  * @member {number} inChannels
  *   Input channel count. This is the same as this.channelCount_pointwise1Before (from initer()).
  *
+
+//!!! ...unfinished... (2021/04/18) What about pointwiese21 and pointwiese22?
  * @member {number} outChannels
  *   The output channel count after these three convolutions. It is the same as this.channelCount_pointwise2After (from initer()).
  *
@@ -260,9 +416,19 @@ Params.outputTensorCount =      new ParamDesc.Int(                "outputTensorC
  * or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX (-1)
  * or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE (0), it equals channelCount_pointwise1After_depthwiseBefore.
  *
- * @member {number} channelCount_pointwise2After
- *   The channel count after the second 1x1 pointwise convolution. If ( pointwise2ChannelCount > 0 ), it equals pointwise2ChannelCount.
- * If ( pointwise2ChannelCount == 0 ), it equals channelCount_depthwiseAfter_pointwise2Before.
+ * @member {number} channelCount_pointwise21After
+ *   The channel count after the first pointwise2 convolution. If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
+ * If ( pointwise21ChannelCount == 0 ), it equals channelCount_depthwiseAfter_pointwise2Before.
+ *
+ * @member {number} channelCount_pointwise22After
+ *   The channel count after the second pointwise2 convolution. If ( pointwise22ChannelCount > 0 ), it equals pointwise22ChannelCount.
+ * If ( pointwise22ChannelCount == 0 ), it equals channelCount_depthwiseAfter_pointwise2Before.
+ *
+
+//!!! ...unfinished... (2021/04/18) should always  two?
+
+ * @member {number} outputTensorCount
+ *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep().
  *
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has two parameters inputTensors and outputTensors. The inputTensors (tf.tensor3d[]) represents the images
@@ -380,17 +546,17 @@ class Base extends ReturnOrClone.Base {
 
 
 //!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
-//      this.operationArray.push( Base.pointwise1Conv.bind( this,  ) );
-      this.operationArray.push( Base.pointwise1Conv );
-//!!! Should determine destroyInputSingle() or destroyInputArray() according to ?
-      this.operationArray.push( Base.destroyInputSingle );
-      this.operationArray.push( Base.destroyInputArray );
-//!!!
-      this.pfn_lastPrev = ;
-      this.pfn_pointwise1ConvPrev =     this.pfn_pointwise1BiasPrev = this.pfn_pointwise1ActivationPrev =
-      this.pfn_depthwiseOperationPrev = this.pfn_depthwiseBiasPrev =  this.pfn_depthwiseActivationPrev =
-      this.pfn_pointwise2ConvPrev =     this.pfn_pointwise2BiasPrev = this.pfn_pointwise2ActivationPrev =
-      this.pfn_outputPrev;
+// //      this.operationArray.push( Base.pointwise1Conv.bind( this,  ) );
+//       this.operationArray.push( Base.pointwise1Conv );
+// //!!! Should determine destroyInputSingle() or destroyInputArray() according to ?
+//       this.operationArray.push( Base.destroyInputSingle );
+//       this.operationArray.push( Base.destroyInputArray );
+// //!!!
+//       this.pfn_lastPrev = ;
+//       this.pfn_pointwise1ConvPrev =     this.pfn_pointwise1BiasPrev = this.pfn_pointwise1ActivationPrev =
+//       this.pfn_depthwiseOperationPrev = this.pfn_depthwiseBiasPrev =  this.pfn_depthwiseActivationPrev =
+//       this.pfn_pointwise2ConvPrev =     this.pfn_pointwise2BiasPrev = this.pfn_pointwise2ActivationPrev =
+//       this.pfn_outputPrev;
 
       if ( this.bPointwise1Bias ) {
         this.pointwise1BiasesWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise1BiasesShape );
@@ -734,16 +900,16 @@ class Base extends ReturnOrClone.Base {
     }
 
 //!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
-    this.operationInput = null;
-    this.operationArray = [];
-    this.operationParams = [];  // Every operation takes input parameters from this array.
-    this.operationReturns = []; // Every operation puts returned values into this array.
-//???
-    this.pfn_head = this.pfn_lastPrev =
-    this.pfn_pointwise1ConvPrev =     this.pfn_pointwise1BiasPrev = this.pfn_pointwise1ActivationPrev =
-    this.pfn_depthwiseOperationPrev = this.pfn_depthwiseBiasPrev =  this.pfn_depthwiseActivationPrev =
-    this.pfn_pointwise2ConvPrev =     this.pfn_pointwise2BiasPrev = this.pfn_pointwise2ActivationPrev =
-    this.pfn_addInputToOutputPrev =   this.pfn_destroyInputPrev =   this.pfn_outputPrev = Base.return_input_directly;
+//     this.operationInput = null;
+//     this.operationArray = [];
+//     this.operationParams = [];  // Every operation takes input parameters from this array.
+//     this.operationReturns = []; // Every operation puts returned values into this array.
+//
+//     this.pfn_head = this.pfn_lastPrev =
+//     this.pfn_pointwise1ConvPrev =     this.pfn_pointwise1BiasPrev = this.pfn_pointwise1ActivationPrev =
+//     this.pfn_depthwiseOperationPrev = this.pfn_depthwiseBiasPrev =  this.pfn_depthwiseActivationPrev =
+//     this.pfn_pointwise2ConvPrev =     this.pfn_pointwise2BiasPrev = this.pfn_pointwise2ActivationPrev =
+//     this.pfn_addInputToOutputPrev =   this.pfn_destroyInputPrev =   this.pfn_outputPrev = Base.return_input_directly;
 
 
 //!!! ...unfinished... (2021/04/18)
@@ -768,23 +934,23 @@ class Base extends ReturnOrClone.Base {
 
 
 //!!! ...unfinished... (2021/04/17) Using this.operationArray, this.operationParams, this.operationReturns for skipping non-existed operation.
-  static destroyInputSingle() {
-    this.operationInput.dispose();
-  }
+//   static destroyInputSingle() {
+//     this.operationInput.dispose();
+//   }
+//
+//   static destroyInputArray() {
+//     this.operationInput[ 0 ].dispose();
+//     this.operationInput[ 1 ].dispose();
+//   }
+//
+// //!!! ...unfinished... (2021/04/17) Using this.operationArray, this.operationParams, this.operationReturns for skipping non-existed operation.
+//   static pointwise1Conv() {
+//     this.operationReturns[ 0 ] = tf.conv2d( this.operationParams[ 0 ], this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+// //!!! What about this.operationReturns[ 1 ] ?
+//   }
 
-  static destroyInputArray() {
-    this.operationInput[ 0 ].dispose();
-    this.operationInput[ 1 ].dispose();
-  }
 
-//!!! ...unfinished... (2021/04/17) Using this.operationArray, this.operationParams, this.operationReturns for skipping non-existed operation.
-  static pointwise1Conv() {
-    this.operationReturns[ 0 ] = tf.conv2d( this.operationParams[ 0 ], this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-//!!! What about this.operationReturns[ 1 ] ?
-  }
-
-
-  /** Pointwise1 Convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
+  /** Pointwise1 Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
   }
@@ -902,7 +1068,7 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/04/17) What if two output tensors?
 
-  /** Second 1x1 pointwise convolution. */
+  /** Pointwise2 convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise2Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" );
   }
@@ -913,6 +1079,7 @@ class Base extends ReturnOrClone.Base {
     return t;
   }
 
+//!!! (2021/04/18 Remarked) Old Codes.
   static pointwise2Bias_and_destroy( inputTensor ) {
     let t = tf.add( inputTensor, this.pointwise2BiasesTensor3d );
     inputTensor.dispose();
@@ -924,6 +1091,45 @@ class Base extends ReturnOrClone.Base {
     inputTensor.dispose();
     return t;
   }
+
+
+//!!! ...unfinished... (2021/04/18) What if two output tensors?
+
+  /** Pointwise2 Convolution Bias Activation. */
+  static pointwise2Conv_and_destroy_or_keep( inputTensor ) {
+    return this.pfn_pointwise2Conv( inputTensor );
+  }
+
+  static pointwise2ConvBias_and_destroy_or_keep( inputTensor ) {
+    let t0 = this.pfn_pointwise2Conv( inputTensor );
+
+    let t1 = tf.add( t0, this.pointwise2BiasesTensor3d );
+    t0.dispose();
+
+    return t1;
+  }
+
+  static pointwise2ConvActivation_and_destroy_or_keep( inputTensor ) {
+    let t0 = this.pfn_pointwise1Conv( inputTensor );
+
+    let t1 = this.pointwise2ActivationFunction( t0 );
+    t0.dispose();
+
+    return t1;
+  }
+
+  static pointwise1ConvBiasActivation_and_destroy_or_keep( inputTensor ) {
+    let t0 = this.pfn_pointwise2Conv( inputTensor );
+
+    let t1 = tf.add( t0, this.pointwise2BiasesTensor3d );
+    t0.dispose();
+
+    t0 = this.pointwise2ActivationFunction( t1 );
+    t1.dispose();
+
+    return t0;
+  }
+
 
 
 //!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
@@ -999,6 +1205,7 @@ class Base extends ReturnOrClone.Base {
 
   get inChannels()                            { return this.channelCount_pointwise1Before; }
   
+//!!! ...unfinished... (2021/04/18) What about pointwiese21 and pointwiese22?
   /**
    * @return {number}
    *   The channel count of output tensor. If there are two output tensor (i.e. ( outputTensorCount == 2 ) ), every one of them has
@@ -1019,11 +1226,13 @@ class Base extends ReturnOrClone.Base {
       + `bDepthwiseBias=${this.bDepthwiseBias}, `
       + `depthwiseActivationName=${this.depthwiseActivationName}, `
 
+//!!! ...unfinished... (2021/04/18) What about pointwiese21 and pointwiese22?
       + `pointwise2ChannelCount=${this.pointwise2ChannelCount}, `
       + `bPointwise2Bias=${this.bPointwise2Bias}, `
       + `pointwise2ActivationName=${this.pointwise2ActivationName}, `
 
       + `inputTensorCount=${this.inputTensorCount}, `
+//!!! ...unfinished... (2021/04/18) What about pointwiese21 and pointwiese22?
       + `outputTensorCount=${this.outputTensorCount}, `
       + `bAddInputToOutput=${this.bAddInputToOutput}, `
 
