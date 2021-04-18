@@ -21,23 +21,18 @@ class Params extends Weights.Params {
    * @param {number} byteOffsetBegin
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
-
-//!!! ...unfinished... If negative, the channel count will be the same as input channel count (i.e. equal to channelCount_pointwise1Before).
-// And will be added with the input if it is the last layer of this PointDepthPoint.
-//
-//!!! ...unfinished... What if ( depthwiseStrides != 1 ) or ( depthwisePad != "same" ) ?
-
+   *
    * @param {number} pointwise1ChannelCount
    *   The output channel count of the first pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If 0 or negative, there will be no pointwise convolution before depthwise convolution.
+   * If 0, there will be no pointwise convolution before depthwise convolution.
    *
    * @param {boolean} bPointwise1Bias
    *   If true, there will be a bias after pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( pointwise1ChannelCount <= 0 ), this bias will also be ignored.
+   * If ( pointwise1ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {number} pointwise1ActivationId
    *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution. If null,
-   * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise1ChannelCount <= 0 ), this activation function
+   * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise1ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
    * @param {number} depthwise_AvgMax_Or_ChannelMultiplier
@@ -50,11 +45,11 @@ class Params extends Weights.Params {
    *
    * @param {number} depthwiseFilterHeight
    *   The height (and width) of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this will also be ignored.
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
    *
    * @param {number} depthwiseStridesPad
    *   The strides and padding of depthwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this depthwiseStridesPad will also be ignored. It has three possible value:
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this depthwiseStridesPad will also be ignored. It has three possible value:
    *   - 0: means ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" )
    *   - 1: means ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
    *   - 2: means ( depthwiseStrides == 2 ) and ( depthwisePad == "same" )
@@ -62,11 +57,11 @@ class Params extends Weights.Params {
    *
    * @param {boolean} bDepthwiseBias
    *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true, there will be a bias after depthwise convolution.
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this bias will also be ignored.
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this bias will also be ignored.
    *
    * @param {number} depthwiseActivationId
    *   The activation function id (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution. If null, it will be
-   * extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ), this activation function
+   * extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation function
    * will also be ignored.
    *
    * @param {number} pointwise2ChannelCount
@@ -75,11 +70,11 @@ class Params extends Weights.Params {
    *
    * @param {boolean} bPointwise2Bias
    *   If true, there will be a bias after the second pointwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by
-   * evolution). If ( pointwise2ChannelCount <= 0 ), this bias will also be ignored.
+   * evolution). If ( pointwise2ChannelCount == 0 ), this bias will also be ignored.
    *
    * @param {number} pointwise2ActivationId
    *   The activation function id (Params.pointwise2ActivationId.valueDesc.Ids.Xxx) after the second pointwise convolution. If null,
-   * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise2ChannelCount <= 0 ), this activation function
+   * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise2ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
    * @param {number} inputTensorCount
@@ -256,17 +251,18 @@ Params.outputTensorCount =      new ParamDesc.Int(                "outputTensorC
  *
  * @member {number} channelCount_pointwise1After_depthwiseBefore
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
- * If ( pointwise1ChannelCount <= 0 ), it equals inChannels.
+ * If ( pointwise1ChannelCount == 0 ), it equals inChannels.
  *
  * @member {number} channelCount_depthwiseAfter_pointwise2Before
  *   The channel count after the NxN depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
  * ( channelCount_pointwise1After_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier ). If
- * Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG (-2) or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX (-1)
+ * Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG (-2)
+ * or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX (-1)
  * or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE (0), it equals channelCount_pointwise1After_depthwiseBefore.
  *
  * @member {number} channelCount_pointwise2After
  *   The channel count after the second 1x1 pointwise convolution. If ( pointwise2ChannelCount > 0 ), it equals pointwise2ChannelCount.
- * If ( pointwise2ChannelCount <= 0 ), it equals channelCount_depthwiseAfter_pointwise2Before.
+ * If ( pointwise2ChannelCount == 0 ), it equals channelCount_depthwiseAfter_pointwise2Before.
  *
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has two parameters inputTensors and outputTensors. The inputTensors (tf.tensor3d[]) represents the images
@@ -382,6 +378,7 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1FiltersTensor4d = tf.tensor4d( this.pointwise1FiltersWeights.weights, this.pointwise1FiltersShape );
       this.pfn_pointwise1Conv = Base.pointwise1Conv_and_destroy; // will dispose inputTensor.
 
+
 //!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
 //      this.operationArray.push( Base.pointwise1Conv.bind( this,  ) );
       this.operationArray.push( Base.pointwise1Conv );
@@ -395,7 +392,6 @@ class Base extends ReturnOrClone.Base {
       this.pfn_pointwise2ConvPrev =     this.pfn_pointwise2BiasPrev = this.pfn_pointwise2ActivationPrev =
       this.pfn_outputPrev;
 
-
       if ( this.bPointwise1Bias ) {
         this.pointwise1BiasesWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise1BiasesShape );
         if ( !this.pointwise1BiasesWeights.extract() )
@@ -404,11 +400,20 @@ class Base extends ReturnOrClone.Base {
         this.byteOffsetEnd = this.pointwise1BiasesWeights.defaultByteOffsetEnd;
 
         this.pointwise1BiasesTensor3d = tf.tensor3d( this.pointwise1BiasesWeights.weights, this.pointwise1BiasesShape );
-        this.pfn_pointwise1Bias = Base.pointwise1Bias_and_destroy;
-      }
 
-      if ( this.pointwise1ActivationFunction )
-        this.pfn_pointwise1Activation = Base.pointwise1Activation_and_destroy;
+        if ( this.pointwise1ActivationFunction )
+          this.pfn_pointwise1ConvBiasActivation = Base.pointwise1ConvBiasActivation_and_destroy_or_keep;
+        else
+          this.pfn_pointwise1ConvBiasActivation = Base.pointwise1ConvBias_and_destroy_or_keep;
+
+      } else {
+
+        if ( this.pointwise1ActivationFunction )
+          this.pfn_pointwise1ConvBiasActivation = Base.pointwise1ConvActivation_and_destroy_or_keep;
+         else
+          this.pfn_pointwise1ConvBiasActivation = Base.pointwise1Conv_and_destroy_or_keep;
+
+      }
 
     } else {
       this.channelCount_pointwise1After_depthwiseBefore = channelCount_pointwise1Before;  // No first 1x1 pointwise convolution.
@@ -493,17 +498,17 @@ class Base extends ReturnOrClone.Base {
 
         this.depthwiseBiasesTensor3d = tf.tensor3d( this.depthwiseBiasesWeights.weights, this.depthwiseBiasesShape );
 
-       if ( this.depthwiseActivationFunction )
-         this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationBiasActivation_and_destroy_or_keep;
+        if ( this.depthwiseActivationFunction )
+          this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationBiasActivation_and_destroy_or_keep;
         else
-         this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationBias_and_destroy_or_keep;
+          this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationBias_and_destroy_or_keep;
 
       } else {
 
-       if ( this.depthwiseActivationFunction )
-         this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationActivation_and_destroy_or_keep;
-        else
-         this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperation_and_destroy_or_keep;
+        if ( this.depthwiseActivationFunction )
+          this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationActivation_and_destroy_or_keep;
+         else
+          this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperation_and_destroy_or_keep;
 
       }
 
@@ -741,7 +746,8 @@ class Base extends ReturnOrClone.Base {
     this.pfn_addInputToOutputPrev =   this.pfn_destroyInputPrev =   this.pfn_outputPrev = Base.return_input_directly;
 
 
-    this.pfn_pointwise1Conv =     this.pfn_pointwise1Bias =           this.pfn_pointwise1Activation =
+//!!! ...unfinished... (2021/04/18)
+    this.pfn_pointwise1Conv =     this.pfn_pointwise1ConvBiasActivation =
     this.pfn_depthwiseOperation = this.pfn_depthwiseOperationBiasActivation =
     this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias =           this.pfn_pointwise2Activation = Base.return_input_directly;
 
@@ -778,7 +784,7 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-  /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
+  /** Pointwise1 Convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
   }
@@ -789,17 +795,41 @@ class Base extends ReturnOrClone.Base {
     return t;
   }
 
-  static pointwise1Bias_and_destroy( inputTensor ) {
-    let t = tf.add( inputTensor, this.pointwise1BiasesTensor3d );
-    inputTensor.dispose();
-    return t;
+  /** Pointwise1 Convolution Bias Activation. */
+  static pointwise1Conv_and_destroy_or_keep( inputTensor ) {
+    return this.pfn_pointwise1Conv( inputTensor );
   }
 
-  static pointwise1Activation_and_destroy( inputTensor ) {
-    let t = this.pointwise1ActivationFunction( inputTensor );
-    inputTensor.dispose();
-    return t;
+  static pointwise1ConvBias_and_destroy_or_keep( inputTensor ) {
+    let t0 = this.pfn_pointwise1Conv( inputTensor );
+
+    let t1 = tf.add( t0, this.pointwise1BiasesTensor3d );
+    t0.dispose();
+
+    return t1;
   }
+
+  static pointwise1ConvActivation_and_destroy_or_keep( inputTensor ) {
+    let t0 = this.pfn_pointwise1Conv( inputTensor );
+
+    let t1 = this.pointwise1ActivationFunction( t0 );
+    t0.dispose();
+
+    return t1;
+  }
+
+  static pointwise1ConvBiasActivation_and_destroy_or_keep( inputTensor ) {
+    let t0 = this.pfn_pointwise1Conv( inputTensor );
+
+    let t1 = tf.add( t0, this.pointwise1BiasesTensor3d );
+    t0.dispose();
+
+    t0 = this.pointwise1ActivationFunction( t1 );
+    t1.dispose();
+
+    return t0;
+  }
+
 
   /** Depthwise Average Pooling. */
   static depthwiseAvg_and_keep( inputTensor ) {
@@ -905,16 +935,12 @@ class Base extends ReturnOrClone.Base {
     let t0, t1;
 
     // The first 1x1 pointwise convolution.
-    t0 = this.pfn_pointwise1Conv( inputTensor ); // inputTensor should NOT be disposed here. It should be disposed later (after residual connection).
-    t1 = this.pfn_pointwise1Bias( t0 );
-    t0 = this.pfn_pointwise1Activation( t1 );
+    //
+    // inputTensor should NOT be disposed here. It should be disposed later (after residual connection).
+    t0 = this.pfn_pointwise1ConvBiasActivation( inputTensor );
 
     // The depthwise convolution (or average pooling, or max pooling).
     t1 = this.pfn_depthwiseOperationBiasActivation( t0 );
-//!!! (2021/04/18 Remarked) Combine into one pfn_depthwiseOperationBiasActivation.
-//     t1 = this.pfn_depthwiseOperation( t0 );
-//     t0 = this.pfn_depthwiseBias( t1 );
-//     t1 = this.pfn_depthwiseActivation( t0 );
 
     // The second 1x1 pointwise convolution.
     t0 = this.pfn_pointwise2Conv( t1 );
@@ -953,16 +979,10 @@ class Base extends ReturnOrClone.Base {
     let t0, t1;
 
     // The first 1x1 pointwise convolution.
-    t0 = this.pfn_pointwise1Conv( inputTensor );
-    t1 = this.pfn_pointwise1Bias( t0 );
-    t0 = this.pfn_pointwise1Activation( t1 );
+    t0 = this.pfn_pointwise1ConvBiasActivation( inputTensor );
 
     // The depthwise convolution (or average pooling, or max pooling).
     t1 = this.pfn_depthwiseOperationBiasActivation( t0 );
-//!!! (2021/04/18 Remarked) Combine into one pfn_depthwiseOperationBiasActivation.
-//     t1 = this.pfn_depthwiseOperation( t0 );
-//     t0 = this.pfn_depthwiseBias( t1 );
-//     t1 = this.pfn_depthwiseActivation( t0 );
 
     // The second 1x1 pointwise convolution.
     t0 = this.pfn_pointwise2Conv( t1 );
