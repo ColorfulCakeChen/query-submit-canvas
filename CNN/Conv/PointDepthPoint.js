@@ -630,12 +630,6 @@ class Base extends ReturnOrClone.Base {
       } else if ( this.bDepthwise ) {
         switch ( this.pfn_depthwiseOperation ) {
 
-//!!! ...unfinished... if there are Base.depthwiseBias_and_keep and Base.depthwiseActivation_and_keep,
-//              could keep ( this.pfn_depthwiseOperation == Base.return_input_directly )
-//
-//               this.pfn_depthwiseBias = Base.depthwiseBias_and_???destroy;
-//               this.pfn_depthwiseActivation = Base.depthwiseActivation_and_???destroy;
-//
           // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
           case Base.return_input_directly:     this.pfn_depthwiseOperation = Base.keep_input_return_copy; break;
 
@@ -842,8 +836,6 @@ class Base extends ReturnOrClone.Base {
 
   /** Depthwise Operation Bias Activation. */
   static depthwiseOperation_and_destroy_or_keep( inputTensor ) {
-    // Although this looks like redundant, however, it is not. The reason is the this.pfn_depthwiseOperation might be
-    // either Base.return_input_directly or Base.keep_input_return_copy.
     return this.pfn_depthwiseOperation( inputTensor ); // may destroy or keep.
   }
 
