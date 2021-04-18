@@ -492,11 +492,27 @@ class Base extends ReturnOrClone.Base {
         this.byteOffsetEnd = this.depthwiseBiasesWeights.defaultByteOffsetEnd;
 
         this.depthwiseBiasesTensor3d = tf.tensor3d( this.depthwiseBiasesWeights.weights, this.depthwiseBiasesShape );
-        this.pfn_depthwiseBias = Base.depthwiseBias_and_destroy;
+
+       if ( this.depthwiseActivationFunction )
+         this.pfn_depthwiseBiasActivation = Base.depthwiseBiasActivation_and_destroy;
+        else
+         this.pfn_depthwiseBiasActivation = Base.depthwiseBias_and_destroy;
+
+//!!! (2021/04/18 Remarked) Combine into one pfn_depthwiseBiasActivation.
+//        this.pfn_depthwiseBias = Base.depthwiseBias_and_destroy;
+
+      } else {
+
+       if ( this.depthwiseActivationFunction )
+         this.pfn_depthwiseBiasActivation = Base.depthwiseActivation_and_destroy;
+        else
+         this.pfn_depthwiseBiasActivation = Base.return_input_directly;
+
       }
 
-      if ( this.depthwiseActivationFunction )
-        this.pfn_depthwiseActivation = Base.depthwiseActivation_and_destroy;
+//!!! (2021/04/18 Remarked) Combine into one pfn_depthwiseBiasActivation.
+//       if ( this.depthwiseActivationFunction )
+//         this.pfn_depthwiseActivation = Base.depthwiseActivation_and_destroy;
     }
 
     ++progressToAdvance.value;
@@ -737,9 +753,11 @@ class Base extends ReturnOrClone.Base {
     this.pfn_addInputToOutputPrev =   this.pfn_destroyInputPrev =   this.pfn_outputPrev = Base.return_input_directly;
 
 
-    this.pfn_pointwise1Conv =     this.pfn_pointwise1Bias = this.pfn_pointwise1Activation =
-    this.pfn_depthwiseOperation = this.pfn_depthwiseBias =  this.pfn_depthwiseActivation =
-    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias = this.pfn_pointwise2Activation = Base.return_input_directly;
+    this.pfn_pointwise1Conv =     this.pfn_pointwise1Bias =           this.pfn_pointwise1Activation =
+//!!! (2021/04/18 Remarked) Combine into one pfn_depthwiseBiasActivation.
+//    this.pfn_depthwiseOperation = this.pfn_depthwiseBias =  this.pfn_depthwiseActivation =
+    this.pfn_depthwiseOperation = this.pfn_depthwiseBiasActivation =
+    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias =           this.pfn_pointwise2Activation = Base.return_input_directly;
 
     this.pointwise1FiltersWeights = this.pointwise1BiasesWeights
       = this.depthwiseFiltersWeights = this.depthwiseBiasesWeights
@@ -767,17 +785,17 @@ class Base extends ReturnOrClone.Base {
     this.operationInput[ 1 ].dispose();
   }
 
-  /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
 //!!! ...unfinished... (2021/04/17) Using this.operationArray, this.operationParams, this.operationReturns for skipping non-existed operation.
   static pointwise1Conv() {
     this.operationReturns[ 0 ] = tf.conv2d( this.operationParams[ 0 ], this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
 //!!! What about this.operationReturns[ 1 ] ?
   }
 
+
+  /** First 1x1 pointwise convolution. (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static pointwise1Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
   }
-
 
   static pointwise1Conv_and_destroy( inputTensor ) {
     let t = tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" );
@@ -828,7 +846,10 @@ class Base extends ReturnOrClone.Base {
     let t = tf.depthwiseConv2d( inputTensor, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
     inputTensor.dispose();
     return t;
+
+//!!! ...unfinished... (2021/04/18) combine depthwise bias and activation into this.pfn_depthwiseOperation.
   }
+
 
   static depthwiseBias_and_destroy( inputTensor ) {
     let t = tf.add( inputTensor, this.depthwiseBiasesTensor3d );
@@ -841,6 +862,16 @@ class Base extends ReturnOrClone.Base {
     inputTensor.dispose();
     return t;
   }
+
+  static depthwiseBiasActivation_and_destroy( inputTensor ) {
+    let t0 = Base.depthwiseBias_and_destroy.call( this, inputTensor );
+    let t1 = Base.depthwiseActivation_and_destroy.call( this, t0 );
+    return t1;
+  }
+
+
+
+
 
 //!!! ...unfinished... (2021/04/17) What if two output tensors?
 
@@ -883,6 +914,9 @@ class Base extends ReturnOrClone.Base {
 
     // The depthwise convolution (or average pooling, or max pooling).
     t1 = this.pfn_depthwiseOperation( t0 );
+
+//!!! (2021/04/18 Remarked) Combine into one pfn_depthwiseBiasActivation.
+//??? should put into pfn_depthwiseOperation too.
     t0 = this.pfn_depthwiseBias( t1 );
     t1 = this.pfn_depthwiseActivation( t0 );
 
@@ -929,6 +963,9 @@ class Base extends ReturnOrClone.Base {
 
     // The depthwise convolution (or average pooling, or max pooling).
     t1 = this.pfn_depthwiseOperation( t0 );
+
+//!!! (2021/04/18 Remarked) Combine into one pfn_depthwiseBiasActivation.
+//??? should put into pfn_depthwiseOperation too.
     t0 = this.pfn_depthwiseBias( t1 );
     t1 = this.pfn_depthwiseActivation( t0 );
 
