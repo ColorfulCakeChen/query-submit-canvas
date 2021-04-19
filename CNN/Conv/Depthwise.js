@@ -20,18 +20,19 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * @member {boolean} bInitOk
  *   If true, the init() is successful.
  *
- * @member {function} pfnConv
+ * @member {function} pfnOperation
  *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
  * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
  * All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method calls one of
- * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy(), Conv_and_keep() according to the parameters.
+ * Base.return_input_directly(), Base.keep_input_return_copy(), Avg_and_destroy(), Avg_and_keep(), Max_and_destroy(), Max_and_keep(),
+ * Conv_and_destroy(), Conv_and_keep() according to the parameters.
  *
- * @member {function} pfnConvBiasActivation
+ * @member {function} pfnOperationBiasActivation
  *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
  * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
  * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
- * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(),
- * ConvActivation_and_destroy_or_keep(), ConvBiasActivation_and_destroy_or_keep() according to the parameters.
+ * Base.return_input_directly(), Base.keep_input_return_copy(), Operation_and_destroy_or_keep(), OperationBias_and_destroy_or_keep(),
+ * OperationActivation_and_destroy_or_keep(), OperationBiasActivation_and_destroy_or_keep() according to the parameters.
  */
 class Base extends ReturnOrClone_Activation.Base {
 
