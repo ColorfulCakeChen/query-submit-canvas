@@ -7,6 +7,7 @@ import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone from "./ReturnOrClone.js";
 import * as Pointwise from "./Pointwise.js";
+import * as Depthwise from "./Depthwise.js";
 
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
@@ -428,7 +429,7 @@ class Base extends ReturnOrClone.Base {
 
     this.bPointwise1 = this.pointwise1.bExisted;
     if ( this.bPointwise1 ) {
-      this.channelCount_pointwise1After_depthwiseBefore = this.pointwise1ChannelCount;
+      this.channelCount_pointwise1After_depthwiseBefore = this.pointwise1.outputChannelCount;
     } else {
       this.channelCount_pointwise1After_depthwiseBefore = channelCount_pointwise1Before;  // No pointwise1 convolution.
     }
@@ -438,95 +439,113 @@ class Base extends ReturnOrClone.Base {
 
     // 3. The depthwise operation.
 
-    this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false;               // Assume no depthwise.
-    this.channelCount_depthwiseAfter_concatenateBefore = this.channelCount_pointwise1After_depthwiseBefore; // So no channel multiplier.
+//!!! ...unfinished... (2021/04/19) Use Depthwise.Base.
+    this.depthwise = new Depthwise.Base(
+      this.channelCount_pointwise1After_depthwiseBefore,
+      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
+      params.defaultInput, this.byteOffsetEnd );
 
-    this.depthwiseFilterWidth = this.depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
+    if ( !this.depthwise.bInitOk )
+      return false;  // e.g. input array does not have enough data.
+    this.byteOffsetEnd = this.depthwise.byteOffsetEnd;
 
-    if ( this.depthwise_AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
-
-      // if 1x1 AVG pooling, or 1x1 MAX pooling, or illegal pooling type (i.e. not AVG, not MAX):
-      //   - As no depthwise operation (i.e. ( this.bDepthwise == true ) )
-      //   - Just return input (i.e. ( this.pfn_depthwiseOperation == Base.return_input_directly ) )
-
-      if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
-        // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
-      } else {
-        switch ( this.depthwise_AvgMax_Or_ChannelMultiplier ) {
-          case Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG:
-            this.bDepthwise = this.bDepthwiseAvg = true;
-            this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy;
-            break;
-
-          case Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX:
-            this.bDepthwise = this.bDepthwiseMax = true;
-            this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy;
-            break;
-        }
-      }
-
-    } else {
-      if ( this.depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
-        this.bDepthwise = this.bDepthwiseConv = true;
-
-        this.channelCount_depthwiseAfter_concatenateBefore
-          = this.channelCount_pointwise1After_depthwiseBefore * this.depthwise_AvgMax_Or_ChannelMultiplier;
-
-        this.depthwiseFiltersShape
-          = [ this.depthwiseFilterHeight, this.depthwiseFilterWidth,
-              this.channelCount_pointwise1After_depthwiseBefore, this.depthwise_AvgMax_Or_ChannelMultiplier ];
-
-        this.depthwiseFiltersWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.depthwiseFiltersShape );
-        if ( !this.depthwiseFiltersWeights.extract() )
-          return false;  // e.g. input array does not have enough data.
-
-        this.byteOffsetEnd = this.depthwiseFiltersWeights.defaultByteOffsetEnd;
-
-        this.depthwiseFiltersTensor4d = tf.tensor4d( this.depthwiseFiltersWeights.weights, this.depthwiseFiltersShape );
-        this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy; // will dispose inputTensor.
-
-      } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
-      }
-    }
-
-    switch ( this.depthwiseStridesPad ) {
-      case 0:  this.depthwiseStrides = 1; this.depthwisePad = "valid"; break;
-      default:
-      case 1:  this.depthwiseStrides = 1; this.depthwisePad = "same";  break;
-      case 2:  this.depthwiseStrides = 2; this.depthwisePad = "same";  break;
-    }
-
-    this.depthwiseActivationFunction = Base.getActivationFunction( this.depthwiseActivationId );
-
-    this.depthwiseFilterHeightWidth = [ this.depthwiseFilterHeight, this.depthwiseFilterWidth ];
-    this.depthwiseBiasesShape =       [ 1, 1, this.channelCount_depthwiseAfter_concatenateBefore ];
-
+    this.bDepthwise = this.depthwise.bExisted;
     if ( this.bDepthwise ) {
-
-      if ( this.bDepthwiseBias ) {
-        this.depthwiseBiasesWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.depthwiseBiasesShape );
-        if ( !this.depthwiseBiasesWeights.extract() )
-          return false;  // e.g. input array does not have enough data.
-
-        this.byteOffsetEnd = this.depthwiseBiasesWeights.defaultByteOffsetEnd;
-
-        this.depthwiseBiasesTensor3d = tf.tensor3d( this.depthwiseBiasesWeights.weights, this.depthwiseBiasesShape );
-
-        if ( this.depthwiseActivationFunction )
-          this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationBiasActivation_and_destroy_or_keep;
-        else
-          this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationBias_and_destroy_or_keep;
-
-      } else {
-
-        if ( this.depthwiseActivationFunction )
-          this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationActivation_and_destroy_or_keep;
-         else
-          this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperation_and_destroy_or_keep;
-
-      }
-
+      this.channelCount_depthwiseAfter_concatenateBefore = this.depthwise.outputChannelCount;
+    } else {
+      this.channelCount_depthwiseAfter_concatenateBefore = this.channelCount_pointwise1After_depthwiseBefore;  // No depthwise operation.
     }
+
+//!!! (2021/04/19 Remarked) Use Depthwise.Base instead.
+//     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false;               // Assume no depthwise.
+//     this.channelCount_depthwiseAfter_concatenateBefore = this.channelCount_pointwise1After_depthwiseBefore; // So no channel multiplier.
+//
+//     this.depthwiseFilterWidth = this.depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
+//
+//     if ( this.depthwise_AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
+//
+//       // if 1x1 AVG pooling, or 1x1 MAX pooling, or illegal pooling type (i.e. not AVG, not MAX):
+//       //   - As no depthwise operation (i.e. ( this.bDepthwise == true ) )
+//       //   - Just return input (i.e. ( this.pfn_depthwiseOperation == Base.return_input_directly ) )
+//
+//       if ( ( 1 == this.depthwiseFilterHeight ) && ( 1 == this.depthwiseFilterWidth ) ) {
+//         // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
+//       } else {
+//         switch ( this.depthwise_AvgMax_Or_ChannelMultiplier ) {
+//           case Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG:
+//             this.bDepthwise = this.bDepthwiseAvg = true;
+//             this.pfn_depthwiseOperation = Base.depthwiseAvg_and_destroy;
+//             break;
+//
+//           case Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX:
+//             this.bDepthwise = this.bDepthwiseMax = true;
+//             this.pfn_depthwiseOperation = Base.depthwiseMax_and_destroy;
+//             break;
+//         }
+//       }
+//
+//     } else {
+//       if ( this.depthwise_AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
+//         this.bDepthwise = this.bDepthwiseConv = true;
+//
+//         this.channelCount_depthwiseAfter_concatenateBefore
+//           = this.channelCount_pointwise1After_depthwiseBefore * this.depthwise_AvgMax_Or_ChannelMultiplier;
+//
+//         this.depthwiseFiltersShape
+//           = [ this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+//               this.channelCount_pointwise1After_depthwiseBefore, this.depthwise_AvgMax_Or_ChannelMultiplier ];
+//
+//         this.depthwiseFiltersWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.depthwiseFiltersShape );
+//         if ( !this.depthwiseFiltersWeights.extract() )
+//           return false;  // e.g. input array does not have enough data.
+//
+//         this.byteOffsetEnd = this.depthwiseFiltersWeights.defaultByteOffsetEnd;
+//
+//         this.depthwiseFiltersTensor4d = tf.tensor4d( this.depthwiseFiltersWeights.weights, this.depthwiseFiltersShape );
+//         this.pfn_depthwiseOperation = Base.depthwiseConv_and_destroy; // will dispose inputTensor.
+//
+//       } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
+//       }
+//     }
+//
+//     switch ( this.depthwiseStridesPad ) {
+//       case 0:  this.depthwiseStrides = 1; this.depthwisePad = "valid"; break;
+//       default:
+//       case 1:  this.depthwiseStrides = 1; this.depthwisePad = "same";  break;
+//       case 2:  this.depthwiseStrides = 2; this.depthwisePad = "same";  break;
+//     }
+//
+//     this.depthwiseActivationFunction = Base.getActivationFunction( this.depthwiseActivationId );
+//
+//     this.depthwiseFilterHeightWidth = [ this.depthwiseFilterHeight, this.depthwiseFilterWidth ];
+//     this.depthwiseBiasesShape =       [ 1, 1, this.channelCount_depthwiseAfter_concatenateBefore ];
+//
+//     if ( this.bDepthwise ) {
+//
+//       if ( this.bDepthwiseBias ) {
+//         this.depthwiseBiasesWeights = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.depthwiseBiasesShape );
+//         if ( !this.depthwiseBiasesWeights.extract() )
+//           return false;  // e.g. input array does not have enough data.
+//
+//         this.byteOffsetEnd = this.depthwiseBiasesWeights.defaultByteOffsetEnd;
+//
+//         this.depthwiseBiasesTensor3d = tf.tensor3d( this.depthwiseBiasesWeights.weights, this.depthwiseBiasesShape );
+//
+//         if ( this.depthwiseActivationFunction )
+//           this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationBiasActivation_and_destroy_or_keep;
+//         else
+//           this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationBias_and_destroy_or_keep;
+//
+//       } else {
+//
+//         if ( this.depthwiseActivationFunction )
+//           this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperationActivation_and_destroy_or_keep;
+//          else
+//           this.pfn_depthwiseOperationBiasActivation = Base.depthwiseOperation_and_destroy_or_keep;
+//
+//       }
+//
+//     }
 
     ++progressToAdvance.value;
     yield progressRoot;  // depthwise filters was ready. Report progress.
@@ -645,20 +664,23 @@ class Base extends ReturnOrClone.Base {
         this.pointwise1.setKeepInputTensor( true ); // will NOT dispose inputTensor.
 
       } else if ( this.bDepthwise ) {
-        switch ( this.pfn_depthwiseOperation ) {
+        this.depthwise.setKeepInputTensor( true ); // will NOT dispose inputTensor.
 
-          // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-          case Base.return_input_directly:     this.pfn_depthwiseOperation = Base.keep_input_return_copy; break;
-
-          case Base.depthwiseAvg_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep;  break;
-          case Base.depthwiseMax_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep;  break;
-          case Base.depthwiseConv_and_destroy: this.pfn_depthwiseOperation = Base.depthwiseConv_and_keep; break;
-
-          // Just clone input if unknown depthwise operation.
-          default:                             this.pfn_depthwiseOperation = Base.keep_input_return_copy;
-            tf.util.assert( false, `Unknown depthwise operation. (${this.pfn_depthwiseOperation})` );
-            break;
-        }
+//!!! (2021/04/19 Remarked) Use Depthwise.Base instead.
+//         switch ( this.pfn_depthwiseOperation ) {
+//
+//           // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
+//           case Base.return_input_directly:     this.pfn_depthwiseOperation = Base.keep_input_return_copy; break;
+//
+//           case Base.depthwiseAvg_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseAvg_and_keep;  break;
+//           case Base.depthwiseMax_and_destroy:  this.pfn_depthwiseOperation = Base.depthwiseMax_and_keep;  break;
+//           case Base.depthwiseConv_and_destroy: this.pfn_depthwiseOperation = Base.depthwiseConv_and_keep; break;
+//
+//           // Just clone input if unknown depthwise operation.
+//           default:                             this.pfn_depthwiseOperation = Base.keep_input_return_copy;
+//             tf.util.assert( false, `Unknown depthwise operation. (${this.pfn_depthwiseOperation})` );
+//             break;
+//         }
 
       } else if ( this.bPointwise2 ) {
 //!!! ...unfinished... (2021/04/18) What if two output tensors? Pointwise21 or Pointwise22 is responsible for it?
@@ -720,15 +742,21 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1 = null;
     }
 
-    if ( this.depthwiseFiltersTensor4d ) {
-      this.depthwiseFiltersTensor4d.dispose();
-      this.depthwiseFiltersTensor4d = null;
+    if ( this.depthwise ) {
+      this.depthwise.disposeTensors();
+      this.depthwise = null;
     }
 
-    if ( this.depthwiseBiasesTensor3d ) {
-      this.depthwiseBiasesTensor3d.dispose();
-      this.depthwiseBiasesTensor3d = null;
-    }
+//!!! (2021/04/19 Remarked) Use Depthwise.Base instead.
+//     if ( this.depthwiseFiltersTensor4d ) {
+//       this.depthwiseFiltersTensor4d.dispose();
+//       this.depthwiseFiltersTensor4d = null;
+//     }
+//
+//     if ( this.depthwiseBiasesTensor3d ) {
+//       this.depthwiseBiasesTensor3d.dispose();
+//       this.depthwiseBiasesTensor3d = null;
+//     }
 
     if ( this.pointwise21 ) {
       this.pointwise21.disposeTensors();
@@ -754,10 +782,11 @@ class Base extends ReturnOrClone.Base {
 
 
 //!!! ...unfinished... (2021/04/18)
-    this.pfn_depthwiseOperation = this.pfn_depthwiseOperationBiasActivation =
-      Base.return_input_directly;
-
-    this.depthwiseFiltersWeights = this.depthwiseBiasesWeights = null;
+//!!! (2021/04/19 Remarked) Use Depthwise.Base instead.
+//     this.pfn_depthwiseOperation = this.pfn_depthwiseOperationBiasActivation =
+//       Base.return_input_directly;
+//
+//     this.depthwiseFiltersWeights = this.depthwiseBiasesWeights = null;
 
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
@@ -789,73 +818,74 @@ class Base extends ReturnOrClone.Base {
 
 
 
-  /** Depthwise Average Pooling. */
-  static depthwiseAvg_and_keep( inputTensor ) {
-    return tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
-  }
-
-  static depthwiseAvg_and_destroy( inputTensor ) {
-    let t = tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
-    inputTensor.dispose();
-    return t;
-  }
-
-  /** Depthwise Max Pooling. */
-  static depthwiseMax_and_keep( inputTensor ) {
-    return tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
-  }
-
-  static depthwiseMax_and_destroy( inputTensor ) {
-    let t = tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
-    inputTensor.dispose();
-    return t;
-  }
-
-  /** Depthwise Convolution. */
-  static depthwiseConv_and_keep( inputTensor ) {
-    return tf.depthwiseConv2d( inputTensor, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
-  }
-
-  static depthwiseConv_and_destroy( inputTensor ) {
-    let t = tf.depthwiseConv2d( inputTensor, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
-    inputTensor.dispose();
-    return t;
-  }
-
-  /** Depthwise Operation Bias Activation. */
-  static depthwiseOperation_and_destroy_or_keep( inputTensor ) {
-    return this.pfn_depthwiseOperation( inputTensor ); // may destroy or keep.
-  }
-
-  static depthwiseOperationBias_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfn_depthwiseOperation( inputTensor ); // may destroy or keep.
-
-    let t1 = tf.add( t0, this.depthwiseBiasesTensor3d );
-    t0.dispose();
-
-    return t1;
-  }
-
-  static depthwiseOperationActivation_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfn_depthwiseOperation( inputTensor ); // may destroy or keep.
-
-    let t1 = this.depthwiseActivationFunction( t0 );
-    t0.dispose();
-
-    return t1;
-  }
-
-  static depthwiseOperationBiasActivation_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfn_depthwiseOperation( inputTensor ); // may destroy or keep.
-
-    let t1 = tf.add( t0, this.depthwiseBiasesTensor3d );
-    t0.dispose();
-
-    t0 = this.depthwiseActivationFunction( t1 );
-    t1.dispose();
-
-    return t0;
-  }
+//!!! (2021/04/19 Remarked) Use Depthwise.Base instead.
+//   /** Depthwise Average Pooling. */
+//   static depthwiseAvg_and_keep( inputTensor ) {
+//     return tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+//   }
+//
+//   static depthwiseAvg_and_destroy( inputTensor ) {
+//     let t = tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "avg", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+//     inputTensor.dispose();
+//     return t;
+//   }
+//
+//   /** Depthwise Max Pooling. */
+//   static depthwiseMax_and_keep( inputTensor ) {
+//     return tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+//   }
+//
+//   static depthwiseMax_and_destroy( inputTensor ) {
+//     let t = tf.pool( inputTensor, this.depthwiseFilterHeightWidth, "max", this.depthwisePad, 1, this.depthwiseStrides ); // dilations = 1
+//     inputTensor.dispose();
+//     return t;
+//   }
+//
+//   /** Depthwise Convolution. */
+//   static depthwiseConv_and_keep( inputTensor ) {
+//     return tf.depthwiseConv2d( inputTensor, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+//   }
+//
+//   static depthwiseConv_and_destroy( inputTensor ) {
+//     let t = tf.depthwiseConv2d( inputTensor, this.depthwiseFiltersTensor4d, this.depthwiseStrides, this.depthwisePad );
+//     inputTensor.dispose();
+//     return t;
+//   }
+//
+//   /** Depthwise Operation Bias Activation. */
+//   static depthwiseOperation_and_destroy_or_keep( inputTensor ) {
+//     return this.pfn_depthwiseOperation( inputTensor ); // may destroy or keep.
+//   }
+//
+//   static depthwiseOperationBias_and_destroy_or_keep( inputTensor ) {
+//     let t0 = this.pfn_depthwiseOperation( inputTensor ); // may destroy or keep.
+//
+//     let t1 = tf.add( t0, this.depthwiseBiasesTensor3d );
+//     t0.dispose();
+//
+//     return t1;
+//   }
+//
+//   static depthwiseOperationActivation_and_destroy_or_keep( inputTensor ) {
+//     let t0 = this.pfn_depthwiseOperation( inputTensor ); // may destroy or keep.
+//
+//     let t1 = this.depthwiseActivationFunction( t0 );
+//     t0.dispose();
+//
+//     return t1;
+//   }
+//
+//   static depthwiseOperationBiasActivation_and_destroy_or_keep( inputTensor ) {
+//     let t0 = this.pfn_depthwiseOperation( inputTensor ); // may destroy or keep.
+//
+//     let t1 = tf.add( t0, this.depthwiseBiasesTensor3d );
+//     t0.dispose();
+//
+//     t0 = this.depthwiseActivationFunction( t1 );
+//     t1.dispose();
+//
+//     return t0;
+//   }
 
 
 
@@ -873,7 +903,9 @@ class Base extends ReturnOrClone.Base {
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
 
     // The depthwise convolution (or average pooling, or max pooling).
-    t1 = this.pfn_depthwiseOperationBiasActivation( t0 );
+    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+//!!! (2021/04/19 Remarked) Use Depthwise.Base instead.
+//    t1 = this.pfn_depthwiseOperationBiasActivation( t0 );
 
 //!!! ...unfinished... (2021/04/17) What if two output tensors?
     // The pointwise21 convolution.
@@ -915,7 +947,9 @@ class Base extends ReturnOrClone.Base {
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
 
     // The depthwise convolution (or average pooling, or max pooling).
-    t1 = this.pfn_depthwiseOperationBiasActivation( t0 );
+    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+//!!! (2021/04/19 Remarked) Use Depthwise.Base instead.
+//    t1 = this.pfn_depthwiseOperationBiasActivation( t0 );
 
 //!!! ...unfinished... (2021/04/17) What if two output tensors?
     // The pointwise21 convolution.
