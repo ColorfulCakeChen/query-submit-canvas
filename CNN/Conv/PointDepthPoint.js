@@ -1,7 +1,6 @@
 export { Params, Base };
 
 import * as ValueMax from "../ValueMax.js";
-//import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
@@ -577,11 +576,18 @@ class Base extends ReturnOrClone.Base {
         this.pointwise1.setKeepInputTensor( true ); // will NOT dispose inputTensor.
 
       } else if ( this.bDepthwise ) {
-        this.depthwise.setKeepInputTensor( true ); // will NOT dispose inputTensor.
+        this.depthwise.setKeepInputTensor( true );  // will NOT dispose inputTensor.
 
-      } else if ( this.bPointwise2 ) {
-//!!! ...unfinished... (2021/04/18) What if two output tensors? Pointwise21 or Pointwise22 is responsible for it?
-        this.pfn_pointwise2Conv = Base.pointwise2Conv_and_keep; // will NOT dispose inputTensor.
+      } else if ( this.bPointwise21 ) {
+        if ( this.bPointwise22 ) {
+          // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input. Now, let pointwise22 keep-input, too.
+          this.pointwise22.setKeepInputTensor( true );
+        } else {
+          this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep-input.
+        }
+
+      } else if ( this.bPointwise22 ) {
+        this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep-input.
 
       } else {
 
