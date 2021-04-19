@@ -440,7 +440,8 @@ class Base extends ReturnOrClone.Base {
     // 3. The depthwise operation.
     this.depthwise = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwiseBefore,
-      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
+      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
+      this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
       params.defaultInput, this.byteOffsetEnd );
 
     if ( !this.depthwise.bInitOk )
@@ -466,7 +467,6 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount_pointwise1Before;
     else
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
-    
 
     // 4.1 Pointwise21
     this.pointwise21 = new Pointwise.Base(
@@ -510,6 +510,12 @@ class Base extends ReturnOrClone.Base {
       // If there is not any pointwise2 convolution, the result channel count will not be zero. It should be the channel count after
       // depthwise operation together with the second input channel count (if existed).
       this.channelCount_pointwise2After = this.channelCount_concatenateAfter_pointwise2Before;
+    }
+
+    // If both pointwise21 and pointwise22 existed, the pointwise21 should keep-input-tensor.
+    // Otherwise, the pointwise22 will fail to have to process it.
+    if ( this.bPointwise21 && this.bPointwise22 ) {
+      this.pointwise21.setKeepInputTensor( true );
     }
 
     // 4.4
