@@ -6,6 +6,7 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone from "./ReturnOrClone.js";
+import * as Pointwise from "./Pointwise.js";
 
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
@@ -214,144 +215,6 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
 
 
 /**
- * Handle initialization of pointwise convolution (1x1 conv2d), bias and activation.
- *
- * @member {number} byteOffsetBegin
- *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init().
- *
- * @member {number} byteOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
- *
- * @member {boolean} bExisted
- *   If true, the pointwise convolution exist.
- */
-class Pointwise {
-
-  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, inputFloat32Array, byteOffsetBegin ) {
-    this.inputChannelCount = inputChannelCount;
-    this.outputChannelCount = outputChannelCount;
-    this.bBias = bBias;
-    this.nActivationId = nActivationId;
-    this.inputFloat32Array = inputFloat32Array;
-    this.byteOffsetBegin = byteOffsetBegin;
-  }
-
-  init() {
-    this.bExisted = ( this.outputChannelCount > 0 );
-    this.pfnActivation = Base.getActivationFunction( this.nActivationId );
-
-    if ( this.bExisted ) {
-
-      //this.filterHeightWidth = [ 1, 1 ];
-      this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
-      this.biasesShape =       [ 1, 1, this.outputChannelCount ];
-
-      this.filtersWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
-      if ( !this.filtersWeights.extract() )
-        return false;  // e.g. input array does not have enough data.
-
-      this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
-
-      this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
-      this.pfnConv = Pointwise.Conv_and_destroy; // will dispose inputTensor.
-
-      if ( this.bBias ) {
-        this.biasesWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
-        if ( !this.pointwise1BiasesWeights.extract() )
-          return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
-
-        this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.pointwise1BiasesShape );
-
-        if ( this.pfnActivation )
-          this.pfnConvBiasActivation = Pointwise.ConvBiasActivation_and_destroy_or_keep;
-        else
-          this.pfnConvBiasActivation = Pointwise.ConvBias_and_destroy_or_keep;
-
-      } else {
-
-        if ( this.pfnActivation )
-          this.pfnConvBiasActivation = Pointwise.ConvActivation_and_destroy_or_keep;
-         else
-          this.pfnConvBiasActivation = Pointwise.Conv_and_destroy_or_keep;
-
-      }
-
-    } else {
-      this.pfnConv = Base.return_input_directly;
-      this.pfnConvBiasActivation = Pointwise.Conv_and_destroy_or_keep;
-    }
-
-    this.bInitOk = true;
-  }
-
-  disposeTensors() {
-    if ( this.filtersTensor4d ) {
-      tf.dispose( this.filtersTensor4d );
-      this.filtersTensor4d = null;
-    }
-
-    if ( this.biasesTensor3d ) {
-      tf.dispose( this.biasesTensor3d );
-      this.biasesTensor3d = null;
-    }
-
-    this.filtersWeights = this.biasesWeights = this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
-    this.byteOffsetBegin = this.byteOffsetEnd = -1;
-    this.bInitOk = false;
-  }
-
-  /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
-  static Conv_and_keep( inputTensor ) {
-    return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-  }
-
-  static Conv_and_destroy( inputTensor ) {
-    let t = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
-    inputTensor.dispose();
-    return t;
-  }
-
-  /** Pointwise Convolution, Bias and Activation. */
-  static Conv_and_destroy_or_keep( inputTensor ) {
-    return this.pfnConv( inputTensor );
-  }
-
-  static ConvBias_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnConv( inputTensor );
-
-    let t1 = tf.add( t0, this.biasesTensor3d );
-    t0.dispose();
-
-    return t1;
-  }
-
-  static ConvActivation_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnConv( inputTensor );
-
-    let t1 = this.pfnActivation( t0 );
-    t0.dispose();
-
-    return t1;
-  }
-
-  static ConvBiasActivation_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnConv( inputTensor );
-
-    let t1 = tf.add( t0, this.biasesTensor3d );
-    t0.dispose();
-
-    t0 = this.pfnActivation( t1 );
-    t1.dispose();
-
-    return t0;
-  }
-
-}
-
-
-/**
  * One step of one block of convolution neural network. There are at most three convolutions inside this object.
  *   - 1x1 pointwise convolution: change channel count. (exapnd)
  *   - NxN depthwise convolution: change channel count. (channel multiplier)
@@ -554,7 +417,7 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
     // 2. The first 1x1 pointwise convolution.
-    this.pointwise1 = new Pointwise(
+    this.pointwise1 = new Pointwise.Base(
       this.channelCount_pointwise1Before,
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
       params.defaultInput, this.byteOffsetEnd );
@@ -680,7 +543,7 @@ class Base extends ReturnOrClone.Base {
     
 
     // 4.1 Pointwise21
-    this.pointwise21 = new Pointwise(
+    this.pointwise21 = new Pointwise.Base(
       this.channelCount_concatenateAfter_pointwise2Before,
       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
       params.defaultInput, this.byteOffsetEnd );
@@ -697,7 +560,7 @@ class Base extends ReturnOrClone.Base {
     }
 
     // 4.2 Pointwise22
-    this.pointwise22 = new Pointwise(
+    this.pointwise22 = new Pointwise.Base(
       this.channelCount_concatenateAfter_pointwise2Before,
       this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
       params.defaultInput, this.byteOffsetEnd );
@@ -723,65 +586,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise2After = this.channelCount_concatenateAfter_pointwise2Before;
     }
 
-
-//!!! (2021/04/18 Remarked) Using class Pointwise instead.
-//     this.bPointwise2 = ( this.pointwise2ChannelCount > 0 );
-//     this.pointwise2ActivationFunction = Base.getActivationFunction( this.pointwise2ActivationId );
-//
-//     if ( this.bPointwise2 ) {
-//       this.channelCount_pointwise2After = this.pointwise2ChannelCount;
-//
-//       //this.pointwise2FilterHeightWidth = [ 1, 1 ];
-//       this.pointwise2FiltersShape =      [ 1, 1, this.channelCount_depthwiseAfter_pointwise2Before, this.channelCount_pointwise2After ];
-//       this.pointwise2BiasesShape =       [ 1, 1, this.channelCount_pointwise2After ];
-//
-//       this.pointwise2FiltersWeightsArray = new Array( this.outputTensorCount );
-//       this.pointwise2FiltersTensor4dArray = new Array( this.outputTensorCount );
-//
-//       this.pointwise2BiasesWeightsArray = new Array( this.outputTensorCount );
-//       this.pointwise2BiasesTensor3dArray = new Array( this.outputTensorCount );
-//
-//       for ( let i = 0; i < this.outputTensorCount; ++i ) {
-//
-//         let pointwise2FiltersWeights = this.pointwise2FiltersWeightsArray[ i ]
-//               = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise2FiltersShape );
-//
-//         if ( !pointwise2FiltersWeights.extract() )
-//           return false;  // e.g. input array does not have enough data.
-//
-//         this.byteOffsetEnd = pointwise2FiltersWeights.defaultByteOffsetEnd;
-//  
-//         let pointwise2FiltersTensor4d = this.pointwise2FiltersTensor4dArray[ i ]
-//               = tf.tensor4d( pointwise2FiltersWeights.weights, this.pointwise2FiltersShape );
-//
-// //!!! ...unfinished... (2021/04/17) What if two output tensors?
-//         this.pfn_pointwise2Conv = Base.pointwise2Conv_and_destroy; // will dispose inputTensor.
-//
-//         if ( this.bPointwise2Bias ) {
-//           let pointwise2BiasesWeights = this.pointwise2BiasesWeightsArray[ i ]
-//                 = new Weights.Base( params.defaultInput, this.byteOffsetEnd, this.pointwise2BiasesShape );
-//
-//           if ( !pointwise2BiasesWeights.extract() )
-//             return false;  // e.g. input array does not have enough data.
-//
-//           this.byteOffsetEnd = pointwise2BiasesWeights.defaultByteOffsetEnd;
-//
-//           let pointwise2BiasesTensor3d = this.pointwise2BiasesTensor3dArray[ i ]
-//                 = tf.tensor3d( pointwise2BiasesWeights.weights, this.pointwise2BiasesShape );
-//
-// //!!! ...unfinished... (2021/04/17) What if two output tensors?
-//           this.pfn_pointwise2Bias = Base.pointwise2Bias_and_destroy;
-//         }
-//
-// //!!! ...unfinished... (2021/04/17) What if two output tensors?
-//         if ( this.pointwise2ActivationFunction )
-//           this.pfn_pointwise2Activation = Base.pointwise2Activation_and_destroy;
-//       }
-//
-//     } else {
-//       this.channelCount_pointwise2After = this.channelCount_depthwiseAfter_pointwise2Before;
-//     }
-
+    // 4.4
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise2 filters was ready. Report progress.
 
@@ -837,9 +642,7 @@ class Base extends ReturnOrClone.Base {
       // Find out the first existed operation. Change it to "Xxx_keep" version. So that the
       // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
       if ( this.bPointwise1 ) {
-//!!! (2021/04/18 Remarked) Using class Pointwise instead.
-//        this.pfn_pointwise1Conv = Base.pointwise1Conv_and_keep; // will NOT dispose inputTensor.
-        this.pfnConv = Pointwise.Conv_and_keep; // will NOT dispose inputTensor.
+        this.pointwise1.setKeepInputTensor( true ); // will NOT dispose inputTensor.
 
       } else if ( this.bDepthwise ) {
         switch ( this.pfn_depthwiseOperation ) {
@@ -918,12 +721,12 @@ class Base extends ReturnOrClone.Base {
     }
 
     if ( this.depthwiseFiltersTensor4d ) {
-      tf.dispose( this.depthwiseFiltersTensor4d );
+      this.depthwiseFiltersTensor4d.dispose();
       this.depthwiseFiltersTensor4d = null;
     }
 
     if ( this.depthwiseBiasesTensor3d ) {
-      tf.dispose( this.depthwiseBiasesTensor3d );
+      this.depthwiseBiasesTensor3d.dispose();
       this.depthwiseBiasesTensor3d = null;
     }
 
@@ -936,17 +739,6 @@ class Base extends ReturnOrClone.Base {
       this.pointwise22.disposeTensors();
       this.pointwise22 = null;
     }
-
-//!!! (2021/04/18 Remarked) Using class Pointwise instead.
-//     if ( this.pointwise2FiltersTensor4dArray ) {
-//       tf.dispose( this.pointwise2FiltersTensor4dArray );
-//       this.pointwise2FiltersTensor4dArray = null;
-//     }
-//
-//     if ( this.pointwise2BiasesTensor3dArray ) {
-//       tf.dispose( this.pointwise2BiasesTensor3dArray );
-//       this.pointwise2BiasesTensor3dArray = null;
-//     }
 
 //!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
 //     this.operationInput = null;
@@ -963,24 +755,20 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/04/18)
     this.pfn_depthwiseOperation = this.pfn_depthwiseOperationBiasActivation =
-//!!! (2021/04/18 Remarked) Using class Pointwise instead.
-//    this.pfn_pointwise2Conv =     this.pfn_pointwise2Bias =           this.pfn_pointwise2Activation =
       Base.return_input_directly;
 
-    this.depthwiseFiltersWeights = this.depthwiseBiasesWeights =
-//!!! (2021/04/18 Remarked) Using class Pointwise instead.
-//    this.pointwise2FiltersWeightsArray = this.pointwise2BiasesWeightsArray =
-      null;
+    this.depthwiseFiltersWeights = this.depthwiseBiasesWeights = null;
 
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
   }
 
-  /** Convert activation function id to function object. */
-  static getActivationFunction( nActivationId ) {
-    let pfn = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
-    return pfn;
-  }
+//!!! (2021/04/19 Remarked) Move to class ReturnOrClone_Activation.
+//   /** Convert activation function id to function object. */
+//   static getActivationFunctionById( nActivationId ) {
+//     let pfn = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
+//     return pfn;
+//   }
 
 
 //!!! ...unfinished... (2021/04/17) Using this.operationArray, this.operationParams, this.operationReturns for skipping non-existed operation.
@@ -999,53 +787,6 @@ class Base extends ReturnOrClone.Base {
 // //!!! What about this.operationReturns[ 1 ] ?
 //   }
 
-
-//!!! (2021/04/18 Remarked) Using class Pointwise instead.
-//   /** Pointwise1 Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
-//   static pointwise1Conv_and_keep( inputTensor ) {
-//     return tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" ); // 1x1, Stride = 1
-//   }
-//
-//   static pointwise1Conv_and_destroy( inputTensor ) {
-//     let t = tf.conv2d( inputTensor, this.pointwise1FiltersTensor4d, 1, "valid" );
-//     inputTensor.dispose();
-//     return t;
-//   }
-//
-//   /** Pointwise1 Convolution Bias Activation. */
-//   static pointwise1Conv_and_destroy_or_keep( inputTensor ) {
-//     return this.pfn_pointwise1Conv( inputTensor );
-//   }
-//
-//   static pointwise1ConvBias_and_destroy_or_keep( inputTensor ) {
-//     let t0 = this.pfn_pointwise1Conv( inputTensor );
-//
-//     let t1 = tf.add( t0, this.pointwise1BiasesTensor3d );
-//     t0.dispose();
-//
-//     return t1;
-//   }
-//
-//   static pointwise1ConvActivation_and_destroy_or_keep( inputTensor ) {
-//     let t0 = this.pfn_pointwise1Conv( inputTensor );
-//
-//     let t1 = this.pointwise1ActivationFunction( t0 );
-//     t0.dispose();
-//
-//     return t1;
-//   }
-//
-//   static pointwise1ConvBiasActivation_and_destroy_or_keep( inputTensor ) {
-//     let t0 = this.pfn_pointwise1Conv( inputTensor );
-//
-//     let t1 = tf.add( t0, this.pointwise1BiasesTensor3d );
-//     t0.dispose();
-//
-//     t0 = this.pointwise1ActivationFunction( t1 );
-//     t1.dispose();
-//
-//     return t0;
-//   }
 
 
   /** Depthwise Average Pooling. */
@@ -1116,69 +857,6 @@ class Base extends ReturnOrClone.Base {
     return t0;
   }
 
-//!!! (2021/04/18 Remarked) Using class Pointwise instead.
-//   /** Pointwise2 convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
-//   static pointwise2Conv_and_keep( inputTensor ) {
-//     return tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" );
-//   }
-//
-//   static pointwise2Conv_and_destroy( inputTensor ) {
-//     let t = tf.conv2d( inputTensor, this.pointwise2FiltersTensor4d, 1, "valid" );
-//     inputTensor.dispose();
-//     return t;
-//   }
-//
-// //!!! (2021/04/18 Remarked) Old Codes.
-//   static pointwise2Bias_and_destroy( inputTensor ) {
-//     let t = tf.add( inputTensor, this.pointwise2BiasesTensor3d );
-//     inputTensor.dispose();
-//     return t;
-//   }
-//
-//   static pointwise2Activation_and_destroy( inputTensor ) {
-//     let t = this.pointwise2ActivationFunction( inputTensor );
-//     inputTensor.dispose();
-//     return t;
-//   }
-//
-//
-// //!!! ...unfinished... (2021/04/18) What if two output tensors?
-//
-//   /** Pointwise2 Convolution Bias Activation. */
-//   static pointwise2Conv_and_destroy_or_keep( inputTensor ) {
-//     return this.pfn_pointwise2Conv( inputTensor );
-//   }
-//
-//   static pointwise2ConvBias_and_destroy_or_keep( inputTensor ) {
-//     let t0 = this.pfn_pointwise2Conv( inputTensor );
-//
-//     let t1 = tf.add( t0, this.pointwise2BiasesTensor3d );
-//     t0.dispose();
-//
-//     return t1;
-//   }
-//
-//   static pointwise2ConvActivation_and_destroy_or_keep( inputTensor ) {
-//     let t0 = this.pfn_pointwise1Conv( inputTensor );
-//
-//     let t1 = this.pointwise2ActivationFunction( t0 );
-//     t0.dispose();
-//
-//     return t1;
-//   }
-//
-//   static pointwise1ConvBiasActivation_and_destroy_or_keep( inputTensor ) {
-//     let t0 = this.pfn_pointwise2Conv( inputTensor );
-//
-//     let t1 = tf.add( t0, this.pointwise2BiasesTensor3d );
-//     t0.dispose();
-//
-//     t0 = this.pointwise2ActivationFunction( t1 );
-//     t1.dispose();
-//
-//     return t0;
-//   }
-
 
 
 //!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
@@ -1200,11 +878,6 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2021/04/17) What if two output tensors?
     // The pointwise21 convolution.
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
-//!!! (2021/04/18 Remarked) Using class Pointwise instead.
-//     // The second 1x1 pointwise convolution.
-//     t0 = this.pfn_pointwise2Conv( t1 );
-//     t1 = this.pfn_pointwise2Bias( t0 );
-//     t0 = this.pfn_pointwise2Activation( t1 );
 
     // Skip connection.
 //!!! ...unfinished... (2021/04/18) What if two input tensors?
@@ -1247,10 +920,6 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2021/04/17) What if two output tensors?
     // The pointwise21 convolution.
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
-//!!! (2021/04/18 Remarked) Using class Pointwise instead.
-//     t0 = this.pfn_pointwise2Conv( t1 );
-//     t1 = this.pfn_pointwise2Bias( t0 );
-//     t0 = this.pfn_pointwise2Activation( t1 );
 
     return t0;
   }
