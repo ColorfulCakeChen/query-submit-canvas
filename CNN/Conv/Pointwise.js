@@ -35,12 +35,11 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, bKeepInputTensor, inputFloat32Array, byteOffsetBegin ) {
+  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, inputFloat32Array, byteOffsetBegin ) {
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-    this.bKeepInputTensor = bKeepInputTensor;
     this.inputFloat32Array = inputFloat32Array;
     this.byteOffsetBegin = byteOffsetBegin;
   }
@@ -93,24 +92,23 @@ class Base extends ReturnOrClone_Activation.Base {
       this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
     }
 
-    this.setKeepInputTensor( this.bKeepInputTensor );
-
     this.bInitOk = true;
   }
 
   disposeTensors() {
     if ( this.filtersTensor4d ) {
-      tf.dispose( this.filtersTensor4d );
+      this.filtersTensor4d.dispose();
       this.filtersTensor4d = null;
     }
 
     if ( this.biasesTensor3d ) {
-      tf.dispose( this.biasesTensor3d );
+      this.biasesTensor3d.dispose();
       this.biasesTensor3d = null;
     }
 
     this.filtersWeights = this.biasesWeights = this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
     this.byteOffsetEnd = -1;
+    this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
   }
 
