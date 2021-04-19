@@ -189,25 +189,6 @@ class Base extends ReturnOrClone_Activation.Base {
           break;
       }
 
-//!!!
-//       switch ( this.AvgMax_Or_ChannelMultiplier ) {
-//
-// //!!! (2021/04/19) What if Avg/Max but filter size is 1x1 (i.e. ( this.pfnOperation == Base.return_input_directly ) )?
-//
-// //           // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-// //           case Base.return_input_directly:     this.pfnOperation = Base.keep_input_return_copy; break;
-//
-//         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: this.pfnOperation = Base.Avg_and_keep; break;
-//         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: this.pfnOperation = Base.Max_and_keep; break;
-//
-//         // i.e. ( false == this.bExisted ). Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-//         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE:
-//           this.pfnOperationBiasActivation = this.pfnOperation = Base.keep_input_return_copy;
-//           break;
-//
-//         default: this.pfnOperation = Base.Conv_and_keep; break;
-//       }
-
     } else {
 
       switch ( this.pfnOperation ) {
@@ -226,22 +207,6 @@ class Base extends ReturnOrClone_Activation.Base {
           tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
           break;
       }
-
-//!!!
-//       switch ( this.AvgMax_Or_ChannelMultiplier ) {
-//
-// //!!! (2021/04/19) What if Avg/Max but filter size is 1x1 (i.e. ( this.pfnOperation == Base.return_input_directly ) )?
-//
-//         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: this.pfnOperation = Base.Avg_and_destroy; break;
-//         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: this.pfnOperation = Base.Max_and_destroy; break;
-//
-//         // i.e. ( false == this.bExisted ). Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-//         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE:
-//           this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
-//           break;
-//
-//         default: this.pfnOperation = Base.Conv_and_destroy; break;
-//       }
 
     }
   }
