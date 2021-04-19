@@ -407,10 +407,6 @@ class Base extends ReturnOrClone.Base {
     this.pointwise22ActivationName = params.pointwise22ActivationName;
 
     this.inputTensorCount = params.inputTensorCount;
-
-//!!! ...unfinished... (2021/04/18)
-    this.outputTensorCount = params.outputTensorCount;
-
     this.bAddInputToOutput = ( 0 == this.inputTensorCount );
 
     ++progressToAdvance.value;
@@ -515,6 +511,9 @@ class Base extends ReturnOrClone.Base {
     // Otherwise, the pointwise22 will fail to have to process it.
     if ( this.bPointwise21 && this.bPointwise22 ) {
       this.pointwise21.setKeepInputTensor( true );
+      this.outputTensorCount = 2; // This is the only case which will output two tensors. 
+    } else {
+      this.outputTensorCount = 1; // All other cases, there will be only one output tensor.
     }
 
     // 4.4
@@ -713,13 +712,13 @@ class Base extends ReturnOrClone.Base {
 
     // The depthwise convolution (or average pooling, or max pooling).
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
-//!!! (2021/04/19 Remarked) Use Depthwise.Base instead.
-//    t1 = this.pfn_depthwiseOperationBiasActivation( t0 );
 
 //!!! ...unfinished... (2021/04/17) What if two output tensors?
     // The pointwise21 convolution.
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
 
+//   this.outputTensorCount
+    
     // Skip connection.
 //!!! ...unfinished... (2021/04/18) What if two input tensors?
     t1 = tf.add( inputTensor, t0 );
@@ -802,11 +801,8 @@ class Base extends ReturnOrClone.Base {
       + `pointwise22ActivationName=${this.pointwise22ActivationName}, `
 
       + `inputTensorCount=${this.inputTensorCount}, `
-
-//!!! ...unfinished... (2021/04/18) What about pointwiese21 and pointwiese22?
-      + `outputTensorCount=${this.outputTensorCount}, `
-
       + `bAddInputToOutput=${this.bAddInputToOutput}, `
+      + `outputTensorCount=${this.outputTensorCount}, `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
