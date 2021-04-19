@@ -1,12 +1,8 @@
-export { Pointwise, Base };
+export { Base };
 
-import * as ValueMax from "../ValueMax.js";
-//import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
-import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
-
 
 /**
  * Handle initialization of pointwise convolution (1x1 conv2d), bias and activation.
@@ -28,22 +24,23 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
  * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
  * All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method calls one of
- * Conv_and_destroy(), Conv_and_keep() according to the initer()'s parameters.
+ * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy(), Conv_and_keep() according to the parameters.
  *
  * @member {function} pfnConvBiasActivation
  *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
  * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
  * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
  * Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(), ConvActivation_and_destroy_or_keep(),
- * ConvBiasActivation_and_destroy_or_keep() according to the constructor's parameters.
+ * ConvBiasActivation_and_destroy_or_keep() according to the parameters.
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, inputFloat32Array, byteOffsetBegin ) {
+  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, bKeepInputTensor, inputFloat32Array, byteOffsetBegin ) {
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
+    this.bKeepInputTensor = bKeepInputTensor;
     this.inputFloat32Array = inputFloat32Array;
     this.byteOffsetBegin = byteOffsetBegin;
   }
@@ -96,6 +93,8 @@ class Base extends ReturnOrClone_Activation.Base {
       this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
     }
 
+    this.setKeepInputTensor( this.bKeepInputTensor );
+
     this.bInitOk = true;
   }
 
@@ -113,6 +112,27 @@ class Base extends ReturnOrClone_Activation.Base {
     this.filtersWeights = this.biasesWeights = this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
     this.byteOffsetEnd = -1;
     this.bInitOk = false;
+  }
+
+  /**
+   * Adjust this.pfnConv so that the inputTensor of this.pfnConv() and this.pfnConvBiasActivation() will or will not be disposed.
+   */
+  setKeepInputTensor( bKeepInputTensor ) {
+    this.bKeepInputTensor = bKeepInputTensor;
+
+    if ( this.bExisted ) {
+      if ( bKeepInputTensor ) {
+        this.pfnConv = Base.Conv_and_keep;
+      } else {
+        this.pfnConv = Base.Conv_and_destroy;
+      }
+    } else {
+      if ( bKeepInputTensor ) {
+        this.pfnConv = Base.keep_input_return_copy;
+      } else {
+        this.pfnConv = Base.return_input_directly;
+      }
+    }
   }
 
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
