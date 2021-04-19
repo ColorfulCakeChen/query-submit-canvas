@@ -5,7 +5,7 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 
 /**
- * Handle initialization of pointwise convolution (1x1 conv2d), bias and activation.
+ * Handle pointwise convolution (1x1 conv2d), bias and activation.
  *
  * @member {number} byteOffsetBegin
  *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init().
