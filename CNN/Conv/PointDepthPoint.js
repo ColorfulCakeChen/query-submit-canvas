@@ -716,6 +716,8 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 0 ] = tf.add( t0, inputTensor );
     t0.dispose();
 
+    outputTensors[ 1 ] = null;
+
     // The inputTensor is kept (not disposed).
   }
 
@@ -731,6 +733,8 @@ class Base extends ReturnOrClone.Base {
     t0 = this.pointwise22.pfnConvBiasActivation( t1 );
     outputTensors[ 0 ] = tf.add( t0, inputTensor );
     t0.dispose();
+
+    outputTensors[ 1 ] = null;
 
     // The inputTensor is kept (not disposed).
   }
@@ -817,47 +821,44 @@ class Base extends ReturnOrClone.Base {
   
 
 //!!! ...unfinished... (2021/04/19) both pointwise21 and pointwise22
-  /** The input will be added to output for achieving skip connection. The inputTensor will be kept (not disposed).*/
-  static apply_2_2_and_keep_NoSkipConnection( inputTensors, outputTensors ) {
+  /** The two input will not be added to the only output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
+  static apply_2_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
 
-    // The pointwise1 convolution.
-    //
-    // inputTensor should NOT be disposed here. It should be disposed later (after residual connection).
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
 
-    // The depthwise convolution (or average pooling, or max pooling).
     this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
-
-//!!! ...unfinished... (2021/04/19) Concat two output tensors?
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
+
     t1 = tf.concat( this.intermediateTensorsArray, 2 ); // Along the last axis (whose id is 2 for tensor3d).
     this.intermediateTensorsArray[ 0 ].dispose();
+//!!! ...unfinished... (2021/04/19) Who is responsible for keep or destroy inputTensors[ 1 ]?
 
-//!!! ...unfinished... (2021/04/19) What if one output tensors?
-    // The pointwise21 and pointwise22 convolution.
-    this.intermediateTensorsArray[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
-    this.intermediateTensorsArray[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
-
-//   this.outputTensorCount
-    
-    // Skip connection.
-//!!! ...unfinished... (2021/04/18) What if two input tensors?
-    outputTensors[ 0 ] = tf.add( this.intermediateTensorsArray[ 0 ], ???t0 );
-    this.intermediateTensorsArray[ 0 ].dispose();
-
-    outputTensors[ 1 ];
-    t0.dispose();
-
-    // The inputTensor is kept (not disposed).
-
-    return t1;
+    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = null;
   }
 
+//!!! ...unfinished... (2021/04/19) both pointwise21 and pointwise22
+  /** The two input will not be added to the only output (pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
+  static apply_2_22_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+    let t0, t1;
 
-//!!! (2021/04/19) Old Codes
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+
+    this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
+
+    t1 = tf.concat( this.intermediateTensorsArray, 2 ); // Along the last axis (whose id is 2 for tensor3d).
+    this.intermediateTensorsArray[ 0 ].dispose();
+//!!! ...unfinished... (2021/04/19) Who is responsible for keep or destroy inputTensors[ 1 ]?
+
+    outputTensors[ 0 ] = this.pointwise22.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = null;
+  }
+
+//!!! ...unfinished... (2021/04/19) both pointwise21 and pointwise22
   /**
-   * The input will not be added to output (i.e. no residual connection).
+   * The two input will not be added to the two output (i.e. no residual connection). The input tensors may or may not be disposed.
    *
    * @param {tf.tensor[]} inputTensors
    *   An array of tensors. If ( this.inputTensorCount == 0 ) or ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
@@ -868,21 +869,55 @@ class Base extends ReturnOrClone.Base {
    * the outputTensors[ 0 ] will be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will
    * be the result.
    */
-  static apply_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+  static apply_2_2_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
 
-    // The pointwise1 convolution.
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
 
-    // The depthwise convolution (or average pooling, or max pooling).
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-//!!! ...unfinished... (2021/04/17) What if two output tensors?
-    // The pointwise21 convolution.
-    t0 = this.pointwise21.pfnConvBiasActivation( t1 );
+    t1 = tf.concat( this.intermediateTensorsArray, 2 ); // Along the last axis (whose id is 2 for tensor3d).
+    this.intermediateTensorsArray[ 0 ].dispose();
+//!!! ...unfinished... (2021/04/19) Who is responsible for keep or destroy inputTensors[ 1 ]?
 
-    return t0;
+//!!! ...unfinished... (2021/04/19) What if one output tensors?
+    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
   }
+
+
+
+
+
+//!!! (2021/04/19) Old Codes
+//   /**
+//    * The input will not be added to output (i.e. no residual connection).
+//    *
+//    * @param {tf.tensor[]} inputTensors
+//    *   An array of tensors. If ( this.inputTensorCount == 0 ) or ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
+//    * If ( this.inputTensorCount == 2 ), the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
+//    *
+//    * @param {tf.tensor[]} outputTensors
+//    *   An array for returning the result (output) tensors. If ( this.outputTensorCount == 0 ) or ( this.outputTensorCount == 1 ),
+//    * the outputTensors[ 0 ] will be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will
+//    * be the result.
+//    */
+//   static apply_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+//     let t0, t1;
+//
+//     // The pointwise1 convolution.
+//     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+//
+//     // The depthwise convolution (or average pooling, or max pooling).
+//     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+//
+// //!!! ...unfinished... (2021/04/17) What if two output tensors?
+//     // The pointwise21 convolution.
+//     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
+//
+//     return t0;
+//   }
 
   /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
   isValid() {
