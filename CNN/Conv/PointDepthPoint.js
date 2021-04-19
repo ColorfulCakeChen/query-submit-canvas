@@ -308,11 +308,9 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  *   The channel count after all pointwise2 convolution. Basically, it will be ( channelCount_pointwise21After + channelCount_pointwise22After )
  * if at least one pointwise2 convolution existed. If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it
  * will be channelCount_concatenateAfter_pointwise2Before.
-
-//!!! ...unfinished... (2021/04/18) should always  two?
-
+ *
  * @member {number} outputTensorCount
- *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep().
+ *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2.
  *
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has two parameters inputTensors and outputTensors. The inputTensors (tf.tensor3d[]) represents the images
@@ -453,12 +451,12 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // depthwise filters was ready. Report progress.
 
-//!!!
     // 4. The pointwise2 convolution.
 
-//!!! ...unfinished... (2021/04/18) This should be the concatenated channel count (if two input tensors).
-    // Assume all input tensor have the same channel count.
+    // If there are two input tensors, the channel count for pointwise2 will be the concatenated channel count
+    // (= depthwise_channel_count + another_input_channel_count ).
     if ( this.inputTensorCount > 1 )
+      // Assume all input tensors have the same channel count.
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount_pointwise1Before;
     else
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
