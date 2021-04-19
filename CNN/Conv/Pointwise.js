@@ -30,8 +30,8 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
  * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
  * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
- * Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(), ConvActivation_and_destroy_or_keep(),
- * ConvBiasActivation_and_destroy_or_keep() according to the parameters.
+ * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(),
+ * ConvActivation_and_destroy_or_keep(), ConvBiasActivation_and_destroy_or_keep() according to the parameters.
  */
 class Base extends ReturnOrClone_Activation.Base {
 
@@ -88,8 +88,8 @@ class Base extends ReturnOrClone_Activation.Base {
       }
 
     } else {
-      this.pfnConv = Base.return_input_directly;
-      this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
+      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
+      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
     }
 
     this.bInitOk = true;
@@ -113,7 +113,7 @@ class Base extends ReturnOrClone_Activation.Base {
   }
 
   /**
-   * Adjust this.pfnConv so that the inputTensor of this.pfnConv() and this.pfnConvBiasActivation() will or will not be disposed.
+   * Adjust this.pfnConv (and this.pfnConvBiasActivation if need) so that the inputTensor of this.pfnConv() and this.pfnConvBiasActivation() will or will not be disposed.
    */
   setKeepInputTensor( bKeepInputTensor ) {
     this.bKeepInputTensor = bKeepInputTensor;
@@ -125,10 +125,11 @@ class Base extends ReturnOrClone_Activation.Base {
         this.pfnConv = Base.Conv_and_destroy;
       }
     } else {
+      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
       if ( bKeepInputTensor ) {
-        this.pfnConv = Base.keep_input_return_copy;
+        this.pfnConvBiasActivation = this.pfnConv = Base.keep_input_return_copy;
       } else {
-        this.pfnConv = Base.return_input_directly;
+        this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
       }
     }
   }
