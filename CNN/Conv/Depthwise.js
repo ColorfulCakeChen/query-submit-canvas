@@ -15,7 +15,7 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {boolean} bExisted
- *   If true, this pointwise convolution exist.
+ *   If true, this depthwise convolution exist.
  *
  * @member {boolean} bInitOk
  *   If true, the init() is successful.
