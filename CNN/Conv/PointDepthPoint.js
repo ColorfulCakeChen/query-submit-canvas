@@ -887,6 +887,40 @@ class Base extends ReturnOrClone.Base {
   }
 
 
+  /** One input to one output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
+  static apply_1_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+
+    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 ); // may destroy t1.
+    outputTensors[ 1 ] = null;
+  }
+
+  /** One input to one output (pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
+  static apply_1_22_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+
+    outputTensors[ 0 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
+    outputTensors[ 1 ] = null;
+  }
+
+  /** One input to two output (pointwise21 and pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
+  static apply_1_2_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+
+    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
+  }
+
+
 
 
 
