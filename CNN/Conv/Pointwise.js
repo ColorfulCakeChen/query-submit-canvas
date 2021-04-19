@@ -113,7 +113,8 @@ class Base extends ReturnOrClone_Activation.Base {
   }
 
   /**
-   * Adjust this.pfnConv (and this.pfnConvBiasActivation if need) so that the inputTensor of this.pfnConv() and this.pfnConvBiasActivation() will or will not be disposed.
+   * Adjust this.pfnConv (and this.pfnConvBiasActivation if need) so that this.pfnConv() and this.pfnConvBiasActivation() will or will not
+   * dispose its inputTensor.
    */
   setKeepInputTensor( bKeepInputTensor ) {
     this.bKeepInputTensor = bKeepInputTensor;
