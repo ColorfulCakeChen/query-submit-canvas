@@ -820,7 +820,6 @@ class Base extends ReturnOrClone.Base {
   
   
 
-//!!! ...unfinished... (2021/04/19) both pointwise21 and pointwise22
   /** The two input will not be added to the only output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
   static apply_2_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
@@ -833,6 +832,8 @@ class Base extends ReturnOrClone.Base {
     t1 = tf.concat( this.intermediateTensorsArray, 2 ); // Along the last axis (whose id is 2 for tensor3d).
     this.intermediateTensorsArray[ 0 ].dispose();
 //!!! ...unfinished... (2021/04/19) Who is responsible for keep or destroy inputTensors[ 1 ]?
+// Perhaps, need Concat.Base. It has setKeepInputTensor0() and setKeepInputTensor1() control whether destroy
+// or keep individual inputTensors[] elements
 
     outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 1 ] = null;
