@@ -5,7 +5,8 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 
 /**
- * Handle concatenate two tensors. It could destroy one or two of the input tensors.
+ * Concatenate two tensor3d ( height x width x channel ) always along the last axis (i.e. axisId = 2, along the channel axis). It could
+ * destroy one or two of the input tensors.
  *
  * @member {number} byteOffsetBegin
  *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init().
@@ -14,40 +15,30 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {boolean} bKeepInputTensor0
+ *   If false, the first input tensor will be disposed after concatenating. If true, the first input tensor will be kept after concatenating.
+ *
+ * @member {boolean} bKeepInputTensor1
+ *   If false, the second input tensor will be disposed after concatenating. If true, the second input tensor will be kept after concatenating.
+ *
+ * @member {function} pfnConcat
+ *   This is a method. It has one parameter inputTensorsArray and return a outputTensor. The inputTensorsArray (tf.tensor3d[]) represents
+ * all the images ( height x width x channel ) which will be concatenated. They should have the same ( height x width ) but could
+ * different channel count. The outputTensor (tf.tensor3d) represents the result of concatenating the inputs along the last axis
+ * (i.e. the channel axis ( axisId = 2 ) ). The inputTensor may or may not be disposed. In fact, this method calls one of
 
 //!!! ...unfinished... (2021/04/23)
 
- * @member {boolean} bExisted
- *   If true, this pointwise convolution exist.
- *
- * @member {boolean} bInitOk
- *   If true, the init() is successful.
- *
- * @member {function} pfnConv
- *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
- * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
- * All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method calls one of
  * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy(), Conv_and_keep() according to the parameters.
  *
- * @member {function} pfnConvBiasActivation
- *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
- * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
- * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
- * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(),
- * ConvActivation_and_destroy_or_keep(), ConvBiasActivation_and_destroy_or_keep() according to the parameters.
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-
 //!!! ...unfinished... (2021/04/23)
 
-  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, inputFloat32Array, byteOffsetBegin ) {
-    this.inputChannelCount = inputChannelCount;
-    this.outputChannelCount = outputChannelCount;
-    this.bBias = bBias;
-    this.nActivationId = nActivationId;
-    this.inputFloat32Array = inputFloat32Array;
-    this.byteOffsetBegin = byteOffsetBegin;
+  constructor( bKeepInputTensor0, bKeepInputTensor1 ) {
+    this.bKeepInputTensor0 = bKeepInputTensor0;
+    this.bKeepInputTensor1 = bKeepInputTensor1;
   }
 
 
@@ -108,19 +99,8 @@ class Base extends ReturnOrClone_Activation.Base {
 //!!! ...unfinished... (2021/04/23)
 
   disposeTensors() {
-    if ( this.filtersTensor4d ) {
-      this.filtersTensor4d.dispose();
-      this.filtersTensor4d = null;
-    }
-
-    if ( this.biasesTensor3d ) {
-      this.biasesTensor3d.dispose();
-      this.biasesTensor3d = null;
-    }
-
-    this.filtersWeights = this.biasesWeights = this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
-    this.byteOffsetEnd = -1;
-    this.bKeepInputTensor = false;  // Default will dispose input tensor.
+    this.pfnConcat = null;
+    this.bKeepInputTensor0 = this.bKeepInputTensor1 = false;  // Default will dispose input tensors.
     this.bInitOk = false;
   }
 
@@ -129,10 +109,21 @@ class Base extends ReturnOrClone_Activation.Base {
 // or keep individual inputTensors[] elements
 
   /**
-   * Adjust this.pfnConv (and this.pfnConvBiasActivation if need) so that this.pfnConv() and this.pfnConvBiasActivation() will or will not
-   * dispose its inputTensor.
+   * Adjust this.pfnConcat so that this.pfnConcat() will or will not dispose its inputTensors.
    */
-  setKeepInputTensor( bKeepInputTensor ) {
+  setKeepInputTensor0( bKeepInputTensor0 ) {
+//!!! ...unfinished... (2021/04/23)
+
+  }
+
+  setKeepInputTensor1( bKeepInputTensor1 ) {
+//!!! ...unfinished... (2021/04/23)
+
+  }
+
+  setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
+//!!! ...unfinished... (2021/04/23)
+
     this.bKeepInputTensor = bKeepInputTensor;
 
     if ( this.bExisted ) {
