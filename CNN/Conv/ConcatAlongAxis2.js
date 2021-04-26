@@ -8,13 +8,6 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * Concatenate two tensor3d ( height x width x channel ) always along the last axis (i.e. axisId = 2, along the channel axis). It could
  * destroy one or two of the input tensors.
  *
- * @member {number} byteOffsetBegin
- *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init().
- *
- * @member {number} byteOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
- *
  * @member {boolean} bKeepInputTensor0
  *   If false, the first input tensor will be disposed after concatenating. If true, the first input tensor will be kept after concatenating.
  *
@@ -29,7 +22,8 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 
 //!!! ...unfinished... (2021/04/23)
 
- * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy(), Conv_and_keep() according to the parameters.
+ * Base.return_input_directly(), Base.keep_input_return_copy(), Concat_and_keep0_keep1(), Concat_and_keep0_destroy1(),
+ * Concat_and_destroy0_keep1(), Concat_and_destroy0_destroy1() according to the parameters.
  *
  */
 class Base extends ReturnOrClone_Activation.Base {
@@ -95,30 +89,24 @@ class Base extends ReturnOrClone_Activation.Base {
 
   /** Concatenate along axis id 2. (The inputTensorsArray[ 0 ] will not be disposed. The inputTensorsArray[ 1 ] will be disposed. */
   static Concat_and_keep0_destroy1( inputTensorsArray ) {
-    try {
-      return tf.concat( inputTensorsArray, 2 ); // AxisId = 2
-    } finally {
-      inputTensorsArray[ 1 ].dispose();
-    }
+    let t = tf.concat( inputTensorsArray, 2 ); // AxisId = 2
+    inputTensorsArray[ 1 ].dispose();
+    return t;
   }
 
   /** Concatenate along axis id 2. (The inputTensorsArray[ 0 ] will be disposed. The inputTensorsArray[ 1 ] will not be disposed. */
   static Concat_and_destroy0_keep1( inputTensorsArray ) {
-    try {
-      return tf.concat( inputTensorsArray, 2 ); // AxisId = 2
-    } finally {
-      inputTensorsArray[ 0 ].dispose();
-    }
+    let t = tf.concat( inputTensorsArray, 2 ); // AxisId = 2
+    inputTensorsArray[ 0 ].dispose();
+    return t;
   }
 
   /** Concatenate along axis id 2. (Both the inputTensorsArray[ 0 ] and inputTensorsArray[ 1 ] will be disposed. */
   static Concat_and_destroy0_destroy1( inputTensorsArray ) {
-    try {
-      return tf.concat( inputTensorsArray, 2 ); // AxisId = 2
-    } finally {
-      inputTensorsArray[ 0 ].dispose();
-      inputTensorsArray[ 1 ].dispose();
-    }
+    let t = tf.concat( inputTensorsArray, 2 ); // AxisId = 2
+    inputTensorsArray[ 0 ].dispose();
+    inputTensorsArray[ 1 ].dispose();
+    return t;
   }
 
 }
