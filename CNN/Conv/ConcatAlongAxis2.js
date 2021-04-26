@@ -26,61 +26,57 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * Concat_and_destroy0_keep1(), Concat_and_destroy0_destroy1() according to the parameters.
  *
  */
+
+//!!! ...unfinished... (2021/04/26) need ReturnOrClone_Activation.Base?
+
 class Base extends ReturnOrClone_Activation.Base {
 
   constructor( bKeepInputTensor0, bKeepInputTensor1 ) {
-//!!! ...unfinished... (2021/04/23)
-//     this.bKeepInputTensor0 = bKeepInputTensor0;
-//     this.bKeepInputTensor1 = bKeepInputTensor1;
-
-//!!! ...unfinished... (2021/04/23)
-    this.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
+    this.bKeepInputTensor0 = bKeepInputTensor0;
+    this.bKeepInputTensor1 = bKeepInputTensor1;
+    Base.adjust_pfnConcat.call( this );
   }
 
-//!!! ...unfinished... (2021/04/23)
 
 //!!! ...unfinished... (2021/04/23) Who is responsible for keep or destroy inputTensors[ 1 ]?
 // Perhaps, need Concat.Base. It has setKeepInputTensor0() and setKeepInputTensor1() control whether destroy
 // or keep individual inputTensors[] elements
 
-  /**
-   * Adjust this.pfnConcat so that this.pfnConcat() will or will not dispose its inputTensors.
-   */
   setKeepInputTensor0( bKeepInputTensor0 ) {
-//!!! ...unfinished... (2021/04/23)
-
+    this.bKeepInputTensor0 = bKeepInputTensor0;
+    Base.adjust_pfnConcat.call( this );
   }
 
   setKeepInputTensor1( bKeepInputTensor1 ) {
-//!!! ...unfinished... (2021/04/23)
-
+    this.bKeepInputTensor1 = bKeepInputTensor1;
+    Base.adjust_pfnConcat.call( this );
   }
 
+  /**
+   * Adjust this.pfnConcat so that this.pfnConcat() will or will not dispose its inputTensors.
+   */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
-//!!! ...unfinished... (2021/04/26)
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
+    Base.adjust_pfnConcat.call( this );
+  }
 
-    this.bKeepInputTensor = bKeepInputTensor;
-
-    if ( this.bExisted ) {
-      if ( bKeepInputTensor ) {
-        this.pfnConv = Base.Conv_and_keep;
+  /** Set this.pfnConcat according to this.bKeepInputTensor0 and this.bKeepInputTensor1. */
+  static adjust_pfnConcat() {
+    if ( this.bKeepInputTensor0 ) {
+      if ( this.bKeepInputTensor1 ) {
+        this.pfnConcat = Base.Concat_and_keep0_keep1;
       } else {
-        this.pfnConv = Base.Conv_and_destroy;
+        this.pfnConcat = Base.Concat_and_keep0_destroy1;
       }
     } else {
-      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
-      if ( bKeepInputTensor ) {
-        this.pfnConvBiasActivation = this.pfnConv = Base.keep_input_return_copy;
+      if ( this.bKeepInputTensor1 ) {
+        this.pfnConcat = Base.Concat_and_destroy0_keep1;
       } else {
-        this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
+        this.pfnConcat = Base.Concat_and_destroy0_destroy1;
       }
     }
   }
-
-
-//!!! ...unfinished... (2021/04/26)
 
   /** Concatenate along axis id 2. (Both the inputTensorsArray[ 0 ] and inputTensorsArray[ 1 ] will not be disposed. */
   static Concat_and_keep0_keep1( inputTensorsArray ) {
