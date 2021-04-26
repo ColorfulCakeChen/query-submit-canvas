@@ -34,75 +34,16 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-//!!! ...unfinished... (2021/04/23)
-
   constructor( bKeepInputTensor0, bKeepInputTensor1 ) {
-    this.bKeepInputTensor0 = bKeepInputTensor0;
-    this.bKeepInputTensor1 = bKeepInputTensor1;
-  }
-
+//!!! ...unfinished... (2021/04/23)
+//     this.bKeepInputTensor0 = bKeepInputTensor0;
+//     this.bKeepInputTensor1 = bKeepInputTensor1;
 
 //!!! ...unfinished... (2021/04/23)
-
-  init() {
-    this.disposeTensors();
-
-    this.bExisted = ( this.outputChannelCount > 0 );
-    this.pfnActivation = Base.getActivationFunction( this.nActivationId );
-
-    if ( this.bExisted ) {
-
-      //this.filterHeightWidth = [ 1, 1 ];
-      this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
-      this.biasesShape =       [ 1, 1, this.outputChannelCount ];
-
-      this.filtersWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
-      if ( !this.filtersWeights.extract() )
-        return false;  // e.g. input array does not have enough data.
-
-      this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
-
-      this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
-      this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
-
-      if ( this.bBias ) {
-        this.biasesWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
-        if ( !this.pointwise1BiasesWeights.extract() )
-          return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
-
-        this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.pointwise1BiasesShape );
-
-        if ( this.pfnActivation )
-          this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
-        else
-          this.pfnConvBiasActivation = Base.ConvBias_and_destroy_or_keep;
-
-      } else {
-
-        if ( this.pfnActivation )
-          this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
-         else
-          this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
-
-      }
-
-    } else {
-      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
-      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
-    }
-
-    this.bInitOk = true;
+    this.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
   }
-
 
 //!!! ...unfinished... (2021/04/23)
-
-  disposeTensors() {
-    this.pfnConcat = null;
-    this.bKeepInputTensor0 = this.bKeepInputTensor1 = false;  // Default will dispose input tensors.
-    this.bInitOk = false;
-  }
 
 //!!! ...unfinished... (2021/04/23) Who is responsible for keep or destroy inputTensors[ 1 ]?
 // Perhaps, need Concat.Base. It has setKeepInputTensor0() and setKeepInputTensor1() control whether destroy
@@ -122,7 +63,9 @@ class Base extends ReturnOrClone_Activation.Base {
   }
 
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
-//!!! ...unfinished... (2021/04/23)
+//!!! ...unfinished... (2021/04/26)
+    this.bKeepInputTensor0 = bKeepInputTensor0;
+    this.bKeepInputTensor1 = bKeepInputTensor1;
 
     this.bKeepInputTensor = bKeepInputTensor;
 
@@ -143,52 +86,39 @@ class Base extends ReturnOrClone_Activation.Base {
   }
 
 
-//!!! ...unfinished... (2021/04/23)
+//!!! ...unfinished... (2021/04/26)
 
-  /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
-  static Conv_and_keep( inputTensor ) {
-    return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+  /** Concatenate along axis id 2. (Both the inputTensorsArray[ 0 ] and inputTensorsArray[ 1 ] will not be disposed. */
+  static Concat_and_keep0_keep1( inputTensorsArray ) {
+    return tf.concat( inputTensorsArray, 2 ); // AxisId = 2
   }
 
-  static Conv_and_destroy( inputTensor ) {
-    let t = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
-    inputTensor.dispose();
-    return t;
+  /** Concatenate along axis id 2. (The inputTensorsArray[ 0 ] will not be disposed. The inputTensorsArray[ 1 ] will be disposed. */
+  static Concat_and_keep0_destroy1( inputTensorsArray ) {
+    try {
+      return tf.concat( inputTensorsArray, 2 ); // AxisId = 2
+    } finally {
+      inputTensorsArray[ 1 ].dispose();
+    }
   }
 
-  /** Pointwise Convolution, Bias and Activation. */
-  static Conv_and_destroy_or_keep( inputTensor ) {
-    return this.pfnConv( inputTensor );
+  /** Concatenate along axis id 2. (The inputTensorsArray[ 0 ] will be disposed. The inputTensorsArray[ 1 ] will not be disposed. */
+  static Concat_and_destroy0_keep1( inputTensorsArray ) {
+    try {
+      return tf.concat( inputTensorsArray, 2 ); // AxisId = 2
+    } finally {
+      inputTensorsArray[ 0 ].dispose();
+    }
   }
 
-  static ConvBias_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnConv( inputTensor );
-
-    let t1 = tf.add( t0, this.biasesTensor3d );
-    t0.dispose();
-
-    return t1;
-  }
-
-  static ConvActivation_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnConv( inputTensor );
-
-    let t1 = this.pfnActivation( t0 );
-    t0.dispose();
-
-    return t1;
-  }
-
-  static ConvBiasActivation_and_destroy_or_keep( inputTensor ) {
-    let t0 = this.pfnConv( inputTensor );
-
-    let t1 = tf.add( t0, this.biasesTensor3d );
-    t0.dispose();
-
-    t0 = this.pfnActivation( t1 );
-    t1.dispose();
-
-    return t0;
+  /** Concatenate along axis id 2. (Both the inputTensorsArray[ 0 ] and inputTensorsArray[ 1 ] will be disposed. */
+  static Concat_and_destroy0_destroy1( inputTensorsArray ) {
+    try {
+      return tf.concat( inputTensorsArray, 2 ); // AxisId = 2
+    } finally {
+      inputTensorsArray[ 0 ].dispose();
+      inputTensorsArray[ 1 ].dispose();
+    }
   }
 
 }
