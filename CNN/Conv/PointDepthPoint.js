@@ -321,7 +321,7 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  * ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed one or two tf.tensor3d as the result.
  * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
  * apply_and_destroy_AddInputToOutput(), apply_and_keep_AddInputToOutput(), apply_and_destroy_or_keep_NoSkipConnection(),
- * return_input_directly(), keep_input_return_copy() according to the initer()'s parameters.
+ * return_input_directly(), keep_input_return_copy_array() according to the initer()'s parameters.
  */
 class Base extends ReturnOrClone.Base {
 
@@ -564,64 +564,11 @@ class Base extends ReturnOrClone.Base {
 //       this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
 //     }
 
-
-//!!! ...unfinished... (2021/04/30)
-
     // 5.2 Determine which apply_Xxx() function should be used.
     //
     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
     // because the adjustment might also need to select different apply_Xxx() function.
-    if ( this.bPointwise21 ) {
-      if ( this.bPointwise22 ) {
-  //!!!
-        // 5.2.1 Both pointwise21 and pointwise22 existed.
-        if ( bShouldAddInputToOutput ) {
-          if ( bKeepInputTensor ) {
-            this.apply_and_destroy_or_keep = Base.apply_1_2_and_keep_AddInputToOutput;    // will NOT dispose inputTensor.
-          } else {
-            this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_AddInputToOutput; // will dispose inputTensor.
-          }
-        } else {
-          if ( this.inputTensorCount > 1 ) {
-            this.apply_and_destroy_or_keep = Base.apply_2_2_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
-          } else {
-            this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
-          }
-        }
-
-      } else {
-        // 5.2.2 Only pointwise21 existed (and no pointwise22).
-
-      }
-    } else {
-      if ( this.bPointwise22 ) {
-        // 5.2.3 Only pointwise22 existed (and no pointwise21).
-
-      } else {
-        // 5.2.4 Both pointwise21 and pointwise22 not existed.
-
-      }
-    }
-
-  Base.apply_1_21_and_keep_AddInputToOutput;
-  Base.apply_1_22_and_keep_AddInputToOutput;
-  Base.apply_1_2_and_keep_AddInputToOutput;
-
-  Base.apply_1_21_and_destroy_AddInputToOutput;
-  Base.apply_1_22_and_destroy_AddInputToOutput;
-  Base.apply_1_2_and_destroy_AddInputToOutput;
-
-  Base.apply_2_21_and_destroy_or_keep_NoSkipConnection;
-  Base.apply_2_22_and_destroy_or_keep_NoSkipConnection;
-  Base.apply_2_2_and_destroy_or_keep_NoSkipConnection;
-
-  Base.apply_1_21_and_destroy_or_keep_NoSkipConnection;
-  Base.apply_1_22_and_destroy_or_keep_NoSkipConnection;
-  Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;
-
-
-//!!!
-
+    this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
 
     // 5.3
     //
@@ -772,7 +719,84 @@ class Base extends ReturnOrClone.Base {
 //   }
 
 
+  /** Determine which apply_Xxx() function should be used.
+   * @return {function} Return one of the apply_Xxx function.
+   */
+  static Determine_apply_and_destroy_or_keep() {
 
+    if ( this.bShouldAddInputToOutput ) { // ( this.inputTensorCount == 0 ) and possible.
+      if ( this.bKeepInputTensor ) {
+        // 1. add-input-to-output and keep-input.
+
+        if ( this.bPointwise21 ) {
+          if ( this.bPointwise22 ) {
+            return Base.apply_1_2_and_keep_AddInputToOutput;  // 1.1 Both pointwise21 and pointwise22 existed.
+          } else {
+            return Base.apply_1_21_and_keep_AddInputToOutput; // 1.2 Only pointwise21 existed (and no pointwise22).
+          }
+        } else {
+          if ( this.bPointwise22 ) {
+            return Base.apply_1_22_and_keep_AddInputToOutput; // 1.3 Only pointwise22 existed (and no pointwise21).
+          } else {
+            return Base.apply_1_21_and_keep_AddInputToOutput; // 1.4 Both pointwise21 and pointwise22 not existed. (Same as only pointwise21.)
+          }
+        }
+
+      } else {
+        // 2. add-input-to-output and destroy-input.
+
+        if ( this.bPointwise21 ) {
+          if ( this.bPointwise22 ) {
+            return Base.apply_1_2_and_destroy_AddInputToOutput;  // 2.1 Both pointwise21 and pointwise22 existed.
+          } else {
+            return Base.apply_1_21_and_destroy_AddInputToOutput; // 2.2 Only pointwise21 existed (and no pointwise22).
+          }
+        } else {
+          if ( this.bPointwise22 ) {
+            return Base.apply_1_22_and_destroy_AddInputToOutput; // 2.3 Only pointwise22 existed (and no pointwise21).
+          } else {
+            return Base.apply_1_21_and_destroy_AddInputToOutput; // 2.4 Both pointwise21 and pointwise22 not existed. (Same as only pointwise21.)
+          }
+        }
+
+    } else {
+      if ( this.inputTensorCount > 1 ) {
+        // 3. (no-add-input-to-output but) concat and destroy-input (or keep-input).
+
+        if ( this.bPointwise21 ) {
+          if ( this.bPointwise22 ) {
+            return Base.apply_2_2_and_destroy_or_keep_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
+          } else {
+            return Base.apply_2_21_and_destroy_or_keep_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
+          }
+        } else {
+          if ( this.bPointwise22 ) {
+            return Base.apply_2_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
+          } else {
+            return Base.apply_2_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Same as only pointwise21.)
+          }
+        }
+
+      } else { // ( this.inputTensorCount == 1 ) or ( ( this.inputTensorCount == 0 ) but not-possible ).
+        // 4. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
+
+        if ( this.bPointwise21 ) {
+          if ( this.bPointwise22 ) {
+            return Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;  // 4.1 Both pointwise21 and pointwise22 existed.
+          } else {
+            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 4.2 Only pointwise21 existed (and no pointwise22).
+          }
+        } else {
+          if ( this.bPointwise22 ) {
+            return Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 4.3 Only pointwise22 existed (and no pointwise21).
+          } else {
+            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 4.4 Both pointwise21 and pointwise22 not existed. (Same as only pointwise21.)
+          }
+        }
+
+      }
+    }
+  }
 
 
 //!!! ...unfinished... (2021/04/17) Using this.operationInput[], this.operationArray[], this.operationParams[], this.operationReturns[] for skipping non-existed operation.
