@@ -7,6 +7,7 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone from "./ReturnOrClone.js";
 import * as Pointwise from "./Pointwise.js";
 import * as Depthwise from "./Depthwise.js";
+import * as ConcatAlongAxisId2 from "./ConcatAlongAxisId2.js";
 
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
@@ -195,10 +196,10 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
  *
  * Avoid too large filter size. Otherwise, performance may be poor.
  */
-Params.depthwiseFilterHeight =   new ParamDesc.Int( "depthwiseFilterHeight", 1, 9 );
+Params.depthwiseFilterHeight =   new ParamDesc.Int(                "depthwiseFilterHeight", 1, 9 );
 
 /** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
-Params.depthwiseStridesPad =     new ParamDesc.Int( "depthwiseStridesPad",   0, 2 );
+Params.depthwiseStridesPad =     new ParamDesc.Int(                "depthwiseStridesPad",   0, 2 );
 
 Params.bDepthwiseBias =          new ParamDesc.Bool(               "bDepthwiseBias" );
 Params.depthwiseActivationId =   new ParamDesc.ActivationFunction( "depthwiseActivationId" );
@@ -312,6 +313,9 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  * @member {number} outputTensorCount
  *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2.
  *
+
+//!!! ...unfinished... (2021/04/30) there are more functions to be pointed.
+
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has two parameters inputTensors and outputTensors. The inputTensors (tf.tensor3d[]) represents the images
  * ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed one or two tf.tensor3d as the result.
@@ -457,11 +461,13 @@ class Base extends ReturnOrClone.Base {
 
     // If there are two input tensors, the channel count for pointwise2 will be the concatenated channel count
     // (= depthwise_channel_count + another_input_channel_count ).
-    if ( this.inputTensorCount > 1 )
+    if ( this.inputTensorCount > 1 ) {
       // Assume all input tensors have the same channel count.
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount_pointwise1Before;
-    else
+      this.concatenator = new ConcatAlongAxisId2.Base( false, false );
+    } else {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
+    }
 
     // 4.1 Pointwise21
     this.pointwise21 = new Pointwise.Base(
@@ -523,6 +529,8 @@ class Base extends ReturnOrClone.Base {
     // 5. Configure correct function pointers according to whether keeping or destroying input tensor.
     this.bKeepInputTensor = bKeepInputTensor;
 
+    // 5.1
+    //
     // Although caller could request add-input-to-output, it may or may not doable.
     // Only if the dimension of output is the same as the dimension of input, it is possible to add-input-to-output.
     //
@@ -540,21 +548,83 @@ class Base extends ReturnOrClone.Base {
            )
        );
 
-    // Determine which apply_Xxx() function should be used.
+//!!! (2021/04/30 Remarked) Consider inputTensorCount and pointwise21 or pointwise22 existed.
+//     // Determine which apply_Xxx() function should be used.
+//     //
+//     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
+//     // because the adjustment might also need to select different apply_Xxx() function.
+//     if ( bShouldAddInputToOutput ) {
+//
+//       if ( bKeepInputTensor )
+//         this.apply_and_destroy_or_keep = Base.apply_and_keep_AddInputToOutput;    // will NOT dispose inputTensor.
+//       else
+//         this.apply_and_destroy_or_keep = Base.apply_and_destroy_AddInputToOutput; // will dispose inputTensor.
+//
+//     } else {
+//       this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
+//     }
+
+
+//!!! ...unfinished... (2021/04/30)
+
+    // 5.2 Determine which apply_Xxx() function should be used.
     //
     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
     // because the adjustment might also need to select different apply_Xxx() function.
-    if ( bShouldAddInputToOutput ) {
+    if ( this.bPointwise21 ) {
+      if ( this.bPointwise22 ) {
+  //!!!
+        // 5.2.1 Both pointwise21 and pointwise22 existed.
+        if ( bShouldAddInputToOutput ) {
+          if ( bKeepInputTensor ) {
+            this.apply_and_destroy_or_keep = Base.apply_1_2_and_keep_AddInputToOutput;    // will NOT dispose inputTensor.
+          } else {
+            this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_AddInputToOutput; // will dispose inputTensor.
+          }
+        } else {
+          if ( this.inputTensorCount > 1 ) {
+            this.apply_and_destroy_or_keep = Base.apply_2_2_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
+          } else {
+            this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
+          }
+        }
 
-      if ( bKeepInputTensor )
-        this.apply_and_destroy_or_keep = Base.apply_and_keep_AddInputToOutput;    // will NOT dispose inputTensor.
-      else
-        this.apply_and_destroy_or_keep = Base.apply_and_destroy_AddInputToOutput; // will dispose inputTensor.
+      } else {
+        // 5.2.2 Only pointwise21 existed (and no pointwise22).
 
+      }
     } else {
-      this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
+      if ( this.bPointwise22 ) {
+        // 5.2.3 Only pointwise22 existed (and no pointwise21).
+
+      } else {
+        // 5.2.4 Both pointwise21 and pointwise22 not existed.
+
+      }
     }
 
+  Base.apply_1_21_and_keep_AddInputToOutput;
+  Base.apply_1_22_and_keep_AddInputToOutput;
+  Base.apply_1_2_and_keep_AddInputToOutput;
+
+  Base.apply_1_21_and_destroy_AddInputToOutput;
+  Base.apply_1_22_and_destroy_AddInputToOutput;
+  Base.apply_1_2_and_destroy_AddInputToOutput;
+
+  Base.apply_2_21_and_destroy_or_keep_NoSkipConnection;
+  Base.apply_2_22_and_destroy_or_keep_NoSkipConnection;
+  Base.apply_2_2_and_destroy_or_keep_NoSkipConnection;
+
+  Base.apply_1_21_and_destroy_or_keep_NoSkipConnection;
+  Base.apply_1_22_and_destroy_or_keep_NoSkipConnection;
+  Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;
+
+
+//!!!
+
+
+    // 5.3
+    //
     // If:
     //   - caller request keep-input, or
     //   - caller request add-input-to-output, and some criteria matched.
@@ -591,10 +661,13 @@ class Base extends ReturnOrClone.Base {
       } else {
 
         // Since there is no operation at all (i.e. no pointwise1, no depthwise, no pointwise2), let's forget
-        // add-input-to-output (because it is not meaningful in this case). Just according to whether needs
-        // keep-input, change the total operation to return input directly or return clone of input directly.
+        // add-input-to-output or concatenating (because they are not meaningful in this case). Just according
+        // to whether needs keep-input, change the total operation to return input directly or return clone of
+        // input directly.
         if ( bKeepInputTensor ) {
-          this.apply_and_destroy_or_keep = Base.keep_input_return_copy;
+//!!! ...unfinished... (2021/04/30) Now input is always an array of tensors.
+//          this.apply_and_destroy_or_keep = Base.keep_input_return_copy;
+          this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
         } else {
           this.apply_and_destroy_or_keep = Base.return_input_directly;
         }
@@ -647,6 +720,10 @@ class Base extends ReturnOrClone.Base {
     if ( this.depthwise ) {
       this.depthwise.disposeTensors();
       this.depthwise = null;
+    }
+ 
+    if ( this.concatenator ) {
+      this.concatenator = null;
     }
 
     if ( this.pointwise21 ) {
@@ -702,6 +779,7 @@ class Base extends ReturnOrClone.Base {
 //  this.operationInput = ???;
 
 
+//!!! ...unfinished... (2021/04/30) What about no pointwise21 and no pointwise22?
 
   /** The only one input will be added to the only one output (pointwise21). The inputTensor will be kept (not disposed).*/
   static apply_1_21_and_keep_AddInputToOutput( inputTensors, outputTensors ) {
@@ -758,6 +836,8 @@ class Base extends ReturnOrClone.Base {
 
     // The inputTensor is kept (not disposed).
   }
+
+//!!! ...unfinished... (2021/04/30) What about no pointwise21 and no pointwise22?
 
   /** The only one input will be added to the only one output (pointwise21). The inputTensor will be disposed.*/
   static apply_1_21_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
@@ -819,6 +899,7 @@ class Base extends ReturnOrClone.Base {
 
   
   
+//!!! ...unfinished... (2021/04/30) What about no pointwise21 and no pointwise22?
 
   /** The two input will not be added to the only output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
   static apply_2_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
@@ -829,7 +910,8 @@ class Base extends ReturnOrClone.Base {
     this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-    t1 = tf.concat( this.intermediateTensorsArray, 2 ); // Along the last axis (whose id is 2 for tensor3d).
+    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray ); // Along the last axis (whose id is 2 for tensor3d).
+//!!! ...unfinished... (2021/04/30) should already handled by this.concatenator.
     this.intermediateTensorsArray[ 0 ].dispose();
 //!!! ...unfinished... (2021/04/19) Who is responsible for keep or destroy inputTensors[ 1 ]?
 // Perhaps, need Concat.Base. It has setKeepInputTensor0() and setKeepInputTensor1() control whether destroy
@@ -849,7 +931,8 @@ class Base extends ReturnOrClone.Base {
     this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-    t1 = tf.concat( this.intermediateTensorsArray, 2 ); // Along the last axis (whose id is 2 for tensor3d).
+    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray ); // Along the last axis (whose id is 2 for tensor3d).
+//!!! ...unfinished... (2021/04/30) should already handled by this.concatenator.
     this.intermediateTensorsArray[ 0 ].dispose();
 //!!! ...unfinished... (2021/04/19) Who is responsible for keep or destroy inputTensors[ 1 ]?
 
@@ -878,7 +961,8 @@ class Base extends ReturnOrClone.Base {
     this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-    t1 = tf.concat( this.intermediateTensorsArray, 2 ); // Along the last axis (whose id is 2 for tensor3d).
+    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray ); // Along the last axis (whose id is 2 for tensor3d).
+//!!! ...unfinished... (2021/04/30) should already handled by this.concatenator.
     this.intermediateTensorsArray[ 0 ].dispose();
 //!!! ...unfinished... (2021/04/19) Who is responsible for keep or destroy inputTensors[ 1 ]?
 
@@ -887,6 +971,9 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
   }
 
+
+
+//!!! ...unfinished... (2021/04/30) What about no pointwise21 and no pointwise22?
 
   /** One input to one output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
   static apply_1_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
