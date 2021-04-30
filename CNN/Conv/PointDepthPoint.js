@@ -738,7 +738,7 @@ class Base extends ReturnOrClone.Base {
           if ( this.bPointwise22 ) {
             return Base.apply_1_22_and_keep_AddInputToOutput; // 1.3 Only pointwise22 existed (and no pointwise21).
           } else {
-            return Base.apply_1_21_and_keep_AddInputToOutput; // 1.4 Both pointwise21 and pointwise22 not existed. (Same as only pointwise21.)
+            return Base.apply_1_21_and_keep_AddInputToOutput; // 1.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           }
         }
 
@@ -755,7 +755,7 @@ class Base extends ReturnOrClone.Base {
           if ( this.bPointwise22 ) {
             return Base.apply_1_22_and_destroy_AddInputToOutput; // 2.3 Only pointwise22 existed (and no pointwise21).
           } else {
-            return Base.apply_1_21_and_destroy_AddInputToOutput; // 2.4 Both pointwise21 and pointwise22 not existed. (Same as only pointwise21.)
+            return Base.apply_1_21_and_destroy_AddInputToOutput; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           }
         }
 
@@ -773,7 +773,7 @@ class Base extends ReturnOrClone.Base {
           if ( this.bPointwise22 ) {
             return Base.apply_2_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
           } else {
-            return Base.apply_2_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Same as only pointwise21.)
+            return Base.apply_2_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           }
         }
 
@@ -790,7 +790,7 @@ class Base extends ReturnOrClone.Base {
           if ( this.bPointwise22 ) {
             return Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 4.3 Only pointwise22 existed (and no pointwise21).
           } else {
-            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 4.4 Both pointwise21 and pointwise22 not existed. (Same as only pointwise21.)
+            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 4.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           }
         }
 
