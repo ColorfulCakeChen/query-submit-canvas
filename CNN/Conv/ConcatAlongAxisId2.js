@@ -1,9 +1,5 @@
 export { Base };
 
-import * as ValueDesc from "../Unpacker/ValueDesc.js";
-import * as Weights from "../Unpacker/Weights.js";
-import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
-
 /**
  * Concatenate two tensor3d ( height x width x channel ) always along the last axis (i.e. axisId = 2, along the channel axis). It could
  * destroy one or two of the input tensors.
@@ -19,17 +15,11 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * all the images ( height x width x channel ) which will be concatenated. They should have the same ( height x width ) but could
  * different channel count. The outputTensor (tf.tensor3d) represents the result of concatenating the inputs along the last axis
  * (i.e. the channel axis ( axisId = 2 ) ). The inputTensor may or may not be disposed. In fact, this method calls one of
-
-//!!! ...unfinished... (2021/04/23)
-
- * Base.return_input_directly(), Base.keep_input_return_copy(), Concat_and_keep0_keep1(), Concat_and_keep0_destroy1(),
- * Concat_and_destroy0_keep1(), Concat_and_destroy0_destroy1() according to the parameters.
+ * Concat_and_keep0_keep1(), Concat_and_keep0_destroy1(), Concat_and_destroy0_keep1(), Concat_and_destroy0_destroy1() according
+ * to the parameters.
  *
  */
-
-//!!! ...unfinished... (2021/04/26) need ReturnOrClone_Activation.Base?
-
-class Base extends ReturnOrClone_Activation.Base {
+class Base {
 
   constructor( bKeepInputTensor0, bKeepInputTensor1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
