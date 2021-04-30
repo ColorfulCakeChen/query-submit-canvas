@@ -37,16 +37,17 @@ class Base extends ReturnOrClone_Activation.Base {
     Base.adjust_pfnConcat.call( this );
   }
 
-
-//!!! ...unfinished... (2021/04/23) Who is responsible for keep or destroy inputTensors[ 1 ]?
-// Perhaps, need Concat.Base. It has setKeepInputTensor0() and setKeepInputTensor1() control whether destroy
-// or keep individual inputTensors[] elements
-
+  /**
+   * Adjust this.pfnConcat so that this.pfnConcat() will or will not dispose its inputTensors.
+   */
   setKeepInputTensor0( bKeepInputTensor0 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     Base.adjust_pfnConcat.call( this );
   }
 
+  /**
+   * Adjust this.pfnConcat so that this.pfnConcat() will or will not dispose its inputTensors.
+   */
   setKeepInputTensor1( bKeepInputTensor1 ) {
     this.bKeepInputTensor1 = bKeepInputTensor1;
     Base.adjust_pfnConcat.call( this );
