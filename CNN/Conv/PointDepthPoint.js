@@ -313,14 +313,15 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  * @member {number} outputTensorCount
  *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2.
  *
-
-//!!! ...unfinished... (2021/04/30) there are more functions to be pointed.
-
+ * @member {boolean} bAddInputToOutput
+ *   It will be true when ( this.inputTensorCount == 0 ). The input (in this case, the main input (i.e. inputTensorArray[ 0 ])
+ * will be added to the output for achieving skip connection.
+ *
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has two parameters inputTensors and outputTensors. The inputTensors (tf.tensor3d[]) represents the images
  * ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed one or two tf.tensor3d as the result.
  * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
- * apply_and_destroy_AddInputToOutput(), apply_and_keep_AddInputToOutput(), apply_and_destroy_or_keep_NoSkipConnection(),
+ * apply_X_Y_and_destroy_AddInputToOutput(), apply_X_Y_and_keep_AddInputToOutput(), apply_X_Y_and_destroy_or_keep_NoSkipConnection(),
  * return_input_directly_array(), keep_input_return_copy_array() according to the initer()'s parameters.
  */
 class Base extends ReturnOrClone.Base {
@@ -804,7 +805,6 @@ class Base extends ReturnOrClone.Base {
 //  this.operationInput = ???;
 
 
-//!!! ...unfinished... (2021/04/30) What about no pointwise21 and no pointwise22?
 
   /** The only one input will be added to the only one output (pointwise21). The inputTensor will be kept (not disposed).*/
   static apply_1_21_and_keep_AddInputToOutput( inputTensors, outputTensors ) {
@@ -851,18 +851,17 @@ class Base extends ReturnOrClone.Base {
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
-    t0 = this.pointwise21.pfnConvBiasActivation( t1 );
+    t0 = this.pointwise21.pfnConvBiasActivation( t1 ); // always keep t1.
     outputTensors[ 0 ] = tf.add( t0, inputTensor );
     t0.dispose();
 
-    t0 = this.pointwise22.pfnConvBiasActivation( t1 ); // will destroy t1.
+    t0 = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
     outputTensors[ 1 ] = tf.add( t0, inputTensor );
     t0.dispose();
 
     // The inputTensor is kept (not disposed).
   }
 
-//!!! ...unfinished... (2021/04/30) What about no pointwise21 and no pointwise22?
 
   /** The only one input will be added to the only one output (pointwise21). The inputTensor will be disposed.*/
   static apply_1_21_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
@@ -885,45 +884,8 @@ class Base extends ReturnOrClone.Base {
     return t;
   }
 
-  
-//!!! (2021/04/19) Old Codes
-//   /** The input will be added to output for achieving skip connection. The inputTensor will be kept (not disposed).*/
-//   static apply_and_keep_AddInputToOutput( inputTensors, outputTensors ) {
-//     let t0, t1;
-//
-//     // The pointwise1 convolution.
-//     //
-//     // inputTensor should NOT be disposed here. It should be disposed later (after residual connection).
-//     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-//
-//     // The depthwise convolution (or average pooling, or max pooling).
-//     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
-//
-// //!!! ...unfinished... (2021/04/17) What if two output tensors?
-//     // The pointwise21 convolution.
-//     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
-//
-// //   this.outputTensorCount
-//  
-//     // Skip connection.
-// //!!! ...unfinished... (2021/04/18) What if two input tensors?
-//     t1 = tf.add( inputTensor, t0 );
-//     t0.dispose();
-//
-//     // The inputTensor is kept (not disposed).
-//
-//     return t1;
-//   }
-//
-//   /** The input will be added to output for achieving skip connection. The inputTensor will be disposed. */
-//   static apply_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
-//     let t = Base.apply_and_keep_AddInputToOutput.call( this, inputTensor );
-//     inputTensor.dispose();
-//     return t;
-//   }
 
-  
-  
+
 //!!! ...unfinished... (2021/04/30) What about no pointwise21 and no pointwise22?
 
   /** The two input will not be added to the only output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
@@ -1110,3 +1072,4 @@ class Base extends ReturnOrClone.Base {
   }
 
 }
+z
