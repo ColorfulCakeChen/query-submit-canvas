@@ -464,6 +464,8 @@ class Base extends ReturnOrClone.Base {
     if ( this.inputTensorCount > 1 ) {
       // Assume all input tensors have the same channel count.
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount_pointwise1Before;
+
+//!!! ...unfinished... (2021/05/01)
       this.concatenator = new ConcatAlongAxisId2.Base( false, false );
     } else {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
@@ -547,22 +549,6 @@ class Base extends ReturnOrClone.Base {
             && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
            )
        );
-
-//!!! (2021/04/30 Remarked) Consider inputTensorCount and pointwise21 or pointwise22 existed.
-//     // Determine which apply_Xxx() function should be used.
-//     //
-//     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
-//     // because the adjustment might also need to select different apply_Xxx() function.
-//     if ( bShouldAddInputToOutput ) {
-//
-//       if ( bKeepInputTensor )
-//         this.apply_and_destroy_or_keep = Base.apply_and_keep_AddInputToOutput;    // will NOT dispose inputTensor.
-//       else
-//         this.apply_and_destroy_or_keep = Base.apply_and_destroy_AddInputToOutput; // will dispose inputTensor.
-//
-//     } else {
-//       this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NoSkipConnection; // will or will NOT dispose inputTensor.
-//     }
 
     // 5.2 Determine which apply_Xxx() function should be used.
     //
@@ -722,9 +708,10 @@ class Base extends ReturnOrClone.Base {
    */
   static Determine_apply_and_destroy_or_keep() {
 
-    if ( this.bShouldAddInputToOutput ) { // ( this.inputTensorCount == 0 ) and possible.
+    if ( this.bShouldAddInputToOutput ) { // 1. ( this.inputTensorCount == 0 ) and possible to add-input-to-output.
+
       if ( this.bKeepInputTensor ) {
-        // 1. add-input-to-output and keep-input.
+        // 1.1 add-input-to-output and keep-input.
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
@@ -741,7 +728,7 @@ class Base extends ReturnOrClone.Base {
         }
 
       } else {
-        // 2. add-input-to-output and destroy-input.
+        // 1.2 add-input-to-output and destroy-input.
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
@@ -759,9 +746,10 @@ class Base extends ReturnOrClone.Base {
 
       }
 
-    } else {
+    } else { // 2. ( this.inputTensorCount >= 1 ) or ( ( this.inputTensorCount == 0 ) but not-possible to add-input-to-output).
+
       if ( this.inputTensorCount > 1 ) {
-        // 3. (no-add-input-to-output but) concat and destroy-input (or keep-input).
+        // 2.1 (no-add-input-to-output but) concat and destroy-input (or keep-input).
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
@@ -777,8 +765,10 @@ class Base extends ReturnOrClone.Base {
           }
         }
 
-      } else { // ( this.inputTensorCount == 1 ) or ( ( this.inputTensorCount == 0 ) but not-possible ).
-        // 4. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
+      } else {
+        // 2.2 no-add-input-to-output, no-concat, and destroy-input (or keep-input).
+        //
+        // ( this.inputTensorCount == 1 ) or ( ( this.inputTensorCount == 0 ) but not-possible ).
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
