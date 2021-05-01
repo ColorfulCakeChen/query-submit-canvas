@@ -554,7 +554,7 @@ class Base extends ReturnOrClone.Base {
     // because the adjustment might also need to select different apply_Xxx() function.
     this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
 
-    // 5.3
+    // 5.3 Adjust the destroy-or-keep behavior of the first operation.
     //
     // If:
     //   - caller request keep-input, or
@@ -570,19 +570,18 @@ class Base extends ReturnOrClone.Base {
 //       this.operationArray[ 1 ];
 //       this.operationArray.slpice(  );
 
-      // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. input1) is always the concatenating. So the
-      // concatenator is always responsible for the keeping (not-disposed) of the input1.
-      if ( this.concatenator ) {
-        this.concatenator.setKeepInputTensor1( true );
-      }
-
-      // Find out the first existed operation. Change it to "Xxx_keep" version. So that the
+      // 5.3.1 Main input (i.e. inputTensor0)
+      //
+      // Find out the first existed operation of the main input (i.e. inputTensor0). Change it to "Xxx_keep" version. So that the
       // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
       if ( this.bPointwise1 ) {
-        this.pointwise1.setKeepInputTensor( true ); // will NOT dispose inputTensor.
+        this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensor0.
 
       } else if ( this.bDepthwise ) {
-        this.depthwise.setKeepInputTensor( true );  // will NOT dispose inputTensor.
+        this.depthwise.setKeepInputTensor( true );     // will NOT dispose inputTensor0.
+
+      } else if ( this.concatenator ) {
+        this.concatenator.setKeepInputTensor0( true ); // will NOT dispose inputTensor0.
 
       } else if ( this.bPointwise21 ) {
         if ( this.bPointwise22 ) {
@@ -597,10 +596,10 @@ class Base extends ReturnOrClone.Base {
 
       } else {
 
-        // Since there is no operation at all (i.e. no pointwise1, no depthwise, no pointwise2), let's forget
-        // add-input-to-output or concatenating (because they are not meaningful in this case). Just according
-        // to whether needs keep-input, change the total operation to return input directly or return clone of
-        // input directly.
+        // Since there is no operation at all (i.e. no pointwise1, no depthwise, no concat, no pointwise2),
+        // let's forget add-input-to-output or concatenating (because they are not meaningful in this case).
+        // Just according to whether needs keep-input, change the total operation to return input directly
+        // or return clone of input directly.
         if ( bKeepInputTensor ) {
           this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
         } else {
@@ -609,6 +608,14 @@ class Base extends ReturnOrClone.Base {
 
       }
 
+      // 5.3.2 Branch input (i.e. inputTensor1)
+      //
+      // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensor1) is always the concatenating.
+      // So the concatenator is always responsible for keeping (i.e. not-disposing) the inputTensor1.
+      if ( this.concatenator ) {
+        this.concatenator.setKeepInputTensor1( true );
+      }
+      
     } else {
       // Since it is not required to keep-input and not possible to add-input-to-output, it is not necessary to
       // use "Xxx_keep" operation. Using "Xxx_destroy" operation is sufficient.
