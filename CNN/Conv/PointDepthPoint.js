@@ -464,8 +464,6 @@ class Base extends ReturnOrClone.Base {
     if ( this.inputTensorCount > 1 ) {
       // Assume all input tensors have the same channel count.
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount_pointwise1Before;
-
-//!!! ...unfinished... (2021/05/01)
       this.concatenator = new ConcatAlongAxisId2.Base( false, false );
     } else {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
@@ -571,6 +569,12 @@ class Base extends ReturnOrClone.Base {
 //!!! Should move this.operationArray[ 1 ] (i.e. destroyInputSingle() or destroyInputArray()) to position before Base.addInputToOutput.
 //       this.operationArray[ 1 ];
 //       this.operationArray.slpice(  );
+
+      // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. input1) is always the concatenating. So the
+      // concatenator is always responsible for the keeping (not-disposed) of the input1.
+      if ( this.concatenator ) {
+        this.concatenator.setKeepInputTensor1( true );
+      }
 
       // Find out the first existed operation. Change it to "Xxx_keep" version. So that the
       // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
