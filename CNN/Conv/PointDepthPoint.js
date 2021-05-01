@@ -321,7 +321,7 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  * ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed one or two tf.tensor3d as the result.
  * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
  * apply_and_destroy_AddInputToOutput(), apply_and_keep_AddInputToOutput(), apply_and_destroy_or_keep_NoSkipConnection(),
- * return_input_directly(), keep_input_return_copy_array() according to the initer()'s parameters.
+ * return_input_directly_array(), keep_input_return_copy_array() according to the initer()'s parameters.
  */
 class Base extends ReturnOrClone.Base {
 
@@ -612,11 +612,9 @@ class Base extends ReturnOrClone.Base {
         // to whether needs keep-input, change the total operation to return input directly or return clone of
         // input directly.
         if ( bKeepInputTensor ) {
-//!!! ...unfinished... (2021/04/30) Now input is always an array of tensors.
-//          this.apply_and_destroy_or_keep = Base.keep_input_return_copy;
           this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
         } else {
-          this.apply_and_destroy_or_keep = Base.return_input_directly;
+          this.apply_and_destroy_or_keep = Base.return_input_directly_array;
         }
 
       }
@@ -758,6 +756,8 @@ class Base extends ReturnOrClone.Base {
             return Base.apply_1_21_and_destroy_AddInputToOutput; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           }
         }
+
+      }
 
     } else {
       if ( this.inputTensorCount > 1 ) {
