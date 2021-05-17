@@ -612,7 +612,7 @@ class Base extends ReturnOrClone.Base {
       // 5.3.2 Branch input (i.e. inputTensor1)
       //
       // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensor1) is always the concatenating.
-      // So the concatenator is always responsible for keeping (i.e. not-disposing) the inputTensor1.
+      // So the concatenator is always responsible for keeping (i.e. not-disposing) the inputTensor1 when need-keep-input-tensor.
       if ( this.concatenator ) {
         this.concatenator.setKeepInputTensor1( true );
       }
