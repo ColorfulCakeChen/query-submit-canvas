@@ -23,7 +23,8 @@ class TestCase {
     paramsInArray, paramsOutArray,
     pointwise1FiltersArray, pointwise1BiasesArray,
     depthwiseFiltersArray, depthwiseBiasesArray,
-    pointwise2FiltersArray, pointwise2BiasesArray,
+    pointwise21FiltersArray, pointwise21BiasesArray,
+    pointwise22FiltersArray, pointwise22BiasesArray,
     imageIn
   ) {
     this.weights = {
@@ -142,9 +143,12 @@ class TestCase {
     let [
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-      bAddInputToOutput
+      pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+      inputTensorCount,
     ] = this.weights.params.outArray;
+
+    let bAddInputToOutput = ( 0 == inputTensorCount );
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
@@ -164,9 +168,18 @@ class TestCase {
     tf.util.assert( ( pointDepthPoint.byteOffsetEnd == this.weightsFloat32Array.byteLength ),
       `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${this.weightsFloat32Array.byteLength}). ${parametersDescription}`);
 
-
+    // input tensor parameters.
     tf.util.assert( ( pointDepthPoint.inChannels == this.image.in.depth ),
       `PointDepthPoint inChannels (${pointDepthPoint.inChannels}) should be (${this.image.in.depth}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.inputTensorCount == inputTensorCount ),
+      `PointDepthPoint inputTensorCount (${pointDepthPoint.inputTensorCount}) should be (${inputTensorCount}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bAddInputToOutput == bAddInputToOutput ),
+      `PointDepthPoint bAddInputToOutput (${pointDepthPoint.bAddInputToOutput}) should be (${bAddInputToOutput}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bKeepInputTensor == bKeepInputTensor ),
+      `PointDepthPoint bKeepInputTensor (${pointDepthPoint.bKeepInputTensor}) should be (${bKeepInputTensor}). ${parametersDescription}`);
 
     // pointwise1 parameters.
     tf.util.assert( ( pointDepthPoint.pointwise1ChannelCount == pointwise1ChannelCount ),
@@ -202,27 +215,35 @@ class TestCase {
     tf.util.assert( ( pointDepthPoint.depthwiseActivationName == depthwiseActivationName ),
       `PointDepthPoint depthwiseActivationName (${pointDepthPoint.depthwiseActivationName}) should be (${depthwiseActivationName}). ${parametersDescription}`);
 
-    // pointwise2 parameters.
-    tf.util.assert( ( pointDepthPoint.pointwise2ChannelCount == pointwise2ChannelCount ),
-      `PointDepthPoint pointwise2ChannelCount (${pointDepthPoint.pointwise2ChannelCount}) should be (${pointwise2ChannelCount}). ${parametersDescription}`);
+    // pointwise21 parameters.
+    tf.util.assert( ( pointDepthPoint.pointwise21ChannelCount == pointwise21ChannelCount ),
+      `PointDepthPoint pointwise21ChannelCount (${pointDepthPoint.pointwise21ChannelCount}) should be (${pointwise21ChannelCount}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.bPointwise2Bias == bPointwise2Bias ),
-      `PointDepthPoint bPointwise2Bias (${pointDepthPoint.bPointwise2Bias}) should be (${bPointwise2Bias}). ${parametersDescription}`);
+    tf.util.assert( ( pointDepthPoint.bPointwise21Bias == bPointwise21Bias ),
+      `PointDepthPoint bPointwise21Bias (${pointDepthPoint.bPointwise21Bias}) should be (${bPointwise21Bias}). ${parametersDescription}`);
 
-    tf.util.assert( ( pointDepthPoint.pointwise2ActivationId == pointwise2ActivationId ),
-      `PointDepthPoint pointwise2ActivationId (${pointDepthPoint.pointwise2ActivationId}) should be (${pointwise2ActivationId}). ${parametersDescription}`);
+    tf.util.assert( ( pointDepthPoint.pointwise21ActivationId == pointwise21ActivationId ),
+      `PointDepthPoint pointwise21ActivationId (${pointDepthPoint.pointwise21ActivationId}) should be (${pointwise21ActivationId}). ${parametersDescription}`);
 
-    let pointwise2ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise2ActivationId );
-    tf.util.assert( ( pointDepthPoint.pointwise2ActivationName == pointwise2ActivationName ),
-      `PointDepthPoint pointwise2ActivationName (${pointDepthPoint.pointwise2ActivationName}) should be (${pointwise2ActivationName}). ${parametersDescription}`);
+    let pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise21ActivationId );
+    tf.util.assert( ( pointDepthPoint.pointwise21ActivationName == pointwise21ActivationName ),
+      `PointDepthPoint pointwise21ActivationName (${pointDepthPoint.pointwise21ActivationName}) should be (${pointwise21ActivationName}). ${parametersDescription}`);
+
+    // pointwise22 parameters.
+    tf.util.assert( ( pointDepthPoint.pointwise22ChannelCount == pointwise22ChannelCount ),
+      `PointDepthPoint pointwise22ChannelCount (${pointDepthPoint.pointwise22ChannelCount}) should be (${pointwise22ChannelCount}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bPointwise22Bias == bPointwise22Bias ),
+      `PointDepthPoint bPointwise22Bias (${pointDepthPoint.bPointwise22Bias}) should be (${bPointwise22Bias}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.pointwise22ActivationId == pointwise22ActivationId ),
+      `PointDepthPoint pointwise22ActivationId (${pointDepthPoint.pointwise22ActivationId}) should be (${pointwise22ActivationId}). ${parametersDescription}`);
+
+    let pointwise22ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise22ActivationId );
+    tf.util.assert( ( pointDepthPoint.pointwise22ActivationName == pointwise22ActivationName ),
+      `PointDepthPoint pointwise22ActivationName (${pointDepthPoint.pointwise22ActivationName}) should be (${pointwise22ActivationName}). ${parametersDescription}`);
 
     // Other parameters.
-    tf.util.assert( ( pointDepthPoint.bAddInputToOutput == bAddInputToOutput ),
-      `PointDepthPoint bAddInputToOutput (${pointDepthPoint.bAddInputToOutput}) should be (${bAddInputToOutput}). ${parametersDescription}`);
-
-
-    tf.util.assert( ( pointDepthPoint.bKeepInputTensor == bKeepInputTensor ),
-      `PointDepthPoint bKeepInputTensor (${pointDepthPoint.bKeepInputTensor}) should be (${bKeepInputTensor}). ${parametersDescription}`);
 
 //!!! ...unfinished...
 //     tf.util.assert( ( pointDepthPoint.outChannels == outChannels ),
@@ -239,9 +260,12 @@ class TestCase {
     let [
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-      pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-      bAddInputToOutput
+      pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+      inputTensorCount,
     ] = this.weights.params.outArray;
+
+    let bAddInputToOutput = ( 0 == inputTensorCount );
 
     // Create description for debug easily.
     this.paramsOutDescription =
@@ -251,7 +275,9 @@ class TestCase {
       + `depthwiseStridesPad=${depthwiseStridesPad}, `
       + `bDepthwiseBias=${bDepthwiseBias}, `
 //      + `depthwiseActivationName=${depthwiseActivationName}, `
-      + `pointwise2ChannelCount=${pointwise2ChannelCount}, bPointwise2Bias=${bPointwise2Bias}, `//pointwise2ActivationName=${pointwise2ActivationName}, `
+      + `pointwise21ChannelCount=${pointwise21ChannelCount}, bPointwise21Bias=${bPointwise21Bias}, `//pointwise21ActivationName=${pointwise21ActivationName}, `
+      + `pointwise22ChannelCount=${pointwise22ChannelCount}, bPointwise22Bias=${bPointwise22Bias}, `//pointwise22ActivationName=${pointwise22ActivationName}, `
+      + `inputTensorCount=${inputTensorCount} `
       + `bAddInputToOutput=${bAddInputToOutput}`
     ;
 
@@ -274,6 +300,9 @@ class TestCase {
         "Depthwise", this.paramsOutDescription );
     }
 
+//!!! ...unfinished... (2021/05/17) concat
+
+//!!! ...unfinished... (2021/05/17) Pointwise22
     // Pointwise2
     if ( pointwise2ChannelCount > 0 ) {
       nextImageIn = TestCase.calcPointwise(
@@ -281,6 +310,8 @@ class TestCase {
         pointwise2ChannelCount, this.weights.pointwise2Filters, bPointwise2Bias, this.weights.pointwise2Biases, pointwise2ActivationId,
         "Pointwise 2", this.paramsOutDescription );
     }
+
+//!!! ...unfinished... (2021/05/17) Pointwise22
 
     // Residual Connection.
     nextImageIn = TestCase.modifyByInput( nextImageIn, bAddInputToOutput, this.image.in, this.paramsOutDescription );
