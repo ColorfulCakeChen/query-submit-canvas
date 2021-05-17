@@ -846,9 +846,6 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-
-//!!! ...unfinished... (2021/04/30) What about no pointwise21 and no pointwise22?
-
   /** The two input will not be added to the only output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
   static apply_2_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
@@ -858,18 +855,12 @@ class Base extends ReturnOrClone.Base {
     this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray ); // Along the last axis (whose id is 2 for tensor3d).
-//!!! ...unfinished... (2021/04/30) should already handled by this.concatenator.
-    this.intermediateTensorsArray[ 0 ].dispose();
-//!!! ...unfinished... (2021/04/19) Who is responsible for keep or destroy inputTensors[ 1 ]?
-// Perhaps, need Concat.Base. It has setKeepInputTensor0() and setKeepInputTensor1() control whether destroy
-// or keep individual inputTensors[] elements
+    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
 
     outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 1 ] = null;
   }
 
-//!!! ...unfinished... (2021/04/19) both pointwise21 and pointwise22
   /** The two input will not be added to the only output (pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
   static apply_2_22_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
@@ -879,16 +870,12 @@ class Base extends ReturnOrClone.Base {
     this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray ); // Along the last axis (whose id is 2 for tensor3d).
-//!!! ...unfinished... (2021/04/30) should already handled by this.concatenator.
-    this.intermediateTensorsArray[ 0 ].dispose();
-//!!! ...unfinished... (2021/04/19) Who is responsible for keep or destroy inputTensors[ 1 ]?
+    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
 
     outputTensors[ 0 ] = this.pointwise22.pfnConvBiasActivation( t1 );
     outputTensors[ 1 ] = null;
   }
 
-//!!! ...unfinished... (2021/04/19) both pointwise21 and pointwise22
   /**
    * The two input will not be added to the two output (i.e. no residual connection). The input tensors may or may not be disposed.
    *
@@ -909,12 +896,8 @@ class Base extends ReturnOrClone.Base {
     this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
-    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray ); // Along the last axis (whose id is 2 for tensor3d).
-//!!! ...unfinished... (2021/04/30) should already handled by this.concatenator.
-    this.intermediateTensorsArray[ 0 ].dispose();
-//!!! ...unfinished... (2021/04/19) Who is responsible for keep or destroy inputTensors[ 1 ]?
+    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
 
-//!!! ...unfinished... (2021/04/19) What if one output tensors?
     outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
   }
