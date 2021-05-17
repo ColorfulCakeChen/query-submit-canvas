@@ -594,6 +594,47 @@ y.print();
   }
 
   /**
+   * @param {number}   imageIn1.height    Image1 height
+   * @param {number}   imageIn1.width     Image1 width
+   * @param {number}   imageIn1.depth     Image1 channel count
+   * @param {number[]} imageIn1.dataArray Image1 data
+   * @param {number}   imageIn2.height    Image2 height
+   * @param {number}   imageIn2.width     Image2 width
+   * @param {number}   imageIn2.depth     Image2 channel count
+   * @param {number[]} imageIn2.dataArray Image2 data
+   * @param {string}   concatName        A string for debug message of this concatenation.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {object}
+   *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2. If imageIn2 is null, return imageIn1.
+   * If both imageIn1 and imageIn2 is null, return null.
+   */
+  static calcConcatAlongAxisId2( imageIn1, imageIn2, concatName, parametersDesc ) {
+
+    if ( null == imageIn1 ) {
+      if ( null == imageIn2 )
+        return null; // Both input is null. Return null.
+      else
+        return imageIn2; // Only input1 is null. Return input2.
+    } else {
+      if ( null == imageIn2 )
+        return imageIn1; // Only input2 is null. Return input1.
+      else
+        ; // Both input is not null. Do concatenate them in the following.
+    }
+
+    tf.util.assert( ( imageIn1.height == imageIn2.height ),
+      `${concatName} shape imageIn1.height (${imageIn1.height}) `
+        + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})`);
+
+    tf.util.assert( ( imageIn1.width == imageIn2.width ),
+      `${concatName} shape imageIn1.width (${imageIn1.width}) `
+        + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})`);
+
+//!!! ...unfinished... (2021/05/17)
+  }
+
+  /**
    * @param {number}   imageOut.height    Output image height
    * @param {number}   imageOut.width     Output image width
    * @param {number}   imageOut.depth     Output image channel count
