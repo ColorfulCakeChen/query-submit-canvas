@@ -631,7 +631,38 @@ y.print();
       `${concatName} shape imageIn1.width (${imageIn1.width}) `
         + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})`);
 
-//!!! ...unfinished... (2021/05/17)
+    let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
+    let imageOut = {
+      height: imageIn1.height, width: imageIn1.width, depth: ( imageIn1.depth + imageIn2.depth ), dataArray: new Float32Array( imageOutLength ) };
+
+    // Concatenate along the image depth.
+    for ( let y = 0; y < imageIn1.height; ++y ) {
+      let indexBaseX = ( y * imageIn1.width );
+
+      for ( let x = 0; x < imageIn1.width; ++x ) {
+        let indexBaseC = ( indexBaseX + x );
+        let outIndexBaseC = ( indexBaseC * imageOut.depth );
+
+        let outChannel = 0;
+
+        let in1IndexBaseC  = ( indexBaseC * imageIn1.depth );
+        for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
+          let in1Index = in1IndexBaseC + in1Channel;
+          let outIndex = outIndexBaseC + outChannel;
+          imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
+        }
+
+        let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
+        for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
+          let in2Index = in2IndexBaseC + in2Channel;
+          let outIndex = outIndexBaseC + outChannel;
+          imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
+        }
+
+      }
+    }
+
+    return imageOut;
   }
 
   /**
