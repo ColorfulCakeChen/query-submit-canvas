@@ -903,9 +903,6 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-
-//!!! ...unfinished... (2021/04/30) What about no pointwise21 and no pointwise22?
-
   /** One input to one output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
   static apply_1_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
@@ -939,38 +936,6 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
   }
 
-
-
-
-
-//!!! (2021/04/19) Old Codes
-//   /**
-//    * The input will not be added to output (i.e. no residual connection).
-//    *
-//    * @param {tf.tensor[]} inputTensors
-//    *   An array of tensors. If ( this.inputTensorCount == 0 ) or ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
-//    * If ( this.inputTensorCount == 2 ), the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
-//    *
-//    * @param {tf.tensor[]} outputTensors
-//    *   An array for returning the result (output) tensors. If ( this.outputTensorCount == 0 ) or ( this.outputTensorCount == 1 ),
-//    * the outputTensors[ 0 ] will be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will
-//    * be the result.
-//    */
-//   static apply_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
-//     let t0, t1;
-//
-//     // The pointwise1 convolution.
-//     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-//
-//     // The depthwise convolution (or average pooling, or max pooling).
-//     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
-//
-// //!!! ...unfinished... (2021/04/17) What if two output tensors?
-//     // The pointwise21 convolution.
-//     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
-//
-//     return t0;
-//   }
 
   /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
   isValid() {
@@ -1016,4 +981,3 @@ class Base extends ReturnOrClone.Base {
   }
 
 }
-z
