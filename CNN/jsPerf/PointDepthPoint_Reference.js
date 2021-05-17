@@ -34,7 +34,8 @@ class TestCase {
       },
       pointwise1Filters: pointwise1FiltersArray, pointwise1Biases: pointwise1BiasesArray,
       depthwiseFilters:  depthwiseFiltersArray,  depthwiseBiases:  depthwiseBiasesArray,
-      pointwise2Filters: pointwise2FiltersArray, pointwise2Biases: pointwise2BiasesArray
+      pointwise21Filters: pointwise21FiltersArray, pointwise21Biases: pointwise21BiasesArray,
+      pointwise22Filters: pointwise22FiltersArray, pointwise22Biases: pointwise22BiasesArray,
     };
 
     this.image = {
@@ -75,14 +76,24 @@ class TestCase {
         offset += depthwiseBiasesArray.length;
       }
 
-      if ( pointwise2FiltersArray ) {
-        weightsSourceArray.push( { offset: offset, weights: pointwise2FiltersArray } );
-        offset += pointwise2FiltersArray.length;
+      if ( pointwise21FiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise21FiltersArray } );
+        offset += pointwise21FiltersArray.length;
       }
 
-      if ( pointwise2BiasesArray ) {
-        weightsSourceArray.push( { offset: offset, weights: pointwise2BiasesArray } );
-        offset += pointwise2BiasesArray.length;
+      if ( pointwise21BiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise21BiasesArray } );
+        offset += pointwise21BiasesArray.length;
+      }
+
+      if ( pointwise22FiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise22FiltersArray } );
+        offset += pointwise22FiltersArray.length;
+      }
+
+      if ( pointwise22BiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise22BiasesArray } );
+        offset += pointwise22BiasesArray.length;
       }
 
       this.weightsTotalLength = offset;
@@ -130,10 +141,13 @@ class TestCase {
         //depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
         null, null, null, null, null,
 
-        //pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
+        //pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
         null, null, null,
 
-        // bAddInputToOutput
+        //pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+        null, null, null,
+
+        // inputTensorCount
         null
       )
 
@@ -430,30 +444,8 @@ class TestCase {
     let effectFilterWidth =  dilationWidth  * ( depthwiseFilterWidth  - 1 ) + 1;
     let effectFilterSize = effectFilterHeight * effectFilterWidth;
 
-//!!! (2021/03/19 Remarked)
-//     // For accessing the input pixels around the filter.
-//     let effectFilterHeightOffset = Math.floor( ( effectFilterHeight - 1 ) / 2 );
-//     let effectFilterWidthOffset =  Math.floor( ( effectFilterWidth  - 1 ) / 2 );
-
     let padHeight = 0, padHeightTop = 0, padHeightBottom = 0, padWidth = 0, padWidthLeft = 0, padWidthRight = 0;
     let imageInBeginY = 0, imageInBeginX = 0; // So that negative ( inX, inY ) will never happen. for ( pad == "valid" ).
-
-//!!! (2021/03/19 Remarked) Only if ( strides == 1 ) and ( pad == "same" ), the output image ( height, width ) equals input image ( height, width ).
-//     switch ( depthwisePad ) {
-//       case "valid": // When ( pad == "valid" ), the convolution will be ignored if the filter is partially outside input image.
-//         imageOutHeight = Math.floor( ( ( imageIn.height - effectFilterHeight) / stridesHeight ) + 1 );
-//         imageOutWidth =  Math.floor( ( ( imageIn.width  - effectFilterWidth ) / stridesWidth  ) + 1 );
-//         imageInBeginY = effectFilterHeightOffset; // So that negative ( inX, inY ) will never happen.
-//         imageInBeginX = effectFilterWidthOffset;
-//         break;
-//
-//       case "same":
-// //!!! ...unfinished... Only if ( strides == 1 ) and ( pad == "same" ), the output image ( height, width ) equals input image ( height, width ).
-//         imageOutHeight = imageIn.height;
-//         imageOutWidth = imageIn.width;
-//         imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will happen, but they will be viewed as zero value.
-//         break;
-//     }
 
     // Determine padding number around the input image height and width.
     if ( depthwisePad == "same" ) {
@@ -492,17 +484,11 @@ class TestCase {
 
     // Depthwise Convolution
     for ( let outY = 0; outY < imageOutHeight; ++outY ) {
-//!!! (2021/03/19 Remarked)
-//      let outIndexBaseX = ( outY * imageIn.width );
       let outIndexBaseX = ( outY * imageOutWidth );
-//!!! (2021/03/19 Remarked)
-//      let inYBase = imageInBeginY + ( outY * stridesHeight ) - effectFilterHeightOffset;
       let inYBase = imageInBeginY + ( outY * stridesHeight );
 
       for ( let outX = 0; outX < imageOutWidth; ++outX ) {
         let outIndexBaseC = ( ( outIndexBaseX + outX ) * imageOutDepth );
-//!!! (2021/03/19 Remarked)
-//        let inXBase = imageInBeginX + ( outX * stridesWidth ) - effectFilterWidthOffset;
         let inXBase = imageInBeginX + ( outX * stridesWidth );
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
@@ -701,20 +687,6 @@ y.print();
     let pfnActivation = PointDepthPoint.Base.getActivationFunction( nActivationId );
     if ( !pfnActivation )
       return imageIn;
-
-//!!! (2021/03/17 Remarked) Using tensor directly.
-//     for ( let y = 0; y < imageIn.height; ++y ) {
-//       let indexBaseX = ( y * imageIn.width );
-//
-//       for ( let x = 0; x < imageIn.width; ++x ) {
-//         let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
-//
-//         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-//           let inIndex = inIndexBaseC + inChannel;
-//           imageIn.dataArray[ inIndex ] = pfnActivation( imageIn.dataArray[ inIndex ] );
-//         }
-//       }
-//     }
 
     // Because pfnActivation is function of tensorflow.js, it process tf.tensor (i.e. not a single value).
     // Let it process the whole input (as an Array) directly.
