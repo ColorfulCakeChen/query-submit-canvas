@@ -14,10 +14,10 @@ class TestCase {
    * @param {number[]} paramsInArray     parameters data which will be processed by PointDepthPoint.Params
    * @param {number[]} paramsOutArray    parameters data which should match the result of PointDepthPoint.Params
    *
-   * @param {number}   imageIn.height    Image height
-   * @param {number}   imageIn.width     Image width
-   * @param {number}   imageIn.depth     Image channel count
-   * @param {number[]} imageIn.dataArray Image data
+   * @param {number}   imageInArray[ i ].height    Image height
+   * @param {number}   imageInArray[ i ].width     Image width
+   * @param {number}   imageInArray[ i ].depth     Image channel count
+   * @param {number[]} imageInArray[ i ].dataArray Image data
    */
   constructor(
     paramsInArray, paramsOutArray,
@@ -25,8 +25,7 @@ class TestCase {
     depthwiseFiltersArray, depthwiseBiasesArray,
     pointwise21FiltersArray, pointwise21BiasesArray,
     pointwise22FiltersArray, pointwise22BiasesArray,
-    imageIn1,
-    imageIn2
+    imageInArray
   ) {
     this.weights = {
       params: {
@@ -39,10 +38,7 @@ class TestCase {
       pointwise22Filters: pointwise22FiltersArray, pointwise22Biases: pointwise22BiasesArray,
     };
 
-    this.image = {
-      in1: imageIn1,
-      in2: imageIn2
-    };
+    this.imageInArray = imageInArray;
 
     // For testing not start at the offset 0.
     this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
@@ -129,7 +125,7 @@ class TestCase {
     // Initialize successfully or failed.
     let bInitOk = pointDepthPoint.init(
       progress,
-      this.image.in1.depth, // channelCount_pointwise1Before (i.e. inChannels)
+      this.imageInArray[ 0 ].depth, // channelCount_pointwise1Before (i.e. inChannels)
       bKeepInputTensor,
 
 //!!! ...unfinished... Could be randomized some null some non-null?
@@ -185,8 +181,8 @@ class TestCase {
       `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${this.weightsFloat32Array.byteLength}). ${parametersDescription}`);
 
     // input tensor parameters.
-    tf.util.assert( ( pointDepthPoint.inChannels == this.image.in.depth ),
-      `PointDepthPoint inChannels (${pointDepthPoint.inChannels}) should be (${this.image.in.depth}). ${parametersDescription}`);
+    tf.util.assert( ( pointDepthPoint.inChannels == this.imageInArray[ 0 ].in.depth ),
+      `PointDepthPoint inChannels (${pointDepthPoint.inChannels}) should be (${this.imageInArray[ 0 ].depth}). ${parametersDescription}`);
 
     tf.util.assert( ( pointDepthPoint.inputTensorCount == inputTensorCount ),
       `PointDepthPoint inputTensorCount (${pointDepthPoint.inputTensorCount}) should be (${inputTensorCount}). ${parametersDescription}`);
@@ -268,7 +264,7 @@ class TestCase {
     return pointDepthPoint;
   }
 
-  /** According to this.weights.params.outArray and this.image.inArray, calculate this.image.outArray.
+  /** According to this.weights.params.outArray and this.imageInArray, calculate imageOutArray.
    * @return {number[]} Return output image data as array.
    */ 
   calcResult() {
@@ -297,7 +293,7 @@ class TestCase {
       + `bAddInputToOutput=${bAddInputToOutput}`
     ;
 
-    let nextImageIn = this.image.in1;
+    let nextImageIn = this.imageInArray[ 0 ];
 
     // 1. Pointwise1
     if ( pointwise1ChannelCount > 0 ) {
@@ -318,7 +314,7 @@ class TestCase {
 
     // 3. Concat (along image depth)
     if ( inputTensorCount > 1 ) {
-      nextImageIn = TestCase.calcConcatAlongAxisId2( nextImageIn, this.image.in2, "ConcatAlongDepth", this.paramsOutDescription );
+      nextImageIn = TestCase.calcConcatAlongAxisId2( nextImageIn, this.imageInArray[ 1 ], "ConcatAlongDepth", this.paramsOutDescription );
     }
 
     // 4. Pointwise2
@@ -341,13 +337,12 @@ class TestCase {
     }
 
     // 5. Residual Connection.
-    //
-    // Always using input image1. In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
     nextImageOutArray[ 0 ] = TestCase.modifyByInput(
-      nextImageOutArray[ 0 ], bAddInputToOutput, this.image.in1, "ImageOut1", this.paramsOutDescription );
+      nextImageOutArray[ 0 ], bAddInputToOutput, this.imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
 
+    // Always using input image1 (i.e. this.imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
     nextImageOutArray[ 1 ] = TestCase.modifyByInput(
-      nextImageOutArray[ 1 ], bAddInputToOutput, this.image.in1, "ImageOut2", this.paramsOutDescription );
+      nextImageOutArray[ 1 ], bAddInputToOutput, this.imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
 
     return nextImageOutArray;
   }
