@@ -299,15 +299,15 @@ class TestCase {
 
     let nextImageIn = this.image.in1;
 
-    // Pointwise1
+    // 1. Pointwise1
     if ( pointwise1ChannelCount > 0 ) {
       nextImageIn = TestCase.calcPointwise(
         nextImageIn,
         pointwise1ChannelCount, this.weights.pointwise1Filters, bPointwise1Bias, this.weights.pointwise1Biases, pointwise1ActivationId,
-        "Pointwise 1", this.paramsOutDescription );
+        "Pointwise1", this.paramsOutDescription );
     }
 
-    // Depthwise
+    // 2. Depthwise
     if ( 0 != depthwise_AvgMax_Or_ChannelMultiplier ) {
       nextImageIn = TestCase.calcDepthwise(
         nextImageIn,
@@ -316,26 +316,40 @@ class TestCase {
         "Depthwise", this.paramsOutDescription );
     }
 
-    // Concat (along image depth)
+    // 3. Concat (along image depth)
     if ( inputTensorCount > 1 ) {
-      nextImageIn = TestCase.calcConcatAlongAxisId2( nextImageIn, this.image.in2, "ConcatAlongAxisId2", this.paramsOutDescription );
+      nextImageIn = TestCase.calcConcatAlongAxisId2( nextImageIn, this.image.in2, "ConcatAlongDepth", this.paramsOutDescription );
     }
 
-//!!! ...unfinished... (2021/05/17) Pointwise22
-    // Pointwise2
-    if ( pointwise2ChannelCount > 0 ) {
-      nextImageIn = TestCase.calcPointwise(
+    // 4. Pointwise2
+    let nextImageOutArray = [ null, null ];
+
+    // 4.1 Pointwise21
+    if ( pointwise21ChannelCount > 0 ) {
+      nextImageOutArray[ 0 ] = TestCase.calcPointwise(
         nextImageIn,
-        pointwise2ChannelCount, this.weights.pointwise2Filters, bPointwise2Bias, this.weights.pointwise2Biases, pointwise2ActivationId,
-        "Pointwise 2", this.paramsOutDescription );
+        pointwise21ChannelCount, this.weights.pointwise21Filters, bPointwise21Bias, this.weights.pointwise21Biases, pointwise21ActivationId,
+        "Pointwise21", this.paramsOutDescription );
     }
 
-//!!! ...unfinished... (2021/05/17) Pointwise22
+    // 4.2 Pointwise22
+    if ( pointwise22ChannelCount > 0 ) {
+      nextImageOutArray[ 1 ] = TestCase.calcPointwise(
+        nextImageIn,
+        pointwise22ChannelCount, this.weights.pointwise22Filters, bPointwise22Bias, this.weights.pointwise22Biases, pointwise22ActivationId,
+        "Pointwise22", this.paramsOutDescription );
+    }
 
-    // Residual Connection.
-    nextImageIn = TestCase.modifyByInput( nextImageIn, bAddInputToOutput, this.image.in, this.paramsOutDescription );
+    // 5. Residual Connection.
+    //
+    // Always using input image1. In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
+    nextImageOutArray[ 0 ] = TestCase.modifyByInput(
+      nextImageOutArray[ 0 ], bAddInputToOutput, this.image.in1, "ImageOut1", this.paramsOutDescription );
 
-    return nextImageIn;
+    nextImageOutArray[ 1 ] = TestCase.modifyByInput(
+      nextImageOutArray[ 1 ], bAddInputToOutput, this.image.in1, "ImageOut2", this.paramsOutDescription );
+
+    return nextImageOutArray;
   }
 
   /**
@@ -671,36 +685,40 @@ y.print();
   }
 
   /**
-   * @param {number}   imageOut.height    Output image height
-   * @param {number}   imageOut.width     Output image width
-   * @param {number}   imageOut.depth     Output image channel count
-   * @param {number[]} imageOut.dataArray Output image data
-   * @param {boolean}  bAddInputToOutput  Whether add input to output.
-   * @param {number}   imageIn.height     Input image height
-   * @param {number}   imageIn.width      Input image width
-   * @param {number}   imageIn.depth      Input image channel count
-   * @param {number[]} imageIn.dataArray  Input image data
-   * @param {string}   parametersDesc     A string for debug message of this point-depth-point.
+   * @param {number}   imageOut.height      Output image height
+   * @param {number}   imageOut.width       Output image width
+   * @param {number}   imageOut.depth       Output image channel count
+   * @param {number[]} imageOut.dataArray   Output image data
+   * @param {boolean}  bAddInputToOutput    Whether add input to output.
+   * @param {number}   imageIn.height       Input image height
+   * @param {number}   imageIn.width        Input image width
+   * @param {number}   imageIn.depth        Input image channel count
+   * @param {number[]} imageIn.dataArray    Input image data
+   * @param {string}   addInputToOutputName A string for debug message of this bias.
+   * @param {string}   parametersDesc       A string for debug message of this point-depth-point.
    *
    * @return {object}
    *   Return imageOut. If no additive, it will be the original imageOut. If additive, the imageOut.dataArray will be replaced with
-   * new data.
+   * new data. Return null, if ( imageOut == null ).
    */
-  static modifyByInput( imageOut, bAddInputToOutput, imageIn, parametersDesc ) {
+  static modifyByInput( imageOut, bAddInputToOutput, imageIn, addInputToOutputName, parametersDesc ) {
+
+    if ( !imageOut )
+      return null;
 
     if ( !bAddInputToOutput )
       return imageOut;
 
     tf.util.assert( ( imageIn.height == imageOut.height ),
-      `When ( bAddInputToOutput == true ), imageIn.height ( ${imageIn.height} ) `
+      `${addInputToOutputName} When ( bAddInputToOutput == true ), imageIn.height ( ${imageIn.height} ) `
         + `should match imageOut.height ( ${imageOut.height} ). (${parametersDesc})`);
 
     tf.util.assert( ( imageIn.width == imageOut.width ),
-      `When ( bAddInputToOutput == true ), imageIn.width ( ${imageIn.width} ) `
+      `${addInputToOutputName} When ( bAddInputToOutput == true ), imageIn.width ( ${imageIn.width} ) `
         + `should match imageOut.width ( ${imageOut.width} ). (${parametersDesc})`);
 
     tf.util.assert( ( imageIn.depth == imageOut.depth ),
-      `When ( bAddInputToOutput == true ), imageIn.depth ( ${imageIn.depth} ) `
+      `${addInputToOutputName} When ( bAddInputToOutput == true ), imageIn.depth ( ${imageIn.depth} ) `
         + `should match imageOut.depth ( ${imageOut.depth} ). (${parametersDesc})`);
 
     let resultArray = imageIn.dataArray.map( ( value, i ) => ( imageOut.dataArray[ i ] + value ) );
