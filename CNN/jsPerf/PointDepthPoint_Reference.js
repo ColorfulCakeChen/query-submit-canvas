@@ -25,7 +25,8 @@ class TestCase {
     depthwiseFiltersArray, depthwiseBiasesArray,
     pointwise21FiltersArray, pointwise21BiasesArray,
     pointwise22FiltersArray, pointwise22BiasesArray,
-    imageIn
+    imageIn1,
+    imageIn2
   ) {
     this.weights = {
       params: {
@@ -39,7 +40,8 @@ class TestCase {
     };
 
     this.image = {
-      in:  imageIn
+      in1: imageIn1,
+      in2: imageIn2
     };
 
     // For testing not start at the offset 0.
@@ -127,7 +129,7 @@ class TestCase {
     // Initialize successfully or failed.
     let bInitOk = pointDepthPoint.init(
       progress,
-      this.image.in.depth, // channelCount_pointwise1Before (i.e. inChannels)
+      this.image.in1.depth, // channelCount_pointwise1Before (i.e. inChannels)
       bKeepInputTensor,
 
 //!!! ...unfinished... Could be randomized some null some non-null?
@@ -295,7 +297,7 @@ class TestCase {
       + `bAddInputToOutput=${bAddInputToOutput}`
     ;
 
-    let nextImageIn = this.image.in;
+    let nextImageIn = this.image.in1;
 
     // Pointwise1
     if ( pointwise1ChannelCount > 0 ) {
@@ -314,7 +316,10 @@ class TestCase {
         "Depthwise", this.paramsOutDescription );
     }
 
-//!!! ...unfinished... (2021/05/17) concat
+    // Concat (along image depth)
+    if ( inputTensorCount > 1 ) {
+      nextImageIn = TestCase.calcConcatAlongAxisId2( nextImageIn, this.image.in2, "ConcatAlongAxisId2", this.paramsOutDescription );
+    }
 
 //!!! ...unfinished... (2021/05/17) Pointwise22
     // Pointwise2
