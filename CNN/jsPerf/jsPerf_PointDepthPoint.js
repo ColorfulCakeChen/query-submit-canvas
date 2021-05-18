@@ -39,8 +39,9 @@ class HeightWidthDepth {
 
     // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-    // pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-    // bAddInputToOutput,
+    // pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+    // pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+    // inputTensorCount,
     //
 
     let testImageData = this.testCorrectness_ImageData = {
@@ -883,29 +884,70 @@ class HeightWidthDepth {
    * @param {PointDepthPoint.Base} pointDepthPoint
    *   The object which implemets PointDepthPoint logic.
    *
-   * @param {tf.tensor3d} inputTensor3d
-   *   The input of the PointDepthPoint's apply_and_destroy_or_keep().
+   * @param {tf.tensor3d[]} inputTensors
+   *   The input array of the PointDepthPoint's apply_and_destroy_or_keep().
    *
-   * @param {tf.tensor3d} outputTensor3d
-   *   The output of the PointDepthPoint's apply_and_destroy_or_keep().
+   * @param {tf.tensor3d[]} outputTensors
+   *   The output array of the PointDepthPoint's apply_and_destroy_or_keep().
    */
-  check_Input_Output_WeightsTable( testCaseIndex, pointDepthPoint, inputTensor3d, outputTensor3d ) {
+  check_Input_Output_WeightsTable( testCaseIndex, pointDepthPoint, inputTensors, outputTensors ) {
     tf.tidy( () => {
 
       let parametersDescription = pointDepthPoint.parametersDescription;
       let strNote = `( testCaseIndex=${testCaseIndex}, ${parametersDescription} )`;
 
+      tf.util.assert( inputTensors.length == 2,
+        `PointDepthPoint inputTensors.length ( ${inputTensors.length} ) should be 2. ${strNote}`);
+
+      tf.util.assert( outputTensors.length == 2,
+        `PointDepthPoint outputTensors.length ( ${outputTensors.length} ) should be 2. ${strNote}`);
+
       let testCase = this.testCases[ testCaseIndex ];
-      let imageOutRef = testCase.calcResult();
-      let outputArrayRef = imageOutRef.dataArray;
+//!!! (2021/05/18 Remarked) output become array.
+//       let imageOutRef = testCase.calcResult();
+//       let outputArrayRef = imageOutRef.dataArray;
+//
+//       let outputArray = outputTensor3d.dataSync();
+//
+//       tf.util.assert( outputArray.length == outputArrayRef.length,
+//         `PointDepthPoint output length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
+//
+//       tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
+//         `PointDepthPoint output ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
 
-      let outputArray = outputTensor3d.dataSync();
+      let imageOutRefs = testCase.calcResult(); // Output is an array with two elements.
 
-      tf.util.assert( outputArray.length == outputArrayRef.length,
-        `PointDepthPoint output length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
+      tf.util.assert( imageOutRefs.length == 2,
+        `PointDepthPoint imageOutRefs.length ( ${imageOutRefs.length} ) should be 2. ${strNote}`);
 
-      tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
-        `PointDepthPoint output ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
+      for ( let i = 0; i < imageOutRefs.length; ++i ) {
+        // Get referenced result (as number array).
+        let imageOutRef = imageOutRefs[ i ];
+        let outputArrayRef = null;
+        if ( imageOutRef ) {
+          outputArrayRef = imageOutRef.dataArray;
+        }
+
+        // Get real (tested target) result (as typed-array).
+        let outputTensor = outputTensors[ i ];
+        let outputArray = null;
+        if ( outputTensor ) {
+          outputArray = outputTensor.dataSync();
+        }
+
+        // Checking real result against referneced result.
+        tf.util.assert( outputArray == outputArrayRef,
+          `PointDepthPoint output${i} ( ${outputArray} ) and outputRef${i} ( ${outputArrayRef} ) should be both null or non-null. ${strNote}`);
+
+        if( outputArray ) {
+          tf.util.assert( outputArray.length == outputArrayRef.length,
+            `PointDepthPoint output${i} length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
+
+          tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
+            `PointDepthPoint output${i} ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
+        }
+      }
+
     });
   }
 
