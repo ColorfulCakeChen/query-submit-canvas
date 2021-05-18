@@ -44,14 +44,27 @@ class HeightWidthDepth {
     // inputTensorCount,
     //
 
-    let testImageData = this.testCorrectness_ImageData = {
-      height: 3, width: 5, depth: 4,
-      dataArray: [
-        111, 112, 113, 114,  121, 122, 123, 124,  131, 132, 133, 134,  141, 142, 143, 144,  151, 152, 153, 154,
-        211, 212, 213, 214,  221, 222, 223, 224,  231, 232, 233, 234,  241, 242, 243, 244,  251, 252, 253, 254,
-        311, 312, 313, 314,  321, 322, 323, 324,  331, 332, 333, 334,  341, 342, 343, 344,  351, 352, 353, 354,
-      ]
-    };
+    this.testCorrectness_ImageDataArray = [
+      // testCorrectness_ImageDataArray[ 0 ]
+      {
+        height: 3, width: 5, depth: 4,
+        dataArray: [
+          111, 112, 113, 114,  121, 122, 123, 124,  131, 132, 133, 134,  141, 142, 143, 144,  151, 152, 153, 154,
+          211, 212, 213, 214,  221, 222, 223, 224,  231, 232, 233, 234,  241, 242, 243, 244,  251, 252, 253, 254,
+          311, 312, 313, 314,  321, 322, 323, 324,  331, 332, 333, 334,  341, 342, 343, 344,  351, 352, 353, 354,
+        ]
+      },
+
+      // testCorrectness_ImageDataArray[ 1 ]
+      {
+        height: 3, width: 5, depth: 5,
+        dataArray: [
+          111, 112, 113, 114, 115,  121, 122, 123, 124, 125,  131, 132, 133, 134, 135,  141, 142, 143, 144, 145,  151, 152, 153, 154, 155,
+          211, 212, 213, 214, 215,  221, 222, 223, 224, 225,  231, 232, 233, 234, 235,  241, 242, 243, 244, 245,  251, 252, 253, 254, 255,
+          311, 312, 313, 314, 315,  321, 322, 323, 324, 325,  331, 332, 333, 334, 335,  341, 342, 343, 344, 345,  351, 352, 353, 354, 355,
+        ]
+      },
+    ];
 
     let testCase_depthwise_avg_strides_1_pad_valid, testCase_depthwise_avg_strides_1_pad_same, testCase_depthwise_avg_strides_2_pad_same;
     let testCase_depthwise_max_strides_1_pad_valid, testCase_depthwise_max_strides_1_pad_same, testCase_depthwise_max_strides_2_pad_same;
@@ -80,7 +93,7 @@ class HeightWidthDepth {
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
 
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 1: depthwise (channelMultiplier = avg pooling, strides = 1, pad = same)
@@ -97,7 +110,7 @@ class HeightWidthDepth {
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
 
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 2: depthwise (channelMultiplier = avg pooling, strides = 2, pad = same)
@@ -114,7 +127,7 @@ class HeightWidthDepth {
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
 
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 3: depthwise (channelMultiplier = max pooling, strides = 1, pad = valid)
@@ -131,7 +144,7 @@ class HeightWidthDepth {
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
 
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 4: depthwise (channelMultiplier = max pooling, strides = 1, pad = same)
@@ -148,7 +161,7 @@ class HeightWidthDepth {
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
 
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 5: depthwise (channelMultiplier = max pooling, strides = 2, pad = same)
@@ -165,7 +178,7 @@ class HeightWidthDepth {
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
 
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
 //!!! ...unfinished...
@@ -227,7 +240,7 @@ class HeightWidthDepth {
         ],
 
         // imageIn
-        testImageData
+        this.testCorrectness_ImageDataArray
       ),
 
       // Test Case 7 (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = same), pointwise2, AddInputToOutput)
@@ -284,7 +297,7 @@ class HeightWidthDepth {
         [ 201, 202, 203, 204 ],
 
         // imageIn
-        testImageData
+        this.testCorrectness_ImageDataArray
       ),
 
       // Test Case 8: depthwise (channelMultiplier = 1, strides = 1, pad = valid)
@@ -317,7 +330,7 @@ class HeightWidthDepth {
 
         [], [], [], // depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
 
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 9: depthwise (channelMultiplier = 1, strides = 1, pad = same)
@@ -350,7 +363,7 @@ class HeightWidthDepth {
 
         [], [], [], // depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
 
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 10: depthwise (channelMultiplier = 1, strides = 1, pad = same, AddInputToOutput)
@@ -383,7 +396,7 @@ class HeightWidthDepth {
 
         [], [], [], // depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
 
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 11: depthwise (channelMultiplier = 2, strides = 2, pad = same)
@@ -416,7 +429,7 @@ class HeightWidthDepth {
 
         [], [], [], // depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
 
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 12: pointwise1 (4-to-1 channel, no bias)
@@ -440,7 +453,7 @@ class HeightWidthDepth {
 
         [],             // pointwise1BiasesArray
         [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 13: pointwise1 (4-to-2 channel, no bias)
@@ -464,7 +477,7 @@ class HeightWidthDepth {
 
         [],             // pointwise1BiasesArray
         [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 14: pointwise1 (4-to-2 channel, bias, activation)
@@ -490,7 +503,7 @@ class HeightWidthDepth {
         [ 3, 4 ],
 
         [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
-        testImageData   // imageIn
+        this.testCorrectness_ImageDataArray   // imageIn
       ),
 
       // Test Case 15: (pointwise1, depthwise (channelMultiplier = 2, strides = 1, pad = valid), pointwise2)
@@ -550,23 +563,27 @@ class HeightWidthDepth {
         [ 201, 202, 203, 204, 205, 206, 207, 208 ],
 
         // imageIn
-        testImageData
+        this.testCorrectness_ImageDataArray
       ),
     ];
 
     // Small input image for correctness testing.
-    this.dataTensor3d = tf.tidy( () => {
-      let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
-      let dataTensor3d = tf.tensor3d( testImageData.dataArray, shape );
-      return dataTensor3d;
+    this.dataTensor3dArray = tf.tidy( () => {
+      let dataTensor3dArray = new Array( testImageData.length );
+      for ( let i = 0; i < testImageData.length; ++i ) {
+        let shape = [ testImageData[ i ].height, testImageData[ i ].width, testImageData[ i ].depth ];
+        let dataTensor3d = tf.tensor3d( testImageData[ i ].dataArray, shape );
+        dataTensor3dArray[ i ] = dataTensor3d;
+      }
+      return dataTensor3dArray;
     });
 
   }
 
   disposeTensors() {
-    if ( this.dataTensor3d ) {
-      this.dataTensor3d.dispose();
-      this.dataTensor3d = null;
+    if ( this.dataTensor3dArray ) {
+      tf.dispose( this.dataTensor3dArray );
+      this.dataTensor3dArray = null;
     }
 
     this.pointDepthPoint_PerformanceTest_release();
@@ -669,18 +686,29 @@ class HeightWidthDepth {
     this.disposeTensors();
 
     // Larger input image for performance testing.
-    this.dataTensor3d = tf.tidy( () => {
+    let inputTensorCount = 2;
+    this.testPerformance_ImageDataArray = new Array( inputTensorCount );
+    this.dataTensor3dArray = tf.tidy( () => {
+      let dataTensor3dArray = new Array( inputTensorCount );
+
       let shape = [ this.height, this.width, this.depth ];
       let length = tf.util.sizeFromShape( shape );
-      let t = tf.range( 0, length, 1 );
-      let dataTensor3d = tf.reshape( t, shape );
 
-      this.testPerformance_ImageData = {
-        height: this.height, width: this.width, depth: this.depth,
-        dataArray: dataTensor3d.dataSync()
-      };
+      for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
+        let numberBegin = ( i * length );
+        let numberEnd = numberBegin + length - 1;
 
-      return dataTensor3d;
+        let t = tf.range( numberBegin, numberEnd, 1 );
+        let dataTensor3d = tf.reshape( t, shape );
+        dataTensor3dArray[ i ] = dataTensor3d;
+
+        this.testPerformance_ImageDataArray[ i ] = {
+          height: this.height, width: this.width, depth: this.depth,
+          dataArray: dataTensor3d.dataSync()
+        };
+      }
+
+      return dataTensor3dArray;
     });
 
 //!!! ...unfinished...
@@ -699,7 +727,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
       pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
-      this.testPerformance_ImageData
+      this.testPerformance_ImageDataArray
     );
 
     // Test Case: (pointwise1 (bias, COS), depthwise (avg pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
@@ -716,7 +744,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
       pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
-      this.testPerformance_ImageData
+      this.testPerformance_ImageDataArray
     );
 
     // Test Case: (pointwise1 (bias, COS), depthwise (max pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
@@ -733,7 +761,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
       pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
-      this.testPerformance_ImageData
+      this.testPerformance_ImageDataArray
     );
 
     // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
@@ -750,7 +778,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, depthwise_8to16_BiasesArray,
       pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
-      this.testPerformance_ImageData
+      this.testPerformance_ImageDataArray
     );
 
     // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS), AddInputToOutput)
@@ -767,7 +795,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
       pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
-      this.testPerformance_ImageData
+      this.testPerformance_ImageDataArray
     );
 
     // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS))
@@ -784,7 +812,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
       pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
-      this.testPerformance_ImageData
+      this.testPerformance_ImageDataArray
     );
 
     // Test Case: (pointwise1 (none), depthwise (channelMultiplier = 32, strides = 1, pad = same, bias, COS), pointwise2 (bias))
@@ -801,7 +829,7 @@ class HeightWidthDepth {
       [], [], //pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
       pointwise_128to128_FiltersArray, pointwise_Xto128_BiasesArray,
-      this.testPerformance_ImageData
+      this.testPerformance_ImageDataArray
     );
 
     // Test Case: (pointwise1 (bias, COS), depthwise (none), pointwise2 (bias))
@@ -818,7 +846,7 @@ class HeightWidthDepth {
       pointwise_4to128_FiltersArray, pointwise_Xto128_BiasesArray,
       [], [], //depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
       pointwise_128to128_FiltersArray, pointwise_Xto128_BiasesArray,
-      this.testPerformance_ImageData
+      this.testPerformance_ImageDataArray
     );
 
 
