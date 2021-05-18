@@ -271,7 +271,7 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  *   The activation function id (Params.pointwise22ActivationId.valueDesc.Ids.Xxx) after the second pointwise2 convolution.
  *
  * @member {number} inChannels
- *   Input channel count. This is the same as this.channelCount_pointwise1Before (from initer()).
+ *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount_pointwise1Before (from initer()).
  *
  * @member {number} outChannels1
  *   The channel count of the first output tensor. It is the same as this.channelCount_pointwise21After (from initer()).
@@ -942,8 +942,9 @@ class Base extends ReturnOrClone.Base {
     return this.bInitOk;
   }
 
+  /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]).*/
   get inChannels()                            { return this.channelCount_pointwise1Before; }
-  
+
   /** @return {number} The channel count of the first output tensor.*/
   get outChannels1()                          { return this.channelCount_pointwise21After; }
 
