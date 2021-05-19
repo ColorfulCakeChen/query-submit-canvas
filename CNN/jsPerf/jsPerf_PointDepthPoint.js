@@ -782,11 +782,15 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
         1.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
+        4.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
+        0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
+        3.4 ], // paramsInArray
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           1,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+          4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+          0 ], // paramsOutArray
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
@@ -799,11 +803,15 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
+        4.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
+        0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
+        6.4 ], // paramsInArray
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,           3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+          4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+          0 ], // paramsOutArray
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
@@ -816,11 +824,15 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX - 0.6,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
+        4.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
+        0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
+        9.4 ], // paramsInArray
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,           3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+          4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+          0 ], // paramsOutArray
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
@@ -833,11 +845,15 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
         2.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
+        4.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
+        0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
+        0.4 ], // paramsInArray
 
       [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+          4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+          0 ], // paramsOutArray
 
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, depthwise_8to16_BiasesArray,
@@ -850,11 +866,15 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [ 8.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
         2.1,   3.1, 4.1,   2.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   4.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   7.4 ], // paramsInArray
+        4.1,   4.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
+        4.1,   4.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
+        3.4 ], // paramsInArray
 
       [   8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4, false, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,        true ], // paramsOutArray
+          4, false, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          0, false, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+          0 ], // paramsOutArray
 
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
@@ -867,11 +887,15 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [ 8.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
         2.1,   3.1, 4.1,   2.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   4.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS + 0.3,   6.4 ], // paramsInArray
+        4.1,   4.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
+        0.1,   4.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
+        1.4 ], // paramsInArray
 
       [   8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4, false, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.COS,       false ], // paramsOutArray
+          4, false, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
+          0, false, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+          1 ], // paramsOutArray
 
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
@@ -884,11 +908,15 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [   0.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
          32.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        128.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE + 0.3,   6.4 ], // paramsInArray
+        128.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE + 0.3,
+          0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE + 0.3,
+          4.4 ], // paramsInArray
 
       [     0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
            32,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          128,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE,       false ], // paramsOutArray
+          128,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
+            0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE,
+            0 ], // paramsOutArray
 
       [], [], //pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
@@ -901,11 +929,15 @@ class HeightWidthDepth {
     new PointDepthPoint_Reference.TestCase(
       [ 128.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           0.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        128.1,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE + 0.3,   6.4 ], // paramsInArray
+        128.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE + 0.3,
+          0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE + 0.3,
+          4.4 ], // paramsInArray
 
       [   128,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             0,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          128,  true, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE,       false ], // paramsOutArray
+          128,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
+            0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE,
+            0 ], // paramsOutArray
 
       pointwise_4to128_FiltersArray, pointwise_Xto128_BiasesArray,
       [], [], //depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
