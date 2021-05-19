@@ -41,6 +41,7 @@ class Base extends ReturnOrClone_Activation.Base {
     AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId,
     inputFloat32Array, byteOffsetBegin ) {
 
+    super();
     this.inputChannelCount = inputChannelCount;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
     this.filterHeight = filterHeight;
