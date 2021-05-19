@@ -36,6 +36,7 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 class Base extends ReturnOrClone_Activation.Base {
 
   constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, inputFloat32Array, byteOffsetBegin ) {
+    super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
