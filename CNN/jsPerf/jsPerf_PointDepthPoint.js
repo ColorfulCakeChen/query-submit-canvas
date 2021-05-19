@@ -571,8 +571,8 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU + 0.1,
           2.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
-            8,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.RELU + 0.3,
-          0.3,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.RELU + 0.3,
+            8,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.RELU + 0.3,
+          0.3,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.RELU + 0.3,
           4.4 ], // paramsInArray
 
         [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,
