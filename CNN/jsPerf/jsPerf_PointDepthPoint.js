@@ -94,8 +94,9 @@ class HeightWidthDepth {
             0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
             1 ], // paramsOutArray
 
-        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
-        [], [], [], [], [], [],
+        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray,
+        // pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray
+        [], [], [], [], [], [], [], [],
 
         this.testCorrectness_ImageDataArray   // imageIn
       ),
@@ -115,8 +116,9 @@ class HeightWidthDepth {
             0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
             1 ], // paramsOutArray
 
-        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
-        [], [], [], [], [], [],
+        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray,
+        // pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray
+        [], [], [], [], [], [], [], [],
 
         this.testCorrectness_ImageDataArray   // imageIn
       ),
@@ -136,8 +138,9 @@ class HeightWidthDepth {
             0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
             1 ], // paramsOutArray
 
-        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
-        [], [], [], [], [], [],
+        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray,
+        // pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray
+        [], [], [], [], [], [], [], [],
 
         this.testCorrectness_ImageDataArray   // imageIn
       ),
@@ -157,8 +160,9 @@ class HeightWidthDepth {
             0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
             1 ], // paramsOutArray
 
-        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
-        [], [], [], [], [], [],
+        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray,
+        // pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray
+        [], [], [], [], [], [], [], [],
 
         this.testCorrectness_ImageDataArray   // imageIn
       ),
@@ -178,8 +182,9 @@ class HeightWidthDepth {
             0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
             1 ], // paramsOutArray
 
-        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
-        [], [], [], [], [], [],
+        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray,
+        // pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray
+        [], [], [], [], [], [], [], [],
 
         this.testCorrectness_ImageDataArray   // imageIn
       ),
@@ -199,8 +204,9 @@ class HeightWidthDepth {
             0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
             1 ], // paramsOutArray
 
-        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
-        [], [], [], [], [], [],
+        // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray,
+        // pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray
+        [], [], [], [], [], [], [], [],
 
         this.testCorrectness_ImageDataArray   // imageIn
       ),
@@ -253,7 +259,7 @@ class HeightWidthDepth {
         // depthwiseBiasesArray
         [], //[ 101, 102, 103, 104 ],
 
-        // pointwise2FiltersArray
+        // pointwise21FiltersArray
         // (Some negative so that the result will not too large (out of float32 range). Otherwise, the result will strange.)
         [
 //            1,  5,  9,  3,
@@ -262,10 +268,13 @@ class HeightWidthDepth {
 //            4,  8,  2,  6,
         ],
 
-        // pointwise2BiasesArray
+        // pointwise22BiasesArray
         [
 //           201, 202, 203, 204
         ],
+
+        // pointwise22FiltersArray, pointwise22BiasesArray
+        [], [],
 
         // imageIn
         this.testCorrectness_ImageDataArray
@@ -316,7 +325,7 @@ class HeightWidthDepth {
         // depthwiseBiasesArray
         [ 101, 102, 103, 104 ],
 
-        // pointwise2FiltersArray
+        // pointwise21FiltersArray
         // (Some negative so that the result will not too large (out of float32 range). Otherwise, the result will strange.)
         [
            1,  5,  9,  3,
@@ -325,8 +334,11 @@ class HeightWidthDepth {
            4,  8,  2,  6,
         ],
 
-        // pointwise2BiasesArray
+        // pointwise21BiasesArray
         [ 201, 202, 203, 204 ],
+
+        // pointwise22FiltersArray, pointwise22BiasesArray
+        [], [],
 
         // imageIn
         this.testCorrectness_ImageDataArray
@@ -364,7 +376,8 @@ class HeightWidthDepth {
           0, 0, 0, 1,
         ],
 
-        [], [], [], // depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+        [], [], [], // depthwiseBiasesArray, pointwise21FiltersArray, pointwise21BiasesArray
+        [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
 
         this.testCorrectness_ImageDataArray   // imageIn
       ),
@@ -401,7 +414,8 @@ class HeightWidthDepth {
           0, 0, 0, 1,
         ],
 
-        [], [], [], // depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+        [], [], [], // depthwiseBiasesArray, pointwise21FiltersArray, pointwise21BiasesArray
+        [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
 
         this.testCorrectness_ImageDataArray   // imageIn
       ),
@@ -438,7 +452,8 @@ class HeightWidthDepth {
           0, 0, 0, 1,
         ],
 
-        [], [], [], // depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+        [], [], [], // depthwiseBiasesArray, pointwise21FiltersArray, pointwise21BiasesArray
+        [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
 
         this.testCorrectness_ImageDataArray   // imageIn
       ),
@@ -475,7 +490,8 @@ class HeightWidthDepth {
           0, 0, 0, 1, 0, 0, 0, 0, 
         ],
 
-        [], [], [], // depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+        [], [], [], // depthwiseBiasesArray, pointwise21FiltersArray, pointwise21BiasesArray
+        [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
 
         this.testCorrectness_ImageDataArray   // imageIn
       ),
@@ -504,7 +520,9 @@ class HeightWidthDepth {
         ],
 
         [],             // pointwise1BiasesArray
-        [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+        [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise21FiltersArray, pointwise21BiasesArray
+        [], [],         // pointwise22FiltersArray, pointwise22BiasesArray
+
         this.testCorrectness_ImageDataArray   // imageIn
       ),
 
@@ -532,7 +550,9 @@ class HeightWidthDepth {
         ],
 
         [],             // pointwise1BiasesArray
-        [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+        [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise21FiltersArray, pointwise21BiasesArray
+        [], [],         // pointwise22FiltersArray, pointwise22BiasesArray
+
         this.testCorrectness_ImageDataArray   // imageIn
       ),
 
@@ -562,7 +582,9 @@ class HeightWidthDepth {
         // pointwise1BiasesArray
         [ 3, 4 ],
 
-        [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray
+        [], [], [], [], // depthwiseFiltersArray, depthwiseBiasesArray, pointwise21FiltersArray, pointwise21BiasesArray
+        [], [],         // pointwise22FiltersArray, pointwise22BiasesArray
+
         this.testCorrectness_ImageDataArray   // imageIn
       ),
 
@@ -611,7 +633,7 @@ class HeightWidthDepth {
         // depthwiseBiasesArray
         [ 101, 102, 103, 104 ],
 
-        // pointwise2FiltersArray
+        // pointwise21FiltersArray
         [
           11, 21, 31, 41,
           12, 22, 32, 42,
@@ -623,8 +645,10 @@ class HeightWidthDepth {
           18, 28, 38, 48,
         ],
 
-        // pointwise2BiasesArray
+        // pointwise21BiasesArray
         [ 201, 202, 203, 204, 205, 206, 207, 208 ],
+
+        [], [],         // pointwise22FiltersArray, pointwise22BiasesArray
 
         // imageIn
         this.testCorrectness_ImageDataArray
@@ -796,6 +820,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
       pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
+      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
       this.testPerformance_ImageDataArray
     );
 
@@ -817,6 +842,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
       pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
+      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
       this.testPerformance_ImageDataArray
     );
 
@@ -838,6 +864,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
       pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
+      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
       this.testPerformance_ImageDataArray
     );
 
@@ -859,6 +886,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, depthwise_8to16_BiasesArray,
       pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
+      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
       this.testPerformance_ImageDataArray
     );
 
@@ -880,6 +908,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
       pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
+      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
       this.testPerformance_ImageDataArray
     );
 
@@ -901,6 +930,7 @@ class HeightWidthDepth {
       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
       pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
+      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
       this.testPerformance_ImageDataArray
     );
 
@@ -922,6 +952,7 @@ class HeightWidthDepth {
       [], [], //pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
       pointwise_128to128_FiltersArray, pointwise_Xto128_BiasesArray,
+      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
       this.testPerformance_ImageDataArray
     );
 
@@ -943,6 +974,7 @@ class HeightWidthDepth {
       pointwise_4to128_FiltersArray, pointwise_Xto128_BiasesArray,
       [], [], //depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
       pointwise_128to128_FiltersArray, pointwise_Xto128_BiasesArray,
+      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
       this.testPerformance_ImageDataArray
     );
 
