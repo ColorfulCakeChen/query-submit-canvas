@@ -86,7 +86,7 @@ class HeightWidthDepth {
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,  3.1, 3.1,   0.2, 0 + 0.2,
           0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
           0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
-          1.1 ], // paramsInArray
+          4.1 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,    3,   0, false, 0,
@@ -105,11 +105,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,  3.1, 4.1,   0.2, 0 + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          7.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,    3,   1, false, 0,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
@@ -122,11 +126,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,  3.1, 5.1,   0.2, 0 + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          4.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,    3,   2, false, 0,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
@@ -139,11 +147,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX - 0.6,  3.1, 3.1,   0.2, 0 + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          4.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,    3,   0, false, 0,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
@@ -156,11 +168,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX - 0.6,  3.1, 4.1,   0.2, 0 + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          4.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,    3,   1, false, 0,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
@@ -173,11 +189,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX - 0.6,  3.1, 5.1,   0.2, 0 + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          4.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,    3,   2, false, 0,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         // pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise2FiltersArray, pointwise2BiasesArray        
         [], [], [], [], [], [],
@@ -191,11 +211,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 2.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
           0.1,   3.1, 4.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
-          0.2,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE + 0.3,  6.4 ], // paramsInArray
+          0.2,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE + 0.3,
+          0.2,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE + 0.3,
+          4.4 ], // paramsInArray
 
         [   2, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
             0,     3,   1, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
-            0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,      false ], // paramsOutArray
+            0,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
+            0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE,
+            1 ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
@@ -252,11 +276,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
           2.1,  3.1, 4.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
-          4.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.NONE + 0.3,  7.4 ], // paramsInArray
+          4.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE + 0.3,
+          0.4 ], // paramsInArray
 
         [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
             2,    3,   1, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
-            4, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,       true ], // paramsOutArray
+            4, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE,
+            0 ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
@@ -309,11 +337,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           1.1,  3.1, 3.1,   0.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          4.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             1,    3,   0, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         [], [], // pointwise1FiltersArray, pointwise1BiasesArray
 
@@ -342,11 +374,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           1.1,  3.1, 4.1,   0.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          4.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             1,    3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         [], [], // pointwise1FiltersArray, pointwise1BiasesArray
 
@@ -375,11 +411,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           1.1,  3.1, 4.1,   0.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   5.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          3.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             1,    3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,        true ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            0 ], // paramsOutArray
 
         [], [], // pointwise1FiltersArray, pointwise1BiasesArray
 
@@ -408,11 +448,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 0.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           2.1,  3.1, 5.1,   0.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   4.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          4.4 ], // paramsInArray
 
         [   0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             2,    3,   2, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.NONE,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         [], [], // pointwise1FiltersArray, pointwise1BiasesArray
 
@@ -441,11 +485,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 1.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
           0.1,   3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
-          0.2,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+          0.2,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          4.4 ], // paramsInArray
 
         [   1, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
             0,     3,  0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
-            0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
@@ -465,11 +513,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 2.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE + 0.1,
           0.1,   3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
-          0.2,   5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+          0.2,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          4.4 ], // paramsInArray
 
         [   2, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.NONE,
             0,     3,  0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
-            0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
@@ -489,11 +541,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
           0.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
-          0.2,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.SIN + 0.3,   6.4 ], // paramsInArray
+          0.2,  5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN + 0.3,
+          0.2,  5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN + 0.3,
+          4.4 ], // paramsInArray
 
         [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             0,    3,  0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
-            0, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.SIN,       false ], // paramsOutArray
+            0, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.SIN,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.SIN,
+            1 ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
@@ -515,11 +571,15 @@ class HeightWidthDepth {
       new PointDepthPoint_Reference.TestCase(
         [ 2.1,  1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU + 0.1,
           2.1,  3.1, 3.1,  3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU + 0.2,
-            8,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.RELU + 0.3,   6.4 ], // paramsInArray
+            8,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.RELU + 0.3,
+          0.3,  5.3, PointDepthPoint.Params.pointwise2ActivationId.valueDesc.Ids.RELU + 0.3,
+          4.4 ], // paramsInArray
 
         [   2, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,
             2,    3,   0, true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.RELU,
-            8, true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.RELU,       false ], // paramsOutArray
+            8, true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.RELU,
+            0, true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.RELU,
+            1 ], // paramsOutArray
 
         // pointwise1FiltersArray
         [
