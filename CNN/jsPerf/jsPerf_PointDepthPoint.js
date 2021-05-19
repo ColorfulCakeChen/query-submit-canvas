@@ -633,9 +633,10 @@ class HeightWidthDepth {
 
     // Small input image for correctness testing.
     this.dataTensor3dArray = tf.tidy( () => {
-      let dataTensor3dArray = new Array( testImageData.length );
-      for ( let i = 0; i < testImageData.length; ++i ) {
-        let shape = [ testImageData[ i ].height, testImageData[ i ].width, testImageData[ i ].depth ];
+      let dataTensor3dArray = new Array( this.testCorrectness_ImageDataArray.length );
+      for ( let i = 0; i < this.testCorrectness_ImageDataArray.length; ++i ) {
+        let testImageData = this.testCorrectness_ImageDataArray[ i ];
+        let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
         let dataTensor3d = tf.tensor3d( testImageData[ i ].dataArray, shape );
         dataTensor3dArray[ i ] = dataTensor3d;
       }
