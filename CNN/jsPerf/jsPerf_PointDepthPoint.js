@@ -637,7 +637,7 @@ class HeightWidthDepth {
       for ( let i = 0; i < this.testCorrectness_ImageDataArray.length; ++i ) {
         let testImageData = this.testCorrectness_ImageDataArray[ i ];
         let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
-        let dataTensor3d = tf.tensor3d( testImageData[ i ].dataArray, shape );
+        let dataTensor3d = tf.tensor3d( testImageData.dataArray, shape );
         dataTensor3dArray[ i ] = dataTensor3d;
       }
       return dataTensor3dArray;
