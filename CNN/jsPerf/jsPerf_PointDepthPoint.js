@@ -968,7 +968,7 @@ class HeightWidthDepth {
             0,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           128,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
             0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE,
-            0 ], // paramsOutArray
+            1 ], // paramsOutArray
 
       pointwise_4to128_FiltersArray, pointwise_Xto128_BiasesArray,
       [], [], //depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
