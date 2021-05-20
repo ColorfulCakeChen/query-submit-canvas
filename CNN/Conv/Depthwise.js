@@ -52,6 +52,9 @@ class Base extends ReturnOrClone_Activation.Base {
     this.byteOffsetBegin = byteOffsetBegin;
   }
 
+  /**
+   * @return {boolean} Return true, if succeeded.
+   */
   init() {
     this.disposeTensors();
 
@@ -145,6 +148,7 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     this.bInitOk = true;
+    return true;
   }
 
   disposeTensors() {
