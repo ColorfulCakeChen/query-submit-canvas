@@ -75,7 +75,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( this.bBias ) {
         this.biasesWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
-        if ( !this.pointwise1BiasesWeights.extract() )
+        if ( !this.biasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
 
