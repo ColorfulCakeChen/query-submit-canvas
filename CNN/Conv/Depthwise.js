@@ -113,7 +113,7 @@ class Base extends ReturnOrClone_Activation.Base {
       case 2:  this.strides = 2; this.pad = "same";  break;
     }
 
-    this.pfnActivation = Base.getActivationFunction( this.nActivationId );
+    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
 
     this.filterHeightWidth = [ this.filterHeight, this.filterWidth ];
     this.biasesShape =       [ 1, 1, this.outputChannelCount ];
