@@ -1093,7 +1093,7 @@ class HeightWidthDepth {
         }
 
         // Checking real result against referneced result.
-        tf.util.assert( outputArray == outputArrayRef,
+        tf.util.assert( ( outputArray == null ) == ( outputArrayRef == null ),
           `PointDepthPoint output${i} ( ${outputArray} ) and outputRef${i} ( ${outputArrayRef} ) should be both null or non-null. ${strNote}`);
 
         if( outputArray ) {
