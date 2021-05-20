@@ -423,7 +423,7 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
       params.defaultInput, this.byteOffsetEnd );
 
-    if ( !this.pointwise1.bInitOk )
+    if ( !this.pointwise1.init() )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise1.byteOffsetEnd;
 
@@ -444,7 +444,7 @@ class Base extends ReturnOrClone.Base {
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
       params.defaultInput, this.byteOffsetEnd );
 
-    if ( !this.depthwise.bInitOk )
+    if ( !this.depthwise.init() )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.depthwise.byteOffsetEnd;
 
@@ -476,7 +476,7 @@ class Base extends ReturnOrClone.Base {
       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
       params.defaultInput, this.byteOffsetEnd );
 
-    if ( !this.pointwise21.bInitOk )
+    if ( !this.pointwise21.init() )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise21.byteOffsetEnd;
 
@@ -493,7 +493,7 @@ class Base extends ReturnOrClone.Base {
       this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
       params.defaultInput, this.byteOffsetEnd );
 
-    if ( !this.pointwise22.bInitOk )
+    if ( !this.pointwise22.init() )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise22.byteOffsetEnd;
 
