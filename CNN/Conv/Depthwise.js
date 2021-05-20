@@ -174,7 +174,7 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     this.filtersWeights = this.biasesWeights = this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
-    this.bExisted = this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false; // Assume no depthwise.
+    this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false; // Assume no depthwise.
     this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
@@ -226,6 +226,10 @@ class Base extends ReturnOrClone_Activation.Base {
       }
 
     }
+  }
+
+  get bExisted() {
+    return this.bDepthwise;
   }
 
   /** Depthwise Average Pooling. */
