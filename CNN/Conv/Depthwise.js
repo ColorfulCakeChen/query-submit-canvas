@@ -15,7 +15,19 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {boolean} bExisted
- *   If true, this depthwise convolution exist.
+ *   If true, this depthwise operation exist. The same as this.bDepthwise.
+
+ * @member {boolean} bDepthwise
+ *   If true, this depthwise convolution exist. The same as this.bExisted.
+ *
+ * @member {boolean} bDepthwiseAvg
+ *   If true, this depthwise operation exist. And it is depthwise average pooling.
+ *
+ * @member {boolean} bDepthwiseMax
+ *   If true, this depthwise operation exist. And it is depthwise maximum pooling.
+ *
+ * @member {boolean} bDepthwiseConv
+ *   If true, this depthwise operation exist. And it is depthwise convolution.
  *
  * @member {boolean} bInitOk
  *   If true, the init() is successful.
@@ -58,9 +70,8 @@ class Base extends ReturnOrClone_Activation.Base {
   init() {
     this.disposeTensors();
 
-    this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false; // Assume no depthwise.
+    this.byteOffsetEnd = this.byteOffsetBegin;
     this.outputChannelCount = this.inputChannelCount; // Assume no channel multiplier.
-
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
     if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
@@ -163,6 +174,7 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     this.filtersWeights = this.biasesWeights = this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
+    this.bExisted = this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false; // Assume no depthwise.
     this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
