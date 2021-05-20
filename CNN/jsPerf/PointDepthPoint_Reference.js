@@ -774,7 +774,7 @@ y.print();
    */
   static modifyByActivation( imageIn, nActivationId, parametersDesc ) {
 
-    let pfnActivation = PointDepthPoint.Base.getActivationFunction( nActivationId );
+    let pfnActivation = PointDepthPoint.Base.getActivationFunctionById( nActivationId );
     if ( !pfnActivation )
       return imageIn;
 
