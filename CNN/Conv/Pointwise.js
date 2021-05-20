@@ -15,7 +15,10 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {boolean} bExisted
- *   If true, this pointwise convolution exist.
+ *   If true, this pointwise convolution exists. The same as this.bPointwise.
+ *
+ * @member {boolean} bPointwise
+ *   If true, this pointwise convolution exists. The same as this.bExisted.
  *
  * @member {boolean} bInitOk
  *   If true, the init() is successful.
@@ -51,10 +54,11 @@ class Base extends ReturnOrClone_Activation.Base {
   init() {
     this.disposeTensors();
 
-    this.bExisted = ( this.outputChannelCount > 0 );
+    this.byteOffsetEnd = this.byteOffsetBegin;
+    this.bPointwise = ( this.outputChannelCount > 0 );
     this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
 
-    if ( this.bExisted ) {
+    if ( this.bPointwise ) {
 
       //this.filterHeightWidth = [ 1, 1 ];
       this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
@@ -112,6 +116,7 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     this.filtersWeights = this.biasesWeights = this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
+    this.bPointwise = false;
     this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
@@ -138,6 +143,10 @@ class Base extends ReturnOrClone_Activation.Base {
         this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
       }
     }
+  }
+
+  get bExisted() {
+    return this.bPointwise;
   }
 
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
