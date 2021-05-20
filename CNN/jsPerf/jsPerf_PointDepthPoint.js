@@ -785,7 +785,7 @@ class HeightWidthDepth {
 
       for ( let i = 0; i < dataTensor3dArray.length; ++i ) {
         let numberBegin = ( i * length );
-        let numberEnd = numberBegin + length - 1;
+        let numberEnd = numberBegin + length;
 
         let t = tf.range( numberBegin, numberEnd, 1 );
         let dataTensor3d = tf.reshape( t, shape );
