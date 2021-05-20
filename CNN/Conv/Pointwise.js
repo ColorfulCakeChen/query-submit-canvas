@@ -79,7 +79,7 @@ class Base extends ReturnOrClone_Activation.Base {
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
 
-        this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.pointwise1BiasesShape );
+        this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.biasesShape );
 
         if ( this.pfnActivation )
           this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
