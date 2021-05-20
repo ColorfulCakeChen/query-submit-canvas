@@ -52,7 +52,7 @@ class Base extends ReturnOrClone_Activation.Base {
     this.disposeTensors();
 
     this.bExisted = ( this.outputChannelCount > 0 );
-    this.pfnActivation = Base.getActivationFunction( this.nActivationId );
+    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
 
     if ( this.bExisted ) {
 
