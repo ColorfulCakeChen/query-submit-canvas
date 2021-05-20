@@ -232,22 +232,13 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  * Only meaningful when ( this.isValid() == true ).
  *
  * @member {boolean} bPointwise1
- *   If true, the pointwise1 convolution exist.
+ *   If true, the pointwise1 convolution exists.
  *
  * @member {string} pointwise1ActivationName
  *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution.
  *
  * @member {boolean} bDepthwise
- *   If true, the depthwise convolution (or average pooling, or maximum pooling) exist.
- *
- * @member {boolean} bDepthwiseAvg
- *   If true, the depthwise average pooling exist.
- *
- * @member {boolean} bDepthwiseMax
- *   If true, the depthwise maximum pooling exist.
- *
- * @member {boolean} bDepthwiseConv
- *   If true, the depthwise convolution exist.
+ *   If true, the depthwise convolution (or average pooling, or maximum pooling) exists.
  *
  * @member {string} depthwise_AvgMax_Or_ChannelMultiplier_Name
  *   Depthwise operation name.
@@ -256,13 +247,13 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution.
  *
  * @member {boolean} bPointwise2
- *   If true, the pointwise2 convolution exist.
+ *   If true, the pointwise2 (i.e. pointwise21 or/and pointwise22)  convolution exists.
  *
  * @member {boolean} bPointwise21
- *   If true, the first pointwise2 convolution exist.
+ *   If true, the first pointwise2 convolution exists.
  *
  * @member {boolean} bPointwise22
- *   If true, the second pointwise2 convolution exist.
+ *   If true, the second pointwise2 convolution exists.
  *
  * @member {string} pointwise21ActivationName
  *   The activation function id (Params.pointwise21ActivationId.valueDesc.Ids.Xxx) after the first pointwise2 convolution.
