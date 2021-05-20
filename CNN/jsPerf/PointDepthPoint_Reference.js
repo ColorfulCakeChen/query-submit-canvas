@@ -319,29 +319,43 @@ class TestCase {
     // 4. Pointwise2
     let nextImageOutArray = [ null, null ];
 
-    // 4.1 Pointwise21
-    if ( pointwise21ChannelCount > 0 ) {
-      nextImageOutArray[ 0 ] = TestCase.calcPointwise(
-        nextImageIn,
-        pointwise21ChannelCount, this.weights.pointwise21Filters, bPointwise21Bias, this.weights.pointwise21Biases, pointwise21ActivationId,
-        "Pointwise21", this.paramsOutDescription );
+    if ( ( pointwise21ChannelCount == 0 ) && ( pointwise22ChannelCount == 0 ) ) {
+
+      // 4.0 No Pointwise21 and No Pointwise22.
+
+      // Residual Connection.
+        nextImageOutArray[ 0 ] = TestCase.modifyByInput(
+          nextImageIn, bAddInputToOutput, this.imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
+
+    } else {
+
+      // 4.1 Pointwise21
+      if ( pointwise21ChannelCount > 0 ) {
+        nextImageOutArray[ 0 ] = TestCase.calcPointwise(
+          nextImageIn,
+          pointwise21ChannelCount, this.weights.pointwise21Filters, bPointwise21Bias, this.weights.pointwise21Biases, pointwise21ActivationId,
+          "Pointwise21", this.paramsOutDescription );
+
+        // Residual Connection.
+        nextImageOutArray[ 0 ] = TestCase.modifyByInput(
+          nextImageOutArray[ 0 ], bAddInputToOutput, this.imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
+      }
+
+      // 4.2 Pointwise22
+      if ( pointwise22ChannelCount > 0 ) {
+        nextImageOutArray[ 1 ] = TestCase.calcPointwise(
+          nextImageIn,
+          pointwise22ChannelCount, this.weights.pointwise22Filters, bPointwise22Bias, this.weights.pointwise22Biases, pointwise22ActivationId,
+          "Pointwise22", this.paramsOutDescription );
+
+        // Residual Connection.
+        //
+        // Always using input image1 (i.e. this.imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
+        nextImageOutArray[ 1 ] = TestCase.modifyByInput(
+          nextImageOutArray[ 1 ], bAddInputToOutput, this.imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
+      }
+
     }
-
-    // 4.2 Pointwise22
-    if ( pointwise22ChannelCount > 0 ) {
-      nextImageOutArray[ 1 ] = TestCase.calcPointwise(
-        nextImageIn,
-        pointwise22ChannelCount, this.weights.pointwise22Filters, bPointwise22Bias, this.weights.pointwise22Biases, pointwise22ActivationId,
-        "Pointwise22", this.paramsOutDescription );
-    }
-
-    // 5. Residual Connection.
-    nextImageOutArray[ 0 ] = TestCase.modifyByInput(
-      nextImageOutArray[ 0 ], bAddInputToOutput, this.imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
-
-    // Always using input image1 (i.e. this.imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
-    nextImageOutArray[ 1 ] = TestCase.modifyByInput(
-      nextImageOutArray[ 1 ], bAddInputToOutput, this.imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
 
     return nextImageOutArray;
   }
