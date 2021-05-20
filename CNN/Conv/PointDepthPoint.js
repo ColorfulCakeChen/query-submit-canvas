@@ -817,21 +817,21 @@ class Base extends ReturnOrClone.Base {
 
   /** The only one input will be added to the only one output (pointwise21). The inputTensor will be disposed.*/
   static apply_1_21_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
-    let t = Base.apply_1_21_and_keep_AddInputToOutput.call( inputTensors, outputTensors );
+    let t = Base.apply_1_21_and_keep_AddInputToOutput.call( this, inputTensors, outputTensors );
     inputTensors[ 0 ].dispose();
     return t;
   }
 
   /** The only one input will be added to the only one output (pointwise22). The inputTensor will be disposed.*/
   static apply_1_22_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
-    let t = Base.apply_1_22_and_keep_AddInputToOutput.call( inputTensors, outputTensors );
+    let t = Base.apply_1_22_and_keep_AddInputToOutput.call( this, inputTensors, outputTensors );
     inputTensors[ 0 ].dispose();
     return t;
   }
 
   /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor will be disposed.*/
   static apply_1_2_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
-    let t = Base.apply_1_2_and_keep_AddInputToOutput.call( inputTensors, outputTensors );
+    let t = Base.apply_1_2_and_keep_AddInputToOutput.call( this, inputTensors, outputTensors );
     inputTensors[ 0 ].dispose();
     return t;
   }
