@@ -1163,6 +1163,7 @@ class HeightWidthDepth {
           try {
             tf.tidy( () => {
 
+              let outputTensor3dArray = new Array( 2 );
               let inputTensor3dArray = new Array( 2 );
               let tensorNumDifference_apply_before_after;
               if ( bKeepInputTensor ) {
@@ -1179,7 +1180,7 @@ class HeightWidthDepth {
               let pointDepthPoint = testCase.pointDepthPoint_create( bKeepInputTensor );
 
               let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
-              let outputTensor3dArray = pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray );
+              pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
               let memoryInfo_apply_after = tf.memory();
 
               tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
