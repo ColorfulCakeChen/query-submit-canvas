@@ -534,8 +534,8 @@ class Base extends ReturnOrClone.Base {
     //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
     let bShouldAddInputToOutput = this.bShouldAddInputToOutput
      = (   ( this.bAddInputToOutput )
-        && (   ( this.depthwiseStrides == 1 )
-            && ( this.depthwisePad == "same" )
+        && (   ( this.depthwise.strides == 1 )
+            && ( this.depthwise.pad == "same" )
             && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
            )
        );
