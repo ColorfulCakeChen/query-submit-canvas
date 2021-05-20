@@ -14,7 +14,6 @@ import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
  * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/144/colorfulcakechen-cnn-pointdepthpoint-8b96be794f92522de1}
  */
 
-
 /**
  * A test set.
  */
@@ -947,7 +946,7 @@ class HeightWidthDepth {
            32,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           128,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
             0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE,
-            0 ], // paramsOutArray
+            1 ], // paramsOutArray
 
       [], [], //pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
       depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
