@@ -15,16 +15,16 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {boolean} bExisted
- *   If true, this depthwise operation exist. The same as this.bDepthwise.
+ *   If true, this depthwise operation exists. The same as this.bDepthwise.
 
  * @member {boolean} bDepthwise
- *   If true, this depthwise convolution exist. The same as this.bExisted.
+ *   If true, this depthwise operation exists. The same as this.bExisted.
  *
  * @member {boolean} bDepthwiseAvg
- *   If true, this depthwise operation exist. And it is depthwise average pooling.
+ *   If true, this depthwise operation exists. And it is depthwise average pooling.
  *
  * @member {boolean} bDepthwiseMax
- *   If true, this depthwise operation exist. And it is depthwise maximum pooling.
+ *   If true, this depthwise operation exists. And it is depthwise maximum pooling.
  *
  * @member {boolean} bDepthwiseConv
  *   If true, this depthwise operation exist. And it is depthwise convolution.
