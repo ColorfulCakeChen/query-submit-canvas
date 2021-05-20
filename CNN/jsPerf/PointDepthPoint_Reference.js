@@ -181,7 +181,7 @@ class TestCase {
       `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${this.weightsFloat32Array.byteLength}). ${parametersDescription}`);
 
     // input tensor parameters.
-    tf.util.assert( ( pointDepthPoint.inChannels == this.imageInArray[ 0 ].in.depth ),
+    tf.util.assert( ( pointDepthPoint.inChannels == this.imageInArray[ 0 ].depth ),
       `PointDepthPoint inChannels (${pointDepthPoint.inChannels}) should be (${this.imageInArray[ 0 ].depth}). ${parametersDescription}`);
 
     tf.util.assert( ( pointDepthPoint.inputTensorCount == inputTensorCount ),
