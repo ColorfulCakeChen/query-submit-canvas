@@ -3,7 +3,6 @@ export { TestCase };
 import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
-//import * as TensorTools from "../util/TensorTools.js";
 
 /**
  * Reference computation of class PointDepthPoint.Base.
@@ -774,7 +773,7 @@ y.print();
    */
   static modifyByActivation( imageIn, nActivationId, parametersDesc ) {
 
-    let pfnActivation = PointDepthPoint.Base.getActivationFunctionById( nActivationId );
+    let pfnActivation = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
     if ( !pfnActivation )
       return imageIn;
 
