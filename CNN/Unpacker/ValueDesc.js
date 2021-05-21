@@ -149,26 +149,10 @@ class ActivationFunction extends Int {
 
   constructor() {
     super( 0, 6,
-      [                                   "NONE",  "RELU",  "RELU6",  "SIGMOID",  "TANH",  "SIN",  "COS" ],
-//!!! (2021/05/20 Remarked) NONE should be null.
-//      [ ActivationFunction.return_input_directly, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ]
-      [                                     null, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ]
+      [ "NONE",  "RELU",  "RELU6",  "SIGMOID",  "TANH",  "SIN",  "COS" ],
+      [   null, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ]
     );
   }
-
-//!!! (2021/05/20 Remarked) NONE should be null.
-//   /**
-//    * Return the input (as output) directly. Used for ActivationFunction.Ids.NONE.
-//    *
-//    * @param {tf.tensor} inputTensor
-//    *   A tensor data. It should be viewed as already disposed by this method. However, in fact, it is returned as output
-//    * directly.
-//    *
-//    * @return {tf.tensor} The same as input.
-//    */
-//   static return_input_directly( inputTensor ) {
-//     return inputTensor;
-//   }
 
 }
 
