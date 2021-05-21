@@ -19,6 +19,19 @@ class Same {
   getAdjuster() {
     return this.adjust.bind( this );
   }
+
+  /**
+   * Return a generator which produces some testable input value which could be adjusted into output value by this ValueRange object.
+   *
+   * @yield {number[]}
+   *   Every time yield an array with two elements: [ valueInput, valueOutput ]. The valueOutput is a value from valueRangeMin to valueRangeMax.
+   * The valueInput is a value which could be adjusted to valueOutput by this ValueRange object.
+   */
+  * valueGenerator() {
+//!!! ...unfinished... (2021/05/21)
+
+  }
+
 }
 
 /** The only one ValueRange.Same instance. */
@@ -37,6 +50,14 @@ class Bool extends Same {
     // According to negative or positive, the remainder could be one of [ -1, 0, +1 ].
     // So simply check it whether is 0 (instead of check both -1 and +1), could result in false or true.
     return ( ( Math.trunc( value ) % 2 ) != 0 );
+  }
+
+  /**
+   * @override
+   */
+  * valueGenerator() {
+//!!! ...unfinished... (2021/05/21)
+
   }
 
 }
@@ -81,6 +102,14 @@ class Int extends Same {
     let quotientInt = Math.floor( quotient );  // So that negative value could be handled correctly.
     let result = valueInt - ( quotientInt * this.kinds );
     return result;
+  }
+
+  /**
+   * @override
+   */
+  * valueGenerator() {
+//!!! ...unfinished... (2021/05/21)
+
   }
 
 }
