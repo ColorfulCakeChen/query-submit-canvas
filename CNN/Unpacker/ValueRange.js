@@ -21,17 +21,29 @@ class Same {
   }
 
   /**
-   * Return a generator which produces some testable input value which could be adjusted into output value by this ValueRange object.
+   * Return a generator which produces a sequence of two-value pair.
+   *
+   * For ValueRange.Same, there is no testable value pair coulde be generated. The reason is that any value is legal for it.
    *
    * @yield {number[]}
    *   Every time yield an array with two elements: [ valueInput, valueOutput ]. The valueOutput is a value from valueRangeMin to valueRangeMax.
    * The valueInput is a value which could be adjusted to valueOutput by this ValueRange object.
    */
-  * valueGenerator() {
-//!!! ...unfinished... (2021/05/21)
-
+  * valueInputOutputPairGenerator() {
+    return;
   }
 
+  /**
+   * Return a random integer between min and max. (This function comes from MDN's Math.random().)
+   *
+   * @param {number} min The the minimum integer. (inclusive)
+   * @param {number} max The the maximum integer. (inclusive)
+   */
+  static getRandomIntInclusive( min, max ) {
+    min = Math.ceil( min );
+    max = Math.floor( max );
+    return Math.floor( Math.random() * ( max - min + 1 ) + min );
+  }
 }
 
 /** The only one ValueRange.Same instance. */
@@ -53,11 +65,22 @@ class Bool extends Same {
   }
 
   /**
+   * For ValueRange.Bool, two two-value pairs will be generated.  
+   *
    * @override
    */
-  * valueGenerator() {
-//!!! ...unfinished... (2021/05/21)
+  * valueInputOutputPairGenerator() {
 
+    let randomBaseInt = Same.getRandomIntInclusive( -100, +100 ); // (-100 and +100 just chosen arbitrarily.)
+    let randomBaseIntEven = randomBaseInt * 2; // Any integer multiplied by 2 will be an even number.
+
+    // An even value with fractional part will become 0 by Bool.adjust().
+    let valueInputZero = ( randomBaseIntEven + 0 ) + Math.random();
+    yield [ valueInputZero, 0 ];
+
+    // A odd value with fractional part will become 1 by Bool.adjust().
+    let valueInputOne  = ( randomBaseIntEven + 1 ) + Math.random();
+    yield [ valueInputOne, 1 ];
   }
 
 }
@@ -105,10 +128,24 @@ class Int extends Same {
   }
 
   /**
+   * For ValueRange.Int, this.kinds two-value pairs will be generated.  
+   *
    * @override
    */
-  * valueGenerator() {
-//!!! ...unfinished... (2021/05/21)
+  * valueInputOutputPairGenerator() {
+
+//!!! ...unfinished... (2021/05/22)
+    let randomBaseInt = Same.getRandomIntInclusive( -100, +100 ); // (-100 and +100 just chosen arbitrarily.)
+//???
+    // An integer which has the same remainder as randomBaseInt when divided by this.kinds.
+    let randomBaseIntCongruence = randomBaseInt * this.kinds;
+
+    for ( let i = 0; i < this.kinds; ++i ) {
+      let valueInput = randomBaseIntCongruence + this.min + i;
+
+    // An even value with fractional part will become 0 by Bool.adjust().
+    let valueInputZero = ( randomBaseIntEven + 0 ) + Math.random();
+    yield [ valueInputZero, 0 ];
 
   }
 
