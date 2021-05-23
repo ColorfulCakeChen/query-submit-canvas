@@ -65,7 +65,7 @@ class Bool extends Same {
   }
 
   /**
-   * For ValueRange.Bool, two two-value pairs will be generated.  
+   * For ValueRange.Bool, two two-value pairs will be generated in sequence.
    *
    * @override
    */
@@ -128,25 +128,28 @@ class Int extends Same {
   }
 
   /**
-   * For ValueRange.Int, this.kinds two-value pairs will be generated.  
+   * For ValueRange.Int, this.kinds two-value pairs will be generated in sequence.
    *
    * @override
    */
   * valueInputOutputPairGenerator() {
 
-//!!! ...unfinished... (2021/05/22)
-    let randomBaseInt = Same.getRandomIntInclusive( -100, +100 ); // (-100 and +100 just chosen arbitrarily.)
-//???
+    let randomBaseInt = Same.getRandomIntInclusive( -10, +10 ); // (-10 and +10 just chosen arbitrarily.)
+
     // An integer which has the same remainder as randomBaseInt when divided by this.kinds.
     let randomBaseIntCongruence = randomBaseInt * this.kinds;
 
     for ( let i = 0; i < this.kinds; ++i ) {
-      let valueInput = randomBaseIntCongruence + this.min + i;
+      let valueOutputInt = ( this.min + i );
 
-    // An even value with fractional part will become 0 by Bool.adjust().
-    let valueInputZero = ( randomBaseIntEven + 0 ) + Math.random();
-    yield [ valueInputZero, 0 ];
+      // An integer which could become valueOutputInt when adjusted by Int.adjust().
+      let valueInputInt = randomBaseIntCongruence + valueOutputInt;
 
+      // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
+      let valueInputFloat = valueInputInt + Math.random();
+
+      yield [ valueInputFloat, valueOutputInt ];
+    }
   }
 
 }
