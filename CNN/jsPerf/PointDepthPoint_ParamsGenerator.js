@@ -11,19 +11,22 @@ class Base {
   constructor() {
   }
 
-//!!! ...unfinished... (2021/05/21 Remarked) should use ValueRange.Same.valueGenerator()
   /**
-   * @param {number} valueRangeMin
    *
-   * @param {number} valueRangeMax
    *
-   * @yield {number[]}
-   *   Yield an array with two elements: [ valueInput, valueOutput ]. The valueOutput is a value from valueRangeMin to valueRangeMax.
-   * The valueInput is a value which 
+   *
+   *
+   * @yield {object}
+   *   Yield an object. The object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is, it has
+   * the following data members: inputFloat32Array, byteOffsetBegin, pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+   * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+   * pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+   * inputTensorCount.
+   *
    */
-  static *ValuePairGenerator( valueRangeMin, valueRangeMax ) {
-     let generatedValuePair;
-//!!! ...unfinished... (2021/05/21)
+  static *ParamsGenerator() {
+//!!! ...unfinished... (2021/05/24)
+
   }
 
 }
