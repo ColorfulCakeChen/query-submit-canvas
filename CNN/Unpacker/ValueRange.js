@@ -25,9 +25,9 @@ class Same {
    *
    * For ValueRange.Same, there is no testable value pair coulde be generated. The reason is that any value is legal for it.
    *
-   * @yield {number[]}
-   *   Every time yield an array with two elements: [ valueInput, valueOutput ]. The valueOutput is a value from valueRangeMin to valueRangeMax.
-   * The valueInput is a value which could be adjusted to valueOutput by this ValueRange object.
+   * @yield {object}
+   *   Every time yield an array with two number properties: { valueInput, valueOutput }. The valueOutput is a value from valueRangeMin to
+   * valueRangeMax. The valueInput is a value which could be adjusted to valueOutput by this ValueRange object.
    */
   * valueInputOutputPairGenerator() {
     return;
@@ -76,11 +76,11 @@ class Bool extends Same {
 
     // An even value with fractional part will become 0 by Bool.adjust().
     let valueInputZero = ( randomBaseIntEven + 0 ) + Math.random();
-    yield [ valueInputZero, 0 ];
+    yield { valueInput: valueInputZero, valueOutput: 0 };
 
     // A odd value with fractional part will become 1 by Bool.adjust().
     let valueInputOne  = ( randomBaseIntEven + 1 ) + Math.random();
-    yield [ valueInputOne, 1 ];
+    yield { valueInput: valueInputOne, valueOutput: 1 };
   }
 
 }
@@ -148,7 +148,7 @@ class Int extends Same {
       // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
       let valueInputFloat = valueInputInt + Math.random();
 
-      yield [ valueInputFloat, valueOutputInt ];
+      yield { valueInput: valueInputFloat, valueOutput: valueOutputInt };
     }
   }
 
