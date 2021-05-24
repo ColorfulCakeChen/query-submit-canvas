@@ -23,14 +23,14 @@ class Same {
   /**
    * Return a generator which produces a sequence of two-value pair.
    *
-   * For ValueRange.Same, there is no testable value pair coulde be generated. The reason is that any value is legal for it.
+   * For ValueRange.Same, there is no meaningful testable value pair could be generated. The reason is that any value is legal for it.
    *
    * @yield {object}
    *   Every time yield an array with two number properties: { valueInput, valueOutput }. The valueOutput is a value from valueRangeMin to
    * valueRangeMax. The valueInput is a value which could be adjusted to valueOutput by this ValueRange object.
    */
   * valueInputOutputPairGenerator() {
-    return;
+    yield { valueInput: 0, valueOutput: 0 };
   }
 
   /**
