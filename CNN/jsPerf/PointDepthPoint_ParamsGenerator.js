@@ -25,6 +25,29 @@ class Base {
    *
    */
   static *ParamsGenerator() {
+
+//!!! ...unfinished... (2021/05/24)
+    for ( let pointwise1ChannelCount of PointDepthPoint.Params.pointwise1ChannelCount.range.valueInputOutputPairGenerator() ) {
+
+      pointwise1ChannelCount.valueInput;
+      pointwise1ChannelCount.valueOutput;
+    }
+
+    PointDepthPoint.Params.bPointwise1Bias.range;
+    PointDepthPoint.Params.pointwise1ActivationId.range;
+    PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.range;
+    PointDepthPoint.Params.depthwiseFilterHeight.range;
+    PointDepthPoint.Params.depthwiseStridesPad.range;
+    PointDepthPoint.Params.bDepthwiseBias.range;
+    PointDepthPoint.Params.depthwiseActivationId.range;
+    PointDepthPoint.Params.pointwise21ChannelCount.range;
+    PointDepthPoint.Params.bPointwise21Bias.range;
+    PointDepthPoint.Params.pointwise21ActivationId.range;
+    PointDepthPoint.Params.pointwise22ChannelCount.range;
+    PointDepthPoint.Params.bPointwise22Bias.range;
+    PointDepthPoint.Params.pointwise22ActivationId.range;
+    PointDepthPoint.Params.inputTensorCount.range;
+
 //!!! ...unfinished... (2021/05/24)
 
   }
