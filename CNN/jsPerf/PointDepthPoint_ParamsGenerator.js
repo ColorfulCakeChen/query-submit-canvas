@@ -27,10 +27,23 @@ class Base {
   static *ParamsGenerator() {
 
 //!!! ...unfinished... (2021/05/24)
+//     paramsInArray, paramsOutArray,
+//     pointwise1FiltersArray, pointwise1BiasesArray,
+//     depthwiseFiltersArray, depthwiseBiasesArray,
+//     pointwise21FiltersArray, pointwise21BiasesArray,
+//     pointwise22FiltersArray, pointwise22BiasesArray,
+
+    let result = {};
+
+//!!! ...unfinished... (2021/05/24)
     for ( let pointwise1ChannelCount of PointDepthPoint.Params.pointwise1ChannelCount.range.valueInputOutputPairGenerator() ) {
+
+      result.pointwise1ChannelCount = null;
 
       pointwise1ChannelCount.valueInput;
       pointwise1ChannelCount.valueOutput;
+
+      result.pointwise1ChannelCount = pointwise1ChannelCount.valueInput;
     }
 
     PointDepthPoint.Params.bPointwise1Bias.range;
