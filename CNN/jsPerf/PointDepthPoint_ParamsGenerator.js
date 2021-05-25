@@ -56,43 +56,31 @@ class Base {
 
     this.paramsInArray = [];
     this.result = { in: {}, out: {} };
-
-//!!! ...unfinished... (2021/05/24)
-    for ( let i = 0; i < this.paramDescArray.length; ++i ) {
-      let paramDesc = this.paramDescArray[ i ];
-
-      for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
-        this.result.out[ paramDesc.paramName ] = pair.valueOutput;
-
-        if ( Math.random() < 0.5 ) {
-          this.result.in[ paramDesc.paramName ] = pair.valueInput; // Try parameter value assigned directly (i.e. by specifying).
-        } else {
-          this.result.in[ paramDesc.paramName ] = null;            // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
-          this.paramsInArray.push( pair.valueInput );
-        }
-
-      }
-
+    
 //!!! ...unfinished... (2021/05/25)
-    }
-
-//!!! ...unfinished... (2021/05/24)
-
+    yield *this.permuteParamRecursively( 0 );
   }
 
   /**
-   * This method will modify this.result and this.paramsInArray.
+   * This method will modify this.result and this.paramsInArray. It also calls itself recursively to permute all parameters.
    *
    * @param {number} currentIndex
    *   The index into the this.paramDescArray[]. It represents the current parameter to be tried.
    *
-   * @yield
+   * @yield {object}
+   *   Every time one kind of parameters' combination is generated, this method will yield an object { in, out } which has two sub-objects.
+   * The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. The "out" sub-object's data
+   * members represent the "should-be" result of PointDepthPoint.Params's extract().
    *
    */
   * permuteParamRecursively( currentIndex ) {
 
-    if ( currentIndex >= this.paramDescArray.length ) { // All parameters are tried.
-      yield result
+    if ( currentIndex >= this.paramDescArray.length ) { // All parameters are tried to one kind of combination.
+//!!! ...unfinished... (2021/05/25)
+      this.result.in.inputFloat32Array;
+      this.result.in.byteOffsetBegin;
+
+      yield this.result;
       return;
     }
 
@@ -101,19 +89,16 @@ class Base {
 //!!! ...unfinished... (2021/05/25)
     let paramDesc = this.paramDescArray[ currentIndex ];
     for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
-
       this.result.out[ paramDesc.paramName ] = pair.valueOutput;
 
       // Try parameter value assigned directly (i.e. by specifying).      
       this.result.in[ paramDesc.paramName ] = pair.valueInput;
-      this.permuteParamRecursively( nextIndex );
+      yield *this.permuteParamRecursively( nextIndex );
 
       // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
       this.result.in[ paramDesc.paramName ] = null;
       this.paramsInArray.push( pair.valueInput );
-      this.permuteParamRecursively( nextIndex );
-
-
+      yield *this.permuteParamRecursively( nextIndex );
     }
 
   }
