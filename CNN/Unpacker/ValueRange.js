@@ -29,7 +29,7 @@ class Same {
    *   Every time yield an array with two number properties: { valueInput, valueOutput }. The valueOutput is a value from valueRangeMin to
    * valueRangeMax. The valueInput is a value which could be adjusted to valueOutput by this ValueRange object.
    */
-  * valueInputOutputPairGenerator() {
+  * valueInputOutputGenerator() {
     yield { valueInput: 0, valueOutput: 0 };
   }
 
@@ -69,7 +69,7 @@ class Bool extends Same {
    *
    * @override
    */
-  * valueInputOutputPairGenerator() {
+  * valueInputOutputGenerator() {
 
     let randomBaseInt = Same.getRandomIntInclusive( -100, +100 ); // (-100 and +100 just chosen arbitrarily.)
     let randomBaseIntEven = randomBaseInt * 2; // Any integer multiplied by 2 will be an even number.
@@ -132,7 +132,7 @@ class Int extends Same {
    *
    * @override
    */
-  * valueInputOutputPairGenerator() {
+  * valueInputOutputGenerator() {
 
     let randomBaseInt = Same.getRandomIntInclusive( -10, +10 ); // (-10 and +10 just chosen arbitrarily.)
 
