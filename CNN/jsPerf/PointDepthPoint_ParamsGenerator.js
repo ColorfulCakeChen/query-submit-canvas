@@ -47,13 +47,6 @@ class Base {
    */
   * ParamsGenerator() {
 
-//!!! ...unfinished... (2021/05/24)
-//     paramsInArray, paramsOutArray,
-//     pointwise1FiltersArray, pointwise1BiasesArray,
-//     depthwiseFiltersArray, depthwiseBiasesArray,
-//     pointwise21FiltersArray, pointwise21BiasesArray,
-//     pointwise22FiltersArray, pointwise22BiasesArray,
-
     this.paramsInArray = [];
     this.result = { in: {}, out: {} };
     
@@ -77,6 +70,13 @@ class Base {
 
     if ( currentIndex >= this.paramDescArray.length ) { // All parameters are tried to one kind of combination.
 //!!! ...unfinished... (2021/05/25)
+      
+//     paramsInArray, paramsOutArray,
+//     pointwise1FiltersArray, pointwise1BiasesArray,
+//     depthwiseFiltersArray, depthwiseBiasesArray,
+//     pointwise21FiltersArray, pointwise21BiasesArray,
+//     pointwise22FiltersArray, pointwise22BiasesArray,
+
       this.result.in.inputFloat32Array;
       this.result.in.byteOffsetBegin;
 
@@ -101,6 +101,69 @@ class Base {
       yield *this.permuteParamRecursively( nextIndex );
     }
 
+  }
+
+
+//!!! ...unfinished... (2021/05/25) Generate:
+//     pointwise1FiltersArray, pointwise1BiasesArray,
+//     depthwiseFiltersArray, depthwiseBiasesArray,
+//     pointwise21FiltersArray, pointwise21BiasesArray,
+//     pointwise22FiltersArray, pointwise22BiasesArray,
+  {
+    let numberArrayArray = [
+      pointwise1FiltersArray, pointwise1BiasesArray,
+      depthwiseFiltersArray, depthwiseBiasesArray,
+      pointwise21FiltersArray, pointwise21BiasesArray,
+      pointwise22FiltersArray, pointwise22BiasesArray,
+    ];
+
+    this.concat_NumberArray_To_Float32Array( numberArrayArray );
+
+    this.result.in.inputFloat32Array = this.weightsFloat32Array;
+    this.result.in.byteOffsetBegin = this.weightsByteOffsetBegin;
+  }
+ 
+  /**
+   * Generate this.weightsFloat32Array (as a Float32Array) from an array of number array. It also add a random offset
+   * and record in this.weightsByteOffsetBegin.
+   *
+   * @param {number[][]} numberArrayArray
+   *   An array. Its elements are number array.
+   */
+  concat_NumberArray_To_Float32Array( numberArrayArray ) {
+
+    // For testing not start at the offset 0.
+    this.weightsElementOffsetBegin = ValueRange.Same.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
+    this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used byte count.
+
+    // Prepare weights source and offset into array. So that they can be accessed by loop.
+    let offset = 0;
+    let weightsSourceArray = this.weightsSourceArray = [];
+    for ( let i = 0; i < numberArrayArray.length; ++i ) {
+      let numberArray = numberArrayArray[ i ];
+      if ( numberArray ) {
+        weightsSourceArray.push( { offset: offset, weights: numberArray } );
+        offset += numberArray.length;
+      }
+    }
+
+//!!! ...unfinished... (2021/05/25)
+//     this.weightsTotalLength = offset;
+//     this.weightsTotalByteCount = this.weightsByteOffsetBegin + ( this.weightsTotalLength * Float32Array.BYTES_PER_ELEMENT );
+
+    // Concatenate this.weights into a Float32Array.
+    this.weightsFloat32Array = new Float32Array( this.weightsTotalLength );
+    {
+      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
+        this.weightsFloat32Array[ i ] = -i;
+      }
+
+      for ( let i = 0; i < weightsSourceArray.length; ++i ) { // Concatenate this.weights into a Float32Array.
+        this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
+      }
+    }
+
+//!!! ...unfinished... (2021/05/25)
   }
 
 }
