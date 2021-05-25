@@ -17,11 +17,13 @@ class Base {
    *
    *
    * @yield {object}
-   *   Yield an object. The object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is, it has
-   * the following data members: inputFloat32Array, byteOffsetBegin, pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-   * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-   * pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
-   * inputTensorCount.
+   *   Yield an object { in, out } which has two sub-objects. The "in" sub-object's data members represent every parameters of the
+   * PointDepthPoint.Params's constructor. That is, it has the following data members: inputFloat32Array, byteOffsetBegin,
+   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+   * pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId, inputTensorCount. The "out" sub-object's data members represent
+   * the "should-be" result of PointDepthPoint.Params's extract(). That is, it has the above data members except inputFloat32Array,
+   * byteOffsetBegin.
    *
    */
   static *ParamsGenerator() {
@@ -33,17 +35,20 @@ class Base {
 //     pointwise21FiltersArray, pointwise21BiasesArray,
 //     pointwise22FiltersArray, pointwise22BiasesArray,
 
-    let result = {};
+    let paramsInArray = [];
+    let result = { in: {}, out: {} };
 
 //!!! ...unfinished... (2021/05/24)
-    for ( let pointwise1ChannelCount of PointDepthPoint.Params.pointwise1ChannelCount.range.valueInputOutputPairGenerator() ) {
+    for ( let pointwise1ChannelCount of PointDepthPoint.Params.pointwise1ChannelCount.range.valueInputOutputGenerator() ) {
 
-      result.pointwise1ChannelCount = null;
+      result.out.pointwise1ChannelCount( pointwise1ChannelCount.valueOutput );
 
-      pointwise1ChannelCount.valueInput;
-      pointwise1ChannelCount.valueOutput;
+      paramsInArray.push( pointwise1ChannelCount.valueInput );
+      result.in.pointwise1ChannelCount = null;
 
-      result.pointwise1ChannelCount = pointwise1ChannelCount.valueInput;
+
+      paramsInArray.pop();
+      result.in.pointwise1ChannelCount = pointwise1ChannelCount.valueInput;
     }
 
     PointDepthPoint.Params.bPointwise1Bias.range;
