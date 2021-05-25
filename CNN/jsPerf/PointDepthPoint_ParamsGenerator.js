@@ -9,27 +9,8 @@ import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 class Base {
 
   constructor() {
-  }
-
-  /**
-   *
-   *
-   *
-   *
-   * @yield {object}
-   *   Yield an object { in, out } which has two sub-objects. The "in" sub-object's data members represent every parameters of the
-   * PointDepthPoint.Params's constructor. That is, it has the following data members: inputFloat32Array, byteOffsetBegin,
-   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
-   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-   * pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId, inputTensorCount. The "out" sub-object's data members represent
-   * the "should-be" result of PointDepthPoint.Params's extract(). That is, it has the above data members except inputFloat32Array,
-   * byteOffsetBegin.
-   *
-   */
-  static *ParamsGenerator() {
-
     // All the parameters to be tried.
-    let paramDescArray = [
+    this.paramDescArray = [
       PointDepthPoint.Params.pointwise1ChannelCount,
       PointDepthPoint.Params.bPointwise1Bias,
       PointDepthPoint.Params.pointwise1ActivationId,
@@ -47,6 +28,25 @@ class Base {
       PointDepthPoint.Params.inputTensorCount,
     ];
 
+  }
+
+  /**
+   *
+   *
+   *
+   *
+   * @yield {object}
+   *   Yield an object { in, out } which has two sub-objects. The "in" sub-object's data members represent every parameters of the
+   * PointDepthPoint.Params's constructor. That is, it has the following data members: inputFloat32Array, byteOffsetBegin,
+   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+   * pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId, inputTensorCount. The "out" sub-object's data members represent
+   * the "should-be" result of PointDepthPoint.Params's extract(). That is, it has the above data members except inputFloat32Array,
+   * byteOffsetBegin.
+   *
+   */
+  * ParamsGenerator() {
+
 //!!! ...unfinished... (2021/05/24)
 //     paramsInArray, paramsOutArray,
 //     pointwise1FiltersArray, pointwise1BiasesArray,
@@ -54,61 +54,66 @@ class Base {
 //     pointwise21FiltersArray, pointwise21BiasesArray,
 //     pointwise22FiltersArray, pointwise22BiasesArray,
 
-    let paramsInArray = [];
-    let result = { in: {}, out: {} };
+    this.paramsInArray = [];
+    this.result = { in: {}, out: {} };
 
 //!!! ...unfinished... (2021/05/24)
-    for ( let i = 0; i < paramDescArray.length; ++i ) {
-      let paramDesc = paramDescArray[ i ];
+    for ( let i = 0; i < this.paramDescArray.length; ++i ) {
+      let paramDesc = this.paramDescArray[ i ];
 
       for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
+        this.result.out[ paramDesc.paramName ] = pair.valueOutput;
 
-        result.out[ paramDesc.paramName ]( pair.valueOutput );
+        if ( Math.random() < 0.5 ) {
+          this.result.in[ paramDesc.paramName ] = pair.valueInput; // Try parameter value assigned directly (i.e. by specifying).
+        } else {
+          this.result.in[ paramDesc.paramName ] = null;            // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
+          this.paramsInArray.push( pair.valueInput );
+        }
 
-        // Try parameter value assigned directly (i.e. by specifying).
-        result.in[ paramDesc.paramName ] = null;
-        paramsInArray.push( pair.valueInput );
-
-//!!! ...unfinished... (2021/05/25)
-
-        // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
-        result.in[ paramDesc.paramName ] = pair.valueInput;
-        paramsInArray.pop();
       }
 
+//!!! ...unfinished... (2021/05/25)
+    }
 
 //!!! ...unfinished... (2021/05/24)
 
   }
 
   /**
-   *
-   * @param {ParamDesc.Base[]} paramDescArray
-   *   All the parameters to be tried.
+   * This method will modify this.result and this.paramsInArray.
    *
    * @param {number} currentIndex
-   *   The index into the paramDescArray[]. It represents the current parameter to be tried.
+   *   The index into the this.paramDescArray[]. It represents the current parameter to be tried.
    *
-   * @return {???}
+   * @yield
    *
    */
-  static permuteParams( paramDescArray, currentIndex ) {
+  * permuteParamRecursively( currentIndex ) {
 
-    if ( currentIndex >= paramDescArray.length )
-      return; // All parameters are tried.
+    if ( currentIndex >= this.paramDescArray.length ) { // All parameters are tried.
+      yield result
+      return;
+    }
+
+    let nextIndex = currentIndex + 1;
 
 //!!! ...unfinished... (2021/05/25)
-    let paramDesc = paramDescArray[ currentIndex ];
+    let paramDesc = this.paramDescArray[ currentIndex ];
     for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
 
-      result.out[ paramDesc.paramName ]( pair.valueOutput );
+      this.result.out[ paramDesc.paramName ] = pair.valueOutput;
 
-      paramsInArray.push( pair.valueInput );
-      result.in[ paramDesc.paramName ] = null;
+      // Try parameter value assigned directly (i.e. by specifying).      
+      this.result.in[ paramDesc.paramName ] = pair.valueInput;
+      this.permuteParamRecursively( nextIndex );
+
+      // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
+      this.result.in[ paramDesc.paramName ] = null;
+      this.paramsInArray.push( pair.valueInput );
+      this.permuteParamRecursively( nextIndex );
 
 
-      paramsInArray.pop();
-      result.in[ paramDesc.paramName ] = pair.valueInput;
     }
 
   }
