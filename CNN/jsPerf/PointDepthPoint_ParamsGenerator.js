@@ -34,6 +34,9 @@ class Base {
    *
    *
    *
+   * @param {number} channelCount_pointwise1Before
+   *   The channel count of pointwise1's input.
+   *
    *
    * @yield {object}
    *   Yield an object { in, out } which has two sub-objects. The "in" sub-object's data members represent every parameters of the
@@ -45,11 +48,12 @@ class Base {
    * byteOffsetBegin.
    *
    */
-  * ParamsGenerator() {
+  * ParamsGenerator( channelCount_pointwise1Before ) {
 
+    this.channelCount_pointwise1Before = channelCount_pointwise1Before;
     this.paramsInArray = [];
     this.result = { in: {}, out: {} };
-    
+
 //!!! ...unfinished... (2021/05/25)
     yield *this.permuteParamRecursively( 0 );
   }
@@ -77,7 +81,7 @@ class Base {
 //     pointwise21FiltersArray, pointwise21BiasesArray,
 //     pointwise22FiltersArray, pointwise22BiasesArray,
 
-      let numberArrayArray = Base.generate_Filters_Biases( this.result.in );
+      let numberArrayArray = Base.generate_Filters_Biases( this.channelCount_pointwise1Before, this.result.in );
 
       let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( numberArrayArray );
       this.result.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
@@ -108,6 +112,10 @@ class Base {
 
 
   /**
+   *
+   * @param {number} channelCount_pointwise1Before
+   *   The channel count of pointwise1's input.
+   *
    * @param {object}
    *   An object which has the following data members: 
    * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
@@ -120,7 +128,7 @@ class Base {
    * pointwise22FiltersArray, pointwise22BiasesArray ]. But it may not have so many elements because some may not exist. So, it may
    * be an array with zero element.
    */
-  static generate_Filters_Biases( params ) {
+  static generate_Filters_Biases( channelCount_pointwise1Before, params ) {
     
     let numberArrayArray = [];
 
