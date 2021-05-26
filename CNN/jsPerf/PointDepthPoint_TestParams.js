@@ -67,14 +67,17 @@ class Base {
    * @yield {object}
    *   Every time one kind of parameters' combination is generated, this method will yield an object { in, out } which has two sub-objects.
    * The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. The "out" sub-object's data
-   * members represent the "should-be" result of PointDepthPoint.Params's extract().
+   * members represent the "should-be" result of PointDepthPoint.Params's extract(). The "in.weights" is an object which may or may not have
+   * the following properties: pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray,
+   * pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray.
    *
    */
   * permuteParamRecursively( currentIndex ) {
 
     if ( currentIndex >= this.paramDescArray.length ) { // All parameters are used to be composed as one kind of combination.
-      let numberArrayArray = Base.generate_Filters_Biases( this.channelCount_pointwise1Before, this.result.out );
-      let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( numberArrayArray );
+      let numberArrayObject_numberArrayArray = Base.generate_Filters_Biases( this.channelCount_pointwise1Before, this.result.out );
+      let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( numberArrayObject_numberArrayArray.numberArrayArray );
+      this.result.in.weights = numberArrayObject_numberArrayArray.numberArrayObject;
       this.result.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
       this.result.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
       yield this.result;
@@ -203,22 +206,29 @@ class Base {
    * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount.
    *
    * @return {number[][]}
-   *   Return an array. Every element of the array is a number array. At most, it may look like [ pointwise1FiltersArray,
+   *   Return an object { numberArrayObject, numberArrayArray }. The numberArrayObject is an object which may or may not have the
+   * following properties: pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray,
+   * pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray. The numberArrayArray is an array.
+   * Every element of the array is a number array (i.e. the above number array). At most, it may look like [ pointwise1FiltersArray,
    * pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise21FiltersArray, pointwise21BiasesArray,
    * pointwise22FiltersArray, pointwise22BiasesArray ]. But it may not have so many elements because some may not exist. So, it may
    * be an array with zero element.
    */
   static generate_Filters_Biases( channelCount_pointwise1Before, params ) {
-    let numberArrayArray = [];
+    let result = { numberArrayObject: {}, numberArrayArray = [] };
 
     // Pointwise1
     let pointwise1 = Base.generate_pointwise_filters_biases( channelCount_pointwise1Before, params.pointwise1ChannelCount, params.bPointwise1Bias );
-    numberArrayArray.push( ...pointwise1.numberArrayArray );
+    result.numberArrayObject.pointwise1Filters = pointwise1[ 0 ];
+    result.numberArrayObject.pointwise1Biases = pointwise1[ 1 ];
+    result.numberArrayArray.push( ...pointwise1.numberArrayArray );
 
     // Depthwise
     let depthwise = Base.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
       params.depthwise_AvgMax_Or_ChannelMultiplier, params.depthwiseFilterHeight, params.depthwiseStridesPad, params.bDepthwiseBias );
-    numberArrayArray.push( ...depthwise.numberArrayArray );
+    result.numberArrayObject.depthwiseFilters = depthwise[ 0 ];
+    result.numberArrayObject.depthwiseBiases = depthwise[ 1 ];
+    result.numberArrayArray.push( ...depthwise.numberArrayArray );
 
     // Concat
     let pointwise2_inputChannelCount = depthwise.outputChannelCount;
@@ -229,13 +239,17 @@ class Base {
 
     // Pointwise21
     let pointwise21 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount, params.pointwise21ChannelCount, params.bPointwise21Bias );
-    numberArrayArray.push( ...pointwise21.numberArrayArray );
+    result.numberArrayObject.pointwise21Filters = pointwise21[ 0 ];
+    result.numberArrayObject.pointwise21Biases = pointwise21[ 1 ];
+    result.numberArrayArray.push( ...pointwise21.numberArrayArray );
 
     // Pointwise22
     let pointwise22 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount, params.pointwise22ChannelCount, params.bPointwise22Bias );
-    numberArrayArray.push( ...pointwise21.numberArrayArray );
+    result.numberArrayObject.pointwise22Filters = pointwise22[ 0 ];
+    result.numberArrayObject.pointwise22Biases = pointwise22[ 1 ];
+    result.numberArrayArray.push( ...pointwise22.numberArrayArray );
 
-    return numberArrayArray;
+    return result;
   }
 
   /**
