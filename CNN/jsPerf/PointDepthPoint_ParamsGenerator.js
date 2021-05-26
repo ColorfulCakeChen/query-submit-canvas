@@ -1,8 +1,8 @@
 export { Base };
 
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
-import * as ValueDesc from "../Unpacker/ValueDesc.js";
-import * as ValueRange from "../Unpacker/ValueRange.js";
+//import * as ValueDesc from "../Unpacker/ValueDesc.js";
+//import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 
@@ -104,12 +104,21 @@ class Base {
   }
 
 
-//!!! ...unfinished... (2021/05/25) Generate:
-//     pointwise1FiltersArray, pointwise1BiasesArray,
-//     depthwiseFiltersArray, depthwiseBiasesArray,
-//     pointwise21FiltersArray, pointwise21BiasesArray,
-//     pointwise22FiltersArray, pointwise22BiasesArray,
-  a() {
+  /**
+   * @param {object}
+   *   An object which has the following data members: 
+   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+   * pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId, inputTensorCount.
+   *
+   * @return {number[][]}
+   *   Return an array. Every element of the array is a number array. At most, it may look like [ pointwise1FiltersArray,
+   * pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise21FiltersArray, pointwise21BiasesArray,
+   * pointwise22FiltersArray, pointwise22BiasesArray ]. But it may not have so many elements because some may not exist. So, it may
+   * be an array with zero element.
+   */
+  Generate_Filters_Biases() {
+//!!! ...unfinished... (2021/05/26)
     let numberArrayArray = [
       pointwise1FiltersArray, pointwise1BiasesArray,
       depthwiseFiltersArray, depthwiseBiasesArray,
@@ -117,12 +126,12 @@ class Base {
       pointwise22FiltersArray, pointwise22BiasesArray,
     ];
 
-    let concatenatedNumberArray = this.concat_NumberArray_To_Float32Array( numberArrayArray );
+    let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( numberArrayArray );
 
-    this.result.in.inputFloat32Array = concatenatedNumberArray.weightsFloat32Array;
-    this.result.in.byteOffsetBegin = concatenatedNumberArray.weightsByteOffsetBegin;
+    this.result.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
+    this.result.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
   }
- 
+
   /**
    *
    * @param {number[][]} numberArrayArray
@@ -132,7 +141,7 @@ class Base {
    *   Return an object { weightsFloat32Array, weightsByteOffsetBegin }. The weightsFloat32Array (as a Float32Array) is the concatenation
    * of the numberArrayArray. The weightsByteOffsetBegin is a random offset inside weightsFloat32Array.
    */
-  concat_NumberArray_To_Float32Array( numberArrayArray ) {
+  static concat_NumberArray_To_Float32Array( numberArrayArray ) {
 
     // For testing not start at the offset 0.
     this.weightsElementOffsetBegin = ValueRange.Same.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
