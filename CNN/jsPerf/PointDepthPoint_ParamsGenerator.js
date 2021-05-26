@@ -109,7 +109,7 @@ class Base {
 //     depthwiseFiltersArray, depthwiseBiasesArray,
 //     pointwise21FiltersArray, pointwise21BiasesArray,
 //     pointwise22FiltersArray, pointwise22BiasesArray,
-  {
+  a() {
     let numberArrayArray = [
       pointwise1FiltersArray, pointwise1BiasesArray,
       depthwiseFiltersArray, depthwiseBiasesArray,
@@ -117,53 +117,53 @@ class Base {
       pointwise22FiltersArray, pointwise22BiasesArray,
     ];
 
-    this.concat_NumberArray_To_Float32Array( numberArrayArray );
+    let concatenatedNumberArray = this.concat_NumberArray_To_Float32Array( numberArrayArray );
 
-    this.result.in.inputFloat32Array = this.weightsFloat32Array;
-    this.result.in.byteOffsetBegin = this.weightsByteOffsetBegin;
+    this.result.in.inputFloat32Array = concatenatedNumberArray.weightsFloat32Array;
+    this.result.in.byteOffsetBegin = concatenatedNumberArray.weightsByteOffsetBegin;
   }
  
   /**
-   * Generate this.weightsFloat32Array (as a Float32Array) from an array of number array. It also add a random offset
-   * and record in this.weightsByteOffsetBegin.
    *
    * @param {number[][]} numberArrayArray
    *   An array. Its elements are number array.
+   *
+   * @return {object}
+   *   Return an object { weightsFloat32Array, weightsByteOffsetBegin }. The weightsFloat32Array (as a Float32Array) is the concatenation
+   * of the numberArrayArray. The weightsByteOffsetBegin is a random offset inside weightsFloat32Array.
    */
   concat_NumberArray_To_Float32Array( numberArrayArray ) {
 
     // For testing not start at the offset 0.
     this.weightsElementOffsetBegin = ValueRange.Same.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
-    this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used byte count.
+    let result = {
+      weightsByteOffsetBegin: this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used byte count.
+    };
 
     // Prepare weights source and offset into array. So that they can be accessed by loop.
-    let offset = 0;
-    let weightsSourceArray = this.weightsSourceArray = [];
+    let weightsTotalLength = result.weightsElementOffsetBegin;
+    let weightsSourceArray = [];
     for ( let i = 0; i < numberArrayArray.length; ++i ) {
       let numberArray = numberArrayArray[ i ];
       if ( numberArray ) {
-        weightsSourceArray.push( { offset: offset, weights: numberArray } );
-        offset += numberArray.length;
+        weightsSourceArray.push( { offset: weightsTotalLength, weights: numberArray } );
+        weightsTotalLength += numberArray.length;
       }
     }
 
-//!!! ...unfinished... (2021/05/25)
-//     this.weightsTotalLength = offset;
-//     this.weightsTotalByteCount = this.weightsByteOffsetBegin + ( this.weightsTotalLength * Float32Array.BYTES_PER_ELEMENT );
-
-    // Concatenate this.weights into a Float32Array.
-    this.weightsFloat32Array = new Float32Array( this.weightsTotalLength );
+    // Concatenate all number array into a Float32Array.
+    result.weightsFloat32Array = new Float32Array( weightsTotalLength );
     {
-      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
-        this.weightsFloat32Array[ i ] = -i;
+      for ( let i = 0; i < result.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
+        result.weightsFloat32Array[ i ] = -i;
       }
 
       for ( let i = 0; i < weightsSourceArray.length; ++i ) { // Concatenate this.weights into a Float32Array.
-        this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
+        result.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
       }
     }
 
-//!!! ...unfinished... (2021/05/25)
+    return result;
   }
 
 }
