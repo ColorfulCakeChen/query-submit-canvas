@@ -123,33 +123,85 @@ class Base {
 
   /**
    * @param {number} inputChannelCount
-   *   The channel count of the pointwise convolution's input. If zero (or negative), means the pointwise convolution does not exist.
+   *   The channel count of the pointwise convolution's input.
+   *
+   * @param {number} outputChannelCount
+   *   The channel count of the pointwise convolution's output. If ( outputChannelCount <= 0 ), means this pointwise convolution does not exist.
    *
    * @param {boolean} bBias
-   *   If true, the returned array will contain a number array as the bias' weight values.
+   *   If true, the returned array will contain a number array as the bias' weight values. If ( outputChannelCount <= 0 ), this will be ignored.
    *
-   * @return {number[][]}
-   *   Return an array. Every element of the array is a number array. At most, it will contain two number array and look like
-   * [ pointwiseFiltersArray, pointwiseBiasesArray ]. But it may also be no element (e.g. return an empty array).
+   * @return {object}
+   *   Return an object { outputChannelCount, numberArrayArray }. The outputChannelCount is the channel count of this pointwise operation.
+   * The numberArrayArray is an array. Its every element is a number array. At most, numberArrayArray will contain two number array and
+   * look like [ pointwiseFiltersArray, pointwiseBiasesArray ]. But it may also be no element (i.e. an empty array).
    */
   static generate_pointwise_filters_biases( inputChannelCount, outputChannelCount, bBias ) {
-    let numberArrayArray = [];
+    let result = {
+      outputChannelCount: inputChannelCount, // If this pointwise operation does not exist, default outputChannelCount will be inputChannelCount.
+      numberArrayArray: []
+    };
 
-    if ( inputChannelCount > 0 ) {
+    if ( outputChannelCount > 0 ) {
+      result.outputChannelCount = outputChannelCount;
+
       let filtersWeightsRandomOffset = { min: -100, max: +100 };
       let filtersWeightsCount = inputChannelCount * outputChannelCount;
       let filtersArray = Base.generate_numberArray( filtersWeightsCount, filtersWeightsRandomOffset.min, filtersWeightsRandomOffset.max );
-      numberArrayArray.push( filtersArray );
+      result.numberArrayArray.push( filtersArray );
 
       if ( bBias ) {
         let biasesWeightsRandomOffset = { min: -100, max: +100 };
-        let biasesWeightsCount = outputChannelCount;
+        let biasesWeightsCount = result.outputChannelCount;
         let biasesArray = Base.generate_numberArray( biasesWeightsCount, biasesWeightsRandomOffset.min, biasesWeightsRandomOffset.max );
-        numberArrayArray.push( biasesArray );
+        result.numberArrayArray.push( biasesArray );
       }
     }
 
-    return numberArrayArray;
+    return result;
+  }
+
+  /**
+   * @param {number} inputChannelCount
+   *   The channel count of the depthwise convolution's input.
+   *
+   * @param {boolean} bBias
+   *   If true, the returned array will contain a number array as the bias' weight values. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ),
+   * this will be ignored.
+   *
+   * @return {object}
+   *   Return an object { outputChannelCount, numberArrayArray }. The outputChannelCount is the channel count of this depthwise operation.
+   * The numberArrayArray is an array. Its every element is a number array. At most, numberArrayArray will contain two number array and
+   * look like [ depthwiseFiltersArray, depthwiseBiasesArray ]. But it may also be no element (i.e. an empty array).
+   */
+  static generate_depthwise_filters_biases(
+    inputChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bBias ) {
+
+    let result = {
+      outputChannelCount: inputChannelCount, // If this depthwise operation does not exist, default outputChannelCount will be inputChannelCount.
+      numberArrayArray: []
+    };
+
+    if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+      result.outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
+
+      let filtersWeightsRandomOffset = { min: -100, max: +100 };
+      let depthwiseFilterWidth = depthwiseFilterHeight;
+      let filtersWeightsCount = result.outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
+      let filtersArray = Base.generate_numberArray( filtersWeightsCount, filtersWeightsRandomOffset.min, filtersWeightsRandomOffset.max );
+      result.numberArrayArray.push( filtersArray );
+    }
+
+    if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
+      if ( bBias ) {
+        let biasesWeightsRandomOffset = { min: -100, max: +100 };
+        let biasesWeightsCount = result.outputChannelCount;
+        let biasesArray = Base.generate_numberArray( biasesWeightsCount, biasesWeightsRandomOffset.min, biasesWeightsRandomOffset.max );
+        result.numberArrayArray.push( biasesArray );
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -160,7 +212,7 @@ class Base {
    * @param {object}
    *   An object which has the following data members:  pointwise1ChannelCount, bPointwise1Bias,
    * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
-   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias.
+   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount.
    *
    * @return {number[][]}
    *   Return an array. Every element of the array is a number array. At most, it may look like [ pointwise1FiltersArray,
@@ -169,28 +221,31 @@ class Base {
    * be an array with zero element.
    */
   static generate_Filters_Biases( channelCount_pointwise1Before, params ) {
-    
     let numberArrayArray = [];
 
     // Pointwise1
-    numberArrayArray.push(
-      ... Base.generate_pointwise_filters_biases( channelCount_pointwise1Before, params.pointwise1ChannelCount, params.bPointwise1Bias ) );
-
-    let channelCount_pointwise1After_depthwiseBefore;
-    if ( channelCount_pointwise1Before > 0 ) {
-      channelCount_pointwise1After_depthwiseBefore = params.pointwise1ChannelCount;
-    } else {
-      channelCount_pointwise1After_depthwiseBefore = channelCount_pointwise1Before;  // No pointwise1 convolution.
-    }
+    let pointwise1 = Base.generate_pointwise_filters_biases( channelCount_pointwise1Before, params.pointwise1ChannelCount, params.bPointwise1Bias );
+    numberArrayArray.push( ...pointwise1.numberArrayArray );
 
     // Depthwise
+    let depthwise = Base.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
+      params.depthwise_AvgMax_Or_ChannelMultiplier, params.depthwiseFilterHeight, params.depthwiseStridesPad, params.bDepthwiseBias );
+    numberArrayArray.push( ...depthwise.numberArrayArray );
 
-//!!! ...unfinished... (2021/05/26)
+    // Concat
+    let pointwise2_inputChannelCount = depthwise.outputChannelCount;
+    if ( params.inputTensorCount > 1 ) {
+      // Assume all input tensors have the same channel count.
+      pointwise2_inputChannelCount += this.channelCount_pointwise1Before;
+    }
 
-//!!! ...unfinished... (2021/05/26)
-      depthwiseFiltersArray, depthwiseBiasesArray,
-      pointwise21FiltersArray, pointwise21BiasesArray,
-      pointwise22FiltersArray, pointwise22BiasesArray,
+    // Pointwise21
+    let pointwise21 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount, params.pointwise21ChannelCount, params.bPointwise21Bias );
+    numberArrayArray.push( ...pointwise21.numberArrayArray );
+
+    // Pointwise22
+    let pointwise22 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount, params.pointwise22ChannelCount, params.bPointwise22Bias );
+    numberArrayArray.push( ...pointwise21.numberArrayArray );
 
     return numberArrayArray;
   }
