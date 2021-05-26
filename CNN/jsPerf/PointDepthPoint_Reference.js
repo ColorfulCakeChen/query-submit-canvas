@@ -413,101 +413,111 @@ class TestCase {
     return pointDepthPoint;
   }
 
-
-
-
-
-
   /** According to this.weights.params.outArray and this.imageInArray, calculate imageOutArray.
+   *
+   * @param {number}   imageInArray[ i ].height    Image height
+   * @param {number}   imageInArray[ i ].width     Image width
+   * @param {number}   imageInArray[ i ].depth     Image channel count
+   * @param {number[]} imageInArray[ i ].dataArray Image data
+   *
    * @return {number[]} Return output image data as array.
    */ 
-  calcResult() {
-    // Assume the paramsOutArray is correct. Unpack it into parameters.
-    let [
-      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-      pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
-      inputTensorCount,
-    ] = this.weights.params.outArray;
+  calcResult( imageInArray, testParams ) {
 
-    let bAddInputToOutput = ( 0 == inputTensorCount );
+//!!! (2021/05/26 Remarked)
+//     // Assume the paramsOutArray is correct. Unpack it into parameters.
+//     let [
+//       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+//       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+//       pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+//       pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+//       inputTensorCount,
+//     ] = this.weights.params.outArray;
+
+    let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
 
     // Create description for debug easily.
     this.paramsOutDescription =
-        `pointwise1ChannelCount=${pointwise1ChannelCount}, bPointwise1Bias=${bPointwise1Bias}, `// pointwise1ActivationName=${pointwise1ActivationName}, `
-      + `depthwise_AvgMax_Or_ChannelMultiplier=${depthwise_AvgMax_Or_ChannelMultiplier}, `
-      + `depthwiseFilterHeight=${depthwiseFilterHeight}, `
-      + `depthwiseStridesPad=${depthwiseStridesPad}, `
-      + `bDepthwiseBias=${bDepthwiseBias}, `
+        `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `// pointwise1ActivationName=${pointwise1ActivationName}, `
+      + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
+      + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
+      + `depthwiseStridesPad=${testParams.out.depthwiseStridesPad}, `
+      + `bDepthwiseBias=${testParams.out.bDepthwiseBias}, `
 //      + `depthwiseActivationName=${depthwiseActivationName}, `
-      + `pointwise21ChannelCount=${pointwise21ChannelCount}, bPointwise21Bias=${bPointwise21Bias}, `//pointwise21ActivationName=${pointwise21ActivationName}, `
-      + `pointwise22ChannelCount=${pointwise22ChannelCount}, bPointwise22Bias=${bPointwise22Bias}, `//pointwise22ActivationName=${pointwise22ActivationName}, `
-      + `inputTensorCount=${inputTensorCount} `
+      + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `//pointwise21ActivationName=${pointwise21ActivationName}, `
+      + `pointwise22ChannelCount=${testParams.out.pointwise22ChannelCount}, bPointwise22Bias=${testParams.out.bPointwise22Bias}, `//pointwise22ActivationName=${pointwise22ActivationName}, `
+      + `inputTensorCount=${testParams.out.inputTensorCount} `
       + `bAddInputToOutput=${bAddInputToOutput}`
     ;
 
-    let nextImageIn = this.imageInArray[ 0 ];
+    let nextImageIn = imageInArray[ 0 ];
 
     // 1. Pointwise1
-    if ( pointwise1ChannelCount > 0 ) {
+    if ( testParams.out.pointwise1ChannelCount > 0 ) {
       nextImageIn = TestCase.calcPointwise(
         nextImageIn,
-        pointwise1ChannelCount, this.weights.pointwise1Filters, bPointwise1Bias, this.weights.pointwise1Biases, pointwise1ActivationId,
+        testParams.out.pointwise1ChannelCount,
+        testParams.in.weights.pointwise1Filters, testParams.out.bPointwise1Bias,
+        testParams.in.weights.pointwise1Biases, testParams.out.pointwise1ActivationId,
         "Pointwise1", this.paramsOutDescription );
     }
 
     // 2. Depthwise
-    if ( 0 != depthwise_AvgMax_Or_ChannelMultiplier ) {
+    if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       nextImageIn = TestCase.calcDepthwise(
         nextImageIn,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
-        this.weights.depthwiseFilters, bDepthwiseBias, this.weights.depthwiseBiases, depthwiseActivationId,
+        testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
+        testParams.in.weights.depthwiseFilters, testParams.out.bDepthwiseBias,
+        testParams.in.weights.depthwiseBiases, testParams.out.depthwiseActivationId,
         "Depthwise", this.paramsOutDescription );
     }
 
     // 3. Concat (along image depth)
-    if ( inputTensorCount > 1 ) {
-      nextImageIn = TestCase.calcConcatAlongAxisId2( nextImageIn, this.imageInArray[ 1 ], "ConcatAlongDepth", this.paramsOutDescription );
+    if ( testParams.out.inputTensorCount > 1 ) {
+      nextImageIn = TestCase.calcConcatAlongAxisId2( nextImageIn, imageInArray[ 1 ], "ConcatAlongDepth", this.paramsOutDescription );
     }
 
     // 4. Pointwise2
     let nextImageOutArray = [ null, null ];
 
-    if ( ( pointwise21ChannelCount == 0 ) && ( pointwise22ChannelCount == 0 ) ) {
+    if ( ( testParams.out.pointwise21ChannelCount == 0 ) && ( testParams.out.pointwise22ChannelCount == 0 ) ) {
 
       // 4.0 No Pointwise21 and No Pointwise22.
 
       // Residual Connection.
         nextImageOutArray[ 0 ] = TestCase.modifyByInput(
-          nextImageIn, bAddInputToOutput, this.imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
+          nextImageIn, bAddInputToOutput, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
 
     } else {
 
       // 4.1 Pointwise21
-      if ( pointwise21ChannelCount > 0 ) {
+      if ( testParams.out.pointwise21ChannelCount > 0 ) {
         nextImageOutArray[ 0 ] = TestCase.calcPointwise(
           nextImageIn,
-          pointwise21ChannelCount, this.weights.pointwise21Filters, bPointwise21Bias, this.weights.pointwise21Biases, pointwise21ActivationId,
+          testParams.out.pointwise21ChannelCount,
+          testParams.in.weights.pointwise21Filters, testParams.out.bPointwise21Bias,
+          testParams.in.weights.pointwise21Biases, testParams.out.pointwise21ActivationId,
           "Pointwise21", this.paramsOutDescription );
 
         // Residual Connection.
         nextImageOutArray[ 0 ] = TestCase.modifyByInput(
-          nextImageOutArray[ 0 ], bAddInputToOutput, this.imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
+          nextImageOutArray[ 0 ], bAddInputToOutput, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
       }
 
       // 4.2 Pointwise22
-      if ( pointwise22ChannelCount > 0 ) {
+      if ( testParams.out.pointwise22ChannelCount > 0 ) {
         nextImageOutArray[ 1 ] = TestCase.calcPointwise(
           nextImageIn,
-          pointwise22ChannelCount, this.weights.pointwise22Filters, bPointwise22Bias, this.weights.pointwise22Biases, pointwise22ActivationId,
+          testParams.out.pointwise22ChannelCount,
+          testParams.in.weights.pointwise22Filters, testParams.out.bPointwise22Bias,
+          testParams.in.weights.pointwise22Biases, testParams.out.pointwise22ActivationId,
           "Pointwise22", this.paramsOutDescription );
 
         // Residual Connection.
         //
-        // Always using input image1 (i.e. this.imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
+        // Always using input image1 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
         nextImageOutArray[ 1 ] = TestCase.modifyByInput(
-          nextImageOutArray[ 1 ], bAddInputToOutput, this.imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
+          nextImageOutArray[ 1 ], bAddInputToOutput, imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
       }
 
     }
