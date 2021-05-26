@@ -37,7 +37,6 @@ class Base {
    * @param {number} channelCount_pointwise1Before
    *   The channel count of pointwise1's input.
    *
-   *
    * @yield {object}
    *   Yield an object { in, out } which has two sub-objects. The "in" sub-object's data members represent every parameters of the
    * PointDepthPoint.Params's constructor. That is, it has the following data members: inputFloat32Array, byteOffsetBegin,
@@ -54,7 +53,6 @@ class Base {
     this.paramsInArray = [];
     this.result = { in: {}, out: {} };
 
-//!!! ...unfinished... (2021/05/25)
     yield *this.permuteParamRecursively( 0 );
   }
 
@@ -73,27 +71,16 @@ class Base {
   * permuteParamRecursively( currentIndex ) {
 
     if ( currentIndex >= this.paramDescArray.length ) { // All parameters are tried to one kind of combination.
-//!!! ...unfinished... (2021/05/25)
-    
-//     paramsInArray, paramsOutArray,
-//     pointwise1FiltersArray, pointwise1BiasesArray,
-//     depthwiseFiltersArray, depthwiseBiasesArray,
-//     pointwise21FiltersArray, pointwise21BiasesArray,
-//     pointwise22FiltersArray, pointwise22BiasesArray,
-
       let numberArrayArray = Base.generate_Filters_Biases( this.channelCount_pointwise1Before, this.result.in );
-
       let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( numberArrayArray );
       this.result.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
       this.result.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
-
       yield this.result;
       return;
     }
 
     let nextIndex = currentIndex + 1;
 
-//!!! ...unfinished... (2021/05/25)
     let paramDesc = this.paramDescArray[ currentIndex ];
     for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
       this.result.out[ paramDesc.paramName ] = pair.valueOutput;
@@ -107,7 +94,6 @@ class Base {
       this.paramsInArray.push( pair.valueInput );
       yield *this.permuteParamRecursively( nextIndex );
     }
-
   }
 
 
@@ -209,7 +195,7 @@ class Base {
    * @param {number} channelCount_pointwise1Before
    *   The channel count of pointwise1's input.
    *
-   * @param {object}
+   * @param {object} params
    *   An object which has the following data members:  pointwise1ChannelCount, bPointwise1Bias,
    * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
    * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount.
