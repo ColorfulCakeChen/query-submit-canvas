@@ -72,8 +72,8 @@ class Base {
    */
   * permuteParamRecursively( currentIndex ) {
 
-    if ( currentIndex >= this.paramDescArray.length ) { // All parameters are tried to one kind of combination.
-      let numberArrayArray = Base.generate_Filters_Biases( this.channelCount_pointwise1Before, this.result.in );
+    if ( currentIndex >= this.paramDescArray.length ) { // All parameters are used to be composed as one kind of combination.
+      let numberArrayArray = Base.generate_Filters_Biases( this.channelCount_pointwise1Before, this.result.out );
       let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( numberArrayArray );
       this.result.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
       this.result.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
