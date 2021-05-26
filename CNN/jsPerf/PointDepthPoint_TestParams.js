@@ -8,7 +8,13 @@ import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 
 class Base {
 
-  constructor() {
+  /**
+   * @param {number} channelCount_pointwise1Before
+   *   The channel count of pointwise1's input.
+   */
+  constructor( channelCount_pointwise1Before ) {
+    this.channelCount_pointwise1Before = channelCount_pointwise1Before;
+
     // All the parameters to be tried.
     this.paramDescArray = [
       PointDepthPoint.Params.pointwise1ChannelCount,
@@ -34,9 +40,6 @@ class Base {
    *
    *
    *
-   * @param {number} channelCount_pointwise1Before
-   *   The channel count of pointwise1's input.
-   *
    * @yield {object}
    *   Yield an object { in, out } which has two sub-objects. The "in" sub-object's data members represent every parameters of the
    * PointDepthPoint.Params's constructor. That is, it has the following data members: inputFloat32Array, byteOffsetBegin,
@@ -47,9 +50,8 @@ class Base {
    * byteOffsetBegin.
    *
    */
-  * ParamsGenerator( channelCount_pointwise1Before ) {
+  * ParamsGenerator() {
 
-    this.channelCount_pointwise1Before = channelCount_pointwise1Before;
     this.paramsInArray = [];
     this.result = { in: {}, out: {} };
 
