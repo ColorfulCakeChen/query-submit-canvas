@@ -6,6 +6,7 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 //import * as TensorTools from "../util/TensorTools.js";
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
+import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
 
 
 /**
@@ -1160,9 +1161,23 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
 
-    for ( let testCaseIndex = 0; testCaseIndex < this.testCases.length; ++testCaseIndex ) {
+//!!! (2021/05/26 Remarked)
+//     for ( let testCaseIndex = 0; testCaseIndex < this.testCases.length; ++testCaseIndex ) {
+//       try {
+//         let testCase = this.testCases[ testCaseIndex ];
+
+//!!! ...unfinished... (2021/05/26)
+    let testParamsBase = new PointDepthPoint_TestParams.Base( this.depth );
+    let paramsGenerator = testParamsBase.ParamsGenerator();
+
+    let testCaseIndex = 0;
+    for ( let params of paramsGenerator ) {
       try {
-        let testCase = this.testCases[ testCaseIndex ];
+
+//!!! ...unfinished... (2021/05/26)
+        let testCase = new PointDepthPoint_Reference.TestCase();
+        testCase = new PointDepthPoint_Reference.TestCase( params );
+        //this.dataTensor3dArray
 
         for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
           let bKeepInputTensor = ( nKeepInputTensor != 0 );
@@ -1170,8 +1185,6 @@ class HeightWidthDepth {
           try {
             tf.tidy( () => {
 
-//!!! (2021/05/20 Remarked) Try empty array.
-//              let outputTensor3dArray = new Array( 2 );
               let outputTensor3dArray = [];
               let inputTensor3dArray = new Array( 2 );
               let tensorNumDifference_apply_before_after;
@@ -1216,6 +1229,8 @@ class HeightWidthDepth {
         console.log( `backendName=${backendName}, PointDepthPoint testCaseIndex = ${testCaseIndex}` );
         throw e;
       }
+
+      ++testCaseIndex;
     }
 
     // After correctness testing done, create all PointDepthPoint for performance testing.
