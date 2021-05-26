@@ -20,6 +20,10 @@ class Same {
     return this.adjust.bind( this );
   }
 
+
+//!!! ...unfinished... (2021/05/26) Maybe need a parameter to restrict the maximum generated value count, or value upper bound.
+// Otherwise, too large value may not feasible to be tested.
+
   /**
    * Return a generator which produces a sequence of two-value pair.
    *
