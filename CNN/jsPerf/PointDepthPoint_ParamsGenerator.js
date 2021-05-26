@@ -70,15 +70,18 @@ class Base {
 
     if ( currentIndex >= this.paramDescArray.length ) { // All parameters are tried to one kind of combination.
 //!!! ...unfinished... (2021/05/25)
-      
+    
 //     paramsInArray, paramsOutArray,
 //     pointwise1FiltersArray, pointwise1BiasesArray,
 //     depthwiseFiltersArray, depthwiseBiasesArray,
 //     pointwise21FiltersArray, pointwise21BiasesArray,
 //     pointwise22FiltersArray, pointwise22BiasesArray,
 
-      this.result.in.inputFloat32Array;
-      this.result.in.byteOffsetBegin;
+      let numberArrayArray = Base.generate_Filters_Biases( this.result.in );
+
+      let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( numberArrayArray );
+      this.result.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
+      this.result.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
 
       yield this.result;
       return;
@@ -117,7 +120,12 @@ class Base {
    * pointwise22FiltersArray, pointwise22BiasesArray ]. But it may not have so many elements because some may not exist. So, it may
    * be an array with zero element.
    */
-  Generate_Filters_Biases() {
+  static generate_Filters_Biases( params ) {
+    
+    let numberArrayArray = [];
+
+    params
+
 //!!! ...unfinished... (2021/05/26)
     let numberArrayArray = [
       pointwise1FiltersArray, pointwise1BiasesArray,
@@ -126,10 +134,7 @@ class Base {
       pointwise22FiltersArray, pointwise22BiasesArray,
     ];
 
-    let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( numberArrayArray );
-
-    this.result.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
-    this.result.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
+    return numberArrayArray;
   }
 
   /**
