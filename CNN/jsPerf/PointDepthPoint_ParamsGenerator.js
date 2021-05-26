@@ -2,7 +2,7 @@ export { Base };
 
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../Unpacker/ValueDesc.js";
-//import * as ValueRange from "../Unpacker/ValueRange.js";
+import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 
@@ -112,15 +112,55 @@ class Base {
 
 
   /**
+   * @return {number[]}
+   *   Return a number array.
+   */
+  static generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax ) {
+    let numberArray = ( ... new Array( elementCount ).keys() ).map(
+      x => x + ValueRange.Same.getRandomIntInclusive( randomOffsetMin, randomOffsetMax ) );
+    return numberArray;
+  }
+
+  /**
+   * @param {number} inputChannelCount
+   *   The channel count of the pointwise convolution's input. If zero (or negative), means the pointwise convolution does not exist.
+   *
+   * @param {boolean} bBias
+   *   If true, the returned array will contain a number array as the bias' weight values.
+   *
+   * @return {number[][]}
+   *   Return an array. Every element of the array is a number array. At most, it will contain two number array and look like
+   * [ pointwiseFiltersArray, pointwiseBiasesArray ]. But it may also be no element (e.g. return an empty array).
+   */
+  static generate_pointwise_filters_biases( inputChannelCount, outputChannelCount, bBias ) {
+    let numberArrayArray = [];
+
+    if ( inputChannelCount > 0 ) {
+      let filtersWeightsRandomOffset = { min: -100, max: +100 };
+      let filtersWeightsCount = inputChannelCount * outputChannelCount;
+      let filtersArray = Base.generate_numberArray( filtersWeightsCount, filtersWeightsRandomOffset.min, filtersWeightsRandomOffset.max );
+      numberArrayArray.push( filtersArray );
+
+      if ( bBias ) {
+        let biasesWeightsRandomOffset = { min: -100, max: +100 };
+        let biasesWeightsCount = outputChannelCount;
+        let biasesArray = Base.generate_numberArray( biasesWeightsCount, biasesWeightsRandomOffset.min, biasesWeightsRandomOffset.max );
+        numberArrayArray.push( biasesArray );
+      }
+    }
+
+    return numberArrayArray;
+  }
+
+  /**
    *
    * @param {number} channelCount_pointwise1Before
    *   The channel count of pointwise1's input.
    *
    * @param {object}
-   *   An object which has the following data members: 
-   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
-   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-   * pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId, inputTensorCount.
+   *   An object which has the following data members:  pointwise1ChannelCount, bPointwise1Bias,
+   * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
+   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias.
    *
    * @return {number[][]}
    *   Return an array. Every element of the array is a number array. At most, it may look like [ pointwise1FiltersArray,
@@ -132,15 +172,25 @@ class Base {
     
     let numberArrayArray = [];
 
-    params
+    // Pointwise1
+    numberArrayArray.push(
+      ... Base.generate_pointwise_filters_biases( channelCount_pointwise1Before, params.pointwise1ChannelCount, params.bPointwise1Bias ) );
+
+    let channelCount_pointwise1After_depthwiseBefore;
+    if ( channelCount_pointwise1Before > 0 ) {
+      channelCount_pointwise1After_depthwiseBefore = params.pointwise1ChannelCount;
+    } else {
+      channelCount_pointwise1After_depthwiseBefore = channelCount_pointwise1Before;  // No pointwise1 convolution.
+    }
+
+    // Depthwise
 
 //!!! ...unfinished... (2021/05/26)
-    let numberArrayArray = [
-      pointwise1FiltersArray, pointwise1BiasesArray,
+
+//!!! ...unfinished... (2021/05/26)
       depthwiseFiltersArray, depthwiseBiasesArray,
       pointwise21FiltersArray, pointwise21BiasesArray,
       pointwise22FiltersArray, pointwise22BiasesArray,
-    ];
 
     return numberArrayArray;
   }
