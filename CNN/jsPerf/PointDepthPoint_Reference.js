@@ -3,12 +3,14 @@ export { TestCase };
 import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
+import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
 
 /**
  * Reference computation of class PointDepthPoint.Base.
  */
 class TestCase {
 
+//!!! ...unfinished... (2021/05/26) Old Codes. should be remarked.
   /**
    * @param {number[]} paramsInArray     parameters data which will be processed by PointDepthPoint.Params
    * @param {number[]} paramsOutArray    parameters data which should match the result of PointDepthPoint.Params
@@ -18,6 +20,7 @@ class TestCase {
    * @param {number}   imageInArray[ i ].depth     Image channel count
    * @param {number[]} imageInArray[ i ].dataArray Image data
    */
+/*
   constructor(
     paramsInArray, paramsOutArray,
     pointwise1FiltersArray, pointwise1BiasesArray,
@@ -108,13 +111,16 @@ class TestCase {
       }
     }
   }
+*/
 
+//!!! ...unfinished... (2021/05/26) Old Codes. should be remarked.
   /**
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
    *
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
+/*
   pointDepthPoint_create( bKeepInputTensor ) {
 
     let pointDepthPoint = new PointDepthPoint.Base();
@@ -262,6 +268,155 @@ class TestCase {
 
     return pointDepthPoint;
   }
+*/
+
+
+  static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
+    tf.util.assert( ( value1 == value2 ),
+      `PointDepthPoint ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
+  }
+
+  /**
+   * @param {boolean} bKeepInputTensor
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
+   *
+   * @param {object} testParams
+   *   An object { in, out } which has two sub-objects. The "in" sub-object's data members represent every parameters of the
+   * PointDepthPoint.Params's constructor. That is, it has the following data members: inputFloat32Array, byteOffsetBegin,
+   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+   * pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId, inputTensorCount. The "out" sub-object's data members represent
+   * the "should-be" result of PointDepthPoint.Params's extract(). That is, it has the above data members except inputFloat32Array,
+   * byteOffsetBegin.
+   *
+   * @return {PointDepthPoint.Base} The created pointDepthPoint object.
+   */
+  pointDepthPoint_createByTestParams( channelCount_pointwise1Before, bKeepInputTensor, testParams ) {
+
+    let pointDepthPoint = new PointDepthPoint.Base();
+
+    let progress = new ValueMax.Percentage.Aggregate();
+
+    // Initialize successfully or failed.
+    let bInitOk = pointDepthPoint.init(
+      progress,
+      channelCount_pointwise1Before, // (i.e. inChannels)
+      bKeepInputTensor,
+
+      new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
+        testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
+
+        testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight,
+        testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
+
+        testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
+        testParams.in.pointwise22ChannelCount, testParams.in.bPointwise22Bias, testParams.in.pointwise22ActivationId,
+        testParams.in.inputTensorCount
+      )
+
+    );
+
+    let bAddInputToOutput = ( 0 == testParams.in.inputTensorCount );
+
+    let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
+
+    tf.util.assert( ( pointDepthPoint.isValid() == bInitOk ),
+      `PointDepthPoint validation state (${pointDepthPoint.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
+
+    tf.util.assert( ( true == bInitOk ),
+      `Failed to initialize pointDepthPoint object. ${parametersDescription}`);
+
+    tf.util.assert( ( 100 == progress.valuePercentage ),
+      `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
+
+
+    tf.util.assert( ( pointDepthPoint.byteOffsetBegin == testParams.byteOffsetBegin ),
+      `PointDepthPoint parsing beginning position (${pointDepthPoint.byteOffsetBegin}) should be (${testParams.byteOffsetBegin}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.byteOffsetEnd == testParams.inputFloat32Array.byteLength ),
+      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${testParams.inputFloat32Array.byteLength}). ${parametersDescription}`);
+
+    // input tensor parameters.
+    Base.AssertTwoEqualValues( "inChannels", pointDepthPoint.inChannels, channelCount_pointwise1Before, parametersDescription );
+    Base.AssertTwoEqualValues( "inputTensorCount", pointDepthPoint.inputTensorCount, testParams.out.inputTensorCount, parametersDescription );
+    Base.AssertTwoEqualValues( "bAddInputToOutput", pointDepthPoint.bAddInputToOutput, bAddInputToOutput, parametersDescription );
+    Base.AssertTwoEqualValues( "bKeepInputTensor", pointDepthPoint.bKeepInputTensor, bKeepInputTensor, parametersDescription );
+
+    // pointwise1 parameters.
+    Base.AssertTwoEqualValues( "pointwise1ChannelCount",
+      pointDepthPoint.pointwise1ChannelCount, testParams.out.pointwise1ChannelCount, parametersDescription );
+
+    Base.AssertTwoEqualValues( "bPointwise1Bias",
+      pointDepthPoint.bPointwise1Bias, testParams.out.bPointwise1Bias, parametersDescription );
+
+    Base.AssertTwoEqualValues( "pointwise1ActivationId",
+      pointDepthPoint.pointwise1ActivationId, testParams.out.pointwise1ActivationId, parametersDescription );
+
+    let pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise1ActivationId );
+    Base.AssertTwoEqualValues( "pointwise1ActivationName",
+      pointDepthPoint.pointwise1ActivationName, pointwise1ActivationName, parametersDescription );
+
+    // depthwise parameters.
+    Base.AssertTwoEqualValues( "depthwise_AvgMax_Or_ChannelMultiplier",
+      pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, parametersDescription );
+
+    Base.AssertTwoEqualValues( "depthwiseFilterHeight",
+      pointDepthPoint.depthwiseFilterHeight, testParams.out.depthwiseFilterHeight, parametersDescription );
+
+    Base.AssertTwoEqualValues( "depthwiseStridesPad",
+      pointDepthPoint.depthwiseStridesPad, testParams.out.depthwiseStridesPad, parametersDescription );
+
+    Base.AssertTwoEqualValues( "bDepthwiseBias",
+      pointDepthPoint.bDepthwiseBias, testParams.out.bDepthwiseBias, parametersDescription );
+
+    Base.AssertTwoEqualValues( "depthwiseActivationId",
+      pointDepthPoint.depthwiseActivationId, testParams.out.depthwiseActivationId, parametersDescription );
+
+    let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.depthwiseActivationId );
+    Base.AssertTwoEqualValues( "depthwiseActivationName",
+      pointDepthPoint.depthwiseActivationName, depthwiseActivationName, parametersDescription );
+
+    // pointwise21 parameters.
+    Base.AssertTwoEqualValues( "pointwise21ChannelCount",
+      pointDepthPoint.pointwise21ChannelCount, testParams.out.pointwise21ChannelCoun, parametersDescription );
+
+    Base.AssertTwoEqualValues( "bPointwise21Bias",
+      pointDepthPoint.bPointwise21Bias, testParams.out.bPointwise21Bias, parametersDescription );
+
+    Base.AssertTwoEqualValues( "pointwise21ActivationId",
+      pointDepthPoint.pointwise21ActivationId, testParams.out.pointwise21ActivationId, parametersDescription );
+
+    let pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise21ActivationId );
+    Base.AssertTwoEqualValues( "pointwise21ActivationName",
+      pointDepthPoint.pointwise21ActivationName, pointwise21ActivationName, parametersDescription );
+
+    // pointwise22 parameters.
+    Base.AssertTwoEqualValues( "pointwise22ChannelCount",
+      pointDepthPoint.pointwise22ChannelCount, testParams.out.pointwise22ChannelCount, parametersDescription );
+
+    Base.AssertTwoEqualValues( "bPointwise22Bias",
+      pointDepthPoint.bPointwise22Bias, testParams.out.bPointwise22Bias, parametersDescription );
+
+    Base.AssertTwoEqualValues( "pointwise22ActivationId",
+      pointDepthPoint.pointwise22ActivationId, testParams.out.pointwise22ActivationId, parametersDescription );
+
+    let pointwise22ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise22ActivationId );
+    Base.AssertTwoEqualValues( "pointwise22ActivationName",
+      pointDepthPoint.pointwise22ActivationName, pointwise22ActivationName, parametersDescription );
+
+    // Other parameters.
+
+//!!! ...unfinished...
+//     tf.util.assert( ( pointDepthPoint.outChannels == outChannels ),
+//       `PointDepthPoint outChannels (${pointDepthPoint.outChannels}) should be (${outChannels}). ${parametersDescription}`);
+
+    return pointDepthPoint;
+  }
+
+
+
+
+
 
   /** According to this.weights.params.outArray and this.imageInArray, calculate imageOutArray.
    * @return {number[]} Return output image data as array.
