@@ -89,24 +89,26 @@ class Base {
    * @param {number} currentParamDescIndex
    *   The index into the this.paramDescArray[]. It represents the current parameter to be tried.
    *
-   * @yield {object}
-   *   Every time one kind of parameters' combination is generated, this method will yield an object { in, out } which has two sub-objects.
-   * The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. The "out" sub-object's data
-   * members represent the "should-be" result of PointDepthPoint.Params's extract(). The "in.weights" is an object which may or may not have
-   * the following properties: pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray,
-   * pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray.
-   *
+   * @yield {TestParams}
+   *   Every time one kind of parameters' combination is generated, the this.result will be yielded.
    */
   * permuteParamRecursively( currentParamDescIndex ) {
 
     if ( currentParamDescIndex >= this.paramDescArray.length ) { // All parameters are used to be composed as one kind of combination.
-      let numberArrayObject_numberArrayArray = Base.generate_Filters_Biases( this.channelCount_pointwise1Before, this.result.out );
-      let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( numberArrayObject_numberArrayArray.numberArrayArray );
-      this.result.in.weights = numberArrayObject_numberArrayArray.numberArrayObject;
+      let filters_biases = Base.generate_Filters_Biases( this.channelCount_pointwise1Before, this.result.out );
+
+      // In front of the filters and biases, there should be the parameters by evolution.
+      filters_biases.numberArrayArray.unshift( this.paramsInArray );
+
+      let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( filters_biases.numberArrayArray );
       this.result.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
       this.result.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
+
+      // The original (non-concatenated) filters and biases should also be returned.
+      this.result.in.weights = filters_biases.numberArrayObject;
+
       yield this.result;
-      return;
+      return; // Stop this recusive. Back-track to another parameters combination.
     }
 
     let nextParamDescIndex = currentParamDescIndex + 1;
