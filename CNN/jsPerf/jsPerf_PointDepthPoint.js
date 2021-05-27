@@ -67,7 +67,7 @@ class HeightWidthDepth {
     ];
 
 //!!! ...unfinished... (2021/05/27) Old Codes. should be remarked.
-
+/*
     let testCase_depthwise_avg_strides_1_pad_valid, testCase_depthwise_avg_strides_1_pad_same, testCase_depthwise_avg_strides_2_pad_same;
     let testCase_depthwise_max_strides_1_pad_valid, testCase_depthwise_max_strides_1_pad_same, testCase_depthwise_max_strides_2_pad_same;
     let testCase_pointwise1_depthwise_2_strides_1_pad_same_pointwise2_AddInputToOutput;
@@ -656,7 +656,7 @@ class HeightWidthDepth {
         this.testCorrectness_ImageDataArray
       ),
     ];
-
+*/
     // Small input image for correctness testing.
     this.dataTensor3dArray = tf.tidy( () => {
       let dataTensor3dArray = new Array( this.testCorrectness_ImageDataArray.length );
@@ -802,183 +802,152 @@ class HeightWidthDepth {
       return dataTensor3dArray;
     });
 
-//!!! ...unfinished...
+    // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+    // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    // pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+    // pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+    // inputTensorCount,
+    //
+
+//!!! ...unfinished... (2021/05/27)
 
     // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 1, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     let testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
-    new PointDepthPoint_Reference.TestCase(
-      [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
-        1.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
-        0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
-        3.4 ], // paramsInArray
-
-      [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+    new PointDepthPoint_Reference.Base( new PointDepthPoint_TestParams.TestParams().set( this.depth,
+          8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           1,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
           0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
-          0 ], // paramsOutArray
+          0,
 
-      pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
-      depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
-      pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
-      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
-      this.testPerformance_ImageDataArray
-    );
+//!!! (2021/05/27 Remarked)
+//       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
+//       depthwise_8to8_FiltersArray, depthwise_8to8_BiasesArray,
+//       pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
+//       [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
+//       this.testPerformance_ImageDataArray
+    ) );
 
     // Test Case: (pointwise1 (bias, COS), depthwise (avg pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     let testCase_pointwise1_4to8_bias_COS_depthwise_avg_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
-    new PointDepthPoint_Reference.TestCase(
-      [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
-        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG - 0.6,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
-        0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
-        6.4 ], // paramsInArray
-
-      [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,           3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+    new PointDepthPoint_Reference.Base( new PointDepthPoint_TestParams.TestParams().set( this.depth,
+          8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,
+                 3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
           0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
-          0 ], // paramsOutArray
+          0,
 
-      pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
-      [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
-      pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
-      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
-      this.testPerformance_ImageDataArray
-    );
+//!!! (2021/05/27 Remarked)
+//       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
+//       [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
+//       pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
+//       [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
+//       this.testPerformance_ImageDataArray
+    ) );
 
     // Test Case: (pointwise1 (bias, COS), depthwise (max pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     let testCase_pointwise1_4to8_bias_COS_depthwise_max_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
-    new PointDepthPoint_Reference.TestCase(
-      [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
-        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX - 0.6,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
-        0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
-        9.4 ], // paramsInArray
-
-      [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,           3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+    new PointDepthPoint_Reference.Base( new PointDepthPoint_TestParams.TestParams().set( this.depth,
+          8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,
+                 3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
           0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
-          0 ], // paramsOutArray
+          0,
 
-      pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
-      [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
-      pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
-      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
-      this.testPerformance_ImageDataArray
-    );
+//!!! (2021/05/27 Remarked)
+//       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
+//       [] /* depthwise_8to8_FiltersArray */, depthwise_8to8_BiasesArray,
+//       pointwise_8to4_FiltersArray, pointwise_Xto4_BiasesArray,
+//       [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
+//       this.testPerformance_ImageDataArray
+    ) );
 
     // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     let testCase_pointwise1_4to8_bias_COS_depthwise_8to16_strides_1_pad_same_bias_COS_pointwise2_16to4_bias_COS_AddInputToOutput =
-    new PointDepthPoint_Reference.TestCase(
-      [ 8.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
-        2.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
-        0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
-        0.4 ], // paramsInArray
-
-      [   8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+    new PointDepthPoint_Reference.Base( new PointDepthPoint_TestParams.TestParams().set( this.depth,
+          8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
           0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
-          0 ], // paramsOutArray
+          0,
 
-      pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
-      depthwise_8to16_FiltersArray, depthwise_8to16_BiasesArray,
-      pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
-      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
-      this.testPerformance_ImageDataArray
-    );
+//!!! (2021/05/27 Remarked)
+//       pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
+//       depthwise_8to16_FiltersArray, depthwise_8to16_BiasesArray,
+//       pointwise_16to4_FiltersArray, pointwise_Xto4_BiasesArray,
+//       [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
+//       this.testPerformance_ImageDataArray
+    ) );
 
     // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS), AddInputToOutput)
     let testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS_AddInputToOutput =
-    new PointDepthPoint_Reference.TestCase(
-      [ 8.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
-        2.1,   3.1, 4.1,   2.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   4.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
-        0.1,   4.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
-        3.4 ], // paramsInArray
-
-      [   8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+    new PointDepthPoint_Reference.Base( new PointDepthPoint_TestParams.TestParams().set( this.depth,
+          8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4, false, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
           0, false, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
-          0 ], // paramsOutArray
+          0,
 
-      pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
-      depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
-      pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
-      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
-      this.testPerformance_ImageDataArray
-    );
+//!!! (2021/05/27 Remarked)
+//       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
+//       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
+//       pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
+//       [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
+//       this.testPerformance_ImageDataArray
+    ) );
 
     // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS))
     let testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS =
-    new PointDepthPoint_Reference.TestCase(
-      [ 8.1,   0.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
-        2.1,   3.1, 4.1,   2.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        4.1,   4.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS + 0.3,
-        0.1,   4.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS + 0.3,
-        1.4 ], // paramsInArray
-
-      [   8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+    new PointDepthPoint_Reference.Base( new PointDepthPoint_TestParams.TestParams().set( this.depth,
+          8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4, false, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
           0, false, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
-          1 ], // paramsOutArray
+          1,
 
-      pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
-      depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
-      pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
-      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
-      this.testPerformance_ImageDataArray
-    );
+//!!! (2021/05/27 Remarked)
+//       pointwise_4to8_FiltersArray,  [], //pointwise_4to8_BiasesArray,
+//       depthwise_8to16_FiltersArray, [], //depthwise_8to16_BiasesArray,
+//       pointwise_16to4_FiltersArray, [], //pointwise_Xto4_BiasesArray,
+//       [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
+//       this.testPerformance_ImageDataArray
+    ) );
 
     // Test Case: (pointwise1 (none), depthwise (channelMultiplier = 32, strides = 1, pad = same, bias, COS), pointwise2 (bias))
     let testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias =
-    new PointDepthPoint_Reference.TestCase(
-      [   0.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
-         32.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        128.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE + 0.3,
-          0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE + 0.3,
-          4.4 ], // paramsInArray
-
-      [     0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+    new PointDepthPoint_Reference.Base( new PointDepthPoint_TestParams.TestParams().set( this.depth,
+            0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
            32,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           128,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
             0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE,
-            1 ], // paramsOutArray
+            1,
 
-      [], [], //pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
-      depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
-      pointwise_128to128_FiltersArray, pointwise_Xto128_BiasesArray,
-      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
-      this.testPerformance_ImageDataArray
-    );
+//!!! (2021/05/27 Remarked)
+//       [], [], //pointwise_4to8_FiltersArray, pointwise_4to8_BiasesArray,
+//       depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
+//       pointwise_128to128_FiltersArray, pointwise_Xto128_BiasesArray,
+//       [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
+//       this.testPerformance_ImageDataArray
+    ) );
 
     // Test Case: (pointwise1 (bias, COS), depthwise (none), pointwise2 (bias))
     let testCase_pointwise1_4to128_bias_COS_depthwise_none_COS_pointwise2_128to128_bias =
-    new PointDepthPoint_Reference.TestCase(
-      [ 128.1,   1.1, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS + 0.1,
-          0.1,   3.1, 4.1,   3.2, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS + 0.2,
-        128.1,   5.3, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE + 0.3,
-          0.1,   5.3, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE + 0.3,
-          4.4 ], // paramsInArray
-
-      [   128,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
+    new PointDepthPoint_Reference.Base( new PointDepthPoint_TestParams.TestParams().set( this.depth,
+          128,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             0,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           128,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
             0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE,
-            1 ], // paramsOutArray
+            1,
 
-      pointwise_4to128_FiltersArray, pointwise_Xto128_BiasesArray,
-      [], [], //depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
-      pointwise_128to128_FiltersArray, pointwise_Xto128_BiasesArray,
-      [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
-      this.testPerformance_ImageDataArray
-    );
+//!!! (2021/05/27 Remarked)
+//       pointwise_4to128_FiltersArray, pointwise_Xto128_BiasesArray,
+//       [], [], //depthwise_4to128_FiltersArray, depthwise_Xto128_BiasesArray,
+//       pointwise_128to128_FiltersArray, pointwise_Xto128_BiasesArray,
+//       [], [],     // pointwise22FiltersArray, pointwise22BiasesArray
+//       this.testPerformance_ImageDataArray
+    ) );
 
 
     // Different pointDepthPoint objects.
