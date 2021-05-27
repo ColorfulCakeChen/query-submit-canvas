@@ -18,273 +18,6 @@ class TestCase {
     this.testParams = testParams;
   }
 
-//!!! ...unfinished... (2021/05/26) Old Codes. should be remarked.
-  /**
-   * @param {number[]} paramsInArray     parameters data which will be processed by PointDepthPoint.Params
-   * @param {number[]} paramsOutArray    parameters data which should match the result of PointDepthPoint.Params
-   *
-   * @param {number}   imageInArray[ i ].height    Image height
-   * @param {number}   imageInArray[ i ].width     Image width
-   * @param {number}   imageInArray[ i ].depth     Image channel count
-   * @param {number[]} imageInArray[ i ].dataArray Image data
-   */
-/*
-  constructor(
-    paramsInArray, paramsOutArray,
-    pointwise1FiltersArray, pointwise1BiasesArray,
-    depthwiseFiltersArray, depthwiseBiasesArray,
-    pointwise21FiltersArray, pointwise21BiasesArray,
-    pointwise22FiltersArray, pointwise22BiasesArray,
-    imageInArray
-  ) {
-    this.weights = {
-      params: {
-        inArray:  paramsInArray,
-        outArray: paramsOutArray
-      },
-      pointwise1Filters: pointwise1FiltersArray, pointwise1Biases: pointwise1BiasesArray,
-      depthwiseFilters:  depthwiseFiltersArray,  depthwiseBiases:  depthwiseBiasesArray,
-      pointwise21Filters: pointwise21FiltersArray, pointwise21Biases: pointwise21BiasesArray,
-      pointwise22Filters: pointwise22FiltersArray, pointwise22Biases: pointwise22BiasesArray,
-    };
-
-    this.imageInArray = imageInArray;
-
-    // For testing not start at the offset 0.
-    this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
-    this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
-
-    // Prepare weights source and offset into array. So that they can be accessed by loop.
-    let weightsSourceArray = this.weightsSourceArray = [];
-    {
-      let offset = this.weightsElementOffsetBegin;
-
-      if ( paramsInArray ) {
-        weightsSourceArray.push( { offset: offset, weights: paramsInArray } );
-        offset += paramsInArray.length;
-      }
-
-      if ( pointwise1FiltersArray ) {
-        weightsSourceArray.push( { offset: offset, weights: pointwise1FiltersArray } );
-        offset += pointwise1FiltersArray.length;
-      }
-
-      if ( pointwise1BiasesArray ) {
-        weightsSourceArray.push( { offset: offset, weights: pointwise1BiasesArray } );
-        offset += pointwise1BiasesArray.length;
-      }
-
-      if ( depthwiseFiltersArray ) {
-        weightsSourceArray.push( { offset: offset, weights: depthwiseFiltersArray } );
-        offset += depthwiseFiltersArray.length;
-      }
-
-      if ( depthwiseBiasesArray ) {
-        weightsSourceArray.push( { offset: offset, weights: depthwiseBiasesArray } );
-        offset += depthwiseBiasesArray.length;
-      }
-
-      if ( pointwise21FiltersArray ) {
-        weightsSourceArray.push( { offset: offset, weights: pointwise21FiltersArray } );
-        offset += pointwise21FiltersArray.length;
-      }
-
-      if ( pointwise21BiasesArray ) {
-        weightsSourceArray.push( { offset: offset, weights: pointwise21BiasesArray } );
-        offset += pointwise21BiasesArray.length;
-      }
-
-      if ( pointwise22FiltersArray ) {
-        weightsSourceArray.push( { offset: offset, weights: pointwise22FiltersArray } );
-        offset += pointwise22FiltersArray.length;
-      }
-
-      if ( pointwise22BiasesArray ) {
-        weightsSourceArray.push( { offset: offset, weights: pointwise22BiasesArray } );
-        offset += pointwise22BiasesArray.length;
-      }
-
-      this.weightsTotalLength = offset;
-    }
-
-    // Concatenate this.weights into a Float32Array.
-    this.weightsFloat32Array = new Float32Array( this.weightsTotalLength );
-    {
-      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
-        this.weightsFloat32Array[ i ] = -i;
-      }
-
-      for ( let i = 0; i < weightsSourceArray.length; ++i ) { // Concatenate this.weights into a Float32Array.
-        this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
-      }
-    }
-  }
-*/
-
-//!!! ...unfinished... (2021/05/26) Old Codes. should be remarked.
-  /**
-   * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
-   *
-   * @return {PointDepthPoint.Base} The created pointDepthPoint object.
-   */
-/*
-  pointDepthPoint_create( bKeepInputTensor ) {
-
-    let pointDepthPoint = new PointDepthPoint.Base();
-
-    let progress = new ValueMax.Percentage.Aggregate();
-
-    // Initialize successfully or failed.
-    let bInitOk = pointDepthPoint.init(
-      progress,
-      this.imageInArray[ 0 ].depth, // channelCount_pointwise1Before (i.e. inChannels)
-      bKeepInputTensor,
-
-//!!! ...unfinished... Could be randomized some null some non-null?
-      new PointDepthPoint.Params( this.weightsFloat32Array, this.weightsByteOffsetBegin,
-
-        // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
-
-        //pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-        null, null, null,
-
-        //depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-        null, null, null, null, null,
-
-        //pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-        null, null, null,
-
-        //pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
-        null, null, null,
-
-        // inputTensorCount
-        null
-      )
-
-    );
-
-    // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
-    let [
-      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-      pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
-      inputTensorCount,
-    ] = this.weights.params.outArray;
-
-    let bAddInputToOutput = ( 0 == inputTensorCount );
-
-    let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
-
-    tf.util.assert( ( pointDepthPoint.isValid() == bInitOk ),
-      `PointDepthPoint validation state (${pointDepthPoint.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
-
-    tf.util.assert( ( true == bInitOk ),
-      `Failed to initialize pointDepthPoint object. ${parametersDescription}`);
-
-    tf.util.assert( ( 100 == progress.valuePercentage ),
-      `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
-
-
-    tf.util.assert( ( pointDepthPoint.byteOffsetBegin == this.weightsByteOffsetBegin ),
-      `PointDepthPoint parsing beginning position (${pointDepthPoint.byteOffsetBegin}) should be (${this.weightsByteOffsetBegin}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.byteOffsetEnd == this.weightsFloat32Array.byteLength ),
-      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${this.weightsFloat32Array.byteLength}). ${parametersDescription}`);
-
-    // input tensor parameters.
-    tf.util.assert( ( pointDepthPoint.inChannels == this.imageInArray[ 0 ].depth ),
-      `PointDepthPoint inChannels (${pointDepthPoint.inChannels}) should be (${this.imageInArray[ 0 ].depth}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.inputTensorCount == inputTensorCount ),
-      `PointDepthPoint inputTensorCount (${pointDepthPoint.inputTensorCount}) should be (${inputTensorCount}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.bAddInputToOutput == bAddInputToOutput ),
-      `PointDepthPoint bAddInputToOutput (${pointDepthPoint.bAddInputToOutput}) should be (${bAddInputToOutput}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.bKeepInputTensor == bKeepInputTensor ),
-      `PointDepthPoint bKeepInputTensor (${pointDepthPoint.bKeepInputTensor}) should be (${bKeepInputTensor}). ${parametersDescription}`);
-
-    // pointwise1 parameters.
-    tf.util.assert( ( pointDepthPoint.pointwise1ChannelCount == pointwise1ChannelCount ),
-      `PointDepthPoint pointwise1ChannelCount (${pointDepthPoint.pointwise1ChannelCount}) should be (${pointwise1ChannelCount}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.bPointwise1Bias == bPointwise1Bias ),
-      `PointDepthPoint bPointwise1Bias (${pointDepthPoint.bPointwise1Bias}) should be (${bPointwise1Bias}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.pointwise1ActivationId == pointwise1ActivationId ),
-      `PointDepthPoint pointwise1ActivationId (${pointDepthPoint.pointwise1ActivationId}) should be (${pointwise1ActivationId}). ${parametersDescription}`);
-
-    let pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise1ActivationId );
-    tf.util.assert( ( pointDepthPoint.pointwise1ActivationName == pointwise1ActivationName ),
-      `PointDepthPoint pointwise1ActivationName (${pointDepthPoint.pointwise1ActivationName}) should be (${pointwise1ActivationName}). ${parametersDescription}`);
-
-    // depthwise parameters.
-    tf.util.assert( ( pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier == depthwise_AvgMax_Or_ChannelMultiplier ),
-      `PointDepthPoint depthwise_AvgMax_Or_ChannelMultiplier (${pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier}) should be (${depthwise_AvgMax_Or_ChannelMultiplier}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.depthwiseFilterHeight == depthwiseFilterHeight ),
-      `PointDepthPoint depthwiseFilterHeight (${pointDepthPoint.depthwiseFilterHeight}) should be (${depthwiseFilterHeight}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.depthwiseStridesPad == depthwiseStridesPad ),
-      `PointDepthPoint depthwiseStridesPad (${pointDepthPoint.depthwiseStridesPad}) should be (${depthwiseStridesPad}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.bDepthwiseBias == bDepthwiseBias ),
-      `PointDepthPoint bDepthwiseBias (${pointDepthPoint.bDepthwiseBias}) should be (${bDepthwiseBias}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.depthwiseActivationId == depthwiseActivationId ),
-      `PointDepthPoint depthwiseActivationId (${pointDepthPoint.depthwiseActivationId}) should be (${depthwiseActivationId}). ${parametersDescription}`);
-
-    let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( depthwiseActivationId );
-    tf.util.assert( ( pointDepthPoint.depthwiseActivationName == depthwiseActivationName ),
-      `PointDepthPoint depthwiseActivationName (${pointDepthPoint.depthwiseActivationName}) should be (${depthwiseActivationName}). ${parametersDescription}`);
-
-    // pointwise21 parameters.
-    tf.util.assert( ( pointDepthPoint.pointwise21ChannelCount == pointwise21ChannelCount ),
-      `PointDepthPoint pointwise21ChannelCount (${pointDepthPoint.pointwise21ChannelCount}) should be (${pointwise21ChannelCount}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.bPointwise21Bias == bPointwise21Bias ),
-      `PointDepthPoint bPointwise21Bias (${pointDepthPoint.bPointwise21Bias}) should be (${bPointwise21Bias}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.pointwise21ActivationId == pointwise21ActivationId ),
-      `PointDepthPoint pointwise21ActivationId (${pointDepthPoint.pointwise21ActivationId}) should be (${pointwise21ActivationId}). ${parametersDescription}`);
-
-    let pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise21ActivationId );
-    tf.util.assert( ( pointDepthPoint.pointwise21ActivationName == pointwise21ActivationName ),
-      `PointDepthPoint pointwise21ActivationName (${pointDepthPoint.pointwise21ActivationName}) should be (${pointwise21ActivationName}). ${parametersDescription}`);
-
-    // pointwise22 parameters.
-    tf.util.assert( ( pointDepthPoint.pointwise22ChannelCount == pointwise22ChannelCount ),
-      `PointDepthPoint pointwise22ChannelCount (${pointDepthPoint.pointwise22ChannelCount}) should be (${pointwise22ChannelCount}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.bPointwise22Bias == bPointwise22Bias ),
-      `PointDepthPoint bPointwise22Bias (${pointDepthPoint.bPointwise22Bias}) should be (${bPointwise22Bias}). ${parametersDescription}`);
-
-    tf.util.assert( ( pointDepthPoint.pointwise22ActivationId == pointwise22ActivationId ),
-      `PointDepthPoint pointwise22ActivationId (${pointDepthPoint.pointwise22ActivationId}) should be (${pointwise22ActivationId}). ${parametersDescription}`);
-
-    let pointwise22ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise22ActivationId );
-    tf.util.assert( ( pointDepthPoint.pointwise22ActivationName == pointwise22ActivationName ),
-      `PointDepthPoint pointwise22ActivationName (${pointDepthPoint.pointwise22ActivationName}) should be (${pointwise22ActivationName}). ${parametersDescription}`);
-
-    // Other parameters.
-
-//!!! ...unfinished...
-//     tf.util.assert( ( pointDepthPoint.outChannels == outChannels ),
-//       `PointDepthPoint outChannels (${pointDepthPoint.outChannels}) should be (${outChannels}). ${parametersDescription}`);
-
-    return pointDepthPoint;
-  }
-*/
-
-
-  static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
-    tf.util.assert( ( value1 == value2 ),
-      `PointDepthPoint ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
-  }
-
-
 //!!! ...unfinished... (2021/05/27)
 
   /**
@@ -567,6 +300,274 @@ class TestCase {
 
     return pointDepthPoint;
   }
+
+
+//!!! ...unfinished... (2021/05/26) Old Codes. should be remarked.
+  /**
+   * @param {number[]} paramsInArray     parameters data which will be processed by PointDepthPoint.Params
+   * @param {number[]} paramsOutArray    parameters data which should match the result of PointDepthPoint.Params
+   *
+   * @param {number}   imageInArray[ i ].height    Image height
+   * @param {number}   imageInArray[ i ].width     Image width
+   * @param {number}   imageInArray[ i ].depth     Image channel count
+   * @param {number[]} imageInArray[ i ].dataArray Image data
+   */
+/*
+  constructor(
+    paramsInArray, paramsOutArray,
+    pointwise1FiltersArray, pointwise1BiasesArray,
+    depthwiseFiltersArray, depthwiseBiasesArray,
+    pointwise21FiltersArray, pointwise21BiasesArray,
+    pointwise22FiltersArray, pointwise22BiasesArray,
+    imageInArray
+  ) {
+    this.weights = {
+      params: {
+        inArray:  paramsInArray,
+        outArray: paramsOutArray
+      },
+      pointwise1Filters: pointwise1FiltersArray, pointwise1Biases: pointwise1BiasesArray,
+      depthwiseFilters:  depthwiseFiltersArray,  depthwiseBiases:  depthwiseBiasesArray,
+      pointwise21Filters: pointwise21FiltersArray, pointwise21Biases: pointwise21BiasesArray,
+      pointwise22Filters: pointwise22FiltersArray, pointwise22Biases: pointwise22BiasesArray,
+    };
+
+    this.imageInArray = imageInArray;
+
+    // For testing not start at the offset 0.
+    this.weightsElementOffsetBegin = 3; // Skip the un-used. (in element count)
+    this.weightsByteOffsetBegin = this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used. (in byte count)
+
+    // Prepare weights source and offset into array. So that they can be accessed by loop.
+    let weightsSourceArray = this.weightsSourceArray = [];
+    {
+      let offset = this.weightsElementOffsetBegin;
+
+      if ( paramsInArray ) {
+        weightsSourceArray.push( { offset: offset, weights: paramsInArray } );
+        offset += paramsInArray.length;
+      }
+
+      if ( pointwise1FiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise1FiltersArray } );
+        offset += pointwise1FiltersArray.length;
+      }
+
+      if ( pointwise1BiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise1BiasesArray } );
+        offset += pointwise1BiasesArray.length;
+      }
+
+      if ( depthwiseFiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: depthwiseFiltersArray } );
+        offset += depthwiseFiltersArray.length;
+      }
+
+      if ( depthwiseBiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: depthwiseBiasesArray } );
+        offset += depthwiseBiasesArray.length;
+      }
+
+      if ( pointwise21FiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise21FiltersArray } );
+        offset += pointwise21FiltersArray.length;
+      }
+
+      if ( pointwise21BiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise21BiasesArray } );
+        offset += pointwise21BiasesArray.length;
+      }
+
+      if ( pointwise22FiltersArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise22FiltersArray } );
+        offset += pointwise22FiltersArray.length;
+      }
+
+      if ( pointwise22BiasesArray ) {
+        weightsSourceArray.push( { offset: offset, weights: pointwise22BiasesArray } );
+        offset += pointwise22BiasesArray.length;
+      }
+
+      this.weightsTotalLength = offset;
+    }
+
+    // Concatenate this.weights into a Float32Array.
+    this.weightsFloat32Array = new Float32Array( this.weightsTotalLength );
+    {
+      for ( let i = 0; i < this.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
+        this.weightsFloat32Array[ i ] = -i;
+      }
+
+      for ( let i = 0; i < weightsSourceArray.length; ++i ) { // Concatenate this.weights into a Float32Array.
+        this.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
+      }
+    }
+  }
+*/
+
+//!!! ...unfinished... (2021/05/26) Old Codes. should be remarked.
+  /**
+   * @param {boolean} bKeepInputTensor
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
+   *
+   * @return {PointDepthPoint.Base} The created pointDepthPoint object.
+   */
+/*
+  pointDepthPoint_create( bKeepInputTensor ) {
+
+    let pointDepthPoint = new PointDepthPoint.Base();
+
+    let progress = new ValueMax.Percentage.Aggregate();
+
+    // Initialize successfully or failed.
+    let bInitOk = pointDepthPoint.init(
+      progress,
+      this.imageInArray[ 0 ].depth, // channelCount_pointwise1Before (i.e. inChannels)
+      bKeepInputTensor,
+
+//!!! ...unfinished... Could be randomized some null some non-null?
+      new PointDepthPoint.Params( this.weightsFloat32Array, this.weightsByteOffsetBegin,
+
+        // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
+
+        //pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+        null, null, null,
+
+        //depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+        null, null, null, null, null,
+
+        //pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+        null, null, null,
+
+        //pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+        null, null, null,
+
+        // inputTensorCount
+        null
+      )
+
+    );
+
+    // Pass null as the following parameters so that they will be extracted from this.weightsFloat32Array.
+    let [
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+      pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+      inputTensorCount,
+    ] = this.weights.params.outArray;
+
+    let bAddInputToOutput = ( 0 == inputTensorCount );
+
+    let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
+
+    tf.util.assert( ( pointDepthPoint.isValid() == bInitOk ),
+      `PointDepthPoint validation state (${pointDepthPoint.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
+
+    tf.util.assert( ( true == bInitOk ),
+      `Failed to initialize pointDepthPoint object. ${parametersDescription}`);
+
+    tf.util.assert( ( 100 == progress.valuePercentage ),
+      `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
+
+
+    tf.util.assert( ( pointDepthPoint.byteOffsetBegin == this.weightsByteOffsetBegin ),
+      `PointDepthPoint parsing beginning position (${pointDepthPoint.byteOffsetBegin}) should be (${this.weightsByteOffsetBegin}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.byteOffsetEnd == this.weightsFloat32Array.byteLength ),
+      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${this.weightsFloat32Array.byteLength}). ${parametersDescription}`);
+
+    // input tensor parameters.
+    tf.util.assert( ( pointDepthPoint.inChannels == this.imageInArray[ 0 ].depth ),
+      `PointDepthPoint inChannels (${pointDepthPoint.inChannels}) should be (${this.imageInArray[ 0 ].depth}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.inputTensorCount == inputTensorCount ),
+      `PointDepthPoint inputTensorCount (${pointDepthPoint.inputTensorCount}) should be (${inputTensorCount}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bAddInputToOutput == bAddInputToOutput ),
+      `PointDepthPoint bAddInputToOutput (${pointDepthPoint.bAddInputToOutput}) should be (${bAddInputToOutput}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bKeepInputTensor == bKeepInputTensor ),
+      `PointDepthPoint bKeepInputTensor (${pointDepthPoint.bKeepInputTensor}) should be (${bKeepInputTensor}). ${parametersDescription}`);
+
+    // pointwise1 parameters.
+    tf.util.assert( ( pointDepthPoint.pointwise1ChannelCount == pointwise1ChannelCount ),
+      `PointDepthPoint pointwise1ChannelCount (${pointDepthPoint.pointwise1ChannelCount}) should be (${pointwise1ChannelCount}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bPointwise1Bias == bPointwise1Bias ),
+      `PointDepthPoint bPointwise1Bias (${pointDepthPoint.bPointwise1Bias}) should be (${bPointwise1Bias}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.pointwise1ActivationId == pointwise1ActivationId ),
+      `PointDepthPoint pointwise1ActivationId (${pointDepthPoint.pointwise1ActivationId}) should be (${pointwise1ActivationId}). ${parametersDescription}`);
+
+    let pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise1ActivationId );
+    tf.util.assert( ( pointDepthPoint.pointwise1ActivationName == pointwise1ActivationName ),
+      `PointDepthPoint pointwise1ActivationName (${pointDepthPoint.pointwise1ActivationName}) should be (${pointwise1ActivationName}). ${parametersDescription}`);
+
+    // depthwise parameters.
+    tf.util.assert( ( pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier == depthwise_AvgMax_Or_ChannelMultiplier ),
+      `PointDepthPoint depthwise_AvgMax_Or_ChannelMultiplier (${pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier}) should be (${depthwise_AvgMax_Or_ChannelMultiplier}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.depthwiseFilterHeight == depthwiseFilterHeight ),
+      `PointDepthPoint depthwiseFilterHeight (${pointDepthPoint.depthwiseFilterHeight}) should be (${depthwiseFilterHeight}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.depthwiseStridesPad == depthwiseStridesPad ),
+      `PointDepthPoint depthwiseStridesPad (${pointDepthPoint.depthwiseStridesPad}) should be (${depthwiseStridesPad}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bDepthwiseBias == bDepthwiseBias ),
+      `PointDepthPoint bDepthwiseBias (${pointDepthPoint.bDepthwiseBias}) should be (${bDepthwiseBias}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.depthwiseActivationId == depthwiseActivationId ),
+      `PointDepthPoint depthwiseActivationId (${pointDepthPoint.depthwiseActivationId}) should be (${depthwiseActivationId}). ${parametersDescription}`);
+
+    let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( depthwiseActivationId );
+    tf.util.assert( ( pointDepthPoint.depthwiseActivationName == depthwiseActivationName ),
+      `PointDepthPoint depthwiseActivationName (${pointDepthPoint.depthwiseActivationName}) should be (${depthwiseActivationName}). ${parametersDescription}`);
+
+    // pointwise21 parameters.
+    tf.util.assert( ( pointDepthPoint.pointwise21ChannelCount == pointwise21ChannelCount ),
+      `PointDepthPoint pointwise21ChannelCount (${pointDepthPoint.pointwise21ChannelCount}) should be (${pointwise21ChannelCount}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bPointwise21Bias == bPointwise21Bias ),
+      `PointDepthPoint bPointwise21Bias (${pointDepthPoint.bPointwise21Bias}) should be (${bPointwise21Bias}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.pointwise21ActivationId == pointwise21ActivationId ),
+      `PointDepthPoint pointwise21ActivationId (${pointDepthPoint.pointwise21ActivationId}) should be (${pointwise21ActivationId}). ${parametersDescription}`);
+
+    let pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise21ActivationId );
+    tf.util.assert( ( pointDepthPoint.pointwise21ActivationName == pointwise21ActivationName ),
+      `PointDepthPoint pointwise21ActivationName (${pointDepthPoint.pointwise21ActivationName}) should be (${pointwise21ActivationName}). ${parametersDescription}`);
+
+    // pointwise22 parameters.
+    tf.util.assert( ( pointDepthPoint.pointwise22ChannelCount == pointwise22ChannelCount ),
+      `PointDepthPoint pointwise22ChannelCount (${pointDepthPoint.pointwise22ChannelCount}) should be (${pointwise22ChannelCount}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.bPointwise22Bias == bPointwise22Bias ),
+      `PointDepthPoint bPointwise22Bias (${pointDepthPoint.bPointwise22Bias}) should be (${bPointwise22Bias}). ${parametersDescription}`);
+
+    tf.util.assert( ( pointDepthPoint.pointwise22ActivationId == pointwise22ActivationId ),
+      `PointDepthPoint pointwise22ActivationId (${pointDepthPoint.pointwise22ActivationId}) should be (${pointwise22ActivationId}). ${parametersDescription}`);
+
+    let pointwise22ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( pointwise22ActivationId );
+    tf.util.assert( ( pointDepthPoint.pointwise22ActivationName == pointwise22ActivationName ),
+      `PointDepthPoint pointwise22ActivationName (${pointDepthPoint.pointwise22ActivationName}) should be (${pointwise22ActivationName}). ${parametersDescription}`);
+
+    // Other parameters.
+
+//!!! ...unfinished...
+//     tf.util.assert( ( pointDepthPoint.outChannels == outChannels ),
+//       `PointDepthPoint outChannels (${pointDepthPoint.outChannels}) should be (${outChannels}). ${parametersDescription}`);
+
+    return pointDepthPoint;
+  }
+*/
+
+
+  static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
+    tf.util.assert( ( value1 == value2 ),
+      `PointDepthPoint ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
+  }
+
 
   /** According to imageInArray and this.testParams.in.weights, calculate imageOutArray.
    *
