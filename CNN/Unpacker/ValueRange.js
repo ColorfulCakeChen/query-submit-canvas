@@ -77,13 +77,14 @@ class Bool extends Same {
 
     let randomBaseInt = Same.getRandomIntInclusive( -100, +100 ); // (-100 and +100 just chosen arbitrarily.)
     let randomBaseIntEven = randomBaseInt * 2; // Any integer multiplied by 2 will be an even number.
+    let randomBaseIntEvenSign = Math.sign( randomBaseIntEven );
 
     // An even value with fractional part will become 0 by Bool.adjust().
-    let valueInputZero = ( randomBaseIntEven + 0 ) + Math.random();
+    let valueInputZero = ( randomBaseIntEven + 0 ) + ( randomBaseIntEvenSign * Math.random() );
     yield { valueInput: valueInputZero, valueOutput: 0 };
 
     // A odd value with fractional part will become 1 by Bool.adjust().
-    let valueInputOne  = ( randomBaseIntEven + 1 ) + Math.random();
+    let valueInputOne  = ( randomBaseIntEven + 1 ) + ( randomBaseIntEvenSign * Math.random() );
     yield { valueInput: valueInputOne, valueOutput: 1 };
   }
 
@@ -148,9 +149,10 @@ class Int extends Same {
 
       // An integer which could become valueOutputInt when adjusted by Int.adjust().
       let valueInputInt = randomBaseIntCongruence + valueOutputInt;
+      let valueInputIntSign = Math.sign( valueInputInt );
 
       // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
-      let valueInputFloat = valueInputInt + Math.random();
+      let valueInputFloat = valueInputInt + ( valueInputIntSign * Math.random() );
 
       yield { valueInput: valueInputFloat, valueOutput: valueOutputInt };
     }
