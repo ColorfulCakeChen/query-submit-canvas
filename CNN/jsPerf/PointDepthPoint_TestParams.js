@@ -18,7 +18,11 @@ import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
  * it has the following data members: inputFloat32Array, byteOffsetBegin, pointwise1ChannelCount, bPointwise1Bias,
  * pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias,
  * depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
- * bPointwise22Bias, pointwise22ActivationId, inputTensorCount.
+ * bPointwise22Bias, pointwise22ActivationId, inputTensorCount. It also has the following properties:
+ *   - inputFloat32Array
+ *   - byteOffsetBegin
+ *   - weights
+ *   - channelCount_pointwise1Before
  *
  * @member {object} out
  *   The "out" sub-object's data members represent the "should-be" result of PointDepthPoint.Params's extract().
