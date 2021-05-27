@@ -103,11 +103,11 @@ class TestParams {
     filters_biases.numberArrayArray.unshift( paramsInArray );
 
     let Float32Array_ByteOffsetBegin = TestParams.concat_NumberArray_To_Float32Array( filters_biases.numberArrayArray );
-    this.result.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
-    this.result.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
+    this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
+    this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
 
     // The original (non-concatenated) filters and biases should also be returned.
-    this.result.in.weights = filters_biases.numberArrayObject;
+    this.in.weights = filters_biases.numberArrayObject;
 
     return this;
   }
