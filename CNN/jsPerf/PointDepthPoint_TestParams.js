@@ -41,19 +41,20 @@ class Base {
    *
    *
    * @yield {object}
-   *   Yield an object { in, out } which has two sub-objects. The "in" sub-object's data members represent every parameters of the
-   * PointDepthPoint.Params's constructor. That is, it has the following data members: inputFloat32Array, byteOffsetBegin,
-   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
-   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-   * pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId, inputTensorCount. The "out" sub-object's data members represent
-   * the "should-be" result of PointDepthPoint.Params's extract(). That is, it has the above data members except inputFloat32Array,
-   * byteOffsetBegin.
+   *   Yield an object { id, in, out } which has one number and two sub-objects. The "id" is the numeric identifier of the parameter
+   * set. The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
+   * it has the following data members: inputFloat32Array, byteOffsetBegin, pointwise1ChannelCount, bPointwise1Bias,
+   * pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias,
+   * depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
+   * bPointwise22Bias, pointwise22ActivationId, inputTensorCount. The "out" sub-object's data members represent the "should-be"
+   * result of PointDepthPoint.Params's extract(). That is, it has the above data members except inputFloat32Array, byteOffsetBegin.
+   *
    *
    */
   * ParamsGenerator() {
 
     this.paramsInArray = [];
-    this.result = { in: {}, out: {} };
+    this.result = { id: -1, in: {}, out: {} };
 
     yield *this.permuteParamRecursively( 0 );
   }
@@ -61,7 +62,7 @@ class Base {
   /**
    * This method will modify this.result and this.paramsInArray. It also calls itself recursively to permute all parameters.
    *
-   * @param {number} currentIndex
+   * @param {number} currentParamDescIndex
    *   The index into the this.paramDescArray[]. It represents the current parameter to be tried.
    *
    * @yield {object}
@@ -72,9 +73,9 @@ class Base {
    * pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray.
    *
    */
-  * permuteParamRecursively( currentIndex ) {
+  * permuteParamRecursively( currentParamDescIndex ) {
 
-    if ( currentIndex >= this.paramDescArray.length ) { // All parameters are used to be composed as one kind of combination.
+    if ( currentParamDescIndex >= this.paramDescArray.length ) { // All parameters are used to be composed as one kind of combination.
       let numberArrayObject_numberArrayArray = Base.generate_Filters_Biases( this.channelCount_pointwise1Before, this.result.out );
       let Float32Array_ByteOffsetBegin = Base.concat_NumberArray_To_Float32Array( numberArrayObject_numberArrayArray.numberArrayArray );
       this.result.in.weights = numberArrayObject_numberArrayArray.numberArrayObject;
@@ -84,20 +85,22 @@ class Base {
       return;
     }
 
-    let nextIndex = currentIndex + 1;
+    let nextParamDescIndex = currentParamDescIndex + 1;
 
-    let paramDesc = this.paramDescArray[ currentIndex ];
+    let paramDesc = this.paramDescArray[ currentParamDescIndex ];
     for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
       this.result.out[ paramDesc.paramName ] = pair.valueOutput;
 
       // Try parameter value assigned directly (i.e. by specifying).      
+      ++this.result.id;
       this.result.in[ paramDesc.paramName ] = pair.valueInput;
-      yield *this.permuteParamRecursively( nextIndex );
+      yield *this.permuteParamRecursively( nextParamDescIndex );
 
       // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
+      ++this.result.id;
       this.result.in[ paramDesc.paramName ] = null;
       this.paramsInArray.push( pair.valueInput );
-      yield *this.permuteParamRecursively( nextIndex );
+      yield *this.permuteParamRecursively( nextParamDescIndex );
     }
   }
 
