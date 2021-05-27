@@ -47,6 +47,9 @@ class TestParams {
    *
    * @param {number} channelCount_pointwise1Before
    *   The channel count of pointwise1's input.
+   *
+   * @return {TestParams}
+   *   Return this object self.
    */
   set(
     channelCount_pointwise1Before,
@@ -65,7 +68,7 @@ class TestParams {
       inputTensorCount
     };
 
-    this.set_By_ParamsInArray_ParamsOut( channelCount_pointwise1Before, null, paramsOut );
+    return this.set_By_ParamsInArray_ParamsOut( channelCount_pointwise1Before, null, paramsOut );
   }
  
   /**
@@ -86,6 +89,9 @@ class TestParams {
    *   An object which has the following data members: pointwise1ChannelCount, bPointwise1Bias,
    * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
    * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount. This object will be recorded in this.out directly.
+   *
+   * @return {TestParams}
+   *   Return this object self.
    */
   set_By_ParamsInArray_ParamsOut( channelCount_pointwise1Before, paramsInArray, paramsOut ) {
     this.channelCount_pointwise1Before = channelCount_pointwise1Before;
@@ -102,6 +108,8 @@ class TestParams {
 
     // The original (non-concatenated) filters and biases should also be returned.
     this.result.in.weights = filters_biases.numberArrayObject;
+
+    return this;
   }
 
   /**
