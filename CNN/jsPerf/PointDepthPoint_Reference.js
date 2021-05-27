@@ -284,6 +284,158 @@ class TestCase {
       `PointDepthPoint ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
   }
 
+
+//!!! ...unfinished... (2021/05/27)
+
+  /**
+   * Check the PointDepthPoint's output according to input (for correctness testing).
+   *
+   * @param {PointDepthPoint_Reference.Base} testCase
+   *   The testCase.
+   *
+   * @param {PointDepthPoint_TestParams.TestParams} testParams
+   *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
+   *
+   * @param {PointDepthPoint.Base} pointDepthPoint
+   *   The object which implemets PointDepthPoint logic.
+   *
+   * @param {tf.tensor3d[]} inputTensors
+   *   The input array of the PointDepthPoint's apply_and_destroy_or_keep().
+   *
+   * @param {tf.tensor3d[]} outputTensors
+   *   The output array of the PointDepthPoint's apply_and_destroy_or_keep().
+   */
+//!!! (2021/05/27 Remarked)
+//  check_Input_Output_WeightsTable( testCaseIndex, pointDepthPoint, inputTensors, outputTensors ) {
+  check_Input_Output_WeightsTable( pointDepthPoint_reference, testParams, pointDepthPoint, inputTensors, outputTensors ) {
+    tf.tidy( () => {
+
+      let parametersDescription = pointDepthPoint.parametersDescription;
+      let strNote = `( testCaseIndex=${testParams.id}, ${parametersDescription} )`;
+
+      tf.util.assert( inputTensors.length == 2,
+        `PointDepthPoint inputTensors.length ( ${inputTensors.length} ) should be 2. ${strNote}`);
+
+      tf.util.assert( outputTensors.length == 2,
+        `PointDepthPoint outputTensors.length ( ${outputTensors.length} ) should be 2. ${strNote}`);
+
+      let imageOutRefs = pointDepthPoint_reference.calcResult( ); // Output is an array with two elements.
+
+      tf.util.assert( imageOutRefs.length == 2,
+        `PointDepthPoint imageOutRefs.length ( ${imageOutRefs.length} ) should be 2. ${strNote}`);
+
+      for ( let i = 0; i < imageOutRefs.length; ++i ) {
+        // Get referenced result (as number array).
+        let imageOutRef = imageOutRefs[ i ];
+        let outputArrayRef = null;
+        if ( imageOutRef ) {
+          outputArrayRef = imageOutRef.dataArray;
+        }
+
+        // Get real (tested target) result (as typed-array).
+        let outputTensor = outputTensors[ i ];
+        let outputArray = null;
+        if ( outputTensor ) {
+          outputArray = outputTensor.dataSync();
+        }
+
+        // Checking real result against referneced result.
+        tf.util.assert( ( outputArray == null ) == ( outputArrayRef == null ),
+          `PointDepthPoint output${i} ( ${outputArray} ) and outputRef${i} ( ${outputArrayRef} ) should be both null or non-null. ${strNote}`);
+
+        if( outputArray ) {
+          tf.util.assert( outputArray.length == outputArrayRef.length,
+            `PointDepthPoint output${i} length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
+
+          tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
+            `PointDepthPoint output${i} ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
+        }
+      }
+
+    });
+  }
+
+//!!! ...unfinished... (2021/05/27)
+
+  // Testing whether the results of different implementation are the same.
+  testCorrectness() {
+
+//!!! (2021/05/26 Remarked)
+//     for ( let testCaseIndex = 0; testCaseIndex < this.testCases.length; ++testCaseIndex ) {
+//       try {
+//         let testCase = this.testCases[ testCaseIndex ];
+
+//!!! ...unfinished... (2021/05/26)
+    let testParamsBase = new PointDepthPoint_TestParams.Base( this.depth );
+    let testParamsGenerator = testParamsBase.ParamsGenerator();
+
+    for ( let testParams of testParamsGenerator ) {
+      try {
+
+//!!! ...unfinished... (2021/05/26)
+        let testCase = new PointDepthPoint_Reference.TestCase();
+
+        for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
+          let bKeepInputTensor = ( nKeepInputTensor != 0 );
+
+          try {
+            tf.tidy( () => {
+
+              let outputTensor3dArray = [];
+              let inputTensor3dArray = new Array( 2 );
+              let tensorNumDifference_apply_before_after;
+              if ( bKeepInputTensor ) {
+                inputTensor3dArray[ 0 ] = this.dataTensor3dArray[ 0 ];
+                inputTensor3dArray[ 1 ] = this.dataTensor3dArray[ 1 ];
+                tensorNumDifference_apply_before_after = 1;
+              } else {
+                inputTensor3dArray[ 0 ] = this.dataTensor3dArray[ 0 ].clone(); // Otherwise, this.dataTensor3d will be destroyed. 
+                inputTensor3dArray[ 1 ] = this.dataTensor3dArray[ 1 ].clone();
+                tensorNumDifference_apply_before_after = 0;
+              }
+
+              let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
+//!!! (2021/05/27 Remarked)
+//              let pointDepthPoint = testCase.pointDepthPoint_create( bKeepInputTensor );
+              let pointDepthPoint = testCase.pointDepthPoint_createByTestParams( this.depth, bKeepInputTensor, testParams );
+
+              let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
+              pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
+              let memoryInfo_apply_after = tf.memory();
+
+              tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
+                `PointDepthPoint.apply_and_destroy_or_keep() memory leak.`);
+
+              // Test correctness of pointDepthPoint apply.
+//!!! (2021/05/27 Remarked)
+//              this.check_Input_Output_WeightsTable( testCaseIndex, pointDepthPoint, this.dataTensor3dArray, outputTensor3dArray );
+              this.check_Input_Output_WeightsTable( testCase, testParams, pointDepthPoint, this.dataTensor3dArray, outputTensor3dArray );
+
+              pointDepthPoint.disposeTensors();
+              let memoryInfo_afterDispose = tf.memory();
+
+              tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
+                `PointDepthPoint create/dispose memory leak.`);
+
+              tf.dispose( outputTensor3dArray );
+            });
+          } catch ( e ) {
+            console.log( `bKeepInputTensor=${bKeepInputTensor}` );
+            throw e;
+          }
+        }
+      } catch ( e ) {
+        let backendName = tf.getBackend();
+        console.log( `backendName=${backendName}, PointDepthPoint testCaseIndex = ${testCaseIndex}` );
+        throw e;
+      }
+
+      ++testCaseIndex;
+    }
+
+
+
+
   /**
    * @param {number} channelCount_pointwise1Before
    *   The channel count of pointwise1's input.
