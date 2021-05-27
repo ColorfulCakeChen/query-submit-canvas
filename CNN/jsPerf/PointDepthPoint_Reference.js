@@ -59,7 +59,7 @@ class TestCase {
             }
 
             let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-            let pointDepthPoint = this.pointDepthPoint_create( imageInArray[ 0 ].depth, bKeepInputTensor );
+            let pointDepthPoint = this.pointDepthPoint_create( bKeepInputTensor );
 
             let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
             pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
@@ -163,15 +163,12 @@ class TestCase {
   }
 
   /**
-   * @param {number} channelCount_pointwise1Before
-   *   The channel count of pointwise1's input.
-   *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
    *
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
-  pointDepthPoint_create( channelCount_pointwise1Before, bKeepInputTensor ) {
+  pointDepthPoint_create( bKeepInputTensor ) {
 
     let pointDepthPoint = new PointDepthPoint.Base();
 
@@ -181,7 +178,7 @@ class TestCase {
     let testParams = this.testParams;
     let bInitOk = pointDepthPoint.init(
       progress,
-      channelCount_pointwise1Before, // (i.e. inChannels)
+      testParams.in.channelCount_pointwise1Before, // (i.e. inChannels)
       bKeepInputTensor,
 
       new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
@@ -218,7 +215,7 @@ class TestCase {
       `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${testParams.inputFloat32Array.byteLength}). ${parametersDescription}`);
 
     // input tensor parameters.
-    Base.AssertTwoEqualValues( "inChannels", pointDepthPoint.inChannels, channelCount_pointwise1Before, parametersDescription );
+    Base.AssertTwoEqualValues( "inChannels", pointDepthPoint.inChannels, testParams.in.channelCount_pointwise1Before, parametersDescription );
     Base.AssertTwoEqualValues( "inputTensorCount", pointDepthPoint.inputTensorCount, testParams.out.inputTensorCount, parametersDescription );
     Base.AssertTwoEqualValues( "bAddInputToOutput", pointDepthPoint.bAddInputToOutput, bAddInputToOutput, parametersDescription );
     Base.AssertTwoEqualValues( "bKeepInputTensor", pointDepthPoint.bKeepInputTensor, bKeepInputTensor, parametersDescription );
