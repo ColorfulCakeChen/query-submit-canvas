@@ -251,7 +251,7 @@ class TestParams {
     }
 
     // Pointwise21
-    let pointwise21 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+    let pointwise21 = TestParams.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
       params.pointwise21ChannelCount, params.bPointwise21Bias );
 
     result.numberArrayObject.pointwise21Filters = pointwise21[ 0 ];
@@ -259,7 +259,7 @@ class TestParams {
     result.numberArrayArray.push( ...pointwise21.numberArrayArray );
 
     // Pointwise22
-    let pointwise22 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+    let pointwise22 = TestParams.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
       params.pointwise22ChannelCount, params.bPointwise22Bias );
 
     result.numberArrayObject.pointwise22Filters = pointwise22[ 0 ];
