@@ -283,7 +283,7 @@ class TestParams {
     // For testing not start at the offset 0.
     this.weightsElementOffsetBegin = ValueRange.Same.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
     let result = {
-      weightsByteOffsetBegin: this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used byte count.
+      weightsByteOffsetBegin: this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT, // Skip the un-used byte count.
     };
 
     // Prepare weights source and offset into array. So that they can be accessed by loop.
