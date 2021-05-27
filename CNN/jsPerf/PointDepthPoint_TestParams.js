@@ -247,7 +247,7 @@ class TestParams {
     let pointwise2_inputChannelCount = depthwise.outputChannelCount;
     if ( params.inputTensorCount > 1 ) {
       // Assume all input tensors have the same channel count.
-      pointwise2_inputChannelCount += this.channelCount_pointwise1Before;
+      pointwise2_inputChannelCount += channelCount_pointwise1Before;
     }
 
     // Pointwise21
@@ -281,13 +281,13 @@ class TestParams {
   static concat_NumberArray_To_Float32Array( numberArrayArray ) {
 
     // For testing not start at the offset 0.
-    this.weightsElementOffsetBegin = ValueRange.Same.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
+    let weightsElementOffsetBegin = ValueRange.Same.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
     let result = {
-      weightsByteOffsetBegin: this.weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT, // Skip the un-used byte count.
+      weightsByteOffsetBegin: weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT, // Skip the un-used byte count.
     };
 
     // Prepare weights source and offset into array. So that they can be accessed by loop.
-    let weightsTotalLength = result.weightsElementOffsetBegin;
+    let weightsTotalLength = weightsElementOffsetBegin;
     let weightsSourceArray = [];
     for ( let i = 0; i < numberArrayArray.length; ++i ) {
       let numberArray = numberArrayArray[ i ];
@@ -304,7 +304,7 @@ class TestParams {
         result.weightsFloat32Array[ i ] = -i;
       }
 
-      for ( let i = 0; i < weightsSourceArray.length; ++i ) { // Concatenate this.weights into a Float32Array.
+      for ( let i = 0; i < weightsSourceArray.length; ++i ) { // Concatenate all number array into a Float32Array.
         result.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
       }
     }
