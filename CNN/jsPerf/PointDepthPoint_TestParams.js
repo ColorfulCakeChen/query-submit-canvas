@@ -375,6 +375,7 @@ class Base {
   * permuteParamRecursively( currentParamDescIndex ) {
 
     if ( currentParamDescIndex >= this.paramDescArray.length ) { // All parameters are used to be composed as one kind of combination.
+      ++this.result.id;  // Complete one kind of combination.
       this.result.set_By_ParamsInArray_ParamsOut( this.channelCount_pointwise1Before, this.paramsInArray, this.result.out );
       yield this.result;
       return; // Stop this recusive. Back-track to another parameters combination.
@@ -387,12 +388,10 @@ class Base {
       this.result.out[ paramDesc.paramName ] = pair.valueOutput;
 
       // Try parameter value assigned directly (i.e. by specifying).      
-      ++this.result.id;
       this.result.in[ paramDesc.paramName ] = pair.valueInput;
       yield *this.permuteParamRecursively( nextParamDescIndex );
 
       // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
-      ++this.result.id;
       this.result.in[ paramDesc.paramName ] = null;
       this.paramsInArray.push( pair.valueInput );
       yield *this.permuteParamRecursively( nextParamDescIndex );
