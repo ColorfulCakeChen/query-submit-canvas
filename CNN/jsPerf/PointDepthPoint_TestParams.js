@@ -225,7 +225,7 @@ class TestParams {
    * be an array with zero element.
    */
   static generate_Filters_Biases( channelCount_pointwise1Before, params ) {
-    let result = { numberArrayObject: {}, numberArrayArray = [] };
+    let result = { numberArrayObject: {}, numberArrayArray: [] };
 
     // Pointwise1
     let pointwise1 = TestParams.generate_pointwise_filters_biases( channelCount_pointwise1Before,
