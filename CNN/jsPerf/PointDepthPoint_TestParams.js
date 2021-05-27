@@ -6,6 +6,38 @@ import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 //import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 
+/**
+ *
+ * This is an object { id, in, out } which has one number and two sub-objects.
+ *
+ * @member {number} id
+ *   The numeric identifier of the parameter.
+ *
+ * @member {object} in
+ *   The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
+ * it has the following data members: inputFloat32Array, byteOffsetBegin, pointwise1ChannelCount, bPointwise1Bias,
+ * pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias,
+ * depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
+ * bPointwise22Bias, pointwise22ActivationId, inputTensorCount.
+ *
+ * @member {object} out
+ *   The "out" sub-object's data members represent the "should-be" result of PointDepthPoint.Params's extract().
+ * That is, it has the above data members except inputFloat32Array, byteOffsetBegin.
+ *
+ */
+class TestParams {
+
+  constructor() {
+    this.id = -1;
+    this.in = {};
+    this.out = {};
+  }
+
+}
+
+/**
+ * Responsible for generating TestParams.
+ */
 class Base {
 
   /**
@@ -40,21 +72,13 @@ class Base {
    *
    *
    *
-   * @yield {object}
-   *   Yield an object { id, in, out } which has one number and two sub-objects. The "id" is the numeric identifier of the parameter
-   * set. The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
-   * it has the following data members: inputFloat32Array, byteOffsetBegin, pointwise1ChannelCount, bPointwise1Bias,
-   * pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias,
-   * depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
-   * bPointwise22Bias, pointwise22ActivationId, inputTensorCount. The "out" sub-object's data members represent the "should-be"
-   * result of PointDepthPoint.Params's extract(). That is, it has the above data members except inputFloat32Array, byteOffsetBegin.
-   *
-   *
+   * @yield {TestParams}
+   *   Yield an object PointDepthPoint_TestParams.TestParams.
    */
   * ParamsGenerator() {
 
     this.paramsInArray = [];
-    this.result = { id: -1, in: {}, out: {} };
+    this.result = new TestParams();
 
     yield *this.permuteParamRecursively( 0 );
   }
