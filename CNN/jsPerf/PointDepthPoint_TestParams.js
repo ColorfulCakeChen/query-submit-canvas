@@ -94,7 +94,7 @@ class TestParams {
    *   Return this object self.
    */
   set_By_ParamsInArray_ParamsOut( channelCount_pointwise1Before, paramsInArray, paramsOut ) {
-    this.channelCount_pointwise1Before = channelCount_pointwise1Before;
+    this.in.channelCount_pointwise1Before = channelCount_pointwise1Before;
     this.out = paramsOut;
 
     let filters_biases = TestParams.generate_Filters_Biases( channelCount_pointwise1Before, paramsOut );
