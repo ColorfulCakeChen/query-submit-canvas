@@ -66,6 +66,8 @@ class HeightWidthDepth {
       },
     ];
 
+//!!! ...unfinished... (2021/05/27) Old Codes. should be remarked.
+
     let testCase_depthwise_avg_strides_1_pad_valid, testCase_depthwise_avg_strides_1_pad_same, testCase_depthwise_avg_strides_2_pad_same;
     let testCase_depthwise_max_strides_1_pad_valid, testCase_depthwise_max_strides_1_pad_same, testCase_depthwise_max_strides_2_pad_same;
     let testCase_pointwise1_depthwise_2_strides_1_pad_same_pointwise2_AddInputToOutput;
@@ -1032,82 +1034,6 @@ class HeightWidthDepth {
     }
   }
 
-  /**
-   * Check the PointDepthPoint's output according to input (for correctness testing).
-   *
-   * @param {number} testCaseIndex
-   *   The index of array this.testCases[].
-   *
-   * @param {PointDepthPoint.Base} pointDepthPoint
-   *   The object which implemets PointDepthPoint logic.
-   *
-   * @param {tf.tensor3d[]} inputTensors
-   *   The input array of the PointDepthPoint's apply_and_destroy_or_keep().
-   *
-   * @param {tf.tensor3d[]} outputTensors
-   *   The output array of the PointDepthPoint's apply_and_destroy_or_keep().
-   */
-  check_Input_Output_WeightsTable( testCaseIndex, pointDepthPoint, inputTensors, outputTensors ) {
-    tf.tidy( () => {
-
-      let parametersDescription = pointDepthPoint.parametersDescription;
-      let strNote = `( testCaseIndex=${testCaseIndex}, ${parametersDescription} )`;
-
-      tf.util.assert( inputTensors.length == 2,
-        `PointDepthPoint inputTensors.length ( ${inputTensors.length} ) should be 2. ${strNote}`);
-
-      tf.util.assert( outputTensors.length == 2,
-        `PointDepthPoint outputTensors.length ( ${outputTensors.length} ) should be 2. ${strNote}`);
-
-      let testCase = this.testCases[ testCaseIndex ];
-//!!! (2021/05/18 Remarked) output become array.
-//       let imageOutRef = testCase.calcResult();
-//       let outputArrayRef = imageOutRef.dataArray;
-//
-//       let outputArray = outputTensor3d.dataSync();
-//
-//       tf.util.assert( outputArray.length == outputArrayRef.length,
-//         `PointDepthPoint output length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
-//
-//       tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
-//         `PointDepthPoint output ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
-
-      let imageOutRefs = testCase.calcResult(); // Output is an array with two elements.
-
-      tf.util.assert( imageOutRefs.length == 2,
-        `PointDepthPoint imageOutRefs.length ( ${imageOutRefs.length} ) should be 2. ${strNote}`);
-
-      for ( let i = 0; i < imageOutRefs.length; ++i ) {
-        // Get referenced result (as number array).
-        let imageOutRef = imageOutRefs[ i ];
-        let outputArrayRef = null;
-        if ( imageOutRef ) {
-          outputArrayRef = imageOutRef.dataArray;
-        }
-
-        // Get real (tested target) result (as typed-array).
-        let outputTensor = outputTensors[ i ];
-        let outputArray = null;
-        if ( outputTensor ) {
-          outputArray = outputTensor.dataSync();
-        }
-
-        // Checking real result against referneced result.
-        tf.util.assert( ( outputArray == null ) == ( outputArrayRef == null ),
-          `PointDepthPoint output${i} ( ${outputArray} ) and outputRef${i} ( ${outputArrayRef} ) should be both null or non-null. ${strNote}`);
-
-        if( outputArray ) {
-          tf.util.assert( outputArray.length == outputArrayRef.length,
-            `PointDepthPoint output${i} length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
-
-          tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
-            `PointDepthPoint output${i} ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
-        }
-      }
-
-    });
-  }
-
 //!!! ...unfinished...
   // Test apply by depthwise convolution.
   test_DConv_1_bias_COS_AddInputToOutput() {
@@ -1161,76 +1087,13 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
 
-//!!! (2021/05/26 Remarked)
-//     for ( let testCaseIndex = 0; testCaseIndex < this.testCases.length; ++testCaseIndex ) {
-//       try {
-//         let testCase = this.testCases[ testCaseIndex ];
-
-//!!! ...unfinished... (2021/05/26)
     let testParamsBase = new PointDepthPoint_TestParams.Base( this.depth );
-    let paramsGenerator = testParamsBase.ParamsGenerator();
+    let testParamsGenerator = testParamsBase.ParamsGenerator();
 
-    let testCaseIndex = 0;
-    for ( let params of paramsGenerator ) {
-      try {
-
-//!!! ...unfinished... (2021/05/26)
-        let testCase = new PointDepthPoint_Reference.TestCase();
-        testCase = new PointDepthPoint_Reference.TestCase( params );
-        //this.dataTensor3dArray
-
-        for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
-          let bKeepInputTensor = ( nKeepInputTensor != 0 );
-
-          try {
-            tf.tidy( () => {
-
-              let outputTensor3dArray = [];
-              let inputTensor3dArray = new Array( 2 );
-              let tensorNumDifference_apply_before_after;
-              if ( bKeepInputTensor ) {
-                inputTensor3dArray[ 0 ] = this.dataTensor3dArray[ 0 ];
-                inputTensor3dArray[ 1 ] = this.dataTensor3dArray[ 1 ];
-                tensorNumDifference_apply_before_after = 1;
-              } else {
-                inputTensor3dArray[ 0 ] = this.dataTensor3dArray[ 0 ].clone(); // Otherwise, this.dataTensor3d will be destroyed. 
-                inputTensor3dArray[ 1 ] = this.dataTensor3dArray[ 1 ].clone();
-                tensorNumDifference_apply_before_after = 0;
-              }
-
-              let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-              let pointDepthPoint = testCase.pointDepthPoint_create( bKeepInputTensor );
-
-              let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
-              pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
-              let memoryInfo_apply_after = tf.memory();
-
-              tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-                `PointDepthPoint.apply_and_destroy_or_keep() memory leak.`);
-
-              // Test correctness of pointDepthPoint apply.
-              this.check_Input_Output_WeightsTable( testCaseIndex, pointDepthPoint, this.dataTensor3dArray, outputTensor3dArray );
-
-              pointDepthPoint.disposeTensors();
-              let memoryInfo_afterDispose = tf.memory();
-
-              tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
-                `PointDepthPoint create/dispose memory leak.`);
-
-              tf.dispose( outputTensor3dArray );
-            });
-          } catch ( e ) {
-            console.log( `bKeepInputTensor=${bKeepInputTensor}` );
-            throw e;
-          }
-        }
-      } catch ( e ) {
-        let backendName = tf.getBackend();
-        console.log( `backendName=${backendName}, PointDepthPoint testCaseIndex = ${testCaseIndex}` );
-        throw e;
-      }
-
-      ++testCaseIndex;
+//!!! ...unfinished... (2021/05/27)
+    for ( let testParams of testParamsGenerator ) {
+      let testCase = new PointDepthPoint_Reference.TestCase( testParams );
+      testCase.testCorrectness( this.testCorrectness_ImageDataArray, this.dataTensor3dArray );
     }
 
     // After correctness testing done, create all PointDepthPoint for performance testing.
