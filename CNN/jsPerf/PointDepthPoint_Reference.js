@@ -10,6 +10,14 @@ import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
  */
 class TestCase {
 
+  /**
+   * @param {PointDepthPoint_TestParams.TestParams} testParams
+   *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
+   */
+  constructor( testParams ) {
+    this.testParams = testParams;
+  }
+
 //!!! ...unfinished... (2021/05/26) Old Codes. should be remarked.
   /**
    * @param {number[]} paramsInArray     parameters data which will be processed by PointDepthPoint.Params
@@ -277,27 +285,22 @@ class TestCase {
   }
 
   /**
+   * @param {number} channelCount_pointwise1Before
+   *   The channel count of pointwise1's input.
+   *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
    *
-   * @param {object} testParams
-   *   An object { in, out } which has two sub-objects. The "in" sub-object's data members represent every parameters of the
-   * PointDepthPoint.Params's constructor. That is, it has the following data members: inputFloat32Array, byteOffsetBegin,
-   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
-   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-   * pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId, inputTensorCount. The "out" sub-object's data members represent
-   * the "should-be" result of PointDepthPoint.Params's extract(). That is, it has the above data members except inputFloat32Array,
-   * byteOffsetBegin.
-   *
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
-  pointDepthPoint_createByTestParams( channelCount_pointwise1Before, bKeepInputTensor, testParams ) {
+  pointDepthPoint_create( channelCount_pointwise1Before, bKeepInputTensor ) {
 
     let pointDepthPoint = new PointDepthPoint.Base();
 
     let progress = new ValueMax.Percentage.Aggregate();
 
     // Initialize successfully or failed.
+    let testParams = this.testParams;
     let bInitOk = pointDepthPoint.init(
       progress,
       channelCount_pointwise1Before, // (i.e. inChannels)
@@ -413,7 +416,7 @@ class TestCase {
     return pointDepthPoint;
   }
 
-  /** According to this.weights.params.outArray and this.imageInArray, calculate imageOutArray.
+  /** According to imageInArray and this.testParams.in.weights, calculate imageOutArray.
    *
    * @param {number}   imageInArray[ i ].height    Image height
    * @param {number}   imageInArray[ i ].width     Image width
@@ -422,18 +425,9 @@ class TestCase {
    *
    * @return {number[]} Return output image data as array.
    */ 
-  calcResult( imageInArray, testParams ) {
+  calcResult( imageInArray ) {
 
-//!!! (2021/05/26 Remarked)
-//     // Assume the paramsOutArray is correct. Unpack it into parameters.
-//     let [
-//       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-//       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-//       pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-//       pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
-//       inputTensorCount,
-//     ] = this.weights.params.outArray;
-
+    let testParams = this.testParams;
     let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
 
     // Create description for debug easily.
