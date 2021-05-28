@@ -235,17 +235,17 @@ class Base extends ReturnOrClone_Activation.Base {
 
   /**
    * @return {boolean}
-   *   If the ( height * width ) of this depthwise operation output is the same as its input, return true.
+   *   If the ( height, width ) of this depthwise operation output is the same as its input, return true.
    */
   is_Output_Same_HeightWidth_As_Input() {
 
     if ( this.strides != 1 )
-      return false; // If strides is not 1, it is impossible to output same ( height * width ) as input.
+      return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
 
     if ( this.pad == "same" )
-      return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have same ( height * width ) as input.
+      return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
 
-    // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have same ( height * width ) as input.
+    // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same ( height, width ) as input.
     if ( ( this.pad == "valid" ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
       return true;
 
