@@ -74,15 +74,26 @@ class Base extends ReturnOrClone_Activation.Base {
     this.outputChannelCount = this.inputChannelCount; // Assume no channel multiplier.
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
+    switch ( this.stridesPad ) {
+      case 0:  this.strides = 1; this.pad = "valid"; break;
+      default:
+      case 1:  this.strides = 1; this.pad = "same";  break;
+      case 2:  this.strides = 2; this.pad = "same";  break;
+    }
+
     if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
-      // if 1x1 AVG pooling, or 1x1 MAX pooling, or illegal pooling type (i.e. not AVG, not MAX):
-      //   - As no depthwise operation (i.e. ( this.bDepthwise == true ) )
+      // if 1x1 AVG pooling ( and strides is 1 ), or 1x1 MAX pooling ( and strides is 1 ), or illegal pooling type (i.e. not AVG, not MAX):
+      //   - As no depthwise operation (i.e. ( this.bDepthwise == false ) )
       //   - Just return input (i.e. ( this.pfnOperation == Base.return_input_directly ) )
 
-      if ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) ) {
 //!!! ...unfinished... (2021/05/28 Remarked) Although filter size 1x1, it perhaps can not do nothing if considering strides and pad.
-        this.pfnOperation = Base.return_input_directly; // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
+//      if ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) ) {
+
+      // Although filter size 1x1, it perhaps can not do nothing if considering strides and pad.
+      if ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) ) {
+        // Do nothing, because the result of 1x1 AVG or MAX pooling (when strides is 1) is just the same as input.
+        this.pfnOperation = Base.return_input_directly;
       } else {
         switch ( this.AvgMax_Or_ChannelMultiplier ) {
           case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
@@ -116,13 +127,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
       } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
       }
-    }
-
-    switch ( this.stridesPad ) {
-      case 0:  this.strides = 1; this.pad = "valid"; break;
-      default:
-      case 1:  this.strides = 1; this.pad = "same";  break;
-      case 2:  this.strides = 2; this.pad = "same";  break;
     }
 
     this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
@@ -175,6 +179,7 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     this.filtersWeights = this.biasesWeights = this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
+    this.outputChannelCount = this.strides = this.pad = null;
     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false; // Assume no depthwise.
     this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
