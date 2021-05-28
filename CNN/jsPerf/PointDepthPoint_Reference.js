@@ -1,4 +1,4 @@
-export { TestCase };
+export { Base };
 
 import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
@@ -8,7 +8,7 @@ import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
 /**
  * Reference computation of class PointDepthPoint.Base.
  */
-class TestCase {
+class Base {
 
   /**
    * @param {PointDepthPoint_TestParams.TestParams} testParams
@@ -329,7 +329,7 @@ class TestCase {
 
     // 1. Pointwise1
     if ( testParams.out.pointwise1ChannelCount > 0 ) {
-      nextImageIn = TestCase.calcPointwise(
+      nextImageIn = Base.calcPointwise(
         nextImageIn,
         testParams.out.pointwise1ChannelCount,
         testParams.in.weights.pointwise1Filters, testParams.out.bPointwise1Bias,
@@ -339,7 +339,7 @@ class TestCase {
 
     // 2. Depthwise
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-      nextImageIn = TestCase.calcDepthwise(
+      nextImageIn = Base.calcDepthwise(
         nextImageIn,
         testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
         testParams.in.weights.depthwiseFilters, testParams.out.bDepthwiseBias,
@@ -349,7 +349,7 @@ class TestCase {
 
     // 3. Concat (along image depth)
     if ( testParams.out.inputTensorCount > 1 ) {
-      nextImageIn = TestCase.calcConcatAlongAxisId2( nextImageIn, imageInArray[ 1 ], "ConcatAlongDepth", this.paramsOutDescription );
+      nextImageIn = Base.calcConcatAlongAxisId2( nextImageIn, imageInArray[ 1 ], "ConcatAlongDepth", this.paramsOutDescription );
     }
 
     // 4. Pointwise2
@@ -360,14 +360,14 @@ class TestCase {
       // 4.0 No Pointwise21 and No Pointwise22.
 
       // Residual Connection.
-        nextImageOutArray[ 0 ] = TestCase.modifyByInput(
+        nextImageOutArray[ 0 ] = Base.modifyByInput(
           nextImageIn, bAddInputToOutput, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
 
     } else {
 
       // 4.1 Pointwise21
       if ( testParams.out.pointwise21ChannelCount > 0 ) {
-        nextImageOutArray[ 0 ] = TestCase.calcPointwise(
+        nextImageOutArray[ 0 ] = Base.calcPointwise(
           nextImageIn,
           testParams.out.pointwise21ChannelCount,
           testParams.in.weights.pointwise21Filters, testParams.out.bPointwise21Bias,
@@ -375,13 +375,13 @@ class TestCase {
           "Pointwise21", this.paramsOutDescription );
 
         // Residual Connection.
-        nextImageOutArray[ 0 ] = TestCase.modifyByInput(
+        nextImageOutArray[ 0 ] = Base.modifyByInput(
           nextImageOutArray[ 0 ], bAddInputToOutput, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
       }
 
       // 4.2 Pointwise22
       if ( testParams.out.pointwise22ChannelCount > 0 ) {
-        nextImageOutArray[ 1 ] = TestCase.calcPointwise(
+        nextImageOutArray[ 1 ] = Base.calcPointwise(
           nextImageIn,
           testParams.out.pointwise22ChannelCount,
           testParams.in.weights.pointwise22Filters, testParams.out.bPointwise22Bias,
@@ -391,7 +391,7 @@ class TestCase {
         // Residual Connection.
         //
         // Always using input image1 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
-        nextImageOutArray[ 1 ] = TestCase.modifyByInput(
+        nextImageOutArray[ 1 ] = Base.modifyByInput(
           nextImageOutArray[ 1 ], bAddInputToOutput, imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
       }
 
@@ -448,10 +448,10 @@ class TestCase {
     }
 
     // Bias
-    TestCase.modifyByBias( imageOut, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
+    Base.modifyByBias( imageOut, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
     // Activation
-    TestCase.modifyByActivation( imageOut, pointwiseActivationId, parametersDesc );
+    Base.modifyByActivation( imageOut, pointwiseActivationId, parametersDesc );
 
     return imageOut;
   }
@@ -633,10 +633,10 @@ class TestCase {
     }
 
     // Bias
-    TestCase.modifyByBias( imageOut, bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
+    Base.modifyByBias( imageOut, bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
     // Activation
-    TestCase.modifyByActivation( imageOut, depthwiseActivationId, parametersDesc );
+    Base.modifyByActivation( imageOut, depthwiseActivationId, parametersDesc );
 
     return imageOut;
   }
