@@ -765,11 +765,15 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
+//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
+//    tf.util.assert( null == inputTensors[ 1 ] );
+
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 0 ] = tf.add( t0, inputTensor );
+//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
     t0.dispose();
 
     outputTensors[ 1 ] = null;
@@ -783,11 +787,15 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
+//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
+//    tf.util.assert( null == inputTensors[ 1 ] );
+
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise22.pfnConvBiasActivation( t1 );
     outputTensors[ 0 ] = tf.add( t0, inputTensor );
+//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
     t0.dispose();
 
     outputTensors[ 1 ] = null;
@@ -801,15 +809,20 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
+//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
+//    tf.util.assert( null == inputTensors[ 1 ] );
+
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise21.pfnConvBiasActivation( t1 ); // always keep t1.
     outputTensors[ 0 ] = tf.add( t0, inputTensor );
+//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
     t0.dispose();
 
     t0 = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
     outputTensors[ 1 ] = tf.add( t0, inputTensor );
+//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
     t0.dispose();
 
     // The inputTensor is kept (not disposed).
