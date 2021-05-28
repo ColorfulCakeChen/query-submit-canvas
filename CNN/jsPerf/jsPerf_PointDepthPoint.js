@@ -1061,7 +1061,7 @@ class HeightWidthDepth {
 
 //!!! ...unfinished... (2021/05/27)
     for ( let testParams of testParamsGenerator ) {
-      let testCase = new PointDepthPoint_Reference.TestCase( testParams );
+      let testCase = new PointDepthPoint_Reference.Base( testParams );
       testCase.testCorrectness( this.testCorrectness_ImageDataArray, this.dataTensor3dArray );
     }
 
