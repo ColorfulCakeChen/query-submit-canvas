@@ -81,6 +81,7 @@ class Base extends ReturnOrClone_Activation.Base {
       //   - Just return input (i.e. ( this.pfnOperation == Base.return_input_directly ) )
 
       if ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) ) {
+//!!! ...unfinished... (2021/05/28 Remarked) Although filter size 1x1, it perhaps can not do nothing if considering strides and pad.
         this.pfnOperation = Base.return_input_directly; // Do nothing, because the result of 1x1 AVG or MAX pooling is just the same as input.
       } else {
         switch ( this.AvgMax_Or_ChannelMultiplier ) {
