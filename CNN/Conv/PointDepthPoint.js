@@ -584,6 +584,9 @@ class Base extends ReturnOrClone.Base {
 
       } else {
 
+//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
+// If AddInputToOutput exists, should let it setKeepInputTensor( true ).
+
         // Since there is no operation at all (i.e. no pointwise1, no depthwise, no concat, no pointwise2),
         // let's forget add-input-to-output or concatenating (because they are not meaningful in this case).
         // Just according to whether needs keep-input, change the total operation to return input directly
