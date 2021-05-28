@@ -1103,7 +1103,7 @@ class HeightWidthDepth {
 }
 
 function init() {
-  console.log("jsPerf_PointDepthPoint.js, init()");
+  //console.log("jsPerf_PointDepthPoint.js, init()");
 
   disposeTensors();
 
