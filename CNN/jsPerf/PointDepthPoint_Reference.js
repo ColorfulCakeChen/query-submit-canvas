@@ -208,11 +208,11 @@ class TestCase {
       `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
 
 
-    tf.util.assert( ( pointDepthPoint.byteOffsetBegin == testParams.byteOffsetBegin ),
-      `PointDepthPoint parsing beginning position (${pointDepthPoint.byteOffsetBegin}) should be (${testParams.byteOffsetBegin}). ${parametersDescription}`);
+    Base.AssertTwoEqualValues( "parsing beginning position",
+      pointDepthPoint.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
 
-    tf.util.assert( ( pointDepthPoint.byteOffsetEnd == testParams.inputFloat32Array.byteLength ),
-      `PointDepthPoint parsing ending position (${pointDepthPoint.byteOffsetEnd}) should be (${testParams.inputFloat32Array.byteLength}). ${parametersDescription}`);
+    Base.AssertTwoEqualValues( "parsing ending position",
+      pointDepthPoint.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
     // input tensor parameters.
     Base.AssertTwoEqualValues( "inChannels", pointDepthPoint.inChannels, testParams.in.channelCount_pointwise1Before, parametersDescription );
