@@ -194,7 +194,7 @@ class Base {
 
     );
 
-    let bAddInputToOutput = ( 0 == testParams.in.inputTensorCount );
+    let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
