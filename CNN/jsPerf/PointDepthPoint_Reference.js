@@ -256,7 +256,7 @@ class Base {
 
     // pointwise21 parameters.
     Base.AssertTwoEqualValues( "pointwise21ChannelCount",
-      pointDepthPoint.pointwise21ChannelCount, testParams.out.pointwise21ChannelCoun, parametersDescription );
+      pointDepthPoint.pointwise21ChannelCount, testParams.out.pointwise21ChannelCount, parametersDescription );
 
     Base.AssertTwoEqualValues( "bPointwise21Bias",
       pointDepthPoint.bPointwise21Bias, testParams.out.bPointwise21Bias, parametersDescription );
