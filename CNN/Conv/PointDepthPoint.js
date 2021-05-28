@@ -526,7 +526,9 @@ class Base extends ReturnOrClone.Base {
     // Although caller could request add-input-to-output, it may or may not doable.
     // Only if the dimension of output is the same as the dimension of input, it is possible to add-input-to-output.
     //
-    // Only if stride is "1" and pad is "same", the dimension 0 (height) and 1 (width) of the output will be the same as input.
+    // Only if depthwise stride is "1" and pad is "same" (or pad is "valid" but filter size 1x1), the dimension 0 (height)
+    // and 1 (width) of the output will be the same as input.
+    //
     // Only if output channel is equals to input channel, the dimension 2 (channel) of the output will be the same as input.
     //
     // For example:
@@ -534,8 +536,7 @@ class Base extends ReturnOrClone.Base {
     //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
     let bShouldAddInputToOutput = this.bShouldAddInputToOutput
      = (   ( this.bAddInputToOutput )
-        && (   ( this.depthwise.strides == 1 )
-            && ( this.depthwise.pad == "same" )
+        && (   ( this.depthwise.is_Output_Same_HeightWidth_As_Input() )
             && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
            )
        );
