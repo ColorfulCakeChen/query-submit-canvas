@@ -7,6 +7,7 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone from "./ReturnOrClone.js";
 import * as Pointwise from "./Pointwise.js";
 import * as Depthwise from "./Depthwise.js";
+import * as AddTwoTensors from "./AddTwoTensors.js";
 import * as ConcatAlongAxisId2 from "./ConcatAlongAxisId2.js";
 
 /**
@@ -541,6 +542,11 @@ class Base extends ReturnOrClone.Base {
            )
        );
 
+    if ( bShouldAddInputToOutput ) {
+//!!! ...unfinished... (2021/05/29) what is the keep-input flags?
+      this.addTwoTensors = new AddTwoTensors.Base( false, false );
+    }
+
     // 5.2 Determine which apply_Xxx() function should be used.
     //
     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
@@ -655,6 +661,10 @@ class Base extends ReturnOrClone.Base {
       this.depthwise = null;
     }
  
+    if ( this.addTwoTensors ) {
+      this.addTwoTensors = null
+    }
+
     if ( this.concatenator ) {
       this.concatenator = null;
     }
