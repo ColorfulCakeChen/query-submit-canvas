@@ -357,6 +357,9 @@ class Base {
 
     if ( ( testParams.out.pointwise21ChannelCount == 0 ) && ( testParams.out.pointwise22ChannelCount == 0 ) ) {
 
+//!!! ...unfinished... (2021/05/29) In this case, should do dothing instead add-input-to-output.
+// But, what should be returned? Especially, if there are two input tensors?
+
       // 4.0 No Pointwise21 and No Pointwise22.
 
       // Residual Connection.
