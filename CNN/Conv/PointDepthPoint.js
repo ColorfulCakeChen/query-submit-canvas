@@ -507,7 +507,7 @@ class Base extends ReturnOrClone.Base {
     }
 
     // If both pointwise21 and pointwise22 existed, the pointwise21 should keep-input-tensor.
-    // Otherwise, the pointwise22 will fail to have to process it.
+    // Otherwise, the pointwise22 will fail to process it.
     if ( this.bPointwise21 && this.bPointwise22 ) {
       this.pointwise21.setKeepInputTensor( true );
       this.outputTensorCount = 2; // This is the only case which will output two tensors. 
@@ -544,7 +544,18 @@ class Base extends ReturnOrClone.Base {
 
     if ( bShouldAddInputToOutput ) {
 //!!! ...unfinished... (2021/05/29) what is the keep-input flags?
-      this.addTwoTensors = new AddTwoTensors.Base( false, false );
+      if ( this.bPointwise21 )
+        this.addInput0ToPointwise21Output = new AddTwoTensors.Base( false, false );
+
+      if ( this.bPointwise22 )
+        this.addInput0ToPointwise22Output = new AddTwoTensors.Base( false, false );
+
+      // If both addInput0ToPointwise21Output and addInput0ToPointwise22Output existed, the former (addInput0ToPointwise21Output)
+      // should keep-input-tensor-0 (i.e. the original input tensor) and keep-input-tensor-1 (i.e. the depthwise output).
+      // Otherwise, the addInput0ToPointwise22Output will fail to process it.
+      if ( this.addInput0ToPointwise21Output && this.addInput0ToPointwise22Output ) {
+        this.addInput0ToPointwise21Output.setKeepInputTensor( true, true );
+      }
     }
 
     // 5.2 Determine which apply_Xxx() function should be used.
@@ -588,7 +599,22 @@ class Base extends ReturnOrClone.Base {
       } else if ( this.bPointwise22 ) {
         this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep-input.
 
+      } else if ( this.addInput0ToPointwise21Output ) {
+        if ( this.addInput0ToPointwise22Output ) {
+          // Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist, then addInput0ToPointwise21Output already keep-input.
+          // Now, let addInput0ToPointwise22Output keep-input-tensor-0 (i.e. the original input tensor), too.
+          this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
+        } else {
+          // Since only addInput0ToPointwise21Output exists, let it keep-input-tensor-0 (i.e. the original input tensor).
+          this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
+        }
+
+      } else if ( this.addInput0ToPointwise22Output ) {
+        // Since only addInput0ToPointwise22Output exists, let it keep-input-tensor-0 (i.e. the original input tensor).
+        this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
+
       } else {
+
 
 //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
 // If AddInputToOutput exists, should let it setKeepInputTensor( true ).
@@ -661,8 +687,12 @@ class Base extends ReturnOrClone.Base {
       this.depthwise = null;
     }
  
-    if ( this.addTwoTensors ) {
-      this.addTwoTensors = null
+    if ( this.addInput0ToPointwise21Output ) {
+      this.addInputToPointwise21Output = null;
+    }
+
+    if ( this.addInput0ToPointwise22Output ) {
+      this.addInputToPointwise22Output = null;
     }
 
     if ( this.concatenator ) {
@@ -785,10 +815,12 @@ class Base extends ReturnOrClone.Base {
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
-    outputTensors[ 0 ] = tf.add( t0, inputTensor );
-//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
-    t0.dispose();
-
+//!!! (2021/05/29 Remarked)
+//     outputTensors[ 0 ] = tf.add( t0, inputTensor );
+// //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
+//     t0.dispose();
+    
+    outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 );
     outputTensors[ 1 ] = null;
 
     // The inputTensor is kept (not disposed).
@@ -807,10 +839,13 @@ class Base extends ReturnOrClone.Base {
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise22.pfnConvBiasActivation( t1 );
-    outputTensors[ 0 ] = tf.add( t0, inputTensor );
-//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
-    t0.dispose();
+//!!! (2021/05/29 Remarked)
+//     outputTensors[ 0 ] = tf.add( t0, inputTensor );
+// //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
+//     t0.dispose();
 
+//!!! ...unfinished... (2021/05/29) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
+    outputTensors[ 0 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 );
     outputTensors[ 1 ] = null;
 
     // The inputTensor is kept (not disposed).
@@ -829,18 +864,28 @@ class Base extends ReturnOrClone.Base {
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise21.pfnConvBiasActivation( t1 ); // always keep t1.
-    outputTensors[ 0 ] = tf.add( t0, inputTensor );
-//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
-    t0.dispose();
+//!!! (2021/05/29 Remarked)
+//     outputTensors[ 0 ] = tf.add( t0, inputTensor );
+// //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
+//     t0.dispose();
+
+    outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 ); // always keep inputTensor and t0.
 
     t0 = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
-    outputTensors[ 1 ] = tf.add( t0, inputTensor );
-//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
-    t0.dispose();
+//!!! (2021/05/29 Remarked)
+//     outputTensors[ 1 ] = tf.add( t0, inputTensor );
+// //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
+//     t0.dispose();
+
+//!!! ...unfinished... (2021/05/29) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
+    outputTensors[ 1 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 ); // always keep inputTensor and t0.
 
     // The inputTensor is kept (not disposed).
   }
 
+
+//!!! ...unfinished... (2021/05/29) should remove these codes. Adjust addInput0ToPointwise21Output and addInput0ToPointwise22Output 
+// keep-input flag to achieve the same effect.
 
   /** The only one input will be added to the only one output (pointwise21). The inputTensor will be disposed.*/
   static apply_1_21_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
