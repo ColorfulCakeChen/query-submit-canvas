@@ -616,7 +616,7 @@ class Base extends ReturnOrClone.Base {
       } else {
 
 
-//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
+//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do not exist? This will destroy inputTensors!
 // If AddInputToOutput exists, should let it setKeepInputTensor( true ).
 
         // Since there is no operation at all (i.e. no pointwise1, no depthwise, no concat, no pointwise2),
@@ -820,6 +820,8 @@ class Base extends ReturnOrClone.Base {
 // //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
 //     t0.dispose();
     
+//!!! ...unfinished... (2021/05/29) If pointwise1, depthwise, pointwise21, pointwise22 all do not exist, the t0 will be the inputTensor.
+// This will destroy the inputTensor.
     outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 );
     outputTensors[ 1 ] = null;
 
@@ -844,7 +846,8 @@ class Base extends ReturnOrClone.Base {
 // //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
 //     t0.dispose();
 
-//!!! ...unfinished... (2021/05/29) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
+//!!! ...unfinished... (2021/05/29) If pointwise1, depthwise, pointwise21, pointwise22 all do not exist, the t0 will be the inputTensor.
+// This will destroy the inputTensor.
     outputTensors[ 0 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 );
     outputTensors[ 1 ] = null;
 
@@ -877,7 +880,8 @@ class Base extends ReturnOrClone.Base {
 // //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
 //     t0.dispose();
 
-//!!! ...unfinished... (2021/05/29) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
+//!!! ...unfinished... (2021/05/29) If pointwise1, depthwise, pointwise21, pointwise22 all do not exist, the t0 will be the inputTensor.
+// This will destroy the inputTensor.
     outputTensors[ 1 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 ); // always keep inputTensor and t0.
 
     // The inputTensor is kept (not disposed).
