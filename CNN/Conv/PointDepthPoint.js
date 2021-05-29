@@ -543,7 +543,7 @@ class Base extends ReturnOrClone.Base {
        );
 
     if ( bShouldAddInputToOutput ) {
-//!!! ...unfinished... (2021/05/29) what is the keep-input flags?
+//!!! ...unfinished... (2021/05/29)
       if ( this.bPointwise21 )
         this.addInput0ToPointwise21Output = new AddTwoTensors.Base( false, false );
 
@@ -792,6 +792,10 @@ class Base extends ReturnOrClone.Base {
    * @return {function} Return one of the apply_Xxx function.
    */
   static Determine_apply_and_destroy_or_keep() {
+
+//!!! ...unfinished... (2021/05/29)
+// Sine there are this.addInput0ToPointwise21Output and this.addInput0ToPointwise22Output,
+// Xxx_keep_AddInputToOutput() and Xxx_destroy_AddInputToOutput() should be combined into one Xxx_keep_or_destroy_AddInputToOutput().
 
     if ( this.bShouldAddInputToOutput ) { // 1. ( this.inputTensorCount == 0 ) and possible to add-input-to-output.
 
