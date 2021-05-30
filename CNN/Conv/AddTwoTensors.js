@@ -1,5 +1,7 @@
 export { Base };
 
+//!!! ...unfinished... (2021/05/30) may inherit from Pointwise?
+
 /**
  * Add two tensor3d. They should have the same dimensions ( height x width x channel ). It could destroy one or two of the input tensors.
  *
