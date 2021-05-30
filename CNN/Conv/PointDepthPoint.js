@@ -564,6 +564,10 @@ class Base extends ReturnOrClone.Base {
     // because the adjustment might also need to select different apply_Xxx() function.
     this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
 
+//!!! ...unfinished... (2021/05/30) Should separate to consider bKeepInputTensor and bShouldAddInputToOutput 
+// (just like Base.Determine_apply_and_destroy_or_keep.call()) to setup keep-input flags. This could also
+// combine Xxx_keep_AddInputToOutput() and Xxx_destroy_AddInputToOutput() into one Xxx_keep_or_destroy_AddInputToOutput().
+
     // 5.3 Adjust the destroy-or-keep behavior of the first operation.
     //
     // If:
