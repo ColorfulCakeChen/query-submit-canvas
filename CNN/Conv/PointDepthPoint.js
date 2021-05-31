@@ -921,7 +921,13 @@ class Base extends ReturnOrClone.Base {
 // If no pointwise22, there will be no addInput0ToPointwise22Output. (WRONG!)
 // So, may need integrate addInput0ToPointwiseXxOutput into pointwise21Xx.
 
+//!!! ...unfinished... (2021/05/31)
     } else if ( this.addInput0ToPointwise21Output ) {
+      // In this case, only addInput0ToPointwise21Output will exist, and the addInput0ToPointwise22Output will NOT exist.
+      //
+      // The only possible case which both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist is that both
+      // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute the above codes).
+
       if ( this.addInput0ToPointwise22Output ) {
         // Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist, then addInput0ToPointwise21Output already keep-input.
         // Now, let addInput0ToPointwise22Output keep-input-tensor-0 (i.e. the original input tensor), too.
