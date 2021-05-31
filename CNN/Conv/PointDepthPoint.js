@@ -543,7 +543,8 @@ class Base extends ReturnOrClone.Base {
        );
 
     if ( bShouldAddInputToOutput ) {
-//!!! ...unfinished... (2021/05/29)
+//!!! ...unfinished... (2021/05/31) Even pointwise21 and pointwise22 do no exist, addInput0ToPointwiseXx should still exist.
+
       if ( this.bPointwise21 )
         this.addInput0ToPointwise21Output = new AddTwoTensors.Base( false, false );
 
