@@ -543,13 +543,23 @@ class Base extends ReturnOrClone.Base {
        );
 
     if ( bShouldAddInputToOutput ) {
-//!!! ...unfinished... (2021/05/31) Even pointwise21 and pointwise22 do no exist, addInput0ToPointwiseXx should still exist.
+//!!! ...unfinished... (2021/05/31) Even pointwise21 and pointwise22 do not exist, addInput0ToPointwiseXx should still exist.
 
-      if ( this.bPointwise21 )
-        this.addInput0ToPointwise21Output = new AddTwoTensors.Base( false, false );
-
-      if ( this.bPointwise22 )
+      // Only if both pointwise21 and pointwise22 exist, it needs have both addInput0ToPointwise21Output and addInput0ToPointwise22Output.
+      //
+      // If both addInput0ToPointwise21Output and addInput0ToPointwise22Output existed, the former (addInput0ToPointwise21Output)
+      // should keep-input-tensor-0 (i.e. the original input tensor) and keep-input-tensor-1 (i.e. the depthwise output).
+      // Otherwise, the addInput0ToPointwise22Output will fail to process it.
+      if ( ( this.bPointwise21 ) && ( this.bPointwise22 ) ) {
+        this.addInput0ToPointwise21Output = new AddTwoTensors.Base( true, true );
         this.addInput0ToPointwise22Output = new AddTwoTensors.Base( false, false );
+
+      // Othrewise (i.e. only pointwise21 exists, or only pointwise22 exists, or both pointwise21 and pointwise22 do not exist),
+      // it just needs only one addInput0ToPointwise21Output.
+      } else {
+        this.addInput0ToPointwise21Output = new AddTwoTensors.Base( false, false );
+      }
+
 
       // If both addInput0ToPointwise21Output and addInput0ToPointwise22Output existed, the former (addInput0ToPointwise21Output)
       // should keep-input-tensor-0 (i.e. the original input tensor) and keep-input-tensor-1 (i.e. the depthwise output).
