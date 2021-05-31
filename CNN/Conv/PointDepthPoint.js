@@ -543,7 +543,6 @@ class Base extends ReturnOrClone.Base {
        );
 
     if ( bShouldAddInputToOutput ) {
-//!!! ...unfinished... (2021/05/31) Even pointwise21 and pointwise22 do not exist, addInput0ToPointwiseXx should still exist.
 
       // Only if both pointwise21 and pointwise22 exist, both addInput0ToPointwise21Output and addInput0ToPointwise22Output are needed.
       //
@@ -557,14 +556,6 @@ class Base extends ReturnOrClone.Base {
       // only one addInput0ToPointwise21Output is needed.
       } else {
         this.addInput0ToPointwise21Output = new AddTwoTensors.Base( false, false );
-      }
-
-
-      // If both addInput0ToPointwise21Output and addInput0ToPointwise22Output existed, the former (addInput0ToPointwise21Output)
-      // should keep-input-tensor-0 (i.e. the original input tensor) and keep-input-tensor-1 (i.e. the depthwise output).
-      // Otherwise, the addInput0ToPointwise22Output will fail to process it.
-      if ( this.addInput0ToPointwise21Output && this.addInput0ToPointwise22Output ) {
-        this.addInput0ToPointwise21Output.setKeepInputTensor( true, true );
       }
     }
 
@@ -898,6 +889,7 @@ class Base extends ReturnOrClone.Base {
 
     this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;
 
+
 //!!! ...unfinished... (2021/05/30)
     // 5.3.1 Main input (i.e. inputTensor0)
     //
@@ -923,9 +915,10 @@ class Base extends ReturnOrClone.Base {
     } else if ( this.bPointwise22 ) {
       this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep-input.
 
+//!!! ...unfinished... (2021/05/31) Even pointwise21 and pointwise22 do not exist, addInput0ToPointwiseXx should still exist.
 //!!! ...unfinished... (2021/05/30)
-// If no pointwise21, there will be no addInput0ToPointwise21Output.
-// If no pointwise22, there will be no addInput0ToPointwise22Output.
+// If no pointwise21, there will be no addInput0ToPointwise21Output. (WRONG!)
+// If no pointwise22, there will be no addInput0ToPointwise22Output. (WRONG!)
 // So, may need integrate addInput0ToPointwiseXxOutput into pointwise21Xx.
 
     } else if ( this.addInput0ToPointwise21Output ) {
