@@ -925,24 +925,18 @@ class Base extends ReturnOrClone.Base {
     } else if ( this.addInput0ToPointwise21Output ) {
       // In this case, only addInput0ToPointwise21Output will exist, and the addInput0ToPointwise22Output will NOT exist.
       //
-      // The only possible case which both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist is that both
-      // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute the above codes).
-
-      if ( this.addInput0ToPointwise22Output ) {
-        // Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist, then addInput0ToPointwise21Output already keep-input.
-        // Now, let addInput0ToPointwise22Output keep-input-tensor-0 (i.e. the original input tensor), too.
-        this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
-      } else {
-        // Since only addInput0ToPointwise21Output exists, let it keep-input-tensor-0 (i.e. the original input tensor).
-        this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
-      }
-
-    } else if ( this.addInput0ToPointwise22Output ) {
-      // Since only addInput0ToPointwise22Output exists, let it keep-input-tensor-0 (i.e. the original input tensor).
-      this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
+      // (The only possible case which both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist is that both
+      // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute the above codes).)
+      //
+      // Since this is the only operation (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
+      // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to keep-input,
+      // it should keep both inputs (they are the same one inputTensors[ 0 ] in fact) simultaneously. Otherwise, the only
+      // inputTensors[ 0 ] will be destroyed.
+      this.addInput0ToPointwise21Output.setKeepInputTensor0( true, true );
 
     } else {
 
+//!!! ...unfinished... (2021/06/01)
 
 //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do not exist? This will destroy inputTensors!
 // If AddInputToOutput exists, should let it setKeepInputTensor( true ).
