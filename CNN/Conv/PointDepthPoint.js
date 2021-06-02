@@ -915,13 +915,6 @@ class Base extends ReturnOrClone.Base {
     } else if ( this.bPointwise22 ) {
       this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep-input.
 
-//!!! ...unfinished... (2021/05/31) Even pointwise21 and pointwise22 do not exist, addInput0ToPointwiseXx should still exist.
-//!!! ...unfinished... (2021/05/30)
-// If no pointwise21, there will be no addInput0ToPointwise21Output. (WRONG!)
-// If no pointwise22, there will be no addInput0ToPointwise22Output. (WRONG!)
-// So, may need integrate addInput0ToPointwiseXxOutput into pointwise21Xx.
-
-//!!! ...unfinished... (2021/05/31)
     } else if ( this.addInput0ToPointwise21Output ) {
       // In this case, only addInput0ToPointwise21Output will exist, and the addInput0ToPointwise22Output will NOT exist.
       //
@@ -929,30 +922,22 @@ class Base extends ReturnOrClone.Base {
       // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute the above codes).)
       //
       // Since this is the only operation (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
-      // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to keep-input,
-      // it should keep both inputs (they are the same one inputTensors[ 0 ] in fact) simultaneously. Otherwise, the only
-      // inputTensors[ 0 ] will be destroyed.
+      // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to
+      // keep-input, it should keep both inputs (they are the same one inputTensors[ 0 ] in fact) simultaneously. Otherwise,
+      // the only inputTensors[ 0 ] will be destroyed.
       this.addInput0ToPointwise21Output.setKeepInputTensor0( true, true );
 
     } else {
 
-//!!! ...unfinished... (2021/06/01)
+      // It should not execute to here since this function is for should-add-input-to-output (and keep-input).
+      tf.util.assert( ( null != this.addInput0ToPointwise21Output ), "At least, the this.addInput0ToPointwise21Output should exist." );
 
-//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do not exist? This will destroy inputTensors!
-// If AddInputToOutput exists, should let it setKeepInputTensor( true ).
-
-      // Since there is no operation at all (i.e. no pointwise1, no depthwise, no concat, no pointwise2),
-      // let's forget add-input-to-output or concatenating (because they are not meaningful in this case).
-      // Just according to whether needs keep-input, change the total operation to return input directly
-      // or return clone of input directly.
-      if ( bKeepInputTensor ) {
-        this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
-      } else {
-        this.apply_and_destroy_or_keep = Base.return_input_directly_array;
-      }
-
+      // Just clone all the inputTensors[] as returned values. This may be, however, wrong if there are wrongly two input tensors
+      // (there should be only one input (i.e. inputTensors[ 0 ] for should-add-input-to-output).
+      this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
     }
 
+//!!! ...unfinished... (2021/06/02)
     // 5.3.2 Branch input (i.e. inputTensor1)
     //
     // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensor1) is always the concatenating.
