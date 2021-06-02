@@ -883,15 +883,12 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-//!!! ...unfinished... (2021/05/30)
   /** add-input-to-output and keep-input. */
   static Adjust_destroy_or_keep_ShouldAddInputToOutput_KeepInputTensor() {
 
     this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;
 
-
-//!!! ...unfinished... (2021/05/30)
-    // 5.3.1 Main input (i.e. inputTensor0)
+    // 1. Main input (i.e. inputTensors[ 0 ])
     //
     // Find out the first existed operation of the main input (i.e. inputTensor0). Change it to "Xxx_keep" version. So that the
     // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
@@ -938,7 +935,7 @@ class Base extends ReturnOrClone.Base {
     }
 
 //!!! ...unfinished... (2021/06/02)
-    // 5.3.2 Branch input (i.e. inputTensor1)
+    // 2. Branch input (i.e. inputTensors[ 1 ])
     //
     // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensor1) is always the concatenating.
     // So the concatenator is always responsible for keeping (i.e. not-disposing) the inputTensor1 when need-keep-input-tensor.
