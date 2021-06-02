@@ -883,6 +883,7 @@ class Base extends ReturnOrClone.Base {
   }
 
 
+//!!! ...unfinished... (2021/06/02)
   /** add-input-to-output and keep-input. */
   static Adjust_destroy_or_keep_ShouldAddInputToOutput_KeepInputTensor() {
 
@@ -920,8 +921,8 @@ class Base extends ReturnOrClone.Base {
       //
       // Since this is the only operation (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
       // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to
-      // keep-input, it should keep both inputs (they are the same one inputTensors[ 0 ] in fact) simultaneously. Otherwise,
-      // the only inputTensors[ 0 ] will be destroyed.
+      // keep-input, it should keep both inputs (they are just the same one inputTensors[ 0 ] in fact) simultaneously.
+      // Otherwise, the only inputTensors[ 0 ] will be destroyed.
       this.addInput0ToPointwise21Output.setKeepInputTensor0( true, true );
 
     } else {
@@ -929,7 +930,8 @@ class Base extends ReturnOrClone.Base {
       // It should not execute to here since this function is for should-add-input-to-output (and keep-input).
       tf.util.assert( ( null != this.addInput0ToPointwise21Output ), "At least, the this.addInput0ToPointwise21Output should exist." );
 
-      // Just clone all the inputTensors[] as returned values. This may be, however, wrong if there are wrongly two input tensors
+//!!! ...unfinished... (2021/06/02)
+      // Just clone all the inputTensors[] as returned values. This may be wrong, however, if there are wrongly two input tensors
       // (there should be only one input (i.e. inputTensors[ 0 ] for should-add-input-to-output).
       this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
     }
