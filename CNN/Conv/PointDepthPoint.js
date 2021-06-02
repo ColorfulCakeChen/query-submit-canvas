@@ -1200,9 +1200,66 @@ class Base extends ReturnOrClone.Base {
   }
 
 
+//!!! ...unfinished... (2021/06/02) combined into Xxx_and_destroy_or_keep_AddInputToOutput()
+
+  /** The only one input will be added to the only one output (pointwise21). The inputTensor may or may not be disposed.*/
+  static apply_1_21_and_destroy_or_keep_AddInputToOutput( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    let inputTensor = inputTensors[ 0 ];
+
+//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
+//    tf.util.assert( null == inputTensors[ 1 ] );
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
+    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+
+    t0 = this.pointwise21.pfnConvBiasActivation( t1 );
+    
+    outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 );
+    outputTensors[ 1 ] = null;
+  }
+
+  /** The only one input will be added to the only one output (pointwise22). The inputTensor may or may not be disposed.*/
+  static apply_1_22_and_destroy_or_keep_AddInputToOutput( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    let inputTensor = inputTensors[ 0 ];
+
+//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
+//    tf.util.assert( null == inputTensors[ 1 ] );
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
+    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+
+    t0 = this.pointwise22.pfnConvBiasActivation( t1 );
+
+    outputTensors[ 0 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 );
+    outputTensors[ 1 ] = null;
+  }
+
+  /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor may or may not be disposed.*/
+  static apply_1_2_and_destroy_or_keep_AddInputToOutput( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    let inputTensor = inputTensors[ 0 ];
+
+//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
+//    tf.util.assert( null == inputTensors[ 1 ] );
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
+    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+
+    t0 = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 );
+
+    t0 = this.pointwise22.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 );
+  }
 
 
-  /** The only one input will be added to the only one output (pointwise21). The inputTensor will be kept (not disposed).*/
+/*!!! (2021/06/02 Remarked) 
+  /** The only one input will be added to the only one output (pointwise21). The inputTensor will be kept (not disposed).* /
   static apply_1_21_and_keep_AddInputToOutput( inputTensors, outputTensors ) {
     let t0, t1;
 
@@ -1228,7 +1285,7 @@ class Base extends ReturnOrClone.Base {
     // The inputTensor is kept (not disposed).
   }
 
-  /** The only one input will be added to the only one output (pointwise22). The inputTensor will be kept (not disposed).*/
+  /** The only one input will be added to the only one output (pointwise22). The inputTensor will be kept (not disposed).* /
   static apply_1_22_and_keep_AddInputToOutput( inputTensors, outputTensors ) {
     let t0, t1;
 
@@ -1254,7 +1311,7 @@ class Base extends ReturnOrClone.Base {
     // The inputTensor is kept (not disposed).
   }
 
-  /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor will be kept (not disposed).*/
+  /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor will be kept (not disposed).* /
   static apply_1_2_and_keep_AddInputToOutput( inputTensors, outputTensors ) {
     let t0, t1;
 
@@ -1291,26 +1348,28 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2021/05/29) should remove these codes. Adjust addInput0ToPointwise21Output and addInput0ToPointwise22Output 
 // keep-input flag to achieve the same effect.
 
-  /** The only one input will be added to the only one output (pointwise21). The inputTensor will be disposed.*/
+  /** The only one input will be added to the only one output (pointwise21). The inputTensor will be disposed.* /
   static apply_1_21_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
     let t = Base.apply_1_21_and_keep_AddInputToOutput.call( this, inputTensors, outputTensors );
     inputTensors[ 0 ].dispose();
     return t;
   }
 
-  /** The only one input will be added to the only one output (pointwise22). The inputTensor will be disposed.*/
+  /** The only one input will be added to the only one output (pointwise22). The inputTensor will be disposed.* /
   static apply_1_22_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
     let t = Base.apply_1_22_and_keep_AddInputToOutput.call( this, inputTensors, outputTensors );
     inputTensors[ 0 ].dispose();
     return t;
   }
 
-  /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor will be disposed.*/
+  /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor will be disposed.* /
   static apply_1_2_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
     let t = Base.apply_1_2_and_keep_AddInputToOutput.call( this, inputTensors, outputTensors );
     inputTensors[ 0 ].dispose();
     return t;
   }
+*/
+
 
 
   /** The two input will not be added to the only output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
