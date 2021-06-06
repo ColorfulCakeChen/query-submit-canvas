@@ -580,43 +580,41 @@ class Base extends ReturnOrClone.Base {
     //
     if ( ( bKeepInputTensor ) || ( bShouldAddInputToOutput ) ) {
 
-      // 5.3.1 Main input (i.e. inputTensor0)
+      // 5.3.1 Main input (i.e. inputTensors[ 0 ])
       //
-      // Find out the first existed operation of the main input (i.e. inputTensor0). Change it to "Xxx_keep" version. So that the
+      // Find out the first existed operation of the main input (i.e. inputTensors[ 0 ]). Change it to "Xxx_keep" version. So that the
       // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
       if ( this.bPointwise1 ) {
-        this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensor0.
+        this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensors[ 0 ].
 
       } else if ( this.bDepthwise ) {
-        this.depthwise.setKeepInputTensor( true );     // will NOT dispose inputTensor0.
+        this.depthwise.setKeepInputTensor( true );     // will NOT dispose inputTensors[ 0 ].
 
       } else if ( this.concatenator ) {
-        this.concatenator.setKeepInputTensor0( true ); // will NOT dispose inputTensor0.
+        this.concatenator.setKeepInputTensor0( true ); // will NOT dispose inputTensors[ 0 ].
 
       } else if ( this.bPointwise21 ) {
         if ( this.bPointwise22 ) {
-          // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input. Now, let pointwise22 keep-input, too.
+          // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input. Now, let pointwise22 keep inputTensors[ 0 ], too.
           this.pointwise22.setKeepInputTensor( true );
         } else {
-          this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep-input.
+          this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep inputTensors[ 0 ].
         }
 
       } else if ( this.bPointwise22 ) {
-        this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep-input.
+        this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep inputTensors[ 0 ].
 
       } else if ( this.addInput0ToPointwise21Output ) {
-        if ( this.addInput0ToPointwise22Output ) {
-          // Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist, then addInput0ToPointwise21Output already keep-input.
-          // Now, let addInput0ToPointwise22Output keep-input-tensor-0 (i.e. the original input tensor), too.
-          this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
-        } else {
-          // Since only addInput0ToPointwise21Output exists, let it keep-input-tensor-0 (i.e. the original input tensor).
-          this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
-        }
-
-      } else if ( this.addInput0ToPointwise22Output ) {
-        // Since only addInput0ToPointwise22Output exists, let it keep-input-tensor-0 (i.e. the original input tensor).
-        this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
+        // In this case, only addInput0ToPointwise21Output will exist, and the addInput0ToPointwise22Output will NOT exist.
+        //
+        // (The only possible case which both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist is that both
+        // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute to the above codes).)
+        //
+        // Since this is the only operation (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
+        // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to
+        // keep-input, it should keep both inputs (they are just the same one inputTensors[ 0 ] in fact) simultaneously.
+        // Otherwise, the only inputTensors[ 0 ] will be destroyed.
+        this.addInput0ToPointwise21Output.setKeepInputTensor0( true, true );
 
       } else {
 
@@ -892,30 +890,30 @@ class Base extends ReturnOrClone.Base {
     // Find out the first existed operation of the main input (i.e. inputTensor0). Change it to "Xxx_keep" version. So that the
     // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
     if ( this.bPointwise1 ) {
-      this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensor0.
+      this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensors[ 0 ].
 
     } else if ( this.bDepthwise ) {
-      this.depthwise.setKeepInputTensor( true );     // will NOT dispose inputTensor0.
+      this.depthwise.setKeepInputTensor( true );     // will NOT dispose inputTensors[ 0 ].
 
     } else if ( this.concatenator ) {
-      this.concatenator.setKeepInputTensor0( true ); // will NOT dispose inputTensor0.
+      this.concatenator.setKeepInputTensor0( true ); // will NOT dispose inputTensors[ 0 ].
 
     } else if ( this.bPointwise21 ) {
       if ( this.bPointwise22 ) {
-        // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input. Now, let pointwise22 keep-input, too.
+        // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input. Now, let pointwise22 keep inputTensors[ 0 ], too.
         this.pointwise22.setKeepInputTensor( true );
       } else {
-        this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep-input.
+        this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep inputTensors[ 0 ].
       }
 
     } else if ( this.bPointwise22 ) {
-      this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep-input.
+      this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep inputTensors[ 0 ].
 
     } else if ( this.addInput0ToPointwise21Output ) {
       // In this case, only addInput0ToPointwise21Output will exist, and the addInput0ToPointwise22Output will NOT exist.
       //
       // (The only possible case which both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist is that both
-      // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute the above codes).)
+      // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute to the above codes).)
       //
       // Since this is the only operation (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
       // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to
