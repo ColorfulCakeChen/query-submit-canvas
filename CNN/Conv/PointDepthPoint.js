@@ -632,6 +632,16 @@ class Base extends ReturnOrClone.Base {
           this.apply_and_destroy_or_keep = Base.return_input_directly_array;
         }
 
+
+//!!! ...unfinished... (2021/06/06)
+        // It should not execute to here since this function is for should-add-input-to-output (and keep-input).
+        tf.util.assert( ( null != this.addInput0ToPointwise21Output ), "At least, the this.addInput0ToPointwise21Output should exist." );
+
+//!!! ...unfinished... (2021/06/02)
+        // Just clone all the inputTensors[] as returned values. This may be wrong, however, if there are wrongly two input tensors
+        // (there should be only one input (i.e. inputTensors[ 0 ] for should-add-input-to-output).
+        this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
+
       }
 
       // 5.3.2 Branch input (i.e. inputTensors[ 1 ])
@@ -642,82 +652,40 @@ class Base extends ReturnOrClone.Base {
         this.concatenator.setKeepInputTensor1( true );
       }
 
-    } else {
-//!!!???
-      // Since it is not required to keep-input and not possible to add-input-to-output, it is not necessary to
-      // use "Xxx_keep" operation. Using "Xxx_destroy" operation is sufficient.
-
-      // 5.4
-      
-//!!! ...unfinished... (2021/05/29) If pointwise1, depthwise, pointwise21, pointwise22 all do not exist,
-// but AddInputToOutput exists, it should keep some input because they may be only and the same tensor.
-// Otherwise, the inputTensor will be destroyed too early.
-
-      // 5.4.1 Main input (i.e. inputTensor0)
-      //
-      // Find out the first existed operation of the main input (i.e. inputTensor0). Change it to "Xxx_keep" version. So that the
-      // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
-      if ( this.bPointwise1 ) {
-        // already will dispose inputTensor0.
-
-      } else if ( this.bDepthwise ) {
-        // already will dispose inputTensor0.
-
-      } else if ( this.concatenator ) {
-        // already will dispose inputTensor0.
-
-      } else if ( this.bPointwise21 ) {
-        if ( this.bPointwise22 ) {
-          // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input.
-          // already will dispose inputTensor0.
-        } else {
-          // already will dispose inputTensor0.
-        }
-
-      } else if ( this.bPointwise22 ) {
-        // already will dispose inputTensor0.
-
-//!!! ...unfinished... (2021/05/29) 
-      // All pointwise1, depthwise, pointwise21, pointwise22 do not exist, but AddInputToOutput exists.
-      // In this situation, the depthwise output is, in fact, the original input tensor.
-      // So the last add-input-to-output should keep-input-tensor-1 (i.e. the depthwise output). Otherwise,
-      // the inputTensor will be destroyed too early. But it should destroy-input-tensor-0 (i.e. the original input tensor).
-      } else if ( this.addInput0ToPointwise21Output ) {
-
-        if ( this.addInput0ToPointwise22Output ) {
-          // Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist, the addInput0ToPointwise22Output is
-          // the last add-input-to-output.
-          this.addInput0ToPointwise22Output.setKeepInputTensor( false, true );
-        } else {
-          // Only addInput0ToPointwise21Output exists, it is the last add-input-to-output.
-          this.addInput0ToPointwise21Output.setKeepInputTensor( false, true );
-        }
-
-      } else if ( this.addInput0ToPointwise22Output ) {
-        // Only addInput0ToPointwise22Output exists, it is the last add-input-to-output.
-        this.addInput0ToPointwise22Output.setKeepInputTensor( false, true );
-
-      } else {
-
-//!!! ...unfinished... (2021/05/29) If input is illegal (e.g. only need inputTensors[ 0 ], but ( inputTensors[ 1 ] != null ) ),
-// return-input-directly might be a problem.
-
-        // Since there is no operation at all (i.e. no pointwise1, no depthwise, no concat, no pointwise2, no concatenating,
-        // no add-input-to-output) and no need to keep-input, change the total operation to return input directly.
-        this.apply_and_destroy_or_keep = Base.return_input_directly_array;
-      }
-
-//!!! ...unfinished... (2021/05/29) If input is illegal (e.g. need inputTensors[ 1 ], but ( inputTensors[ 1 ] == null ) ), what will happen?
-
-      // 5.4.2 Branch input (i.e. inputTensor1)
-      //
-      // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensor1) is always the concatenating.
-      // So the concatenator is always responsible for destroying the inputTensor1.
-      if ( this.concatenator ) {
-        // already will dispose inputTensor1.
-      }
-
     }
+
+//!!! ...unfinished... (2021/06/06)
+    // 5.4 If no need to keep-input (but may need add-input-to-output), the last add-input-to-output should destroy
+    //     inputTensors[ 0 ] after add-input-to-output.
+    if ( false == bKeepInputTensor ) {
+
+      if ( this.addInput0ToPointwise21Output ) {
+        if ( this.addInput0ToPointwise22Output ) {
+          // 5.4.1 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
+          //     Let the last add-input-to-output (i.e. addInput0ToPointwise22Output) destroy the inputTensors[ 0 ].
+          this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
+
+        } else {
+          // 5.4.2 Only addInput0ToPointwise21Output exists. Let it destroy the inputTensors[ 0 ].
+          this.addInput0ToPointwise21Output.setKeepInputTensor0( false );
+
+        }
+      } else {
+        if ( this.addInput0ToPointwise22Output ) {
+          // 5.4.3 Only addInput0ToPointwise22Output exists. Let it destroy the inputTensors[ 0 ].
+          this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
+
+        } else {
+          // 5.4.4 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
+
+  //!!! ...unfinished... (2021/06/06)
+          // It should not execute to here since this function is for should-add-input-to-output (and destroy-input).
+          tf.util.assert( ( null != this.addInput0ToPointwise21Output ) || ( null != this.addInput0ToPointwise22Output ),
+            "At least, the this.addInput0ToPointwise21Output should exist." );
+        }
+      }
+    }
+
 
     ++progressToAdvance.value;
     yield progressRoot;  // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
@@ -975,6 +943,7 @@ class Base extends ReturnOrClone.Base {
       } else {
         // 2.4 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
 
+//!!! ...unfinished... (2021/06/06)
         // It should not execute to here since this function is for should-add-input-to-output (and destroy-input).
         tf.util.assert( ( null != this.addInput0ToPointwise21Output ) || ( null != this.addInput0ToPointwise22Output ),
           "At least, the this.addInput0ToPointwise21Output should exist." );
