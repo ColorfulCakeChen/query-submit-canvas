@@ -887,6 +887,71 @@ class Base extends ReturnOrClone.Base {
   /** add-input-to-output and keep-input. */
   static Adjust_destroy_or_keep_ShouldAddInputToOutput_KeepInputTensor() {
 
+    // 1. Main input (i.e. inputTensors[ 0 ])
+    //
+    // Find out the first existed operation of the main input (i.e. inputTensor0). Change it to "Xxx_keep" version. So that the
+    // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
+    if ( this.bPointwise1 ) {
+      this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensor0.
+
+    } else if ( this.bDepthwise ) {
+      this.depthwise.setKeepInputTensor( true );     // will NOT dispose inputTensor0.
+
+    } else if ( this.concatenator ) {
+      this.concatenator.setKeepInputTensor0( true ); // will NOT dispose inputTensor0.
+
+    } else if ( this.bPointwise21 ) {
+      if ( this.bPointwise22 ) {
+        // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input. Now, let pointwise22 keep-input, too.
+        this.pointwise22.setKeepInputTensor( true );
+      } else {
+        this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep-input.
+      }
+
+    } else if ( this.bPointwise22 ) {
+      this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep-input.
+
+    } else if ( this.addInput0ToPointwise21Output ) {
+      // In this case, only addInput0ToPointwise21Output will exist, and the addInput0ToPointwise22Output will NOT exist.
+      //
+      // (The only possible case which both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist is that both
+      // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute the above codes).)
+      //
+      // Since this is the only operation (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
+      // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to
+      // keep-input, it should keep both inputs (they are just the same one inputTensors[ 0 ] in fact) simultaneously.
+      // Otherwise, the only inputTensors[ 0 ] will be destroyed.
+      this.addInput0ToPointwise21Output.setKeepInputTensor0( true, true );
+
+    } else {
+
+      // It should not execute to here since this function is for should-add-input-to-output (and keep-input).
+      tf.util.assert( ( null != this.addInput0ToPointwise21Output ), "At least, the this.addInput0ToPointwise21Output should exist." );
+
+//!!! ...unfinished... (2021/06/02)
+      // Just clone all the inputTensors[] as returned values. This may be wrong, however, if there are wrongly two input tensors
+      // (there should be only one input (i.e. inputTensors[ 0 ] for should-add-input-to-output).
+      this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
+    }
+
+//!!! ...unfinished... (2021/06/02)
+    // 2. Branch input (i.e. inputTensors[ 1 ])
+    //
+    // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensor1) is always the concatenating.
+    // So the concatenator is always responsible for keeping (i.e. not-disposing) the inputTensor1 when need-keep-input-tensor.
+    if ( this.concatenator ) {
+      this.concatenator.setKeepInputTensor1( true );
+    }
+
+//!!! ...unfinished... (2021/05/30)
+
+  }
+
+
+//!!! ...unfinished... (2021/06/06)
+  /** add-input-to-output and not-keep-input. */
+  static Adjust_destroy_or_keep_ShouldAddInputToOutput_DestroyInputTensor() {
+
     this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;
 
     // 1. Main input (i.e. inputTensors[ 0 ])
@@ -945,22 +1010,9 @@ class Base extends ReturnOrClone.Base {
       this.concatenator.setKeepInputTensor1( true );
     }
 
-//!!! ...unfinished... (2021/05/30)
-      if ( this.bPointwise21 ) {
-        if ( this.bPointwise22 ) {
-          this.apply_and_destroy_or_keep = Base.apply_1_2_and_keep_AddInputToOutput;  // 1.1 Both pointwise21 and pointwise22 existed.
-        } else {
-          return Base.apply_1_21_and_keep_AddInputToOutput; // 1.2 Only pointwise21 existed (and no pointwise22).
-        }
-      } else {
-        if ( this.bPointwise22 ) {
-          return Base.apply_1_22_and_keep_AddInputToOutput; // 1.3 Only pointwise22 existed (and no pointwise21).
-        } else {
-          return Base.apply_1_21_and_keep_AddInputToOutput; // 1.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
-        }
-      }
 
   }
+
 
 
 //!!! ...unfinished... (2021/05/30)
@@ -972,6 +1024,20 @@ class Base extends ReturnOrClone.Base {
 // Xxx_keep_AddInputToOutput() and Xxx_destroy_AddInputToOutput() should be combined into one Xxx_keep_or_destroy_AddInputToOutput().
 
     if ( this.bShouldAddInputToOutput ) { // 1. ( this.inputTensorCount == 0 ) and possible to add-input-to-output.
+
+      if ( this.bPointwise21 ) {
+        if ( this.bPointwise22 ) { // 1.1 Both pointwise21 and pointwise22 existed.
+          this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;
+        } else {                   // 1.2 Only pointwise21 existed (and no pointwise22).
+          this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
+        }
+      } else {
+        if ( this.bPointwise22 ) { // 1.3 Only pointwise22 existed (and no pointwise21).
+          this.apply_and_destroy_or_keep = Base.apply_1_22_and_destroy_or_keep_AddInputToOutput;
+        } else {                   // 1.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+          this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
+        }
+      }
 
 //!!! ...unfinished... (2021/05/30)
 
@@ -1258,117 +1324,6 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-/*!!! (2021/06/02 Remarked) 
-  /** The only one input will be added to the only one output (pointwise21). The inputTensor will be kept (not disposed).* /
-  static apply_1_21_and_keep_AddInputToOutput( inputTensors, outputTensors ) {
-    let t0, t1;
-
-    let inputTensor = inputTensors[ 0 ];
-
-//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
-//    tf.util.assert( null == inputTensors[ 1 ] );
-
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
-
-    t0 = this.pointwise21.pfnConvBiasActivation( t1 );
-//!!! (2021/05/29 Remarked)
-//     outputTensors[ 0 ] = tf.add( t0, inputTensor );
-// //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
-//     t0.dispose();
-    
-//!!! ...unfinished... (2021/05/29) If pointwise1, depthwise, pointwise21, pointwise22 all do not exist, the t0 will be the inputTensor.
-// This will destroy the inputTensor.
-    outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 );
-    outputTensors[ 1 ] = null;
-
-    // The inputTensor is kept (not disposed).
-  }
-
-  /** The only one input will be added to the only one output (pointwise22). The inputTensor will be kept (not disposed).* /
-  static apply_1_22_and_keep_AddInputToOutput( inputTensors, outputTensors ) {
-    let t0, t1;
-
-    let inputTensor = inputTensors[ 0 ];
-
-//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
-//    tf.util.assert( null == inputTensors[ 1 ] );
-
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
-
-    t0 = this.pointwise22.pfnConvBiasActivation( t1 );
-//!!! (2021/05/29 Remarked)
-//     outputTensors[ 0 ] = tf.add( t0, inputTensor );
-// //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
-//     t0.dispose();
-
-//!!! ...unfinished... (2021/05/29) If pointwise1, depthwise, pointwise21, pointwise22 all do not exist, the t0 will be the inputTensor.
-// This will destroy the inputTensor.
-    outputTensors[ 0 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 );
-    outputTensors[ 1 ] = null;
-
-    // The inputTensor is kept (not disposed).
-  }
-
-  /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor will be kept (not disposed).* /
-  static apply_1_2_and_keep_AddInputToOutput( inputTensors, outputTensors ) {
-    let t0, t1;
-
-    let inputTensor = inputTensors[ 0 ];
-
-//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
-//    tf.util.assert( null == inputTensors[ 1 ] );
-
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
-
-    t0 = this.pointwise21.pfnConvBiasActivation( t1 ); // always keep t1.
-//!!! (2021/05/29 Remarked)
-//     outputTensors[ 0 ] = tf.add( t0, inputTensor );
-// //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
-//     t0.dispose();
-
-    outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 ); // always keep inputTensor and t0.
-
-    t0 = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
-//!!! (2021/05/29 Remarked)
-//     outputTensors[ 1 ] = tf.add( t0, inputTensor );
-// //!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do no exist? This will destroy inputTensors!
-//     t0.dispose();
-
-//!!! ...unfinished... (2021/05/29) If pointwise1, depthwise, pointwise21, pointwise22 all do not exist, the t0 will be the inputTensor.
-// This will destroy the inputTensor.
-    outputTensors[ 1 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 ); // always keep inputTensor and t0.
-
-    // The inputTensor is kept (not disposed).
-  }
-
-
-//!!! ...unfinished... (2021/05/29) should remove these codes. Adjust addInput0ToPointwise21Output and addInput0ToPointwise22Output 
-// keep-input flag to achieve the same effect.
-
-  /** The only one input will be added to the only one output (pointwise21). The inputTensor will be disposed.* /
-  static apply_1_21_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
-    let t = Base.apply_1_21_and_keep_AddInputToOutput.call( this, inputTensors, outputTensors );
-    inputTensors[ 0 ].dispose();
-    return t;
-  }
-
-  /** The only one input will be added to the only one output (pointwise22). The inputTensor will be disposed.* /
-  static apply_1_22_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
-    let t = Base.apply_1_22_and_keep_AddInputToOutput.call( this, inputTensors, outputTensors );
-    inputTensors[ 0 ].dispose();
-    return t;
-  }
-
-  /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor will be disposed.* /
-  static apply_1_2_and_destroy_AddInputToOutput( inputTensors, outputTensors ) {
-    let t = Base.apply_1_2_and_keep_AddInputToOutput.call( this, inputTensors, outputTensors );
-    inputTensors[ 0 ].dispose();
-    return t;
-  }
-*/
 
 
 
