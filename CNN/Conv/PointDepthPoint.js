@@ -952,8 +952,6 @@ class Base extends ReturnOrClone.Base {
   /** add-input-to-output and not-keep-input. */
   static Adjust_destroy_or_keep_ShouldAddInputToOutput_DestroyInputTensor() {
 
-    this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;
-
     // 1. Main input (i.e. inputTensors[ 0 ])
     //
     // Find out the first existed operation of the main input (i.e. inputTensor0). Change it to "Xxx_keep" version. So that the
@@ -1025,44 +1023,31 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bShouldAddInputToOutput ) { // 1. ( this.inputTensorCount == 0 ) and possible to add-input-to-output.
 
+      // 1.1
+
       if ( this.bPointwise21 ) {
-        if ( this.bPointwise22 ) { // 1.1 Both pointwise21 and pointwise22 existed.
+        if ( this.bPointwise22 ) { // 1.1.1 Both pointwise21 and pointwise22 existed.
           this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;
-        } else {                   // 1.2 Only pointwise21 existed (and no pointwise22).
+        } else {                   // 1.1.2 Only pointwise21 existed (and no pointwise22).
           this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
         }
       } else {
-        if ( this.bPointwise22 ) { // 1.3 Only pointwise22 existed (and no pointwise21).
+        if ( this.bPointwise22 ) { // 1.1.3 Only pointwise22 existed (and no pointwise21).
           this.apply_and_destroy_or_keep = Base.apply_1_22_and_destroy_or_keep_AddInputToOutput;
-        } else {                   // 1.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+        } else {                   // 1.1.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
         }
       }
 
-//!!! ...unfinished... (2021/05/30)
+      // 1.2
 
+//!!! ...unfinished... (2021/06/06)
       if ( this.bKeepInputTensor ) {
-        // 1.1 add-input-to-output and keep-input.
+        // 1.2.1 add-input-to-output and keep-input.
         Base.Adjust_destroy_or_keep_ShouldAddInputToOutput_KeepInputTensor.call( this );
-
-//!!! ...unfinished... (2021/05/30)
       } else {
-        // 1.2 add-input-to-output and destroy-input.
-
-        if ( this.bPointwise21 ) {
-          if ( this.bPointwise22 ) {
-            return Base.apply_1_2_and_destroy_AddInputToOutput;  // 2.1 Both pointwise21 and pointwise22 existed.
-          } else {
-            return Base.apply_1_21_and_destroy_AddInputToOutput; // 2.2 Only pointwise21 existed (and no pointwise22).
-          }
-        } else {
-          if ( this.bPointwise22 ) {
-            return Base.apply_1_22_and_destroy_AddInputToOutput; // 2.3 Only pointwise22 existed (and no pointwise21).
-          } else {
-            return Base.apply_1_21_and_destroy_AddInputToOutput; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
-          }
-        }
-
+        // 1.2.2 add-input-to-output and destroy-input.
+        Base.Adjust_destroy_or_keep_ShouldAddInputToOutput_DestroyInputTensor.call( this );
       }
 
     } else { // 2. ( this.inputTensorCount >= 1 ) or ( ( this.inputTensorCount == 0 ) but not-possible to add-input-to-output).
@@ -1074,16 +1059,16 @@ class Base extends ReturnOrClone.Base {
         this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;
 
         if ( this.bPointwise21 ) {
-          if ( this.bPointwise22 ) {
-            this.apply_and_destroy_or_keep = Base.apply_2_2_and_destroy_or_keep_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
-          } else {
-            this.apply_and_destroy_or_keep = Base.apply_2_21_and_destroy_or_keep_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
+          if ( this.bPointwise22 ) { // 2.1.1 Both pointwise21 and pointwise22 existed.
+            this.apply_and_destroy_or_keep = Base.apply_2_2_and_destroy_or_keep_NoSkipConnection;
+          } else {                   // 2.1.2 Only pointwise21 existed (and no pointwise22).
+            this.apply_and_destroy_or_keep = Base.apply_2_21_and_destroy_or_keep_NoSkipConnection;
           }
         } else {
-          if ( this.bPointwise22 ) {
-            this.apply_and_destroy_or_keep = Base.apply_2_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
-          } else {
-            this.apply_and_destroy_or_keep = Base.apply_2_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+          if ( this.bPointwise22 ) { // 2.1.3 Only pointwise22 existed (and no pointwise21).
+            this.apply_and_destroy_or_keep = Base.apply_2_22_and_destroy_or_keep_NoSkipConnection;
+          } else {                   // 2.1.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+            this.apply_and_destroy_or_keep = Base.apply_2_21_and_destroy_or_keep_NoSkipConnection;
           }
         }
 
@@ -1093,16 +1078,16 @@ class Base extends ReturnOrClone.Base {
         // ( this.inputTensorCount == 1 ) or ( ( this.inputTensorCount == 0 ) but not-possible ).
 
         if ( this.bPointwise21 ) {
-          if ( this.bPointwise22 ) {
-            this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;  // 4.1 Both pointwise21 and pointwise22 existed.
-          } else {
-            this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 4.2 Only pointwise21 existed (and no pointwise22).
+          if ( this.bPointwise22 ) { // 2.2.1 Both pointwise21 and pointwise22 existed.
+            this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;
+          } else {                   // 2.2.2 Only pointwise21 existed (and no pointwise22).
+            this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_NoSkipConnection;
           }
         } else {
-          if ( this.bPointwise22 ) {
-            this.apply_and_destroy_or_keep = Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 4.3 Only pointwise22 existed (and no pointwise21).
-          } else {
-            this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 4.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+          if ( this.bPointwise22 ) { // 2.2.3 Only pointwise22 existed (and no pointwise21).
+            this.apply_and_destroy_or_keep = Base.apply_1_22_and_destroy_or_keep_NoSkipConnection;
+          } else {                   // 2.2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+            this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_NoSkipConnection;
           }
         }
 
