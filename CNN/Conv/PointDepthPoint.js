@@ -614,7 +614,7 @@ class Base extends ReturnOrClone.Base {
         // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to
         // keep-input, it should keep both inputs (they are just the same one inputTensors[ 0 ] in fact) simultaneously.
         // Otherwise, the only inputTensors[ 0 ] will be destroyed.
-        this.addInput0ToPointwise21Output.setKeepInputTensor0( true, true );
+        this.addInput0ToPointwise21Output.setKeepInputTensor( true, true );
 
       } else {
 
@@ -634,10 +634,10 @@ class Base extends ReturnOrClone.Base {
 
       }
 
-      // 5.3.2 Branch input (i.e. inputTensor1)
+      // 5.3.2 Branch input (i.e. inputTensors[ 1 ])
       //
-      // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensor1) is always the concatenating.
-      // So the concatenator is always responsible for keeping (i.e. not-disposing) the inputTensor1 when need-keep-input-tensor.
+      // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensors[ 1 ]) is always the concatenating.
+      // So the concatenator is always responsible for keeping (i.e. not-disposing) the inputTensors[ 1 ] when need-keep-input-tensor.
       if ( this.concatenator ) {
         this.concatenator.setKeepInputTensor1( true );
       }
@@ -887,7 +887,7 @@ class Base extends ReturnOrClone.Base {
 
     // 1. Main input (i.e. inputTensors[ 0 ])
     //
-    // Find out the first existed operation of the main input (i.e. inputTensor0). Change it to "Xxx_keep" version. So that the
+    // Find out the first existed operation of the main input (i.e. inputTensors[ 0 ]). Change it to "Xxx_keep" version. So that the
     // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
     if ( this.bPointwise1 ) {
       this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensors[ 0 ].
@@ -900,7 +900,8 @@ class Base extends ReturnOrClone.Base {
 
     } else if ( this.bPointwise21 ) {
       if ( this.bPointwise22 ) {
-        // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input. Now, let pointwise22 keep inputTensors[ 0 ], too.
+        // Both pointwise21 and pointwise22 exist, then pointwise21 already keeps inputTensors[ 0 ].
+        // Now, let pointwise22 keep inputTensors[ 0 ], too.
         this.pointwise22.setKeepInputTensor( true );
       } else {
         this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep inputTensors[ 0 ].
@@ -919,7 +920,7 @@ class Base extends ReturnOrClone.Base {
       // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to
       // keep-input, it should keep both inputs (they are just the same one inputTensors[ 0 ] in fact) simultaneously.
       // Otherwise, the only inputTensors[ 0 ] will be destroyed.
-      this.addInput0ToPointwise21Output.setKeepInputTensor0( true, true );
+      this.addInput0ToPointwise21Output.setKeepInputTensor( true, true );
 
     } else {
 
@@ -932,59 +933,96 @@ class Base extends ReturnOrClone.Base {
       this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
     }
 
-//!!! ...unfinished... (2021/06/02)
     // 2. Branch input (i.e. inputTensors[ 1 ])
     //
-    // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensor1) is always the concatenating.
-    // So the concatenator is always responsible for keeping (i.e. not-disposing) the inputTensor1 when need-keep-input-tensor.
+    // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensors[ 1 ]) is always the concatenating.
+    // So the concatenator is always responsible for keeping (i.e. not-disposing) the inputTensors[ 1 ] when need-keep-input-tensor.
     if ( this.concatenator ) {
       this.concatenator.setKeepInputTensor1( true );
     }
 
-//!!! ...unfinished... (2021/05/30)
+//!!! ...unfinished... (2021/06/06)
+//     tf.util.assert( ( null == this.concatenator ),
+//       "add-input-to-output can not handle branch input (i.e. inputTensors[ 1 ]). Only inputTensors[ 0 ] could be handled." );
 
   }
 
 
-//!!! ...unfinished... (2021/06/06)
   /** add-input-to-output and not-keep-input. */
   static Adjust_destroy_or_keep_ShouldAddInputToOutput_DestroyInputTensor() {
 
+    // 1. let it keep-input first.
+    Base.Adjust_destroy_or_keep_ShouldAddInputToOutput_KeepInputTensor( this );
+
+//!!! ...unfinished... (2021/06/06)
+    // 2. But, the last add-input-to-output should destroy inputTensors[ 0 ] after add-input-to-output.
+    if ( this.addInput0ToPointwise21Output ) {
+      if ( this.addInput0ToPointwise22Output ) {
+        // 2.1 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
+        //     Let the last add-input-to-output (i.e. addInput0ToPointwise22Output) destroy the inputTensors[ 0 ].
+        this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
+
+      } else {
+        // 2.2 Only addInput0ToPointwise21Output exists. Let it destroy the inputTensors[ 0 ].
+        this.addInput0ToPointwise21Output.setKeepInputTensor0( false );
+
+      }
+    } else {
+      if ( this.addInput0ToPointwise22Output ) {
+        // 2.3 Only addInput0ToPointwise22Output exists. Let it destroy the inputTensors[ 0 ].
+        this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
+
+      } else {
+        // 2.4 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
+
+        // It should not execute to here since this function is for should-add-input-to-output (and destroy-input).
+        tf.util.assert( ( null != this.addInput0ToPointwise21Output ) || ( null != this.addInput0ToPointwise22Output ),
+          "At least, the this.addInput0ToPointwise21Output should exist." );
+      }
+    }
+  }
+
+
+//!!! ...unfinished... (2021/06/06)
+  /** No-add-input-to-output (but may have branch input (i.e. inputTensors[ 1 ]) needs to be concatenated) and keep-input. */
+  static Adjust_destroy_or_keep_NoSkipConnection_KeepInputTensor() {
+
     // 1. Main input (i.e. inputTensors[ 0 ])
     //
-    // Find out the first existed operation of the main input (i.e. inputTensor0). Change it to "Xxx_keep" version. So that the
+    // Find out the first existed operation of the main input (i.e. inputTensors[ 0 ]). Change it to "Xxx_keep" version. So that the
     // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
     if ( this.bPointwise1 ) {
-      this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensor0.
+      this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensors[ 0 ].
 
     } else if ( this.bDepthwise ) {
-      this.depthwise.setKeepInputTensor( true );     // will NOT dispose inputTensor0.
+      this.depthwise.setKeepInputTensor( true );     // will NOT dispose inputTensors[ 0 ].
 
     } else if ( this.concatenator ) {
-      this.concatenator.setKeepInputTensor0( true ); // will NOT dispose inputTensor0.
+      this.concatenator.setKeepInputTensor0( true ); // will NOT dispose inputTensors[ 0 ].
 
     } else if ( this.bPointwise21 ) {
       if ( this.bPointwise22 ) {
-        // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input. Now, let pointwise22 keep-input, too.
+        // Both pointwise21 and pointwise22 exist, then pointwise21 already keeps inputTensors[ 0 ].
+        // Now, let pointwise22 keep inputTensors[ 0 ], too.
         this.pointwise22.setKeepInputTensor( true );
       } else {
-        this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep-input.
+        this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep inputTensors[ 0 ].
       }
 
     } else if ( this.bPointwise22 ) {
-      this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep-input.
+      this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep inputTensors[ 0 ].
 
     } else if ( this.addInput0ToPointwise21Output ) {
       // In this case, only addInput0ToPointwise21Output will exist, and the addInput0ToPointwise22Output will NOT exist.
       //
       // (The only possible case which both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist is that both
-      // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute the above codes).)
+      // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute to the above codes).)
       //
       // Since this is the only operation (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
       // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to
       // keep-input, it should keep both inputs (they are just the same one inputTensors[ 0 ] in fact) simultaneously.
       // Otherwise, the only inputTensors[ 0 ] will be destroyed.
-      this.addInput0ToPointwise21Output.setKeepInputTensor0( true, true );
+      this.addInput0ToPointwise21Output.setKeepInputTensor( true, true );
 
     } else {
 
@@ -1002,13 +1040,15 @@ class Base extends ReturnOrClone.Base {
     //
     // If ( inputTensorCount > 1 ), the first operation of the branch input (i.e. inputTensor1) is always the concatenating.
     // So the concatenator is always responsible for keeping (i.e. not-disposing) the inputTensor1 when need-keep-input-tensor.
+    tf.util.assert( ( null == this.concatenator ),
+      "add-input-to-output can not handle branch input (i.e. inputTensors[ 1 ]). Only inputTensors[ 0 ] could be handled." );
+
+//!!! ...unfinished... (2021/06/06)
     if ( this.concatenator ) {
       this.concatenator.setKeepInputTensor1( true );
     }
 
-
   }
-
 
 
 //!!! ...unfinished... (2021/05/30)
