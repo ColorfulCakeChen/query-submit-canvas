@@ -750,7 +750,7 @@ class Base {
       return imageOut;
 
     // If the output dimensions ( height, width, depth ) is not the same as input, it is impossible to add-input-to-output.
-    if ( ( imageIn.height != imageOut.height ) || ( imageIn.width == imageOut.width ) || ( imageIn.depth == imageOut.depth ) )
+    if ( ( imageIn.height != imageOut.height ) || ( imageIn.width != imageOut.width ) || ( imageIn.depth != imageOut.depth ) )
       return imageOut;
 
     tf.util.assert( ( imageIn.height == imageOut.height ),
