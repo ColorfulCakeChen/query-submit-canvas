@@ -43,9 +43,10 @@ class Base {
         try {
           tf.tidy( () => {
 
+            let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
+
             let outputTensor3dArray = [];
             let inputTensor3dArray = new Array( 2 );
-            let tensorNumDifference_apply_before_after;
             if ( bKeepInputTensor ) {
               inputTensor3dArray[ 0 ] = imageInTensor3dArray[ 0 ];
 
@@ -53,26 +54,24 @@ class Base {
                 inputTensor3dArray[ 1 ] = imageInTensor3dArray[ 1 ];
               }
 
-              tensorNumDifference_apply_before_after = 1;
+              inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
 
             } else {
               inputTensor3dArray[ 0 ] = imageInTensor3dArray[ 0 ].clone(); // Otherwise, this.dataTensor3d will be destroyed. 
+              inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
 
               if ( this.testParams.out.inputTensorCount > 1 ) { // Pass two input tensors according to parameters.
                 inputTensor3dArray[ 1 ] = imageInTensor3dArray[ 1 ].clone();
+                inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
               }
-
-              tensorNumDifference_apply_before_after = 0;
             }
 
             let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
             let pointDepthPoint = this.pointDepthPoint_create( bKeepInputTensor );
 
-//!!!
-            if ( pointDepthPoint.outputTensorCount == 1 ) {
-              //tensorNumDifference_apply_before_after;
-            } if ( pointDepthPoint.outputTensorCount == 2 ) {
-            }
+            // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
+            // tensor count (i.e. inputTensorDestroyCount).
+            let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
 
             let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
             pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
