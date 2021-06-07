@@ -565,7 +565,7 @@ class Base extends ReturnOrClone.Base {
     // because the adjustment might also need to select different apply_Xxx() function.
     this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
 
-    // 5.3 Adjust the destroy-or-keep behavior of the first operation.
+    // 5.3 Adjust the destroy-or-keep behavior of the first operation and last operation.
     //
     // If:
     //   - caller request keep-input, or
@@ -638,22 +638,22 @@ class Base extends ReturnOrClone.Base {
 
         if ( this.addInput0ToPointwise21Output ) {
           if ( this.addInput0ToPointwise22Output ) {
-            // 5.4.1 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
+            // 5.3.2.1 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
             //     Let the last add-input-to-output (i.e. addInput0ToPointwise22Output) destroy the inputTensors[ 0 ].
             this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
 
           } else {
-            // 5.4.2 Only addInput0ToPointwise21Output exists. Let it destroy the inputTensors[ 0 ].
+            // 5.3.2.2 Only addInput0ToPointwise21Output exists. Let it destroy the inputTensors[ 0 ].
             this.addInput0ToPointwise21Output.setKeepInputTensor0( false );
 
           }
         } else {
           if ( this.addInput0ToPointwise22Output ) {
-            // 5.4.3 Only addInput0ToPointwise22Output exists. Let it destroy the inputTensors[ 0 ].
+            // 5.3.2.3 Only addInput0ToPointwise22Output exists. Let it destroy the inputTensors[ 0 ].
             this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
 
           } else {
-            // 5.4.4 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
+            // 5.3.2.4 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
             //
             // Executed to here means that no need to keep-input and no need add-input-to-output. This should not happen
             // because here is for should-add-input-to-output (and destroy-input).
@@ -708,14 +708,6 @@ class Base extends ReturnOrClone.Base {
       this.depthwise = null;
     }
  
-    if ( this.addInput0ToPointwise21Output ) {
-      this.addInputToPointwise21Output = null;
-    }
-
-    if ( this.addInput0ToPointwise22Output ) {
-      this.addInputToPointwise22Output = null;
-    }
-
     if ( this.concatenator ) {
       this.concatenator = null;
     }
@@ -728,6 +720,14 @@ class Base extends ReturnOrClone.Base {
     if ( this.pointwise22 ) {
       this.pointwise22.disposeTensors();
       this.pointwise22 = null;
+    }
+
+    if ( this.addInput0ToPointwise21Output ) {
+      this.addInputToPointwise21Output = null;
+    }
+
+    if ( this.addInput0ToPointwise22Output ) {
+      this.addInputToPointwise22Output = null;
     }
 
     this.intermediateTensorsArray = null;
