@@ -68,6 +68,12 @@ class Base {
             let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
             let pointDepthPoint = this.pointDepthPoint_create( bKeepInputTensor );
 
+//!!!
+            if ( pointDepthPoint.outputTensorCount == 1 ) {
+              //tensorNumDifference_apply_before_after;
+            } if ( pointDepthPoint.outputTensorCount == 2 ) {
+            }
+
             let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
             pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
             let memoryInfo_apply_after = tf.memory();
