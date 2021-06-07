@@ -617,29 +617,15 @@ class Base extends ReturnOrClone.Base {
         this.addInput0ToPointwise21Output.setKeepInputTensor( true, true );
 
       } else {
-
-
-//!!! ...unfinished... (2021/05/28) What if pointwise1, depthwise, pointwise21, pointwise22 all do not exist? This will destroy inputTensors!
-// If AddInputToOutput exists, should let it setKeepInputTensor( true ).
-
-        // Since there is no operation at all (i.e. no pointwise1, no depthwise, no concat, no pointwise2),
-        // let's forget add-input-to-output or concatenating (because they are not meaningful in this case).
-        // Just according to whether needs keep-input, change the total operation to return input directly
-        // or return clone of input directly.
-        if ( bKeepInputTensor ) {
-          // This may be wrong, however, if there are wrongly two input tensors (there should be only one input (i.e.
-          // inputTensors[ 0 ]) for should-add-input-to-output).
-//!!! ...unfinished... (2021/06/06)
-          this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
-        } else {
-          this.apply_and_destroy_or_keep = Base.return_input_directly_array;
-        }
-
-
-//!!! ...unfinished... (2021/06/06)
-        // It should not execute to here since this function is for should-add-input-to-output (and keep-input).
-        tf.util.assert( ( null != this.addInput0ToPointwise21Output ), "At least, the this.addInput0ToPointwise21Output should exist." );
-
+        // The only case exectued to here is that no-add-input-to-output and no-concatenater. (Otherwise, it will execute to
+        // the above codes.)
+        //
+        // Since there is no operation at all (i.e. no pointwise1, no depthwise, no concat, no pointwise2, no-add-inpu-to-output)
+        // but need to keep-input, change the total operation to return clone of input directly.
+        //
+        // Note: This may be wrong, however, if there are wrongly two input tensors (there should be only one input
+        // (i.e. inputTensors[ 0 ]) for should-add-input-to-output).
+        this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
       }
 
       // 5.3.2 Branch input (i.e. inputTensors[ 1 ])
@@ -649,7 +635,6 @@ class Base extends ReturnOrClone.Base {
       if ( this.concatenator ) {
         this.concatenator.setKeepInputTensor1( true );
       }
-
     }
 
 //!!! ...unfinished... (2021/06/06)
