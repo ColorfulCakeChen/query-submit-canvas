@@ -50,11 +50,20 @@ class Base {
             let tensorNumDifference_apply_before_after;
             if ( bKeepInputTensor ) {
               inputTensor3dArray[ 0 ] = imageInTensor3dArray[ 0 ];
-              inputTensor3dArray[ 1 ] = imageInTensor3dArray[ 1 ];
+
+              if ( this.testParams.inputTensorCount > 1 ) { // Pass two input tensors according to parameters.
+                inputTensor3dArray[ 1 ] = imageInTensor3dArray[ 1 ];
+              }
+
               tensorNumDifference_apply_before_after = 1;
+
             } else {
               inputTensor3dArray[ 0 ] = imageInTensor3dArray[ 0 ].clone(); // Otherwise, this.dataTensor3d will be destroyed. 
-              inputTensor3dArray[ 1 ] = imageInTensor3dArray[ 1 ].clone();
+
+              if ( this.testParams.inputTensorCount > 1 ) { // Pass two input tensors according to parameters.
+                inputTensor3dArray[ 1 ] = imageInTensor3dArray[ 1 ].clone();
+              }
+
               tensorNumDifference_apply_before_after = 0;
             }
 
