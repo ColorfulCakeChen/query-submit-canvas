@@ -580,10 +580,7 @@ class Base extends ReturnOrClone.Base {
     //
     if ( ( bKeepInputTensor ) || ( bShouldAddInputToOutput ) ) {
 
-      // Main input (i.e. inputTensors[ 0 ])
-      //
-      // Find out the first existed operation of the main input (i.e. inputTensors[ 0 ]). Change it to "Xxx_keep" version. So that the
-      // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
+      // 5.3.1 Let the first existed operation of the main input (i.e. inputTensors[ 0 ]) keep-input.
 
       if ( this.bPointwise1 ) {
         this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensors[ 0 ].
@@ -639,42 +636,38 @@ class Base extends ReturnOrClone.Base {
         }
       }
 
-    }
+      // 5.3.2 If no need to keep-input (but need add-input-to-output), the last add-input-to-output should destroy
+      //       inputTensors[ 0 ] after add-input-to-output.
+      if ( false == bKeepInputTensor ) {
 
-//!!! ...unfinished... (2021/06/06)
-    // 5.4 If no need to keep-input (but may need add-input-to-output), the last add-input-to-output should destroy
-    //     inputTensors[ 0 ] after add-input-to-output.
-    if ( false == bKeepInputTensor ) {
+        if ( this.addInput0ToPointwise21Output ) {
+          if ( this.addInput0ToPointwise22Output ) {
+            // 5.4.1 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
+            //     Let the last add-input-to-output (i.e. addInput0ToPointwise22Output) destroy the inputTensors[ 0 ].
+            this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
 
-      if ( this.addInput0ToPointwise21Output ) {
-        if ( this.addInput0ToPointwise22Output ) {
-          // 5.4.1 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
-          //     Let the last add-input-to-output (i.e. addInput0ToPointwise22Output) destroy the inputTensors[ 0 ].
-          this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
+          } else {
+            // 5.4.2 Only addInput0ToPointwise21Output exists. Let it destroy the inputTensors[ 0 ].
+            this.addInput0ToPointwise21Output.setKeepInputTensor0( false );
 
+          }
         } else {
-          // 5.4.2 Only addInput0ToPointwise21Output exists. Let it destroy the inputTensors[ 0 ].
-          this.addInput0ToPointwise21Output.setKeepInputTensor0( false );
+          if ( this.addInput0ToPointwise22Output ) {
+            // 5.4.3 Only addInput0ToPointwise22Output exists. Let it destroy the inputTensors[ 0 ].
+            this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
 
-        }
-      } else {
-        if ( this.addInput0ToPointwise22Output ) {
-          // 5.4.3 Only addInput0ToPointwise22Output exists. Let it destroy the inputTensors[ 0 ].
-          this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
-
-        } else {
-          // 5.4.4 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
-          //
-          // Executed to here means that no need to keep-input and no need add-input-to-output.
-
-  //!!! ...unfinished... (2021/06/06)
-          // It should not execute to here since this function is for should-add-input-to-output (and destroy-input).
-          tf.util.assert( ( null != this.addInput0ToPointwise21Output ) || ( null != this.addInput0ToPointwise22Output ),
-            "At least, the this.addInput0ToPointwise21Output should exist." );
+          } else {
+            // 5.4.4 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
+            //
+            // Executed to here means that no need to keep-input and no need add-input-to-output. This should not happen
+            // because here is for should-add-input-to-output (and destroy-input).
+            tf.util.assert( ( null != this.addInput0ToPointwise21Output ) || ( null != this.addInput0ToPointwise22Output ),
+              "At least, the this.addInput0ToPointwise21Output should exist." );
+          }
         }
       }
-    }
 
+    }
 
     ++progressToAdvance.value;
     yield progressRoot;  // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
