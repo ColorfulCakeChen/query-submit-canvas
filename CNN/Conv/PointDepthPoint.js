@@ -580,10 +580,11 @@ class Base extends ReturnOrClone.Base {
     //
     if ( ( bKeepInputTensor ) || ( bShouldAddInputToOutput ) ) {
 
-      // 5.3.1 Main input (i.e. inputTensors[ 0 ])
+      // Main input (i.e. inputTensors[ 0 ])
       //
       // Find out the first existed operation of the main input (i.e. inputTensors[ 0 ]). Change it to "Xxx_keep" version. So that the
       // apply_and_destroy_or_keep()'s input tensor will not be destroy and can be added to output.
+
       if ( this.bPointwise1 ) {
         this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensors[ 0 ].
 
@@ -592,9 +593,10 @@ class Base extends ReturnOrClone.Base {
 
       } else if ( this.concatenator ) {
         // Executed to here means that keep-input but not add-input-to-output (otherwise, there will be no concatenator).
-        // That is, there will be a branch input (i.e. inputTensors[ 1 ]). In this case, the first operation of the branch
-        // input (i.e. inputTensors[ 1 ]) is always the concatenating. So the concatenator is always responsible for keeping
-        // (i.e. not-disposing) the inputTensors[ 1 ] when need-keep-input-tensor.
+        // That is, there will be a branch input (i.e. inputTensors[ 1 ]). In this case, not only the first operation of the
+        // main input (i.e. inputTensors[ 0 ]) but also the first operation of the branch input (i.e. inputTensors[ 1 ]) is
+        // the concatenating. So the concatenator is responsible for keeping
+        // (i.e. not-disposing) both the inputTensors[ 0 ] and inputTensors[ 1 ].
         this.concatenator.setKeepInputTensor( true, true ); // will NOT dispose inputTensors[ 0 ] and inputTensors[ 1 ].
 
       } else if ( this.bPointwise21 ) {
