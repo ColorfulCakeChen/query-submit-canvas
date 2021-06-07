@@ -49,7 +49,7 @@ class Base {
             if ( bKeepInputTensor ) {
               inputTensor3dArray[ 0 ] = imageInTensor3dArray[ 0 ];
 
-              if ( this.testParams.inputTensorCount > 1 ) { // Pass two input tensors according to parameters.
+              if ( this.testParams.out.inputTensorCount > 1 ) { // Pass two input tensors according to parameters.
                 inputTensor3dArray[ 1 ] = imageInTensor3dArray[ 1 ];
               }
 
@@ -58,7 +58,7 @@ class Base {
             } else {
               inputTensor3dArray[ 0 ] = imageInTensor3dArray[ 0 ].clone(); // Otherwise, this.dataTensor3d will be destroyed. 
 
-              if ( this.testParams.inputTensorCount > 1 ) { // Pass two input tensors according to parameters.
+              if ( this.testParams.out.inputTensorCount > 1 ) { // Pass two input tensors according to parameters.
                 inputTensor3dArray[ 1 ] = imageInTensor3dArray[ 1 ].clone();
               }
 
