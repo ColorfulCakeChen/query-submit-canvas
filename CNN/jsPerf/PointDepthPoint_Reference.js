@@ -18,8 +18,6 @@ class Base {
     this.testParams = testParams;
   }
 
-//!!! ...unfinished... (2021/05/27)
-
   /**
    * Testing whether the results of different implementation are the same.
    *
@@ -78,7 +76,8 @@ class Base {
               `PointDepthPoint.apply_and_destroy_or_keep() memory leak.`);
 
             // Test correctness of pointDepthPoint apply.
-            this.check_Input_Output_WeightsTable( imageInArray, imageInTensor3dArray, outputTensor3dArray, pointDepthPoint.parametersDescription );
+            let parametersDescription = pointDepthPoint.parametersDescription;
+            this.check_Input_Output_WeightsTable( imageInArray, imageInTensor3dArray, outputTensor3dArray, parametersDescription );
 
             pointDepthPoint.disposeTensors();
             let memoryInfo_afterDispose = tf.memory();
