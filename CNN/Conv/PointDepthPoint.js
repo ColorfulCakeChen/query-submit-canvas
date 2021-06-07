@@ -595,8 +595,8 @@ class Base extends ReturnOrClone.Base {
         // Executed to here means that keep-input but not add-input-to-output (otherwise, there will be no concatenator).
         // That is, there will be a branch input (i.e. inputTensors[ 1 ]). In this case, not only the first operation of the
         // main input (i.e. inputTensors[ 0 ]) but also the first operation of the branch input (i.e. inputTensors[ 1 ]) is
-        // the concatenating. So the concatenator is responsible for keeping
-        // (i.e. not-disposing) both the inputTensors[ 0 ] and inputTensors[ 1 ].
+        // the concatenating. So the concatenator is responsible for keeping (i.e. not-disposing) both the inputTensors[ 0 ]
+        // and inputTensors[ 1 ].
         this.concatenator.setKeepInputTensor( true, true ); // will NOT dispose inputTensors[ 0 ] and inputTensors[ 1 ].
 
       } else if ( this.bPointwise21 ) {
