@@ -4,7 +4,6 @@ export { Base };
 //import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
-//import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 
 /**
  *
@@ -395,6 +394,8 @@ class Base {
       this.result.in[ paramDesc.paramName ] = null;
       this.paramsInArray.push( pair.valueInput );
       yield *this.permuteParamRecursively( nextParamDescIndex );
+
+      this.paramsInArray.pop(); // So that it could be re-tried as by-specifying when backtracking.
     }
   }
 
