@@ -554,12 +554,14 @@ class Base extends ReturnOrClone.Base {
      = (   ( this.bAddInputToOutput )
         && (   ( this.depthwise.is_Output_Same_HeightWidth_As_Input() )
 
-//!!! ...unfinished... (2021/06/08) What if both pointwise21 and pointwise22 need be add-input-to-output?
+//!!! ...unfinished... (2021/06/08) What if both pointwise21 and pointwise22 need to be add-input-to-output?
             && ( channelCount1_pointwise1Before == this.channelCount_pointwise2After ) // Only inputTensors[ 0 ] will be used to add to output.
            )
        );
 
     if ( bShouldAddInputToOutput ) {
+
+//!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
 
       // Only if both pointwise21 and pointwise22 exist, both addInput0ToPointwise21Output and addInput0ToPointwise22Output are needed.
       //
@@ -631,6 +633,8 @@ class Base extends ReturnOrClone.Base {
         // keep-input, it should keep both inputs (they are just the same one inputTensors[ 0 ] in fact) simultaneously.
         // Otherwise, the only inputTensors[ 0 ] will be destroyed.
         this.addInput0ToPointwise21Output.setKeepInputTensor( true, true );
+
+//!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
 
       } else {
         // The only case exectued to here is that no-add-input-to-output and no-concatenater. (Otherwise, it will execute to
@@ -866,6 +870,9 @@ class Base extends ReturnOrClone.Base {
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+
+//!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
+// Perhaps, AddTwoTensors should be able to handle no-op (no add but just return input).
 
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 );
