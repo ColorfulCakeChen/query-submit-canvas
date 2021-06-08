@@ -367,7 +367,6 @@ class Base {
     }
 
     // 4. Pointwise2
-    let nextImageOutArray;
     let pointwise21Result, pointwise22Result;
     if ( ( testParams.out.pointwise21ChannelCount == 0 ) && ( testParams.out.pointwise22ChannelCount == 0 ) ) {
 
@@ -409,21 +408,22 @@ class Base {
           pointwise22Result, bAddInputToOutput, imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
       }
 
-      // 4.3 Integrate pointwise21 and pointwise22 into pointwise2.
-      if ( pointwise21Result ) {
-        if ( pointwise22Result ) {
-          nextImageOutArray = [ pointwise21Result, pointwise22Result ];
-        } else {
-          nextImageOutArray = [ pointwise21Result ];
-        }
-      } else {
-        if ( pointwise22Result ) {
-          nextImageOutArray = [ pointwise22Result ];
-        } else {
-          nextImageOutArray = [ null, null ];
-        }
-      }
+    }
 
+    // 4.3 Integrate pointwise21 and pointwise22 into pointwise2.
+    let nextImageOutArray;
+    if ( pointwise21Result ) {
+      if ( pointwise22Result ) {
+        nextImageOutArray = [ pointwise21Result, pointwise22Result ];
+      } else {
+        nextImageOutArray = [ pointwise21Result ];
+      }
+    } else {
+      if ( pointwise22Result ) {
+        nextImageOutArray = [ pointwise22Result ];
+      } else {
+        nextImageOutArray = [ null, null ];
+      }
     }
 
     return nextImageOutArray;
