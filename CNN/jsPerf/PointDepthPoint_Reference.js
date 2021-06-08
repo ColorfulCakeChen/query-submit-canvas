@@ -416,11 +416,11 @@ class Base {
       if ( pointwise22Result ) {
         nextImageOutArray = [ pointwise21Result, pointwise22Result ];
       } else {
-        nextImageOutArray = [ pointwise21Result ];
+        nextImageOutArray = [ pointwise21Result, null ];
       }
     } else {
       if ( pointwise22Result ) {
-        nextImageOutArray = [ pointwise22Result ];
+        nextImageOutArray = [ pointwise22Result, null ];
       } else {
         nextImageOutArray = [ null, null ];
       }
