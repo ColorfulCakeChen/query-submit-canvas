@@ -28,6 +28,19 @@ class Base {
   }
 
   /**
+   *
+   */
+  init() {
+
+//!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
+// Perhaps, AddTwoTensors should be able to handle no-op (no add but just return input).
+
+//!!! ...unfinished... (2021/06/08)
+    this.pfnOperation = this.pfnAdd = Base.return_input_directly;    
+
+  }
+
+  /**
    * Adjust this.pfnAdd so that this.pfnAdd() will or will not dispose its inputTensors.
    */
   setKeepInputTensor0( bKeepInputTensor0 ) {
