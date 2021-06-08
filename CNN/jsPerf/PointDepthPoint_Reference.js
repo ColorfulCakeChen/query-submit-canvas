@@ -367,24 +367,21 @@ class Base {
     }
 
     // 4. Pointwise2
-    let nextImageOutArray = [ null, null ];
-
+    let nextImageOutArray;
+    let pointwise21Result, pointwise22Result;
     if ( ( testParams.out.pointwise21ChannelCount == 0 ) && ( testParams.out.pointwise22ChannelCount == 0 ) ) {
-
-//!!! ...unfinished... (2021/05/29) In this case, should do dothing instead add-input-to-output.
-// But, what should be returned? Especially, if there are two input tensors?
 
       // 4.0 No Pointwise21 and No Pointwise22.
 
       // Residual Connection.
-        nextImageOutArray[ 0 ] = Base.modifyByInput(
-          nextImageIn, bAddInputToOutput, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
+      pointwise21Result = Base.modifyByInput(
+        nextImageIn, bAddInputToOutput, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
 
     } else {
 
       // 4.1 Pointwise21
       if ( testParams.out.pointwise21ChannelCount > 0 ) {
-        nextImageOutArray[ 0 ] = Base.calcPointwise(
+        pointwise21Result = Base.calcPointwise(
           nextImageIn,
           testParams.out.pointwise21ChannelCount,
           testParams.in.weights.pointwise21Filters, testParams.out.bPointwise21Bias,
@@ -392,13 +389,13 @@ class Base {
           "Pointwise21", this.paramsOutDescription );
 
         // Residual Connection.
-        nextImageOutArray[ 0 ] = Base.modifyByInput(
-          nextImageOutArray[ 0 ], bAddInputToOutput, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
+        pointwise21Result = Base.modifyByInput(
+          pointwise21Result, bAddInputToOutput, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
       }
 
       // 4.2 Pointwise22
       if ( testParams.out.pointwise22ChannelCount > 0 ) {
-        nextImageOutArray[ 1 ] = Base.calcPointwise(
+        pointwise22Result = Base.calcPointwise(
           nextImageIn,
           testParams.out.pointwise22ChannelCount,
           testParams.in.weights.pointwise22Filters, testParams.out.bPointwise22Bias,
@@ -408,8 +405,23 @@ class Base {
         // Residual Connection.
         //
         // Always using input image1 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
-        nextImageOutArray[ 1 ] = Base.modifyByInput(
-          nextImageOutArray[ 1 ], bAddInputToOutput, imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
+        pointwise22Result = Base.modifyByInput(
+          pointwise22Result, bAddInputToOutput, imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
+      }
+
+      // 4.3 Integrate pointwise21 and pointwise22 into pointwise2.
+      if ( pointwise21Result ) {
+        if ( pointwise22Result ) {
+          nextImageOutArray = [ pointwise21Result, pointwise22Result ];
+        } else {
+          nextImageOutArray = [ pointwise21Result ];
+        }
+      } else {
+        if ( pointwise22Result ) {
+          nextImageOutArray = [ pointwise22Result ];
+        } else {
+          nextImageOutArray = [ null, null ];
+        }
       }
 
     }
