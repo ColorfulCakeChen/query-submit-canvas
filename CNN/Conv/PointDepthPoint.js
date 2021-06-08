@@ -516,8 +516,9 @@ class Base extends ReturnOrClone.Base {
 
     if ( !this.bPointwise2 ) {
       // If there is not any pointwise2 convolution, the result channel count will not be zero. It should be the channel count after
-      // depthwise operation together with the second input channel count (if existed).
-      this.channelCount_pointwise2After = this.channelCount_concatenateAfter_pointwise2Before;
+      // depthwise operation together with the second input channel count (if existed). And it should be at the first output tensor
+      // (i.e. outputTensors[ 0 ]).
+      this.channelCount_pointwise2After = this.channelCount_pointwise21After = this.channelCount_concatenateAfter_pointwise2Before;
     }
 
     // If both pointwise21 and pointwise22 existed, the pointwise21 should keep-input-tensor.
@@ -552,6 +553,8 @@ class Base extends ReturnOrClone.Base {
     let bShouldAddInputToOutput = this.bShouldAddInputToOutput
      = (   ( this.bAddInputToOutput )
         && (   ( this.depthwise.is_Output_Same_HeightWidth_As_Input() )
+
+//!!! ...unfinished... (2021/06/08) What if both pointwise21 and pointwise22 need be add-input-to-output?
             && ( channelCount1_pointwise1Before == this.channelCount_pointwise2After ) // Only inputTensors[ 0 ] will be used to add to output.
            )
        );
