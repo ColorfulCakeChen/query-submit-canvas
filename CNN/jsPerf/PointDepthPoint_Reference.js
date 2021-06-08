@@ -192,7 +192,8 @@ class Base {
     let testParams = this.testParams;
     let bInitOk = pointDepthPoint.init(
       progress,
-      testParams.in.channelCount_pointwise1Before, // (i.e. inChannels)
+      testParams.in.channelCount1_pointwise1Before, // (i.e. inChannels1)
+      testParams.in.channelCount2_pointwise1Before, // (i.e. inChannels2)
       bKeepInputTensor,
 
       new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
