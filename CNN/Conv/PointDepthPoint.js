@@ -262,8 +262,11 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  * @member {string} pointwise22ActivationName
  *   The activation function id (Params.pointwise22ActivationId.valueDesc.Ids.Xxx) after the second pointwise2 convolution.
  *
- * @member {number} inChannels
- *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount_pointwise1Before (from initer()).
+ * @member {number} inChannels1
+ *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount1_pointwise1Before (from initer()).
+ *
+ * @member {number} inChannels2
+ *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). This is the same as this.channelCount2_pointwise1Before (from initer()).
  *
  * @member {number} outChannels1
  *   The channel count of the first output tensor. It is the same as this.channelCount_pointwise21After (from initer()).
@@ -287,7 +290,7 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  *
  * @member {number} channelCount_concatenateAfter_pointwise2Before
  *   The channel count after depthwise operation together with the second input channel count (if existed).
- * That is ( channelCount_depthwiseAfter_concatenateBefore + channelCount_pointwise1Before ).
+ * That is ( channelCount_depthwiseAfter_concatenateBefore + channelCount1_pointwise1Before ).
  *
  * @member {number} channelCount_pointwise21After
  *   The channel count after the first pointwise2 convolution. If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
@@ -325,9 +328,14 @@ class Base extends ReturnOrClone.Base {
    *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
    * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
    *
-   * @param {number} channelCount_pointwise1Before
-   *   The channel count of apply_and_destroy_or_keep()'s input image. This should always be specified and can not be null
-   * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   * @param {number} channelCount1_pointwise1Before
+   *   The channel count of apply_and_destroy_or_keep()'s first input image (i.e. inputTensors[ 0 ]). This should always be specified
+   * and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *
+   * @param {number} channelCount2_pointwise1Before
+   *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]). If ( params.inputTensorCount == 2 ),
+   * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   * If ( params.inputTensorCount < 2 ), this will be ignored.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
@@ -343,7 +351,7 @@ class Base extends ReturnOrClone.Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    */
-  * initer( progressParent, channelCount_pointwise1Before, bKeepInputTensor, params ) {
+  * initer( progressParent, channelCount1_pointwise1Before, channelCount2_pointwise1Before, bKeepInputTensor, params ) {
 
     // 0. Prepare
 
@@ -361,7 +369,8 @@ class Base extends ReturnOrClone.Base {
 
     this.disposeTensors();  // Also initialize some member function pointers to no_operation().
 
-    this.channelCount_pointwise1Before = channelCount_pointwise1Before;
+    this.channelCount1_pointwise1Before = channelCount1_pointwise1Before;
+    this.channelCount2_pointwise1Before = channelCount2_pointwise1Before;
 
     // 1. Extract parameters.
     if ( !params )
@@ -411,7 +420,7 @@ class Base extends ReturnOrClone.Base {
 
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
-      this.channelCount_pointwise1Before,
+      this.channelCount1_pointwise1Before,
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
       params.defaultInput, this.byteOffsetEnd );
 
@@ -423,7 +432,7 @@ class Base extends ReturnOrClone.Base {
     if ( this.bPointwise1 ) {
       this.channelCount_pointwise1After_depthwiseBefore = this.pointwise1.outputChannelCount;
     } else {
-      this.channelCount_pointwise1After_depthwiseBefore = channelCount_pointwise1Before;  // No pointwise1 convolution.
+      this.channelCount_pointwise1After_depthwiseBefore = channelCount1_pointwise1Before;  // No pointwise1 convolution.
     }
 
     ++progressToAdvance.value;
@@ -455,8 +464,7 @@ class Base extends ReturnOrClone.Base {
     // If there are two input tensors, the channel count for pointwise2 will be the concatenated channel count
     // (= depthwise_channel_count + another_input_channel_count ).
     if ( this.inputTensorCount > 1 ) {
-      // Assume all input tensors have the same channel count.
-      this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount_pointwise1Before;
+      this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount2_pointwise1Before;
       this.concatenator = new ConcatAlongAxisId2.Base( false, false );
     } else {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
@@ -538,7 +546,7 @@ class Base extends ReturnOrClone.Base {
     let bShouldAddInputToOutput = this.bShouldAddInputToOutput
      = (   ( this.bAddInputToOutput )
         && (   ( this.depthwise.is_Output_Same_HeightWidth_As_Input() )
-            && ( channelCount_pointwise1Before == this.channelCount_pointwise2After )
+            && ( channelCount1_pointwise1Before == this.channelCount_pointwise2After ) // Only inputTensors[ 0 ] will be used to add to output.
            )
        );
 
@@ -682,11 +690,11 @@ class Base extends ReturnOrClone.Base {
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
-  init( progressParent, channelCount_pointwise1Before, bKeepInputTensor, params ) {
+  init( progressParent, channelCount1_pointwise1Before, channelCount2_pointwise1Before, bKeepInputTensor, params ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer( progressParent, channelCount_pointwise1Before, bKeepInputTensor, params );
+    let initer = this.initer( progressParent, channelCount1_pointwise1Before, channelCount2_pointwise1Before, bKeepInputTensor, params );
     let initerNext;
     do {
       initerNext = initer.next();
@@ -959,7 +967,10 @@ class Base extends ReturnOrClone.Base {
   }
 
   /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]).*/
-  get inChannels()                            { return this.channelCount_pointwise1Before; }
+  get inChannels1()                            { return this.channelCount1_pointwise1Before; }
+
+  /** @return {number} The channel count of the second input tensor (i.e. inputTensors[ 1 ]).*/
+  get inChannels2()                            { return this.channelCount2_pointwise1Before; }
 
   /** @return {number} The channel count of the first output tensor.*/
   get outChannels1()                          { return this.channelCount_pointwise21After; }
@@ -970,7 +981,10 @@ class Base extends ReturnOrClone.Base {
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
     let str =
-        `pointwise1ChannelCount=${this.pointwise1ChannelCount}, `
+        `inChannels1=${this.inChannels1}, inChannels2=${this.inChannels2}, `
+      + `outChannels1=${this.outChannels1}, outChannels2=${this.outChannels2}, `
+
+      + `pointwise1ChannelCount=${this.pointwise1ChannelCount}, `
       + `bPointwise1Bias=${this.bPointwise1Bias}, `
       + `pointwise1ActivationName=${this.pointwise1ActivationName}, `
 
