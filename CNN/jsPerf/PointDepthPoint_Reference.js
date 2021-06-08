@@ -78,7 +78,7 @@ class Base {
             let memoryInfo_apply_after = tf.memory();
 
             let parametersDescription = pointDepthPoint.parametersDescription;
-            
+
             tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
               `PointDepthPoint.apply_and_destroy_or_keep() memory leak. ${parametersDescription}`);
 
