@@ -848,8 +848,8 @@ class Base extends ReturnOrClone.Base {
 
     t0 = this.pointwise22.pfnConvBiasActivation( t1 );
 
-    outputTensors[ 0 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 );
-    outputTensors[ 1 ] = null;
+    outputTensors[ 0 ] = null;
+    outputTensors[ 1 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 );
   }
 
   /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor may or may not be disposed.*/
@@ -902,8 +902,8 @@ class Base extends ReturnOrClone.Base {
 
     t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
 
-    outputTensors[ 0 ] = this.pointwise22.pfnConvBiasActivation( t1 );
-    outputTensors[ 1 ] = null;
+    outputTensors[ 0 ] = null;
+    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
   }
 
   /**
@@ -951,8 +951,8 @@ class Base extends ReturnOrClone.Base {
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
-    outputTensors[ 0 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
-    outputTensors[ 1 ] = null;
+    outputTensors[ 0 ] = null;
+    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
   }
 
   /** One input to two output (pointwise21 and pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
@@ -972,17 +972,20 @@ class Base extends ReturnOrClone.Base {
     return this.bInitOk;
   }
 
-  /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]).*/
+  /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]). */
   get inChannels1()                            { return this.channelCount1_pointwise1Before; }
 
-  /** @return {number} The channel count of the second input tensor (i.e. inputTensors[ 1 ]).*/
+  /** @return {number} The channel count of the second input tensor (i.e. inputTensors[ 1 ]). */
   get inChannels2()                            { return this.channelCount2_pointwise1Before; }
 
-  /** @return {number} The channel count of the first output tensor.*/
+  /** @return {number} The channel count of the first output tensor (i.e. outputTensors[ 0 ]). */
   get outChannels1()                          { return this.channelCount_pointwise21After; }
 
-  /** @return {number} The channel count of the second output tensor.*/
+  /** @return {number} The channel count of the second output tensor (i.e. outputTensors[ 1 ]). */
   get outChannels2()                          { return this.channelCount_pointwise22After; }
+
+  /** @return {number} The channel count of both the first and second output tensors. */
+  get outChannelsAll()                          { return this.channelCount_pointwise2After; }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
