@@ -230,16 +230,16 @@ class TestParams {
     let pointwise1 = TestParams.generate_pointwise_filters_biases( channelCount_pointwise1Before,
       params.pointwise1ChannelCount, params.bPointwise1Bias );
 
-    result.numberArrayObject.pointwise1Filters = pointwise1[ 0 ];
-    result.numberArrayObject.pointwise1Biases = pointwise1[ 1 ];
+    result.numberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
+    result.numberArrayObject.pointwise1Biases = pointwise1.numberArrayArray[ 1 ];
     result.numberArrayArray.push( ...pointwise1.numberArrayArray );
 
     // Depthwise
     let depthwise = TestParams.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
       params.depthwise_AvgMax_Or_ChannelMultiplier, params.depthwiseFilterHeight, params.depthwiseStridesPad, params.bDepthwiseBias );
 
-    result.numberArrayObject.depthwiseFilters = depthwise[ 0 ];
-    result.numberArrayObject.depthwiseBiases = depthwise[ 1 ];
+    result.numberArrayObject.depthwiseFilters = depthwise.numberArrayArray[ 0 ];
+    result.numberArrayObject.depthwiseBiases = depthwise.numberArrayArray[ 1 ];
     result.numberArrayArray.push( ...depthwise.numberArrayArray );
 
     // Concat
@@ -253,16 +253,16 @@ class TestParams {
     let pointwise21 = TestParams.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
       params.pointwise21ChannelCount, params.bPointwise21Bias );
 
-    result.numberArrayObject.pointwise21Filters = pointwise21[ 0 ];
-    result.numberArrayObject.pointwise21Biases = pointwise21[ 1 ];
+    result.numberArrayObject.pointwise21Filters = pointwise21.numberArrayArray[ 0 ];
+    result.numberArrayObject.pointwise21Biases = pointwise21.numberArrayArray[ 1 ];
     result.numberArrayArray.push( ...pointwise21.numberArrayArray );
 
     // Pointwise22
     let pointwise22 = TestParams.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
       params.pointwise22ChannelCount, params.bPointwise22Bias );
 
-    result.numberArrayObject.pointwise22Filters = pointwise22[ 0 ];
-    result.numberArrayObject.pointwise22Biases = pointwise22[ 1 ];
+    result.numberArrayObject.pointwise22Filters = pointwise22.numberArrayArray[ 0 ];
+    result.numberArrayObject.pointwise22Biases = pointwise22.numberArrayArray[ 1 ];
     result.numberArrayArray.push( ...pointwise22.numberArrayArray );
 
     return result;
