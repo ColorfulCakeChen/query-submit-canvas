@@ -578,6 +578,9 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bShouldAddInputToOutput ) {
 
+//!!! ...unfinished... (2021/06/08) Even if pointwise21 (or pointwise22) does not exist, it is also possible add-input-to-output.
+// Although the output may be come from depthwise or pointwise1 or inputTensors[].
+
 //!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
 
       // Only if both pointwise21 and pointwise22 exist, both addInput0ToPointwise21Output and addInput0ToPointwise22Output are needed.
