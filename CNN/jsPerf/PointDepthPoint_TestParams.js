@@ -21,7 +21,8 @@ import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
  *   - inputFloat32Array
  *   - byteOffsetBegin
  *   - weights
- *   - channelCount_pointwise1Before
+ *   - channelCount1_pointwise1Before
+ *   - channelCount2_pointwise1Before
  *
  * @member {object} out
  *   The "out" sub-object's data members represent the "should-be" result of PointDepthPoint.Params's extract().
@@ -41,17 +42,21 @@ class TestParams {
    *   - this.in.inputFloat32Array
    *   - this.in.byteOffsetBegin
    *   - this.in.weights
-   *   - this.in.channelCount_pointwise1Before
+   *   - this.in.channelCount1_pointwise1Before
+   *   - this.in.channelCount2_pointwise1Before
    *   - this.out
    *
-   * @param {number} channelCount_pointwise1Before
-   *   The channel count of pointwise1's input.
+   * @param {number} channelCount1_pointwise1Before
+   *   The channel count of the first input image.
+   *
+   * @param {number} channelCount2_pointwise1Before
+   *   The channel count of the second input image.
    *
    * @return {TestParams}
    *   Return this object self.
    */
   set(
-    channelCount_pointwise1Before,
+    channelCount1_pointwise1Before, channelCount2_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
@@ -67,7 +72,7 @@ class TestParams {
       inputTensorCount
     };
 
-    return this.set_By_ParamsInArray_ParamsOut( channelCount_pointwise1Before, null, paramsOut );
+    return this.set_By_ParamsInArray_ParamsOut( channelCount1_pointwise1Before, channelCount2_pointwise1Before, null, paramsOut );
   }
  
   /**
@@ -75,11 +80,15 @@ class TestParams {
    *   - this.in.inputFloat32Array
    *   - this.in.byteOffsetBegin
    *   - this.in.weights
-   *   - this.in.channelCount_pointwise1Before
+   *   - this.in.channelCount1_pointwise1Before
+   *   - this.in.channelCount2_pointwise1Before
    *   - this.out
    *
-   * @param {number} channelCount_pointwise1Before
-   *   The channel count of pointwise1's input.
+   * @param {number} channelCount1_pointwise1Before
+   *   The channel count of the first input image.
+   *
+   * @param {number} channelCount2_pointwise1Before
+   *   The channel count of the second input image.
    *
    * @param {number[]} paramsInArray
    *   A number array which will be concatenated in front of the number array of filters and biases.
@@ -92,11 +101,12 @@ class TestParams {
    * @return {TestParams}
    *   Return this object self.
    */
-  set_By_ParamsInArray_ParamsOut( channelCount_pointwise1Before, paramsInArray, paramsOut ) {
-    this.in.channelCount_pointwise1Before = channelCount_pointwise1Before;
+  set_By_ParamsInArray_ParamsOut( channelCount1_pointwise1Before, channelCount2_pointwise1Before, paramsInArray, paramsOut ) {
+    this.in.channelCount1_pointwise1Before = channelCount1_pointwise1Before;
+    this.in.channelCount2_pointwise1Before = channelCount2_pointwise1Before;
     this.out = paramsOut;
 
-    let filters_biases = TestParams.generate_Filters_Biases( channelCount_pointwise1Before, paramsOut );
+    let filters_biases = TestParams.generate_Filters_Biases( channelCount1_pointwise1Before, channelCount2_pointwise1Before, paramsOut );
 
     // In front of the filters and biases, there should be the parameters by evolution.
     filters_biases.numberArrayArray.unshift( paramsInArray );
@@ -206,8 +216,11 @@ class TestParams {
 
   /**
    *
-   * @param {number} channelCount_pointwise1Before
-   *   The channel count of pointwise1's input.
+   * @param {number} channelCount1_pointwise1Before
+   *   The channel count of the first input image.
+   *
+   * @param {number} channelCount2_pointwise1Before
+   *   The channel count of the second input image.
    *
    * @param {object} params
    *   An object which has the following data members:  pointwise1ChannelCount, bPointwise1Bias,
@@ -223,11 +236,11 @@ class TestParams {
    * pointwise22FiltersArray, pointwise22BiasesArray ]. But it may not have so many elements because some may not exist. So, it may
    * be an array with zero element.
    */
-  static generate_Filters_Biases( channelCount_pointwise1Before, params ) {
+  static generate_Filters_Biases( channelCount1_pointwise1Before, channelCount2_pointwise1Before, params ) {
     let result = { numberArrayObject: {}, numberArrayArray: [] };
 
     // Pointwise1
-    let pointwise1 = TestParams.generate_pointwise_filters_biases( channelCount_pointwise1Before,
+    let pointwise1 = TestParams.generate_pointwise_filters_biases( channelCount1_pointwise1Before, channelCount2_pointwise1Before,
       params.pointwise1ChannelCount, params.bPointwise1Bias );
 
     result.numberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
@@ -245,8 +258,7 @@ class TestParams {
     // Concat
     let pointwise2_inputChannelCount = depthwise.outputChannelCount;
     if ( params.inputTensorCount > 1 ) {
-      // Assume all input tensors have the same channel count.
-      pointwise2_inputChannelCount += channelCount_pointwise1Before;
+      pointwise2_inputChannelCount += channelCount2_pointwise1Before; // Add the channel count of the second input image.
     }
 
     // Pointwise21
@@ -320,11 +332,15 @@ class TestParams {
 class Base {
 
   /**
-   * @param {number} channelCount_pointwise1Before
-   *   The channel count of pointwise1's input.
+   * @param {number} channelCount1_pointwise1Before
+   *   The channel count of the first input image.
+   *
+   * @param {number} channelCount2_pointwise1Before
+   *   The channel count of the second input image.
    */
-  constructor( channelCount_pointwise1Before ) {
-    this.channelCount_pointwise1Before = channelCount_pointwise1Before;
+  constructor( channelCount1_pointwise1Before, channelCount2_pointwise1Before ) {
+    this.channelCount1_pointwise1Before = channelCount1_pointwise1Before;
+    this.channelCount2_pointwise1Before = channelCount2_pointwise1Before;
 
     // All the parameters to be tried.
     this.paramDescArray = [
@@ -375,7 +391,10 @@ class Base {
 
     if ( currentParamDescIndex >= this.paramDescArray.length ) { // All parameters are used to be composed as one kind of combination.
       ++this.result.id;  // Complete one kind of combination.
-      this.result.set_By_ParamsInArray_ParamsOut( this.channelCount_pointwise1Before, this.paramsInArray, this.result.out );
+
+      this.result.set_By_ParamsInArray_ParamsOut(
+        this.channelCount1_pointwise1Before, this.channelCount2_pointwise1Before, this.paramsInArray, this.result.out );
+
       yield this.result;
       return; // Stop this recusive. Back-track to another parameters combination.
     }
