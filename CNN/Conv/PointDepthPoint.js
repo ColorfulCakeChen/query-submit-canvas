@@ -550,16 +550,33 @@ class Base extends ReturnOrClone.Base {
     // For example:
     //   - if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
     //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
-    let bShouldAddInputToOutput = this.bShouldAddInputToOutput
-     = (   ( this.bAddInputToOutput )
-        && (   ( this.depthwise.is_Output_Same_HeightWidth_As_Input() )
 
-//!!! ...unfinished... (2021/06/08) What if both pointwise21 and pointwise22 need to be add-input-to-output?
-            && ( channelCount1_pointwise1Before == this.channelCount_pointwise2After ) // Only inputTensors[ 0 ] will be used to add to output.
-           )
-       );
+//!!! (2021/06/08 Remarked) even if both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could add-input-to-output.
+//     let bShouldAddInputToOutput = this.bShouldAddInputToOutput
+//      = (   ( this.bAddInputToOutput )
+//         && (   ( this.depthwise.is_Output_Same_HeightWidth_As_Input() )
+//
+// //!!! ...unfinished... (2021/06/08) What if both pointwise21 and pointwise22 need to be add-input-to-output?
+//             && ( channelCount1_pointwise1Before == this.channelCount_pointwise2After ) // Only inputTensors[ 0 ] will be used to add to output.
+//            )
+//        );
 
-    if ( bShouldAddInputToOutput ) {
+
+//!!! ...unfinished... (2021/06/08)
+    // Even if both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could add-input-to-output.
+    if ( ( this.bAddInputToOutput ) && ( this.depthwise.is_Output_Same_HeightWidth_As_Input() ) ) {
+      if ( channelCount1_pointwise1Before == this.channelCount_pointwise21After )
+        this.bShould_addInput0ToPointwise21Output = true;
+
+      // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount1_pointwise1Before
+      // (not channelCount2_pointwise1Before).
+      if ( channelCount1_pointwise1Before == this.channelCount_pointwise22After )
+        this.bShould_addInput0ToPointwise22Output = true;
+    }
+    
+    this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21Output || this.bShould_addInput0ToPointwise22Output;
+
+    if ( this.bShouldAddInputToOutput ) {
 
 //!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
 
@@ -568,6 +585,7 @@ class Base extends ReturnOrClone.Base {
       // In this case, the former (addInput0ToPointwise21Output) should keep-input-tensor-0 (i.e. the original input tensor)
       // and keep-input-tensor-1 (i.e. the depthwise output). Otherwise, the addInput0ToPointwise22Output will fail to process it.
       if ( ( this.bPointwise21 ) && ( this.bPointwise22 ) ) {
+        
         this.addInput0ToPointwise21Output = new AddTwoTensors.Base( true, true );
         this.addInput0ToPointwise22Output = new AddTwoTensors.Base( false, false );
 
@@ -753,6 +771,8 @@ class Base extends ReturnOrClone.Base {
 
     this.intermediateTensorsArray = null;
 
+    this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21Output = this.bShould_addInput0ToPointwise22Output = false;
+
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
   }
@@ -768,6 +788,9 @@ class Base extends ReturnOrClone.Base {
 
       if ( this.bPointwise21 ) {
         if ( this.bPointwise22 ) {
+
+//!!! ...unfinished... (2021/06/08) although both exist, but it may be only pointwise21 or pointwise22 could add-input-to-output.
+
           return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;  // 1.1 Both pointwise21 and pointwise22 existed.
         } else {
           return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.2 Only pointwise21 existed (and no pointwise22).
@@ -858,6 +881,9 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 0 ] = null;
     outputTensors[ 1 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 );
   }
+
+
+//!!! ...unfinished... (2021/06/08) although both exist, but it may be only pointwise21 or pointwise22 could add-input-to-output.
 
   /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor may or may not be disposed.*/
   static apply_1_2_and_destroy_or_keep_AddInputToOutput( inputTensors, outputTensors ) {
