@@ -100,7 +100,7 @@ class Base {
       }
     } catch ( e ) {
       let backendName = tf.getBackend();
-      console.log( `backendName=${backendName}, PointDepthPoint testCaseIndex = ${this.testParams.id}` );
+      console.log( `backendName=${backendName}, PointDepthPoint this.testParams.id = ${this.testParams.id}` );
       throw e;
     }
 
@@ -129,7 +129,7 @@ class Base {
   check_Input_Output_WeightsTable( imageInArray, inputTensors, outputTensors, parametersDescription ) {
     tf.tidy( () => {
 
-      let strNote = `( testCaseIndex=${this.testParams.id}, ${parametersDescription} )`;
+      let strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
 
       tf.util.assert( imageInArray.length == 2,
         `PointDepthPoint imageInArray.length ( ${imageInArray.length} ) should be 2. ${strNote}`);
