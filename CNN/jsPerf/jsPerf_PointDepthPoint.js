@@ -35,6 +35,7 @@ class HeightWidthDepth {
 
     this.valueCount = height * width * depth;
 
+//!!! ...unfinished... (2021/06/08) seems not used.
     this.concatenatedShape = [ height, width, depth ];
 
     // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
@@ -1064,7 +1065,9 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
 
-    let testParamsBase = new PointDepthPoint_TestParams.Base( this.depth );
+    let testParamsBase = new PointDepthPoint_TestParams.Base(
+      this.testCorrectness_ImageDataArray[ 0 ].depth, this.testCorrectness_ImageDataArray[ 1 ].depth );
+
     let testParamsGenerator = testParamsBase.ParamsGenerator();
 
 //!!! ...unfinished... (2021/05/27)
