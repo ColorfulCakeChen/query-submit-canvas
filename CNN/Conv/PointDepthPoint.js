@@ -94,6 +94,12 @@ class Params extends Weights.Params {
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise22ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
+
+//!!! ...unfinished... (2021/06/08) could be inferred from channelCount2_pointwise1Before?
+// If ( channelCount2_pointwise1Before < 0 ), means need add-input-to-output?
+// But this also means add-input-to-output can not be determined by evolution.
+//
+
    * @param {number} inputTensorCount
    *   How many input tensors should be past into apply_and_destroy(). the If null, it will be extracted from inputFloat32Array
    * (i.e. by evolution).
