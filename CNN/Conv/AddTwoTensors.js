@@ -69,6 +69,9 @@ class Base {
     }
   }
 
+//!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
+// Perhaps, AddTwoTensors should be able to handle no-op (no add but just return input).
+
   /** Add. (Both the inputTensor0 and inputTensor1 will not be disposed. */
   static Add_and_keep0_keep1( inputTensor0, inputTensor1 ) {
     return tf.add( inputTensor0, inputTensor1 );
