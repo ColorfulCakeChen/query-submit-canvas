@@ -804,10 +804,15 @@ class Base extends ReturnOrClone.Base {
               // 1.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22Output exists.
               return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
             } else {
-              // 1.1.4 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
+              // 1.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
 
-//!!! ...unfinished... (2021/06/09) It should not execute to here.
-              
+              // It should not execute to here.
+              tf.util.assert( false,
+              `PointDepthPoint.Determine_apply_and_destroy_or_keep(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
+                + `should equal be this.bShould_addInput0ToPointwise21Output (${this.bShould_addInput0ToPointwise21Output}) `
+                + ` or this.bShould_addInput0ToPointwise22Output (${this.bShould_addInput0ToPointwise22Output}). ${this.parametersDescription}`);
+
+              return undefined;
             }
           }
 
