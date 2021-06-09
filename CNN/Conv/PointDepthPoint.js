@@ -829,15 +829,15 @@ class Base extends ReturnOrClone.Base {
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
-            return Base.apply_2_2_and_destroy_or_keep_NoSkipConnection;  // 2.1 Both pointwise21 and pointwise22 existed.
+            return Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 2.1 Both pointwise21 and pointwise22 existed.
           } else {
-            return Base.apply_2_21_and_destroy_or_keep_NoSkipConnection; // 2.2 Only pointwise21 existed (and no pointwise22).
+            return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.2 Only pointwise21 existed (and no pointwise22).
           }
         } else {
           if ( this.bPointwise22 ) {
-            return Base.apply_2_22_and_destroy_or_keep_NoSkipConnection; // 2.3 Only pointwise22 existed (and no pointwise21).
+            return Base.apply_2_22_and_destroy_or_keep_ConcatInput1; // 2.3 Only pointwise22 existed (and no pointwise21).
           } else {
-            return Base.apply_2_21_and_destroy_or_keep_NoSkipConnection; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+            return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           }
         }
 
@@ -964,10 +964,8 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-  /** The two input will not be added to the only output (pointwise21) (i.e. no residual connection). The input tensors may or may not
-   * be disposed.
-   */
-  static apply_2_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+  /** The inputTensors[ 1 ] will be concatenated before outputTensors[ 0 ]. */
+  static apply_2_21_and_destroy_or_keep_ConcatInput1( inputTensors, outputTensors ) {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
@@ -981,10 +979,8 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 1 ] = null;
   }
 
-  /** The two input will not be added to the only output (pointwise22) (i.e. no residual connection). The input tensors may or may not
-   * be disposed.
-   */
-  static apply_2_22_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+  /** The inputTensors[ 1 ] will be concatenated before outputTensors[ 1 ]. */
+  static apply_2_22_and_destroy_or_keep_ConcatInput1( inputTensors, outputTensors ) {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
@@ -999,7 +995,8 @@ class Base extends ReturnOrClone.Base {
   }
 
   /**
-   * The two input will not be added to the two output (i.e. no residual connection). The input tensors may or may not be disposed.
+   * The inputTensors[ 1 ] will be concatenated before outputTensors[ 0 ] and outputTensors[ 1 ].
+   * The input tensors may or may not be disposed.
    *
    * @param {tf.tensor[]} inputTensors
    *   An array of tensors. If ( this.inputTensorCount == 0 ) or ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
@@ -1010,7 +1007,7 @@ class Base extends ReturnOrClone.Base {
    * the outputTensors[ 0 ] will be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will
    * be the result.
    */
-  static apply_2_2_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+  static apply_2_2_and_destroy_or_keep_ConcatInput1( inputTensors, outputTensors ) {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
