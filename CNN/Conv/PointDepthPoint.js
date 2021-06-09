@@ -609,7 +609,7 @@ class Base extends ReturnOrClone.Base {
     //   - change the first operation from "Xxx_destroy" to "Xxx_keep".
     //   - change the total operation if no first operation exists.
     //
-    if ( ( bKeepInputTensor ) || ( bShouldAddInputToOutput ) ) {
+    if ( ( bKeepInputTensor ) || ( this.bShouldAddInputToOutput ) ) {
 
       // 5.3.1 Let the first existed operation of the main input (i.e. inputTensors[ 0 ]) keep-input.
 
@@ -787,17 +787,39 @@ class Base extends ReturnOrClone.Base {
       if ( this.bPointwise21 ) {
         if ( this.bPointwise22 ) {
 
-//!!! ...unfinished... (2021/06/08) although both exist, but it may be only pointwise21 or pointwise22 could add-input-to-output.
+          // 1.1 Both pointwise21 and pointwise22 exist.
+          //
+          // Although both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could (or need) add-input-to-output.
 
-          return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;  // 1.1 Both pointwise21 and pointwise22 existed.
+//!!! ...unfinished... (2021/06/09)
+          if ( this.bShould_addInput0ToPointwise21Output ) {
+            if ( this.bShould_addInput0ToPointwise22Output ) {
+              // 1.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
+              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;
+            } else {
+              // 1.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21Output exists.
+//!!! ...unfinished... (2021/06/09)
+            }
+          } else {
+            if ( this.bShould_addInput0ToPointwise22Output ) {
+              // 1.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22Output exists.
+//!!! ...unfinished... (2021/06/09)
+            } else {
+              // 1.1.4 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
+
+//!!! ...unfinished... (2021/06/09) It should not execute to here.
+              
+            }
+          }
+
         } else {
-          return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.2 Only pointwise21 existed (and no pointwise22).
+          return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.2 Only pointwise21 exists (and no pointwise22).
         }
       } else {
         if ( this.bPointwise22 ) {
-          return Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 1.3 Only pointwise22 existed (and no pointwise21).
+          return Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 1.3 Only pointwise22 exists (and no pointwise21).
         } else {
-          return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+          return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21.)
         }
       }
 
