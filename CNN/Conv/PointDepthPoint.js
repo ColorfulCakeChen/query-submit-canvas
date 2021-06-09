@@ -541,6 +541,13 @@ class Base extends ReturnOrClone.Base {
     // 5. Configure correct function pointers according to whether keeping or destroying input tensor.
     this.bKeepInputTensor = bKeepInputTensor;
 
+
+//!!! ...unfinished... (2021/06/09)
+// Perhaps, prepare one queue for every input. Push every operation into the queue.
+// The first operation in the queue is responsible for keep the input not to be disposed.
+// The last operation in the queue is responsible for dispose the input.
+
+
     // 5.1
     //
     // Although caller could request add-input-to-output, it may or may not doable.
@@ -577,7 +584,7 @@ class Base extends ReturnOrClone.Base {
       if ( channelCount1_pointwise1Before == this.channelCount_pointwise22After )
         this.bShould_addInput0ToPointwise22Output = true;
     }
-    
+
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21Output || this.bShould_addInput0ToPointwise22Output;
 
     if ( this.bShouldAddInputToOutput ) {
