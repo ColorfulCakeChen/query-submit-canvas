@@ -10,6 +10,10 @@ import * as Depthwise from "./Depthwise.js";
 import * as AddTwoTensors from "./AddTwoTensors.js";
 import * as ConcatAlongAxisId2 from "./ConcatAlongAxisId2.js";
 
+
+//!!! ...unfinished... (2021/06/09) Why are not channelCount1_pointwise1Before and channelCount2_pointwise1Before evolutable
+// params (e.g. between 3 - 5)?
+
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
  */
