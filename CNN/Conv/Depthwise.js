@@ -244,6 +244,11 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   is_Output_Same_HeightWidth_As_Input() {
 
+    // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
+    // In fact, they are the same one in this case.
+    if ( !this.bDepthwise )
+      return true;
+
     if ( this.strides != 1 )
       return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
 
