@@ -638,6 +638,19 @@ class Base extends ReturnOrClone.Base {
       } else if ( this.bPointwise22 ) {
         this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep inputTensors[ 0 ].
 
+
+//!!! ...unfinished... (2021/06/09)
+      } else if ( this.addInput0ToPointwise21Output ) {
+        if ( this.addInput0ToPointwise22Output ) {
+        } else {
+        }
+
+//!!! ...unfinished... (2021/06/09)
+      } else if ( this.addInput0ToPointwise22Output ) {
+
+
+
+//!!! ...unfinished... (2021/06/09) may be wrong?
       } else if ( this.addInput0ToPointwise21Output ) {
         // In this case, only addInput0ToPointwise21Output will exist, and the addInput0ToPointwise22Output will NOT exist.
         //
@@ -668,6 +681,9 @@ class Base extends ReturnOrClone.Base {
           this.apply_and_destroy_or_keep = Base.return_input_directly_array;
         }
       }
+
+
+//!!! ...unfinished... (2021/06/09)
 
       // 5.3.2 If no need to keep-input (but need add-input-to-output), the last add-input-to-output should destroy
       //       inputTensors[ 0 ] after add-input-to-output.
