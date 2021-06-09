@@ -791,19 +791,18 @@ class Base extends ReturnOrClone.Base {
           //
           // Although both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could (or need) add-input-to-output.
 
-//!!! ...unfinished... (2021/06/09)
           if ( this.bShould_addInput0ToPointwise21Output ) {
             if ( this.bShould_addInput0ToPointwise22Output ) {
               // 1.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
-              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput;
+              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_2;
             } else {
               // 1.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21Output exists.
-//!!! ...unfinished... (2021/06/09)
+              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_21;
             }
           } else {
             if ( this.bShould_addInput0ToPointwise22Output ) {
               // 1.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22Output exists.
-//!!! ...unfinished... (2021/06/09)
+              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
             } else {
               // 1.1.4 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
 
@@ -903,10 +902,10 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-//!!! ...unfinished... (2021/06/08) although both exist, but it may be only pointwise21 or pointwise22 could add-input-to-output.
-
-  /** The only one input will be added to the two output (pointwise21 and pointwise22). The inputTensor may or may not be disposed.*/
-  static apply_1_2_and_destroy_or_keep_AddInputToOutput( inputTensors, outputTensors ) {
+  /** Both outputTensors[ 0 ] and outputTensors[ 1 ] exist. The inputTensors[ 0 ] will be added to both of them.
+   * The inputTensor may or may not be disposed.
+   */
+  static apply_1_2_and_destroy_or_keep_AddInputToOutput_2( inputTensors, outputTensors ) {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
@@ -917,11 +916,48 @@ class Base extends ReturnOrClone.Base {
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
-//!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
-// Perhaps, AddTwoTensors should be able to handle no-op (no add but just return input).
+    t0 = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 );
+
+    t0 = this.pointwise22.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 );
+  }
+
+  /** Both outputTensors[ 0 ] and outputTensors[ 1 ] exist. The inputTensors[ 0 ] will be added to only outputTensors[ 0 ].
+   * The inputTensor may or may not be disposed.
+   */
+  static apply_1_2_and_destroy_or_keep_AddInputToOutput_21( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    let inputTensor = inputTensors[ 0 ];
+
+//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
+//    tf.util.assert( null == inputTensors[ 1 ] );
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
+    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 );
+
+    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
+  }
+
+  /** Both outputTensors[ 0 ] and outputTensors[ 1 ] exist. The inputTensors[ 0 ] will be added to only outputTensors[ 1 ].
+   * The inputTensor may or may not be disposed.
+   */
+  static apply_1_2_and_destroy_or_keep_AddInputToOutput_22( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    let inputTensor = inputTensors[ 0 ];
+
+//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
+//    tf.util.assert( null == inputTensors[ 1 ] );
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
+    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+
+    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
 
     t0 = this.pointwise22.pfnConvBiasActivation( t1 );
     outputTensors[ 1 ] = this.addInput0ToPointwise22Output.pfnAdd( inputTensor, t0 );
