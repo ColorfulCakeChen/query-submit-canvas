@@ -687,6 +687,8 @@ class Base extends ReturnOrClone.Base {
             if ( this.addInput0ToPointwise22Output ) { // no pointwise21, no pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
               this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
               this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
+//!!! ...unfinished... (2021/06/09) What about setKeepInputTensor1() ?
+
             } else { // no pointwise21, no pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
               this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
             }
