@@ -633,58 +633,111 @@ class Base extends ReturnOrClone.Base {
 // pointwise22 - addInput0ToPointwise22Output
 
       if ( this.bPointwise21 ) {
-      } else if ( this.addInput0ToPointwise21Output ) {
+
+        if ( this.bPointwise22 ) {
+          if ( this.addInput0ToPointwise21Output ) {
+            if ( this.addInput0ToPointwise22Output ) {
+            } else {
+            }
+          } else {
+            if ( this.addInput0ToPointwise22Output ) {
+            } else {
+            }
+          }
+        } else {
+          if ( this.addInput0ToPointwise21Output ) {
+            if ( this.addInput0ToPointwise22Output ) {
+            } else {
+            }
+          } else {
+            if ( this.addInput0ToPointwise22Output ) {
+            } else {
+            }
+        }
+
+      } else {
+
+        if ( this.bPointwise22 ) {
+          if ( this.addInput0ToPointwise21Output ) {
+            if ( this.addInput0ToPointwise22Output ) {
+            } else {
+            }
+          } else {
+            if ( this.addInput0ToPointwise22Output ) {
+            } else {
+            }
+          }
+        } else {
+          if ( this.addInput0ToPointwise21Output ) {
+            if ( this.addInput0ToPointwise22Output ) {
+            } else {
+            }
+          } else {
+            if ( this.addInput0ToPointwise22Output ) {
+            } else {
+            }
+        }
+
       }
+
+//!!! ...unfinished... (2021/06/09) What if both pointwise21 and pointwise22 exist?
+        this.pointwise21.setKeepInputTensor( true );
+        this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
 
       if ( this.bPointwise22 ) {
+          this.pointwise22.setKeepInputTensor( true );
+
       } else if ( this.addInput0ToPointwise22Output ) {
+        this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
       }
 
 
 
-//!!! ...unfinished... (2021/06/09) should separate into two sequence:
-// pointwise21 - addInput0ToPointwise21Output
-// pointwise22 - addInput0ToPointwise22Output
+      
 
-      } else if ( this.bPointwise21 ) {
-        if ( this.bPointwise22 ) {
-          // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input. Now, let pointwise22 keep inputTensors[ 0 ], too.
-          this.pointwise22.setKeepInputTensor( true );
-        } else {
-          this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep inputTensors[ 0 ].
-        }
-
-      } else if ( this.bPointwise22 ) {
-        this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep inputTensors[ 0 ].
-
-
-//!!! ...unfinished... (2021/06/09) What if the inputTensors of addInput0ToPointwise21Output (and addInput0ToPointwise22Output)
-// are all the same one inputTensors[ 0 ]? (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
-// no addInput0ToPointwise22Output)
-      } else if ( this.addInput0ToPointwise21Output ) {
-        if ( this.addInput0ToPointwise22Output ) {
-          this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
-        } else {
-          this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
-        }
-
-//!!! ...unfinished... (2021/06/09)
-      } else if ( this.addInput0ToPointwise22Output ) {
+//!!! ...unfinished... (2021/06/09) (Old Codes) should separate into two sequence:
+// // pointwise21 - addInput0ToPointwise21Output
+// // pointwise22 - addInput0ToPointwise22Output
+//
+//       } else if ( this.bPointwise21 ) {
+//         if ( this.bPointwise22 ) {
+//           // Both pointwise21 and pointwise22 exist, then pointwise21 already keep-input. Now, let pointwise22 keep inputTensors[ 0 ], too.
+//           this.pointwise22.setKeepInputTensor( true );
+//         } else {
+//           this.pointwise21.setKeepInputTensor( true ); // Since only pointwise21 exists, let it keep inputTensors[ 0 ].
+//         }
+//
+//       } else if ( this.bPointwise22 ) {
+//         this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep inputTensors[ 0 ].
 
 
+// //!!! ...unfinished... (2021/06/09) (Old Codes) What if the inputTensors of addInput0ToPointwise21Output (and addInput0ToPointwise22Output)
+// // are all the same one inputTensors[ 0 ]? (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
+// // no addInput0ToPointwise22Output)
+//       } else if ( this.addInput0ToPointwise21Output ) {
+//         if ( this.addInput0ToPointwise22Output ) {
+//           this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
+//         } else {
+//           this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
+//         }
+//
+// //!!! ...unfinished... (2021/06/09)
+//       } else if ( this.addInput0ToPointwise22Output ) {
 
-//!!! ...unfinished... (2021/06/09) may be wrong?
-      } else if ( this.addInput0ToPointwise21Output ) {
-        // In this case, only addInput0ToPointwise21Output will exist, and the addInput0ToPointwise22Output will NOT exist.
-        //
-        // (The only possible case which both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist is that both
-        // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute to the above codes).)
-        //
-        // Since this is the only operation (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
-        // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to
-        // keep-input, it should keep both inputs (they are just the same one inputTensors[ 0 ] in fact) simultaneously.
-        // Otherwise, the only inputTensors[ 0 ] will be destroyed.
-        this.addInput0ToPointwise21Output.setKeepInputTensor( true, true );
+
+
+// //!!! ...unfinished... (2021/06/09) may be wrong?
+//       } else if ( this.addInput0ToPointwise21Output ) {
+//         // In this case, only addInput0ToPointwise21Output will exist, and the addInput0ToPointwise22Output will NOT exist.
+//         //
+//         // (The only possible case which both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist is that both
+//         // pointwise21 and pointwise22 exist. And in that case, it never executes to here (it will execute to the above codes).)
+//         //
+//         // Since this is the only operation (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
+//         // no addInput0ToPointwise22Output), it in fact adds inputTensors[ 0 ] to inputTensors[ 0 ] itself. In order to
+//         // keep-input, it should keep both inputs (they are just the same one inputTensors[ 0 ] in fact) simultaneously.
+//         // Otherwise, the only inputTensors[ 0 ] will be destroyed.
+//         this.addInput0ToPointwise21Output.setKeepInputTensor( true, true );
 
 //!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
 
