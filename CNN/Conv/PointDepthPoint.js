@@ -626,6 +626,25 @@ class Base extends ReturnOrClone.Base {
         // the concatenating. So the concatenator is responsible for keeping (i.e. not-disposing) both the inputTensors[ 0 ]
         // and inputTensors[ 1 ].
         this.concatenator.setKeepInputTensor( true, true ); // will NOT dispose inputTensors[ 0 ] and inputTensors[ 1 ].
+      }
+
+//!!! ...unfinished... (2021/06/09) should separate into two sequence:
+// pointwise21 - addInput0ToPointwise21Output
+// pointwise22 - addInput0ToPointwise22Output
+
+      if ( this.bPointwise21 ) {
+      } else if ( this.addInput0ToPointwise21Output ) {
+      }
+
+      if ( this.bPointwise22 ) {
+      } else if ( this.addInput0ToPointwise22Output ) {
+      }
+
+
+
+//!!! ...unfinished... (2021/06/09) should separate into two sequence:
+// pointwise21 - addInput0ToPointwise21Output
+// pointwise22 - addInput0ToPointwise22Output
 
       } else if ( this.bPointwise21 ) {
         if ( this.bPointwise22 ) {
@@ -639,10 +658,14 @@ class Base extends ReturnOrClone.Base {
         this.pointwise22.setKeepInputTensor( true );   // Since only pointwise22 exists, let it keep inputTensors[ 0 ].
 
 
-//!!! ...unfinished... (2021/06/09)
+//!!! ...unfinished... (2021/06/09) What if the inputTensors of addInput0ToPointwise21Output (and addInput0ToPointwise22Output)
+// are all the same one inputTensors[ 0 ]? (i.e. no pointwise1, no depthwise, no pointwise21, no pointwise22,
+// no addInput0ToPointwise22Output)
       } else if ( this.addInput0ToPointwise21Output ) {
         if ( this.addInput0ToPointwise22Output ) {
+          this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
         } else {
+          this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
         }
 
 //!!! ...unfinished... (2021/06/09)
