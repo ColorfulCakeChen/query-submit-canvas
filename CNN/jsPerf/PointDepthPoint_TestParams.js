@@ -37,6 +37,9 @@ class TestParams {
     this.out = {};
   }
 
+//!!! ...unfinished... (2021/06/09) channelCount1_pointwise1Before and channelCount2_pointwise1Before should also be random
+// tested (e.g. between 3 - 5).
+
   /**
    * Fills the following proterties:
    *   - this.in.inputFloat32Array
