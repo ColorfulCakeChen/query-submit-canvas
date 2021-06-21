@@ -782,10 +782,20 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-//!!! ...unfinished... (2021/06/21)
+  /** Adjust the destroy-or-keep behavior of the first operation and last operation. */
   static Adjust_KeepInputTensor() {
 
-    // 5.3.1 Let the first existed operation of the main input (i.e. inputTensors[ 0 ]) keep-input.
+//!!! ...unfinished... (2021/06/21)
+
+    // If:
+    //   - caller request keep-input, or
+    //   - caller request add-input-to-output, and some criteria matched.
+    // Then:
+    //   - change the first operation from "Xxx_destroy" to "Xxx_keep".
+    //   - change the total operation if no first operation exists.
+    //
+
+    // 1. Let the first existed operation of the main input (i.e. inputTensors[ 0 ]) keep-input.
 
     if ( this.bPointwise1 ) {
       this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensors[ 0 ].
@@ -899,28 +909,28 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/06/09)
 
-    // 5.3.2 If no need to keep-input (but need add-input-to-output), the last add-input-to-output should destroy
-    //       inputTensors[ 0 ] after add-input-to-output.
+    // 2. If no need to keep-input (but need add-input-to-output), the last add-input-to-output should destroy
+    //    inputTensors[ 0 ] after add-input-to-output.
     if ( false == bKeepInputTensor ) {
 
       if ( this.addInput0ToPointwise21Output ) {
         if ( this.addInput0ToPointwise22Output ) {
-          // 5.3.2.1 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
+          // 2.1 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
           //     Let the last add-input-to-output (i.e. addInput0ToPointwise22Output) destroy the inputTensors[ 0 ].
           this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
 
         } else {
-          // 5.3.2.2 Only addInput0ToPointwise21Output exists. Let it destroy the inputTensors[ 0 ].
+          // 2.2 Only addInput0ToPointwise21Output exists. Let it destroy the inputTensors[ 0 ].
           this.addInput0ToPointwise21Output.setKeepInputTensor0( false );
 
         }
       } else {
         if ( this.addInput0ToPointwise22Output ) {
-          // 5.3.2.3 Only addInput0ToPointwise22Output exists. Let it destroy the inputTensors[ 0 ].
+          // 2.3 Only addInput0ToPointwise22Output exists. Let it destroy the inputTensors[ 0 ].
           this.addInput0ToPointwise22Output.setKeepInputTensor0( false );
 
         } else {
-          // 5.3.2.4 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
+          // 2.4 Both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
           //
           // Executed to here means that no need to keep-input and no need add-input-to-output. This should not happen
           // because here is for should-add-input-to-output (and destroy-input).
@@ -931,6 +941,7 @@ class Base extends ReturnOrClone.Base {
     }
 
   }
+
 
 
   /** The only one input will be added to the only one output (pointwise21). The inputTensor may or may not be disposed.*/
