@@ -611,7 +611,7 @@ class Base extends ReturnOrClone.Base {
     //
     if ( ( bKeepInputTensor ) || ( this.bShouldAddInputToOutput ) ) {
 //!!! ...unfinished... (2021/06/21)
-      Base.Adjust_KeepInputTensor.call( this );
+      Base.Adjust_for_KeepInputTensor.call( this );
     }
 
     ++progressToAdvance.value;
@@ -782,8 +782,8 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-  /** Adjust the destroy-or-keep behavior of the first operation and last operation. */
-  static Adjust_KeepInputTensor() {
+  /** Adjust the destroy-or-keep behavior of the first operation and last operation. Call this method only when ( bKeepInputTensor == true ). */
+  static Adjust_for_KeepInputTensor() {
 
 //!!! ...unfinished... (2021/06/21)
 
@@ -916,21 +916,25 @@ class Base extends ReturnOrClone.Base {
         // 12. has pointwise21, has pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
         () => {
           this.pointwise21.setKeepInputTensor( true );
+          this.pointwise22.setKeepInputTensor( true );
         },
 
         // 13. has pointwise21, has pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
         () => {
           this.pointwise21.setKeepInputTensor( true );
+          this.pointwise22.setKeepInputTensor( true );
         },
 
         // 14. has pointwise21, has pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
         () => {
           this.pointwise21.setKeepInputTensor( true );
+          this.pointwise22.setKeepInputTensor( true );
         },
 
         // 15. has pointwise21, has pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
         () => {
           this.pointwise21.setKeepInputTensor( true );
+          this.pointwise22.setKeepInputTensor( true );
         },
 
       ];
