@@ -809,13 +809,13 @@ class Base extends ReturnOrClone.Base {
 
     // 1. Let the first existed operation of the main input (i.e. inputTensors[ 0 ]) keep-input.
 
-    if ( this.bPointwise1 ) {
+    if ( this.bPointwise1 ) { // 1.1
       this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensors[ 0 ].
 
-    } else if ( this.bDepthwise ) {
+    } else if ( this.bDepthwise ) { // 1.2
       this.depthwise.setKeepInputTensor( true );     // will NOT dispose inputTensors[ 0 ].
 
-    } else if ( this.concatenator ) {
+    } else if ( this.concatenator ) { // 1.3
       // Executed to here means that keep-input but not add-input-to-output (otherwise, there will be no concatenator).
       // That is, there will be a branch input (i.e. inputTensors[ 1 ]). In this case, not only the first operation of the
       // main input (i.e. inputTensors[ 0 ]) but also the first operation of the branch input (i.e. inputTensors[ 1 ]) is
@@ -823,13 +823,9 @@ class Base extends ReturnOrClone.Base {
       // and inputTensors[ 1 ].
       this.concatenator.setKeepInputTensor( true, true ); // will NOT dispose inputTensors[ 0 ] and inputTensors[ 1 ].
 
-    } else {
+    } else { // 1.4
 
-//!!! ...unfinished... (2021/06/09) should separate into two sequence:
-// pointwise21 - addInput0ToPointwise21Output
-// pointwise22 - addInput0ToPointwise22Output
-
-//!!! ...unfinished... (2021/06/22) Convert into array index for table looking-up.
+      // Combine these four parameters into an array index for table looking-up.
       let functorTableIndex =
           ( ( this.bPointwise21 ? 1 : 0 ) * 8 )
         + ( ( this.bPointwise22 ? 1 : 0 ) * 4 )
@@ -840,7 +836,7 @@ class Base extends ReturnOrClone.Base {
       // Group into a looking-up table for every combination.
       let functorTable = [
 
-        // 0. no pointwise21, no pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
+        // 1.4.0 no pointwise21, no pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
         () => {
 
 //!!! ...unfinished... (2021/06/23) shoud be tested.
@@ -861,74 +857,74 @@ class Base extends ReturnOrClone.Base {
           }
         },
 
-        () => { // 1. no pointwise21, no pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
+        () => { // 1.4.1 no pointwise21, no pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
           this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
         },
 
-        () => { // 2. no pointwise21, no pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
+        () => { // 1.4.2 no pointwise21, no pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
           this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
         },
 
-        () => { // 3. no pointwise21, no pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
+        () => { // 1.4.3 no pointwise21, no pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
           this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
-          this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
-        },
-
-
-        () => { // 4. no pointwise21, has pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
-          this.pointwise22.setKeepInputTensor( true );
-        },
-
-        () => { // 5. no pointwise21, has pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
-          this.pointwise22.setKeepInputTensor( true );
-        },
-
-        () => { // 6. no pointwise21, has pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
-          this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
-          this.pointwise22.setKeepInputTensor( true );
-        },
-
-        () => { // 7. no pointwise21, has pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
-          this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
-          this.pointwise22.setKeepInputTensor( true );
-        },
-
-
-        () => { // 8. has pointwise21, no pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
-          this.pointwise21.setKeepInputTensor( true );
-        },
-
-        () => { // 9. has pointwise21, no pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
-          this.pointwise21.setKeepInputTensor( true );
-          this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
-        },
-
-        () => { // 10. has pointwise21, no pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
-          this.pointwise21.setKeepInputTensor( true );
-        },
-
-        () => { // 11. has pointwise21, no pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
-          this.pointwise21.setKeepInputTensor( true );
           this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
         },
 
 
-        () => { // 12. has pointwise21, has pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
+        () => { // 1.4.4 no pointwise21, has pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
+          this.pointwise22.setKeepInputTensor( true );
+        },
+
+        () => { // 1.4.5 no pointwise21, has pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
+          this.pointwise22.setKeepInputTensor( true );
+        },
+
+        () => { // 1.4.6 no pointwise21, has pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
+          this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
+          this.pointwise22.setKeepInputTensor( true );
+        },
+
+        () => { // 1.4.7 no pointwise21, has pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
+          this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
+          this.pointwise22.setKeepInputTensor( true );
+        },
+
+
+        () => { // 1.4.8 has pointwise21, no pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
+          this.pointwise21.setKeepInputTensor( true );
+        },
+
+        () => { // 1.4.9 has pointwise21, no pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
+          this.pointwise21.setKeepInputTensor( true );
+          this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
+        },
+
+        () => { // 1.4.10 has pointwise21, no pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
+          this.pointwise21.setKeepInputTensor( true );
+        },
+
+        () => { // 1.4.11 has pointwise21, no pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
+          this.pointwise21.setKeepInputTensor( true );
+          this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
+        },
+
+
+        () => { // 1.4.12 has pointwise21, has pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
           this.pointwise21.setKeepInputTensor( true );
           this.pointwise22.setKeepInputTensor( true );
         },
 
-        () => { // 13. has pointwise21, has pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
+        () => { // 1.4.13 has pointwise21, has pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
           this.pointwise21.setKeepInputTensor( true );
           this.pointwise22.setKeepInputTensor( true );
         },
 
-        () => { // 14. has pointwise21, has pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
+        () => { // 1.4.14 has pointwise21, has pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
           this.pointwise21.setKeepInputTensor( true );
           this.pointwise22.setKeepInputTensor( true );
         },
 
-        () => { // 15. has pointwise21, has pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
+        () => { // 1.4.15 has pointwise21, has pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
           this.pointwise21.setKeepInputTensor( true );
           this.pointwise22.setKeepInputTensor( true );
         },
@@ -939,13 +935,9 @@ class Base extends ReturnOrClone.Base {
       functor();
     }
 
-
-
-//!!! ...unfinished... (2021/06/23)
-
     // 2. If no need to keep-input (but need add-input-to-output), the last add-input-to-output should destroy
     //    inputTensors[ 0 ] after add-input-to-output.
-    if ( false == bKeepInputTensor ) {
+    if ( false == this.bKeepInputTensor ) {
 
       if ( this.addInput0ToPointwise21Output ) {
         if ( this.addInput0ToPointwise22Output ) {
