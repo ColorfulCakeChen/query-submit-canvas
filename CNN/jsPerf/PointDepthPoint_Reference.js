@@ -80,7 +80,10 @@ class Base {
             let parametersDescription = pointDepthPoint.parametersDescription;
 
             tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-              `PointDepthPoint.apply_and_destroy_or_keep() memory leak. ${parametersDescription}`);
+              `PointDepthPoint.apply_and_destroy_or_keep() memory leak. `
+                + `result tensor count (${memoryInfo_apply_after.numTensors}) `
+                + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
+                + `${parametersDescription}` );
 
             // Test correctness of pointDepthPoint apply.
             this.check_Input_Output_WeightsTable( imageInArray, imageInTensor3dArray, outputTensor3dArray, parametersDescription );
@@ -89,7 +92,10 @@ class Base {
             let memoryInfo_afterDispose = tf.memory();
 
             tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
-              `PointDepthPoint create/dispose memory leak. ${parametersDescription}`);
+              `PointDepthPoint create/dispose memory leak. `
+                + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
+                + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
+                + `${parametersDescription}` );
 
             tf.dispose( outputTensor3dArray );
           });
