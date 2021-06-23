@@ -568,8 +568,50 @@ class Base extends ReturnOrClone.Base {
     //   - if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
     //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
     if ( ( this.bAddInputToOutput ) && ( this.depthwise.is_Output_Same_HeightWidth_As_Input() ) ) {
-      
-//!!! ...unfinished... (2021/06/23) What if no pointwise21 or no pointwise21 but has add_input-to_output?
+
+//!!! ...unfinished... (2021/06/23 Remarked) (New Codes) but the same as old codes.
+//
+//       if ( this.bPointwise21 ) {
+//         if  ( this.bPointwise22 ) { // has pointwise21, has pointwise22
+//
+//           this.bShould_addInput0ToPointwise21Output = ( channelCount1_pointwise1Before == this.channelCount_pointwise21After );
+//
+//           // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount1_pointwise1Before
+//           // (not channelCount2_pointwise1Before).
+//           this.bShould_addInput0ToPointwise22Output = ( channelCount1_pointwise1Before == this.channelCount_pointwise22After );
+//
+//         } else { // has pointwise21, no pointwise22
+//
+//           this.bShould_addInput0ToPointwise21Output = ( channelCount1_pointwise1Before == this.channelCount_pointwise21After );
+//           this.bShould_addInput0ToPointwise22Output = false;  // Usually, if no pointwise22, then no addInput0ToPointwise22Output.
+//
+//         }
+//       } else {
+//         if  ( this.bPointwise22 ) { // no pointwise21, has pointwise22
+//
+//           this.bShould_addInput0ToPointwise21Output = false;  // Usually, if no pointwise21, then no addInput0ToPointwise21Output.
+//           this.bShould_addInput0ToPointwise22Output = ( channelCount1_pointwise1Before == this.channelCount_pointwise22After );
+//
+//         } else { // no pointwise21, no pointwise22
+//
+//           // Usually, if no pointwise21, then no addInput0ToPointwise21Output.
+//           // Usually, if no pointwise22, then no addInput0ToPointwise22Output.
+//           //
+//           // However, here is the exception: When both no pointwise21 and no pointwise22, there might be addInput0ToPointwise21Output
+//           // if channelCount_concatenateAfter_pointwise2Before (not channelCount_pointwise21After, not channelCount_pointwise22After)
+//           // has the same dimension as inputTensors[ 0 ].
+//           this.bShould_addInput0ToPointwise21Output = ( channelCount1_pointwise1Before == this.channelCount_concatenateAfter_pointwise2Before );
+//           this.bShould_addInput0ToPointwise22Output = false;
+//         }
+//       }
+
+
+      // Usually, if no pointwise21, then no addInput0ToPointwise21Output.
+      // Usually, if no pointwise22, then no addInput0ToPointwise22Output.
+      //
+      // However, here is the exception: When both no pointwise21 and no pointwise22, there might be addInput0ToPointwise21Output
+      // if channelCount_concatenateAfter_pointwise2Before (which is assigned as channelCount_pointwise21After in this case)
+      // has the same dimension as inputTensors[ 0 ].
 
       if ( channelCount1_pointwise1Before == this.channelCount_pointwise21After )
         this.bShould_addInput0ToPointwise21Output = true;
