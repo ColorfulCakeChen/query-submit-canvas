@@ -797,6 +797,8 @@ class Base extends ReturnOrClone.Base {
    */
   static Adjust_for_KeepInputTensor_or_ShouldAddInputToOutput() {
 
+//!!! ...unfinished... (2021/06/23) When all operation is no-op but need add-input-to-output and keep-input, the inputTensors[ 0 ] is disposed (twice)?
+
     // If:
     //   - caller request keep-input, or
     //   - caller request add-input-to-output, and some criteria matched.
