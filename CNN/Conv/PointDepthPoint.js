@@ -568,6 +568,9 @@ class Base extends ReturnOrClone.Base {
     //   - if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
     //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
     if ( ( this.bAddInputToOutput ) && ( this.depthwise.is_Output_Same_HeightWidth_As_Input() ) ) {
+      
+//!!! ...unfinished... (2021/06/23) What if no pointwise21 or no pointwise21 but has add_input-to_output?
+
       if ( channelCount1_pointwise1Before == this.channelCount_pointwise21After )
         this.bShould_addInput0ToPointwise21Output = true;
 
@@ -750,10 +753,13 @@ class Base extends ReturnOrClone.Base {
           this.outChannels2 = this.pointwise22ChannelCount;
           this.apply_and_destroy_or_keep = Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 1.3 Only pointwise22 exists (and no pointwise21).
         } else {
-//!!! ...unfinished... (2021/06/23)
-          this.outChannels1 = ;
-          this.outChannels2 = ;
-          this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21.)
+
+//!!! ...unfinished... (2021/06/23) What if no pointwise21 and no pointwise21 but has add_input-to_output?
+
+          // 1.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel cout is the same as channel cout before pointwise2.)
+          this.outChannels1 = this.channelCount_concatenateAfter_pointwise2Before;
+          this.outChannels2 = 0;
+          this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
         }
       }
 
@@ -764,6 +770,7 @@ class Base extends ReturnOrClone.Base {
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
+//!!! ...unfinished... (2021/06/23)
             this.outChannels1 = ;
             this.outChannels2 = ;
             this.apply_and_destroy_or_keep = Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 2.1 Both pointwise21 and pointwise22 existed.
