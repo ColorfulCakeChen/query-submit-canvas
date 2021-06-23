@@ -620,7 +620,7 @@ class Base extends ReturnOrClone.Base {
     //   - change the total operation if no first operation exists.
     //
     if ( ( bKeepInputTensor ) || ( this.bShouldAddInputToOutput ) ) {
-      Base.Adjust_for_KeepInputTensor.call( this );
+      Base.Adjust_for_KeepInputTensor_or_ShouldAddInputToOutput.call( this );
     }
 
     ++progressToAdvance.value;
@@ -795,7 +795,7 @@ class Base extends ReturnOrClone.Base {
   /** Adjust the destroy-or-keep behavior of the first operation and last operation. Call this method only when ( bKeepInputTensor == true )
    * or ( bShouldAddInputToOutput == true ).
    */
-  static Adjust_for_KeepInputTensor() {
+  static Adjust_for_KeepInputTensor_or_ShouldAddInputToOutput() {
 
 //!!! ...unfinished... (2021/06/21)
 
