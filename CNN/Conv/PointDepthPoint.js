@@ -843,9 +843,10 @@ class Base extends ReturnOrClone.Base {
         // 0. no pointwise21, no pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
         () => {
 
-//!!! ...unfinished... (2021/06/23) What to do?
+//!!! ...unfinished... (2021/06/23) shoud be tested.
+
           // The only case exectued to here is that no-add-input-to-output and no-concatenater. (Otherwise, it will execute to
-          // the above codes.)
+          // the above codes or the other functors.)
           //
           // Since there is no operation at all (i.e. no pointwise1, no depthwise, no concat, no pointwise2, no-add-inpu-to-output),
           // just according to whether needs keep-input, change the total operation to return input directly
@@ -853,7 +854,7 @@ class Base extends ReturnOrClone.Base {
           //
           // Note: This may be wrong, however, if there are wrongly two input tensors (there should be only one input
           // (i.e. inputTensors[ 0 ]) for should-add-input-to-output).
-          if ( bKeepInputTensor ) {
+          if ( this.bKeepInputTensor ) {
             this.apply_and_destroy_or_keep = Base.keep_input_return_copy_array;
           } else {
             this.apply_and_destroy_or_keep = Base.return_input_directly_array;
