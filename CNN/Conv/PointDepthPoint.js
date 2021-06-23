@@ -610,7 +610,7 @@ class Base extends ReturnOrClone.Base {
       // Usually, if no pointwise22, then no addInput0ToPointwise22Output.
       //
       // However, here is the exception: When both no pointwise21 and no pointwise22, there might be addInput0ToPointwise21Output
-      // if channelCount_concatenateAfter_pointwise2Before (which is assigned as channelCount_pointwise21After in this case)
+      // if channelCount_concatenateAfter_pointwise2Before (which is already assigned to channelCount_pointwise21After in this case)
       // has the same dimension as inputTensors[ 0 ].
 
       if ( channelCount1_pointwise1Before == this.channelCount_pointwise21After )
