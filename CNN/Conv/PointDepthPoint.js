@@ -981,7 +981,7 @@ class Base extends ReturnOrClone.Base {
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
-    
+
     outputTensors[ 0 ] = this.addInput0ToPointwise21Output.pfnAdd( inputTensor, t0 );
     outputTensors[ 1 ] = null;
   }
