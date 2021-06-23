@@ -797,8 +797,6 @@ class Base extends ReturnOrClone.Base {
    */
   static Adjust_for_KeepInputTensor_or_ShouldAddInputToOutput() {
 
-//!!! ...unfinished... (2021/06/21)
-
     // If:
     //   - caller request keep-input, or
     //   - caller request add-input-to-output, and some criteria matched.
