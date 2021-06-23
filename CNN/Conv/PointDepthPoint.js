@@ -869,7 +869,6 @@ class Base extends ReturnOrClone.Base {
         () => { // 3. no pointwise21, no pointwise22, has addInput0ToPointwise21Output, has addInput0ToPointwise22Output
           this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
           this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
-//!!! ...unfinished... (2021/06/09) What about setKeepInputTensor1() ?
         },
 
 
@@ -879,10 +878,10 @@ class Base extends ReturnOrClone.Base {
 
         () => { // 5. no pointwise21, has pointwise22, no addInput0ToPointwise21Output, has addInput0ToPointwise22Output
           this.pointwise22.setKeepInputTensor( true );
-          this.addInput0ToPointwise22Output.setKeepInputTensor0( true );
         },
 
         () => { // 6. no pointwise21, has pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
+//!!! ...unfinished... (2021/06/23)
           this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
           this.pointwise22.setKeepInputTensor( true );
         },
