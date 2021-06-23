@@ -792,7 +792,9 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-  /** Adjust the destroy-or-keep behavior of the first operation and last operation. Call this method only when ( bKeepInputTensor == true ). */
+  /** Adjust the destroy-or-keep behavior of the first operation and last operation. Call this method only when ( bKeepInputTensor == true )
+   * or ( bShouldAddInputToOutput == true ).
+   */
   static Adjust_for_KeepInputTensor() {
 
 //!!! ...unfinished... (2021/06/21)
@@ -835,13 +837,13 @@ class Base extends ReturnOrClone.Base {
         + ( ( this.addInput0ToPointwise22Output ? 1 : 0 ) * 1 )
       ;
 
-//!!! ...unfinished... (2021/06/22) Group into a looking-up table.
+      // Group into a looking-up table for every combination.
       let functorTable = [
 
         // 0. no pointwise21, no pointwise22, no addInput0ToPointwise21Output, no addInput0ToPointwise22Output
         () => {
 
-//!!! ...unfinished... (2021/06/21) What to do?
+//!!! ...unfinished... (2021/06/23) What to do?
           // The only case exectued to here is that no-add-input-to-output and no-concatenater. (Otherwise, it will execute to
           // the above codes.)
           //
