@@ -881,7 +881,6 @@ class Base extends ReturnOrClone.Base {
         },
 
         () => { // 6. no pointwise21, has pointwise22, has addInput0ToPointwise21Output, no addInput0ToPointwise22Output
-//!!! ...unfinished... (2021/06/23)
           this.addInput0ToPointwise21Output.setKeepInputTensor0( true );
           this.pointwise22.setKeepInputTensor( true );
         },
@@ -939,7 +938,7 @@ class Base extends ReturnOrClone.Base {
 
 
 
-//!!! ...unfinished... (2021/06/09)
+//!!! ...unfinished... (2021/06/23)
 
     // 2. If no need to keep-input (but need add-input-to-output), the last add-input-to-output should destroy
     //    inputTensors[ 0 ] after add-input-to-output.
