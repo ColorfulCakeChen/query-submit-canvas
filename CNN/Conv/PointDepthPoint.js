@@ -279,9 +279,15 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). This is the same as this.channelCount2_pointwise1Before (from initer()).
  *
  * @member {number} outChannels1
+
+!!! ...unfinished... (2021/06/23) not the same as channelCount_pointwise21fter
+
  *   The channel count of the first output tensor. It is the same as this.channelCount_pointwise21After (from initer()).
  *
  * @member {number} outChannels2
+
+!!! ...unfinished... (2021/06/23) not the same as channelCount_pointwise22After
+
  *   The channel count of the second output tensor. It is the same as this.channelCount_pointwise22After (from initer()).
  *
  * @member {number} outChannels
@@ -598,7 +604,9 @@ class Base extends ReturnOrClone.Base {
     //
     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
     // because the adjustment might also need to select different apply_Xxx() function.
-    this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
+//!!! (2021/06/23 Remarked)
+//    this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
+    Base.Determine_apply_and_destroy_or_keep.call( this );
 
     // 5.3 Adjust the destroy-or-keep behavior of the first operation and last operation.
     //
@@ -682,6 +690,7 @@ class Base extends ReturnOrClone.Base {
     this.intermediateTensorsArray = null;
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21Output = this.bShould_addInput0ToPointwise22Output = false;
+    this.outChannels1 = this.outChannels2 = 0;
 
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
@@ -700,42 +709,51 @@ class Base extends ReturnOrClone.Base {
         if ( this.bPointwise22 ) {
 
           // 1.1 Both pointwise21 and pointwise22 exist.
-          //
+          this.outChannels1 = this.pointwise21ChannelCount;
+          this.outChannels2 = this.pointwise22ChannelCount;
+
           // Although both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could (or need) add-input-to-output.
 
           if ( this.bShould_addInput0ToPointwise21Output ) {
             if ( this.bShould_addInput0ToPointwise22Output ) {
               // 1.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21Output and addInput0ToPointwise22Output exist.
-              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_2;
+              this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_2;
             } else {
               // 1.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21Output exists.
-              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_21;
+              this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_21;
             }
           } else {
             if ( this.bShould_addInput0ToPointwise22Output ) {
               // 1.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22Output exists.
-              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
+              this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
             } else {
               // 1.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21Output and addInput0ToPointwise22Output do not exist.
+
+              this.apply_and_destroy_or_keep = undefined;
 
               // It should not execute to here.
               tf.util.assert( false,
               `PointDepthPoint.Determine_apply_and_destroy_or_keep(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
                 + `should equal be this.bShould_addInput0ToPointwise21Output (${this.bShould_addInput0ToPointwise21Output}) `
                 + ` or this.bShould_addInput0ToPointwise22Output (${this.bShould_addInput0ToPointwise22Output}). ${this.parametersDescription}`);
-
-              return undefined;
             }
           }
 
         } else {
-          return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.2 Only pointwise21 exists (and no pointwise22).
+          this.outChannels1 = this.pointwise21ChannelCount;
+          this.outChannels2 = 0;
+          this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.2 Only pointwise21 exists (and no pointwise22).
         }
       } else {
         if ( this.bPointwise22 ) {
-          return Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 1.3 Only pointwise22 exists (and no pointwise21).
+          this.outChannels1 = 0;
+          this.outChannels2 = this.pointwise22ChannelCount;
+          this.apply_and_destroy_or_keep = Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 1.3 Only pointwise22 exists (and no pointwise21).
         } else {
-          return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21.)
+//!!! ...unfinished... (2021/06/23)
+          this.outChannels1 = ;
+          this.outChannels2 = ;
+          this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21.)
         }
       }
 
@@ -746,15 +764,23 @@ class Base extends ReturnOrClone.Base {
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
-            return Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 2.1 Both pointwise21 and pointwise22 existed.
+            this.outChannels1 = ;
+            this.outChannels2 = ;
+            this.apply_and_destroy_or_keep = Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 2.1 Both pointwise21 and pointwise22 existed.
           } else {
-            return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.2 Only pointwise21 existed (and no pointwise22).
+            this.outChannels1 = ;
+            this.outChannels2 = ;
+            this.apply_and_destroy_or_keep = Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.2 Only pointwise21 existed (and no pointwise22).
           }
         } else {
           if ( this.bPointwise22 ) {
-            return Base.apply_2_22_and_destroy_or_keep_ConcatInput1; // 2.3 Only pointwise22 existed (and no pointwise21).
+            this.outChannels1 = ;
+            this.outChannels2 = ;
+            this.apply_and_destroy_or_keep = Base.apply_2_22_and_destroy_or_keep_ConcatInput1; // 2.3 Only pointwise22 existed (and no pointwise21).
           } else {
-            return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+            this.outChannels1 = ;
+            this.outChannels2 = ;
+            this.apply_and_destroy_or_keep = Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           }
         }
 
@@ -765,15 +791,23 @@ class Base extends ReturnOrClone.Base {
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
-            return Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
+            this.outChannels1 = ;
+            this.outChannels2 = ;
+            this.apply_and_destroy_or_keep = Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
           } else {
-            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
+            this.outChannels1 = ;
+            this.outChannels2 = ;
+            this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
           }
         } else {
           if ( this.bPointwise22 ) {
-            return Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
+            this.outChannels1 = ;
+            this.outChannels2 = ;
+            this.apply_and_destroy_or_keep = Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
           } else {
-            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+            this.outChannels1 = ;
+            this.outChannels2 = ;
+            this.apply_and_destroy_or_keep = Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           }
         }
 
@@ -1184,11 +1218,15 @@ class Base extends ReturnOrClone.Base {
   /** @return {number} The channel count of the second input tensor (i.e. inputTensors[ 1 ]). */
   get inChannels2()                            { return this.channelCount2_pointwise1Before; }
 
-  /** @return {number} The channel count of the first output tensor (i.e. outputTensors[ 0 ]). */
-  get outChannels1()                          { return this.channelCount_pointwise21After; }
 
-  /** @return {number} The channel count of the second output tensor (i.e. outputTensors[ 1 ]). */
-  get outChannels2()                          { return this.channelCount_pointwise22After; }
+//!!! ...unfinished... (2021/06/23) not the same as channelCount_pointwise21fter and channelCount_pointwise22fter
+//
+//   /** @return {number} The channel count of the first output tensor (i.e. outputTensors[ 0 ]). */
+//   get outChannels1()                          { return this.channelCount_pointwise21After; }
+//
+//   /** @return {number} The channel count of the second output tensor (i.e. outputTensors[ 1 ]). */
+//   get outChannels2()                          { return this.channelCount_pointwise22After; }
+
 
   /** @return {number} The channel count of both the first and second output tensors. */
   get outChannelsAll()                          { return this.channelCount_pointwise2After; }
