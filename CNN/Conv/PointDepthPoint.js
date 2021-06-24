@@ -812,8 +812,14 @@ class Base extends ReturnOrClone.Base {
     if ( this.bPointwise1 ) { // 1.1
       this.pointwise1.setKeepInputTensor( true );    // will NOT dispose inputTensors[ 0 ].
 
+//!!! ...unfinished... (2021/06/24) should also consider whether add-input-to-output.
+// Otherwise, inputTensors[ 0 ] may still be disposed by add-input-to-output.
+
     } else if ( this.bDepthwise ) { // 1.2
       this.depthwise.setKeepInputTensor( true );     // will NOT dispose inputTensors[ 0 ].
+
+//!!! ...unfinished... (2021/06/24) should also consider whether add-input-to-output.
+// Otherwise, inputTensors[ 0 ] may still be disposed by add-input-to-output.
 
     } else if ( this.concatenator ) { // 1.3
       // Executed to here means that keep-input but not add-input-to-output (otherwise, there will be no concatenator).
@@ -823,7 +829,13 @@ class Base extends ReturnOrClone.Base {
       // and inputTensors[ 1 ].
       this.concatenator.setKeepInputTensor( true, true ); // will NOT dispose inputTensors[ 0 ] and inputTensors[ 1 ].
 
+//!!! ...unfinished... (2021/06/24) should also consider whether add-input-to-output.
+// Otherwise, inputTensors[ 0 ] may still be disposed by add-input-to-output.
+
     } else { // 1.4
+
+//!!! ...unfinished... (2021/06/24) should also consider whether add-input-to-output.
+// Otherwise, inputTensors[ 0 ] may still be disposed by add-input-to-output.
 
       // Combine these four parameters into an array index for table looking-up.
       let functorTableIndex =
