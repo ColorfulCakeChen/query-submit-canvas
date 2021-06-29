@@ -1206,12 +1206,26 @@ function() {
   this.pointwise21.setKeepInputTensor( false );
 },
 
-//!!! ...unfinished... (2021/06/28)
 // 9. no keep-input, no pointwise1, no depthwise, no concatenator, has pointwise21, no pointwise22, no addInput0ToPointwise21, has addInput0ToPointwise22
 function() {
   this.pointwise21.setKeepInputTensor( true );
   this.addInput0ToPointwise22.setKeepInputTensor( true, false ); // Both its input-0 and input-1 are the same one (inputTensors[ 0 ]).
 },
+
+// 10. no keep-input, no pointwise1, no depthwise, no concatenator, has pointwise21, no pointwise22, has addInput0ToPointwise21, no addInput0ToPointwise22
+function() {
+  this.pointwise21.setKeepInputTensor( true );
+  this.addInput0ToPointwise21.setKeepInputTensor( true, false );
+},
+
+//!!! ...unfinished... (2021/06/28)
+// 11. no keep-input, no pointwise1, no depthwise, no concatenator, has pointwise21, no pointwise22, has addInput0ToPointwise21, has addInput0ToPointwise22
+function() {
+  this.pointwise21.setKeepInputTensor( true );
+  this.addInput0ToPointwise21.setKeepInputTensor( true, false );
+  this.addInput0ToPointwise22.setKeepInputTensor( true, false ); // Both its input-0 and input-1 are the same one (inputTensors[ 0 ]).
+},
+
 
 //!!! ...unfinished... (2021/06/28)
 function() { // 1.4.5 no pointwise21, has pointwise22, no addInput0ToPointwise21, has addInput0ToPointwise22
