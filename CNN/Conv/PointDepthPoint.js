@@ -900,6 +900,27 @@ class Base extends ReturnOrClone.Base {
   }
 
 
+  /**
+   * @param {boolean[]} KeepInputTensorFlagArray
+   *   An array whose elements are flags for every operations whether need keep input. The elements should be the following: [
+   * pointwise1_Input0, depthwise_Input0, concatenator_Input0, concatenator_Input1,
+   * pointwise21_Input0, addInput0ToPointwise21_Input0, addInput0ToPointwise21_Input1,
+   * pointwise22_Input0, addInput0ToPointwise22_Input0, addInput0ToPointwise22_Input1 ].
+   */
+  static setKeepInputTensor_ByFlagArray( KeepInputTensorFlagArray ) {
+    let [
+      pointwise1_Input0, depthwise_Input0, concatenator_Input0, concatenator_Input1,
+      pointwise21_Input0, addInput0ToPointwise21_Input0, addInput0ToPointwise21_Input1,
+      pointwise22_Input0, addInput0ToPointwise22_Input0, addInput0ToPointwise22_Input1
+    ] = KeepInputTensorFlagArray;
+    
+    if ( this.bPointwise1 ) {
+//!!! ...unfinished... (2021/06/29)
+    }
+
+//!!! ...unfinished... (2021/06/29)
+  }
+
 
   /** The only one input will be added to the only one output (pointwise21). The inputTensor may or may not be disposed.*/
   static apply_1_21_and_destroy_or_keep_AddInputToOutput( inputTensors, outputTensors ) {
