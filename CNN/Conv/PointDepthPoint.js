@@ -812,26 +812,22 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/06/28)
     // Combine these eight parameters into an array index for table looking-up.
-    let functorTableIndex =
-        ( ( this.bKeepInputTensor ? 1 : 0 ) * 128 )
-      + ( ( this.bPointwise1 ? 1 : 0 ) * 64 )
-      + ( ( this.bDepthwise ? 1 : 0 ) * 32 )
-      + ( ( this.concatenator ? 1 : 0 ) * 16 )
-      + ( ( this.bPointwise21 ? 1 : 0 ) * 8 )
-      + ( ( this.bPointwise22 ? 1 : 0 ) * 4 )
-      + ( ( this.addInput0ToPointwise21 ? 1 : 0 ) * 2 )
-      + ( ( this.addInput0ToPointwise22 ? 1 : 0 ) * 1 )
+    let flagArrayTableIndex =
+        ( ( this.bKeepInputTensor       ? 1 : 0 ) * 128 )
+      + ( ( this.bPointwise1            ? 1 : 0 ) *  64 )
+      + ( ( this.bDepthwise             ? 1 : 0 ) *  32 )
+      + ( ( this.concatenator           ? 1 : 0 ) *  16 )
+      + ( ( this.bPointwise21           ? 1 : 0 ) *   8 )
+      + ( ( this.addInput0ToPointwise21 ? 1 : 0 ) *   4 )
+      + ( ( this.bPointwise22           ? 1 : 0 ) *   2 )
+      + ( ( this.addInput0ToPointwise22 ? 1 : 0 ) *   1 )
     ;
 
 
 //!!! ...unfinished... (2021/06/28)
 
-    let functor = Base.Adjust_for_KeepInputTensor_or_ShouldAddInputToOutput_functorTable[ functorTableIndex ];
-    functor.call( this );
-
-
-
-
+    let flagArray = Base.Adjust_for_KeepInputTensor_or_ShouldAddInputToOutput_FlagArray_Table[ flagArrayTableIndex ];
+    Base.setKeepInputTensor_ByFlagArray.call( this, flagArray );
 
 
 //!!! ...unfinished... (2021/06/28) Old Codes
@@ -901,6 +897,8 @@ class Base extends ReturnOrClone.Base {
 
 
   /**
+   * Set multiple operations' keep-input flags.
+   *
    * @param {boolean[]} KeepInputTensorFlagArray
    *   An array whose elements are flags for every operations whether need keep input. The elements should be the following: [
    * pointwise1_Input0, depthwise_Input0, concatenator_Input0, concatenator_Input1,
@@ -913,12 +911,27 @@ class Base extends ReturnOrClone.Base {
       pointwise21_Input0, addInput0ToPointwise21_Input0, addInput0ToPointwise21_Input1,
       pointwise22_Input0, addInput0ToPointwise22_Input0, addInput0ToPointwise22_Input1
     ] = KeepInputTensorFlagArray;
-    
-    if ( this.bPointwise1 ) {
-//!!! ...unfinished... (2021/06/29)
-    }
 
-//!!! ...unfinished... (2021/06/29)
+    if ( this.bPointwise1 )
+      this.pointwise1.setKeepInputTensor( pointwise1_Input0 );
+
+    if ( this.bDepthwise )
+      this.depthwise.setKeepInputTensor( depthwise_Input0 );
+
+    if ( this.concatenator )
+      this.concatenator.setKeepInputTensor( concatenator_Input0, concatenator_Input1 );
+
+    if ( this.bPointwise21 )
+      this.pointwise21.setKeepInputTensor( pointwise21_Input0 );
+
+    if ( this.addInput0ToPointwise21 )
+      this.addInput0ToPointwise21.setKeepInputTensor( addInput0ToPointwise21_Input0, addInput0ToPointwise21_Input1 );
+
+    if ( this.bPointwise22 )
+      this.pointwise22.setKeepInputTensor( pointwise22_Input0 );
+
+    if ( this.addInput0ToPointwise22 )
+      this.addInput0ToPointwise22.setKeepInputTensor( addInput0ToPointwise22_Input0, addInput0ToPointwise22_Input1 );
   }
 
 
@@ -1169,8 +1182,15 @@ class Base extends ReturnOrClone.Base {
 }
 
 
-// Group into a looking-up table for every combination.
-Base.Adjust_for_KeepInputTensor_or_ShouldAddInputToOutput_functorTable = [
+/** Group multiple keep-input flags into a looking-up table for every combination.
+ *
+ * [ pointwise1_Input0, depthwise_Input0, concatenator_Input0, concatenator_Input1,
+ *   pointwise21_Input0, addInput0ToPointwise21_Input0, addInput0ToPointwise21_Input1,
+ *   pointwise22_Input0, addInput0ToPointwise22_Input0, addInput0ToPointwise22_Input1 ].
+ */
+Base.Adjust_for_KeepInputTensor_or_ShouldAddInputToOutput_FlagArray_Table = [
+
+//!!! ...unfinished... (2021/06/29) should swap position of pointwise22 and addInput0ToPointwise21.
 
 // 0. no keep-input, no pointwise1, no depthwise, no concatenator, no pointwise21, no pointwise22, no addInput0ToPointwise21, no addInput0ToPointwise22
 function() {
