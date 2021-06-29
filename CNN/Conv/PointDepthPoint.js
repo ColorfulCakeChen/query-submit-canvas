@@ -783,7 +783,27 @@ class Base extends ReturnOrClone.Base {
           if ( this.bPointwise22 ) {
             return Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
           } else {
-            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+             // 3.4 Both pointwise21 and pointwise22 not existed.
+
+//!!! ...unfinished... (2021/06/29 Remarked)
+//            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+
+            // no pointwise1, no depthwise, no concatenator, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
+            if ( !this.bPointwise1 && !this.bDepthwise ) {
+
+//!!! ...unfinished... (2021/06/29) should be tested.
+
+              // Note: This may be wrong, however, if there are wrongly two input tensors (there should be only one input
+              // (i.e. inputTensors[ 0 ]) for should-add-input-to-output).
+              if ( this.bKeepInputTensor )
+                return Base.keep_input_return_copy_array; // 3.4.1
+              else
+                return Base.return_input_directly_array;  // 3.4.2
+
+            } else {
+              return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4.3 At least, there are pointwise1 or depthwise. (Use pointwise21.)
+            }
+            
           }
         }
 
