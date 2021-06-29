@@ -1277,6 +1277,34 @@ function() {
   this.addInput0ToPointwise22.setKeepInputTensor( false, false );
 },
 
+// 20. no keep-input, no pointwise1, no depthwise, has concatenator, no pointwise21, has pointwise22, no addInput0ToPointwise21, no addInput0ToPointwise22
+function() {
+  this.concatenator.setKeepInputTensor( false, false );
+  this.pointwise22.setKeepInputTensor( false );
+},
+
+// 21. no keep-input, no pointwise1, no depthwise, has concatenator, no pointwise21, has pointwise22, no addInput0ToPointwise21, has addInput0ToPointwise22
+function() {
+  this.concatenator.setKeepInputTensor( true, false );
+  this.pointwise22.setKeepInputTensor( false );
+  this.addInput0ToPointwise22.setKeepInputTensor( false, false );
+},
+
+// 22. no keep-input, no pointwise1, no depthwise, has concatenator, no pointwise21, has pointwise22, has addInput0ToPointwise21, no addInput0ToPointwise22
+function() {
+  this.concatenator.setKeepInputTensor( true, false );
+  this.addInput0ToPointwise21.setKeepInputTensor( false, true );
+  this.pointwise22.setKeepInputTensor( false );
+},
+
+// 23. no keep-input, no pointwise1, no depthwise, has concatenator, no pointwise21, has pointwise22, has addInput0ToPointwise21, has addInput0ToPointwise22
+function() {
+  this.concatenator.setKeepInputTensor( true, false );
+  this.addInput0ToPointwise21.setKeepInputTensor( true, true );
+  this.pointwise22.setKeepInputTensor( false );
+  this.addInput0ToPointwise22.setKeepInputTensor( false, false );
+},
+
 //!!! ...unfinished... (2021/06/29)
 
 //!!! ...unfinished... (2021/06/28)
