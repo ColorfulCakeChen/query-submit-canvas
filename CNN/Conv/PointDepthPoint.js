@@ -1202,6 +1202,8 @@ class Base extends ReturnOrClone.Base {
 }
 
 
+//!!! ...unfinished... (2021/06/30) Can reference-counting every input to determine whether should dispose it?
+
 /** Group multiple keep-input flags into a looking-up table for every combination.
  *
  * [ pointwise1_Input0, depthwise_Input0, concatenator_Input0, concatenator_Input1,
