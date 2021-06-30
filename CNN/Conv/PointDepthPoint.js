@@ -1203,6 +1203,9 @@ class Base extends ReturnOrClone.Base {
 
 
 //!!! ...unfinished... (2021/06/30) Can reference-counting every input to determine whether should dispose it?
+// Count how many operations will use a parameter after every operation.
+// If the count is not zero, it means some operation will use the parameter later.
+// In that case, the parameter should not be disposed by the operation.
 
 /** Group multiple keep-input flags into a looking-up table for every combination.
  *
