@@ -1213,19 +1213,10 @@ Base.Adjust_for_KeepInputTensor_or_ShouldAddInputToOutput_FlagArray_Table = [
 //!!! ...unfinished... (2021/06/29) should swap position of pointwise22 and addInput0ToPointwise21.
 
 // 0. no keep-input, no pointwise1, no depthwise, no concatenator, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
-[
-
-//!!! ...unfinished... (2021/06/28) should be tested.
-
-  // Note: This may be wrong, however, if there are wrongly two input tensors (there should be only one input
-  // (i.e. inputTensors[ 0 ]) for should-add-input-to-output).
-  this.apply_and_destroy_or_keep = Base.return_input_directly_array;
-},
+[ false,  false,  false, false,  false,  false, false,  false,  false, false ],
 
 // 1. no keep-input, no pointwise1, no depthwise, no concatenator, no pointwise21, no pointwise22, no addInput0ToPointwise21, has addInput0ToPointwise22
-function() {
-  this.addInput0ToPointwise22.setKeepInputTensor( true, false ); // Both its input-0 and input-1 are the same one (inputTensors[ 0 ]).
-},
+[ false,  false,  false, false,  false,  false, false,  false,   true, false ], // Both its input-0 and input-1 are the same one (inputTensors[ 0 ]).
 
 // 2. no keep-input, no pointwise1, no depthwise, no concatenator, no pointwise21, no pointwise22, has addInput0ToPointwise21, no addInput0ToPointwise22
 function() {
