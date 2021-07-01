@@ -9,7 +9,7 @@ import * as Pointwise from "./Pointwise.js";
 import * as Depthwise from "./Depthwise.js";
 import * as AddTwoTensors from "./AddTwoTensors.js";
 import * as ConcatAlongAxisId2 from "./ConcatAlongAxisId2.js";
-import * as ParamOpCounter from "./ParamOpCounter.js";
+import * as TensorOpCounter from "./TensorOpCounter.js";
 
 
 //!!! ...unfinished... (2021/06/09) Why are not channelCount1_pointwise1Before and channelCount2_pointwise1Before evolutable
@@ -430,9 +430,9 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
 //!!! ...unfinished... (2021/06/30)
-    let ParamOpCounterId = -1;
-    this.input0_paramOpCounter = new ParamOpCounter.Base( ++ParamOpCounterId, null );
-    this.input1_paramOpCounter = new ParamOpCounter.Base( ++ParamOpCounterId, null );
+    let TensorOpCounterId = -1;
+    this.input0_TensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, null );
+    this.input1_TensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, null );
 
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
@@ -449,7 +449,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise1After_depthwiseBefore = this.pointwise1.outputChannelCount;
 
 //!!! ...unfinished... (2021/06/30)
-      this.pointwise1.paramOpCounter = new ParamOpCounter.Base( ++ParamOpCounterId, this.input0_paramOpCounter );
+      this.pointwise1.TensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.input0_TensorOpCounter );
 
     } else {
       this.channelCount_pointwise1After_depthwiseBefore = channelCount1_pointwise1Before;  // No pointwise1 convolution.
@@ -474,7 +474,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_depthwiseAfter_concatenateBefore = this.depthwise.outputChannelCount;
 
 //!!! ...unfinished... (2021/06/30) What if no pointwise1?
-      this.depthwise.paramOpCounter = new ParamOpCounter.Base( ++ParamOpCounterId, this.pointwise1.paramOpCounter );
+      this.depthwise.TensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.pointwise1.TensorOpCounter );
 
     } else {
       this.channelCount_depthwiseAfter_concatenateBefore = this.channelCount_pointwise1After_depthwiseBefore;  // No depthwise operation.
@@ -509,7 +509,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise21After = this.pointwise21ChannelCount;
 
 //!!! ...unfinished... (2021/06/30) What if no depthwise?
-      this.pointwise21.paramOpCounter = new ParamOpCounter.Base( ++ParamOpCounterId, this.depthwise.paramOpCounter );
+      this.pointwise21.TensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.depthwise.TensorOpCounter );
 
     } else {
       this.channelCount_pointwise21After = 0;  // No first pointwise2 convolution.
@@ -566,8 +566,8 @@ class Base extends ReturnOrClone.Base {
 // The last operation in the queue is responsible for dispose the input.
 
 //!!! ...unfinished... (2021/06/30)
-//     this.ParamOpCounter0 = new ParamOpCounter.Base( 0, );
-//     this.ParamOpCounter1 = new ParamOpCounter.Base( 1, );
+//     this.TensorOpCounter0 = new TensorOpCounter.Base( 0, );
+//     this.TensorOpCounter1 = new TensorOpCounter.Base( 1, );
 
 
     // 5.1
