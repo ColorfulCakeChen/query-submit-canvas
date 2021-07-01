@@ -3,7 +3,7 @@ export { Base, Bases };
 /**
  * Count how many operations use a tensor behind this counter.
  *
- * @member {number} tensorId
+ * @member {any} tensorId
  *   This tensor's identifier.
  *
  * @member {Base} input0
