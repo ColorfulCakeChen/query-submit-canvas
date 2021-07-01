@@ -454,7 +454,7 @@ class Base extends ReturnOrClone.Base {
     if ( this.bPointwise1 ) {
       this.channelCount_pointwise1After_depthwiseBefore = this.pointwise1.outputChannelCount;
 //!!! ...unfinished... (2021/07/01)
-      TensorOpCounters.pointwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise1", TensorOpCounters.input0 );
+      TensorOpCounters.pointwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise1", this.pointwise1, TensorOpCounters.input0 );
 
     } else {
       this.channelCount_pointwise1After_depthwiseBefore = channelCount1_pointwise1Before;  // No pointwise1 convolution.
@@ -480,7 +480,7 @@ class Base extends ReturnOrClone.Base {
     if ( this.bDepthwise ) {
       this.channelCount_depthwiseAfter_concatenateBefore = this.depthwise.outputChannelCount;
 //!!! ...unfinished... (2021/07/01)
-      TensorOpCounters.depthwise = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise", TensorOpCounters.pointwise1 );
+      TensorOpCounters.depthwise = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise", this.depthwise, TensorOpCounters.pointwise1 );
 
     } else {
       this.channelCount_depthwiseAfter_concatenateBefore = this.channelCount_pointwise1After_depthwiseBefore;  // No depthwise operation.
@@ -499,8 +499,8 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount2_pointwise1Before;
       this.concatenator = new ConcatAlongAxisId2.Base( false, false );
 //!!! ...unfinished... (2021/07/01)
-      TensorOpCounters.concatenator
-        = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_concatenator", TensorOpCounters.depthwise, TensorOpCounters.input1 );
+      TensorOpCounters.concatenator = new TensorOpCounter.Base(
+        ( ++TensorOpCounterId ) + "_concatenator", this.concatenator, TensorOpCounters.depthwise, TensorOpCounters.input1 );
 
     } else {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
@@ -522,7 +522,8 @@ class Base extends ReturnOrClone.Base {
     if ( this.bPointwise21 ) {
       this.channelCount_pointwise21After = this.pointwise21ChannelCount;
 //!!! ...unfinished... (2021/07/01)
-      TensorOpCounters.pointwise21 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise21", TensorOpCounters.concatenator );
+      TensorOpCounters.pointwise21 = new TensorOpCounter.Base(
+        ( ++TensorOpCounterId ) + "_pointwise21", this.pointwise21, TensorOpCounters.concatenator );
 
     } else {
       this.channelCount_pointwise21After = 0;  // No first pointwise2 convolution.
@@ -544,7 +545,8 @@ class Base extends ReturnOrClone.Base {
     if ( this.bPointwise22 ) {
       this.channelCount_pointwise22After = this.pointwise22ChannelCount;
 //!!! ...unfinished... (2021/07/01)
-      TensorOpCounters.pointwise22 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise22", TensorOpCounters.concatenator );
+      TensorOpCounters.pointwise22 = new TensorOpCounter.Base(
+        ( ++TensorOpCounterId ) + "_pointwise22", this.pointwise22, TensorOpCounters.concatenator );
 
     } else {
       this.channelCount_pointwise22After = 0;  // No second pointwise2 convolution.
@@ -615,9 +617,11 @@ class Base extends ReturnOrClone.Base {
 
       if ( channelCount1_pointwise1Before == this.channelCount_pointwise21After ) {
         this.bShould_addInput0ToPointwise21 = true;
+        
 //!!! ...unfinished... (2021/07/01)
+        this.addInput0ToPointwise21 = new AddTwoTensors.Base();
         TensorOpCounters.addInput0ToPointwise21 = new TensorOpCounter.Base(
-          ( ++TensorOpCounterId ) + "_addInput0ToPointwise21", TensorOpCounters.pointwise21, TensorOpCounters.input1 );
+          ( ++TensorOpCounterId ) + "_addInput0ToPointwise21", this.addInput0ToPointwise21, TensorOpCounters.pointwise21, TensorOpCounters.input1 );
       }
 
       // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount1_pointwise1Before
@@ -625,12 +629,16 @@ class Base extends ReturnOrClone.Base {
       if ( channelCount1_pointwise1Before == this.channelCount_pointwise22After ) {
         this.bShould_addInput0ToPointwise22 = true;
 //!!! ...unfinished... (2021/07/01)
+        this.addInput0ToPointwise22 = new AddTwoTensors.Base();
         TensorOpCounters.addInput0ToPointwise22 = new TensorOpCounter.Base(
-          ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", TensorOpCounters.pointwise22, TensorOpCounters.input1 );
+          ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", this.addInput0ToPointwise22, TensorOpCounters.pointwise22, TensorOpCounters.input1 );
       }
     }
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
+
+
+//!!! ...unfinished... (2021/07/01) should be integrated into TensorOpCounters analyzing.
 
     // Note: No matter whether pointwise21 or pointwise22 exists, it is possible that only addInput0ToPointwise21 or
     //       only addInput0ToPointwise22 or both exist.
