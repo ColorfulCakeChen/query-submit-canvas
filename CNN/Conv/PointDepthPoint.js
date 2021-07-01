@@ -584,10 +584,6 @@ class Base extends ReturnOrClone.Base {
 // The first operation in the queue is responsible for keep the input not to be disposed.
 // The last operation in the queue is responsible for dispose the input.
 
-//!!! ...unfinished... (2021/06/30)
-//     this.TensorOpCounter0 = new TensorOpCounter.Base( 0, );
-//     this.TensorOpCounter1 = new TensorOpCounter.Base( 1, );
-
 
     // 5.1
     //
@@ -649,17 +645,23 @@ class Base extends ReturnOrClone.Base {
         TensorOpCounters.addInput0ToPointwise21
           = new TensorOpCounter.Base( ++TensorOpCounterId, TensorOpCounters.pointwise21, TensorOpCounters.input1 );
 
+        TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
+
       }
     } else {
       if ( this.bShould_addInput0ToPointwise22 ) {
         this.addInput0ToPointwise22 = new AddTwoTensors.Base( false, false );
 
 //!!! ...unfinished... (2021/07/01)
+        TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
         TensorOpCounters.addInput0ToPointwise22
           = new TensorOpCounter.Base( ++TensorOpCounterId, TensorOpCounters.pointwise22, TensorOpCounters.input1 );
 
       } else {
         // No add-input-to-output is needed.
+//!!! ...unfinished... (2021/07/01)
+        TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
+        TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
       }
     }
 
@@ -668,6 +670,11 @@ class Base extends ReturnOrClone.Base {
     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
     // because the adjustment might also need to select different apply_Xxx() function.
     this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
+
+
+//!!! ...unfinished... (2021/07/01) Analyze 
+    //TensorOpCounters
+
 
     // 5.3 Adjust the destroy-or-keep behavior of the first operation and last operation.
     //
