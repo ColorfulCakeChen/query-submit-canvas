@@ -429,10 +429,10 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-//!!! ...unfinished... (2021/06/30)
+//!!! ...unfinished... (2021/07/01)
     let TensorOpCounterId = -1;
-    this.input0_TensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, null );
-    this.input1_TensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, null );
+    this.inputTensorOpCounter0 = new TensorOpCounter.Base( ++TensorOpCounterId, null );
+    this.inputTensorOpCounter1 = new TensorOpCounter.Base( ++TensorOpCounterId, null );
 
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
@@ -447,12 +447,13 @@ class Base extends ReturnOrClone.Base {
     this.bPointwise1 = this.pointwise1.bExisted;
     if ( this.bPointwise1 ) {
       this.channelCount_pointwise1After_depthwiseBefore = this.pointwise1.outputChannelCount;
-
-//!!! ...unfinished... (2021/06/30)
-      this.pointwise1.TensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.input0_TensorOpCounter );
+//!!! ...unfinished... (2021/07/01)
+      this.pointwise1.outputTensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.inputTensorOpCounter0 );
 
     } else {
       this.channelCount_pointwise1After_depthwiseBefore = channelCount1_pointwise1Before;  // No pointwise1 convolution.
+//!!! ...unfinished... (2021/07/01)
+      this.pointwise1.outputTensorOpCounter = this.inputTensorOpCounter0; // Its output tensor is just the input tensor.
     }
 
     ++progressToAdvance.value;
@@ -472,12 +473,13 @@ class Base extends ReturnOrClone.Base {
     this.bDepthwise = this.depthwise.bExisted;
     if ( this.bDepthwise ) {
       this.channelCount_depthwiseAfter_concatenateBefore = this.depthwise.outputChannelCount;
-
-//!!! ...unfinished... (2021/06/30) What if no pointwise1?
-      this.depthwise.TensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.pointwise1.TensorOpCounter );
+//!!! ...unfinished... (2021/07/01)
+      this.depthwise.outputTensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.pointwise1.outputTensorOpCounter );
 
     } else {
       this.channelCount_depthwiseAfter_concatenateBefore = this.channelCount_pointwise1After_depthwiseBefore;  // No depthwise operation.
+//!!! ...unfinished... (2021/07/01)
+      this.depthwise.outputTensorOpCounter = this.pointwise1.outputTensorOpCounter;
     }
 
     ++progressToAdvance.value;
@@ -490,8 +492,13 @@ class Base extends ReturnOrClone.Base {
     if ( this.inputTensorCount > 1 ) {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount2_pointwise1Before;
       this.concatenator = new ConcatAlongAxisId2.Base( false, false );
+//!!! ...unfinished... (2021/07/01)
+      this.concatenator.outputTensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.depthwise.outputTensorOpCounter );
+
     } else {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
+
+//!!! ...unfinished... (2021/07/01)
     }
 
     // 4.1 Pointwise21
@@ -507,12 +514,13 @@ class Base extends ReturnOrClone.Base {
     this.bPointwise21 = this.pointwise21.bExisted;
     if ( this.bPointwise21 ) {
       this.channelCount_pointwise21After = this.pointwise21ChannelCount;
-
-//!!! ...unfinished... (2021/06/30) What if no depthwise?
-      this.pointwise21.TensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.depthwise.TensorOpCounter );
+//!!! ...unfinished... (2021/07/01)
+      this.pointwise21.outputTensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.depthwise.outputTensorOpCounter );
 
     } else {
       this.channelCount_pointwise21After = 0;  // No first pointwise2 convolution.
+//!!! ...unfinished... (2021/07/01)
+      this.pointwise21.outputTensorOpCounter = this.depthwise.outputTensorOpCounter;
     }
 
     // 4.2 Pointwise22
