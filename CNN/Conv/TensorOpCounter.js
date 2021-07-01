@@ -1,4 +1,4 @@
-export { Base, Bases };
+export { Base };
 
 /**
  * Count how many operations use a tensor behind this counter.
@@ -15,6 +15,9 @@ export { Base, Bases };
  * @member {number} behindOperationCount
  *   This tensor is used by how many operations which is behind this operation. If zero, the tensor is not used by other operation.
  *
+ * @member {Base[]} nextOperationArray
+ *   The operations behind this operation.
+ *
  *
  *
  */
@@ -25,6 +28,13 @@ class Base {
     this.input0 = input0;
     this.input1 = input1;
     this.behindOperationCount = 0;
+    this.nextOperationArray = [];
+
+    if ( input0 )
+      input0.nextOperationArray.push( this );
+
+    if ( input1 )
+      input1.nextOperationArray.push( this );
   }
 
 }
