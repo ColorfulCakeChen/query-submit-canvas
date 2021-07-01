@@ -6,6 +6,9 @@ export { Base };
  * @member {any} tensorId
  *   This tensor's identifier.
  *
+ * @member {object} operationObject
+ *   The object which implements the operation. It should have a pfnOperation() method.
+ *
  * @member {Base} input0
  *   The first TensorOpCounter which is just before this TensorOpCounter.
  *
@@ -23,8 +26,9 @@ export { Base };
  */
 class Base {
 
-  constructor( tensorId, input0, input1 ) {
+  constructor( tensorId, operationObject, input0, input1 ) {
     this.tensorId = tensorId;
+    this.operationObject = operationObject;
     this.input0 = input0;
     this.input1 = input1;
     this.behindOperationCount = 0;
