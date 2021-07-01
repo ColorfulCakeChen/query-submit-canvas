@@ -431,8 +431,17 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/07/01)
     let TensorOpCounterId = -1;
-    this.inputTensorOpCounter0 = new TensorOpCounter.Base( ++TensorOpCounterId, null );
-    this.inputTensorOpCounter1 = new TensorOpCounter.Base( ++TensorOpCounterId, null );
+    let TensorOpCounters = {
+      input0: new TensorOpCounter.Base( ++TensorOpCounterId, null ),
+      input1: new TensorOpCounter.Base( ++TensorOpCounterId, null ),
+      pointwise1: {},
+      depthwise: {},
+      concatenator: {},
+      pointwise21: {},
+      addInput0ToPointwise21: {},
+      pointwise22: {},
+      addInput0ToPointwise22: {},
+    };
 
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
@@ -448,12 +457,13 @@ class Base extends ReturnOrClone.Base {
     if ( this.bPointwise1 ) {
       this.channelCount_pointwise1After_depthwiseBefore = this.pointwise1.outputChannelCount;
 //!!! ...unfinished... (2021/07/01)
-      this.pointwise1.outputTensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.inputTensorOpCounter0 );
+      TensorOpCounters.pointwise1.input = TensorOpCounters.input0;
+      TensorOpCounters.pointwise1.output = new TensorOpCounter.Base( ++TensorOpCounterId, TensorOpCounters.pointwise1.input );
 
     } else {
       this.channelCount_pointwise1After_depthwiseBefore = channelCount1_pointwise1Before;  // No pointwise1 convolution.
 //!!! ...unfinished... (2021/07/01)
-      this.pointwise1.outputTensorOpCounter = this.inputTensorOpCounter0; // Its output tensor is just the input tensor.
+      TensorOpCounters.pointwise1.input = TensorOpCounters.pointwise1.output = TensorOpCounters.input0; // Its output is just the input tensor.
     }
 
     ++progressToAdvance.value;
@@ -474,12 +484,13 @@ class Base extends ReturnOrClone.Base {
     if ( this.bDepthwise ) {
       this.channelCount_depthwiseAfter_concatenateBefore = this.depthwise.outputChannelCount;
 //!!! ...unfinished... (2021/07/01)
-      this.depthwise.outputTensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.pointwise1.outputTensorOpCounter );
+      TensorOpCounters.depthwise.input = TensorOpCounters.pointwise1.output;
+      TensorOpCounters.depthwise.output = new TensorOpCounter.Base( ++TensorOpCounterId, TensorOpCounters.depthwise.input );
 
     } else {
       this.channelCount_depthwiseAfter_concatenateBefore = this.channelCount_pointwise1After_depthwiseBefore;  // No depthwise operation.
 //!!! ...unfinished... (2021/07/01)
-      this.depthwise.outputTensorOpCounter = this.pointwise1.outputTensorOpCounter;
+      TensorOpCounters.depthwise.input = TensorOpCounters.depthwise.output = TensorOpCounters.pointwise1.output;
     }
 
     ++progressToAdvance.value;
@@ -493,7 +504,9 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount2_pointwise1Before;
       this.concatenator = new ConcatAlongAxisId2.Base( false, false );
 //!!! ...unfinished... (2021/07/01)
-      this.concatenator.outputTensorOpCounter = new TensorOpCounter.Base( ++TensorOpCounterId, this.depthwise.outputTensorOpCounter );
+      TensorOpCounters.concatenator.input0 = TensorOpCounters.depthwise.output;
+      TensorOpCounters.concatenator.input1 = TensorOpCounters.input1;
+      TensorOpCounters.concatenator.output = new TensorOpCounter.Base( ++TensorOpCounterId, TensorOpCounters.concatenator.input0, TensorOpCounters.concatenator.input1 );
 
     } else {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
