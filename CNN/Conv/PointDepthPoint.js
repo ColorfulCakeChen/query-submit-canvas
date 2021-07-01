@@ -432,7 +432,7 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
 //!!! ...unfinished... (2021/07/01)
-    // For analyze every tensor processed by how many operations. These will be used to determine whether
+    // For analyzing every tensor processed by how many operations. These will be used to determine whether
     // the operation should dispose its input tensor.
     let TensorOpCounterId = -1;
     let TensorOpCounters = {
@@ -634,12 +634,30 @@ class Base extends ReturnOrClone.Base {
         // and keep-input-tensor-1 (i.e. the depthwise output). Otherwise, the addInput0ToPointwise22 will fail to process it.
         this.addInput0ToPointwise21 = new AddTwoTensors.Base( true, true );
         this.addInput0ToPointwise22 = new AddTwoTensors.Base( false, false );
+
+//!!! ...unfinished... (2021/07/01)
+        TensorOpCounters.addInput0ToPointwise21
+          = new TensorOpCounter.Base( ++TensorOpCounterId, TensorOpCounters.pointwise21, TensorOpCounters.input1 );
+
+        TensorOpCounters.addInput0ToPointwise22
+          = new TensorOpCounter.Base( ++TensorOpCounterId, TensorOpCounters.pointwise22, TensorOpCounters.input1 );
+
       } else {
         this.addInput0ToPointwise21 = new AddTwoTensors.Base( false, false );
+
+//!!! ...unfinished... (2021/07/01)
+        TensorOpCounters.addInput0ToPointwise21
+          = new TensorOpCounter.Base( ++TensorOpCounterId, TensorOpCounters.pointwise21, TensorOpCounters.input1 );
+
       }
     } else {
       if ( this.bShould_addInput0ToPointwise22 ) {
         this.addInput0ToPointwise22 = new AddTwoTensors.Base( false, false );
+
+//!!! ...unfinished... (2021/07/01)
+        TensorOpCounters.addInput0ToPointwise22
+          = new TensorOpCounter.Base( ++TensorOpCounterId, TensorOpCounters.pointwise22, TensorOpCounters.input1 );
+
       } else {
         // No add-input-to-output is needed.
       }
