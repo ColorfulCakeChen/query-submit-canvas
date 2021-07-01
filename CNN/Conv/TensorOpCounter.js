@@ -1,4 +1,4 @@
-export { Base };
+export { Base, Bases };
 
 /**
  * Count how many operations use a tensor behind this counter.
@@ -6,10 +6,10 @@ export { Base };
  * @member {number} tensorId
  *   This tensor's identifier.
  *
- * @member {Base} previousInputOpCounter0
+ * @member {Base} input0
  *   The first TensorOpCounter which is just before this TensorOpCounter.
  *
- * @member {Base} previousInputOpCounter1
+ * @member {Base} input1
  *   The second TensorOpCounter which is just before this TensorOpCounter.
  *
  * @member {number} behindOperationCount
@@ -20,10 +20,10 @@ export { Base };
  */
 class Base {
 
-  constructor( tensorId, previousTensorOpCounter0, previousTensorOpCounter1 ) {
+  constructor( tensorId, input0, input1 ) {
     this.tensorId = tensorId;
-    this.previousTensorOpCounter0 = previousTensorOpCounter0;
-    this.previousTensorOpCounter1 = previousTensorOpCounter1;
+    this.input0 = input0;
+    this.input1 = input1;
     this.behindOperationCount = 0;
   }
 
