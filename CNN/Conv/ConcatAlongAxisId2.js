@@ -1,8 +1,5 @@
 export { Base };
 
-//!!! ...unfinished... (2021/06/30)
-import * as ParamOpCounter from "./ParamOpCounter.js";
-
 /**
  * Concatenate two tensor3d ( height x width x channel ) always along the last axis (i.e. axisId = 2, along the channel axis). It could
  * destroy one or two of the input tensors.
@@ -28,10 +25,6 @@ class Base {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
     Base.adjust_pfnConcat.call( this );
-
-//!!! ...unfinished... (2021/06/30)
-//     this.ParamOpCounter0 = new ParamOpCounter.Base( 0, );
-//     this.ParamOpCounter1 = new ParamOpCounter.Base( 1, );
   }
 
   /**
