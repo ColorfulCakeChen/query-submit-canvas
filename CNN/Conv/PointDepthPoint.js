@@ -432,17 +432,12 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
 //!!! ...unfinished... (2021/07/01)
+    // For analyze every tensor processed by how many operations. These will be used to determine whether
+    // the operation should dispose its input tensor.
     let TensorOpCounterId = -1;
     let TensorOpCounters = {
       input0: new TensorOpCounter.Base( ++TensorOpCounterId, null, null ),
       input1: new TensorOpCounter.Base( ++TensorOpCounterId, null, null ),
-      pointwise1: {},
-      depthwise: {},
-      concatenator: {},
-      pointwise21: {},
-      addInput0ToPointwise21: {},
-      pointwise22: {},
-      addInput0ToPointwise22: {},
     };
 
     // 2. The first 1x1 pointwise convolution.
