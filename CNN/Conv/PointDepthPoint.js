@@ -585,6 +585,9 @@ class Base extends ReturnOrClone.Base {
 // The first operation in the queue is responsible for keep the input not to be disposed.
 // The last operation in the queue is responsible for dispose the input.
 
+//!!! ...unfinished... (2021/07/01)
+    TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
+    TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
 
     // 5.1
     //
@@ -615,9 +618,6 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2021/07/01)
         TensorOpCounters.addInput0ToPointwise21 = new TensorOpCounter.Base(
           ( ++TensorOpCounterId ) + "_addInput0ToPointwise21", TensorOpCounters.pointwise21, TensorOpCounters.input1 );
-      } else {
-//!!! ...unfinished... (2021/07/01)
-        TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
       }
 
       // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount1_pointwise1Before
@@ -625,11 +625,8 @@ class Base extends ReturnOrClone.Base {
       if ( channelCount1_pointwise1Before == this.channelCount_pointwise22After ) {
         this.bShould_addInput0ToPointwise22 = true;
 //!!! ...unfinished... (2021/07/01)
-        TensorOpCounters.addInput0ToPointwise22
-          = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", TensorOpCounters.pointwise22, TensorOpCounters.input1 );
-      } else {
-//!!! ...unfinished... (2021/07/01)
-        TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
+        TensorOpCounters.addInput0ToPointwise22 = new TensorOpCounter.Base(
+          ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", TensorOpCounters.pointwise22, TensorOpCounters.input1 );
       }
     }
 
