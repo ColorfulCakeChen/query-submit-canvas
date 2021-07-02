@@ -588,6 +588,7 @@ class Base extends ReturnOrClone.Base {
 // The last operation in the queue is responsible for dispose the input.
 
 //!!! ...unfinished... (2021/07/01)
+    // Assume no add-input-to-output by default.
     TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
     TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
 
