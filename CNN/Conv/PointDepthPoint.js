@@ -431,7 +431,7 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-//!!! ...unfinished... (2021/07/01)
+//!!! ...unfinished... (2021/07/02) TensorOpCounter may be a Map or Set.
     // For analyzing every tensor processed by how many operations. These will be used to determine whether
     // the operation should dispose its input tensor.
     let TensorOpCounterId = -1;
@@ -668,11 +668,6 @@ class Base extends ReturnOrClone.Base {
     // because the adjustment might also need to select different apply_Xxx() function.
     this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
 
-
-//!!! ...unfinished... (2021/07/01) Analyze 
-    //TensorOpCounters
-
-
     // 5.3 Adjust the destroy-or-keep behavior of the first operation and last operation.
     //
     // If:
@@ -684,6 +679,18 @@ class Base extends ReturnOrClone.Base {
     //
     if ( ( bKeepInputTensor ) || ( this.bShouldAddInputToOutput ) ) {
       Base.Adjust_for_KeepInputTensor_or_ShouldAddInputToOutput.call( this );
+    }
+
+
+//!!! ...unfinished... (2021/07/02) Analyze 
+    {
+      let alwaysKeepSet;
+      if ( bKeepInputTensor ) { // User requests to keep input tensors.
+        alwaysKeepSet = new Set( [ TensorOpCounters.input0, TensorOpCounters.input1 ] );
+      }
+
+      //TensorOpCounters
+      TensorOpCounters.addInput0ToPointwise22.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
     }
 
     ++progressToAdvance.value;
