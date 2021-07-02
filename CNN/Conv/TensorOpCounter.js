@@ -7,7 +7,9 @@ export { Base };
  *   This tensor's identifier.
  *
  * @member {object} operationObject
- *   The object which implements the operation. It should have a pfnOperation() method.
+ *   The object which implements the operation. It should have the following method:
+ *   - setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 )
+ *   - pfnOperation( inputTensor0, inputTensor1 )
  *
  * @member {Base} input0
  *   The first TensorOpCounter which represents this operation's first input.
@@ -40,6 +42,29 @@ class Base {
 
     if ( input1 )
       input1.nextOperationArray.push( this );
+  }
+
+  /**
+   * Call the this.operationObject.setKeepInputTensor() according to：
+   *   - whether the operation is the last operation of the this.input0 / this.input1.
+   *   - whether the this.input0 / this.input1 is in alwaysKeepSet.
+   *
+   * @param {Set<Base>} alwaysKeepSet
+   *   A set object. Its every element is TensorOpCounter.Base object. They represent tensors never be disposed. The this.input0
+   * and this.input1 will be compared with them.
+   */
+  operationObject_setKeepInputTensor_accordingTo_( alwaysKeepSet ) {
+    
+    if ( !this.operationObject )
+      return; // Since there is no operation, there is no need to set up its keep-input flags.
+
+    let bKeepInputTensor0, bKeepInputTensor1;
+
+    if ( this.input0 ) {
+    } else {
+    }
+
+//!!! ...unfinished... (2021/07/02)
   }
 
   get nextOperationsCount() {
