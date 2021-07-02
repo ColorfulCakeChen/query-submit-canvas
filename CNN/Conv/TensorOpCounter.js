@@ -60,9 +60,15 @@ class Base {
     if ( !this.operationObject )
       return; // Since there is no operation, there is no need to set up its keep-input flags.
 
+//!!! ...unfinished... (2021/07/02)
+    // Every input which needs to be disposed by this operation will have an entry in this Map.
+    //
+    // The key is the input TensorOpCounter.Base object.
+    // The value is its array index in this.inputArray[] (also in this.bKeepInputTensorArray[]).
+    let disposeMap = new Map;
+
     for ( let i = 0; i < this.inputArray.length; ++i ) {
       let input = this.inputArray[ i ];
-      this.bKeepInputTensorArray[ i ] = undefined;
 
       if ( !input )
         continue; // Since the input does not exist, there is no keep/dispose for it.
@@ -76,21 +82,23 @@ class Base {
         continue; // Since the input does not processed by this operation, there is no keep/dispose for it. (shoud not happen)
 
 //!!! ...unfinished... (2021/07/02)
+      // If this operation is the last operation of the tensor, this operation should dispose it.
+      //
+      // Note: If an input appear multiple times in this.inputArray[] (i.e. multiple inputs of this operation are the same one input),
+      // the map will only record the last one. That is, the input will only be disposed once (rather than multiple times).
       if ( input.nextOperationArray[ input.nextOperationArray.length - 1 ] == this.operationObject ) {
-        this.bKeepInputTensorArray[ i ] = false; // Since this operation is the last operation of the tensor, this operation should dispose it.
-      } else {
-        this.bKeepInputTensorArray[ i ] = true; // 
+        disposeMap.set( input, i );
       }
 
 //!!! ...unfinished... (2021/07/02) What if duplicated input? (i.e. multiple same input in the this.inputArray[])
 
-        this.bKeepInputTensorArray[ i ] = false; // Since the input does not exist, there is no need to keep it.
-        } else {
-        }
+    }
 
-      } else {
-        this.bKeepInputTensorArray[ i ] = false; // Since the input does not exist, there is no need to keep it.
-      }
+//!!! ...unfinished... (2021/07/02) What if duplicated input? (i.e. multiple same input in the this.inputArray[])
+    
+    this.bKeepInputTensorArray.fill( true ); // Default is keep every input.
+    for ( let [ input, arrayIndex ] of disposeMap ) {
+      this.bKeepInputTensorArray[ arrayIndex ] = false; // The input tensor should be disposed (i.e. will not be kept).
     }
 
 //!!! ...unfinished... (2021/07/02)
