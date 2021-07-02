@@ -689,7 +689,12 @@ class Base extends ReturnOrClone.Base {
         alwaysKeepSet = new Set( [ TensorOpCounters.input0, TensorOpCounters.input1 ] );
       }
 
-      //TensorOpCounters
+//!!! ...unfinished... (2021/07/02)  If TensorOpCounters is a Map or Set.
+      for ( let [ k, v ] of TensorOpCounters ) {
+        TensorOpCounters.addInput0ToPointwise22.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
+      }
+
+//!!! ...unfinished... (2021/07/02)
       TensorOpCounters.addInput0ToPointwise22.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
     }
 
