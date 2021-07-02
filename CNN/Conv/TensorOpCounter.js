@@ -19,7 +19,7 @@ export { Base };
  * @member {Base[]} nextOperationArray
  *   The operations behind this operation.
  *
- * @member {number} nextOperationCount
+ * @member {number} nextOperationsCount
  *   This operration's output tensor is used by how many operations which is behind this operation. This is the same as
  * this.nextOperationArray.length. If zero, the tensor is not used by other operation.
  *
@@ -42,7 +42,7 @@ class Base {
       input1.nextOperationArray.push( this );
   }
 
-  get nextOperationCount() {
+  get nextOperationsCount() {
     return this.nextOperationArray.length;
   }
 
