@@ -12,18 +12,18 @@ export { Base };
  *   - pfnOperation( inputTensor0, inputTensor1 )
  *
  * @member {Base} input0
- *   The first TensorOpCounter which represents this operation's first input.
+ *   The TensorOpCounter.Base object which represents this operation's first input.
  *
  * @member {Base} input1
- *   The second TensorOpCounter which represents this operation's second input. It could be null, if this operation does not have
- * second input tensor.
+ *   The TensorOpCounter.Base object which represents this operation's second input. It could be null which means this operation
+ * does not have second input tensor.
  *
  * @member {Base[]} nextOperationArray
- *   The operations behind this operation.
+ *   The operations which will use the output tensor of this operation.
  *
  * @member {number} nextOperationsCount
- *   This operration's output tensor is used by how many operations which is behind this operation. This is the same as
- * this.nextOperationArray.length. If zero, the tensor is not used by other operation.
+ *   This operation's output tensor is used by how many operations which is behind this operation. This is the same as
+ * this.nextOperationArray.length. If zero, the output tensor is not used by other operation.
  *
  *
  *
@@ -38,9 +38,9 @@ class Base {
 
     // Record this operation is one of the input's operations.
     for ( let i = 0; i < this.inputArray.length; ++i ) {
-      let inputTensorOpCounter = this.inputArray[ i ];
-      if ( inputTensorOpCounter )
-        inputTensorOpCounter.nextOperationArray.push( this );
+      let input = this.inputArray[ i ];
+      if ( input )
+        input.nextOperationArray.push( this );
     }
 
     this.bKeepInputTensorArray = new Array( this.inputArray.length );
@@ -55,8 +55,8 @@ class Base {
    *   A set object. Its every element is TensorOpCounter.Base object. They represent tensors never be disposed. The this.input0
    * and this.input1 will be compared with them.
    */
-  operationObject_setKeepInputTensor_accordingTo( alwaysKeepSet ) {
-    
+  setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet ) {
+  
     if ( !this.operationObject )
       return; // Since there is no operation, there is no need to set up its keep-input flags.
 
@@ -84,6 +84,9 @@ class Base {
       // the map will only record the last one. So that the input will only be disposed once (rather than multiple times).
       if ( input.nextOperationArray[ input.nextOperationArray.length - 1 ] == this )
         disposeMap.set( input, i );
+
+      // This operation uses the input tensor. There are, however, other operations still need use the same input tensor.
+      // So the input tensor should not be disposed (i.e. should be kept) by this operation.
     }
 
     // Find out and mark all the input tensors should be disposed (i.e. will not be kept) by this operation.
