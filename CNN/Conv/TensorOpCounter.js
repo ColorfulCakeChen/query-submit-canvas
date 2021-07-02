@@ -60,7 +60,6 @@ class Base {
     if ( !this.operationObject )
       return; // Since there is no operation, there is no need to set up its keep-input flags.
 
-//!!! ...unfinished... (2021/07/02)
     // Every input which needs to be disposed by this operation will have an entry in this Map.
     //
     // The key is the input TensorOpCounter.Base object.
@@ -87,23 +86,14 @@ class Base {
         disposeMap.set( input, i );
     }
 
-//!!! ...unfinished... (2021/07/02) What if duplicated input? (i.e. multiple same input in the this.inputArray[])
-    
+    // Find out and mark all the input tensors should be disposed (i.e. will not be kept) by this operation.
     this.bKeepInputTensorArray.fill( true ); // Default is keep every input.
     for ( let [ input, arrayIndex ] of disposeMap ) {
-      this.bKeepInputTensorArray[ arrayIndex ] = false; // The input tensor should be disposed (i.e. will not be kept).
+      this.bKeepInputTensorArray[ arrayIndex ] = false;
     }
 
-//!!! ...unfinished... (2021/07/02)
+    // Configure the operation to keep or dispose its inputs.
     this.operationObject.setKeepInputTensor( this.bKeepInputTensorArray[ 0 ], this.bKeepInputTensorArray[ 1 ] );
-  }
-
-//!!! ...unfinished... (2021/07/02)
-  /**
-   *
-   * @param {Base} anotherTensorOpCounter
-   */
-  isLastOperation( anotherTensorOpCounter ) {
   }
 
   get nextOperationsCount() {
