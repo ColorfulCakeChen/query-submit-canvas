@@ -33,15 +33,17 @@ class Base {
   constructor( tensorId, operationObject, input0, input1 ) {
     this.tensorId = tensorId;
     this.operationObject = operationObject;
-    this.input0 = input0;
-    this.input1 = input1;
+    this.inputArray = [ input0, input1 ];
     this.nextOperationArray = [];
 
-    if ( input0 )
-      input0.nextOperationArray.push( this );
+    // Record this operation is one of the input's operations.
+    for ( let i = 0; i < this.inputArray.length; ++i ) {
+      let inputTensorOpCounter = this.inputArray[ i ];
+      if ( inputTensorOpCounter )
+        inputTensorOpCounter.nextOperationArray.push( this );
+    }
 
-    if ( input1 )
-      input1.nextOperationArray.push( this );
+    this.bKeepInputTensorArray = new Array( this.inputArray.length );
   }
 
   /**
@@ -53,18 +55,54 @@ class Base {
    *   A set object. Its every element is TensorOpCounter.Base object. They represent tensors never be disposed. The this.input0
    * and this.input1 will be compared with them.
    */
-  operationObject_setKeepInputTensor_accordingTo_( alwaysKeepSet ) {
+  operationObject_setKeepInputTensor_accordingTo( alwaysKeepSet ) {
     
     if ( !this.operationObject )
       return; // Since there is no operation, there is no need to set up its keep-input flags.
 
-    let bKeepInputTensor0, bKeepInputTensor1;
+    for ( let i = 0; i < this.inputArray.length; ++i ) {
+      let input = this.inputArray[ i ];
+      this.bKeepInputTensorArray[ i ] = undefined;
 
-    if ( this.input0 ) {
-    } else {
+      if ( !input )
+        continue; // Since the input does not exist, there is no keep/dispose for it.
+
+      if ( ( alwaysKeepSet ) && ( alwaysKeepSet.has( input ) ) ) {
+        this.bKeepInputTensorArray[ i ] = true;
+        continue; // The input in alwaysKeepSet should always be kept.
+      }
+
+      if ( input.nextOperationArray.length <= 0 )
+        continue; // Since the input does not processed by this operation, there is no keep/dispose for it. (shoud not happen)
+
+//!!! ...unfinished... (2021/07/02)
+      if ( input.nextOperationArray[ input.nextOperationArray.length - 1 ] == this.operationObject ) {
+        this.bKeepInputTensorArray[ i ] = false; // Since this operation is the last operation of the tensor, this operation should dispose it.
+      } else {
+        this.bKeepInputTensorArray[ i ] = true; // 
+      }
+
+//!!! ...unfinished... (2021/07/02) What if duplicated input? (i.e. multiple same input in the this.inputArray[])
+
+        this.bKeepInputTensorArray[ i ] = false; // Since the input does not exist, there is no need to keep it.
+        } else {
+        }
+
+      } else {
+        this.bKeepInputTensorArray[ i ] = false; // Since the input does not exist, there is no need to keep it.
+      }
     }
 
 //!!! ...unfinished... (2021/07/02)
+    this.operationObject.setKeepInputTensor( this.bKeepInputTensorArray[ 0 ], this.bKeepInputTensorArray[ 1 ] );
+  }
+
+//!!! ...unfinished... (2021/07/02)
+  /**
+   *
+   * @param {Base} anotherTensorOpCounter
+   */
+  isLastOperation( anotherTensorOpCounter ) {
   }
 
   get nextOperationsCount() {
