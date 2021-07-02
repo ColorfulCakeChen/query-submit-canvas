@@ -71,27 +71,20 @@ class Base {
       let input = this.inputArray[ i ];
 
       if ( !input )
-        continue; // Since the input does not exist, there is no keep/dispose for it.
+        continue; // Since the input does not exist, there is no need to dispose it.
 
-      if ( ( alwaysKeepSet ) && ( alwaysKeepSet.has( input ) ) ) {
-        this.bKeepInputTensorArray[ i ] = true;
-        continue; // The input in alwaysKeepSet should always be kept.
-      }
+      if ( ( alwaysKeepSet ) && ( alwaysKeepSet.has( input ) ) )
+        continue; // The input in alwaysKeepSet should always be kept (always not to be disposed).
 
       if ( input.nextOperationArray.length <= 0 )
-        continue; // Since the input does not processed by this operation, there is no keep/dispose for it. (shoud not happen)
+        continue; // Since the input does not processed by this operation, there is no need to dispose it. (shoud not happen)
 
-//!!! ...unfinished... (2021/07/02)
-      // If this operation is the last operation of the tensor, this operation should dispose it.
+      // If this operation is the last operation of the input tensor, this operation is responsible for disposing it.
       //
-      // Note: If an input appear multiple times in this.inputArray[] (i.e. multiple inputs of this operation are the same one input),
-      // the map will only record the last one. That is, the input will only be disposed once (rather than multiple times).
-      if ( input.nextOperationArray[ input.nextOperationArray.length - 1 ] == this.operationObject ) {
+      // Note: If an input appears multiple times in this.inputArray[] (i.e. multiple inputs of this operation are the same one input),
+      // the map will only record the last one. So that the input will only be disposed once (rather than multiple times).
+      if ( input.nextOperationArray[ input.nextOperationArray.length - 1 ] == this )
         disposeMap.set( input, i );
-      }
-
-//!!! ...unfinished... (2021/07/02) What if duplicated input? (i.e. multiple same input in the this.inputArray[])
-
     }
 
 //!!! ...unfinished... (2021/07/02) What if duplicated input? (i.e. multiple same input in the this.inputArray[])
