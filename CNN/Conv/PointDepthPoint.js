@@ -621,7 +621,7 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2021/07/01)
         this.addInput0ToPointwise21 = new AddTwoTensors.Base();
         TensorOpCounters.addInput0ToPointwise21 = new TensorOpCounter.Base(
-          ( ++TensorOpCounterId ) + "_addInput0ToPointwise21", this.addInput0ToPointwise21, TensorOpCounters.pointwise21, TensorOpCounters.input1 );
+          ( ++TensorOpCounterId ) + "_addInput0ToPointwise21", this.addInput0ToPointwise21, TensorOpCounters.input0, TensorOpCounters.pointwise21 );
       }
 
       // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount1_pointwise1Before
@@ -631,7 +631,7 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2021/07/01)
         this.addInput0ToPointwise22 = new AddTwoTensors.Base();
         TensorOpCounters.addInput0ToPointwise22 = new TensorOpCounter.Base(
-          ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", this.addInput0ToPointwise22, TensorOpCounters.pointwise22, TensorOpCounters.input1 );
+          ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", this.addInput0ToPointwise22, TensorOpCounters.input0, TensorOpCounters.pointwise22 );
       }
     }
 
