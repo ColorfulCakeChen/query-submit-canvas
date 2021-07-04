@@ -64,7 +64,7 @@ class Base {
     //
     // The key is the input TensorOpCounter.Base object.
     // The value is its array index in this.inputArray[] (also in this.bKeepInputTensorArray[]).
-    let disposeMap = new Map;
+    let input_dispose_Map = new Map;
 
     for ( let i = 0; i < this.inputArray.length; ++i ) {
       let input = this.inputArray[ i ];
@@ -83,7 +83,7 @@ class Base {
       // Note: If an input appears multiple times in this.inputArray[] (i.e. multiple inputs of this operation are the same one input),
       // the map will only record the last one. So that the input will only be disposed once (rather than multiple times).
       if ( input.nextOperationArray[ input.nextOperationArray.length - 1 ] == this )
-        disposeMap.set( input, i );
+        input_dispose_Map.set( input, i );
 
       // This operation uses the input tensor. There are, however, other operations still need use the same input tensor.
       // So the input tensor should not be disposed (i.e. should be kept) by this operation.
@@ -91,7 +91,7 @@ class Base {
 
     // Find out and mark all the input tensors should be disposed (i.e. will not be kept) by this operation.
     this.bKeepInputTensorArray.fill( true ); // Default is keep every input.
-    for ( let [ input, arrayIndex ] of disposeMap ) {
+    for ( let [ input, arrayIndex ] of input_dispose_Map ) {
       this.bKeepInputTensorArray[ arrayIndex ] = false;
     }
 
