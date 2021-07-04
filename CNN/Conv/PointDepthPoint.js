@@ -737,7 +737,7 @@ class Base extends ReturnOrClone.Base {
 
       for ( let i = 0; i < TensorOpCounterArray.length; ++i ) {
         let TensorOpCounter = TensorOpCounterArray[ i ];
-        TensorOpCounter.addInput0ToPointwise22.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
+        TensorOpCounter.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
       }
     }
 
