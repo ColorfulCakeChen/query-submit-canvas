@@ -1117,9 +1117,6 @@ class Base extends ReturnOrClone.Base {
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
-//!!! ...unfinished... (2021/07/04)
-    // All pointwise2 should be done before any addInput0ToPointwise2 because TensorOpCounters analyzes them in this order.
-
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 0 ] = this.addInput0ToPointwise21.pfnAdd( inputTensor, t0 );
 
@@ -1141,9 +1138,6 @@ class Base extends ReturnOrClone.Base {
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
 
-//!!! ...unfinished... (2021/07/04)
-    // All pointwise2 should be done before any addInput0ToPointwise2 because TensorOpCounters analyzes them in this order.
-
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 0 ] = this.addInput0ToPointwise21.pfnAdd( inputTensor, t0 );
 
@@ -1163,9 +1157,6 @@ class Base extends ReturnOrClone.Base {
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise.pfnOperationBiasActivation( t0 );
-
-//!!! ...unfinished... (2021/07/04)
-    // All pointwise2 should be done before any addInput0ToPointwise2 because TensorOpCounters analyzes them in this order.
 
     outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
 
