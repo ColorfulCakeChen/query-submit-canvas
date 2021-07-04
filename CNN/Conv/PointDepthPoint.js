@@ -435,10 +435,12 @@ class Base extends ReturnOrClone.Base {
     // For analyzing every tensor processed by how many operations. These will be used to determine whether
     // the operation should dispose its input tensor.
     let TensorOpCounterId = -1;
-    let TensorOpCounters = {
-      input0: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input0", null, null ),
-      input1: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input1", null, null ),
-    };
+
+    // Q: Why not set TensorOpCounters.input0 and TensorOpCounters.input1 as properties when initializing TensorOpCounters object?
+    // A: The TensorOpCounterId will not change after the initialization so that the id of TensorOpCounters.input1 will be wrong.
+    let TensorOpCounters = {};
+    TensorOpCounters.input0 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input0", null, null );
+    TensorOpCounters.input1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input1", null, null );
 
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
