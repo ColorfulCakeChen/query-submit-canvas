@@ -521,14 +521,14 @@ class Base extends ReturnOrClone.Base {
     this.bPointwise21 = this.pointwise21.bExisted;
     if ( this.bPointwise21 ) {
       this.channelCount_pointwise21After = this.pointwise21ChannelCount;
-//!!! ...unfinished... (2021/07/01)
-      TensorOpCounters.pointwise21 = new TensorOpCounter.Base(
-        ( ++TensorOpCounterId ) + "_pointwise21", this.pointwise21, TensorOpCounters.concatenator );
+//!!! ...unfinished... (2021/07/04 Remarked) Move to later.
+//       TensorOpCounters.pointwise21 = new TensorOpCounter.Base(
+//         ( ++TensorOpCounterId ) + "_pointwise21", this.pointwise21, TensorOpCounters.concatenator );
 
     } else {
       this.channelCount_pointwise21After = 0;  // No first pointwise2 convolution.
-//!!! ...unfinished... (2021/07/01)
-      TensorOpCounters.pointwise21 = TensorOpCounters.concatenator; // Its output is just its input tensor.
+//!!! ...unfinished... (2021/07/04 Remarked) Move to later.
+//       TensorOpCounters.pointwise21 = TensorOpCounters.concatenator; // Its output is just its input tensor.
     }
 
     // 4.2 Pointwise22
@@ -544,14 +544,14 @@ class Base extends ReturnOrClone.Base {
     this.bPointwise22 = this.pointwise22.bExisted;
     if ( this.bPointwise22 ) {
       this.channelCount_pointwise22After = this.pointwise22ChannelCount;
-//!!! ...unfinished... (2021/07/01)
-      TensorOpCounters.pointwise22 = new TensorOpCounter.Base(
-        ( ++TensorOpCounterId ) + "_pointwise22", this.pointwise22, TensorOpCounters.concatenator );
+//!!! ...unfinished... (2021/07/04 Remarked) Move to later.
+//       TensorOpCounters.pointwise22 = new TensorOpCounter.Base(
+//         ( ++TensorOpCounterId ) + "_pointwise22", this.pointwise22, TensorOpCounters.concatenator );
 
     } else {
       this.channelCount_pointwise22After = 0;  // No second pointwise2 convolution.
-//!!! ...unfinished... (2021/07/01)
-      TensorOpCounters.pointwise22 = TensorOpCounters.concatenator; // Its output is just its input tensor.
+//!!! ...unfinished... (2021/07/04 Remarked) Move to later.
+//      TensorOpCounters.pointwise22 = TensorOpCounters.concatenator; // Its output is just its input tensor.
     }
 
     // 4.3 Pointwise2 (= Pointwise21 + Pointwise22 )
@@ -587,10 +587,10 @@ class Base extends ReturnOrClone.Base {
 // The first operation in the queue is responsible for keep the input not to be disposed.
 // The last operation in the queue is responsible for dispose the input.
 
-//!!! ...unfinished... (2021/07/01)
-    // Assume no add-input-to-output by default.
-    TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
-    TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
+//!!! ...unfinished... (2021/07/04 Remarked) Move to later.
+//     // Assume no add-input-to-output by default.
+//     TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
+//     TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
 
     // 5.1
     //
@@ -618,28 +618,64 @@ class Base extends ReturnOrClone.Base {
 
       if ( channelCount1_pointwise1Before == this.channelCount_pointwise21After ) {
         this.bShould_addInput0ToPointwise21 = true;
-        
-//!!! ...unfinished... (2021/07/01)
         this.addInput0ToPointwise21 = new AddTwoTensors.Base();
-        TensorOpCounters.addInput0ToPointwise21 = new TensorOpCounter.Base(
-          ( ++TensorOpCounterId ) + "_addInput0ToPointwise21", this.addInput0ToPointwise21, TensorOpCounters.input0, TensorOpCounters.pointwise21 );
+        
+//!!! ...unfinished... (2021/07/04 Remarked) Move to later.
+//         TensorOpCounters.addInput0ToPointwise21 = new TensorOpCounter.Base(
+//           ( ++TensorOpCounterId ) + "_addInput0ToPointwise21", this.addInput0ToPointwise21, TensorOpCounters.input0, TensorOpCounters.pointwise21 );
       }
 
       // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount1_pointwise1Before
       // (not channelCount2_pointwise1Before).
       if ( channelCount1_pointwise1Before == this.channelCount_pointwise22After ) {
         this.bShould_addInput0ToPointwise22 = true;
-//!!! ...unfinished... (2021/07/01)
         this.addInput0ToPointwise22 = new AddTwoTensors.Base();
-        TensorOpCounters.addInput0ToPointwise22 = new TensorOpCounter.Base(
-          ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", this.addInput0ToPointwise22, TensorOpCounters.input0, TensorOpCounters.pointwise22 );
+
+//!!! ...unfinished... (2021/07/04 Remarked) Move to later.
+//         TensorOpCounters.addInput0ToPointwise22 = new TensorOpCounter.Base(
+//           ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", this.addInput0ToPointwise22, TensorOpCounters.input0, TensorOpCounters.pointwise22 );
       }
     }
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
 
-//!!! ...unfinished... (2021/07/01) should be integrated into TensorOpCounters analyzing.
+//!!! ...unfinished... (2021/07/04)
+    // Q: Why not create TensorOpCounter in the above codes?
+    // A: The reason is that let addInput0ToPointwise21 in front of pointwise22.
+    //    This is because apply_X_X_and_destroy_or_keep_AddInputToOutput_X() does them in this order.
+    {
+      if ( this.bPointwise21 )
+        TensorOpCounters.pointwise21 = new TensorOpCounter.Base(
+          ( ++TensorOpCounterId ) + "_pointwise21", this.pointwise21, TensorOpCounters.concatenator );
+      else
+        TensorOpCounters.pointwise21 = TensorOpCounters.concatenator; // Its output is just its input tensor.
+
+      // Note: This should be before pointwise22.
+      if ( this.bShould_addInput0ToPointwise21 )
+        TensorOpCounters.addInput0ToPointwise21 = new TensorOpCounter.Base(
+          ( ++TensorOpCounterId ) + "_addInput0ToPointwise21", this.addInput0ToPointwise21, TensorOpCounters.input0, TensorOpCounters.pointwise21 );
+      else
+        TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
+
+      if ( this.bPointwise22 )
+        TensorOpCounters.pointwise22 = new TensorOpCounter.Base(
+          ( ++TensorOpCounterId ) + "_pointwise22", this.pointwise22, TensorOpCounters.concatenator );
+      else
+        TensorOpCounters.pointwise22 = TensorOpCounters.concatenator; // Its output is just its input tensor.
+
+      // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount1_pointwise1Before
+      // (not channelCount2_pointwise1Before).
+      if ( this.bShould_addInput0ToPointwise22 )
+        TensorOpCounters.addInput0ToPointwise22 = new TensorOpCounter.Base(
+          ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", this.addInput0ToPointwise22, TensorOpCounters.input0, TensorOpCounters.pointwise22 );
+      else
+        TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
+    }
+
+
+
+//!!! ...unfinished... (2021/07/04) should be integrated into TensorOpCounters analyzing.
 
     // Note: No matter whether pointwise21 or pointwise22 exists, it is possible that only addInput0ToPointwise21 or
     //       only addInput0ToPointwise22 or both exist.
