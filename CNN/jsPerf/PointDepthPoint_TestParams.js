@@ -243,8 +243,6 @@ class TestParams {
     let result = { numberArrayObject: {}, numberArrayArray: [] };
 
     // Pointwise1
-//!!! (2021/06/23 Remarked)
-//    let pointwise1 = TestParams.generate_pointwise_filters_biases( channelCount1_pointwise1Before, channelCount2_pointwise1Before,
     let pointwise1 = TestParams.generate_pointwise_filters_biases( channelCount1_pointwise1Before,
       params.pointwise1ChannelCount, params.bPointwise1Bias );
 
