@@ -190,8 +190,8 @@ class Base {
 //!!! (2021/07/05 Remarked)
           let elementIndex;
           tf.util.assert( outputArray.every( ( value, index ) =>
-//            Math.round( value * fractionDigitsMultiplier ) === Math.round( outputArrayRef[ elementIndex = index ] * fractionDigitsMultiplier ) ),
-            Math.trunc( value * fractionDigitsMultiplier ) === Math.trunc( outputArrayRef[ elementIndex = index ] * fractionDigitsMultiplier ) ),
+            Math.round( value * fractionDigitsMultiplier ) === Math.round( outputArrayRef[ elementIndex = index ] * fractionDigitsMultiplier ) ),
+//            Math.trunc( value * fractionDigitsMultiplier ) === Math.trunc( outputArrayRef[ elementIndex = index ] * fractionDigitsMultiplier ) ),
             `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
               +`( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}` );
 
