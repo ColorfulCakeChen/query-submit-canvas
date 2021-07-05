@@ -34,7 +34,6 @@ class Base {
    */
   testCorrectness( imageInArray, imageInTensor3dArray ) {
 
-//!!! ...unfinished... (2021/05/27)
     try {
 
       for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
@@ -133,7 +132,7 @@ class Base {
   check_Input_Output_WeightsTable( imageInArray, inputTensors, outputTensors, parametersDescription ) {
     tf.tidy( () => {
 
-      let fractionDigits = 3;
+      let fractionDigits = 2;
       let fractionDigitsMultiplier = Math.pow( 10, fractionDigits );
 
       let strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
