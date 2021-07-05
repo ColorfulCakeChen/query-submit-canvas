@@ -180,9 +180,15 @@ class Base {
 
           // Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different (especially activation function
           // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
-          for ( let j = 0; j < outputArray.length; ++i ) {
-            let valueByTensorflow = Math.trunc( outputArray[ j ] * fractionDigitsMultiplier );
-            let valueByRef = Math.trunc( outputArrayRef[ j ] * fractionDigitsMultiplier );
+          {
+            let valueByTensorflow, valueByRef, j;
+            for ( j = 0; j < outputArray.length; ++i ) {
+              valueByTensorflow = Math.trunc( outputArray[ j ] * fractionDigitsMultiplier );
+              valueByRef = Math.trunc( outputArrayRef[ j ] * fractionDigitsMultiplier );
+              if ( valueByTensorflow != valueByRef )
+                break;
+            }
+
             tf.util.assert( valueByTensorflow === valueByRef,
               `PointDepthPoint output${i}[ ${j} ] ( ${outputArray[ j ]} ) should be ( ${outputArrayRef[ j ]} ) `
               +`( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
