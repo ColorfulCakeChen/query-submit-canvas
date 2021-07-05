@@ -113,8 +113,6 @@ class Base {
   }
 
 
-//!!! ...unfinished... (2021/05/27)
-
   /**
    * Check the PointDepthPoint's output according to input (for correctness testing).
    *
@@ -134,6 +132,9 @@ class Base {
    */
   check_Input_Output_WeightsTable( imageInArray, inputTensors, outputTensors, parametersDescription ) {
     tf.tidy( () => {
+
+      let fractionDigits = 3;
+      let fractionDigitsMultiplier = Math.pow( 10, fractionDigits );
 
       let strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
 
@@ -179,11 +180,10 @@ class Base {
 //             `PointDepthPoint output${i} ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
 
           // Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different (especially activation function
-          // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they always could not pass this test.
-          let fractionDigits = 3;
+          // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
           tf.util.assert(
-            outputArray.every(
-              ( value, index ) => value.toExponential( fractionDigits ) === outputArrayRef[ index ].toExponential( fractionDigits )
+            outputArray.every( ( value, index ) =>
+                Math.trunc( value * fractionDigitsMultiplier ) === Math.trunc( outputArrayRef[ index ] * fractionDigitsMultiplier )
             ),
             `PointDepthPoint output${i} ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
         }
