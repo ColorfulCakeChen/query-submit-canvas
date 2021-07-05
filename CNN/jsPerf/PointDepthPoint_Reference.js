@@ -174,7 +174,17 @@ class Base {
           tf.util.assert( outputArray.length == outputArrayRef.length,
             `PointDepthPoint output${i} length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
 
-          tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
+//!!! (2021/07/05 Remarked) floating-point accumulated error. (especially activation function is SIGMOID, TANH, SIN, COS.)
+//           tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
+//             `PointDepthPoint output${i} ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
+
+          // Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different (especially activation function
+          // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they always could not pass this test.
+          let fractionDigits = 3;
+          tf.util.assert(
+            outputArray.every(
+              ( value, index ) => value.toExponential( fractionDigits ) === outputArrayRef[ index ].toExponential( fractionDigits )
+            ),
             `PointDepthPoint output${i} ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
         }
       }
