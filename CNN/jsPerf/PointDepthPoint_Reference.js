@@ -427,7 +427,9 @@ class Base {
       }
     } else {
       if ( pointwise22Result ) {
-        nextImageOutArray = [ pointwise22Result, null ];
+//!!! (2021/07/05 Remarked)
+//        nextImageOutArray = [ pointwise22Result, null ];
+        nextImageOutArray = [ null, pointwise22Result ];
       } else {
         nextImageOutArray = [ null, null ];
       }
