@@ -133,9 +133,10 @@ class Base {
     tf.tidy( () => {
 
 //!!! (2021/07/05 Remarked)
-//       let fractionDigits = 2;
-//       let fractionDigitsMultiplier = Math.pow( 10, fractionDigits );
-      let acceptableDifference = 0.001;
+      let fractionDigits = 1;
+      let fractionDigitsMultiplier = Math.pow( 10, fractionDigits );
+//!!! (2021/07/05 Remarked)
+//      let acceptableDifference = 0.001;
 
       let strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
 
@@ -176,24 +177,23 @@ class Base {
           tf.util.assert( outputArray.length == outputArrayRef.length,
             `PointDepthPoint output${i} length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
 
-//!!! (2021/07/05 Remarked) floating-point accumulated error. (especially activation function is SIGMOID, TANH, SIN, COS.)
-//           tf.util.assert( outputArray.every( ( value, index ) => value === outputArrayRef[ index ] ),
-//             `PointDepthPoint output${i} ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
-
           // Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different (especially activation function
           // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
-          let elementIndex;
-          tf.util.assert( outputArray.every( ( value, index ) =>
-            Math.abs( value - outputArrayRef[ elementIndex = index ] ) <= acceptableDifference ),
-            `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
-              +`( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}` );
 
 //!!! (2021/07/05 Remarked)
 //           let elementIndex;
 //           tf.util.assert( outputArray.every( ( value, index ) =>
-//             Math.round( value * fractionDigitsMultiplier ) === Math.round( outputArrayRef[ elementIndex = index ] * fractionDigitsMultiplier ) ),
+//             Math.abs( value - outputArrayRef[ elementIndex = index ] ) <= acceptableDifference ),
 //             `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
 //               +`( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}` );
+
+//!!! (2021/07/05 Remarked)
+          let elementIndex;
+          tf.util.assert( outputArray.every( ( value, index ) =>
+//            Math.round( value * fractionDigitsMultiplier ) === Math.round( outputArrayRef[ elementIndex = index ] * fractionDigitsMultiplier ) ),
+            Math.trunc( value * fractionDigitsMultiplier ) === Math.trunc( outputArrayRef[ elementIndex = index ] * fractionDigitsMultiplier ) ),
+            `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
+              +`( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}` );
 
         }
       }
