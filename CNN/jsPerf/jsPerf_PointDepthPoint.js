@@ -1071,7 +1071,11 @@ class HeightWidthDepth {
     let testParamsGenerator = testParamsBase.ParamsGenerator();
 
 //!!! ...unfinished... (2021/05/27)
+    let batchMessageInterval = 1000; // Every so many test case, display a message.
     for ( let testParams of testParamsGenerator ) {
+      if ( ( testParams.id % batchMessageInterval ) == 0 )
+        console.log( `testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
+
       let testCase = new PointDepthPoint_Reference.Base( testParams );
       testCase.testCorrectness( this.testCorrectness_ImageDataArray, this.dataTensor3dArray );
     }
