@@ -184,7 +184,7 @@ class Base {
           // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
           let elementIndex;
           tf.util.assert( outputArray.every( ( value, index ) =>
-            Math.abs( value - outputArrayRef[ elementIndex = index ] ) <= acceptableDifference,
+            Math.abs( value - outputArrayRef[ elementIndex = index ] ) <= acceptableDifference ),
             `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
               +`( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}` );
 
