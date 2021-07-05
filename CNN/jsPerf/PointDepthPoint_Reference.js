@@ -183,7 +183,7 @@ class Base {
           // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
           tf.util.assert(
             outputArray.every( ( value, index ) =>
-                Math.trunc( value * fractionDigitsMultiplier ) === Math.trunc( outputArrayRef[ index ] * fractionDigitsMultiplier )
+              Math.trunc( value * fractionDigitsMultiplier ) === Math.trunc( outputArrayRef[ index ] * fractionDigitsMultiplier )
             ),
             `PointDepthPoint output${i} ( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}`);
         }
