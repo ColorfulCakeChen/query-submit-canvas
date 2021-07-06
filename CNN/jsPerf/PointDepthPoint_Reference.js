@@ -226,8 +226,10 @@ class Base {
     tf.util.assert( ( pointDepthPoint.isValid() == bInitOk ),
       `PointDepthPoint validation state (${pointDepthPoint.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
-    if ( !bInitOk ) // For Debug.
+    if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
+      debugger;
+    }
 
     tf.util.assert( ( true == bInitOk ),
       `Failed to initialize pointDepthPoint object. ${parametersDescription}`);
