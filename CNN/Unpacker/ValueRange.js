@@ -180,10 +180,11 @@ class Int extends Same {
       // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
       let valueInputFloat = valueInputInt + ( valueInputIntSign * Math.random() );
 
-      // Test: the above algorithm might be wrong.
-      tf.util.assert( this.adjust( valueInputFloat ) == valueOutputInt,
-        `ValueRange.Int( ${this.min}, ${this.max} ).valueInputOutputGenerator(): `
-          + `this.adjust( ${valueInputFloat} ) return ( ${this.adjust( valueInputFloat )} ) should be ( ${valueOutputInt} ).` );
+//!!! (2021/07/06 Remarked) Moved to outer test case.
+//       // Test: the above algorithm might be wrong.
+//       tf.util.assert( this.adjust( valueInputFloat ) == valueOutputInt,
+//         `ValueRange.Int( ${this.min}, ${this.max} ).valueInputOutputGenerator(): `
+//           + `this.adjust( ${valueInputFloat} ) return ( ${this.adjust( valueInputFloat )} ) should be ( ${valueOutputInt} ).` );
 
       yield { valueInput: valueInputFloat, valueOutput: valueOutputInt };
     }
