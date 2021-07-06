@@ -20,10 +20,6 @@ class Same {
     return this.adjust.bind( this );
   }
 
-
-//!!! ...unfinished... (2021/05/26) Maybe need a parameter to restrict the maximum generated value count, or value upper bound.
-// Otherwise, too large value may not feasible to be tested.
-
   /**
    * Return a generator which produces a sequence of two-value pair.
    *
@@ -148,6 +144,10 @@ class Int extends Same {
     return result;
   }
 
+//!!! ...unfinished... (2021/05/26) Maybe need a parameter to restrict the maximum generated value count, or value upper bound.
+// Otherwise, too large value may not feasible to be tested.
+
+
   /**
    * For ValueRange.Int, this.kinds two-value pairs will be generated in sequence.
    *
@@ -155,14 +155,19 @@ class Int extends Same {
    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
    * is Same.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
    *
+   * @param {number} maxKinds
+   *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
+   * When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity.
+   *
    * @override
    */
-  * valueInputOutputGenerator( offsetMultiplier = Same.getRandomIntInclusive( -10, +10 ) ) {
+  * valueInputOutputGenerator( offsetMultiplier = Same.getRandomIntInclusive( -10, +10 ), maxKinds = this.kinds ) {
 
     // An integer which has the same remainder as offsetMultiplier when divided by this.kinds.
     let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
 
-    for ( let i = 0; i < this.kinds; ++i ) {
+    let testKinds = Math.min( maxKinds, this.kinds );
+    for ( let i = 0; i < testKinds; ++i ) {
       let valueOutputInt = ( this.min + i );
 
       // An integer which could become valueOutputInt when adjusted by Int.adjust().
