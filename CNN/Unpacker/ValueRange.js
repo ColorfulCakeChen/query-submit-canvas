@@ -207,8 +207,8 @@ class Int extends Same {
 
       // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
 //!!! (2021/07/06 Temp Remarked) for debug
-//      let valueInputFloat = valueInputInt + ( valueInputIntSign * Math.random() );
-      let valueInputFloat = valueInputInt + ( valueInputIntSign * 0 );
+      let valueInputFloat = valueInputInt + ( valueInputIntSign * Math.random() );
+//      let valueInputFloat = valueInputInt + ( valueInputIntSign * 0 );
 
 //!!! (2021/07/06 Remarked) Moved to outer test case.
 //       // Test: the above algorithm might be wrong.
