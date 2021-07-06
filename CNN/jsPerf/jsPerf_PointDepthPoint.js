@@ -1071,7 +1071,7 @@ class HeightWidthDepth {
     let testParamsGenerator = testParamsBase.ParamsGenerator();
 
 //!!! ...unfinished... (2021/05/27)
-    let batchMessageInterval = 10 * 1000; // Every so many test case, display a message.
+    let batchMessageInterval = 100 * 1000; // Every so many test cases, display a message.
     for ( let testParams of testParamsGenerator ) {
       if ( ( testParams.id % batchMessageInterval ) == 0 )
         console.log( `${tf.getBackend()}, testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
