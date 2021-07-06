@@ -93,10 +93,21 @@ class Bool extends Same {
 
     // An even value with fractional part will become 0 by Bool.adjust().
     let valueInputZero = ( baseIntEven + 0 ) + ( baseIntEvenSign * Math.random() );
+
+    // (2021/07/06 Temp Debug) The above algorithm might be wrong.
+    if ( this.adjust( valueInputZero ) != 0 )
+      debugger;
+
     yield { valueInput: valueInputZero, valueOutput: 0 };
+
 
     // A odd value with fractional part will become 1 by Bool.adjust().
     let valueInputOne  = ( baseIntEven + 1 ) + ( baseIntEvenSign * Math.random() );
+
+    // (2021/07/06 Temp Debug) The above algorithm might be wrong.
+    if ( this.adjust( valueInputOne ) != 1 )
+      debugger;
+
     yield { valueInput: valueInputOne, valueOutput: 1 };
   }
 
@@ -190,6 +201,10 @@ class Int extends Same {
 //       tf.util.assert( this.adjust( valueInputFloat ) == valueOutputInt,
 //         `ValueRange.Int( ${this.min}, ${this.max} ).valueInputOutputGenerator(): `
 //           + `this.adjust( ${valueInputFloat} ) return ( ${this.adjust( valueInputFloat )} ) should be ( ${valueOutputInt} ).` );
+
+      // (2021/07/06 Temp Debug) The above algorithm might be wrong.
+      if ( this.adjust( valueInputFloat ) != valueOutputInt )
+        debugger;
 
       yield { valueInput: valueInputFloat, valueOutput: valueOutputInt };
     }
