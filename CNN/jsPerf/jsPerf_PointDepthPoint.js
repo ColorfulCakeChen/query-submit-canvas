@@ -1069,7 +1069,7 @@ class HeightWidthDepth {
     {
       let paramDesc = PointDepthPoint.Params.bPointwise1Bias;
 
-      for ( let offsetMultiplier = -2; offsetMultiplier <= +2; ++offsetMultiplier ) {
+      for ( let offsetMultiplier = -100; offsetMultiplier <= +100; ++offsetMultiplier ) {
         for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
           let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
 
@@ -1084,7 +1084,7 @@ class HeightWidthDepth {
     {
       let paramDesc = PointDepthPoint.Params.pointwise21ChannelCount;
 
-      for ( let offsetMultiplier = -2; offsetMultiplier <= +2; ++offsetMultiplier ) {
+      for ( let offsetMultiplier = -10; offsetMultiplier <= +10; ++offsetMultiplier ) {
         for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
           let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
 
