@@ -200,23 +200,23 @@ class Base {
 
     // Initialize successfully or failed.
     let testParams = this.testParams;
+    let extractedParams = new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
+      testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
+
+      testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight,
+      testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
+
+      testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
+      testParams.in.pointwise22ChannelCount, testParams.in.bPointwise22Bias, testParams.in.pointwise22ActivationId,
+      testParams.in.inputTensorCount
+    );
+
     let bInitOk = pointDepthPoint.init(
       progress,
       testParams.in.channelCount1_pointwise1Before, // (i.e. inChannels1)
       testParams.in.channelCount2_pointwise1Before, // (i.e. inChannels2)
       bKeepInputTensor,
-
-      new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
-        testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
-
-        testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight,
-        testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
-
-        testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
-        testParams.in.pointwise22ChannelCount, testParams.in.bPointwise22Bias, testParams.in.pointwise22ActivationId,
-        testParams.in.inputTensorCount
-      )
-
+      extractedParams
     );
 
     let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
