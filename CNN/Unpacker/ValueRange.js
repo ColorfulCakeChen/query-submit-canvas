@@ -83,12 +83,18 @@ class Bool extends Same {
     let baseIntEven = baseInt * 2; // Any integer multiplied by 2 will be an even number.
     let baseIntEvenSign = Math.sign( baseIntEven );
 
-    // If no sign (i.e. baseIntEven is zero), choose the sign randomly. Otherwise, there will no fractional part at all.
+//!!! (2021/07/06 Remarked) sign should be positive in this case.
+//     // If no sign (i.e. baseIntEven is zero), choose the sign randomly. Otherwise, there will no fractional part at all.
+//     if ( baseIntEvenSign == 0 ) {
+//       if ( Math.random() >= 0.5 )
+//         baseIntEvenSign = 1;
+//       else
+//         baseIntEvenSign = -1;
+//     }
+
+    // If no sign (i.e. baseIntEven is zero), choose positive sign. Otherwise, there will no fractional part at all.
     if ( baseIntEvenSign == 0 ) {
-      if ( Math.random() >= 0.5 )
-        baseIntEvenSign = 1;
-      else
-        baseIntEvenSign = -1;
+      baseIntEvenSign = 1;
     }
 
     // An even value with fractional part will become 0 by Bool.adjust().
@@ -185,12 +191,18 @@ class Int extends Same {
       let valueInputInt = baseIntCongruence + valueOutputInt;
       let valueInputIntSign = Math.sign( valueInputInt );
 
-      // If no sign (i.e. valueInputInt is zero), choose the sign randomly. Otherwise, there will no fractional part at all.
+//!!! (2021/07/06 Remarked) sign should be positive in this case.
+//       // If no sign (i.e. valueInputInt is zero), choose the sign randomly. Otherwise, there will no fractional part at all.
+//       if ( valueInputIntSign == 0 ) {
+//         if ( Math.random() >= 0.5 )
+//           valueInputIntSign = 1;
+//         else
+//           valueInputIntSign = -1;
+//       }
+
+      // If no sign (i.e. valueInputInt is zero), choose positive sign. Otherwise, there will no fractional part at all.
       if ( valueInputIntSign == 0 ) {
-        if ( Math.random() >= 0.5 )
-          valueInputIntSign = 1;
-        else
-          valueInputIntSign = -1;
+        valueInputIntSign = 1;
       }
 
       // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
