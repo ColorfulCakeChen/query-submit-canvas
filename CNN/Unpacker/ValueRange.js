@@ -83,37 +83,24 @@ class Bool extends Same {
     let baseIntEven = baseInt * 2; // Any integer multiplied by 2 will be an even number.
     let baseIntEvenSign = Math.sign( baseIntEven );
 
-//!!! (2021/07/06 Remarked) sign should be positive in this case.
-//     // If no sign (i.e. baseIntEven is zero), choose the sign randomly. Otherwise, there will no fractional part at all.
-//     if ( baseIntEvenSign == 0 ) {
-//       if ( Math.random() >= 0.5 )
-//         baseIntEvenSign = 1;
-//       else
-//         baseIntEvenSign = -1;
-//     }
-
     // If no sign (i.e. baseIntEven is zero), choose positive sign. Otherwise, there will no fractional part at all.
     if ( baseIntEvenSign == 0 ) {
       baseIntEvenSign = 1;
     }
 
+    // A: Why not use Math.random() to generate value between [ 0, 1 ) directly?
+    // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
+    //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
+    //    from Float64 to Float32.
+    let randomFractionalPart1 = Same.getRandomIntInclusive( 0, 999 ) / 1000;
+    let randomFractionalPart2 = Same.getRandomIntInclusive( 0, 999 ) / 1000;
+
     // An even value with fractional part will become 0 by Bool.adjust().
-    let valueInputZero = ( baseIntEven + 0 ) + ( baseIntEvenSign * Math.random() );
-
-    // (2021/07/06 Temp Debug) The above algorithm might be wrong.
-    if ( this.adjust( valueInputZero ) != 0 )
-      debugger;
-
+    let valueInputZero = ( baseIntEven + 0 ) + ( baseIntEvenSign * randomFractionalPart1 );
     yield { valueInput: valueInputZero, valueOutput: 0 };
 
-
     // A odd value with fractional part will become 1 by Bool.adjust().
-    let valueInputOne  = ( baseIntEven + 1 ) + ( baseIntEvenSign * Math.random() );
-
-    // (2021/07/06 Temp Debug) The above algorithm might be wrong.
-    if ( this.adjust( valueInputOne ) != 1 )
-      debugger;
-
+    let valueInputOne  = ( baseIntEven + 1 ) + ( baseIntEvenSign * randomFractionalPart2 );
     yield { valueInput: valueInputOne, valueOutput: 1 };
   }
 
@@ -161,9 +148,6 @@ class Int extends Same {
     return result;
   }
 
-//!!! ...unfinished... (2021/05/26) Maybe need a parameter to restrict the maximum generated value count, or value upper bound.
-// Otherwise, too large value may not feasible to be tested.
-
 
   /**
    * For ValueRange.Int, this.kinds two-value pairs will be generated in sequence.
@@ -191,34 +175,19 @@ class Int extends Same {
       let valueInputInt = baseIntCongruence + valueOutputInt;
       let valueInputIntSign = Math.sign( valueInputInt );
 
-//!!! (2021/07/06 Remarked) sign should be positive in this case.
-//       // If no sign (i.e. valueInputInt is zero), choose the sign randomly. Otherwise, there will no fractional part at all.
-//       if ( valueInputIntSign == 0 ) {
-//         if ( Math.random() >= 0.5 )
-//           valueInputIntSign = 1;
-//         else
-//           valueInputIntSign = -1;
-//       }
-
       // If no sign (i.e. valueInputInt is zero), choose positive sign. Otherwise, there will no fractional part at all.
       if ( valueInputIntSign == 0 ) {
         valueInputIntSign = 1;
       }
 
+      // A: Why not use Math.random() to generate value between [ 0, 1 ) directly?
+      // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
+      //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
+      //    from Float64 to Float32.
+      let randomFractionalPart = Same.getRandomIntInclusive( 0, 999 ) / 1000;
+
       // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
-//!!! (2021/07/06 Temp Remarked) for debug
-      let valueInputFloat = valueInputInt + ( valueInputIntSign * Math.random() );
-//      let valueInputFloat = valueInputInt + ( valueInputIntSign * 0 );
-
-//!!! (2021/07/06 Remarked) Moved to outer test case.
-//       // Test: the above algorithm might be wrong.
-//       tf.util.assert( this.adjust( valueInputFloat ) == valueOutputInt,
-//         `ValueRange.Int( ${this.min}, ${this.max} ).valueInputOutputGenerator(): `
-//           + `this.adjust( ${valueInputFloat} ) return ( ${this.adjust( valueInputFloat )} ) should be ( ${valueOutputInt} ).` );
-
-      // (2021/07/06 Temp Debug) The above algorithm might be wrong.
-      //if ( this.adjust( valueInputFloat ) != valueOutputInt )
-      //  debugger;
+      let valueInputFloat = valueInputInt + ( valueInputIntSign * randomFractionalPart );
 
       //!!! (2021/07/06 Temp Test) When the random fractional part is converted (from Float64) into Float32, it might shifted to different value.
       if ( this.adjust( new Float32Array( [ valueInputFloat ] )[ 0 ] ) != valueOutputInt )
