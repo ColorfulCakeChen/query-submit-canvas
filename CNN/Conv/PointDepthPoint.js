@@ -721,7 +721,6 @@ class Base extends ReturnOrClone.Base {
 //     }
 
 
-//!!! ...unfinished... (2021/07/04) need test
     // 5.3 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
     {
       let alwaysKeepSet;
@@ -729,14 +728,15 @@ class Base extends ReturnOrClone.Base {
         alwaysKeepSet = new Set( [ TensorOpCounters.input0, TensorOpCounters.input1 ] );
       }
 
-      let TensorOpCounterArray = [
+      // Using Set (instead of Array) so that duplicated TensorOpCounter will only analyzed once.
+      // Note: When an operation does not exist, its output TensorOpCounter will be just its input TensorOpCounter (so duplicated).
+      let TensorOpCounterSet = new Set( [
         TensorOpCounters.pointwise1,  TensorOpCounters.depthwise, TensorOpCounters.concatenator,
         TensorOpCounters.pointwise21, TensorOpCounters.addInput0ToPointwise21,
         TensorOpCounters.pointwise22, TensorOpCounters.addInput0ToPointwise22
-      ];
+      ] );
 
-      for ( let i = 0; i < TensorOpCounterArray.length; ++i ) {
-        let TensorOpCounter = TensorOpCounterArray[ i ];
+      for ( let TensorOpCounter of TensorOpCounterSet ) {
         TensorOpCounter.setKeepInputTensor_IfNotLastOperation_Or_In( alwaysKeepSet );
       }
     }
