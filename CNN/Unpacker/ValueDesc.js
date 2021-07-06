@@ -149,8 +149,8 @@ class ActivationFunction extends Int {
 
   constructor() {
     super( 0, 6,
-      [ "NONE",  "RELU",  "RELU6",  "SIGMOID",  "TANH",  "SIN",  "COS" ],
-      [   null, tf.relu, tf.relu6, tf.sigmoid, tf.tanh, tf.sin, tf.cos ]
+      [ "NONE",  "RELU",  "RELU6",  "SIN",  "COS",  "SIGMOID",  "TANH" ],
+      [   null, tf.relu, tf.relu6, tf.sin, tf.cos, tf.sigmoid, tf.tanh ]
     );
   }
 
