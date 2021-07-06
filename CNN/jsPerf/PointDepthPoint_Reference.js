@@ -238,6 +238,10 @@ class Base {
       `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
 
 
+    if ( pointDepthPoint.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
+      debugger;
+    }
+
     Base.AssertTwoEqualValues( "parsing beginning position",
       pointDepthPoint.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
 
