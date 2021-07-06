@@ -365,7 +365,7 @@ class Base {
     ];
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
-    this.maxKindsPerParameter = 100;
+    this.maxKindsPerParameter = 20;
   }
 
   /**
