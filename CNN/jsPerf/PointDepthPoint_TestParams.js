@@ -406,6 +406,8 @@ class Base {
 
     let nextParamDescIndex = currentParamDescIndex + 1;
 
+//!!! ...unfinished... (2021/07/06) When ( XxxChannelCount == 0 ), whether could skip bias and activation combination?
+
     let paramDesc = this.paramDescArray[ currentParamDescIndex ];
     for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( undefined, this.maxKindsPerParameter ) ) {
 
