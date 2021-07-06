@@ -1,6 +1,7 @@
 export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeTensors };
 
 import * as ValueMax from "../ValueMax.js";
+import * as ValueRange from "../Unpacker/ValueRange.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
@@ -1062,8 +1063,42 @@ class HeightWidthDepth {
     tf.dispose( outputTensor3dArray );
   }
 
+  test_ValueRange_valueInputOutputGenerator() {
+
+    // Test ValueRange.Bool().valueInputOutputGenerator().
+    {
+      let paramDesc = PointDepthPoint.Params.bPointwise1Bias;
+
+      for ( let offsetMultiplier = -2; offsetMultiplier <= +2; ++offsetMultiplier ) {
+        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
+          let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
+
+          tf.util.assert( adjustedInput == pair.valueOutput,
+            `ValueRange.Bool().valueInputOutputGenerator( ${offsetMultiplier} ): `
+              + `this.adjust( ${pair.valueInput} ) return ( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
+        }
+      }
+    }
+
+    // Test ValueRange.Int().valueInputOutputGenerator().
+    {
+      let paramDesc = PointDepthPoint.Params.pointwise21ChannelCount;
+
+      for ( let offsetMultiplier = -2; offsetMultiplier <= +2; ++offsetMultiplier ) {
+        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
+          let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
+
+          tf.util.assert( adjustedInput == pair.valueOutput,
+            `ValueRange.Int( ${paramDesc.min}, ${paramDesc.max} ).valueInputOutputGenerator( ${offsetMultiplier} ): `
+              + `this.adjust( ${pair.valueInput} ) return ( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
+        }
+      }
+    }
+  }
+
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
+    this.test_ValueRange_valueInputOutputGenerator();
 
     let testParamsBase = new PointDepthPoint_TestParams.Base(
       this.testCorrectness_ImageDataArray[ 0 ].depth, this.testCorrectness_ImageDataArray[ 1 ].depth );
