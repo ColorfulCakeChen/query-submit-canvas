@@ -29,12 +29,16 @@ class Same {
    *
    * For ValueRange.Same, there is no meaningful testable value pair could be generated. The reason is that any value is legal for it.
    *
+   * @param {number} offsetMultiplier
+   *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
+   * is Same.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
+   *
    * @yield {object}
    *   Every time yield an array with two number properties: { valueInput, valueOutput }. The valueOutput is a value from valueRangeMin to
    * valueRangeMax. The valueInput is a value which could be adjusted to valueOutput by this ValueRange object.
    */
-  * valueInputOutputGenerator() {
-    yield { valueInput: 0, valueOutput: 0 };
+  * valueInputOutputGenerator( offsetMultiplier = Same.getRandomIntInclusive( -10, +10 ) ) {
+    yield { valueInput: offsetMultiplier, valueOutput: offsetMultiplier };
   }
 
   /**
@@ -71,20 +75,32 @@ class Bool extends Same {
   /**
    * For ValueRange.Bool, two two-value pairs will be generated in sequence.
    *
+   * @param {number} offsetMultiplier
+   *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
+   * is Same.getRandomIntInclusive( -100, +100 ). The -100 and +100 is just chosen arbitrarily.
+   *
    * @override
    */
-  * valueInputOutputGenerator() {
+  * valueInputOutputGenerator( offsetMultiplier = Same.getRandomIntInclusive( -100, +100 ) ) {
 
-    let randomBaseInt = Same.getRandomIntInclusive( -100, +100 ); // (-100 and +100 just chosen arbitrarily.)
-    let randomBaseIntEven = randomBaseInt * 2; // Any integer multiplied by 2 will be an even number.
-    let randomBaseIntEvenSign = Math.sign( randomBaseIntEven );
+    let baseInt = Math.trunc( offsetMultiplier );
+    let baseIntEven = baseInt * 2; // Any integer multiplied by 2 will be an even number.
+    let baseIntEvenSign = Math.sign( baseIntEven );
+
+    // If no sign (i.e. baseIntEven is zero), choose the sign randomly. Otherwise, there will no fractional part at all.
+    if ( baseIntEvenSign == 0 ) {
+      if ( Math.random() >= 0.5 )
+        baseIntEvenSign = 1;
+      else
+        baseIntEvenSign = -1;
+    }
 
     // An even value with fractional part will become 0 by Bool.adjust().
-    let valueInputZero = ( randomBaseIntEven + 0 ) + ( randomBaseIntEvenSign * Math.random() );
+    let valueInputZero = ( baseIntEven + 0 ) + ( baseIntEvenSign * Math.random() );
     yield { valueInput: valueInputZero, valueOutput: 0 };
 
     // A odd value with fractional part will become 1 by Bool.adjust().
-    let valueInputOne  = ( randomBaseIntEven + 1 ) + ( randomBaseIntEvenSign * Math.random() );
+    let valueInputOne  = ( baseIntEven + 1 ) + ( baseIntEvenSign * Math.random() );
     yield { valueInput: valueInputOne, valueOutput: 1 };
   }
 
@@ -135,21 +151,31 @@ class Int extends Same {
   /**
    * For ValueRange.Int, this.kinds two-value pairs will be generated in sequence.
    *
+   * @param {number} offsetMultiplier
+   *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
+   * is Same.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
+   *
    * @override
    */
-  * valueInputOutputGenerator() {
+  * valueInputOutputGenerator( offsetMultiplier = Same.getRandomIntInclusive( -10, +10 ) ) {
 
-    let randomBaseInt = Same.getRandomIntInclusive( -10, +10 ); // (-10 and +10 just chosen arbitrarily.)
-
-    // An integer which has the same remainder as randomBaseInt when divided by this.kinds.
-    let randomBaseIntCongruence = randomBaseInt * this.kinds;
+    // An integer which has the same remainder as offsetMultiplier when divided by this.kinds.
+    let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
 
     for ( let i = 0; i < this.kinds; ++i ) {
       let valueOutputInt = ( this.min + i );
 
       // An integer which could become valueOutputInt when adjusted by Int.adjust().
-      let valueInputInt = randomBaseIntCongruence + valueOutputInt;
+      let valueInputInt = baseIntCongruence + valueOutputInt;
       let valueInputIntSign = Math.sign( valueInputInt );
+
+      // If no sign (i.e. valueInputInt is zero), choose the sign randomly. Otherwise, there will no fractional part at all.
+      if ( valueInputIntSign == 0 ) {
+        if ( Math.random() >= 0.5 )
+          valueInputIntSign = 1;
+        else
+          valueInputIntSign = -1;
+      }
 
       // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
       let valueInputFloat = valueInputInt + ( valueInputIntSign * Math.random() );
