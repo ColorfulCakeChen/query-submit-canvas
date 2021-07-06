@@ -364,6 +364,8 @@ class Base {
       PointDepthPoint.Params.inputTensorCount,
     ];
 
+    // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
+    this.maxKindsPerParameter = 1024;
   }
 
   /**
@@ -405,7 +407,7 @@ class Base {
     let nextParamDescIndex = currentParamDescIndex + 1;
 
     let paramDesc = this.paramDescArray[ currentParamDescIndex ];
-    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator() ) {
+    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( undefined, this.maxKindsPerParameter ) ) {
       this.result.out[ paramDesc.paramName ] = pair.valueOutput;
 
       // Try parameter value assigned directly (i.e. by specifying).      
