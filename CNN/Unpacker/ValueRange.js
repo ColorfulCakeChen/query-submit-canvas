@@ -92,8 +92,8 @@ class Bool extends Same {
     // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
     //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
     //    from Float64 to Float32.
-    let randomFractionalPart1 = Same.getRandomIntInclusive( 0, 999 ) / 1000;
-    let randomFractionalPart2 = Same.getRandomIntInclusive( 0, 999 ) / 1000;
+    let randomFractionalPart1 = Same.getRandomIntInclusive( 0, 99 ) / 1000;
+    let randomFractionalPart2 = Same.getRandomIntInclusive( 0, 99 ) / 1000;
 
     // An even value with fractional part will become 0 by Bool.adjust().
     let valueInputZero = ( baseIntEven + 0 ) + ( baseIntEvenSign * randomFractionalPart1 );
@@ -184,7 +184,7 @@ class Int extends Same {
       // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
       //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
       //    from Float64 to Float32.
-      let randomFractionalPart = Same.getRandomIntInclusive( 0, 999 ) / 1000;
+      let randomFractionalPart = Same.getRandomIntInclusive( 0, 99 ) / 1000;
 
       // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
       let valueInputFloat = valueInputInt + ( valueInputIntSign * randomFractionalPart );
