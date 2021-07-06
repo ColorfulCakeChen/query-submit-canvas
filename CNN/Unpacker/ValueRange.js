@@ -217,7 +217,11 @@ class Int extends Same {
 //           + `this.adjust( ${valueInputFloat} ) return ( ${this.adjust( valueInputFloat )} ) should be ( ${valueOutputInt} ).` );
 
       // (2021/07/06 Temp Debug) The above algorithm might be wrong.
-      if ( this.adjust( valueInputFloat ) != valueOutputInt )
+      //if ( this.adjust( valueInputFloat ) != valueOutputInt )
+      //  debugger;
+
+      //!!! (2021/07/06 Temp Test) When the random fractional part is converted (from Float64) into Float32, it might shifted to different value.
+      if ( this.adjust( new Float32Array( [ valueInputFloat ] )[ 0 ] ) != valueOutputInt )
         debugger;
 
       yield { valueInput: valueInputFloat, valueOutput: valueOutputInt };
