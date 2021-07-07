@@ -254,6 +254,8 @@ class TestParams {
     let depthwise = TestParams.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
       params.depthwise_AvgMax_Or_ChannelMultiplier, params.depthwiseFilterHeight, params.depthwiseStridesPad, params.bDepthwiseBias );
 
+//!!! ...unfinished... (2021/07/07) if AVG or MAX pooling, depthwise.numberArrayArray[ 0 ] will be depthwiseBiases (not depthwiseFilters).
+
     result.numberArrayObject.depthwiseFilters = depthwise.numberArrayArray[ 0 ];
     result.numberArrayObject.depthwiseBiases = depthwise.numberArrayArray[ 1 ];
     result.numberArrayArray.push( ...depthwise.numberArrayArray );
