@@ -199,8 +199,10 @@ class Base extends ReturnOrClone_Activation.Base {
    * will or will not dispose its inputTensor.
    */
   setKeepInputTensor( bKeepInputTensor ) {
-    this.bKeepInputTensor = bKeepInputTensor;
+    if ( bKeepInputTensor == this.bKeepInputTensor )
+      return;
 
+    this.bKeepInputTensor = bKeepInputTensor;
     if ( bKeepInputTensor ) {
 
       switch ( this.pfnOperation ) {
