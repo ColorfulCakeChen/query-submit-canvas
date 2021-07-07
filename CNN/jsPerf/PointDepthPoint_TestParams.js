@@ -347,13 +347,14 @@ class Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.maxKindsPerParameter = 5;
+    this.maxKindsPointwise = 3;
 
     // All the parameters to be tried.
     //
     // Note1: Because the logic of activation function is simple, it is just randomly tested one (i.e. ( maxKinds == 0 ))
     //        for speeding up testing.
     this.paramDescConfigArray = [
-      { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds: this.maxKindsPerParameter },
+      { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds:                         0 },
       { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsPerParameter },
@@ -361,10 +362,10 @@ class Base {
       { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.bDepthwiseBias,                        maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.depthwiseActivationId,                 maxKinds:                        0  },
-      { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds: this.maxKindsPerParameter },
+      { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise21Bias,                      maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise21ActivationId,               maxKinds:                         0 },
-      { paramDesc: PointDepthPoint.Params.pointwise22ChannelCount,               maxKinds: this.maxKindsPerParameter },
+      { paramDesc: PointDepthPoint.Params.pointwise22ChannelCount,               maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise22Bias,                      maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise22ActivationId,               maxKinds:                         0 },
       { paramDesc: PointDepthPoint.Params.inputTensorCount,                      maxKinds:                 undefined },
