@@ -829,6 +829,10 @@ class Base {
     if ( !bBias )
       return imageIn;
 
+    tf.util.assert( ( biasesArray != null ),
+      `${biasName} biasesArray (${biasesArray}) `
+        + `should not be null. (${parametersDesc})`);
+
     tf.util.assert( ( biasesArray.length == imageIn.depth ),
       `${biasName} shape (${biasesArray.length}) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
