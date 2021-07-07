@@ -87,9 +87,6 @@ class Base extends ReturnOrClone_Activation.Base {
       //   - As no depthwise operation (i.e. ( this.bDepthwise == false ) )
       //   - Just return input (i.e. ( this.pfnOperation == Base.return_input_directly ) )
 
-//!!! ...unfinished... (2021/05/28 Remarked) Although filter size 1x1, it perhaps can not do nothing if considering strides and pad.
-//      if ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) ) {
-
       // Although filter size 1x1, it perhaps can not do nothing if considering strides and pad.
       if ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) ) {
         // Do nothing, because the result of 1x1 AVG or MAX pooling (when strides is 1) is just the same as input.
@@ -197,9 +194,14 @@ class Base extends ReturnOrClone_Activation.Base {
 
       switch ( this.pfnOperation ) {
 
+//!!! (2021/07/07 Remarked) pfnOperationBiasActivation should not be changed because there might be bias and activation.
+//         // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
+//         // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
+//         case Base.return_input_directly: this.pfnOperation = this.pfnOperationBiasActivation = Base.keep_input_return_copy; break;
+
         // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-        // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-        case Base.return_input_directly: this.pfnOperation = this.pfnOperationBiasActivation = Base.keep_input_return_copy; break;
+        // Note: pfnOperationBiasActivation should not be changed here because there might be bias and activation.
+        case Base.return_input_directly: this.pfnOperation = Base.keep_input_return_copy; break;
 
         case Base.Avg_and_destroy:       this.pfnOperation = Base.Avg_and_keep;  break;
         case Base.Max_and_destroy:       this.pfnOperation = Base.Max_and_keep;  break;
@@ -216,9 +218,14 @@ class Base extends ReturnOrClone_Activation.Base {
 
       switch ( this.pfnOperation ) {
 
+//!!! (2021/07/07 Remarked) pfnOperationBiasActivation should not be changed because there might be bias and activation.
+//         // Just return input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
+//         // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
+//         case Base.keep_input_return_copy: this.pfnOperation = this.pfnOperationBiasActivation = Base.return_input_directly; break;
+
         // Just return input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-        // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-        case Base.keep_input_return_copy: this.pfnOperation = this.pfnOperationBiasActivation = Base.return_input_directly; break;
+        // Note: pfnOperationBiasActivation should not be changed here because there might be bias and activation.
+        case Base.keep_input_return_copy: this.pfnOperation = Base.return_input_directly; break;
 
         case Base.Avg_and_keep:           this.pfnOperation = Base.Avg_and_destroy;  break;
         case Base.Max_and_keep:           this.pfnOperation = Base.Max_and_destroy;  break;
