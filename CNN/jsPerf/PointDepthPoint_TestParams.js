@@ -345,27 +345,30 @@ class Base {
     this.channelCount1_pointwise1Before = channelCount1_pointwise1Before;
     this.channelCount2_pointwise1Before = channelCount2_pointwise1Before;
 
-    // All the parameters to be tried.
-    this.paramDescArray = [
-      PointDepthPoint.Params.pointwise1ChannelCount,
-      PointDepthPoint.Params.bPointwise1Bias,
-      PointDepthPoint.Params.pointwise1ActivationId,
-      PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
-      PointDepthPoint.Params.depthwiseFilterHeight,
-      PointDepthPoint.Params.depthwiseStridesPad,
-      PointDepthPoint.Params.bDepthwiseBias,
-      PointDepthPoint.Params.depthwiseActivationId,
-      PointDepthPoint.Params.pointwise21ChannelCount,
-      PointDepthPoint.Params.bPointwise21Bias,
-      PointDepthPoint.Params.pointwise21ActivationId,
-      PointDepthPoint.Params.pointwise22ChannelCount,
-      PointDepthPoint.Params.bPointwise22Bias,
-      PointDepthPoint.Params.pointwise22ActivationId,
-      PointDepthPoint.Params.inputTensorCount,
-    ];
-
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.maxKindsPerParameter = 5;
+
+    // All the parameters to be tried.
+    //
+    // Note1: Because the logic of activation function is simple, it is just randomly tested one (i.e. ( maxKinds == 0 ))
+    //        for speeding up testing.
+    this.paramDescConfigArray = [
+      { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds: this.maxKindsPerParameter },
+      { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds:                         0 },
+      { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.bDepthwiseBias,                        maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.depthwiseActivationId,                 maxKinds:                        0  },
+      { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds: this.maxKindsPerParameter },
+      { paramDesc: PointDepthPoint.Params.bPointwise21Bias,                      maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.pointwise21ActivationId,               maxKinds:                         0 },
+      { paramDesc: PointDepthPoint.Params.pointwise22ChannelCount,               maxKinds: this.maxKindsPerParameter },
+      { paramDesc: PointDepthPoint.Params.bPointwise22Bias,                      maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.pointwise22ActivationId,               maxKinds:                         0 },
+      { paramDesc: PointDepthPoint.Params.inputTensorCount,                      maxKinds:                 undefined },
+    ];
   }
 
   /**
@@ -408,8 +411,9 @@ class Base {
 
 //!!! ...unfinished... (2021/07/06) When ( XxxChannelCount == 0 ), whether could skip bias and activation combination?
 
-    let paramDesc = this.paramDescArray[ currentParamDescIndex ];
-    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( undefined, this.maxKindsPerParameter ) ) {
+    let paramDescConfig = this.paramDescConfigArray[ currentParamDescIndex ];
+    let paramDesc = paramDescConfig.paramDesc;
+    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( undefined, paramDescConfig.maxKinds ) ) {
 
       //!!! (2021/07/06 Temp Debug) Check the algorithm might be wrong.
       //if ( paramDesc.valueDesc.range.adjust( pair.valueInput ) != pair.valueOutput )
