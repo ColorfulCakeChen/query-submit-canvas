@@ -356,7 +356,7 @@ class Base {
       { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds: this.maxKindsPerParameter },
       { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds:                         0 },
-      { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsPerParameter },
       { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.bDepthwiseBias,                        maxKinds:                 undefined },
