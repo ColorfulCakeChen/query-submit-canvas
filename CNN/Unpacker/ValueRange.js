@@ -44,9 +44,12 @@ class Same {
    * @param {number} max The the maximum integer. (inclusive)
    */
   static getRandomIntInclusive( min, max ) {
-    min = Math.ceil( min );
-    max = Math.floor( max );
-    return Math.floor( Math.random() * ( max - min + 1 ) + min );
+    let minReal = Math.min( min, max );
+    let maxReal = Math.max( min, max );
+    let minInt = Math.ceil( minReal );
+    let maxInt  = Math.floor( maxReal );
+    let kindsInt = maxInt - minInt + 1;
+    return Math.floor( ( Math.random() * kindsInt ) + minInt );
   }
 }
 
@@ -148,6 +151,44 @@ class Int extends Same {
     return result;
   }
 
+  /**
+   * @param {number} baseIntCongruence
+   *   An integer which is divisible by this.kinds. This will be used to offset the index value to generate valueInput.
+   *
+   * @param {number} index
+   *   An integer between [ 0, this.kinds ).
+   *
+   * @return {object}
+   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value composed from baseIntCongruence, this.min
+   * and index. The valueOutput is an integer value. When call this.adjust( valueInput ) will return valueOutput.
+   */
+  get_valueInputOutput_byIndex( baseIntCongruence, index ) {
+    let valueOutputInt = ( this.min + index );
+
+    // An integer which could become valueOutputInt when adjusted by Int.adjust().
+    let valueInputInt = baseIntCongruence + valueOutputInt;
+    let valueInputIntSign = Math.sign( valueInputInt );
+
+    // If no sign (i.e. valueInputInt is zero), choose positive sign. Otherwise, there will no fractional part at all.
+    if ( valueInputIntSign == 0 ) {
+      valueInputIntSign = 1;
+    }
+
+    // A: Why not use Math.random() to generate value between [ 0, 1 ) directly?
+    // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
+    //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
+    //    from Float64 to Float32.
+    let randomFractionalPart = Same.getRandomIntInclusive( 0, 99 ) / 1000;
+
+    // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
+    let valueInputFloat = valueInputInt + ( valueInputIntSign * randomFractionalPart );
+
+    //!!! (2021/07/06 Temp Test) When the random fractional part is converted (from Float64) into Float32, it might shifted to different value.
+    //if ( this.adjust( new Float32Array( [ valueInputFloat ] )[ 0 ] ) != valueOutputInt )
+    //  debugger;
+
+    return { valueInput: valueInputFloat, valueOutput: valueOutputInt };
+  }
 
   /**
    * For ValueRange.Int, this.kinds two-value pairs will be generated in sequence.
@@ -158,7 +199,8 @@ class Int extends Same {
    *
    * @param {number} maxKinds
    *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
-   * When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity.
+   * When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If zero or negative,
+   * only one value (between [ 0, this.kinds ] randomly) will be generated.
    *
    * @override
    */
@@ -167,33 +209,16 @@ class Int extends Same {
     // An integer which has the same remainder as offsetMultiplier when divided by this.kinds.
     let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
 
-    let testKinds = Math.min( maxKinds, this.kinds );
-    for ( let i = 0; i < testKinds; ++i ) {
-      let valueOutputInt = ( this.min + i );
-
-      // An integer which could become valueOutputInt when adjusted by Int.adjust().
-      let valueInputInt = baseIntCongruence + valueOutputInt;
-      let valueInputIntSign = Math.sign( valueInputInt );
-
-      // If no sign (i.e. valueInputInt is zero), choose positive sign. Otherwise, there will no fractional part at all.
-      if ( valueInputIntSign == 0 ) {
-        valueInputIntSign = 1;
+    if ( maxKinds > 0 ) {
+      let testKinds = Math.min( maxKinds, this.kinds );
+      for ( let i = 0; i < testKinds; ++i ) {
+        let valueInputOutput = this.get_valueInputOutput_byIndex( baseIntCongruence, i );
+        yield valueInputOutput;
       }
-
-      // A: Why not use Math.random() to generate value between [ 0, 1 ) directly?
-      // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
-      //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
-      //    from Float64 to Float32.
-      let randomFractionalPart = Same.getRandomIntInclusive( 0, 99 ) / 1000;
-
-      // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
-      let valueInputFloat = valueInputInt + ( valueInputIntSign * randomFractionalPart );
-
-      //!!! (2021/07/06 Temp Test) When the random fractional part is converted (from Float64) into Float32, it might shifted to different value.
-      //if ( this.adjust( new Float32Array( [ valueInputFloat ] )[ 0 ] ) != valueOutputInt )
-      //  debugger;
-
-      yield { valueInput: valueInputFloat, valueOutput: valueOutputInt };
+    } else {
+      let index = Same.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
+      let valueInputOutput = this.get_valueInputOutput_byIndex( baseIntCongruence, index );
+      yield valueInputOutput;
     }
   }
 
