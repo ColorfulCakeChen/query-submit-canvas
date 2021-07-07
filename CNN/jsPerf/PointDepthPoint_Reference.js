@@ -132,7 +132,7 @@ class Base {
   check_Input_Output_WeightsTable( imageInArray, inputTensors, outputTensors, parametersDescription ) {
     tf.tidy( () => {
 
-      let acceptableDifference = 0.005;
+      let acceptableDifference = 0.01;
 
       let strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
 
