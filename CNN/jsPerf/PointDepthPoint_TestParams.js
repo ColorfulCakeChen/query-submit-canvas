@@ -161,13 +161,13 @@ class TestParams {
       let filtersWeightsRandomOffset = { min: -100, max: +100 };
       let filtersWeightsCount = inputChannelCount * outputChannelCount;
       let filtersArray = TestParams.generate_numberArray( filtersWeightsCount, filtersWeightsRandomOffset.min, filtersWeightsRandomOffset.max );
-      result.numberArrayArray.push( filtersArray );
+      result.numberArrayArray[ 0 ] = filtersArray;
 
       if ( bBias ) {
         let biasesWeightsRandomOffset = { min: -100, max: +100 };
         let biasesWeightsCount = result.outputChannelCount;
         let biasesArray = TestParams.generate_numberArray( biasesWeightsCount, biasesWeightsRandomOffset.min, biasesWeightsRandomOffset.max );
-        result.numberArrayArray.push( biasesArray );
+        result.numberArrayArray[ 1 ] = biasesArray;
       }
     }
 
@@ -202,7 +202,7 @@ class TestParams {
       let depthwiseFilterWidth = depthwiseFilterHeight;
       let filtersWeightsCount = result.outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
       let filtersArray = TestParams.generate_numberArray( filtersWeightsCount, filtersWeightsRandomOffset.min, filtersWeightsRandomOffset.max );
-      result.numberArrayArray.push( filtersArray );
+      result.numberArrayArray[ 0 ] = filtersArray; // Note: if AVG or MAX pooling, depthwise.numberArrayArray[ 0 ] will be undefined.
     }
 
     if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
@@ -210,7 +210,7 @@ class TestParams {
         let biasesWeightsRandomOffset = { min: -100, max: +100 };
         let biasesWeightsCount = result.outputChannelCount;
         let biasesArray = TestParams.generate_numberArray( biasesWeightsCount, biasesWeightsRandomOffset.min, biasesWeightsRandomOffset.max );
-        result.numberArrayArray.push( biasesArray );
+        result.numberArrayArray[ 1 ] = biasesArray;
       }
     }
 
@@ -253,8 +253,6 @@ class TestParams {
     // Depthwise
     let depthwise = TestParams.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
       params.depthwise_AvgMax_Or_ChannelMultiplier, params.depthwiseFilterHeight, params.depthwiseStridesPad, params.bDepthwiseBias );
-
-//!!! ...unfinished... (2021/07/07) if AVG or MAX pooling, depthwise.numberArrayArray[ 0 ] will be depthwiseBiases (not depthwiseFilters).
 
     result.numberArrayObject.depthwiseFilters = depthwise.numberArrayArray[ 0 ];
     result.numberArrayObject.depthwiseBiases = depthwise.numberArrayArray[ 1 ];
