@@ -395,9 +395,9 @@ class Base {
    * @yield {TestParams}
    *   Every time one kind of parameters' combination is generated, the this.result will be yielded.
    */
-  * permuteParamRecursively( currentParamDescIndex ) {
+  * permuteParamRecursively( currentParamDescConfigIndex ) {
 
-    if ( currentParamDescIndex >= this.paramDescArray.length ) { // All parameters are used to be composed as one kind of combination.
+    if ( currentParamDescConfigIndex >= this.paramDescConfigArray.length ) { // All parameters are used to be composed as one kind of combination.
       ++this.result.id;  // Complete one kind of combination.
 
       this.result.set_By_ParamsInArray_ParamsOut(
@@ -407,11 +407,11 @@ class Base {
       return; // Stop this recusive. Back-track to another parameters combination.
     }
 
-    let nextParamDescIndex = currentParamDescIndex + 1;
+    let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
 
 //!!! ...unfinished... (2021/07/06) When ( XxxChannelCount == 0 ), whether could skip bias and activation combination?
 
-    let paramDescConfig = this.paramDescConfigArray[ currentParamDescIndex ];
+    let paramDescConfig = this.paramDescConfigArray[ currentParamDescConfigIndex ];
     let paramDesc = paramDescConfig.paramDesc;
     for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( undefined, paramDescConfig.maxKinds ) ) {
 
@@ -423,12 +423,12 @@ class Base {
 
       // Try parameter value assigned directly (i.e. by specifying).      
       this.result.in[ paramDesc.paramName ] = pair.valueInput;
-      yield *this.permuteParamRecursively( nextParamDescIndex );
+      yield *this.permuteParamRecursively( nextParamDescConfigIndex );
 
       // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
       this.result.in[ paramDesc.paramName ] = null;
       this.paramsInArray.push( pair.valueInput );
-      yield *this.permuteParamRecursively( nextParamDescIndex );
+      yield *this.permuteParamRecursively( nextParamDescConfigIndex );
 
       this.paramsInArray.pop(); // So that it could be re-tried as by-specifying when backtracking.
     }
