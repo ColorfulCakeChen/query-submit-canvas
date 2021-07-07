@@ -87,23 +87,34 @@ class Base extends ReturnOrClone_Activation.Base {
       //   - As no depthwise operation (i.e. ( this.bDepthwise == false ) )
       //   - Just return input (i.e. ( this.pfnOperation == Base.return_input_directly ) )
 
-      // Although filter size 1x1, it perhaps can not do nothing if considering strides and pad.
-      if ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) ) {
-        // Do nothing, because the result of 1x1 AVG or MAX pooling (when strides is 1) is just the same as input.
-        this.pfnOperation = Base.return_input_directly;
-      } else {
-        switch ( this.AvgMax_Or_ChannelMultiplier ) {
-          case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
-            this.bDepthwise = this.bDepthwiseAvg = true;
-            this.pfnOperation = Base.Avg_and_destroy;
-            break;
+      // When 1x1 AVG or MAX pooling (and strides is 1), the result of depthwise operation (not include bias and activation) is the same as input.
+      let bSameAsInput = ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) );
 
-          case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
-            this.bDepthwise = this.bDepthwiseMax = true;
+//!!! (2021/07/07 Remarked) Although result is the same as input, it might still has bias and/or activation.
+//       // Although filter size 1x1, it perhaps can not do nothing if considering strides and pad.
+//       if ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) ) {
+//         // Do nothing, because the result of 1x1 AVG or MAX pooling (when strides is 1) is just the same as input.
+//         this.pfnOperation = Base.return_input_directly;
+//       } else {
+      switch ( this.AvgMax_Or_ChannelMultiplier ) {
+        case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
+          this.bDepthwise = this.bDepthwiseAvg = true;
+          if ( bSameAsInput )
+            this.pfnOperation = Base.return_input_directly; // For speeding up performance. (but it might still has bias and/or activation.)
+          else
+            this.pfnOperation = Base.Avg_and_destroy;
+          break;
+
+        case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
+          this.bDepthwise = this.bDepthwiseMax = true;
+          if ( bSameAsInput )
+            this.pfnOperation = Base.return_input_directly; // For speeding up performance. (but it might still has bias and/or activation.)
+          else
             this.pfnOperation = Base.Max_and_destroy;
-            break;
-        }
+          break;
       }
+//!!! (2021/07/07 Remarked) Although result is the same as input, it might still has bias and/or activation.
+//      }
 
     } else {
       if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
