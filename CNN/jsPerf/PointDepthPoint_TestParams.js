@@ -239,15 +239,15 @@ class TestParams {
     let pointwise1 = TestParams.generate_pointwise_filters_biases( channelCount1_pointwise1Before,
       paramsAll.pointwise1ChannelCount, paramsAll.bPointwise1Bias );
 
-    io_paramsNumberArrayObject.pointwise1FiltersArray = pointwise1.numberArrayArray[ 0 ];
-    io_paramsNumberArrayObject.pointwise1BiasesArray =  pointwise1.numberArrayArray[ 1 ];
+    io_paramsNumberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
+    io_paramsNumberArrayObject.pointwise1Biases =  pointwise1.numberArrayArray[ 1 ];
 
     // Depthwise
     let depthwise = TestParams.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
       paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
 
-    io_paramsNumberArrayObject.depthwiseFiltersArray = depthwise.numberArrayArray[ 0 ];
-    io_paramsNumberArrayObject.depthwiseBiasesArray =  depthwise.numberArrayArray[ 1 ];
+    io_paramsNumberArrayObject.depthwiseFilters = depthwise.numberArrayArray[ 0 ];
+    io_paramsNumberArrayObject.depthwiseBiases =  depthwise.numberArrayArray[ 1 ];
 
     // Concat
     let pointwise2_inputChannelCount = depthwise.outputChannelCount;
@@ -259,15 +259,15 @@ class TestParams {
     let pointwise21 = TestParams.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
       paramsAll.pointwise21ChannelCount, paramsAll.bPointwise21Bias );
 
-    io_paramsNumberArrayObject.pointwise21FiltersArray = pointwise21.numberArrayArray[ 0 ];
-    io_paramsNumberArrayObject.pointwise21BiasesArray =  pointwise21.numberArrayArray[ 1 ];
+    io_paramsNumberArrayObject.pointwise21Filters = pointwise21.numberArrayArray[ 0 ];
+    io_paramsNumberArrayObject.pointwise21Biases =  pointwise21.numberArrayArray[ 1 ];
 
     // Pointwise22
     let pointwise22 = TestParams.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
       paramsAll.pointwise22ChannelCount, paramsAll.bPointwise22Bias );
 
-    io_paramsNumberArrayObject.pointwise22FiltersArray = pointwise22.numberArrayArray[ 0 ];
-    io_paramsNumberArrayObject.pointwise22BiasesArray =  pointwise22.numberArrayArray[ 1 ];
+    io_paramsNumberArrayObject.pointwise22Filters = pointwise22.numberArrayArray[ 0 ];
+    io_paramsNumberArrayObject.pointwise22Biases =  pointwise22.numberArrayArray[ 1 ];
   }
 
   /**
@@ -339,17 +339,17 @@ TestParams.paramsInArrayOrder = [
   PointDepthPoint.Params.pointwise22ActivationId.paramName,
   PointDepthPoint.Params.inputTensorCount.paramName,
   
-  "pointwise1FiltersArray",
-  "pointwise1BiasesArray",
+  "pointwise1Filters",
+  "pointwise1Biases",
 
-  "depthwiseFiltersArray",
-  "depthwiseBiasesArray",
+  "depthwiseFilters",
+  "depthwiseBiases",
 
-  "pointwise21FiltersArray",
-  "pointwise21BiasesArray",
+  "pointwise21Filters",
+  "pointwise21Biases",
 
-  "pointwise22FiltersArray",
-  "pointwise22BiasesArray",
+  "pointwise22Filters",
+  "pointwise22Biases",
 ];
 
 
