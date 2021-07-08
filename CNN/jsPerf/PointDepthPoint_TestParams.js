@@ -328,6 +328,39 @@ class TestParams {
 
 }
 
+/**
+ * The order when generate weightsFloat32Array[].
+ */
+TestParams.paramsInArrayOrder = [
+  PointDepthPoint.Params.pointwise1ChannelCount.paramName,
+  PointDepthPoint.Params.bPointwise1Bias.paramName,
+  PointDepthPoint.Params.pointwise1ActivationId.paramName,
+  PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.paramName,
+  PointDepthPoint.Params.depthwiseFilterHeight.paramName,
+  PointDepthPoint.Params.depthwiseStridesPad.paramName,
+  PointDepthPoint.Params.bDepthwiseBias.paramName,
+  PointDepthPoint.Params.depthwiseActivationId.paramName,
+  PointDepthPoint.Params.pointwise21ChannelCount.paramName,
+  PointDepthPoint.Params.bPointwise21Bias.paramName,
+  PointDepthPoint.Params.pointwise21ActivationId.paramName,
+  PointDepthPoint.Params.pointwise22ChannelCount.paramName,
+  PointDepthPoint.Params.bPointwise22Bias.paramName,
+  PointDepthPoint.Params.pointwise22ActivationId.paramName,
+  PointDepthPoint.Params.inputTensorCount.paramName,
+  
+  "pointwise1Filters",
+  "pointwise1Biases",
+
+  "depthwiseFilters",
+  "depthwiseBiases",
+
+  "pointwise21Filters",
+  "pointwise21Biases",
+
+  "pointwise22Filters",
+  "pointwise22Biases",
+];
+
 
 /**
  * Responsible for generating TestParams.
