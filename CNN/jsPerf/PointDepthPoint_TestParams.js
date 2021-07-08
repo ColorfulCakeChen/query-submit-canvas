@@ -40,43 +40,44 @@ class TestParams {
 //!!! ...unfinished... (2021/06/09) channelCount1_pointwise1Before and channelCount2_pointwise1Before should also be random
 // tested (e.g. between 3 - 5).
 
-  /**
-   * Fills the following proterties:
-   *   - this.in.inputFloat32Array
-   *   - this.in.byteOffsetBegin
-   *   - this.in.weights
-   *   - this.in.channelCount1_pointwise1Before
-   *   - this.in.channelCount2_pointwise1Before
-   *   - this.out
-   *
-   * @param {number} channelCount1_pointwise1Before
-   *   The channel count of the first input image.
-   *
-   * @param {number} channelCount2_pointwise1Before
-   *   The channel count of the second input image.
-   *
-   * @return {TestParams}
-   *   Return this object self.
-   */
-  set(
-    channelCount1_pointwise1Before, channelCount2_pointwise1Before,
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-    pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
-    inputTensorCount
-  ) {
+//!!! (2021/07/08 Remarked) seems not used.
+//   /**
+//    * Fills the following proterties:
+//    *   - this.in.inputFloat32Array
+//    *   - this.in.byteOffsetBegin
+//    *   - this.in.weights
+//    *   - this.in.channelCount1_pointwise1Before
+//    *   - this.in.channelCount2_pointwise1Before
+//    *   - this.out
+//    *
+//    * @param {number} channelCount1_pointwise1Before
+//    *   The channel count of the first input image.
+//    *
+//    * @param {number} channelCount2_pointwise1Before
+//    *   The channel count of the second input image.
+//    *
+//    * @return {TestParams}
+//    *   Return this object self.
+//    */
+//   set(
+//     channelCount1_pointwise1Before, channelCount2_pointwise1Before,
+//     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+//     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+//     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+//     pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+//     inputTensorCount
+//   ) {
 
-    let paramsOut = {
-      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-      pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
-      inputTensorCount
-    };
+//     let paramsOut = {
+//       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+//       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+//       pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+//       pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+//       inputTensorCount
+//     };
 
-    return this.set_By_ParamsInArray_ParamsOut( channelCount1_pointwise1Before, channelCount2_pointwise1Before, null, paramsOut );
-  }
+//     return this.set_By_ParamsInArray_ParamsOut( channelCount1_pointwise1Before, channelCount2_pointwise1Before, null, paramsOut );
+//   }
  
   /**
    * Fills the following proterties:
@@ -93,8 +94,13 @@ class TestParams {
    * @param {number} channelCount2_pointwise1Before
    *   The channel count of the second input image.
    *
-   * @param {number[]} paramsInArray
-   *   A number array which will be concatenated in front of the number array of filters and biases.
+   * @param {Map<ParamName,number[]>} io_paramsNumberArrayMap
+   *   Pass in a map. The result will be put into this map. It is map from a string name (e.g. parameter name) to a number array.
+   * The name should be one of TestParams.paramsInArrayOrder[] elements.
+
+//!!! (2021/07/08 Remarked)
+//   * @param {number[]} paramsInArray
+//   *   A number array which will be concatenated in front of the number array of filters and biases.
    *
    * @param {object} paramsOut
    *   An object which has the following data members: pointwise1ChannelCount, bPointwise1Bias,
@@ -104,22 +110,31 @@ class TestParams {
    * @return {TestParams}
    *   Return this object self.
    */
-  set_By_ParamsInArray_ParamsOut( channelCount1_pointwise1Before, channelCount2_pointwise1Before, paramsInArray, paramsOut ) {
+//!!! (2021/07/08 Remarked)
+//  set_By_ParamsInArray_ParamsOut( channelCount1_pointwise1Before, channelCount2_pointwise1Before, paramsInArray, paramsOut ) {
+  set_By_ParamsNumberArrayMap_ParamsOut( channelCount1_pointwise1Before, channelCount2_pointwise1Before, io_paramsNumberArrayMap, paramsOut ) {
     this.in.channelCount1_pointwise1Before = channelCount1_pointwise1Before;
     this.in.channelCount2_pointwise1Before = channelCount2_pointwise1Before;
     this.out = paramsOut;
 
-    let filters_biases = TestParams.generate_Filters_Biases( channelCount1_pointwise1Before, channelCount2_pointwise1Before, paramsOut );
+//!!! (2021/07/08 Remarked)
+//     let filters_biases = TestParams.generate_Filters_Biases( channelCount1_pointwise1Before, channelCount2_pointwise1Before, paramsOut );
+//
+//     // In front of the filters and biases, there should be the parameters by evolution.
+//     filters_biases.numberArrayArray.unshift( paramsInArray );
+//
+//    let Float32Array_ByteOffsetBegin = TestParams.concat_NumberArray_To_Float32Array( filters_biases.numberArrayArray );
 
-    // In front of the filters and biases, there should be the parameters by evolution.
-    filters_biases.numberArrayArray.unshift( paramsInArray );
+    TestParams.generate_Filters_Biases( channelCount1_pointwise1Before, channelCount2_pointwise1Before, paramsOut, io_paramsNumberArrayMap );
 
-    let Float32Array_ByteOffsetBegin = TestParams.concat_NumberArray_To_Float32Array( filters_biases.numberArrayArray );
+    let Float32Array_ByteOffsetBegin = TestParams.concat_NumberArrayMap_To_Float32Array( io_paramsNumberArrayMap );
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
 
     // The original (non-concatenated) filters and biases should also be returned.
-    this.in.weights = filters_biases.numberArrayObject;
+//!!! (2021/07/08 Remarked)
+//    this.in.weights = filters_biases.numberArrayObject;
+    this.in.weights = io_numberArrayMap;
 
     return this;
   }
@@ -225,38 +240,30 @@ class TestParams {
    * @param {number} channelCount2_pointwise1Before
    *   The channel count of the second input image.
    *
-   * @param {object} params
-   *   An object which has the following data members:  pointwise1ChannelCount, bPointwise1Bias,
+   * @param {object} paramsAll
+   *   An object which must have all the following data members: pointwise1ChannelCount, bPointwise1Bias,
    * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
-   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount.
+   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount. They will be used to modify io_paramsNumberArrayMap.
    *
-   * @return {number[][]}
-   *   Return an object { numberArrayObject, numberArrayArray }. The numberArrayObject is an object which may or may not have the
-   * following properties: pointwise1FiltersArray, pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray,
-   * pointwise21FiltersArray, pointwise21BiasesArray, pointwise22FiltersArray, pointwise22BiasesArray. The numberArrayArray is an array.
-   * Every element of the array is a number array (i.e. the above number array). At most, it may look like [ pointwise1FiltersArray,
-   * pointwise1BiasesArray, depthwiseFiltersArray, depthwiseBiasesArray, pointwise21FiltersArray, pointwise21BiasesArray,
-   * pointwise22FiltersArray, pointwise22BiasesArray ]. But it may not have so many elements because some may not exist. So, it may
-   * be an array with zero element.
+   * @param {Map<ParamName,number[]>} io_paramsNumberArrayMap
+   *   Pass in a map. The result will be put into this map. It is map from a string name (e.g. parameter name) to a number array.
+   * The name should be one of TestParams.paramsInArrayOrder[] elements.
    */
-  static generate_Filters_Biases( channelCount1_pointwise1Before, channelCount2_pointwise1Before, params ) {
-    let result = { numberArrayObject: {}, numberArrayArray: [] };
+  static generate_Filters_Biases( channelCount1_pointwise1Before, channelCount2_pointwise1Before, paramsAll, io_paramsNumberArrayMap ) {
 
     // Pointwise1
     let pointwise1 = TestParams.generate_pointwise_filters_biases( channelCount1_pointwise1Before,
-      params.pointwise1ChannelCount, params.bPointwise1Bias );
+      paramsAll.pointwise1ChannelCount, paramsAll.bPointwise1Bias );
 
-    result.numberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
-    result.numberArrayObject.pointwise1Biases = pointwise1.numberArrayArray[ 1 ];
-    result.numberArrayArray.push( ...pointwise1.numberArrayArray );
+    io_paramsNumberArrayMap.set( "pointwise1Filters", pointwise1.numberArrayArray[ 0 ] );
+    io_paramsNumberArrayMap.set( "pointwise1Biases",  pointwise1.numberArrayArray[ 1 ] );
 
     // Depthwise
     let depthwise = TestParams.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
-      params.depthwise_AvgMax_Or_ChannelMultiplier, params.depthwiseFilterHeight, params.depthwiseStridesPad, params.bDepthwiseBias );
+      paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
 
-    result.numberArrayObject.depthwiseFilters = depthwise.numberArrayArray[ 0 ];
-    result.numberArrayObject.depthwiseBiases = depthwise.numberArrayArray[ 1 ];
-    result.numberArrayArray.push( ...depthwise.numberArrayArray );
+    io_paramsNumberArrayMap.set( "depthwiseFilters", depthwise.numberArrayArray[ 0 ] );
+    io_paramsNumberArrayMap.set( "depthwiseBiases",  depthwise.numberArrayArray[ 1 ] );
 
     // Concat
     let pointwise2_inputChannelCount = depthwise.outputChannelCount;
@@ -266,33 +273,30 @@ class TestParams {
 
     // Pointwise21
     let pointwise21 = TestParams.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-      params.pointwise21ChannelCount, params.bPointwise21Bias );
+      paramsAll.pointwise21ChannelCount, paramsAll.bPointwise21Bias );
 
-    result.numberArrayObject.pointwise21Filters = pointwise21.numberArrayArray[ 0 ];
-    result.numberArrayObject.pointwise21Biases = pointwise21.numberArrayArray[ 1 ];
-    result.numberArrayArray.push( ...pointwise21.numberArrayArray );
+    io_paramsNumberArrayMap.set( "pointwise21Filters", pointwise21.numberArrayArray[ 0 ] );
+    io_paramsNumberArrayMap.set( "pointwise21Biases",  pointwise21.numberArrayArray[ 1 ] );
 
     // Pointwise22
     let pointwise22 = TestParams.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-      params.pointwise22ChannelCount, params.bPointwise22Bias );
+      paramsAll.pointwise22ChannelCount, paramsAll.bPointwise22Bias );
 
-    result.numberArrayObject.pointwise22Filters = pointwise22.numberArrayArray[ 0 ];
-    result.numberArrayObject.pointwise22Biases = pointwise22.numberArrayArray[ 1 ];
-    result.numberArrayArray.push( ...pointwise22.numberArrayArray );
-
-    return result;
+    io_paramsNumberArrayMap.set( "pointwise22Filters", pointwise22.numberArrayArray[ 0 ] );
+    io_paramsNumberArrayMap.set( "pointwise22Biases",  pointwise22.numberArrayArray[ 1 ] );
   }
 
   /**
    *
-   * @param {number[][]} numberArrayArray
-   *   An array. Its elements are number array.
+   * @param {Map<ParamName,number[]>} numberArrayMap
+   *   Pass in a map. The result will be put into this map. It is map from a string name (e.g. parameter name) to a number array.
+   * The name should be one of TestParams.paramsInArrayOrder[] elements.
    *
    * @return {object}
    *   Return an object { weightsFloat32Array, weightsByteOffsetBegin }. The weightsFloat32Array (as a Float32Array) is the concatenation
    * of the numberArrayArray. The weightsByteOffsetBegin is a random offset inside weightsFloat32Array.
    */
-  static concat_NumberArray_To_Float32Array( numberArrayArray ) {
+  static concat_NumberArrayMap_To_Float32Array( numberArrayMap ) {
 
     // For testing not start at the offset 0.
     let weightsElementOffsetBegin = ValueRange.Same.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
@@ -303,8 +307,9 @@ class TestParams {
     // Prepare weights source and offset into array. So that they can be accessed by loop.
     let weightsTotalLength = weightsElementOffsetBegin;
     let weightsSourceArray = [];
-    for ( let i = 0; i < numberArrayArray.length; ++i ) {
-      let numberArray = numberArrayArray[ i ];
+    for ( let i = 0; i < TestParams.paramsInArrayOrder.length; ++i ) {
+      let paramName = TestParams.paramsInArrayOrder[ i ];
+      let numberArray = numberArrayMap.get( paramName );
       if ( numberArray ) {
         weightsSourceArray.push( { offset: weightsTotalLength, weights: numberArray } );
         weightsTotalLength += numberArray.length;
@@ -329,7 +334,7 @@ class TestParams {
 }
 
 /**
- * The order when generate weightsFloat32Array[].
+ * The order when generate weightsFloat32Array[]. This order should be the same as the extracted order of PointDepthPoint.initer().
  */
 TestParams.paramsInArrayOrder = [
   PointDepthPoint.Params.pointwise1ChannelCount.paramName,
@@ -414,14 +419,16 @@ class Base {
    */
   * ParamsGenerator() {
 
-    this.paramsInArray = [];
+//!!! (2021/07/08 Remarked)
+//    this.paramsInArray = [];
+    this.paramsNumberArrayMap = new Map();
     this.result = new TestParams();
 
     yield *this.permuteParamRecursively( 0 );
   }
 
   /**
-   * This method will modify this.result and this.paramsInArray. It also calls itself recursively to permute all parameters.
+   * This method will modify this.result and this.paramsNumberArrayMap. It also calls itself recursively to permute all parameters.
    *
    * @param {number} currentParamDescIndex
    *   The index into the this.paramDescArray[]. It represents the current parameter to be tried.
@@ -434,8 +441,8 @@ class Base {
     if ( currentParamDescConfigIndex >= this.paramDescConfigArray.length ) { // All parameters are used to be composed as one kind of combination.
       ++this.result.id;  // Complete one kind of combination.
 
-      this.result.set_By_ParamsInArray_ParamsOut(
-        this.channelCount1_pointwise1Before, this.channelCount2_pointwise1Before, this.paramsInArray, this.result.out );
+      this.result.set_By_ParamsNumberArrayMap_ParamsOut(
+        this.channelCount1_pointwise1Before, this.channelCount2_pointwise1Before, this.paramsNumberArrayMap, this.result.out );
 
       yield this.result;
       return; // Stop this recusive. Back-track to another parameters combination.
@@ -461,10 +468,10 @@ class Base {
 
       // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
       this.result.in[ paramDesc.paramName ] = null;
-      this.paramsInArray.push( pair.valueInput );
+      this.paramsNumberArrayMap.set( paramDesc.paramName, [ pair.valueInput ] );
       yield *this.permuteParamRecursively( nextParamDescConfigIndex );
 
-      this.paramsInArray.pop(); // So that it could be re-tried as by-specifying when backtracking.
+      this.paramsNumberArrayMap.delete( paramDesc.paramName ); // So that it could be re-tried as by-specifying when backtracking.
     }
   }
 
