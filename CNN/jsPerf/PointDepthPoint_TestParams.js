@@ -134,7 +134,7 @@ class TestParams {
     // The original (non-concatenated) filters and biases should also be returned.
 //!!! (2021/07/08 Remarked)
 //    this.in.weights = filters_biases.numberArrayObject;
-    this.in.weights = io_numberArrayMap;
+    this.in.weights = io_paramsNumberArrayMap;
 
     return this;
   }
