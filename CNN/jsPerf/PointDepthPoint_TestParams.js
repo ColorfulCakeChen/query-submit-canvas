@@ -293,7 +293,7 @@ class TestParams {
     let weightsSourceArray = [];
     for ( let i = 0; i < TestParams.paramsInArrayOrder.length; ++i ) {
       let paramName = TestParams.paramsInArrayOrder[ i ];
-      let numberArray = paramsNumberArrayObject.get( paramName );
+      let numberArray = paramsNumberArrayObject[ paramName ];
       if ( numberArray ) {
         weightsSourceArray.push( { offset: weightsTotalLength, weights: numberArray } );
         weightsTotalLength += numberArray.length;
