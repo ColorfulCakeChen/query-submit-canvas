@@ -267,7 +267,7 @@ class TestParams {
 
     // Concat
     let pointwise2_inputChannelCount = depthwise.outputChannelCount;
-    if ( params.inputTensorCount > 1 ) {
+    if ( paramsAll.inputTensorCount > 1 ) {
       pointwise2_inputChannelCount += channelCount2_pointwise1Before; // Add the channel count of the second input image.
     }
 
@@ -334,7 +334,9 @@ class TestParams {
 }
 
 /**
- * The order when generate weightsFloat32Array[]. This order should be the same as the extracted order of PointDepthPoint.initer().
+ * The order when generate weightsFloat32Array[].
+ *
+ * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of PointDepthPoint.initer().
  */
 TestParams.paramsInArrayOrder = [
   PointDepthPoint.Params.pointwise1ChannelCount.paramName,
@@ -387,7 +389,7 @@ class Base {
     this.maxKindsPerParameter = 5;
     this.maxKindsPointwise = 3;
 
-    // All the parameters to be tried.
+    // All the parameters to be tried. The order of these element could be changed to change testing order.
     //
     // Note1: Because the logic of activation function is simpler than other, it is just randomly tested one
     //        (i.e. ( maxKinds == 0 )) for speeding up testing.
