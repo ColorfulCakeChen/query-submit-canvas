@@ -40,44 +40,6 @@ class TestParams {
 //!!! ...unfinished... (2021/06/09) channelCount1_pointwise1Before and channelCount2_pointwise1Before should also be random
 // tested (e.g. between 3 - 5).
 
-//!!! (2021/07/08 Remarked) seems not used.
-//   /**
-//    * Fills the following proterties:
-//    *   - this.in.inputFloat32Array
-//    *   - this.in.byteOffsetBegin
-//    *   - this.in.weights
-//    *   - this.in.channelCount1_pointwise1Before
-//    *   - this.in.channelCount2_pointwise1Before
-//    *   - this.out
-//    *
-//    * @param {number} channelCount1_pointwise1Before
-//    *   The channel count of the first input image.
-//    *
-//    * @param {number} channelCount2_pointwise1Before
-//    *   The channel count of the second input image.
-//    *
-//    * @return {TestParams}
-//    *   Return this object self.
-//    */
-//   set(
-//     channelCount1_pointwise1Before, channelCount2_pointwise1Before,
-//     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-//     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-//     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-//     pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
-//     inputTensorCount
-//   ) {
-
-//     let paramsOut = {
-//       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-//       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-//       pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-//       pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
-//       inputTensorCount
-//     };
-
-//     return this.set_By_ParamsInArray_ParamsOut( channelCount1_pointwise1Before, channelCount2_pointwise1Before, null, paramsOut );
-//   }
  
   /**
    * Fills the following proterties:
@@ -373,19 +335,13 @@ class Base {
     this.maxKindsPerParameter = 5;
     this.maxKindsPointwise = 3;
 
-    // All the parameters to be tried. The order of these element could be changed to change testing order.
+    // All the parameters to be tried.
     //
     // Note1: Because the logic of activation function is simpler than other, it is just randomly tested one
     //        (i.e. ( maxKinds == 0 )) for speeding up testing.
+    //
+    // Note2: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     this.paramDescConfigArray = [
-      { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds:    this.maxKindsPointwise },
-      { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds:                 undefined },
-      { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds:                         0 },
-      { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsPerParameter },
-      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                 undefined },
-      { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds:                 undefined },
-      { paramDesc: PointDepthPoint.Params.bDepthwiseBias,                        maxKinds:                 undefined },
-      { paramDesc: PointDepthPoint.Params.depthwiseActivationId,                 maxKinds:                        0  },
       { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise21Bias,                      maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise21ActivationId,               maxKinds:                         0 },
@@ -393,6 +349,16 @@ class Base {
       { paramDesc: PointDepthPoint.Params.bPointwise22Bias,                      maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise22ActivationId,               maxKinds:                         0 },
       { paramDesc: PointDepthPoint.Params.inputTensorCount,                      maxKinds:                 undefined },
+
+      { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds:    this.maxKindsPointwise },
+      { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds:                         0 },
+
+      { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsPerParameter },
+      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.bDepthwiseBias,                        maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.depthwiseActivationId,                 maxKinds:                        0  },
     ];
   }
 
