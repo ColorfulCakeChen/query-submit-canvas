@@ -455,7 +455,7 @@ class Base {
       this.paramsNumberArrayObject[ paramDesc.paramName ] = [ pair.valueInput ];
       yield *this.permuteParamRecursively( nextParamDescConfigIndex );
 
-      this.paramsNumberArrayMap[ paramDesc.paramName ] = undefined; // So that it could be re-tried as by-specifying when backtracking.
+      this.paramsNumberArrayObject[ paramDesc.paramName ] = undefined; // So that it could be re-tried as by-specifying when backtracking.
     }
   }
 
