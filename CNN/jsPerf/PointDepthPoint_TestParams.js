@@ -351,8 +351,8 @@ class Base {
 
     // All the parameters to be tried.
     //
-    // Note1: Because the logic of activation function is simple, it is just randomly tested one (i.e. ( maxKinds == 0 ))
-    //        for speeding up testing.
+    // Note1: Because the logic of activation function is simpler than other, it is just randomly tested one
+    //        (i.e. ( maxKinds == 0 )) for speeding up testing.
     this.paramDescConfigArray = [
       { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds:                 undefined },
