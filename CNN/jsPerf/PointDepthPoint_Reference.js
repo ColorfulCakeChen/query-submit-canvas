@@ -569,13 +569,19 @@ class Base {
     if ( depthwisePad == "same" ) {
       padHeight = effectFilterHeight - 1; // So that the output height will be the same as input height.
       let padHeightHalf = padHeight / 2;
-      padHeightTop    = Math.ceil(  padHeightHalf );
-      padHeightBottom = Math.floor( padHeightHalf );
+//!!! (2021/07/09 Remarked) Changed to pad right-bottom first.
+//       padHeightTop    = Math.ceil(  padHeightHalf );
+//       padHeightBottom = Math.floor( padHeightHalf );
+      padHeightTop    = Math.floor(  padHeightHalf );
+      padHeightBottom = Math.ceil( padHeightHalf );
 
       padWidth = effectFilterWidth - 1;  // So that the output width will be the same as input width.
       let padWidthHalf = padWidth / 2;
-      padWidthLeft    = Math.ceil(  padWidthHalf );
-      padWidthRight   = Math.floor( padWidthHalf );
+//!!! (2021/07/09 Remarked) Changed to pad right-bottom first.
+//       padWidthLeft    = Math.ceil(  padWidthHalf );
+//       padWidthRight   = Math.floor( padWidthHalf );
+      padWidthLeft    = Math.floor(  padWidthHalf );
+      padWidthRight   = Math.ceil( padWidthHalf );
 
       imageInBeginY = - padHeightTop; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. for ( pad == "same" ).
       imageInBeginX = - padWidthLeft;
