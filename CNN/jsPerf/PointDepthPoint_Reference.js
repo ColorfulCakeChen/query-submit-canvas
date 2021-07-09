@@ -440,8 +440,6 @@ class Base {
       }
     } else {
       if ( pointwise22Result ) {
-//!!! (2021/07/05 Remarked)
-//        nextImageOutArray = [ pointwise22Result, null ];
         nextImageOutArray = [ null, pointwise22Result ];
       } else {
         nextImageOutArray = [ null, null ];
@@ -784,7 +782,8 @@ class Base {
    * @param {string}   parametersDesc       A string for debug message of this point-depth-point.
    *
    * @return {object}
-   *   Return imageOut. If no additive, it will be the original imageOut. If additive, the imageOut.dataArray will be replaced with
+   *   If no additive, it will be the original imageOut. If additive, the a new imageOut will be created and returned. The new created
+   * imageOutNew will have the same ( height, width, depty ) as imageOut but imageOutNew.dataArray will be replaced with
    * new data. Return null, if ( imageOut == null ).
    */
   static modifyByInput( imageOut, bAddInputToOutput, imageIn, addInputToOutputName, parametersDesc ) {
@@ -812,9 +811,17 @@ class Base {
         + `should match imageOut.depth ( ${imageOut.depth} ). (${parametersDesc})`);
 
     let resultArray = imageIn.dataArray.map( ( value, i ) => ( imageOut.dataArray[ i ] + value ) );
-    imageOut.dataArray = resultArray;
 
-    return imageOut;
+    // Q: Why not just modify imageOut directly?
+    // A: The imageOut might be the original input array which should not be modified at all. (because they might be used in another test.)
+    let imageOutNew = {
+      height:    imageOut.height,
+      width:     imageOut.width,
+      depth:     imageOut.depth,
+      dataArray: resultArray
+    };
+
+    return imageOutNew;
   }
 
   /**
