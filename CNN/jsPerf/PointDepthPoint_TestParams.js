@@ -355,10 +355,12 @@ class Base {
       { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds:                         0 },
 
       { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsPerParameter },
-      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                 undefined },
+//!!! (2021/07/09 Remarked) avg pooling filter size seems that could not larger than input image size?
+//      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                         3 },
       { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.bDepthwiseBias,                        maxKinds:                 undefined },
-      { paramDesc: PointDepthPoint.Params.depthwiseActivationId,                 maxKinds:                        0  },
+      { paramDesc: PointDepthPoint.Params.depthwiseActivationId,                 maxKinds:                         0 },
     ];
   }
 
