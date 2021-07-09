@@ -355,7 +355,7 @@ class Base {
       { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds:                         0 },
 
       { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsPerParameter },
-//!!! (2021/07/09 Remarked) avg pooling filter size seems that could not larger than input image size?
+//!!! (2021/07/09 Remarked) when pad is "valid", it seems that depthwise (avg/max pooling)'s filter size could not be larger than input image size?
 //      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                         3 },
       { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds:                 undefined },
