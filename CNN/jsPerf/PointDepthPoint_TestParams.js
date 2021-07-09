@@ -348,11 +348,12 @@ class Base {
       { paramDesc: PointDepthPoint.Params.pointwise22ChannelCount,               maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise22Bias,                      maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise22ActivationId,               maxKinds:                         0 },
-      { paramDesc: PointDepthPoint.Params.inputTensorCount,                      maxKinds:                 undefined },
 
       { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds:                         0 },
+
+      { paramDesc: PointDepthPoint.Params.inputTensorCount,                      maxKinds:                 undefined },
 
       { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsPerParameter },
 //!!! (2021/07/09 Remarked) when pad is "valid", it seems that depthwise (avg/max pooling)'s filter size could not be larger than input image size?
