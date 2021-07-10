@@ -462,6 +462,8 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise1 filters was ready. Report progress.
 
+//!!! ...unfinished (2021/07/10) When 在 pad=valid, it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
+
     // 3. The depthwise operation.
     this.depthwise = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwiseBefore,
