@@ -320,6 +320,11 @@ TestParams.paramsInArrayOrder = [
  */
 class Base {
 
+//!!! ...unfinished... (2021/07/11) channelCount1_pointwise1Before and channelCount2_pointwise1Before should also be included
+// when permuteParamRecursively. They should be one of ( channelCount1_pointwise1Before, 0 ) or
+// ( channelCount1_pointwise1Before, channelCount2_pointwise1Before ) according to inputTensorCount is 0, 1, or 2.
+//
+
   /**
    * @param {number} channelCount1_pointwise1Before
    *   The channel count of the first input image.
