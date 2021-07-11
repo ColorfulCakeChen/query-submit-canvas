@@ -665,7 +665,7 @@ class Base extends ReturnOrClone.Base {
         alwaysKeepSet = new Set( [ TensorOpCounters.input0, TensorOpCounters.input1 ] );
       }
 
-      // Using Set (instead of Array) so that duplicated TensorOpCounter will only analyzed once.
+      // Using Set (instead of Array) so that duplicated TensorOpCounter will only be analyzed once.
       // Note: When an operation does not exist, its output TensorOpCounter will be just its input TensorOpCounter (so duplicated).
       let TensorOpCounterSet = new Set( [
         TensorOpCounters.pointwise1,  TensorOpCounters.depthwise, TensorOpCounters.concatenator,
