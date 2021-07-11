@@ -489,12 +489,15 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // depthwise filters was ready. Report progress.
 
 
-//!!! ...unfinished... (2021/07/10) How to ensure input0 and input1 have the same ( height, width )?
+//!!! ...unfinished... (2021/07/11) How to ensure input0 and input1 have the same ( height, width )?
 //
 // Perhaps, need depthwise1 and depthwise2 with the same StridesPad (so that their result will have the same ( height, width ) ).
 //  They both apply to input0 (never apply to input1).
 // When depthwise2 existed, the input1 will be ignored and the concatenator will concatenate the result of depthwise1 and depthwise2
 // instead of depthwise1 and input1.
+//
+// When ( channelCount2_pointwise1Before == 0 ) and ???, depthwise2 will be added?
+//
 
 
     // 4. Concatenator
