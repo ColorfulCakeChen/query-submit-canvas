@@ -571,7 +571,7 @@ class Base {
 //       padHeightTop    = Math.ceil(  padHeightHalf );
 //       padHeightBottom = Math.floor( padHeightHalf );
       padHeightTop    = Math.floor(  padHeightHalf );
-      padHeightBottom = Math.ceil( padHeightHalf );
+      padHeightBottom = Math.ceil( padHeightHalf );   // When pad is odd, let right-bottom are padded more.
 
       padWidth = effectFilterWidth - 1;  // So that the output width will be the same as input width.
       let padWidthHalf = padWidth / 2;
@@ -579,7 +579,7 @@ class Base {
 //       padWidthLeft    = Math.ceil(  padWidthHalf );
 //       padWidthRight   = Math.floor( padWidthHalf );
       padWidthLeft    = Math.floor(  padWidthHalf );
-      padWidthRight   = Math.ceil( padWidthHalf );
+      padWidthRight   = Math.ceil( padWidthHalf );    // When pad is odd, let right-bottom are padded more.
 
       imageInBeginY = - padHeightTop; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. for ( pad == "same" ).
       imageInBeginX = - padWidthLeft;
