@@ -14,7 +14,11 @@ import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
- * it has the following data members: inputFloat32Array, byteOffsetBegin, pointwise1ChannelCount, bPointwise1Bias,
+ * it has the following data members: inputFloat32Array, byteOffsetBegin, 
+
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+ 
+ pointwise1ChannelCount, bPointwise1Bias,
  * pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias,
  * depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
  * bPointwise22Bias, pointwise22ActivationId, inputTensorCount. It also has the following properties:
@@ -61,7 +65,11 @@ class TestParams {
    * The name should be one of TestParams.paramsInArrayOrder[] elements.
    *
    * @param {object} paramsOut
-   *   An object which has the following data members: pointwise1ChannelCount, bPointwise1Bias,
+   *   An object which has the following data members:
+
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+   
+   pointwise1ChannelCount, bPointwise1Bias,
    * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
    * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount. This object will be recorded in this.out directly.
    *
@@ -211,6 +219,8 @@ class TestParams {
     io_paramsNumberArrayObject.depthwiseFilters = depthwise.numberArrayArray[ 0 ];
     io_paramsNumberArrayObject.depthwiseBiases =  depthwise.numberArrayArray[ 1 ];
 
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+
     // Concat
     let pointwise2_inputChannelCount = depthwise.outputChannelCount;
     if ( paramsAll.inputTensorCount > 1 ) {
@@ -285,6 +295,9 @@ class TestParams {
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of PointDepthPoint.initer().
  */
 TestParams.paramsInArrayOrder = [
+
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+
   PointDepthPoint.Params.pointwise1ChannelCount.paramName,
   PointDepthPoint.Params.bPointwise1Bias.paramName,
   PointDepthPoint.Params.pointwise1ActivationId.paramName,
