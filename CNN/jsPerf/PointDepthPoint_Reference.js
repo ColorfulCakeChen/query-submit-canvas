@@ -201,6 +201,9 @@ class Base {
     // Initialize successfully or failed.
     let testParams = this.testParams;
     let extractedParams = new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
+
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
 
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight,
@@ -219,6 +222,7 @@ class Base {
       extractedParams
     );
 
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
     let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
@@ -370,6 +374,8 @@ class Base {
         testParams.in.weights.pointwise1Biases, testParams.out.pointwise1ActivationId,
         "Pointwise1", this.paramsOutDescription );
     }
+
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
 
     // 2. Depthwise
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
