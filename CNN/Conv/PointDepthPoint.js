@@ -31,6 +31,34 @@ class Params extends Weights.Params {
    * @param {number} byteOffsetBegin
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
+
+!!! ...unfinished... (2021/07/12)
+
+   * @param {number} channelCount2_pointwise1Before
+   *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]).
+
+!!! ...unfinished... (2021/07/12 Remarked)
+//   * If ( params.inputTensorCount == 2 ),
+//   * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+//   * If ( params.inputTensorCount < 2 ), this will be ignored.
+
+   *   - ( channelCount2_pointwise1Before > 0 ): TWO-INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
+   *     will not be processed by any pointwise1 and depthwise operation. It will be concatenated directly with the result of depthwise
+   *     operation of inputTensors[ 0 ]. The concatenated result will be processed by pointwise2 convolution.
+   *
+   *   - ( channelCount2_pointwise1Before == 0 ): ONE-INPUT: The inputTensors[ 1 ] will not be used at all (will be ignored completely).
+   *     The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution.
+   *
+   *   - ( channelCount2_pointwise1Before == -1 ): ONE-INPUT-ADD-TO-OUTPUT: The inputTensors[ 1 ] will not be used at all (will be ignored
+   *     completely). The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution. Finally,
+   *     the inputTensors[ 0 ] will be added to the result of pointwise2. This is the only one case which will do add-input-to-output.
+   *
+   *   - ( channelCount2_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: The inputTensors[ 1 ] will not be used at all (will be ignored
+   *     completely). The inputTensors[ 0 ]) will processed applied by pointwise1, two depthwise operations. These two depthwise operations
+   *     will have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
+   *     bDepthwiseBias, depthwiseActivationId) but have different (filter and bias) weights. The two depthwise results will be concatenated.
+   *     The concatenated result will be processed by pointwise2 convolution.
+   *
    *
    * @param {number} pointwise1ChannelCount
    *   The output channel count of the pointwise1 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -101,6 +129,8 @@ class Params extends Weights.Params {
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise22ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
+
+!!! ...unfinished... (2021/07/12) should be deprecated by channelCount2_pointwise1Before.
 
 //!!! ...unfinished... (2021/06/08) could be inferred from channelCount2_pointwise1Before?
 // If ( channelCount2_pointwise1Before < 0 ), means need add-input-to-output?
@@ -318,6 +348,9 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  * if at least one pointwise2 convolution existed. If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it
  * will be channelCount_concatenateAfter_pointwise2Before.
  *
+
+!!! ...unfinished... (2021/07/12)
+
  * @member {number} outputTensorCount
  *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2.
  *
@@ -344,34 +377,6 @@ class Base extends ReturnOrClone.Base {
    * @param {number} channelCount1_pointwise1Before
    *   The channel count of apply_and_destroy_or_keep()'s first input image (i.e. inputTensors[ 0 ]). This should always be specified
    * and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
-   *
-
-!!! ...unfinished... (2021/07/12)
-
-   * @param {number} channelCount2_pointwise1Before
-   *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]).
-
-!!! ...unfinished... (2021/07/12 Remarked)
-//   * If ( params.inputTensorCount == 2 ),
-//   * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
-//   * If ( params.inputTensorCount < 2 ), this will be ignored.
-
-   *   - ( channelCount2_pointwise1Before > 0 ): TWO-INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
-   *     will not be applied by any pointwise1 and depthwise operration. It will be concatenated directly with the result of depthwise
-   *     operation of inputTensors[ 0 ].
-   *
-   *   - ( channelCount2_pointwise1Before == 0 ): ONE-INPUT: The inputTensors[ 1 ] will not be used at all (will be ignored completely).
-   *     The inputTensors[ 0 ] will be applied by pointwise1 and one depthwise operation.
-   *
-   *   - ( channelCount2_pointwise1Before == -1 ): ONE-INPUT-ADD-TO-OUTPUT: The inputTensors[ 1 ] will not be used at all (will be ignored
-   *     completely). The inputTensors[ 0 ] will be applied by pointwise1 and one depthwise operation. And the inputTensors[ 0 ] will be
-   *     addded to the result of pointwise2. This is the only one case which will do add-input-to-output.
-   *
-   *   - ( channelCount2_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: The inputTensors[ 1 ] will not be used at all (will be ignored
-   *     completely). The inputTensors[ 0 ]) will be applied by pointwise1 and two depthwise operations. These two depthwise operations will
-   *     have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
-   *     bDepthwiseBias, depthwiseActivationId) but have different (filter and bias) weights. The two depthwise results will be concatenated
-   *     before applying pointwise2.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
