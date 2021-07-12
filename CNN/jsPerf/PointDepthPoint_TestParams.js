@@ -347,6 +347,9 @@ class Base {
     //
     // Note2: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     this.paramDescConfigArray = [
+      
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+
       { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise21Bias,                      maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise21ActivationId,               maxKinds:                         0 },
