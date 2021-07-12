@@ -512,8 +512,6 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished (2021/07/10) When pad=valid, it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
 
-//!!! ...unfinished (2021/07/12) When ( bDepthwise2Requested == true ), need depthwise2.
-
     // 3. The depthwise operation.
 
     // 3.1 The first depthwise operation.
@@ -753,10 +751,7 @@ class Base extends ReturnOrClone.Base {
       // Using Set (instead of Array) so that duplicated TensorOpCounter will only be analyzed once.
       // Note: When an operation does not exist, its output TensorOpCounter will be just its input TensorOpCounter (so duplicated).
       let TensorOpCounterSet = new Set( [
-        TensorOpCounters.pointwise1,  TensorOpCounters.depthwise, TensorOpCounters.concatenator,
-
-//!!! ...unfinished (2021/07/12) When ( bDepthwise2Requested == true ), need depthwise2.
-
+        TensorOpCounters.pointwise1,  TensorOpCounters.depthwise, TensorOpCounters.depthwise2, TensorOpCounters.concatenator,
         TensorOpCounters.pointwise21, TensorOpCounters.addInput0ToPointwise21,
         TensorOpCounters.pointwise22, TensorOpCounters.addInput0ToPointwise22
       ] );
@@ -839,7 +834,11 @@ class Base extends ReturnOrClone.Base {
 
     this.intermediateTensorsArray = null;
 
-    this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22 = false;
+    this.bPointwise1
+      = this.bDepthwise2Requested = this.bDepthwise1 = this.bDepthwise2 =
+      = this.bConcatenatorRequested
+      = this.bPointwise21 = this.bPointwise22
+      = this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22 = false;
 
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
