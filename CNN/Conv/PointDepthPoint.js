@@ -31,17 +31,10 @@ class Params extends Weights.Params {
    * @param {number} byteOffsetBegin
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
-
-!!! ...unfinished... (2021/07/12)
-
+   *
    * @param {number} channelCount2_pointwise1Before
    *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]).
-
-!!! ...unfinished... (2021/07/12 Remarked)
-//   * If ( params.inputTensorCount == 2 ),
-//   * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
-//   * If ( params.inputTensorCount < 2 ), this will be ignored.
-
+   *
    *   - ( channelCount2_pointwise1Before > 0 ): TWO-INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
    *     will not be processed by any pointwise1 and depthwise operation. It will be concatenated directly with the result of depthwise
    *     operation of inputTensors[ 0 ]. The concatenated result will be processed by pointwise2 convolution.
@@ -54,11 +47,11 @@ class Params extends Weights.Params {
    *     the inputTensors[ 0 ] will be added to the result of pointwise2. This is the only one case which will do add-input-to-output.
    *
    *   - ( channelCount2_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: The inputTensors[ 1 ] will not be used at all (will be ignored
-   *     completely). The inputTensors[ 0 ]) will processed applied by pointwise1, two depthwise operations. These two depthwise operations
-   *     will have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
-   *     bDepthwiseBias, depthwiseActivationId) but have different (filter and bias) weights. The two depthwise results will be concatenated.
-   *     The concatenated result will be processed by pointwise2 convolution.
-   *
+   *     completely). The inputTensors[ 0 ] will be processed by two pathes: one is by pointwise1 and one depthwise operation, the other
+   *     is by another depthwise operation (without pointwise1). These two depthwise operations will have the same configurations
+   *     (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId)
+   *     but have different (filter and bias) weights. The two depthwise results will be concatenated. The concatenated result will
+   *     be processed by pointwise2 convolution. This is the only one case which there will be second depthwise.
    *
    * @param {number} pointwise1ChannelCount
    *   The output channel count of the pointwise1 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -291,14 +284,24 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  * @member {string} pointwise1ActivationName
  *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution.
  *
+ * @member {boolean} bDepthwise2Requested
+ *   It will be true only when ( channelCount2_pointwise1Before == -2 ). If true, it means a second depthwise might be needed.
+ *
  * @member {boolean} bDepthwise
  *   If true, the depthwise convolution (or average pooling, or maximum pooling) exists.
+ *
+ * @member {boolean} bDepthwise2
+ *   If true, the second depthwise convolution (or average pooling, or maximum pooling) exists.
  *
  * @member {string} depthwise_AvgMax_Or_ChannelMultiplier_Name
  *   Depthwise operation name.
  *
  * @member {string} depthwiseActivationName
  *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution.
+ *
+ * @member {boolean} bConcatenatorRequested
+ *   It will be true when ( channelCount2_pointwise1Before > 0 ) or ( channelCount2_pointwise1Before == -2 ). If true, it means
+ * a concatenator (before pointwise2) is needed.
  *
  * @member {boolean} bPointwise2
  *   If true, the pointwise2 (i.e. pointwise21 or/and pointwise22)  convolution exists.
@@ -462,13 +465,12 @@ class Base extends ReturnOrClone.Base {
 
     // Determine input tensor count and whether request add-input-to-output.
     if ( this.channelCount2_pointwise1Before > 0 ) {
-      this.inputTensorCount = 2;
-      this.bAddInputToOutput = false;
+      this.inputTensorCount = 2; this.bDepthwise2Requested = false; this.bConcatenatorRequested = true; this.bAddInputToOutput = false;
     } else {
       switch ( this.channelCount2_pointwise1Before ) {
-        case  0: this.inputTensorCount = 1; this.bAddInputToOutput = false; break;
-        case -1: this.inputTensorCount = 1; this.bAddInputToOutput =  true; break;
-        case -2: this.inputTensorCount = 1; this.bAddInputToOutput = false; break;
+        case  0: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutput = false; break;
+        case -1: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutput =  true; break;
+        case -2: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested =  true; this.bAddInputToOutput = false; break;
       }
     }
 
@@ -510,9 +512,11 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished (2021/07/10) When pad=valid, it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
 
-//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+//!!! ...unfinished (2021/07/12) When ( bDepthwise2Requested == true ), need depthwise2.
 
     // 3. The depthwise operation.
+
+    // 3.1 The first depthwise operation.
     this.depthwise = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwiseBefore,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
@@ -533,36 +537,66 @@ class Base extends ReturnOrClone.Base {
       TensorOpCounters.depthwise = TensorOpCounters.pointwise1; // Its output is just its input tensor.
     }
 
+    // 3.2 The second depthwise operation.
+    this.bDepthwise2 = false;
+    if ( this.bDepthwise2Requested ) {
+      
+      // Q: Why does depthwise2 use the same configuration as depthwise1?
+      // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
+      //    true for StridesPad.
+      this.depthwise2 = new Depthwise.Base(
+
+        // The depthwise2 processes the inputTensors[ 0 ] directly (i.e. not the pointwise1 result of inputTensors[ 0 ], and
+        // not inputTensors[ 1 ]).
+        this.channelCount1_pointwise1Before,
+
+        this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
+        this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
+        params.defaultInput, this.byteOffsetEnd );
+
+      if ( !this.depthwise2.init() )
+        return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = this.depthwise2.byteOffsetEnd;
+
+      this.bDepthwise2 = this.depthwise2.bExisted;
+      if ( this.bDepthwise2 ) {
+        this.channelCount_depthwise2After_concatenateBefore = this.depthwise2.outputChannelCount;
+        TensorOpCounters.depthwise2 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise2", this.depthwise2, TensorOpCounters.input0 );
+
+      } else {
+        // The depthwise2 is requested but not created. It means ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ). In this case,
+        // the depthwise2 should be short circuit to inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
+        this.channelCount_depthwise2After_concatenateBefore = channelCount1_pointwise1Before;
+        TensorOpCounters.depthwise2 = TensorOpCounters.input0;
+      }
+
+    } else {
+      // The depthwise2 is not requested. In this case, the depthwise2 should be short circuit to inputTensor[ 1 ] (i.e. not inputTensor[ 0 ]).
+      this.channelCount_depthwise2After_concatenateBefore = this.channelCount2_pointwise1Before;
+      TensorOpCounters.depthwise2 = TensorOpCounters.input1;
+    }
+
     ++progressToAdvance.value;
     yield progressRoot;  // depthwise filters was ready. Report progress.
 
 
-//!!! ...unfinished... (2021/07/11) How to ensure input0 and input1 have the same ( height, width )?
-//
-// Perhaps, need depthwise1 and depthwise2 with the same StridesPad (so that their result will have the same ( height, width ) ).
-//  They both apply to input0 (never apply to input1).
-// When depthwise2 existed, the input1 will be ignored and the concatenator will concatenate the result of depthwise1 and depthwise2
-// instead of depthwise1 and input1.
-//
-// When ( channelCount2_pointwise1Before == 0 ) and ???, depthwise2 will be added?
-//
-
-
     // 4. Concatenator
-    
-    // If there are two input tensors, the channel count for pointwise2 will be the concatenated channel count
-    // (= depthwise_channel_count + another_input_channel_count ).
-    if ( this.inputTensorCount > 1 ) {
-      this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount2_pointwise1Before;
+    //
+    // If ( there are two input tensors ) or ( there is one input tensor but there is depthwise2 ), the channel count for pointwise2 input
+    // will be the concatenated channel count (= depthwise_channel_count + depthwise2_channel_count ).
+    if ( this.bConcatenatorRequested ) {
+      
+      this.channelCount_concatenateAfter_pointwise2Before
+        = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount_depthwise2After_concatenateBefore;
+
       this.concatenator = new ConcatAlongAxisId2.Base( false, false );
-//!!! ...unfinished... (2021/07/01)
+
       TensorOpCounters.concatenator = new TensorOpCounter.Base(
-        ( ++TensorOpCounterId ) + "_concatenator", this.concatenator, TensorOpCounters.depthwise, TensorOpCounters.input1 );
+        ( ++TensorOpCounterId ) + "_concatenator", this.concatenator, TensorOpCounters.depthwise, TensorOpCounters.depthwise2 );
 
     } else {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
-//!!! ...unfinished... (2021/07/01)
-      TensorOpCounters.concatenator = TensorOpCounters.depthwise; // Its output is just its input tensor.
+      TensorOpCounters.concatenator = TensorOpCounters.depthwise;
     }
 
 
@@ -721,7 +755,7 @@ class Base extends ReturnOrClone.Base {
       let TensorOpCounterSet = new Set( [
         TensorOpCounters.pointwise1,  TensorOpCounters.depthwise, TensorOpCounters.concatenator,
 
-//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+//!!! ...unfinished (2021/07/12) When ( bDepthwise2Requested == true ), need depthwise2.
 
         TensorOpCounters.pointwise21, TensorOpCounters.addInput0ToPointwise21,
         TensorOpCounters.pointwise22, TensorOpCounters.addInput0ToPointwise22
@@ -775,7 +809,12 @@ class Base extends ReturnOrClone.Base {
       this.depthwise.disposeTensors();
       this.depthwise = null;
     }
- 
+
+    if ( this.depthwise2 ) {
+      this.depthwise2.disposeTensors();
+      this.depthwise2 = null;
+    }
+
     if ( this.concatenator ) {
       this.concatenator = null;
     }
@@ -811,7 +850,7 @@ class Base extends ReturnOrClone.Base {
    */
   static Determine_apply_and_destroy_or_keep() {
 
-//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+//!!! ...unfinished (2021/07/12) When ( bDepthwise2Requested == true ), need depthwise2.
 
     if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutput == true ) and possible to add-input-to-output.
 
@@ -1145,11 +1184,14 @@ class Base extends ReturnOrClone.Base {
       + `bPointwise1Bias=${this.bPointwise1Bias}, `
       + `pointwise1ActivationName=${this.pointwise1ActivationName}, `
 
+      + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
       + `depthwise_AvgMax_Or_ChannelMultiplier=${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseStridesPad=${this.depthwiseStridesPad}, `
       + `bDepthwiseBias=${this.bDepthwiseBias}, `
       + `depthwiseActivationName=${this.depthwiseActivationName}, `
+
+      + `bConcatenatorRequested=${this.bConcatenatorRequested}, `
 
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
