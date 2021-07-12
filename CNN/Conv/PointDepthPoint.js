@@ -345,10 +345,18 @@ class Base extends ReturnOrClone.Base {
    *   The channel count of apply_and_destroy_or_keep()'s first input image (i.e. inputTensors[ 0 ]). This should always be specified
    * and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
    *
+
+!!! ...unfinished... (2021/07/12)
+
    * @param {number} channelCount2_pointwise1Before
    *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]). If ( params.inputTensorCount == 2 ),
    * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
    * If ( params.inputTensorCount < 2 ), this will be ignored.
+   *   - If ( channelCount2_pointwise1Before == 0 ), ???
+   *   - If ( channelCount2_pointwise1Before < 0 ), the apply_and_destroy_or_keep()'s first input image (i.e. inputTensors[ 0 ]) will be
+   *     applied two depthwise operation of same configuration (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+   *     depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId) but different weights. The two depthwise results will be concatenated
+   *     before applying pointwise2.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
