@@ -349,13 +349,28 @@ class Base extends ReturnOrClone.Base {
 !!! ...unfinished... (2021/07/12)
 
    * @param {number} channelCount2_pointwise1Before
-   *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]). If ( params.inputTensorCount == 2 ),
-   * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
-   * If ( params.inputTensorCount < 2 ), this will be ignored.
-   *   - If ( channelCount2_pointwise1Before == 0 ), ???
-   *   - If ( channelCount2_pointwise1Before < 0 ), the apply_and_destroy_or_keep()'s first input image (i.e. inputTensors[ 0 ]) will be
-   *     applied two depthwise operation of same configuration (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
-   *     depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId) but different weights. The two depthwise results will be concatenated
+   *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]).
+
+!!! ...unfinished... (2021/07/12 Remarked)
+//   * If ( params.inputTensorCount == 2 ),
+//   * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+//   * If ( params.inputTensorCount < 2 ), this will be ignored.
+
+   *   - ( channelCount2_pointwise1Before > 0 ): TWO-INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
+   *     will not be applied by any pointwise1 and depthwise operration. It will be concatenated directly with the result of depthwise
+   *     operation of inputTensors[ 0 ].
+   *
+   *   - ( channelCount2_pointwise1Before == 0 ): ONE-INPUT: The inputTensors[ 1 ] will not be used at all (will be ignored completely).
+   *     The inputTensors[ 0 ] will be applied by pointwise1 and one depthwise operation.
+   *
+   *   - ( channelCount2_pointwise1Before == -1 ): ONE-INPUT-ADD-TO-OUTPUT: The inputTensors[ 1 ] will not be used at all (will be ignored
+   *     completely). The inputTensors[ 0 ] will be applied by pointwise1 and one depthwise operation. And the inputTensors[ 0 ] will be
+   *     addded to the result of pointwise2. This is the only one case which will do add-input-to-output.
+   *
+   *   - ( channelCount2_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: The inputTensors[ 1 ] will not be used at all (will be ignored
+   *     completely). The inputTensors[ 0 ]) will be applied by pointwise1 and two depthwise operations. These two depthwise operations will
+   *     have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
+   *     bDepthwiseBias, depthwiseActivationId) but have different (filter and bias) weights. The two depthwise results will be concatenated
    *     before applying pointwise2.
    *
    * @param {boolean} bKeepInputTensor
