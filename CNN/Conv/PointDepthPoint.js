@@ -130,37 +130,40 @@ class Params extends Weights.Params {
    * will also be ignored.
    *
 
-!!! ...unfinished... (2021/07/12) should be deprecated by channelCount2_pointwise1Before.
-
-//!!! ...unfinished... (2021/06/08) could be inferred from channelCount2_pointwise1Before?
-// If ( channelCount2_pointwise1Before < 0 ), means need add-input-to-output?
-// But this also means add-input-to-output can not be determined by evolution.
+// !!! ...unfinished... (2021/07/12 Remarked) be deprecated by channelCount2_pointwise1Before.
 //
-
-   * @param {number} inputTensorCount
-   *   How many input tensors should be past into apply_and_destroy(). the If null, it will be extracted from inputFloat32Array
-   * (i.e. by evolution).
-   *   - 0: One input. It will be added to output if ( depthwiseStridesPad == 1 ) ( i.e. ( depthwiseStrides == 1 )
-   *        and ( depthwisePad == "same" ) ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ). This could achieve
-   *        the residual connection of MobileNetV2.
-   *   - 1: One input. It will not be added to output.
-   *   - 2: Two input. They will not be added to output. The second input will not be processed by pointwise1 convolution, depthwise
-   *        operation. But the second input will be concatenated with the result of depthwise operation. And then the concatenated
-   *        result will be processed by pointwise2 convolution.
+// //!!! ...unfinished... (2021/06/08) could be inferred from channelCount2_pointwise1Before?
+// // If ( channelCount2_pointwise1Before < 0 ), means need add-input-to-output?
+// // But this also means add-input-to-output can not be determined by evolution.
+// //
+//
+//    * @param {number} inputTensorCount
+//    *   How many input tensors should be past into apply_and_destroy(). the If null, it will be extracted from inputFloat32Array
+//    * (i.e. by evolution).
+//    *   - 0: One input. It will be added to output if ( depthwiseStridesPad == 1 ) ( i.e. ( depthwiseStrides == 1 )
+//    *        and ( depthwisePad == "same" ) ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ). This could achieve
+//    *        the residual connection of MobileNetV2.
+//    *   - 1: One input. It will not be added to output.
+//    *   - 2: Two input. They will not be added to output. The second input will not be processed by pointwise1 convolution, depthwise
+//    *        operation. But the second input will be concatenated with the result of depthwise operation. And then the concatenated
+//    *        result will be processed by pointwise2 convolution.
    *
    */
   constructor( inputFloat32Array, byteOffsetBegin,
+    channelCount2_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
-    inputTensorCount
+    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
+// !!! ...unfinished... (2021/07/12 Remarked) be deprecated by channelCount2_pointwise1Before.
+//     inputTensorCount
   ) {
 
 //!!! ...unfinished...
 // squeeze-and-excitation ?
 
     let parameterMap = new Map( [
+      [ Params.channelCount2_pointwise1Before,        channelCount2_pointwise1Before ],
       [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
       [ Params.bPointwise1Bias,                       bPointwise1Bias ],
       [ Params.pointwise1ActivationId,                pointwise1ActivationId ],
@@ -175,11 +178,14 @@ class Params extends Weights.Params {
       [ Params.pointwise22ChannelCount,               pointwise22ChannelCount ],
       [ Params.bPointwise22Bias,                      bPointwise22Bias ],
       [ Params.pointwise22ActivationId,               pointwise22ActivationId ],
-      [ Params.inputTensorCount,                      inputTensorCount ],
+// !!! ...unfinished... (2021/07/12 Remarked) be deprecated by channelCount2_pointwise1Before.
+//      [ Params.inputTensorCount,                      inputTensorCount ],
     ] );
 
     return super( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
+
+  get channelCount2_pointwise1Before() { return this.parameterMapModified.get( Params.channelCount2_pointwise1Before ); }
 
   get pointwise1ChannelCount()    { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
   get bPointwise1Bias()           { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
@@ -210,11 +216,14 @@ class Params extends Weights.Params {
   get pointwise22ActivationId()   { return this.parameterMapModified.get( Params.pointwise22ActivationId ); }
   get pointwise22ActivationName() { return Params.pointwise22ActivationId.getStringOfValue( this.pointwise22ActivationId ); }
 
-  get inputTensorCount()          { return this.parameterMapModified.get( Params.inputTensorCount ); }
+// !!! ...unfinished... (2021/07/12 Remarked) be deprecated by channelCount2_pointwise1Before.
+//  get inputTensorCount()          { return this.parameterMapModified.get( Params.inputTensorCount ); }
 }
 
 
 // Define parameter descriptions.
+
+Params.channelCount2_pointwise1Before =  new ParamDesc.Int(        "channelCount2_pointwise1Before", -2, ( 10 * 1024 ) );
 
 Params.pointwise1ChannelCount =  new ParamDesc.Int(                "pointwise1ChannelCount", 0, ( 10 * 1024 ) );
 Params.bPointwise1Bias =         new ParamDesc.Bool(               "bPointwise1Bias" );
@@ -256,7 +265,8 @@ Params.pointwise22ChannelCount = new ParamDesc.Int(                "pointwise22C
 Params.bPointwise22Bias =        new ParamDesc.Bool(               "bPointwise22Bias" );
 Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22ActivationId" );
 
-Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorCount",  0, 2 );
+// !!! ...unfinished... (2021/07/12 Remarked) be deprecated by channelCount2_pointwise1Before.
+//Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorCount",  0, 2 );
 
 
 /**
@@ -348,14 +358,12 @@ Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorC
  * if at least one pointwise2 convolution existed. If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it
  * will be channelCount_concatenateAfter_pointwise2Before.
  *
-
-!!! ...unfinished... (2021/07/12)
-
  * @member {number} outputTensorCount
- *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2.
+ *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2. It is
+ * determined by bPointwise21 and bPointwise22.
  *
  * @member {boolean} bAddInputToOutput
- *   It will be true when ( this.inputTensorCount == 0 ). The input (in this case, the main input (i.e. inputTensorArray[ 0 ])
+ *   It will be true when ( this.channelCount2_pointwise1Before == -1 ). The input (in this case, the main input (i.e. inputTensorArray[ 0 ])
  * will be added to the output for achieving skip connection.
  *
  * @member {function} apply_and_destroy_or_keep
@@ -392,7 +400,7 @@ class Base extends ReturnOrClone.Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    */
-  * initer( progressParent, channelCount1_pointwise1Before, channelCount2_pointwise1Before, bKeepInputTensor, params ) {
+  * initer( progressParent, channelCount1_pointwise1Before, bKeepInputTensor, params ) {
 
     // 0. Prepare
 
@@ -411,7 +419,6 @@ class Base extends ReturnOrClone.Base {
     this.disposeTensors();  // Also initialize some member function pointers to no_operation().
 
     this.channelCount1_pointwise1Before = channelCount1_pointwise1Before;
-    this.channelCount2_pointwise1Before = channelCount2_pointwise1Before;
 
     // 1. Extract parameters.
     if ( !params )
@@ -428,6 +435,8 @@ class Base extends ReturnOrClone.Base {
     // Get parameters' real (adjusted) values.
     //
     // Do not keep params in this.params so that the inputFloat32Array could be released.
+    this.channelCount2_pointwise1Before = params.channelCount2_pointwise1Before;
+
     this.pointwise1ChannelCount = params.pointwise1ChannelCount;
     this.bPointwise1Bias = params.bPointwise1Bias;
     this.pointwise1ActivationId = params.pointwise1ActivationId;
@@ -451,8 +460,17 @@ class Base extends ReturnOrClone.Base {
     this.pointwise22ActivationId = params.pointwise22ActivationId;
     this.pointwise22ActivationName = params.pointwise22ActivationName;
 
-    this.inputTensorCount = params.inputTensorCount;
-    this.bAddInputToOutput = ( 0 == this.inputTensorCount );
+    // Determine input tensor count and whether request add-input-to-output.
+    if ( this.channelCount2_pointwise1Before > 0 ) {
+      this.inputTensorCount = 2;
+      this.bAddInputToOutput = false;
+    } else {
+      switch ( this.channelCount2_pointwise1Before ) {
+        case  0: this.inputTensorCount = 1; this.bAddInputToOutput = false; break;
+        case -1: this.inputTensorCount = 1; this.bAddInputToOutput =  true; break;
+        case -2: this.inputTensorCount = 1; this.bAddInputToOutput = false; break;
+      }
+    }
 
     this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
 
@@ -788,7 +806,7 @@ class Base extends ReturnOrClone.Base {
    */
   static Determine_apply_and_destroy_or_keep() {
 
-    if ( this.bShouldAddInputToOutput ) { // ( this.inputTensorCount == 0 ) and possible to add-input-to-output.
+    if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutput == true ) and possible to add-input-to-output.
 
       // 1. add-input-to-output and (keep-input or destroy-input).
 
@@ -836,7 +854,7 @@ class Base extends ReturnOrClone.Base {
         }
       }
 
-    } else { // ( this.inputTensorCount >= 1 ) or ( ( this.inputTensorCount == 0 ) but not-possible to add-input-to-output).
+    } else { // ( this.inputTensorCount >= 1 ) or ( ( this.bAddInputToOutput == true ) but not-possible to add-input-to-output).
 
       if ( this.inputTensorCount > 1 ) {
         // 2. (no-add-input-to-output but) concat and destroy-input (or keep-input).
@@ -858,7 +876,7 @@ class Base extends ReturnOrClone.Base {
       } else {
         // 3. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
         //
-        // ( this.inputTensorCount == 1 ) or ( ( this.inputTensorCount == 0 ) but not-possible ).
+        // ( this.inputTensorCount == 1 ) or ( ( this.bAddInputToOutput == true ) but not-possible ).
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
@@ -1033,7 +1051,7 @@ class Base extends ReturnOrClone.Base {
    * The input tensors may or may not be disposed.
    *
    * @param {tf.tensor[]} inputTensors
-   *   An array of tensors. If ( this.inputTensorCount == 0 ) or ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
+   *   An array of tensors. If ( this.inputTensorCount == 1 ), the inputTensors[ 0 ] will be used.
    * If ( this.inputTensorCount == 2 ), the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
    *
    * @param {tf.tensor[]} outputTensors
