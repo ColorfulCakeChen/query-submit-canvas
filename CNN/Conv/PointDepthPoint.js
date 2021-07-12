@@ -508,7 +508,9 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise1 filters was ready. Report progress.
 
-//!!! ...unfinished (2021/07/10) When 在 pad=valid, it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
+//!!! ...unfinished (2021/07/10) When pad=valid, it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
+
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
 
     // 3. The depthwise operation.
     this.depthwise = new Depthwise.Base(
@@ -718,6 +720,9 @@ class Base extends ReturnOrClone.Base {
       // Note: When an operation does not exist, its output TensorOpCounter will be just its input TensorOpCounter (so duplicated).
       let TensorOpCounterSet = new Set( [
         TensorOpCounters.pointwise1,  TensorOpCounters.depthwise, TensorOpCounters.concatenator,
+
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+
         TensorOpCounters.pointwise21, TensorOpCounters.addInput0ToPointwise21,
         TensorOpCounters.pointwise22, TensorOpCounters.addInput0ToPointwise22
       ] );
@@ -805,6 +810,8 @@ class Base extends ReturnOrClone.Base {
    * @return {function} Return one of the apply_Xxx function.
    */
   static Determine_apply_and_destroy_or_keep() {
+
+//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
 
     if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutput == true ) and possible to add-input-to-output.
 
