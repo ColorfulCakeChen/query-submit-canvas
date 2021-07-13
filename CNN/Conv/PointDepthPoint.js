@@ -318,14 +318,14 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *
  *   - When ( channelCount1_pointwise1Before > 0 ): TWO-INPUTS: (ShuffleNetV2's tail)
  * <pre>
- * input0 - pointwise1 - depthwise  - concatenator - pointwise21
+ * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
  * input1 --------------------------/              \ pointwise22
  * </pre>
  *
  *
  *   - When ( channelCount1_pointwise1Before == 0 ): ONE-INPUT: (MobileNetV1)
  * <pre>
- * input0 - pointwise1 - depthwise  ---------------- pointwise21
+ * input0 - pointwise1 - depthwise1 ---------------- pointwise21
  *                                                 \ pointwise22
  * </pre>
  *
@@ -333,7 +333,7 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *   - When ( channelCount1_pointwise1Before == -1 ): ONE-INPUT-ADD-TO-OUTPUT: (MobileNetV2)
  * <pre>
  *        /------------------------------------------------------\
- * input0 - pointwise1 - depthwise  ---------------- pointwise21 - addInput0ToPointwise21
+ * input0 - pointwise1 - depthwise1 ---------------- pointwise21 - addInput0ToPointwise21
  *        \                                        \ pointwise22 - addInput0ToPointwise22
  *         \-----------------------------------------------------/
  * </pre>
@@ -341,7 +341,7 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *
  *   - When ( channelCount1_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: (ShuffleNetV2's head)
  * <pre>
- * input0 - pointwise1 - depthwise  - concatenator - pointwise21
+ * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
  *        \------------- depthwise2 /              \ pointwise22
  * </pre>
  *
@@ -366,8 +366,8 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  * @member {boolean} bDepthwise2Requested
  *   It will be true only when ( channelCount1_pointwise1Before == -2 ). If true, it means a second depthwise might be needed.
  *
- * @member {boolean} bDepthwise
- *   If true, the depthwise convolution (or average pooling, or maximum pooling) exists.
+ * @member {boolean} bDepthwise1
+ *   If true, the first depthwise convolution (or average pooling, or maximum pooling) exists.
  *
  * @member {boolean} bDepthwise2
  *   If true, the second depthwise convolution (or average pooling, or maximum pooling) exists.
@@ -589,24 +589,24 @@ class Base extends ReturnOrClone.Base {
     // 3. The depthwise operation.
 
     // 3.1 The first depthwise operation.
-    this.depthwise = new Depthwise.Base(
+    this.depthwise1 = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwiseBefore,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
       params.defaultInput, this.byteOffsetEnd );
 
-    if ( !this.depthwise.init() )
+    if ( !this.depthwise1.init() )
       return false;  // e.g. input array does not have enough data.
-    this.byteOffsetEnd = this.depthwise.byteOffsetEnd;
+    this.byteOffsetEnd = this.depthwise1.byteOffsetEnd;
 
-    this.bDepthwise = this.depthwise.bExisted;
-    if ( this.bDepthwise ) {
-      this.channelCount_depthwiseAfter_concatenateBefore = this.depthwise.outputChannelCount;
-      TensorOpCounters.depthwise = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise", this.depthwise, TensorOpCounters.pointwise1 );
+    this.bDepthwise1 = this.depthwise1.bExisted;
+    if ( this.bDepthwise1 ) {
+      this.channelCount_depthwise1After_concatenateBefore = this.depthwise1.outputChannelCount;
+      TensorOpCounters.depthwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise1", this.depthwise1, TensorOpCounters.pointwise1 );
 
     } else {
-      this.channelCount_depthwiseAfter_concatenateBefore = this.channelCount_pointwise1After_depthwiseBefore;  // No depthwise operation.
-      TensorOpCounters.depthwise = TensorOpCounters.pointwise1; // Its output is just its input tensor.
+      this.channelCount_depthwise1After_concatenateBefore = this.channelCount_pointwise1After_depthwiseBefore;  // No depthwise1 operation.
+      TensorOpCounters.depthwise1 = TensorOpCounters.pointwise1; // Its output is just its input tensor.
     }
 
     // 3.2 The second depthwise operation.
@@ -655,20 +655,20 @@ class Base extends ReturnOrClone.Base {
     // 4. Concatenator
     //
     // If ( there are two input tensors ) or ( there is one input tensor but there is depthwise2 ), the channel count for pointwise2 input
-    // will be the concatenated channel count (= depthwise_channel_count + depthwise2_channel_count ).
+    // will be the concatenated channel count (= depthwise1_channel_count + depthwise2_channel_count ).
     if ( this.bConcatenatorRequested ) {
       
       this.channelCount_concatenateAfter_pointwise2Before
-        = this.channelCount_depthwiseAfter_concatenateBefore + this.channelCount_depthwise2After_concatenateBefore;
+        = this.channelCount_depthwise1After_concatenateBefore + this.channelCount_depthwise2After_concatenateBefore;
 
       this.concatenator = new ConcatAlongAxisId2.Base( false, false );
 
       TensorOpCounters.concatenator = new TensorOpCounter.Base(
-        ( ++TensorOpCounterId ) + "_concatenator", this.concatenator, TensorOpCounters.depthwise, TensorOpCounters.depthwise2 );
+        ( ++TensorOpCounterId ) + "_concatenator", this.concatenator, TensorOpCounters.depthwise1, TensorOpCounters.depthwise2 );
 
     } else {
-      this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwiseAfter_concatenateBefore;
-      TensorOpCounters.concatenator = TensorOpCounters.depthwise;
+      this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwise1After_concatenateBefore;
+      TensorOpCounters.concatenator = TensorOpCounters.depthwise1;
     }
 
 
@@ -751,7 +751,7 @@ class Base extends ReturnOrClone.Base {
     // For example:
     //   - if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
     //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
-    if ( ( this.bAddInputToOutputRequested ) && ( this.depthwise.is_Output_Same_HeightWidth_As_Input() ) ) {
+    if ( ( this.bAddInputToOutputRequested ) && ( this.depthwise1.is_Output_Same_HeightWidth_As_Input() ) ) {
 
       // Note:
       //
@@ -825,7 +825,7 @@ class Base extends ReturnOrClone.Base {
       // Using Set (instead of Array) so that duplicated TensorOpCounter will only be analyzed once.
       // Note: When an operation does not exist, its output TensorOpCounter will be just its input TensorOpCounter (so duplicated).
       let TensorOpCounterSet = new Set( [
-        TensorOpCounters.pointwise1,  TensorOpCounters.depthwise, TensorOpCounters.depthwise2, TensorOpCounters.concatenator,
+        TensorOpCounters.pointwise1,  TensorOpCounters.depthwise1, TensorOpCounters.depthwise2, TensorOpCounters.concatenator,
         TensorOpCounters.pointwise21, TensorOpCounters.addInput0ToPointwise21,
         TensorOpCounters.pointwise22, TensorOpCounters.addInput0ToPointwise22
       ] );
@@ -874,9 +874,9 @@ class Base extends ReturnOrClone.Base {
       this.pointwise1 = null;
     }
 
-    if ( this.depthwise ) {
-      this.depthwise.disposeTensors();
-      this.depthwise = null;
+    if ( this.depthwise1 ) {
+      this.depthwise1.disposeTensors();
+      this.depthwise1 = null;
     }
 
     if ( this.depthwise2 ) {
@@ -1012,8 +1012,8 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2021/06/29 Remarked)
 //            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
 
-            // no pointwise1, no depthwise, no concatenator, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
-            if ( !this.bPointwise1 && !this.bDepthwise ) {
+            // no pointwise1, no depthwise1, no concatenator, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
+            if ( !this.bPointwise1 && !this.bDepthwise1 ) {
 
 //!!! ...unfinished... (2021/06/29) should be tested.
 
@@ -1046,7 +1046,7 @@ class Base extends ReturnOrClone.Base {
 //    tf.util.assert( null == inputTensors[ 1 ] );
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
 
@@ -1064,7 +1064,7 @@ class Base extends ReturnOrClone.Base {
 //    tf.util.assert( null == inputTensors[ 1 ] );
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise22.pfnConvBiasActivation( t1 );
 
@@ -1085,7 +1085,7 @@ class Base extends ReturnOrClone.Base {
 //    tf.util.assert( null == inputTensors[ 1 ] );
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 0 ] = this.addInput0ToPointwise21.pfnAdd( inputTensor, t0 );
@@ -1106,7 +1106,7 @@ class Base extends ReturnOrClone.Base {
 //    tf.util.assert( null == inputTensors[ 1 ] );
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
     t0 = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 0 ] = this.addInput0ToPointwise21.pfnAdd( inputTensor, t0 );
@@ -1126,7 +1126,7 @@ class Base extends ReturnOrClone.Base {
 //    tf.util.assert( null == inputTensors[ 1 ] );
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
     outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
 
@@ -1141,7 +1141,7 @@ class Base extends ReturnOrClone.Base {
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
 
-    this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
     t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
@@ -1156,7 +1156,7 @@ class Base extends ReturnOrClone.Base {
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
 
-    this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
     t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
@@ -1183,7 +1183,7 @@ class Base extends ReturnOrClone.Base {
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
 
-    this.intermediateTensorsArray[ 0 ] = this.depthwise.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
     t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
@@ -1198,7 +1198,7 @@ class Base extends ReturnOrClone.Base {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
     outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 ); // may destroy t1.
     outputTensors[ 1 ] = null;
@@ -1209,7 +1209,7 @@ class Base extends ReturnOrClone.Base {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
     outputTensors[ 0 ] = null;
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
@@ -1220,7 +1220,7 @@ class Base extends ReturnOrClone.Base {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise.pfnOperationBiasActivation( t0 );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
     outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
