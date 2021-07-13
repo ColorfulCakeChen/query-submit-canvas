@@ -1275,9 +1275,12 @@ class Base extends ReturnOrClone.Base {
       + `pointwise22ActivationName=${this.pointwise22ActivationName}, `
 
       + `inputTensorCount=${this.inputTensorCount}, `
+      + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
+      + `bConcatenatorRequested=${this.bConcatenatorRequested}, `
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
-      + `outputTensorCount=${this.outputTensorCount}, `
 
+      + `outputTensorCount=${this.outputTensorCount}, `
+    
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
     return str;
