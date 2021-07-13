@@ -84,7 +84,7 @@ class Params extends Weights.Params {
    *   - 0: means ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" )
    *   - 1: means ( depthwiseStrides == 1 ) and ( depthwisePad == "same" )
    *   - 2: means ( depthwiseStrides == 2 ) and ( depthwisePad == "same" )
-   * Default is 1 because ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) is a pre-condition for ( bAddInputToOutput == true ).
+   * Default is 1 because ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) is a pre-condition for ( bAddInputToOutputRequested == true ).
    *
    * @param {boolean} bDepthwiseBias
    *   If null, it will be extracted from inputFloat32Array (i.e. by evolution). If true, there will be a bias after depthwise convolution.
@@ -176,6 +176,48 @@ class Params extends Weights.Params {
     ] );
 
     return super( inputFloat32Array, byteOffsetBegin, parameterMap );
+  }
+
+  /**
+   * Extract parameters from inputFloat32Array.
+   *
+   * @return {boolean} Return false, if extraction failed.
+   *
+   * @override
+   */
+  extract() {
+    let bExtractOk = super.extract();
+    if ( !bExtractOk )
+      return false;
+
+    // Determine input tensor count and whether request add-input-to-output.
+    Params.DetermineFlags_AccordingTo_channelCount1_pointwise1Before.call( this, this.channelCount1_pointwise1Before );
+    return bExtractOk;
+  }
+
+  /**
+   * Determine input tensor count, whether request depthwise2, whether request concatenator, and whether request add-input-to-output.
+   *
+   * @param {number} channelCount1_pointwise1Before
+   *   According to this integer, the flags will be set in this.inputTensorCount, this.bDepthwise2Requested, this.bConcatenatorRequested,
+   * this.bAddInputToOutputRequested.
+   */
+  static SetFlags_by_channelCount1_pointwise1Before( channelCount1_pointwise1Before ) {
+
+    if ( channelCount1_pointwise1Before > 0 ) {
+      this.inputTensorCount = 2; this.bDepthwise2Requested = false; this.bConcatenatorRequested = true; this.bAddInputToOutputRequested = false;
+    }
+
+    switch ( channelCount1_pointwise1Before ) {
+      case  0: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutputRequested = false;
+        break;
+
+      case -1: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutputRequested =  true;
+        break;
+
+      case -2: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested =  true; this.bAddInputToOutputRequested = false;
+        break;
+    }
   }
 
   get channelCount1_pointwise1Before() { return this.parameterMapModified.get( Params.channelCount1_pointwise1Before ); }
@@ -355,16 +397,16 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  * @member {string} pointwise22ActivationName
  *   The activation function id (Params.pointwise22ActivationId.valueDesc.Ids.Xxx) after the second pointwise2 convolution.
  *
- * @member {number} inChannels1
+ * @member {number} inChannels0
  *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount0_pointwise1Before (from initer()).
  *
- * @member {number} inChannels2
+ * @member {number} inChannels1
  *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). This is the same as this.channelCount1_pointwise1Before (from initer()).
  *
- * @member {number} outChannels1
+ * @member {number} outChannels0
  *   The channel count of the first output tensor. It is the same as this.channelCount_pointwise21After (from initer()).
  *
- * @member {number} outChannels2
+ * @member {number} outChannels1
  *   The channel count of the second output tensor. It is the same as this.channelCount_pointwise22After (from initer()).
  *
  * @member {number} outChannels
@@ -402,7 +444,7 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2. It is
  * determined by bPointwise21 and bPointwise22.
  *
- * @member {boolean} bAddInputToOutput
+ * @member {boolean} bAddInputToOutputRequested
  *   It will be true when ( this.channelCount1_pointwise1Before == -1 ). The input (in this case, the main input (i.e. inputTensorArray[ 0 ])
  * will be added to the output for achieving skip connection.
  *
@@ -501,15 +543,10 @@ class Base extends ReturnOrClone.Base {
     this.pointwise22ActivationName = params.pointwise22ActivationName;
 
     // Determine input tensor count and whether request add-input-to-output.
-    if ( this.channelCount1_pointwise1Before > 0 ) {
-      this.inputTensorCount = 2; this.bDepthwise2Requested = false; this.bConcatenatorRequested = true; this.bAddInputToOutput = false;
-    } else {
-      switch ( this.channelCount1_pointwise1Before ) {
-        case  0: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutput = false; break;
-        case -1: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutput =  true; break;
-        case -2: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested =  true; this.bAddInputToOutput = false; break;
-      }
-    }
+    this.inputTensorCount = params.inputTensorCount;
+    this.bDepthwise2Requested = params.bDepthwise2Requested;
+    this.bConcatenatorRequested = params.bConcatenatorRequested;
+    this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
 
     this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
 
@@ -714,7 +751,7 @@ class Base extends ReturnOrClone.Base {
     // For example:
     //   - if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
     //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
-    if ( ( this.bAddInputToOutput ) && ( this.depthwise.is_Output_Same_HeightWidth_As_Input() ) ) {
+    if ( ( this.bAddInputToOutputRequested ) && ( this.depthwise.is_Output_Same_HeightWidth_As_Input() ) ) {
 
       // Note:
       //
@@ -888,7 +925,7 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished (2021/07/12) When ( bDepthwise2Requested == true ), need depthwise2.
 
-    if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutput == true ) and possible to add-input-to-output.
+    if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
 
       // 1. add-input-to-output and (keep-input or destroy-input).
 
@@ -936,7 +973,7 @@ class Base extends ReturnOrClone.Base {
         }
       }
 
-    } else { // ( this.inputTensorCount >= 1 ) or ( ( this.bAddInputToOutput == true ) but not-possible to add-input-to-output).
+    } else { // ( this.inputTensorCount >= 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible to add-input-to-output).
 
       if ( this.inputTensorCount > 1 ) {
         // 2. (no-add-input-to-output but) concat and destroy-input (or keep-input).
@@ -958,7 +995,7 @@ class Base extends ReturnOrClone.Base {
       } else {
         // 3. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
         //
-        // ( this.inputTensorCount == 1 ) or ( ( this.bAddInputToOutput == true ) but not-possible ).
+        // ( this.inputTensorCount == 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible ).
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
@@ -1238,7 +1275,7 @@ class Base extends ReturnOrClone.Base {
       + `pointwise22ActivationName=${this.pointwise22ActivationName}, `
 
       + `inputTensorCount=${this.inputTensorCount}, `
-      + `bAddInputToOutput=${this.bAddInputToOutput}, `
+      + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `outputTensorCount=${this.outputTensorCount}, `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}`
