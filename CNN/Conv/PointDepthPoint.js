@@ -35,21 +35,21 @@ class Params extends Weights.Params {
    * @param {number} channelCount1_pointwise1Before
    *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]).
    *
-   *   - ( channelCount1_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: The inputTensors[ 1 ] will not be used at all (will be ignored
+   *   - ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: The inputTensors[ 1 ] will not be used at all (will be ignored
    *     completely). The inputTensors[ 0 ] will be processed by two pathes: one is by pointwise1 and one depthwise operation, the other
    *     is by another depthwise operation (without pointwise1). These two depthwise operations will have the same configurations
    *     (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId)
    *     but have different (filter and bias) weights. The two depthwise results will be concatenated. The concatenated result will
    *     be processed by pointwise2 convolution. This is the only one case which there will be second depthwise.
    *
-   *   - ( channelCount1_pointwise1Before == -1 ): ONE-INPUT-ADD-TO-OUTPUT: The inputTensors[ 1 ] will not be used at all (will be ignored
+   *   - ( channelCount1_pointwise1Before == -1 ): ONE_INPUT_ADD_TO_OUTPUT: The inputTensors[ 1 ] will not be used at all (will be ignored
    *     completely). The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution. Finally,
    *     the inputTensors[ 0 ] will be added to the result of pointwise2. This is the only one case which will do add-input-to-output.
    *
-   *   - ( channelCount1_pointwise1Before == 0 ): ONE-INPUT: The inputTensors[ 1 ] will not be used at all (will be ignored completely).
+   *   - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT: The inputTensors[ 1 ] will not be used at all (will be ignored completely).
    *     The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution.
    *
-   *   - ( channelCount1_pointwise1Before > 0 ): TWO-INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
+   *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
    *     will not be processed by any pointwise1 and depthwise operation. It will be concatenated directly with the result of depthwise
    *     operation of inputTensors[ 0 ]. The concatenated result will be processed by pointwise2 convolution.
    *
@@ -198,7 +198,10 @@ class Params extends Weights.Params {
     }
   }
 
-  get channelCount1_pointwise1Before() { return this.parameterMapModified.get( Params.channelCount1_pointwise1Before ); }
+  get channelCount1_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount1_pointwise1Before ); }
+//!!! (2021/07/13 Remarked)
+//  get channelCount1_pointwise1Before_Ids()  { return Params.channelCount1_pointwise1Before.getStringOfValue( this.channelCount1_pointwise1Before ); }
+  get channelCount1_pointwise1Before_Name() { return Params.channelCount1_pointwise1Before.getStringOfValue( this.channelCount1_pointwise1Before ); }
 
   get pointwise1ChannelCount()    { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
   get bPointwise1Bias()           { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
@@ -228,15 +231,12 @@ class Params extends Weights.Params {
   get bPointwise22Bias()          { return this.parameterMapModified.get( Params.bPointwise22Bias ); }
   get pointwise22ActivationId()   { return this.parameterMapModified.get( Params.pointwise22ActivationId ); }
   get pointwise22ActivationName() { return Params.pointwise22ActivationId.getStringOfValue( this.pointwise22ActivationId ); }
-
-  get modeName() {
-  }
 }
 
 
 // Define parameter descriptions.
 
-Params.channelCount1_pointwise1Before =  new ParamDesc.Int(        "channelCount1_pointwise1Before", -2, ( 10 * 1024 ) );
+Params.channelCount1_pointwise1Before =  new ParamDesc.channelCount1_pointwise1Before( "channelCount1_pointwise1Before" );
 
 Params.pointwise1ChannelCount =  new ParamDesc.Int(                "pointwise1ChannelCount", 0, ( 10 * 1024 ) );
 Params.bPointwise1Bias =         new ParamDesc.Bool(               "bPointwise1Bias" );
@@ -291,14 +291,14 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *
  * There four main combinations:
  *
- *   - When ( channelCount1_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: (ShuffleNetV2's head)
+ *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: (ShuffleNetV2's head)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
  *        \------------- depthwise2 /              \ pointwise22
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == -1 ): ONE-INPUT-ADD-TO-OUTPUT: (MobileNetV2)
+ *   - When ( channelCount1_pointwise1Before == -1 ): ONE_INPUT_ADD_TO_OUTPUT: (MobileNetV2)
  * <pre>
  *        /------------------------------------------------------\
  * input0 - pointwise1 - depthwise1 ---------------- pointwise21 - addInput0ToPointwise21
@@ -307,14 +307,14 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == 0 ): ONE-INPUT: (MobileNetV1)
+ *   - When ( channelCount1_pointwise1Before == 0 ): ONE_INPUT: (MobileNetV1)
  * <pre>
  * input0 - pointwise1 - depthwise1 ---------------- pointwise21
  *                                                 \ pointwise22
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before > 0 ): TWO-INPUTS: (ShuffleNetV2's tail)
+ *   - When ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2's tail)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
  * input1 --------------------------/              \ pointwise22
@@ -899,6 +899,14 @@ class Base extends ReturnOrClone.Base {
   static Determine_apply_and_destroy_or_keep() {
 
 //!!! ...unfinished (2021/07/12) When ( bDepthwise2Requested == true ), need depthwise2.
+//
+//!!! ...unfinished (2021/07/13)
+// switch ( this.channelCount1_pointwise1Before )
+// Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE
+// Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT
+// Params.channelCount1_pointwise1Before.Ids.ONE_INPUT
+// Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX
+//
 
     if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
 
