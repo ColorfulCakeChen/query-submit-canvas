@@ -351,11 +351,12 @@ class Base {
 //!!! ...unfinished... (2021/07/13 Remarked)
 //    let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
     let flags = {};
-    PointDepthPoint.Params.DetermineFlags_AccordingTo_channelCount1_pointwise1Before.call( flags, testParams.out.channelCount1_pointwise1Before );
+    PointDepthPoint.Params.setFlags_by_channelCount1_pointwise1Before.call( flags, testParams.out.channelCount1_pointwise1Before );
 
     // Create description for debug easily.
     this.paramsOutDescription =
-        ``
+        `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
+
       + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `// pointwise1ActivationName=${pointwise1ActivationName}, `
       + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
       + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
@@ -365,9 +366,9 @@ class Base {
       + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `//pointwise21ActivationName=${pointwise21ActivationName}, `
       + `pointwise22ChannelCount=${testParams.out.pointwise22ChannelCount}, bPointwise22Bias=${testParams.out.bPointwise22Bias}, `//pointwise22ActivationName=${pointwise22ActivationName}, `
 
-      + `inputTensorCount=${flags.inputTensorCount} `
-      + `bDepthwise2Requested=${flags.bDepthwise2Requested}`
-      + `bConcatenatorRequested=${flags.bConcatenatorRequested}`
+      + `inputTensorCount=${flags.inputTensorCount}, `
+      + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
+      + `bConcatenatorRequested=${flags.bConcatenatorRequested}, `
       + `bAddInputToOutputRequested=${flags.bAddInputToOutputRequested}`
     ;
 
