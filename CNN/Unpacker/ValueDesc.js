@@ -106,11 +106,18 @@ class Int {
     this.valueObjects = valueObjects;
 
     this.Ids = {};
+    
+//!!! ...unfinished... (2021/07/13) could use a function look up an array (instead of map)
+// this.integerToNameArrray[ value - valueIntegerMin ] to reduce memory?
+
     this.integerToNameMap = new Map;
     this.nameToIntegerMap = new Map;
     for ( let i = 0; i < valueNames.length; ++i ) {
       let integerId = ( valueIntegerMin + i );
       let name = valueNames[ i ];
+
+//!!! ...unfinished... (2021/07/13) could use a function (dynamic properties?) instead of a large array to reduce (Ids) memory?
+
       this.Ids[ name ] = integerId;
       this.integerToNameMap.set( integerId, name );
       this.nameToIntegerMap.set( name, integerId );
