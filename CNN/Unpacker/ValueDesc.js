@@ -106,18 +106,11 @@ class Int {
     this.valueObjects = valueObjects;
 
     this.Ids = {};
-    
-//!!! ...unfinished... (2021/07/13) could use a function look up an array (instead of map)
-// this.integerToNameArrray[ value - valueIntegerMin ] to reduce memory?
-
     this.integerToNameMap = new Map;
     this.nameToIntegerMap = new Map;
     for ( let i = 0; i < valueNames.length; ++i ) {
       let integerId = ( valueIntegerMin + i );
       let name = valueNames[ i ];
-
-//!!! ...unfinished... (2021/07/13) could use a function (dynamic properties?) instead of a large array to reduce (Ids) memory?
-
       this.Ids[ name ] = integerId;
       this.integerToNameMap.set( integerId, name );
       this.nameToIntegerMap.set( name, integerId );
@@ -193,7 +186,7 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
  *   - -2: ONE_INPUT_TWO_DEPTHWISE
  *   - -1: ONE_INPUT_ADD_TO_OUTPUT
  *   -  0: ONE_INPUT
- *   - [ 1, ( 10 * 1024 ) ]: TWO_INPUTS with the second input channel count between 1 and 10240 (inclusive).
+ *   - [ 1, ( 10 * 1024 ) ]: TWO_INPUTS with the second input channel count between 1 and 10240 (inclusive). (without names defined.)
  */
 class channelCount1_pointwise1Before extends Int {
 
@@ -203,10 +196,10 @@ class channelCount1_pointwise1Before extends Int {
       "ONE_INPUT_ADD_TO_OUTPUT",
       "ONE_INPUT",
 
-//!!! ...unfinished... (2021/07/13) could use a function instead of a large array to reduce memory?
-
+      // (2021/07/13 Remarked) Do not define these names to reduce memory usage.
+      //
       // i.e. "TWO_INPUTS_1", "TWO_INPUTS_2", ..., "TWO_INPUTS_10240".
-      ... [ ... new Array( 10 * 1024 ).keys() ].map( x => "TWO_INPUTS_" + ( x + 1 ) )
+      //... [ ... new Array( 10 * 1024 ).keys() ].map( x => "TWO_INPUTS_" + ( x + 1 ) )
     ] );
   }
 
