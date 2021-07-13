@@ -191,7 +191,7 @@ class Params extends Weights.Params {
       return false;
 
     // Determine input tensor count and whether request add-input-to-output.
-    Params.DetermineFlags_AccordingTo_channelCount1_pointwise1Before.call( this, this.channelCount1_pointwise1Before );
+    Params.setFlags_by_channelCount1_pointwise1Before.call( this, this.channelCount1_pointwise1Before );
     return bExtractOk;
   }
 
@@ -202,7 +202,7 @@ class Params extends Weights.Params {
    *   According to this integer, the flags will be set in this.inputTensorCount, this.bDepthwise2Requested, this.bConcatenatorRequested,
    * this.bAddInputToOutputRequested.
    */
-  static SetFlags_by_channelCount1_pointwise1Before( channelCount1_pointwise1Before ) {
+  static setFlags_by_channelCount1_pointwise1Before( channelCount1_pointwise1Before ) {
 
     if ( channelCount1_pointwise1Before > 0 ) {
       this.inputTensorCount = 2; this.bDepthwise2Requested = false; this.bConcatenatorRequested = true; this.bAddInputToOutputRequested = false;
