@@ -1,4 +1,4 @@
-export { Base, Same, Bool, Int, ActivationFunction, AvgMax_Or_ChannelMultiplier };
+export { Base, Same, Bool, Int, ActivationFunction, AvgMax_Or_ChannelMultiplier, channelCount1_pointwise1Before };
 
 import * as ValueDesc from "./ValueDesc.js";
 
@@ -126,7 +126,7 @@ class ActivationFunction extends Base {
  *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
  *
  * @member {ValueDesc.AvgMax_Or_ChannelMultiplier} valueDesc
- *   The range of the parameter's all possible values. It is an ValueDesc.ActivationFunction object.
+ *   The range of the parameter's all possible values. It is an ValueDesc.AvgMax_Or_ChannelMultiplier object.
  */
 class AvgMax_Or_ChannelMultiplier extends Base {
 
@@ -135,3 +135,19 @@ class AvgMax_Or_ChannelMultiplier extends Base {
   }
 }
 
+
+/**
+ * Describe some properties of an channelCount1_pointwise1Before parameter.
+ *
+ * @member {string} paramName
+ *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
+ *
+ * @member {ValueDesc.channelCount1_pointwise1Before} valueDesc
+ *   The range of the parameter's all possible values. It is an ValueDesc.channelCount1_pointwise1Before object.
+ */
+class channelCount1_pointwise1Before extends Base {
+
+  constructor( paramName ) {
+    super( paramName, ValueDesc.channelCount1_pointwise1Before.Singleton );
+  }
+}
