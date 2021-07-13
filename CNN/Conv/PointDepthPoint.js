@@ -316,21 +316,21 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *
  * There four main combinations:
  *
- *   - When ( channelCount1_pointwise1Before > 0 ):
+ *   - When ( channelCount1_pointwise1Before > 0 ): TWO-INPUTS: (ShuffleNetV2's tail)
  * <pre>
  * input0 - pointwise1 - depthwise  - concatenator - pointwise21
  * input1 --------------------------/              \ pointwise22
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == 0 ):
+ *   - When ( channelCount1_pointwise1Before == 0 ): ONE-INPUT: (MobileNetV1)
  * <pre>
  * input0 - pointwise1 - depthwise  ---------------- pointwise21
  *                                                 \ pointwise22
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == -1 ):
+ *   - When ( channelCount1_pointwise1Before == -1 ): ONE-INPUT-ADD-TO-OUTPUT: (MobileNetV2)
  * <pre>
  *        /------------------------------------------------------\
  * input0 - pointwise1 - depthwise  ---------------- pointwise21 - addInput0ToPointwise21
@@ -339,7 +339,7 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == -2 ):
+ *   - When ( channelCount1_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: (ShuffleNetV2's head)
  * <pre>
  * input0 - pointwise1 - depthwise  - concatenator - pointwise21
  *        \------------- depthwise2 /              \ pointwise22
