@@ -268,8 +268,8 @@ class Params extends Base {
     if ( !this.parameterMap )
       return false;  // Do not know what parameters to be used or extracted.
 
-    let bInitOk = super.extract(); // Extract a block of input array.
-    if ( !bInitOk )
+    let bExtractOk = super.extract(); // Extract a block of input array.
+    if ( !bExtractOk )
       return false;
 
     // Copy the adjusted extracted weights.
@@ -286,7 +286,7 @@ class Params extends Base {
       this.parameterMapModified.set( paramDesc, adjustedValue ); // Record in map, too.
     }
 
-    return bInitOk;
+    return bExtractOk;
   }
 
   /** @return {number} The count of the parameters extracted from inputFloat32Array. (i.e. by evolution) */
