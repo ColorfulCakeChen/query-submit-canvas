@@ -35,23 +35,23 @@ class Params extends Weights.Params {
    * @param {number} channelCount1_pointwise1Before
    *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]).
    *
-   *   - ( channelCount1_pointwise1Before > 0 ): TWO-INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
-   *     will not be processed by any pointwise1 and depthwise operation. It will be concatenated directly with the result of depthwise
-   *     operation of inputTensors[ 0 ]. The concatenated result will be processed by pointwise2 convolution.
-   *
-   *   - ( channelCount1_pointwise1Before == 0 ): ONE-INPUT: The inputTensors[ 1 ] will not be used at all (will be ignored completely).
-   *     The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution.
-   *
-   *   - ( channelCount1_pointwise1Before == -1 ): ONE-INPUT-ADD-TO-OUTPUT: The inputTensors[ 1 ] will not be used at all (will be ignored
-   *     completely). The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution. Finally,
-   *     the inputTensors[ 0 ] will be added to the result of pointwise2. This is the only one case which will do add-input-to-output.
-   *
    *   - ( channelCount1_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: The inputTensors[ 1 ] will not be used at all (will be ignored
    *     completely). The inputTensors[ 0 ] will be processed by two pathes: one is by pointwise1 and one depthwise operation, the other
    *     is by another depthwise operation (without pointwise1). These two depthwise operations will have the same configurations
    *     (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId)
    *     but have different (filter and bias) weights. The two depthwise results will be concatenated. The concatenated result will
    *     be processed by pointwise2 convolution. This is the only one case which there will be second depthwise.
+   *
+   *   - ( channelCount1_pointwise1Before == -1 ): ONE-INPUT-ADD-TO-OUTPUT: The inputTensors[ 1 ] will not be used at all (will be ignored
+   *     completely). The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution. Finally,
+   *     the inputTensors[ 0 ] will be added to the result of pointwise2. This is the only one case which will do add-input-to-output.
+   *
+   *   - ( channelCount1_pointwise1Before == 0 ): ONE-INPUT: The inputTensors[ 1 ] will not be used at all (will be ignored completely).
+   *     The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution.
+   *
+   *   - ( channelCount1_pointwise1Before > 0 ): TWO-INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
+   *     will not be processed by any pointwise1 and depthwise operation. It will be concatenated directly with the result of depthwise
+   *     operation of inputTensors[ 0 ]. The concatenated result will be processed by pointwise2 convolution.
    *
    * @param {number} pointwise1ChannelCount
    *   The output channel count of the pointwise1 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -122,24 +122,6 @@ class Params extends Weights.Params {
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise22ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
-
-// !!! ...unfinished... (2021/07/12 Remarked) be deprecated by channelCount1_pointwise1Before.
-//
-// //!!! ...unfinished... (2021/06/08) could be inferred from channelCount1_pointwise1Before?
-// // If ( channelCount1_pointwise1Before < 0 ), means need add-input-to-output?
-// // But this also means add-input-to-output can not be determined by evolution.
-// //
-//
-//    * @param {number} inputTensorCount
-//    *   How many input tensors should be past into apply_and_destroy(). the If null, it will be extracted from inputFloat32Array
-//    * (i.e. by evolution).
-//    *   - 0: One input. It will be added to output if ( depthwiseStridesPad == 1 ) ( i.e. ( depthwiseStrides == 1 )
-//    *        and ( depthwisePad == "same" ) ) and ( channelCount_pointwise1Before == channelCount_pointwise2After ). This could achieve
-//    *        the residual connection of MobileNetV2.
-//    *   - 1: One input. It will not be added to output.
-//    *   - 2: Two input. They will not be added to output. The second input will not be processed by pointwise1 convolution, depthwise
-//    *        operation. But the second input will be concatenated with the result of depthwise operation. And then the concatenated
-//    *        result will be processed by pointwise2 convolution.
    *
    */
   constructor( inputFloat32Array, byteOffsetBegin,
@@ -148,8 +130,6 @@ class Params extends Weights.Params {
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
     pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
-// !!! ...unfinished... (2021/07/12 Remarked) be deprecated by channelCount1_pointwise1Before.
-//     inputTensorCount
   ) {
 
 //!!! ...unfinished...
@@ -171,8 +151,6 @@ class Params extends Weights.Params {
       [ Params.pointwise22ChannelCount,               pointwise22ChannelCount ],
       [ Params.bPointwise22Bias,                      bPointwise22Bias ],
       [ Params.pointwise22ActivationId,               pointwise22ActivationId ],
-// !!! ...unfinished... (2021/07/12 Remarked) be deprecated by channelCount1_pointwise1Before.
-//      [ Params.inputTensorCount,                      inputTensorCount ],
     ] );
 
     return super( inputFloat32Array, byteOffsetBegin, parameterMap );
@@ -251,8 +229,8 @@ class Params extends Weights.Params {
   get pointwise22ActivationId()   { return this.parameterMapModified.get( Params.pointwise22ActivationId ); }
   get pointwise22ActivationName() { return Params.pointwise22ActivationId.getStringOfValue( this.pointwise22ActivationId ); }
 
-// !!! ...unfinished... (2021/07/12 Remarked) be deprecated by channelCount1_pointwise1Before.
-//  get inputTensorCount()          { return this.parameterMapModified.get( Params.inputTensorCount ); }
+  get modeName() {
+  }
 }
 
 
@@ -300,9 +278,6 @@ Params.pointwise22ChannelCount = new ParamDesc.Int(                "pointwise22C
 Params.bPointwise22Bias =        new ParamDesc.Bool(               "bPointwise22Bias" );
 Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22ActivationId" );
 
-// !!! ...unfinished... (2021/07/12 Remarked) be deprecated by channelCount1_pointwise1Before.
-//Params.inputTensorCount =        new ParamDesc.Int(                "inputTensorCount",  0, 2 );
-
 
 /**
  * One step of one block of convolution neural network. There are at most three convolutions inside this object.
@@ -316,17 +291,10 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *
  * There four main combinations:
  *
- *   - When ( channelCount1_pointwise1Before > 0 ): TWO-INPUTS: (ShuffleNetV2's tail)
+ *   - When ( channelCount1_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: (ShuffleNetV2's head)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
- * input1 --------------------------/              \ pointwise22
- * </pre>
- *
- *
- *   - When ( channelCount1_pointwise1Before == 0 ): ONE-INPUT: (MobileNetV1)
- * <pre>
- * input0 - pointwise1 - depthwise1 ---------------- pointwise21
- *                                                 \ pointwise22
+ *        \------------- depthwise2 /              \ pointwise22
  * </pre>
  *
  *
@@ -339,10 +307,17 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == -2 ): ONE-INPUT-TWO-DEPTHWISE: (ShuffleNetV2's head)
+ *   - When ( channelCount1_pointwise1Before == 0 ): ONE-INPUT: (MobileNetV1)
+ * <pre>
+ * input0 - pointwise1 - depthwise1 ---------------- pointwise21
+ *                                                 \ pointwise22
+ * </pre>
+ *
+ *
+ *   - When ( channelCount1_pointwise1Before > 0 ): TWO-INPUTS: (ShuffleNetV2's tail)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
- *        \------------- depthwise2 /              \ pointwise22
+ * input1 --------------------------/              \ pointwise22
  * </pre>
  *
  *
