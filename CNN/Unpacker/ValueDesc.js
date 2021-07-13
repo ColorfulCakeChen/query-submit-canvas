@@ -163,8 +163,8 @@ ActivationFunction.Singleton = new ActivationFunction;
 /** Describe depthwise operation's id, range, name.
  *
  * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
- *   - -1: average pooling. (AVG)
- *   - -2: maximum pooling. (MAX)
+ *   - -2: average pooling. (AVG)
+ *   - -1: maximum pooling. (MAX)
  *   -  0: no depthwise operation. (NONE)
  *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
  */
@@ -178,3 +178,30 @@ class AvgMax_Or_ChannelMultiplier extends Int {
 
 /** The only one ValueDesc.AvgMax_Or_ChannelMultiplier instance. */
 AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
+
+
+/** Describe id, range, name of channelCount1_pointwise1Before.
+ *
+ * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
+ *   - -2: ONE_INPUT_TWO_DEPTHWISE
+ *   - -1: ONE_INPUT_ADD_TO_OUTPUT
+ *   -  0: ONE_INPUT
+ *   - [ 1, ( 10 * 1024 ) ]: TWO_INPUTS with the second input channel count between 1 and 10240 (inclusive).
+ */
+class channelCount1_pointwise1Before extends Int {
+
+  constructor() {
+    super( -2, ( 10 * 1024 ), [
+      "ONE_INPUT_TWO_DEPTHWISE",
+      "ONE_INPUT_ADD_TO_OUTPUT",
+      "ONE_INPUT",
+
+      // i.e. "TWO_INPUTS_1", "TWO_INPUTS_2", ..., "TWO_INPUTS_10240".
+      ... [ ... new Array( 10 * 1024 ).keys() ].map( x => "TWO_INPUTS_" + ( x + 1 ) )
+    ] );
+  }
+
+}
+
+/** The only one ValueDesc.AvgMax_Or_ChannelMultiplier instance. */
+channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
