@@ -199,8 +199,6 @@ class Params extends Weights.Params {
   }
 
   get channelCount1_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount1_pointwise1Before ); }
-//!!! (2021/07/13 Remarked)
-//  get channelCount1_pointwise1Before_Ids()  { return Params.channelCount1_pointwise1Before.getStringOfValue( this.channelCount1_pointwise1Before ); }
   get channelCount1_pointwise1Before_Name() { return Params.channelCount1_pointwise1Before.getStringOfValue( this.channelCount1_pointwise1Before ); }
 
   get pointwise1ChannelCount()    { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
@@ -493,6 +491,7 @@ class Base extends ReturnOrClone.Base {
     //
     // Do not keep params in this.params so that the inputFloat32Array could be released.
     this.channelCount1_pointwise1Before = params.channelCount1_pointwise1Before;
+    this.channelCount1_pointwise1Before_Name = params.channelCount1_pointwise1Before_Name;
 
     this.pointwise1ChannelCount = params.pointwise1ChannelCount;
     this.bPointwise1Bias = params.bPointwise1Bias;
@@ -902,10 +901,10 @@ class Base extends ReturnOrClone.Base {
 //
 //!!! ...unfinished (2021/07/13)
 // switch ( this.channelCount1_pointwise1Before )
-// Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE
-// Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT
-// Params.channelCount1_pointwise1Before.Ids.ONE_INPUT
-// Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX
+//   case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE
+//   case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT
+//   case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT
+//   default: // Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX
 //
 
     if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
@@ -1236,6 +1235,8 @@ class Base extends ReturnOrClone.Base {
         `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels0}, `
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels0}, `
 
+      + `channelCount1_pointwise1Before_Name=${this.channelCount1_pointwise1Before_Name}, `
+    
       + `pointwise1ChannelCount=${this.pointwise1ChannelCount}, `
       + `bPointwise1Bias=${this.bPointwise1Bias}, `
       + `pointwise1ActivationName=${this.pointwise1ActivationName}, `
