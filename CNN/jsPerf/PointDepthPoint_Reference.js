@@ -202,7 +202,7 @@ class Base {
     let testParams = this.testParams;
     let extractedParams = new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
 
-//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
 
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
 
@@ -216,13 +216,13 @@ class Base {
 
     let bInitOk = pointDepthPoint.init(
       progress,
-      testParams.in.channelCount1_pointwise1Before, // (i.e. inChannels1)
-      testParams.in.channelCount2_pointwise1Before, // (i.e. inChannels2)
+      testParams.in.channelCount0_pointwise1Before, // (i.e. inChannels1)
+      testParams.in.channelCount1_pointwise1Before, // (i.e. inChannels2)
       bKeepInputTensor,
       extractedParams
     );
 
-//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
     let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
@@ -347,11 +347,16 @@ class Base {
   calcResult( imageInArray ) {
 
     let testParams = this.testParams;
-    let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
+
+//!!! ...unfinished... (2021/07/13 Remarked)
+//    let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
+    let flags = {};
+    PointDepthPoint.Params.DetermineFlags_AccordingTo_channelCount1_pointwise1Before.call( flags, testParams.out.channelCount1_pointwise1Before );
 
     // Create description for debug easily.
     this.paramsOutDescription =
-        `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `// pointwise1ActivationName=${pointwise1ActivationName}, `
+        ``
+      + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `// pointwise1ActivationName=${pointwise1ActivationName}, `
       + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
       + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
       + `depthwiseStridesPad=${testParams.out.depthwiseStridesPad}, `
@@ -359,11 +364,16 @@ class Base {
 //      + `depthwiseActivationName=${depthwiseActivationName}, `
       + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `//pointwise21ActivationName=${pointwise21ActivationName}, `
       + `pointwise22ChannelCount=${testParams.out.pointwise22ChannelCount}, bPointwise22Bias=${testParams.out.bPointwise22Bias}, `//pointwise22ActivationName=${pointwise22ActivationName}, `
-      + `inputTensorCount=${testParams.out.inputTensorCount} `
-      + `bAddInputToOutput=${bAddInputToOutput}`
+
+      + `inputTensorCount=${flags.inputTensorCount} `
+      + `bDepthwise2Requested=${flags.bDepthwise2Requested}`
+      + `bConcatenatorRequested=${flags.bConcatenatorRequested}`
+      + `bAddInputToOutputRequested=${flags.bAddInputToOutputRequested}`
     ;
 
     let nextImageIn = imageInArray[ 0 ];
+
+//!!! ...unfinished... (2021/07/13) depthwise2
 
     // 1. Pointwise1
     if ( testParams.out.pointwise1ChannelCount > 0 ) {
@@ -375,7 +385,7 @@ class Base {
         "Pointwise1", this.paramsOutDescription );
     }
 
-//!!! ...unfinished (2021/07/12) When ( channelCount2_pointwise1Before == 0 ), need depthwise2.
+//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
 
     // 2. Depthwise
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
@@ -400,7 +410,7 @@ class Base {
 
       // Residual Connection.
       pointwise21Result = Base.modifyByInput(
-        nextImageIn, bAddInputToOutput, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
+        nextImageIn, flags.bAddInputToOutputRequested, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
 
     } else {
 
@@ -415,7 +425,7 @@ class Base {
 
         // Residual Connection.
         pointwise21Result = Base.modifyByInput(
-          pointwise21Result, bAddInputToOutput, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
+          pointwise21Result, flags.bAddInputToOutputRequested, imageInArray[ 0 ], "ImageOut1", this.paramsOutDescription );
       }
 
       // 4.2 Pointwise22
@@ -431,7 +441,7 @@ class Base {
         //
         // Always using input image1 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
         pointwise22Result = Base.modifyByInput(
-          pointwise22Result, bAddInputToOutput, imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
+          pointwise22Result, flags.bAddInputToOutputRequested, imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
       }
 
     }
