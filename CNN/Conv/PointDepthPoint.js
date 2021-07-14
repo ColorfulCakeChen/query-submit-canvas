@@ -446,9 +446,10 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has two parameters inputTensors and outputTensors. The inputTensors (tf.tensor3d[]) represents the images
- * ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed one or two tf.tensor3d as the result.
- * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
- * apply_X_Y_and_destroy_AddInputToOutput(), apply_X_Y_and_keep_AddInputToOutput(), apply_X_Y_and_destroy_or_keep_NoSkipConnection(),
+ * ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed one or two tf.tensor3d as
+ * the result. All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls
+ * one of apply_X_Y_and_destroy_or_keep_ConcatInput0Depthwise2(), apply_X_Y_and_destroy_AddInputToOutput(),
+ * apply_X_Y_and_destroy_or_keep_NoSkipConnection(), apply_X_Y_and_destroy_or_keep_ConcatInput1(),
  * return_input_directly_array(), keep_input_return_copy_array() according to the initer()'s parameters.
  */
 class Base extends ReturnOrClone.Base {
@@ -918,14 +919,23 @@ class Base extends ReturnOrClone.Base {
    */
   static Determine_apply_and_destroy_or_keep() {
 
-//!!! ...unfinished (2021/07/12) When ( bDepthwise2Requested == true ), need depthwise2.
-
-
     switch ( this.channelCount1_pointwise1Before ) {
 
-//!!! ...unfinished (2021/07/14)
       // 1.
       case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2) (simplified ShuffleNetV2's head)
+        if ( this.bPointwise21 ) {
+          if ( this.bPointwise22 ) {
+            return Base.apply_1_2_and_destroy_or_keep_ConcatInput0Depthwise2;  // 4.1 Both pointwise21 and pointwise22 existed.
+          } else {
+            return Base.apply_1_21_and_destroy_or_keep_ConcatInput0Depthwise2; // 4.2 Only pointwise21 existed (and no pointwise22).
+          }
+        } else {
+          if ( this.bPointwise22 ) {
+            return Base.apply_1_22_and_destroy_or_keep_ConcatInput0Depthwise2; // 4.3 Only pointwise22 existed (and no pointwise21).
+          } else {
+            return Base.apply_1_21_and_destroy_or_keep_ConcatInput0Depthwise2; // 4.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+          }
+        }
         break;
 
       case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1) (MobileNetV2)
@@ -1151,6 +1161,55 @@ class Base extends ReturnOrClone.Base {
   }
 
 
+  /** The inputTensors[ 0 ] will be branched by depthwise2 and concatenated before outputTensors[ 0 ]. */
+  static apply_1_21_and_destroy_or_keep_ConcatInput0Depthwise2( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( t0 );
+
+    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
+
+    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = null;
+  }
+
+  /** The inputTensors[ 0 ] will be branched by depthwise2 and concatenated before outputTensors[ 1 ]. */
+  static apply_1_22_and_destroy_or_keep_ConcatInput0Depthwise2( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( t0 );
+
+    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
+
+    outputTensors[ 0 ] = null;
+    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
+  }
+
+  /**
+   * The inputTensors[ 0 ] will be branched by depthwise2 and concatenated before outputTensors[ 0 ] and outputTensors[ 1 ].
+   * The input tensors may or may not be disposed.
+   */
+  static apply_1_2_and_destroy_or_keep_ConcatInput0Depthwise2( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+
+    this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( t0 );
+
+    t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
+
+    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
+  }
+
+
   /** The only one input will be added to the only one output (pointwise21). The inputTensor may or may not be disposed.*/
   static apply_1_21_and_destroy_or_keep_AddInputToOutput( inputTensors, outputTensors ) {
     let t0, t1;
@@ -1250,6 +1309,40 @@ class Base extends ReturnOrClone.Base {
   }
 
 
+  /** One input to one output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
+  static apply_1_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+
+    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 ); // may destroy t1.
+    outputTensors[ 1 ] = null;
+  }
+
+  /** One input to one output (pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
+  static apply_1_22_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+
+    outputTensors[ 0 ] = null;
+    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
+  }
+
+  /** One input to two output (pointwise21 and pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
+  static apply_1_2_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+
+    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
+  }
+
+
   /** The inputTensors[ 1 ] will be concatenated before outputTensors[ 0 ]. */
   static apply_2_21_and_destroy_or_keep_ConcatInput1( inputTensors, outputTensors ) {
     let t0, t1;
@@ -1305,40 +1398,6 @@ class Base extends ReturnOrClone.Base {
 
     outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
-  }
-
-
-  /** One input to one output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
-  static apply_1_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
-    let t0, t1;
-
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
-
-    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 ); // may destroy t1.
-    outputTensors[ 1 ] = null;
-  }
-
-  /** One input to one output (pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
-  static apply_1_22_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
-    let t0, t1;
-
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
-
-    outputTensors[ 0 ] = null;
-    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
-  }
-
-  /** One input to two output (pointwise21 and pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
-  static apply_1_2_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
-    let t0, t1;
-
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
-
-    outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
-    outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 ); // may destroy t1.
   }
 
 
