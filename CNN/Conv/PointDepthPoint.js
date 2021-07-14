@@ -922,7 +922,7 @@ class Base extends ReturnOrClone.Base {
     switch ( this.channelCount1_pointwise1Before ) {
 
       // 1.
-      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2) (simplified ShuffleNetV2's head)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2) (simplified ShuffleNetV2's head)
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
             return Base.apply_1_2_and_destroy_or_keep_ConcatInput0Depthwise2;  // 4.1 Both pointwise21 and pointwise22 existed.
@@ -938,8 +938,8 @@ class Base extends ReturnOrClone.Base {
         }
         break;
 
-      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1) (MobileNetV2)
-      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT:               // ( 0) (MobileNetV1)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1) (MobileNetV2)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT:               // ( 0) (MobileNetV1)
 
         if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
 
@@ -1030,7 +1030,9 @@ class Base extends ReturnOrClone.Base {
         break;
 
       // 4. (no-add-input-to-output but has) concat and destroy-input (or keep-input).
-      default: // Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX (> 0) ( this.inputTensorCount > 1 ) (simplified ShuffleNetV2's tail)
+      //
+      // ( this.inputTensorCount > 1 ).
+      default: // Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX (> 0) (simplified ShuffleNetV2's tail)
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
             return Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 4.1 Both pointwise21 and pointwise22 existed.
