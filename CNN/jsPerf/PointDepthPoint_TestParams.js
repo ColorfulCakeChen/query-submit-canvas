@@ -234,7 +234,7 @@ class TestParams {
     // Depthwise2
     let depthwise2;
     if ( paramsAll.channelCount1_pointwise1Before
-           == Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) { // (-2) (simplified ShuffleNetV2's head)
+           == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) { // (-2) (simplified ShuffleNetV2's head)
 
       depthwise2 = TestParams.generate_depthwise_filters_biases( channelCount0_pointwise1Before, // Use input0.
         paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
