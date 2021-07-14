@@ -14,13 +14,9 @@ import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
- * it has the following data members: inputFloat32Array, byteOffsetBegin, 
-
-//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
- 
- pointwise1ChannelCount, bPointwise1Bias,
- * pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias,
- * depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
+ * it has the following data members: inputFloat32Array, byteOffsetBegin, channelCount1_pointwise1Before, pointwise1ChannelCount,
+ * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
+ * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
  * bPointwise22Bias, pointwise22ActivationId, inputTensorCount. It also has the following properties:
  *   - inputFloat32Array
  *   - byteOffsetBegin
@@ -295,9 +291,7 @@ class TestParams {
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of PointDepthPoint.initer().
  */
 TestParams.paramsInArrayOrder = [
-
-//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
-
+  PointDepthPoint.Params.channelCount1_pointwise1Before.paramName,
   PointDepthPoint.Params.pointwise1ChannelCount.paramName,
   PointDepthPoint.Params.bPointwise1Bias.paramName,
   PointDepthPoint.Params.pointwise1ActivationId.paramName,
@@ -342,12 +336,16 @@ class Base {
    * @param {number} channelCount0_pointwise1Before
    *   The channel count of the first input image.
    *
-   * @param {number} channelCount1_pointwise1Before
-   *   The channel count of the second input image.
+//!!! (2021/07/14 Remarked) Now, channelCount1_pointwise1Before is in params.
+//    * @param {number} channelCount1_pointwise1Before
+//    *   The channel count of the second input image.
    */
-  constructor( channelCount0_pointwise1Before, channelCount1_pointwise1Before ) {
+//!!! (2021/07/14 Remarked) Now, channelCount1_pointwise1Before is in params.
+//  constructor( channelCount0_pointwise1Before, channelCount1_pointwise1Before ) {
+  constructor( channelCount0_pointwise1Before ) {
     this.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
-    this.channelCount1_pointwise1Before = channelCount1_pointwise1Before;
+//!!! (2021/07/14 Remarked) Now, channelCount1_pointwise1Before is in params.
+//    this.channelCount1_pointwise1Before = channelCount1_pointwise1Before;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.maxKindsPerParameter = 5;
@@ -362,6 +360,7 @@ class Base {
     this.paramDescConfigArray = [
       
 //!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
+      { paramDesc: PointDepthPoint.Params.channelCount1_pointwise1Before,        maxKinds: this.maxKindsPerParameter },
 
       { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise21Bias,                      maxKinds:                 undefined },
