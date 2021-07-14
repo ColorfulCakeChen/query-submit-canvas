@@ -36,7 +36,7 @@ class TestParams {
     this.out = {};
   }
 
-//!!! ...unfinished... (2021/06/09) channelCount0_pointwise1Before should also be random tested (e.g. between 3 - 5).
+//!!! ...unfinished... (2021/06/09) channelCount0_pointwise1Before should also be randomly tested (e.g. between 3 - 5).
 
  
   /**
@@ -44,7 +44,7 @@ class TestParams {
    *   - this.in.inputFloat32Array
    *   - this.in.byteOffsetBegin
    *   - this.in.weights
-   *   - this.in.channelCount1_pointwise1Before
+   *   - this.in.channelCount0_pointwise1Before
    *   - this.out
    *
    * @param {number} channelCount0_pointwise1Before
