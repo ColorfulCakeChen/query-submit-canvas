@@ -47,7 +47,8 @@ class Base {
   testCorrectness( imageInArray, imageInTensor3dArray ) {
 
     try {
-
+      let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
+      let imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
       let outputTensor3dArray = new Array( 2 );
       let inputTensor3dArray = new Array( 2 );
 
@@ -59,15 +60,20 @@ class Base {
 
             let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
 
+            imageInArraySelected.fill( undefined );
+            imageInArraySelected[ 0 ] = imageInArray[ 0 ];
+            if ( channelCount1_pointwise1Before > 0 ) { // Pass two input images according to parameters.
+              imageInArraySelected[ 1 ] = imageInArray[ channelCount1_pointwise1Before ];
+            }
+
             outputTensor3dArray.fill( undefined );
             inputTensor3dArray.fill( undefined );
 
             if ( bKeepInputTensor ) {
               inputTensor3dArray[ 0 ] = imageInTensor3dArray[ 0 ];
 
-              if ( this.testParams.out.channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
-//!!! ...unfinished... (2021/07/14) channelCount1 ?
-                inputTensor3dArray[ 1 ] = imageInTensor3dArray[ 1 ];
+              if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
+                inputTensor3dArray[ 1 ] = imageInTensor3dArray[ channelCount1_pointwise1Before ];
               }
 
               inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
@@ -77,8 +83,7 @@ class Base {
               inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
 
               if ( this.testParams.out.channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
-//!!! ...unfinished... (2021/07/14) channelCount1 ?
-                inputTensor3dArray[ 1 ] = imageInTensor3dArray[ 1 ].clone();
+                inputTensor3dArray[ 1 ] = imageInTensor3dArray[ channelCount1_pointwise1Before ].clone();
                 inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
               }
             }
@@ -103,7 +108,7 @@ class Base {
                 + `${parametersDescription}` );
 
             // Test correctness of pointDepthPoint apply.
-            this.check_Input_Output_WeightsTable( imageInArray, imageInTensor3dArray, outputTensor3dArray, parametersDescription );
+            this.check_Input_Output_WeightsTable( imageInArraySelected, imageInTensor3dArray, outputTensor3dArray, parametersDescription );
 
             pointDepthPoint.disposeTensors();
             let memoryInfo_afterDispose = tf.memory();
@@ -135,6 +140,8 @@ class Base {
    *
    * @param {object[]} imageInArray
    *   The image to be tested.
+   *     - imageInArray[ 0 ]: input0
+   *     - imageInArray[ 1 ]: input1
    *
    * @param {number}   imageInArray[ i ].height    Image height
    * @param {number}   imageInArray[ i ].width     Image width
@@ -354,6 +361,11 @@ class Base {
   }
 
   /** According to imageInArray and this.testParams.in.weights, calculate imageOutArray.
+   *
+   * @param {object[]} imageInArray
+   *   The image to be tested.
+   *     - imageInArray[ 0 ]: input0
+   *     - imageInArray[ 1 ]: input1
    *
    * @param {number}   imageInArray[ i ].height    Image height
    * @param {number}   imageInArray[ i ].width     Image width
