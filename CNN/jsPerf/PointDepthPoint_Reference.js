@@ -226,8 +226,7 @@ class Base {
     // Initialize successfully or failed.
     let testParams = this.testParams;
     let extractedParams = new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
-
-//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
+      testParams.in.channelCount1_pointwise1Before,
 
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
 
@@ -241,8 +240,7 @@ class Base {
 
     let bInitOk = pointDepthPoint.init(
       progress,
-      testParams.in.channelCount0_pointwise1Before, // (i.e. inChannels1)
-      testParams.in.channelCount1_pointwise1Before, // (i.e. inChannels2)
+      testParams.in.channelCount0_pointwise1Before, // (i.e. inChannels0)
       bKeepInputTensor,
       extractedParams
     );
@@ -278,8 +276,11 @@ class Base {
       pointDepthPoint.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
     // input tensor parameters.
+    Base.AssertTwoEqualValues( "channelCount1_pointwise1Before",
+      pointDepthPoint.channelCount1_pointwise1Before, testParams.out.channelCount1_pointwise1Before, parametersDescription );
+
     Base.AssertTwoEqualValues( "inChannels", pointDepthPoint.inChannels, testParams.in.channelCount_pointwise1Before, parametersDescription );
-    Base.AssertTwoEqualValues( "inputTensorCount", pointDepthPoint.inputTensorCount, testParams.out.inputTensorCount, parametersDescription );
+//    Base.AssertTwoEqualValues( "inputTensorCount", pointDepthPoint.inputTensorCount, testParams.out.inputTensorCount, parametersDescription );
     Base.AssertTwoEqualValues( "bAddInputToOutput", pointDepthPoint.bAddInputToOutput, bAddInputToOutput, parametersDescription );
     Base.AssertTwoEqualValues( "bKeepInputTensor", pointDepthPoint.bKeepInputTensor, bKeepInputTensor, parametersDescription );
 
@@ -378,14 +379,12 @@ class Base {
 
     let testParams = this.testParams;
 
-//!!! ...unfinished... (2021/07/13 Remarked)
-//    let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
     let flags = {};
     PointDepthPoint.Params.setFlags_by_channelCount1_pointwise1Before.call( flags, testParams.out.channelCount1_pointwise1Before );
 
     // Create description for debug easily.
     this.paramsOutDescription =
-        `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
+        `inChannels0=${testParams.in.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
 
       + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `// pointwise1ActivationName=${pointwise1ActivationName}, `
       + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
@@ -404,8 +403,6 @@ class Base {
 
     let nextImageIn = imageInArray[ 0 ];
 
-//!!! ...unfinished... (2021/07/13) depthwise2
-
     // 1. Pointwise1
     if ( testParams.out.pointwise1ChannelCount > 0 ) {
       nextImageIn = Base.calcPointwise(
@@ -416,16 +413,30 @@ class Base {
         "Pointwise1", this.paramsOutDescription );
     }
 
-//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
-
     // 2. Depthwise
+
+    // 2.1 Depthwise1
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       nextImageIn = Base.calcDepthwise(
         nextImageIn,
         testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
-        testParams.in.weights.depthwiseFilters, testParams.out.bDepthwiseBias,
-        testParams.in.weights.depthwiseBiases, testParams.out.depthwiseActivationId,
-        "Depthwise", this.paramsOutDescription );
+        testParams.in.weights.depthwise1Filters, testParams.out.bDepthwiseBias,
+        testParams.in.weights.depthwise1Biases, testParams.out.depthwiseActivationId,
+        "Depthwise1", this.paramsOutDescription );
+    }
+
+    // 2.2 Depthwise2
+    if ( testParams.out.channelCount1_pointwise1Before
+           == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) { // (-2) (simplified ShuffleNetV2's head)
+
+      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
+        nextImageIn = Base.calcDepthwise(
+          imageInArray[ 1 ],
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
+          testParams.in.weights.depthwise2Filters, testParams.out.bDepthwiseBias,
+          testParams.in.weights.depthwise2Biases, testParams.out.depthwiseActivationId,
+          "Depthwise2", this.paramsOutDescription );
+      }
     }
 
     // 3. Concat (along image depth)
