@@ -245,8 +245,8 @@ class Base {
       extractedParams
     );
 
-//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
-    let bAddInputToOutput = ( 0 == testParams.out.inputTensorCount );
+    let flags = {};
+    PointDepthPoint.Params.setFlags_by_channelCount1_pointwise1Before.call( flags, testParams.out.channelCount1_pointwise1Before );
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
@@ -280,8 +280,15 @@ class Base {
       pointDepthPoint.channelCount1_pointwise1Before, testParams.out.channelCount1_pointwise1Before, parametersDescription );
 
     Base.AssertTwoEqualValues( "inChannels", pointDepthPoint.inChannels, testParams.in.channelCount_pointwise1Before, parametersDescription );
-//    Base.AssertTwoEqualValues( "inputTensorCount", pointDepthPoint.inputTensorCount, testParams.out.inputTensorCount, parametersDescription );
-    Base.AssertTwoEqualValues( "bAddInputToOutput", pointDepthPoint.bAddInputToOutput, bAddInputToOutput, parametersDescription );
+    Base.AssertTwoEqualValues( "inputTensorCount", pointDepthPoint.inputTensorCount, flags.inputTensorCount, parametersDescription );
+    Base.AssertTwoEqualValues( "bDepthwise2Requested", pointDepthPoint.bDepthwise2Requested, flags.bDepthwise2Requested, parametersDescription );
+
+    Base.AssertTwoEqualValues( "bConcatenatorRequested",
+      pointDepthPoint.bConcatenatorRequested, flags.bConcatenatorRequested, parametersDescription );
+
+    Base.AssertTwoEqualValues( "bAddInputToOutputRequested",
+      pointDepthPoint.bAddInputToOutputRequested, flags.bAddInputToOutputRequested, parametersDescription );
+
     Base.AssertTwoEqualValues( "bKeepInputTensor", pointDepthPoint.bKeepInputTensor, bKeepInputTensor, parametersDescription );
 
     // pointwise1 parameters.
