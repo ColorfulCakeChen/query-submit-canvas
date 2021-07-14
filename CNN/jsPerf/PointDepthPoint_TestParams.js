@@ -36,8 +36,7 @@ class TestParams {
     this.out = {};
   }
 
-//!!! ...unfinished... (2021/06/09) channelCount0_pointwise1Before and channelCount1_pointwise1Before should also be random
-// tested (e.g. between 3 - 5).
+//!!! ...unfinished... (2021/06/09) channelCount0_pointwise1Before should also be random tested (e.g. between 3 - 5).
 
  
   /**
@@ -45,15 +44,11 @@ class TestParams {
    *   - this.in.inputFloat32Array
    *   - this.in.byteOffsetBegin
    *   - this.in.weights
-   *   - this.in.channelCount0_pointwise1Before
    *   - this.in.channelCount1_pointwise1Before
    *   - this.out
    *
    * @param {number} channelCount0_pointwise1Before
    *   The channel count of the first input image.
-   *
-   * @param {number} channelCount1_pointwise1Before
-   *   The channel count of the second input image.
    *
    * @param {object} io_paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
@@ -181,9 +176,6 @@ class TestParams {
    * @param {number} channelCount0_pointwise1Before
    *   The channel count of the first input image.
    *
-   * @param {number} channelCount1_pointwise1Before
-   *   The channel count of the second input image.
-   *
    * @param {object} paramsAll
    *   An object which must have all the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias,
    * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
@@ -210,10 +202,11 @@ class TestParams {
     io_paramsNumberArrayObject.depthwise1Biases =  depthwise1.numberArrayArray[ 1 ];
 
     // Depthwise2
+    let depthwise2;
     if ( paramsAll.channelCount1_pointwise1Before
            == Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) { // (-2) (simplified ShuffleNetV2's head)
 
-      let depthwise2 = TestParams.generate_depthwise_filters_biases( channelCount0_pointwise1Before, // Use input0.
+      depthwise2 = TestParams.generate_depthwise_filters_biases( channelCount0_pointwise1Before, // Use input0.
         paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
 
       io_paramsNumberArrayObject.depthwise2Filters = depthwise2.numberArrayArray[ 0 ];
@@ -360,7 +353,7 @@ class Base {
     //
     // Note2: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     this.paramDescConfigArray = [
-      
+
       { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise21Bias,                      maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise21ActivationId,               maxKinds:                         0 },
