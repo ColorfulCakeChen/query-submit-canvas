@@ -919,75 +919,108 @@ class Base extends ReturnOrClone.Base {
   static Determine_apply_and_destroy_or_keep() {
 
 //!!! ...unfinished (2021/07/12) When ( bDepthwise2Requested == true ), need depthwise2.
-//
-//!!! ...unfinished (2021/07/13)
-// switch ( this.channelCount1_pointwise1Before )
-//   case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE
-//   case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT
-//   case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT
-//   default: // Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX
-//
+
 
     switch ( this.channelCount1_pointwise1Before ) {
+
+//!!! ...unfinished (2021/07/14)
       // 1.
-      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
+      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2) (simplified ShuffleNetV2's head)
         break;
 
-      // 2. add-input-to-output and (keep-input or destroy-input).
-      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
+      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1) (MobileNetV2)
+      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT:               // ( 0) (MobileNetV1)
 
-        if ( this.bPointwise21 ) {
-          if ( this.bPointwise22 ) {
+        if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
 
-            // 2.1 Both pointwise21 and pointwise22 exist.
-            //
-            // Although both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could (or need) add-input-to-output.
+          // 2. add-input-to-output and (keep-input or destroy-input).
 
-            if ( this.bShould_addInput0ToPointwise21 ) {
-              if ( this.bShould_addInput0ToPointwise22 ) {
-                // 2.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21 and addInput0ToPointwise22 exist.
-                return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_2;
+          if ( this.bPointwise21 ) {
+            if ( this.bPointwise22 ) {
+
+              // 2.1 Both pointwise21 and pointwise22 exist.
+              //
+              // Although both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could (or need) add-input-to-output.
+
+              if ( this.bShould_addInput0ToPointwise21 ) {
+                if ( this.bShould_addInput0ToPointwise22 ) {
+                  // 2.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21 and addInput0ToPointwise22 exist.
+                  return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_2;
+                } else {
+                  // 2.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21 exists.
+                  return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_21;
+                }
               } else {
-                // 2.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21 exists.
-                return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_21;
+                if ( this.bShould_addInput0ToPointwise22 ) {
+                  // 2.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22 exists.
+                  return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
+                } else {
+                  // 2.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21 and addInput0ToPointwise22 do not exist.
+
+                  // It should not execute to here.
+                  tf.util.assert( false,
+                    `PointDepthPoint.Determine_apply_and_destroy_or_keep(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
+                      + `should equal this.bShould_addInput0ToPointwise21 (${this.bShould_addInput0ToPointwise21}) `
+                      + ` or this.bShould_addInput0ToPointwise22 (${this.bShould_addInput0ToPointwise22}). ${this.parametersDescription}`);
+
+                  return undefined;
+                }
               }
+
             } else {
-              if ( this.bShould_addInput0ToPointwise22 ) {
-                // 2.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22 exists.
-                return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
-              } else {
-                // 2.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21 and addInput0ToPointwise22 do not exist.
-
-                // It should not execute to here.
-                tf.util.assert( false,
-                  `PointDepthPoint.Determine_apply_and_destroy_or_keep(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
-                    + `should equal this.bShould_addInput0ToPointwise21 (${this.bShould_addInput0ToPointwise21}) `
-                    + ` or this.bShould_addInput0ToPointwise22 (${this.bShould_addInput0ToPointwise22}). ${this.parametersDescription}`);
-
-                return undefined;
-              }
+              return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 2.2 Only pointwise21 exists (and no pointwise22).
             }
-
           } else {
-            return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 2.2 Only pointwise21 exists (and no pointwise22).
+            if ( this.bPointwise22 ) {
+              return Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 2.3 Only pointwise22 exists (and no pointwise21).
+            } else {
+              // 2.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel count is the same as channel count before pointwise2.)
+              return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
+            }
           }
+
         } else {
-          if ( this.bPointwise22 ) {
-            return Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 2.3 Only pointwise22 exists (and no pointwise21).
+
+          // 3. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
+          //
+          // ( this.inputTensorCount == 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible to add-input-to-output ).
+
+          if ( this.bPointwise21 ) {
+            if ( this.bPointwise22 ) {
+              return Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
+            } else {
+              return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
+            }
           } else {
-            // 2.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel count is the same as channel count before pointwise2.)
-            return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
+            if ( this.bPointwise22 ) {
+              return Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
+            } else {
+              // 3.4 Both pointwise21 and pointwise22 not existed.
+
+              // no pointwise1, no depthwise1, no concatenator, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
+              if ( !this.bPointwise1 && !this.bDepthwise1 ) {
+
+  //!!! ...unfinished... (2021/06/29) should be tested.
+
+                // Note: This may be wrong, however, if there are wrongly two input tensors (there should be only one input
+                // (i.e. inputTensors[ 0 ]) for should-add-input-to-output).
+                if ( this.bKeepInputTensor )
+                  return Base.keep_input_return_copy_array; // 3.4.1
+                else
+                  return Base.return_input_directly_array;  // 3.4.2
+
+              } else {
+                return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4.3 At least, there are pointwise1 or depthwise. (Use pointwise21.)
+              }
+
+            }
           }
+
         }
-
-        break;
-
-      // 3.
-      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT: // (0)
         break;
 
       // 4. (no-add-input-to-output but has) concat and destroy-input (or keep-input).
-      default: // Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX (> 0) (i.e. ( this.inputTensorCount > 1 ) )
+      default: // Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX (> 0) ( this.inputTensorCount > 1 ) (simplified ShuffleNetV2's tail)
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
             return Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 4.1 Both pointwise21 and pointwise22 existed.
@@ -1003,26 +1036,6 @@ class Base extends ReturnOrClone.Base {
         }
         break;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1075,8 +1088,8 @@ class Base extends ReturnOrClone.Base {
 //         }
 //       }
 //
-    } else { // ( this.inputTensorCount >= 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible to add-input-to-output).
-
+//    } else { // ( this.inputTensorCount >= 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible to add-input-to-output).
+//
 //       if ( this.inputTensorCount > 1 ) {
 //         // 2. (no-add-input-to-output but) concat and destroy-input (or keep-input).
 //
@@ -1093,48 +1106,48 @@ class Base extends ReturnOrClone.Base {
 //             return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
 //           }
 //         }
-
-      } else {
-        // 3. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
-        //
-        // ( this.inputTensorCount == 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible ).
-
-        if ( this.bPointwise21 ) {
-          if ( this.bPointwise22 ) {
-            return Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
-          } else {
-            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
-          }
-        } else {
-          if ( this.bPointwise22 ) {
-            return Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
-          } else {
-             // 3.4 Both pointwise21 and pointwise22 not existed.
-
-//!!! ...unfinished... (2021/06/29 Remarked)
-//            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
-
-            // no pointwise1, no depthwise1, no concatenator, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
-            if ( !this.bPointwise1 && !this.bDepthwise1 ) {
-
-//!!! ...unfinished... (2021/06/29) should be tested.
-
-              // Note: This may be wrong, however, if there are wrongly two input tensors (there should be only one input
-              // (i.e. inputTensors[ 0 ]) for should-add-input-to-output).
-              if ( this.bKeepInputTensor )
-                return Base.keep_input_return_copy_array; // 3.4.1
-              else
-                return Base.return_input_directly_array;  // 3.4.2
-
-            } else {
-              return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4.3 At least, there are pointwise1 or depthwise. (Use pointwise21.)
-            }
-            
-          }
-        }
-
-      }
-    }
+//
+//       } else {
+//         // 3. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
+//         //
+//         // ( this.inputTensorCount == 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible ).
+//
+//         if ( this.bPointwise21 ) {
+//           if ( this.bPointwise22 ) {
+//             return Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
+//           } else {
+//             return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
+//           }
+//         } else {
+//           if ( this.bPointwise22 ) {
+//             return Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
+//           } else {
+//              // 3.4 Both pointwise21 and pointwise22 not existed.
+//
+// //!!! ...unfinished... (2021/06/29 Remarked)
+// //            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+//
+//             // no pointwise1, no depthwise1, no concatenator, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
+//             if ( !this.bPointwise1 && !this.bDepthwise1 ) {
+//
+// //!!! ...unfinished... (2021/06/29) should be tested.
+//
+//               // Note: This may be wrong, however, if there are wrongly two input tensors (there should be only one input
+//               // (i.e. inputTensors[ 0 ]) for should-add-input-to-output).
+//               if ( this.bKeepInputTensor )
+//                 return Base.keep_input_return_copy_array; // 3.4.1
+//               else
+//                 return Base.return_input_directly_array;  // 3.4.2
+//
+//             } else {
+//               return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4.3 At least, there are pointwise1 or depthwise. (Use pointwise21.)
+//             }
+//         
+//           }
+//         }
+//
+//       }
+//     }
   }
 
 
