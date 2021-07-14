@@ -198,8 +198,13 @@ class Params extends Weights.Params {
     }
   }
 
+  /** @return {number} The number version of channelCount1_pointwise1Before. */
   get channelCount1_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount1_pointwise1Before ); }
-  get channelCount1_pointwise1Before_Name() { return Params.channelCount1_pointwise1Before.getStringOfValue( this.channelCount1_pointwise1Before ); }
+
+  /** @return {string} The string version of channelCount1_pointwise1Before. */
+  get channelCount1_pointwise1Before_Name() {
+    return Params.channelCount1_pointwise1Before.getStringOfValue( this.channelCount1_pointwise1Before );
+  }
 
   get pointwise1ChannelCount()    { return this.parameterMapModified.get( Params.pointwise1ChannelCount ); }
   get bPointwise1Bias()           { return this.parameterMapModified.get( Params.bPointwise1Bias ); }
@@ -320,7 +325,7 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *
  *
  *
- * Strictly speaking, ShuffleNetV2 is more like the following:
+ * Strictly speaking, the real ShuffleNetV2 is more like the following:
  *
  * (original ShuffleNetV2's head)
  * <pre>
@@ -645,7 +650,6 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // depthwise filters was ready. Report progress.
 
-
     // 4. Concatenator
     //
     // If ( there are two input tensors ) or ( there is one input tensor but there is depthwise2 ), the channel count for pointwise2 input
@@ -664,7 +668,6 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_concatenateAfter_pointwise2Before = this.channelCount_depthwise1After_concatenateBefore;
       TensorOpCounters.concatenator = TensorOpCounters.depthwise1;
     }
-
 
     // 5. The pointwise2 convolution.
 
