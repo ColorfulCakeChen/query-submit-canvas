@@ -289,7 +289,7 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *
  * There four main combinations:
  *
- *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: (ShuffleNetV2's head)
+ *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: (simplified ShuffleNetV2's head)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
  *        \------------- depthwise2 /              \ pointwise22
@@ -312,12 +312,32 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2's tail)
+ *   - When ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (simplified ShuffleNetV2's tail)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
  * input1 --------------------------/              \ pointwise22
  * </pre>
  *
+ *
+ *
+ * Strictly speaking, ShuffleNetV2 is more like the following:
+ *
+ * (original ShuffleNetV2's head)
+ * <pre>
+ * input0 - pointwise1 - depthwise1 - pointwise21 - concatenator - channelShuffler
+ *        \------------- depthwise2 - pointwise22 /
+ * </pre>
+ *
+ * (original ShuffleNetV2's tail)
+ * <pre>
+ * input0 - channelSplitter - pointwise1 - depthwise1 - pointwise21 - concatenator - channelShuffler
+ *                          \---------------------------------------/
+ * </pre>
+ *
+ * The channelShuffler of original ShuffleNetV2 is achieved by tf.reshape() operation. According to experiments, however, the
+ * channelShuffler could be acheived by pointwise convolution more efficiently (than reshape). This result in our simplified
+ * ShuffleNetV2 structure: replacing pointwise-concat-shuffle-split with concat-pointwise. It should be more efficient because
+ * less operations are used than original structure.
  *
  *
  *
