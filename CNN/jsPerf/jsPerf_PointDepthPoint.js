@@ -49,9 +49,9 @@ class HeightWidthDepth {
 
       { height: 3, width: 5, depth: 1, // testCorrectness_ImageDataArray[ 1 ]: input1 with ( channelCount == 1 )
         dataArray: [
-          111, 112,  121, 122,  131, 132,  141, 142,  151, 152,
-          211, 212,  221, 222,  231, 232,  241, 242,  251, 252,
-          311, 312,  321, 322,  331, 332,  341, 342,  351, 352, ]
+          111,  121,  131,  141,  151,
+          211,  221,  231,  241,  251,
+          311,  321,  331,  341,  351, ]
       },
 
       { height: 3, width: 5, depth: 2, // testCorrectness_ImageDataArray[ 2 ]: input1 with ( channelCount == 2 )
