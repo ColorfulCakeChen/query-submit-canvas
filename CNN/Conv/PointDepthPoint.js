@@ -323,7 +323,7 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *
  *
  *
- * Strictly speaking, the real ShuffleNetV2 is more like the following:
+ * Strictly speaking, the real (original) ShuffleNetV2 is more like the following:
  *
  * (original ShuffleNetV2's head)
  * <pre>
@@ -338,7 +338,7 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  * </pre>
  *
  * The channelShuffler of original ShuffleNetV2 is achieved by tf.reshape() operation. According to experiments, however, the
- * channelShuffler could be acheived by pointwise convolution more efficiently (than reshape). This result in our simplified
+ * channelShuffler could be acheived by pointwise convolution more efficiently (than reshape). This results in our simplified
  * ShuffleNetV2 structure: replacing pointwise-concat-shuffle-split with concat-pointwise. It should be more efficient because
  * less operations are used than original structure.
  *
@@ -929,6 +929,7 @@ class Base extends ReturnOrClone.Base {
 //
 
     switch ( this.channelCount1_pointwise1Before ) {
+      // 1.
       case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
         break;
 
@@ -981,10 +982,25 @@ class Base extends ReturnOrClone.Base {
 
         break;
 
+      // 3.
       case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT: // (0)
         break;
 
-      default: // Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX (> 0)
+      // 4. (no-add-input-to-output but has) concat and destroy-input (or keep-input).
+      default: // Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX (> 0) (i.e. ( this.inputTensorCount > 1 ) )
+        if ( this.bPointwise21 ) {
+          if ( this.bPointwise22 ) {
+            return Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 4.1 Both pointwise21 and pointwise22 existed.
+          } else {
+            return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 4.2 Only pointwise21 existed (and no pointwise22).
+          }
+        } else {
+          if ( this.bPointwise22 ) {
+            return Base.apply_2_22_and_destroy_or_keep_ConcatInput1; // 4.3 Only pointwise22 existed (and no pointwise21).
+          } else {
+            return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 4.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+          }
+        }
         break;
     }
 
@@ -1011,72 +1027,72 @@ class Base extends ReturnOrClone.Base {
 
 
 //!!! (2021/07/14 Remakred) Old Codes
-    if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
-
-      // 1. add-input-to-output and (keep-input or destroy-input).
-
-      if ( this.bPointwise21 ) {
-        if ( this.bPointwise22 ) {
-
-          // 1.1 Both pointwise21 and pointwise22 exist.
-          //
-          // Although both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could (or need) add-input-to-output.
-
-          if ( this.bShould_addInput0ToPointwise21 ) {
-            if ( this.bShould_addInput0ToPointwise22 ) {
-              // 1.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21 and addInput0ToPointwise22 exist.
-              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_2;
-            } else {
-              // 1.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21 exists.
-              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_21;
-            }
-          } else {
-            if ( this.bShould_addInput0ToPointwise22 ) {
-              // 1.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22 exists.
-              return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
-            } else {
-              // 1.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21 and addInput0ToPointwise22 do not exist.
-
-              // It should not execute to here.
-              tf.util.assert( false,
-                `PointDepthPoint.Determine_apply_and_destroy_or_keep(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
-                  + `should equal this.bShould_addInput0ToPointwise21 (${this.bShould_addInput0ToPointwise21}) `
-                  + ` or this.bShould_addInput0ToPointwise22 (${this.bShould_addInput0ToPointwise22}). ${this.parametersDescription}`);
-
-              return undefined;
-            }
-          }
-
-        } else {
-          return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.2 Only pointwise21 exists (and no pointwise22).
-        }
-      } else {
-        if ( this.bPointwise22 ) {
-          return Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 1.3 Only pointwise22 exists (and no pointwise21).
-        } else {
-          // 1.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel cout is the same as channel cout before pointwise2.)
-          return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
-        }
-      }
-
+//     if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
+//
+//       // 1. add-input-to-output and (keep-input or destroy-input).
+//
+//       if ( this.bPointwise21 ) {
+//         if ( this.bPointwise22 ) {
+//
+//           // 1.1 Both pointwise21 and pointwise22 exist.
+//           //
+//           // Although both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could (or need) add-input-to-output.
+//
+//           if ( this.bShould_addInput0ToPointwise21 ) {
+//             if ( this.bShould_addInput0ToPointwise22 ) {
+//               // 1.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21 and addInput0ToPointwise22 exist.
+//               return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_2;
+//             } else {
+//               // 1.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21 exists.
+//               return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_21;
+//             }
+//           } else {
+//             if ( this.bShould_addInput0ToPointwise22 ) {
+//               // 1.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22 exists.
+//               return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
+//             } else {
+//               // 1.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21 and addInput0ToPointwise22 do not exist.
+//
+//               // It should not execute to here.
+//               tf.util.assert( false,
+//                 `PointDepthPoint.Determine_apply_and_destroy_or_keep(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
+//                   + `should equal this.bShould_addInput0ToPointwise21 (${this.bShould_addInput0ToPointwise21}) `
+//                   + ` or this.bShould_addInput0ToPointwise22 (${this.bShould_addInput0ToPointwise22}). ${this.parametersDescription}`);
+//
+//               return undefined;
+//             }
+//           }
+//
+//         } else {
+//           return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.2 Only pointwise21 exists (and no pointwise22).
+//         }
+//       } else {
+//         if ( this.bPointwise22 ) {
+//           return Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 1.3 Only pointwise22 exists (and no pointwise21).
+//         } else {
+//           // 1.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel cout is the same as channel cout before pointwise2.)
+//           return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
+//         }
+//       }
+//
     } else { // ( this.inputTensorCount >= 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible to add-input-to-output).
 
-      if ( this.inputTensorCount > 1 ) {
-        // 2. (no-add-input-to-output but) concat and destroy-input (or keep-input).
-
-        if ( this.bPointwise21 ) {
-          if ( this.bPointwise22 ) {
-            return Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 2.1 Both pointwise21 and pointwise22 existed.
-          } else {
-            return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.2 Only pointwise21 existed (and no pointwise22).
-          }
-        } else {
-          if ( this.bPointwise22 ) {
-            return Base.apply_2_22_and_destroy_or_keep_ConcatInput1; // 2.3 Only pointwise22 existed (and no pointwise21).
-          } else {
-            return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
-          }
-        }
+//       if ( this.inputTensorCount > 1 ) {
+//         // 2. (no-add-input-to-output but) concat and destroy-input (or keep-input).
+//
+//         if ( this.bPointwise21 ) {
+//           if ( this.bPointwise22 ) {
+//             return Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 2.1 Both pointwise21 and pointwise22 existed.
+//           } else {
+//             return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.2 Only pointwise21 existed (and no pointwise22).
+//           }
+//         } else {
+//           if ( this.bPointwise22 ) {
+//             return Base.apply_2_22_and_destroy_or_keep_ConcatInput1; // 2.3 Only pointwise22 existed (and no pointwise21).
+//           } else {
+//             return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+//           }
+//         }
 
       } else {
         // 3. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
