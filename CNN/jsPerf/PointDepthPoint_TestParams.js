@@ -247,7 +247,7 @@ class TestParams {
     let pointwise2_inputChannelCount = depthwise1.outputChannelCount;
     {
       // (-2) (simplified ShuffleNetV2's head)
-      if ( paramsAll.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
+      if ( paramsAll.channelCount1_pointwise1Before == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
         pointwise2_inputChannelCount += depthwise2.outputChannelCount; // Add the channel count of the branch of the first input image.
 
       // (> 0) Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX  (simplified ShuffleNetV2's tail)
