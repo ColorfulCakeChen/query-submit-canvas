@@ -38,6 +38,36 @@ class TestParams {
 
 //!!! ...unfinished... (2021/06/09) channelCount0_pointwise1Before should also be randomly tested (e.g. between 3 - 5).
 
+  /**
+   * Use scattered parameters to fills the following proterties:
+   *   - this.in.inputFloat32Array
+   *   - this.in.byteOffsetBegin
+   *   - this.in.weights
+   *   - this.in.channelCount0_pointwise1Before
+   *   - this.out
+   *
+   * @return {TestParams}
+   *   Return this object self.
+   */
+  set_By_ParamsScattered(
+    channelCount0_pointwise1Before,
+    channelCount1_pointwise1Before,
+    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
+  ) {
+    let paramsNumberArrayObject = {};
+    let paramsOut = {
+      channelCount1_pointwise1Before,
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+      pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
+    };
+
+    return this.set_By_ParamsNumberArrayMap_ParamsOut( channelCount0_pointwise1Before, paramsNumberArrayObject, paramsOut );
+  }
  
   /**
    * Fills the following proterties:
