@@ -905,7 +905,7 @@ class Base extends ReturnOrClone.Base {
     this.intermediateTensorsArray = null;
 
     this.bPointwise1
-      = this.bDepthwise2Requested = this.bDepthwise1 = this.bDepthwise2 =
+      = this.bDepthwise1 = this.bDepthwise2 = this.bDepthwise2Requested
       = this.bConcatenatorRequested
       = this.bPointwise21 = this.bPointwise22
       = this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22 = false;
