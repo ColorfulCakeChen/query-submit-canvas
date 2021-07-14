@@ -12,10 +12,8 @@ import * as ConcatAlongAxisId2 from "./ConcatAlongAxisId2.js";
 import * as TensorOpCounter from "./TensorOpCounter.js";
 
 
-//!!! ...unfinished... (2021/06/09) Why are not channelCount0_pointwise1Before and channelCount1_pointwise1Before evolutable
-// params (e.g. between 3 - 5)?
+//!!! ...unfinished... (2021/06/09) Why are not channelCount0_pointwise1Before evolutable params?
 
-//!!! ...unfinished... (2021/07/01) Pointwise21's filter should be able pass in by external (for achieving channel-shuffle).
 
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
@@ -930,6 +928,89 @@ class Base extends ReturnOrClone.Base {
 //   default: // Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX
 //
 
+    switch ( this.channelCount1_pointwise1Before ) {
+      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
+        break;
+
+      // 2. add-input-to-output and (keep-input or destroy-input).
+      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
+
+        if ( this.bPointwise21 ) {
+          if ( this.bPointwise22 ) {
+
+            // 2.1 Both pointwise21 and pointwise22 exist.
+            //
+            // Although both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could (or need) add-input-to-output.
+
+            if ( this.bShould_addInput0ToPointwise21 ) {
+              if ( this.bShould_addInput0ToPointwise22 ) {
+                // 2.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21 and addInput0ToPointwise22 exist.
+                return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_2;
+              } else {
+                // 2.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21 exists.
+                return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_21;
+              }
+            } else {
+              if ( this.bShould_addInput0ToPointwise22 ) {
+                // 2.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22 exists.
+                return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
+              } else {
+                // 2.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21 and addInput0ToPointwise22 do not exist.
+
+                // It should not execute to here.
+                tf.util.assert( false,
+                  `PointDepthPoint.Determine_apply_and_destroy_or_keep(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
+                    + `should equal this.bShould_addInput0ToPointwise21 (${this.bShould_addInput0ToPointwise21}) `
+                    + ` or this.bShould_addInput0ToPointwise22 (${this.bShould_addInput0ToPointwise22}). ${this.parametersDescription}`);
+
+                return undefined;
+              }
+            }
+
+          } else {
+            return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 2.2 Only pointwise21 exists (and no pointwise22).
+          }
+        } else {
+          if ( this.bPointwise22 ) {
+            return Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 2.3 Only pointwise22 exists (and no pointwise21).
+          } else {
+            // 2.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel count is the same as channel count before pointwise2.)
+            return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
+          }
+        }
+
+        break;
+
+      case Params.channelCount1_pointwise1Before.Ids.ONE_INPUT: // (0)
+        break;
+
+      default: // Params.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX (> 0)
+        break;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//!!! (2021/07/14 Remakred) Old Codes
     if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
 
       // 1. add-input-to-output and (keep-input or destroy-input).
