@@ -23,6 +23,12 @@ class Base {
    *
    * @param {object[]} imageInArray
    *   The image to be tested.
+   *     - imageInArray[ 0 ]: input0
+   *     - imageInArray[ 1 ]: input1 with ( channelCount == 1 )
+   *     - imageInArray[ 2 ]: input1 with ( channelCount == 2 )
+   *     - imageInArray[ 3 ]: input1 with ( channelCount == 3 )
+   *     - imageInArray[ 4 ]: input1 with ( channelCount == 4 )
+   *     - imageInArray[ 5 ]: input1 with ( channelCount == 5 )
    *
    * @param {number}   imageInArray[ i ].height    Image height
    * @param {number}   imageInArray[ i ].width     Image width
@@ -31,6 +37,12 @@ class Base {
    *
    * @param {tf.tensor3d[]} imageInTensor3dArray
    *   The tensor3d created from imageInArray.
+   *     - imageInTensor3dArray[ 0 ]: input0
+   *     - imageInTensor3dArray[ 1 ]: input1 with ( channelCount == 1 )
+   *     - imageInTensor3dArray[ 2 ]: input1 with ( channelCount == 2 )
+   *     - imageInTensor3dArray[ 3 ]: input1 with ( channelCount == 3 )
+   *     - imageInTensor3dArray[ 4 ]: input1 with ( channelCount == 4 )
+   *     - imageInTensor3dArray[ 5 ]: input1 with ( channelCount == 5 )
    */
   testCorrectness( imageInArray, imageInTensor3dArray ) {
 
