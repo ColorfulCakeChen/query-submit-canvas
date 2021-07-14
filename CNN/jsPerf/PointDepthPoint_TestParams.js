@@ -17,12 +17,11 @@ import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
  * it has the following data members: inputFloat32Array, byteOffsetBegin, channelCount1_pointwise1Before, pointwise1ChannelCount,
  * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
  * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
- * bPointwise22Bias, pointwise22ActivationId, inputTensorCount. It also has the following properties:
+ * bPointwise22Bias, pointwise22ActivationId. It also has the following properties:
  *   - inputFloat32Array
  *   - byteOffsetBegin
  *   - weights
  *   - channelCount0_pointwise1Before
- *   - channelCount1_pointwise1Before
  *
  * @member {object} out
  *   The "out" sub-object's data members represent the "should-be" result of PointDepthPoint.Params's extract().
@@ -61,23 +60,18 @@ class TestParams {
    * The name should be one of TestParams.paramsInArrayOrder[] elements.
    *
    * @param {object} paramsOut
-   *   An object which has the following data members:
-
-//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
-   
-   pointwise1ChannelCount, bPointwise1Bias,
+   *   An object which has the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias,
    * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
-   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount. This object will be recorded in this.out directly.
+   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias. This object will be recorded in this.out directly.
    *
    * @return {TestParams}
    *   Return this object self.
    */
-  set_By_ParamsNumberArrayMap_ParamsOut( channelCount0_pointwise1Before, channelCount1_pointwise1Before, io_paramsNumberArrayObject, paramsOut ) {
+  set_By_ParamsNumberArrayMap_ParamsOut( channelCount0_pointwise1Before, io_paramsNumberArrayObject, paramsOut ) {
     this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
-    this.in.channelCount1_pointwise1Before = channelCount1_pointwise1Before;
     this.out = paramsOut;
 
-    TestParams.generate_Filters_Biases( channelCount0_pointwise1Before, channelCount1_pointwise1Before, paramsOut, io_paramsNumberArrayObject );
+    TestParams.generate_Filters_Biases( channelCount0_pointwise1Before, paramsOut, io_paramsNumberArrayObject );
 
     let Float32Array_ByteOffsetBegin = TestParams.concat_ParamsNumberArrayObject_To_Float32Array( io_paramsNumberArrayObject );
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
@@ -191,7 +185,7 @@ class TestParams {
    *   The channel count of the second input image.
    *
    * @param {object} paramsAll
-   *   An object which must have all the following data members: pointwise1ChannelCount, bPointwise1Bias,
+   *   An object which must have all the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias,
    * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
    * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount. They will be used to modify io_paramsNumberArrayObject.
    *
@@ -199,7 +193,7 @@ class TestParams {
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of TestParams.paramsInArrayOrder[] elements.
    */
-  static generate_Filters_Biases( channelCount0_pointwise1Before, channelCount1_pointwise1Before, paramsAll, io_paramsNumberArrayObject ) {
+  static generate_Filters_Biases( channelCount0_pointwise1Before, paramsAll, io_paramsNumberArrayObject ) {
 
     // Pointwise1
     let pointwise1 = TestParams.generate_pointwise_filters_biases( channelCount0_pointwise1Before,
@@ -208,19 +202,35 @@ class TestParams {
     io_paramsNumberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
     io_paramsNumberArrayObject.pointwise1Biases =  pointwise1.numberArrayArray[ 1 ];
 
-    // Depthwise
-    let depthwise = TestParams.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
+    // Depthwise1
+    let depthwise1 = TestParams.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
       paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
 
-    io_paramsNumberArrayObject.depthwiseFilters = depthwise.numberArrayArray[ 0 ];
-    io_paramsNumberArrayObject.depthwiseBiases =  depthwise.numberArrayArray[ 1 ];
+    io_paramsNumberArrayObject.depthwise1Filters = depthwise1.numberArrayArray[ 0 ];
+    io_paramsNumberArrayObject.depthwise1Biases =  depthwise1.numberArrayArray[ 1 ];
 
-//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
+    // Depthwise2
+    if ( paramsAll.channelCount1_pointwise1Before
+           == Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) { // (-2) (simplified ShuffleNetV2's head)
+
+      let depthwise2 = TestParams.generate_depthwise_filters_biases( channelCount0_pointwise1Before, // Use input0.
+        paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
+
+      io_paramsNumberArrayObject.depthwise2Filters = depthwise2.numberArrayArray[ 0 ];
+      io_paramsNumberArrayObject.depthwise2Biases =  depthwise2.numberArrayArray[ 1 ];
+    }
 
     // Concat
-    let pointwise2_inputChannelCount = depthwise.outputChannelCount;
-    if ( paramsAll.inputTensorCount > 1 ) {
-      pointwise2_inputChannelCount += channelCount1_pointwise1Before; // Add the channel count of the second input image.
+    let pointwise2_inputChannelCount = depthwise1.outputChannelCount;
+    {
+      // (-2) (simplified ShuffleNetV2's head)
+      if ( paramsAll.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
+        pointwise2_inputChannelCount += depthwise2.outputChannelCount; // Add the channel count of the branch of the first input image.
+
+      // (> 0) Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX  (simplified ShuffleNetV2's tail)
+      } else if ( paramsAll.channelCount1_pointwise1Before > 0 ) {
+        pointwise2_inputChannelCount += paramsAll.channelCount1_pointwise1Before; // Add the channel count of the second input image.
+      }
     }
 
     // Pointwise21
@@ -306,13 +316,15 @@ TestParams.paramsInArrayOrder = [
   PointDepthPoint.Params.pointwise22ChannelCount.paramName,
   PointDepthPoint.Params.bPointwise22Bias.paramName,
   PointDepthPoint.Params.pointwise22ActivationId.paramName,
-  PointDepthPoint.Params.inputTensorCount.paramName,
   
   "pointwise1Filters",
   "pointwise1Biases",
 
-  "depthwiseFilters",
-  "depthwiseBiases",
+  "depthwise1Filters",
+  "depthwise1Biases",
+
+  "depthwise2Filters",
+  "depthwise2Biases",
 
   "pointwise21Filters",
   "pointwise21Biases",
@@ -327,25 +339,15 @@ TestParams.paramsInArrayOrder = [
  */
 class Base {
 
-//!!! ...unfinished... (2021/07/11) channelCount0_pointwise1Before and channelCount1_pointwise1Before should also be included
-// when permuteParamRecursively. They should be one of ( channelCount0_pointwise1Before, 0 ) or
-// ( channelCount0_pointwise1Before, channelCount1_pointwise1Before ) according to inputTensorCount is 0, 1, or 2.
-//
+//!!! ...unfinished... (2021/07/11) channelCount0_pointwise1Before  should also be included when permuteParamRecursively.
 
   /**
    * @param {number} channelCount0_pointwise1Before
    *   The channel count of the first input image.
    *
-//!!! (2021/07/14 Remarked) Now, channelCount1_pointwise1Before is in params.
-//    * @param {number} channelCount1_pointwise1Before
-//    *   The channel count of the second input image.
    */
-//!!! (2021/07/14 Remarked) Now, channelCount1_pointwise1Before is in params.
-//  constructor( channelCount0_pointwise1Before, channelCount1_pointwise1Before ) {
   constructor( channelCount0_pointwise1Before ) {
     this.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
-//!!! (2021/07/14 Remarked) Now, channelCount1_pointwise1Before is in params.
-//    this.channelCount1_pointwise1Before = channelCount1_pointwise1Before;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.maxKindsPerParameter = 5;
@@ -359,9 +361,6 @@ class Base {
     // Note2: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     this.paramDescConfigArray = [
       
-//!!! ...unfinished (2021/07/12) When ( channelCount1_pointwise1Before == 0 ), need depthwise2.
-      { paramDesc: PointDepthPoint.Params.channelCount1_pointwise1Before,        maxKinds: this.maxKindsPerParameter },
-
       { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise21Bias,                      maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise21ActivationId,               maxKinds:                         0 },
@@ -373,7 +372,7 @@ class Base {
       { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds:                         0 },
 
-      { paramDesc: PointDepthPoint.Params.inputTensorCount,                      maxKinds:                 undefined },
+      { paramDesc: PointDepthPoint.Params.channelCount1_pointwise1Before,        maxKinds: this.maxKindsPerParameter },
 
       { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsPerParameter },
 //!!! (2021/07/09 Remarked) when pad is "valid", it seems that depthwise (avg/max pooling)'s filter size could not be larger than input image size?
@@ -415,7 +414,7 @@ class Base {
       ++this.result.id;  // Complete one kind of combination.
 
       this.result.set_By_ParamsNumberArrayMap_ParamsOut(
-        this.channelCount0_pointwise1Before, this.channelCount1_pointwise1Before, this.paramsNumberArrayObject, this.result.out );
+        this.channelCount0_pointwise1Before, this.paramsNumberArrayObject, this.result.out );
 
       yield this.result;
       return; // Stop this recusive. Back-track to another parameters combination.
