@@ -46,14 +46,34 @@ class Base {
    */
   testCorrectness( imageInArray, imageInTensor3dArray ) {
 
-//!!! ...unfinished... (2021/07/15) Since bKeepInputTensor does not affect this.calcResult(),
-// it is possible that this.calcResult() once and this.check_Input_Output_WeightsTable() twice for speeding up the testing performance.
-
     try {
       let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
       let imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
       let outputTensor3dArray = new Array( 2 );
       let inputTensor3dArray = new Array( 2 );
+
+      let strNote;
+
+      // Since bKeepInputTensor does not affect this.calcResult(), it is possible that do this.calcResult() once and
+      // this.check_Input_Output_WeightsTable() twice for speeding up the testing performance.
+      let imageOutReferenceArray;
+      {
+        strNote = `( this.testParams.id=${this.testParams.id} )`;
+
+        imageInArraySelected.fill( undefined );
+        imageInArraySelected[ 0 ] = imageInArray[ 0 ];
+        if ( channelCount1_pointwise1Before > 0 ) { // Pass two input images according to parameters.
+          imageInArraySelected[ 1 ] = imageInArray[ channelCount1_pointwise1Before ];
+        }
+
+        tf.util.assert( imageInArraySelected.length == 2,
+          `PointDepthPoint imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
+
+        imageOutReferenceArray = this.calcResult( imageInArraySelected ); // Output is an array with two elements.
+
+        tf.util.assert( imageOutReferenceArray.length == 2,
+          `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
+      }
 
       for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
         let bKeepInputTensor = ( nKeepInputTensor != 0 );
@@ -62,12 +82,6 @@ class Base {
           tf.tidy( () => {
 
             let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
-
-            imageInArraySelected.fill( undefined );
-            imageInArraySelected[ 0 ] = imageInArray[ 0 ];
-            if ( channelCount1_pointwise1Before > 0 ) { // Pass two input images according to parameters.
-              imageInArraySelected[ 1 ] = imageInArray[ channelCount1_pointwise1Before ];
-            }
 
             outputTensor3dArray.fill( undefined );
             inputTensor3dArray.fill( undefined );
@@ -94,6 +108,9 @@ class Base {
             let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
             let pointDepthPoint = this.pointDepthPoint_create( bKeepInputTensor );
 
+            let parametersDescription = pointDepthPoint.parametersDescription;
+            strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
+
             // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
             // tensor count (i.e. inputTensorDestroyCount).
             let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
@@ -102,7 +119,11 @@ class Base {
             pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
             let memoryInfo_apply_after = tf.memory();
 
-            let parametersDescription = pointDepthPoint.parametersDescription;
+            tf.util.assert( inputTensor3dArray.length == 2,
+              `PointDepthPoint inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}`);
+
+            tf.util.assert( outputTensor3dArray.length == 2,
+              `PointDepthPoint outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
 
             tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
               `PointDepthPoint.apply_and_destroy_or_keep() memory leak. `
@@ -111,7 +132,9 @@ class Base {
                 + `${parametersDescription}` );
 
             // Test correctness of pointDepthPoint apply.
-            this.check_Input_Output_WeightsTable( imageInArraySelected, imageInTensor3dArray, outputTensor3dArray, parametersDescription );
+//!!! (2021/07/15 Remarked)
+//            this.check_Input_Output_WeightsTable( imageInArraySelected, imageInTensor3dArray, outputTensor3dArray, parametersDescription );
+            this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, parametersDescription );
 
             pointDepthPoint.disposeTensors();
             let memoryInfo_afterDispose = tf.memory();
@@ -141,49 +164,55 @@ class Base {
   /**
    * Check the PointDepthPoint's output according to input (for correctness testing).
    *
-   * @param {object[]} imageInArray
-   *   The image to be tested.
-   *     - imageInArray[ 0 ]: input0
-   *     - imageInArray[ 1 ]: input1
+//    * @param {object[]} imageInArray
+//    *   The image to be tested.
+//    *     - imageInArray[ 0 ]: input0
+//    *     - imageInArray[ 1 ]: input1
+//    *
+//    * @param {number}   imageInArray[ i ].height    Image height
+//    * @param {number}   imageInArray[ i ].width     Image width
+//    * @param {number}   imageInArray[ i ].depth     Image channel count
+//    * @param {number[]} imageInArray[ i ].dataArray Image data
    *
-   * @param {number}   imageInArray[ i ].height    Image height
-   * @param {number}   imageInArray[ i ].width     Image width
-   * @param {number}   imageInArray[ i ].depth     Image channel count
-   * @param {number[]} imageInArray[ i ].dataArray Image data
+   * @param {number[]} imageOutReferenceArray[ i ] Refernece output Image data
    *
-   * @param {tf.tensor3d[]} inputTensors
-   *   The input array of the PointDepthPoint's apply_and_destroy_or_keep().
+//!!! (2021/07/15 Remarked)
+//    * @param {tf.tensor3d[]} inputTensors
+//    *   The input array of the PointDepthPoint's apply_and_destroy_or_keep().
    *
    * @param {tf.tensor3d[]} outputTensors
    *   The output array of the PointDepthPoint's apply_and_destroy_or_keep().
    */
-  check_Input_Output_WeightsTable( imageInArray, inputTensors, outputTensors, parametersDescription ) {
+//!!! (2021/07/15 Remarked)
+//  check_Input_Output_WeightsTable( imageInArray, inputTensors, outputTensors, parametersDescription ) {
+  check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensors, parametersDescription ) {
     tf.tidy( () => {
 
       let acceptableDifference = 2; //0.05;
 
-      let strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
+//!!! (2021/07/15 Remarked)
+//       let strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
+//
+//       tf.util.assert( imageInArray.length == 2,
+//         `PointDepthPoint imageInArray.length ( ${imageInArray.length} ) should be 2. ${strNote}`);
+//
+//       tf.util.assert( inputTensors.length == 2,
+//         `PointDepthPoint inputTensors.length ( ${inputTensors.length} ) should be 2. ${strNote}`);
+//
+//       tf.util.assert( outputTensors.length == 2,
+//         `PointDepthPoint outputTensors.length ( ${outputTensors.length} ) should be 2. ${strNote}`);
+//
+//       let imageOutRefs = this.calcResult( imageInArray ); // Output is an array with two elements.
+//
+//       tf.util.assert( imageOutRefs.length == 2,
+//         `PointDepthPoint imageOutRefs.length ( ${imageOutRefs.length} ) should be 2. ${strNote}`);
 
-      tf.util.assert( imageInArray.length == 2,
-        `PointDepthPoint imageInArray.length ( ${imageInArray.length} ) should be 2. ${strNote}`);
-
-      tf.util.assert( inputTensors.length == 2,
-        `PointDepthPoint inputTensors.length ( ${inputTensors.length} ) should be 2. ${strNote}`);
-
-      tf.util.assert( outputTensors.length == 2,
-        `PointDepthPoint outputTensors.length ( ${outputTensors.length} ) should be 2. ${strNote}`);
-
-      let imageOutRefs = this.calcResult( imageInArray ); // Output is an array with two elements.
-
-      tf.util.assert( imageOutRefs.length == 2,
-        `PointDepthPoint imageOutRefs.length ( ${imageOutRefs.length} ) should be 2. ${strNote}`);
-
-      for ( let i = 0; i < imageOutRefs.length; ++i ) {
+      for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
         // Get referenced result (as number array).
-        let imageOutRef = imageOutRefs[ i ];
+        let imageOutReferenceArray = imageOutReferenceArray[ i ];
         let outputArrayRef = null;
-        if ( imageOutRef ) {
-          outputArrayRef = imageOutRef.dataArray;
+        if ( imageOutReferenceArray ) {
+          outputArrayRef = imageOutReferenceArray.dataArray;
         }
 
         // Get real (tested target) result (as typed-array).
@@ -195,11 +224,13 @@ class Base {
 
         // Checking real result against referneced result.
         tf.util.assert( ( outputArray == null ) == ( outputArrayRef == null ),
-          `PointDepthPoint output${i} ( ${outputArray} ) and outputRef${i} ( ${outputArrayRef} ) should be both null or non-null. ${strNote}`);
+          `PointDepthPoint output${i} ( ${outputArray} ) and outputRef${i} ( ${outputArrayRef} ) should be both null or non-null. `
+            + `${parametersDescription}` );
 
         if( outputArray ) {
           tf.util.assert( outputArray.length == outputArrayRef.length,
-            `PointDepthPoint output${i} length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). ${strNote}`);
+            `PointDepthPoint output${i} length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). `
+              + `${parametersDescription}` );
 
           // Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different (especially activation function
           // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
@@ -207,7 +238,8 @@ class Base {
           tf.util.assert( outputArray.every( ( value, index ) =>
             Math.abs( value - outputArrayRef[ elementIndex = index ] ) <= acceptableDifference ),
             `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
-              +`( ${outputArray} ) should be ( ${outputArrayRef} ). ${strNote}` );
+              +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
+              + `${parametersDescription}` );
         }
       }
 
