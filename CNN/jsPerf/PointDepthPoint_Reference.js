@@ -1,9 +1,51 @@
-export { Base };
+export { ImageCreator, Base };
 
 import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
+
+
+/**
+ * Dynamically create image data with specified channelCount, depthwiseFilterHeight, depthwiseStridesPad.
+ * The same image data will be returned when same specification is requested. So that the testing performance
+ * could be improved.
+ */
+class ImageDataBag {
+
+  /**
+   * @param {} 
+   *   .
+   */
+  constructor( defaultHeight, defaultWidth ) {
+    //this.testParams = testParams;
+  }
+
+
+//!!! ...unfinished... (2021/07/15) should also consider different depthwiseFilterHeight.
+// Perhaps, useing a dynamic input1 creator which will save already created input1 to speed up future testing.
+// getImageData_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad )
+// getTensor3d_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad )
+//
+
+//     // Borrow the calcDepthwise() function to create an input image which is shrink by ( strides == 2 ).
+//     function StridesPad_producer( imageIn, depthwiseStridesPad ) {
+//       let imageOutShrinked = PointDepthPoint_Reference.Base.calcDepthwise(
+//         imageIn,
+//         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, 1, // Max Pooling, 1x1, achieving lesser computation.
+//         depthwiseStridesPad,
+//         null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+//         "StridesPad_producer", "" );
+//       return imageOutShrinked;
+//     }
+
+  /** Release all tensors. */
+  disposeTensors() {
+//!!! ...unfinished... (2021/07/15)
+  }
+
+}
+
 
 /**
  * Reference computation of class PointDepthPoint.Base.
