@@ -108,14 +108,17 @@ class HeightWidthDepth {
     this.dataTensor3dArray = tf.tidy( () => {
       let stridesPadMin = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max;
       let stridesPadMax = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max;
-      
+
       let dataTensor3dArray = new Array( this.testCorrectness_ImageDataArray.length );
       for ( let i = 0; i < this.testCorrectness_ImageDataArray.length; ++i ) {
+        dataTensor3dArray[ i ] = [];
         for ( let stridesPad = stridesPadMin; stridesPad <= stridesPadMin; ++stridesPad ) {
           let testImageData = this.testCorrectness_ImageDataArray[ i ][ stridesPad ];
-          let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
-          let dataTensor3d = tf.tensor3d( testImageData.dataArray, shape );
-          dataTensor3dArray[ i ] = dataTensor3d;
+          if ( testImageData ) {
+            let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
+            let dataTensor3d = tf.tensor3d( testImageData.dataArray, shape );
+            dataTensor3dArray[ i ][ stridesPad ] = dataTensor3d;
+          }
         }
       }
       return dataTensor3dArray;
