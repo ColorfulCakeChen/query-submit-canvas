@@ -101,6 +101,11 @@ class HeightWidthDepth {
     this.testCorrectness_ImageDataArray = [
       [ image_3_5_4 ], // testCorrectness_ImageDataArray[ 0 ][ 0 ]: input0
 
+//!!! ...unfinished... (2021/07/15) should also consider different depthwiseFilterHeight.
+// Perhaps, useing a dynamic input1 creator which will save already created input1 to speed up future testing.
+// getImage_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad )
+//
+
       // testCorrectness_ImageDataArray[ 1 ][ 0 - 2 ]: input1 with ( channelCount == 1 ) and StridesPad [ 0, 2 ]
       StridesPadArray_producer( image_3_5_1 ),
 
