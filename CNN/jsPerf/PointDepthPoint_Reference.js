@@ -132,8 +132,6 @@ class Base {
                 + `${parametersDescription}` );
 
             // Test correctness of pointDepthPoint apply.
-//!!! (2021/07/15 Remarked)
-//            this.check_Input_Output_WeightsTable( imageInArraySelected, imageInTensor3dArray, outputTensor3dArray, parametersDescription );
             this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, parametersDescription );
 
             pointDepthPoint.disposeTensors();
@@ -647,18 +645,14 @@ class Base {
     // Determine padding number around the input image height and width.
     if ( depthwisePad == "same" ) {
       padHeight = effectFilterHeight - 1; // So that the output height will be the same as input height.
+
       let padHeightHalf = padHeight / 2;
-//!!! (2021/07/09 Remarked) Changed to pad right-bottom first.
-//       padHeightTop    = Math.ceil(  padHeightHalf );
-//       padHeightBottom = Math.floor( padHeightHalf );
       padHeightTop    = Math.floor(  padHeightHalf );
       padHeightBottom = Math.ceil( padHeightHalf );   // When pad is odd, let right-bottom are padded more.
 
       padWidth = effectFilterWidth - 1;  // So that the output width will be the same as input width.
+
       let padWidthHalf = padWidth / 2;
-//!!! (2021/07/09 Remarked) Changed to pad right-bottom first.
-//       padWidthLeft    = Math.ceil(  padWidthHalf );
-//       padWidthRight   = Math.floor( padWidthHalf );
       padWidthLeft    = Math.floor(  padWidthHalf );
       padWidthRight   = Math.ceil( padWidthHalf );    // When pad is odd, let right-bottom are padded more.
 
