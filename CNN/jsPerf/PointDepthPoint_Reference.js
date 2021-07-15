@@ -436,16 +436,18 @@ class Base {
     }
 
     // 2.2 Depthwise2
-    let depthwiseResult;
+    let depthwise2Result;
     if ( testParams.out.channelCount1_pointwise1Before
            == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) { // (-2) (simplified ShuffleNetV2's head)
       if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-        depthwiseResult = Base.calcDepthwise(
+        depthwise2Result = Base.calcDepthwise(
           imageInArray[ 0 ], // depthwise2 apply to input0 (not input1)
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
           testParams.in.weights.depthwise2Filters, testParams.out.bDepthwiseBias,
           testParams.in.weights.depthwise2Biases, testParams.out.depthwiseActivationId,
           "Depthwise2", this.paramsOutDescription );
+      } else {
+        depthwise2Result = imageInArray[ 0 ]; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0).
       }
     }
 
@@ -462,7 +464,7 @@ class Base {
 
       // Concatenate depthwise1's result and depthwise2's result.
       nextImageIn = Base.calcConcatAlongAxisId2(
-        nextImageIn, depthwiseResult, "ConcatAlongDepth_ONE_INPUT_TWO_DEPTHWISE", this.paramsOutDescription );
+        nextImageIn, depthwise2Result, "ConcatAlongDepth_ONE_INPUT_TWO_DEPTHWISE", this.paramsOutDescription );
     }
 
     // 4. Pointwise2
