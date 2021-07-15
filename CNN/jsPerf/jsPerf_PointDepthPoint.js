@@ -489,12 +489,9 @@ class HeightWidthDepth {
   testCorrectness() {
     this.test_ValueRange_valueInputOutputGenerator();
 
-    let testParamsBase = new PointDepthPoint_TestParams.Base(
-      this.testCorrectness_ImageDataArray[ 0 ].depth, this.testCorrectness_ImageDataArray[ 1 ].depth );
-
+    let testParamsBase = new PointDepthPoint_TestParams.Base( this.testCorrectness_ImageDataArray[ 0 ][ 0 ].depth );
     let testParamsGenerator = testParamsBase.ParamsGenerator();
 
-//!!! ...unfinished... (2021/05/27)
     let batchMessageInterval = 100 * 1000; // Every so many test cases, display a message.
     for ( let testParams of testParamsGenerator ) {
       if ( ( testParams.id % batchMessageInterval ) == 0 )
