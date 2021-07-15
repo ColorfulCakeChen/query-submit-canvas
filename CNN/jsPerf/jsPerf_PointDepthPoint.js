@@ -106,7 +106,7 @@ class HeightWidthDepth {
 
     // Small input image for correctness testing.
     this.dataTensor3dArray = tf.tidy( () => {
-      let stridesPadMin = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max;
+      let stridesPadMin = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min;
       let stridesPadMax = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max;
 
       let dataTensor3dArray = new Array( this.testCorrectness_ImageDataArray.length );
