@@ -46,6 +46,9 @@ class Base {
    */
   testCorrectness( imageInArray, imageInTensor3dArray ) {
 
+//!!! ...unfinished... (2021/07/15) Since bKeepInputTensor does not affect this.calcResult(),
+// it is possible that this.calcResult() once and this.check_Input_Output_WeightsTable() twice for speeding up the testing performance.
+
     try {
       let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
       let imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
@@ -433,12 +436,12 @@ class Base {
     }
 
     // 2.2 Depthwise2
+    let depthwiseResult;
     if ( testParams.out.channelCount1_pointwise1Before
            == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) { // (-2) (simplified ShuffleNetV2's head)
-
       if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-        nextImageIn = Base.calcDepthwise(
-          imageInArray[ 1 ],
+        depthwiseResult = Base.calcDepthwise(
+          imageInArray[ 0 ], // depthwise2 apply to input0 (not input1)
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
           testParams.in.weights.depthwise2Filters, testParams.out.bDepthwiseBias,
           testParams.in.weights.depthwise2Biases, testParams.out.depthwiseActivationId,
@@ -447,8 +450,19 @@ class Base {
     }
 
     // 3. Concat (along image depth)
-    if ( testParams.out.inputTensorCount > 1 ) {
-      nextImageIn = Base.calcConcatAlongAxisId2( nextImageIn, imageInArray[ 1 ], "ConcatAlongDepth", this.paramsOutDescription );
+
+    // TWO_INPUTS (> 0)
+    if ( testParams.out.channelCount1_pointwise1Before > 0 ) {
+      // Concatenate depthwise1's result and input1.
+      nextImageIn = Base.calcConcatAlongAxisId2( nextImageIn, imageInArray[ 1 ], "ConcatAlongDepth_TWO_INPUTS", this.paramsOutDescription );
+
+    // ONE_INPUT_TWO_DEPTHWISE (-2) (simplified ShuffleNetV2's head)
+    } else if ( testParams.out.channelCount1_pointwise1Before
+                  == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
+
+      // Concatenate depthwise1's result and depthwise2's result.
+      nextImageIn = Base.calcConcatAlongAxisId2(
+        nextImageIn, depthwiseResult, "ConcatAlongDepth_ONE_INPUT_TWO_DEPTHWISE", this.paramsOutDescription );
     }
 
     // 4. Pointwise2
