@@ -43,7 +43,7 @@ class HeightWidthDepth {
     function StridesPad_producer( imageIn, depthwiseStridesPad ) {
       let imageOutShrinked = PointDepthPoint_Reference.Base.calcDepthwise(
         imageIn,
-        Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, 1, // Max Pooling, 1x1, achieving lesser computation.
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, 1, // Max Pooling, 1x1, achieving lesser computation.
         depthwiseStridesPad,
         null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
         "StridesPad_producer", "" );
