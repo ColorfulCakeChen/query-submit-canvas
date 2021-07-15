@@ -50,6 +50,19 @@ class HeightWidthDepth {
       return imageOutShrinked;
     }
 
+    // Return an array which has imageIn with StridesPad in [ 0, 2 ].
+    function StridesPadArray_producer( imageIn ) {
+      let min = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min;
+      let max = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max;
+      let kinds = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.kinds;
+
+      let resultArray = new Array( kinds );
+      for ( let stridesPad = min; stridesPad <= max; ++stridesPad ) {
+        resultArray[ stridesPad - min ] = StridesPad_producer( imageIn, stridesPad );
+      }
+      return resultArray;
+    }
+
     let image_3_5_1 = { height: 3, width: 5, depth: 1,
       dataArray: [
         111,  121,  131,  141,  151,
@@ -89,35 +102,33 @@ class HeightWidthDepth {
       [ image_3_5_4 ], // testCorrectness_ImageDataArray[ 0 ][ 0 ]: input0
 
       // testCorrectness_ImageDataArray[ 1 ][ 0 - 2 ]: input1 with ( channelCount == 1 ) and StridesPad [ 0, 2 ]
-      [ image_3_5_1, StridesPad_producer( image_3_5_1, 0 ), StridesPad_producer( image_3_5_1, 1 ), StridesPad_producer( image_3_5_1, 2 ) ],
+      StridesPadArray_producer( image_3_5_1 ),
 
       // testCorrectness_ImageDataArray[ 2 ][ 0 - 2 ]: input1 with ( channelCount == 2 ) and StridesPad [ 0, 2 ]
-      [ image_3_5_2, StridesPad_producer( image_3_5_2, 0 ), StridesPad_producer( image_3_5_2, 1 ), StridesPad_producer( image_3_5_2, 2 ) ],
+      StridesPadArray_producer( image_3_5_2 ),
 
       // testCorrectness_ImageDataArray[ 3 ][ 0 - 2 ]: input1 with ( channelCount == 3 ) and StridesPad [ 0, 2 ]
-      [ image_3_5_3, StridesPad_producer( image_3_5_3, 0 ), StridesPad_producer( image_3_5_3, 1 ), StridesPad_producer( image_3_5_3, 2 ) ],
+      StridesPadArray_producer( image_3_5_3 ),
 
       // testCorrectness_ImageDataArray[ 4 ][ 0 - 2 ]: input1 with ( channelCount == 4 ) and StridesPad [ 0, 2 ]
-      [ image_3_5_4, StridesPad_producer( image_3_5_4, 0 ), StridesPad_producer( image_3_5_4, 1 ), StridesPad_producer( image_3_5_4, 2 ) ],
+      StridesPadArray_producer( image_3_5_4 ),
 
       // testCorrectness_ImageDataArray[ 5 ][ 0 - 2 ]: input1 with ( channelCount == 5 ) and StridesPad [ 0, 2 ]
-      [ image_3_5_5, StridesPad_producer( image_3_5_5, 0 ), StridesPad_producer( image_3_5_5, 1 ), StridesPad_producer( image_3_5_5, 2 ) ],
+      StridesPadArray_producer( image_3_5_5 ),
     ];
 
     // Small input image for correctness testing.
     this.dataTensor3dArray = tf.tidy( () => {
-      let stridesPadMin = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min;
-      let stridesPadMax = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max;
 
       let dataTensor3dArray = new Array( this.testCorrectness_ImageDataArray.length );
       for ( let i = 0; i < this.testCorrectness_ImageDataArray.length; ++i ) {
-        dataTensor3dArray[ i ] = [];
-        for ( let stridesPad = stridesPadMin; stridesPad <= stridesPadMax; ++stridesPad ) {
-          let testImageData = this.testCorrectness_ImageDataArray[ i ][ stridesPad ];
+        dataTensor3dArray[ i ] = new Array( this.testCorrectness_ImageDataArray[ i ].length );
+        for ( let j = 0; j <= this.testCorrectness_ImageDataArray[ i ].length; ++j ) {
+          let testImageData = this.testCorrectness_ImageDataArray[ i ][ j ];
           if ( testImageData ) {
             let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
             let dataTensor3d = tf.tensor3d( testImageData.dataArray, shape );
-            dataTensor3dArray[ i ][ stridesPad ] = dataTensor3d;
+            dataTensor3dArray[ i ][ j ] = dataTensor3d;
           }
         }
       }
