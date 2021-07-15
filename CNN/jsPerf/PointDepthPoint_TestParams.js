@@ -241,6 +241,8 @@ class TestParams {
 
       io_paramsNumberArrayObject.depthwise2Filters = depthwise2.numberArrayArray[ 0 ];
       io_paramsNumberArrayObject.depthwise2Biases =  depthwise2.numberArrayArray[ 1 ];
+    } else {
+      io_paramsNumberArrayObject.depthwise2Filters = io_paramsNumberArrayObject.depthwise2Biases = undefined;
     }
 
     // Concat
