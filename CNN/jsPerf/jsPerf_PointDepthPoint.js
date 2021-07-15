@@ -112,7 +112,7 @@ class HeightWidthDepth {
       let dataTensor3dArray = new Array( this.testCorrectness_ImageDataArray.length );
       for ( let i = 0; i < this.testCorrectness_ImageDataArray.length; ++i ) {
         dataTensor3dArray[ i ] = [];
-        for ( let stridesPad = stridesPadMin; stridesPad <= stridesPadMin; ++stridesPad ) {
+        for ( let stridesPad = stridesPadMin; stridesPad <= stridesPadMax; ++stridesPad ) {
           let testImageData = this.testCorrectness_ImageDataArray[ i ][ stridesPad ];
           if ( testImageData ) {
             let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
