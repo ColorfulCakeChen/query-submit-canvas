@@ -164,55 +164,23 @@ class Base {
   /**
    * Check the PointDepthPoint's output according to input (for correctness testing).
    *
-//    * @param {object[]} imageInArray
-//    *   The image to be tested.
-//    *     - imageInArray[ 0 ]: input0
-//    *     - imageInArray[ 1 ]: input1
-//    *
-//    * @param {number}   imageInArray[ i ].height    Image height
-//    * @param {number}   imageInArray[ i ].width     Image width
-//    * @param {number}   imageInArray[ i ].depth     Image channel count
-//    * @param {number[]} imageInArray[ i ].dataArray Image data
-   *
-   * @param {number[]} imageOutReferenceArray[ i ] Refernece output Image data
-   *
-//!!! (2021/07/15 Remarked)
-//    * @param {tf.tensor3d[]} inputTensors
-//    *   The input array of the PointDepthPoint's apply_and_destroy_or_keep().
+   * @param {number[]} imageOutReferenceArray[ i ]
+   *   Refernece output Image data.
    *
    * @param {tf.tensor3d[]} outputTensors
    *   The output array of the PointDepthPoint's apply_and_destroy_or_keep().
    */
-//!!! (2021/07/15 Remarked)
-//  check_Input_Output_WeightsTable( imageInArray, inputTensors, outputTensors, parametersDescription ) {
   check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensors, parametersDescription ) {
     tf.tidy( () => {
 
       let acceptableDifference = 2; //0.05;
 
-//!!! (2021/07/15 Remarked)
-//       let strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
-//
-//       tf.util.assert( imageInArray.length == 2,
-//         `PointDepthPoint imageInArray.length ( ${imageInArray.length} ) should be 2. ${strNote}`);
-//
-//       tf.util.assert( inputTensors.length == 2,
-//         `PointDepthPoint inputTensors.length ( ${inputTensors.length} ) should be 2. ${strNote}`);
-//
-//       tf.util.assert( outputTensors.length == 2,
-//         `PointDepthPoint outputTensors.length ( ${outputTensors.length} ) should be 2. ${strNote}`);
-//
-//       let imageOutRefs = this.calcResult( imageInArray ); // Output is an array with two elements.
-//
-//       tf.util.assert( imageOutRefs.length == 2,
-//         `PointDepthPoint imageOutRefs.length ( ${imageOutRefs.length} ) should be 2. ${strNote}`);
-
       for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
         // Get referenced result (as number array).
-        let imageOutReferenceArray = imageOutReferenceArray[ i ];
+        let imageOutReference = imageOutReferenceArray[ i ];
         let outputArrayRef = null;
-        if ( imageOutReferenceArray ) {
-          outputArrayRef = imageOutReferenceArray.dataArray;
+        if ( imageOutReference ) {
+          outputArrayRef = imageOutReference.dataArray;
         }
 
         // Get real (tested target) result (as typed-array).
