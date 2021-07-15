@@ -39,6 +39,29 @@ class ImageDataBag {
 //       return imageOutShrinked;
 //     }
 
+  /**
+   * The returned object has the following properties:
+   *   - object.height:    Image height
+   *   - object.width:     Image width
+   *   - object.depth:     Image channel count
+   *   - object.dataArray: Image data
+   *
+   * @return {object}
+   *   Return an image data with the specified specification.
+   */
+  getImageData_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad ) {
+//!!! ...unfinished... (2021/07/15)
+  }
+
+  /**
+   *
+   * @return {tf.tensor3d}
+   *   Return a tensor with the specified specification.
+   */
+  getTensor3d_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad ) {
+//!!! ...unfinished... (2021/07/15)
+  }
+
   /** Release all tensors. */
   disposeTensors() {
 //!!! ...unfinished... (2021/07/15)
