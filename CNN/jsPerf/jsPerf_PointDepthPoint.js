@@ -505,24 +505,24 @@ class HeightWidthDepth {
   testCorrectness() {
     this.test_ValueRange_valueInputOutputGenerator();
 
-    let originalImageSize = { height: 3, width: 5, depth: 4 };
-    let imageSourceBag = new PointDepthPoint_Reference.ImageSourceBag( originalImageSize.height, originalImageSize.width );
+    tf.tidy( () => {
+      let originalImageSize = { height: 3, width: 5, depth: 4 };
+      let imageSourceBag = new PointDepthPoint_Reference.ImageSourceBag( originalImageSize.height, originalImageSize.width );
 
-    let testParamsBase = new PointDepthPoint_TestParams.Base( originalImageSize.depth );
-    let testParamsGenerator = testParamsBase.ParamsGenerator();
+      let testParamsBase = new PointDepthPoint_TestParams.Base( originalImageSize.depth );
+      let testParamsGenerator = testParamsBase.ParamsGenerator();
 
-    let batchMessageInterval = 100 * 1000; // Every so many test cases, display a message.
-    for ( let testParams of testParamsGenerator ) {
-      if ( ( testParams.id % batchMessageInterval ) == 0 )
-        console.log( `${tf.getBackend()}, testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
+      let batchMessageInterval = 100 * 1000; // Every so many test cases, display a message.
+      for ( let testParams of testParamsGenerator ) {
+        if ( ( testParams.id % batchMessageInterval ) == 0 )
+          console.log( `${tf.getBackend()}, testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
 
-      let testCase = new PointDepthPoint_Reference.Base( testParams );
-//!!! (2021/07/16 Remarked)
-//      testCase.testCorrectness( this.testCorrectness_ImageDataArray, this.dataTensor3dArray );
-      testCase.testCorrectness( imageSourceBag );
-    }
+        let testCase = new PointDepthPoint_Reference.Base( testParams );
+        testCase.testCorrectness( imageSourceBag );
+      }
 
-    imageSourceBag.disposeTensors();
+      imageSourceBag.disposeTensors();
+    });
 
     // After correctness testing done, create all PointDepthPoint for performance testing.
     this.pointDepthPoint_PerformanceTest_init();
