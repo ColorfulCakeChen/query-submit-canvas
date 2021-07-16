@@ -122,13 +122,11 @@ class ImageSourceBag {
   /** Release all tensors. */
   disposeTensors() {
     if ( this.tensorsBy_channelCount_filterHeight_stridesPad ) {
-      for ( let tensorsBy_filterHeight_stridesPad of this.tensorsBy_channelCount_filterHeight_stridesPad ) {
-        for ( let tensorsBy_stridesPad of tensorsBy_filterHeight_stridesPad ) {
-          for ( let tensor of tensorsBy_stridesPad ) {
+      for ( let tensorsBy_filterHeight_stridesPad of this.tensorsBy_channelCount_filterHeight_stridesPad )
+        for ( let tensorsBy_stridesPad of tensorsBy_filterHeight_stridesPad )
+          for ( let tensor of tensorsBy_stridesPad )
             tensor.dispose();
-          }
-        }
-      }
+
       this.tensorsBy_channelCount_filterHeight_stridesPad.clear();
     }
   }
@@ -152,33 +150,15 @@ class Base {
   /**
    * Testing whether the results of different implementation are the same.
    *
-   * @param {object[]} imageInArray
-   *   The image to be tested.
-   *     - imageInArray[ 0 ][ 0 ]: input0
-   *     - imageInArray[ 1 ][ 0 - 2 ]: input1 with ( channelCount == 1 ) and StridesPad [ 0, 2 ]
-   *     - imageInArray[ 2 ][ 0 - 2 ]: input1 with ( channelCount == 2 ) and StridesPad [ 0, 2 ]
-   *     - imageInArray[ 3 ][ 0 - 2 ]: input1 with ( channelCount == 3 ) and StridesPad [ 0, 2 ]
-   *     - imageInArray[ 4 ][ 0 - 2 ]: input1 with ( channelCount == 4 ) and StridesPad [ 0, 2 ]
-   *     - imageInArray[ 5 ][ 0 - 2 ]: input1 with ( channelCount == 5 ) and StridesPad [ 0, 2 ]
-   *
-   * @param {number}   imageInArray[ i ].height    Image height
-   * @param {number}   imageInArray[ i ].width     Image width
-   * @param {number}   imageInArray[ i ].depth     Image channel count
-   * @param {number[]} imageInArray[ i ].dataArray Image data
-   *
-   * @param {tf.tensor3d[]} imageInTensor3dArray
-   *   The tensor3d created from imageInArray.
-   *     - imageInTensor3dArray[ 0 ][ 0 ]: input0
-   *     - imageInTensor3dArray[ 1 ][ 0 - 2 ]: input1 with ( channelCount == 1 ) and StridesPad [ 0, 2 ]
-   *     - imageInTensor3dArray[ 2 ][ 0 - 2 ]: input1 with ( channelCount == 2 ) and StridesPad [ 0, 2 ]
-   *     - imageInTensor3dArray[ 3 ][ 0 - 2 ]: input1 with ( channelCount == 3 ) and StridesPad [ 0, 2 ]
-   *     - imageInTensor3dArray[ 4 ][ 0 - 2 ]: input1 with ( channelCount == 4 ) and StridesPad [ 0, 2 ]
-   *     - imageInTensor3dArray[ 5 ][ 0 - 2 ]: input1 with ( channelCount == 5 ) and StridesPad [ 0, 2 ]
+   * @param {ImageSourceBag} imageSourceBag
+   *   The provider of image and tensor of variable specification for testing.
    */
-  testCorrectness( imageInArray, imageInTensor3dArray ) {
+  testCorrectness( imageSourceBag ) {
 
     try {
+      let channelCount0_pointwise1Before = this.testParams.in.channelCount0_pointwise1Before;
       let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
+      let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
       let depthwiseStridesPad = this.testParams.out.depthwiseStridesPad;
 
       let imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
@@ -194,9 +174,9 @@ class Base {
         strNote = `( this.testParams.id=${this.testParams.id} )`;
 
         imageInArraySelected.fill( undefined );
-        imageInArraySelected[ 0 ] = imageInArray[ 0 ][ 0 ];
+        imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
         if ( channelCount1_pointwise1Before > 0 ) { // Pass two input images according to parameters.
-          imageInArraySelected[ 1 ] = imageInArray[ channelCount1_pointwise1Before ][ depthwiseStridesPad ];
+          imageInArraySelected[ 1 ] = imageSourceBag.getImage_by( channelCount1_pointwise1Before, depthwiseFilterHeight, depthwiseStridesPad );
         }
 
         tf.util.assert( imageInArraySelected.length == 2,
@@ -220,20 +200,21 @@ class Base {
             inputTensor3dArray.fill( undefined );
 
             if ( bKeepInputTensor ) {
-              inputTensor3dArray[ 0 ] = imageInTensor3dArray[ 0 ][ 0 ];
+              inputTensor3dArray[ 0 ] = imageSourceBag.getTensor_by( channelCount0_pointwise1Before );
 
               if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
-                inputTensor3dArray[ 1 ] = imageInTensor3dArray[ channelCount1_pointwise1Before ][ depthwiseStridesPad ];
+                inputTensor3dArray[ 1 ] = imageSourceBag.getTensor_by( channelCount1_pointwise1Before, depthwiseFilterHeight, depthwiseStridesPad );
               }
 
               inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
 
             } else {
-              inputTensor3dArray[ 0 ] = imageInTensor3dArray[ 0 ][ 0 ].clone(); // Otherwise, this.dataTensor3d will be destroyed. 
+              inputTensor3dArray[ 0 ] = imageSourceBag.getTensor_by( channelCount0_pointwise1Before ).clone(); // Otherwise, this.dataTensor3d will be destroyed. 
               inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
 
               if ( this.testParams.out.channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
-                inputTensor3dArray[ 1 ] = imageInTensor3dArray[ channelCount1_pointwise1Before ][ depthwiseStridesPad ].clone();
+                inputTensor3dArray[ 1 ]
+                  = imageSourceBag.getTensor_by( channelCount1_pointwise1Before, depthwiseFilterHeight, depthwiseStridesPad ).clone();
                 inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
               }
             }
