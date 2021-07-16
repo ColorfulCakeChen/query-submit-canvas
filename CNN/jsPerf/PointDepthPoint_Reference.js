@@ -22,8 +22,8 @@ class ImageSourceBag {
     this.originalWidth = originalWidth;
 
     // Three dimension array which is indexed by [ channelCount, filterHeight_stridesPad ].
-    this.imagesBy_channelCount_filterHeight_stridesPad = new Array();
-    this.tensorsBy_channelCount_filterHeight_stridesPad = new Array();
+    this.imagesBy_channelCount_filterHeight_stridesPad = new Map();
+    this.tensorsBy_channelCount_filterHeight_stridesPad = new Map();
   }
 
 
@@ -59,15 +59,15 @@ class ImageSourceBag {
    */
   getImage_by( channelCount, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
 
-    let imagesBy_filterHeight_stridesPad = this.imagesBy_channelCount_filterHeight_stridesPad[ channelCount ];
+    let imagesBy_filterHeight_stridesPad = this.imagesBy_channelCount_filterHeight_stridesPad.get( channelCount );
     if ( !imagesBy_filterHeight_stridesPad )
-      this.imagesBy_channelCount_filterHeight_stridesPad[ channelCount ] = imagesBy_filterHeight_stridesPad = [];
+      this.imagesBy_channelCount_filterHeight_stridesPad.set( channelCount, imagesBy_filterHeight_stridesPad = new Map() );
 
-    let imagesBy_stridesPad = imagesBy_filterHeight_stridesPad[ depthwiseFilterHeight ];
+    let imagesBy_stridesPad = imagesBy_filterHeight_stridesPad.get( depthwiseFilterHeight );
     if ( !imagesBy_stridesPad )
-      imagesBy_filterHeight_stridesPad[ depthwiseFilterHeight ] = imagesBy_stridesPad = [];
+      imagesBy_filterHeight_stridesPad.set( depthwiseFilterHeight, imagesBy_stridesPad = new Map() );
 
-    let image = imagesBy_stridesPad[ depthwiseStridesPad ];
+    let image = imagesBy_stridesPad.get( depthwiseStridesPad );
     if ( image )
       return image; // 1. The requested image has already been created. Re-use it. Return it directly.
 
@@ -75,7 +75,7 @@ class ImageSourceBag {
 
     // 2.1 The original image is requested.
     if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseStridesPad == 0 ) ) {
-        imagesBy_stridesPad[ depthwiseStridesPad ] = image = { height: this.originalHeight, width: this.originalWidth, depth: channelCount };
+        image = { height: this.originalHeight, width: this.originalWidth, depth: channelCount };
         let elementCount = image.height * image.width * image.depth;
         let randomOffsetMin = -200; // Just choosed randomly.
         let randomOffsetMax = +200;
@@ -86,7 +86,7 @@ class ImageSourceBag {
       let originalImage = this.getImage_by( channelCount ); // Use original image to create shrinked image.
 
       // Borrow the calcDepthwise() function to create an input image which is shrink by specified filter size and strides and pad.
-      imagesBy_stridesPad[ depthwiseStridesPad ] = image = PointDepthPoint_Reference.Base.calcDepthwise(
+      image = PointDepthPoint_Reference.Base.calcDepthwise(
         originalImage,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, // Max Pooling is faster and without filter weights.
         depthwiseFilterHeight,
@@ -95,6 +95,8 @@ class ImageSourceBag {
         "ImageSourceBag.getImage_by()", ""
       );
     }
+
+    imagesBy_stridesPad.set( depthwiseStridesPad, image );
 
     return image;
   }
@@ -110,7 +112,16 @@ class ImageSourceBag {
 
   /** Release all tensors. */
   disposeTensors() {
-//!!! ...unfinished... (2021/07/15)
+    if ( this.tensorsBy_channelCount_filterHeight_stridesPad ) {
+      for ( let tensorsBy_filterHeight_stridesPad of this.tensorsBy_channelCount_filterHeight_stridesPad ) {
+        for ( let tensorsBy_stridesPad of tensorsBy_filterHeight_stridesPad ) {
+          for ( let tensor of tensorsBy_stridesPad ) {
+            tensor.dispose();
+          }
+        }
+      }
+      this.tensorsBy_channelCount_filterHeight_stridesPad.clear();
+    }
   }
 
 }
