@@ -1,4 +1,4 @@
-export { ImageCreator, Base };
+export { ImageSourceBag, Base };
 
 import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
@@ -11,14 +11,17 @@ import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
  * The same image data will be returned when same specification is requested. So that the testing performance
  * could be improved.
  */
-class ImageDataBag {
+class ImageSourceBag {
 
   /**
    * @param {} 
    *   .
    */
-  constructor( defaultHeight, defaultWidth ) {
-    //this.testParams = testParams;
+  constructor( originalHeight, originalWidth ) {
+    this.originalHeight = originalHeight;
+    this.originalWidth = originalWidth;
+    this.imageArrayArrayArray = new Array();  // Three dimension array which is indexed by [ height, width, channelCount ].
+    this.tensorArrayArrayArray = new Array(); // Three dimension array which is indexed by [ height, width, channelCount ].
   }
 
 
@@ -40,16 +43,51 @@ class ImageDataBag {
 //     }
 
   /**
-   * The returned object has the following properties:
-   *   - object.height:    Image height
-   *   - object.width:     Image width
-   *   - object.depth:     Image channel count
-   *   - object.dataArray: Image data
+   * If ( depthwiseFilterHeight == 1 ) and ( depthwiseStridesPad == 0 ), the original image will be returned. The original
+   * image has the size ( originalHeight, originalWidth, channelCount ). Its value is generated randomly.
+   *
+   *
+   * @param {number} channelCount
+   *   A positive integer which represents the returned image's depth.
+   *
+   * @param {number} depthwiseFilterHeight
+   *   An integer represents the returned image should be the original image processed by depthwise convolution filter of this size.
+   * Its should be in the range of PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.
+   *
+   * @param {number} depthwiseStridesPad
+   *   An integer represents the returned image should be the original image processed by depthwise convolution of this strides and pad.
+   * Its should be in the range of PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.
    *
    * @return {object}
-   *   Return an image data with the specified specification.
+   *   Return an image data with the specified specification. It has the following properties:
+   *     - object.height:    Image height
+   *     - object.width:     Image width
+   *     - object.depth:     Image channel count
+   *     - object.dataArray: Image data
    */
-  getImageData_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad ) {
+  getImage_by( channelCount, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
+
+    if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseStridesPad == 0 ) ) { // original image
+      let imageArrayArray = this.imageArrayArrayArray[ this.originalHeight ];
+      if ( !imageArrayArray )
+        imageArrayArray = [];
+
+      let imageArray = imageArrayArray[ this.originalWidth ];
+      if ( !imageArray )
+        imageArray = [];
+
+      let image = imageArray[ channelCount ];
+      if ( !image ) {
+        image = { height: this.originalHeight, width: this.originalWidth, depth: channelCount };
+        let elementCount = image.height * image.width * image.depth;
+        let randomOffsetMin = -200; // Just choosed randomly.
+        let randomOffsetMax = +200;
+        image.dataArray = PointDepthPoint_TestParams.TestParams.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
+      }
+      
+      return image;
+    }
+
 //!!! ...unfinished... (2021/07/15)
   }
 
