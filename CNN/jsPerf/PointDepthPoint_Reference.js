@@ -83,9 +83,11 @@ class ImageSourceBag {
 
 //!!! ...unfinished... (2021/07/16) if ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ) (i.e. NONE), should return original.
 
-    // When 0 (i.e. NONE), the original image is returned directly (i.e. will not be shrinked) because there id no depthwise convolution.
-    if ( depthwise_AvgMax_Or_ChannelMultiplier == PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE )
+    // 0. When no depthwise, the original image is returned directly (i.e. will not be shrinked).
+    if ( depthwise_AvgMax_Or_ChannelMultiplier == PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE ) {
+      let originalImage = this.getImage_by( channelCount );
       return originalImage;
+    }
 
     // Borrow the calcDepthwise() function to create an input image which is shrink by specified filter size and strides and pad.
     image = Base.calcDepthwise(
@@ -108,6 +110,8 @@ class ImageSourceBag {
    *   Return a tensor with the specified specification.
    */
   getTensor3d_by( channelCount, depthwise_AvgMax_Or_ChannelMultiplier = 0, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
+
+//!!! ...unfinished... (2021/07/16) need look up by depthwise_AvgMax_Or_ChannelMultiplier.
 
     let tensorsBy_filterHeight_stridesPad = this.tensorsBy_channelCount_filterHeight_stridesPad.get( channelCount );
     if ( !tensorsBy_filterHeight_stridesPad )
