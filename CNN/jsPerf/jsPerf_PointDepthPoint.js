@@ -506,6 +506,7 @@ class HeightWidthDepth {
     this.test_ValueRange_valueInputOutputGenerator();
 
     tf.tidy( () => {
+      // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors dynamically created in imageSourceBag.
       let originalImageSize = { height: 3, width: 5, depth: 4 };
       let imageSourceBag = new PointDepthPoint_Reference.ImageSourceBag( originalImageSize.height, originalImageSize.width );
 
