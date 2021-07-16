@@ -1,4 +1,4 @@
-export { Base };
+export { TestParams, Base };
 
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../Unpacker/ValueDesc.js";
