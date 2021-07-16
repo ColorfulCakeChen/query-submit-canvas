@@ -96,7 +96,7 @@ class ImageSourceBag {
    * @return {tf.tensor3d}
    *   Return a tensor with the specified specification.
    */
-  getTensor3d_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad ) {
+  getTensor3d_by( channelCount, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
 
     let tensorsBy_filterHeight_stridesPad = this.tensorsBy_channelCount_filterHeight_stridesPad.get( channelCount );
     if ( !tensorsBy_filterHeight_stridesPad )
