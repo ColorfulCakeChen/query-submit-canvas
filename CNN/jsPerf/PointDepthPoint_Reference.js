@@ -76,7 +76,7 @@ class ImageSourceBag {
       let originalImage = this.getImage_by( channelCount ); // Use original image to create shrinked image.
 
       // Borrow the calcDepthwise() function to create an input image which is shrink by specified filter size and strides and pad.
-      image = PointDepthPoint_Reference.Base.calcDepthwise(
+      image = Base.calcDepthwise(
         originalImage,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, // Max Pooling is faster and without filter weights.
         depthwiseFilterHeight,
@@ -192,74 +192,67 @@ class Base {
         let bKeepInputTensor = ( nKeepInputTensor != 0 );
 
         try {
+          outputTensor3dArray.fill( undefined );
+          inputTensor3dArray.fill( undefined );
 
-//!!! (2021/07/16 Remarked) tidy() will dispose tensors dynamically created in imageSourceBag.
-//          tf.tidy( () => {
+          inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
+          if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
+            inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by( channelCount1_pointwise1Before, depthwiseFilterHeight, depthwiseStridesPad );
+          }
 
-            outputTensor3dArray.fill( undefined );
-            inputTensor3dArray.fill( undefined );
+          let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
+          if ( bKeepInputTensor ) {
+            inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
 
-            inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
+          } else {
+            inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
+            inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+
             if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
-              inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by( channelCount1_pointwise1Before, depthwiseFilterHeight, depthwiseStridesPad );
+              inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
+              inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
             }
+          }
 
-            let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
-            if ( bKeepInputTensor ) {
-              inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
+          let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
+          let pointDepthPoint = this.pointDepthPoint_create( bKeepInputTensor );
 
-            } else {
-              inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
-              inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+          let parametersDescription = pointDepthPoint.parametersDescription;
+          strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
 
-              if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
-                inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
-                inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
-              }
-            }
+          // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
+          // tensor count (i.e. inputTensorDestroyCount).
+          let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
 
-            let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-            let pointDepthPoint = this.pointDepthPoint_create( bKeepInputTensor );
+          let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
+          pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
+          let memoryInfo_apply_after = tf.memory();
 
-            let parametersDescription = pointDepthPoint.parametersDescription;
-            strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
+          tf.util.assert( inputTensor3dArray.length == 2,
+            `PointDepthPoint inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}`);
 
-            // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
-            // tensor count (i.e. inputTensorDestroyCount).
-            let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
+          tf.util.assert( outputTensor3dArray.length == 2,
+            `PointDepthPoint outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
 
-            let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
-            pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
-            let memoryInfo_apply_after = tf.memory();
+          tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
+            `PointDepthPoint.apply_and_destroy_or_keep() memory leak. `
+              + `result tensor count (${memoryInfo_apply_after.numTensors}) `
+              + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
+              + `${parametersDescription}` );
 
-            tf.util.assert( inputTensor3dArray.length == 2,
-              `PointDepthPoint inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}`);
+          // Test correctness of pointDepthPoint apply.
+          this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, parametersDescription );
 
-            tf.util.assert( outputTensor3dArray.length == 2,
-              `PointDepthPoint outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
+          pointDepthPoint.disposeTensors();
+          let memoryInfo_afterDispose = tf.memory();
 
-            tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-              `PointDepthPoint.apply_and_destroy_or_keep() memory leak. `
-                + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-                + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
-                + `${parametersDescription}` );
+          tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
+            `PointDepthPoint create/dispose memory leak. `
+              + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
+              + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
+              + `${parametersDescription}` );
 
-            // Test correctness of pointDepthPoint apply.
-            this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, parametersDescription );
-
-            pointDepthPoint.disposeTensors();
-            let memoryInfo_afterDispose = tf.memory();
-
-            tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
-              `PointDepthPoint create/dispose memory leak. `
-                + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
-                + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
-                + `${parametersDescription}` );
-
-            tf.dispose( outputTensor3dArray );
-
-//!!! (2021/07/16 Remarked) tidy() will dispose tensors dynamically created in imageSourceBag.
-//          });
+          tf.dispose( outputTensor3dArray );
 
         } catch ( e ) {
           console.log( `bKeepInputTensor=${bKeepInputTensor}` );
