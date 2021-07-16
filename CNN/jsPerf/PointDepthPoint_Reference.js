@@ -193,9 +193,8 @@ class Base {
 
         try {
 
-//!!! ...unfinished... (2021/07/16) tidy will dispose tensors dynamically created in imageSourceBag.
-
-          tf.tidy( () => {
+//!!! (2021/07/16 Remarked) tidy() will dispose tensors dynamically created in imageSourceBag.
+//          tf.tidy( () => {
 
             outputTensor3dArray.fill( undefined );
             inputTensor3dArray.fill( undefined );
@@ -258,7 +257,10 @@ class Base {
                 + `${parametersDescription}` );
 
             tf.dispose( outputTensor3dArray );
-          });
+
+//!!! (2021/07/16 Remarked) tidy() will dispose tensors dynamically created in imageSourceBag.
+//          });
+
         } catch ( e ) {
           console.log( `bKeepInputTensor=${bKeepInputTensor}` );
           throw e;
