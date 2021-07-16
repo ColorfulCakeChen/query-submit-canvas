@@ -209,7 +209,7 @@ class Base {
               inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
 
             } else {
-              inputTensor3dArray[ 0 ] = imageSourceBag.getTensor_by( channelCount0_pointwise1Before ).clone(); // Otherwise, this.dataTensor3d will be destroyed. 
+              inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before ).clone(); // Clone for being destroyed. 
               inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
 
               if ( this.testParams.out.channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
