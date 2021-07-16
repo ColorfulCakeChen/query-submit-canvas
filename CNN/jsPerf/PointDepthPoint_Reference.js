@@ -194,27 +194,24 @@ class Base {
         try {
           tf.tidy( () => {
 
-            let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
-
             outputTensor3dArray.fill( undefined );
             inputTensor3dArray.fill( undefined );
 
+            inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
+            if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
+              inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by( channelCount1_pointwise1Before, depthwiseFilterHeight, depthwiseStridesPad );
+            }
+
+            let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
             if ( bKeepInputTensor ) {
-              inputTensor3dArray[ 0 ] = imageSourceBag.getTensor_by( channelCount0_pointwise1Before );
-
-              if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
-                inputTensor3dArray[ 1 ] = imageSourceBag.getTensor_by( channelCount1_pointwise1Before, depthwiseFilterHeight, depthwiseStridesPad );
-              }
-
               inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
 
             } else {
-              inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before ).clone(); // Clone for being destroyed. 
+              inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
               inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
 
-              if ( this.testParams.out.channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
-                inputTensor3dArray[ 1 ]
-                  = imageSourceBag.getTensor_by( channelCount1_pointwise1Before, depthwiseFilterHeight, depthwiseStridesPad ).clone();
+              if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
+                inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
                 inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
               }
             }
