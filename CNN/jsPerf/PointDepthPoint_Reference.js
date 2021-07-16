@@ -192,6 +192,9 @@ class Base {
         let bKeepInputTensor = ( nKeepInputTensor != 0 );
 
         try {
+
+//!!! ...unfinished... (2021/07/16) tidy will dispose tensors dynamically created in imageSourceBag.
+
           tf.tidy( () => {
 
             outputTensor3dArray.fill( undefined );
