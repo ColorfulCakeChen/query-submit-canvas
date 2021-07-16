@@ -20,8 +20,10 @@ class ImageSourceBag {
   constructor( originalHeight, originalWidth ) {
     this.originalHeight = originalHeight;
     this.originalWidth = originalWidth;
-    this.imageArrayArrayArray = new Array();  // Three dimension array which is indexed by [ height, width, channelCount ].
-    this.tensorArrayArrayArray = new Array(); // Three dimension array which is indexed by [ height, width, channelCount ].
+
+    // Three dimension array which is indexed by [ channelCount, filterHeight_stridesPad ].
+    this.imagesBy_channelCount_filterHeight_stridesPad = new Array();
+    this.tensorsBy_channelCount_filterHeight_stridesPad = new Array();
   }
 
 
@@ -31,16 +33,6 @@ class ImageSourceBag {
 // getTensor3d_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad )
 //
 
-//     // Borrow the calcDepthwise() function to create an input image which is shrink by ( strides == 2 ).
-//     function StridesPad_producer( imageIn, depthwiseStridesPad ) {
-//       let imageOutShrinked = PointDepthPoint_Reference.Base.calcDepthwise(
-//         imageIn,
-//         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, 1, // Max Pooling, 1x1, achieving lesser computation.
-//         depthwiseStridesPad,
-//         null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-//         "StridesPad_producer", "" );
-//       return imageOutShrinked;
-//     }
 
   /**
    * If ( depthwiseFilterHeight == 1 ) and ( depthwiseStridesPad == 0 ), the original image will be returned. The original
@@ -67,28 +59,44 @@ class ImageSourceBag {
    */
   getImage_by( channelCount, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
 
-    if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseStridesPad == 0 ) ) { // original image
-      let imageArrayArray = this.imageArrayArrayArray[ this.originalHeight ];
-      if ( !imageArrayArray )
-        imageArrayArray = [];
+    let imagesBy_filterHeight_stridesPad = this.imagesBy_channelCount_filterHeight_stridesPad[ channelCount ];
+    if ( !imagesBy_filterHeight_stridesPad )
+      this.imagesBy_channelCount_filterHeight_stridesPad[ channelCount ] = imagesBy_filterHeight_stridesPad = [];
 
-      let imageArray = imageArrayArray[ this.originalWidth ];
-      if ( !imageArray )
-        imageArray = [];
+    let imagesBy_stridesPad = imagesBy_filterHeight_stridesPad[ depthwiseFilterHeight ];
+    if ( !imagesBy_stridesPad )
+      imagesBy_filterHeight_stridesPad[ depthwiseFilterHeight ] = imagesBy_stridesPad = [];
 
-      let image = imageArray[ channelCount ];
-      if ( !image ) {
-        image = { height: this.originalHeight, width: this.originalWidth, depth: channelCount };
+    let image = imagesBy_stridesPad[ depthwiseStridesPad ];
+    if ( image )
+      return image; // 1. The requested image has already been created. Re-use it. Return it directly.
+
+    // 2. The requested has not yet existed. It should be created newly.
+
+    // 2.1 The original image is requested.
+    if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseStridesPad == 0 ) ) {
+        imagesBy_stridesPad[ depthwiseStridesPad ] = image = { height: this.originalHeight, width: this.originalWidth, depth: channelCount };
         let elementCount = image.height * image.width * image.depth;
         let randomOffsetMin = -200; // Just choosed randomly.
         let randomOffsetMax = +200;
         image.dataArray = PointDepthPoint_TestParams.TestParams.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
-      }
-      
-      return image;
+
+    // 2.2 The shrinked image requested.
+    } else {
+      let originalImage = this.getImage_by( channelCount ); // Use original image to create shrinked image.
+
+      // Borrow the calcDepthwise() function to create an input image which is shrink by specified filter size and strides and pad.
+      imagesBy_stridesPad[ depthwiseStridesPad ] = image = PointDepthPoint_Reference.Base.calcDepthwise(
+        originalImage,
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, // Max Pooling is faster and without filter weights.
+        depthwiseFilterHeight,
+        depthwiseStridesPad,
+        null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+        "ImageSourceBag.getImage_by()", ""
+      );
     }
 
-//!!! ...unfinished... (2021/07/15)
+    return image;
   }
 
   /**
