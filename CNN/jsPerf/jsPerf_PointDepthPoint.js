@@ -505,7 +505,10 @@ class HeightWidthDepth {
   testCorrectness() {
     this.test_ValueRange_valueInputOutputGenerator();
 
-    let testParamsBase = new PointDepthPoint_TestParams.Base( this.testCorrectness_ImageDataArray[ 0 ][ 0 ].depth );
+    let originalImageSize = { height: 3, width: 5, depth: 4 };
+    let imageSourceBag = new PointDepthPoint_Reference.ImageSourceBag( originalImageSize.height, originalImageSize.width );
+
+    let testParamsBase = new PointDepthPoint_TestParams.Base( originalImageSize.depth );
     let testParamsGenerator = testParamsBase.ParamsGenerator();
 
     let batchMessageInterval = 100 * 1000; // Every so many test cases, display a message.
@@ -514,8 +517,12 @@ class HeightWidthDepth {
         console.log( `${tf.getBackend()}, testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
 
       let testCase = new PointDepthPoint_Reference.Base( testParams );
-      testCase.testCorrectness( this.testCorrectness_ImageDataArray, this.dataTensor3dArray );
+//!!! (2021/07/16 Remarked)
+//      testCase.testCorrectness( this.testCorrectness_ImageDataArray, this.dataTensor3dArray );
+      testCase.testCorrectness( imageSourceBag );
     }
+
+    imageSourceBag.disposeTensors();
 
     // After correctness testing done, create all PointDepthPoint for performance testing.
     this.pointDepthPoint_PerformanceTest_init();
