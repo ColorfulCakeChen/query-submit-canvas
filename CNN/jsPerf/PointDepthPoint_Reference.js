@@ -14,25 +14,15 @@ import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
 class ImageSourceBag {
 
   /**
-   * @param {} 
-   *   .
+   * @param {number} originalHeight The original image's height.
+   * @param {number} originalWidth  The original image's width.
    */
   constructor( originalHeight, originalWidth ) {
     this.originalHeight = originalHeight;
     this.originalWidth = originalWidth;
-
-    // Three dimension array which is indexed by [ channelCount, filterHeight_stridesPad ].
-    this.imagesBy_channelCount_filterHeight_stridesPad = new Map();
+    this.imagesBy_channelCount_filterHeight_stridesPad = new Map(); // Images indexed by [ channelCount, filterHeight, stridesPad ].
     this.tensorsBy_channelCount_filterHeight_stridesPad = new Map();
   }
-
-
-//!!! ...unfinished... (2021/07/15) should also consider different depthwiseFilterHeight.
-// Perhaps, useing a dynamic input1 creator which will save already created input1 to speed up future testing.
-// getImageData_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad )
-// getTensor3d_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad )
-//
-
 
   /**
    * If ( depthwiseFilterHeight == 1 ) and ( depthwiseStridesPad == 0 ), the original image will be returned. The original
@@ -96,7 +86,7 @@ class ImageSourceBag {
       );
     }
 
-    imagesBy_stridesPad.set( depthwiseStridesPad, image );
+    imagesBy_stridesPad.set( depthwiseStridesPad, image ); // Cache it.
 
     return image;
   }
@@ -107,7 +97,26 @@ class ImageSourceBag {
    *   Return a tensor with the specified specification.
    */
   getTensor3d_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad ) {
-//!!! ...unfinished... (2021/07/15)
+
+    let tensorsBy_filterHeight_stridesPad = this.tensorsBy_channelCount_filterHeight_stridesPad.get( channelCount );
+    if ( !tensorsBy_filterHeight_stridesPad )
+      this.tensorsBy_channelCount_filterHeight_stridesPad.set( channelCount, tensorsBy_filterHeight_stridesPad = new Map() );
+
+    let tensorsBy_stridesPad = tensorsBy_filterHeight_stridesPad.get( depthwiseFilterHeight );
+    if ( !tensorsBy_stridesPad )
+      tensorsBy_filterHeight_stridesPad.set( depthwiseFilterHeight, tensorsBy_stridesPad = new Map() );
+
+    let tensor = tensorsBy_stridesPad.get( depthwiseStridesPad );
+    if ( tensor )
+      return tensor; // 1. The requested tensor has already been created. Re-use it. Return it directly.
+
+    let image = this.getImage_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad );
+    let shape = [ image.height, image.width, image.depth ];
+    tensor = tf.tensor3d( image.dataArray, shape ); // Create new tensor of specified specification.
+
+    tensorsBy_stridesPad.set( depthwiseStridesPad, tensor ); // Cache it.
+
+    return tensor;
   }
 
   /** Release all tensors. */
