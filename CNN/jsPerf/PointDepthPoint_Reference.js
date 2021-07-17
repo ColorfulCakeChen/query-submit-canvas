@@ -126,10 +126,9 @@ class ImageSourceBag {
         null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
         "ImageSourceBag.internal_getImage_by()", ""
       );
-
-      imagesBy_stridesPad.set( depthwiseStridesPad, image ); // Cache it.
     }
     
+    imagesBy_stridesPad.set( depthwiseStridesPad, image ); // Cache it.
     return image;
   }
 
