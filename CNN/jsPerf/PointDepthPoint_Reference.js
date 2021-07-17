@@ -115,7 +115,7 @@ class ImageSourceBag {
     }
 
     // 2.2 The shrinked image requested.
-    let originalImage = this.internal_getImage_by( channelCount ); // Use original image to create shrinked image.
+    let originalImage = ImageSourceBag.internal_getImage_by.call( this, channelCount ); // Use original image to create shrinked image.
 
     // Borrow the calcDepthwise() function to create an input image which is shrink by specified filter size and strides and pad.
     image = Base.calcDepthwise(
@@ -124,7 +124,7 @@ class ImageSourceBag {
       depthwiseFilterHeight,
       depthwiseStridesPad,
       null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-      "ImageSourceBag.getImage_by()", ""
+      "ImageSourceBag.internal_getImage_by()", ""
     );
 
     imagesBy_stridesPad.set( depthwiseStridesPad, image ); // Cache it.
@@ -150,7 +150,7 @@ class ImageSourceBag {
       return tensor; // 1. The requested tensor has already been created. Re-use it. Return it directly.
 
     // 2. Create new tensor according to its corresponding image.
-    let image = this.getImage_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad );
+    let image = ImageSourceBag.internal_getImage_by.call( this, channelCount, depthwiseFilterHeight, depthwiseStridesPad );
     let shape = [ image.height, image.width, image.depth ];
     tensor = tf.tensor3d( image.dataArray, shape ); // Create new tensor of specified specification.
 
