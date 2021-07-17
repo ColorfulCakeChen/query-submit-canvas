@@ -107,28 +107,29 @@ class ImageSourceBag {
 
     // 2.1 The original image is requested.
     if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseStridesPad == 0 ) ) {
-        image = { height: this.originalHeight, width: this.originalWidth, depth: channelCount };
-        let elementCount = image.height * image.width * image.depth;
-        let randomOffsetMin = -200; // Just choosed randomly.
-        let randomOffsetMax = +200;
-        image.dataArray = PointDepthPoint_TestParams.TestParams.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
-    }
+      image = { height: this.originalHeight, width: this.originalWidth, depth: channelCount };
+      let elementCount = image.height * image.width * image.depth;
+      let randomOffsetMin = -200; // Just choosed randomly.
+      let randomOffsetMax = +200;
+      image.dataArray = PointDepthPoint_TestParams.TestParams.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
 
     // 2.2 The shrinked image requested.
-    let originalImage = ImageSourceBag.internal_getImage_by.call( this, channelCount ); // Use original image to create shrinked image.
+    } else {
+      let originalImage = ImageSourceBag.internal_getImage_by.call( this, channelCount ); // Use original image to create shrinked image.
 
-    // Borrow the calcDepthwise() function to create an input image which is shrink by specified filter size and strides and pad.
-    image = Base.calcDepthwise(
-      originalImage,
-      PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, // Max Pooling is faster and without filter weights.
-      depthwiseFilterHeight,
-      depthwiseStridesPad,
-      null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-      "ImageSourceBag.internal_getImage_by()", ""
-    );
+      // Borrow the calcDepthwise() function to create an input image which is shrink by specified filter size and strides and pad.
+      image = Base.calcDepthwise(
+        originalImage,
+        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, // Max Pooling is faster and without filter weights.
+        depthwiseFilterHeight,
+        depthwiseStridesPad,
+        null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+        "ImageSourceBag.internal_getImage_by()", ""
+      );
 
-    imagesBy_stridesPad.set( depthwiseStridesPad, image ); // Cache it.
-
+      imagesBy_stridesPad.set( depthwiseStridesPad, image ); // Cache it.
+    }
+    
     return image;
   }
 
