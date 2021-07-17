@@ -7,8 +7,8 @@ import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
 
 
 /**
- * Dynamically create image data with specified channelCount, depthwiseFilterHeight, depthwiseStridesPad.
- * The same image data will be returned when same specification is requested. So that the testing performance
+ * Dynamically create random image data with specified channelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+ * depthwiseStridesPad. The same image data will be returned when same specification is requested. So that the testing performance
  * could be improved.
  */
 class ImageSourceBag {
@@ -53,7 +53,43 @@ class ImageSourceBag {
    */
   getImage_by( channelCount, depthwise_AvgMax_Or_ChannelMultiplier = 0, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
 
-//!!! ...unfinished... (2021/07/16) need look up by depthwise_AvgMax_Or_ChannelMultiplier.
+    // 1. When no depthwise operation, the original image is returned directly (i.e. will not be shrinked).
+    //
+    // Because there is not depthwise operation, there is not possible to shrink.
+    if ( depthwise_AvgMax_Or_ChannelMultiplier == PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE ) {
+      let originalImage = ImageSourceBag.internal_getImage_by.call( this, channelCount );
+      return originalImage;
+    }
+
+    // 2. Otherwise, return image which is adjusted by depthwise operation.
+    let image = ImageSourceBag.internal_getImage_by.call( this, channelCount, depthwiseFilterHeight, depthwiseStridesPad );
+    return image;
+  }
+
+  /**
+   *
+   * @return {tf.tensor3d}
+   *   Return a tensor with the specified specification.
+   */
+  getTensor3d_by( channelCount, depthwise_AvgMax_Or_ChannelMultiplier = 0, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
+
+    // 1. When no depthwise operation, the original image's tensor is returned directly (i.e. will not be shrinked).
+    //
+    // Because there is not depthwise operation, there is not possible to shrink.
+    if ( depthwise_AvgMax_Or_ChannelMultiplier == PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE ) {
+      let originalTensor = ImageSourceBag.internal_getTensor3d_by.call( this, channelCount );
+      return originalTensor;
+    }
+
+    // 2. Otherwise, return image tensor which is adjusted by depthwise operation.
+    let tensor = ImageSourceBag.internal_getTensor3d_by.call( this, channelCount, depthwiseFilterHeight, depthwiseStridesPad );
+    return tensor;
+  }
+
+  /**
+   * Similiar to this.getImage_by() but does not consider depthwise_AvgMax_Or_ChannelMultiplier.
+   */
+  static internal_getImage_by( channelCount, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
 
     let imagesBy_filterHeight_stridesPad = this.imagesBy_channelCount_filterHeight_stridesPad.get( channelCount );
     if ( !imagesBy_filterHeight_stridesPad )
@@ -81,14 +117,6 @@ class ImageSourceBag {
     // 2.2 The shrinked image requested.
     let originalImage = this.getImage_by( channelCount ); // Use original image to create shrinked image.
 
-//!!! ...unfinished... (2021/07/16) if ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ) (i.e. NONE), should return original.
-
-    // 0. When no depthwise, the original image is returned directly (i.e. will not be shrinked).
-    if ( depthwise_AvgMax_Or_ChannelMultiplier == PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE ) {
-      let originalImage = this.getImage_by( channelCount );
-      return originalImage;
-    }
-
     // Borrow the calcDepthwise() function to create an input image which is shrink by specified filter size and strides and pad.
     image = Base.calcDepthwise(
       originalImage,
@@ -105,13 +133,9 @@ class ImageSourceBag {
   }
 
   /**
-   *
-   * @return {tf.tensor3d}
-   *   Return a tensor with the specified specification.
+   * Similiar to this.getTensor3d_by() but does not consider depthwise_AvgMax_Or_ChannelMultiplier.
    */
-  getTensor3d_by( channelCount, depthwise_AvgMax_Or_ChannelMultiplier = 0, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
-
-//!!! ...unfinished... (2021/07/16) need look up by depthwise_AvgMax_Or_ChannelMultiplier.
+  static internal_getTensor3d_by( channelCount, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
 
     let tensorsBy_filterHeight_stridesPad = this.tensorsBy_channelCount_filterHeight_stridesPad.get( channelCount );
     if ( !tensorsBy_filterHeight_stridesPad )
@@ -125,16 +149,8 @@ class ImageSourceBag {
     if ( tensor )
       return tensor; // 1. The requested tensor has already been created. Re-use it. Return it directly.
 
-//!!! ...unfinished... (2021/07/16) need test.
-
-    // 2. When 0 (i.e. NONE), the original image is returned directly (i.e. will not be shrinked) because there id no depthwise convolution.
-    if ( depthwise_AvgMax_Or_ChannelMultiplier == PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE ) {
-      let originalTensor = this.getTensor3d_by( channelCount );
-      return originalTensor;
-    }
-
-    // 3.
-    let image = this.getImage_by( channelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+    // 2. Create new tensor according to its corresponding image.
+    let image = this.getImage_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad );
     let shape = [ image.height, image.width, image.depth ];
     tensor = tf.tensor3d( image.dataArray, shape ); // Create new tensor of specified specification.
 
