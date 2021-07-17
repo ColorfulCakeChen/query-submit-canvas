@@ -115,7 +115,7 @@ class ImageSourceBag {
     }
 
     // 2.2 The shrinked image requested.
-    let originalImage = this.getImage_by( channelCount ); // Use original image to create shrinked image.
+    let originalImage = this.internal_getImage_by( channelCount ); // Use original image to create shrinked image.
 
     // Borrow the calcDepthwise() function to create an input image which is shrink by specified filter size and strides and pad.
     image = Base.calcDepthwise(
