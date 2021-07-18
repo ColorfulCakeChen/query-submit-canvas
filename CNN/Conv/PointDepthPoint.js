@@ -408,16 +408,26 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  * @member {number} outChannels
  *   The channel count of all output tensor. It is the same as this.channelCount_pointwise2After (from initer()).
  *
- * @member {number} channelCount_pointwise1After_depthwiseBefore
+ * @member {number} channelCount_pointwise1After_depthwise1Before
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
- * If ( pointwise1ChannelCount == 0 ), it equals inChannels.
+ * If ( pointwise1ChannelCount == 0 ), it equals inChannels0.
+ *
+ * @member {number} channelCount_depthwise2After_concatenateBefore
+ *   The channel count after the second depthwise convolution.
+ *   - If depthwise2 exists, i.e. ONE_INPUT_TWO_DEPTHWISE. It will be the channel count of depthwise2's output.
+ *   - If ( bDepthwise2Requested == true ) but depthwise2 does not exist, i.e. no depthwise operation.
+ *       It will be the same as channelCount0_pointwise1Before.
+ *   - If ( bDepthwise2Requested == false ) and ( bConcatenatorRequested == true ), i.e. TWO_INPUTS.
+ *       It will be the same as channelCount1_pointwise1Before.
+ *   - If ( bDepthwise2Requested == false ) and ( bConcatenatorRequested == false ), i.e. ONE_INPUT or ONE_INPUT_ADD_TO_OUTPUT.
+ *       It will be zero.
  *
  * @member {number} channelCount_depthwiseAfter_concatenateBefore
  *   The channel count after the NxN depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
- * ( channelCount_pointwise1After_depthwiseBefore * depthwise_AvgMax_Or_ChannelMultiplier ). If
+ * ( channelCount_pointwise1After_depthwise1Before * depthwise_AvgMax_Or_ChannelMultiplier ). If
  * Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG (-2)
  * or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX (-1)
- * or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE (0), it equals channelCount_pointwise1After_depthwiseBefore.
+ * or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE (0), it equals channelCount_pointwise1After_depthwise1Before.
  *
  * @member {number} channelCount_concatenateAfter_pointwise2Before
  *   The channel count after depthwise operation together with the second input channel count (if existed).
@@ -571,11 +581,11 @@ class Base extends ReturnOrClone.Base {
 
     this.bPointwise1 = this.pointwise1.bExisted;
     if ( this.bPointwise1 ) {
-      this.channelCount_pointwise1After_depthwiseBefore = this.pointwise1.outputChannelCount;
+      this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount;
       TensorOpCounters.pointwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise1", this.pointwise1, TensorOpCounters.input0 );
 
     } else {
-      this.channelCount_pointwise1After_depthwiseBefore = channelCount0_pointwise1Before;  // No pointwise1 convolution.
+      this.channelCount_pointwise1After_depthwise1Before = channelCount0_pointwise1Before;  // No pointwise1 convolution.
       TensorOpCounters.pointwise1 = TensorOpCounters.input0; // Its output is just its input tensor.
     }
 
@@ -588,7 +598,7 @@ class Base extends ReturnOrClone.Base {
 
     // 3.1 The first depthwise operation.
     this.depthwise1 = new Depthwise.Base(
-      this.channelCount_pointwise1After_depthwiseBefore,
+      this.channelCount_pointwise1After_depthwise1Before,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
       params.defaultInput, this.byteOffsetEnd );
@@ -603,7 +613,7 @@ class Base extends ReturnOrClone.Base {
       TensorOpCounters.depthwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise1", this.depthwise1, TensorOpCounters.pointwise1 );
 
     } else {
-      this.channelCount_depthwise1After_concatenateBefore = this.channelCount_pointwise1After_depthwiseBefore;  // No depthwise1 operation.
+      this.channelCount_depthwise1After_concatenateBefore = this.channelCount_pointwise1After_depthwise1Before;  // No depthwise1 operation.
       TensorOpCounters.depthwise1 = TensorOpCounters.pointwise1; // Its output is just its input tensor.
     }
 
@@ -630,20 +640,30 @@ class Base extends ReturnOrClone.Base {
 
       this.bDepthwise2 = this.depthwise2.bExisted;
       if ( this.bDepthwise2 ) {
+        // The depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
         this.channelCount_depthwise2After_concatenateBefore = this.depthwise2.outputChannelCount;
         TensorOpCounters.depthwise2 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise2", this.depthwise2, TensorOpCounters.input0 );
 
       } else {
-        // The depthwise2 is requested but not created. It means ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ). In this case,
-        // the depthwise2 should be short circuit to inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
+        // The depthwise2 is requested but not created. It means no depthwise operation (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ).
+        // In this case, the depthwise2 should be short circuit to inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
         this.channelCount_depthwise2After_concatenateBefore = channelCount0_pointwise1Before;
         TensorOpCounters.depthwise2 = TensorOpCounters.input0;
       }
 
     } else {
-      // The depthwise2 is not requested. In this case, the depthwise2 should be short circuit to inputTensor[ 1 ] (i.e. not inputTensor[ 0 ]).
-      this.channelCount_depthwise2After_concatenateBefore = this.channelCount1_pointwise1Before;
-      TensorOpCounters.depthwise2 = TensorOpCounters.input1;
+      // The depthwise2 is not requested and concatenator exists. It means TWO_INPUTS. In this case, the depthwise2 should
+      // be short circuit to inputTensor[ 1 ] (i.e. not inputTensor[ 0 ]).
+      if ( this.bConcatenatorRequested == true ) {
+        this.channelCount_depthwise2After_concatenateBefore = this.channelCount1_pointwise1Before;
+        TensorOpCounters.depthwise2 = TensorOpCounters.input1;
+
+      // The depthwise2 is not requested and concatenator does not exist. It means ONE_INPUT or ONE_INPUT_ADD_TO_OUTPUT. In this case,
+      // the depthwise2 will be short circuit to inputTensor[ 1 ] but it will be zero (i.e. no input) in fact.
+      } else {
+        this.channelCount_depthwise2After_concatenateBefore = 0;
+        TensorOpCounters.depthwise2 = TensorOpCounters.input1;
+      }
     }
 
     ++progressToAdvance.value;
