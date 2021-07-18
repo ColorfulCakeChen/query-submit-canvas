@@ -393,7 +393,6 @@ class Base {
       { paramDesc: PointDepthPoint.Params.bPointwise22Bias,                      maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise22ActivationId,               maxKinds:                         0 },
 
-      { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds:    this.maxKindsPointwise },
       { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds:                         0 },
 
@@ -406,6 +405,8 @@ class Base {
       { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.bDepthwiseBias,                        maxKinds:                 undefined },
       { paramDesc: PointDepthPoint.Params.depthwiseActivationId,                 maxKinds:                         0 },
+
+      { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds:    this.maxKindsPointwise },
     ];
   }
 
