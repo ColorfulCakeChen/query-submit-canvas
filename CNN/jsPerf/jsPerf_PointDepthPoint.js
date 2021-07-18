@@ -39,106 +39,107 @@ class HeightWidthDepth {
 //!!! ...unfinished... (2021/06/08) seems not used.
     this.concatenatedShape = [ height, width, depth ];
 
-    // Borrow the calcDepthwise() function to create an input image which is shrink by ( strides == 2 ).
-    function StridesPad_producer( imageIn, depthwiseStridesPad ) {
-      let imageOutShrinked = PointDepthPoint_Reference.Base.calcDepthwise(
-        imageIn,
-        PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, 1, // Max Pooling, 1x1, achieving lesser computation.
-        depthwiseStridesPad,
-        null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-        "StridesPad_producer", "" );
-      return imageOutShrinked;
-    }
-
-    // Return an array which has imageIn with StridesPad in [ 0, 2 ].
-    function StridesPadArray_producer( imageIn ) {
-      let min = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min;
-      let max = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max;
-      let kinds = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.kinds;
-
-      let resultArray = new Array( kinds );
-      for ( let stridesPad = min; stridesPad <= max; ++stridesPad ) {
-        resultArray[ stridesPad - min ] = StridesPad_producer( imageIn, stridesPad );
-      }
-      return resultArray;
-    }
-
-    let image_3_5_1 = { height: 3, width: 5, depth: 1,
-      dataArray: [
-        111,  121,  131,  141,  151,
-        211,  221,  231,  241,  251,
-        311,  321,  331,  341,  351, ]
-    };
-
-    let image_3_5_2 = { height: 3, width: 5, depth: 2,
-      dataArray: [
-        111, 112,  121, 122,  131, 132,  141, 142,  151, 152,
-        211, 212,  221, 222,  231, 232,  241, 242,  251, 252,
-        311, 312,  321, 322,  331, 332,  341, 342,  351, 352, ]
-    };
-
-    let image_3_5_3 = { height: 3, width: 5, depth: 3,
-      dataArray: [
-        111, 112, 113,  121, 122, 123,  131, 132, 133,  141, 142, 143,  151, 152, 153,
-        211, 212, 213,  221, 222, 223,  231, 232, 233,  241, 242, 243,  251, 252, 253,
-        311, 312, 313,  321, 322, 323,  331, 332, 333,  341, 342, 343,  351, 352, 353, ]
-    };
-
-    let image_3_5_4 = { height: 3, width: 5, depth: 4,
-      dataArray: [
-        111, 112, 113, 114,  121, 122, 123, 124,  131, 132, 133, 134,  141, 142, 143, 144,  151, 152, 153, 154,
-        211, 212, 213, 214,  221, 222, 223, 224,  231, 232, 233, 234,  241, 242, 243, 244,  251, 252, 253, 254,
-        311, 312, 313, 314,  321, 322, 323, 324,  331, 332, 333, 334,  341, 342, 343, 344,  351, 352, 353, 354, ]
-    };
-
-    let image_3_5_5 = { height: 3, width: 5, depth: 5,
-      dataArray: [
-        111, 112, 113, 114, 115,  121, 122, 123, 124, 125,  131, 132, 133, 134, 135,  141, 142, 143, 144, 145,  151, 152, 153, 154, 155,
-        211, 212, 213, 214, 215,  221, 222, 223, 224, 225,  231, 232, 233, 234, 235,  241, 242, 243, 244, 245,  251, 252, 253, 254, 255,
-        311, 312, 313, 314, 315,  321, 322, 323, 324, 325,  331, 332, 333, 334, 335,  341, 342, 343, 344, 345,  351, 352, 353, 354, 355, ]
-    };
-
-    this.testCorrectness_ImageDataArray = [
-      [ image_3_5_4 ], // testCorrectness_ImageDataArray[ 0 ][ 0 ]: input0
-
-//!!! ...unfinished... (2021/07/15) should also consider different depthwiseFilterHeight.
-// Perhaps, useing a dynamic input1 creator which will save already created input1 to speed up future testing.
-// getImage_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad )
+//!!! (2021/07/18 Remarked) Replcaed by ImageSourceBag.
+//     // Borrow the calcDepthwise() function to create an input image which is shrink by ( strides == 2 ).
+//     function StridesPad_producer( imageIn, depthwiseStridesPad ) {
+//       let imageOutShrinked = PointDepthPoint_Reference.Base.calcDepthwise(
+//         imageIn,
+//         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX, 1, // Max Pooling, 1x1, achieving lesser computation.
+//         depthwiseStridesPad,
+//         null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+//         "StridesPad_producer", "" );
+//       return imageOutShrinked;
+//     }
 //
-
-      // testCorrectness_ImageDataArray[ 1 ][ 0 - 2 ]: input1 with ( channelCount == 1 ) and StridesPad [ 0, 2 ]
-      StridesPadArray_producer( image_3_5_1 ),
-
-      // testCorrectness_ImageDataArray[ 2 ][ 0 - 2 ]: input1 with ( channelCount == 2 ) and StridesPad [ 0, 2 ]
-      StridesPadArray_producer( image_3_5_2 ),
-
-      // testCorrectness_ImageDataArray[ 3 ][ 0 - 2 ]: input1 with ( channelCount == 3 ) and StridesPad [ 0, 2 ]
-      StridesPadArray_producer( image_3_5_3 ),
-
-      // testCorrectness_ImageDataArray[ 4 ][ 0 - 2 ]: input1 with ( channelCount == 4 ) and StridesPad [ 0, 2 ]
-      StridesPadArray_producer( image_3_5_4 ),
-
-      // testCorrectness_ImageDataArray[ 5 ][ 0 - 2 ]: input1 with ( channelCount == 5 ) and StridesPad [ 0, 2 ]
-      StridesPadArray_producer( image_3_5_5 ),
-    ];
-
-    // Small input image for correctness testing.
-    this.dataTensor3dArray = tf.tidy( () => {
-
-      let dataTensor3dArray = new Array( this.testCorrectness_ImageDataArray.length );
-      for ( let i = 0; i < this.testCorrectness_ImageDataArray.length; ++i ) {
-        dataTensor3dArray[ i ] = new Array( this.testCorrectness_ImageDataArray[ i ].length );
-        for ( let j = 0; j <= this.testCorrectness_ImageDataArray[ i ].length; ++j ) {
-          let testImageData = this.testCorrectness_ImageDataArray[ i ][ j ];
-          if ( testImageData ) {
-            let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
-            let dataTensor3d = tf.tensor3d( testImageData.dataArray, shape );
-            dataTensor3dArray[ i ][ j ] = dataTensor3d;
-          }
-        }
-      }
-      return dataTensor3dArray;
-    });
+//     // Return an array which has imageIn with StridesPad in [ 0, 2 ].
+//     function StridesPadArray_producer( imageIn ) {
+//       let min = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min;
+//       let max = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max;
+//       let kinds = PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.kinds;
+//
+//       let resultArray = new Array( kinds );
+//       for ( let stridesPad = min; stridesPad <= max; ++stridesPad ) {
+//         resultArray[ stridesPad - min ] = StridesPad_producer( imageIn, stridesPad );
+//       }
+//       return resultArray;
+//     }
+//
+//     let image_3_5_1 = { height: 3, width: 5, depth: 1,
+//       dataArray: [
+//         111,  121,  131,  141,  151,
+//         211,  221,  231,  241,  251,
+//         311,  321,  331,  341,  351, ]
+//     };
+//
+//     let image_3_5_2 = { height: 3, width: 5, depth: 2,
+//       dataArray: [
+//         111, 112,  121, 122,  131, 132,  141, 142,  151, 152,
+//         211, 212,  221, 222,  231, 232,  241, 242,  251, 252,
+//         311, 312,  321, 322,  331, 332,  341, 342,  351, 352, ]
+//     };
+//
+//     let image_3_5_3 = { height: 3, width: 5, depth: 3,
+//       dataArray: [
+//         111, 112, 113,  121, 122, 123,  131, 132, 133,  141, 142, 143,  151, 152, 153,
+//         211, 212, 213,  221, 222, 223,  231, 232, 233,  241, 242, 243,  251, 252, 253,
+//         311, 312, 313,  321, 322, 323,  331, 332, 333,  341, 342, 343,  351, 352, 353, ]
+//     };
+//
+//     let image_3_5_4 = { height: 3, width: 5, depth: 4,
+//       dataArray: [
+//         111, 112, 113, 114,  121, 122, 123, 124,  131, 132, 133, 134,  141, 142, 143, 144,  151, 152, 153, 154,
+//         211, 212, 213, 214,  221, 222, 223, 224,  231, 232, 233, 234,  241, 242, 243, 244,  251, 252, 253, 254,
+//         311, 312, 313, 314,  321, 322, 323, 324,  331, 332, 333, 334,  341, 342, 343, 344,  351, 352, 353, 354, ]
+//     };
+//
+//     let image_3_5_5 = { height: 3, width: 5, depth: 5,
+//       dataArray: [
+//         111, 112, 113, 114, 115,  121, 122, 123, 124, 125,  131, 132, 133, 134, 135,  141, 142, 143, 144, 145,  151, 152, 153, 154, 155,
+//         211, 212, 213, 214, 215,  221, 222, 223, 224, 225,  231, 232, 233, 234, 235,  241, 242, 243, 244, 245,  251, 252, 253, 254, 255,
+//         311, 312, 313, 314, 315,  321, 322, 323, 324, 325,  331, 332, 333, 334, 335,  341, 342, 343, 344, 345,  351, 352, 353, 354, 355, ]
+//     };
+//
+//     this.testCorrectness_ImageDataArray = [
+//       [ image_3_5_4 ], // testCorrectness_ImageDataArray[ 0 ][ 0 ]: input0
+//
+// //!!! ...unfinished... (2021/07/15) should also consider different depthwiseFilterHeight.
+// // Perhaps, useing a dynamic input1 creator which will save already created input1 to speed up future testing.
+// // getImage_by( channelCount, depthwiseFilterHeight, depthwiseStridesPad )
+// //
+//
+//       // testCorrectness_ImageDataArray[ 1 ][ 0 - 2 ]: input1 with ( channelCount == 1 ) and StridesPad [ 0, 2 ]
+//       StridesPadArray_producer( image_3_5_1 ),
+//
+//       // testCorrectness_ImageDataArray[ 2 ][ 0 - 2 ]: input1 with ( channelCount == 2 ) and StridesPad [ 0, 2 ]
+//       StridesPadArray_producer( image_3_5_2 ),
+//
+//       // testCorrectness_ImageDataArray[ 3 ][ 0 - 2 ]: input1 with ( channelCount == 3 ) and StridesPad [ 0, 2 ]
+//       StridesPadArray_producer( image_3_5_3 ),
+//
+//       // testCorrectness_ImageDataArray[ 4 ][ 0 - 2 ]: input1 with ( channelCount == 4 ) and StridesPad [ 0, 2 ]
+//       StridesPadArray_producer( image_3_5_4 ),
+//
+//       // testCorrectness_ImageDataArray[ 5 ][ 0 - 2 ]: input1 with ( channelCount == 5 ) and StridesPad [ 0, 2 ]
+//       StridesPadArray_producer( image_3_5_5 ),
+//     ];
+//
+//     // Small input image for correctness testing.
+//     this.dataTensor3dArray = tf.tidy( () => {
+//
+//       let dataTensor3dArray = new Array( this.testCorrectness_ImageDataArray.length );
+//       for ( let i = 0; i < this.testCorrectness_ImageDataArray.length; ++i ) {
+//         dataTensor3dArray[ i ] = new Array( this.testCorrectness_ImageDataArray[ i ].length );
+//         for ( let j = 0; j <= this.testCorrectness_ImageDataArray[ i ].length; ++j ) {
+//           let testImageData = this.testCorrectness_ImageDataArray[ i ][ j ];
+//           if ( testImageData ) {
+//             let shape = [ testImageData.height, testImageData.width, testImageData.depth ];
+//             let dataTensor3d = tf.tensor3d( testImageData.dataArray, shape );
+//             dataTensor3dArray[ i ][ j ] = dataTensor3d;
+//           }
+//         }
+//       }
+//       return dataTensor3dArray;
+//     });
 
   }
 
