@@ -412,15 +412,20 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
  * If ( pointwise1ChannelCount == 0 ), it equals inChannels0.
  *
-
-//!!! ...unfinished... (2021/07/18)
-
  * @member {number} channelCount_depthwise1After_concatenateBefore
+ *   The channel count after the first depthwise convolution which applies to the result of pointwise1.
+ *   - If depthwise1 exists, it will be the channel count of depthwise1's output.
+ *     - When ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
+ *         ( channelCount_pointwise1After_depthwise1Before * depthwise_AvgMax_Or_ChannelMultiplier ).
+ *     - When ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG  ) (i.e. -2)
+ *         or ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX  ) (i.e. -1)
+ *         or ( depthwise_AvgMax_Or_ChannelMultiplier == Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE ) (i.e.  0),
+ *         it equals channelCount_pointwise1After_depthwise1Before.
+ *   - If depthwise1 does not exist, it will be the channel count of previous operation (i.e. pointwise1)
+ *       which is channelCount_pointwise1After_depthwise1Before.
  *
- *
-
  * @member {number} channelCount_depthwise2After_concatenateBefore
- *   The channel count after the second depthwise convolution.
+ *   The channel count after the second depthwise convolution which applies to input0 or input1.
  *   - If depthwise2 exists, i.e. ONE_INPUT_TWO_DEPTHWISE. It will be the channel count of depthwise2's output.
  *   - If ( bDepthwise2Requested == true ) but depthwise2 does not exist, i.e. no depthwise operation.
  *       It will be the same as channelCount0_pointwise1Before.
@@ -432,12 +437,6 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
 
 //!!! ...unfinished... (2021/07/18)
 
- * @member {number} channelCount_depthwiseAfter_concatenateBefore
- *   The channel count after the NxN depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
- * ( channelCount_pointwise1After_depthwise1Before * depthwise_AvgMax_Or_ChannelMultiplier ). If
- * Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG (-2)
- * or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX (-1)
- * or Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE (0), it equals channelCount_pointwise1After_depthwise1Before.
  *
  * @member {number} channelCount_concatenateAfter_pointwise2Before
  *   The channel count after depthwise operation together with the second input channel count (if existed).
@@ -1078,118 +1077,6 @@ class Base extends ReturnOrClone.Base {
         }
         break;
     }
-
-
-
-//!!! (2021/07/14 Remakred) Old Codes
-//     if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
-//
-//       // 1. add-input-to-output and (keep-input or destroy-input).
-//
-//       if ( this.bPointwise21 ) {
-//         if ( this.bPointwise22 ) {
-//
-//           // 1.1 Both pointwise21 and pointwise22 exist.
-//           //
-//           // Although both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could (or need) add-input-to-output.
-//
-//           if ( this.bShould_addInput0ToPointwise21 ) {
-//             if ( this.bShould_addInput0ToPointwise22 ) {
-//               // 1.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21 and addInput0ToPointwise22 exist.
-//               return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_2;
-//             } else {
-//               // 1.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21 exists.
-//               return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_21;
-//             }
-//           } else {
-//             if ( this.bShould_addInput0ToPointwise22 ) {
-//               // 1.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22 exists.
-//               return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
-//             } else {
-//               // 1.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21 and addInput0ToPointwise22 do not exist.
-//
-//               // It should not execute to here.
-//               tf.util.assert( false,
-//                 `PointDepthPoint.Determine_apply_and_destroy_or_keep(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
-//                   + `should equal this.bShould_addInput0ToPointwise21 (${this.bShould_addInput0ToPointwise21}) `
-//                   + ` or this.bShould_addInput0ToPointwise22 (${this.bShould_addInput0ToPointwise22}). ${this.parametersDescription}`);
-//
-//               return undefined;
-//             }
-//           }
-//
-//         } else {
-//           return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 1.2 Only pointwise21 exists (and no pointwise22).
-//         }
-//       } else {
-//         if ( this.bPointwise22 ) {
-//           return Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 1.3 Only pointwise22 exists (and no pointwise21).
-//         } else {
-//           // 1.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel cout is the same as channel cout before pointwise2.)
-//           return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
-//         }
-//       }
-//
-//    } else { // ( this.inputTensorCount >= 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible to add-input-to-output).
-//
-//       if ( this.inputTensorCount > 1 ) {
-//         // 2. (no-add-input-to-output but) concat and destroy-input (or keep-input).
-//
-//         if ( this.bPointwise21 ) {
-//           if ( this.bPointwise22 ) {
-//             return Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 2.1 Both pointwise21 and pointwise22 existed.
-//           } else {
-//             return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.2 Only pointwise21 existed (and no pointwise22).
-//           }
-//         } else {
-//           if ( this.bPointwise22 ) {
-//             return Base.apply_2_22_and_destroy_or_keep_ConcatInput1; // 2.3 Only pointwise22 existed (and no pointwise21).
-//           } else {
-//             return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
-//           }
-//         }
-//
-//       } else {
-//         // 3. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
-//         //
-//         // ( this.inputTensorCount == 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible ).
-//
-//         if ( this.bPointwise21 ) {
-//           if ( this.bPointwise22 ) {
-//             return Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
-//           } else {
-//             return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
-//           }
-//         } else {
-//           if ( this.bPointwise22 ) {
-//             return Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
-//           } else {
-//              // 3.4 Both pointwise21 and pointwise22 not existed.
-//
-// //!!! ...unfinished... (2021/06/29 Remarked)
-// //            return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
-//
-//             // no pointwise1, no depthwise1, no concatenator, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
-//             if ( !this.bPointwise1 && !this.bDepthwise1 ) {
-//
-// //!!! ...unfinished... (2021/06/29) should be tested.
-//
-//               // Note: This may be wrong, however, if there are wrongly two input tensors (there should be only one input
-//               // (i.e. inputTensors[ 0 ]) for should-add-input-to-output).
-//               if ( this.bKeepInputTensor )
-//                 return Base.keep_input_return_copy_array; // 3.4.1
-//               else
-//                 return Base.return_input_directly_array;  // 3.4.2
-//
-//             } else {
-//               return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4.3 At least, there are pointwise1 or depthwise. (Use pointwise21.)
-//             }
-//         
-//           }
-//         }
-//
-//       }
-//     }
   }
 
 
