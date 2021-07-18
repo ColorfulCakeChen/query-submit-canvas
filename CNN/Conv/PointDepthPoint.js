@@ -434,13 +434,13 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *   - If ( bDepthwise2Requested == false ) and ( bConcatenatorRequested == false ), i.e. ONE_INPUT or ONE_INPUT_ADD_TO_OUTPUT.
  *       It will be zero.
  *
-
-//!!! ...unfinished... (2021/07/18)
-
- *
  * @member {number} channelCount_concatenateAfter_pointwise2Before
- *   The channel count after depthwise operation together with the second input channel count (if existed).
+ *   The channel count after depthwise1 operation together with input0 (after depthwise2) or input1 (without depthwise2).
  * That is ( channelCount_depthwiseAfter_concatenateBefore + channelCount0_pointwise1Before ).
+ *   - If ( this.bConcatenatorRequested == true ), it is
+ *       ( this.channelCount_depthwise1After_concatenateBefore + this.channelCount_depthwise2After_concatenateBefore ).
+ *   - If ( this.bConcatenatorRequested == false ), it is
+ *       ( this.channelCount_depthwise1After_concatenateBefore ).
  *
  * @member {number} channelCount_pointwise21After
  *   The channel count after the first pointwise2 convolution. If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
