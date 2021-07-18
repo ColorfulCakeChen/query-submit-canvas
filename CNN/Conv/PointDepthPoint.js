@@ -412,6 +412,13 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
  * If ( pointwise1ChannelCount == 0 ), it equals inChannels0.
  *
+
+//!!! ...unfinished... (2021/07/18)
+
+ * @member {number} channelCount_depthwise1After_concatenateBefore
+ *
+ *
+
  * @member {number} channelCount_depthwise2After_concatenateBefore
  *   The channel count after the second depthwise convolution.
  *   - If depthwise2 exists, i.e. ONE_INPUT_TWO_DEPTHWISE. It will be the channel count of depthwise2's output.
@@ -422,6 +429,9 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *   - If ( bDepthwise2Requested == false ) and ( bConcatenatorRequested == false ), i.e. ONE_INPUT or ONE_INPUT_ADD_TO_OUTPUT.
  *       It will be zero.
  *
+
+//!!! ...unfinished... (2021/07/18)
+
  * @member {number} channelCount_depthwiseAfter_concatenateBefore
  *   The channel count after the NxN depthwise convolution. If ( depthwise_AvgMax_Or_ChannelMultiplier >= 1 ), it equals
  * ( channelCount_pointwise1After_depthwise1Before * depthwise_AvgMax_Or_ChannelMultiplier ). If
