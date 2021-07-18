@@ -1426,8 +1426,8 @@ class Base extends ReturnOrClone.Base {
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
     let str =
-        `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels0}, `
-      + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels0}, `
+        `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
+      + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, `
 
       + `channelCount1_pointwise1Before_Name=${this.channelCount1_pointwise1Before_Name}, `
     
