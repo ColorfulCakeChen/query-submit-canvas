@@ -429,10 +429,12 @@ class Base {
       pointDepthPoint.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
     // input tensor parameters.
+    Base.AssertTwoEqualValues( "inChannels0", pointDepthPoint.inChannels0, testParams.in.channelCount0_pointwise1Before, parametersDescription );
+    Base.AssertTwoEqualValues( "inChannels1",
+      pointDepthPoint.inChannels1, testParams.out.channelCount1_pointwise1Before, parametersDescription );
     Base.AssertTwoEqualValues( "channelCount1_pointwise1Before",
       pointDepthPoint.channelCount1_pointwise1Before, testParams.out.channelCount1_pointwise1Before, parametersDescription );
 
-    Base.AssertTwoEqualValues( "inChannels", pointDepthPoint.inChannels, testParams.in.channelCount_pointwise1Before, parametersDescription );
     Base.AssertTwoEqualValues( "inputTensorCount", pointDepthPoint.inputTensorCount, flags.inputTensorCount, parametersDescription );
     Base.AssertTwoEqualValues( "bDepthwise2Requested", pointDepthPoint.bDepthwise2Requested, flags.bDepthwise2Requested, parametersDescription );
 
