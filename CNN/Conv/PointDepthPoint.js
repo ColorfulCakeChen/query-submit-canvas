@@ -1084,10 +1084,12 @@ class Base extends ReturnOrClone.Base {
   static apply_1_21_and_destroy_or_keep_ConcatInput0Depthwise2( inputTensors, outputTensors ) {
     let t0, t1;
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    let inputTensor = inputTensors[ 0 ];
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
 
     this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
-    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( inputTensor );
 
     t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
 
@@ -1099,10 +1101,12 @@ class Base extends ReturnOrClone.Base {
   static apply_1_22_and_destroy_or_keep_ConcatInput0Depthwise2( inputTensors, outputTensors ) {
     let t0, t1;
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    let inputTensor = inputTensors[ 0 ];
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
 
     this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
-    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( inputTensor );
 
     t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
 
@@ -1117,10 +1121,12 @@ class Base extends ReturnOrClone.Base {
   static apply_1_2_and_destroy_or_keep_ConcatInput0Depthwise2( inputTensors, outputTensors ) {
     let t0, t1;
 
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    let inputTensor = inputTensors[ 0 ];
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
 
     this.intermediateTensorsArray[ 0 ] = this.depthwise1.pfnOperationBiasActivation( t0 );
-    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( t0 );
+    this.intermediateTensorsArray[ 1 ] = this.depthwise2.pfnOperationBiasActivation( inputTensor );
 
     t1 = this.concatenator.pfnConcat( this.intermediateTensorsArray );
 
@@ -1134,9 +1140,6 @@ class Base extends ReturnOrClone.Base {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
-
-//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
-//    tf.util.assert( null == inputTensors[ 1 ] );
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
@@ -1152,9 +1155,6 @@ class Base extends ReturnOrClone.Base {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
-
-//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
-//    tf.util.assert( null == inputTensors[ 1 ] );
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
@@ -1174,9 +1174,6 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
-//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
-//    tf.util.assert( null == inputTensors[ 1 ] );
-
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
@@ -1195,9 +1192,6 @@ class Base extends ReturnOrClone.Base {
 
     let inputTensor = inputTensors[ 0 ];
 
-//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
-//    tf.util.assert( null == inputTensors[ 1 ] );
-
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
@@ -1214,9 +1208,6 @@ class Base extends ReturnOrClone.Base {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
-
-//!!! ...unfinished... (2021/05/28) What if inputTensors[ 0 ] exists?
-//    tf.util.assert( null == inputTensors[ 1 ] );
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensor );
     t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
