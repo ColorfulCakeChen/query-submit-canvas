@@ -472,7 +472,9 @@ class Base {
       this.result.out[ paramDesc.paramName ] = pair.valueOutput;
 
       // Randomly place the parameter directly or in weights array.
-      let dice = Math.random();
+//!!! (2021/07/19 Temp Remarked)
+//      let dice = Math.random();
+      let dice = 0;
       if ( dice < 0.5 ) {
         // Try parameter value assigned directly (i.e. by specifying).      
         this.result.in[ paramDesc.paramName ] = pair.valueInput;
