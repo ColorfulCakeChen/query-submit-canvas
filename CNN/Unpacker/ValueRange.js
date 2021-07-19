@@ -116,7 +116,7 @@ class Bool extends Same {
     let valueInputOne  = ( baseIntEven + 1 ) + ( baseIntEvenSign * randomFractionalPart2 );
     let valueInputOutputOne = { valueInput: valueInputOne, valueOutput: 1 };
 
-    // Yield kinds according to maxKinds.
+    // Yield according to maxKinds.
     if ( maxKinds >= 2 ) {
       yield valueInputOutputZero; // Both zero and one.
       yield valueInputOutputOne;
