@@ -469,16 +469,21 @@ class Base {
 
       this.result.out[ paramDesc.paramName ] = pair.valueOutput;
 
-      // Try parameter value assigned directly (i.e. by specifying).      
-      this.result.in[ paramDesc.paramName ] = pair.valueInput;
-      yield *this.permuteParamRecursively( nextParamDescConfigIndex );
+      // Randomly place the parameter directly or in weights array.
+      let dice = Same.getRandomIntInclusive( 0, 1 );
+      if ( dice == 0 ) {
+        // Try parameter value assigned directly (i.e. by specifying).      
+        this.result.in[ paramDesc.paramName ] = pair.valueInput;
+        yield *this.permuteParamRecursively( nextParamDescConfigIndex );
 
-      // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
-      this.result.in[ paramDesc.paramName ] = null;
-      this.paramsNumberArrayObject[ paramDesc.paramName ] = [ pair.valueInput ];
-      yield *this.permuteParamRecursively( nextParamDescConfigIndex );
+      } else {
+        // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
+        this.result.in[ paramDesc.paramName ] = null;
+        this.paramsNumberArrayObject[ paramDesc.paramName ] = [ pair.valueInput ];
+        yield *this.permuteParamRecursively( nextParamDescConfigIndex );
 
-      this.paramsNumberArrayObject[ paramDesc.paramName ] = undefined; // So that it could be re-tried as by-specifying when backtracking.
+        this.paramsNumberArrayObject[ paramDesc.paramName ] = undefined; // So that it could be re-tried as by-specifying when backtracking.
+      }
     }
   }
 
