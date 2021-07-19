@@ -384,7 +384,7 @@ class Base {
       Bias:         0,
       ActivationId: 0,
 
-      channelCount1_pointwise1Before: 4, //5,
+      channelCount1_pointwise1Before: 5,
       depthwise_AvgMax_Or_ChannelMultiplier: 5,
 
 //!!! (2021/07/09 Remarked) when pad is "valid", it seems that depthwise (avg/max pooling)'s filter size could not be larger than input image size?
