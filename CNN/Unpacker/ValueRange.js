@@ -62,6 +62,11 @@ Same.Singleton = new Same;
  */
 class Bool extends Same {
 
+  constructor( min, max ) {
+    super();
+    this.kinds = 2; // Boolean has only two kinds.
+  }
+
   /** @return {boolean} Convert number value into false or true. */
   adjust( value ) {
     // If value is not an integer, the remainder will always not zero. So convert it to integer first.
@@ -78,9 +83,14 @@ class Bool extends Same {
    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
    * is Same.getRandomIntInclusive( -100, +100 ). The -100 and +100 is just chosen arbitrarily.
    *
+   * @param {number} maxKinds
+   *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
+   * When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If zero or negative,
+   * only one value (between [ 0, this.kinds ] randomly) will be generated.
+   *
    * @override
    */
-  * valueInputOutputGenerator( offsetMultiplier = Same.getRandomIntInclusive( -100, +100 ) ) {
+  * valueInputOutputGenerator( offsetMultiplier = Same.getRandomIntInclusive( -100, +100 ), maxKinds = this.kinds ) {
 
     let baseInt = Math.trunc( offsetMultiplier );
     let baseIntEven = baseInt * 2; // Any integer multiplied by 2 will be an even number.
@@ -100,11 +110,26 @@ class Bool extends Same {
 
     // An even value with fractional part will become 0 by Bool.adjust().
     let valueInputZero = ( baseIntEven + 0 ) + ( baseIntEvenSign * randomFractionalPart1 );
-    yield { valueInput: valueInputZero, valueOutput: 0 };
+    let valueInputOutputZero = { valueInput: valueInputZero, valueOutput: 0 };
 
     // A odd value with fractional part will become 1 by Bool.adjust().
     let valueInputOne  = ( baseIntEven + 1 ) + ( baseIntEvenSign * randomFractionalPart2 );
-    yield { valueInput: valueInputOne, valueOutput: 1 };
+    let valueInputOutputOne = { valueInput: valueInputOne, valueOutput: 1 };
+
+    // Yield kinds according to maxKinds.
+    if ( maxKinds >= 2 ) {
+      yield valueInputOutputZero; // Both zero and one.
+      yield valueInputOutputOne;
+    } else if ( maxKinds >= 1 ) {
+      yield valueInputOutputZero; // Always zero. (Although, not so meaningful.)
+      //yield valueInputOutputOne;
+    } else {
+      let index = Same.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
+      if ( index == 0 )
+        yield valueInputOutputZero; // Randomly choose zero.
+      else
+        yield valueInputOutputOne;  // Randomly choose one.
+    }
   }
 
 }
