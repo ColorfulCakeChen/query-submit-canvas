@@ -264,7 +264,7 @@ class Base {
           }
 
           let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-          let pointDepthPoint = this.pointDepthPoint_create( bKeepInputTensor );
+          let pointDepthPoint = Base.pointDepthPoint_create( bKeepInputTensor, testParams );
 
           let parametersDescription = pointDepthPoint.parametersDescription;
           strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
@@ -374,16 +374,20 @@ class Base {
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
    *
+   * @param {PointDepthPoint_TestParams.TestParams} testParams
+   *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
+   *
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
-  pointDepthPoint_create( bKeepInputTensor ) {
+  static pointDepthPoint_create( bKeepInputTensor, testParams ) {
 
     let pointDepthPoint = new PointDepthPoint.Base();
 
     let progress = new ValueMax.Percentage.Aggregate();
 
     // Initialize successfully or failed.
-    let testParams = this.testParams;
+//!!! (2021/07/19 Remarked) Become function parameter.
+//    let testParams = this.testParams;
     let extractedParams = new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
       testParams.in.channelCount1_pointwise1Before,
 
