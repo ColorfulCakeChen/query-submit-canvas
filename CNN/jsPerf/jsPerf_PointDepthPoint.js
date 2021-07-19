@@ -270,35 +270,35 @@ class HeightWidthDepth {
       // The pointDepthPoint for performance testing should:
       //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
       this.pointDepthPoint_DConv_1_bias_COS_AddInputToOutput
-        = PointDepthPoint_Reference.pointDepthPoint_create(  true,
+        = PointDepthPoint_Reference.Base.pointDepthPoint_create(  true,
             testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput ),
 
       this.pointDepthPoint_Avg_bias_COS_AddInputToOutput
-        = PointDepthPoint_Reference.pointDepthPoint_create(  true,
+        = PointDepthPoint_Reference.Base.pointDepthPoint_create(  true,
             testCase_pointwise1_4to8_bias_COS_depthwise_avg_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput ),
 
       this.pointDepthPoint_Max_bias_COS_AddInputToOutput
-        = PointDepthPoint_Reference.pointDepthPoint_create(  true,
+        = PointDepthPoint_Reference.Base.pointDepthPoint_create(  true,
             testCase_pointwise1_4to8_bias_COS_depthwise_max_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput ),
 
       this.pointDepthPoint_DConv_2_bias_COS_AddInputToOutput
-        = PointDepthPoint_Reference.pointDepthPoint_create(  true,
+        = PointDepthPoint_Reference.Base.pointDepthPoint_create(  true,
             testCase_pointwise1_4to8_bias_COS_depthwise_8to16_strides_1_pad_same_bias_COS_pointwise2_16to4_bias_COS_AddInputToOutput ),
 
       this.pointDepthPoint_DConv_2_COS_AddInputToOutput
-        = PointDepthPoint_Reference.pointDepthPoint_create(  true,
+        = PointDepthPoint_Reference.Base.pointDepthPoint_create(  true,
             testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS_AddInputToOutput ),
 
       this.pointDepthPoint_DConv_2_COS
-        = PointDepthPoint_Reference.pointDepthPoint_create(  true,
+        = PointDepthPoint_Reference.Base.pointDepthPoint_create(  true,
             testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS ),
 
       this.pointDepthPoint_DConv_32_bias_COS_P128_bias
-        = PointDepthPoint_Reference.pointDepthPoint_create(  true,
+        = PointDepthPoint_Reference.Base.pointDepthPoint_create(  true,
             testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias ),
 
       this.pointDepthPoint_P128_bias_COS_P128_bias
-        = PointDepthPoint_Reference.pointDepthPoint_create(  true,
+        = PointDepthPoint_Reference.Base.pointDepthPoint_create(  true,
             testCase_pointwise1_4to128_bias_COS_depthwise_none_COS_pointwise2_128to128_bias ),
 
     ];
