@@ -162,9 +162,9 @@ class ImageSourceBag {
   /** Release all tensors. */
   disposeTensors() {
     if ( this.tensorsBy_channelCount_filterHeight_stridesPad ) {
-      for ( let tensorsBy_filterHeight_stridesPad of this.tensorsBy_channelCount_filterHeight_stridesPad )
-        for ( let tensorsBy_stridesPad of tensorsBy_filterHeight_stridesPad )
-          for ( let tensor of tensorsBy_stridesPad )
+      for ( let tensorsBy_filterHeight_stridesPad of this.tensorsBy_channelCount_filterHeight_stridesPad.values() )
+        for ( let tensorsBy_stridesPad of tensorsBy_filterHeight_stridesPad.values() )
+          for ( let tensor of tensorsBy_stridesPad.values() )
             tensor.dispose();
 
       this.tensorsBy_channelCount_filterHeight_stridesPad.clear();
