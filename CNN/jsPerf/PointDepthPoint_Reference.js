@@ -185,6 +185,11 @@ class Base {
    */
   constructor( testParams ) {
     this.testParams = testParams;
+
+    // For reducing memory allocation.
+    this.imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+    this.outputTensor3dArray = new Array( 2 );
+    this.inputTensor3dArray = new Array( 2 );
   }
 
   /**
@@ -202,9 +207,9 @@ class Base {
       let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
       let depthwiseStridesPad = this.testParams.out.depthwiseStridesPad;
 
-      let imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
-      let outputTensor3dArray = new Array( 2 );
-      let inputTensor3dArray = new Array( 2 );
+      let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+      let outputTensor3dArray = this.outputTensor3dArray;
+      let inputTensor3dArray = this.inputTensor3dArray;
 
       let strNote;
 
