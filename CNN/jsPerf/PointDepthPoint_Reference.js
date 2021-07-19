@@ -180,12 +180,9 @@ class ImageSourceBag {
 class Base {
 
   /**
-   * @param {PointDepthPoint_TestParams.TestParams} testParams
-   *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
+   *
    */
-  constructor( testParams ) {
-    this.testParams = testParams;
-
+  constructor() {
     // For reducing memory allocation.
     this.imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
     this.outputTensor3dArray = new Array( 2 );
@@ -197,8 +194,12 @@ class Base {
    *
    * @param {ImageSourceBag} imageSourceBag
    *   The provider of image and tensor of variable specification for testing.
+   *
+   * @param {PointDepthPoint_TestParams.TestParams} testParams
+   *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
    */
-  testCorrectness( imageSourceBag ) {
+  testCorrectness( imageSourceBag, testParams ) {
+    this.testParams = testParams;
 
     try {
       let channelCount0_pointwise1Before = this.testParams.in.channelCount0_pointwise1Before;
