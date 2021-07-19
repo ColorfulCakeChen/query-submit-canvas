@@ -376,13 +376,22 @@ class Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.maxKindsRestrict = {
-      PerParameter: 5,
+//      PerParameter: 5,
       Pointwise:    3,
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( maxKinds == 0 )) for speeding up testing.
       Bias:         0,
       ActivationId: 0,
+
+      channelCount1_pointwise1Before: 4, //5,
+      depthwise_AvgMax_Or_ChannelMultiplier: 5,
+
+//!!! (2021/07/09 Remarked) when pad is "valid", it seems that depthwise (avg/max pooling)'s filter size could not be larger than input image size?
+//      depthwiseFilterHeight: undefined,
+      depthwiseFilterHeight: 3,
+
+      depthwiseStridesPad: undefined,
     };
 
     // All the parameters to be tried.
@@ -390,27 +399,25 @@ class Base {
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     this.paramDescConfigArray = [
 
-      { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds:    this.maxKindsRestrict.Pointwise },
-      { paramDesc: PointDepthPoint.Params.bPointwise21Bias,                      maxKinds:         this.maxKindsRestrict.Bias },
+      { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds: this.maxKindsRestrict.Pointwise },
+      { paramDesc: PointDepthPoint.Params.bPointwise21Bias,                      maxKinds: this.maxKindsRestrict.Bias },
       { paramDesc: PointDepthPoint.Params.pointwise21ActivationId,               maxKinds: this.maxKindsRestrict.ActivationId },
-      { paramDesc: PointDepthPoint.Params.pointwise22ChannelCount,               maxKinds:    this.maxKindsRestrict.Pointwise },
-      { paramDesc: PointDepthPoint.Params.bPointwise22Bias,                      maxKinds:         this.maxKindsRestrict.Bias },
+      { paramDesc: PointDepthPoint.Params.pointwise22ChannelCount,               maxKinds: this.maxKindsRestrict.Pointwise },
+      { paramDesc: PointDepthPoint.Params.bPointwise22Bias,                      maxKinds: this.maxKindsRestrict.Bias },
       { paramDesc: PointDepthPoint.Params.pointwise22ActivationId,               maxKinds: this.maxKindsRestrict.ActivationId },
 
-      { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds:         this.maxKindsRestrict.Bias },
+      { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds: this.maxKindsRestrict.Bias },
       { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds: this.maxKindsRestrict.ActivationId },
 
-      { paramDesc: PointDepthPoint.Params.channelCount1_pointwise1Before,        maxKinds: this.maxKindsRestrict.PerParameter },
+      { paramDesc: PointDepthPoint.Params.channelCount1_pointwise1Before,        maxKinds: this.maxKindsRestrict.channelCount1_pointwise1Before },
 
-      { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsRestrict.PerParameter },
-//!!! (2021/07/09 Remarked) when pad is "valid", it seems that depthwise (avg/max pooling)'s filter size could not be larger than input image size?
-//      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                 undefined },
-      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds:                                  3 },
-      { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds:                          undefined },
-      { paramDesc: PointDepthPoint.Params.bDepthwiseBias,                        maxKinds:         this.maxKindsRestrict.Bias },
+      { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsRestrict.depthwise_AvgMax_Or_ChannelMultiplier },
+      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds: this.maxKindsRestrict.depthwiseFilterHeight },
+      { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds: this.maxKindsRestrict.depthwiseStridesPad },
+      { paramDesc: PointDepthPoint.Params.bDepthwiseBias,                        maxKinds: this.maxKindsRestrict.Bias },
       { paramDesc: PointDepthPoint.Params.depthwiseActivationId,                 maxKinds: this.maxKindsRestrict.ActivationId },
 
-      { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds:    this.maxKindsRestrict.Pointwise },
+      { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds: this.maxKindsRestrict.Pointwise },
     ];
   }
 
@@ -451,8 +458,6 @@ class Base {
     }
 
     let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
-
-//!!! ...unfinished... (2021/07/06) When ( XxxChannelCount == 0 ), whether could skip bias and activation combination?
 
     let paramDescConfig = this.paramDescConfigArray[ currentParamDescConfigIndex ];
     let paramDesc = paramDescConfig.paramDesc;
