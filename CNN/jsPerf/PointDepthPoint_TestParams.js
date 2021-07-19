@@ -66,6 +66,8 @@ class TestParams {
       pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
     };
 
+    Object.assign( this.in, paramsOut ); // So that all parameters are by specified (none is by evolution).
+
     return this.set_By_ParamsNumberArrayMap_ParamsOut( channelCount0_pointwise1Before, paramsNumberArrayObject, paramsOut );
   }
  
