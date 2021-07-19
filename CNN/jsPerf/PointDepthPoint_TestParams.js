@@ -470,8 +470,8 @@ class Base {
       this.result.out[ paramDesc.paramName ] = pair.valueOutput;
 
       // Randomly place the parameter directly or in weights array.
-      let dice = Same.getRandomIntInclusive( 0, 1 );
-      if ( dice == 0 ) {
+      let dice = Math.random();
+      if ( dice < 0.5 ) {
         // Try parameter value assigned directly (i.e. by specifying).      
         this.result.in[ paramDesc.paramName ] = pair.valueInput;
         yield *this.permuteParamRecursively( nextParamDescConfigIndex );
