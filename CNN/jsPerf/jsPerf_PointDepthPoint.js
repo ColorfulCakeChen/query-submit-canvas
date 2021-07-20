@@ -405,8 +405,8 @@ class HeightWidthDepth {
     tf.tidy( () => {
       // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors dynamically created in imageSourceBag.
 //!!! (2021/07/20 Temp Remarked) for testing width is even/odd in webgl.
-//      let originalImageSize = { height: 3, width: 5, depth: 4 };
-      let originalImageSize = { height: 3, width: 4, depth: 4 };
+      let originalImageSize = { height: 3, width: 5, depth: 4 };
+//      let originalImageSize = { height: 3, width: 4, depth: 4 };
       let imageSourceBag = new PointDepthPoint_Reference.ImageSourceBag( originalImageSize.height, originalImageSize.width );
 
       let testParamsBase = new PointDepthPoint_TestParams.Base( originalImageSize.depth );
