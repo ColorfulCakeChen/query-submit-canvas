@@ -116,7 +116,9 @@ class TestParams {
    */
   static generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax ) {
     let numberArray = [ ... new Array( elementCount ).keys() ].map(
-      x => x + ValueRange.Same.getRandomIntInclusive( randomOffsetMin, randomOffsetMax ) );
+//!!! (2021/07/20 Temp Remarked) Fix to non-random to simplify debug.
+//      x => x + ValueRange.Same.getRandomIntInclusive( randomOffsetMin, randomOffsetMax ) );
+      x => x + 0 );
     return numberArray;
   }
 
