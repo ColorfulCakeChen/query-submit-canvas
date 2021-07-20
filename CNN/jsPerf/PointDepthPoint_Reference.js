@@ -811,14 +811,20 @@ class Base {
       padHeight = effectFilterHeight - 1; // So that the output height will be the same as input height.
 
       let padHeightHalf = padHeight / 2;
-      padHeightTop    = Math.floor(  padHeightHalf );
-      padHeightBottom = Math.ceil( padHeightHalf );   // When pad is odd, let right-bottom are padded more.
+      padHeightTop    = Math.floor( padHeightHalf );
+      padHeightBottom = Math.ceil(  padHeightHalf );   // When pad is odd, let right-bottom are padded more.
 
       padWidth = effectFilterWidth - 1;  // So that the output width will be the same as input width.
 
-      let padWidthHalf = padWidth / 2;
-      padWidthLeft    = Math.floor(  padWidthHalf );
-      padWidthRight   = Math.ceil( padWidthHalf );    // When pad is odd, let right-bottom are padded more.
+      if ( depthwiseStrides <= 1 ) {
+        let padWidthHalf = padWidth / 2;
+        padWidthLeft    = Math.floor( padWidthHalf );
+        padWidthRight   = Math.ceil(  padWidthHalf );    // When pad is odd, let right-bottom are padded more.
+      } else {
+//!!! ...unfinished... (2021/07/20) It seems that left-pad always zero when ( strides > 1 ). (according to experiments.)
+        padWidthLeft    = 0;
+        padWidthRight   = padWidth;    // When ( strides > 1 ), it seems that width all pad to the right.
+      }
 
       imageInBeginY = - padHeightTop; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. for ( pad == "same" ).
       imageInBeginX = - padWidthLeft;
