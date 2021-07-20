@@ -383,8 +383,11 @@ class Base {
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( maxKinds == 0 )) for speeding up testing.
-      Bias:         0,
-      ActivationId: 0,
+//!!! (2021/07/20 Temp Remarked) Fix to none to simplify debug.
+//       Bias:         0,
+//       ActivationId: 0,
+      Bias:         1,
+      ActivationId: 1,
 
       channelCount1_pointwise1Before: 5,
       depthwise_AvgMax_Or_ChannelMultiplier: 5,
