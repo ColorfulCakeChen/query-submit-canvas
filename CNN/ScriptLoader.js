@@ -1,4 +1,4 @@
-export {createPromise};
+export { createPromise };
 
 /**
  * @param {string}  url
@@ -7,7 +7,7 @@ export {createPromise};
  * @param {boolean} isModule
  *   If true, the script will be loaded as javascript module.
  *
- * @param {string} HTMLElementId
+ * @param {string} htmlElementId
  *   If specified, it will become the id of the created HTMLScriptElement. And it will be used to determine whether the script
  * has been loaded to prevent loading twice.
  *
