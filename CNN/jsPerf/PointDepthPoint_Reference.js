@@ -816,12 +816,15 @@ class Base {
 
       padWidth = effectFilterWidth - 1;  // So that the output width will be the same as input width.
 
+//!!! ...unfinished... (2021/07/20) What is the correct pading scheme?
       if ( depthwiseStrides <= 1 ) {
+//!!! ...unfinished... (2021/07/20) This is correct when image width is odd (but wrong when imag width is even).
         let padWidthHalf = padWidth / 2;
         padWidthLeft    = Math.floor( padWidthHalf );
         padWidthRight   = Math.ceil(  padWidthHalf );    // When pad is odd, let right-bottom are padded more.
       } else {
 //!!! ...unfinished... (2021/07/20) It seems that left-pad always zero when ( strides > 1 ). (according to experiments.)
+//!!! ...unfinished... (2021/07/20) This is correct when image width is even (but wrong when imag width is odd).
         padWidthLeft    = 0;
         padWidthRight   = padWidth;    // When ( strides > 1 ), it seems that width all pad to the right.
       }
