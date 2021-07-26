@@ -838,7 +838,8 @@ class Base {
 
 
 //!!! ...unfinished (2021/07/26)
-    // (The follwoging calculation is copied from https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
+    // (The follwoging codes for output image height and width and padding calculation is copied from
+    // https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
     let imageOutHeight, imageOutWidth;
 
     // Determine output image height and width without padding.
@@ -849,7 +850,7 @@ class Base {
       padHeight = padHeightTop = padHeightBottom = padWidth = padWidthLeft = padWidthRight
         = imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will never happen. for ( pad == "valid" ).
 
-    // Determine output image height and width with padding number around the input image height and width.
+    // Determine output image height and width with padding around the input image height and width.
     else if ( depthwisePad == "same" ) {
       imageOutHeight = Math.ceil( imageIn.height / stridesHeight );
       imageOutWidth =  Math.ceil( imageIn.width  / stridesWidth  );
