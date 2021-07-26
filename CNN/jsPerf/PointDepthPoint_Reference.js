@@ -851,7 +851,7 @@ class Base {
         = imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will never happen. for ( pad == "valid" ).
 
     // Determine output image height and width with padding around the input image height and width.
-    else if ( depthwisePad == "same" ) {
+    } else if ( depthwisePad == "same" ) {
       imageOutHeight = Math.ceil( imageIn.height / stridesHeight );
       imageOutWidth =  Math.ceil( imageIn.width  / stridesWidth  );
 
