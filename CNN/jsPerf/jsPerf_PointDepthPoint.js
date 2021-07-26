@@ -403,25 +403,34 @@ class HeightWidthDepth {
     this.test_ValueRange_valueInputOutputGenerator();
 
     tf.tidy( () => {
-      // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors dynamically created in imageSourceBag.
-//!!! (2021/07/20 Temp Remarked) for testing width is even/odd in webgl.
-      let originalImageSize = { height: 3, width: 5, depth: 4 };
-//      let originalImageSize = { height: 3, width: 4, depth: 4 };
-      let imageSourceBag = new PointDepthPoint_Reference.ImageSourceBag( originalImageSize.height, originalImageSize.width );
+      
+      // Test different input image width (even and odd).
+      let originalImageSizeArray = [
+        { height: 3, width: 4, depth: 4 },
+        { height: 3, width: 5, depth: 4 },
+      ];
 
-      let testParamsBase = new PointDepthPoint_TestParams.Base( originalImageSize.depth );
-      let testParamsGenerator = testParamsBase.ParamsGenerator();
-      let testReference = new PointDepthPoint_Reference.Base();
+      for ( let originalImageSize of originalImageSizeArray ) {
 
-      let batchMessageInterval = 100 * 1000; // Every so many test cases, display a message.
-      for ( let testParams of testParamsGenerator ) {
-        if ( ( testParams.id % batchMessageInterval ) == 0 )
-          console.log( `${tf.getBackend()}, testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
+        // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors dynamically created in imageSourceBag.
+        let imageSourceBag = new PointDepthPoint_Reference.ImageSourceBag( originalImageSize.height, originalImageSize.width );
 
-        testReference.testCorrectness( imageSourceBag, testParams );
+        let testParamsBase = new PointDepthPoint_TestParams.Base( originalImageSize.depth );
+        let testParamsGenerator = testParamsBase.ParamsGenerator();
+        let testReference = new PointDepthPoint_Reference.Base();
+
+        let batchMessageInterval = 10 * 1000; //100 * 1000; // Every so many test cases, display a message.
+        for ( let testParams of testParamsGenerator ) {
+          if ( ( testParams.id % batchMessageInterval ) == 0 )
+            console.log( `${tf.getBackend()}, `
+              + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
+              + `testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
+
+          testReference.testCorrectness( imageSourceBag, testParams );
+        }
+
+        imageSourceBag.disposeTensors();
       }
-
-      imageSourceBag.disposeTensors();
     });
 
     // After correctness testing done, create all PointDepthPoint for performance testing.
