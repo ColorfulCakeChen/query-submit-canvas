@@ -311,8 +311,8 @@ class Base {
     } catch ( e ) {
       let backendName = tf.getBackend();
       console.log( `backendName=${backendName}, `
-        `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
-        `PointDepthPoint this.testParams.id = ${this.testParams.id}` );
+//        + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
+        + `PointDepthPoint this.testParams.id = ${this.testParams.id}` );
       throw e;
     }
   }
