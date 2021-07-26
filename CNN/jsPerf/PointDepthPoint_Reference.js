@@ -803,38 +803,68 @@ class Base {
     let effectFilterWidth =  dilationWidth  * ( depthwiseFilterWidth  - 1 ) + 1;
     let effectFilterSize = effectFilterHeight * effectFilterWidth;
 
-    let padHeight = 0, padHeightTop = 0, padHeightBottom = 0, padWidth = 0, padWidthLeft = 0, padWidthRight = 0;
-    let imageInBeginY = 0, imageInBeginX = 0; // So that negative ( inX, inY ) will never happen. for ( pad == "valid" ).
+    let padHeight, padHeightTop, padHeightBottom, padWidth, padWidthLeft, padWidthRight, imageInBeginY, imageInBeginX;
 
-    // Determine padding number around the input image height and width.
-    if ( depthwisePad == "same" ) {
-      padHeight = effectFilterHeight - 1; // So that the output height will be the same as input height.
+//!!! (2021/07/26 Remarked) Replaced by tensorflow's conv_util.ts codes.
+//     // Determine padding number around the input image height and width.
+//     if ( depthwisePad == "same" ) {
+//       padHeight = effectFilterHeight - 1; // So that the output height will be the same as input height.
+//
+//       let padHeightHalf = padHeight / 2;
+//       padHeightTop    = Math.floor( padHeightHalf );
+//       padHeightBottom = Math.ceil(  padHeightHalf );   // When pad is odd, let right-bottom are padded more.
+//
+//       padWidth = effectFilterWidth - 1;  // So that the output width will be the same as input width.
+//
+// //!!! ...unfinished... (2021/07/20) What is the correct pading scheme?
+//       if ( depthwiseStrides <= 1 ) {
+// //!!! ...unfinished... (2021/07/20) This is correct when image width is odd (but wrong when imag width is even).
+//         let padWidthHalf = padWidth / 2;
+//         padWidthLeft    = Math.floor( padWidthHalf );
+//         padWidthRight   = Math.ceil(  padWidthHalf );    // When pad is odd, let right-bottom are padded more.
+//       } else {
+// //!!! ...unfinished... (2021/07/20) It seems that left-pad always zero when ( strides > 1 ). (according to experiments.)
+// //!!! ...unfinished... (2021/07/20) This is correct when image width is even (but wrong when imag width is odd).
+//         padWidthLeft    = 0;
+//         padWidthRight   = padWidth;    // When ( strides > 1 ), it seems that width all pad to the right.
+//       }
+//
+//       imageInBeginY = - padHeightTop; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. for ( pad == "same" ).
+//       imageInBeginX = - padWidthLeft;
+//     }
+//
+//     let imageOutHeight = Math.floor( ( ( imageIn.height + padHeight - effectFilterHeight) / stridesHeight ) + 1 );
+//     let imageOutWidth =  Math.floor( ( ( imageIn.width  + padWidth  - effectFilterWidth ) / stridesWidth  ) + 1 );
 
-      let padHeightHalf = padHeight / 2;
-      padHeightTop    = Math.floor( padHeightHalf );
-      padHeightBottom = Math.ceil(  padHeightHalf );   // When pad is odd, let right-bottom are padded more.
 
-      padWidth = effectFilterWidth - 1;  // So that the output width will be the same as input width.
+//!!! ...unfinished (2021/07/26)
+    // (The follwoging calculation is copied from https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
+    let imageOutHeight, imageOutWidth;
 
-//!!! ...unfinished... (2021/07/20) What is the correct pading scheme?
-      if ( depthwiseStrides <= 1 ) {
-//!!! ...unfinished... (2021/07/20) This is correct when image width is odd (but wrong when imag width is even).
-        let padWidthHalf = padWidth / 2;
-        padWidthLeft    = Math.floor( padWidthHalf );
-        padWidthRight   = Math.ceil(  padWidthHalf );    // When pad is odd, let right-bottom are padded more.
-      } else {
-//!!! ...unfinished... (2021/07/20) It seems that left-pad always zero when ( strides > 1 ). (according to experiments.)
-//!!! ...unfinished... (2021/07/20) This is correct when image width is even (but wrong when imag width is odd).
-        padWidthLeft    = 0;
-        padWidthRight   = padWidth;    // When ( strides > 1 ), it seems that width all pad to the right.
-      }
+    // Determine output image height and width without padding.
+    if ( depthwisePad == "valid" ) {
+      imageOutHeight = Math.ceil( ( imageIn.height - effectFilterHeight + 1 ) / stridesHeight );
+      imageOutWidth =  Math.ceil( ( imageIn.width  - effectFilterWidth  + 1 ) / stridesWidth  );
+
+      padHeight = padHeightTop = padHeightBottom = padWidth = padWidthLeft = padWidthRight
+        = imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will never happen. for ( pad == "valid" ).
+
+    // Determine output image height and width with padding number around the input image height and width.
+    else if ( depthwisePad == "same" ) {
+      imageOutHeight = Math.ceil( imageIn.height / stridesHeight );
+      imageOutWidth =  Math.ceil( imageIn.width  / stridesWidth  );
+
+      padHeight = Math.max( 0, ( imageOutHeight - 1 ) * stridesHeight + effectFilterHeight - imageIn.height );
+      padWidth =  Math.max( 0, ( imageOutWidth  - 1 ) * stridesWidth  + effectFilterWidth  - imageIn.width  );
+
+      padHeightTop = Math.floor( padHeight / 2 );
+      padHeightBottom = padHeight - padHeightTop;
+      padWidthLeft = Math.floor( padWidth /  2 );
+      padWidthRight =   padWidth  - padWidthLeft;
 
       imageInBeginY = - padHeightTop; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. for ( pad == "same" ).
       imageInBeginX = - padWidthLeft;
     }
-
-    let imageOutHeight = Math.floor( ( ( imageIn.height + padHeight - effectFilterHeight) / stridesHeight ) + 1 );
-    let imageOutWidth =  Math.floor( ( ( imageIn.width  + padWidth  - effectFilterWidth ) / stridesWidth  ) + 1 );
 
     // If not AVG, MAX, NONE, the filters shape should match input image channel count.
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
