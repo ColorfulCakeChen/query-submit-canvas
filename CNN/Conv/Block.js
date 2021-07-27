@@ -120,7 +120,7 @@ class Params extends Weights.Params {
 // Define parameter descriptions.
 Params.stepCountPerBlock =               new ParamDesc.Int(                         "stepCountPerBlock",          0, ( 10 * 1024 ) );
 Params.bChannelShuffler =                new ParamDesc.Bool(                        "bChannelShuffler" );
-Params.pointwise1ChannelCountRate =      new ParamDesc.Int(                         "pointwise1ChannelCountRate", 1,             2 );
+Params.pointwise1ChannelCountRate =      new ParamDesc.Int(                         "pointwise1ChannelCountRate", 0,             2 );
 Params.depthwiseChannelMultiplierStep0 = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwiseChannelMultiplierStep0" );
 Params.depthwiseFilterHeight =           new ParamDesc.Int(                         "depthwiseFilterHeight",      1,             9 );
 Params.bBias =                           new ParamDesc.Bool(                        "bBias" );
