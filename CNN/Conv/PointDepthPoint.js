@@ -51,6 +51,15 @@ class Params extends Weights.Params {
    *     will not be processed by any pointwise1 and depthwise operation. It will be concatenated directly with the result of depthwise
    *     operation of inputTensors[ 0 ]. The concatenated result will be processed by pointwise2 convolution.
    *
+
+//!!! ...unfinished... (2021/07/27)
+// Perhaps, ( channelCount1_pointwise1Before == -3 ): ONE_INPUT_TWO_DEPTHWISE_ONE_MAX_POOLING
+//
+// A max pooling will be used as a branch of input0. The max pooling result of input0 should be concatenated with the
+// two depthwise convolutions' result of input0. The reason is that max pooling could provide information which is difficult achieved
+// by a depthwise convolution. (Thinks that for a while: how to calculate maximum value by linear combination (i.e. add-multiply).)
+
+
    * @param {number} pointwise1ChannelCount
    *   The output channel count of the pointwise1 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    * If 0, there will be no pointwise convolution before depthwise convolution.
