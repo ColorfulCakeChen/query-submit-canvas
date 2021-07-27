@@ -226,7 +226,7 @@ class Base {
 
     // 0. Prepare
 
-//!!! ...unfinished...
+//!!! ...unfinished... (2021/07/27)
     // Estimate the maximum value of progress.
     let progressMax =
       1    // for extracting parameters from inputFloat32Array.
@@ -244,6 +244,8 @@ class Base {
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
+//!!! ...unfinished... (2021/07/27)
+    this.bKeepInputTensor = bKeepInputTensor;
 
     // 1. Extract parameters.
     if ( !params )
@@ -257,7 +259,6 @@ class Base {
     // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
     this.byteOffsetEnd = params.defaultByteOffsetEnd;
 
-//!!! ...unfinished...
     // Get parameters' real (adjusted) values.
     //
     // Do not keep params in this.params so that the inputFloat32Array could be released.
@@ -265,12 +266,20 @@ class Base {
     this.bChannelShuffler = params.bChannelShuffler
     this.pointwise1ChannelCountRate = params.pointwise1ChannelCountRate;
     this.depthwiseChannelMultiplierStep0 = params.depthwiseChannelMultiplierStep0;
-    this.depthwiseFilterHeight = params.depthwiseFilterHeight;
+    this.depthwiseFilterHeight = this.depthwiseFilterWidth = params.depthwiseFilterHeight; // Assume depthwise filter's width equals its height.
     this.bBias = params.bBias;
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
     this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
+
+    // The depthwise channel multipler of the step 0 can not be Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0).
+    // Otherwise, the input image will not be shrinked a little (for ( stepCountPerBlock <= 0 )) or will not be halven
+    // (for ( stepCountPerBlock >= 1 ). So force to 1 at least (always needs depthwise operation).
+    //
+    // This adjustment should be after Params.init().
+    if ( this.depthwiseChannelMultiplierStep0 == 0 )
+      this.depthwiseChannelMultiplierStep0 = 1;
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
@@ -282,24 +291,7 @@ class Base {
 // This could also reduce one parameter (drop the bChannelShuffler parameter).
 
 
-//!!! ...unfinished... (2021/04/10) Place this adjustment after Params.init().
-    // The depthwise channel multipler of the step 0 can not be  Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0).
-    // Otherwise, the input image will not be shrinked a little (for ( stepCountPerBlock <= 0 )) or will not be halven
-    // (for ( stepCountPerBlock >= 1 ). So force to 1 at least (always needs depthwise operation).
-    if ( depthwiseChannelMultiplierStep0 == 0 )
-      depthwiseChannelMultiplierStep0 = 1;
-
-    this.depthwiseChannelMultiplierStep0 = depthwiseChannelMultiplierStep0;
-
-    let depthwiseFilterWidth =   depthwiseFilterHeight;  // Assume depthwise filter's width equals its height.
-    this.depthwiseFilterHeight = depthwiseFilterHeight;
-    this.depthwiseFilterWidth =  depthwiseFilterWidth;
-
-    this.bBias = bBias;
-    this.nActivationId = nActivationId;
-    this.nActivationIdAtBlockEnd = nActivationIdAtBlockEnd;
-
-    this.bKeepInputTensor = bKeepInputTensor;
+//!!! ...unfinished... (2021/07/27)
 
     this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
