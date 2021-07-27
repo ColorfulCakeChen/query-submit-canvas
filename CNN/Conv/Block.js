@@ -396,9 +396,9 @@ class Base {
           pointwise2ActivationId = nActivationIdAtBlockEnd;
         }
 
-        // If ( pointwise1ChannelCount < pointwise2ChannelCount ), similiar to ResNet.
-        // If ( pointwise1ChannelCount == pointwise2ChannelCount ), similiar to MobileNetV1 or ShufffleNetV2.
-        // If ( pointwise1ChannelCount > pointwise2ChannelCount ), similiar to MobileNetV2.
+        // If ( pointwise1ChannelCount < pointwise2ChannelCount ), similar to ResNet.
+        // If ( pointwise1ChannelCount == pointwise2ChannelCount ), similar to MobileNetV1 or ShufffleNetV2.
+        // If ( pointwise1ChannelCount > pointwise2ChannelCount ), similar to MobileNetV2.
         pointwise1ChannelCount = pointwise2ChannelCount * pointwise1ChannelCountRate;
 
         step0 = this.step0 = new PointDepthPoint.Base();
