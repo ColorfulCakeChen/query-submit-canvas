@@ -349,13 +349,15 @@ Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22A
  *
  *
  *
+ * @member {boolean} bInitOk
+ *  If true, this object initialized (i.e. initer()) successfully.
  *
  * @member {number} byteOffsetBegin
  *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by initer().
  *
  * @member {number} byteOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
- * Only meaningful when ( this.isValid() == true ).
+ * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {boolean} bPointwise1
  *   If true, the pointwise1 convolution exists.
@@ -1311,11 +1313,6 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
   }
 
-
-  /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
-  isValid() {
-    return this.bInitOk;
-  }
 
   /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]). */
   get inChannels0()    { return this.channelCount0_pointwise1Before; }
