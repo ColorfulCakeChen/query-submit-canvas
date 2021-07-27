@@ -196,7 +196,7 @@ class channelCount1_pointwise1Before extends Int {
       "ONE_INPUT_ADD_TO_OUTPUT",
       "ONE_INPUT",
 
-      // (2021/07/13 Remarked) Do not define these names to reduce memory usage.
+      // (2021/07/13 Remarked) Do not define these names because they will occupy too many memory.
       //
       // i.e. "TWO_INPUTS_1", "TWO_INPUTS_2", ..., "TWO_INPUTS_10240".
       //... [ ... new Array( 10 * 1024 ).keys() ].map( x => "TWO_INPUTS_" + ( x + 1 ) )
