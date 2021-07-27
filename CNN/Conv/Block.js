@@ -51,6 +51,10 @@ class Params extends Weights.Params {
 //!!! ...unfinished... (2021/07/27) In reality, it is almost no reason to use only avg/max pooling to compose a block because it keep
 // too little information for the next block. So, it should be possible to combine ( bChannelShuffler, pointwise1ChannelCountRate,
 // depthwiseChannelMultiplierStep0 ) into only one parameter.
+//
+// In my opinion, a max pooling may be used as a branch of input0. The max pooling result of input0 should be concatenated with the
+// depthwise convolution result of input0. The reason is that max pooling could provide information which is difficult achieved
+// by a depthwise convolution. (Thinks that for a while: how to calculate maximum value by linear combination (i.e. add-multiply).)
 
    * @param {number} depthwiseChannelMultiplierStep0
    *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor. If null, it will be extracted
