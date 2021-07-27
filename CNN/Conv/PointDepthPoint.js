@@ -180,19 +180,23 @@ class Params extends Weights.Params {
    */
   static setFlags_by_channelCount1_pointwise1Before( channelCount1_pointwise1Before ) {
 
-    if ( channelCount1_pointwise1Before > 0 ) {
+    if ( channelCount1_pointwise1Before > 0 ) { // ValueDesc.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX (> 0)
       this.inputTensorCount = 2; this.bDepthwise2Requested = false; this.bConcatenatorRequested = true; this.bAddInputToOutputRequested = false;
-    }
 
-    switch ( channelCount1_pointwise1Before ) {
-      case  0: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutputRequested = false;
-        break;
+    } else {
+      switch ( channelCount1_pointwise1Before ) {
+        case ValueDesc.channelCount1_pointwise1Before.Ids.ONE_INPUT: // ( 0)
+          this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutputRequested = false;
+          break;
 
-      case -1: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutputRequested =  true;
-        break;
+        case ValueDesc.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
+          this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutputRequested =  true;
+          break;
 
-      case -2: this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested =  true; this.bAddInputToOutputRequested = false;
-        break;
+        case ValueDesc.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
+          this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested =  true; this.bAddInputToOutputRequested = false;
+          break;
+      }
     }
   }
 
