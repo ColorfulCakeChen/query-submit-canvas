@@ -389,7 +389,7 @@ class Base {
 //!!! ...unfinished... (2021/07/27) When pad is "same", it should test more filter size.
     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
     //
-    // Note: When pad is "same", there is not this restricted.
+    // Note: When pad is "same", this restriction does not exist.
     let depthwiseFilterMaxSize = Math.min( this.inputImageHeight, this.inputImageWidth );
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
