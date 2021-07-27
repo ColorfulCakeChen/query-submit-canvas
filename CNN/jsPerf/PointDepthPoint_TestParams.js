@@ -371,12 +371,26 @@ class Base {
 //!!! ...unfinished... (2021/07/11) channelCount0_pointwise1Before  should also be included when permuteParamRecursively.
 
   /**
+   * @param {number} inputImageHeight
+   *   The height of the input image.
+   *
+   * @param {number} inputImageWidth
+   *   The width of the input image.
+   *
    * @param {number} channelCount0_pointwise1Before
    *   The channel count of the first input image.
    *
    */
-  constructor( channelCount0_pointwise1Before ) {
+  constructor( inputImageHeight, inputImageWidth, channelCount0_pointwise1Before ) {
+    this.inputImageHeight = inputImageHeight;
+    this.inputImageWidth = inputImageWidth;
     this.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
+
+//!!! ...unfinished... (2021/07/27) When pad is "same", it should test more filter size.
+    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
+    //
+    // Note: When pad is "same", there is not this restricted.
+    let depthwiseFilterMaxSize = Math.min( this.inputImageHeight, this.inputImageWidth );
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.maxKindsRestrict = {
@@ -393,11 +407,7 @@ class Base {
 
       channelCount1_pointwise1Before: 5,
       depthwise_AvgMax_Or_ChannelMultiplier: 5,
-
-//!!! (2021/07/09 Remarked) when pad is "valid", it seems that depthwise (avg/max pooling)'s filter size could not be larger than input image size?
-//      depthwiseFilterHeight: undefined,
-      depthwiseFilterHeight: 3,
-
+      depthwiseFilterHeight: depthwiseFilterMaxSize,
       depthwiseStridesPad: undefined,
     };
 
