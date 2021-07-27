@@ -17,6 +17,58 @@ class Params extends Weights.Params {
   /**
    * If a parameter's value is null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @param {number} byteOffsetBegin
+   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
+   * (not to the inputFloat32Array.byteOffset).
+   *
+   * @param {number} stepCountPerBlock
+   *   There are how many step inside this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If zero or
+   * negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
+   * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
+   * (halve height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
+   *
+   * @param {boolean} bChannelShuffler
+   *   If true, will like ShuffleNetV2 (i.e. split and concat channels). If false, will like MobileNetV1 or MobileNetV2 (i.e. add input
+   * to output). If null, it will be extracted from inputFloat32Array (i.e. by evolution). If ( stepCountPerBlock <= 0 ), this flag
+   * will be ignored.
+   *
+   * @param {number} pointwise1ChannelCountRate
+   *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
+   * That is, pointwise1ChannelCount = ( pointwise2ChannelCount * pointwise1ChannelCountRate ). If null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution).
+   *   - If ( stepCountPerBlock <= 0 ), this rate will be ignored because there will be no first 1x1 pointwise.
+   *   - If ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 1 ), will like ShuffleNetV2.
+   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will like MobileNetV1.
+   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate > 1 ), will like MobileNetV2.
+   *
+
+//!!! ...unfinished...
+
+   * @param {number} depthwiseChannelMultiplierStep0
+   *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor. If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution). If non-null, it should be integer between [ -2, 32 ]:
+   *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.AVG (-2): average pooling.
+   *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.MAX (-1): max pooling.
+   *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0): this will be adjusted to 1 forcibly (always needs depthwise operation).
+   *   - positive integer between [ 1, 32 ]: depthwise convolution and the number indicates channel multiplier.
+   *
+   * @param {boolean} bBias
+   *   If true, there will be a bias after every convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *
+   * @param {string} nActivationId
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution. If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
+   *
+   * @param {string} nActivationIdAtBlockEnd
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
+   * pointwise2ActivationId of this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If the output of
+   * this block needs to be any arbitrary value, it is recommended not to use activation at the end of this block
+   * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
+   * of the activation function.
+   *
    * @return {boolean} Return false, if initialization failed.
    *
    * @override
@@ -121,13 +173,6 @@ class Base {
    *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
    * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
    *
-   * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpreted as weights.
-   *
-   * @param {number} byteOffsetBegin
-   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
-   * (not to the inputFloat32Array.byteOffset).
-   *
    * @param {number} sourceHeight
    *   The height of the source image which will be processed by apply_and_destroy_or_keep(). This should always be specified and can
    * not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
@@ -140,58 +185,17 @@ class Base {
    *   The channel count of the source image. It may be the output channel count of the previous convolution block, so it could be large.
    * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
    *
-   * @param {number} stepCountPerBlock
-   *   There are how many step inside this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If zero or
-   * negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
-   * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
-   * (halve height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
-   *
-   * @param {boolean} bChannelShuffler
-   *   If true, will like ShuffleNetV2 (i.e. split and concat channels). If false, will like MobileNetV1 or MobileNetV2 (i.e. add input
-   * to output). If null, it will be extracted from inputFloat32Array (i.e. by evolution). If ( stepCountPerBlock <= 0 ), this flag
-   * will be ignored.
-   *
-   * @param {number} pointwise1ChannelCountRate
-   *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
-   * That is, pointwise1ChannelCount = ( pointwise2ChannelCount * pointwise1ChannelCountRate ). If null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution).
-   *   - If ( stepCountPerBlock <= 0 ), this rate will be ignored because there will be no first 1x1 pointwise.
-   *   - If ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 1 ), will like ShuffleNetV2.
-   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will like MobileNetV1.
-   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate > 1 ), will like MobileNetV2.
-   *
-
-//!!! ...unfinished...
-
-   * @param {number} depthwiseChannelMultiplierStep0
-   *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor. If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution). If non-null, it should be integer between [ -2, 32 ]:
-   *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.AVG (-2): average pooling.
-   *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.MAX (-1): max pooling.
-   *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0): this will be adjusted to 1 forcibly (always needs depthwise operation).
-   *   - positive integer between [ 1, 32 ]: depthwise convolution and the number indicates channel multiplier.
-   *
-   * @param {boolean} bBias
-   *   If true, there will be a bias after every convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   *
-   * @param {string} nActivationId
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution. If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution).
-   *
-   * @param {string} nActivationIdAtBlockEnd
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
-   * pointwise2ActivationId of this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If the output of
-   * this block needs to be any arbitrary value, it is recommended not to use activation at the end of this block
-   * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
-   * of the activation function.
    *
 //!!! ...unfinished...
 //!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1 )?
-          // Since pointwise2ActivationId is always NONE in MobileNetV2 (i.e. ( bChannelShuffler == false ), the nActivationIdAtBlockEnd is never used in MobileNetV2.
+// Since pointwise2ActivationId is always NONE in MobileNetV2 (i.e. ( bChannelShuffler == false ), the nActivationIdAtBlockEnd is never used in MobileNetV2.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). If it is null, it will be viewed as falsy
    * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *
+   * @param {Params} params
+   *   A Params object. The params.extract() will be called to extract parameters.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
@@ -204,14 +208,17 @@ class Base {
    */
   * initer(
     progressParent,
-    inputFloat32Array, byteOffsetBegin,
+//!!! (2021/07/27 Remarked) Moved to Params.
+//    inputFloat32Array, byteOffsetBegin,
     sourceHeight, sourceWidth, sourceChannelCount,
-    stepCountPerBlock,
-    bChannelShuffler,
-    pointwise1ChannelCountRate,
-    depthwiseChannelMultiplierStep0, depthwiseFilterHeight,
-    bBias, nActivationId, nActivationIdAtBlockEnd,
-    bKeepInputTensor
+//!!! (2021/07/27 Remarked) Moved to Params.
+//     stepCountPerBlock,
+//     bChannelShuffler,
+//     pointwise1ChannelCountRate,
+//     depthwiseChannelMultiplierStep0, depthwiseFilterHeight,
+//     bBias, nActivationId, nActivationIdAtBlockEnd,
+    bKeepInputTensor,
+    params
   ) {
 
     // Both MobileNetV3 and ShuffleNetV2:
