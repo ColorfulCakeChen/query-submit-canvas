@@ -748,10 +748,6 @@ class Base extends ReturnOrClone.Base {
     // If both pointwise21 and pointwise22 existed, the pointwise21 should keep-input-tensor.
     // Otherwise, the pointwise22 will fail to process it.
     if ( this.bPointwise21 && this.bPointwise22 ) {
-
-//!!! ...unfinished... (2021/07/10 Remarked) should already be integrated into TensorOpCounters analyzing.
-//      this.pointwise21.setKeepInputTensor( true );
-
       this.outputTensorCount = 2; // This is the only case which will output two tensors. 
     } else {
       this.outputTensorCount = 1; // All other cases, there will be only one output tensor.
