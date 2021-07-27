@@ -5,7 +5,6 @@ import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
-//import * as ReturnOrClone from "./ReturnOrClone.js";
 import * as PointDepthPoint from "./PointDepthPoint.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
@@ -34,8 +33,8 @@ class Params extends Weights.Params {
    *       until the block end.
    *
    * @param {boolean} bChannelShuffler
-   *   If true, this block will like ShuffleNetV2 (i.e. split and concat channels). If false, this block will like MobileNetV1
-   * or MobileNetV2 (i.e. add input to output). If null, it will be extracted from inputFloat32Array (i.e. by evolution). If
+   *   If true, this block will be similar to ShuffleNetV2 (i.e. split and concat channels). If false, this block will be similar to
+   * MobileNetV1 or MobileNetV2 (i.e. add input to output). If null, it will be extracted from inputFloat32Array (i.e. by evolution). If
    * ( stepCountPerBlock <= 0 ), this flag will be ignored.
    *
    * @param {number} pointwise1ChannelCountRate
@@ -43,16 +42,16 @@ class Params extends Weights.Params {
    * That is, pointwise1ChannelCount = ( pointwise2ChannelCount * pointwise1ChannelCountRate ). If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
    *   - If ( stepCountPerBlock <= 0 ), this rate will be ignored because there will be no first 1x1 pointwise.
-   *   - If ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 1 ), will like ShuffleNetV2.
-   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will like MobileNetV1.
-   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate > 1 ), will like MobileNetV2.
+   *   - If ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2.
+   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
+   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate > 1 ), will be similar to MobileNetV2.
    *
 
 //!!! ...unfinished...
 
    * @param {number} depthwiseChannelMultiplierStep0
    *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor. If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution). If non-null, it should be integer between [ -2, 32 ]:
+   * from inputFloat32Array (i.e. by evolution). If non-null, it should be an integer between [ -2, 32 ]:
    *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.AVG (-2): average pooling.
    *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.MAX (-1): max pooling.
    *   - Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0): this will be adjusted to 1 forcibly (always needs depthwise operation).
@@ -61,52 +60,42 @@ class Params extends Weights.Params {
    * @param {boolean} bBias
    *   If true, there will be a bias after every convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {string} theActivationId
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution. If null, it will be extracted
+   * @param {string} nActivationId
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
-   * @param {string} theActivationIdAtBlockEnd
+   * @param {string} nActivationIdAtBlockEnd
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
    * pointwise2ActivationId of this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If the output of
    * this block needs to be any arbitrary value, it is recommended not to use activation at the end of this block
-   * (i.e. theActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
+   * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
    * of the activation function.
    *
-   * @return {boolean} Return false, if initialization failed.
+   * @return {boolean}
+   *   Return false, if initialization failed.
    *
    * @override
    */
   init( inputFloat32Array, byteOffsetBegin,
-//!!! (2021/04/10 Remarked) They can not be evolved.
-//    sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, theActivationId, theActivationIdAtBlockEnd
+    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd
   ) {
 
     let parameterMap = new Map( [
-//!!! (2021/04/10 Remarked) They can not be evolved.
-//       [ Params.sourceHeight,                     sourceHeight ],
-//       [ Params.sourceWidth,                      sourceWidth ],
-//       [ Params.sourceChannelCount,               sourceChannelCount ],
       [ Params.stepCountPerBlock,                stepCountPerBlock ],
       [ Params.bChannelShuffler,                 bChannelShuffler ],
       [ Params.pointwise1ChannelCountRate,       pointwise1ChannelCountRate ],
       [ Params.depthwiseChannelMultiplierStep0,  depthwiseChannelMultiplierStep0 ],
       [ Params.depthwiseFilterHeight,            depthwiseFilterHeight ],
       [ Params.bBias,                            bBias ],
-      [ Params.theActivationId,                  theActivationId ],
-      [ Params.theActivationIdAtBlockEnd,        theActivationIdAtBlockEnd ],
+      [ Params.nActivationId,                    nActivationId ],
+      [ Params.nActivationIdAtBlockEnd,          nActivationIdAtBlockEnd ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
-
-//!!! (2021/04/10 Remarked) They can not be evolved.
-//   get sourceHeight()                        { return this.parameterMapModified.get( Params.sourceHeight ); }
-//   get sourceWidth()                         { return this.parameterMapModified.get( Params.sourceWidth ); }
-//   get sourceChannelCount()                  { return this.parameterMapModified.get( Params.sourceChannelCount ); }
 
   get stepCountPerBlock()                   { return this.parameterMapModified.get( Params.stepCountPerBlock ); }
   get bChannelShuffler()                    { return this.parameterMapModified.get( Params.bChannelShuffler ); }
@@ -120,34 +109,35 @@ class Params extends Weights.Params {
 
   get depthwiseFilterHeight()               { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
   get bBias()                               { return this.parameterMapModified.get( Params.bBias ); }
-  get theActivationId()                     { return this.parameterMapModified.get( Params.theActivationId ); }
-  get theActivationIdName()                 { return Params.theActivationId.getStringOfValue( this.theActivationId ); }
-  get theActivationIdAtBlockEndId()         { return this.parameterMapModified.get( Params.theActivationIdAtBlockEnd ); }
-  get theActivationIdAtBlockEndName()       { return Params.theActivationIdAtBlockEnd.getStringOfValue( this.theActivationIdAtBlockEnd ); }
+  get nActivationId()                       { return this.parameterMapModified.get( Params.nActivationId ); }
+  get nActivationIdName()                   { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
+  get nActivationIdAtBlockEndId()           { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
+  get nActivationIdAtBlockEndName()         { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
 }
 
 
 // Define parameter descriptions.
-
-//!!! (2021/04/10 Remarked) They can not be evolved.
-// Params.sourceHeight =                    new ParamDesc.Int(                         "sourceHeight",               1, ( 10 * 1024 ) );
-// Params.sourceWidth =                     new ParamDesc.Int(                         "sourceWidth",                1, ( 10 * 1024 ) );
-// Params.sourceChannelCount =              new ParamDesc.Int(                         "sourceChannelCount",         1, ( 10 * 1024 ) );
-
 Params.stepCountPerBlock =               new ParamDesc.Int(                         "stepCountPerBlock",          0, ( 10 * 1024 ) );
 Params.bChannelShuffler =                new ParamDesc.Bool(                        "bChannelShuffler" );
 Params.pointwise1ChannelCountRate =      new ParamDesc.Int(                         "pointwise1ChannelCountRate", 1,             2 );
 Params.depthwiseChannelMultiplierStep0 = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwiseChannelMultiplierStep0" );
 Params.depthwiseFilterHeight =           new ParamDesc.Int(                         "depthwiseFilterHeight",      1,             9 );
 Params.bBias =                           new ParamDesc.Bool(                        "bBias" );
-Params.theActivationId =                 new ParamDesc.ActivationFunction(          "theActivationId" );
-Params.theActivationIdAtBlockEnd =       new ParamDesc.ActivationFunction(          "theActivationIdAtBlockEnd" );
+Params.nActivationId =                   new ParamDesc.ActivationFunction(          "nActivationId" );
+Params.nActivationIdAtBlockEnd =         new ParamDesc.ActivationFunction(          "nActivationIdAtBlockEnd" );
 
 
 /**
  * Implement a block of ( depthwise convolution and pointwise convolution ) or ShuffleNetV2 (with 2 output channel groups) or MobileNetV1
  * or MobileNetV2.
  *
+ *
+ * @member {number} byteOffsetBegin
+ *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by initer().
+ *
+ * @member {number} byteOffsetEnd
+ *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
+ * Only meaningful when ( this.isValid() == true ).
  *
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has an parameter inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which
@@ -191,7 +181,7 @@ class Base {
    *
 //!!! ...unfinished...
 //!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1 )?
-// Since pointwise2ActivationId is always NONE in MobileNetV2 (i.e. ( bChannelShuffler == false ), the theActivationIdAtBlockEnd is never used in MobileNetV2.
+// Since pointwise2ActivationId is always NONE in MobileNetV2 (i.e. ( bChannelShuffler == false ), the nActivationIdAtBlockEnd is never used in MobileNetV2.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). If it is null, it will be viewed as falsy
@@ -209,20 +199,7 @@ class Base {
    *
    * @see PointDepthPoint.Base.initer()
    */
-  * initer(
-    progressParent,
-//!!! (2021/07/27 Remarked) Moved to Params.
-//    inputFloat32Array, byteOffsetBegin,
-    sourceHeight, sourceWidth, sourceChannelCount,
-//!!! (2021/07/27 Remarked) Moved to Params.
-//     stepCountPerBlock,
-//     bChannelShuffler,
-//     pointwise1ChannelCountRate,
-//     depthwiseChannelMultiplierStep0, depthwiseFilterHeight,
-//     bBias, theActivationId, theActivationIdAtBlockEnd,
-    bKeepInputTensor,
-    params
-  ) {
+  * initer( progressParent, sourceHeight, sourceWidth, sourceChannelCount, bKeepInputTensor, params ) {
 
     // Both MobileNetV3 and ShuffleNetV2:
     //   - They all do not use (depthwise convolution) channelMultiplier.
@@ -264,8 +241,6 @@ class Base {
 
     this.disposeTensors();
 
-    this.nextByteOffsetBegin = byteOffsetBegin;
-
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
@@ -292,10 +267,10 @@ class Base {
     this.depthwiseChannelMultiplierStep0 = params.depthwiseChannelMultiplierStep0;
     this.depthwiseFilterHeight = params.depthwiseFilterHeight;
     this.bBias = params.bBias;
-    this.theActivationId = params.theActivationId;
-    this.theActivationIdName = params.theActivationIdName;
-    this.theActivationIdAtBlockEnd = params.theActivationIdAtBlockEnd;
-    this.theActivationIdAtBlockEndName = params.theActivationIdAtBlockEndName;
+    this.nActivationId = params.nActivationId;
+    this.nActivationIdName = params.nActivationIdName;
+    this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
+    this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
@@ -321,19 +296,19 @@ class Base {
     this.depthwiseFilterWidth =  depthwiseFilterWidth;
 
     this.bBias = bBias;
-    this.theActivationId = theActivationId;
-    this.theActivationIdAtBlockEnd = theActivationIdAtBlockEnd;
+    this.nActivationId = nActivationId;
+    this.nActivationIdAtBlockEnd = nActivationIdAtBlockEnd;
 
     this.bKeepInputTensor = bKeepInputTensor;
 
     this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
     let pointwise1Bias = bBias;
-    let pointwise1ActivationId = theActivationId;
+    let pointwise1ActivationId = nActivationId;
     let depthwiseBias = bBias;
-    let depthwiseActivationId = theActivationId;
+    let depthwiseActivationId = nActivationId;
     let pointwise2Bias = bBias;
-    let pointwise2ActivationId = theActivationId;
+    let pointwise2ActivationId = nActivationId;
 
     if ( stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
@@ -354,7 +329,7 @@ class Base {
 
       // This is the last step of this block (i.e. at-block-end) because ( stepCountPerBlock <= 0 ) means there is only one step inside
       // this block. And a different activation function may be used after pointwise2 convolution.
-      pointwise2ActivationId = theActivationIdAtBlockEnd;
+      pointwise2ActivationId = nActivationIdAtBlockEnd;
 
       let step0 = this.step0 = new PointDepthPoint.Base();
       step0.init(
@@ -405,7 +380,7 @@ class Base {
 
           // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function in default.
           //
-          // But it could be changed by theActivationIdAtBlockEnd for the last step of the block.
+          // But it could be changed by nActivationIdAtBlockEnd for the last step of the block.
           pointwise2ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
         }
 
@@ -414,7 +389,7 @@ class Base {
         //
         // Even if in MobileNetV2 (pointwise2 convolution does not have activation function in default), this is still true.
         if ( 1 == stepCountPerBlock ) {
-          pointwise2ActivationId = theActivationIdAtBlockEnd;
+          pointwise2ActivationId = nActivationIdAtBlockEnd;
         }
 
         // If ( pointwise1ChannelCount < pointwise2ChannelCount ), similiar to ResNet.
@@ -518,7 +493,7 @@ class Base {
           //
           // Even if in MobileNetV2 (pointwise2 convolution does not have activation function in default), this is still true.
           if ( i == ( this.steps1After.length - 1 ) ) {
-            pointwise2ActivationId = theActivationIdAtBlockEnd;
+            pointwise2ActivationId = nActivationIdAtBlockEnd;
           }
 
           let step = new PointDepthPoint.Base();
@@ -541,6 +516,9 @@ class Base {
         }
       }
     }
+
+    this.bInitOk = true;
+    return true;
   }
 
   /**
@@ -555,30 +533,11 @@ class Base {
    *
    * @see PointDepthPoint.Base.init()
    */
-  init(
-    progressParent,
-    inputFloat32Array, byteOffsetBegin,
-    sourceHeight, sourceWidth, sourceChannelCount,
-    stepCountPerBlock,
-    bChannelShuffler,
-    pointwise1ChannelCountRate,
-    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, theActivationId, theActivationIdAtBlockEnd,
-    bKeepInputTensor
-  ) {
+  init( progressParent, sourceHeight, sourceWidth, sourceChannelCount, bKeepInputTensor, params ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer(
-      progressParent,
-      inputFloat32Array, byteOffsetBegin,
-      sourceHeight, sourceWidth, sourceChannelCount,
-      stepCountPerBlock,
-      bChannelShuffler,
-      pointwise1ChannelCountRate,
-      depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, theActivationId, theActivationIdAtBlockEnd,
-      bKeepInputTensor
-    );
-
+    let initer = this.initer( progressParent, sourceHeight, sourceWidth, sourceChannelCount, bKeepInputTensor, params );
     let initerNext;
     do {
       initerNext = initer.next();
@@ -588,6 +547,7 @@ class Base {
     return bInitOk;
   }
 
+  /** Release all tensors. */
   disposeTensors() {
 //!!! (2021/04/10) ...unfinished... Using ChannelShuffler.ConcatPointwiseConv instead.
     if ( this.concatGather ) {
@@ -622,6 +582,9 @@ class Base {
     }
 
     this.stepLast = null; // It has already de disposed by this.step0 or this.steps1After.
+
+    this.byteOffsetBegin = this.byteOffsetEnd = -1;
+    this.bInitOk = false;
   }
 
   /** Process input, destroy input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.)
@@ -767,6 +730,11 @@ class Base {
     }
 
     return t;
+  }
+
+  /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
+  isValid() {
+    return this.bInitOk;
   }
 
 }
