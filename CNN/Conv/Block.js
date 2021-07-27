@@ -613,40 +613,40 @@ class Base {
 //   - Pointwise convolution to generate output group 1.
 //   - Pointwise convolution to generate output group 2.
 //
-// In order to achieve it, there is a pre-condition: the pointwise2 convolution (after depthwise convolution) do not
-// have bias and activation function. The reason is that the channel shuffler (when achieved by pointwise convolution)
-// uses only pointwise convolution without bias and activation function.
-//
+// Although the channel shuffler is achieved by pointwise convolution without bias and activation function, however,
+// the second pointwise convolution (before channel shuffler) indeed has bias and activation function. After combining
+// these two pointwise convolutions (the original second and the channel shuffler), the total result is twice pointwise
+// convolution with bias and activation function.
 //
 // If the poitwise1 convolution (of every step (include step 0 too)) could be discarded, the step 0 and step 0's branch could
 // be achieved simultaneously by:
 //   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS).
 //   - No need to concatenate because the above operation already double channel count.
-//   - twice pointwise2 convolution (no bias, no activation function, every has same as block's input channel count).
+//   - twice pointwise2 convolution (every has same as block's input channel count).
 //
 // And, the step 1 (, 2, 3, ..., ( n - 2 ) ) could be achieved by:
 //   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
 //   - concatenate.
-//   - twice pointwise2 convolution (no bias, no activation function, every has same as block's input channel count).
+//   - twice pointwise2 convolution (every has same as block's input channel count).
 //
 // And, the last step (i.e. step ( n - 1 ) ) of the block could be achieved by:
 //   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
 //   - concatenate.
-//   - once pointwise2 convolution (no bias, no activation function, has double of block's input channel count).
+//   - once pointwise2 convolution (has double of block's input channel count).
 //
 // Note that:
 //   - The depthwise convolution (channelMultipler = 2, strides = 2) of step 0 achieves simultaneously two depthwise
 //     convolution (channelMultipler = 1, strides = 2) of step 0 and step 0's branch. So, it is one less depthwise
 //     convolution, and one less concatenating.
 //
-//   - The twice pointwise2 convolution (no bias, no activation function, every has same as block's input channel count)
-//     achieves not only pointwise convolution but also channel shuffling. So, it is one less pointwise convolution.
+//   - The twice pointwise2 convolution (every has same as block's input channel count) achieves not only pointwise
+//     convolution but also channel shuffling. So, it is one less pointwise convolution.
 //
-//   - The once pointwise2 convolution (no bias, no activation function, has double of block's input channel count) of
-//     last step achieves simultaneously pointwise convolution, channel shuffling, and concatenating. So, it is not only
-//     one less pointwise convolution, but also one less concatenating.
+//   - The once pointwise2 convolution (has double of block's input channel count) of last step achieves simultaneously
+//     pointwise convolution, channel shuffling, and concatenating. So, it is not only one less pointwise convolution,
+//     but also one less concatenating.
 //
-//   - Although the pointwise1 convolution is discarded and the pointwise2 convolution does not have bias and activation
+//   - Even if the pointwise1 convolution is discarded and the pointwise2 convolution does not have bias and activation
 //     function, the depthwise convolution (with bias and COS as activation function) and pointwise2 convolution together
 //     compose an effective Fourier series which should have enough expressive power for approximating any function.
 //
