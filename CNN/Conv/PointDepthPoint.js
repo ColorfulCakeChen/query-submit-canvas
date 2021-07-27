@@ -879,11 +879,11 @@ class Base extends ReturnOrClone.Base {
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
-  init( progressParent, channelCount0_pointwise1Before, channelCount1_pointwise1Before, bKeepInputTensor, params ) {
+  init( progressParent, channelCount0_pointwise1Before, bKeepInputTensor, params ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer( progressParent, channelCount0_pointwise1Before, channelCount1_pointwise1Before, bKeepInputTensor, params );
+    let initer = this.initer( progressParent, channelCount0_pointwise1Before, bKeepInputTensor, params );
     let initerNext;
     do {
       initerNext = initer.next();
