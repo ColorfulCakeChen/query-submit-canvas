@@ -491,7 +491,8 @@ class Base extends ReturnOrClone.Base {
    *
    * @param {Params} params
    *   A Params object. The params.extract() will be called to extract parameters.
-   *   * @yield {ValueMax.Percentage.Aggregate}
+   *
+   * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
    * @yield {boolean}
