@@ -25,15 +25,18 @@ class Params extends Weights.Params {
    * (not to the inputFloat32Array.byteOffset).
    *
    * @param {number} stepCountPerBlock
-   *   There are how many step inside this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If zero or
-   * negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking sourceHeight
-   * (minus ( filterHeight - 1 )). If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
-   * (halve height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until the block end.
+   *   There are how many steps inside this block.
+   *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *   - If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking
+   *       sourceHeight by minus ( filterHeight - 1 ).
+   *   - If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
+   *       by halving height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
+   *       until the block end.
    *
    * @param {boolean} bChannelShuffler
-   *   If true, will like ShuffleNetV2 (i.e. split and concat channels). If false, will like MobileNetV1 or MobileNetV2 (i.e. add input
-   * to output). If null, it will be extracted from inputFloat32Array (i.e. by evolution). If ( stepCountPerBlock <= 0 ), this flag
-   * will be ignored.
+   *   If true, this block will like ShuffleNetV2 (i.e. split and concat channels). If false, this block will like MobileNetV1
+   * or MobileNetV2 (i.e. add input to output). If null, it will be extracted from inputFloat32Array (i.e. by evolution). If
+   * ( stepCountPerBlock <= 0 ), this flag will be ignored.
    *
    * @param {number} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
