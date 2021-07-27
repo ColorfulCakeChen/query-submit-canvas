@@ -132,12 +132,15 @@ Params.nActivationIdAtBlockEnd =         new ParamDesc.ActivationFunction(      
  * or MobileNetV2.
  *
  *
+ * @member {boolean} bInitOk
+ *  If true, this object initialized (i.e. initer()) successfully.
+ *
  * @member {number} byteOffsetBegin
  *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by initer().
  *
  * @member {number} byteOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
- * Only meaningful when ( this.isValid() == true ).
+ * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has an parameter inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which
