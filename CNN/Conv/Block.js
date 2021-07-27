@@ -42,9 +42,10 @@ class Params extends Weights.Params {
    * That is, pointwise1ChannelCount = ( pointwise2ChannelCount * pointwise1ChannelCountRate ). If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
    *   - If ( stepCountPerBlock <= 0 ), this rate will be ignored because there will be no first 1x1 pointwise.
-   *   - If ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2.
+   *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 0 ), will be simplified ShuffleNetV2 (expanding by once depthwise).
+   *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
-   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate > 1 ), will be similar to MobileNetV2.
+   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate >  1 ), will be similar to MobileNetV2.
    *
 
 //!!! ...unfinished...
@@ -351,6 +352,12 @@ class Base {
 
     } else {  // ShuffleNetV2, or MobileNetV2.
 
+//!!! ...unfinished... (2021/07/27)
+//    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 0 ), will be simplified ShuffleNetV2 (expanding by once depthwise).
+//    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
+//    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
+//    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate >  1 ), will be similar to MobileNetV2.
+
       // Step 0.
       //
       // The special points of a block's step 0 are:
@@ -605,6 +612,8 @@ class Base {
     return this.step0.apply_and_destroy_or_keep( inputTensor );
   }
 
+//!!! ...unfinished... (2021/07/27) How to specify this configuration? ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 )
+//
 //!!! ...unfinished... (2021/04/13) (Our) Adjusted ShuffleNetV2:
 //  
 // Since channel shuffler could achieved efficiently by pointwise convolution, it may be possible to combine the pointwise2
