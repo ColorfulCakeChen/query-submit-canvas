@@ -58,15 +58,15 @@ class Params extends Weights.Params {
    * @param {boolean} bBias
    *   If true, there will be a bias after every convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {string} nActivationId
+   * @param {string} theActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution. If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
-   * @param {string} nActivationIdAtBlockEnd
+   * @param {string} theActivationIdAtBlockEnd
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
    * pointwise2ActivationId of this block. If null, it will be extracted from inputFloat32Array (i.e. by evolution). If the output of
    * this block needs to be any arbitrary value, it is recommended not to use activation at the end of this block
-   * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
+   * (i.e. theActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
    * of the activation function.
    *
    * @return {boolean} Return false, if initialization failed.
@@ -79,7 +79,7 @@ class Params extends Weights.Params {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd
+    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, theActivationId, theActivationIdAtBlockEnd
   ) {
 
     let parameterMap = new Map( [
@@ -93,8 +93,8 @@ class Params extends Weights.Params {
       [ Params.depthwiseChannelMultiplierStep0,  depthwiseChannelMultiplierStep0 ],
       [ Params.depthwiseFilterHeight,            depthwiseFilterHeight ],
       [ Params.bBias,                            bBias ],
-      [ Params.nActivationId,                    nActivationId ],
-      [ Params.nActivationIdAtBlockEnd,          nActivationIdAtBlockEnd ],
+      [ Params.theActivationId,                  theActivationId ],
+      [ Params.theActivationIdAtBlockEnd,        theActivationIdAtBlockEnd ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
@@ -117,10 +117,10 @@ class Params extends Weights.Params {
 
   get depthwiseFilterHeight()               { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
   get bBias()                               { return this.parameterMapModified.get( Params.bBias ); }
-  get nActivationId()                       { return this.parameterMapModified.get( Params.nActivationId ); }
-  get nActivationId()                       { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
-  get nActivationIdAtBlockEndId()           { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
-  get nActivationIdAtBlockEndName()         { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
+  get theActivationId()                     { return this.parameterMapModified.get( Params.theActivationId ); }
+  get theActivationIdName()                 { return Params.theActivationId.getStringOfValue( this.theActivationId ); }
+  get theActivationIdAtBlockEndId()         { return this.parameterMapModified.get( Params.theActivationIdAtBlockEnd ); }
+  get theActivationIdAtBlockEndName()       { return Params.theActivationIdAtBlockEnd.getStringOfValue( this.theActivationIdAtBlockEnd ); }
 }
 
 
@@ -137,8 +137,8 @@ Params.pointwise1ChannelCountRate =      new ParamDesc.Int(                     
 Params.depthwiseChannelMultiplierStep0 = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwiseChannelMultiplierStep0" );
 Params.depthwiseFilterHeight =           new ParamDesc.Int(                         "depthwiseFilterHeight",      1,             9 );
 Params.bBias =                           new ParamDesc.Bool(                        "bBias" );
-Params.nActivationId =                   new ParamDesc.ActivationFunction(          "nActivationId" );
-Params.nActivationIdAtBlockEnd =         new ParamDesc.ActivationFunction(          "nActivationIdAtBlockEnd" );
+Params.theActivationId =                 new ParamDesc.ActivationFunction(          "theActivationId" );
+Params.theActivationIdAtBlockEnd =       new ParamDesc.ActivationFunction(          "theActivationIdAtBlockEnd" );
 
 
 /**
@@ -188,7 +188,7 @@ class Base {
    *
 //!!! ...unfinished...
 //!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1 )?
-// Since pointwise2ActivationId is always NONE in MobileNetV2 (i.e. ( bChannelShuffler == false ), the nActivationIdAtBlockEnd is never used in MobileNetV2.
+// Since pointwise2ActivationId is always NONE in MobileNetV2 (i.e. ( bChannelShuffler == false ), the theActivationIdAtBlockEnd is never used in MobileNetV2.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). If it is null, it will be viewed as falsy
@@ -216,7 +216,7 @@ class Base {
 //     bChannelShuffler,
 //     pointwise1ChannelCountRate,
 //     depthwiseChannelMultiplierStep0, depthwiseFilterHeight,
-//     bBias, nActivationId, nActivationIdAtBlockEnd,
+//     bBias, theActivationId, theActivationIdAtBlockEnd,
     bKeepInputTensor,
     params
   ) {
@@ -267,45 +267,35 @@ class Base {
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
 
-//!!! ...unfinished...
     // 1. Extract parameters.
-    this.params = new Params();
-    let bParamsInitOk
-      = this.params.init( inputFloat32Array, byteOffsetBegin,
-          pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-          pointwise2ChannelCount, bPointwise2Bias, pointwise2ActivationId,
-          bAddInputToOutput );
+    if ( !params )
+      return false;
 
-    if ( !bParamsInitOk )
+    this.byteOffsetEnd = this.byteOffsetBegin = params.defaultByteOffsetBegin;
+
+    if ( !params.extract() )
       return false;  // e.g. input array does not have enough data.
 
-    this.nextByteOffsetBegin = this.params.defaultByteOffsetEnd;
+    // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
+    this.byteOffsetEnd = params.defaultByteOffsetEnd;
 
 //!!! ...unfinished...
     // Get parameters' real (adjusted) values.
-    {
-      pointwise1ChannelCount = this.pointwise1ChannelCount;
-      bPointwise1Bias = this.bPointwise1Bias;
-      pointwise1ActivationId = this.pointwise1ActivationId;
-
-      depthwise_AvgMax_Or_ChannelMultiplier = this.depthwise_AvgMax_Or_ChannelMultiplier;
-      depthwiseFilterHeight = this.depthwiseFilterHeight;
-      depthwiseStridesPad = this.depthwiseStridesPad;
-      bDepthwiseBias = this.bDepthwiseBias;
-      depthwiseActivationId = this.depthwiseActivationId;
-
-      pointwise2ChannelCount = this.pointwise2ChannelCount;
-      bPointwise2Bias = this.bPointwise2Bias;
-      pointwise2ActivationId = this.pointwise2ActivationId;
-
-      bAddInputToOutput = this.bAddInputToOutput;
-    }
+    //
+    // Do not keep params in this.params so that the inputFloat32Array could be released.
+    this.stepCountPerBlock = params.stepCountPerBlock;
+    this.bChannelShuffler = params.bChannelShuffler
+    this.pointwise1ChannelCountRate = params.pointwise1ChannelCountRate;
+    this.depthwiseChannelMultiplierStep0 = params.depthwiseChannelMultiplierStep0;
+    this.depthwiseFilterHeight = params.depthwiseFilterHeight;
+    this.bBias = params.bBias;
+    this.theActivationId = params.theActivationId;
+    this.theActivationIdName = params.theActivationIdName;
+    this.theActivationIdAtBlockEnd = params.theActivationIdAtBlockEnd;
+    this.theActivationIdAtBlockEndName = params.theActivationIdAtBlockEndName;
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
-
-    this.stepCountPerBlock = stepCountPerBlock;
 
 //!!! ...unfinished... (2021/04/10)
 // Perhaps, Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0) (no depthwise operation) could be viewed as ( bChannelShuffler == true ).
@@ -313,8 +303,6 @@ class Base {
 // (WRONG! it is possible to change depthwiseChannelMultiplier in ShuffleNetV2.)
 // This could also reduce one parameter (drop the bChannelShuffler parameter).
 
-    this.bChannelShuffler = bChannelShuffler;
-    this.pointwise1ChannelCountRate = pointwise1ChannelCountRate;
 
 //!!! ...unfinished... (2021/04/10) Place this adjustment after Params.init().
     // The depthwise channel multipler of the step 0 can not be  Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0).
@@ -330,19 +318,19 @@ class Base {
     this.depthwiseFilterWidth =  depthwiseFilterWidth;
 
     this.bBias = bBias;
-    this.nActivationId = nActivationId;
-    this.nActivationIdAtBlockEnd = nActivationIdAtBlockEnd;
+    this.theActivationId = theActivationId;
+    this.theActivationIdAtBlockEnd = theActivationIdAtBlockEnd;
 
     this.bKeepInputTensor = bKeepInputTensor;
 
     this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
     let pointwise1Bias = bBias;
-    let pointwise1ActivationId = nActivationId;
+    let pointwise1ActivationId = theActivationId;
     let depthwiseBias = bBias;
-    let depthwiseActivationId = nActivationId;
+    let depthwiseActivationId = theActivationId;
     let pointwise2Bias = bBias;
-    let pointwise2ActivationId = nActivationId;
+    let pointwise2ActivationId = theActivationId;
 
     if ( stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
@@ -363,7 +351,7 @@ class Base {
 
       // This is the last step of this block (i.e. at-block-end) because ( stepCountPerBlock <= 0 ) means there is only one step inside
       // this block. And a different activation function may be used after pointwise2 convolution.
-      pointwise2ActivationId = nActivationIdAtBlockEnd;
+      pointwise2ActivationId = theActivationIdAtBlockEnd;
 
       let step0 = this.step0 = new PointDepthPoint.Base();
       step0.init(
@@ -414,7 +402,7 @@ class Base {
 
           // In MobileNetV2, the second 1x1 pointwise convolution does not have activation function in default.
           //
-          // But it could be changed by nActivationIdAtBlockEnd for the last step of the block.
+          // But it could be changed by theActivationIdAtBlockEnd for the last step of the block.
           pointwise2ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
         }
 
@@ -423,7 +411,7 @@ class Base {
         //
         // Even if in MobileNetV2 (pointwise2 convolution does not have activation function in default), this is still true.
         if ( 1 == stepCountPerBlock ) {
-          pointwise2ActivationId = nActivationIdAtBlockEnd;
+          pointwise2ActivationId = theActivationIdAtBlockEnd;
         }
 
         // If ( pointwise1ChannelCount < pointwise2ChannelCount ), similiar to ResNet.
@@ -527,7 +515,7 @@ class Base {
           //
           // Even if in MobileNetV2 (pointwise2 convolution does not have activation function in default), this is still true.
           if ( i == ( this.steps1After.length - 1 ) ) {
-            pointwise2ActivationId = nActivationIdAtBlockEnd;
+            pointwise2ActivationId = theActivationIdAtBlockEnd;
           }
 
           let step = new PointDepthPoint.Base();
@@ -571,7 +559,7 @@ class Base {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
+    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, theActivationId, theActivationIdAtBlockEnd,
     bKeepInputTensor
   ) {
 
@@ -584,7 +572,7 @@ class Base {
       stepCountPerBlock,
       bChannelShuffler,
       pointwise1ChannelCountRate,
-      depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
+      depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, theActivationId, theActivationIdAtBlockEnd,
       bKeepInputTensor
     );
 
