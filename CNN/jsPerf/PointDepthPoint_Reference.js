@@ -412,8 +412,8 @@ class Base {
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
-    tf.util.assert( ( pointDepthPoint.isValid() == bInitOk ),
-      `PointDepthPoint validation state (${pointDepthPoint.isValid()}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
+    tf.util.assert( ( pointDepthPoint.bInitOk == bInitOk ),
+      `PointDepthPoint validation state (${pointDepthPoint.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
