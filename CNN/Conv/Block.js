@@ -53,7 +53,8 @@ class Params extends Weights.Params {
 // depthwiseChannelMultiplierStep0 ) into only one parameter.
 //
 // Problem: When ( stepCountPerBlock <= 0 ), the depthwiseChannelMultiplierStep0 is used for expanding channels. Perhaps, use
-// abs( stepCountPerBlock ) as its depthwiseChannelMultiplier.
+// abs( stepCountPerBlock ) as its depthwiseChannelMultiplier. If ( stepCountPerBlock == 0 ), depthwiseChannelMultiplier will
+// be 1 forcibly.
 //
 //
 // In my opinion, a max pooling may be used as a branch of input0. The max pooling result of input0 should be concatenated with the
