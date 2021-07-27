@@ -52,7 +52,8 @@ class Params extends Weights.Params {
 // too little information for the next block. So, it should be possible to combine ( bChannelShuffler, pointwise1ChannelCountRate,
 // depthwiseChannelMultiplierStep0 ) into only one parameter.
 //
-// Problem: When ( stepCountPerBlock <= 0 ), the depthwiseChannelMultiplierStep0 is used for expanding channels.
+// Problem: When ( stepCountPerBlock <= 0 ), the depthwiseChannelMultiplierStep0 is used for expanding channels. Perhaps, use
+// abs( stepCountPerBlock ) as its depthwiseChannelMultiplier.
 //
 //
 // In my opinion, a max pooling may be used as a branch of input0. The max pooling result of input0 should be concatenated with the
