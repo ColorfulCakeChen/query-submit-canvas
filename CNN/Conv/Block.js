@@ -52,6 +52,9 @@ class Params extends Weights.Params {
 // too little information for the next block. So, it should be possible to combine ( bChannelShuffler, pointwise1ChannelCountRate,
 // depthwiseChannelMultiplierStep0 ) into only one parameter.
 //
+// Problem: When ( stepCountPerBlock <= 0 ), the depthwiseChannelMultiplierStep0 is used for expanding channels.
+//
+//
 // In my opinion, a max pooling may be used as a branch of input0. The max pooling result of input0 should be concatenated with the
 // depthwise convolution result of input0. The reason is that max pooling could provide information which is difficult achieved
 // by a depthwise convolution. (Thinks that for a while: how to calculate maximum value by linear combination (i.e. add-multiply).)
