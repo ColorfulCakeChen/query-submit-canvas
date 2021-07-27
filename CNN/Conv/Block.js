@@ -48,7 +48,9 @@ class Params extends Weights.Params {
    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
    *
 
-//!!! ...unfinished...
+//!!! ...unfinished... (2021/07/27) In reality, it is almost no reason to use only avg/max pooling to compose a block because it keep
+// too little information for the next block. So, it should be possible to combine ( bChannelShuffler, pointwise1ChannelCountRate,
+// depthwiseChannelMultiplierStep0 ) into only one parameter.
 
    * @param {number} depthwiseChannelMultiplierStep0
    *   The depthwise convolution of the first step (Step 0) will expand input channel by this factor. If null, it will be extracted
