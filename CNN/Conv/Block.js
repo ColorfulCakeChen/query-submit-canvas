@@ -276,8 +276,7 @@ class Base {
 //!!! ...unfinished... (2021/07/28)
     let progressRoot = progressParent.getRoot();
     let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) ); // For parameters extracting.
-    let progressForStep0 = progressParent.addChild( new ValueMax.Percentage.Aggregate() ); // for step0.
-    let progressForSteps1After = progressParent.addChild( new ValueMax.Percentage.Aggregate() ); // for step1, 2, 3, ... 
+    let progressForSteps = progressParent.addChild( new ValueMax.Percentage.Aggregate() ); // for step0, step1, 2, 3, ... 
 
     this.disposeTensors();
 
@@ -378,44 +377,87 @@ class Base {
 
 //!!! ...unfinished... (2021/07/28) What if ( stepCount == 0 )?
 
-      // If there is only one step, this (step 0) is also the last step of this block (i.e. at-block-end) and a different activation
-      // function may be used after pointwise2 convolution.
-      if ( 1 == stepCount ) {
-        pointwise2ActivationId = this.nActivationIdAtBlockEnd;
+      let progressForStepsArray = new Array( stepCount ); // Progress for step0, 1, 2, 3, ... 
+      for ( let i = 0; i < progressForStepsArray.length; ++i ) {
+        progressForStepsArray[ i ] = progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
       }
 
       let pointwise1ChannelCount = 0; // no pointwise convolution before depthwise convolution.
       let depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, pointwise21ChannelCount, pointwise22ChannelCount;
 
       depthwise_AvgMax_Or_ChannelMultiplier = 2; // Step0: double the channel count by depthwise channel multiplier.
-      depthwiseStridesPad = 1;
-      pointwise21ChannelCount = 
-      pointwise22ChannelCount =
+      depthwiseStridesPad = 0; // In this mode, always ( strides = 1, pad = "valid" ).
+      pointwise21ChannelCount = sourceChannelCount * depthwise_AvgMax_Or_ChannelMultiplier; // Step0 will double channel count.
+      pointwise22ChannelCount = 0; // No second output.
 
-      let step0 = this.step0 = new PointDepthPoint.Base();
-      let step0Initer = step0.initer( progressForStep0,
+      // If there is only one step, this (step 0) is also the last step of this block (i.e. at-block-end) and a different activation
+      // function may be used after pointwise2 convolution.
+      if ( 1 == stepCount ) {
+        pointwise21ActivationId = this.nActivationIdAtBlockEnd;
+      }
+
+      this.stepsArray = new Array( stepCount );
+
+      let params;
+      params = new PointDepthPoint.Params(
+        params.defaultInput, this.byteOffsetEnd,
+        pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
+        depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, depthwiseStridesPad,depthwiseBias, depthwiseActivationId,
+        pointwise21ChannelCount, pointwise21Bias, pointwise21ActivationId,
+        pointwise22ChannelCount, pointwise22Bias, pointwise22ActivationId,
+      )
+
+      this.stepsArray[ 0 ] = new PointDepthPoint.Base();
+      let step0Initer = this.step0.initer( progressForStepsArray[ 0 ],
         sourceChannelCount,
         ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT, // no add-input-to-output, no concatenate.
-        bKeepInputTensor,  // Step 0 may or may not keep input tensor according to caller's necessary. 
-        new PointDepthPoint.Params(
-          params.defaultInput, this.byteOffsetEnd,
-          pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
-          depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, depthwiseStridesPad,depthwiseBias, depthwiseActivationId,
-          pointwise2ChannelCount, pointwise21Bias, pointwise21ActivationId,
-          pointwise2ChannelCount, pointwise21Bias, pointwise21ActivationId,
-        )
+        bKeepInputTensor,  // Step0 may or may not keep input tensor according to caller's necessary.
+        params
       );
-                                     
-      this.bInitOk = yield* step0Initer;
-      if ( !this.bInitOk ) {
-        return false;
 
+      this.bInitOk = yield* step0Initer;
+      if ( !this.bInitOk )
+        return false;
       this.byteOffsetEnd = this.step0.byteOffsetEnd;
 
 //!!! ...unfinished... (2021/07/28)
-      let progressForSteps1AfterArray = new Array( stepCount - 1 ); // Progress for step1, 2, 3, ... 
-      for ( let i = 0; i < progressForSteps1AfterArray.length; ++i ) {
-        progressForSteps1AfterArray[ i ] = progressForSteps1After.addChild( new ValueMax.Percentage.Aggregate() );
+      depthwise_AvgMax_Or_ChannelMultiplier = 1; // Only step0 will double the channel count.
+      pointwise21ChannelCount = this.stepsArray[ 0 ].outChannelsAll; // Step0's output channel count is the final channel count.
+
+      for ( let i = 1; i < this.stepsArray.length; ++i ) { // Step1, 2, 3, ...
+
+        // If this is the last step of this block (i.e. at-block-end), a different activation function may be used after
+        // pointwise2 convolution.
+        if ( i == ( this.stepsArray.length - 1 ) ) {
+          pointwise21ActivationId = nActivationIdAtBlockEnd;
+        }
+
+        params = new PointDepthPoint.Params(
+          params.defaultInput, this.byteOffsetEnd,
+          pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
+          depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, depthwiseStridesPad,depthwiseBias, depthwiseActivationId,
+          pointwise21ChannelCount, pointwise21Bias, pointwise21ActivationId,
+          pointwise22ChannelCount, pointwise22Bias, pointwise22ActivationId,
+        )
+
+//!!! ...unfinished... (2021/07/28)
+        let step = new PointDepthPoint.Base();
+        let stepIniter = step.initer(
+          channelCount_pointwise1Before,
+          pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
+          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId,
+          pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationId,
+          this.bAddInputToOutput,
+          false // No matter bKeepInputTensor, all steps (except step 0) should not keep input tensor.
+        );
+
+        this.steps1After[ i ] = step;
+      }
+
+      if ( 1 == stepCountPerBlock ) {
+        this.stepLast = this.step0; // If there is only one step, it is also the last step.
+      } else {
+        this.stepLast = this.steps1After[ this.steps1After.length - 1 ]; // Shortcut to the last step.
       }
 
 
@@ -677,39 +719,51 @@ class Base {
 
   /** Release all tensors. */
   disposeTensors() {
-//!!! (2021/04/10) ...unfinished... Using ChannelShuffler.ConcatPointwiseConv instead.
-    if ( this.concatGather ) {
-      this.concatGather.disposeTensors();
-      this.concatGather = null;
-    }
+//!!! (2021/07/28 Remarked) Old Codes.
+// //!!! (2021/04/10) ...unfinished... Using ChannelShuffler.ConcatPointwiseConv instead.
+//     if ( this.concatGather ) {
+//       this.concatGather.disposeTensors();
+//       this.concatGather = null;
+//     }
+//
+//     if ( this.concatPointwiseConv ) {
+//       this.concatPointwiseConv.disposeTensors();
+//       this.concatPointwiseConv = null;
+//     }
+//
+//     if ( this.concatTensorArray ) {
+//       this.concatTensorArray = null;
+//     }
+//
+//     if ( this.step0 ) {
+//       this.step0.disposeTensors();
+//       this.step0 = null;
+//     }
+//
+//     if ( this.step0Branch ) {
+//       this.step0Branch.disposeTensors();
+//       this.step0Branch = null;
+//     }
+//
+//     if ( this.steps1After ) {
+//       for ( let step of this.steps1After ) {
+//         step.disposeTensors();
+//       }
+//       this.steps1After = null;
+//     }
 
-    if ( this.concatPointwiseConv ) {
-      this.concatPointwiseConv.disposeTensors();
-      this.concatPointwiseConv = null;
-    }
-
-    if ( this.concatTensorArray ) {
-      this.concatTensorArray = null;
-    }
-
-    if ( this.step0 ) {
-      this.step0.disposeTensors();
-      this.step0 = null;
-    }
-
-    if ( this.step0Branch ) {
-      this.step0Branch.disposeTensors();
-      this.step0Branch = null;
-    }
-
-    if ( this.steps1After ) {
-      for ( let step of this.steps1After ) {
+    if ( this.stepsArray ) {
+      for ( let i = 0; i < this.stepsArray.length ) {
+        let step = this.stepsArray[ i ];
         step.disposeTensors();
       }
-      this.steps1After = null;
+      this.stepsArray.length = 0;
     }
 
     this.stepLast = null; // It has already de disposed by this.step0 or this.steps1After.
+
+    this.apply_and_destroy_or_keep = null;
+    this.outputChannelCount = -1;
 
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
