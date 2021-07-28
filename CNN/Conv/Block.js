@@ -711,24 +711,22 @@ class Base {
    * @return {tf.tensor3d} Return a new tensor. All other intermediate tensors were disposed.
    */
   static apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput( inputTensor ) {
-//!!! (2021/07/28 Remarked) Old Codes.
-//    return this.step0.apply_and_destroy_or_keep( inputTensor );
 
     let inputTensors = this.intermediateTensorsArrayArray[ 0 ];
     let outputTensors = this.intermediateTensorsArrayArray[ 1 ];
 
-    inputTensors[ 0 ] = inputTensor;
-    inputTensors[ 1 ] = null;
+    outputTensors[ 0 ] = inputTensor;
+    outputTensors[ 1 ] = null;
 
-//!!! ...unfinished... (2021/07/28)
+//!!! ...unfinished... (2021/07/28) need test
     let swapTensors;
     for ( let i = 0; i < this.stepsArray.length ) {
+      swapTensors = inputTensors; inputTensors = outputTensors; outputTensors = swapTensors; // Swap input and output tensor array for next step.
       let step = this.stepsArray[ i ];
       step.apply_and_destroy_or_keep( inputTensors, outputTensors );
-
-      // Swap input tensor array and output tensor array for next step.
-      swapTensors = inputTensors; inputTensors = outputTensors; outputTensors = swapTensors;
     }
+
+    return outputTensors[ 0 ];
   }
 
 //!!! ...unfinished... (2021/07/27) How to specify this configuration? ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 )
@@ -862,11 +860,6 @@ class Base {
     }
 
     return t;
-  }
-
-  /** @return {boolean} Return true if this object initialized (i.e. initer()) successfully. */
-  isValid() {
-    return this.bInitOk;
   }
 
 }
