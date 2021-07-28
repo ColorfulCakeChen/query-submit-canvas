@@ -33,7 +33,7 @@ class Params extends Weights.Params {
 
 //!!! ...unfinished... (2021/07/28) What if ( depthwiseFilterHeight == 1 )?
 
-   *   - If zero or negative (<= 0), the step count will be automatically calculated so that the block's output has half
+   *   - If zero (== 0), the step count will be automatically calculated so that the block's output has half
    *     ( height, width ) and double channel count (depth). It is achieved by:
    *       - step0: tf.depthwiseConv2d( strides = 1, pad = "valid" ) with channel multiplier 2 to double the channel count.
    *       - step1 to step(Last-1): tf.depthwiseConv2d( strides = 1, pad = "valid" ).
@@ -148,7 +148,7 @@ class Params extends Weights.Params {
 
 
 // Define parameter descriptions.
-Params.stepCountPerBlock =               new ParamDesc.Int(                         "stepCountPerBlock",          0, ( 10 * 1024 ) );
+Params.stepCountPerBlock =               new ParamDesc.Int(                         "stepCountPerBlock",          0, ( 1 * 1024 ) );
 Params.bChannelShuffler =                new ParamDesc.Bool(                        "bChannelShuffler" );
 Params.pointwise1ChannelCountRate =      new ParamDesc.Int(                         "pointwise1ChannelCountRate", 0,             2 );
 Params.depthwiseChannelMultiplierStep0 = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwiseChannelMultiplierStep0" );
@@ -355,7 +355,7 @@ class Base {
 
 //!!! ...unfinished... (2021/07/28) should detect every step's initer successful or failed.
 
-    if ( this.stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
+    if ( this.stepCountPerBlock == 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
 //!!! ...unfinished... (2021/07/28)
       // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
