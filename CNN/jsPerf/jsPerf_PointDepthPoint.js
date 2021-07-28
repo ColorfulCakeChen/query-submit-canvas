@@ -13,7 +13,7 @@ import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
 /**
  * Test CNN PointDepthPoint.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/336/colorfulcakechen-cnn-pointdepthpoint-9f937bf70feecef074}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/337/colorfulcakechen-cnn-pointdepthpoint-5f2b8ae36380ea6393}
  */
 
 /**
