@@ -32,6 +32,19 @@ class Params extends Weights.Params {
    *       height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until
    *       the block end.
    *
+
+//!!! ...unfinished... (2021/07/28)
+// Problem: When ( stepCountPerBlock <= 0 ), the depthwiseChannelMultiplierStep0 is used for expanding channels. Perhaps, use
+// abs( stepCountPerBlock ) as its depthwiseChannelMultiplier. If ( stepCountPerBlock == 0 ), depthwiseChannelMultiplier will
+// be 1 forcibly.
+// (However, it usually should be enough that channel multiplier is 1 or 2 (no need to be more?).)
+//
+// Or, when ( stepCountPerBlock <= 0 ), the step count will be automatically calculated so that the block's output has
+// half ( height, width ) and double channel count (depth).
+//
+//
+//
+
    * @param {boolean} bChannelShuffler
    *   If true, this block will be similar to ShuffleNetV2 (i.e. split and concat channels). If false, this block will be similar to
    * MobileNetV1 or MobileNetV2 (i.e. add input to output). If null, it will be extracted from inputFloat32Array (i.e. by evolution). If
@@ -51,11 +64,6 @@ class Params extends Weights.Params {
 //!!! ...unfinished... (2021/07/27) In reality, it is almost no reason to use only avg/max pooling to compose a block because it keep
 // too little information for the next block. So, it should be possible to combine ( bChannelShuffler, pointwise1ChannelCountRate,
 // depthwiseChannelMultiplierStep0 ) into only one parameter.
-//
-// Problem: When ( stepCountPerBlock <= 0 ), the depthwiseChannelMultiplierStep0 is used for expanding channels. Perhaps, use
-// abs( stepCountPerBlock ) as its depthwiseChannelMultiplier. If ( stepCountPerBlock == 0 ), depthwiseChannelMultiplier will
-// be 1 forcibly.
-// (However, it usually should be enough that channel multiplier is 1 or 2 (no need to be more?).)
 //
 //
 // In my opinion, a max pooling may be used as a branch of input0. The max pooling result of input0 should be concatenated with the
