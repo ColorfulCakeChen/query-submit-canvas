@@ -243,24 +243,29 @@ class Base {
     // 0. Prepare
 
 //!!! ...unfinished... (2021/07/28) should create ValueMax.Percentage.Aggregate for every PointDepthPoint's init.
+// This, however, should be done according to stepCountPerBlock.
+    
     // Estimate the maximum value of progress.
     let progressMax =
       1    // for extracting parameters from inputFloat32Array.
-      + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
-      + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
-      + 1  // for extracting pointwise2 filters (and biases) from inputFloat32Array and building tensors.
-      + 1  // for all pointwise1-depthwise-pointwise2 filters (and biases) ready.
+//!!! (2021/07/28 Remarked)
+//       + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
+//       + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
+//       + 1  // for extracting pointwise2 filters (and biases) from inputFloat32Array and building tensors.
+//       + 1  // for all pointwise1-depthwise-pointwise2 filters (and biases) ready.
       ;
 
+//!!! ...unfinished... (2021/07/28)
     let progressRoot = progressParent.getRoot();
-    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
+    let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) ); // For parameters extracting.
+    let progressForStep0 = progressParent.addChild( new ValueMax.Percentage.Aggregate() ); // for step0.
+    let progressForSteps1After = progressParent.addChild( new ValueMax.Percentage.Aggregate() ); // for step1, 2, 3, ... 
 
     this.disposeTensors();
 
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
-//!!! ...unfinished... (2021/07/27)
     this.bKeepInputTensor = bKeepInputTensor;
 
     // 1. Extract parameters.
@@ -327,6 +332,8 @@ class Base {
     let pointwise2Bias = bBias;
     let pointwise2ActivationId = nActivationId;
 
+//!!! ...unfinished... (2021/07/28) should detect every step's initer successful or failed.
+
     if ( stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
       // Only one step (i.e. step 0 ) for depthwise operation with ( strides = 1, pad = "valid" )
@@ -349,7 +356,7 @@ class Base {
       pointwise2ActivationId = nActivationIdAtBlockEnd;
 
       let step0 = this.step0 = new PointDepthPoint.Base();
-      step0.init(
+      let step0Initer = step0.initer( progressForStep0,
         sourceChannelCount,
         pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId,
@@ -357,6 +364,8 @@ class Base {
         false, // It is not possible to add-input-to-output, because ( depthwisePad == "valid" ).
         bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
       );
+      
+      this.bInitOk = yield* step0Initer;
 
       this.stepLast = step0;
       this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
@@ -538,10 +547,11 @@ class Base {
           this.stepLast = this.steps1After[ this.steps1After.length - 1 ]; // Shortcut to the last step.
         }
       }
+//!!! ...unfinished... (2021/07/28)
+      this.bInitOk = true;
     }
 
-    this.bInitOk = true;
-    return true;
+    return this.bInitOk;
   }
 
   /**
