@@ -55,6 +55,7 @@ class Params extends Weights.Params {
 // Problem: When ( stepCountPerBlock <= 0 ), the depthwiseChannelMultiplierStep0 is used for expanding channels. Perhaps, use
 // abs( stepCountPerBlock ) as its depthwiseChannelMultiplier. If ( stepCountPerBlock == 0 ), depthwiseChannelMultiplier will
 // be 1 forcibly.
+// (However, it usually should be enough that channel multiplier is 1 or 2 (no need to be more?).)
 //
 //
 // In my opinion, a max pooling may be used as a branch of input0. The max pooling result of input0 should be concatenated with the
@@ -241,7 +242,7 @@ class Base {
 
     // 0. Prepare
 
-//!!! ...unfinished... (2021/07/27)
+//!!! ...unfinished... (2021/07/28) should create ValueMax.Percentage.Aggregate for every PointDepthPoint's init.
     // Estimate the maximum value of progress.
     let progressMax =
       1    // for extracting parameters from inputFloat32Array.
