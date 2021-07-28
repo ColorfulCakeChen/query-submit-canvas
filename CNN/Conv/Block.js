@@ -341,54 +341,50 @@ class Base {
 
 
 //!!! ...unfinished... (2021/07/28)
-    this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
+//    this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
-    let pointwise1Bias = this.bBias;
-    let pointwise1ActivationId = this.nActivationId;
-    let depthwiseBias = this.bBias;
-    let depthwiseActivationId = this.nActivationId;
-    let pointwise21Bias = this.bBias;
-    let pointwise21ActivationId = this.nActivationId;
-    let pointwise22Bias = this.bBias;
-    let pointwise22ActivationId = this.nActivationId;
+    let channelCount0_pointwise1Before;
+    let pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId;
+    let depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, depthwiseBias, depthwiseActivationId;
+    let pointwise21ChannelCount, pointwise21Bias, pointwise21ActivationId;
+    let pointwise22ChannelCount, pointwise22Bias, pointwise22ActivationId;
+    let bShouldKeepInputTensor;
+    let params;
 
-//!!! ...unfinished... (2021/07/28) should detect every step's initer successful or failed.
+    // By default, all convolution use the same bias flag and activation function.
+    pointwise1Bias = depthwiseBias = pointwise21Bias = pointwise22Bias = this.bBias;
+    pointwise1ActivationId = depthwiseActivationId = pointwise21ActivationId = pointwise22ActivationId = this.nActivationId;
 
     if ( this.stepCountPerBlock == 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
-//!!! ...unfinished... (2021/07/28)
       // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
+      let stepCount;
+      {
+        // The target size is the result of a depthwise convolution with ( strides = 2, pad = "same" ).
+        let targetHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
+        //let targetWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
 
-      // The target size is the result of a depthwise convolution with ( strides = 2, pad = "same" ).
-      let targetHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
-      //let targetWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
+        let differenceHeight = sourceHeight - targetHeight;
+        //let differenceWidth =  sourceWidth  - targetWidth;
 
-      let differenceHeight = sourceHeight - targetHeight;
-      //let differenceWidth =  sourceWidth  - targetWidth;
+        if ( this.depthwiseFilterHeight == 1 )
+          this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
 
-      if ( this.depthwiseFilterHeight == 1 )
-        this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
+        // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
+        let heightReducedPerStep = this.depthwiseFilterHeight - 1;
 
-      // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
-      let heightReducedPerStep = this.depthwiseFilterHeight - 1;
-
-      // The step count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
-      let stepCount = Math.floor( differenceHeight / heightReducedPerStep );
+        // The step count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
+        stepCount = Math.floor( differenceHeight / heightReducedPerStep );
 
 //!!! ...unfinished... (2021/07/28) What if ( stepCount == 0 )?
-
-      let progressForStepsArray = new Array( stepCount ); // Progress for step0, 1, 2, 3, ... 
-      for ( let i = 0; i < progressForStepsArray.length; ++i ) {
-        progressForStepsArray[ i ] = progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
       }
 
-      let channelCount0_pointwise1Before;
-      let pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, pointwise21ChannelCount, pointwise22ChannelCount;
-      let bShouldKeepInputTensor;
-      let params;
+      for ( let i = 0; i < stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
+        progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
+      }
 
-      pointwise1ChannelCount = 0; // In this mode, always no pointwise convolution before depthwise convolution.
-      depthwiseStridesPad = 0; // In this mode, always ( strides = 1, pad = "valid" ).
+      pointwise1ChannelCount = 0;  // In this mode, always no pointwise convolution before depthwise convolution.
+      depthwiseStridesPad = 0;     // In this mode, always ( strides = 1, pad = "valid" ).
       pointwise22ChannelCount = 0; // In this mode, always no second output.
 
       this.stepsArray = new Array( stepCount );
@@ -416,7 +412,7 @@ class Base {
         )
 
         let step = this.stepsArray[ i ] = new PointDepthPoint.Base();
-        let stepIniter = step.initer( progressForStepsArray[ i ],
+        let stepIniter = step.initer( progressForSteps.children[ i ],
           channelCount0_pointwise1Before,
           ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT, // no add-input-to-output, no concatenate.
           bShouldKeepInputTensor,
@@ -443,6 +439,8 @@ class Base {
       this.outputChannelCount = this.stepsArray[ 0 ].outputChannelCount;
 
     } else {  // ShuffleNetV2, or MobileNetV2.
+
+//!!! ...unfinished... (2021/07/28) should detect every step's initer successful or failed.
 
 //!!! ...unfinished... (2021/07/27)
 //    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 0 ), will be simplified ShuffleNetV2 (expanding by once depthwise).
