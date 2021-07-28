@@ -26,11 +26,11 @@ class Params extends Weights.Params {
    * @param {number} stepCountPerBlock
    *   There are how many steps inside this block.
    *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   *   - If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) for shrinking
-   *       sourceHeight by minus ( filterHeight - 1 ).
-   *   - If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
-   *       by halving height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
-   *       until the block end.
+   *   - If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) to shrink
+   *       sourceHeight (i.e. to be minus ( filterHeight - 1 ) ).
+   *   - If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink (i.e. to halve
+   *       height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until
+   *       the block end.
    *
    * @param {boolean} bChannelShuffler
    *   If true, this block will be similar to ShuffleNetV2 (i.e. split and concat channels). If false, this block will be similar to
