@@ -26,8 +26,18 @@ class Params extends Weights.Params {
    * @param {number} stepCountPerBlock
    *   There are how many steps inside this block.
    *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   *   - If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) to shrink
-   *       sourceHeight (i.e. to be minus ( filterHeight - 1 ) ).
+
+//!!! ...unfinished... (2021/07/28 Remarked) Old Design
+//    *   - If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) to shrink
+//    *       sourceHeight (i.e. to be minus ( filterHeight - 1 ) ).
+
+//!!! ...unfinished... (2021/07/28)
+   *   - If zero or negative (<= 0), the step count will be automatically calculated so that the block's output has half
+   *     ( height, width ) and double channel count (depth). It is achieved by:
+   *       - step0: tf.depthwiseConv2d( strides = 1, pad = "valid" ) with channel multiplier 2 to double the channel count.
+   *       - step1 to step(Last-1): tf.depthwiseConv2d( strides = 1, pad = "valid" ).
+   *       - stepLast: tf.depthwiseConv2d( strides = 1, pad = "valid" ) and pointwise2.
+   *
    *   - If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink (i.e. to halve
    *       height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until
    *       the block end.
@@ -38,9 +48,6 @@ class Params extends Weights.Params {
 // abs( stepCountPerBlock ) as its depthwiseChannelMultiplier. If ( stepCountPerBlock == 0 ), depthwiseChannelMultiplier will
 // be 1 forcibly.
 // (However, it usually should be enough that channel multiplier is 1 or 2 (no need to be more?).)
-//
-// Or, when ( stepCountPerBlock <= 0 ), the step count will be automatically calculated so that the block's output has
-// half ( height, width ) and double channel count (depth).
 //
 //
 //
