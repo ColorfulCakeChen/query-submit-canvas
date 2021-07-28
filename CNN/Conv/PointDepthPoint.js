@@ -33,19 +33,21 @@ class Params extends Weights.Params {
    * @param {number} channelCount1_pointwise1Before
    *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]).
    *
-   *   - ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: The inputTensors[ 1 ] will not be used at all (will be ignored
-   *     completely). The inputTensors[ 0 ] will be processed by two pathes: one is by pointwise1 and one depthwise operation, the other
-   *     is by another depthwise operation (without pointwise1). These two depthwise operations will have the same configurations
-   *     (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId)
-   *     but have different (filter and bias) weights. The two depthwise results will be concatenated. The concatenated result will
-   *     be processed by pointwise2 convolution. This is the only one case which there will be second depthwise.
+   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE (-2): The inputTensors[ 1 ] will not be used at
+   *     all (will be ignored completel). The inputTensors[ 0 ] will be processed by two pathes: one is by pointwise1 and one
+   *     depthwise operation, the other is by another depthwise operation (without pointwise1). These two depthwise operations will
+   *     have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
+   *     bDepthwiseBias, depthwiseActivationId) but have different (filter and bias) weights. The two depthwise results will be
+   *     concatenated. The concatenated result will be processed by pointwise2 convolution. This is the only one case which there
+   *     will be second depthwise.
    *
-   *   - ( channelCount1_pointwise1Before == -1 ): ONE_INPUT_ADD_TO_OUTPUT: The inputTensors[ 1 ] will not be used at all (will be ignored
-   *     completely). The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution. Finally,
-   *     the inputTensors[ 0 ] will be added to the result of pointwise2. This is the only one case which will do add-input-to-output.
+   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT (-1): The inputTensors[ 1 ] will not be used at
+   *     all (will be ignored completely). The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and
+   *     pointwise2 convolution. Finally, the inputTensors[ 0 ] will be added to the result of pointwise2. This is the only one case
+   *     which will do add-input-to-output.
    *
-   *   - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT: The inputTensors[ 1 ] will not be used at all (will be ignored completely).
-   *     The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution.
+   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0): The inputTensors[ 1 ] will not be used at all (will be
+   *     ignored completely). The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution.
    *
    *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
    *     will not be processed by any pointwise1 and depthwise operation. It will be concatenated directly with the result of depthwise
@@ -189,20 +191,20 @@ class Params extends Weights.Params {
    */
   static setFlags_by_channelCount1_pointwise1Before( channelCount1_pointwise1Before ) {
 
-    if ( channelCount1_pointwise1Before > 0 ) { // ValueDesc.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX (> 0)
+    if ( channelCount1_pointwise1Before > 0 ) { // ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_XXX (> 0)
       this.inputTensorCount = 2; this.bDepthwise2Requested = false; this.bConcatenatorRequested = true; this.bAddInputToOutputRequested = false;
 
     } else {
       switch ( channelCount1_pointwise1Before ) {
-        case ValueDesc.channelCount1_pointwise1Before.Ids.ONE_INPUT: // ( 0)
+        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT: // ( 0)
           this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutputRequested = false;
           break;
 
-        case ValueDesc.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
+        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
           this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested = false; this.bAddInputToOutputRequested =  true;
           break;
 
-        case ValueDesc.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
+        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
           this.inputTensorCount = 1; this.bDepthwise2Requested = this.bConcatenatorRequested =  true; this.bAddInputToOutputRequested = false;
           break;
       }
