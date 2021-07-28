@@ -319,6 +319,9 @@ class Base {
     if ( this.depthwiseChannelMultiplierStep0 == 0 )
       this.depthwiseChannelMultiplierStep0 = 1;
 
+    // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
+    this.intermediateTensorsArrayArray = [ new Array( 2 ), new Array( 2 ) ];
+
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
@@ -343,7 +346,7 @@ class Base {
 //!!! ...unfinished... (2021/07/28)
 //    this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
-    let channelCount0_pointwise1Before;
+    let channelCount0_pointwise1Before, channelCount1_pointwise1Before;
     let pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId;
     let depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, depthwiseBias, depthwiseActivationId;
     let pointwise21ChannelCount, pointwise21Bias, pointwise21ActivationId;
@@ -383,6 +386,7 @@ class Base {
         progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
       }
 
+      channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no add-input-to-output, no concatenate.
       pointwise1ChannelCount = 0;  // In this mode, always no pointwise convolution before depthwise convolution.
       depthwiseStridesPad = 0;     // In this mode, always ( strides = 1, pad = "valid" ).
       pointwise22ChannelCount = 0; // In this mode, always no second output.
@@ -405,6 +409,7 @@ class Base {
 
         params = new PointDepthPoint.Params(
           params.defaultInput, this.byteOffsetEnd,
+          channelCount1_pointwise1Before,
           pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
           depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, depthwiseStridesPad,depthwiseBias, depthwiseActivationId,
           pointwise21ChannelCount, pointwise21Bias, pointwise21ActivationId,
@@ -412,12 +417,7 @@ class Base {
         )
 
         let step = this.stepsArray[ i ] = new PointDepthPoint.Base();
-        let stepIniter = step.initer( progressForSteps.children[ i ],
-          channelCount0_pointwise1Before,
-          ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT, // no add-input-to-output, no concatenate.
-          bShouldKeepInputTensor,
-          params
-        );
+        let stepIniter = step.initer( progressForSteps.children[ i ], channelCount0_pointwise1Before, bShouldKeepInputTensor, params );
 
         this.bInitOk = yield* stepIniter;
         if ( !this.bInitOk )
@@ -434,9 +434,8 @@ class Base {
 
       this.stepLast = this.stepsArray[ this.stepsArray.length - 1 ]; // Shortcut to the last step.
 
-//!!! ...unfinished... (2021/07/28)
-      this.apply_and_destroy_or_keep = Base.???apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
-      this.outputChannelCount = this.stepsArray[ 0 ].outputChannelCount;
+      this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
+      this.outputChannelCount = this.stepsArray[ 0 ].outChannelsAll;
 
     } else {  // ShuffleNetV2, or MobileNetV2.
 
@@ -712,7 +711,24 @@ class Base {
    * @return {tf.tensor3d} Return a new tensor. All other intermediate tensors were disposed.
    */
   static apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput( inputTensor ) {
-    return this.step0.apply_and_destroy_or_keep( inputTensor );
+//!!! (2021/07/28 Remarked) Old Codes.
+//    return this.step0.apply_and_destroy_or_keep( inputTensor );
+
+    let inputTensors = this.intermediateTensorsArrayArray[ 0 ];
+    let outputTensors = this.intermediateTensorsArrayArray[ 1 ];
+
+    inputTensors[ 0 ] = inputTensor;
+    inputTensors[ 1 ] = null;
+
+//!!! ...unfinished... (2021/07/28)
+    let swapTensors;
+    for ( let i = 0; i < this.stepsArray.length ) {
+      let step = this.stepsArray[ i ];
+      step.apply_and_destroy_or_keep( inputTensors, outputTensors );
+
+      // Swap input tensor array and output tensor array for next step.
+      swapTensors = inputTensors; inputTensors = outputTensors; outputTensors = swapTensors;
+    }
   }
 
 //!!! ...unfinished... (2021/07/27) How to specify this configuration? ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 )
