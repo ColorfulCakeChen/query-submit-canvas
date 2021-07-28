@@ -341,28 +341,31 @@ class Base {
 //     PointDepthPoint.Params.setFlags_by_channelCount1_pointwise1Before.call( flags, this.channelCount1_pointwise1Before );
 
 
+//!!! ...unfinished... (2021/07/28)
     this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
-    let pointwise1Bias = bBias;
-    let pointwise1ActivationId = nActivationId;
-    let depthwiseBias = bBias;
-    let depthwiseActivationId = nActivationId;
-    let pointwise2Bias = bBias;
-    let pointwise2ActivationId = nActivationId;
+    let pointwise1Bias = this.bBias;
+    let pointwise1ActivationId = this.nActivationId;
+    let depthwiseBias = this.bBias;
+    let depthwiseActivationId = this.nActivationId;
+    let pointwise21Bias = this.bBias;
+    let pointwise21ActivationId = this.nActivationId;
+    let pointwise22Bias = this.bBias;
+    let pointwise22ActivationId = this.nActivationId;
 
 //!!! ...unfinished... (2021/07/28) should detect every step's initer successful or failed.
 
     if ( this.stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
 //!!! ...unfinished... (2021/07/28)
-      // Calculate the real step count for depthwise convolution with ( strides = , pad = "valid" ).
+      // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
 
       // The target size is the result of a depthwise convolution with ( strides = 2, pad = "same" ).
       let targetHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
-      let targetWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
+      //let targetWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
 
       let differenceHeight = sourceHeight - targetHeight;
-      let differenceWidth =  sourceWidth  - targetWidth;
+      //let differenceWidth =  sourceWidth  - targetWidth;
 
       if ( this.depthwiseFilterHeight == 1 )
         this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
@@ -370,12 +373,57 @@ class Base {
       // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
       let heightReducedPerStep = this.depthwiseFilterHeight - 1;
 
-//!!! ...unfinished... (2021/07/28)
-      // The block count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
-      this.blockCount = Math.floor( differenceHeight / heightReducedPerBlock );
+      // The step count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
+      let stepCount = Math.floor( differenceHeight / heightReducedPerStep );
 
-      // Channel count only be expanded by channel multiplier of depthwise convolution of step 0 of block 0.
-      this.totalChannelExpansionFactor = config.depthwiseChannelMultiplierBlock0Step0;
+//!!! ...unfinished... (2021/07/28) What if ( stepCount == 0 )?
+
+      // If there is only one step, this (step 0) is also the last step of this block (i.e. at-block-end) and a different activation
+      // function may be used after pointwise2 convolution.
+      if ( 1 == stepCount ) {
+        pointwise2ActivationId = this.nActivationIdAtBlockEnd;
+      }
+
+      let pointwise1ChannelCount = 0; // no pointwise convolution before depthwise convolution.
+      let depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, pointwise21ChannelCount, pointwise22ChannelCount;
+
+      depthwise_AvgMax_Or_ChannelMultiplier = 2; // Step0: double the channel count by depthwise channel multiplier.
+      depthwiseStridesPad = 1;
+      pointwise21ChannelCount = 
+      pointwise22ChannelCount =
+
+      let step0 = this.step0 = new PointDepthPoint.Base();
+      let step0Initer = step0.initer( progressForStep0,
+        sourceChannelCount,
+        ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT, // no add-input-to-output, no concatenate.
+        bKeepInputTensor,  // Step 0 may or may not keep input tensor according to caller's necessary. 
+        new PointDepthPoint.Params(
+          params.defaultInput, this.byteOffsetEnd,
+          pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
+          depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, depthwiseStridesPad,depthwiseBias, depthwiseActivationId,
+          pointwise2ChannelCount, pointwise21Bias, pointwise21ActivationId,
+          pointwise2ChannelCount, pointwise21Bias, pointwise21ActivationId,
+        )
+      );
+                                     
+      this.bInitOk = yield* step0Initer;
+      if ( !this.bInitOk ) {
+        return false;
+
+      this.byteOffsetEnd = this.step0.byteOffsetEnd;
+
+//!!! ...unfinished... (2021/07/28)
+      let progressForSteps1AfterArray = new Array( stepCount - 1 ); // Progress for step1, 2, 3, ... 
+      for ( let i = 0; i < progressForSteps1AfterArray.length; ++i ) {
+        progressForSteps1AfterArray[ i ] = progressForSteps1After.addChild( new ValueMax.Percentage.Aggregate() );
+      }
+
+
+
+
+
+
+
 
 
 
