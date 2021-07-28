@@ -260,20 +260,11 @@ class Base {
 
     // 0. Prepare
 
-//!!! ...unfinished... (2021/07/28) should create ValueMax.Percentage.Aggregate for every PointDepthPoint's init.
-// This, however, should be done according to stepCountPerBlock.
-    
     // Estimate the maximum value of progress.
     let progressMax =
       1    // for extracting parameters from inputFloat32Array.
-//!!! (2021/07/28 Remarked)
-//       + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
-//       + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
-//       + 1  // for extracting pointwise2 filters (and biases) from inputFloat32Array and building tensors.
-//       + 1  // for all pointwise1-depthwise-pointwise2 filters (and biases) ready.
       ;
 
-//!!! ...unfinished... (2021/07/28)
     let progressRoot = progressParent.getRoot();
     let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) ); // For parameters extracting.
     let progressForSteps = progressParent.addChild( new ValueMax.Percentage.Aggregate() ); // for step0, step1, 2, 3, ... 
@@ -294,8 +285,7 @@ class Base {
     if ( !params.extract() )
       return false;  // e.g. input array does not have enough data.
 
-    // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
-    this.byteOffsetEnd = params.defaultByteOffsetEnd;
+    this.byteOffsetEnd = params.defaultByteOffsetEnd; // Record where to extract next weights. Only meaningful when ( this.bInitOk == true ).
 
     // Get parameters' real (adjusted) values.
     //
@@ -319,7 +309,7 @@ class Base {
     if ( this.depthwiseChannelMultiplierStep0 == 0 )
       this.depthwiseChannelMultiplierStep0 = 1;
 
-    // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
+    // Pre-allocate array to place intermediate 2 input tensors and 2 output tensors. This could reduce memory re-allocation.
     this.intermediateTensorsArrayArray = [ new Array( 2 ), new Array( 2 ) ];
 
     ++progressToAdvance.value;
