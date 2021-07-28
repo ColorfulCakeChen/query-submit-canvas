@@ -308,10 +308,10 @@ class Base {
 
 //!!! ...unfinished... (2021/07/27)
 //    this.channelCount1_pointwise1Before;
-//     ValueDesc.channelCount1_pointwise1Before.Ids.TWO_INPUTS_XXX (> 0)
-//     ValueDesc.channelCount1_pointwise1Before.Ids.ONE_INPUT: // ( 0)
-//     ValueDesc.channelCount1_pointwise1Before.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
-//     ValueDesc.channelCount1_pointwise1Before.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
+//     ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_XXX (> 0)
+//     ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT: // ( 0)
+//     ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
+//     ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
 //
 //     let flags = {};
 //     PointDepthPoint.Params.setFlags_by_channelCount1_pointwise1Before.call( flags, this.channelCount1_pointwise1Before );
