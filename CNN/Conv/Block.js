@@ -403,7 +403,7 @@ class Base {
 
         // If this is the last step of this block (i.e. at-block-end), a different activation function may be used after
         // pointwise2 convolution.
-        if ( i == ( this.stepsArray.length - 1 ) ) {
+        if ( ( this.stepsArray.length - 1 ) == i ) {
           pointwise21ActivationId = this.nActivationIdAtBlockEnd;
         }
 
