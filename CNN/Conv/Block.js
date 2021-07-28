@@ -382,54 +382,29 @@ class Base {
         progressForStepsArray[ i ] = progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
       }
 
-      let pointwise1ChannelCount = 0; // no pointwise convolution before depthwise convolution.
-      let depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, pointwise21ChannelCount, pointwise22ChannelCount;
+      let channelCount0_pointwise1Before;
+      let pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, pointwise21ChannelCount, pointwise22ChannelCount;
+      let bShouldKeepInputTensor;
+      let params;
 
-      depthwise_AvgMax_Or_ChannelMultiplier = 2; // Step0: double the channel count by depthwise channel multiplier.
+      pointwise1ChannelCount = 0; // In this mode, always no pointwise convolution before depthwise convolution.
       depthwiseStridesPad = 0; // In this mode, always ( strides = 1, pad = "valid" ).
-      pointwise21ChannelCount = sourceChannelCount * depthwise_AvgMax_Or_ChannelMultiplier; // Step0 will double channel count.
-      pointwise22ChannelCount = 0; // No second output.
-
-      // If there is only one step, this (step 0) is also the last step of this block (i.e. at-block-end) and a different activation
-      // function may be used after pointwise2 convolution.
-      if ( 1 == stepCount ) {
-        pointwise21ActivationId = this.nActivationIdAtBlockEnd;
-      }
+      pointwise22ChannelCount = 0; // In this mode, always no second output.
 
       this.stepsArray = new Array( stepCount );
+      for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step1, 2, 3, ...
 
-      let params;
-      params = new PointDepthPoint.Params(
-        params.defaultInput, this.byteOffsetEnd,
-        pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
-        depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, depthwiseStridesPad,depthwiseBias, depthwiseActivationId,
-        pointwise21ChannelCount, pointwise21Bias, pointwise21ActivationId,
-        pointwise22ChannelCount, pointwise22Bias, pointwise22ActivationId,
-      )
-
-      this.stepsArray[ 0 ] = new PointDepthPoint.Base();
-      let step0Initer = this.step0.initer( progressForStepsArray[ 0 ],
-        sourceChannelCount,
-        ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT, // no add-input-to-output, no concatenate.
-        bKeepInputTensor,  // Step0 may or may not keep input tensor according to caller's necessary.
-        params
-      );
-
-      this.bInitOk = yield* step0Initer;
-      if ( !this.bInitOk )
-        return false;
-      this.byteOffsetEnd = this.step0.byteOffsetEnd;
-
-//!!! ...unfinished... (2021/07/28)
-      depthwise_AvgMax_Or_ChannelMultiplier = 1; // Only step0 will double the channel count.
-      pointwise21ChannelCount = this.stepsArray[ 0 ].outChannelsAll; // Step0's output channel count is the final channel count.
-
-      for ( let i = 1; i < this.stepsArray.length; ++i ) { // Step1, 2, 3, ...
+        if ( 0 == i ) { // Step0.
+          channelCount0_pointwise1Before = sourceChannelCount; // Step0 uses the original input channel count.
+          depthwise_AvgMax_Or_ChannelMultiplier = 2;           // Step0 double the channel count by depthwise channel multiplier.
+          pointwise21ChannelCount = sourceChannelCount * depthwise_AvgMax_Or_ChannelMultiplier; // Step0 will double channel count.
+          bShouldKeepInputTensor = bKeepInputTensor; // Step0 may or may not keep input tensor according to caller's necessary.
+        }
 
         // If this is the last step of this block (i.e. at-block-end), a different activation function may be used after
         // pointwise2 convolution.
         if ( i == ( this.stepsArray.length - 1 ) ) {
-          pointwise21ActivationId = nActivationIdAtBlockEnd;
+          pointwise21ActivationId = this.nActivationIdAtBlockEnd;
         }
 
         params = new PointDepthPoint.Params(
@@ -440,73 +415,32 @@ class Base {
           pointwise22ChannelCount, pointwise22Bias, pointwise22ActivationId,
         )
 
-//!!! ...unfinished... (2021/07/28)
-        let step = new PointDepthPoint.Base();
-        let stepIniter = step.initer(
-          channelCount_pointwise1Before,
-          pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
-          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId,
-          pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationId,
-          this.bAddInputToOutput,
-          false // No matter bKeepInputTensor, all steps (except step 0) should not keep input tensor.
+        let step = this.stepsArray[ i ] = new PointDepthPoint.Base();
+        let stepIniter = step.initer( progressForStepsArray[ i ],
+          channelCount0_pointwise1Before,
+          ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT, // no add-input-to-output, no concatenate.
+          bShouldKeepInputTensor,
+          params
         );
 
-        this.steps1After[ i ] = step;
+        this.bInitOk = yield* stepIniter;
+        if ( !this.bInitOk )
+          return false;
+        this.byteOffsetEnd = this.step.byteOffsetEnd;
+
+        if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
+          channelCount0_pointwise1Before = step.outChannelsAll; // Step0's output channel count is all the other steps' input channel count.
+          depthwise_AvgMax_Or_ChannelMultiplier = 1;            // Except step0, all other steps will not double the channel count.
+          pointwise21ChannelCount = step.outChannelsAll;        // Step0's output channel count is all the other steps' output channel count.
+          bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step 0) should not keep input tensor.
+        }
       }
 
-      if ( 1 == stepCountPerBlock ) {
-        this.stepLast = this.step0; // If there is only one step, it is also the last step.
-      } else {
-        this.stepLast = this.steps1After[ this.steps1After.length - 1 ]; // Shortcut to the last step.
-      }
+      this.stepLast = this.stepsArray[ this.stepsArray.length - 1 ]; // Shortcut to the last step.
 
-
-
-
-
-
-
-
-
-
-
-
-
-//!!! (2021/07/28 Remarked) Old Codes.
-      // Only one step (i.e. step 0 ) for depthwise operation with ( strides = 1, pad = "valid" )
-      // for shrinking sourceHeight (minus ( filterHeight - 1 )).
-
-      let pointwise1ChannelCount = 0; // no pointwise convolution before depthwise convolution.
-      let pointwise2ChannelCount;
-
-      let depthwise_AvgMax_Or_ChannelMultiplier = depthwiseChannelMultiplierStep0; // (Can not be zero.)
-      if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) { // Depthwise convolution.
-        pointwise2ChannelCount = sourceChannelCount * depthwiseChannelMultiplierStep0;
-      } else {                                       // Avg pooling, or Max pooling.
-        pointwise2ChannelCount = sourceChannelCount; // The output channel count of average (or max) pooling is the same as input channel count.
-      }
-
-      let depthwiseStridesPad = 0; // ( depthwiseStrides == 1 ) and ( depthwisePad == "valid" ) so that shrinking sourceHeight a little.
-
-      // This is the last step of this block (i.e. at-block-end) because ( stepCountPerBlock <= 0 ) means there is only one step inside
-      // this block. And a different activation function may be used after pointwise2 convolution.
-      pointwise2ActivationId = nActivationIdAtBlockEnd;
-
-      let step0 = this.step0 = new PointDepthPoint.Base();
-      let step0Initer = step0.initer( progressForStep0,
-        sourceChannelCount,
-        pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId,
-        pointwise2ChannelCount, pointwise2Bias, pointwise2ActivationId,
-        false, // It is not possible to add-input-to-output, because ( depthwisePad == "valid" ).
-        bKeepInputTensor  // Step 0 may or may not keep input tensor according to caller's necessary. 
-      );
-      
-      this.bInitOk = yield* step0Initer;
-
-      this.stepLast = step0;
-      this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
-      this.outputChannelCount = step0.outputChannelCount;
+//!!! ...unfinished... (2021/07/28)
+      this.apply_and_destroy_or_keep = Base.???apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
+      this.outputChannelCount = this.stepsArray[ 0 ].outputChannelCount;
 
     } else {  // ShuffleNetV2, or MobileNetV2.
 
