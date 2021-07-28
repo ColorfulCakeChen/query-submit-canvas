@@ -300,6 +300,9 @@ class Base {
     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
     this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
 
+
+//!!! ...unfinished... (2021/07/28) If depthwiseChannelMultiplierStep0 is removed, this codes should also be removed.
+
     // The depthwise channel multipler of the step 0 can not be Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0).
     // Otherwise, the input image will not be shrinked a little (for ( stepCountPerBlock <= 0 )) or will not be halven
     // (for ( stepCountPerBlock >= 1 ). So force to 1 at least (always needs depthwise operation).
