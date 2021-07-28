@@ -31,12 +31,15 @@ class Params extends Weights.Params {
 //    *   - If zero or negative (<= 0), every block will use only one tf.depthwiseConv2d( strides = 1, pad = "valid" ) to shrink
 //    *       sourceHeight (i.e. to be minus ( filterHeight - 1 ) ).
 
-//!!! ...unfinished... (2021/07/28)
+//!!! ...unfinished... (2021/07/28) What if ( depthwiseFilterHeight == 1 )?
+
    *   - If zero or negative (<= 0), the step count will be automatically calculated so that the block's output has half
    *     ( height, width ) and double channel count (depth). It is achieved by:
    *       - step0: tf.depthwiseConv2d( strides = 1, pad = "valid" ) with channel multiplier 2 to double the channel count.
    *       - step1 to step(Last-1): tf.depthwiseConv2d( strides = 1, pad = "valid" ).
    *       - stepLast: tf.depthwiseConv2d( strides = 1, pad = "valid" ) and pointwise2.
+   *       - If ( depthwiseFilterHeight == 1 ), depthwiseFilterHeight will become 2 forcibly. Otherwise, the image size
+   *         could not be shrinked.
    *
    *   - If positive (>= 1), every block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink (i.e. to halve
    *       height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until
@@ -349,8 +352,37 @@ class Base {
 
 //!!! ...unfinished... (2021/07/28) should detect every step's initer successful or failed.
 
-    if ( stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
+    if ( this.stepCountPerBlock <= 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
+//!!! ...unfinished... (2021/07/28)
+      // Calculate the real step count for depthwise convolution with ( strides = , pad = "valid" ).
+
+      // The target size is the result of a depthwise convolution with ( strides = 2, pad = "same" ).
+      let targetHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
+      let targetWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
+
+      let differenceHeight = sourceHeight - targetHeight;
+      let differenceWidth =  sourceWidth  - targetWidth;
+
+      if ( this.depthwiseFilterHeight == 1 )
+        this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
+
+      // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
+      let heightReducedPerStep = this.depthwiseFilterHeight - 1;
+
+//!!! ...unfinished... (2021/07/28)
+      // The block count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
+      this.blockCount = Math.floor( differenceHeight / heightReducedPerBlock );
+
+      // Channel count only be expanded by channel multiplier of depthwise convolution of step 0 of block 0.
+      this.totalChannelExpansionFactor = config.depthwiseChannelMultiplierBlock0Step0;
+
+
+
+
+
+
+//!!! (2021/07/28 Remarked) Old Codes.
       // Only one step (i.e. step 0 ) for depthwise operation with ( strides = 1, pad = "valid" )
       // for shrinking sourceHeight (minus ( filterHeight - 1 )).
 
