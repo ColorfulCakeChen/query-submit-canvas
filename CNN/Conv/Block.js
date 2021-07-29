@@ -172,6 +172,24 @@ Params.nActivationIdAtBlockEnd =         new ParamDesc.ActivationFunction(      
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {PointDepthPoint.Base} step0
+ *   The first computation step of this block.
+ *
+ * @member {PointDepthPoint.Base} stepLast
+ *   The last computation step of this block. It may be the same as this.step0 when there is only one step inside this block.
+ *
+ * @member {PointDepthPoint.Base[]} stepsArray
+ *   All computation steps of this block.
+ *
+ * @member {number} outputHeight
+ *   The output image height of this block's last step.
+ *
+ * @member {number} outputWidth
+ *   The output image width of this block's last step.
+ *
+ * @member {number} outputChannelCount
+ *   The output channel count of this block's last step.
+ *
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has an parameter inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which
  * will be processed. It returns a new tf.tensor3d. All other tensors will be disposed. But inputTensor could be kept
@@ -179,16 +197,6 @@ Params.nActivationIdAtBlockEnd =         new ParamDesc.ActivationFunction(      
  * apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput(), apply_and_destroy_or_keep_ChannelShuffle(),
  * apply_and_destroy_or_keep_AddInputToOutput() according to the init()'s parameters.
  *
- * @member {number} outputChannelCount
- *   The output channel count of this block's last step.
- *
- * @member {PointDepthPoint.Base} step0
- *   The first step computation of this block.
- *
- * @member {PointDepthPoint.Base} stepLast
- *   The last step computation of this block. It may be the same as this.step0 when there is only one step inside this block.
- *
- * @see ChannelShuffler.ConcatPointwiseConv
  */
 class Base {
 
@@ -353,6 +361,11 @@ class Base {
 
     if ( this.stepCountPerBlock == 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
+//!!! ...unfinished... (2021/07/29) What if can not achieve the output size?
+      // The target size is the result of a depthwise convolution with ( strides = 2, pad = "same" ).
+      this.outputHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
+      this.outputWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
+
       // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
       let stepCount;
       {
@@ -425,12 +438,17 @@ class Base {
         }
       }
 
+      this.step0 = this.stepsArray[ 0 ]; // Shortcut to the first step.
       this.stepLast = this.stepsArray[ this.stepsArray.length - 1 ]; // Shortcut to the last step.
 
+      this.outputChannelCount = this.stepLast.outChannelsAll;
       this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
-      this.outputChannelCount = this.stepsArray[ 0 ].outChannelsAll;
 
     } else {  // ShuffleNetV2, or MobileNetV2.
+
+      // The target size is the result of a depthwise convolution with ( strides = 2, pad = "same" ).
+      this.outputHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
+      this.outputWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
 
 //!!! ...unfinished... (2021/07/28) should detect every step's initer successful or failed.
 
