@@ -374,39 +374,9 @@ class Base {
     if ( this.stepCountPerBlock == 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
       // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
-      let stepCount;
-      let depthwiseFilterHeightLast; // The last step's depthwise filter size.
-      {
-        let differenceHeight = sourceHeight - this.outputHeight;
-        //let differenceWidth =  sourceWidth  - this.outputWidth;
-
-//!!! ...unfinished... (2021/07/29) if ( differenceHeight == 0 ), should use depthwise filter 1x1 so that there is at least one step. 
-
-        if ( this.depthwiseFilterHeight <= 1 )
-          this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
-
-        // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
-        let heightReducedPerStep = this.depthwiseFilterHeight - 1;
-
-        // The possible step count for reducing sourceHeight to outputHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
-        //
-        // This value may be less than real step count because the filter size of the last step may be larger than its input.
-        let stepCountCandidate = Math.floor( differenceHeight / heightReducedPerStep );
-
-        let differenceHeightLast = differenceHeight - ( stepCountCandidate * heightReducedPerStep ); // The last step should reduce so many height.
-        if ( 0 == differenceHeightLast ) { // The original depthwiseFilterHeight could achieve the output size. 
-          stepCount = stepCountCandidate; // It is the real step count.
-          depthwiseFilterHeightLast = this.depthwiseFilterHeight; // Using original depthwise filter size is good enough.
-
-        } else { // The original depthwiseFilterHeight could not achieve the output size. It is larger than the last step's input size.
-          stepCount = stepCountCandidate + 1; // Needs one more step.
-          depthwiseFilterHeightLast = differenceHeightLast + 1; // The last step's depthwise filter size should just eliminate the last diffference.
-        }
-
-//!!! ...unfinished... (2021/07/29) What if can not achieve the output size?
-
-//!!! ...unfinished... (2021/07/28) What if ( stepCount == 0 )?
-      }
+      let { stepCount, depthwiseFilterHeightLast } = Base.calc_stepCount_depthwiseFilterHeightLast_when_Strides_1_Pad_Valid.call( this );
+//       let ;
+//       let ; // The last step's depthwise filter size.
 
       for ( let i = 0; i < stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
         progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
@@ -728,6 +698,58 @@ class Base {
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
   }
+
+  /**
+   * Compute how many step shoud be used and what is the last step's depthwise filter size, when shrink sourceHeight to outputHeight
+   * by depthwise convolution with ( strides = 1, pad = "valid" ).
+   *
+   * @param {Base} this
+   *   This Block.Base object with this.sourceHeight, this.outputHeight, this.depthwiseFilterHeight.
+   *
+   * @return {object}
+   *   Return an object { stepCount, depthwiseFilterHeightLast }. The stepCount will be at least 1 (never 0). The depthwiseFilterHeightLast
+   * will be at least 1 (at most this.depthwiseFilterHeight).
+   */
+  static calc_stepCount_depthwiseFilterHeightLast_when_Strides_1_Pad_Valid() {
+
+    // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
+    let stepCount;
+    let depthwiseFilterHeightLast; // The last step's depthwise filter size.
+
+    let differenceHeight = this.sourceHeight - this.outputHeight;
+    //let differenceWidth =  this.sourceWidth  - this.outputWidth;
+
+    if ( 0 == differenceHeight ) { // No difference between source and output size.
+      stepCount = 1; // Only one step is needed. (Avoid no steps. At least, there should be one step.)
+      depthwiseFilterHeightLast == 1;
+
+    } else {
+
+      if ( this.depthwiseFilterHeight <= 1 )
+        this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
+
+      // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
+      let heightReducedPerStep = this.depthwiseFilterHeight - 1;
+
+      // The possible step count for reducing sourceHeight to outputHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
+      //
+      // This value may be less than real step count because the filter size of the last step may be larger than its input.
+      let stepCountCandidate = Math.floor( differenceHeight / heightReducedPerStep );
+
+      let differenceHeightLast = differenceHeight - ( stepCountCandidate * heightReducedPerStep ); // The last step should reduce so many height.
+      if ( 0 == differenceHeightLast ) { // The original depthwiseFilterHeight could achieve the output size. 
+        stepCount = stepCountCandidate; // It is the real step count.
+        depthwiseFilterHeightLast = this.depthwiseFilterHeight; // Using original depthwise filter size is good enough.
+
+      } else { // The original depthwiseFilterHeight could not achieve the output size. It is larger than the last step's input size.
+        stepCount = stepCountCandidate + 1; // Needs one more step.
+        depthwiseFilterHeightLast = differenceHeightLast + 1; // The last step's depthwise filter size should just eliminate the last diffference.
+      }
+    }
+//!!! ...unfinished... (2021/07/29) What if can not achieve the output size?
+
+//!!! ...unfinished... (2021/07/28) What if ( stepCount == 0 )?
+    }
 
   /** Process input, destroy or keep input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.)
    *
