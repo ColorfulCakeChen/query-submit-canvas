@@ -341,45 +341,15 @@ class Base {
       this.outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
     }
 
-    let paramsConfig;
-    let params;
-
-//!!! ...unfinished... (2021/07/29)
-//    *   - If ( stepCountPerBlock == 0 ), this rate will be ignored. There will be no first 1x1 pointwise.
-//    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 0 ), will be simplified ShuffleNetV2 (expanding by once depthwise).
-//    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
-//    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
-//    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
-
-
-    if ( this.stepCountPerBlock == 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
-      paramsConfig = new ParamsConfig_NotShuffleNet_NotMobileNet( this );
-
-//!!! ...unfinished... (2021/07/29)
-    } else {
-      if ( this.bChannelShuffler == true ) {
-        if ( this.pointwise1ChannelCountRate == 0 ) { // will be simplified ShuffleNetV2 (expanding by once depthwise).
-
-//!!! ...unfinished... (2021/07/29)
-
-        } else { // ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
-
-//!!! ...unfinished... (2021/07/29)
-        }
-      } else { // ( bChannelShuffler == false )
-        // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
-        // ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
-
-//!!! ...unfinished... (2021/07/29)
-      }
-    }
-
+    
+    let paramsConfig = Base.createParamsConfig.call( this );
     paramsConfig.determine_stepCount_depthwiseFilterHeightLast(); // Calculate the real step count.
 
-//!!! ...unfinished... (2021/07/29)
     for ( let i = 0; i < paramsConfig.stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
       progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
     }
+
+    let params, step, stepIniter;
 
     this.stepsArray = new Array( paramsConfig.stepCount );
     for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step1, 2, 3, ...
@@ -405,8 +375,8 @@ class Base {
         paramsConfig.pointwise22ChannelCount, paramsConfig.pointwise22Bias, paramsConfig.pointwise22ActivationId,
       )
 
-      let step = this.stepsArray[ i ] = new PointDepthPoint.Base();
-      let stepIniter = step.initer( progressForSteps.children[ i ],
+      step = this.stepsArray[ i ] = new PointDepthPoint.Base();
+      stepIniter = step.initer( progressForSteps.children[ i ],
         paramsConfig.channelCount0_pointwise1Before, paramsConfig.bShouldKeepInputTensor, params );
 
       this.bInitOk = yield* stepIniter;
@@ -682,7 +652,7 @@ class Base {
       this.stepsArray.length = 0;
     }
 
-    this.stepLast = null; // It has already de disposed by this.step0 or this.steps1After.
+    this.step0 = this.stepLast = null; // It has already de disposed by this.step0 or this.steps1After.
 
     this.apply_and_destroy_or_keep = null;
     this.outputChannelCount = -1;
@@ -691,6 +661,41 @@ class Base {
     
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
+  }
+
+  /**
+   * @param {Base} this
+   *   The Block object to be reference.
+   */
+  static createParamsConfig() {
+//!!! ...unfinished... (2021/07/29)
+//    *   - If ( stepCountPerBlock == 0 ), this rate will be ignored. There will be no first 1x1 pointwise.
+//    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 0 ), will be simplified ShuffleNetV2 (expanding by once depthwise).
+//    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
+//    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
+//    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
+
+    if ( this.stepCountPerBlock == 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
+      return new ParamsConfig_NotShuffleNet_NotMobileNet( this );
+
+//!!! ...unfinished... (2021/07/29)
+    } else {
+      if ( this.bChannelShuffler == true ) {
+        if ( this.pointwise1ChannelCountRate == 0 ) { // will be simplified ShuffleNetV2 (expanding by once depthwise).
+
+//!!! ...unfinished... (2021/07/29)
+
+        } else { // ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
+
+//!!! ...unfinished... (2021/07/29)
+        }
+      } else { // ( bChannelShuffler == false )
+        // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
+        // ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
+
+//!!! ...unfinished... (2021/07/29)
+      }
+    }
   }
 
   /** Process input, destroy or keep input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.)
