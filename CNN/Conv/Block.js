@@ -904,8 +904,12 @@ class ParamsConfig {
   /** Called before step0 is about to be created. Sub-class should override this method to adjust data members. */
   configTo_beforeStep0() {}
 
-  /** Called after step0 is created (i.e. before step1, 2, 3, ...). Sub-class should override this method to adjust data members. */
-  configTo_afterStep0() {}
+  /** Called after step0 is created (i.e. before step1, 2, 3, ...). Sub-class should override this method to adjust data members.
+   *
+   * @param {PointDepthPoint.Base} step0
+   *   The just created step0 object.
+   */
+  configTo_afterStep0( step0 ) {}
 
   /** Called before stepLast is about to be created. Sub-class should override this method to adjust data members. */
   configTo_beforeStepLast() {}
@@ -915,27 +919,22 @@ class ParamsConfig {
  * Privode parameters for pure depthwise-pointwise convolutions.
  */
 class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
-  constructor( block ) {
-    super( block );
-
-//!!! ...unfinished... (2021/07/29)
-    this.stepCount = -1; // How many step should be in the block.
-    this.depthwiseFilterHeightLast = -1; // The last step's depthwise filter size.
-  }
-
   /**
    * Compute how many step shoud be used and what is the last step's depthwise filter size, when shrink sourceHeight to outputHeight
    * by depthwise convolution with ( strides = 1, pad = "valid" ).
    *
    * The this.stepCount will be at least 1 (never 0).
-   * The this.depthwiseFilterHeightLast will be at least 1 (at most this.depthwiseFilterHeight).
+   * The this.depthwiseFilterHeightLast will be at least 1 (at most this.block.depthwiseFilterHeight).
    *
+   * The this.block.depthwiseFilterHeight might be modified.
+   * 
    * @override
    */
   determine_stepCount_depthwiseFilterHeightLast() {
+    let block = this.block;
 
-    let differenceHeight = this.sourceHeight - this.outputHeight;
-    //let differenceWidth =  this.sourceWidth  - this.outputWidth;
+    let differenceHeight = block.sourceHeight - block.outputHeight;
+    //let differenceWidth =  block.sourceWidth  - block.outputWidth;
 
     if ( 0 == differenceHeight ) { // 1. No difference between source and output size.
       this.stepCount = 1;                 // Only one step is needed. (Avoid no steps. At least, there should be one step.)
@@ -943,11 +942,11 @@ class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
     }
 
     // Since difference between source and output exists, the filter size should be larger than 1x1.
-    if ( this.depthwiseFilterHeight <= 1 )
-      this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
+    if ( block.depthwiseFilterHeight <= 1 )
+      block.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
 
     // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
-    let heightReducedPerStep = this.depthwiseFilterHeight - 1;
+    let heightReducedPerStep = block.depthwiseFilterHeight - 1;
 
     // The possible step count for reducing sourceHeight to outputHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
     //
@@ -958,7 +957,7 @@ class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
     if ( 0 == differenceHeightLast ) {
       // 2. The original depthwiseFilterHeight could achieve the output size at the last step. 
       this.stepCount = stepCountCandidate; // It is the real step count.
-      this.depthwiseFilterHeightLast = this.depthwiseFilterHeight; // The last step uses the original depthwise filter size is enough.
+      this.depthwiseFilterHeightLast = block.depthwiseFilterHeight; // The last step uses the original depthwise filter size is enough.
     }
 
     // 3. The original depthwiseFilterHeight could not achieve the output size at the last step.
@@ -969,5 +968,36 @@ class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
     this.depthwiseFilterHeightLast = differenceHeightLast + 1;
   }
 
+  /** @override */
+  configTo_beforeStep0() {
+    let block = this.block;
+
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no add-input-to-output, no concatenate.
+    this.pointwise1ChannelCount = 0;  // In this mode, always no pointwise convolution before depthwise convolution.
+    this.depthwiseStridesPad = 0;     // In this mode, always ( strides = 1, pad = "valid" ).
+    this.pointwise22ChannelCount = 0; // In this mode, always no second output.
+
+    this.channelCount0_pointwise1Before = block.sourceChannelCount; // Step0 uses the original input channel count.
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                 // Step0 double the channel count by depthwise channel multiplier.
+    this.depthwiseFilterHeight = this.block.depthwiseFilterHeight;  // All steps (except the last step) uses default depthwise filter size.
+    this.pointwise21ChannelCount = block.sourceChannelCount * block.depthwise_AvgMax_Or_ChannelMultiplier; // Step0 will double channel count.
+    this.bShouldKeepInputTensor = block.bKeepInputTensor; // Step0 may or may not keep input tensor according to caller's necessary.
+  }
+
+  /** @override */
+  configTo_afterStep0( step0 ) {
+    let block = this.block;
+    this.channelCount0_pointwise1Before = step0.outChannelsAll; // Step0's output channel count is all the other steps' input channel count.
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;            // Except step0, all other steps will not double the channel count.
+    this.pointwise21ChannelCount = step0.outChannelsAll;       // Step0's output channel count is all the other steps' output channel count.
+    this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step 0) should not keep input tensor.
+  }
+
+  /** @override */
+  configTo_beforeStepLast() {
+    let block = this.block;
+    this.depthwiseFilterHeight = this.depthwiseFilterHeightLast;
+    this.pointwise21ActivationId = block.nActivationIdAtBlockEnd;
+  }
 }
 
