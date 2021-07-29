@@ -382,7 +382,7 @@ class Base {
 
 //!!! ...unfinished... (2021/07/29) if ( differenceHeight == 0 ), should use depthwise filter 1x1 so that there is at least one step. 
 
-        if ( this.depthwiseFilterHeight == 1 )
+        if ( this.depthwiseFilterHeight <= 1 )
           this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
 
         // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
@@ -391,15 +391,15 @@ class Base {
         // The step count for reducing sourceHeight to outputHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
         //
         // This value may be less than real step count because the filter size of the last step may be larger than its input.
-        let stepCountLess = Math.floor( differenceHeight / heightReducedPerStep );
+        let stepCountCandidate = Math.floor( differenceHeight / heightReducedPerStep );
 
-        let differenceHeightLast = this.outputHeight - ( stepCountLess * heightReducedPerStep );
-        if ( 0 == differenceHeightLast ) { // The depthwiseFilterHeight could achieve the output size. 
-          stepCount = stepCountLess; // It is the real step count.
+        let differenceHeightLast = this.outputHeight - ( stepCountCandidate * heightReducedPerStep );
+        if ( 0 == differenceHeightLast ) { // The original depthwiseFilterHeight could achieve the output size. 
+          stepCount = stepCountCandidate; // It is the real step count.
           depthwiseFilterHeightLast = this.depthwiseFilterHeight; // Using original depthwise filter size is good enough.
 
-        } else { // The depthwiseFilterHeight could not achieve the output size. It is larger than the last step's input size.
-          stepCount = stepCountLess + 1; // Needs one more step.
+        } else { // The original depthwiseFilterHeight could not achieve the output size. It is larger than the last step's input size.
+          stepCount = stepCountCandidate + 1; // Needs one more step.
           depthwiseFilterHeightLast = differenceHeightLast + 1; // The last step's depthwise filter size should just eliminate the last diffference.
         }
 
