@@ -379,6 +379,8 @@ class Base {
         let differenceHeight = sourceHeight - this.outputHeight;
         //let differenceWidth =  sourceWidth  - this.outputWidth;
 
+//!!! ...unfinished... (2021/07/29) if ( differenceHeight == 0 ), should use depthwise filter 1x1 so that there is at least one step. 
+
         if ( this.depthwiseFilterHeight == 1 )
           this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
 
