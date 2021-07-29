@@ -388,12 +388,12 @@ class Base {
         // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
         let heightReducedPerStep = this.depthwiseFilterHeight - 1;
 
-        // The step count for reducing sourceHeight to outputHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
+        // The possible step count for reducing sourceHeight to outputHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
         //
         // This value may be less than real step count because the filter size of the last step may be larger than its input.
         let stepCountCandidate = Math.floor( differenceHeight / heightReducedPerStep );
 
-        let differenceHeightLast = this.outputHeight - ( stepCountCandidate * heightReducedPerStep );
+        let differenceHeightLast = differenceHeight - ( stepCountCandidate * heightReducedPerStep ); // The last step should reduce so many height.
         if ( 0 == differenceHeightLast ) { // The original depthwiseFilterHeight could achieve the output size. 
           stepCount = stepCountCandidate; // It is the real step count.
           depthwiseFilterHeightLast = this.depthwiseFilterHeight; // Using original depthwise filter size is good enough.
