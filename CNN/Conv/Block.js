@@ -341,17 +341,8 @@ class Base {
       this.outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
     }
 
-    let channelCount0_pointwise1Before, channelCount1_pointwise1Before;
-    let pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId;
-    let depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId;
-    let pointwise21ChannelCount, pointwise21Bias, pointwise21ActivationId;
-    let pointwise22ChannelCount, pointwise22Bias, pointwise22ActivationId;
-    let bShouldKeepInputTensor;
+    let paramsConfig;
     let params;
-
-    // By default, all convolution use the same bias flag and activation function.
-    pointwise1Bias = depthwiseBias = pointwise21Bias = pointwise22Bias = this.bBias;
-    pointwise1ActivationId = depthwiseActivationId = pointwise21ActivationId = pointwise22ActivationId = this.nActivationId;
 
 //!!! ...unfinished... (2021/07/29)
 //    *   - If ( stepCountPerBlock == 0 ), this rate will be ignored. There will be no first 1x1 pointwise.
@@ -361,90 +352,83 @@ class Base {
 //    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
 
 
-    let stepCount, depthwiseFilterHeightLast;
-
     if ( this.stepCountPerBlock == 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
-      // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
-      let r = Base.calc_stepCount_depthwiseFilterHeightLast_when_Strides_1_Pad_Valid.call( this );
-      stepCount = r.stepCount;
-      depthwiseFilterHeightLast = r.depthwiseFilterHeightLast;
+      paramsConfig = new ParamsConfig_NotShuffleNet_NotMobileNet( this );
 
 //!!! ...unfinished... (2021/07/29)
     } else {
       if ( this.bChannelShuffler == true ) {
         if ( this.pointwise1ChannelCountRate == 0 ) { // will be simplified ShuffleNetV2 (expanding by once depthwise).
 
+//!!! ...unfinished... (2021/07/29)
+
         } else { // ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
+
+//!!! ...unfinished... (2021/07/29)
         }
       } else { // ( bChannelShuffler == false )
         // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
         // ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
+
+//!!! ...unfinished... (2021/07/29)
       }
     }
 
-//!!! ...unfinished... (2021/07/29)
-
-      channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no add-input-to-output, no concatenate.
-      pointwise1ChannelCount = 0;  // In this mode, always no pointwise convolution before depthwise convolution.
-      depthwiseStridesPad = 0;     // In this mode, always ( strides = 1, pad = "valid" ).
-      pointwise22ChannelCount = 0; // In this mode, always no second output.
+    paramsConfig.determine_stepCount_depthwiseFilterHeightLast(); // Calculate the real step count.
 
 //!!! ...unfinished... (2021/07/29)
-    for ( let i = 0; i < stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
+    for ( let i = 0; i < paramsConfig.stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
       progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
     }
 
-      this.stepsArray = new Array( stepCount );
-      for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step1, 2, 3, ...
+    this.stepsArray = new Array( paramsConfig.stepCount );
+    for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step1, 2, 3, ...
 
-        if ( 0 == i ) { // Step0.
-          channelCount0_pointwise1Before = sourceChannelCount; // Step0 uses the original input channel count.
-          depthwise_AvgMax_Or_ChannelMultiplier = 2;           // Step0 double the channel count by depthwise channel multiplier.
-          depthwiseFilterHeight = this.depthwiseFilterHeight;  // All steps (except the last step) uses default depthwise filter size.
-          pointwise21ChannelCount = sourceChannelCount * depthwise_AvgMax_Or_ChannelMultiplier; // Step0 will double channel count.
-          bShouldKeepInputTensor = bKeepInputTensor; // Step0 may or may not keep input tensor according to caller's necessary.
-        }
-
-        // If this is the last step of this block (i.e. at-block-end)
-        //   - a different depthwise filter size may be used.
-        //   - a different activation function may be used after pointwise2 convolution.
-        if ( ( this.stepsArray.length - 1 ) == i ) {
-          depthwiseFilterHeight = depthwiseFilterHeightLast;
-          pointwise21ActivationId = this.nActivationIdAtBlockEnd;
-        }
-
-        params = new PointDepthPoint.Params(
-          params.defaultInput, this.byteOffsetEnd,
-          channelCount1_pointwise1Before,
-          pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
-          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,depthwiseBias, depthwiseActivationId,
-          pointwise21ChannelCount, pointwise21Bias, pointwise21ActivationId,
-          pointwise22ChannelCount, pointwise22Bias, pointwise22ActivationId,
-        )
-
-        let step = this.stepsArray[ i ] = new PointDepthPoint.Base();
-        let stepIniter = step.initer( progressForSteps.children[ i ], channelCount0_pointwise1Before, bShouldKeepInputTensor, params );
-
-        this.bInitOk = yield* stepIniter;
-        if ( !this.bInitOk )
-          return false;
-        this.byteOffsetEnd = this.step.byteOffsetEnd;
-
-        if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
-          channelCount0_pointwise1Before = step.outChannelsAll; // Step0's output channel count is all the other steps' input channel count.
-          depthwise_AvgMax_Or_ChannelMultiplier = 1;            // Except step0, all other steps will not double the channel count.
-          pointwise21ChannelCount = step.outChannelsAll;        // Step0's output channel count is all the other steps' output channel count.
-          bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step 0) should not keep input tensor.
-        }
+      if ( 0 == i ) { // Step0.
+        paramsConfig.configTo_beforeStep0();
       }
 
-      this.step0 = this.stepsArray[ 0 ]; // Shortcut to the first step.
-      this.stepLast = this.stepsArray[ this.stepsArray.length - 1 ]; // Shortcut to the last step.
+      // If this is the last step of this block (i.e. at-block-end)
+      //   - a different depthwise filter size may be used.
+      //   - a different activation function may be used after pointwise2 convolution.
+      if ( ( this.stepsArray.length - 1 ) == i ) {
+        paramsConfig.configTo_beforeStepLast();
+      }
 
-      this.outputChannelCount = this.stepLast.outChannelsAll;
-      this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
+      params = new PointDepthPoint.Params(
+        params.defaultInput, this.byteOffsetEnd,
+        paramsConfig.channelCount1_pointwise1Before,
+        paramsConfig.pointwise1ChannelCount, paramsConfig.pointwise1Bias, paramsConfig.pointwise1ActivationId,
+        paramsConfig.depthwise_AvgMax_Or_ChannelMultiplier, paramsConfig.depthwiseFilterHeight,
+        paramsConfig.depthwiseStridesPad, paramsConfig.depthwiseBias, paramsConfig.depthwiseActivationId,
+        paramsConfig.pointwise21ChannelCount, paramsConfig.pointwise21Bias, paramsConfig.pointwise21ActivationId,
+        paramsConfig.pointwise22ChannelCount, paramsConfig.pointwise22Bias, paramsConfig.pointwise22ActivationId,
+      )
 
-    } else {  // ShuffleNetV2, or MobileNetV2.
+      let step = this.stepsArray[ i ] = new PointDepthPoint.Base();
+      let stepIniter = step.initer( progressForSteps.children[ i ],
+        paramsConfig.channelCount0_pointwise1Before, paramsConfig.bShouldKeepInputTensor, params );
+
+      this.bInitOk = yield* stepIniter;
+      if ( !this.bInitOk )
+        return false;
+      this.byteOffsetEnd = this.step.byteOffsetEnd;
+
+      if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
+        paramsConfig.configTo_afterStep0( step );
+      }
+    }
+
+    this.step0 = this.stepsArray[ 0 ]; // Shortcut to the first step.
+    this.stepLast = this.stepsArray[ this.stepsArray.length - 1 ]; // Shortcut to the last step.
+
+    this.outputChannelCount = this.stepLast.outChannelsAll;
+    this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
+
+
+//!!! ...unfinished... (2021/07/29)
+//    } else {  // ShuffleNetV2, or MobileNetV2.
+    {
 
 //!!! ...unfinished... (2021/07/28) should detect every step's initer successful or failed.
 
