@@ -375,6 +375,7 @@ class Base {
 
       // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
       let stepCount;
+      let depthwiseFilterHeightLast; // The last step's depthwise filter size.
       {
         let differenceHeight = sourceHeight - this.outputHeight;
         //let differenceWidth =  sourceWidth  - this.outputWidth;
@@ -387,8 +388,20 @@ class Base {
         // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
         let heightReducedPerStep = this.depthwiseFilterHeight - 1;
 
-        // The step count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
-        stepCount = Math.floor( differenceHeight / heightReducedPerStep );
+        // The step count for reducing sourceHeight to outputHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
+        //
+        // This value may be less than real step count because the filter size of the last step may be larger than its input.
+        let stepCountLess = Math.floor( differenceHeight / heightReducedPerStep );
+
+        let differenceHeightLast = this.outputHeight - ( stepCountLess * heightReducedPerStep );
+        if ( 0 == differenceHeightLast ) { // The depthwiseFilterHeight could achieve the output size. 
+          stepCount = stepCountLess; // It is the real step count.
+          depthwiseFilterHeightLast = this.depthwiseFilterHeight; // Using original depthwise filter size is good enough.
+
+        } else { // The depthwiseFilterHeight could not achieve the output size. It is larger than the last step's input size.
+          stepCount = stepCountLess + 1; // Needs one more step.
+          depthwiseFilterHeightLast = differenceHeightLast + 1; // The last step's depthwise filter size should just eliminate the last diffference.
+        }
 
 //!!! ...unfinished... (2021/07/29) What if can not achieve the output size?
 
