@@ -302,7 +302,7 @@ class Base {
     this.pointwise1ChannelCountRate = params.pointwise1ChannelCountRate;
 //!!! ...unfinished... (2021/07/28) If depthwiseChannelMultiplierStep0 is removed, this codes should also be removed.
     this.depthwiseChannelMultiplierStep0 = params.depthwiseChannelMultiplierStep0;
-    this.depthwiseFilterHeight = this.depthwiseFilterWidth = params.depthwiseFilterHeight; // Assume depthwise filter's width equals its height.
+    this.depthwiseFilterHeight = params.depthwiseFilterHeight; // Assume depthwise filter's width equals its height.
     this.bBias = params.bBias;
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
@@ -361,7 +361,7 @@ class Base {
 
     let channelCount0_pointwise1Before, channelCount1_pointwise1Before;
     let pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId;
-    let depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, depthwiseBias, depthwiseActivationId;
+    let depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, depthwiseBias, depthwiseActivationId;
     let pointwise21ChannelCount, pointwise21Bias, pointwise21ActivationId;
     let pointwise22ChannelCount, pointwise22Bias, pointwise22ActivationId;
     let bShouldKeepInputTensor;
@@ -375,8 +375,6 @@ class Base {
 
       // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
       let { stepCount, depthwiseFilterHeightLast } = Base.calc_stepCount_depthwiseFilterHeightLast_when_Strides_1_Pad_Valid.call( this );
-
-//!!! ...unfinished... (2021/07/29) Use the last step's depthwise filter size.
 
       for ( let i = 0; i < stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
         progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
@@ -393,13 +391,16 @@ class Base {
         if ( 0 == i ) { // Step0.
           channelCount0_pointwise1Before = sourceChannelCount; // Step0 uses the original input channel count.
           depthwise_AvgMax_Or_ChannelMultiplier = 2;           // Step0 double the channel count by depthwise channel multiplier.
+          depthwiseFilterHeight = this.depthwiseFilterHeight;  // All steps (except the last step) uses default depthwise filter size.
           pointwise21ChannelCount = sourceChannelCount * depthwise_AvgMax_Or_ChannelMultiplier; // Step0 will double channel count.
           bShouldKeepInputTensor = bKeepInputTensor; // Step0 may or may not keep input tensor according to caller's necessary.
         }
 
-        // If this is the last step of this block (i.e. at-block-end), a different activation function may be used after
-        // pointwise2 convolution.
+        // If this is the last step of this block (i.e. at-block-end)
+        //   - a different depthwise filter size may be used.
+        //   - a different activation function may be used after pointwise2 convolution.
         if ( ( this.stepsArray.length - 1 ) == i ) {
+          depthwiseFilterHeight = depthwiseFilterHeightLast;
           pointwise21ActivationId = this.nActivationIdAtBlockEnd;
         }
 
@@ -407,7 +408,7 @@ class Base {
           params.defaultInput, this.byteOffsetEnd,
           channelCount1_pointwise1Before,
           pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId,
-          depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, depthwiseStridesPad,depthwiseBias, depthwiseActivationId,
+          depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,depthwiseBias, depthwiseActivationId,
           pointwise21ChannelCount, pointwise21Bias, pointwise21ActivationId,
           pointwise22ChannelCount, pointwise22Bias, pointwise22ActivationId,
         )
@@ -719,7 +720,7 @@ class Base {
     if ( 0 == differenceHeight ) { // 1. No difference between source and output size.
       return {
         stepCount: 1,                // Only one step is needed. (Avoid no steps. At least, there should be one step.)
-        depthwiseFilterHeightLast: 1 // Use filter size 1x1 so that the input size will be kept.
+        depthwiseFilterHeightLast: 1 // The last (and only one) ste should use filter size 1x1 so that the input size could be kept.
       };
     }
 
@@ -742,20 +743,15 @@ class Base {
         stepCount: stepCountCandidate, // It is the real step count.
         depthwiseFilterHeightLast: this.depthwiseFilterHeight; // The last step uses the original depthwise filter size is enough.
       };
-
-    } else {
-      // 3. The original depthwiseFilterHeight could not achieve the output size at the last step.
-      //    It is larger than the last step's input size. An extra step with a smaller filter size is needed.
-      return {
-        stepCount: stepCountCandidate + 1, // Needs one more step.
-        depthwiseFilterHeightLast: differenceHeightLast + 1; // The last step's depthwise filter size should just eliminate the last diffference.
-      };
     }
+
+    // 3. The original depthwiseFilterHeight could not achieve the output size at the last step.
+    //    It is larger than the last step's input size. An extra step with a smaller filter size is needed.
+    return {
+      stepCount: stepCountCandidate + 1, // Needs one more step.
+      depthwiseFilterHeightLast: differenceHeightLast + 1; // The extra last step's depthwise filter size should just eliminate the last diffference.
+    };
   }
-//!!! ...unfinished... (2021/07/29) What if can not achieve the output size?
-
-//!!! ...unfinished... (2021/07/28) What if ( stepCount == 0 )?
-    }
 
   /** Process input, destroy or keep input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.)
    *
