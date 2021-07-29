@@ -312,7 +312,8 @@ class Base {
       this.depthwiseChannelMultiplierStep0 = 1;
 
     // Pre-allocate array to place intermediate 2 input tensors and 2 output tensors. This could reduce memory re-allocation.
-    this.intermediateTensorsArrayArray = [ new Array( 2 ), new Array( 2 ) ];
+    this.intermediateInputTensors = new Array( 2 );
+    this.intermediateOutputTensors = new Array( 2 );
 
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
@@ -688,11 +689,13 @@ class Base {
     this.apply_and_destroy_or_keep = null;
     this.outputChannelCount = -1;
 
+    this.intermediateInputTensors = this.intermediateOutputTensors = null;
+    
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
   }
 
-  /** Process input, destroy input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.)
+  /** Process input, destroy or keep input, return result. (For Not ShuffleNetV2 and Not MobileNetV2.)
    *
    * @param {Block} this
    *   This method should not be called directly. It should be called by calling apply_and_destroy_or_keep().
@@ -703,22 +706,21 @@ class Base {
    * @return {tf.tensor3d} Return a new tensor. All other intermediate tensors were disposed.
    */
   static apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput( inputTensor ) {
-
-    let inputTensors = this.intermediateTensorsArrayArray[ 0 ];
-    let outputTensors = this.intermediateTensorsArrayArray[ 1 ];
+    let inputTensors = this.intermediateInputTensors;
+    let outputTensors = this.intermediateOutputTensors;
 
     outputTensors[ 0 ] = inputTensor;
     outputTensors[ 1 ] = null;
 
-//!!! ...unfinished... (2021/07/28) need test
-    let swapTensors;
     for ( let i = 0; i < this.stepsArray.length ) {
-      swapTensors = inputTensors; inputTensors = outputTensors; outputTensors = swapTensors; // Swap input and output tensor array for next step.
+      inputTensors[ 0 ] = outputTensors[ 0 ]; // Previous step's output becomes next step's input.
+      inputTensors[ 1 ] = outputTensors[ 1 ];
+
       let step = this.stepsArray[ i ];
       step.apply_and_destroy_or_keep( inputTensors, outputTensors );
     }
 
-    return outputTensors[ 0 ];
+    return outputTensors[ 0 ]; // Note: The last step should only output one tensor.
   }
 
 //!!! ...unfinished... (2021/07/27) How to specify this configuration? ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 )
