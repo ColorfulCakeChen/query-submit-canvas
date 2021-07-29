@@ -375,8 +375,8 @@ class Base {
 
       // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
       let { stepCount, depthwiseFilterHeightLast } = Base.calc_stepCount_depthwiseFilterHeightLast_when_Strides_1_Pad_Valid.call( this );
-//       let ;
-//       let ; // The last step's depthwise filter size.
+
+//!!! ...unfinished... (2021/07/29) Use the last step's depthwise filter size.
 
       for ( let i = 0; i < stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
         progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
@@ -704,7 +704,8 @@ class Base {
    * by depthwise convolution with ( strides = 1, pad = "valid" ).
    *
    * @param {Base} this
-   *   This Block.Base object with this.sourceHeight, this.outputHeight, this.depthwiseFilterHeight.
+   *   This Block.Base object with this.sourceHeight, this.outputHeight, this.depthwiseFilterHeight. The this.depthwiseFilterHeight
+   * moght be modified if it is not feasible.
    *
    * @return {object}
    *   Return an object { stepCount, depthwiseFilterHeightLast }. The stepCount will be at least 1 (never 0). The depthwiseFilterHeightLast
@@ -712,40 +713,45 @@ class Base {
    */
   static calc_stepCount_depthwiseFilterHeightLast_when_Strides_1_Pad_Valid() {
 
-    // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
-    let stepCount;
-    let depthwiseFilterHeightLast; // The last step's depthwise filter size.
-
     let differenceHeight = this.sourceHeight - this.outputHeight;
     //let differenceWidth =  this.sourceWidth  - this.outputWidth;
 
-    if ( 0 == differenceHeight ) { // No difference between source and output size.
-      stepCount = 1; // Only one step is needed. (Avoid no steps. At least, there should be one step.)
-      depthwiseFilterHeightLast == 1;
+    if ( 0 == differenceHeight ) { // 1. No difference between source and output size.
+      return {
+        stepCount: 1,                // Only one step is needed. (Avoid no steps. At least, there should be one step.)
+        depthwiseFilterHeightLast: 1 // Use filter size 1x1 so that the input size will be kept.
+      };
+    }
+
+    // Since difference between source and output exists, the filter size should be larger than 1x1.
+    if ( this.depthwiseFilterHeight <= 1 )
+      this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
+
+    // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
+    let heightReducedPerStep = this.depthwiseFilterHeight - 1;
+
+    // The possible step count for reducing sourceHeight to outputHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
+    //
+    // This value may be less than real step count because the filter size of the last step may be larger than its input.
+    let stepCountCandidate = Math.floor( differenceHeight / heightReducedPerStep );
+
+    let differenceHeightLast = differenceHeight - ( stepCountCandidate * heightReducedPerStep ); // The last step should reduce so many height.
+    if ( 0 == differenceHeightLast ) {
+      // 2. The original depthwiseFilterHeight could achieve the output size at the last step. 
+      return {
+        stepCount: stepCountCandidate, // It is the real step count.
+        depthwiseFilterHeightLast: this.depthwiseFilterHeight; // The last step uses the original depthwise filter size is enough.
+      };
 
     } else {
-
-      if ( this.depthwiseFilterHeight <= 1 )
-        this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
-
-      // The height of processed image will be reduced a little for any depthwise filter larger than 1x1.
-      let heightReducedPerStep = this.depthwiseFilterHeight - 1;
-
-      // The possible step count for reducing sourceHeight to outputHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
-      //
-      // This value may be less than real step count because the filter size of the last step may be larger than its input.
-      let stepCountCandidate = Math.floor( differenceHeight / heightReducedPerStep );
-
-      let differenceHeightLast = differenceHeight - ( stepCountCandidate * heightReducedPerStep ); // The last step should reduce so many height.
-      if ( 0 == differenceHeightLast ) { // The original depthwiseFilterHeight could achieve the output size. 
-        stepCount = stepCountCandidate; // It is the real step count.
-        depthwiseFilterHeightLast = this.depthwiseFilterHeight; // Using original depthwise filter size is good enough.
-
-      } else { // The original depthwiseFilterHeight could not achieve the output size. It is larger than the last step's input size.
-        stepCount = stepCountCandidate + 1; // Needs one more step.
-        depthwiseFilterHeightLast = differenceHeightLast + 1; // The last step's depthwise filter size should just eliminate the last diffference.
-      }
+      // 3. The original depthwiseFilterHeight could not achieve the output size at the last step.
+      //    It is larger than the last step's input size. An extra step with a smaller filter size is needed.
+      return {
+        stepCount: stepCountCandidate + 1, // Needs one more step.
+        depthwiseFilterHeightLast: differenceHeightLast + 1; // The last step's depthwise filter size should just eliminate the last diffference.
+      };
     }
+  }
 //!!! ...unfinished... (2021/07/29) What if can not achieve the output size?
 
 //!!! ...unfinished... (2021/07/28) What if ( stepCount == 0 )?
