@@ -172,14 +172,14 @@ Params.nActivationIdAtBlockEnd =         new ParamDesc.ActivationFunction(      
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {PointDepthPoint.Base[]} stepsArray
+ *   All computation steps of this block.
+ *
  * @member {PointDepthPoint.Base} step0
  *   The first computation step of this block.
  *
  * @member {PointDepthPoint.Base} stepLast
  *   The last computation step of this block. It may be the same as this.step0 when there is only one step inside this block.
- *
- * @member {PointDepthPoint.Base[]} stepsArray
- *   All computation steps of this block.
  *
  * @member {number} outputHeight
  *   The output image height of this block's last step.
@@ -300,6 +300,7 @@ class Base {
     this.stepCountPerBlock = params.stepCountPerBlock;
     this.bChannelShuffler = params.bChannelShuffler
     this.pointwise1ChannelCountRate = params.pointwise1ChannelCountRate;
+//!!! ...unfinished... (2021/07/28) If depthwiseChannelMultiplierStep0 is removed, this codes should also be removed.
     this.depthwiseChannelMultiplierStep0 = params.depthwiseChannelMultiplierStep0;
     this.depthwiseFilterHeight = this.depthwiseFilterWidth = params.depthwiseFilterHeight; // Assume depthwise filter's width equals its height.
     this.bBias = params.bBias;
@@ -352,8 +353,11 @@ class Base {
     // Note: This calculation copied from the getPadAndOutInfo() of
     // (https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts).
     //
-    this.outputHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
-    this.outputWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
+    {
+      let stridesHeight = 2, stridesWidth = 2;
+      this.outputHeight = Math.ceil( sourceHeight / stridesHeight );
+      this.outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
+    }
 
     let channelCount0_pointwise1Before, channelCount1_pointwise1Before;
     let pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId;
