@@ -347,6 +347,14 @@ class Base {
 //!!! ...unfinished... (2021/07/28)
 //    this.bAddInputToOutput = !bChannelShuffler; // ChannelShuffler or AddInputToOutput, but not both. They are all for achieving skip connection.
 
+    // By default, the output ( height, width ) is half of the input (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
+    //
+    // Note: This calculation copied from the getPadAndOutInfo() of
+    // (https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts).
+    //
+    this.outputHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
+    this.outputWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
+
     let channelCount0_pointwise1Before, channelCount1_pointwise1Before;
     let pointwise1ChannelCount, pointwise1Bias, pointwise1ActivationId;
     let depthwise_AvgMax_Or_ChannelMultiplier, depthwiseStridesPad, depthwiseBias, depthwiseActivationId;
@@ -361,20 +369,11 @@ class Base {
 
     if ( this.stepCountPerBlock == 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
 
-//!!! ...unfinished... (2021/07/29) What if can not achieve the output size?
-      // The target size is the result of a depthwise convolution with ( strides = 2, pad = "same" ).
-      this.outputHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
-      this.outputWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
-
       // Calculate the real step count for depthwise convolution with ( strides = 1, pad = "valid" ).
       let stepCount;
       {
-        // The target size is the result of a depthwise convolution with ( strides = 2, pad = "same" ).
-        let targetHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
-        //let targetWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
-
-        let differenceHeight = sourceHeight - targetHeight;
-        //let differenceWidth =  sourceWidth  - targetWidth;
+        let differenceHeight = sourceHeight - this.outputHeight;
+        //let differenceWidth =  sourceWidth  - this.outputWidth;
 
         if ( this.depthwiseFilterHeight == 1 )
           this.depthwiseFilterHeight = 2; // Otherwise, the image size could not be shrinked.
@@ -384,6 +383,8 @@ class Base {
 
         // The step count for reducing sourceHeight to targetHeight by tf.depthwiseConv2d( strides = 1, pad = "valid" ).
         stepCount = Math.floor( differenceHeight / heightReducedPerStep );
+
+//!!! ...unfinished... (2021/07/29) What if can not achieve the output size?
 
 //!!! ...unfinished... (2021/07/28) What if ( stepCount == 0 )?
       }
@@ -445,10 +446,6 @@ class Base {
       this.apply_and_destroy_or_keep = Base.apply_and_destroy_or_keep_NotChannelShuffle_NotAddInputToOutput;
 
     } else {  // ShuffleNetV2, or MobileNetV2.
-
-      // The target size is the result of a depthwise convolution with ( strides = 2, pad = "same" ).
-      this.outputHeight = Math.ceil( sourceHeight / 2 ); // stridesHeight = 2
-      this.outputWidth =  Math.ceil( sourceWidth  / 2 ); // stridesWidth = 2
 
 //!!! ...unfinished... (2021/07/28) should detect every step's initer successful or failed.
 
