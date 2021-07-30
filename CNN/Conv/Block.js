@@ -1054,7 +1054,7 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
   configTo_beforeStepLast() {
     super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
 
-    // In ShuffleNetV2, the stepLast only output0 (no output1) which has double channel count of source input0.
+    // In ShuffleNetV2, the stepLast only has output0 (no output1). And the output0 has double channel count of source input0.
     //
     // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
     // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
@@ -1066,9 +1066,55 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
 
 /** Privode parameters for MobileNetV1 or MobileNetV2 (i.e. with pointwise1, with add-input-to-output). */
 class ParamsConfig_MobileNet extends ParamsConfig {
-
+  /** @override */
+  configTo_beforeStep0() {
 //!!! ...unfinished... (2021/07/30)
+    let block = this.block;
+    this.channelCount0_pointwise1Before = block.sourceChannelCount; // Step0 uses the original input channel count (as input0).
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenate.
 
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                 // All steps will not double the channel count.
+    this.depthwiseFilterHeight = this.block.depthwiseFilterHeight;  // All steps uses default depthwise filter size.
+    this.depthwiseStridesPad = 2;                                   // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
+
+    // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
+    this.depthwiseBias = false;
+    this.depthwiseActivationId = PointDepthPoint.Params.Activation.Ids.NONE; // In ShuffleNetV2, depthwise convolution doesn't have activation.
+
+    this.pointwise21ChannelCount = block.sourceChannelCount; // All steps' (except stepLast) output0 is the same depth as source input0.
+    this.pointwise22ChannelCount = block.sourceChannelCount; // All steps' (except stepLast) output1 is the same depth as source input1.
+
+    // All steps have pointwise1 convolution before depthwise convolution. Its channel count is adjustable by user's request.
+    this.pointwise1ChannelCount = this.pointwise21ChannelCount * block.pointwise1ChannelCountRate; // In ShuffleNetV2, the rate is usually 1.
+
+    this.bShouldKeepInputTensor = block.bKeepInputTensor;    // Step0 may or may not keep input tensor according to caller's necessary.
+  }
+
+  /** @override */
+  configTo_afterStep0( step0 ) {
+//!!! ...unfinished... (2021/07/30)
+    let block = this.block;
+    // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
+    // i.e. TWO_INPUTS (with concatenate, without add-input-to-output).
+    this.channelCount0_pointwise1Before = step0.outChannels0;
+    this.channelCount1_pointwise1Before = step0.outChannels1;
+    this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+  }
+
+  /** @override */
+  configTo_beforeStepLast() {
+//!!! ...unfinished... (2021/07/30)
+    super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
+
+    // In ShuffleNetV2, the stepLast only has output0 (no output1). And the output0 has double channel count of source input0.
+    //
+    // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
+    // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
+    // not changed.
+    this.pointwise21ChannelCount = block.sourceChannelCount * 2;
+    this.pointwise22ChannelCount = 0;
+  }
 }
 
 //!!! ...unfinished... (2021/07/27)
