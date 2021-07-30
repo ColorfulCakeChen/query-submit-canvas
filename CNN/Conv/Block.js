@@ -6,7 +6,6 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as PointDepthPoint from "./PointDepthPoint.js";
-//import * as ChannelShuffler from "./ChannelShuffler.js";
 
 /**
  * Convolution block parameters.
@@ -80,7 +79,6 @@ class Params extends Weights.Params {
     pointwise1ChannelCountRate,
     depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd
   ) {
-
 
     // Q: Why the depthwiseChannelMultiplierStep0 is not listed as a parameter?
     // A: After considering the following reasons, it is worth to drop this parameter.
@@ -184,13 +182,8 @@ class Base {
    *   The channel count of the source image. It may be the output channel count of the previous convolution block, so it could be large.
    * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
    *
-   *
-//!!! ...unfinished...
-//!!! ...unfinished... (2021/04/09) How to know now is MobileNetV2 (not MobileNetV1)? Maybe according to ( pointwise1ChannelCountRate > 1 )?
-// Since pointwise2ActivationId is always NONE in MobileNetV2 (i.e. ( bChannelShuffler == false ), the nActivationIdAtBlockEnd is never used in MobileNetV2.
-   *
    * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). If it is null, it will be viewed as falsy
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. will be kept). If it is null, it will be viewed as falsy
    * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
    *
    * @param {Params} params
@@ -402,7 +395,7 @@ class Base {
    *   The Block object to be reference.
    */
   static createParamsConfig() {
-//!!! ...unfinished... (2021/07/29)
+//!!! ...unfinished... (2021/07/30) Why not use a single parameter?
 //    *   - If ( stepCountPerBlock == 0 ), this rate will be ignored. There will be no first 1x1 pointwise.
 //    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 0 ), will be simplified ShuffleNetV2 (expanding by once depthwise).
 //    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
