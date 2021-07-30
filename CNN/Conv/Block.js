@@ -713,55 +713,6 @@ class Base {
     return outputTensors[ 0 ]; // Note: The last step should only output one tensor.
   }
 
-//!!! ...unfinished... (2021/07/27) How to specify this configuration? ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 )
-//
-//!!! ...unfinished... (2021/04/13) (Our) Adjusted ShuffleNetV2:
-//  
-// Since channel shuffler could achieved efficiently by pointwise convolution, it may be possible to combine the pointwise2
-// convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
-//   - Concatenate the output of depthwise convolution and the other output group.
-//   - Pointwise convolution to generate output group 1.
-//   - Pointwise convolution to generate output group 2.
-//
-// Although the channel shuffler is achieved by pointwise convolution without bias and activation function, however,
-// the second pointwise convolution (before channel shuffler) indeed has bias and activation function. After combining
-// these two pointwise convolutions (the original second and the channel shuffler), the total result is twice pointwise
-// convolution with bias and activation function.
-//
-// If the poitwise1 convolution (of every step (include step 0 too)) could be discarded, the step 0 and step 0's branch could
-// be achieved simultaneously by:
-//   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS).
-//   - No need to concatenate because the above operation already double channel count.
-//   - twice pointwise2 convolution (every has same as block's input channel count).
-//
-// And, the step 1 (, 2, 3, ..., ( n - 2 ) ) could be achieved by:
-//   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
-//   - concatenate.
-//   - twice pointwise2 convolution (every has same as block's input channel count).
-//
-// And, the last step (i.e. step ( n - 1 ) ) of the block could be achieved by:
-//   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
-//   - concatenate.
-//   - once pointwise2 convolution (has double of block's input channel count).
-//
-// Note that:
-//   - The depthwise convolution (channelMultipler = 2, strides = 2) of step 0 achieves simultaneously two depthwise
-//     convolution (channelMultipler = 1, strides = 2) of step 0 and step 0's branch. So, it is one less depthwise
-//     convolution, and one less concatenating.
-//
-//   - The twice pointwise2 convolution (every has same as block's input channel count) achieves not only pointwise
-//     convolution but also channel shuffling. So, it is one less pointwise convolution.
-//
-//   - The once pointwise2 convolution (has double of block's input channel count) of last step achieves simultaneously
-//     pointwise convolution, channel shuffling, and concatenating. So, it is not only one less pointwise convolution,
-//     but also one less concatenating.
-//
-//   - Even if the pointwise1 convolution is discarded and the pointwise2 convolution does not have bias and activation
-//     function, the depthwise convolution (with bias and COS as activation function) and pointwise2 convolution together
-//     compose an effective Fourier series which should have enough expressive power for approximating any function.
-//
-//
-
   /** Process input, destroy input, return result. (For ShuffleNetV2.)
    *
    * @param {Block} this
@@ -989,16 +940,72 @@ class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
   }
 }
 
-/** Privode parameters for simplified ShuffleNetV2 (i.e. without pointwise1, with concatenator). */
+/** Privode parameters for simplified ShuffleNetV2 (i.e. without pointwise1, with concatenator).
+ * 
+ * Q: How to specify this configuration?
+ * A: By ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 ) in the parameters of Block.Base.
+ *
+ * (Our) Adjusted ShuffleNetV2:
+ *  
+ * Since channel shuffler could achieved efficiently by pointwise convolution, it may be possible to combine the pointwise2
+ * convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
+ *   - Concatenate the output of depthwise convolution and the other output group.
+ *   - Pointwise convolution to generate output group 1.
+ *   - Pointwise convolution to generate output group 2.
+ *
+ * Although the channel shuffler is achieved by pointwise convolution without bias and activation function, however,
+ * the second pointwise convolution (before channel shuffler) indeed has bias and activation function. After combining
+ * these two pointwise convolutions (the original second and the channel shuffler), the total result is twice pointwise
+ * convolution with bias and activation function.
+ *
+ * If the poitwise1 convolution (of every step (include step 0 too)) could be discarded, the step 0 and step 0's branch could
+ * be achieved simultaneously by:
+ *   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS).
+ *   - No need to concatenate because the above operation already double channel count.
+ *   - twice pointwise2 convolution (every has same as block's input channel count).
+ *
+ * And, the step 1 (, 2, 3, ..., ( n - 2 ) ) could be achieved by:
+ *   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
+ *   - concatenate.
+ *   - twice pointwise2 convolution (every has same as block's input channel count).
+ *
+ * And, the last step (i.e. step ( n - 1 ) ) of the block could be achieved by:
+ *   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
+ *   - concatenate.
+ *   - once pointwise2 convolution (has double of block's input channel count).
+ *
+ * Note that:
+ *   - The depthwise convolution (channelMultipler = 2, strides = 2) of step 0 achieves simultaneously two depthwise
+ *     convolution (channelMultipler = 1, strides = 2) of step 0 and step 0's branch. So, it is one less depthwise
+ *     convolution, and one less concatenating.
+ *
+ *   - The twice pointwise2 convolution (every has same as block's input channel count) achieves not only pointwise
+ *     convolution but also channel shuffling. So, it is one less pointwise convolution.
+ *
+ *   - The once pointwise2 convolution (has double of block's input channel count) of last step achieves simultaneously
+ *     pointwise convolution, channel shuffling, and concatenating. So, it is not only one less pointwise convolution,
+ *     but also one less concatenating.
+ *
+ *   - Even if the pointwise1 convolution is discarded and the pointwise2 convolution does not have bias and activation
+ *     function, the depthwise convolution (with bias and COS as activation function) and pointwise2 convolution together
+ *     compose an effective Fourier series which should have enough expressive power for approximating any function.
+ *
+ */
 class ParamsConfig_ShuffleNetV2_Simplified extends ParamsConfig_ShuffleNetV2 {
 
   /** @override */
   configTo_beforeStep0() {
-    super.configTo_beforeStep0();                    // Almost the same as ParamsConfig_ShuffleNetV2. Except the following.
+    super.configTo_beforeStep0();                    // Almost the same as ParamsConfig_ShuffleNetV2. Except the followings.
 
-    // In fact, in this case, ( pointwise1ChannelCountRate == 0 ). So it must be zero.
-    this.pointwise1ChannelCount = 0;                 // Step0 does not have pointwise1 convolution before depthwise convolution.
+    // In this case, ( pointwise1ChannelCountRate == 0 ) so that ( this.pointwise1ChannelCount == 0 ) must true.
+    //
+    // In other words, step0 does not have pointwise1 convolution before depthwise convolution. So the second
+    // depthwise convolution (in original ShuffleNetV2) is not needed. Then, a simpler configuration could be
+    // used.
+    //
+    // Just use once depthwise convolution (but with channel multipler 2) to double the channel count.
 
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
     this.depthwise_AvgMax_Or_ChannelMultiplier = 2;  // Step0 double the channel count by depthwise channel multiplier.
   }
 
