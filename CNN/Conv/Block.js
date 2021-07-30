@@ -1020,7 +1020,7 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
   configTo_beforeStep0() {
     let block = this.block;
     this.channelCount0_pointwise1Before = block.sourceChannelCount; // Step0 uses the original input channel count (as input0).
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenate.
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenation.
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                 // All steps will not double the channel count.
     this.depthwiseFilterHeight = this.block.depthwiseFilterHeight;  // All steps uses default depthwise filter size.
@@ -1044,7 +1044,7 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
     let block = this.block;
     // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
     this.channelCount0_pointwise1Before = step0.outChannels0;
-    this.channelCount1_pointwise1Before = step0.outChannels1; // i.e. TWO_INPUTS (with concatenate, without add-input-to-output).
+    this.channelCount1_pointwise1Before = step0.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
     this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
@@ -1069,7 +1069,9 @@ class ParamsConfig_MobileNet extends ParamsConfig {
   configTo_beforeStep0() {
     let block = this.block;
     this.channelCount0_pointwise1Before = block.sourceChannelCount; // Step0 uses the original input channel count (as input0).
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT; // without concatenate.
+
+    // In MobileNet, all steps (include step0) do not use input1 and do add-input-to-output (without concatenation).
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                 // All steps will not double the channel count.
     this.depthwiseFilterHeight = this.block.depthwiseFilterHeight;  // All steps uses default depthwise filter size.
@@ -1100,12 +1102,11 @@ class ParamsConfig_MobileNet extends ParamsConfig {
 
   /** @override */
   configTo_afterStep0( step0 ) {
-//!!! ...unfinished... (2021/07/30)
     let block = this.block;
-    // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
-    // i.e. TWO_INPUTS (with concatenate, without add-input-to-output).
+
+    // The input0 of all steps (except step0) have the same depth as previous (also step0's) step's output0.
     this.channelCount0_pointwise1Before = step0.outChannels0;
-    this.channelCount1_pointwise1Before = step0.outChannels1;
+
     this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
