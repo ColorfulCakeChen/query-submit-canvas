@@ -957,7 +957,7 @@ class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
   configTo_beforeStep0() {
     let block = this.block;
     this.channelCount0_pointwise1Before = block.sourceChannelCount; // Step0 uses the original input channel count.
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no add-input-to-output, no concatenate.
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
     this.pointwise1ChannelCount = 0;  // In this mode, always no pointwise convolution before depthwise convolution.
     this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                 // Step0 double the channel count by depthwise channel multiplier.
     this.depthwiseFilterHeight = this.block.depthwiseFilterHeight;  // All steps (except stepLast) uses default depthwise filter size.
@@ -994,6 +994,15 @@ class ParamsConfig_ShuffleNetV2_Simplified extends ParamsConfig_ShuffleNetV2 {
     this.depthwise_AvgMax_Or_ChannelMultiplier = 2;  // Step0 double the channel count by depthwise channel multiplier.
   }
 
+  /** @override */
+  configTo_afterStep0( step0 ) {
+    super.configTo_afterStep0( step0 );               // Almost the same as ParamsConfig_ShuffleNetV2. Except the following.
+    let block = this.block;
+//!!! ...unfinished... (2021/07/29)
+    this.pointwise1ChannelCount = step0.outChannels0; // All steps (except step0) has pointwise1 convolution before depthwise convolution.
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;   // All steps (except step0) will not double the channel count.
+  }
+
 //!!! ...unfinished... (2021/07/29)
 }
 
@@ -1003,29 +1012,26 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
   /** @override */
   configTo_beforeStep0() {
     let block = this.block;
-//!!! ...unfinished... (2021/07/29)
     this.channelCount0_pointwise1Before = block.sourceChannelCount; // Step0 uses the original input channel count (as input0).
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // no add-input-to-output, no concatenate.
-    this.pointwise1ChannelCount = block.sourceChannelCount;         // Step0 does not have pointwise1 convolution before depthwise convolution.
-    this.depthwise_AvgMax_Or_ChannelMultiplier = 2;  // Step0 double the channel count by depthwise channel multiplier.
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenate.
+    this.pointwise1ChannelCount = block.sourceChannelCount;         // All steps have pointwise1 convolution before depthwise convolution.
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                 // All steps will not double the channel count.
     this.depthwiseFilterHeight = this.block.depthwiseFilterHeight;  // All steps uses default depthwise filter size.
-    this.depthwiseStridesPad = 2;                    // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
+    this.depthwiseStridesPad = 2;                                   // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
     this.pointwise21ChannelCount = block.sourceChannelCount; // All steps' (except stepLast) output0 is the same depth as source input0.
     this.pointwise22ChannelCount = block.sourceChannelCount; // All steps' (except stepLast) output1 is the same depth as source input1.
-    this.bShouldKeepInputTensor = block.bKeepInputTensor; // Step0 may or may not keep input tensor according to caller's necessary.
+    this.bShouldKeepInputTensor = block.bKeepInputTensor;    // Step0 may or may not keep input tensor according to caller's necessary.
   }
 
   /** @override */
   configTo_afterStep0( step0 ) {
     let block = this.block;
 //!!! ...unfinished... (2021/07/29)
-    // Except step0, all steps' ( input0, input1 ) is the same depth as previous step's ( output0, output1 ).
-    // i.e. TWO_INPUTS (no add-input-to-output, has concatenate).
+    // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
+    // i.e. TWO_INPUTS (with concatenate, without add-input-to-output).
     this.channelCount0_pointwise1Before = step0.outChannels0;
     this.channelCount1_pointwise1Before = step0.outChannels1;
-    this.pointwise1ChannelCount = step0.outChannels0;                 // Step0 does not have pointwise1 convolution before depthwise convolution.
-    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;            // Except step0, all other steps will not double the channel count.
-    this.depthwiseStridesPad = 1;                    // Step0 uses depthwise ( strides = 1, pad = "same" ) to halve ( height, width ).
+    this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
 
