@@ -313,6 +313,7 @@ class Base {
         paramsConfig.configTo_beforeStepLast();
       }
 
+//!!! ...unfinished... (2021/07/30) Move to Params_to_PointDepthPointParams.createParams().
       params = new PointDepthPoint.Params(
         params.defaultInput, this.byteOffsetEnd,
         paramsConfig.channelCount1_pointwise1Before,
@@ -454,7 +455,7 @@ class Base {
 }
 
 
-//!!! ...unfinished... (2021/07/30) Rename to PointDepthPointParams_by_BlockParams.
+//!!! ...unfinished... (2021/07/30) Rename to Params_to_PointDepthPointParams.
 
 /**
  * Basic class for all ParamsConfig_Xxx classes.
