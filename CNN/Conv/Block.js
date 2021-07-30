@@ -454,11 +454,16 @@ class Base {
 }
 
 
+//!!! ...unfinished... (2021/07/30) Rename to PointDepthPointParams_by_BlockParams.
+
 /**
  * Basic class for all ParamsConfig_Xxx classes.
  */
 class ParamsConfig {
   /**
+
+//!!! ...unfinished... (2021/07/30) Change to accept Block.Params (instead of Block.Base).
+
    * @param {Base} block
    *   The Block object which provides basic parameters.
    */
