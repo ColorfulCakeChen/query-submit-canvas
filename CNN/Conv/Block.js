@@ -237,6 +237,8 @@ class Base {
 
     this.disposeTensors();
 
+//!!! ...unfinished... (2021/07/30) should be moved into Params. Then ParamsConfig constructor accept Params (instead of Base).
+// So that ParamsConfig could be tested individually.
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
     this.sourceChannelCount = sourceChannelCount;
@@ -274,7 +276,7 @@ class Base {
     yield progressRoot;  // Parameters extracted. Report progress.
 
 
-//!!! ...unfinished... (2021/07/30) Perhaps, moved to a standalone function.
+//!!! ...unfinished... (2021/07/30) Perhaps, moved to Params.outputHeight() as a standalone function.
 
     // By default, the output ( height, width ) is half of the input (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
     //
