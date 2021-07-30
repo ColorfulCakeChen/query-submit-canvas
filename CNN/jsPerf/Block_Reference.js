@@ -1,4 +1,9 @@
 
+
+//!!! ...unfinished... (2021/07/30)
+// Test the generated params of every step of every Block.ParamsConfig_Xxx whether conform with expectation.
+
+
 //!!! ...unfinished... (2021/07/29)
 //    *   - If ( stepCountPerBlock == 0 ), this rate will be ignored. There will be no first 1x1 pointwise.
 //    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 0 ), will be simplified ShuffleNetV2 (expanding by once depthwise).
