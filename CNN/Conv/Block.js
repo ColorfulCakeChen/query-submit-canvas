@@ -1,5 +1,4 @@
 export { Params, Base };
-//export { Params, Base, PointDepthPoint };
 
 import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
@@ -40,19 +39,21 @@ class Params extends Weights.Params {
    *       the block end.
    *
    * @param {boolean} bChannelShuffler
-   *   If true, this block will be similar to ShuffleNetV2 (i.e. split and concat channels). If false, this block will be similar to
-   * MobileNetV1 or MobileNetV2 (i.e. add input to output). If null, it will be extracted from inputFloat32Array (i.e. by evolution). If
-   * ( stepCountPerBlock == 0 ), this flag will be ignored.
+   *   Whether a (concatenator and) channel shuffler will be used.
+   *   - If ( stepCountPerBlock == 0 ), this flag will be ignored. There will be no channel shuffler.
+   *   - If ( bChannelShuffler == true ), this block will be similar to ShuffleNetV2 (i.e. split and concat channels).
+   *   - If ( bChannelShuffler == false ), this block will be similar to MobileNetV1 or MobileNetV2 (i.e. with add-input-to-output).
+   *   - If ( bChannelShuffler == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
    *
    * @param {number} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
-   * That is, pointwise1ChannelCount = ( pointwise2ChannelCount * pointwise1ChannelCountRate ). If null, it will be extracted from
-   * inputFloat32Array (i.e. by evolution).
+   * That is, pointwise1ChannelCount = ( pointwise2ChannelCount * pointwise1ChannelCountRate ).
    *   - If ( stepCountPerBlock == 0 ), this rate will be ignored. There will be no first 1x1 pointwise.
    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 0 ), will be simplified ShuffleNetV2 (expanding by once depthwise).
    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
+   *   - If ( pointwise1ChannelCountRate == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
    *
    * @param {boolean} bBias
    *   If true, there will be a bias after every convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
