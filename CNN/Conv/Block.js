@@ -856,6 +856,9 @@ class ParamsConfig {
     //
     // Even if in MobileNetV2 (pointwise2 convolution does not have activation function in default), this is still true.
     this.pointwise21ActivationId = this.pointwise22ActivationId = block.nActivationIdAtBlockEnd;
+
+    // Besides, stepLast may use a different depthwise filter size. This is especially true for NotShuffleNet_NotMobileNet.
+    this.depthwiseFilterHeight = this.depthwiseFilterHeightLast;
   }
 }
 
@@ -932,12 +935,6 @@ class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
     this.pointwise21ChannelCount = step0.outChannelsAll;        // Step0's output channel count is all the other steps' output channel count.
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
-
-  /** @override */
-  configTo_beforeStepLast() {
-    super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
-    this.depthwiseFilterHeight = this.depthwiseFilterHeightLast; // Besides, stepLast may use a different depthwise filter size.
-  }
 }
 
 /** Privode parameters for simplified ShuffleNetV2 (i.e. without pointwise1, with concatenator).
@@ -992,7 +989,6 @@ class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
  *
  */
 class ParamsConfig_ShuffleNetV2_Simplified extends ParamsConfig_ShuffleNetV2 {
-
   /** @override */
   configTo_beforeStep0() {
     super.configTo_beforeStep0();                    // Almost the same as ParamsConfig_ShuffleNetV2. Except the followings.
@@ -1016,13 +1012,10 @@ class ParamsConfig_ShuffleNetV2_Simplified extends ParamsConfig_ShuffleNetV2 {
 
     // Note: ( this.pointwise1ChannelCount == 0 ) still true here. All steps do not have pointwise1 convolution before depthwise convolution.
   }
-
-//!!! ...unfinished... (2021/07/30)
 }
 
 /** Privode parameters for ShuffleNetV2 (i.e. with pointwise1, with concatenator). */
 class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
-
   /** @override */
   configTo_beforeStep0() {
     let block = this.block;
@@ -1056,9 +1049,22 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
     this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
+
+  /** @override */
+  configTo_beforeStepLast() {
+    super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
+
+    // In ShuffleNetV2, the stepLast only output0 (no output1) which has double channel count of source input0.
+    //
+    // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
+    // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
+    // not changed.
+    this.pointwise21ChannelCount = block.sourceChannelCount * 2;
+    this.pointwise22ChannelCount = 0;
+  }
 }
 
-/** Privode parameters for simplified ShuffleNetV2 (i.e. with pointwise1, with add-input-to-output). */
+/** Privode parameters for MobileNetV1 or MobileNetV2 (i.e. with pointwise1, with add-input-to-output). */
 class ParamsConfig_MobileNet extends ParamsConfig {
 
 //!!! ...unfinished... (2021/07/30)
