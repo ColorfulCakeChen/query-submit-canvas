@@ -476,6 +476,8 @@ class ParamsConfig {
     this.bShouldKeepInputTensor = false;
 
     this.stepCount = -1; // How many step should be in the block.
+    
+//!!! ...unfinished... (2021/07/30) should be a this.depthwiseFilterHeightFirst.
     this.depthwiseFilterHeightLast = -1; // The last step's depthwise filter size.
   }
 
@@ -540,6 +542,9 @@ class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
       this.stepCount = 1;                 // Only one step is needed. (Avoid no steps. At least, there should be one step.)
       this.depthwiseFilterHeightLast = 1; // The last (and only one) ste should use filter size 1x1 so that the input size could be kept.
     }
+
+//!!! ...unfinished... (2021/07/30) should not modify block.depthwiseFilterHeight directly.
+// should placed in another this.depthwiseFilterHeightFirst.
 
     // Since difference between source and output exists, the filter size should be larger than 1x1.
     if ( block.depthwiseFilterHeight <= 1 )
