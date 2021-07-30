@@ -1012,15 +1012,12 @@ class ParamsConfig_ShuffleNetV2_Simplified extends ParamsConfig_ShuffleNetV2 {
   /** @override */
   configTo_afterStep0( step0 ) {
     super.configTo_afterStep0( step0 );               // Almost the same as ParamsConfig_ShuffleNetV2. Except the following.
-    let block = this.block;
-
-//!!! ...unfinished... (2021/07/29) may be still zero?
-    this.pointwise1ChannelCount = step0.outChannels0; // All steps (except step0) has pointwise1 convolution before depthwise convolution.
-
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;   // All steps (except step0) will not double the channel count.
+
+    // Note: ( this.pointwise1ChannelCount == 0 ) still true here. All steps do not have pointwise1 convolution before depthwise convolution.
   }
 
-//!!! ...unfinished... (2021/07/29)
+//!!! ...unfinished... (2021/07/30)
 }
 
 /** Privode parameters for ShuffleNetV2 (i.e. with pointwise1, with concatenator). */
@@ -1036,7 +1033,6 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
     this.depthwiseFilterHeight = this.block.depthwiseFilterHeight;  // All steps uses default depthwise filter size.
     this.depthwiseStridesPad = 2;                                   // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
 
-//!!! ...unfinished... (2021/07/29)
     // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
     this.depthwiseBias = false;
     this.depthwiseActivationId = PointDepthPoint.Params.Activation.Ids.NONE; // In ShuffleNetV2, depthwise convolution doesn't have activation.
@@ -1053,7 +1049,6 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
   /** @override */
   configTo_afterStep0( step0 ) {
     let block = this.block;
-//!!! ...unfinished... (2021/07/29)
     // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
     // i.e. TWO_INPUTS (with concatenate, without add-input-to-output).
     this.channelCount0_pointwise1Before = step0.outChannels0;
@@ -1065,7 +1060,9 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
 
 /** Privode parameters for simplified ShuffleNetV2 (i.e. with pointwise1, with add-input-to-output). */
 class ParamsConfig_MobileNet extends ParamsConfig {
-//!!! ...unfinished... (2021/07/29)
+
+//!!! ...unfinished... (2021/07/30)
+
 }
 
 //!!! ...unfinished... (2021/07/27)
