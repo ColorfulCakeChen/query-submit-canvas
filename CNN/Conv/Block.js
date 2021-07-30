@@ -1,4 +1,5 @@
-export { Params, Base, PointDepthPoint };
+export { Params, Base };
+//export { Params, Base, PointDepthPoint };
 
 import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
@@ -898,8 +899,13 @@ class ParamsConfig {
    */
   configTo_afterStep0( step0 ) {}
 
-  /** Called before stepLast is about to be created. Sub-class should override this method to adjust data members. */
-  configTo_beforeStepLast() {}
+  /** Called before stepLast is about to be created. Sub-class could override this method to adjust data members. */
+  configTo_beforeStepLast() {
+    // By default, the stepLast of this block (i.e. at-block-end) may use a different activation function after pointwise2 convolution.
+    //
+    // Even if in MobileNetV2 (pointwise2 convolution does not have activation function in default), this is still true.
+    this.pointwise21ActivationId = this.pointwise22ActivationId = block.nActivationIdAtBlockEnd;
+  }
 }
 
 /** Privode parameters for pure depthwise-pointwise convolutions. */
@@ -964,7 +970,7 @@ class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
     this.depthwiseStridesPad = 0;                                   // In this mode, always ( strides = 1, pad = "valid" ).
     this.pointwise21ChannelCount = block.sourceChannelCount * block.depthwise_AvgMax_Or_ChannelMultiplier; // Step0 will double channel count.
     this.pointwise22ChannelCount = 0;                               // In this mode, always no second output.
-    this.bShouldKeepInputTensor = block.bKeepInputTensor; // Step0 may or may not keep input tensor according to caller's necessary.
+    this.bShouldKeepInputTensor = block.bKeepInputTensor;           // Step0 may or may not keep input tensor according to caller's necessary.
   }
 
   /** @override */
@@ -978,9 +984,8 @@ class ParamsConfig_NotShuffleNet_NotMobileNet extends ParamsConfig {
 
   /** @override */
   configTo_beforeStepLast() {
-    let block = this.block;
-    this.depthwiseFilterHeight = this.depthwiseFilterHeightLast;
-    this.pointwise21ActivationId = block.nActivationIdAtBlockEnd;
+    super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
+    this.depthwiseFilterHeight = this.depthwiseFilterHeightLast; // Besides, stepLast may use a different depthwise filter size.
   }
 }
 
@@ -1018,6 +1023,11 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                 // All steps will not double the channel count.
     this.depthwiseFilterHeight = this.block.depthwiseFilterHeight;  // All steps uses default depthwise filter size.
     this.depthwiseStridesPad = 2;                                   // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
+
+//!!! ...unfinished... (2021/07/29)
+    // In ShuffleNetV2, depthwise convolution does not have activation function.
+    this.depthwiseActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+
     this.pointwise21ChannelCount = block.sourceChannelCount; // All steps' (except stepLast) output0 is the same depth as source input0.
     this.pointwise22ChannelCount = block.sourceChannelCount; // All steps' (except stepLast) output1 is the same depth as source input1.
     this.bShouldKeepInputTensor = block.bKeepInputTensor;    // Step0 may or may not keep input tensor according to caller's necessary.
@@ -1033,14 +1043,6 @@ class ParamsConfig_ShuffleNetV2 extends ParamsConfig {
     this.channelCount1_pointwise1Before = step0.outChannels1;
     this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
-  }
-
-  /** @override */
-  configTo_beforeStepLast() {
-    let block = this.block;
-//!!! ...unfinished... (2021/07/29)
-    this.depthwiseFilterHeight = this.depthwiseFilterHeightLast;
-    this.pointwise21ActivationId = block.nActivationIdAtBlockEnd;
   }
 }
 
