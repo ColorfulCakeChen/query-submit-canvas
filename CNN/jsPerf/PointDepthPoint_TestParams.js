@@ -68,7 +68,9 @@ class TestParams {
 
     Object.assign( this.in, paramsOut ); // So that all parameters are by specified (none is by evolution).
 
-    return this.set_By_ParamsNumberArrayMap_ParamsOut( channelCount0_pointwise1Before, paramsNumberArrayObject, paramsOut );
+    let weightsElementOffsetBegin = 0;
+    return this.set_By_ParamsNumberArrayMap_ParamsOut(
+       channelCount0_pointwise1Before, paramsNumberArrayObject, paramsOut, weightsElementOffsetBegin );
   }
  
   /**
@@ -91,16 +93,24 @@ class TestParams {
    * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
    * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias. This object will be recorded in this.out directly.
    *
+   * @param {number} weightsElementOffsetBegin
+   *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
+   * The this.in.byteOffsetBegin will be ( 4 * weightsElementOffsetBegin ).
+   *
    * @return {TestParams}
    *   Return this object self.
    */
-  set_By_ParamsNumberArrayMap_ParamsOut( channelCount0_pointwise1Before, io_paramsNumberArrayObject, paramsOut ) {
+  set_By_ParamsNumberArrayMap_ParamsOut(
+    channelCount0_pointwise1Before, io_paramsNumberArrayObject, paramsOut, weightsElementOffsetBegin = 0 ) {
+
     this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
     this.out = paramsOut;
 
     TestParams.generate_Filters_Biases( channelCount0_pointwise1Before, paramsOut, io_paramsNumberArrayObject );
 
-    let Float32Array_ByteOffsetBegin = TestParams.concat_ParamsNumberArrayObject_To_Float32Array( io_paramsNumberArrayObject );
+    let Float32Array_ByteOffsetBegin
+      = TestParams.concat_ParamsNumberArrayObject_To_Float32Array( io_paramsNumberArrayObject, weightsElementOffsetBegin );
+
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
 
@@ -283,14 +293,15 @@ class TestParams {
    *   Pass in an object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of TestParams.paramsInArrayOrder[] elements.
    *
+   * @param {number} weightsElementOffsetBegin
+   *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
+   *
    * @return {object}
    *   Return an object { weightsFloat32Array, weightsByteOffsetBegin }. The weightsFloat32Array (as a Float32Array) is the concatenation
-   * of the numberArrayArray. The weightsByteOffsetBegin is a random offset inside weightsFloat32Array.
+   * of the numberArrayArray. The weightsByteOffsetBegin is a random offset byte count inside weightsFloat32Array.
    */
-  static concat_ParamsNumberArrayObject_To_Float32Array( paramsNumberArrayObject ) {
+  static concat_ParamsNumberArrayObject_To_Float32Array( paramsNumberArrayObject, weightsElementOffsetBegin = 0 ) {
 
-    // For testing not start at the offset 0.
-    let weightsElementOffsetBegin = ValueRange.Same.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
     let result = {
       weightsByteOffsetBegin: weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT, // Skip the un-used byte count.
     };
@@ -467,8 +478,11 @@ class Base {
     if ( currentParamDescConfigIndex >= this.paramDescConfigArray.length ) { // All parameters are used to be composed as one kind of combination.
       ++this.result.id;  // Complete one kind of combination.
 
+      // For testing not start at the offset 0.
+      let weightsElementOffsetBegin = ValueRange.Same.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
+
       this.result.set_By_ParamsNumberArrayMap_ParamsOut(
-        this.channelCount0_pointwise1Before, this.paramsNumberArrayObject, this.result.out );
+        this.channelCount0_pointwise1Before, this.paramsNumberArrayObject, this.result.out, weightsElementOffsetBegin );
 
       yield this.result;
       return; // Stop this recusive. Back-track to another parameters combination.
