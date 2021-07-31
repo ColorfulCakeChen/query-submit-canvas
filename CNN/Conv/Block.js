@@ -22,16 +22,16 @@ class Params extends Weights.Params {
    * (not to the inputFloat32Array.byteOffset).
    *
    * @param {number} sourceHeight
-   *   The height of the source image which will be processed by apply_and_destroy_or_keep(). This should always be specified and can
-   * not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *   The height of the source image which will be processed by apply_and_destroy_or_keep(). If null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution).
    *
    * @param {number} sourceWidth
-   *   The width of the source image which will be processed by apply_and_destroy_or_keep().c This should always be specified and can
-   * not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *   The width of the source image which will be processed by apply_and_destroy_or_keep(). If null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution).
    *
    * @param {number} sourceChannelCount
-   *   The channel count of the source image. It may be the output channel count of the previous convolution block, so it could be large.
-   * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *   The depth (channel count) of the source image. It may be the output channel count of the previous convolution block, so
+   * it could be large. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
    * @param {number} stepCountPerBlock
    *   There are how many steps inside this block.
