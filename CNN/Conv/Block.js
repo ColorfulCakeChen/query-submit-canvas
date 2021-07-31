@@ -71,8 +71,8 @@ class Params extends Weights.Params {
    *   If true, there will be a bias after every convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
    * @param {string} nActivationId
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be extracted
-   * from inputFloat32Array (i.e. by evolution).
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
+   * extracted from inputFloat32Array (i.e. by evolution).
    *
    * @param {string} nActivationIdAtBlockEnd
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the convolution of the last PointDepthPoint's
@@ -82,8 +82,8 @@ class Params extends Weights.Params {
    * of the activation function.
    *
    * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. will be kept). If it is null, it will be viewed as falsy
-   * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution).
    *
    * @return {boolean}
    *   Return false, if initialization failed.
