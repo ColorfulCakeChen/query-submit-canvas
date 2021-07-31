@@ -21,6 +21,18 @@ class Params extends Weights.Params {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
+   * @param {number} sourceHeight
+   *   The height of the source image which will be processed by apply_and_destroy_or_keep(). This should always be specified and can
+   * not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *
+   * @param {number} sourceWidth
+   *   The width of the source image which will be processed by apply_and_destroy_or_keep().c This should always be specified and can
+   * not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *
+   * @param {number} sourceChannelCount
+   *   The channel count of the source image. It may be the output channel count of the previous convolution block, so it could be large.
+   * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *
    * @param {number} stepCountPerBlock
    *   There are how many steps inside this block.
    *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -69,16 +81,22 @@ class Params extends Weights.Params {
    * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
    * of the activation function.
    *
+   * @param {boolean} bKeepInputTensor
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. will be kept). If it is null, it will be viewed as falsy
+   * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
+   *
    * @return {boolean}
    *   Return false, if initialization failed.
    *
    * @override
    */
   init( inputFloat32Array, byteOffsetBegin,
+    sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd
+    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
+    bKeepInputTensor
   ) {
 
     // Q: Why the depthwiseChannelMultiplierStep0 is not listed as a parameter?
@@ -93,39 +111,53 @@ class Params extends Weights.Params {
     //
 
     let parameterMap = new Map( [
-      [ Params.stepCountPerBlock,                stepCountPerBlock ],
-      [ Params.bChannelShuffler,                 bChannelShuffler ],
-      [ Params.pointwise1ChannelCountRate,       pointwise1ChannelCountRate ],
-      [ Params.depthwiseFilterHeight,            depthwiseFilterHeight ],
-      [ Params.bBias,                            bBias ],
-      [ Params.nActivationId,                    nActivationId ],
-      [ Params.nActivationIdAtBlockEnd,          nActivationIdAtBlockEnd ],
+      [ Params.sourceHeight,               sourceHeight ],
+      [ Params.sourceWidth,                sourceWidth ],
+      [ Params.sourceChannelCount,         sourceChannelCount ],
+      [ Params.stepCountPerBlock,          stepCountPerBlock ],
+      [ Params.bChannelShuffler,           bChannelShuffler ],
+      [ Params.pointwise1ChannelCountRate, pointwise1ChannelCountRate ],
+      [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
+      [ Params.bBias,                      bBias ],
+      [ Params.nActivationId,              nActivationId ],
+      [ Params.nActivationIdAtBlockEnd,    nActivationIdAtBlockEnd ],
+      [ Params.bKeepInputTensor,           bKeepInputTensor ],
     ] );
 
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
-  get stepCountPerBlock()                   { return this.parameterMapModified.get( Params.stepCountPerBlock ); }
-  get bChannelShuffler()                    { return this.parameterMapModified.get( Params.bChannelShuffler ); }
-  get pointwise1ChannelCountRate()          { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
+  get sourceHeight()                { return this.parameterMapModified.get( Params.sourceHeight ); }
+  get sourceWidth()                 { return this.parameterMapModified.get( Params.sourceWidth ); }
+  get sourceChannelCount()          { return this.parameterMapModified.get( Params.sourceChannelCount ); }
 
-  get depthwiseFilterHeight()               { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
-  get bBias()                               { return this.parameterMapModified.get( Params.bBias ); }
-  get nActivationId()                       { return this.parameterMapModified.get( Params.nActivationId ); }
-  get nActivationIdName()                   { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
-  get nActivationIdAtBlockEndId()           { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
-  get nActivationIdAtBlockEndName()         { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
+  get stepCountPerBlock()           { return this.parameterMapModified.get( Params.stepCountPerBlock ); }
+  get bChannelShuffler()            { return this.parameterMapModified.get( Params.bChannelShuffler ); }
+  get pointwise1ChannelCountRate()  { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
+
+  get depthwiseFilterHeight()       { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
+  get bBias()                       { return this.parameterMapModified.get( Params.bBias ); }
+  get nActivationId()               { return this.parameterMapModified.get( Params.nActivationId ); }
+  get nActivationIdName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
+  get nActivationIdAtBlockEndId()   { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
+  get nActivationIdAtBlockEndName() { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
+
+  get bKeepInputTensor()            { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
 }
 
 
 // Define parameter descriptions.
-Params.stepCountPerBlock =               new ParamDesc.Int(                         "stepCountPerBlock",          0, ( 1 * 1024 ) );
-Params.bChannelShuffler =                new ParamDesc.Bool(                        "bChannelShuffler" );
-Params.pointwise1ChannelCountRate =      new ParamDesc.Int(                         "pointwise1ChannelCountRate", 0,             2 );
-Params.depthwiseFilterHeight =           new ParamDesc.Int(                         "depthwiseFilterHeight",      1,             9 );
-Params.bBias =                           new ParamDesc.Bool(                        "bBias" );
-Params.nActivationId =                   new ParamDesc.ActivationFunction(          "nActivationId" );
-Params.nActivationIdAtBlockEnd =         new ParamDesc.ActivationFunction(          "nActivationIdAtBlockEnd" );
+Params.sourceHeight =               new ParamDesc.Int(                "sourceHeight",               1, ( 10 * 1024 ) );
+Params.sourceWidth =                new ParamDesc.Int(                "sourceWidth",                1, ( 10 * 1024 ) );
+Params.sourceChannelCount =         new ParamDesc.Int(                "sourceChannelCount",         1, ( 10 * 1024 ) );
+Params.stepCountPerBlock =          new ParamDesc.Int(                "stepCountPerBlock",          0, (  1 * 1024 ) );
+Params.bChannelShuffler =           new ParamDesc.Bool(               "bChannelShuffler" );
+Params.pointwise1ChannelCountRate = new ParamDesc.Int(                "pointwise1ChannelCountRate", 0,             2 );
+Params.depthwiseFilterHeight =      new ParamDesc.Int(                "depthwiseFilterHeight",      1,             9 );
+Params.bBias =                      new ParamDesc.Bool(               "bBias" );
+Params.nActivationId =              new ParamDesc.ActivationFunction( "nActivationId" );
+Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction( "nActivationIdAtBlockEnd" );
+Params.bKeepInputTensor =           new ParamDesc.Bool(               "bKeepInputTensor" );
 
 
 /**
@@ -171,22 +203,6 @@ class Base {
    *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
    * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
    *
-   * @param {number} sourceHeight
-   *   The height of the source image which will be processed by apply_and_destroy_or_keep(). This should always be specified and can
-   * not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
-   *
-   * @param {number} sourceWidth
-   *   The width of the source image which will be processed by apply_and_destroy_or_keep().c This should always be specified and can
-   * not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
-   *
-   * @param {number} sourceChannelCount
-   *   The channel count of the source image. It may be the output channel count of the previous convolution block, so it could be large.
-   * This should always be specified and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
-   *
-   * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. will be kept). If it is null, it will be viewed as falsy
-   * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
-   *
    * @param {Params} params
    *   A Params object. The params.extract() will be called to extract parameters.
    *
@@ -199,7 +215,7 @@ class Base {
    *
    * @see PointDepthPoint.Base.initer()
    */
-  * initer( progressParent, sourceHeight, sourceWidth, sourceChannelCount, bKeepInputTensor, params ) {
+  * initer( progressParent, params ) {
 
     // Both MobileNetV3 and ShuffleNetV2:
     //   - They all do not use (depthwise convolution) channelMultiplier.
@@ -237,13 +253,6 @@ class Base {
 
     this.disposeTensors();
 
-//!!! ...unfinished... (2021/07/30) should be moved into Params. Then Params_to_PointDepthPointParams constructor accept Params (instead of Base).
-// So that Params_to_PointDepthPointParams could be tested individually.
-    this.sourceHeight = sourceHeight;
-    this.sourceWidth = sourceWidth;
-    this.sourceChannelCount = sourceChannelCount;
-    this.bKeepInputTensor = bKeepInputTensor;
-
     // 1. Extract parameters.
     if ( !params )
       return false;
@@ -258,6 +267,9 @@ class Base {
     // Get parameters' real (adjusted) values.
     //
     // Do not keep params in this.params so that the inputFloat32Array could be released.
+    this.sourceHeight = params.sourceHeight;
+    this.sourceWidth = params.sourceWidth;
+    this.sourceChannelCount = params.sourceChannelCount;
     this.stepCountPerBlock = params.stepCountPerBlock;
     this.bChannelShuffler = params.bChannelShuffler
     this.pointwise1ChannelCountRate = params.pointwise1ChannelCountRate;
@@ -267,6 +279,7 @@ class Base {
     this.nActivationIdName = params.nActivationIdName;
     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
     this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
+    this.bKeepInputTensor = params.bKeepInputTensor;
 
     // Pre-allocate array to place intermediate 2 input tensors and 2 output tensors. This could reduce memory re-allocation.
     this.intermediateInputTensors = new Array( 2 );
@@ -351,11 +364,11 @@ class Base {
    *
    * @see PointDepthPoint.Base.init()
    */
-  init( progressParent, sourceHeight, sourceWidth, sourceChannelCount, bKeepInputTensor, params ) {
+  init( progressParent, params ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer( progressParent, sourceHeight, sourceWidth, sourceChannelCount, bKeepInputTensor, params );
+    let initer = this.initer( progressParent, params );
     let initerNext;
     do {
       initerNext = initer.next();
