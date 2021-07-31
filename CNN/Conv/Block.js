@@ -297,7 +297,7 @@ class Base {
       progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
     }
 
-    let params, step, stepIniter;
+    let thePointDepthPointParams, step, stepIniter;
 
     this.stepsArray = new Array( paramsConfig.stepCount );
     for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step1, 2, 3, ...
@@ -313,20 +313,12 @@ class Base {
         paramsConfig.configTo_beforeStepLast();
       }
 
-//!!! ...unfinished... (2021/07/30) Move to Params_to_PointDepthPointParams.createParams().
-      params = new PointDepthPoint.Params(
-        params.defaultInput, this.byteOffsetEnd,
-        paramsConfig.channelCount1_pointwise1Before,
-        paramsConfig.pointwise1ChannelCount, paramsConfig.pointwise1Bias, paramsConfig.pointwise1ActivationId,
-        paramsConfig.depthwise_AvgMax_Or_ChannelMultiplier, paramsConfig.depthwiseFilterHeight,
-        paramsConfig.depthwiseStridesPad, paramsConfig.depthwiseBias, paramsConfig.depthwiseActivationId,
-        paramsConfig.pointwise21ChannelCount, paramsConfig.pointwise21Bias, paramsConfig.pointwise21ActivationId,
-        paramsConfig.pointwise22ChannelCount, paramsConfig.pointwise22Bias, paramsConfig.pointwise22ActivationId,
-      )
+//!!! ...unfinished... (2021/07/31) What about this.channelCount0_pointwise1Before and this.bShouldKeepInputTensor?
+      thePointDepthPointParams = paramsConfig.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
 
       step = this.stepsArray[ i ] = new PointDepthPoint.Base();
       stepIniter = step.initer( progressForSteps.children[ i ],
-        paramsConfig.channelCount0_pointwise1Before, paramsConfig.bShouldKeepInputTensor, params );
+        paramsConfig.channelCount0_pointwise1Before, paramsConfig.bShouldKeepInputTensor, thePointDepthPointParams );
 
       this.bInitOk = yield* stepIniter;
       if ( !this.bInitOk )
@@ -523,6 +515,34 @@ class Params_to_PointDepthPointParams {
 
     // Besides, the stepLast may use a different depthwise filter size. This is especially true for NotShuffleNet_NotMobileNet.
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Last;
+  }
+
+  /**
+   *
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @param {number} byteOffsetBegin
+   *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
+   * (not to the inputFloat32Array.byteOffset).
+   *
+   * @return {PointDepthPoint.Params}
+   *   Create and return a PointDepthPoint.Params according to this object's current state.
+   */
+  create_PointDepthPointParams( inputFloat32Array, byteOffsetBegin ) {
+    let params = new PointDepthPoint.Params(
+      inputFloat32Array, byteOffsetBegin,
+
+//!!! ...unfinished... (2021/07/31) What about this.channelCount0_pointwise1Before and this.bShouldKeepInputTensor?
+
+      this.channelCount1_pointwise1Before,
+      this.pointwise1ChannelCount, this.pointwise1Bias, this.pointwise1ActivationId,
+      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
+      this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
+      this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
+      this.pointwise22ChannelCount, this.pointwise22Bias, this.pointwise22ActivationId,
+    );
+    return params;
   }
 }
 
