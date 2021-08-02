@@ -1,10 +1,10 @@
 export { TestParams, Base };
 
-import * as RandTools from "../util/RandTools.js";
-//import * as ParamDesc from "../Unpacker/ParamDesc.js";
-//import * as ValueDesc from "../Unpacker/ValueDesc.js";
-//import * as ValueRange from "../Unpacker/ValueRange.js";
-import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
+import * as RandTools from "../../util/RandTools.js";
+//import * as ParamDesc from "../../Unpacker/ParamDesc.js";
+//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+//import * as ValueRange from "../../Unpacker/ValueRange.js";
+import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 
 /**
  *
