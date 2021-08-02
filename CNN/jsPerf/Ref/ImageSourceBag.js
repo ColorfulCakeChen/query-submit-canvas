@@ -73,7 +73,7 @@ class Base {
     // 1. When no depthwise operation, the original image's tensor is returned directly (i.e. will not be shrinked).
     //
     // Because there is not depthwise operation, there is not possible to shrink.
-    if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton..Ids.NONE ) {
+    if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
       let originalTensor = Base.internal_getTensor3d_by.call( this, channelCount );
       return originalTensor;
     }
