@@ -1,7 +1,7 @@
 export { Base };
 
-import * as RandTools from "../util/RandTools.js";
-import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as RandTools from "../../util/RandTools.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 
 /**
  * Dynamically create random image data with specified channelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
