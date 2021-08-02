@@ -1,5 +1,6 @@
 export { Same, Bool, Int };
 
+import * as RandTools from "..util/RandTools.js";
 
 /**
  * Provides methods for converting nothing (just return original value).
@@ -27,30 +28,16 @@ class Same {
    *
    * @param {number} offsetMultiplier
    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
-   * is Same.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
+   * is RandTools.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
    *
    * @yield {object}
    *   Every time yield an array with two number properties: { valueInput, valueOutput }. The valueOutput is a value from valueRangeMin to
    * valueRangeMax. The valueInput is a value which could be adjusted to valueOutput by this ValueRange object.
    */
-  * valueInputOutputGenerator( offsetMultiplier = Same.getRandomIntInclusive( -10, +10 ) ) {
+  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 ) ) {
     yield { valueInput: offsetMultiplier, valueOutput: offsetMultiplier };
   }
 
-  /**
-   * Return a random integer between min and max. (This function comes from MDN's Math.random().)
-   *
-   * @param {number} min The the minimum integer. (inclusive)
-   * @param {number} max The the maximum integer. (inclusive)
-   */
-  static getRandomIntInclusive( min, max ) {
-    let minReal = Math.min( min, max );
-    let maxReal = Math.max( min, max );
-    let minInt = Math.ceil( minReal );
-    let maxInt  = Math.floor( maxReal );
-    let kindsInt = maxInt - minInt + 1;
-    return Math.floor( ( Math.random() * kindsInt ) + minInt );
-  }
 }
 
 /** The only one ValueRange.Same instance. */
@@ -81,7 +68,7 @@ class Bool extends Same {
    *
    * @param {number} offsetMultiplier
    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
-   * is Same.getRandomIntInclusive( -100, +100 ). The -100 and +100 is just chosen arbitrarily.
+   * is RandTools.getRandomIntInclusive( -100, +100 ). The -100 and +100 is just chosen arbitrarily.
    *
    * @param {number} maxKinds
    *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
@@ -90,7 +77,7 @@ class Bool extends Same {
    *
    * @override
    */
-  * valueInputOutputGenerator( offsetMultiplier = Same.getRandomIntInclusive( -100, +100 ), maxKinds = this.kinds ) {
+  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -100, +100 ), maxKinds = this.kinds ) {
 
     let baseInt = Math.trunc( offsetMultiplier );
     let baseIntEven = baseInt * 2; // Any integer multiplied by 2 will be an even number.
@@ -105,8 +92,8 @@ class Bool extends Same {
     // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
     //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
     //    from Float64 to Float32.
-    let randomFractionalPart1 = Same.getRandomIntInclusive( 0, 99 ) / 1000;
-    let randomFractionalPart2 = Same.getRandomIntInclusive( 0, 99 ) / 1000;
+    let randomFractionalPart1 = RandTools.getRandomIntInclusive( 0, 99 ) / 1000;
+    let randomFractionalPart2 = RandTools.getRandomIntInclusive( 0, 99 ) / 1000;
 
     // An even value with fractional part will become 0 by Bool.adjust().
     let valueInputZero = ( baseIntEven + 0 ) + ( baseIntEvenSign * randomFractionalPart1 );
@@ -124,7 +111,7 @@ class Bool extends Same {
       yield valueInputOutputZero; // Always zero. (Although, not so meaningful.)
       //yield valueInputOutputOne;
     } else {
-      let index = Same.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
+      let index = RandTools.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
       if ( index == 0 )
         yield valueInputOutputZero; // Randomly choose zero.
       else
@@ -203,7 +190,7 @@ class Int extends Same {
     // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
     //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
     //    from Float64 to Float32.
-    let randomFractionalPart = Same.getRandomIntInclusive( 0, 99 ) / 1000;
+    let randomFractionalPart = RandTools.getRandomIntInclusive( 0, 99 ) / 1000;
 
     // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
     let valueInputFloat = valueInputInt + ( valueInputIntSign * randomFractionalPart );
@@ -220,7 +207,7 @@ class Int extends Same {
    *
    * @param {number} offsetMultiplier
    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
-   * is Same.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
+   * is RandTools.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
    *
    * @param {number} maxKinds
    *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
@@ -229,7 +216,7 @@ class Int extends Same {
    *
    * @override
    */
-  * valueInputOutputGenerator( offsetMultiplier = Same.getRandomIntInclusive( -10, +10 ), maxKinds = this.kinds ) {
+  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 ), maxKinds = this.kinds ) {
 
     // An integer which has the same remainder as offsetMultiplier when divided by this.kinds.
     let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
@@ -241,7 +228,7 @@ class Int extends Same {
         yield valueInputOutput;
       }
     } else {
-      let index = Same.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
+      let index = RandTools.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
       let valueInputOutput = this.get_valueInputOutput_byIndex( baseIntCongruence, index );
       yield valueInputOutput;
     }
