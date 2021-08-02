@@ -1,6 +1,6 @@
 export { Same, Bool, Int };
 
-import * as RandTools from "..util/RandTools.js";
+import * as RandTools from "../util/RandTools.js";
 
 /**
  * Provides methods for converting nothing (just return original value).
