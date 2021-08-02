@@ -2,6 +2,7 @@ export { Base };
 
 import * as RandTools from "../../util/RandTools.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 
 /**
  * Dynamically create random image data with specified channelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
@@ -115,7 +116,7 @@ class Base {
       let originalImage = Base.internal_getImage_by.call( this, channelCount ); // Use original image to create shrinked image.
 
       // Borrow the calcDepthwise() function to create an input image which is shrink by specified filter size and strides and pad.
-      image = Base.calcDepthwise(
+      image = PointDepthPoint_Reference.Base.calcDepthwise(
         originalImage,
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX, // Max Pooling is faster and without filter weights.
         depthwiseFilterHeight,
