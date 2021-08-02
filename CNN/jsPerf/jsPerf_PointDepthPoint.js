@@ -6,8 +6,9 @@ import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 //import * as TensorTools from "../util/TensorTools.js";
-import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
-import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
+import * as PointDepthPoint_Reference from "./Ref/PointDepthPoint_Reference.js";
+import * as PointDepthPoint_TestParams from "./Ref/PointDepthPoint_TestParams.js"; 
+import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 
 
 /**
@@ -413,7 +414,7 @@ class HeightWidthDepth {
       for ( let originalImageSize of originalImageSizeArray ) {
 
         // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors dynamically created in imageSourceBag.
-        let imageSourceBag = new PointDepthPoint_Reference.ImageSourceBag( originalImageSize.height, originalImageSize.width );
+        let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
 
         let testParamsBase = new PointDepthPoint_TestParams.Base( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
         let testParamsGenerator = testParamsBase.ParamsGenerator();
