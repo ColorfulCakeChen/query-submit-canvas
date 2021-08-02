@@ -1,6 +1,6 @@
 export { TestParams, Base };
 
-import * as RandTools from "..util/RandTools.js";
+import * as RandTools from "../util/RandTools.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../Unpacker/ValueRange.js";
@@ -126,11 +126,9 @@ class TestParams {
    *   Return a number array.
    */
   static generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax ) {
-    let numberArray = [ ... new Array( elementCount ).keys() ].map(
 //!!! (2021/07/20 Temp Remarked) Fix to non-random to simplify debug.
-      x => x + RandTools.getRandomIntInclusive( randomOffsetMin, randomOffsetMax ) );
-//      x => x + 0 );
-    return numberArray;
+    return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
+//    return RandTools.generate_numberArray( elementCount, 0, 0 );
   }
 
   /**
