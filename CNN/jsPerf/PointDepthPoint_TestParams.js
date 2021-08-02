@@ -1,8 +1,9 @@
 export { TestParams, Base };
 
+import * as RandTools from "..util/RandTools.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../Unpacker/ValueDesc.js";
-import * as ValueRange from "../Unpacker/ValueRange.js";
+//import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 
 /**
@@ -127,7 +128,7 @@ class TestParams {
   static generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax ) {
     let numberArray = [ ... new Array( elementCount ).keys() ].map(
 //!!! (2021/07/20 Temp Remarked) Fix to non-random to simplify debug.
-      x => x + ValueRange.Same.getRandomIntInclusive( randomOffsetMin, randomOffsetMax ) );
+      x => x + RandTools.getRandomIntInclusive( randomOffsetMin, randomOffsetMax ) );
 //      x => x + 0 );
     return numberArray;
   }
@@ -479,7 +480,7 @@ class Base {
       ++this.result.id;  // Complete one kind of combination.
 
       // For testing not start at the offset 0.
-      let weightsElementOffsetBegin = ValueRange.Same.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
+      let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
 
       this.result.set_By_ParamsNumberArrayMap_ParamsOut(
         this.channelCount0_pointwise1Before, this.paramsNumberArrayObject, this.result.out, weightsElementOffsetBegin );
