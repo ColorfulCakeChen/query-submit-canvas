@@ -36,22 +36,11 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2021/06/09) channelCount0_pointwise1Before should also be randomly tested (e.g. between 3 - 5).
 
   /**
-   * @param {number} inputImageHeight
-   *   The height of the input image.
-   *
-   * @param {number} inputImageWidth
-   *   The width of the input image.
-   *
-   * @param {number} channelCount0_pointwise1Before
-   *   The channel count of the first input image.
    *
    */
-  constructor( inputImageHeight, inputImageWidth, channelCount0_pointwise1Before ) {
-    super();
-    this.inputImageHeight = inputImageHeight;
-    this.inputImageWidth = inputImageWidth;
-    this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
-  }
+//   constructor() {
+//     super();
+//   }
 
   /**
    * @override
@@ -66,10 +55,22 @@ class Base extends TestParams.Base {
   /**
    * Responsible for generating testing paramters combinations.
    *
+   * @param {number} inputImageHeight
+   *   The height of the input image.
+   *
+   * @param {number} inputImageWidth
+   *   The width of the input image.
+   *
+   * @param {number} channelCount0_pointwise1Before
+   *   The channel count of the first input image.
+   *
    * @yield {Base}
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
-  * ParamsGenerator() {
+  * ParamsGenerator( inputImageHeight, inputImageWidth, channelCount0_pointwise1Before ) {
+    this.inputImageHeight = inputImageHeight;
+    this.inputImageWidth = inputImageWidth;
+    this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
 
 //!!! ...unfinished... (2021/07/27) When pad is "same", it should test more filter size.
     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
