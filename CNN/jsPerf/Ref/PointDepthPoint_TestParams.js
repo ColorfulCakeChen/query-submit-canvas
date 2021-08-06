@@ -4,6 +4,7 @@ import * as RandTools from "../../util/RandTools.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
+import * as ParamsPermutater from "./ParamsPermutater.js";
 import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 
 /**
@@ -376,7 +377,7 @@ Base.paramsInArrayOrder = [
 /**
  * Responsible for generating TestParams.Base.
  */
-class Permuter {
+class Permuter extends ParamsPermutater.Base {
 
 //!!! ...unfinished... (2021/07/11) channelCount0_pointwise1Before  should also be included when permuteParamRecursively.
 
@@ -426,25 +427,28 @@ class Permuter {
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     this.paramDescConfigArray = [
 
-      { paramDesc: PointDepthPoint.Params.pointwise21ChannelCount,               maxKinds: this.maxKindsRestrict.Pointwise },
-      { paramDesc: PointDepthPoint.Params.bPointwise21Bias,                      maxKinds: this.maxKindsRestrict.Bias },
-      { paramDesc: PointDepthPoint.Params.pointwise21ActivationId,               maxKinds: this.maxKindsRestrict.ActivationId },
-      { paramDesc: PointDepthPoint.Params.pointwise22ChannelCount,               maxKinds: this.maxKindsRestrict.Pointwise },
-      { paramDesc: PointDepthPoint.Params.bPointwise22Bias,                      maxKinds: this.maxKindsRestrict.Bias },
-      { paramDesc: PointDepthPoint.Params.pointwise22ActivationId,               maxKinds: this.maxKindsRestrict.ActivationId },
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.maxKindsRestrict.Pointwise ),
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.maxKindsRestrict.Bias ),
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.maxKindsRestrict.ActivationId ),
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.pointwise22ChannelCount, this.maxKindsRestrict.Pointwise ),
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.bPointwise22Bias,        this.maxKindsRestrict.Bias ),
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.pointwise22ActivationId, this.maxKindsRestrict.ActivationId ),
 
-      { paramDesc: PointDepthPoint.Params.bPointwise1Bias,                       maxKinds: this.maxKindsRestrict.Bias },
-      { paramDesc: PointDepthPoint.Params.pointwise1ActivationId,                maxKinds: this.maxKindsRestrict.ActivationId },
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.maxKindsRestrict.Bias ),
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.maxKindsRestrict.ActivationId ),
 
-      { paramDesc: PointDepthPoint.Params.channelCount1_pointwise1Before,        maxKinds: this.maxKindsRestrict.channelCount1_pointwise1Before },
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
+                                                                                            this.maxKindsRestrict.channelCount1_pointwise1Before ),
 
-      { paramDesc: PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier, maxKinds: this.maxKindsRestrict.depthwise_AvgMax_Or_ChannelMultiplier },
-      { paramDesc: PointDepthPoint.Params.depthwiseFilterHeight,                 maxKinds: this.maxKindsRestrict.depthwiseFilterHeight },
-      { paramDesc: PointDepthPoint.Params.depthwiseStridesPad,                   maxKinds: this.maxKindsRestrict.depthwiseStridesPad },
-      { paramDesc: PointDepthPoint.Params.bDepthwiseBias,                        maxKinds: this.maxKindsRestrict.Bias },
-      { paramDesc: PointDepthPoint.Params.depthwiseActivationId,                 maxKinds: this.maxKindsRestrict.ActivationId },
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
+                                                                                             this.maxKindsRestrict.depthwise_AvgMax_Or_ChannelMultiplier ),
 
-      { paramDesc: PointDepthPoint.Params.pointwise1ChannelCount,                maxKinds: this.maxKindsRestrict.Pointwise },
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterHeight,    this.maxKindsRestrict.depthwiseFilterHeight ),
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.depthwiseStridesPad,      this.maxKindsRestrict.depthwiseStridesPad ),
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,           this.maxKindsRestrict.Bias ),
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,    this.maxKindsRestrict.ActivationId ),
+
+      new ParamsPermutater.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,   this.maxKindsRestrict.Pointwise ),
     ];
   }
 
