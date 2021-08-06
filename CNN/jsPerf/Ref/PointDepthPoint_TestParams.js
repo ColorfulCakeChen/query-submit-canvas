@@ -47,6 +47,7 @@ class Base extends TestParams.Base {
    *
    */
   constructor( inputImageHeight, inputImageWidth, channelCount0_pointwise1Before ) {
+    super();
     this.inputImageHeight = inputImageHeight;
     this.inputImageWidth = inputImageWidth;
     this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
