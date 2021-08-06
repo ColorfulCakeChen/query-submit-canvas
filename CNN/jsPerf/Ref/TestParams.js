@@ -1,10 +1,8 @@
 export { ParamDescConfig, Base };
 
-//import * as RandTools from "../../util/RandTools.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
-//import * as TestParams from "./TestParams.js";
 
 
 /**
@@ -22,8 +20,8 @@ export { ParamDescConfig, Base };
  */
 class ParamDescConfig {
   constructor( paramDesc, maxKinds ) {
-    this.paramDesc = this.paramDesc;
-    this.maxKinds = this.maxKinds;
+    this.paramDesc = paramDesc;
+    this.maxKinds = maxKinds;
   }
 }
 
