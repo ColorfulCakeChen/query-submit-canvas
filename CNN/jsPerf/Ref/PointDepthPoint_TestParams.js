@@ -1,10 +1,10 @@
-export { Base, Permuter };
+export { Base };
 
 import * as RandTools from "../../util/RandTools.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
-import * as ParamsPermuter from "./ParamsPermuter.js";
+import * as TestParams from "./TestParams.js";
 import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 
 /**
@@ -22,29 +22,115 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  * bPointwise22Bias, pointwise22ActivationId. It also has the following properties:
  *   - inputFloat32Array
  *   - byteOffsetBegin
- *   - weights
+ *   - paramsNumberArrayObject
  *   - channelCount0_pointwise1Before
  *
  * @member {object} out
  *   The "out" sub-object's data members represent the "should-be" result of PointDepthPoint.Params's extract().
- * That is, it has the above data members except inputFloat32Array, byteOffsetBegin.
+ * That is, it has the above data members except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
  *
  */
-class Base {
+class Base extends TestParams.Base {
 
-  constructor() {
-    this.id = -1;
-    this.in = {};
-    this.out = {};
+//!!! ...unfinished... (2021/07/11) channelCount0_pointwise1Before  should also be included when permuteParamRecursively.
+//!!! ...unfinished... (2021/06/09) channelCount0_pointwise1Before should also be randomly tested (e.g. between 3 - 5).
+
+  /**
+   * @param {number} inputImageHeight
+   *   The height of the input image.
+   *
+   * @param {number} inputImageWidth
+   *   The width of the input image.
+   *
+   * @param {number} channelCount0_pointwise1Before
+   *   The channel count of the first input image.
+   *
+   */
+  constructor( inputImageHeight, inputImageWidth, channelCount0_pointwise1Before ) {
+    this.inputImageHeight = inputImageHeight;
+    this.inputImageWidth = inputImageWidth;
+    this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
   }
 
-//!!! ...unfinished... (2021/06/09) channelCount0_pointwise1Before should also be randomly tested (e.g. between 3 - 5).
+  /**
+   * @override
+   */
+  onBefore_Yield() {
+    // For testing not start at the offset 0.
+    let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
+
+    this.set_By_ParamsNumberArrayMap_ParamsOut( this.channelCount0_pointwise1Before, weightsElementOffsetBegin );
+  }
+
+  /**
+   * Responsible for generating testing paramters combinations.
+   *
+   * @yield {Base}
+   *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
+   */
+  * ParamsGenerator() {
+
+//!!! ...unfinished... (2021/07/27) When pad is "same", it should test more filter size.
+    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
+    //
+    // Note: When pad is "same", this restriction does not exist.
+    let depthwiseFilterMaxSize = Math.min( this.inputImageHeight, this.inputImageWidth );
+
+    // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
+    let maxKindsRestrict = {
+//      PerParameter: 5,
+      Pointwise:    3,
+
+      // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
+      // (i.e. ( maxKinds == 0 )) for speeding up testing.
+//!!! (2021/07/20 Temp Remarked) Fix to none to simplify debug.
+      Bias:         0,
+      ActivationId: 0,
+//       Bias:         1,
+//       ActivationId: 1,
+
+      channelCount1_pointwise1Before: 5,
+      depthwise_AvgMax_Or_ChannelMultiplier: 5,
+      depthwiseFilterHeight: depthwiseFilterMaxSize,
+      depthwiseStridesPad: undefined,
+    };
+
+    // All the parameters to be tried.
+    //
+    // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
+    let paramDescConfigArray = [
+
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.maxKindsRestrict.Pointwise ),
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.maxKindsRestrict.Bias ),
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.maxKindsRestrict.ActivationId ),
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise22ChannelCount, this.maxKindsRestrict.Pointwise ),
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bPointwise22Bias,        this.maxKindsRestrict.Bias ),
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise22ActivationId, this.maxKindsRestrict.ActivationId ),
+
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.maxKindsRestrict.Bias ),
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.maxKindsRestrict.ActivationId ),
+
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
+                                                                                          this.maxKindsRestrict.channelCount1_pointwise1Before ),
+
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
+                                                                                          this.maxKindsRestrict.depthwise_AvgMax_Or_ChannelMultiplier ),
+
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterHeight,   this.maxKindsRestrict.depthwiseFilterHeight ),
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwiseStridesPad,     this.maxKindsRestrict.depthwiseStridesPad ),
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.maxKindsRestrict.Bias ),
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.maxKindsRestrict.ActivationId ),
+
+      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.maxKindsRestrict.Pointwise ),
+    ];
+
+    yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
+  }
 
   /**
    * Use scattered parameters to fills the following proterties:
    *   - this.in.inputFloat32Array
    *   - this.in.byteOffsetBegin
-   *   - this.in.weights
    *   - this.in.channelCount0_pointwise1Before
    *   - this.out
    *
@@ -79,18 +165,17 @@ class Base {
    * Fills the following proterties:
    *   - this.in.inputFloat32Array
    *   - this.in.byteOffsetBegin
-   *   - this.in.weights
    *   - this.in.channelCount0_pointwise1Before
    *   - this.out
    *
    * @param {number} channelCount0_pointwise1Before
    *   The channel count of the first input image.
    *
-   * @param {object} io_paramsNumberArrayObject
+   * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of Base.paramsInArrayOrder[] elements.
    *
-   * @param {object} paramsOut
+   * @param {object} this.out
    *   An object which has the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias,
    * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
    * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias. This object will be recorded in this.out directly.
@@ -103,21 +188,19 @@ class Base {
    *   Return this object self.
    */
   set_By_ParamsNumberArrayMap_ParamsOut(
-    channelCount0_pointwise1Before, io_paramsNumberArrayObject, paramsOut, weightsElementOffsetBegin = 0 ) {
+//!!! ...unfinished... (2021/08/06)  
+//    channelCount0_pointwise1Before, io_paramsNumberArrayObject, paramsOut, weightsElementOffsetBegin = 0 ) {
+    channelCount0_pointwise1Before, weightsElementOffsetBegin = 0 ) {
 
     this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
-    this.out = paramsOut;
 
-    Base.generate_Filters_Biases( channelCount0_pointwise1Before, paramsOut, io_paramsNumberArrayObject );
+    Base.generate_Filters_Biases( channelCount0_pointwise1Before, this.out, this.in.paramsNumberArrayObject );
 
     let Float32Array_ByteOffsetBegin
-      = Base.concat_ParamsNumberArrayObject_To_Float32Array( io_paramsNumberArrayObject, weightsElementOffsetBegin );
+      = Base.concat_ParamsNumberArrayObject_To_Float32Array( this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
-
-    // The original (non-concatenated) filters and biases should also be returned.
-    this.in.weights = io_paramsNumberArrayObject;
 
     return this;
   }
@@ -372,160 +455,3 @@ Base.paramsInArrayOrder = [
   "pointwise22Filters",
   "pointwise22Biases",
 ];
-
-
-/**
- * Responsible for generating TestParams.Base.
- */
-class Permuter extends ParamsPermuter.Base {
-
-//!!! ...unfinished... (2021/07/11) channelCount0_pointwise1Before  should also be included when permuteParamRecursively.
-
-  /**
-   * @param {number} inputImageHeight
-   *   The height of the input image.
-   *
-   * @param {number} inputImageWidth
-   *   The width of the input image.
-   *
-   * @param {number} channelCount0_pointwise1Before
-   *   The channel count of the first input image.
-   *
-   */
-  constructor( inputImageHeight, inputImageWidth, channelCount0_pointwise1Before ) {
-
-//!!! ...unfinished... (2021/07/27) When pad is "same", it should test more filter size.
-    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
-    //
-    // Note: When pad is "same", this restriction does not exist.
-    let depthwiseFilterMaxSize = Math.min( this.inputImageHeight, this.inputImageWidth );
-
-    // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
-    let maxKindsRestrict = {
-//      PerParameter: 5,
-      Pointwise:    3,
-
-      // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
-      // (i.e. ( maxKinds == 0 )) for speeding up testing.
-//!!! (2021/07/20 Temp Remarked) Fix to none to simplify debug.
-      Bias:         0,
-      ActivationId: 0,
-//       Bias:         1,
-//       ActivationId: 1,
-
-      channelCount1_pointwise1Before: 5,
-      depthwise_AvgMax_Or_ChannelMultiplier: 5,
-      depthwiseFilterHeight: depthwiseFilterMaxSize,
-      depthwiseStridesPad: undefined,
-    };
-
-    // All the parameters to be tried.
-    //
-    // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
-    let paramDescConfigArray = [
-
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.maxKindsRestrict.Pointwise ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.maxKindsRestrict.Bias ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.maxKindsRestrict.ActivationId ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise22ChannelCount, this.maxKindsRestrict.Pointwise ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bPointwise22Bias,        this.maxKindsRestrict.Bias ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise22ActivationId, this.maxKindsRestrict.ActivationId ),
-
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.maxKindsRestrict.Bias ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.maxKindsRestrict.ActivationId ),
-
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
-                                                                                          this.maxKindsRestrict.channelCount1_pointwise1Before ),
-
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
-                                                                                          this.maxKindsRestrict.depthwise_AvgMax_Or_ChannelMultiplier ),
-
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterHeight,   this.maxKindsRestrict.depthwiseFilterHeight ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwiseStridesPad,     this.maxKindsRestrict.depthwiseStridesPad ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.maxKindsRestrict.Bias ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.maxKindsRestrict.ActivationId ),
-
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.maxKindsRestrict.Pointwise ),
-    ];
-
-    super( paramDescConfigArray );
-
-    this.inputImageHeight = inputImageHeight;
-    this.inputImageWidth = inputImageWidth;
-    this.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
-
-    this.maxKindsRestrict = maxKindsRestrict;
-  }
-
-  /**
-   *
-   *
-   *
-   * @yield {Base}
-   *   Yield an object PointDepthPoint_Base.Base.
-   */
-  * ParamsGenerator() {
-
-    this.paramsNumberArrayObject = {}; // All parameters which will be packed into weights array.
-    this.result = new Base();
-
-    yield *this.permuteParamRecursively( 0 );
-  }
-
-  /**
-   * This method will modify this.result and this.paramsNumberArrayObject. It also calls itself recursively to permute all parameters.
-   *
-   * @param {number} currentParamDescIndex
-   *   The index into the this.paramDescArray[]. It represents the current parameter to be tried.
-   *
-   * @yield {Base}
-   *   Every time one kind of parameters' combination is generated, the this.result will be yielded.
-   */
-  * permuteParamRecursively( currentParamDescConfigIndex ) {
-
-    if ( currentParamDescConfigIndex >= this.paramDescConfigArray.length ) { // All parameters are used to be composed as one kind of combination.
-      ++this.result.id;  // Complete one kind of combination.
-
-      // For testing not start at the offset 0.
-      let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
-
-      this.result.set_By_ParamsNumberArrayMap_ParamsOut(
-        this.channelCount0_pointwise1Before, this.paramsNumberArrayObject, this.result.out, weightsElementOffsetBegin );
-
-      yield this.result;
-      return; // Stop this recusive. Back-track to another parameters combination.
-    }
-
-    let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
-
-    let paramDescConfig = this.paramDescConfigArray[ currentParamDescConfigIndex ];
-    let paramDesc = paramDescConfig.paramDesc;
-    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( undefined, paramDescConfig.maxKinds ) ) {
-
-      //!!! (2021/07/06 Temp Debug) Check the algorithm might be wrong.
-      //if ( paramDesc.valueDesc.range.adjust( pair.valueInput ) != pair.valueOutput )
-      //  debugger;
-
-      this.result.out[ paramDesc.paramName ] = pair.valueOutput;
-
-      // Randomly place the parameter directly or in weights array.
-//!!! (2021/07/19 Temp Remarked)
-      let dice = Math.random();
-//      let dice = 0;
-      if ( dice < 0.5 ) {
-        // Try parameter value assigned directly (i.e. by specifying).      
-        this.result.in[ paramDesc.paramName ] = pair.valueInput;
-        yield *this.permuteParamRecursively( nextParamDescConfigIndex );
-
-      } else {
-        // Try parameter value assigned from inputFloat32Array (i.e. by evolution).
-        this.result.in[ paramDesc.paramName ] = null;
-        this.paramsNumberArrayObject[ paramDesc.paramName ] = [ pair.valueInput ];
-        yield *this.permuteParamRecursively( nextParamDescConfigIndex );
-
-        this.paramsNumberArrayObject[ paramDesc.paramName ] = undefined; // So that it could be re-tried as by-specifying when backtracking.
-      }
-    }
-  }
-
-}
