@@ -101,28 +101,28 @@ class Base extends TestParams.Base {
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
 
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.maxKindsRestrict.Pointwise ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.maxKindsRestrict.Bias ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.maxKindsRestrict.ActivationId ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise22ChannelCount, this.maxKindsRestrict.Pointwise ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bPointwise22Bias,        this.maxKindsRestrict.Bias ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise22ActivationId, this.maxKindsRestrict.ActivationId ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.maxKindsRestrict.Pointwise ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.maxKindsRestrict.Bias ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.maxKindsRestrict.ActivationId ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise22ChannelCount, this.maxKindsRestrict.Pointwise ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise22Bias,        this.maxKindsRestrict.Bias ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise22ActivationId, this.maxKindsRestrict.ActivationId ),
 
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.maxKindsRestrict.Bias ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.maxKindsRestrict.ActivationId ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.maxKindsRestrict.Bias ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.maxKindsRestrict.ActivationId ),
 
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
-                                                                                          this.maxKindsRestrict.channelCount1_pointwise1Before ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
+                                                                                      this.maxKindsRestrict.channelCount1_pointwise1Before ),
 
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
-                                                                                          this.maxKindsRestrict.depthwise_AvgMax_Or_ChannelMultiplier ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
+                                                                                      this.maxKindsRestrict.depthwise_AvgMax_Or_ChannelMultiplier ),
 
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterHeight,   this.maxKindsRestrict.depthwiseFilterHeight ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwiseStridesPad,     this.maxKindsRestrict.depthwiseStridesPad ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.maxKindsRestrict.Bias ),
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.maxKindsRestrict.ActivationId ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterHeight,   this.maxKindsRestrict.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseStridesPad,     this.maxKindsRestrict.depthwiseStridesPad ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.maxKindsRestrict.Bias ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.maxKindsRestrict.ActivationId ),
 
-      new ParamsPermuter.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.maxKindsRestrict.Pointwise ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.maxKindsRestrict.Pointwise ),
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
