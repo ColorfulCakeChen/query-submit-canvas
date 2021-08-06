@@ -56,13 +56,12 @@ class Base {
    *
    *
    *
-   * @yield {Base}
-   *   Yield an object PointDepthPoint_Base.Base.
+   * @yield {TestParams.Base}
+   *   Yield a TestParams.Base object. The returned object should not be modified because it will be re-used.
    */
   * ParamsGenerator() {
 
     this.paramsNumberArrayObject = {}; // All parameters which will be packed into weights array.
-//???
     this.result = this.onCreate_TestParams();
 
     yield *this.permuteParamRecursively( 0 );
