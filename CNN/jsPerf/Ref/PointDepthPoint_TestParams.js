@@ -60,7 +60,7 @@ class Base extends TestParams.Base {
     // For testing not start at the offset 0.
     let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
 
-    this.set_By_ParamsNumberArrayMap_ParamsOut( this.channelCount0_pointwise1Before, weightsElementOffsetBegin );
+    this.set_By_ParamsNumberArrayMap_ParamsOut( this.in.channelCount0_pointwise1Before, weightsElementOffsetBegin );
   }
 
   /**
