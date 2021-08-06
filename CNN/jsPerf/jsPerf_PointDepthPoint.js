@@ -182,7 +182,7 @@ class HeightWidthDepth {
 
     // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 1, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     let testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
-    new PointDepthPoint_TestParams.TestParams().set_By_ParamsScattered(
+    new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           1,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
@@ -192,7 +192,7 @@ class HeightWidthDepth {
 
     // Test Case: (pointwise1 (bias, COS), depthwise (avg pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     let testCase_pointwise1_4to8_bias_COS_depthwise_avg_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
-    new PointDepthPoint_TestParams.TestParams().set_By_ParamsScattered(
+    new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,
@@ -203,7 +203,7 @@ class HeightWidthDepth {
 
     // Test Case: (pointwise1 (bias, COS), depthwise (max pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     let testCase_pointwise1_4to8_bias_COS_depthwise_max_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput =
-    new PointDepthPoint_TestParams.TestParams().set_By_ParamsScattered(
+    new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,
@@ -214,7 +214,7 @@ class HeightWidthDepth {
 
     // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     let testCase_pointwise1_4to8_bias_COS_depthwise_8to16_strides_1_pad_same_bias_COS_pointwise2_16to4_bias_COS_AddInputToOutput =
-    new PointDepthPoint_TestParams.TestParams().set_By_ParamsScattered(
+    new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
@@ -224,7 +224,7 @@ class HeightWidthDepth {
 
     // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS), AddInputToOutput)
     let testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS_AddInputToOutput =
-    new PointDepthPoint_TestParams.TestParams().set_By_ParamsScattered(
+    new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
@@ -234,7 +234,7 @@ class HeightWidthDepth {
 
     // Test Case: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS))
     let testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS =
-    new PointDepthPoint_TestParams.TestParams().set_By_ParamsScattered(
+    new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
@@ -244,7 +244,7 @@ class HeightWidthDepth {
 
     // Test Case: (pointwise1 (none), depthwise (channelMultiplier = 32, strides = 1, pad = same, bias, COS), pointwise2 (bias))
     let testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias =
-    new PointDepthPoint_TestParams.TestParams().set_By_ParamsScattered(
+    new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
             0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
            32,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
@@ -254,7 +254,7 @@ class HeightWidthDepth {
 
     // Test Case: (pointwise1 (bias, COS), depthwise (none), pointwise2 (bias))
     let testCase_pointwise1_4to128_bias_COS_depthwise_none_COS_pointwise2_128to128_bias =
-    new PointDepthPoint_TestParams.TestParams().set_By_ParamsScattered(
+    new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           128,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
             0,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
@@ -416,7 +416,7 @@ class HeightWidthDepth {
         // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors dynamically created in imageSourceBag.
         let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
 
-        let testParamsBase = new PointDepthPoint_TestParams.Base( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
+        let testParamsBase = new PointDepthPoint_TestParams.Permuter( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
         let testParamsGenerator = testParamsBase.ParamsGenerator();
         let testReference = new PointDepthPoint_Reference.Base();
 
