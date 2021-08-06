@@ -95,7 +95,7 @@ class Params extends Weights.Params {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    depthwiseChannelMultiplierStep0, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
+    depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
     bKeepInputTensor
   ) {
 
