@@ -57,9 +57,7 @@ class Base {
   /**
    *
    */
-  constructor( paramDescConfigArray ) {
-    this.config = { paramDescConfigArray: paramDescConfigArray };
-
+  constructor() {
     this.id = -1;
     this.in = { paramsNumberArrayObject: {} };
     this.out = {};
@@ -86,12 +84,15 @@ class Base {
   /**
    * Responsible for generating testing paramters combinations.
    *
-   *
+   * @param {ParamDescConfig[]} paramDescConfigArray
+   *   List all the parameters to be used in permutation combination.
    *
    * @yield {Base}
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
-  * ParamsGenerator() {
+  static * ParamsGenerator( paramDescConfigArray ) {
+    this.config = { paramDescConfigArray: paramDescConfigArray };
+
     this.in.paramsNumberArrayObject = {}; // All parameters which will be packed into weights array.
     yield *Base.permuteParamRecursively.call( this, 0 );
   }
@@ -107,7 +108,9 @@ class Base {
    */
   static * permuteParamRecursively( currentParamDescConfigIndex ) {
 
-    if ( currentParamDescConfigIndex >= this.paramDescConfigArray.length ) { // All parameters are used to be composed as one kind of combination.
+    if ( currentParamDescConfigIndex >= this.config.paramDescConfigArray.length ) {
+      // All parameters are used to be composed as one kind of combination.
+
       ++this.id;  // Complete one kind of combination.
 
       this.onBefore_Yield();
@@ -125,7 +128,7 @@ class Base {
 
     let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
 
-    let paramDescConfig = this.paramDescConfigArray[ currentParamDescConfigIndex ];
+    let paramDescConfig = this.config.paramDescConfigArray[ currentParamDescConfigIndex ];
     let paramDesc = paramDescConfig.paramDesc;
     for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( undefined, paramDescConfig.maxKinds ) ) {
 
