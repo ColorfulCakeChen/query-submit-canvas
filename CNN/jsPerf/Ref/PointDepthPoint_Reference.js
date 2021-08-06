@@ -365,7 +365,7 @@ class Base {
       `PointDepthPoint ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
   }
 
-  /** According to imageInArray and this.testParams.in.weights, calculate imageOutArray.
+  /** According to imageInArray and this.testParams.in.paramsNumberArrayObject, calculate imageOutArray.
    *
    * @param {object[]} imageInArray
    *   The image to be tested.
@@ -412,8 +412,8 @@ class Base {
       nextImageIn = Base.calcPointwise(
         nextImageIn,
         testParams.out.pointwise1ChannelCount,
-        testParams.in.weights.pointwise1Filters, testParams.out.bPointwise1Bias,
-        testParams.in.weights.pointwise1Biases, testParams.out.pointwise1ActivationId,
+        testParams.in.paramsNumberArrayObject.pointwise1Filters, testParams.out.bPointwise1Bias,
+        testParams.in.paramsNumberArrayObject.pointwise1Biases, testParams.out.pointwise1ActivationId,
         "Pointwise1", this.paramsOutDescription );
     }
 
@@ -424,8 +424,8 @@ class Base {
       nextImageIn = Base.calcDepthwise(
         nextImageIn,
         testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
-        testParams.in.weights.depthwise1Filters, testParams.out.bDepthwiseBias,
-        testParams.in.weights.depthwise1Biases, testParams.out.depthwiseActivationId,
+        testParams.in.paramsNumberArrayObject.depthwise1Filters, testParams.out.bDepthwiseBias,
+        testParams.in.paramsNumberArrayObject.depthwise1Biases, testParams.out.depthwiseActivationId,
         "Depthwise1", this.paramsOutDescription );
     }
 
@@ -437,8 +437,8 @@ class Base {
         depthwise2Result = Base.calcDepthwise(
           imageInArray[ 0 ], // depthwise2 apply to input0 (not input1)
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
-          testParams.in.weights.depthwise2Filters, testParams.out.bDepthwiseBias,
-          testParams.in.weights.depthwise2Biases, testParams.out.depthwiseActivationId,
+          testParams.in.paramsNumberArrayObject.depthwise2Filters, testParams.out.bDepthwiseBias,
+          testParams.in.paramsNumberArrayObject.depthwise2Biases, testParams.out.depthwiseActivationId,
           "Depthwise2", this.paramsOutDescription );
       } else {
         depthwise2Result = imageInArray[ 0 ]; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0).
@@ -478,8 +478,8 @@ class Base {
         pointwise21Result = Base.calcPointwise(
           nextImageIn,
           testParams.out.pointwise21ChannelCount,
-          testParams.in.weights.pointwise21Filters, testParams.out.bPointwise21Bias,
-          testParams.in.weights.pointwise21Biases, testParams.out.pointwise21ActivationId,
+          testParams.in.paramsNumberArrayObject.pointwise21Filters, testParams.out.bPointwise21Bias,
+          testParams.in.paramsNumberArrayObject.pointwise21Biases, testParams.out.pointwise21ActivationId,
           "Pointwise21", this.paramsOutDescription );
 
         // Residual Connection.
@@ -492,8 +492,8 @@ class Base {
         pointwise22Result = Base.calcPointwise(
           nextImageIn,
           testParams.out.pointwise22ChannelCount,
-          testParams.in.weights.pointwise22Filters, testParams.out.bPointwise22Bias,
-          testParams.in.weights.pointwise22Biases, testParams.out.pointwise22ActivationId,
+          testParams.in.paramsNumberArrayObject.pointwise22Filters, testParams.out.bPointwise22Bias,
+          testParams.in.paramsNumberArrayObject.pointwise22Biases, testParams.out.pointwise22ActivationId,
           "Pointwise22", this.paramsOutDescription );
 
         // Residual Connection.
