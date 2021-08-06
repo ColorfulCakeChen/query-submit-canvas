@@ -4,9 +4,12 @@ import * as RandTools from "../../util/RandTools.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
+import * as TestParams from "./TestParams.js";
+
 
 /**
  * Describe which parameter and how many combination for the parameter.
+ *
  *
  * @member {ParamDesc.Base} paramDesc
  *   Which parameter to be used in the permutation.
@@ -16,9 +19,6 @@ import * as RandTools from "../../util/RandTools.js";
  * If ( maxKinds == undefined ), the default is paramDesc.valueDesc.range.kinds. This parameter could lower the kinds
  * to reduce test cases quantity. If zero or negative, only one value (between [ 0, paramDesc.valueDesc.range.kinds ]
  * randomly) will be generated. In fact, this is the maxKinds parameter of ValueRange.XXX.valueInputOutputGenerator().
- *
- *
- *
  */
 class ParamDescConfig {
   constructor( paramDesc, maxKinds ) {
@@ -43,6 +43,16 @@ class Base {
   }
 
   /**
+   * Called by ParamsGenerator() to create a TestParams object. Sub-class should override this method.
+   *
+   * @return {TestParams.Base}
+   *   Return a newly created object which should be the class (or sub-class) of TestParams.Base.
+   */
+  onCreate_TestParams() {
+    //return new TestParams.Base();
+  }
+
+  /**
    *
    *
    *
@@ -52,7 +62,8 @@ class Base {
   * ParamsGenerator() {
 
     this.paramsNumberArrayObject = {}; // All parameters which will be packed into weights array.
-    this.result = new Base();
+//???
+    this.result = this.onCreate_TestParams();
 
     yield *this.permuteParamRecursively( 0 );
   }
