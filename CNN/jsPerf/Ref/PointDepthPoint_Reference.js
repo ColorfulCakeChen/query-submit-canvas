@@ -28,7 +28,7 @@ class Base {
    * @param {ImageSourceBag.Base} imageSourceBag
    *   The provider of image and tensor of variable specification for testing.
    *
-   * @param {PointDepthPoint_TestParams.TestParams} testParams
+   * @param {PointDepthPoint_TestParams.Base} testParams
    *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
    */
   testCorrectness( imageSourceBag, testParams ) {
@@ -208,7 +208,7 @@ class Base {
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
    *
-   * @param {PointDepthPoint_TestParams.TestParams} testParams
+   * @param {PointDepthPoint_TestParams.Base} testParams
    *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
    *
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
