@@ -78,7 +78,7 @@ class Base extends TestParams.Base {
     let depthwiseFilterMaxSize = Math.min( this.inputImageHeight, this.inputImageWidth );
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
-    let maxKindsRestrict = {
+    this.maxKindsRestrict = {
 //      PerParameter: 5,
       Pointwise:    3,
 
