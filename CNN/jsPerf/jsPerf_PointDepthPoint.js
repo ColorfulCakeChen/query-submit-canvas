@@ -416,8 +416,8 @@ class HeightWidthDepth {
         // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors dynamically created in imageSourceBag.
         let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
 
-        let testParams = new PointDepthPoint_TestParams.Base( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
-        let testParamsGenerator = testParams.ParamsGenerator();
+        let testParams = new PointDepthPoint_TestParams.Base();
+        let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
         let testReference = new PointDepthPoint_Reference.Base();
 
         let batchMessageInterval = 10 * 1000; //100 * 1000; // Every so many test cases, display a message.
