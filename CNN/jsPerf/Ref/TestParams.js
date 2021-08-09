@@ -113,13 +113,6 @@ class Base {
 
       this.onBefore_Yield();
 
-//!!! (2021/08/06 Remarked) Old Codes.
-//       // For testing not start at the offset 0.
-//       let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
-//
-//       this.result.set_By_ParamsNumberArrayMap_ParamsOut(
-//         this.channelCount0_pointwise1Before, this.paramsNumberArrayObject, this.result.out, weightsElementOffsetBegin );
-
       yield this;
       return; // Stop this recusive. Back-track to another parameters combination.
     }
