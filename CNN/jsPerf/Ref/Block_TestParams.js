@@ -13,7 +13,7 @@ import * as PointDepthPoint from "../../Conv/Block.js";
  * This is an object { id, in, out } which has one number and two sub-objects.
  *
  * @member {number} id
- *   The numeric identifier of the parameter.
+ *   The numeric identifier of this testing parameter combination.
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the Block.Params's constructor. That is,
