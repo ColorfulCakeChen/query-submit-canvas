@@ -96,7 +96,6 @@ class Base extends TestParams.Base {
    * @override
    */
   onBefore_Yield() {
-//!!! ...unfinished... (2021/08/09)
 
     // For testing not start at the offset 0.
     let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
@@ -111,9 +110,6 @@ class Base extends TestParams.Base {
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
   * ParamsGenerator() {
-
-//!!! ...unfinished... (2021/08/09)
-
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.maxKindsRestrict = {
