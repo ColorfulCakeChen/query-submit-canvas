@@ -12,18 +12,18 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  * This is an object { id, in, out } which has one number and two sub-objects.
  *
  * @member {number} id
- *   The numeric identifier of the parameter.
+ *   The numeric identifier of this testing parameter combination.
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
- * it has the following data members: inputFloat32Array, byteOffsetBegin, channelCount1_pointwise1Before, pointwise1ChannelCount,
- * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
- * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
- * bPointwise22Bias, pointwise22ActivationId. It also has the following properties:
- *   - inputFloat32Array
- *   - byteOffsetBegin
+ * it has the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+ * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+ * pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount, bPointwise22Bias,
+ * pointwise22ActivationId. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - channelCount0_pointwise1Before
+ *   - inputFloat32Array
+ *   - byteOffsetBegin
  *
  * @member {object} out
  *   The "out" sub-object's data members represent the "should-be" result of PointDepthPoint.Params's extract().
