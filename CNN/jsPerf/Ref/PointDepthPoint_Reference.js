@@ -163,7 +163,9 @@ class Base {
   check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensors, parametersDescription ) {
     tf.tidy( () => {
 
-      let acceptableDifference = 2; //0.05;
+//!!! ...unfinished... (2021/08/09 Remarked) Using ratio compared to original value.
+//      let acceptableDifference = 2; //0.05;
+      let acceptableDifferenceRate = 0.05;
 
       for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
         // Get referenced result (as number array).
@@ -193,8 +195,22 @@ class Base {
           // Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different (especially activation function
           // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
           let elementIndex;
-          tf.util.assert( outputArray.every( ( value, index ) =>
-            Math.abs( value - outputArrayRef[ elementIndex = index ] ) <= acceptableDifference ),
+          tf.util.assert( outputArray.every( ( value, index ) => {
+//!!! ...unfinished... (2021/08/09 Remarked) Using ratio compared to original value.
+//            Math.abs( value - outputArrayRef[ elementIndex = index ] ) <= acceptableDifference ),
+              let delta = Math.abs( value - outputArrayRef[ elementIndex = index ] );
+
+              let valueAbs = Math.abs( value );
+              let deltaRate;
+              if ( valueAbs > 0 ) // Avoid divided by zero.
+                deltaRate = delta / valueAbs; // Using ratio so that the difference will not to large even if value is large.
+              else
+                deltaRate = delta;
+
+              if ( deltaRate <= acceptableDifferenceRate )
+                return true;
+              return false;
+            } ),
             `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
               +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
               + `${parametersDescription}` );
