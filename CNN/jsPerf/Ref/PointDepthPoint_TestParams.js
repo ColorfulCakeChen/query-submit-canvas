@@ -43,6 +43,83 @@ class Base extends TestParams.Base {
 //   }
 
   /**
+   * Use scattered parameters to fills the following proterties:
+   *   - this.in.inputFloat32Array
+   *   - this.in.byteOffsetBegin
+   *   - this.in.channelCount0_pointwise1Before
+   *   - this.out
+   *
+   * @return {Base}
+   *   Return this object self.
+   */
+  set_By_ParamsScattered(
+    channelCount0_pointwise1Before,
+    channelCount1_pointwise1Before,
+    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
+  ) {
+    this.in.paramsNumberArrayObject = {};
+    this.out = {
+      channelCount1_pointwise1Before,
+      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+      pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
+    };
+
+    Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
+
+    let weightsElementOffsetBegin = 0;
+    return this.set_By_ParamsNumberArrayMap_ParamsOut( channelCount0_pointwise1Before, weightsElementOffsetBegin );
+  }
+ 
+  /**
+   * Fills the following proterties:
+   *   - this.in.inputFloat32Array
+   *   - this.in.byteOffsetBegin
+   *   - this.in.channelCount0_pointwise1Before
+   *   - this.out
+   *
+   * @param {number} channelCount0_pointwise1Before
+   *   The channel count of the first input image.
+   *
+   * @param {object} this.in.paramsNumberArrayObject
+   *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
+   * The name should be one of Base.paramsInArrayOrder[] elements.
+   *
+   * @param {object} this.out
+   *   An object which has the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias,
+   * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
+   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias. This object will be recorded in this.out directly.
+   *
+   * @param {number} weightsElementOffsetBegin
+   *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
+   * The this.in.byteOffsetBegin will be ( 4 * weightsElementOffsetBegin ).
+   *
+   * @return {Base}
+   *   Return this object self.
+   */
+  set_By_ParamsNumberArrayMap_ParamsOut(
+//!!! ...unfinished... (2021/08/06)  
+//    channelCount0_pointwise1Before, io_paramsNumberArrayObject, paramsOut, weightsElementOffsetBegin = 0 ) {
+    channelCount0_pointwise1Before, weightsElementOffsetBegin = 0 ) {
+
+    this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
+
+    Base.generate_Filters_Biases( channelCount0_pointwise1Before, this.out, this.in.paramsNumberArrayObject );
+
+    let Float32Array_ByteOffsetBegin
+      = Base.concat_ParamsNumberArrayObject_To_Float32Array( this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
+
+    this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
+    this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
+
+    return this;
+  }
+
+  /**
    * @override
    */
   onBefore_Yield() {
@@ -127,84 +204,6 @@ class Base extends TestParams.Base {
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
-  }
-
-  /**
-   * Use scattered parameters to fills the following proterties:
-   *   - this.in.inputFloat32Array
-   *   - this.in.byteOffsetBegin
-   *   - this.in.channelCount0_pointwise1Before
-   *   - this.out
-   *
-   * @return {Base}
-   *   Return this object self.
-   */
-  set_By_ParamsScattered(
-    channelCount0_pointwise1Before,
-    channelCount1_pointwise1Before,
-    pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-    pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
-  ) {
-    let paramsNumberArrayObject = {};
-    let paramsOut = {
-      channelCount1_pointwise1Before,
-      pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-      pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
-    };
-
-    Object.assign( this.in, paramsOut ); // So that all parameters are by specified (none is by evolution).
-
-    let weightsElementOffsetBegin = 0;
-    return this.set_By_ParamsNumberArrayMap_ParamsOut(
-       channelCount0_pointwise1Before, paramsNumberArrayObject, paramsOut, weightsElementOffsetBegin );
-  }
- 
-  /**
-   * Fills the following proterties:
-   *   - this.in.inputFloat32Array
-   *   - this.in.byteOffsetBegin
-   *   - this.in.channelCount0_pointwise1Before
-   *   - this.out
-   *
-   * @param {number} channelCount0_pointwise1Before
-   *   The channel count of the first input image.
-   *
-   * @param {object} this.in.paramsNumberArrayObject
-   *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Base.paramsInArrayOrder[] elements.
-   *
-   * @param {object} this.out
-   *   An object which has the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias,
-   * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
-   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias. This object will be recorded in this.out directly.
-   *
-   * @param {number} weightsElementOffsetBegin
-   *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
-   * The this.in.byteOffsetBegin will be ( 4 * weightsElementOffsetBegin ).
-   *
-   * @return {Base}
-   *   Return this object self.
-   */
-  set_By_ParamsNumberArrayMap_ParamsOut(
-//!!! ...unfinished... (2021/08/06)  
-//    channelCount0_pointwise1Before, io_paramsNumberArrayObject, paramsOut, weightsElementOffsetBegin = 0 ) {
-    channelCount0_pointwise1Before, weightsElementOffsetBegin = 0 ) {
-
-    this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
-
-    Base.generate_Filters_Biases( channelCount0_pointwise1Before, this.out, this.in.paramsNumberArrayObject );
-
-    let Float32Array_ByteOffsetBegin
-      = Base.concat_ParamsNumberArrayObject_To_Float32Array( this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
-
-    this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
-    this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
-
-    return this;
   }
 
   /**
