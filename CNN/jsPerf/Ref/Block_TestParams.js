@@ -115,58 +115,40 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2021/08/09)
 
 
-//!!! ...unfinished... (2021/07/27) When pad is "same", it should test more filter size.
-    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
-    //
-    // Note: When pad is "same", this restriction does not exist.
-    let depthwiseFilterMaxSize = Math.min( this.inputImageHeight, this.inputImageWidth );
-
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.maxKindsRestrict = {
-//      PerParameter: 5,
-      Pointwise:    3,
+      sourceHeight: 5,
+      sourceWidth:  5,
+      sourceChannelCount: 4,
+      stepCountPerBlock: 5,
+      bChannelShuffler: undefined,
+      pointwise1ChannelCountRate: undefined,
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( maxKinds == 0 )) for speeding up testing.
-//!!! (2021/07/20 Temp Remarked) Fix to none to simplify debug.
-      Bias:         0,
-      ActivationId: 0,
-//       Bias:         1,
-//       ActivationId: 1,
+      bBias:         0,
+      nActivationId: 0,
+      nActivationIdAtBlockEnd: 0,
 
-      channelCount1_pointwise1Before: 5,
-      depthwise_AvgMax_Or_ChannelMultiplier: 5,
-      depthwiseFilterHeight: depthwiseFilterMaxSize,
-      depthwiseStridesPad: undefined,
+      depthwiseFilterHeight: undefined,
+      bKeepInputTensor: undefined,
     };
 
     // All the parameters to be tried.
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.maxKindsRestrict.Pointwise ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.maxKindsRestrict.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.maxKindsRestrict.ActivationId ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise22ChannelCount, this.maxKindsRestrict.Pointwise ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise22Bias,        this.maxKindsRestrict.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise22ActivationId, this.maxKindsRestrict.ActivationId ),
-
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.maxKindsRestrict.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.maxKindsRestrict.ActivationId ),
-
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
-                                                                                      this.maxKindsRestrict.channelCount1_pointwise1Before ),
-
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
-                                                                                      this.maxKindsRestrict.depthwise_AvgMax_Or_ChannelMultiplier ),
-
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterHeight,   this.maxKindsRestrict.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseStridesPad,     this.maxKindsRestrict.depthwiseStridesPad ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.maxKindsRestrict.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.maxKindsRestrict.ActivationId ),
-
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.maxKindsRestrict.Pointwise ),
+      new TestParams.ParamDescConfig( Block.Params.sourceHeight,               this.maxKindsRestrict.sourceHeight ),
+      new TestParams.ParamDescConfig( Block.Params.sourceWidth,                this.maxKindsRestrict.sourceWidth ),
+      new TestParams.ParamDescConfig( Block.Params.sourceChannelCount,         this.maxKindsRestrict.sourceChannelCount ),
+      new TestParams.ParamDescConfig( Block.Params.stepCountPerBlock,          this.maxKindsRestrict.stepCountPerBlock ),
+      new TestParams.ParamDescConfig( Block.Params.bChannelShuffler,           this.maxKindsRestrict.bChannelShuffler ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCountRate, this.maxKindsRestrict.pointwise1ChannelCountRate ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,      this.maxKindsRestrict.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Block.Params.bBias,                      this.maxKindsRestrict.bBias ),
+      new TestParams.ParamDescConfig( Block.Params.nActivationId,              this.maxKindsRestrict.nActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.nActivationIdAtBlockEnd,    this.maxKindsRestrict.nActivationIdAtBlockEnd ),
+      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,           this.maxKindsRestrict.bKeepInputTensor ),
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
