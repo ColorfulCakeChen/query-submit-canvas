@@ -80,7 +80,6 @@ class Base extends TestParams.Base {
    *   - this.in.inputFloat32Array
    *   - this.in.byteOffsetBegin
    *   - this.in.channelCount0_pointwise1Before
-   *   - this.out
    *
    * @param {number} channelCount0_pointwise1Before
    *   The channel count of the first input image.
