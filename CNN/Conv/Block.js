@@ -326,12 +326,10 @@ class Base {
         stepParamsMaker.configTo_beforeStepLast();
       }
 
-//!!! ...unfinished... (2021/07/31) What about this.channelCount0_pointwise1Before and this.bShouldKeepInputTensor?
       stepParams = stepParamsMaker.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
 
       step = this.stepsArray[ i ] = new PointDepthPoint.Base();
-      stepIniter = step.initer( progressForSteps.children[ i ],
-        stepParamsMaker.channelCount0_pointwise1Before, stepParamsMaker.bShouldKeepInputTensor, stepParams );
+      stepIniter = step.initer( progressForSteps.children[ i ], stepParams );
 
       this.bInitOk = yield* stepIniter;
       if ( !this.bInitOk )
@@ -542,15 +540,14 @@ class Params_to_PointDepthPointParams {
   create_PointDepthPointParams( inputFloat32Array, byteOffsetBegin ) {
     let params = new PointDepthPoint.Params(
       inputFloat32Array, byteOffsetBegin,
-
-//!!! ...unfinished... (2021/07/31) What about this.channelCount0_pointwise1Before and this.bShouldKeepInputTensor?
-
+      this.channelCount0_pointwise1Before,
       this.channelCount1_pointwise1Before,
       this.pointwise1ChannelCount, this.pointwise1Bias, this.pointwise1ActivationId,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
       this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
       this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
       this.pointwise22ChannelCount, this.pointwise22Bias, this.pointwise22ActivationId,
+      this.bShouldKeepInputTensor
     );
     return params;
   }
