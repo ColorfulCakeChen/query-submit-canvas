@@ -417,7 +417,9 @@ class HeightWidthDepth {
         let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
 
         let testParams = new PointDepthPoint_TestParams.Base();
-        let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
+//!!! (2021/08/10 Remarked) input0's channel count already become one member of Params.
+//        let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
+        let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width );
         let testReference = new PointDepthPoint_Reference.Base();
 
         let batchMessageInterval = 10 * 1000; //100 * 1000; // Every so many test cases, display a message.
