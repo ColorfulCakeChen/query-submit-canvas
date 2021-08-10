@@ -35,11 +35,12 @@ class Base {
     this.testParams = testParams;
 
     try {
-      let channelCount0_pointwise1Before = this.testParams.in.channelCount0_pointwise1Before;
+      let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
       let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
       let depthwise_AvgMax_Or_ChannelMultiplier = this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
       let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
       let depthwiseStridesPad = this.testParams.out.depthwiseStridesPad;
+      let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
 
       let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
       let outputTensor3dArray = this.outputTensor3dArray;
@@ -47,8 +48,9 @@ class Base {
 
       let strNote;
 
-      // Since bKeepInputTensor does not affect this.calcResult(), it is possible that do this.calcResult() once and
-      // this.check_Input_Output_WeightsTable() twice for speeding up the testing performance.
+//!!! (2021/08/10 Remarked) bKeepInputTensor already inside one of Params.
+//      // Since bKeepInputTensor does not affect this.calcResult(), it is possible that do this.calcResult() once and
+//      // this.check_Input_Output_WeightsTable() twice for speeding up the testing performance.
       let imageOutReferenceArray;
       {
         strNote = `( this.testParams.id=${this.testParams.id} )`;
@@ -69,8 +71,9 @@ class Base {
           `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
       }
 
-      for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
-        let bKeepInputTensor = ( nKeepInputTensor != 0 );
+//!!! (2021/08/10 Remarked) bKeepInputTensor already inside one of Params.
+//     for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
+//         let bKeepInputTensor = ( nKeepInputTensor != 0 );
 
         try {
           outputTensor3dArray.fill( undefined );
@@ -97,7 +100,7 @@ class Base {
           }
 
           let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-          let pointDepthPoint = Base.pointDepthPoint_create( bKeepInputTensor, testParams );
+          let pointDepthPoint = Base.pointDepthPoint_create( testParams );
 
           let parametersDescription = pointDepthPoint.parametersDescription;
           strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
@@ -140,7 +143,8 @@ class Base {
           console.log( `bKeepInputTensor=${bKeepInputTensor}` );
           throw e;
         }
-      }
+//!!! (2021/08/10 Remarked) bKeepInputTensor already inside one of Params.
+//      }
     } catch ( e ) {
       let backendName = tf.getBackend();
       console.log( `backendName=${backendName}, `
@@ -221,15 +225,12 @@ class Base {
   }
 
   /**
-   * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep).
-   *
    * @param {PointDepthPoint_TestParams.Base} testParams
    *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
    *
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
-  static pointDepthPoint_create( bKeepInputTensor, testParams ) {
+  static pointDepthPoint_create( testParams ) {
 
     let pointDepthPoint = new PointDepthPoint.Base();
 
@@ -237,7 +238,7 @@ class Base {
 
     // Initialize successfully or failed.
     let extractedParams = new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
-      testParams.in.channelCount1_pointwise1Before,
+      testParams.in.channelCount0_pointwise1Before, testParams.in.channelCount1_pointwise1Before,
 
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
 
@@ -249,12 +250,7 @@ class Base {
       testParams.in.inputTensorCount
     );
 
-    let bInitOk = pointDepthPoint.init(
-      progress,
-      testParams.in.channelCount0_pointwise1Before, // (i.e. inChannels0)
-      bKeepInputTensor,
-      extractedParams
-    );
+    let bInitOk = pointDepthPoint.init( progress, extractedParams );
 
     let flags = {};
     PointDepthPoint.Params.setFlags_by_channelCount1_pointwise1Before.call( flags, testParams.out.channelCount1_pointwise1Before );
@@ -287,7 +283,7 @@ class Base {
       pointDepthPoint.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
     // input tensor parameters.
-    Base.AssertTwoEqualValues( "inChannels0", pointDepthPoint.inChannels0, testParams.in.channelCount0_pointwise1Before, parametersDescription );
+    Base.AssertTwoEqualValues( "inChannels0", pointDepthPoint.inChannels0, testParams.out.channelCount0_pointwise1Before, parametersDescription );
     Base.AssertTwoEqualValues( "inChannels1",
       pointDepthPoint.inChannels1, testParams.out.channelCount1_pointwise1Before, parametersDescription );
     Base.AssertTwoEqualValues( "channelCount1_pointwise1Before",
@@ -302,7 +298,7 @@ class Base {
     Base.AssertTwoEqualValues( "bAddInputToOutputRequested",
       pointDepthPoint.bAddInputToOutputRequested, flags.bAddInputToOutputRequested, parametersDescription );
 
-    Base.AssertTwoEqualValues( "bKeepInputTensor", pointDepthPoint.bKeepInputTensor, bKeepInputTensor, parametersDescription );
+    Base.AssertTwoEqualValues( "bKeepInputTensor", pointDepthPoint.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
 
     // pointwise1 parameters.
     Base.AssertTwoEqualValues( "pointwise1ChannelCount",
@@ -404,7 +400,7 @@ class Base {
 
     // Create description for debug easily.
     this.paramsOutDescription =
-        `inChannels0=${testParams.in.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
+        `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
 
       + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `// pointwise1ActivationName=${pointwise1ActivationName}, `
       + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
