@@ -363,6 +363,8 @@ class Base {
       pointDepthPoint.pointwise22ActivationName, pointwise22ActivationName, parametersDescription );
 
     // Other parameters.
+    Base.AssertTwoEqualValues( "bKeepInputTensor",
+      pointDepthPoint.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
 
 //!!! ...unfinished...
 //     tf.util.assert( ( pointDepthPoint.outChannels == outChannels ),
@@ -415,6 +417,8 @@ class Base {
       + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
       + `bConcatenatorRequested=${flags.bConcatenatorRequested}, `
       + `bAddInputToOutputRequested=${flags.bAddInputToOutputRequested}`
+
+      + `bKeepInputTensor=${testParams.out.bKeepInputTensor}, `
     ;
 
     let nextImageIn = imageInArray[ 0 ];
