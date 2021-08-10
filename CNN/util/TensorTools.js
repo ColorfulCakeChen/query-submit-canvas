@@ -90,6 +90,8 @@ class Asserter_Tensor_NumberArray {
     tf.util.assert( tensorDataArray.length == numberArray.length,
     `${prefixMsg} ${tensorName} length ( ${tensorDataArray.length} ) should be ( ${numberArray.length} ). ${postfixMsg}` );
 
+    this.numberArray = numberArray; // For ElementComparator() to access.
+
     // Check both elements.
     //
     // Note: Array.every() seems faster than for-loop.
