@@ -71,81 +71,69 @@ class Base {
           `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
       }
 
-//!!! (2021/08/10 Remarked) bKeepInputTensor already inside one of Params.
-//     for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
-//         let bKeepInputTensor = ( nKeepInputTensor != 0 );
-//
-//        try {
-          outputTensor3dArray.fill( undefined );
-          inputTensor3dArray.fill( undefined );
+      outputTensor3dArray.fill( undefined );
+      inputTensor3dArray.fill( undefined );
 
-          inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
-          if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
-            inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
-              channelCount1_pointwise1Before, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
-          }
+      inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
+      if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
+        inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
+          channelCount1_pointwise1Before, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+      }
 
-          let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
-          if ( bKeepInputTensor ) {
-            inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
+      let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
+      if ( bKeepInputTensor ) {
+        inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
 
-          } else {
-            inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
-            inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+      } else {
+        inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
+        inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
 
-            if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
-              inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
-              inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
-            }
-          }
+        if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
+          inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
+          inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+        }
+      }
 
-          let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-          let pointDepthPoint = Base.pointDepthPoint_create( testParams );
+      let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
+      let pointDepthPoint = Base.pointDepthPoint_create( testParams );
 
-          let parametersDescription = pointDepthPoint.parametersDescription;
-          strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
+      let parametersDescription = pointDepthPoint.parametersDescription;
+      strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
 
-          // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
-          // tensor count (i.e. inputTensorDestroyCount).
-          let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
+      // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
+      // tensor count (i.e. inputTensorDestroyCount).
+      let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
 
-          let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
-          pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
-          let memoryInfo_apply_after = tf.memory();
+      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
+      pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
+      let memoryInfo_apply_after = tf.memory();
 
-          tf.util.assert( inputTensor3dArray.length == 2,
-            `PointDepthPoint inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}`);
+      tf.util.assert( inputTensor3dArray.length == 2,
+        `PointDepthPoint inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}`);
 
-          tf.util.assert( outputTensor3dArray.length == 2,
-            `PointDepthPoint outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
+      tf.util.assert( outputTensor3dArray.length == 2,
+        `PointDepthPoint outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
 
-          tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-            `PointDepthPoint.apply_and_destroy_or_keep() memory leak. `
-              + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-              + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
-              + `${parametersDescription}` );
+      tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
+        `PointDepthPoint.apply_and_destroy_or_keep() memory leak. `
+          + `result tensor count (${memoryInfo_apply_after.numTensors}) `
+          + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
+          + `${parametersDescription}` );
 
-          // Test correctness of pointDepthPoint apply.
-          this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, parametersDescription );
+      // Test correctness of pointDepthPoint apply.
+      this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, parametersDescription );
 
-          pointDepthPoint.disposeTensors();
-          let memoryInfo_afterDispose = tf.memory();
+      pointDepthPoint.disposeTensors();
+      let memoryInfo_afterDispose = tf.memory();
 
-          tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
-            `PointDepthPoint create/dispose memory leak. `
-              + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
-              + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
-              + `${parametersDescription}` );
+      tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
+        `PointDepthPoint create/dispose memory leak. `
+          + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
+          + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
+          + `${parametersDescription}` );
 
-          tf.dispose( outputTensor3dArray );
+      tf.dispose( outputTensor3dArray );
 
-//!!! (2021/08/10 Remarked) bKeepInputTensor already inside one of Params.
-//         } catch ( e ) {
-//           console.log( `bKeepInputTensor=${bKeepInputTensor}` );
-//           throw e;
-//         }
-//!!! (2021/08/10 Remarked) bKeepInputTensor already inside one of Params.
-//      }
     } catch ( e ) {
       let backendName = tf.getBackend();
       console.log( `backendName=${backendName}, `
@@ -168,9 +156,7 @@ class Base {
   check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensors, parametersDescription ) {
     tf.tidy( () => {
 
-//!!! ...unfinished... (2021/08/09 Remarked) Using ratio compared to original value.
-//      let acceptableDifference = 2; //0.05;
-      let acceptableDifferenceRate = 0.05;
+      let acceptableDifferenceRate = 0.3; //0.05;
 
       for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
         // Get referenced result (as number array).
@@ -201,8 +187,6 @@ class Base {
           // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
           let elementIndex;
           tf.util.assert( outputArray.every( ( value, index ) => {
-//!!! ...unfinished... (2021/08/09 Remarked) Using ratio compared to original value.
-//            Math.abs( value - outputArrayRef[ elementIndex = index ] ) <= acceptableDifference ),
               let delta = Math.abs( value - outputArrayRef[ elementIndex = index ] );
 
               let valueAbs = Math.abs( value );
