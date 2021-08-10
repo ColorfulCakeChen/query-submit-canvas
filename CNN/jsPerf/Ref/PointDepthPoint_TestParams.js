@@ -19,7 +19,7 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  * it has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
  * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
  * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
- * bPointwise22Bias, pointwise22ActivationId. It also has the following properties:
+ * bPointwise22Bias, pointwise22ActivationId, bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - inputFloat32Array
  *   - byteOffsetBegin
@@ -53,7 +53,8 @@ class Base extends TestParams.Base {
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
+    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+    bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
@@ -62,7 +63,8 @@ class Base extends TestParams.Base {
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
       pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
+      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+      bKeepInputTensor
     };
 
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
@@ -83,7 +85,7 @@ class Base extends TestParams.Base {
    * @param {object} this.out
    *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before,
    * pointwise1ChannelCount, bPointwise1Bias, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
-   * bDepthwiseBias, pointwise21ChannelCount, bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias.
+   * bDepthwiseBias, pointwise21ChannelCount, bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, bKeepInputTensor.
    *
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
@@ -155,6 +157,8 @@ class Base extends TestParams.Base {
       depthwise_AvgMax_Or_ChannelMultiplier: 5,
       depthwiseFilterHeight: depthwiseFilterMaxSize,
       depthwiseStridesPad: undefined,
+      
+      bKeepInputTensor: undefined,
     };
 
     // All the parameters to be tried.
@@ -187,6 +191,8 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.maxKindsRestrict.ActivationId ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.maxKindsRestrict.Pointwise ),
+      
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bKeepInputTensor,        this.maxKindsRestrict.bKeepInputTensor ),
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
@@ -425,6 +431,7 @@ Base.paramsInArrayOrder = [
   PointDepthPoint.Params.pointwise22ChannelCount.paramName,
   PointDepthPoint.Params.bPointwise22Bias.paramName,
   PointDepthPoint.Params.pointwise22ActivationId.paramName,
+  PointDepthPoint.Params.bKeepInputTensor.paramName,
   
   "pointwise1Filters",
   "pointwise1Biases",
