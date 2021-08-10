@@ -74,8 +74,8 @@ class Base {
 //!!! (2021/08/10 Remarked) bKeepInputTensor already inside one of Params.
 //     for ( let nKeepInputTensor = 0; nKeepInputTensor < 2; ++nKeepInputTensor ) {
 //         let bKeepInputTensor = ( nKeepInputTensor != 0 );
-
-        try {
+//
+//        try {
           outputTensor3dArray.fill( undefined );
           inputTensor3dArray.fill( undefined );
 
@@ -139,10 +139,11 @@ class Base {
 
           tf.dispose( outputTensor3dArray );
 
-        } catch ( e ) {
-          console.log( `bKeepInputTensor=${bKeepInputTensor}` );
-          throw e;
-        }
+//!!! (2021/08/10 Remarked) bKeepInputTensor already inside one of Params.
+//         } catch ( e ) {
+//           console.log( `bKeepInputTensor=${bKeepInputTensor}` );
+//           throw e;
+//         }
 //!!! (2021/08/10 Remarked) bKeepInputTensor already inside one of Params.
 //      }
     } catch ( e ) {
