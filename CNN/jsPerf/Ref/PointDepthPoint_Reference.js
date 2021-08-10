@@ -202,7 +202,7 @@ class Base {
             return false;
           }
 
-          tf.util.assert( outputArray.every( ElementComparator,
+          tf.util.assert( outputArray.every( ElementComparator ),
             `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
               +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
               + `${parametersDescription}` );
