@@ -1,20 +1,7 @@
-export { Comparator };
+export { Comparator, Asserter_Tensor_NumberArray };
 
 /**
- * An channel shuffler accepts a list of tensor3d with same size (height, width, channel) and outputs a shuffled
- * (re-grouped) list tensor3d.
  *
- * Usually, the output tensor3d list length will be the same as input tensor3d list. Even more, the size of 
- * every output tensor3d will also be the same as input tensor3d. However, the order of the tensor3d's channels
- * (the 3rd dimension) are different.
- *
- * This is the Channel-Shuffle operation of the ShuffleNetV2 neural network.
- *
- *
- *
- *
- * @member {ShuffleInfo} shuffleInfo
- *   The information calculated from init()'s concatenatedShape and outputGroupCount.
  */
 class Comparator {
 
@@ -48,24 +35,30 @@ class Comparator {
 
 
 /**
- *
+ * Assert a tensor whether equals to a number array.
  */
-class Asserter {
-//!!! ...unfinished... (2021/08/10)
+class Asserter_Tensor_NumberArray {
 
   /**
-   * Assert a tensor whether equals to the number array.
+   *
+   *
+   * @param {number} acceptableDifferenceRate
+   *   How many difference (in ratio) between the tensor and numberArray (per element) is acceptable. Because floating-point
+   * accumulated error of float32 (GPU) and float64 (CPU) is different, a little difference should be allowed. Otherwise,
+   * the comparison may hardly to pass this check. Default is 0.3 (i.e. 30% difference is allowed).
+   */
+  constructor( acceptableDifferenceRate = 0.3 ) {
+    this.acceptableDifferenceRate = acceptableDifferenceRate;
+    this.comparator = Asserter_Tensor_NumberArray.ElementComparator.bind( this );
+  }
+
+  /**
    *
    * @param {tf.tensor} tensor
    *   The tf.tensor to be checked.
    *
    * @param {number[]} numberArray
    *   The number to be compared against tensor's data.
-   *
-   * @param {number} acceptableDifferenceRate
-   *   How many difference (in ratio) between the tensor and numberArray (per element) is acceptable. Because floating-point
-   * accumulated error of float32 (GPU) and float64 (CPU) is different, a little difference should be allowed. Otherwise,
-   * the comparison may hardly to pass this check.
    *
    * @param {string} prefixMsg
    *   The text to be displayed at the beginning when comparison failed.
@@ -79,57 +72,67 @@ class Asserter {
    * @param {string} postfixMsg
    *   The text to be displayed at the tail when comparison failed.
    */
-  static assert_Tensor_NumberArray( tensor, numberArray, acceptableDifferenceRate, prefixMsg, tensorName, numberArrayName, postfixMsg ) {
+  assert( tensor, numberArray, prefixMsg, tensorName, numberArrayName, postfixMsg ) {
 
     let tensorDataArray = null;
     if ( tensor ) {
       tensorDataArray = tensor.dataSync();
     }
 
-    // Checking both null or non-null.
+    // Check both null or non-null.
     tf.util.assert( ( tensorDataArray == null ) == ( numberArray == null ),
       `${prefixMsg} ${tensorName} ( ${tensorDataArray} ) and ${numberArrayName} ( ${numberArray} ) should be both null or non-null. ${postfixMsg}` );
 
-    if ( tensorDataArray ) {
+    if ( !tensorDataArray )
+      return; // Since null, no element need to be compared futher.
 
-      // Checking both length.
-      tf.util.assert( tensorDataArray.length == numberArray.length,
-      `${prefixMsg} ${tensorName} length ( ${tensorDataArray.length} ) should be ( ${numberArray.length} ). ${postfixMsg}` );
+    // Check both length.
+    tf.util.assert( tensorDataArray.length == numberArray.length,
+    `${prefixMsg} ${tensorName} length ( ${tensorDataArray.length} ) should be ( ${numberArray.length} ). ${postfixMsg}` );
 
-          // Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different (especially activation function
-          // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
-          let elementIndex;
-          function ElementComparator( value, index ) {
-            let valueRef = outputArrayRef[ elementIndex = index ];
-            let delta = Math.abs( value - valueRef );
+    // Check both elements.
+    //
+    // Note: Array.every() seems faster than for-loop.
+    tf.util.assert( tensorDataArray.every( this.comparator ),
+      `${prefixMsg} ${tensorName}[ ${this.elementIndex} ] `
+        + `( ${tensorDataArray[ this.elementIndex ]} ) should be ( ${numberArray[ this.elementIndex ]} ) `
+        + `( ${tensorDataArray} ) should be ( ${numberArray} ). `
+        + `${postfixMsg}` );
 
-            let valueAbs = Math.abs( value );
-            let valueRefAbs = Math.abs( valueRef );
+//!!! (2021/08/10 Remarked) Old Codes.
+//         `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
+//           +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
+//           + `${parametersDescription}` );
 
-            // Compare to smaller one.
-            //
-            // When one of compared values is zero, it will always be failed if compare to the larger value (got 100% delteRate).
-            let deltaRateBase = Math.min( valueAbs, valueRefAbs );
+  }
 
-            let deltaRate;
-            if ( deltaRateBase > 0 ) // Avoid divided by zero.
-              deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not to large even if value is large.
-            else
-              deltaRate = delta;
+  /**
+   * @param {Asserter_Tensor_NumberArray} this
+   *   - The this.numberArray[] and this.acceptableDifferenceRate will be read by this method.
+   *   - The this.elementIndex will be set by this method.
+   */
+  static ElementComparator( value, index ) {
 
-            if ( deltaRate <= acceptableDifferenceRate )
-              return true;
-            return false;
-          }
+    let valueRef = this.numberArray[ this.elementIndex = index ];
+    let delta = Math.abs( value - valueRef );
 
-          tf.util.assert( outputArray.every( ElementComparator ),
-            `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
-              +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
-              + `${parametersDescription}` );
-        }
-      }
+    let valueAbs = Math.abs( value );
+    let valueRefAbs = Math.abs( valueRef );
 
-    }
+    // Ratio to the smaller one.
+    //
+    // When one of two compared values is zero, it will always be failed if compare to the larger value (got 100% delteRate).
+    let deltaRateBase = Math.min( valueAbs, valueRefAbs );
+
+    let deltaRate;
+    if ( deltaRateBase > 0 ) // Avoid divided by zero.
+      deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not to large even if value is large.
+    else
+      deltaRate = delta;
+
+    if ( deltaRate <= this.acceptableDifferenceRate )
+      return true;
+    return false;
   }
 
 }
