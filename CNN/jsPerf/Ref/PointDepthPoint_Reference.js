@@ -48,9 +48,6 @@ class Base {
 
       let strNote;
 
-//!!! (2021/08/10 Remarked) bKeepInputTensor already inside one of Params.
-//      // Since bKeepInputTensor does not affect this.calcResult(), it is possible that do this.calcResult() once and
-//      // this.check_Input_Output_WeightsTable() twice for speeding up the testing performance.
       let imageOutReferenceArray;
       {
         strNote = `( this.testParams.id=${this.testParams.id} )`;
@@ -186,20 +183,26 @@ class Base {
           // Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different (especially activation function
           // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
           let elementIndex;
-          tf.util.assert( outputArray.every( ( value, index ) => {
-              let delta = Math.abs( value - outputArrayRef[ elementIndex = index ] );
+          function ElementComparator( value, index ) {
+            let valueRef = outputArrayRef[ elementIndex = index ];
+            let delta = Math.abs( value - valueRef );
 
-              let valueAbs = Math.abs( value );
-              let deltaRate;
-              if ( valueAbs > 0 ) // Avoid divided by zero.
-                deltaRate = delta / valueAbs; // Using ratio so that the difference will not to large even if value is large.
-              else
-                deltaRate = delta;
+            let valueAbs = Math.abs( value );
+            let valueRefAbs = Math.abs( valueRef );
 
-              if ( deltaRate <= acceptableDifferenceRate )
-                return true;
-              return false;
-            } ),
+            let deltaRateBase = Math.min( valueAbs, valueRefAbs ); // Compare to smaller one. (Considering one of them is zero.)
+            let deltaRate;
+            if ( deltaRateBase > 0 ) // Avoid divided by zero.
+              deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not to large even if value is large.
+            else
+              deltaRate = delta;
+
+            if ( deltaRate <= acceptableDifferenceRate )
+              return true;
+            return false;
+          }
+
+          tf.util.assert( outputArray.every( ElementComparator,
             `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
               +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
               + `${parametersDescription}` );
