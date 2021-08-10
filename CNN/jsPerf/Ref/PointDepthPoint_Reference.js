@@ -190,7 +190,11 @@ class Base {
             let valueAbs = Math.abs( value );
             let valueRefAbs = Math.abs( valueRef );
 
-            let deltaRateBase = Math.min( valueAbs, valueRefAbs ); // Compare to smaller one. (Considering one of them is zero.)
+            // Compare to smaller one.
+            //
+            // When one of compared values is zero, it will always be failed if compare to the larger value (got 100% delteRate).
+            let deltaRateBase = Math.min( valueAbs, valueRefAbs );
+
             let deltaRate;
             if ( deltaRateBase > 0 ) // Avoid divided by zero.
               deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not to large even if value is large.
