@@ -16,12 +16,11 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
- * it has the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
- * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
- * pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount, bPointwise22Bias,
- * pointwise22ActivationId. It also has the following properties:
+ * it has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
+ * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
+ * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
+ * bPointwise22Bias, pointwise22ActivationId. It also has the following properties:
  *   - paramsNumberArrayObject
- *   - channelCount0_pointwise1Before
  *   - inputFloat32Array
  *   - byteOffsetBegin
  *
@@ -31,9 +30,6 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  *
  */
 class Base extends TestParams.Base {
-
-//!!! ...unfinished... (2021/07/11) channelCount0_pointwise1Before  should also be included when permuteParamRecursively.
-//!!! ...unfinished... (2021/06/09) channelCount0_pointwise1Before should also be randomly tested (e.g. between 3 - 5).
 
   /**
    *
@@ -46,7 +42,6 @@ class Base extends TestParams.Base {
    * Use scattered parameters to fills the following proterties:
    *   - this.in.inputFloat32Array
    *   - this.in.byteOffsetBegin
-   *   - this.in.channelCount0_pointwise1Before
    *   - this.out
    *
    * @return {Base}
@@ -62,6 +57,7 @@ class Base extends TestParams.Base {
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
+      channelCount0_pointwise1Before,
       channelCount1_pointwise1Before,
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
@@ -72,26 +68,22 @@ class Base extends TestParams.Base {
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
 
     let weightsElementOffsetBegin = 0;
-    return this.set_By_ParamsNumberArrayMap_ParamsOut( channelCount0_pointwise1Before, weightsElementOffsetBegin );
+    return this.set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
   }
  
   /**
    * Fills the following proterties:
    *   - this.in.inputFloat32Array
    *   - this.in.byteOffsetBegin
-   *   - this.in.channelCount0_pointwise1Before
-   *
-   * @param {number} channelCount0_pointwise1Before
-   *   The channel count of the first input image.
    *
    * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of Base.paramsInArrayOrder[] elements.
    *
    * @param {object} this.out
-   *   An object which has the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias,
-   * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
-   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias. This object will be recorded in this.out directly.
+   *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+   * pointwise1ChannelCount, bPointwise1Bias, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
+   * bDepthwiseBias, pointwise21ChannelCount, bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias.
    *
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
@@ -100,14 +92,9 @@ class Base extends TestParams.Base {
    * @return {Base}
    *   Return this object self.
    */
-  set_By_ParamsNumberArrayMap_ParamsOut(
-//!!! ...unfinished... (2021/08/06)  
-//    channelCount0_pointwise1Before, io_paramsNumberArrayObject, paramsOut, weightsElementOffsetBegin = 0 ) {
-    channelCount0_pointwise1Before, weightsElementOffsetBegin = 0 ) {
+  set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
-    this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
-
-    Base.generate_Filters_Biases( channelCount0_pointwise1Before, this.out, this.in.paramsNumberArrayObject );
+    Base.generate_Filters_Biases( this.out, this.in.paramsNumberArrayObject );
 
     let Float32Array_ByteOffsetBegin
       = Base.concat_ParamsNumberArrayObject_To_Float32Array( this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
@@ -125,7 +112,7 @@ class Base extends TestParams.Base {
     // For testing not start at the offset 0.
     let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
 
-    this.set_By_ParamsNumberArrayMap_ParamsOut( this.in.channelCount0_pointwise1Before, weightsElementOffsetBegin );
+    this.set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
   }
 
   /**
@@ -137,16 +124,12 @@ class Base extends TestParams.Base {
    * @param {number} inputImageWidth
    *   The width of the input image.
    *
-   * @param {number} channelCount0_pointwise1Before
-   *   The channel count of the first input image.
-   *
    * @yield {Base}
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
-  * ParamsGenerator( inputImageHeight, inputImageWidth, channelCount0_pointwise1Before ) {
+  * ParamsGenerator( inputImageHeight, inputImageWidth ) {
     this.inputImageHeight = inputImageHeight;
     this.inputImageWidth = inputImageWidth;
-    this.in.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
 
 //!!! ...unfinished... (2021/07/27) When pad is "same", it should test more filter size.
     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
@@ -167,6 +150,7 @@ class Base extends TestParams.Base {
 //       Bias:         1,
 //       ActivationId: 1,
 
+      channelCount0_pointwise1Before: 4,
       channelCount1_pointwise1Before: 5,
       depthwise_AvgMax_Or_ChannelMultiplier: 5,
       depthwiseFilterHeight: depthwiseFilterMaxSize,
@@ -187,6 +171,9 @@ class Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.maxKindsRestrict.Bias ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.maxKindsRestrict.ActivationId ),
+
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount0_pointwise1Before,
+                                                                                      this.maxKindsRestrict.channelCount0_pointwise1Before ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
                                                                                       this.maxKindsRestrict.channelCount1_pointwise1Before ),
@@ -300,22 +287,20 @@ class Base extends TestParams.Base {
 
   /**
    *
-   * @param {number} channelCount0_pointwise1Before
-   *   The channel count of the first input image.
-   *
    * @param {object} paramsAll
-   *   An object which must have all the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias,
-   * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
-   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount. They will be used to modify io_paramsNumberArrayObject.
+   *   An object which must have all the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+   * pointwise1ChannelCount, bPointwise1Bias, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
+   * bDepthwiseBias, pointwise21ChannelCount, bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount.
+   *  They will be used to modify io_paramsNumberArrayObject.
    *
    * @param {object} io_paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
    * The name should be one of Base.paramsInArrayOrder[] elements.
    */
-  static generate_Filters_Biases( channelCount0_pointwise1Before, paramsAll, io_paramsNumberArrayObject ) {
+  static generate_Filters_Biases( paramsAll, io_paramsNumberArrayObject ) {
 
     // Pointwise1
-    let pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before,
+    let pointwise1 = Base.generate_pointwise_filters_biases( paramsAll.channelCount0_pointwise1Before,
       paramsAll.pointwise1ChannelCount, paramsAll.bPointwise1Bias );
 
     io_paramsNumberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
@@ -333,7 +318,7 @@ class Base extends TestParams.Base {
     if ( paramsAll.channelCount1_pointwise1Before
            == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) { // (-2) (simplified ShuffleNetV2's head)
 
-      depthwise2 = Base.generate_depthwise_filters_biases( channelCount0_pointwise1Before, // Use input0.
+      depthwise2 = Base.generate_depthwise_filters_biases( paramsAll.channelCount0_pointwise1Before, // Use input0.
         paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
 
       io_paramsNumberArrayObject.depthwise2Filters = depthwise2.numberArrayArray[ 0 ];
@@ -424,6 +409,7 @@ class Base extends TestParams.Base {
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of PointDepthPoint.initer().
  */
 Base.paramsInArrayOrder = [
+  PointDepthPoint.Params.channelCount0_pointwise1Before.paramName,
   PointDepthPoint.Params.channelCount1_pointwise1Before.paramName,
   PointDepthPoint.Params.pointwise1ChannelCount.paramName,
   PointDepthPoint.Params.bPointwise1Bias.paramName,
