@@ -247,7 +247,7 @@ class Base {
 
       testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
       testParams.in.pointwise22ChannelCount, testParams.in.bPointwise22Bias, testParams.in.pointwise22ActivationId,
-      testParams.in.inputTensorCount
+      testParams.in.bKeepInputTensor
     );
 
     let bInitOk = pointDepthPoint.init( progress, extractedParams );
