@@ -14,7 +14,7 @@ import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
 /**
  * Test CNN PointDepthPoint.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/338/colorfulcakechen-cnn-pointdepthpoint-0f05ed2e5f39cc046d}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/359/colorfulcakechen-cnn-pointdepthpoint-93c31344950049fd20}
  */
 
 /**
@@ -434,7 +434,7 @@ class HeightWidthDepth {
         let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width );
         let testReference = new PointDepthPoint_Reference.Base();
 
-        let batchMessageInterval = 20 * 1000; //100 * 1000; // Every so many test cases, display a message.
+        let batchMessageInterval = 30 * 1000; //100 * 1000; // Every so many test cases, display a message.
         for ( let testParams of testParamsGenerator ) {
           if ( ( testParams.id % batchMessageInterval ) == 0 )
             console.log( `${tf.getBackend()}, `
