@@ -45,3 +45,91 @@ class Comparator {
   }
 
 }
+
+
+/**
+ *
+ */
+class Asserter {
+//!!! ...unfinished... (2021/08/10)
+
+  /**
+   * Assert a tensor whether equals to the number array.
+   *
+   * @param {tf.tensor} tensor
+   *   The tf.tensor to be checked.
+   *
+   * @param {number[]} numberArray
+   *   The number to be compared against tensor's data.
+   *
+   * @param {number} acceptableDifferenceRate
+   *   How many difference (in ratio) between the tensor and numberArray (per element) is acceptable. Because floating-point
+   * accumulated error of float32 (GPU) and float64 (CPU) is different, a little difference should be allowed. Otherwise,
+   * the comparison may hardly to pass this check.
+   *
+   * @param {string} prefixMsg
+   *   The text to be displayed at the beginning when comparison failed.
+   *
+   * @param {string} tensorName
+   *   The text to be displayed for the tensor when comparison failed.
+   *
+   * @param {string} numberArrayName
+   *   The text to be displayed for the numberArray when comparison failed.
+   *
+   * @param {string} postfixMsg
+   *   The text to be displayed at the tail when comparison failed.
+   */
+  static assert_Tensor_NumberArray( tensor, numberArray, acceptableDifferenceRate, prefixMsg, tensorName, numberArrayName, postfixMsg ) {
+
+    let tensorDataArray = null;
+    if ( tensor ) {
+      tensorDataArray = tensor.dataSync();
+    }
+
+    // Checking both null or non-null.
+    tf.util.assert( ( tensorDataArray == null ) == ( numberArray == null ),
+      `${prefixMsg} ${tensorName} ( ${tensorDataArray} ) and ${numberArrayName} ( ${numberArray} ) should be both null or non-null. ${postfixMsg}` );
+
+    if ( tensorDataArray ) {
+
+      // Checking both length.
+      tf.util.assert( tensorDataArray.length == numberArray.length,
+      `${prefixMsg} ${tensorName} length ( ${tensorDataArray.length} ) should be ( ${numberArray.length} ). ${postfixMsg}` );
+
+          // Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different (especially activation function
+          // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
+          let elementIndex;
+          function ElementComparator( value, index ) {
+            let valueRef = outputArrayRef[ elementIndex = index ];
+            let delta = Math.abs( value - valueRef );
+
+            let valueAbs = Math.abs( value );
+            let valueRefAbs = Math.abs( valueRef );
+
+            // Compare to smaller one.
+            //
+            // When one of compared values is zero, it will always be failed if compare to the larger value (got 100% delteRate).
+            let deltaRateBase = Math.min( valueAbs, valueRefAbs );
+
+            let deltaRate;
+            if ( deltaRateBase > 0 ) // Avoid divided by zero.
+              deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not to large even if value is large.
+            else
+              deltaRate = delta;
+
+            if ( deltaRate <= acceptableDifferenceRate )
+              return true;
+            return false;
+          }
+
+          tf.util.assert( outputArray.every( ElementComparator ),
+            `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
+              +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
+              + `${parametersDescription}` );
+        }
+      }
+
+    }
+  }
+
+}
