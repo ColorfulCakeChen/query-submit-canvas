@@ -12,9 +12,6 @@ import * as ConcatAlongAxisId2 from "./ConcatAlongAxisId2.js";
 import * as TensorOpCounter from "./TensorOpCounter.js";
 
 
-//!!! ...unfinished... (2021/06/09) Why are not channelCount0_pointwise1Before evolutable params?
-
-
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
  */
@@ -30,8 +27,13 @@ class Params extends Weights.Params {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
+   * @param {number} channelCount0_pointwise1Before
+   *   The channel count of apply_and_destroy_or_keep()'s first input image (i.e. inputTensors[ 0 ]). If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
+   *
    * @param {number} channelCount1_pointwise1Before
-   *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]).
+   *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]). If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE (-2): The inputTensors[ 1 ] will not be used at
    *     all (will be ignored completel). The inputTensors[ 0 ] will be processed by two pathes: one is by pointwise1 and one
@@ -131,20 +133,27 @@ class Params extends Weights.Params {
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise22ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
+   * @param {boolean} bKeepInputTensor
+   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
+   * For another example, the input image should be shared across many neural networks. If it is null, it will be extracted from
+   * inputFloat32Array (i.e. by evolution).
    *
    */
   constructor( inputFloat32Array, byteOffsetBegin,
+    channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId
+    pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+    bKeepInputTensor
   ) {
 
 //!!! ...unfinished...
 // squeeze-and-excitation ?
 
     let parameterMap = new Map( [
+      [ Params.channelCount0_pointwise1Before,        channelCount0_pointwise1Before ],
       [ Params.channelCount1_pointwise1Before,        channelCount1_pointwise1Before ],
       [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
       [ Params.bPointwise1Bias,                       bPointwise1Bias ],
@@ -160,6 +169,7 @@ class Params extends Weights.Params {
       [ Params.pointwise22ChannelCount,               pointwise22ChannelCount ],
       [ Params.bPointwise22Bias,                      bPointwise22Bias ],
       [ Params.pointwise22ActivationId,               pointwise22ActivationId ],
+      [ Params.bKeepInputTensor,                      bKeepInputTensor ],
     ] );
 
     return super( inputFloat32Array, byteOffsetBegin, parameterMap );
@@ -211,6 +221,8 @@ class Params extends Weights.Params {
     }
   }
 
+  get channelCount0_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount0_pointwise1Before ); }
+
   /** @return {number} The number version of channelCount1_pointwise1Before. */
   get channelCount1_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount1_pointwise1Before ); }
 
@@ -247,14 +259,18 @@ class Params extends Weights.Params {
   get bPointwise22Bias()          { return this.parameterMapModified.get( Params.bPointwise22Bias ); }
   get pointwise22ActivationId()   { return this.parameterMapModified.get( Params.pointwise22ActivationId ); }
   get pointwise22ActivationName() { return Params.pointwise22ActivationId.getStringOfValue( this.pointwise22ActivationId ); }
+
+  get bKeepInputTensor()          { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
 }
 
 
 // Define parameter descriptions.
 
+/** At least, there should be 1 input channel. */
+Params.channelCount0_pointwise1Before =  new ParamDesc.Int(        "channelCount0_pointwise1Before", 1, ( 10 * 1024 ) );
 Params.channelCount1_pointwise1Before =  new ParamDesc.channelCount1_pointwise1Before( "channelCount1_pointwise1Before" );
 
-Params.pointwise1ChannelCount =  new ParamDesc.Int(                "pointwise1ChannelCount", 0, ( 10 * 1024 ) );
+Params.pointwise1ChannelCount =  new ParamDesc.Int(                "pointwise1ChannelCount",         0, ( 10 * 1024 ) );
 Params.bPointwise1Bias =         new ParamDesc.Bool(               "bPointwise1Bias" );
 Params.pointwise1ActivationId =  new ParamDesc.ActivationFunction( "pointwise1ActivationId" );
 
@@ -293,6 +309,8 @@ Params.pointwise21ActivationId = new ParamDesc.ActivationFunction( "pointwise21A
 Params.pointwise22ChannelCount = new ParamDesc.Int(                "pointwise22ChannelCount", 0, ( 10 * 1024 ) );
 Params.bPointwise22Bias =        new ParamDesc.Bool(               "bPointwise22Bias" );
 Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22ActivationId" );
+
+Params.bKeepInputTensor =         new ParamDesc.Bool(              "bKeepInputTensor" );
 
 
 /**
@@ -497,15 +515,6 @@ class Base extends ReturnOrClone.Base {
    *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
    * increased when every time advanced. The progressParent.getRoot() will be returned when every time yield.
    *
-   * @param {number} channelCount0_pointwise1Before
-   *   The channel count of apply_and_destroy_or_keep()'s first input image (i.e. inputTensors[ 0 ]). This should always be specified
-   * and can not be null (i.e. it will never be extracted from inputFloat32Array and never by evolution).
-   *
-   * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
-   * For another example, the input image should be shared across many neural networks. If it is null, it will be viewed as falsy
-   * (i.e. it will never be extracted from inputFloat32Array and never by evolution).
-   *
    * @param {Params} params
    *   A Params object. The params.extract() will be called to extract parameters.
    *
@@ -516,10 +525,7 @@ class Base extends ReturnOrClone.Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    */
-  * initer( progressParent, channelCount0_pointwise1Before, bKeepInputTensor, params ) {
-
-//!!! ...unfinished... (2021/07/31) Move channelCount0_pointwise1Before and bKeepInputTensor into Params.
-// So that they could be generated by TestParams for Block testing.
+  * initer( progressParent, params ) {
 
     // 0. Prepare
 
@@ -537,8 +543,6 @@ class Base extends ReturnOrClone.Base {
 
     this.disposeTensors();  // Also initialize some member function pointers to no_operation().
 
-    this.channelCount0_pointwise1Before = channelCount0_pointwise1Before;
-
     // 1. Extract parameters.
     if ( !params )
       return false;
@@ -554,6 +558,7 @@ class Base extends ReturnOrClone.Base {
     // Get parameters' real (adjusted) values.
     //
     // Do not keep params in this.params so that the inputFloat32Array could be released.
+    this.channelCount0_pointwise1Before = params.channelCount0_pointwise1Before;
     this.channelCount1_pointwise1Before = params.channelCount1_pointwise1Before;
     this.channelCount1_pointwise1Before_Name = params.channelCount1_pointwise1Before_Name;
 
@@ -579,6 +584,8 @@ class Base extends ReturnOrClone.Base {
     this.bPointwise22Bias = params.bPointwise22Bias;
     this.pointwise22ActivationId = params.pointwise22ActivationId;
     this.pointwise22ActivationName = params.pointwise22ActivationName;
+
+    this.bKeepInputTensor = params.bKeepInputTensor;
 
     // Determine input tensor count and whether request add-input-to-output.
     this.inputTensorCount = params.inputTensorCount;
@@ -615,7 +622,7 @@ class Base extends ReturnOrClone.Base {
       TensorOpCounters.pointwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise1", this.pointwise1, TensorOpCounters.input0 );
 
     } else {
-      this.channelCount_pointwise1After_depthwise1Before = channelCount0_pointwise1Before;  // No pointwise1 convolution.
+      this.channelCount_pointwise1After_depthwise1Before = this.channelCount0_pointwise1Before;  // No pointwise1 convolution.
       TensorOpCounters.pointwise1 = TensorOpCounters.input0; // Its output is just its input tensor.
     }
 
@@ -677,7 +684,7 @@ class Base extends ReturnOrClone.Base {
       } else {
         // The depthwise2 is requested but not created. It means no depthwise operation (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ).
         // In this case, the depthwise2 should be short circuit to inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
-        this.channelCount_depthwise2After_concatenateBefore = channelCount0_pointwise1Before;
+        this.channelCount_depthwise2After_concatenateBefore = this.channelCount0_pointwise1Before;
         TensorOpCounters.depthwise2 = TensorOpCounters.input0;
       }
 
@@ -778,7 +785,6 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // pointwise2 filters was ready. Report progress.
 
     // 6. Configure correct function pointers according to whether keeping or destroying input tensor.
-    this.bKeepInputTensor = bKeepInputTensor;
 
     // 6.1
     //
@@ -804,14 +810,14 @@ class Base extends ReturnOrClone.Base {
       // if channelCount_concatenateAfter_pointwise2Before (which is already assigned to channelCount_pointwise21After in this case)
       // has the same dimension as inputTensors[ 0 ].
 
-      if ( channelCount0_pointwise1Before == this.channelCount_pointwise21After ) {
+      if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise21After ) {
         this.bShould_addInput0ToPointwise21 = true;
         this.addInput0ToPointwise21 = new AddTwoTensors.Base();
       }
 
       // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount0_pointwise1Before
       // (not channelCount1_pointwise1Before).
-      if ( channelCount0_pointwise1Before == this.channelCount_pointwise22After ) {
+      if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise22After ) {
         this.bShould_addInput0ToPointwise22 = true;
         this.addInput0ToPointwise22 = new AddTwoTensors.Base();
       }
@@ -842,8 +848,7 @@ class Base extends ReturnOrClone.Base {
       else
         TensorOpCounters.pointwise22 = TensorOpCounters.concatenator; // Its output is just its input tensor.
 
-      // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount0_pointwise1Before
-      // (not channelCount1_pointwise1Before).
+      // Only inputTensors[ 0 ] will be used to add to output. So still use TensorOpCounters.input0 (not TensorOpCounters.input1) as input.
       if ( this.bShould_addInput0ToPointwise22 )
         TensorOpCounters.addInput0ToPointwise22 = new TensorOpCounter.Base(
           ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", this.addInput0ToPointwise22, TensorOpCounters.input0, TensorOpCounters.pointwise22 );
@@ -860,7 +865,7 @@ class Base extends ReturnOrClone.Base {
     // 6.3 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
     {
       let alwaysKeepSet;
-      if ( bKeepInputTensor ) { // User requests to keep input tensors.
+      if ( this.bKeepInputTensor ) { // User requests to keep input tensors.
         alwaysKeepSet = new Set( [ TensorOpCounters.input0, TensorOpCounters.input1 ] );
       }
 
@@ -895,11 +900,11 @@ class Base extends ReturnOrClone.Base {
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
-  init( progressParent, channelCount0_pointwise1Before, bKeepInputTensor, params ) {
+  init( progressParent, params ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer( progressParent, channelCount0_pointwise1Before, bKeepInputTensor, params );
+    let initer = this.initer( progressParent, params );
     let initerNext;
     do {
       initerNext = initer.next();
