@@ -23,15 +23,15 @@ class Base {
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
    */
-  setByConcat( paramsNameOrderArray, paramsNumberArrayObject, weightsElementOffsetBegin = 0 ) {
+  setByConcat( nameOrderArray, nameNumberArrayObject, weightsElementOffsetBegin = 0 ) {
 
     this.weightsByteOffsetBegin = weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT; // Skip the un-used byte count.
 
     // Calculate the total length include the extra offset.
     let weightsTotalLength = weightsElementOffsetBegin;
-    for ( let i = 0; i < paramsNameOrderArray.length; ++i ) {
-      let paramName = paramsNameOrderArray[ i ];
-      let numberArray = paramsNumberArrayObject[ paramName ];
+    for ( let i = 0; i < nameOrderArray.length; ++i ) {
+      let name = nameOrderArray[ i ];
+      let numberArray = nameNumberArrayObject[ name ];
       if ( numberArray ) {
         weightsTotalLength += numberArray.length;
       }
@@ -45,9 +45,9 @@ class Base {
       }
 
       let offset = weightsElementOffsetBegin;
-      for ( let i = 0; i < paramsNameOrderArray.length; ++i ) { // Concatenate all number array into a Float32Array.
-        let paramName = paramsNameOrderArray[ i ];
-        let numberArray = paramsNumberArrayObject[ paramName ];
+      for ( let i = 0; i < nameOrderArray.length; ++i ) { // Concatenate all number array into a Float32Array.
+      let name = nameOrderArray[ i ];
+      let numberArray = nameNumberArrayObject[ name ];
         if ( numberArray ) {
           this.weightsFloat32Array.set( numberArray, offset );
           offset += numberArray.length;
