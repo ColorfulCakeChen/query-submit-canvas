@@ -10,13 +10,23 @@ import * as ConvBlock from "../Conv/Block.js";
 // depthwise-pointwise-bias-COS is more like Fourier series.
 // Compare it to depthwise-COS-pointwise-COS (no bias but two COS) about speed and accuracy.
 //
+//
 //!!! ...unfinished... (2021/08/11)
 // In ShuffleNetV2:
 //   - pointwise1: uses activation SIN so that 0 will be kept as 0.
 //   - depthwise: uses activation NONE (ShuffleNetV2's design. This also lets depthwise-pointwise2 compose a complete (cubic) convolution.)
 //   - pointwise2: uses activation COS so that 0 will become 1. This will provide a bias term in the next (PointDepthPoint) step.
 //
-// So, Block should be able to be assigned with different activation functions for pointwise1 and pointwise2.
+// So, Block should be able to be assigned with different activation functions for pointwise1 and pointwise2. (WRONG!!!)
+//
+//
+//!!! ...unfinished... (2021/08/11)
+// In ShuffleNetV2:
+//   - pointwise1: uses activation COS so that 0 will become 1. This will provide a bias term in all the latter steps.
+//   - depthwise: uses activation NONE (ShuffleNetV2's design. This also lets depthwise-pointwise2 compose a complete (cubic) convolution.)
+//   - pointwise2: uses activation COS (ShuffleNetV2's design) or NONE (at the block's last step).
+//
+// So, Block needs NOT be able to be assigned with different activation functions for pointwise1 and pointwise2.
 //
 
 
