@@ -609,10 +609,9 @@ class Base extends ReturnOrClone.Base {
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
       this.channelCount0_pointwise1Before,
-      this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
-      params.defaultInput, this.byteOffsetEnd );
+      this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId );
 
-    if ( !this.pointwise1.init() )
+    if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise1.byteOffsetEnd;
 
@@ -629,18 +628,17 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise1 filters was ready. Report progress.
 
-//!!! ...unfinished (2021/07/10) When pad=valid, it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
-
     // 3. The depthwise operation.
+    //
+    // Note: When pad=valid, it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
 
     // 3.1 The first depthwise operation.
     this.depthwise1 = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwise1Before,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
-      this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-      params.defaultInput, this.byteOffsetEnd );
+      this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId );
 
-    if ( !this.depthwise1.init() )
+    if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.depthwise1.byteOffsetEnd;
 
@@ -668,10 +666,9 @@ class Base extends ReturnOrClone.Base {
         this.channelCount0_pointwise1Before,
 
         this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
-        this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-        params.defaultInput, this.byteOffsetEnd );
+        this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId );
 
-      if ( !this.depthwise2.init() )
+      if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.depthwise2.byteOffsetEnd;
 
@@ -730,10 +727,9 @@ class Base extends ReturnOrClone.Base {
     // 5.1 Pointwise21
     this.pointwise21 = new Pointwise.Base(
       this.channelCount_concatenateAfter_pointwise2Before,
-      this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
-      params.defaultInput, this.byteOffsetEnd );
+      this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId );
 
-    if ( !this.pointwise21.init() )
+    if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise21.byteOffsetEnd;
 
@@ -747,10 +743,9 @@ class Base extends ReturnOrClone.Base {
     // 5.2 Pointwise22
     this.pointwise22 = new Pointwise.Base(
       this.channelCount_concatenateAfter_pointwise2Before,
-      this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
-      params.defaultInput, this.byteOffsetEnd );
+      this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId );
 
-    if ( !this.pointwise22.init() )
+    if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise22.byteOffsetEnd;
 
@@ -1060,8 +1055,6 @@ class Base extends ReturnOrClone.Base {
 
               // no pointwise1, no depthwise1, no concatenator, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
               if ( !this.bPointwise1 && !this.bDepthwise1 ) {
-
-  //!!! ...unfinished... (2021/06/29) should be tested.
 
                 // Note: This may be wrong, however, if there are wrongly two input tensors (there should be only one input
                 // (i.e. inputTensors[ 0 ]) for should-add-input-to-output).
