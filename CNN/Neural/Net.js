@@ -33,7 +33,18 @@ import * as ConvBlock from "../Conv/Block.js";
  *   - nActivationIdAtBlockEnd: ValueDesc.ActivationFunction.Singleton.Ids.NONE
  *
  *
- * 1. The COS and bias
+ * 1. The bias operation
+ *
+ * The kernel idea is:
+ *   - A depthwise-pointwise pair is a complete (cubic) convolution.
+ *   - The depthwise-pointwise-bias-COS combination is more like Fourier series.
+ *
+ * The bias operation (which is not seen in most neural network architecture) is very important (in my opinion). Without it, the Fourier
+ * series is not established. Its execution speed, however, is poor. (This might be the reason why most neural network architecture do
+ * not use it.)
+ *
+ *
+ * 1.1 COS as implicit bias
  *
  * The cosine activation function can achieve impilcit bias. This is because depthwise and pointwise convolution can easily achieve zero
  * and ( cos( 0 ) == 1 ). A constant value (e.g. 1) becomes the bias of the next convolution. So there is not necessary to use explicit
@@ -56,9 +67,12 @@ import * as ConvBlock from "../Conv/Block.js";
 
 //!!! ...unfinished... (2021/08/11)
 
+ *
+ * 1.2 Explicit bias
+ *
  * However, the above design might encounter some problems. Because the pointwise1 itself does not have bias, there is a dangerous
  * that its activation COS might destroy information. For function SIN, the linear relationship could be kept without bias. For
- * functnion COS, however, the linear relationship of negative input value will always be destroyed definitely.
+ * functnion COS, however, the linear relationship of negative input value will always be destroyed when no bias.
  *
  * In my opinion, in ShuffleNetV2, it may be better to use explicit bias:
  *   - Remove pointwise1 (i.e. ( pointwise1ChannelCountRate == 0 ) ).
