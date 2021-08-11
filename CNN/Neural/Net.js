@@ -1,8 +1,16 @@
+export { Config, Base };
+
 //import * as NetProgress from "./NetProgress.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as ConvBlock from "../Conv/Block.js";
 
-export { Config, Base };
+
+//!!! ...unfinished... (2021/08/11)
+// A depthwise-pointwise pair is a complete (cubic) convolution.
+// depthwise-pointwise-bias-COS is more like Fourier series.
+// Compare it to depthwise-COS-pointwise-COS (no bias but two COS) about speed and accuracy.
+//
+
 
 /**
  * A neural network's configuration.
