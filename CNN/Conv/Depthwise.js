@@ -48,11 +48,7 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-  constructor(
-    inputChannelCount,
-    AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId,
-    inputFloat32Array, byteOffsetBegin ) {
-
+  constructor( inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId ) {
     super();
     this.inputChannelCount = inputChannelCount;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
@@ -60,17 +56,22 @@ class Base extends ReturnOrClone_Activation.Base {
     this.stridesPad = stridesPad;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-    this.inputFloat32Array = inputFloat32Array;
-    this.byteOffsetBegin = byteOffsetBegin;
   }
 
   /**
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
    * @return {boolean} Return true, if succeeded.
    */
-  init() {
+  init( inputFloat32Array, byteOffsetBegin ) {
+
+    // Q: Why is the inputFloat32Array not a parameter of constructor?
+    // A: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
+
     this.disposeTensors();
 
-    this.byteOffsetEnd = this.byteOffsetBegin;
+    this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
     this.outputChannelCount = this.inputChannelCount; // Assume no channel multiplier.
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
@@ -88,33 +89,25 @@ class Base extends ReturnOrClone_Activation.Base {
       //   - Just return input (i.e. ( this.pfnOperation == Base.return_input_directly ) )
 
       // When 1x1 AVG or MAX pooling (and strides is 1), the result of depthwise operation (not include bias and activation) is the same as input.
-      let bSameAsInput = ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) );
+      let bOperationResultSameAsInput = ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) );
 
-//!!! (2021/07/07 Remarked) Although result is the same as input, it might still has bias and/or activation.
-//       // Although filter size 1x1, it perhaps can not do nothing if considering strides and pad.
-//       if ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) ) {
-//         // Do nothing, because the result of 1x1 AVG or MAX pooling (when strides is 1) is just the same as input.
-//         this.pfnOperation = Base.return_input_directly;
-//       } else {
       switch ( this.AvgMax_Or_ChannelMultiplier ) {
         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
           this.bDepthwise = this.bDepthwiseAvg = true;
-          if ( bSameAsInput )
-            this.pfnOperation = Base.return_input_directly; // For speeding up performance. (but it might still has bias and/or activation.)
+          if ( bOperationResultSameAsInput )
+            this.pfnOperation = Base.return_input_directly; // For speeding up performance. (Note: It might still has bias and/or activation.)
           else
             this.pfnOperation = Base.Avg_and_destroy;
           break;
 
         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
           this.bDepthwise = this.bDepthwiseMax = true;
-          if ( bSameAsInput )
-            this.pfnOperation = Base.return_input_directly; // For speeding up performance. (but it might still has bias and/or activation.)
+          if ( bOperationResultSameAsInput )
+            this.pfnOperation = Base.return_input_directly; // For speeding up performance. (Note: It might still has bias and/or activation.)
           else
             this.pfnOperation = Base.Max_and_destroy;
           break;
       }
-//!!! (2021/07/07 Remarked) Although result is the same as input, it might still has bias and/or activation.
-//      }
 
     } else {
       if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
@@ -124,7 +117,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
         this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier ];
 
-        this.filtersWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
+        this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
         if ( !this.filtersWeights.extract() )
           return false;  // e.g. input array does not have enough data.
 
@@ -145,7 +138,7 @@ class Base extends ReturnOrClone_Activation.Base {
     if ( this.bDepthwise ) {
 
       if ( this.bBias ) {
-        this.biasesWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
+        this.biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
         if ( !this.biasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
@@ -207,11 +200,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
       switch ( this.pfnOperation ) {
 
-//!!! (2021/07/07 Remarked) pfnOperationBiasActivation should not be changed because there might be bias and activation.
-//         // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-//         // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-//         case Base.return_input_directly: this.pfnOperation = this.pfnOperationBiasActivation = Base.keep_input_return_copy; break;
-
         // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
         // Note: pfnOperationBiasActivation should not be changed here because there might be bias and activation.
         case Base.return_input_directly: this.pfnOperation = Base.keep_input_return_copy; break;
@@ -230,11 +218,6 @@ class Base extends ReturnOrClone_Activation.Base {
     } else {
 
       switch ( this.pfnOperation ) {
-
-//!!! (2021/07/07 Remarked) pfnOperationBiasActivation should not be changed because there might be bias and activation.
-//         // Just return input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-//         // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-//         case Base.keep_input_return_copy: this.pfnOperation = this.pfnOperationBiasActivation = Base.return_input_directly; break;
 
         // Just return input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
         // Note: pfnOperationBiasActivation should not be changed here because there might be bias and activation.
