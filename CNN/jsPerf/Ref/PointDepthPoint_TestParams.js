@@ -1,6 +1,7 @@
 export { Base };
 
 import * as RandTools from "../../util/RandTools.js";
+import * as NameNumberArrayObject_To_Float32Array from "../../util/NameNumberArrayObject_To_Float32Array.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
@@ -98,8 +99,8 @@ class Base extends TestParams.Base {
 
     Base.generate_Filters_Biases( this.out, this.in.paramsNumberArrayObject );
 
-    let Float32Array_ByteOffsetBegin
-      = Base.concat_ParamsNumberArrayObject_To_Float32Array( this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
+    let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base().setByConcat(
+          Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
@@ -368,52 +369,6 @@ class Base extends TestParams.Base {
     io_paramsNumberArrayObject.pointwise22Biases =  pointwise22.numberArrayArray[ 1 ];
   }
 
-  /**
-   *
-   * @param {object} paramsNumberArrayObject
-   *   Pass in an object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Base.paramsInArrayOrder[] elements.
-   *
-   * @param {number} weightsElementOffsetBegin
-   *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
-   *
-   * @return {object}
-   *   Return an object { weightsFloat32Array, weightsByteOffsetBegin }. The weightsFloat32Array (as a Float32Array) is the concatenation
-   * of the numberArrayArray. The weightsByteOffsetBegin is a random offset byte count inside weightsFloat32Array.
-   */
-  static concat_ParamsNumberArrayObject_To_Float32Array( paramsNumberArrayObject, weightsElementOffsetBegin = 0 ) {
-
-    let result = {
-      weightsByteOffsetBegin: weightsElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT, // Skip the un-used byte count.
-    };
-
-    // Prepare weights source and offset into array. So that they can be accessed by loop.
-    let weightsTotalLength = weightsElementOffsetBegin;
-    let weightsSourceArray = [];
-    for ( let i = 0; i < Base.paramsInArrayOrder.length; ++i ) {
-      let paramName = Base.paramsInArrayOrder[ i ];
-      let numberArray = paramsNumberArrayObject[ paramName ];
-      if ( numberArray ) {
-        weightsSourceArray.push( { offset: weightsTotalLength, weights: numberArray } );
-        weightsTotalLength += numberArray.length;
-      }
-    }
-
-    // Concatenate all number array into a Float32Array.
-    result.weightsFloat32Array = new Float32Array( weightsTotalLength );
-    {
-      for ( let i = 0; i < result.weightsElementOffsetBegin; ++i ) { // Make-up the un-used weight values.
-        result.weightsFloat32Array[ i ] = -i;
-      }
-
-      for ( let i = 0; i < weightsSourceArray.length; ++i ) { // Concatenate all number array into a Float32Array.
-        result.weightsFloat32Array.set( weightsSourceArray[ i ].weights, weightsSourceArray[ i ].offset );
-      }
-    }
-
-    return result;
-  }
-
 }
 
 /**
@@ -421,7 +376,7 @@ class Base extends TestParams.Base {
  *
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of PointDepthPoint.initer().
  */
-Base.paramsInArrayOrder = [
+Base.paramsNameOrderArray = [
   PointDepthPoint.Params.channelCount0_pointwise1Before.paramName,
   PointDepthPoint.Params.channelCount1_pointwise1Before.paramName,
   PointDepthPoint.Params.pointwise1ChannelCount.paramName,
