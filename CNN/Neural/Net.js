@@ -50,7 +50,7 @@ import * as ConvBlock from "../Conv/Block.js";
  * and ( cos( 0 ) == 1 ). A constant value (e.g. 1) becomes the bias of the next convolution. So there is not necessary to use explicit
  * bias which has worse performance (than without it).
  *
- * For example, in ShuffleNetV2:
+ * For example, in ShuffleNetV2 ( ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 1 ) and ( bBias == false ) ):
  *   - pointwise1
  *     - If there is a weights ( 0, 0, ..., 0 ), it produces a term's value as 0.
  *     - Using activation COS so that 0 will become 1. This will provide a constant (i.e. bias) term for pointwise2.
@@ -74,9 +74,9 @@ import * as ConvBlock from "../Conv/Block.js";
  * that its activation COS might destroy information. For function SIN, the linear relationship could be kept without bias. For
  * functnion COS, however, the linear relationship of negative input value will always be destroyed when no bias.
  *
- * In my opinion, in ShuffleNetV2, it may be better to use explicit bias:
+ * In my opinion, it may be better in ShuffleNetV2 ( ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 ) and ( bBias == true ) ):
  *   - Remove pointwise1 (i.e. ( pointwise1ChannelCountRate == 0 ) ).
- *   - Let pointwise2 have bias (i.e. ( bBias == true ) ).
+ *   - Let pointwise2 have explicit bias (i.e. ( bBias == true ) ).
  *
  * The execution speed which is lowered by the pointwise2's bias could be compensated by the removed pointwise1.
  *
