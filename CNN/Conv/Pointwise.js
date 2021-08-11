@@ -38,23 +38,28 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, inputFloat32Array, byteOffsetBegin ) {
+  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId ) {
     super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-    this.inputFloat32Array = inputFloat32Array;
-    this.byteOffsetBegin = byteOffsetBegin;
   }
 
   /**
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
    * @return {boolean} Return true, if succeeded.
    */
-  init() {
+  init( inputFloat32Array, byteOffsetBegin ) {
+
+    // Q: Why is the inputFloat32Array not a parameter of constructor?
+    // A: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
+
     this.disposeTensors();
 
-    this.byteOffsetEnd = this.byteOffsetBegin;
+    this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
     this.bPointwise = ( this.outputChannelCount > 0 );
     this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
 
@@ -64,7 +69,7 @@ class Base extends ReturnOrClone_Activation.Base {
       this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
       this.biasesShape =       [ 1, 1, this.outputChannelCount ];
 
-      this.filtersWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
+      this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
       if ( !this.filtersWeights.extract() )
         return false;  // e.g. input array does not have enough data.
 
@@ -74,7 +79,7 @@ class Base extends ReturnOrClone_Activation.Base {
       this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
 
       if ( this.bBias ) {
-        this.biasesWeights = new Weights.Base( this.inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
+        this.biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
         if ( !this.biasesWeights.extract() )
           return false;  // e.g. input array does not have enough data.
         this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
