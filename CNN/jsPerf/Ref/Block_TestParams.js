@@ -1,6 +1,7 @@
 export { Base };
 
 import * as RandTools from "../../util/RandTools.js";
+import * as NameNumberArrayObject_To_Float32Array from "../../util/NameNumberArrayObject_To_Float32Array.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
@@ -83,8 +84,8 @@ class Base extends TestParams.Base {
 
     Base.generate_Filters_Biases( channelCount0_pointwise1Before, this.out, this.in.paramsNumberArrayObject );
 
-    let Float32Array_ByteOffsetBegin
-      = Base.concat_ParamsNumberArrayObject_To_Float32Array( this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
+    let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
+    Float32Array_ByteOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
