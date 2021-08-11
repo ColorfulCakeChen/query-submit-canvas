@@ -68,6 +68,19 @@ import * as ConvBlock from "../Conv/Block.js";
  *
 
 //!!! ...unfinished... (2021/08/11)
+// It seems that TANH, SIGMOID, RELU6 could achieve implicit bias.
+//   - Multiplied by large scale.
+//   - Than, TANH.
+//   - Problem: Three possible values: -1 or 0 or +1. This is not a usable bias which should always the same one (not three) constant.
+//
+// Another possible:
+//   - Multiplied by input self. (i.e. power 2)
+//   - Then, TANH.
+//   - Problem1: Power2 destroy some information (just like COS do).
+//   - Problem2: Thwo possible values: 0 or +1. This is not a usable bias which should always the same one (not two) constant.
+//
+
+//!!! ...unfinished... (2021/08/11)
 
  *
  * 1.2 Explicit bias
