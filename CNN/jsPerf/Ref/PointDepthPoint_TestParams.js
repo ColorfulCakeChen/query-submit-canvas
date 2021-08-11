@@ -99,8 +99,8 @@ class Base extends TestParams.Base {
 
     Base.generate_Filters_Biases( this.out, this.in.paramsNumberArrayObject );
 
-    let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base().setByConcat(
-          Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
+    let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
+    Float32Array_ByteOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
