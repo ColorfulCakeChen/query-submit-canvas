@@ -36,8 +36,8 @@ import * as ConvBlock from "../Conv/Block.js";
  * 1. The COS and bias
  *
  * The cosine activation function can achieve impilcit bias. This is because depthwise and pointwise convolution can easily achieve zero
- * and ( cos( 0 ) == 1 ). A constant value (e.g. 1) becomes the bias of the next convolution. So there is not necessary to use explicit bias
- * which has worse performance (than without it).
+ * and ( cos( 0 ) == 1 ). A constant value (e.g. 1) becomes the bias of the next convolution. So there is not necessary to use explicit
+ * bias which has worse performance (than without it).
  *
  * For example, in ShuffleNetV2:
  *   - pointwise1
@@ -56,9 +56,9 @@ import * as ConvBlock from "../Conv/Block.js";
 
 //!!! ...unfinished... (2021/08/11)
 
- * However, the above design might have some problems. Because the pointwise1 itself does not have bias, there is a dangerous
- * that its activation COS might destroy information. For function SIN, the linear relationship could be kept without bias.
- * For functnion COS, however, the linear relationship of negative input value will always be destroyed definitely.
+ * However, the above design might encounter some problems. Because the pointwise1 itself does not have bias, there is a dangerous
+ * that its activation COS might destroy information. For function SIN, the linear relationship could be kept without bias. For
+ * functnion COS, however, the linear relationship of negative input value will always be destroyed definitely.
  *
  * In my opinion, in ShuffleNetV2, it may be better to use explicit bias:
  *   - Remove pointwise1 (i.e. ( pointwise1ChannelCountRate == 0 ) ).
