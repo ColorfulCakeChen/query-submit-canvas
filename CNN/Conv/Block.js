@@ -298,8 +298,8 @@ class Base {
     //
     {
       let stridesHeight = 2, stridesWidth = 2;
-      this.outputHeight = Math.ceil( sourceHeight / stridesHeight );
-      this.outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
+      this.outputHeight = Math.ceil( this.sourceHeight / stridesHeight );
+      this.outputWidth =  Math.ceil( this.sourceWidth  / stridesWidth );
     }
 
 
