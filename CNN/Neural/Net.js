@@ -11,6 +11,8 @@ import * as ConvBlock from "../Conv/Block.js";
 // Compare it to depthwise-COS-pointwise-COS (no bias but two COS) about speed and accuracy.
 //
 
+//!!! ...unfinished... (2021/08/11)
+    // Rule: Before bias is added, the activation function should not be called. Otherwise, information might be destroy by the activation function.
 
 /**
  * A neural network's configuration.
