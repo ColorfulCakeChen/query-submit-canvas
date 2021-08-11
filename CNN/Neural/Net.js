@@ -36,6 +36,12 @@ import * as ConvBlock from "../Conv/Block.js";
  * and ( cos( 0 ) == 1 ). A constant value (e.g. 1) becomes the bias of the next convolution. So there is not necessary to use explicit bias
  * which has worse performance (than without it).
  *
+
+//!!! ...unfinished... (2021/08/11)
+// Problem: Because the pointwise1 itself does not have bias, there is a dangerous problem that its activation COS might
+// destroy information. For function SIN, the linear relationship could be kept without bias. For functnion COS, however,
+// negative input value will be changed definitely.
+
  * For example, in ShuffleNetV2:
  *   - pointwise1
  *     - If there is a weights ( 0, 0, ..., 0 ), it produces a term's value as 0.
