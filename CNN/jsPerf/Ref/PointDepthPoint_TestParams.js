@@ -321,23 +321,30 @@ class Base extends TestParams.Base {
 
     // Depthwise2
     let depthwise2;
-    if ( paramsAll.channelCount1_pointwise1Before    // (-2) (simplified ShuffleNetV2's head)
-           == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
+    {
+      // (-2) (simplified ShuffleNetV2's head)
+      if ( paramsAll.channelCount1_pointwise1Before
+             == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
 
-      depthwise2 = Base.generate_depthwise_filters_biases( paramsAll.channelCount0_pointwise1Before, // Use input0.
-        paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
+        depthwise2 = Base.generate_depthwise_filters_biases( paramsAll.channelCount0_pointwise1Before, // Use input0.
+          paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight,
+          paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
 
-      io_paramsNumberArrayObject.depthwise2Filters = depthwise2.numberArrayArray[ 0 ];
-      io_paramsNumberArrayObject.depthwise2Biases =  depthwise2.numberArrayArray[ 1 ];
-    } else {
-      io_paramsNumberArrayObject.depthwise2Filters = io_paramsNumberArrayObject.depthwise2Biases = undefined;
+        io_paramsNumberArrayObject.depthwise2Filters = depthwise2.numberArrayArray[ 0 ];
+        io_paramsNumberArrayObject.depthwise2Biases =  depthwise2.numberArrayArray[ 1 ];
+
+      // no depthwise2.
+      } else {
+        io_paramsNumberArrayObject.depthwise2Filters = io_paramsNumberArrayObject.depthwise2Biases = undefined;
+      }
     }
 
     // Concat
     let pointwise2_inputChannelCount = depthwise1.outputChannelCount;
     {
       // (-2) (simplified ShuffleNetV2's head)
-      if ( paramsAll.channelCount1_pointwise1Before == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
+      if ( paramsAll.channelCount1_pointwise1Before
+             == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
         pointwise2_inputChannelCount += depthwise2.outputChannelCount; // Add the channel count of the branch of the first input image.
 
       // (> 0) Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX  (simplified ShuffleNetV2's tail)
