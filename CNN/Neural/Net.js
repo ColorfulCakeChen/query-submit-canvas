@@ -19,9 +19,15 @@ import * as ConvBlock from "../Conv/Block.js";
  * and without activation at the end of every block:
  *   - bChannelShuffler: true
  *   - pointwise1ChannelCountRate: 1
- *   - strAvgMaxConv: "Conv"
+
+//!!! ...unfinished... (2021/08/11) should be removed.
+// *   - strAvgMaxConv: "Conv"
+
  *   - depthwiseFilterHeight: 3
- *   - depthwiseChannelMultiplierBlock0Step0: 1
+
+//!!! ...unfinished... (2021/08/11) should be removed.
+// *   - depthwiseChannelMultiplierBlock0Step0: 1
+
  *   - bBias: false
  *   - nActivationId: ValueDesc.ActivationFunction.Singleton.Ids.COS
  *   - nActivationIdAtBlockEnd: ValueDesc.ActivationFunction.Singleton.Ids.NONE
