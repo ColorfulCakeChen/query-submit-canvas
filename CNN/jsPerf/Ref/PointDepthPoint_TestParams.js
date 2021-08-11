@@ -149,9 +149,9 @@ class Base extends TestParams.Base {
       // (i.e. ( maxKinds == 0 )) for speeding up testing.
 //!!! (2021/07/20 Temp Remarked) Fix to none to simplify debug.
       Bias:         0,
-      ActivationId: 0,
+//      ActivationId: 0,
 //       Bias:         1,
-//       ActivationId: 1,
+       ActivationId: 1,
 
       channelCount0_pointwise1Before: 4,
       channelCount1_pointwise1Before: 5,
