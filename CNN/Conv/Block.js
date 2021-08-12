@@ -730,6 +730,12 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
 }
 
 
+
+//!!! ...unfinished... (2021/08/12) Problem:
+// In ShuffleNetV2, the step0's branch does not have pointwise1-SIGMOID to provide implicit bias.
+// Its depthwise-pointwise2-activation may destroy information because the lack of (implicit) bias.
+
+
 /** Privode parameters for ShuffleNetV2 (i.e. with pointwise1, with concatenator). */
 class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthPointParams {
   /** @override */
