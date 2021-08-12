@@ -37,5 +37,5 @@ async function testByBackend( backendName ) {
 	}
 }
 
-await testByBackend( "cpu" );
+//await testByBackend( "cpu" );
 await testByBackend( "webgl" );
