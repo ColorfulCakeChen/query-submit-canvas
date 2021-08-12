@@ -31,7 +31,11 @@ import * as ConvBlock from "../Conv/Block.js";
 // *   - depthwiseChannelMultiplierBlock0Step0: 1
 
  *   - bBias: false
- *   - nActivationId: ValueDesc.ActivationFunction.Singleton.Ids.COS
+
+//!!! ...unfinished... (2021/08/12)
+// *   - nActivationId: ValueDesc.ActivationFunction.Singleton.Ids.COS
+ *   - nActivationId: ValueDesc.ActivationFunction.Singleton.Ids.SIGMOID
+ *   - nActivationId: ValueDesc.ActivationFunction.Singleton.Ids.SOFTPLUS
  *   - nActivationIdAtBlockEnd: ValueDesc.ActivationFunction.Singleton.Ids.NONE
  *
  *
