@@ -738,6 +738,8 @@ class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthP
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenation.
 
+//!!! ...unfinished... (2021/08/12) WRONG! pointwise1 needs SIGMOID to generate implicit bias.
+
 //!!! ...unfinished... (2021/08/11) This is different from the original MobileNet design.
     // In my opinion, it seems that ShuffleNetV2 uses depthwise-pointwise2 to achieve convolution. The bias and activation should not be
     // between pointwise1 and depthwise. They should be after the pointwise2.
@@ -800,6 +802,8 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
 
     // In MobileNet, all steps (include step0) do not use input1 and do add-input-to-output (without concatenation).
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT;
+
+//!!! ...unfinished... (2021/08/12) WRONG! pointwise1 may needs SIGMOID to generate implicit bias.
 
 //!!! ...unfinished... (2021/08/11) This is different from the original MobileNet design.
     // In my opinion, it seems that MobileNet uses pointwise1-depthwise to achieve convolution. The bias and activation should not be
