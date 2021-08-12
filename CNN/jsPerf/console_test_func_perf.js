@@ -14,10 +14,10 @@ function timesFunc( f ) {
 
 let testFuncArray = [
   tf.sin,
-  tf.asin,
+//  tf.asin,
   tf.cos,
-  tf.acos,
-  tf.tan,
+//  tf.acos,
+//  tf.tan,
   tf.tanh,
   tf.sigmoid,
   tf.relu,
@@ -26,9 +26,9 @@ let testFuncArray = [
   tf.log1p,
   tf.exp,
   tf.expm1,
-  tf.add,
   tf.softplus,
   tf.reciprocal,
+  tf.add,
 ];
 
 async function testByBackend( backendName ) {
