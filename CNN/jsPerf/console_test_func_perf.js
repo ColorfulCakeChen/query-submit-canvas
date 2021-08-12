@@ -7,8 +7,8 @@ function timesFunc( f ) {
   let times = 100; //10 * 1000;
   let y;
   for ( let i = 0; i < times; ++i ) {
-		y = f();
-		y.dispose();
+    y = f();
+    y.dispose();
   }
 }
 
@@ -24,18 +24,18 @@ let testFuncArray = [
 ];
 
 async function testByBackend( backendName ) {
-	console.log( `backend = ${backendName}` );
-	await tf.setBackend( backendName );
+  console.log( `backend = ${backendName}` );
+  await tf.setBackend( backendName );
 
-	for ( let i = 0; i < testFuncArray.length; ++i ) {
-		let testFunc = testFuncArray[ i ];
-		let testFuncBind = testFunc.bind( null, x, b );
-		let testFuncTimes = timesFunc.bind( null, testFuncBind );
+  for ( let i = 0; i < testFuncArray.length; ++i ) {
+    let testFunc = testFuncArray[ i ];
+    let testFuncBind = testFunc.bind( null, x, b );
+    let testFuncTimes = timesFunc.bind( null, testFuncBind );
 
-		const time = await tf.time( testFuncTimes );
-		console.log( `${testFunc.name}, kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
-	}
+    const time = await tf.time( testFuncTimes );
+    console.log( `${testFunc.name}, kernelMs: ${time.kernelMs}, wallTimeMs: ${time.wallMs}`);
+  }
 }
 
-await testByBackend( "cpu" );
+//await testByBackend( "cpu" );
 await testByBackend( "webgl" );
