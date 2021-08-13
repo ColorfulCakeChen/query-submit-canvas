@@ -52,6 +52,12 @@ import * as ConvBlock from "../Conv/Block.js";
  * transformation (i.e. scale) could become bias basis by using scale 0 and specific activation function.
  *
  *
+ * 1.1 Scale 0
+ *
+ * No matter depthwise or pointwise convolution, it is easy to generate constant 0 (i.e. just multiply input by weiht 0). It,
+ * however, is hard to generate constant 1 (which is the bias basis). If  
+ *
+ *
  * SIGMOID (or SOFTPLUS) is a good activation function.
  *
  *   - It has non-zero y-intercept (the result value when input is zero). ( SIGMOID( 0 ) = 0.5, SOFTPLUS( 0 ) ~= 0.6931 )
