@@ -67,72 +67,30 @@ import * as ConvBlock from "../Conv/Block.js";
  *       after the activation function. Otherwise (e.g. COSine function), the input's information might be destroyed forcibly
  *       because it has not yet been affine transformed.
  *
-
-//!!! ...unfinished... (2021/08/13)
-
- *
- * For example, in ShuffleNetV2 ( ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 1 ) and ( bBias == false ) ):
- *   - pointwise1
- *     - If there is a weight-set ( 0, 0, ..., 0 ), it produces a term's value as 0.
+ * For example, in configuration pointwise1-SIGMOID-depthwise-pointwise2-activation:
+ *   - pointwise1-SIGMOID
+ *     - If there is a weight-set ( 0, 0, ..., 0 ), it produces a channel with all value 0.
  *     - Using activation SIGMOID so that 0 will become 0.5. This will provide a constant term (i.e. bias basis) for pointwise2.
  *   - depthwise
  *     - If there is a filter with non-all-zero weight-set, the 0.5 (provided by pointwise1's 0 weights and SIGMOID) might be
  *         manipulated to other value. But it's still a non-zero constant value (i.e. its value is not related to pointwise1's input).
  *     - Although the non-zero constant could not be utilized by the depthwise itself, it could be past to pointwise2 by using
- *         NONE (ShuffleNetV2's design) or other appropriate activation function.
- *   - pointwise2
+ *         NONE or other appropriate activation function.
+ *   - pointwise2-activation
  *     - The constant value (provided by pointwise1's 0 weights and SIGMOID and depthwise's filter) is just like a bias basis.
- *     - Using activation COS (ShuffleNetV2's design) or NONE (at the block's last step).
- *     - The depthwise-pointwise-bias-COS is just like Fourier series although the bias is implicit.
+ *     - This completes an affine transformation. The activation funtction could achieve great expressiveness.
  *
- *
- *
- *
-
- * The kernel idea is:
- *   - A depthwise-pointwise pair is a complete (cubic) convolution.
- *   - The depthwise-pointwise-bias-COS combination is more like Fourier series.
- *
- * The bias operation (which is not seen in most neural network architecture) is very important (in my opinion). Without it, the Fourier
- * series is not established. Its execution speed, however, is poor. (This might be the reason why most neural network architecture do
- * not use it.)
- *
- *
- * 1.1 COS as implicit bias
- *
- * The cosine activation function can achieve impilcit bias. This is because depthwise and pointwise convolution can easily achieve zero
- * and ( cos( 0 ) == 1 ). A constant value (e.g. 1) becomes the bias of the next convolution. So there is not necessary to use explicit
- * bias which has worse performance (than without it).
- *
- * For example, in ShuffleNetV2 ( ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 1 ) and ( bBias == false ) ):
- *   - pointwise1
- *     - If there is a weights ( 0, 0, ..., 0 ), it produces a term's value as 0.
- *     - Using activation COS so that 0 will become 1. This will provide a constant (i.e. bias) term for pointwise2.
- *     - Problem: COS without bias will destroy some information!
- *   - depthwise
- *     - The 1 (provided by pointwise1's 0 weights and COS) might be manipulated to other value by filters. But it's still a
- *         constant value (i.e. its value is not related to pointwise1's input).
- *     - Using activation NONE (ShuffleNetV2's design). This also lets depthwise-pointwise2 compose a complete (cubic) convolution.
- *   - pointwise2
- *     - The constant value (provided by pointwise1's 0 weights and COS and depthwise's filter) is just like a bias term.
- *     - Using activation COS (ShuffleNetV2's design) or NONE (at the block's last step).
- *     - The depthwise-pointwise-bias-COS is just like Fourier series although the bias is implicit.
+ * For another example, in configuration depthwise-SIGMOID-pointwise2-activation:
+ *   - depthwise-SIGMOID
+ *     - If there is a filter with all-zero weight-set ( 0, 0, ..., 0 ), it produces a channel with all value.
+ *     - Using activation SIGMOID so that 0 will become 0.5. This will provide a constant term (i.e. bias basis) for pointwise2.
+ *     - Although the non-zero constant could not be utilized by the depthwise itself, it could be past to pointwise2.
+ *   - pointwise2-activation
+ *     - The constant value (provided by depthwise's 0 filter weights and SIGMOID) is just like a bias basis.
+ *     - This completes an affine transformation. The activation funtction could achieve great expressiveness.
  *
 
-//!!! ...unfinished... (2021/08/11)
-// It seems that TANH, SIGMOID, RELU6 could achieve implicit bias.
-//   - Multiplied by large scale.
-//   - Than, TANH.
-//   - Problem: Three possible values: -1 or 0 or +1. This is not a usable bias which should always the same one (not three) constant.
-//
-// Another possible:
-//   - Multiplied by input self. (i.e. power 2)
-//   - Then, TANH.
-//   - Problem1: Power2 destroy some information (just like COS do).
-//   - Problem2: Thwo possible values: 0 or +1. This is not a usable bias which should always the same one (not two) constant.
-//
-
-//!!! ...unfinished... (2021/08/11)
+//!!! ...unfinished... (2021/08/13)
 
  *
  * 1.2 Explicit bias
