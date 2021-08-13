@@ -35,15 +35,17 @@ import * as ConvBlock from "../Conv/Block.js";
  *
  * 1.1 Explicit bias
  *
- * By specifying ( bBias = true ), the configuration will have bias operations. However, the execution speed of bias
- * seems slow. This is especially true when tf.add() with broadcasting by CPU.
+ * By specifying ( bBias = true ), the configuration will have bias operations. For example:
+ *   - pointwise1-bias-activation-depthwise-pointwise2-bias-activation
+ *
+ * However, the execution speed of bias operation seems slow. This is especially true when tf.add() with broadcasting by CPU.
  *
  *
  * 1.2 Implicit bias: from zero to non-zero
  *
- * Fortunately, in modern deep neural network, there is
- * a possibility to achieve implicit bias. Because deep neural network has multiple layers, the former layer's linear
- * transformation (i.e. scale) could become the latter layer's bias basis by using scale 0 and specific activation function.
+ * Fortunately, in modern deep neural network, there is a possibility to achieve implicit bias. Because deep neural network
+ * has multiple layers, the former layer's linear transformation (i.e. scale) could become the latter layer's bias basis by
+ * using scale 0 and specific activation function.
  * 
  * No matter depthwise or pointwise convolution (just many multiply and add), it is easy to generate constant 0 (i.e. just
  * multiply input by weiht 0). It, however, is hard to generate non-zero constant (e.g. 1). Only non-zero constant could
@@ -60,6 +62,9 @@ import * as ConvBlock from "../Conv/Block.js";
  *       provides the possibility to keep the input's linearity so that it could continue to complete its affine transformation
  *       after the activation function. Otherwise (e.g. COSine function), the input's information might be destroyed forcibly
  *       because it has not yet been affine transformed.
+ *
+ * So, by specifying ( bBias = false ) and ( nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.SIGMOID ), the
+ * configuration will have implicit bias.
  *
  * For example, in configuration pointwise1-SIGMOID-depthwise-pointwise2-activation:
  *   - pointwise1-SIGMOID
