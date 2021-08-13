@@ -42,9 +42,6 @@ import * as ConvBlock from "../Conv/Block.js";
  *
  * 1. The bias operation
  *
-
-//!!! ...unfinished... (2021/08/13)
-
  *
  * The bias (e.g. tf.add()) is important. Without bias, the affine transformation could not be completed. The execution speed of
  * bias, however, seems slow (especially tf.add() with broadcasting by CPU). Fortunately, in modern deep neural network, there is
@@ -62,7 +59,7 @@ import * as ConvBlock from "../Conv/Block.js";
  * the following reasons:
  *
  *   - They has non-zero y-intercept (the result value when input is zero). ( SIGMOID( 0 ) = 0.5, SOFTPLUS( 0 ) ~= 0.6931 )
- *       This could become an implicit bias basis for affine transformation.
+ *       This definitely transforms zero to non-zero (so that as an implicit bias basis for latter layer's affine transformation).
  *
  *   - They are strictly increasing or strictly descreaing (i.e. strinctly monotone) near the origin (i.e. near the ( x = 0 ) ).
  *       When its input is just linear transformed (not yet affine transformed, i.e. only scaled not yet biased), this property
@@ -70,6 +67,23 @@ import * as ConvBlock from "../Conv/Block.js";
  *       after the activation function. Otherwise (e.g. COSine function), the input's information might be destroyed forcibly
  *       because it has not yet been affine transformed.
  *
+
+//!!! ...unfinished... (2021/08/13)
+
+ *
+ * For example, in ShuffleNetV2 ( ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 1 ) and ( bBias == false ) ):
+ *   - pointwise1
+ *     - If there is a weight-set ( 0, 0, ..., 0 ), it produces a term's value as 0.
+ *     - Using activation SIGMOID so that 0 will become 0.5. This will provide a constant term (i.e. bias basis) for pointwise2.
+ *   - depthwise
+ *     - If there is a filter with non-all-zero weight-set, the 0.5 (provided by pointwise1's 0 weights and SIGMOID) might be
+ *         manipulated to other value. But it's still a non-zero constant value (i.e. its value is not related to pointwise1's input).
+ *     - Although the non-zero constant could not be utilized by the depthwise itself, it could be past to pointwise2 by using
+ *         NONE (ShuffleNetV2's design) or other appropriate activation function.
+ *   - pointwise2
+ *     - The constant value (provided by pointwise1's 0 weights and SIGMOID and depthwise's filter) is just like a bias basis.
+ *     - Using activation COS (ShuffleNetV2's design) or NONE (at the block's last step).
+ *     - The depthwise-pointwise-bias-COS is just like Fourier series although the bias is implicit.
  *
  *
  *
