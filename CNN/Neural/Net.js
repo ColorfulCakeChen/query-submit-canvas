@@ -49,7 +49,7 @@ import * as ConvBlock from "../Conv/Block.js";
  * The bias (e.g. tf.add()) is important. Without bias, the affine transformation could not be completed. The execution speed of
  * bias, however, seems slow (especially when tf.add() with broadcasting). Fortunately, in modern deep neural network, there is
  * a possibility to achieve implicit bias. Because deep neural network has multiple layers, the former layer's linear
- * transformation (i.e. scale) could become bias basis by using scale 0 and specific activation function.
+ * transformation (i.e. scale) could become the latter layer's bias basis by using scale 0 and specific activation function.
  *
  *
  * 1.1 Scale 0
