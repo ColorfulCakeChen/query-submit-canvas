@@ -14,6 +14,21 @@ import * as ConvBlock from "../Conv/Block.js";
 //!!! ...unfinished... (2021/08/11)
     // Rule: Before bias is added, the activation function should not be called. Otherwise, information might be destroy by the activation function.
 
+//!!! ...unfinished... (2021/08/13)
+/**
+ * SIGMOID (or SOFTPLUS) is a good activation function.
+ *
+ *   - It has non-zero y-intercept (the result value when input is zero). ( SIGMOID( 0 ) = 0.5, SOFTPLUS( 0 ) ~= 0.6931 )
+ *       This could become an implicit bias basis for affine transformation.
+ *
+ *   - It is strictly increasing or strictly descreaing (i.e. strinctly monotone) near the origin (i.e. near the ( x = 0 ) ).
+ *       When its input is just linear transformed (not yet affine transformed, i.e. only scaled not yet biased), this property
+ *       provides the possibility to keep the input's linearity so that it could continue to complete its affine transformation
+ *       after the activation function. Otherwise (e.g. COSine function), the input's information might be destroyed forcibly
+ *       because it has not yet been affine transformed.
+ *
+ */
+
 /**
  * A neural network's configuration.
  *
