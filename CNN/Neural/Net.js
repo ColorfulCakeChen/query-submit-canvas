@@ -47,27 +47,32 @@ import * as ConvBlock from "../Conv/Block.js";
 
  *
  * The bias (e.g. tf.add()) is important. Without bias, the affine transformation could not be completed. The execution speed of
- * bias, however, seems slow (especially when tf.add() with broadcasting). Fortunately, in modern deep neural network, there is
+ * bias, however, seems slow (especially tf.add() with broadcasting by CPU). Fortunately, in modern deep neural network, there is
  * a possibility to achieve implicit bias. Because deep neural network has multiple layers, the former layer's linear
  * transformation (i.e. scale) could become the latter layer's bias basis by using scale 0 and specific activation function.
  *
  *
- * 1.1 Scale 0
+ * 1.1 Implicit bias: from zero to non-zero
  *
- * No matter depthwise or pointwise convolution, it is easy to generate constant 0 (i.e. just multiply input by weiht 0). It,
- * however, is hard to generate constant 1 (which is the bias basis). If  
+ * No matter depthwise or pointwise convolution (just many multiply and add), it is easy to generate constant 0 (i.e. just
+ * multiply input by weiht 0). It, however, is hard to generate non-zero constant (e.g. 1). Only non-zero constant could
+ * become the bias basis. The opportunity to generate non-constant is by activation function.
  *
+ * Not every kinds of activation function could acheive this task. The SIGMOID (and SOFTPLUS) are good at this job, because
+ * the following reasons:
  *
- * SIGMOID (or SOFTPLUS) is a good activation function.
- *
- *   - It has non-zero y-intercept (the result value when input is zero). ( SIGMOID( 0 ) = 0.5, SOFTPLUS( 0 ) ~= 0.6931 )
+ *   - They has non-zero y-intercept (the result value when input is zero). ( SIGMOID( 0 ) = 0.5, SOFTPLUS( 0 ) ~= 0.6931 )
  *       This could become an implicit bias basis for affine transformation.
  *
- *   - It is strictly increasing or strictly descreaing (i.e. strinctly monotone) near the origin (i.e. near the ( x = 0 ) ).
+ *   - They are strictly increasing or strictly descreaing (i.e. strinctly monotone) near the origin (i.e. near the ( x = 0 ) ).
  *       When its input is just linear transformed (not yet affine transformed, i.e. only scaled not yet biased), this property
  *       provides the possibility to keep the input's linearity so that it could continue to complete its affine transformation
  *       after the activation function. Otherwise (e.g. COSine function), the input's information might be destroyed forcibly
  *       because it has not yet been affine transformed.
+ *
+ *
+ *
+ *
  *
 
  * The kernel idea is:
