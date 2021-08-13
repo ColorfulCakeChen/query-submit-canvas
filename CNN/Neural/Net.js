@@ -5,20 +5,10 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as ConvBlock from "../Conv/Block.js";
 
 
-//!!! ...unfinished... (2021/08/11)
-// A depthwise-pointwise pair is a complete (cubic) convolution.
-// depthwise-pointwise-bias-COS is more like Fourier series.
-// Compare it to depthwise-COS-pointwise-COS (no bias but two COS) about speed and accuracy.
-//
-
-//!!! ...unfinished... (2021/08/11)
-    // Rule: Before bias is added, the activation function should not be called. Otherwise, information might be destroy by the activation function.
-
-
 /**
  * A neural network's configuration.
  *
- * A special recommended configuration is 3x3 ShuffleNetV2 without explicit bias (but with implicit bias by cosine activation)
+ * A special recommended configuration is 3x3 ShuffleNetV2 without explicit bias (but with implicit bias by SIGMOID activation)
  * and without activation at the end of every block:
  *   - bChannelShuffler: true
  *   - pointwise1ChannelCountRate: 1
@@ -32,25 +22,29 @@ import * as ConvBlock from "../Conv/Block.js";
 // *   - depthwiseChannelMultiplierBlock0Step0: 1
 
  *   - bBias: false
-
-//!!! ...unfinished... (2021/08/12)
-// *   - nActivationId: ValueDesc.ActivationFunction.Singleton.Ids.COS
  *   - nActivationId: ValueDesc.ActivationFunction.Singleton.Ids.SIGMOID
- *   - nActivationId: ValueDesc.ActivationFunction.Singleton.Ids.SOFTPLUS
  *   - nActivationIdAtBlockEnd: ValueDesc.ActivationFunction.Singleton.Ids.NONE
  *
  *
  * 1. The bias operation
  *
+ * The bias operation (i.e. tf.add()) is very important. Without bias, the affine transformation could not be completed.
+ * If the activation function is called before bias has been added, the input's information might be destroyed by the
+ * non-linearity of the activation function.
  *
- * The bias (e.g. tf.add()) is important. Without bias, the affine transformation could not be completed. The execution speed of
- * bias, however, seems slow (especially tf.add() with broadcasting by CPU). Fortunately, in modern deep neural network, there is
+ *
+ * 1.1 Explicit bias
+ *
+ * By specifying ( bBias = true ), the configuration will have bias operations. However, the execution speed of bias
+ * seems slow. This is especially true when tf.add() with broadcasting by CPU.
+ *
+ *
+ * 1.2 Implicit bias: from zero to non-zero
+ *
+ * Fortunately, in modern deep neural network, there is
  * a possibility to achieve implicit bias. Because deep neural network has multiple layers, the former layer's linear
  * transformation (i.e. scale) could become the latter layer's bias basis by using scale 0 and specific activation function.
- *
- *
- * 1.1 Implicit bias: from zero to non-zero
- *
+ * 
  * No matter depthwise or pointwise convolution (just many multiply and add), it is easy to generate constant 0 (i.e. just
  * multiply input by weiht 0). It, however, is hard to generate non-zero constant (e.g. 1). Only non-zero constant could
  * become the bias basis. The opportunity to generate non-constant is by activation function.
@@ -89,22 +83,6 @@ import * as ConvBlock from "../Conv/Block.js";
  *     - The constant value (provided by depthwise's 0 filter weights and SIGMOID) is just like a bias basis.
  *     - This completes an affine transformation. The activation funtction could achieve great expressiveness.
  *
-
-//!!! ...unfinished... (2021/08/13)
-
- *
- * 1.2 Explicit bias
- *
- * However, the above design might encounter some problems. Because the pointwise1 itself does not have bias, there is a dangerous
- * that its activation COS might destroy information. For function SIN, the linear relationship could be kept without bias. For
- * functnion COS, however, the linear relationship of negative input value will always be destroyed when no bias.
- *
- * In my opinion, it may be better in ShuffleNetV2 ( ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 ) and ( bBias == true ) ):
- *   - Remove pointwise1 (i.e. ( pointwise1ChannelCountRate == 0 ) ).
- *   - Let pointwise2 have explicit bias (i.e. ( bBias == true ) ).
- *
- * The execution speed which is lowered by the pointwise2's bias could be compensated by the removed pointwise1.
- *
  *
  * 2. Channel Count
  *
@@ -117,6 +95,7 @@ import * as ConvBlock from "../Conv/Block.js";
  * The last PointDepthPoint's pointwise2 of every block without activation function
  * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) could let the output of neural network be any
  * arbitrary value because it will not be restricted by the range of the activation function.
+ *
  */
 class Config {
   /**
