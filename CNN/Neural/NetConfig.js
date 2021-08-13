@@ -71,6 +71,9 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  * So, by specifying ( bBias = false ) and ( nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.SIGMOID ), the
  * configuration will have implicit bias.
  *
+ * Note: When using back-propagation as learning method, SIGMOID may have some drawback. Using SOFTPLUS could avoid the issue.
+ * Using other learning method is also as possible solution.
+ *
 
 //!!! ...unfinished… (2021/08/13)
 // 即使輸入給 depthwise 的資料中，某個頻道全部都是相同的常數值，在 pad = same 時，邊緣位置的資料會有 padded 0 值參與卷積。
