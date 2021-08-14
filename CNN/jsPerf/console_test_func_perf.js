@@ -90,10 +90,10 @@ async function testByBackend( backendName ) {
   }
 
   /** Try explicit bias. */
-  function add_pointwise_c4m1_SIGMOID() {
-    let t0 = tf.add( x_c4, c_broadcast_height_width_channel );
+  function pointwise_c4m1_add_SIGMOID() {
+    let t0 = tf.conv2d( x_c4, pointwiseFilter_c4m1, 1, "valid" );
 
-    let t1 = tf.conv2d( x_c4, pointwiseFilter_c4m1, 1, "valid" );
+    let t1 = tf.add( t0, c_broadcast_height_width_channel );
     t0.dispose();
 
     t0 = tf.sigmoid( t1 );
