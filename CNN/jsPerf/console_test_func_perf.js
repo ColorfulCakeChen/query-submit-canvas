@@ -70,9 +70,6 @@ let testFuncArray = [
   new NameFunc( "pointwise_1x1x4_cm1_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m1, 1, "valid" ) ),
   new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm1, 1, "valid" ) ),
 
-  new NameFunc( "pointwise_1x1x4_cm1_strides1_padSame", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m1, 1, "same" ) ),
-  new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padSame`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm1, 1, "same" ) ),
-
 //   new NameFunc( "pointwise_1x1x4_cm2_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m2, 1, "valid" ) ),
 //   new NameFunc( `pointwise_1x1x${c_more}_cm2_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm2, 1, "valid" ) ),
 
