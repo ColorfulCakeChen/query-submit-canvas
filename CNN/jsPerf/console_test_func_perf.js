@@ -9,11 +9,11 @@ class NameFunc {
   }
 }
 
-const x = tf.randomNormal([2000, 2000, 4]);
-const x_3x3x5 = tf.randomNormal([2000, 2000, 5]);
+const x = tf.randomNormal([1000, 1000, 4]);
+const x_3x3x5 = tf.randomNormal([1000, 1000, 5]);
 
-const c_broadcast_none = tf.randomNormal([2000, 2000, 4]);
-const c_broadcast_channel = tf.randomNormal([2000, 2000, 1]);
+const c_broadcast_none = tf.randomNormal([1000, 1000, 4]);
+const c_broadcast_channel = tf.randomNormal([1000, 1000, 1]);
 const c_broadcast_height_width_channel = tf.randomNormal([1, 1, 4]);
 
 let depthwiseFilter_cm1 = tf.randomNormal( [ 3, 3, 5, 5 ] );
