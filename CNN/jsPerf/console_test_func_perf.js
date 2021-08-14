@@ -85,18 +85,19 @@ async function testByBackend( backendName ) {
 //     new NameFunc( "log1p", tf.log1p.bind( null, x_c4 ) ),
 //     new NameFunc( "exp", tf.exp.bind( null, x_c4 ) ),
 //     new NameFunc( "expm1", tf.expm1.bind( null, x_c4 ) ),
-//    new NameFunc( "softplus", tf.softplus.bind( null, x_c4 ) ),
+//     new NameFunc( "softplus", tf.softplus.bind( null, x_c4 ) ),
 //     new NameFunc( "reciprocal", tf.reciprocal.bind( null, x_c4 ) ),
 
     new NameFunc( "add_broadcast_none", tf.add.bind( null, x_c4, c_broadcast_none ) ),
     new NameFunc( "add_broadcast_channel", tf.add.bind( null, x_c4, c_broadcast_channel ) ),
     new NameFunc( "add_broadcast_height_width_channel", tf.add.bind( null, x_c4, c_broadcast_height_width_channel ) ),
 
+
     new NameFunc( "pointwise_1x1x4_cm1_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m1, 1, "valid" ) ),
     new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm1, 1, "valid" ) ),
 
-    new NameFunc( "pointwise_1x1x4_cm2_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m2, 1, "valid" ) ),
-    new NameFunc( `pointwise_1x1x${c_more}_cm2_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm2, 1, "valid" ) ),
+//     new NameFunc( "pointwise_1x1x4_cm2_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m2, 1, "valid" ) ),
+//     new NameFunc( `pointwise_1x1x${c_more}_cm2_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm2, 1, "valid" ) ),
 
 
     new NameFunc( "depthwise_3x3x4_cm1_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m1_3x3, 1, "same" ) ),
