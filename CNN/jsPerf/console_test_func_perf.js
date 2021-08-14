@@ -128,7 +128,7 @@ async function testByBackend( backendName ) {
     let t1 = tf.add( t0, c_broadcast_height_width_channel );
     t0.dispose();
     
-    let t0 = tf.sigmoid( t1 );
+    t0 = tf.sigmoid( t1 );
     t1.dispose();
 
     t1 = tf.depthwiseConv2d( t0, depthwiseFilter_c4m1_3x3, 1, "same" );
