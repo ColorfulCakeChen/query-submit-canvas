@@ -126,7 +126,7 @@ async function testByBackend( backendName ) {
 
 
     new NameFunc( `pointwise_c4c${c_more}_SIGMOID_pointwise_c${c_more}c4_SIGMOID`, pointwise_c4cN_SIGMOID_pointwise_cNc4_SIGMOID ),
-    new NameFunc( `add_pointwise_c4m1_SIGMOID`, add_pointwise_c4m1_SIGMOID ),
+    new NameFunc( `pointwise_c4m1_add_SIGMOID`, pointwise_c4m1_add_SIGMOID ),
 
 
     new NameFunc( "pointwise_1x1x4_cm1_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m1, 1, "valid" ) ),
