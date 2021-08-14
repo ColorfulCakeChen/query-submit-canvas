@@ -52,18 +52,18 @@ async function testByBackend( backendName ) {
 
   let pointwiseFilter_c4cN = tf.randomNormal( [ 1, 1, 4, c_more ] );
   let pointwiseFilter_cNc4 = tf.randomNormal( [ 1, 1, c_more, 4 ] );
-  
-  let depthwiseFilter_c4m1_3x3 = tf.randomNormal( [ 3, 3, 4, 4 ] );
-  let depthwiseFilter_c4m2_3x3 = tf.randomNormal( [ 3, 3, 4, 8 ] );
 
-  let depthwiseFilter_cNm1_3x3 = tf.randomNormal( [ 3, 3, c_more, c_more ] );
-  let depthwiseFilter_cNm2_3x3 = tf.randomNormal( [ 3, 3, c_more, ( c_more * 2 ) ] );
+  let depthwiseFilter_c4m1_3x3 = tf.randomNormal( [ 3, 3, 4, 1 ] );
+  let depthwiseFilter_c4m2_3x3 = tf.randomNormal( [ 3, 3, 4, 2 ] );
 
-  let depthwiseFilter_c4m1_1x1 = tf.randomNormal( [ 1, 1, 4, 4 ] );
-  let depthwiseFilter_c4m2_1x1 = tf.randomNormal( [ 1, 1, 4, 8 ] );
+  let depthwiseFilter_cNm1_3x3 = tf.randomNormal( [ 3, 3, c_more, 1 ] );
+  let depthwiseFilter_cNm2_3x3 = tf.randomNormal( [ 3, 3, c_more, 2 ] );
 
-  let depthwiseFilter_cNm1_1x1 = tf.randomNormal( [ 1, 1, c_more, c_more ] );
-  let depthwiseFilter_cNm2_1x1 = tf.randomNormal( [ 1, 1, c_more, ( c_more * 2 ) ] );
+  let depthwiseFilter_c4m1_1x1 = tf.randomNormal( [ 1, 1, 4, 1 ] );
+  let depthwiseFilter_c4m2_1x1 = tf.randomNormal( [ 1, 1, 4, 2 ] );
+
+  let depthwiseFilter_cNm1_1x1 = tf.randomNormal( [ 1, 1, c_more, 1 ] );
+  let depthwiseFilter_cNm2_1x1 = tf.randomNormal( [ 1, 1, c_more, 2 ] );
 
   function timesFunc( f ) {
     let y;
