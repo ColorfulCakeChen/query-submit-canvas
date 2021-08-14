@@ -78,8 +78,8 @@ async function testByBackend( backendName ) {
 
     const time = await tf.time( testFuncTimes );
     console.log( `${testNameFunc.name}, `
-      + `kernelMs: ${Number.toFixed( time.kernelMs, 3 )}, `
-      + `wallTimeMs: ${Number.toFixed( time.wallMs, 3 )}`);
+      + `kernelMs: ${time.kernelMs.toFixed( 3 )}, `
+      + `wallTimeMs: ${time.wallMs.toFixed( 3 )}`);
   }
 }
 
