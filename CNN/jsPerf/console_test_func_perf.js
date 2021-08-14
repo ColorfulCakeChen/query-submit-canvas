@@ -20,7 +20,7 @@ let depthwiseFilter = tf.randomNormal( [ 3, 3, 5, 5 ] );
 let pointwiseFilter = tf.randomNormal( [ 1, 1, 5, 5 ] );
 
 function timesFunc( f ) {
-  let times = 100; //10 * 1000;
+  let times = 10; //10 * 1000;
   let y;
   for ( let i = 0; i < times; ++i ) {
     y = f();
@@ -49,8 +49,10 @@ let testFuncArray = [
   new NameFunc( "add_broadcast_channel", tf.add.bind( null, x, c_broadcast_channel ) ),
   new NameFunc( "add_broadcast_height_width_channel", tf.add.bind( null, x, c_broadcast_height_width_channel ) ),
 
-  new NameFunc( "depthwise_3x3x5_strides1_padSame", tf.depthwiseConv2d.bind( null, x_3x3x5, depthwiseFilter, 1, "same" ) ),
   new NameFunc( "pointwise_1x1x5_strides1_padValid", tf.conv2d.bind( null, x_3x3x5, pointwiseFilter, 1, "valid" ) ),
+
+  new NameFunc( "depthwise_3x3x5_strides1_padSame", tf.depthwiseConv2d.bind( null, x_3x3x5, depthwiseFilter, 1, "same" ) ),
+  new NameFunc( "depthwise_3x3x5_strides2_padSame", tf.depthwiseConv2d.bind( null, x_3x3x5, depthwiseFilter, 2, "same" ) ),
 ];
 
 async function testByBackend( backendName ) {
