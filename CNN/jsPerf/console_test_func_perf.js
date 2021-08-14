@@ -156,7 +156,7 @@ async function testByBackend( backendName ) {
 //     new NameFunc( "cos", tf.cos.bind( null, x_cB ) ),
 //    new NameFunc( "acos", tf.acos.bind( null, x_cB ) ),
 //    new NameFunc( "tan", tf.tan.bind( null, x_cB ) ),
-    new NameFunc( "tanh", tf.tanh.bind( null, x_cB ) ),
+//    new NameFunc( "tanh", tf.tanh.bind( null, x_cB ) ),
     new NameFunc( `sigmoid_c${c_base}`, tf.sigmoid.bind( null, x_cB ) ),
     new NameFunc( `sigmoid_c${c_more}`, tf.sigmoid.bind( null, x_cN ) ),
     new NameFunc( "relu", tf.relu.bind( null, x_cB ) ),
@@ -168,9 +168,9 @@ async function testByBackend( backendName ) {
 //     new NameFunc( "softplus", tf.softplus.bind( null, x_cB ) ),
 //     new NameFunc( "reciprocal", tf.reciprocal.bind( null, x_cB ) ),
 
-    new NameFunc( "add_broadcast_none", tf.add.bind( null, x_cB, c_broadcast_none ) ),
-    new NameFunc( "add_broadcast_channel", tf.add.bind( null, x_cB, c_broadcast_channel ) ),
-    new NameFunc( "add_broadcast_height_width", tf.add.bind( null, x_cB, c_broadcast_height_width ) ),
+//     new NameFunc( "add_broadcast_none", tf.add.bind( null, x_cB, c_broadcast_none ) ),
+//     new NameFunc( "add_broadcast_channel", tf.add.bind( null, x_cB, c_broadcast_channel ) ),
+//     new NameFunc( "add_broadcast_height_width", tf.add.bind( null, x_cB, c_broadcast_height_width ) ),
 
 
     new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`, pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID ),
