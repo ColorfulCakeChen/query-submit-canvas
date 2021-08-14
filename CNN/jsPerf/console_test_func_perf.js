@@ -102,6 +102,50 @@ async function testByBackend( backendName ) {
     return t0;
   }
 
+  /** Try pointwise-SIGMOID-depthwise-pointwise-SIGMOID with more channels. */
+  function pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID() {
+    let t0 = tf.conv2d( x_cN, pointwiseFilter_cNm1, 1, "valid" );
+
+    let t1 = tf.sigmoid( t0 );
+    t0.dispose();
+
+    t0 = tf.depthwiseConv2d( t1, depthwiseFilter_cNm1_3x3, 1, "same" );
+    t1.dispose();
+
+    t1 = tf.conv2d( t0, pointwiseFilter_cNm1, 1, "valid" );
+    t0.dispose();
+
+    t0 = tf.sigmoid( t1 );
+    t1.dispose();
+
+    return t0;
+  }
+
+  /** Try pointwise-bias-SIGMOID-depthwise-pointwise-bias-SIGMOID with less channels. */
+  function pointwise_c4m1_bias_SIGMOID_depthwise_pointwise_c4m1_bias_SIGMOID() {
+    let t0 = tf.conv2d( x_c4, pointwiseFilter_c4m1, 1, "valid" );
+
+    let t1 = tf.add( t0, c_broadcast_height_width_channel );
+    t0.dispose();
+    
+    let t0 = tf.sigmoid( t1 );
+    t1.dispose();
+
+    t1 = tf.depthwiseConv2d( t0, depthwiseFilter_c4m1_3x3, 1, "same" );
+    t0.dispose();
+
+    t0 = tf.conv2d( t1, pointwiseFilter_c4m1, 1, "valid" );
+    t1.dispose();
+
+    t1 = tf.add( t0, c_broadcast_height_width_channel );
+    t0.dispose();
+
+    t0 = tf.sigmoid( t1 );
+    t1.dispose();
+
+    return t0;
+  }
+
   let testFuncArray = [
 //     new NameFunc( "sin", tf.sin.bind( null, x_c4 ) ),
 //    new NameFunc( "asin", tf.asin.bind( null, x_c4 ) ),
@@ -128,6 +172,9 @@ async function testByBackend( backendName ) {
     new NameFunc( `pointwise_c4c${c_more}_SIGMOID_pointwise_c${c_more}c4_SIGMOID`, pointwise_c4cN_SIGMOID_pointwise_cNc4_SIGMOID ),
     new NameFunc( `pointwise_c4m1_add_SIGMOID`, pointwise_c4m1_add_SIGMOID ),
 
+    new NameFunc( `pointwise_c${c_more}m1_SIGMOID_pointwise_c${c_more}m1_SIGMOID`, pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID ),
+    new NameFunc( `pointwise_c4m1_bias_SIGMOID_depthwise_pointwise_c4m1_bias_SIGMOID`,
+                     pointwise_c4m1_bias_SIGMOID_depthwise_pointwise_c4m1_bias_SIGMOID ),
 
     new NameFunc( "pointwise_1x1x4_cm1_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m1, 1, "valid" ) ),
     new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm1, 1, "valid" ) ),
@@ -149,8 +196,8 @@ async function testByBackend( backendName ) {
 //     new NameFunc( `depthwise_3x3x${c_more}_cm2_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm2_3x3, 2, "same" ) ),
 
 
-    new NameFunc( "depthwise_1x1x4_cm1_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m1_1x1, 1, "same" ) ),
-    new NameFunc( `depthwise_1x1x${c_more}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm1_1x1, 1, "same" ) ),
+//     new NameFunc( "depthwise_1x1x4_cm1_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m1_1x1, 1, "same" ) ),
+//     new NameFunc( `depthwise_1x1x${c_more}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm1_1x1, 1, "same" ) ),
 
 //     new NameFunc( "depthwise_1x1x4_cm2_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m2_1x1, 1, "same" ) ),
 //     new NameFunc( `depthwise_1x1x${c_more}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm2_1x1, 1, "same" ) ),
