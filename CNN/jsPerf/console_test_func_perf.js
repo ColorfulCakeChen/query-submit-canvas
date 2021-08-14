@@ -16,10 +16,17 @@ const c_broadcast_none = tf.randomNormal([1000, 1000, 4]);
 const c_broadcast_channel = tf.randomNormal([1000, 1000, 1]);
 const c_broadcast_height_width_channel = tf.randomNormal([1, 1, 4]);
 
-let depthwiseFilter_cm1 = tf.randomNormal( [ 3, 3, 5, 5 ] );
-let depthwiseFilter_cm2 = tf.randomNormal( [ 3, 3, 5, 10 ] );
-let pointwiseFilter_cm1 = tf.randomNormal( [ 1, 1, 5, 5 ] );
-let pointwiseFilter_cm2 = tf.randomNormal( [ 1, 1, 5, 10 ] );
+let pointwiseFilter_c4m1 = tf.randomNormal( [ 1, 1, 4, 4 ] );
+let pointwiseFilter_c4m2 = tf.randomNormal( [ 1, 1, 4, 8 ] );
+
+let pointwiseFilter_c5m1 = tf.randomNormal( [ 1, 1, 5, 5 ] );
+let pointwiseFilter_c5m2 = tf.randomNormal( [ 1, 1, 5, 10 ] );
+
+let depthwiseFilter_c4m1 = tf.randomNormal( [ 3, 3, 4, 4 ] );
+let depthwiseFilter_c4m2 = tf.randomNormal( [ 3, 3, 4, 8 ] );
+
+let depthwiseFilter_c5m1 = tf.randomNormal( [ 3, 3, 5, 5 ] );
+let depthwiseFilter_c5m2 = tf.randomNormal( [ 3, 3, 5, 10 ] );
 
 function timesFunc( f ) {
   let times = 10; //10 * 1000;
@@ -51,21 +58,21 @@ let testFuncArray = [
   new NameFunc( "add_broadcast_channel", tf.add.bind( null, x_c4, c_broadcast_channel ) ),
   new NameFunc( "add_broadcast_height_width_channel", tf.add.bind( null, x_c4, c_broadcast_height_width_channel ) ),
 
-  new NameFunc( "pointwise_1x1x4_cm1_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_cm1, 1, "valid" ) ),
-  new NameFunc( "pointwise_1x1x4_cm2_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_cm2, 1, "valid" ) ),
+  new NameFunc( "pointwise_1x1x4_cm1_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m1, 1, "valid" ) ),
+  new NameFunc( "pointwise_1x1x4_cm2_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m2, 1, "valid" ) ),
 
-  new NameFunc( "pointwise_1x1x5_cm1_strides1_padValid", tf.conv2d.bind( null, x_c5, pointwiseFilter_cm1, 1, "valid" ) ),
-  new NameFunc( "pointwise_1x1x5_cm2_strides1_padValid", tf.conv2d.bind( null, x_c5, pointwiseFilter_cm2, 1, "valid" ) ),
+  new NameFunc( "pointwise_1x1x5_cm1_strides1_padValid", tf.conv2d.bind( null, x_c5, pointwiseFilter_c5m1, 1, "valid" ) ),
+  new NameFunc( "pointwise_1x1x5_cm2_strides1_padValid", tf.conv2d.bind( null, x_c5, pointwiseFilter_c5m2, 1, "valid" ) ),
 
-  new NameFunc( "depthwise_3x3x4_cm1_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_cm1, 1, "same" ) ),
-  new NameFunc( "depthwise_3x3x4_cm1_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_cm1, 2, "same" ) ),
-  new NameFunc( "depthwise_3x3x4_cm2_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_cm2, 1, "same" ) ),
-  new NameFunc( "depthwise_3x3x4_cm2_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_cm2, 2, "same" ) ),
+  new NameFunc( "depthwise_3x3x4_cm1_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m1, 1, "same" ) ),
+  new NameFunc( "depthwise_3x3x4_cm1_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m1, 2, "same" ) ),
+  new NameFunc( "depthwise_3x3x4_cm2_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m2, 1, "same" ) ),
+  new NameFunc( "depthwise_3x3x4_cm2_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m2, 2, "same" ) ),
 
-  new NameFunc( "depthwise_3x3x5_cm1_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_cm1, 1, "same" ) ),
-  new NameFunc( "depthwise_3x3x5_cm1_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_cm1, 2, "same" ) ),
-  new NameFunc( "depthwise_3x3x5_cm2_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_cm2, 1, "same" ) ),
-  new NameFunc( "depthwise_3x3x5_cm2_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_cm2, 2, "same" ) ),
+  new NameFunc( "depthwise_3x3x5_cm1_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_c5m1, 1, "same" ) ),
+  new NameFunc( "depthwise_3x3x5_cm1_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_c5m1, 2, "same" ) ),
+  new NameFunc( "depthwise_3x3x5_cm2_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_c5m2, 1, "same" ) ),
+  new NameFunc( "depthwise_3x3x5_cm2_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_c5m2, 2, "same" ) ),
 ];
 
 async function testByBackend( backendName ) {
