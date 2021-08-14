@@ -10,6 +10,7 @@ class NameFunc {
 }
 
 let c_more = 8; // Define the more channel count.
+let testTimes = 10; //10 * 1000; // Run how many times for a function.
 
 const x_c4 = tf.randomNormal([1000, 1000, 4]);
 const x_cN = tf.randomNormal([1000, 1000, c_more]);
@@ -31,9 +32,8 @@ let depthwiseFilter_cNm1 = tf.randomNormal( [ 3, 3, c_more, c_more ] );
 let depthwiseFilter_cNm2 = tf.randomNormal( [ 3, 3, c_more, ( c_more * 2 ) ] );
 
 function timesFunc( f ) {
-  let times = 10; //10 * 1000;
   let y;
-  for ( let i = 0; i < times; ++i ) {
+  for ( let i = 0; i < testTimes; ++i ) {
     y = f();
     y.dispose();
   }
@@ -89,9 +89,13 @@ async function testByBackend( backendName ) {
     let testFuncTimes = timesFunc.bind( null, testNameFunc.f );
 
     const time = await tf.time( testFuncTimes );
+    
+    let kernelMs = time.kernelMs / testTimes;
+    let wallMs = time.wallMs / testTimes;
+
     console.log( `${testNameFunc.name}, `
-      + `kernelMs: ${time.kernelMs.toFixed( 2 )}, `
-      + `wallTimeMs: ${time.wallMs.toFixed( 2 )}`);
+      + `kernelMs: ${kernelMs.toFixed( 2 )}, `
+      + `wallTimeMs: ${wallMs.toFixed( 2 )}`);
   }
 }
 
