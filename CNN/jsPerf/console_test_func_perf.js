@@ -77,7 +77,7 @@ async function testByBackend( backendName ) {
     }
   }
 
-  /** Try pointwise-SIGMOID to achieve implicit bias. */
+  /** Try pointwise-SIGMOID to achieve implicit bias. This is slower than pointwise_cBm1_add_SIGMOID().*/
   function pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID() {
     let t0 = tf.conv2d( x_cB, pointwiseFilter_cBcN, 1, "valid" );
 
@@ -173,8 +173,8 @@ async function testByBackend( backendName ) {
 //     new NameFunc( "add_broadcast_height_width", tf.add.bind( null, x_cB, c_broadcast_height_width ) ),
 
 
-    new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`, pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID ),
-    new NameFunc( `pointwise_c${c_base}m1_add_SIGMOID`, pointwise_cBm1_add_SIGMOID ),
+//     new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`, pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID ),
+//     new NameFunc( `pointwise_c${c_base}m1_add_SIGMOID`, pointwise_cBm1_add_SIGMOID ),
 
     new NameFunc( `pointwise_c${c_more}m1_SIGMOID_pointwise_c${c_more}m1_SIGMOID`, pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID ),
     new NameFunc( `pointwise_c${c_base}m1_bias_SIGMOID_depthwise_pointwise_c${c_base}m1_bias_SIGMOID`,
