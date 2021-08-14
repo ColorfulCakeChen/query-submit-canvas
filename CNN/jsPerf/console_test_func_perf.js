@@ -65,13 +65,15 @@ let testFuncArray = [
 //   new NameFunc( "pointwise_1x1x5_cm2_strides1_padValid", tf.conv2d.bind( null, x_c5, pointwiseFilter_c5m2, 1, "valid" ) ),
 
   new NameFunc( "depthwise_3x3x4_cm1_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m1, 1, "same" ) ),
-  new NameFunc( "depthwise_3x3x4_cm2_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m2, 1, "same" ) ),
-//   new NameFunc( "depthwise_3x3x4_cm1_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m1, 2, "same" ) ),
-//   new NameFunc( "depthwise_3x3x4_cm2_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m2, 2, "same" ) ),
-
   new NameFunc( "depthwise_3x3x5_cm1_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_c5m1, 1, "same" ) ),
+
+  new NameFunc( "depthwise_3x3x4_cm2_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m2, 1, "same" ) ),
   new NameFunc( "depthwise_3x3x5_cm2_strides1_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_c5m2, 1, "same" ) ),
+
+//   new NameFunc( "depthwise_3x3x4_cm1_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m1, 2, "same" ) ),
 //   new NameFunc( "depthwise_3x3x5_cm1_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_c5m1, 2, "same" ) ),
+
+//   new NameFunc( "depthwise_3x3x4_cm2_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c4, depthwiseFilter_c4m2, 2, "same" ) ),
 //   new NameFunc( "depthwise_3x3x5_cm2_strides2_padSame", tf.depthwiseConv2d.bind( null, x_c5, depthwiseFilter_c5m2, 2, "same" ) ),
 ];
 
@@ -85,8 +87,8 @@ async function testByBackend( backendName ) {
 
     const time = await tf.time( testFuncTimes );
     console.log( `${testNameFunc.name}, `
-      + `kernelMs: ${time.kernelMs.toFixed( 3 )}, `
-      + `wallTimeMs: ${time.wallMs.toFixed( 3 )}`);
+      + `kernelMs: ${time.kernelMs.toFixed( 2 )}, `
+      + `wallTimeMs: ${time.wallMs.toFixed( 2 )}`);
   }
 }
 
