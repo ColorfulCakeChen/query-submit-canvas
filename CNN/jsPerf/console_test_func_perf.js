@@ -50,6 +50,9 @@ async function testByBackend( backendName ) {
   let pointwiseFilter_cNm1 = tf.randomNormal( [ 1, 1, c_more, c_more ] );
   let pointwiseFilter_cNm2 = tf.randomNormal( [ 1, 1, c_more, ( c_more * 2 ) ] );
 
+  let pointwiseFilter_c4cN = tf.randomNormal( [ 1, 1, 4, c_more ] );
+  let pointwiseFilter_cNc4 = tf.randomNormal( [ 1, 1, c_more, 4 ] );
+  
   let depthwiseFilter_c4m1_3x3 = tf.randomNormal( [ 3, 3, 4, 4 ] );
   let depthwiseFilter_c4m2_3x3 = tf.randomNormal( [ 3, 3, 4, 8 ] );
 
@@ -68,6 +71,35 @@ async function testByBackend( backendName ) {
       y = f();
       y.dispose();
     }
+  }
+
+  /** Try pointwise-SIGMOID to achieve implicit bias. */
+  function pointwise_c4cN_SIGMOID_pointwise_cNc4_SIGMOID() {
+    let t0 = tf.conv2d( x_c4, pointwiseFilter_c4cN, 1, "valid" );
+
+    let t1 = tf.sigmoid( t0 );
+    t0.dispose();
+
+    t0 = tf.conv2d( t1, pointwiseFilter_cNc4, 1, "valid" );
+    t1.dispose();
+
+    t1 = tf.sigmoid( t0 );
+    t0.dispose();
+
+    return t1;
+  }
+
+  /** Try explicit bias. */
+  function add_pointwise_c4m1_SIGMOID() {
+    let t0 = tf.add( x_c4, c_broadcast_height_width_channel );
+
+    let t1 = tf.conv2d( x_c4, pointwiseFilter_c4m1, 1, "valid" );
+    t0.dispose();
+
+    t0 = tf.sigmoid( t1 );
+    t1.dispose();
+
+    return t0;
   }
 
   let testFuncArray = [
@@ -91,6 +123,10 @@ async function testByBackend( backendName ) {
     new NameFunc( "add_broadcast_none", tf.add.bind( null, x_c4, c_broadcast_none ) ),
     new NameFunc( "add_broadcast_channel", tf.add.bind( null, x_c4, c_broadcast_channel ) ),
     new NameFunc( "add_broadcast_height_width_channel", tf.add.bind( null, x_c4, c_broadcast_height_width_channel ) ),
+
+
+    new NameFunc( `pointwise_c4c${c_more}_SIGMOID_pointwise_c${c_more}c4_SIGMOID`, pointwise_c4cN_SIGMOID_pointwise_cNc4_SIGMOID ),
+    new NameFunc( `add_pointwise_c4m1_SIGMOID`, add_pointwise_c4m1_SIGMOID ),
 
 
     new NameFunc( "pointwise_1x1x4_cm1_strides1_padValid", tf.conv2d.bind( null, x_c4, pointwiseFilter_c4m1, 1, "valid" ) ),
