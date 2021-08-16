@@ -154,7 +154,7 @@ class Tester {
       t0 = tf.depthwiseConv2d( t1, depthwiseFilter_cNm1_3x3, 1, "same" );
       t1.dispose();
 
-      let t1 = tf.sigmoid( t0 );
+      t1 = tf.sigmoid( t0 );
       t0.dispose();
 
       t0 = tf.conv2d( t1, pointwiseFilter_cNm1, 1, "valid" );
