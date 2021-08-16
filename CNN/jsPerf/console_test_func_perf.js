@@ -90,27 +90,52 @@ class Tester {
       }
     }
 
-    /** Try pointwise-SIGMOID to achieve implicit bias. This is slower than pointwise_cBm1_add_SIGMOID().*/
-    function pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID() {
-      let t0 = tf.conv2d( x_cB, pointwiseFilter_cBcN, 1, "valid" );
+//     /** Try pointwise-SIGMOID to achieve implicit bias. This is slower than pointwise_cBm1_add_SIGMOID().*/
+//     function pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID() {
+//       let t0 = tf.conv2d( x_cB, pointwiseFilter_cBcN, 1, "valid" );
+//
+//       let t1 = tf.sigmoid( t0 );
+//       t0.dispose();
+//
+//       t0 = tf.conv2d( t1, pointwiseFilter_cNcB, 1, "valid" );
+//       t1.dispose();
+//
+//       t1 = tf.sigmoid( t0 );
+//       t0.dispose();
+//
+//       return t1;
+//     }
+//
+//     /** Try explicit bias. */
+//     function pointwise_cBm1_add_SIGMOID() {
+//       let t0 = tf.conv2d( x_cB, pointwiseFilter_cBm1, 1, "valid" );
+//
+//       let t1 = tf.add( t0, c_broadcast_height_width );
+//       t0.dispose();
+//
+//       t0 = tf.sigmoid( t1 );
+//       t1.dispose();
+//
+//       return t0;
+//     }
 
-      let t1 = tf.sigmoid( t0 );
-      t0.dispose();
-
-      t0 = tf.conv2d( t1, pointwiseFilter_cNcB, 1, "valid" );
-      t1.dispose();
-
-      t1 = tf.sigmoid( t0 );
-      t0.dispose();
-
-      return t1;
-    }
-
-    /** Try explicit bias. */
-    function pointwise_cBm1_add_SIGMOID() {
+    /** Try pointwise-bias-SIGMOID-depthwise-pointwise-bias-SIGMOID with less channels. */
+    function pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID() {
       let t0 = tf.conv2d( x_cB, pointwiseFilter_cBm1, 1, "valid" );
 
       let t1 = tf.add( t0, c_broadcast_height_width );
+      t0.dispose();
+
+      t0 = tf.sigmoid( t1 );
+      t1.dispose();
+
+      t1 = tf.depthwiseConv2d( t0, depthwiseFilter_cBm1_3x3, 1, "same" );
+      t0.dispose();
+
+      t0 = tf.conv2d( t1, pointwiseFilter_cBm1, 1, "valid" );
+      t1.dispose();
+
+      t1 = tf.add( t0, c_broadcast_height_width );
       t0.dispose();
 
       t0 = tf.sigmoid( t1 );
@@ -130,31 +155,6 @@ class Tester {
       t1.dispose();
 
       t1 = tf.conv2d( t0, pointwiseFilter_cNm1, 1, "valid" );
-      t0.dispose();
-
-      t0 = tf.sigmoid( t1 );
-      t1.dispose();
-
-      return t0;
-    }
-
-    /** Try pointwise-bias-SIGMOID-depthwise-pointwise-bias-SIGMOID with less channels. */
-    function pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID() {
-      let t0 = tf.conv2d( x_cB, pointwiseFilter_cBm1, 1, "valid" );
-
-      let t1 = tf.add( t0, c_broadcast_height_width );
-      t0.dispose();
-
-      t0 = tf.sigmoid( t1 );
-      t1.dispose();
-
-      t1 = tf.depthwiseConv2d( t0, depthwiseFilter_cBm1_3x3, 1, "same" );
-      t0.dispose();
-
-      t0 = tf.conv2d( t1, pointwiseFilter_cBm1, 1, "valid" );
-      t1.dispose();
-
-      t1 = tf.add( t0, c_broadcast_height_width );
       t0.dispose();
 
       t0 = tf.sigmoid( t1 );
@@ -186,13 +186,13 @@ class Tester {
   //     new NameFunc( "add_broadcast_height_width", tf.add.bind( null, x_cB, c_broadcast_height_width ) ),
 
 
-  //     new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`, pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID ),
-  //     new NameFunc( `pointwise_c${c_base}m1_add_SIGMOID`, pointwise_cBm1_add_SIGMOID ),
+//  //     new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`, pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID ),
+//  //     new NameFunc( `pointwise_c${c_base}m1_add_SIGMOID`, pointwise_cBm1_add_SIGMOID ),
 
-      new NameFunc( `pointwise_c${c_more}m1_SIGMOID_depthwise_pointwise_c${c_more}m1_SIGMOID`,
-                      pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID ),
       new NameFunc( `pointwise_c${c_base}m1_bias_SIGMOID_depthwise_pointwise_c${c_base}m1_bias_SIGMOID`,
                       pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID ),
+      new NameFunc( `pointwise_c${c_more}m1_SIGMOID_depthwise_pointwise_c${c_more}m1_SIGMOID`,
+                      pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID ),
 
       new NameFunc( `pointwise_1x1x${c_base}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cB, pointwiseFilter_cBm1, 1, "valid" ) ),
       new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm1, 1, "valid" ) ),
