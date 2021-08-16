@@ -30,15 +30,18 @@ class NameFunc {
   }
 }
 
-async function testByBackend( backendName ) {
+/**
+ *
+ * @param {number} c_base  Define the less channel count.
+ * @param {number} c_more  Define the more channel count.
+ */
+async function testByBackend( backendName, c_base = 4, c_more = 5 ) {
   console.log( `backend = ${backendName}` );
   await tf.setBackend( backendName );
 
   let inputHeight = 1000;
   let inputWidth = 1000;
 
-  let c_base = 4; // Define the less channel count.
-  let c_more = 5; // Define the more channel count.
   let testTimes = 10; //10 * 1000; // Run how many times for a function.
 
   const x_cB = tf.randomNormal([ inputHeight, inputWidth, c_base ]);
@@ -233,6 +236,9 @@ async function testByBackend( backendName ) {
 let wasmUrl = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js";
 await ScriptLoader_createPromise( wasmUrl, false, "wasmBackend" );
 
-//await testByBackend( "wasm" );
-//await testByBackend( "cpu" );
-await testByBackend( "webgl" );
+let c_base = 4; // Define the less channel count.
+let c_more = 5; // Define the more channel count.
+
+//await testByBackend( "wasm", c_base, c_more );
+//await testByBackend( "cpu", c_base, c_more );
+await testByBackend( "webgl", c_base, c_more );
