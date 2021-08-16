@@ -176,9 +176,10 @@ async function testByBackend( backendName ) {
 //     new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`, pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID ),
 //     new NameFunc( `pointwise_c${c_base}m1_add_SIGMOID`, pointwise_cBm1_add_SIGMOID ),
 
-    new NameFunc( `pointwise_c${c_more}m1_SIGMOID_pointwise_c${c_more}m1_SIGMOID`, pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID ),
+    new NameFunc( `pointwise_c${c_more}m1_SIGMOID_depthwise_pointwise_c${c_more}m1_SIGMOID`,
+                    pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID ),
     new NameFunc( `pointwise_c${c_base}m1_bias_SIGMOID_depthwise_pointwise_c${c_base}m1_bias_SIGMOID`,
-                     pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID ),
+                    pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID ),
 
     new NameFunc( `pointwise_1x1x${c_base}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cB, pointwiseFilter_cBm1, 1, "valid" ) ),
     new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm1, 1, "valid" ) ),
