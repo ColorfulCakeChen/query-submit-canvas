@@ -30,206 +30,215 @@ class NameFunc {
   }
 }
 
-/**
- *
- * @param {number} c_base  Define the less channel count.
- * @param {number} c_more  Define the more channel count.
- */
-async function testByBackend( backendName, c_base = 4, c_more = 5 ) {
-  console.log( `backend = ${backendName}` );
-  await tf.setBackend( backendName );
+class Tester {
+  /**
+   *
+   * @param {number} c_base  Define the less channel count.
+   * @param {number} c_more  Define the more channel count.
+   */
+  constructor( c_base = 4, c_more = 5 ) {
+    this.c_base = c_base;
+    this.c_more = c_more;
+  }
 
-  let inputHeight = 1000;
-  let inputWidth = 1000;
+  async testByBackend( backendName ) {
+    console.log( `backend = ${backendName}` );
+    await tf.setBackend( backendName );
 
-  let testTimes = 10; //10 * 1000; // Run how many times for a function.
+    let inputHeight = 1000;
+    let inputWidth = 1000;
 
-  const x_cB = tf.randomNormal([ inputHeight, inputWidth, c_base ]);
-  const x_cN = tf.randomNormal([ inputHeight, inputWidth, c_more ]);
+    let c_base = this.c_base;
+    let c_more = this.c_more;
+    let testTimes = 10; //10 * 1000; // Run how many times for a function.
 
-  const c_broadcast_none = tf.randomNormal([ inputHeight, inputWidth, c_base ]);
-  const c_broadcast_channel = tf.randomNormal([ inputHeight, inputWidth, 1 ]);
-  const c_broadcast_height_width = tf.randomNormal([ 1, 1, c_base ]);
+    const x_cB = tf.randomNormal([ inputHeight, inputWidth, c_base ]);
+    const x_cN = tf.randomNormal([ inputHeight, inputWidth, c_more ]);
 
-  let pointwiseFilter_cBm1 = tf.randomNormal( [ 1, 1, c_base, c_base ] );
-  let pointwiseFilter_cBm2 = tf.randomNormal( [ 1, 1, c_base, ( c_base * 2 ) ] );
+    const c_broadcast_none = tf.randomNormal([ inputHeight, inputWidth, c_base ]);
+    const c_broadcast_channel = tf.randomNormal([ inputHeight, inputWidth, 1 ]);
+    const c_broadcast_height_width = tf.randomNormal([ 1, 1, c_base ]);
 
-  let pointwiseFilter_cNm1 = tf.randomNormal( [ 1, 1, c_more, c_more ] );
-  let pointwiseFilter_cNm2 = tf.randomNormal( [ 1, 1, c_more, ( c_more * 2 ) ] );
+    let pointwiseFilter_cBm1 = tf.randomNormal( [ 1, 1, c_base, c_base ] );
+    let pointwiseFilter_cBm2 = tf.randomNormal( [ 1, 1, c_base, ( c_base * 2 ) ] );
 
-  let pointwiseFilter_cBcN = tf.randomNormal( [ 1, 1, c_base, c_more ] );
-  let pointwiseFilter_cNcB = tf.randomNormal( [ 1, 1, c_more, c_base ] );
+    let pointwiseFilter_cNm1 = tf.randomNormal( [ 1, 1, c_more, c_more ] );
+    let pointwiseFilter_cNm2 = tf.randomNormal( [ 1, 1, c_more, ( c_more * 2 ) ] );
 
-  let depthwiseFilter_cBm1_3x3 = tf.randomNormal( [ 3, 3, c_base, 1 ] );
-  let depthwiseFilter_cBm2_3x3 = tf.randomNormal( [ 3, 3, c_base, 2 ] );
+    let pointwiseFilter_cBcN = tf.randomNormal( [ 1, 1, c_base, c_more ] );
+    let pointwiseFilter_cNcB = tf.randomNormal( [ 1, 1, c_more, c_base ] );
 
-  let depthwiseFilter_cNm1_3x3 = tf.randomNormal( [ 3, 3, c_more, 1 ] );
-  let depthwiseFilter_cNm2_3x3 = tf.randomNormal( [ 3, 3, c_more, 2 ] );
+    let depthwiseFilter_cBm1_3x3 = tf.randomNormal( [ 3, 3, c_base, 1 ] );
+    let depthwiseFilter_cBm2_3x3 = tf.randomNormal( [ 3, 3, c_base, 2 ] );
 
-  let depthwiseFilter_cBm1_1x1 = tf.randomNormal( [ 1, 1, c_base, 1 ] );
-  let depthwiseFilter_cBm2_1x1 = tf.randomNormal( [ 1, 1, c_base, 2 ] );
+    let depthwiseFilter_cNm1_3x3 = tf.randomNormal( [ 3, 3, c_more, 1 ] );
+    let depthwiseFilter_cNm2_3x3 = tf.randomNormal( [ 3, 3, c_more, 2 ] );
 
-  let depthwiseFilter_cNm1_1x1 = tf.randomNormal( [ 1, 1, c_more, 1 ] );
-  let depthwiseFilter_cNm2_1x1 = tf.randomNormal( [ 1, 1, c_more, 2 ] );
+    let depthwiseFilter_cBm1_1x1 = tf.randomNormal( [ 1, 1, c_base, 1 ] );
+    let depthwiseFilter_cBm2_1x1 = tf.randomNormal( [ 1, 1, c_base, 2 ] );
 
-  function timesFunc( f ) {
-    let y;
-    for ( let i = 0; i < testTimes; ++i ) {
-      y = f();
-      y.dispose();
+    let depthwiseFilter_cNm1_1x1 = tf.randomNormal( [ 1, 1, c_more, 1 ] );
+    let depthwiseFilter_cNm2_1x1 = tf.randomNormal( [ 1, 1, c_more, 2 ] );
+
+    function timesFunc( f ) {
+      let y;
+      for ( let i = 0; i < testTimes; ++i ) {
+        y = f();
+        y.dispose();
+      }
     }
-  }
 
-  /** Try pointwise-SIGMOID to achieve implicit bias. This is slower than pointwise_cBm1_add_SIGMOID().*/
-  function pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID() {
-    let t0 = tf.conv2d( x_cB, pointwiseFilter_cBcN, 1, "valid" );
+    /** Try pointwise-SIGMOID to achieve implicit bias. This is slower than pointwise_cBm1_add_SIGMOID().*/
+    function pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID() {
+      let t0 = tf.conv2d( x_cB, pointwiseFilter_cBcN, 1, "valid" );
 
-    let t1 = tf.sigmoid( t0 );
-    t0.dispose();
+      let t1 = tf.sigmoid( t0 );
+      t0.dispose();
 
-    t0 = tf.conv2d( t1, pointwiseFilter_cNcB, 1, "valid" );
-    t1.dispose();
+      t0 = tf.conv2d( t1, pointwiseFilter_cNcB, 1, "valid" );
+      t1.dispose();
 
-    t1 = tf.sigmoid( t0 );
-    t0.dispose();
+      t1 = tf.sigmoid( t0 );
+      t0.dispose();
 
-    return t1;
-  }
+      return t1;
+    }
 
-  /** Try explicit bias. */
-  function pointwise_cBm1_add_SIGMOID() {
-    let t0 = tf.conv2d( x_cB, pointwiseFilter_cBm1, 1, "valid" );
+    /** Try explicit bias. */
+    function pointwise_cBm1_add_SIGMOID() {
+      let t0 = tf.conv2d( x_cB, pointwiseFilter_cBm1, 1, "valid" );
 
-    let t1 = tf.add( t0, c_broadcast_height_width );
-    t0.dispose();
+      let t1 = tf.add( t0, c_broadcast_height_width );
+      t0.dispose();
 
-    t0 = tf.sigmoid( t1 );
-    t1.dispose();
+      t0 = tf.sigmoid( t1 );
+      t1.dispose();
 
-    return t0;
-  }
+      return t0;
+    }
 
-  /** Try pointwise-SIGMOID-depthwise-pointwise-SIGMOID with more channels. */
-  function pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID() {
-    let t0 = tf.conv2d( x_cN, pointwiseFilter_cNm1, 1, "valid" );
+    /** Try pointwise-SIGMOID-depthwise-pointwise-SIGMOID with more channels. */
+    function pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID() {
+      let t0 = tf.conv2d( x_cN, pointwiseFilter_cNm1, 1, "valid" );
 
-    let t1 = tf.sigmoid( t0 );
-    t0.dispose();
+      let t1 = tf.sigmoid( t0 );
+      t0.dispose();
 
-    t0 = tf.depthwiseConv2d( t1, depthwiseFilter_cNm1_3x3, 1, "same" );
-    t1.dispose();
+      t0 = tf.depthwiseConv2d( t1, depthwiseFilter_cNm1_3x3, 1, "same" );
+      t1.dispose();
 
-    t1 = tf.conv2d( t0, pointwiseFilter_cNm1, 1, "valid" );
-    t0.dispose();
+      t1 = tf.conv2d( t0, pointwiseFilter_cNm1, 1, "valid" );
+      t0.dispose();
 
-    t0 = tf.sigmoid( t1 );
-    t1.dispose();
+      t0 = tf.sigmoid( t1 );
+      t1.dispose();
 
-    return t0;
-  }
+      return t0;
+    }
 
-  /** Try pointwise-bias-SIGMOID-depthwise-pointwise-bias-SIGMOID with less channels. */
-  function pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID() {
-    let t0 = tf.conv2d( x_cB, pointwiseFilter_cBm1, 1, "valid" );
+    /** Try pointwise-bias-SIGMOID-depthwise-pointwise-bias-SIGMOID with less channels. */
+    function pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID() {
+      let t0 = tf.conv2d( x_cB, pointwiseFilter_cBm1, 1, "valid" );
 
-    let t1 = tf.add( t0, c_broadcast_height_width );
-    t0.dispose();
-    
-    t0 = tf.sigmoid( t1 );
-    t1.dispose();
+      let t1 = tf.add( t0, c_broadcast_height_width );
+      t0.dispose();
 
-    t1 = tf.depthwiseConv2d( t0, depthwiseFilter_cBm1_3x3, 1, "same" );
-    t0.dispose();
+      t0 = tf.sigmoid( t1 );
+      t1.dispose();
 
-    t0 = tf.conv2d( t1, pointwiseFilter_cBm1, 1, "valid" );
-    t1.dispose();
+      t1 = tf.depthwiseConv2d( t0, depthwiseFilter_cBm1_3x3, 1, "same" );
+      t0.dispose();
 
-    t1 = tf.add( t0, c_broadcast_height_width );
-    t0.dispose();
+      t0 = tf.conv2d( t1, pointwiseFilter_cBm1, 1, "valid" );
+      t1.dispose();
 
-    t0 = tf.sigmoid( t1 );
-    t1.dispose();
+      t1 = tf.add( t0, c_broadcast_height_width );
+      t0.dispose();
 
-    return t0;
-  }
+      t0 = tf.sigmoid( t1 );
+      t1.dispose();
 
-  let testFuncArray = [
-//     new NameFunc( "sin", tf.sin.bind( null, x_cB ) ),
-//    new NameFunc( "asin", tf.asin.bind( null, x_cB ) ),
-//     new NameFunc( "cos", tf.cos.bind( null, x_cB ) ),
-//    new NameFunc( "acos", tf.acos.bind( null, x_cB ) ),
-//    new NameFunc( "tan", tf.tan.bind( null, x_cB ) ),
-//    new NameFunc( "tanh", tf.tanh.bind( null, x_cB ) ),
-    new NameFunc( `sigmoid_c${c_base}`, tf.sigmoid.bind( null, x_cB ) ),
-    new NameFunc( `sigmoid_c${c_more}`, tf.sigmoid.bind( null, x_cN ) ),
-    new NameFunc( "relu", tf.relu.bind( null, x_cB ) ),
-    new NameFunc( "relu6", tf.relu6.bind( null, x_cB ) ),
-//     new NameFunc( "log", tf.log.bind( null, x_cB ) ),
-//     new NameFunc( "log1p", tf.log1p.bind( null, x_cB ) ),
-//     new NameFunc( "exp", tf.exp.bind( null, x_cB ) ),
-//     new NameFunc( "expm1", tf.expm1.bind( null, x_cB ) ),
-//     new NameFunc( "softplus", tf.softplus.bind( null, x_cB ) ),
-//     new NameFunc( "reciprocal", tf.reciprocal.bind( null, x_cB ) ),
+      return t0;
+    }
 
-//     new NameFunc( "add_broadcast_none", tf.add.bind( null, x_cB, c_broadcast_none ) ),
-//     new NameFunc( "add_broadcast_channel", tf.add.bind( null, x_cB, c_broadcast_channel ) ),
-//     new NameFunc( "add_broadcast_height_width", tf.add.bind( null, x_cB, c_broadcast_height_width ) ),
+    let testFuncArray = [
+  //     new NameFunc( "sin", tf.sin.bind( null, x_cB ) ),
+  //    new NameFunc( "asin", tf.asin.bind( null, x_cB ) ),
+  //     new NameFunc( "cos", tf.cos.bind( null, x_cB ) ),
+  //    new NameFunc( "acos", tf.acos.bind( null, x_cB ) ),
+  //    new NameFunc( "tan", tf.tan.bind( null, x_cB ) ),
+  //    new NameFunc( "tanh", tf.tanh.bind( null, x_cB ) ),
+      new NameFunc( `sigmoid_c${c_base}`, tf.sigmoid.bind( null, x_cB ) ),
+      new NameFunc( `sigmoid_c${c_more}`, tf.sigmoid.bind( null, x_cN ) ),
+      new NameFunc( "relu", tf.relu.bind( null, x_cB ) ),
+      new NameFunc( "relu6", tf.relu6.bind( null, x_cB ) ),
+  //     new NameFunc( "log", tf.log.bind( null, x_cB ) ),
+  //     new NameFunc( "log1p", tf.log1p.bind( null, x_cB ) ),
+  //     new NameFunc( "exp", tf.exp.bind( null, x_cB ) ),
+  //     new NameFunc( "expm1", tf.expm1.bind( null, x_cB ) ),
+  //     new NameFunc( "softplus", tf.softplus.bind( null, x_cB ) ),
+  //     new NameFunc( "reciprocal", tf.reciprocal.bind( null, x_cB ) ),
 
-
-//     new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`, pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID ),
-//     new NameFunc( `pointwise_c${c_base}m1_add_SIGMOID`, pointwise_cBm1_add_SIGMOID ),
-
-    new NameFunc( `pointwise_c${c_more}m1_SIGMOID_depthwise_pointwise_c${c_more}m1_SIGMOID`,
-                    pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID ),
-    new NameFunc( `pointwise_c${c_base}m1_bias_SIGMOID_depthwise_pointwise_c${c_base}m1_bias_SIGMOID`,
-                    pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID ),
-
-    new NameFunc( `pointwise_1x1x${c_base}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cB, pointwiseFilter_cBm1, 1, "valid" ) ),
-    new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm1, 1, "valid" ) ),
-
-//     new NameFunc( `pointwise_1x1x${c_base}_cm2_strides1_padValid`, tf.conv2d.bind( null, x_cB, pointwiseFilter_cBm2, 1, "valid" ) ),
-//     new NameFunc( `pointwise_1x1x${c_more}_cm2_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm2, 1, "valid" ) ),
+  //     new NameFunc( "add_broadcast_none", tf.add.bind( null, x_cB, c_broadcast_none ) ),
+  //     new NameFunc( "add_broadcast_channel", tf.add.bind( null, x_cB, c_broadcast_channel ) ),
+  //     new NameFunc( "add_broadcast_height_width", tf.add.bind( null, x_cB, c_broadcast_height_width ) ),
 
 
-    new NameFunc( `depthwise_3x3x${c_base}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm1_3x3, 1, "same" ) ),
-    new NameFunc( `depthwise_3x3x${c_more}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm1_3x3, 1, "same" ) ),
+  //     new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`, pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID ),
+  //     new NameFunc( `pointwise_c${c_base}m1_add_SIGMOID`, pointwise_cBm1_add_SIGMOID ),
 
-//     new NameFunc( `depthwise_3x3x${c_base}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm2_3x3, 1, "same" ) ),
-//     new NameFunc( `depthwise_3x3x${c_more}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm2_3x3, 1, "same" ) ),
+      new NameFunc( `pointwise_c${c_more}m1_SIGMOID_depthwise_pointwise_c${c_more}m1_SIGMOID`,
+                      pointwise_cNm1_SIGMOID_depthwise_pointwise_cNm1_SIGMOID ),
+      new NameFunc( `pointwise_c${c_base}m1_bias_SIGMOID_depthwise_pointwise_c${c_base}m1_bias_SIGMOID`,
+                      pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID ),
 
-//     new NameFunc( `depthwise_3x3x${c_base}_cm1_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm1_3x3, 2, "same" ) ),
-//     new NameFunc( `depthwise_3x3x${c_more}_cm1_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm1_3x3, 2, "same" ) ),
+      new NameFunc( `pointwise_1x1x${c_base}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cB, pointwiseFilter_cBm1, 1, "valid" ) ),
+      new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm1, 1, "valid" ) ),
 
-//     new NameFunc( `depthwise_3x3x${c_base}_cm2_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm2_3x3, 2, "same" ) ),
-//     new NameFunc( `depthwise_3x3x${c_more}_cm2_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm2_3x3, 2, "same" ) ),
-
-
-//     new NameFunc( `depthwise_1x1x${c_base}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm1_1x1, 1, "same" ) ),
-//     new NameFunc( `depthwise_1x1x${c_more}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm1_1x1, 1, "same" ) ),
-
-//     new NameFunc( `depthwise_1x1x${c_base}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm2_1x1, 1, "same" ) ),
-//     new NameFunc( `depthwise_1x1x${c_more}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm2_1x1, 1, "same" ) ),
-
-//     new NameFunc( `depthwise_1x1x${c_base}_cm1_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm1_1x1, 2, "same" ) ),
-//     new NameFunc( `depthwise_1x1x${c_more}_cm1_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm1_1x1, 2, "same" ) ),
-
-//     new NameFunc( `depthwise_1x1x${c_base}_cm2_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm2_1x1, 2, "same" ) ),
-//     new NameFunc( `depthwise_1x1x${c_more}_cm2_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm2_1x1, 2, "same" ) ),
-  ];
+  //     new NameFunc( `pointwise_1x1x${c_base}_cm2_strides1_padValid`, tf.conv2d.bind( null, x_cB, pointwiseFilter_cBm2, 1, "valid" ) ),
+  //     new NameFunc( `pointwise_1x1x${c_more}_cm2_strides1_padValid`, tf.conv2d.bind( null, x_cN, pointwiseFilter_cNm2, 1, "valid" ) ),
 
 
-  for ( let i = 0; i < testFuncArray.length; ++i ) {
-    let testNameFunc = testFuncArray[ i ];
-    let testFuncTimes = timesFunc.bind( null, testNameFunc.f );
+      new NameFunc( `depthwise_3x3x${c_base}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm1_3x3, 1, "same" ) ),
+      new NameFunc( `depthwise_3x3x${c_more}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm1_3x3, 1, "same" ) ),
 
-    const time = await tf.time( testFuncTimes );
+  //     new NameFunc( `depthwise_3x3x${c_base}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm2_3x3, 1, "same" ) ),
+  //     new NameFunc( `depthwise_3x3x${c_more}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm2_3x3, 1, "same" ) ),
 
-    let kernelMs = time.kernelMs / testTimes;
-    let wallMs = time.wallMs / testTimes;
+  //     new NameFunc( `depthwise_3x3x${c_base}_cm1_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm1_3x3, 2, "same" ) ),
+  //     new NameFunc( `depthwise_3x3x${c_more}_cm1_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm1_3x3, 2, "same" ) ),
 
-    console.log( `${testNameFunc.name}, `
-      + `kernelMs: ${kernelMs.toFixed( 2 )}, `
-      + `wallTimeMs: ${wallMs.toFixed( 2 )}`);
+  //     new NameFunc( `depthwise_3x3x${c_base}_cm2_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm2_3x3, 2, "same" ) ),
+  //     new NameFunc( `depthwise_3x3x${c_more}_cm2_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm2_3x3, 2, "same" ) ),
+
+
+  //     new NameFunc( `depthwise_1x1x${c_base}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm1_1x1, 1, "same" ) ),
+  //     new NameFunc( `depthwise_1x1x${c_more}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm1_1x1, 1, "same" ) ),
+
+  //     new NameFunc( `depthwise_1x1x${c_base}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm2_1x1, 1, "same" ) ),
+  //     new NameFunc( `depthwise_1x1x${c_more}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm2_1x1, 1, "same" ) ),
+
+  //     new NameFunc( `depthwise_1x1x${c_base}_cm1_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm1_1x1, 2, "same" ) ),
+  //     new NameFunc( `depthwise_1x1x${c_more}_cm1_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm1_1x1, 2, "same" ) ),
+
+  //     new NameFunc( `depthwise_1x1x${c_base}_cm2_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cB, depthwiseFilter_cBm2_1x1, 2, "same" ) ),
+  //     new NameFunc( `depthwise_1x1x${c_more}_cm2_strides2_padSame`, tf.depthwiseConv2d.bind( null, x_cN, depthwiseFilter_cNm2_1x1, 2, "same" ) ),
+    ];
+
+
+    for ( let i = 0; i < testFuncArray.length; ++i ) {
+      let testNameFunc = testFuncArray[ i ];
+      let testFuncTimes = timesFunc.bind( null, testNameFunc.f );
+
+      const time = await tf.time( testFuncTimes );
+
+      let kernelMs = time.kernelMs / testTimes;
+      let wallMs = time.wallMs / testTimes;
+
+      console.log( `${testNameFunc.name}, `
+        + `kernelMs: ${kernelMs.toFixed( 2 )}, `
+        + `wallTimeMs: ${wallMs.toFixed( 2 )}`);
+    }
   }
 }
 
@@ -239,6 +248,7 @@ await ScriptLoader_createPromise( wasmUrl, false, "wasmBackend" );
 let c_base = 4; // Define the less channel count.
 let c_more = 5; // Define the more channel count.
 
-//await testByBackend( "wasm", c_base, c_more );
-//await testByBackend( "cpu", c_base, c_more );
-await testByBackend( "webgl", c_base, c_more );
+let tester = new Tester( c_base, c_more );
+//await tester.testByBackend( "wasm" );
+//await tester.testByBackend( "cpu" );
+await tester.testByBackend( "webgl" );
