@@ -36,7 +36,9 @@ class Tester {
    * @param {number} c_base  Define the less channel count.
    * @param {number} c_more  Define the more channel count.
    */
-  constructor( c_base = 4, c_more = 5 ) {
+  constructor( inputHeight, inputWidth, c_base = 4, c_more = 5 ) {
+    this.inputHeight = inputHeight;
+    this.inputWidth = inputWidth;
     this.c_base = c_base;
     this.c_more = c_more;
   }
@@ -45,8 +47,8 @@ class Tester {
     console.log( `backend = ${backendName}` );
     await tf.setBackend( backendName );
 
-    let inputHeight = 1000;
-    let inputWidth = 1000;
+    let inputHeight = this.inputHeight;
+    let inputWidth = this.inputWidth;
 
     let c_base = this.c_base;
     let c_more = this.c_more;
@@ -245,10 +247,12 @@ class Tester {
 let wasmUrl = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js";
 await ScriptLoader_createPromise( wasmUrl, false, "wasmBackend" );
 
+let inputHeight = 200;
+let inputWidth = 200;
 let c_base = 4; // Define the less channel count.
 let c_more = 5; // Define the more channel count.
 
-let tester = new Tester( c_base, c_more );
+let tester = new Tester( inputHeight, inputWidth, c_base, c_more );
 //await tester.testByBackend( "wasm" );
 //await tester.testByBackend( "cpu" );
 await tester.testByBackend( "webgl" );
