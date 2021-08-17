@@ -115,48 +115,39 @@ class Tester {
 
   /** Try pointwise-bias-SIGMOID-depthwise-pointwise-bias-SIGMOID with less channels. */
   pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID() {
-    let t0 = tf.conv2d( this.x_cB, this.pointwiseFilter_cBm1, 1, "valid" );
+    let t0, t1;
+    t0 = tf.conv2d( this.x_cB, this.pointwiseFilter_cBm1, 1, "valid" );
+    t1 = tf.add( t0, this.bias1_base );                                      t0.dispose();
+    t0 = tf.sigmoid( t1 );                                                   t1.dispose();
+    t1 = tf.depthwiseConv2d( t0, this.depthwiseFilter_cBm1_3x3, 1, "same" ); t0.dispose();
+    t0 = tf.conv2d( t1, this.pointwiseFilter_cBm1, 1, "valid" );             t1.dispose();
+    t1 = tf.add( t0, this.bias2_base );                                      t0.dispose();
+    t0 = tf.sigmoid( t1 );                                                   t1.dispose();
+    return t0;
+  }
 
-    let t1 = tf.add( t0, this.bias1_base );
-    t0.dispose();
-
-    t0 = tf.sigmoid( t1 );
-    t1.dispose();
-
-    t1 = tf.depthwiseConv2d( t0, this.depthwiseFilter_cBm1_3x3, 1, "same" );
-    t0.dispose();
-
-    t0 = tf.conv2d( t1, this.pointwiseFilter_cBm1, 1, "valid" );
-    t1.dispose();
-
-    t1 = tf.add( t0, this.bias2_base );
-    t0.dispose();
-
-    t0 = tf.sigmoid( t1 );
-    t1.dispose();
-
+  /** Try pointwise-bias-SIGMOID-depthwise-pointwise-bias-SIGMOID with less channels and already broadcast bias. */
+  pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID_already_broadcast() {
+    let t0, t1;
+    t0 = tf.conv2d( this.x_cB, this.pointwiseFilter_cBm1, 1, "valid" );
+    t1 = tf.add( t0, this.bias1_broadcast_base );                            t0.dispose();
+    t0 = tf.sigmoid( t1 );                                                   t1.dispose();
+    t1 = tf.depthwiseConv2d( t0, this.depthwiseFilter_cBm1_3x3, 1, "same" ); t0.dispose();
+    t0 = tf.conv2d( t1, this.pointwiseFilter_cBm1, 1, "valid" );             t1.dispose();
+    t1 = tf.add( t0, this.bias2_broadcast_base );                            t0.dispose();
+    t0 = tf.sigmoid( t1 );                                                   t1.dispose();
     return t0;
   }
 
   /** Try pointwise-SIGMOID-depthwise_SIGMOID-pointwise-SIGMOID with more channels. */
   pointwise_cNm1_SIGMOID_depthwise_SIGMOID_pointwise_cNm1_SIGMOID() {
-    let t0 = tf.conv2d( this.x_cN, this.pointwiseFilter_cNm1, 1, "valid" );
-
-    let t1 = tf.sigmoid( t0 );
-    t0.dispose();
-
-    t0 = tf.depthwiseConv2d( t1, this.depthwiseFilter_cNm1_3x3, 1, "same" );
-    t1.dispose();
-
-    t1 = tf.sigmoid( t0 );
-    t0.dispose();
-
-    t0 = tf.conv2d( t1, this.pointwiseFilter_cNm1, 1, "valid" );
-    t1.dispose();
-
-    t1 = tf.sigmoid( t0 );
-    t0.dispose();
-
+    let t0, t1;
+    t0 = tf.conv2d( this.x_cN, this.pointwiseFilter_cNm1, 1, "valid" );
+    t1 = tf.sigmoid( t0 );                                                   t0.dispose();
+    t0 = tf.depthwiseConv2d( t1, this.depthwiseFilter_cNm1_3x3, 1, "same" ); t1.dispose();
+    t1 = tf.sigmoid( t0 );                                                   t0.dispose();
+    t0 = tf.conv2d( t1, this.pointwiseFilter_cNm1, 1, "valid" );             t1.dispose();
+    t1 = tf.sigmoid( t0 );                                                   t0.dispose();
     return t1;
   }
 
@@ -177,8 +168,8 @@ class Tester {
 
       new NameFunc( `sigmoid_c${c_base}`, tf.sigmoid.bind( null, this.x_cB ) ),
       new NameFunc( `sigmoid_c${c_more}`, tf.sigmoid.bind( null, this.x_cN ) ),
-      new NameFunc( "relu", tf.relu.bind( null, this.x_cB ) ),
-      new NameFunc( "relu6", tf.relu6.bind( null, this.x_cB ) ),
+      new NameFunc( `relu_c${c_base}`, tf.relu.bind( null, this.x_cB ) ),
+      new NameFunc( `relu6_c${c_base}` tf.relu6.bind( null, this.x_cB ) ),
 
 //       new NameFunc( "log", tf.log.bind( null, this.x_cB ) ),
 //       new NameFunc( "log1p", tf.log1p.bind( null, this.x_cB ) ),
@@ -200,6 +191,8 @@ class Tester {
 
       new NameFunc( `pointwise_c${c_base}m1_bias_SIGMOID_depthwise_pointwise_c${c_base}m1_bias_SIGMOID`,
                       this.pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID.bind( this ) ),
+      new NameFunc( `pointwise_c${c_base}m1_bias_SIGMOID_depthwise_pointwise_c${c_base}m1_bias_SIGMOID_already_broadcast`,
+                      this.pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID_already_broadcast.bind( this ) ),
       new NameFunc( `pointwise_c${c_more}m1_SIGMOID_depthwise_SIGMOID_pointwise_c${c_more}m1_SIGMOID`,
                       this.pointwise_cNm1_SIGMOID_depthwise_SIGMOID_pointwise_cNm1_SIGMOID.bind( this ) ),
 
