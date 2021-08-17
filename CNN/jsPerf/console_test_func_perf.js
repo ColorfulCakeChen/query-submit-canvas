@@ -220,8 +220,8 @@ class Tester {
       new NameFunc( `pointwise_c${c_more}m1_SIGMOID_depthwise_SIGMOID_pointwise_c${c_more}m1_SIGMOID`,
                       this.pointwise_cNm1_SIGMOID_depthwise_SIGMOID_pointwise_cNm1_SIGMOID.bind( this ) ),
       
-      new NameFunc( `depthwise_c${c_base}m2_pointwise_c${ ( c_base * 2 ) }m1_SIGMOID_padValid`,
-                      this.depthwise_cBm2_pointwise_c2Bm1_SIGMOID_padValid.bind( this ) ),
+//       new NameFunc( `depthwise_c${c_base}m2_pointwise_c${ ( c_base * 2 ) }m1_SIGMOID_padValid`,
+//                       this.depthwise_cBm2_pointwise_c2Bm1_SIGMOID_padValid.bind( this ) ),
       new NameFunc( `depthwise_c${c_base}m2_SIGMOID_pointwise_c${ ( c_base * 2 ) }m1_SIGMOID`,
                       this.depthwise_cBm2_SIGMOID_pointwise_c2Bm1_SIGMOID.bind( this ) ),
 
