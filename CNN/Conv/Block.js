@@ -619,8 +619,8 @@ class Params_to_PointDepthPointParams_NotShuffleNet_NotMobileNet extends Params_
 //!!! ...unfinished... (2021/08/17) should use pointwise1ChannelCountRate (should not ignore it).
 
     this.pointwise1ChannelCount = 0;  // In this mode, always no pointwise convolution before depthwise convolution.
-    this.pointwise1Bias = false;
-    this.pointwise1ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+    this.pointwise1Bias = blockParams.bBias;
+    this.pointwise1ActivationId = blockParams.nActivationId;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                  // Step0 double the channel count by depthwise channel multiplier.
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps (except stepLast) uses default depthwise filter size.
@@ -746,15 +746,8 @@ class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthP
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenation.
 
-//!!! ...unfinished... (2021/08/12) WRONG! pointwise1 needs SIGMOID to generate implicit bias.
-
-//!!! ...unfinished... (2021/08/11) This is different from the original MobileNet design.
-    // In my opinion, it seems that ShuffleNetV2 uses depthwise-pointwise2 to achieve convolution. The bias and activation should not be
-    // between pointwise1 and depthwise. They should be after the pointwise2.
-    //
-    // Rule: Before bias is added, the activation function should not be called. Otherwise, information might be destroy by the activation function.
-    this.pointwise1Bias = false;
-    this.pointwise1ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+    this.pointwise1Bias = blockParams.bBias;
+    this.pointwise1ActivationId = blockParams.nActivationId;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                  // All steps will not double the channel count.
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps uses default depthwise filter size.
@@ -808,18 +801,13 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
     let blockParams = this.blockParams;
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
 
-    // In MobileNet, all steps (include step0) do not use input1 and do add-input-to-output (without concatenation).
+//!!! ...unfinished... (2021/08/17) WRONG! step0 can not add-input-to-output because ( height, width ) has been halven.
+
+    // In MobileNet, all steps (include step0) do not use input1 and all steps (except step0) do add-input-to-output (without concatenation).
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT;
 
-//!!! ...unfinished... (2021/08/12) WRONG! pointwise1 may needs SIGMOID to generate implicit bias.
-
-//!!! ...unfinished... (2021/08/11) This is different from the original MobileNet design.
-    // In my opinion, it seems that MobileNet uses pointwise1-depthwise to achieve convolution. The bias and activation should not be
-    // between pointwise1 and depthwise. They should be after the depthwise.
-    //
-    // Rule: Before bias is added, the activation function should not be called. Otherwise, information might be destroy by the activation function.
-    this.pointwise1Bias = false;
-    this.pointwise1ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+    this.pointwise1Bias = blockParams.bBias;
+    this.pointwise1ActivationId = blockParams.nActivationId;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                  // All steps will not double the channel count.
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps uses default depthwise filter size.
@@ -857,6 +845,11 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
   configTo_afterStep0( step0 ) {
     // The input0 of all steps (except step0) have the same depth as previous (also step0's) step's output0.
     this.channelCount0_pointwise1Before = step0.outChannels0;
+
+//!!! ...unfinished... (2021/08/17) WRONG! step0 can not add-input-to-output because ( height, width ) has been halven.
+
+    // In MobileNet, all steps (include step0) do not use input1 and all steps (except step0) do add-input-to-output (without concatenation).
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT;
 
     this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
