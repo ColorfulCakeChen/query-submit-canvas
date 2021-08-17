@@ -159,9 +159,9 @@ class Tester {
     let c_more = this.c_more;
 
     this.testFuncArray = [
-//       new NameFunc( "sin", tf.sin.bind( null, this.x_cB ) ),
+//       new NameFunc( `sin_c${c_base}`, tf.sin.bind( null, this.x_cB ) ),
 //       new NameFunc( "asin", tf.asin.bind( null, this.x_cB ) ),
-//       new NameFunc( "cos", tf.cos.bind( null, this.x_cB ) ),
+//       new NameFunc( `cos_c${c_base}`, tf.cos.bind( null, this.x_cB ) ),
 //       new NameFunc( "acos", tf.acos.bind( null, this.x_cB ) ),
 //       new NameFunc( "tan", tf.tan.bind( null, this.x_cB ) ),
 //       new NameFunc( "tanh", tf.tanh.bind( null, this.x_cB ) ),
