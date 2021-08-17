@@ -241,34 +241,32 @@ class Tester {
     console.log( `backend = ${backendName}` );
     await tf.setBackend( backendName );
 
-    tf.tidy( () => {
-      this.prepareTensors();
-      this.prepare_testFuncArray();
+    this.prepareTensors();
+    this.prepare_testFuncArray();
 
-      let testTimes = 10; //10 * 1000; // Run how many times for a function.
+    let testTimes = 10; //10 * 1000; // Run how many times for a function.
 
-      function timesFunc( f ) {
-        let y;
-        for ( let i = 0; i < testTimes; ++i ) {
-          y = f();
-          y.dispose();
-        }
+    function timesFunc( f ) {
+      for ( let i = 0; i < testTimes; ++i ) {
+        let y = f();
+        y.dispose();
       }
+    }
 
-      for ( let i = 0; i < this.testFuncArray.length; ++i ) {
-        let testNameFunc = this.testFuncArray[ i ];
-        let testFuncTimes = timesFunc.bind( null, testNameFunc.f );
+    for ( let i = 0; i < this.testFuncArray.length; ++i ) {
+      let testNameFunc = this.testFuncArray[ i ];
+      let testFuncTimes = timesFunc.bind( null, testNameFunc.f );
 
-        const time = await tf.time( testFuncTimes );
+      const time = await tf.time( testFuncTimes );
 
-        let kernelMs = time.kernelMs / testTimes;
-        let wallMs = time.wallMs / testTimes;
+      let kernelMs = time.kernelMs / testTimes;
+      let wallMs = time.wallMs / testTimes;
 
-        console.log( `${testNameFunc.name}, `
-          + `kernelMs: ${kernelMs.toFixed( 2 )}, `
-          + `wallTimeMs: ${wallMs.toFixed( 2 )}`);
-      }
-    } );
+      console.log( `${testNameFunc.name}, `
+        + `kernelMs: ${kernelMs.toFixed( 2 )}, `
+        + `wallTimeMs: ${wallMs.toFixed( 2 )}`);
+    }
+
   }
 }
 
