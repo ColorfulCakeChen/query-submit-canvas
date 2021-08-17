@@ -12,9 +12,11 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 
 //!!! ...unfinished... (2021/08/17) should compare performance of:
 //   - depthwise-pointwise-bias-activation
-//   - pointwise1-bias-activation-depthwise-pointwise2-bias-activation.
+//   - pointwise1-bias1-activation-depthwise-pointwise2-bias2-activation.
 //
-// Why need pointwise1-bias-activation?
+// Why need pointwise1-bias-activation? That is, the pointwise1ChannelCountRate should always 0.
+// Since depthwise-pointwise2-bias2-activation is complete (Note: the bias2 is important).
+//
 
 
 
