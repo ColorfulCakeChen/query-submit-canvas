@@ -51,6 +51,7 @@ class Tester {
     let c_more = this.c_more;
     
     this.x_cB = tf.randomNormal([ inputHeight, inputWidth, c_base ]);
+    this.x_cB2 = tf.randomNormal([ inputHeight, inputWidth, c_base ]);
     this.x_cN = tf.randomNormal([ inputHeight, inputWidth, c_more ]);
 
 //     this.c_broadcast_none = tf.randomNormal( [ inputHeight, inputWidth, c_base ] );
@@ -184,6 +185,9 @@ class Tester {
 
       new NameFunc( `add_c${c_base}`, tf.add.bind( null, this.x_cB, this.bias1_base ) ),
       new NameFunc( `add_c${c_base}_already_broadcast`, tf.add.bind( null, this.x_cB, this.bias1_broadcast_base ) ),
+
+      new NameFunc( `concat_c${c_base}_bias`, tf.concat.bind( null, [ this.x_cB, this.bias1_broadcast_base ], 2 ) ),
+      new NameFunc( `concat_c${c_base}c${c_base}_bias`, tf.concat.bind( null, [ this.x_cB, this.x_cB2, this.bias1_broadcast_base ], 2 ) ),
 
 //       new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`,
 //                       this.pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID.bind( this ) ),
