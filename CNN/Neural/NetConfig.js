@@ -10,6 +10,16 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 // class MobileNet
 
 
+//!!! ...unfinished... (2021/08/17)
+// The only worth configuration to add implicit bais basis by SIGMOID( 0 ) is depthwise-SIGMOID-pointwise-activation.
+//   - The depthwise should have an all-zero filter ( 0, 0, ..., 0 ) to produce a constant zero channel.
+//   - The SIGMOID after depthwise will convert the channel into a constant non-zero channel.
+//   - The pointwise could use the constant non-zero channel as implicit bias basis for affine transformation.
+//   - The pointwise is not responsible for producing constant channel because it is expensive when channel count is large.
+//   - The step0's depthwise could using ( channelMultiplier = 2 ) to compensate the lost expressiveness because of the all-zero filter.
+//
+
+
 /**
  * The base class for neural network's configuration.
  *
