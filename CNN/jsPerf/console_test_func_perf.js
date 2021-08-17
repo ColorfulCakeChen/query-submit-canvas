@@ -168,8 +168,8 @@ class Tester {
 
       new NameFunc( `sigmoid_c${c_base}`, tf.sigmoid.bind( null, this.x_cB ) ),
       new NameFunc( `sigmoid_c${c_more}`, tf.sigmoid.bind( null, this.x_cN ) ),
-      new NameFunc( `relu_c${c_base}`, tf.relu.bind( null, this.x_cB ) ),
-      new NameFunc( `relu6_c${c_base}` tf.relu6.bind( null, this.x_cB ) ),
+//      new NameFunc( `relu_c${c_base}`, tf.relu.bind( null, this.x_cB ) ),
+//      new NameFunc( `relu6_c${c_base}`, tf.relu6.bind( null, this.x_cB ) ),
 
 //       new NameFunc( "log", tf.log.bind( null, this.x_cB ) ),
 //       new NameFunc( "log1p", tf.log1p.bind( null, this.x_cB ) ),
