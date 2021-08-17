@@ -65,6 +65,7 @@ class Tester {
 
     this.pointwiseFilter_cBm1 = tf.randomNormal( [ 1, 1, c_base, c_base ] );
     this.pointwiseFilter_cBm2 = tf.randomNormal( [ 1, 1, c_base, ( c_base * 2 ) ] );
+    this.pointwiseFilter_c2Bm1 = tf.randomNormal( [ 1, 1, ( c_base * 2 ), ( c_base * 2 ) ] );
 
     this.pointwiseFilter_cNm1 = tf.randomNormal( [ 1, 1, c_more, c_more ] );
     this.pointwiseFilter_cNm2 = tf.randomNormal( [ 1, 1, c_more, ( c_more * 2 ) ] );
@@ -152,6 +153,15 @@ class Tester {
     return t1;
   }
 
+  /** Try depthwise-pointwise-SIGMOID with ( pad = valid ) and ( channelMultiplier = 2 ) and more channels. */
+  depthwise_cBm2_pointwise_c2Bm1_SIGMOID_padValid() {
+    let t0, t1;
+    t0 = tf.depthwiseConv2d( this.x_cN, this.depthwiseFilter_cBm2_3x3, 1, "valid" );
+    t1 = tf.conv2d( t0, this.pointwiseFilter_c2Bm1, 1, "valid" );            t0.dispose();
+    t0 = tf.sigmoid( t1 );                                                   t1.dispose();
+    return t1;
+  }
+
   prepare_testFuncArray() {
     let inputHeight = this.inputHeight;
     let inputWidth = this.inputWidth;
@@ -199,6 +209,10 @@ class Tester {
                       this.pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID_already_broadcast.bind( this ) ),
       new NameFunc( `pointwise_c${c_more}m1_SIGMOID_depthwise_SIGMOID_pointwise_c${c_more}m1_SIGMOID`,
                       this.pointwise_cNm1_SIGMOID_depthwise_SIGMOID_pointwise_cNm1_SIGMOID.bind( this ) ),
+      
+      new NameFunc( `depthwise_c${c_base}m2_pointwise_c${c_base}m1_SIGMOID_padValid`,
+                      this.depthwise_cBm2_pointwise_c2Bm1_SIGMOID_padValid.bind( this ) ),
+      
 
 //       new NameFunc( `pointwise_1x1x${c_base}_cm1_strides1_padValid`, tf.conv2d.bind( null, this.x_cB, this.pointwiseFilter_cBm1, 1, "valid" ) ),
 //       new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, this.x_cN, this.pointwiseFilter_cNm1, 1, "valid" ) ),
