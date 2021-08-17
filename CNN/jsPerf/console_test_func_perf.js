@@ -182,8 +182,8 @@ class Tester {
 //       new NameFunc( "add_broadcast_channel", tf.add.bind( null, this.x_cB, this.c_broadcast_channel ) ),
 //       new NameFunc( "add_broadcast_height_width", tf.add.bind( null, this.x_cB, this.c_broadcast_height_width ) ),
 
-      new NameFunc( `add_c${c_base}_broadcast_height_width`, tf.add.bind( null, this.x_cB, this.bias1_base ) ),
-      new NameFunc( `add_c${c_base}_broadcast_none`, tf.add.bind( null, this.x_cB, this.bias1_broadcast_base ) ),
+      new NameFunc( `add_c${c_base}`, tf.add.bind( null, this.x_cB, this.bias1_base ) ),
+      new NameFunc( `add_c${c_base}_already_broadcast`, tf.add.bind( null, this.x_cB, this.bias1_broadcast_base ) ),
 
 //       new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`,
 //                       this.pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID.bind( this ) ),
