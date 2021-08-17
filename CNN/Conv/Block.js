@@ -616,6 +616,8 @@ class Params_to_PointDepthPointParams_NotShuffleNet_NotMobileNet extends Params_
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
 
+//!!! ...unfinished... (2021/08/17) should use pointwise1ChannelCountRate (should not ignore it).
+
     this.pointwise1ChannelCount = 0;  // In this mode, always no pointwise convolution before depthwise convolution.
     this.pointwise1Bias = false;
     this.pointwise1ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
