@@ -53,9 +53,14 @@ class Tester {
     this.x_cB = tf.randomNormal([ inputHeight, inputWidth, c_base ]);
     this.x_cN = tf.randomNormal([ inputHeight, inputWidth, c_more ]);
 
-    this.c_broadcast_none = tf.randomNormal([ inputHeight, inputWidth, c_base ]);
-    this.c_broadcast_channel = tf.randomNormal([ inputHeight, inputWidth, 1 ]);
-    this.c_broadcast_height_width = tf.randomNormal([ 1, 1, c_base ]);
+//     this.c_broadcast_none = tf.randomNormal( [ inputHeight, inputWidth, c_base ] );
+//     this.c_broadcast_channel = tf.randomNormal( [ inputHeight, inputWidth, 1 ] );
+//     this.c_broadcast_height_width = tf.randomNormal( [ 1, 1, c_base ] );
+
+    this.bias1_base = tf.randomNormal([ 1, 1, c_base ]);
+    this.bias2_base = tf.randomNormal([ 1, 1, c_base ]);
+    this.bias1_broadcast_base = this.bias1_base.broadcastTo( [ inputHeight, inputWidth, c_base ] );
+    this.bias2_broadcast_base = this.bias2_base.broadcastTo( [ inputHeight, inputWidth, c_base ] );
 
     this.pointwiseFilter_cBm1 = tf.randomNormal( [ 1, 1, c_base, c_base ] );
     this.pointwiseFilter_cBm2 = tf.randomNormal( [ 1, 1, c_base, ( c_base * 2 ) ] );
@@ -112,7 +117,7 @@ class Tester {
   pointwise_cBm1_bias_SIGMOID_depthwise_pointwise_cBm1_bias_SIGMOID() {
     let t0 = tf.conv2d( this.x_cB, this.pointwiseFilter_cBm1, 1, "valid" );
 
-    let t1 = tf.add( t0, this.c_broadcast_height_width );
+    let t1 = tf.add( t0, this.bias1_base );
     t0.dispose();
 
     t0 = tf.sigmoid( t1 );
@@ -124,7 +129,7 @@ class Tester {
     t0 = tf.conv2d( t1, this.pointwiseFilter_cBm1, 1, "valid" );
     t1.dispose();
 
-    t1 = tf.add( t0, this.c_broadcast_height_width );
+    t1 = tf.add( t0, this.bias2_base );
     t0.dispose();
 
     t0 = tf.sigmoid( t1 );
@@ -170,10 +175,10 @@ class Tester {
 //       new NameFunc( "tan", tf.tan.bind( null, this.x_cB ) ),
 //       new NameFunc( "tanh", tf.tanh.bind( null, this.x_cB ) ),
 
-//       new NameFunc( `sigmoid_c${c_base}`, tf.sigmoid.bind( null, this.x_cB ) ),
-//       new NameFunc( `sigmoid_c${c_more}`, tf.sigmoid.bind( null, this.x_cN ) ),
-//       new NameFunc( "relu", tf.relu.bind( null, this.x_cB ) ),
-//       new NameFunc( "relu6", tf.relu6.bind( null, this.x_cB ) ),
+      new NameFunc( `sigmoid_c${c_base}`, tf.sigmoid.bind( null, this.x_cB ) ),
+      new NameFunc( `sigmoid_c${c_more}`, tf.sigmoid.bind( null, this.x_cN ) ),
+      new NameFunc( "relu", tf.relu.bind( null, this.x_cB ) ),
+      new NameFunc( "relu6", tf.relu6.bind( null, this.x_cB ) ),
 
 //       new NameFunc( "log", tf.log.bind( null, this.x_cB ) ),
 //       new NameFunc( "log1p", tf.log1p.bind( null, this.x_cB ) ),
@@ -182,10 +187,12 @@ class Tester {
 //       new NameFunc( "softplus", tf.softplus.bind( null, this.x_cB ) ),
 //       new NameFunc( "reciprocal", tf.reciprocal.bind( null, this.x_cB ) ),
 
-      new NameFunc( "add_broadcast_none", tf.add.bind( null, this.x_cB, this.c_broadcast_none ) ),
-      new NameFunc( "add_broadcast_channel", tf.add.bind( null, this.x_cB, this.c_broadcast_channel ) ),
-      new NameFunc( "add_broadcast_height_width", tf.add.bind( null, this.x_cB, this.c_broadcast_height_width ) ),
+//       new NameFunc( "add_broadcast_none", tf.add.bind( null, this.x_cB, this.c_broadcast_none ) ),
+//       new NameFunc( "add_broadcast_channel", tf.add.bind( null, this.x_cB, this.c_broadcast_channel ) ),
+//       new NameFunc( "add_broadcast_height_width", tf.add.bind( null, this.x_cB, this.c_broadcast_height_width ) ),
 
+      new NameFunc( "add_broadcast_height_width", tf.add.bind( null, this.x_cB, this.bias1_base ) ),
+      new NameFunc( "add_broadcast_none", tf.add.bind( null, this.x_cB, this.bias1_broadcast_base ) ),
 
 //       new NameFunc( `pointwise_c${c_base}c${c_more}_SIGMOID_pointwise_c${c_more}c${c_base}_SIGMOID`,
 //                       this.pointwise_cBcN_SIGMOID_pointwise_cNcB_SIGMOID.bind( this ) ),
@@ -196,15 +203,15 @@ class Tester {
       new NameFunc( `pointwise_c${c_more}m1_SIGMOID_depthwise_SIGMOID_pointwise_c${c_more}m1_SIGMOID`,
                       this.pointwise_cNm1_SIGMOID_depthwise_SIGMOID_pointwise_cNm1_SIGMOID.bind( this ) ),
 
-//       new NameFunc( `pointwise_1x1x${c_base}_cm1_strides1_padValid`, tf.conv2d.bind( null, this.x_cB, this.pointwiseFilter_cBm1, 1, "valid" ) ),
-//       new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, this.x_cN, this.pointwiseFilter_cNm1, 1, "valid" ) ),
+      new NameFunc( `pointwise_1x1x${c_base}_cm1_strides1_padValid`, tf.conv2d.bind( null, this.x_cB, this.pointwiseFilter_cBm1, 1, "valid" ) ),
+      new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, this.x_cN, this.pointwiseFilter_cNm1, 1, "valid" ) ),
 
 //       new NameFunc( `pointwise_1x1x${c_base}_cm2_strides1_padValid`, tf.conv2d.bind( null, this.x_cB, this.pointwiseFilter_cBm2, 1, "valid" ) ),
 //       new NameFunc( `pointwise_1x1x${c_more}_cm2_strides1_padValid`, tf.conv2d.bind( null, this.x_cN, this.pointwiseFilter_cNm2, 1, "valid" ) ),
 
 
-//       new NameFunc( `depthwise_3x3x${c_base}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, this.x_cB, this.depthwiseFilter_cBm1_3x3, 1, "same" ) ),
-//       new NameFunc( `depthwise_3x3x${c_more}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, this.x_cN, this.depthwiseFilter_cNm1_3x3, 1, "same" ) ),
+      new NameFunc( `depthwise_3x3x${c_base}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, this.x_cB, this.depthwiseFilter_cBm1_3x3, 1, "same" ) ),
+      new NameFunc( `depthwise_3x3x${c_more}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, this.x_cN, this.depthwiseFilter_cNm1_3x3, 1, "same" ) ),
 
 //       new NameFunc( `depthwise_3x3x${c_base}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, this.x_cB, this.depthwiseFilter_cBm2_3x3, 1, "same" ) ),
 //       new NameFunc( `depthwise_3x3x${c_more}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, this.x_cN, this.depthwiseFilter_cNm2_3x3, 1, "same" ) ),
