@@ -156,7 +156,7 @@ class Tester {
   /** Try depthwise-pointwise-SIGMOID with ( pad = valid ) and ( channelMultiplier = 2 ) and more channels. */
   depthwise_cBm2_pointwise_c2Bm1_SIGMOID_padValid() {
     let t0, t1;
-    t0 = tf.depthwiseConv2d( this.x_cN, this.depthwiseFilter_cBm2_3x3, 1, "valid" );
+    t0 = tf.depthwiseConv2d( this.x_cB, this.depthwiseFilter_cBm2_3x3, 1, "valid" );
     t1 = tf.conv2d( t0, this.pointwiseFilter_c2Bm1, 1, "valid" );            t0.dispose();
     t0 = tf.sigmoid( t1 );                                                   t1.dispose();
     return t1;
