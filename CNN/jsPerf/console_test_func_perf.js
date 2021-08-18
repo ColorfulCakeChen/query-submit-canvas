@@ -185,7 +185,8 @@ class Tester {
   abs_batchNorm_cB() {
     let t0, t1;
     t0 = tf.abs( this.variance_base );
-    t1 = tf.batchNorm( this.x_cB, this.mean_base, t0, this.offset_base, this.scale_base ); t0.dispose();
+    t1 = tf.batchNorm( this.x_cB, this.mean_base, t0, this.offset_base, this.scale_base, 1 ); // varianceEpsilon = 1
+    t0.dispose();
     return t1;
   }
 
