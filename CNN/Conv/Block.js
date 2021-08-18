@@ -460,6 +460,10 @@ class Base {
 
 /**
  * Basic class for all Params_to_PointDepthPointParams_Xxx classes.
+ *
+ * Note: In modern deep learning CNN, there is batch normalization after convolution and before activation. The batch normalization
+ * has bias internally. We do not have batch normalization in architecture so an explicit bias will be used before every activation
+ * function.
  */
 class Params_to_PointDepthPointParams {
   /**
