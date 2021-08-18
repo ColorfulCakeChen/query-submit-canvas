@@ -395,29 +395,26 @@ class Base {
    *   The Block.Params object to be reference.
    */
   static create_Params_to_PointDepthPointParams( blockParams ) {
-//!!! ...unfinished... (2021/07/30) Why not use a single parameter?
-//    *   - If ( stepCountPerBlock == 0 ), this rate will be ignored. There will be no first 1x1 pointwise.
-//    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 0 ), will be simplified ShuffleNetV2 (expanding by once depthwise).
-//    *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
-//    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
-//    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
 
-    if ( this.stepCountPerBlock == 0 ) {  // Not ShuffleNetV2, Not MobileNetV2.
+    if ( this.stepCountPerBlock == 0 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
       return new Params_to_PointDepthPointParams_NotShuffleNet_NotMobileNet( blockParams );
 
     } else {
-      if ( this.bChannelShuffler == true ) {
-        if ( this.pointwise1ChannelCountRate == 0 ) { // will be simplified ShuffleNetV2 (expanding by once depthwise).
+      if ( this.bChannelShuffler == true ) { // 2. ShuffleNetV2
+        if ( this.pointwise1ChannelCountRate == 0 ) { // 2.1 will be simplified ShuffleNetV2 (expanding by once depthwise).
           return new Params_to_PointDepthPointParams_ShuffleNetV2_Simplified( blockParams );
 
-        } else { // ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
+        } else { // 2.2 ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
           return new Params_to_PointDepthPointParams_ShuffleNetV2( blockParams );
 
         }
       } else { // ( bChannelShuffler == false )
-        // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
+        // 3. MobileNetV2
+        //
+        // ( pointwise1ChannelCountRate == 0 ), will be similar to MobileNetV1.
+        // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV2 without expanding.
         // ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
-        return new Params_to_PointDepthPointParams_MobileNet( blockParams );
+        return new Params_to_PointDepthPointParams_MobileNetV2( blockParams );
       }
     }
   }
@@ -798,7 +795,7 @@ class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthP
 
 
 /** Privode parameters for MobileNetV1 or MobileNetV2 (i.e. with pointwise1, with add-input-to-output). */
-class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPointParams {
+class Params_to_PointDepthPointParams_MobileNetV2 extends Params_to_PointDepthPointParams {
   /** @override */
   configTo_beforeStep0() {
     let blockParams = this.blockParams;
@@ -818,7 +815,7 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
     this.depthwiseBias = true;
     this.depthwiseActivationId = blockParams.nActivationId;
 
-    // This is not MobileNetV2's design. It is just our choice for comparing with ShuffleNetV2.
+    // In MobileNetV2's original design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
     this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2; // In MobileNetV2, all steps' output0 is twice depth of source input0.
 
     // In MobileNetV2, since there is no activation function after pointwise21, it needs not bias after pointwise21. The reason
@@ -839,9 +836,10 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
     //
     // Q: How to know whether it is MobileNetV2 or MobileNetV1?
     // A: By pointwise1ChannelCountRate.
-    //   - If ( pointwise1ChannelCount < pointwise21ChannelCount ), similar to ResNet.
-    //   - If ( pointwise1ChannelCount == pointwise21ChannelCount ), similar to MobileNetV1 or ShufffleNetV2.
-    //   - If ( pointwise1ChannelCount > pointwise21ChannelCount ), similar to MobileNetV2.
+    //   - If ( pointwise1ChannelCount == 0 ), similar to MobileNetV1. ( pointwise1ChannelCountRate == 0 )
+    //   - If ( pointwise1ChannelCount <  pointwise21ChannelCount ), similar to ResNet. (can not be expressed by Block.Params)
+    //   - If ( pointwise1ChannelCount == pointwise21ChannelCount ), similar to MobileNetV2 without expanding. ( pointwise1ChannelCountRate == 1 )
+    //   - If ( pointwise1ChannelCount >  pointwise21ChannelCount ), similar to MobileNetV2. ( pointwise1ChannelCountRate == 2 )
     this.pointwise1ChannelCount = this.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate; // In MobileNetV2, the rate is usually 2.
 
     this.bShouldKeepInputTensor = blockParams.bKeepInputTensor;    // Step0 may or may not keep input tensor according to caller's necessary.
