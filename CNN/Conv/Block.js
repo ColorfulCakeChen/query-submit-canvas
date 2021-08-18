@@ -549,7 +549,7 @@ class Params_to_PointDepthPointParams {
 }
 
 
-/** Privode parameters for pure depthwise-pointwise convolutions. */
+/** Provide parameters for pure depthwise-pointwise convolutions. */
 class Params_to_PointDepthPointParams_NotShuffleNet_NotMobileNet extends Params_to_PointDepthPointParams {
   /**
    * Compute how many step shoud be used and what is the last step's depthwise filter size, when shrink sourceHeight to outputHeight
@@ -649,7 +649,7 @@ class Params_to_PointDepthPointParams_NotShuffleNet_NotMobileNet extends Params_
 }
 
 
-/** Privode parameters for simplified ShuffleNetV2 (i.e. without pointwise1, with concatenator).
+/** Provide parameters for simplified ShuffleNetV2 (i.e. without pointwise1, with concatenator).
  * 
  * Q: How to specify this configuration?
  * A: By ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 ) in the parameters of Block.Params.
@@ -713,7 +713,7 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
 }
 
 
-/** Privode parameters for ShuffleNetV2 (i.e. with pointwise1, with concatenator).
+/** Provide parameters for ShuffleNetV2 (i.e. with pointwise1, with concatenator).
  *
  * (Our) Adjusted ShuffleNetV2:
  *
@@ -723,11 +723,11 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  *   - Pointwise convolution to generate output group 1.
  *   - Pointwise convolution to generate output group 2.
  *
-!!!
  * Although the channel shuffler is achieved by pointwise convolution without bias and activation function, however,
- * the second pointwise convolution (before channel shuffler) indeed has bias and activation function. After combining
- * these two pointwise convolutions (the original second pointwise and the channel shuffler), the total result is twice
- * pointwise convolution with bias and activation function.
+ * the pointwise21 convolution (before channel shuffler) indeed has bias and activation function. After combining
+ * these two pointwise convolutions (the original pointwise2 and the channel shuffler), the total result is twice
+ * pointwise convolution: pointwise21 with bias and activation function, pointwise21 with or without bias and
+ * activation function.
  *
  * StepAll
  *   - pointwise21 always has bias and activation. It achieves both pointwise convolution and channel-shuffling.
@@ -737,7 +737,6 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  *
  * Step1, Step2, ..., StepLast
  *   - pointwise22 has no bias and no activation. It achieves only channel-shuffling (not pointwise convolution).
- *
  *
  *
  * Note that:
@@ -814,7 +813,7 @@ class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthP
 }
 
 
-/** Privode parameters for MobileNetV1 or MobileNetV2 (i.e. with pointwise1, with add-input-to-output). */
+/** Provide parameters for MobileNetV1 or MobileNetV2 (i.e. with pointwise1, with add-input-to-output). */
 class Params_to_PointDepthPointParams_MobileNetV2 extends Params_to_PointDepthPointParams {
   /** @override */
   configTo_beforeStep0() {
