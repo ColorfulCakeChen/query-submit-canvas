@@ -726,26 +726,15 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  * Although the channel shuffler is achieved by pointwise convolution without bias and activation function, however,
  * the pointwise21 convolution (before channel shuffler) indeed has bias and activation function. After combining
  * these two pointwise convolutions (the original pointwise2 and the channel shuffler), the total result is twice
- * pointwise convolution: pointwise21 with bias and activation function, pointwise21 with or without bias and
- * activation function.
- *
- * StepAll
- *   - pointwise21 always has bias and activation. It achieves both pointwise convolution and channel-shuffling.
- *
- * Step0
- *   - pointwise22 has bias and activation. It achieves both pointwise convolution and channel-shuffling.
- *
- * Step1, Step2, ..., StepLast
- *   - pointwise22 has no bias and no activation. It achieves only channel-shuffling (not pointwise convolution).
- *
+ * pointwise convolution: pointwise21 and pointwise22. They should all have bias and activation function to achieve
+ * both pointwise convolution and channel-shuffling.
  *
  * Note that:
- *   - The twice pointwise2 convolution (every has same as block's input channel count) achieves not only pointwise
- *     convolution but also channel shuffling. So, it is one less pointwise convolution (than original ShuffleNetV2).
- *
- *   - The once pointwise2 convolution (has double of block's input channel count) of last step achieves simultaneously
- *     pointwise convolution, channel shuffling, and concatenating. So, it is not only one less pointwise convolution,
- *     but also one less concatenating (than original ShuffleNetV2).
+ *   - The pointwise21 and pointwise22 convolution achieves not only pointwise convolution but also channel shuffling.
+ *     Comparing to the original ShuffleNetV2:
+ *       - Step0: Two less pointwise convolution.
+ *       - Step1, Step2, ..., Step( N - 1 ): One less pointwise convolution. But One more bias and one more activation function.
+ *       - StepLast: One less pointwise convolution.
  *
  */
 class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthPointParams {
@@ -766,12 +755,16 @@ class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthP
     this.depthwiseBias = false;
     this.depthwiseActivationId = PointDepthPoint.Params.Activation.Ids.NONE; // In ShuffleNetV2, depthwise convolution doesn't have activation.
 
-    // In ShuffleNetV2, all steps's pointwise21 always has bias and activation. It achieves both pointwise and channel-shuffling.
+    // In ShuffleNetV2, all steps' pointwise21 always has bias and activation. It achieves both pointwise and channel-shuffling.
     this.pointwise21ChannelCount = blockParams.sourceChannelCount; // All steps' (except stepLast) output0 is the same depth as source input0.
     this.pointwise21Bias = true;
     this.pointwise21ActivationId = blockParams.nActivationId;
 
-    // In ShuffleNetV2, only steps0's pointwise21 has bias and activation. It achieves both pointwise and channel-shuffling.
+    // In ShuffleNetV2, all steps' pointwise22 has bias and activation. It achieves both pointwise and channel-shuffling.
+    //
+    // Note: Comparing to the original ShuffleNetV2, this moght be a little more expensive because every all non-step0
+    //       (i.e. step1, step2, ..., stepLast) will do one more bias and activation (although do one less pointwise
+    //       convolution).
     this.pointwise22ChannelCount = blockParams.sourceChannelCount; // All steps' (except stepLast) output1 is the same depth as source input1.
     this.pointwise22Bias = true;
     this.pointwise22ActivationId = blockParams.nActivationId;
@@ -789,11 +782,6 @@ class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthP
     this.channelCount0_pointwise1Before = step0.outChannels0;
     this.channelCount1_pointwise1Before = step0.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
     this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
-
-    // In ShuffleNetV2, the pointwise22 of all non-step0 (i.e. step1, step2, ..., stepLast) does not have bias and activation because
-    // it is only responsible for channel-shuffling (not for pointwise convolution).
-    this.pointwise22Bias = false;
-    this.pointwise22ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
 
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
