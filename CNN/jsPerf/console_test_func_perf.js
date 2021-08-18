@@ -250,14 +250,15 @@ class Tester {
 //       new NameFunc( `depthwise_c${c_base}m2_SIGMOID_pointwise_c${ ( c_base * 2 ) }m1_SIGMOID`,
 //                       this.depthwise_cBm2_SIGMOID_pointwise_c2Bm1_SIGMOID.bind( this ) ),
 
-//       new NameFunc( `pointwise_1x1x${c_base}_cm1_strides1_padValid`, tf.conv2d.bind( null, this.x_cB, this.pointwiseFilter_cBm1, 1, "valid" ) ),
+
+       new NameFunc( `pointwise_1x1x${c_base}_cm1_strides1_padValid`, tf.conv2d.bind( null, this.x_cB, this.pointwiseFilter_cBm1, 1, "valid" ) ),
 //       new NameFunc( `pointwise_1x1x${c_more}_cm1_strides1_padValid`, tf.conv2d.bind( null, this.x_cN, this.pointwiseFilter_cNm1, 1, "valid" ) ),
 
 //       new NameFunc( `pointwise_1x1x${c_base}_cm2_strides1_padValid`, tf.conv2d.bind( null, this.x_cB, this.pointwiseFilter_cBm2, 1, "valid" ) ),
 //       new NameFunc( `pointwise_1x1x${c_more}_cm2_strides1_padValid`, tf.conv2d.bind( null, this.x_cN, this.pointwiseFilter_cNm2, 1, "valid" ) ),
 
 
-//       new NameFunc( `depthwise_3x3x${c_base}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, this.x_cB, this.depthwiseFilter_cBm1_3x3, 1, "same" ) ),
+       new NameFunc( `depthwise_3x3x${c_base}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, this.x_cB, this.depthwiseFilter_cBm1_3x3, 1, "same" ) ),
 //       new NameFunc( `depthwise_3x3x${c_more}_cm1_strides1_padSame`, tf.depthwiseConv2d.bind( null, this.x_cN, this.depthwiseFilter_cNm1_3x3, 1, "same" ) ),
 
 //       new NameFunc( `depthwise_3x3x${c_base}_cm2_strides1_padSame`, tf.depthwiseConv2d.bind( null, this.x_cB, this.depthwiseFilter_cBm2_3x3, 1, "same" ) ),
