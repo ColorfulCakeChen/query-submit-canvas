@@ -795,7 +795,7 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
     let blockParams = this.blockParams;
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
 
-    // In MobileNet:
+    // In MobileNetV2:
     //   - Step0 can not do add-input-to-output because the input0's ( height, width ) has been halven.
     //   - All steps (include step0) do not use input1.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT;
@@ -809,11 +809,12 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
     this.depthwiseBias = true;
     this.depthwiseActivationId = blockParams.nActivationId;
 
+    // This is not MobileNetV2's design. It is just our choice for comparing with ShuffleNetV2.
     this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2; // In MobileNetV2, all steps' output0 is twice depth of source input0.
 
-    // In MobileNetV2, although there is no activation function after pointwise21, it should still have bias for completing
-    // affine transformation.
-    this.pointwise21Bias = true;
+    // In MobileNetV2, since there is no activation function after pointwise21, it needs not bias after pointwise21. The reason
+    // is the pointwise1 of the next step has bias before activation to complete affine transformation.
+    this.pointwise21Bias = false;
 
     // In MobileNetV2, the second 1x1 pointwise convolution doesn't have activation function in default.
     //
@@ -842,7 +843,7 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
     // The input0 of all steps (except step0) have the same depth as previous (also step0's) step's output0.
     this.channelCount0_pointwise1Before = step0.outChannels0;
 
-    // In MobileNet:
+    // In MobileNetV2:
     //   - All steps (except step0) do add-input-to-output (without concatenation).
     //   - All steps (include step0) do not use input1.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT;
@@ -850,4 +851,15 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
     this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
+  
+  /** @override */
+  configTo_beforeStepLast() {
+    super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
+
+    // In MobileNetV2, although there is no activation function after pointwise21, it should have bias after pointwise21 for the
+    // stepLast. The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
+    // transformation. It must have do it by itself.
+    this.pointwise21Bias = true;
+  }
+
 }
