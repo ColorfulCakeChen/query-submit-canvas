@@ -196,19 +196,19 @@ class Tester {
     return t1;
   }
 
-  abs_batchNorm_cB() {
-    let t0 = tf.abs( this.x_cB );
-    let t1 = tf.batchNorm( this.x_cB, this.mean_base, t0, this.offset_base, this.scale_base, 1 ); // varianceEpsilon = 1
-    t0.dispose();
-    return t1;
-  }
+//   abs_batchNorm_cB() { // Slower than square_batchNorm_cB().
+//     let t0 = tf.abs( this.x_cB );
+//     let t1 = tf.batchNorm( this.x_cB, this.mean_base, t0, this.offset_base, this.scale_base, 1 ); // varianceEpsilon = 1
+//     t0.dispose();
+//     return t1;
+//   }
 
-  mul_batchNorm_cB() {
-    let t0 = tf.mul( this.x_cB, this.x_cB );
-    let t1 = tf.batchNorm( this.x_cB, this.mean_base, t0, this.offset_base, this.scale_base, 1 ); // varianceEpsilon = 1
-    t0.dispose();
-    return t1;
-  }
+//   mul_batchNorm_cB() { // Slower than square_batchNorm_cB().
+//     let t0 = tf.mul( this.x_cB, this.x_cB );
+//     let t1 = tf.batchNorm( this.x_cB, this.mean_base, t0, this.offset_base, this.scale_base, 1 ); // varianceEpsilon = 1
+//     t0.dispose();
+//     return t1;
+//   }
 
   square_batchNorm_cB() {
     let t0 = tf.square( this.x_cB );
@@ -256,8 +256,8 @@ class Tester {
 
       new NameFunc( `add_sigmoid_c${c_base}`, this.add_sigmoid_cB.bind( this ) ),
       new NameFunc( `add_relu6_c${c_base}`, this.add_relu6_cB.bind( this ) ),
-      new NameFunc( `abs_batchNorm_c${c_base}`, this.abs_batchNorm_cB.bind( this ) ),
-      new NameFunc( `mul_batchNorm_c${c_base}`, this.mul_batchNorm_cB.bind( this ) ),
+//       new NameFunc( `abs_batchNorm_c${c_base}`, this.abs_batchNorm_cB.bind( this ) ),
+//       new NameFunc( `mul_batchNorm_c${c_base}`, this.mul_batchNorm_cB.bind( this ) ),
       new NameFunc( `square_batchNorm_c${c_base}`, this.square_batchNorm_cB.bind( this ) ),
 
 //       new NameFunc( `batchNorm_c${c_base}_already_broadcast`,
