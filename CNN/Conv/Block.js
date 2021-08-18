@@ -657,21 +657,10 @@ class Params_to_PointDepthPointParams_NotShuffleNet_NotMobileNet extends Params_
  * Q: How to specify this configuration?
  * A: By ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 ) in the parameters of Block.Params.
  *
- * (Our) Adjusted ShuffleNetV2:
- *  
- * Since channel shuffler could achieved efficiently by pointwise convolution, it may be possible to combine the pointwise2
- * convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
- *   - Concatenate the output of depthwise convolution and the other output group.
- *   - Pointwise convolution to generate output group 1.
- *   - Pointwise convolution to generate output group 2.
+ * What is simplified by this configuration?
  *
- * Although the channel shuffler is achieved by pointwise convolution without bias and activation function, however,
- * the second pointwise convolution (before channel shuffler) indeed has bias and activation function. After combining
- * these two pointwise convolutions (the original second and the channel shuffler), the total result is twice pointwise
- * convolution with bias and activation function.
- *
- * If the poitwise1 convolution (of every step (include step 0 too)) could be discarded, the step 0 and step 0's branch could
- * be achieved simultaneously by:
+ * When the poitwise1 convolution (of every step (include step 0 too)) is discarded (i.e. ( pointwise1ChannelCountRate == 0 ) ),
+ * the step 0 and step 0's branch could be achieved simultaneously by:
  *   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS).
  *   - No need to concatenate because the above operation already double channel count.
  *   - twice pointwise2 convolution (every has same as block's input channel count).
@@ -689,18 +678,15 @@ class Params_to_PointDepthPointParams_NotShuffleNet_NotMobileNet extends Params_
  * Note that:
  *   - The depthwise convolution (channelMultipler = 2, strides = 2) of step 0 achieves simultaneously two depthwise
  *     convolution (channelMultipler = 1, strides = 2) of step 0 and step 0's branch. So, it is one less depthwise
- *     convolution, and one less concatenating.
+ *     convolution and one less concatenating (than original and our adjusted ShuffleNetV2).
  *
- *   - The twice pointwise2 convolution (every has same as block's input channel count) achieves not only pointwise
- *     convolution but also channel shuffling. So, it is one less pointwise convolution.
- *
- *   - The once pointwise2 convolution (has double of block's input channel count) of last step achieves simultaneously
- *     pointwise convolution, channel shuffling, and concatenating. So, it is not only one less pointwise convolution,
- *     but also one less concatenating.
- *
- *   - Even if the pointwise1 convolution is discarded and the pointwise2 convolution does not have bias and activation
- *     function, the depthwise convolution (with bias and COS as activation function) and pointwise2 convolution together
- *     compose an effective Fourier series which should have enough expressive power for approximating any function.
+ *   - Even if the pointwise1 convolution is discarded, just two steps of this simplied ShuffleNetV2 still compose an
+ *     effective Fourier series which should have enough expressive power for approximating any function. By given
+ *     the following configuration in the Block.Params:
+ *       - ( bChannelShuffler == true )
+ *       - ( pointwise1ChannelCountRate == 0 )
+ *       - ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.COS) 
+ *       - ( nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE)
  *
  */
 class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_PointDepthPointParams_ShuffleNetV2 {
@@ -730,7 +716,30 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
 }
 
 
-/** Privode parameters for ShuffleNetV2 (i.e. with pointwise1, with concatenator). */
+/** Privode parameters for ShuffleNetV2 (i.e. with pointwise1, with concatenator).
+ *
+ * (Our) Adjusted ShuffleNetV2:
+ *
+ * Since channel shuffler could achieved efficiently by pointwise convolution, it may be possible to combine the pointwise2
+ * convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
+ *   - Concatenate the output of depthwise convolution and the other output group.
+ *   - Pointwise convolution to generate output group 1.
+ *   - Pointwise convolution to generate output group 2.
+ *
+ * Although the channel shuffler is achieved by pointwise convolution without bias and activation function, however,
+ * the second pointwise convolution (before channel shuffler) indeed has bias and activation function. After combining
+ * these two pointwise convolutions (the original second pointwise and the channel shuffler), the total result is twice
+ * pointwise convolution with bias and activation function.
+ *
+ * Note that:
+ *   - The twice pointwise2 convolution (every has same as block's input channel count) achieves not only pointwise
+ *     convolution but also channel shuffling. So, it is one less pointwise convolution (than original ShuffleNetV2).
+ *
+ *   - The once pointwise2 convolution (has double of block's input channel count) of last step achieves simultaneously
+ *     pointwise convolution, channel shuffling, and concatenating. So, it is not only one less pointwise convolution,
+ *     but also one less concatenating (than original ShuffleNetV2).
+ *
+ */
 class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthPointParams {
   /** @override */
   configTo_beforeStep0() {
@@ -858,7 +867,7 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
 
     // In MobileNetV2, although there is no activation function after pointwise21, it should have bias after pointwise21 for the
     // stepLast. The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
-    // transformation. It must have do it by itself.
+    // transformation. It must do it by itself.
     this.pointwise21Bias = true;
   }
 
