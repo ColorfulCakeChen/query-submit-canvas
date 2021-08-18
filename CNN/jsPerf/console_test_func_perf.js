@@ -182,11 +182,37 @@ class Tester {
     return t1;
   }
 
-//!!! ...unfinished... (2021/08/18) should test: variance as mul( x, x ) or pow( x, 2 ) or square( x ).
+  add_sigmoid_cB() {
+    let t0 = tf.add( this.x_cB, this.bias1_base );
+    let t1 = tf.sigmoid( t0 );
+    t0.dispose();
+    return t1;
+  }
+
+  add_relu6_cB() {
+    let t0 = tf.add( this.x_cB, this.bias1_base );
+    let t1 = tf.relu6( t0 );
+    t0.dispose();
+    return t1;
+  }
+
   abs_batchNorm_cB() {
-    let t0, t1;
-    t0 = tf.abs( this.variance_base );
-    t1 = tf.batchNorm( this.x_cB, this.mean_base, t0, this.offset_base, this.scale_base, 1 ); // varianceEpsilon = 1
+    let t0 = tf.abs( this.x_cB );
+    let t1 = tf.batchNorm( this.x_cB, this.mean_base, t0, this.offset_base, this.scale_base, 1 ); // varianceEpsilon = 1
+    t0.dispose();
+    return t1;
+  }
+
+  mul_batchNorm_cB() {
+    let t0 = tf.mul( this.x_cB, this.x_cB );
+    let t1 = tf.batchNorm( this.x_cB, this.mean_base, t0, this.offset_base, this.scale_base, 1 ); // varianceEpsilon = 1
+    t0.dispose();
+    return t1;
+  }
+
+  square_batchNorm_cB() {
+    let t0 = tf.square( this.x_cB );
+    let t1 = tf.batchNorm( this.x_cB, this.mean_base, t0, this.offset_base, this.scale_base, 1 ); // varianceEpsilon = 1
     t0.dispose();
     return t1;
   }
@@ -222,12 +248,17 @@ class Tester {
 //       new NameFunc( "add_broadcast_channel", tf.add.bind( null, this.x_cB, this.c_broadcast_channel ) ),
 //       new NameFunc( "add_broadcast_height_width", tf.add.bind( null, this.x_cB, this.c_broadcast_height_width ) ),
 
-      new NameFunc( `add_c${c_base}`, tf.add.bind( null, this.x_cB, this.bias1_base ) ),
-      new NameFunc( `add_c${c_base}_already_broadcast`, tf.add.bind( null, this.x_cB, this.bias1_broadcast_base ) ),
+//       new NameFunc( `add_c${c_base}`, tf.add.bind( null, this.x_cB, this.bias1_base ) ),
+//       new NameFunc( `add_c${c_base}_already_broadcast`, tf.add.bind( null, this.x_cB, this.bias1_broadcast_base ) ),
 
-      new NameFunc( `batchNorm_c${c_base}`, tf.batchNorm.bind( null,
-                      this.x_cB, this.mean_base, this.variance_base, this.offset_base, this.scale_base ) ),
+//       new NameFunc( `batchNorm_c${c_base}`, tf.batchNorm.bind( null,
+//                       this.x_cB, this.mean_base, this.variance_base, this.offset_base, this.scale_base ) ),
+
+      new NameFunc( `add_sigmoid_c${c_base}`, this.add_sigmoid_cB.bind( this ) ),
+      new NameFunc( `add_relu6_c${c_base}`, this.add_relu6_cB.bind( this ) ),
       new NameFunc( `abs_batchNorm_c${c_base}`, this.abs_batchNorm_cB.bind( this ) ),
+      new NameFunc( `mul_batchNorm_c${c_base}`, this.mul_batchNorm_cB.bind( this ) ),
+      new NameFunc( `square_batchNorm_c${c_base}`, this.square_batchNorm_cB.bind( this ) ),
 
 //       new NameFunc( `batchNorm_c${c_base}_already_broadcast`,
 //                       tf.batchNorm.bind( null,
