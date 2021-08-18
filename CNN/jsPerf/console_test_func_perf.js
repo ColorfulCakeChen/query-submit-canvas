@@ -203,8 +203,11 @@ class Tester {
 //       new NameFunc( "add_broadcast_channel", tf.add.bind( null, this.x_cB, this.c_broadcast_channel ) ),
 //       new NameFunc( "add_broadcast_height_width", tf.add.bind( null, this.x_cB, this.c_broadcast_height_width ) ),
 
-//       new NameFunc( `add_c${c_base}`, tf.add.bind( null, this.x_cB, this.bias1_base ) ),
-//       new NameFunc( `add_c${c_base}_already_broadcast`, tf.add.bind( null, this.x_cB, this.bias1_broadcast_base ) ),
+      new NameFunc( `add_c${c_base}`, tf.add.bind( null, this.x_cB, this.bias1_base ) ),
+      new NameFunc( `add_c${c_base}_already_broadcast`, tf.add.bind( null, this.x_cB, this.bias1_broadcast_base ) ),
+
+      new NameFunc( `batchNorm_c${c_base}`, tf.batchNorm.bind( null, this.x_cB, this.bias1_base, this.bias2_base ) ),
+      new NameFunc( `batchNorm_c${c_base}_already_broadcast`, tf.batchNorm.bind( null, this.x_cB, this.bias1_broadcast_base, this.bias2_broadcast_base ) ),
 
 //       new NameFunc( `concat_c${c_base}_bias`, tf.concat.bind( null, [ this.x_cB, this.bias1_broadcast_base ], 2 ) ),
 //       new NameFunc( `concat_c${c_base}c${c_base}_bias`, tf.concat.bind( null, [ this.x_cB, this.x_cB2, this.bias1_broadcast_base ], 2 ) ),
