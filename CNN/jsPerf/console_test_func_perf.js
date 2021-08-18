@@ -182,6 +182,7 @@ class Tester {
     return t1;
   }
 
+//!!! ...unfinished... (2021/08/18) should test: variance as mul( x, x ) or pow( x, 2 ) or square( x ).
   abs_batchNorm_cB() {
     let t0, t1;
     t0 = tf.abs( this.variance_base );
