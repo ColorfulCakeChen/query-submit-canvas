@@ -12,8 +12,10 @@ import * as ConcatAlongAxisId2 from "./ConcatAlongAxisId2.js";
 import * as TensorOpCounter from "./TensorOpCounter.js";
 
 
-//!!! ...unfinished... (2021/08/13) Add parameter to indicate whether there is a all-zero filter for depthwise or pointwise forcibly.
-// So that implicit bias basis could be generrated forcibly.
+//!!! ...unfinished... (2021/08/18)
+// tf.batchNorm() is faster than tf.add().
+// Whether batchNorm could be used as bias? even activation function?
+//
 
 
 /**
