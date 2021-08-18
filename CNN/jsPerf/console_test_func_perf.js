@@ -63,6 +63,16 @@ class Tester {
     this.bias1_broadcast_base = this.bias1_base.broadcastTo( [ inputHeight, inputWidth, c_base ] );
     this.bias2_broadcast_base = this.bias2_base.broadcastTo( [ inputHeight, inputWidth, c_base ] );
 
+    this.mean_base = tf.randomNormal([ 1, 1, c_base ]);
+    this.variance_base = tf.randomNormal([ 1, 1, c_base ]);
+    this.offset_base = tf.randomNormal([ 1, 1, c_base ]);
+    this.scale_base = tf.randomNormal([ 1, 1, c_base ]);
+
+    this.mean_broadcast_base = this.mean_base.broadcastTo( [ inputHeight, inputWidth, c_base ] );
+    this.variance_broadcast_base = this.variance_base.broadcastTo( [ inputHeight, inputWidth, c_base ] );
+    this.offset_broadcast_base = this.offset_base.broadcastTo( [ inputHeight, inputWidth, c_base ] );
+    this.scale_broadcast_base = this.scale_base.broadcastTo( [ inputHeight, inputWidth, c_base ] );
+
     this.pointwiseFilter_cBm1 = tf.randomNormal( [ 1, 1, c_base, c_base ] );
     this.pointwiseFilter_cBm2 = tf.randomNormal( [ 1, 1, c_base, ( c_base * 2 ) ] );
     this.pointwiseFilter_c2Bm1 = tf.randomNormal( [ 1, 1, ( c_base * 2 ), ( c_base * 2 ) ] );
@@ -206,10 +216,11 @@ class Tester {
       new NameFunc( `add_c${c_base}`, tf.add.bind( null, this.x_cB, this.bias1_base ) ),
       new NameFunc( `add_c${c_base}_already_broadcast`, tf.add.bind( null, this.x_cB, this.bias1_broadcast_base ) ),
 
-      new NameFunc( `batchNorm_c${c_base}`, tf.batchNorm.bind( null, this.x_cB, this.bias1_base, this.bias2_base, this.bias1_base, this.bias2_base ) ),
+      new NameFunc( `batchNorm_c${c_base}`, tf.batchNorm.bind( null,
+                      this.x_cB, this.mean_base, this.variance_base, this.offset_base, this.scale_base ) ),
       new NameFunc( `batchNorm_c${c_base}_already_broadcast`,
                       tf.batchNorm.bind( null,
-                        this.x_cB, this.bias1_broadcast_base, this.bias2_broadcast_base, this.bias1_broadcast_base, this.bias2_broadcast_base ) ),
+                        this.x_cB, this.mean_broadcast_base, this.variance_broadcast_base, this.offset_broadcast_base, this.scale_broadcast_base ) ),
 
 //       new NameFunc( `concat_c${c_base}_bias`, tf.concat.bind( null, [ this.x_cB, this.bias1_broadcast_base ], 2 ) ),
 //       new NameFunc( `concat_c${c_base}c${c_base}_bias`, tf.concat.bind( null, [ this.x_cB, this.x_cB2, this.bias1_broadcast_base ], 2 ) ),
