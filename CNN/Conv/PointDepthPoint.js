@@ -13,7 +13,7 @@ import * as TensorOpCounter from "./TensorOpCounter.js";
 
 
 //!!! ...unfinished... (2021/08/18)
-// tf.batchNorm() is faster than tf.add().
+// tf.batchNorm() is faster than tf.add() when with broadcasting by CPU.
 // Whether batchNorm could be used as bias? even activation function?
 //
 
