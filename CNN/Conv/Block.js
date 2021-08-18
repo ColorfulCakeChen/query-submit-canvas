@@ -67,9 +67,6 @@ class Params extends Weights.Params {
    *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
    *   - If ( pointwise1ChannelCountRate == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   * @param {boolean} bBias
-   *   If true, there will be a bias after every convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   *
    * @param {string} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution).
@@ -95,7 +92,7 @@ class Params extends Weights.Params {
     stepCountPerBlock,
     bChannelShuffler,
     pointwise1ChannelCountRate,
-    depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd,
+    depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd,
     bKeepInputTensor
   ) {
 
@@ -118,7 +115,6 @@ class Params extends Weights.Params {
       [ Params.bChannelShuffler,           bChannelShuffler ],
       [ Params.pointwise1ChannelCountRate, pointwise1ChannelCountRate ],
       [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
-      [ Params.bBias,                      bBias ],
       [ Params.nActivationId,              nActivationId ],
       [ Params.nActivationIdAtBlockEnd,    nActivationIdAtBlockEnd ],
       [ Params.bKeepInputTensor,           bKeepInputTensor ],
@@ -136,7 +132,6 @@ class Params extends Weights.Params {
   get pointwise1ChannelCountRate()  { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
 
   get depthwiseFilterHeight()       { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
-  get bBias()                       { return this.parameterMapModified.get( Params.bBias ); }
   get nActivationId()               { return this.parameterMapModified.get( Params.nActivationId ); }
   get nActivationIdName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
   get nActivationIdAtBlockEndId()   { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
@@ -154,7 +149,6 @@ Params.stepCountPerBlock =          new ParamDesc.Int(                "stepCount
 Params.bChannelShuffler =           new ParamDesc.Bool(               "bChannelShuffler" );
 Params.pointwise1ChannelCountRate = new ParamDesc.Int(                "pointwise1ChannelCountRate", 0,             2 );
 Params.depthwiseFilterHeight =      new ParamDesc.Int(                "depthwiseFilterHeight",      1,             9 );
-Params.bBias =                      new ParamDesc.Bool(               "bBias" );
 Params.nActivationId =              new ParamDesc.ActivationFunction( "nActivationId" );
 Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction( "nActivationIdAtBlockEnd" );
 Params.bKeepInputTensor =           new ParamDesc.Bool(               "bKeepInputTensor" );
@@ -224,7 +218,7 @@ class Base {
     //   - They all use activation function after first pointwise convolution.
     //   - They all use depthwise convolution with ( pad = "same" ).
     //   - They all use depthwise convolution with ( strides = 2 ) for shrinking (halving) height x width.
-    //   - They all do not use bias after pointwise and depthwise convolution.
+    //   - They all do use batch normalization (include bias) after pointwise and depthwise convolution.
     //
     // Inisde one of their block, three convolutions are used:
     //   A) 1x1 (pointwise) convolution, with activation.
@@ -274,7 +268,6 @@ class Base {
     this.bChannelShuffler = params.bChannelShuffler
     this.pointwise1ChannelCountRate = params.pointwise1ChannelCountRate;
     this.depthwiseFilterHeight = params.depthwiseFilterHeight; // Assume depthwise filter's width equals its height.
-    this.bBias = params.bBias;
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
@@ -623,7 +616,7 @@ class Params_to_PointDepthPointParams_NotShuffleNet_NotMobileNet extends Params_
 //!!! ...unfinished... (2021/08/17) should use pointwise1ChannelCountRate (should not ignore it).
 
     this.pointwise1ChannelCount = 0;  // In this mode, always no pointwise convolution before depthwise convolution.
-    this.pointwise1Bias = blockParams.bBias;
+    this.pointwise1Bias = true;
     this.pointwise1ActivationId = blockParams.nActivationId;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                  // Step0 double the channel count by depthwise channel multiplier.
@@ -638,11 +631,11 @@ class Params_to_PointDepthPointParams_NotShuffleNet_NotMobileNet extends Params_
     this.depthwiseActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
 
     this.pointwise21ChannelCount = blockParams.sourceChannelCount * blockParams.depthwise_AvgMax_Or_ChannelMultiplier; // Step0 double channel count.
-    this.pointwise21Bias = blockParams.bBias;
+    this.pointwise21Bias = true;
     this.pointwise21ActivationId = blockParams.nActivationId;
 
     this.pointwise22ChannelCount = 0;                                // In this mode, always no second output.
-    this.pointwise22Bias = false;
+    this.pointwise22Bias = true;
     this.pointwise22ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
 
     this.bShouldKeepInputTensor = blockParams.bKeepInputTensor;      // Step0 may or may not keep input tensor according to caller's necessary.
@@ -750,7 +743,7 @@ class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthP
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenation.
 
-    this.pointwise1Bias = blockParams.bBias;
+    this.pointwise1Bias = true;
     this.pointwise1ActivationId = blockParams.nActivationId;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                  // All steps will not double the channel count.
@@ -762,11 +755,11 @@ class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthP
     this.depthwiseActivationId = PointDepthPoint.Params.Activation.Ids.NONE; // In ShuffleNetV2, depthwise convolution doesn't have activation.
 
     this.pointwise21ChannelCount = blockParams.sourceChannelCount; // All steps' (except stepLast) output0 is the same depth as source input0.
-    this.pointwise21Bias = blockParams.bBias;
+    this.pointwise21Bias = true;
     this.pointwise21ActivationId = blockParams.nActivationId;
 
     this.pointwise22ChannelCount = blockParams.sourceChannelCount; // All steps' (except stepLast) output1 is the same depth as source input1.
-    this.pointwise22Bias = blockParams.bBias;
+    this.pointwise22Bias = true;
     this.pointwise22ActivationId = blockParams.nActivationId;
 
     // In ShuffleNetV2, all steps have pointwise1 convolution before depthwise convolution. Its channel count is adjustable by user's request.
@@ -810,17 +803,18 @@ class Params_to_PointDepthPointParams_MobileNet extends Params_to_PointDepthPoin
     // In MobileNet, all steps (include step0) do not use input1 and all steps (except step0) do add-input-to-output (without concatenation).
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT;
 
-    this.pointwise1Bias = blockParams.bBias;
+    this.pointwise1Bias = true;
     this.pointwise1ActivationId = blockParams.nActivationId;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                  // All steps will not double the channel count.
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps uses default depthwise filter size.
     this.depthwiseStridesPad = 2;                                    // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
-    this.depthwiseBias = blockParams.bBias;
+    this.depthwiseBias = true;
     this.depthwiseActivationId = blockParams.nActivationId;
 
     this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2; // In MobileNetV2, all steps' output0 is twice depth of source input0.
 
+//!!!
     // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
     this.pointwise21Bias = false;
 
