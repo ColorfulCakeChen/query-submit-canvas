@@ -734,7 +734,7 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  *
  * Step0: Two less pointwise convolution.
  *   - Original:
- *       pointwise convolution channel weights independent = ( M * M ) + ( M * M ) = M^2
+ *       pointwise convolution channel weights independent = ( M * M ) + ( M * M ) = 2M^2
  *       bias = M + M = 2M
  *       activation = M + M = 2M
  *       pointwise convolution channel weights shared (for channel shuffling) = ( M * 2M ) + ( M * 2M ) = 4M^2
@@ -745,30 +745,9 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  *       activation = M + M = 2M
  *       function calls = 6
  *   - Our adjusted may be better:
- *       better: pointwise convolution channel computation less M^2
+ *       better: pointwise convolution channel computation less 2M^2
  *       better: function calls less 2
- *       worse:  pointwise convolution channel weights independent more 3M^2
- *
- * <pre>
- *
- *                    +-------------------------------------------------------------------------------+------------+------------+----------------+
- *                    |                       pointwise convolution                                   |    bias    | activation | function calls |
- *                    |-----------------------------------------------------------------+-------------|            |            |                |
- *                    |                             weights                             | computation |            |            |                |
- *                    |--------------------------------+--------------------------------|             |            |            |                |
- *                    |          independent           | shared (for channel shuffling) |             |            |            |                |
- * +-------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
- * | Step0 | Original | ( M *  M ) + ( M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |     5M^2    | M + M = 2M | M + M = 2M |        8       |
- * |       |----------+--------------------------------+--------------------------------+-------------+------------+------------|----------------+
- * |       | Ours     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |     4M^2    | M + M = 2M | M + M = 2M |        6       |
- * |-------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
- * |       |          |
- *
- *
- *
- * </pre>
- *
- *
+ *       worse:  pointwise convolution channel weights independent more 2M^2
  *
  * Step1, Step2, ..., Step( N - 1 ): One less pointwise convolution. But One more bias and one more activation function.
  *   - Original:
@@ -788,6 +767,34 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  *       worse:  pointwise convolution channel weights independent more 3M^2
  *       worse:  bias more M
  *       worse:  activation more M
+ *
+ * <pre>
+ *
+ *                    +-------------------------------------------------------------------------------+------------+------------+----------------+
+ *                    |                       pointwise2 convolution                                  |    bias    | activation | function calls |
+ *                    |-----------------------------------------------------------------+-------------|            |            |                |
+ *                    |                             weights                             | computation |            |            |                |
+ *                    |--------------------------------+--------------------------------|             |            |            |                |
+ *                    |          independent           | shared (for channel shuffling) |             |            |            |                |
+ * +-------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
+ * | Step0 | Original | ( M *  M ) + ( M *  M ) = 2M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        6M^2 | M + M = 2M | M + M = 2M |        8       |
+ * |       |----------+--------------------------------+--------------------------------+-------------+------------+------------|----------------+
+ * |       | Ours     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6       |
+ * |       |----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
+ * |       | Compare  |                     worse 2M^2 |                    better 4M^2 | better 2M^2 |            |            | better 2       |
+ * |-------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
+ * | StepN | Original |              ( M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5       |
+ * |       |----------+--------------------------------+--------------------------------+-------------+------------+------------|----------------+
+ * |       | Ours     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6       |
+ * |       |----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
+ * |       | Compare  |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M |  worse 2       |
+ * |-------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
+ *
+ *
+ *
+ * </pre>
+ *
+ *
  *
  * StepLast: One less pointwise convolution.
  *   - Original:
