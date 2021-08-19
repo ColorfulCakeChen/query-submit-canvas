@@ -58,8 +58,20 @@ class Params extends Weights.Params {
    *     ignored completely). The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution.
    *
    *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
-   *     will not be processed by any pointwise1 and depthwise operation. It will be concatenated directly with the result of depthwise
-   *     operation of inputTensors[ 0 ]. The concatenated result will be processed by pointwise2 convolution.
+   *     will not be processed by any pointwise1 and depthwise operation.
+   *
+   *       - If ( pointwise22ChannelCount == -2 ), input1 will be concatenated with the result of pointwise21
+   *         operation of input0. The concatenated result will be channel-shuffled and splitted into [ output0, output1 ].
+   *
+
+//!!! ...unfinished... (2021/08/19) It seems not reasonable to channel-shuffling the only output0.
+
+   *       - If ( pointwise22ChannelCount == -1 ), input1 will be concatenated with the result of pointwise21
+   *         operation of input0. The concatenated result will be channel-shuffled and become output0.
+   *
+   *       - If ( pointwise22ChannelCount > 0 ), input1 will be concatenated with the result of depthwise
+   *         operation of inputTensors[ 0 ]. The concatenated result will be processed by pointwise2 convolution.
+   *
    *
 
 //!!! ...unfinished... (2021/07/27)
@@ -126,7 +138,7 @@ class Params extends Weights.Params {
    * will also be ignored.
    *
 
-//!!! ...unfinished... (2021/08/19)
+//!!! ...unfinished... (2021/08/19) It seems not reasonable to channel-shuffling the only output0.
 // If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -1 ), generating [ output0 ]
 //   from concat( pointwise21, input1 ) by using channel-shuffler.
 //
@@ -362,13 +374,6 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(               "bKeepInputTe
  *                                                 \ pointwise22
  * </pre>
  *
- *
- *   - When ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (simplified ShuffleNetV2's tail)
- * <pre>
- * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
- * input1 --------------------------/              \ pointwise22
- * </pre>
- *
 
 //!!! ...unfinished... (2021/08/19)
 
@@ -380,21 +385,22 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(               "bKeepInputTe
  * </pre>
  *
  *
+
+//!!! ...unfinished... (2021/08/19) It seems not reasonable to channel-shuffling the only output0.
+
  *   - When ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -1 ): TWO_INPUTS: ONE_OUTPUT: (ShuffleNetV2's tail)
  * <pre>
  * input0 - pointwise1 - depthwise1 - pointwise21 - concatenator - channelShuffler - output0
  * input1 ----------------------------------------/
  * </pre>
  *
-
-//!!! ...unfinished... (2021/08/19)
-// If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -1 ), generating [ output0 ]
-//   from concat( pointwise21, input1 ) by using channel-shuffler.
-//
-// If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -2 ), generating [ output0, output1 ]
-//   from concat( pointwise21, input1 ) by using channel-shuffler.
-//
-
+ *
+ *   - When ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount >= 0 ): TWO_INPUTS: (slower ShuffleNetV2's tail)
+ * <pre>
+ * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
+ * input1 --------------------------/              \ pointwise22
+ * </pre>
+ *
  *
  *
  * Strictly speaking, the real (original) ShuffleNetV2 is more like the following:
