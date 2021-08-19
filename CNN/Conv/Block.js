@@ -804,9 +804,9 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  * | Step2    | Ours     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6       |
  * |   :      | Compare  |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M |  worse 2       |
  * |----------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
- * | StepLast | Original |              ( M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5       |
- * |          | Ours     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6       |
- * |          | Compare  |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M |  worse 2       |
+ * | StepLast | Original |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5       |
+ * |          | Ours     |             ( 2M * 2M ) = 4M^2 |                              0 |        4M^2 |         2M |         2M |        3       |
+ * |          | Compare  |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M | better 2       |
  * |----------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
  *
  *
