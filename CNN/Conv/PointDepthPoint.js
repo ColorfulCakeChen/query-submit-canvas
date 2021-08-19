@@ -67,16 +67,16 @@ class Params extends Weights.Params {
 
    *       - If ( pointwise22ChannelCount == -2 ), input1 will be concatenated with the result of pointwise21 operation
    *         of input0. The concatenated result will be channel-shuffled and splitted into [ output0, output1 ].
-   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) should be the same as pointwise21 (i.e. pointwise21ChannelCount).
-   *           - The output0 and output1 will have the same channel count as pointwise21.
+   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
+   *           - The output0 and output1 will have the same channel count as pointwise21 (i.e. pointwise21ChannelCount).
    *
 
 //!!! ...unfinished... (2021/08/19) It seems not reasonable to channel-shuffling the only output0.
 
    *       - If ( pointwise22ChannelCount == -1 ), input1 will be concatenated with the result of pointwise21 operation
    *         of input0. The concatenated result will be channel-shuffled and become output0.
-   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) should be the same as pointwise21 (i.e. pointwise21ChannelCount).
-   *           - The output0 will have the same channel count as pointwise21.
+   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
+   *           - The output0 will have twice channel count of pointwise21 (i.e. ( 2 * pointwise21ChannelCount ) ).
    *
    *       - If ( pointwise22ChannelCount >= 0 ), input1 will be concatenated with the result of depthwise operation
    *         of input0. The concatenated result will be processed by pointwise2 convolution.
