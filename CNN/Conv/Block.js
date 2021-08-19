@@ -729,18 +729,69 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  * pointwise convolution: pointwise21 and pointwise22. They should all have bias and activation function to achieve
  * both pointwise convolution and channel-shuffling.
  *
- * Note that:
- *   - The pointwise21 and pointwise22 convolution achieves not only pointwise convolution but also channel shuffling.
- *     Comparing to the original ShuffleNetV2:
- *       - Step0: Two less pointwise convolution.
- *       - Step1, Step2, ..., Step( N - 1 ): One less pointwise convolution. But One more bias and one more activation function.
- *       - StepLast: One less pointwise convolution.
+ * The pointwise21 and pointwise22 convolution achieves not only pointwise convolution but also channel shuffling.
+ * Suppose the input channel count is M. Comparing to the original ShuffleNetV2:
+ *
+ * Step0: Two less pointwise convolution.
+ *   - Original:
+ *       pointwise convolution channel weights independent = ( M * M ) + ( M * M ) = M^2
+ *       bias = M + M = 2M
+ *       activation = M + M = 2M
+ *       pointwise convolution channel weights shared (for channel shuffling) = ( M * 2M ) + ( M * 2M ) = 4M^2
+ *       function calls = 8
+ *   - Our Adjusted:
+ *       pointwise convolution channel weights independent = ( M * 2M ) + ( M * 2M ) = 4M^2
+ *       bias = M + M = 2M
+ *       activation = M + M = 2M
+ *       function calls = 6
+ *   - Our adjusted may be better:
+ *       better: pointwise convolution channel computation less M^2
+ *       better: function calls less 2
+ *       worse:  pointwise convolution channel weights independent more 3M^2
+ *
+ * Step1, Step2, ..., Step( N - 1 ): One less pointwise convolution. But One more bias and one more activation function.
+ *   - Original:
+ *       pointwise convolution channel weights independent = ( M * M ) = M^2
+ *       bias = M
+ *       activation = M
+ *       pointwise convolution channel weights shared (for channel shuffling) = ( M * 2M ) + ( M * 2M ) = 4M^2
+ *       function calls = 5
+ *   - Ours Adjusted:
+ *       pointwise convolution channel weights independent = ( M * 2M ) + ( M * 2M ) = 4M^2
+ *       bias = M + M = 2M
+ *       activation = M + M = 2M
+ *       function calls = 6
+ *   - Our adjusted may be worse:
+ *       better: pointwise convolution channel computation less M^2
+ *       worse:  function calls more 1
+ *       worse:  pointwise convolution channel weights independent more 3M^2
+ *       worse:  bias more M
+ *       worse:  activation more M
+ *
+ * StepLast: One less pointwise convolution.
+ *   - Original:
+ *       pointwise convolution channel weights independent = ( M * M ) = M^2
+ *       bias = M
+ *       activation = M
+ *       pointwise convolution channel weights shared (for channel shuffling) = ( M * 2M ) + ( M * 2M ) = 4M^2
+ *       function calls = 5
+ *   - Our Adjusted:
+ *       pointwise convolution channel weights independent = ( 2M * 2M ) = 4M^2
+ *       bias = 2M
+ *       activation = 2M
+ *       function calls = 3
+ *   - Our adjusted may be better or worse:
+ *       better: pointwise convolution channel computation less M^2
+ *       better: function calls less 2
+ *       worse:  pointwise convolution channel weights independent more 3M^2
+ *       worse:  bias more M
+ *       worse:  activation more M
  *
  *
 
 !!! ...unfinished... (2021/08/19) It seems that only in the step0 our adjusted ShuffleNetV2 is better than original ShuffleNetV2.
-In the stepLast, it is hard to tell which is better.
 In step1, step2, ..., step( N - 1 ), our adjusted ShuffleNetV2 is worse because more pointwise channel, more bias, and more activation.
+In the stepLast, it is hard to tell which is better.
 
  *
  *
