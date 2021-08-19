@@ -325,7 +325,7 @@ Params.pointwise22ChannelCount = new ParamDesc.Int(                "pointwise22C
 Params.bPointwise22Bias =        new ParamDesc.Bool(               "bPointwise22Bias" );
 Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22ActivationId" );
 
-Params.bKeepInputTensor =         new ParamDesc.Bool(              "bKeepInputTensor" );
+Params.bKeepInputTensor =        new ParamDesc.Bool(               "bKeepInputTensor" );
 
 
 /**
