@@ -736,6 +736,17 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  *       - Step1, Step2, ..., Step( N - 1 ): One less pointwise convolution. But One more bias and one more activation function.
  *       - StepLast: One less pointwise convolution.
  *
+ *
+
+!!! ...unfinished... (2021/08/19) It seems that only in the step0 our adjusted ShuffleNetV2 is better than original ShuffleNetV2.
+In the stepLast, it is hard to tell which is better.
+In step1, step2, ..., step( N - 1 ), our adjusted ShuffleNetV2 is worse because more pointwise channel, more bias, and more activation.
+
+ *
+ *
+ *
+ *
+ *
  */
 class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthPointParams {
   /** @override */
