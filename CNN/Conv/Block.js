@@ -749,6 +749,27 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  *       better: function calls less 2
  *       worse:  pointwise convolution channel weights independent more 3M^2
  *
+ * <pre>
+ *
+ *                    +--------------------------------------------------------------+------+------------+----------------+
+ *                    |                    pointwise convolution                     | bias | activation | function calls |
+ *                    |--------------------------------------------------------------+-------------|      |            |                |
+ *                    |                          weights                             | computation |      |            |                |
+ *                    |-----------------------------+--------------------------------|             |      |            |                |
+ *                    |          independent        | shared (for channel shuffling) |             |      |            |                |
+ * +-------+----------+-----------------------------+--------------------------------+-------------+------+------------+----------------+
+ * | Step0 | Original | ( M * M ) + ( M * M ) = M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2
+ * |       |          |
+ * |       |----------+
+ * |       | Ours     |
+ * |-------+----------+
+ *
+ *
+ *
+ * </pre>
+ *
+ *
+ *
  * Step1, Step2, ..., Step( N - 1 ): One less pointwise convolution. But One more bias and one more activation function.
  *   - Original:
  *       pointwise convolution channel weights independent = ( M * M ) = M^2
