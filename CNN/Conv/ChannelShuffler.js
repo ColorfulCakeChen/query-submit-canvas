@@ -1,5 +1,7 @@
 export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv };
 
+//!!! ...unfinished... (2021/08/19) Use outputTensors[] instead of new created array as return value (for improving performance).
+
 /**
  * The information for channel shuffler.
  *
