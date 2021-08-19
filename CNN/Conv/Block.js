@@ -730,100 +730,48 @@ class Params_to_PointDepthPointParams_ShuffleNetV2_Simplified extends Params_to_
  * both pointwise convolution and channel-shuffling.
  *
  * The pointwise21 and pointwise22 convolution achieves not only pointwise convolution but also channel shuffling.
- * Suppose the input channel count is M. Comparing to the original ShuffleNetV2:
- *
- * Step0: Two less pointwise convolution.
- *   - Original:
- *       pointwise convolution channel weights independent = ( M * M ) + ( M * M ) = 2M^2
- *       bias = M + M = 2M
- *       activation = M + M = 2M
- *       pointwise convolution channel weights shared (for channel shuffling) = ( M * 2M ) + ( M * 2M ) = 4M^2
- *       function calls = 8
- *   - Our Adjusted:
- *       pointwise convolution channel weights independent = ( M * 2M ) + ( M * 2M ) = 4M^2
- *       bias = M + M = 2M
- *       activation = M + M = 2M
- *       function calls = 6
- *   - Our adjusted may be better:
- *       better: pointwise convolution channel computation less 2M^2
- *       better: function calls less 2
- *       worse:  pointwise convolution channel weights independent more 2M^2
- *
- * Step1, Step2, ..., Step( N - 1 ): One less pointwise convolution. But One more bias and one more activation function.
- *   - Original:
- *       pointwise convolution channel weights independent = ( M * M ) = M^2
- *       bias = M
- *       activation = M
- *       pointwise convolution channel weights shared (for channel shuffling) = ( M * 2M ) + ( M * 2M ) = 4M^2
- *       function calls = 5
- *   - Ours Adjusted:
- *       pointwise convolution channel weights independent = ( M * 2M ) + ( M * 2M ) = 4M^2
- *       bias = M + M = 2M
- *       activation = M + M = 2M
- *       function calls = 6
- *   - Our adjusted may be worse:
- *       better: pointwise convolution channel computation less M^2
- *       worse:  function calls more 1
- *       worse:  pointwise convolution channel weights independent more 3M^2
- *       worse:  bias more M
- *       worse:  activation more M
- *
- * StepLast: One less pointwise convolution.
- *   - Original:
- *       pointwise convolution channel weights independent = ( M * M ) = M^2
- *       bias = M
- *       activation = M
- *       pointwise convolution channel weights shared (for channel shuffling) = ( M * 2M ) + ( M * 2M ) = 4M^2
- *       function calls = 5
- *   - Our Adjusted:
- *       pointwise convolution channel weights independent = ( 2M * 2M ) = 4M^2
- *       bias = 2M
- *       activation = 2M
- *       function calls = 3
- *   - Our adjusted may be better or worse:
- *       better: pointwise convolution channel computation less M^2
- *       better: function calls less 2
- *       worse:  pointwise convolution channel weights independent more 3M^2
- *       worse:  bias more M
- *       worse:  activation more M
+ * Suppose the input channel count is M. Compare ours to the original ShuffleNetV2:
  *
  * <pre>
- *
- *                       +-------------------------------------------------------------------------------+------------+------------+----------------+
- *                       |                       pointwise2 convolution                                  |    bias    | activation | function calls |
- *                       |-----------------------------------------------------------------+-------------|            |            |                |
- *                       |                             weights                             | computation |            |            |                |
- *                       |--------------------------------+--------------------------------|             |            |            |                |
- *                       |          independent           | shared (for channel shuffling) |             |            |            |                |
- * +----------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
- * | Step0    | Original | ( M *  M ) + ( M *  M ) = 2M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        6M^2 | M + M = 2M | M + M = 2M |        8       |
- * |          | Ours     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6       |
- * |          | Compare  |                     worse 2M^2 |                    better 4M^2 | better 2M^2 |            |            | better 2       |
- * |----------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
- * | Step1    | Original |              ( M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5       |
- * | Step2    | Ours     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6       |
- * |   :      | Compare  |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M |  worse 2       |
- * |----------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
- * | StepLast | Original |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5       |
- * |          | Ours     |             ( 2M * 2M ) = 4M^2 |                              0 |        4M^2 |         2M |         2M |        3       |
- * |          | Compare  |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M | better 2       |
- * |----------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------------+
- *
- *
- *
+ *                       +-------------------------------------------------------------------------------+------------+------------+----------+
+ *                       |                       pointwise2 convolution                                  |    bias    | activation | function |
+ *                       |-----------------------------------------------------------------+-------------|            |            |   calls  |
+ *                       |                             weights                             | computation |            |            |          |
+ *                       |--------------------------------+--------------------------------|             |            |            |          |
+ *                       |          independent           | shared (for channel shuffling) |             |            |            |          |
+ * +----------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | Step0    | Original | ( M *  M ) + ( M *  M ) = 2M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        6M^2 | M + M = 2M | M + M = 2M |        8 |
+ * |          | Ours     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6 |
+ * |          | Compare  |                     worse 2M^2 |                    better 4M^2 | better 2M^2 |       same |       same | better 2 |
+ * |----------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | Step1    | Original |              ( M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
+ * | Step2    | Ours     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6 |
+ * |   :      | Compare  |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M |  worse 2 |
+ * |----------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | StepLast | Original |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
+ * |          | Ours     |             ( 2M * 2M ) = 4M^2 |                              0 |        4M^2 |         2M |         2M |        3 |
+ * |          | Compare  |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M | better 2 |
+ * |----------+----------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
  * </pre>
  *
+ * Step0:
+ *   - Two less pointwise convolution computation. Two less function calls.
+ *   - But more independent pointwise weights.
+ *   - Ours is better.
  *
+ * Step1, Step2, ..., Step(N - 1):
+ *   - One less pointwise convolution computation.
+ *   - But more independent pointwise weights, more bias, more activation function, two more function calls.
+ *   - Ours is worse.
  *
+ * StepLast:
+ *   - One less pointwise convolution computation. Two less function calls.
+ *   - But more independent pointwise weights, more bias and more activation function.
+ *   - Ours may be better or worse.
  *
 
-!!! ...unfinished... (2021/08/19) It seems that only in the step0 our adjusted ShuffleNetV2 is better than original ShuffleNetV2.
-In step1, step2, ..., step( N - 1 ), our adjusted ShuffleNetV2 is worse because more pointwise channel, more bias, and more activation.
-In the stepLast, it is hard to tell which is better.
+!!! ...unfinished... (2021/08/19) How to improve?
 
- *
- *
- *
  *
  *
  */
