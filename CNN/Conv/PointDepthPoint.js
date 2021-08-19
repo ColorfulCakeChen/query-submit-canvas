@@ -406,7 +406,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(               "bKeepInputTe
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount >= 0 ): TWO_INPUTS: (slower ShuffleNetV2's tail)
+ *   - When ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount >= 0 ): TWO_INPUTS: (slower ShuffleNetV2's body and tail)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concatenator - pointwise21
  * input1 --------------------------/              \ pointwise22
