@@ -125,6 +125,15 @@ class Params extends Weights.Params {
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise21ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
+
+//!!! ...unfinished... (2021/08/19)
+// If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -1 ), generating [ output0 ]
+//   from concat( pointwise21, input1 ) by using channel-shuffler.
+//
+// If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -2 ), generating [ output0, output1 ]
+//   from concat( pointwise21, input1 ) by using channel-shuffler.
+//
+
    * @param {number} pointwise22ChannelCount
    *   The output channel count of the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    * If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution.
