@@ -69,7 +69,7 @@ class Params extends Weights.Params {
    *       - If ( pointwise22ChannelCount == -1 ), input1 will be concatenated with the result of pointwise21
    *         operation of input0. The concatenated result will be channel-shuffled and become output0.
    *
-   *       - If ( pointwise22ChannelCount > 0 ), input1 will be concatenated with the result of depthwise
+   *       - If ( pointwise22ChannelCount >= 0 ), input1 will be concatenated with the result of depthwise
    *         operation of inputTensors[ 0 ]. The concatenated result will be processed by pointwise2 convolution.
    *
    *
