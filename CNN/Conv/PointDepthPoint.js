@@ -10,6 +10,7 @@ import * as Depthwise from "./Depthwise.js";
 import * as AddTwoTensors from "./AddTwoTensors.js";
 import * as ConcatAlongAxisId2 from "./ConcatAlongAxisId2.js";
 import * as TensorOpCounter from "./TensorOpCounter.js";
+import * as ChannelShuffler from "./ChannelShuffler.js";
 
 
 //!!! ...unfinished... (2021/08/18)
@@ -576,6 +577,13 @@ class Base extends ReturnOrClone.Base {
    * @param {Params} params
    *   A Params object. The params.extract() will be called to extract parameters.
    *
+
+//!!! ...unfinished... (2021/08/19) channelShuffler
+
+   * @param {ChannelShuffler.GroupCount2} channelShuffler
+   *   The channelShuffler. It is only used when ( channelCount1_pointwise1Before > 1 ) (i.e. TWO_INPUTS) and
+   * ( pointwise22ChannelCount < 0 ) (i.e. channel shuffle the pointwise21's result).
+   *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
@@ -583,7 +591,7 @@ class Base extends ReturnOrClone.Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    */
-  * initer( progressParent, params ) {
+  * initer( progressParent, params, channelShuffler ) {
 
     // 0. Prepare
 
