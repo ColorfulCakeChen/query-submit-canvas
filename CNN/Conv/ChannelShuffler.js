@@ -1,6 +1,4 @@
-export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv };
-
-//!!! ...unfinished... (2021/08/19) Use outputTensors[] instead of new created array as return value (for improving performance).
+export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv, Pool };
 
 /**
  * The information for channel shuffler.
@@ -613,6 +611,33 @@ class ConcatPointwiseConv {
     } finally {
       concatenatedTensor.dispose();
     }
+  }
+
+}
+
+
+//!!! ...unfinished... (2021/08/19) Use outputTensors[] instead of new created array as return value (for improving performance).
+
+
+/**
+ *
+ */
+class Pool {
+
+  /**
+   *
+   * @see ChannelShuffler.ShuffleInfo
+   */
+  getBy( concatenatedShape, outputGroupCount ) {
+
+//!!! ...unfinished... (2021/08/19)
+// Return a ChannelShuffler if existed. Otherwise, create new one.
+// If ( outputGroupCount == 2 ), return optimized (loop-unrolled) channelShuffler.
+
+  }
+
+  disposeTensors() {
+//!!! ...unfinished... (2021/08/19)
   }
 
 }
