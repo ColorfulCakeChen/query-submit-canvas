@@ -361,7 +361,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(               "bKeepInputTe
  * activation function.
  *
  *
- * There four main combinations:
+ * There six main combinations:
  *
  *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: (simplified ShuffleNetV2's head)
  * <pre>
