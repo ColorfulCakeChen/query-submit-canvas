@@ -369,6 +369,32 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(               "bKeepInputTe
  * input1 --------------------------/              \ pointwise22
  * </pre>
  *
+
+//!!! ...unfinished... (2021/08/19)
+
+ *
+ *   - When ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -2 ): TWO_INPUTS: TWO_OUTPUT: (ShuffleNetV2's body)
+ * <pre>
+ * input0 - pointwise1 - depthwise1 - pointwise21 - concatenator - channelShuffler - output0
+ * input1 ----------------------------------------/                                \ output1
+ * </pre>
+ *
+ *
+ *   - When ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -1 ): TWO_INPUTS: ONE_OUTPUT: (ShuffleNetV2's tail)
+ * <pre>
+ * input0 - pointwise1 - depthwise1 - pointwise21 - concatenator - channelShuffler - output0
+ * input1 ----------------------------------------/
+ * </pre>
+ *
+
+//!!! ...unfinished... (2021/08/19)
+// If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -1 ), generating [ output0 ]
+//   from concat( pointwise21, input1 ) by using channel-shuffler.
+//
+// If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -2 ), generating [ output0, output1 ]
+//   from concat( pointwise21, input1 ) by using channel-shuffler.
+//
+
  *
  *
  * Strictly speaking, the real (original) ShuffleNetV2 is more like the following:
