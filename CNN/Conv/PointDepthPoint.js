@@ -10,7 +10,7 @@ import * as Depthwise from "./Depthwise.js";
 import * as AddTwoTensors from "./AddTwoTensors.js";
 import * as ConcatAlongAxisId2 from "./ConcatAlongAxisId2.js";
 import * as TensorOpCounter from "./TensorOpCounter.js";
-import * as ChannelShuffler from "./ChannelShuffler.js";
+import * as ChannelShufflerGroupCount2 from "./ChannelShufflerGroupCount2.js";
 
 
 //!!! ...unfinished... (2021/08/18)
@@ -74,13 +74,13 @@ class Params extends Weights.Params {
 //!!! ...unfinished... (2021/08/19) It seems not reasonable to channel-shuffling the only output0.
 
    *       - If ( pointwise22ChannelCount == -1 ), input1 will be concatenated with the result of pointwise21 operation
-   *         of input0. The concatenated result will be channel-shuffled and become output0.
-   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
-   *           - The output0 will have twice channel count of pointwise21 (i.e. ( 2 * pointwise21ChannelCount ) ).
+   *         of input0. The concatenated result will become output0.
+   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
+   *           - The output0 will have channel count as ( pointwise21ChannelCount + channelCount1_pointwise1Before ).
    *
    *       - If ( pointwise22ChannelCount >= 0 ), input1 will be concatenated with the result of depthwise operation
    *         of input0. The concatenated result will be processed by pointwise2 convolution.
-   *           - The input1 could have any channel count.
+   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
    *           - The output0 will be the result of pointwise21.
    *           - The output1 will be the result of pointwise22.
    *
@@ -397,12 +397,9 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(               "bKeepInputTe
  * </pre>
  *
  *
-
-//!!! ...unfinished... (2021/08/19) It seems not reasonable to channel-shuffling the only output0.
-
  *   - When ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -1 ): TWO_INPUTS: ONE_OUTPUT: (ShuffleNetV2's tail)
  * <pre>
- * input0 - pointwise1 - depthwise1 - pointwise21 - concatenator - channelShuffler - output0
+ * input0 - pointwise1 - depthwise1 - pointwise21 - concatenator - output0
  * input1 ----------------------------------------/
  * </pre>
  *
@@ -580,9 +577,9 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/08/19) channelShuffler
 
-   * @param {ChannelShuffler.GroupCount2} channelShuffler
+   * @param {ChannelShufflerGroupCount2.Base} channelShuffler
    *   The channelShuffler. It is only used when ( channelCount1_pointwise1Before > 1 ) (i.e. TWO_INPUTS) and
-   * ( pointwise22ChannelCount < 0 ) (i.e. channel shuffle the pointwise21's result).
+   * ( pointwise22ChannelCount == -2 ) (i.e. channel shuffle the concatenated pointwise21 and input1).
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
