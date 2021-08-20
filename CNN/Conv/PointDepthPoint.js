@@ -9,8 +9,8 @@ import * as Pointwise from "./Pointwise.js";
 import * as Depthwise from "./Depthwise.js";
 import * as AddTwoTensors from "./AddTwoTensors.js";
 import * as ConcatAlongAxisId2 from "./ConcatAlongAxisId2.js";
+import * as ConcatShuffleSplit from "./ConcatShuffleSplit.js";
 import * as TensorOpCounter from "./TensorOpCounter.js";
-import * as ChannelShufflerGroupCount2 from "./ChannelShufflerGroupCount2.js";
 
 
 //!!! ...unfinished... (2021/08/18)
@@ -150,9 +150,9 @@ class Params extends Weights.Params {
    * will also be ignored.
    *
 
-//!!! ...unfinished... (2021/08/19) It seems not reasonable to channel-shuffling the only output0.
+//!!! ...unfinished... (2021/08/19)
 // If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -1 ), generating [ output0 ]
-//   from concat( pointwise21, input1 ) by using channel-shuffler.
+//   from concat( pointwise21, input1 ).
 //
 // If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -2 ), generating [ output0, output1 ]
 //   from concat( pointwise21, input1 ) by using channel-shuffler.
@@ -239,6 +239,8 @@ class Params extends Weights.Params {
    * this.bAddInputToOutputRequested.
    */
   static setFlags_by_channelCount1_pointwise1Before( channelCount1_pointwise1Before ) {
+
+//!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit
 
     if ( channelCount1_pointwise1Before > 0 ) { // ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_XXX (> 0)
       this.inputTensorCount = 2; this.bDepthwise2Requested = false; this.bConcatenatorRequested = true; this.bAddInputToOutputRequested = false;
@@ -554,6 +556,19 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(               "bKeepInputTe
  *   It will be true when ( this.channelCount1_pointwise1Before == -1 ). The input (in this case, the main input (i.e. inputTensorArray[ 0 ])
  * will be added to the output for achieving skip connection.
  *
+ * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
+ *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
+ *
+ *     - It will not be disposed by this object (i.e. it is supposed to be shared with outter callers).
+ *
+ *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
+ *
+ *     - It is only used when ( channelCount1_pointwise1Before > 1 ) (i.e. TWO_INPUTS) and
+ *         ( pointwise22ChannelCount == -2 ) (i.e. channel shuffle the concatenated pointwise21 and input1).
+ *
+ *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
+ *         of pointwise21 and input1.
+ *
  * @member {function} apply_and_destroy_or_keep
  *   This is a method. It has two parameters inputTensors and outputTensors. The inputTensors (tf.tensor3d[]) represents the images
  * ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed one or two tf.tensor3d as
@@ -574,14 +589,6 @@ class Base extends ReturnOrClone.Base {
    * @param {Params} params
    *   A Params object. The params.extract() will be called to extract parameters.
    *
-
-//!!! ...unfinished... (2021/08/19) channelShuffler
-
-   * @param {ChannelShufflerGroupCount2.Base} channelShuffler
-   *   The channelShuffler. It is only used when ( channelCount1_pointwise1Before > 1 ) (i.e. TWO_INPUTS) and
-   * ( pointwise22ChannelCount == -2 ) (i.e. channel shuffle the concatenated pointwise21 and input1). The
-   * channelShuffler's outputGroupCount must be 2 (i.e. split into two group after channel-shuffling).
-   *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
@@ -589,7 +596,7 @@ class Base extends ReturnOrClone.Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    */
-  * initer( progressParent, params, channelShuffler ) {
+  * initer( progressParent, params, channelShuffler_ConcatPointwiseConv ) {
 
     // 0. Prepare
 
@@ -606,6 +613,8 @@ class Base extends ReturnOrClone.Base {
     let progressToAdvance = progressParent.addChild( new ValueMax.Percentage.Concrete( progressMax ) );
 
     this.disposeTensors();  // Also initialize some member function pointers to no_operation().
+
+    this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
 
     // 1. Extract parameters.
     if ( !params )
@@ -656,6 +665,8 @@ class Base extends ReturnOrClone.Base {
     this.bDepthwise2Requested = params.bDepthwise2Requested;
     this.bConcatenatorRequested = params.bConcatenatorRequested;
     this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
+
+//!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit
 
     this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
 
@@ -959,11 +970,11 @@ class Base extends ReturnOrClone.Base {
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
-  init( progressParent, params ) {
+  init( progressParent, params, channelShuffler_ConcatPointwiseConv ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer( progressParent, params );
+    let initer = this.initer( progressParent, params, channelShuffler_ConcatPointwiseConv );
     let initerNext;
     do {
       initerNext = initer.next();
@@ -1388,6 +1399,8 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
   }
+
+//!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit
 
 
   /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]). */
