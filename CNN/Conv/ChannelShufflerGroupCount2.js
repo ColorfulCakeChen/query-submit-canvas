@@ -5,40 +5,14 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
 //!!! ...unfinished... (2021/08/20) setConcatOnly() ?
 
 /**
- * A special channel shuffler for ( outputGroupCount == 2 ). Its apply() does not use loop and not create new array.
+ * A special channel shuffler for ( outputGroupCount == 2 ). Its pfnConcatShuffleSplit() does not use loop and not create new array.
  * So its performance should be better.
- */
-class Base {
 
-  /**
-   *
-   * @see ChannelShuffler.ShuffleInfo
-   */
-  constructor(   ) {
+//!!! ...unfinished... (2021/08/20)
 
-//!!! ...unfinished... (2021/08/19)
-    let concatenatedShape = [ ];
-    let outputGroupCount = 2;
-
-//!!! ...unfinished... (2021/08/19)
-  }
-
-  disposeTensors() {
-//!!! ...unfinished... (2021/08/19)
-  }
-
-//!!! ...unfinished... (2021/08/19) Use outputTensors[] instead of new created array as return value (for improving performance).
-  apply( inputTensors, outputTensors ) {
-// Since ( outputGroupCount == 2 ), use optimized (loop-unrolled).
-  }
-
-}
-
-
-
-/**
  * Concatenate two tensor3d ( height x width x channel ) always along the last axis (i.e. axisId = 2, along the channel axis). It could
  * destroy one or two of the input tensors.
+ *
  *
  * @member {boolean} bKeepInputTensor0
  *   If false, the first input tensor will be disposed after concatenating. If true, the first input tensor will be kept after concatenating.
@@ -46,21 +20,39 @@ class Base {
  * @member {boolean} bKeepInputTensor1
  *   If false, the second input tensor will be disposed after concatenating. If true, the second input tensor will be kept after concatenating.
  *
- * @member {function} pfnConcat
- *   This is a method. It has one parameter inputTensorsArray and return a outputTensor. The inputTensorsArray (tf.tensor3d[]) represents
- * all the images ( height x width x channel ) which will be concatenated. They should have the same ( height x width ) but could
- * different channel count. The outputTensor (tf.tensor3d) represents the result of concatenating the inputs along the last axis
- * (i.e. the channel axis ( axisId = 2 ) ). The inputTensor may or may not be disposed. In fact, this method calls one of
+ * @member {function} pfnConcatShuffleSplit
+ *   This is a method. It has two parameters inputTensors[] and outputTensors[]. The inputTensors[] (tf.tensor3d[]) represents
+ * all the images ( height x width x channel ) which will be concatenated, shuffle, split. They should have the same ( height x width )
+ * but could have different channel count. The outputTensors[] (tf.tensor3d[]) represents the result The inputTensor may or may
+ * not be disposed. In fact, this method calls one of
+
+//!!! ...unfinished... (2021/08/20)
+
  * Concat_and_keep0_keep1(), Concat_and_keep0_destroy1(), Concat_and_destroy0_keep1(), Concat_and_destroy0_destroy1() according
  * to the parameters.
  *
  */
 class Base {
 
+  /**
+   *
+   * @see ChannelShuffler.ShuffleInfo
+   */
   constructor( bKeepInputTensor0, bKeepInputTensor1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
     Base.adjust_pfnConcat.call( this );
+
+//!!! ...unfinished... (2021/08/19)
+    let concatenatedShape = [ ];
+    let outputGroupCount = 2;
+
+//!!! ...unfinished... (2021/08/19)
+
+  }
+
+  disposeTensors() {
+//!!! ...unfinished... (2021/08/19)
   }
 
   /**
@@ -130,6 +122,11 @@ class Base {
     inputTensorsArray[ 0 ].dispose();
     inputTensorsArray[ 1 ].dispose();
     return t;
+  }
+
+//!!! ...unfinished... (2021/08/19) Use outputTensors[] instead of new created array as return value (for improving performance).
+  apply( inputTensors, outputTensors ) {
+// Since ( outputGroupCount == 2 ), use optimized (loop-unrolled).
   }
 
 }
