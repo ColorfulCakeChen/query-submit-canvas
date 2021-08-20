@@ -154,89 +154,23 @@ class Base {
    */
   check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensors, parametersDescription ) {
 
-//!!! (2021/08/10 Remarked) Using TensorTools.Asserter_Tensor_NumberArray instead.
-//     tf.tidy( () => {
-//
-//       let acceptableDifferenceRate = 0.3; //0.05;
-//
-//       for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
-//         // Get referenced result (as number array).
-//         let imageOutReference = imageOutReferenceArray[ i ];
-//         let outputArrayRef = null;
-//         if ( imageOutReference ) {
-//           outputArrayRef = imageOutReference.dataArray;
-//         }
-//
-//         // Get real (tested target) result (as typed-array).
-//         let outputTensor = outputTensors[ i ];
-//         let outputArray = null;
-//         if ( outputTensor ) {
-//           outputArray = outputTensor.dataSync();
-//         }
-//
-//         // Checking real result against referneced result.
-//         tf.util.assert( ( outputArray == null ) == ( outputArrayRef == null ),
-//           `PointDepthPoint output${i} ( ${outputArray} ) and outputRef${i} ( ${outputArrayRef} ) should be both null or non-null. `
-//             + `${parametersDescription}` );
-//
-//         if( outputArray ) {
-//           tf.util.assert( outputArray.length == outputArrayRef.length,
-//             `PointDepthPoint output${i} length ( ${outputArray.length} ) should be ( ${outputArrayRef.length} ). `
-//               + `${parametersDescription}` );
-//
-//           // Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different (especially activation function
-//           // is one of SIGMOID, TANH, SIN, COS), only some digits after decimal are compared. Otherwise, they may not pass this test.
-//           let elementIndex;
-//           function ElementComparator( value, index ) {
-//             let valueRef = outputArrayRef[ elementIndex = index ];
-//             let delta = Math.abs( value - valueRef );
-//
-//             let valueAbs = Math.abs( value );
-//             let valueRefAbs = Math.abs( valueRef );
-//
-//             // Compare to smaller one.
-//             //
-//             // When one of compared values is zero, it will always be failed if compare to the larger value (got 100% delteRate).
-//             let deltaRateBase = Math.min( valueAbs, valueRefAbs );
-//
-//             let deltaRate;
-//             if ( deltaRateBase > 0 ) // Avoid divided by zero.
-//               deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not to large even if value is large.
-//             else
-//               deltaRate = delta;
-//
-//             if ( deltaRate <= acceptableDifferenceRate )
-//               return true;
-//             return false;
-//           }
-//
-//           tf.util.assert( outputArray.every( ElementComparator ),
-//             `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
-//               +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
-//               + `${parametersDescription}` );
-//         }
-//       }
-//
-//     });
+    let outputArrayRef;
+    for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
 
-//!!! ...unfinished... (2021/08/10) TensorTools.Asserter_Tensor_NumberArray
-      let outputArrayRef;
-      for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
-
-        let imageOutReference = imageOutReferenceArray[ i ];
-        if ( imageOutReference ) {
-          outputArrayRef = imageOutReference.dataArray; // Get referenced result (as number array).
-        } else {
-          outputArrayRef = null;
-        }
-
-        let outputTensor = outputTensors[ i ];          // Get real (tested target) result (as typed-array).
-
-        this.asserter_Tensor_NumberArray.assert(
-          outputTensor, outputArrayRef,
-          "PointDepthPoint", `output${i}`, `outputRef${i}`, parametersDescription
-        );
+      let imageOutReference = imageOutReferenceArray[ i ];
+      if ( imageOutReference ) {
+        outputArrayRef = imageOutReference.dataArray; // Get referenced result (as number array).
+      } else {
+        outputArrayRef = null;
       }
+
+      let outputTensor = outputTensors[ i ];          // Get real (tested target) result (as typed-array).
+
+      this.asserter_Tensor_NumberArray.assert(
+        outputTensor, outputArrayRef,
+        "PointDepthPoint", `output${i}`, `outputRef${i}`, parametersDescription
+      );
+    }
   }
 
   /**
@@ -1002,5 +936,9 @@ class Base {
 
     return imageIn;
   }
-
+  
+  static calcConcatShuffleSplit() {
+//!!! ...unfinished... (2021/08/20) Use 2 loop [ 0, (n/2), 1, (n/2)+1, ... ] to do concat-channelShuffle-split
+  }
+  
 }
