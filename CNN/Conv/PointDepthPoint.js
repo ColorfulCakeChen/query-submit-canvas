@@ -65,18 +65,15 @@ class Params extends Weights.Params {
 //!!! ...unfinished... (2021/08/19) Perhaps, combine channelCount1_pointwise1Before and pointwise21ChannelCount,
 // since they should be the same in many cases.
 
-   *       - If ( pointwise22ChannelCount == -2 ),
-   *         ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT,
-   *         input1 will be concatenated with the result of pointwise21 operation
-   *         of input0. The concatenated result will be channel-shuffled and splitted into [ output0, output1 ].
+   *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT ),
+   *         (-2), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
+   *         result will be channel-shuffled and splitted into [ output0, output1 ].
    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
    *           - The output0 and output1 will have the same channel count as pointwise21 (i.e. pointwise21ChannelCount).
    *
-
-//!!! ...unfinished... (2021/08/19) It seems not reasonable to channel-shuffling the only output0.
-
-   *       - If ( pointwise22ChannelCount == -1 ), input1 will be concatenated with the result of pointwise21 operation
-   *         of input0. The concatenated result will become output0.
+   *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1 ),
+   *         (-1), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
+   *         result will become output0.
    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
    *           - The output0 will have channel count as ( pointwise21ChannelCount + channelCount1_pointwise1Before ).
    *
@@ -572,7 +569,8 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
  *
  *     - It is only used when ( channelCount1_pointwise1Before > 1 ) (i.e. TWO_INPUTS) and
- *         ( pointwise22ChannelCount == -2 ) (i.e. channel shuffle the concatenated pointwise21 and input1).
+ *         ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT )
+ *         (-2) (i.e. channel shuffle the concatenated pointwise21 and input1).
  *
  *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
  *         of pointwise21 and input1.
@@ -674,7 +672,7 @@ class Base extends ReturnOrClone.Base {
     this.bConcatenatorRequested = params.bConcatenatorRequested;
     this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
 
-//!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit
+//!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
 
     this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
 
