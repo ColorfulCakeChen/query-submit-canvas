@@ -579,7 +579,8 @@ class Base extends ReturnOrClone.Base {
 
    * @param {ChannelShufflerGroupCount2.Base} channelShuffler
    *   The channelShuffler. It is only used when ( channelCount1_pointwise1Before > 1 ) (i.e. TWO_INPUTS) and
-   * ( pointwise22ChannelCount == -2 ) (i.e. channel shuffle the concatenated pointwise21 and input1).
+   * ( pointwise22ChannelCount == -2 ) (i.e. channel shuffle the concatenated pointwise21 and input1). The
+   * channelShuffler's outputGroupCount must be 2 (i.e. split into two group after channel-shuffling).
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
