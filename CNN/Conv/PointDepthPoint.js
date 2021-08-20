@@ -65,7 +65,9 @@ class Params extends Weights.Params {
 //!!! ...unfinished... (2021/08/19) Perhaps, combine channelCount1_pointwise1Before and pointwise21ChannelCount,
 // since they should be the same in many cases.
 
-   *       - If ( pointwise22ChannelCount == -2 ), input1 will be concatenated with the result of pointwise21 operation
+   *       - If ( pointwise22ChannelCount == -2 ),
+   *         ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT,
+   *         input1 will be concatenated with the result of pointwise21 operation
    *         of input0. The concatenated result will be channel-shuffled and splitted into [ output0, output1 ].
    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
    *           - The output0 and output1 will have the same channel count as pointwise21 (i.e. pointwise21ChannelCount).
@@ -159,9 +161,9 @@ class Params extends Weights.Params {
 //
 
    * @param {number} pointwise22ChannelCount
-   *   The output channel count of the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution.
-   * This second pointwise2 convolution This could achieve some kinds of channel shuffling of ShuffleNetV2.
+   *   The output channel count of the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
+   * evolution). If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution
+   * after depthwise convolution. This second pointwise2 convolution This could achieve some kinds of channel shuffling of ShuffleNetV2.
    *
    * @param {boolean} bPointwise22Bias
    *   If true, there will be a bias after the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
@@ -292,6 +294,12 @@ class Params extends Weights.Params {
   get depthwiseActivationName()   { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
 
   get pointwise21ChannelCount()   { return this.parameterMapModified.get( Params.pointwise21ChannelCount ); }
+  
+  /** @return {string} The string version of pointwise21ChannelCount. */
+  get pointwise21ChannelCountName() {
+    return Params.pointwise21ChannelCount.getStringOfValue( this.pointwise21ChannelCount );
+  }
+
   get bPointwise21Bias()          { return this.parameterMapModified.get( Params.bPointwise21Bias ); }
   get pointwise21ActivationId()   { return this.parameterMapModified.get( Params.pointwise21ActivationId ); }
   get pointwise21ActivationName() { return Params.pointwise21ActivationId.getStringOfValue( this.pointwise21ActivationId ); }
@@ -308,12 +316,12 @@ class Params extends Weights.Params {
 // Define parameter descriptions.
 
 /** At least, there should be 1 input channel. */
-Params.channelCount0_pointwise1Before =  new ParamDesc.Int(        "channelCount0_pointwise1Before", 1, ( 10 * 1024 ) );
+Params.channelCount0_pointwise1Before =  new ParamDesc.Int(             "channelCount0_pointwise1Before", 1, ( 10 * 1024 ) );
 Params.channelCount1_pointwise1Before =  new ParamDesc.channelCount1_pointwise1Before( "channelCount1_pointwise1Before" );
 
-Params.pointwise1ChannelCount =  new ParamDesc.Int(                "pointwise1ChannelCount",         0, ( 10 * 1024 ) );
-Params.bPointwise1Bias =         new ParamDesc.Bool(               "bPointwise1Bias" );
-Params.pointwise1ActivationId =  new ParamDesc.ActivationFunction( "pointwise1ActivationId" );
+Params.pointwise1ChannelCount =  new ParamDesc.Int(                     "pointwise1ChannelCount",         0, ( 10 * 1024 ) );
+Params.bPointwise1Bias =         new ParamDesc.Bool(                    "bPointwise1Bias" );
+Params.pointwise1ActivationId =  new ParamDesc.ActivationFunction(      "pointwise1ActivationId" );
 
 /** Define depthwise operation's id, range, name.
  *
@@ -335,23 +343,23 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
  *
  * Avoid too large filter size. Otherwise, performance may be poor.
  */
-Params.depthwiseFilterHeight =   new ParamDesc.Int(                "depthwiseFilterHeight", 1, 9 );
+Params.depthwiseFilterHeight =   new ParamDesc.Int(                     "depthwiseFilterHeight", 1, 9 );
 
 /** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
-Params.depthwiseStridesPad =     new ParamDesc.Int(                "depthwiseStridesPad",   0, 2 );
+Params.depthwiseStridesPad =     new ParamDesc.Int(                     "depthwiseStridesPad",   0, 2 );
 
-Params.bDepthwiseBias =          new ParamDesc.Bool(               "bDepthwiseBias" );
-Params.depthwiseActivationId =   new ParamDesc.ActivationFunction( "depthwiseActivationId" );
+Params.bDepthwiseBias =          new ParamDesc.Bool(                    "bDepthwiseBias" );
+Params.depthwiseActivationId =   new ParamDesc.ActivationFunction(      "depthwiseActivationId" );
 
-Params.pointwise21ChannelCount = new ParamDesc.Int(                "pointwise21ChannelCount", 0, ( 10 * 1024 ) );
-Params.bPointwise21Bias =        new ParamDesc.Bool(               "bPointwise21Bias" );
-Params.pointwise21ActivationId = new ParamDesc.ActivationFunction( "pointwise21ActivationId" );
+Params.pointwise21ChannelCount = new ParamDesc.Int(                     "pointwise21ChannelCount", 0, ( 10 * 1024 ) );
+Params.bPointwise21Bias =        new ParamDesc.Bool(                    "bPointwise21Bias" );
+Params.pointwise21ActivationId = new ParamDesc.ActivationFunction(      "pointwise21ActivationId" );
 
-Params.pointwise22ChannelCount = new ParamDesc.Int(                "pointwise22ChannelCount", 0, ( 10 * 1024 ) );
-Params.bPointwise22Bias =        new ParamDesc.Bool(               "bPointwise22Bias" );
-Params.pointwise22ActivationId = new ParamDesc.ActivationFunction( "pointwise22ActivationId" );
+Params.pointwise22ChannelCount = new ParamDesc.pointwise22ChannelCount( "pointwise22ChannelCount" );
+Params.bPointwise22Bias =        new ParamDesc.Bool(                    "bPointwise22Bias" );
+Params.pointwise22ActivationId = new ParamDesc.ActivationFunction(      "pointwise22ActivationId" );
 
-Params.bKeepInputTensor =        new ParamDesc.Bool(               "bKeepInputTensor" );
+Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepInputTensor" );
 
 
 /**
@@ -1440,6 +1448,8 @@ class Base extends ReturnOrClone.Base {
       + `bConcatenatorRequested=${this.bConcatenatorRequested}, `
 
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
+      + `pointwise21ChannelCountName=${this.pointwise21ChannelCountName}, `
+    
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
       + `pointwise21ActivationName=${this.pointwise21ActivationName}, `
 
