@@ -11,12 +11,12 @@ export { Base };
  *   If false, the second input tensor will be disposed after concatenating. If true, the second input tensor will be kept after concatenating.
  *
  * @member {function} pfnConcat
- *   This is a method. It has one parameter inputTensorsArray and return a outputTensor. The inputTensorsArray (tf.tensor3d[]) represents
- * all the images ( height x width x channel ) which will be concatenated. They should have the same ( height x width ) but could
- * different channel count. The outputTensor (tf.tensor3d) represents the result of concatenating the inputs along the last axis
- * (i.e. the channel axis ( axisId = 2 ) ). The inputTensor may or may not be disposed. In fact, this method calls one of
- * Concat_and_keep0_keep1(), Concat_and_keep0_destroy1(), Concat_and_destroy0_keep1(), Concat_and_destroy0_destroy1() according
- * to the parameters.
+ *   This is a method. It has one parameter inputTensorsArray and return a outputTensor. The inputTensorsArray (tf.tensor3d[])
+ * represents all the images ( height x width x channel ) which will be concatenated. They should have the same ( height x width )
+ * but could have different channel count. The outputTensor (tf.tensor3d) represents the result of concatenating the inputs along
+ * the last axis (i.e. the channel axis ( axisId = 2 ) ). The inputTensor may or may not be disposed. In fact, this method calls
+ * one of Concat_and_keep0_keep1(), Concat_and_keep0_destroy1(), Concat_and_destroy0_keep1(), Concat_and_destroy0_destroy1()
+ * according to the parameters.
  *
  */
 class Base {
