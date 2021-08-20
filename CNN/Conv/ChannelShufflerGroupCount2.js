@@ -10,8 +10,11 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
 
 //!!! ...unfinished... (2021/08/20)
 
- * Concatenate two tensor3d ( height x width x channel ) always along the last axis (i.e. axisId = 2, along the channel axis). It could
- * destroy one or two of the input tensors.
+ *   - Concatenate two tensor3d ( height x width x channel ) always along the last axis (i.e. axisId = 2, along the channel axis).
+ *   - Shuffle. (may not exist.)
+ *   - Split. (may not exist.)
+ *
+ * It could destroy one or two of the input tensors.
  *
  *
  * @member {boolean} bKeepInputTensor0
@@ -47,6 +50,7 @@ class Base {
     let concatenatedShape = [ ];
     let outputGroupCount = 2;
 
+    ChannelShuffler.ConcatPointwiseConv( 
 //!!! ...unfinished... (2021/08/19)
 
   }
