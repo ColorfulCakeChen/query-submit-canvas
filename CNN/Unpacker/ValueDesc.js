@@ -182,7 +182,7 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 
 /** Describe id, range, name of channelCount1_pointwise1Before.
  *
- * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
+ * Convert number value into integer between [ -2, ( 10 * 1024 ) ] representing operation:
  *   - -2: ONE_INPUT_TWO_DEPTHWISE
  *   - -1: ONE_INPUT_ADD_TO_OUTPUT
  *   -  0: ONE_INPUT
@@ -192,9 +192,9 @@ class channelCount1_pointwise1Before extends Int {
 
   constructor() {
     super( -2, ( 10 * 1024 ), [
-      "ONE_INPUT_TWO_DEPTHWISE",
-      "ONE_INPUT_ADD_TO_OUTPUT",
-      "ONE_INPUT",
+      "ONE_INPUT_TWO_DEPTHWISE", // (-2)
+      "ONE_INPUT_ADD_TO_OUTPUT", // (-1)
+      "ONE_INPUT",               // ( 0)
 
       // (2021/07/13 Remarked) Do not define these names because they will occupy too many memory.
       //
@@ -205,5 +205,29 @@ class channelCount1_pointwise1Before extends Int {
 
 }
 
-/** The only one ValueDesc.AvgMax_Or_ChannelMultiplier instance. */
+/** The only one ValueDesc.channelCount1_pointwise1Before instance. */
 channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
+
+
+/** Describe id, range, name of pointwise22ChannelCount.
+ *
+ * Convert number value into integer between [ -2, ( 10 * 1024 ) ] representing operation:
+ *   - -2: TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT
+ *   - -1: ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1
+ *   -  0: ONE_OUTPUT__POINTWISE21 (i.e. uss depthwise result to generate pointwisw21).
+ *   - [ 1, ( 10 * 1024 ) ]: TWO_OUTPUTS with the second output channel count between 1 and 10240 (inclusive). (without names defined.)
+ */
+class pointwise22ChannelCount extends Int {
+
+  constructor() {
+    super( -2, ( 10 * 1024 ), [
+      "TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT", // (-2)
+      "ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1",                  // (-1)
+      "ONE_OUTPUT__POINTWISE21",                                // ( 0)
+    ] );
+  }
+
+}
+
+/** The only one ValueDesc.pointwise22ChannelCount instance. */
+pointwise22ChannelCount.Singleton = new pointwise22ChannelCount;
