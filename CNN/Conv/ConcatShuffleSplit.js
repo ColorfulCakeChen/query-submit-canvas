@@ -19,8 +19,8 @@ export { Base };
  *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenated
  *         inputTensors[].
  *
- *     - The channelShuffler.filtersTensor4dArray[ 0 ] and channelShuffler.filtersTensor4dArray[ 1 ] will be used from channel
- *         shuffling and splitting.
+ *     - The channelShuffler.filtersTensor4dArray[ 0 ] and channelShuffler.filtersTensor4dArray[ 1 ] will be used for
+ *         channel shuffling and splitting.
  *
  * @member {boolean} bShuffleSplit
  *   If false, there will be no channel shuffling and not splitting after concatenation.
