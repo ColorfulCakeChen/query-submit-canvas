@@ -262,7 +262,7 @@ class ConcatGather {
     // It can be used by algorithm ConcatGather().
     // They should be integers so that can be used as tf.gather()'s index.
     //
-    // Not like SplitConcat, the channel indixes will not be sorted here. According to testing, sorted
+    // Not like SplitConcat, the channel indexes will not be sorted here. According to testing, sorted
     // channel seems slow down memory access when using them as tf.gather()'s index list.
     try {
       this.shuffledChannelIndicesTensor1dArray
