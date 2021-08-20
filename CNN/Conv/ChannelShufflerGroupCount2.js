@@ -2,8 +2,6 @@ export { Base };
 
 //import * as ChannelShuffler from "./ChannelShuffler.js";
 
-//!!! ...unfinished... (2021/08/20) setConcatOnly() ?
-
 /**
  * A special channel shuffler for ( outputGroupCount == 2 ). Its pfnConcatShuffleSplitShuffleSplit() does not use loop and not create new array.
  * So its performance should be better.
@@ -17,25 +15,9 @@ export { Base };
  * It could destroy one or two of the input tensors.
  *
  *
- * @member {boolean} bKeepInputTensor0
- *   If false, the first input tensor will be disposed after concatenating. If true, the first input tensor will be kept after concatenating.
- *
- * @member {boolean} bKeepInputTensor1
- *   If false, the second input tensor will be disposed after concatenating. If true, the second input tensor will be kept after concatenating.
- *
- * @member {function} pfnConcatShuffleSplit
- *   This is a method. It has two parameters inputTensors[] and outputTensors[]. The inputTensors[] (tf.tensor3d[]) represents
- * all the images ( height x width x channel ) which will be concatenated, shuffle, split. They should have the same ( height x width )
- * but could have different channel count. The outputTensors[] (tf.tensor3d[]) represents the result The inputTensor may or may
- * not be disposed. In fact, this method calls one of
-
-//!!! ...unfinished... (2021/08/20)
-
- * Concat_and_keep0_keep1(), Concat_and_keep0_destroy1(), Concat_and_destroy0_keep1(), Concat_and_destroy0_destroy1() according
- * to the parameters.
- *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler
- *   It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
+ *   It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ). It will not be disposed by
+ * this object (i.e. it is supposed to be shared with outter callers).
  *
  *     - The channelShuffler.filtersTensor4dArray[ 0 ] and channelShuffler.filtersTensor4dArray[ 1 ] will be used from channel
  *         shuffling and splitting.
@@ -43,24 +25,34 @@ export { Base };
  *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenated
  *         inputTensorsArray[].
  *
+ * @member {boolean} bShuffleSplit
+ *   If false, there will be no channel shuffling and not splitting after concatenation.
+ *
+ * @member {boolean} bKeepInputTensor0
+ *   If false, the first input tensor will be disposed after concatenating. If true, the first input tensor will be kept after concatenating.
+ *
+ * @member {boolean} bKeepInputTensor1
+ *   If false, the second input tensor will be disposed after concatenating. If true, the second input tensor will be kept after concatenating.
+ *
+
+//!!! ...unfinished... (2021/08/20)
+
+ * @member {function} pfnConcatShuffleSplit
+ *   This is a method. It has two parameters inputTensors[] and outputTensors[]. The inputTensors[] (tf.tensor3d[]) represents
+ * all the images ( height x width x channel ) which will be concatenated, shuffle, split. They should have the same ( height x width )
+ * but could have different channel count. The outputTensors[] (tf.tensor3d[]) represents the result The inputTensor may or may
+ * not be disposed. In fact, this method calls one of ConcatShuffleSplit_and_keep0_keep1(), ConcatShuffleSplit_and_keep0_destroy1(),
+ * ConcatShuffleSplit_and_destroy0_keep1(), ConcatShuffleSplit_and_destroy0_destroy1() according to the parameters.
+ *
  */
 class Base {
 
   /**
    *
    */
-  constructor( channelShuffler, bKeepInputTensor0, bKeepInputTensor1 ) {
+  constructor( channelShuffler, bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 ) {
     this.channelShuffler = channelShuffler;
-
-    this.setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 );
-
-//!!! ...unfinished... (2021/08/19)
-//     let concatenatedShape = [ ];
-//     let outputGroupCount = 2;
-
-//    ChannelShuffler.ConcatPointwiseConv( 
-//!!! ...unfinished... (2021/08/19)
-
+    this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   disposeTensors() {
@@ -100,24 +92,40 @@ class Base {
     Base.adjust_pfnConcatShuffleSplit.call( this );
   }
 
-  /** Set this.pfnConcatShuffleSplit according to this.bKeepInputTensor0 and this.bKeepInputTensor1. */
+  /** Set this.bShuffleSplit, this.bKeepInputTensor0, this.bKeepInputTensor1, and then adjust this.pfnConcatShuffleSplit. */
+  setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 ) {
+    this.bShuffleSplit = bShuffleSplit;
+    this.bKeepInputTensor0 = bKeepInputTensor0;
+    this.bKeepInputTensor1 = bKeepInputTensor1;
+    Base.adjust_pfnConcatShuffleSplit.call( this );
+  }
+
+  /** Set this.pfnConcatShuffleSplit according to this.bShuffleSplit, this.channelShuffler, this.bKeepInputTensor0 and this.bKeepInputTensor1. */
   static adjust_pfnConcatShuffleSplit() {
+
+    // 1.
+    if ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ) {
+      this.pfnShuffleSplit = Base.ShuffleSplit_do; // Want and could do channel shuffling and splitting.
+    } else {
+      this.pfnShuffleSplit = Base.ShuffleSplit_return_input_directly;
+    }
+
+    // 2.
     if ( this.bKeepInputTensor0 ) {
       if ( this.bKeepInputTensor1 ) {
-        this.pfnConcatShuffleSplit = Base.Concat_and_keep0_keep1;
+        this.pfnConcatShuffleSplit = Base.ConcatShuffleSplit_and_keep0_keep1;
       } else {
-        this.pfnConcatShuffleSplit = Base.Concat_and_keep0_destroy1;
+        this.pfnConcatShuffleSplit = Base.ConcatShuffleSplit_and_keep0_destroy1;
       }
     } else {
       if ( this.bKeepInputTensor1 ) {
-        this.pfnConcatShuffleSplit = Base.Concat_and_destroy0_keep1;
+        this.pfnConcatShuffleSplit = Base.ConcatShuffleSplit_and_destroy0_keep1;
       } else {
-        this.pfnConcatShuffleSplit = Base.Concat_and_destroy0_destroy1;
+        this.pfnConcatShuffleSplit = Base.ConcatShuffleSplit_and_destroy0_destroy1;
       }
     }
   }
 
-//!!! ...unfinished... (2021/08/20)
   /**
    *
    * @param {tf.tensor3d} inputTensor
@@ -139,12 +147,13 @@ class Base {
   }
 
   /** Just return inputTensor at outputTensors[ 0 ] ( outputTensors[ 1 ] will be null). */
-  static ShuffleSplit_none( inputTensor, outputTensors ) {
+  static ShuffleSplit_return_input_directly( inputTensor, outputTensors ) {
     outputTensors[ 0 ] = inputTensor;
     outputTensors[ 1 ] = null;
 
     // Do not call inputTensor.dispose(). In fact, because inputTensor is returned directly, it is the same as been disposed already.
   }
+
 
   /** Concatenate along axis id 2. (Both the inputTensorsArray[ 0 ] and inputTensorsArray[ 1 ] will not be disposed.
    *
@@ -152,38 +161,39 @@ class Base {
    *
    *
    * @param {tf.tensor3d[]} inputTensors
-   *   An array of tensors.
+   *   An array of tensors. The inputTensors[ 0 ] and inputTensors[ 1 ] should exist.
    *
    * @param {tf.tensor3d[]} outputTensors
    *   An array for returning the result (output) tensors.
    */
-  static Concat_and_keep0_keep1( inputTensors, outputTensors ) {
+  static ConcatShuffleSplit_and_keep0_keep1( inputTensors, outputTensors ) {
     let t0 = tf.concat( inputTensors, 2 ); // AxisId = 2
-
-//!!! ...unfinished... (2021/08/20) 
     this.pfnShuffleSplit( t0, outputTensors );
   }
 
   /** Concatenate along axis id 2. (The inputTensorsArray[ 0 ] will not be disposed. The inputTensorsArray[ 1 ] will be disposed. */
-  static Concat_and_keep0_destroy1( inputTensorsArray ) {
-    let t = tf.concat( inputTensorsArray, 2 ); // AxisId = 2
-    inputTensorsArray[ 1 ].dispose();
-    return t;
+  static ConcatShuffleSplit_and_keep0_destroy1( inputTensors, outputTensors ) {
+    let t0 = tf.concat( inputTensors, 2 ); // AxisId = 2
+    inputTensors[ 1 ].dispose();
+
+    this.pfnShuffleSplit( t0, outputTensors );
   }
 
   /** Concatenate along axis id 2. (The inputTensorsArray[ 0 ] will be disposed. The inputTensorsArray[ 1 ] will not be disposed. */
-  static Concat_and_destroy0_keep1( inputTensorsArray ) {
-    let t = tf.concat( inputTensorsArray, 2 ); // AxisId = 2
-    inputTensorsArray[ 0 ].dispose();
-    return t;
+  static ConcatShuffleSplit_and_destroy0_keep1( inputTensors, outputTensors ) {
+    let t0 = tf.concat( inputTensors, 2 ); // AxisId = 2
+    inputTensors[ 0 ].dispose();
+
+    this.pfnShuffleSplit( t0, outputTensors );
   }
 
   /** Concatenate along axis id 2. (Both the inputTensorsArray[ 0 ] and inputTensorsArray[ 1 ] will be disposed. */
-  static Concat_and_destroy0_destroy1( inputTensorsArray ) {
-    let t = tf.concat( inputTensorsArray, 2 ); // AxisId = 2
-    inputTensorsArray[ 0 ].dispose();
-    inputTensorsArray[ 1 ].dispose();
-    return t;
+  static ConcatShuffleSplit_and_destroy0_destroy1( inputTensors, outputTensors ) {
+    let t0 = tf.concat( inputTensors, 2 ); // AxisId = 2
+    inputTensors[ 0 ].dispose();
+    inputTensors[ 1 ].dispose();
+
+    this.pfnShuffleSplit( t0, outputTensors );
   }
 
 }
