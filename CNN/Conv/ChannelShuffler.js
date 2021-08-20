@@ -1,5 +1,5 @@
 export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv };
-export { GroupCount2, Pool };
+//export { GroupCount2, Pool };
 
 /**
  * The information for channel shuffler.
@@ -617,56 +617,26 @@ class ConcatPointwiseConv {
 }
 
 
-/**
- * A special channel shuffler for ( outputGroupCount == 2 ). Its apply() does not use loop and not create new array.
- * So its performance should be better.
- */
-class GroupCount2 {
-
-  /**
-   *
-   * @see ChannelShuffler.ShuffleInfo
-   */
-  constructor(   ) {
-
-//!!! ...unfinished... (2021/08/19)
-    let concatenatedShape = [ ];
-    let outputGroupCount = 2;
-
-//!!! ...unfinished... (2021/08/19)
-  }
-
-  disposeTensors() {
-//!!! ...unfinished... (2021/08/19)
-  }
-
-//!!! ...unfinished... (2021/08/19) Use outputTensors[] instead of new created array as return value (for improving performance).
-  apply( inputTensors, outputTensors ) {
-// Since ( outputGroupCount == 2 ), use optimized (loop-unrolled).
-  }
-
-}
-
-
-/**
- *
- */
-class Pool {
-
-  /**
-   *
-   * @see ChannelShuffler.ShuffleInfo
-   */
-  getBy( concatenatedShape, outputGroupCount ) {
-
-//!!! ...unfinished... (2021/08/19)
-// Return a ChannelShuffler if existed. Otherwise, create new one.
-// If ( outputGroupCount == 2 ), return optimized (loop-unrolled) channelShuffler.
-
-  }
-
-  disposeTensors() {
-//!!! ...unfinished... (2021/08/19)
-  }
-
-}
+//!!! ...unfinished... (2021/08/20 Remarked)
+// /**
+//  *
+//  */
+// class Pool {
+//
+//   /**
+//    *
+//    * @see ChannelShuffler.ShuffleInfo
+//    */
+//   getBy( concatenatedShape, outputGroupCount ) {
+//
+// //!!! ...unfinished... (2021/08/19)
+// // Return a ChannelShuffler if existed. Otherwise, create new one.
+// // If ( outputGroupCount == 2 ), return optimized (loop-unrolled) channelShuffler.
+//
+//   }
+//
+//   disposeTensors() {
+// //!!! ...unfinished... (2021/08/19)
+//   }
+//
+// }
