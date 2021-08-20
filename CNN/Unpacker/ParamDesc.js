@@ -1,4 +1,5 @@
-export { Base, Same, Bool, Int, ActivationFunction, AvgMax_Or_ChannelMultiplier, channelCount1_pointwise1Before };
+export { Base, Same, Bool, Int, ActivationFunction, AvgMax_Or_ChannelMultiplier };
+export {  channelCount1_pointwise1Before, pointwise22ChannelCount };
 
 import * as ValueDesc from "./ValueDesc.js";
 
@@ -149,5 +150,22 @@ class channelCount1_pointwise1Before extends Base {
 
   constructor( paramName ) {
     super( paramName, ValueDesc.channelCount1_pointwise1Before.Singleton );
+  }
+}
+
+
+/**
+ * Describe some properties of an pointwise22ChannelCount parameter.
+ *
+ * @member {string} paramName
+ *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
+ *
+ * @member {ValueDesc.pointwise22ChannelCount} valueDesc
+ *   The range of the parameter's all possible values. It is an ValueDesc.pointwise22ChannelCount object.
+ */
+class pointwise22ChannelCount extends Base {
+
+  constructor( paramName ) {
+    super( paramName, ValueDesc.pointwise22ChannelCount.Singleton );
   }
 }
