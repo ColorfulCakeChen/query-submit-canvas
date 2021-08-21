@@ -514,15 +514,10 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution.
  *
  * @member {boolean} bConcat1Requested
- *   It will be true when ( channelCount1_pointwise1Before > 0 ) or ( channelCount1_pointwise1Before == -2 ). If true, it means
- * a concatenator (before pointwise2) is needed.
+ *   If true, the concat1 (after depthwise and before pointwise2) is needed.
  *
- 
-!!!
-
  * @member {boolean} bConcat2ShuffleSplitRequested
- *   It will be true when ( channelCount1_pointwise1Before > 0 ) or ( channelCount1_pointwise1Before == -2 ). If true, it means
- * a concatenator (before pointwise2) is needed.
+ *   If true, the concat2 (after pointwise2) is needed. It may or may not follow channel shuffling and splitting.
  *
  * @member {boolean} bPointwise2
  *   If true, the pointwise2 (i.e. pointwise21 or/and pointwise22)  convolution exists.
@@ -715,11 +710,13 @@ class Base extends ReturnOrClone.Base {
 
     this.bKeepInputTensor = params.bKeepInputTensor;
 
-    // Determine input tensor count and whether request add-input-to-output.
+    // The parameters which are determined (inferenced) from the above parameters.
     this.inputTensorCount = params.inputTensorCount;
     this.bDepthwise2Requested = params.bDepthwise2Requested;
     this.bConcat1Requested = params.bConcat1Requested;
+    this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
     this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
+    this.outputTensorCount = params.outputTensorCount;
 
 //!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
 
@@ -897,13 +894,14 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise2After = this.channelCount_pointwise21After = this.channelCount_concat1After_pointwise2Before;
     }
 
-    // If both pointwise21 and pointwise22 existed, the pointwise21 should keep-input-tensor.
-    // Otherwise, the pointwise22 will fail to process it.
-    if ( this.bPointwise21 && this.bPointwise22 ) {
-      this.outputTensorCount = 2; // This is the only case which will output two tensors. 
-    } else {
-      this.outputTensorCount = 1; // All other cases, there will be only one output tensor.
-    }
+//!!! ...unfinished... (2021/08/21 Remarked) outputChannelCount should already determined in the above.
+//     // If both pointwise21 and pointwise22 existed, the pointwise21 should keep-input-tensor.
+//     // Otherwise, the pointwise22 will fail to process it.
+//     if ( this.bPointwise21 && this.bPointwise22 ) {
+//       this.outputTensorCount = 2; // This is the only case which will output two tensors. 
+//     } else {
+//       this.outputTensorCount = 1; // All other cases, there will be only one output tensor.
+//     }
 
     // 5.4
     ++progressToAdvance.value;
