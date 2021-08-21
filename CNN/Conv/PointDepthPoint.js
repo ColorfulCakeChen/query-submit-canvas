@@ -253,14 +253,23 @@ class Params extends Weights.Params {
     if ( channelCount1_pointwise1Before <= 0 ) {
 
       this.inputTensorCount = 1; // One input.
+      this.bConcat2ShuffleSplitRequested = false; // One input never uses concat2-shuffle-split.
+
+      if ( pointwise22ChannelCount > 0 ) // One input's output count is determined by pointwise22ChannelCount totally.
+        this.outputTensorCount = 2;
+      else
+        this.outputTensorCount = 1;
 
       switch ( channelCount1_pointwise1Before ) {
+        // 1.1
         case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT: // ( 0)
           this.bDepthwise2Requested = this.bConcat1Requested = false; this.bAddInputToOutputRequested = false; break;
 
+        // 1.2 The only case uses add-input-to-output. (MobileNetV2)
         case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
           this.bDepthwise2Requested = this.bConcat1Requested = false; this.bAddInputToOutputRequested =  true; break;
 
+        // 1.3 The only case uses depthwise2. (ShuffleNetV2's head)
         case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
           this.bDepthwise2Requested = this.bConcat1Requested =  true; this.bAddInputToOutputRequested = false; break;
       }
@@ -271,20 +280,20 @@ class Params extends Weights.Params {
       this.bDepthwise2Requested = false; // Two inputs never use depthwise2.
       this.bAddInputToOutputRequested = false; // Two inputs never do add-input-to-output. (It always use concatenation.)
 
-      if ( pointwise22ChannelCount > 0 ) { // 2.1
+      if ( pointwise22ChannelCount > 0 ) { // 2.1 Two-inputs-two-outputs: by concat1. (slower ShuffleNetV2's body)
         this.bConcat1Requested = true; this.bConcat2ShuffleSplitRequested = false; this.outputTensorCount = 2;
 
       } else {
         switch ( pointwise22ChannelCount ) {
-          // 2.2
+          // 2.2 Two-inputs-one-output: by concat1. (slower ShuffleNetV2's tail)
           case ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__POINTWISE21: // ( 0)
             this.bConcat1Requested =  true; this.bConcat2ShuffleSplitRequested = false; this.outputTensorCount = 1; break;
 
-          // 2.3
+          // 2.3 Two-inputs-one-output: by concat2(-shuffle-split). (ShuffleNetV2's tail)
           case ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1: // (-1)
             this.bConcat1Requested = false; this.bConcat2ShuffleSplitRequested =  true; this.outputTensorCount = 1; break;
 
-          // 2.4
+          // 2.4 Two-inputs-two-outputs: by concat2-shuffle-split. (ShuffleNetV2's body)
           case ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT: // (-2)
             this.bConcat1Requested = false; this.bConcat2ShuffleSplitRequested =  true; this.outputTensorCount = 2; break;
         }
@@ -505,6 +514,13 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution.
  *
  * @member {boolean} bConcat1Requested
+ *   It will be true when ( channelCount1_pointwise1Before > 0 ) or ( channelCount1_pointwise1Before == -2 ). If true, it means
+ * a concatenator (before pointwise2) is needed.
+ *
+ 
+!!!
+
+ * @member {boolean} bConcat2ShuffleSplitRequested
  *   It will be true when ( channelCount1_pointwise1Before > 0 ) or ( channelCount1_pointwise1Before == -2 ). If true, it means
  * a concatenator (before pointwise2) is needed.
  *
