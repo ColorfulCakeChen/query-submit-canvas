@@ -233,22 +233,68 @@ class Params extends Weights.Params {
   }
 
   /**
-   * Determine input tensor count, whether request depthwise2, whether request concatenator, and whether request add-input-to-output.
+   * Determine the following properties:
+   *   - this.inputTensorCount
+   *   - this.bDepthwise2Requested
+   *   - this.bConcat1AfterDepthwiseRequested
+   *   - this.bAddInputToOutputRequested
+   *   - this.bConcatShuffleSplit
+   *   - this.outputTensorCount
    *
    * @param {number} channelCount1_pointwise1Before
-   *   According to this integer, the flags will be set in this.inputTensorCount, this.bDepthwise2Requested, this.bConcat1AfterDepthwiseRequested,
-   * this.bAddInputToOutputRequested.
-   *
    * @param {number} pointwise22ChannelCount
-   *   According to this integer, the flags will be set in this.inputTensorCount, this.bDepthwise2Requested, this.bConcat1AfterDepthwiseRequested,
-   * this.bAddInputToOutputRequested.
    */
   static setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount(
             channelCount1_pointwise1Before, pointwise22ChannelCount ) {
 
-//!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit
+//!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputTensorCount
 
     if ( channelCount1_pointwise1Before > 0 ) { // ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_XXX (> 0)
+      
+//    *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT ),
+//    *         (-2), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
+//    *         result will be channel-shuffled and splitted into [ output0, output1 ].
+//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
+//    *           - The output0 and output1 will have the same channel count as pointwise21 (i.e. pointwise21ChannelCount).
+//    *
+//    *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1 ),
+//    *         (-1), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
+//    *         result will become output0.
+//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
+//    *           - The output0 will have channel count as ( pointwise21ChannelCount + channelCount1_pointwise1Before ).
+//    *
+//    *       - If ( pointwise22ChannelCount >= 0 ), input1 will be concatenated with the result of depthwise operation
+//    *         of input0. The concatenated result will be processed by pointwise2 convolution.
+//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
+//    *           - The output0 will be the result of pointwise21.
+//    *           - The output1 will be the result of pointwise22.
+//    *
+
+      this.inputTensorCount = 2; // Two inputs.
+      this.bDepthwise2Requested = false; // Two inputs never use depthwise2.
+      this.bAddInputToOutputRequested = false; // Two inputs never do add-input-to-output. (It always use concatenation.)
+
+      if ( pointwise22ChannelCount > 0 ) {
+        this.bConcat1AfterDepthwiseRequested = true;
+        this.bConcatShuffleSplit = false;
+        this.outputTensorCount = 2;
+
+      } else {
+        switch ( pointwise22ChannelCount ) {
+          case ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT: // (-2)
+            break;
+
+          case ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1: // (-1)
+            break;
+
+          case ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__POINTWISE21: // ( 0)
+            this.bConcat1AfterDepthwiseRequested = true;
+            this.bConcatShuffleSplit = false;
+            this.outputTensorCount = 2;
+            break;
+        }
+      }
+//???
       this.inputTensorCount = 2; this.bDepthwise2Requested = false; this.bConcat1AfterDepthwiseRequested = true; this.bAddInputToOutputRequested = false;
 
     } else {
