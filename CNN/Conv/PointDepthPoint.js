@@ -148,19 +148,11 @@ class Params extends Weights.Params {
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise21ChannelCount == 0 ), this activation function
    * will also be ignored.
    *
-
-//!!! ...unfinished... (2021/08/19)
-// If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -1 ), generating [ output0 ]
-//   from concat( pointwise21, input1 ).
-//
-// If ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -2 ), generating [ output0, output1 ]
-//   from concat( pointwise21, input1 ) by using channel-shuffler.
-//
-
    * @param {number} pointwise22ChannelCount
    *   The output channel count of the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
    * evolution). If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution
    * after depthwise convolution. This second pointwise2 convolution This could achieve some kinds of channel shuffling of ShuffleNetV2.
+   * See channelCount1_pointwise1Before explanation.
    *
    * @param {boolean} bPointwise22Bias
    *   If true, there will be a bias after the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
@@ -246,8 +238,6 @@ class Params extends Weights.Params {
    */
   static setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount(
             channelCount1_pointwise1Before, pointwise22ChannelCount ) {
-
-//!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputTensorCount
 
     // 1. 
     if ( channelCount1_pointwise1Before <= 0 ) {
@@ -492,14 +482,28 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {boolean} bDepthwise2Requested
+ *   It will be true only when ( channelCount1_pointwise1Before == -2 ). If true, it means a second depthwise might be needed.
+ *
+ * @member {boolean} bConcat1Requested
+ *   If true, the concat1 (after depthwise and before pointwise2) is needed.
+ *
+ * @member {boolean} bConcat2ShuffleSplitRequested
+ *   If true, the concat2 (after pointwise2) is needed. It may or may not follow channel shuffling and splitting.
+ *
+ * @member {boolean} bAddInputToOutputRequested
+ *   It will be true when ( this.channelCount1_pointwise1Before == -1 ). The input (in this case, the main input (i.e. inputTensorArray[ 0 ])
+ * will be added to the output for achieving skip connection.
+ *
+ * @member {number} outputTensorCount
+ *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2. It is
+ * determined by channelCount1_pointwise1Before and pointwise22ChannelCount.
+ *
  * @member {boolean} bPointwise1
  *   If true, the pointwise1 convolution exists.
  *
  * @member {string} pointwise1ActivationName
  *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution.
- *
- * @member {boolean} bDepthwise2Requested
- *   It will be true only when ( channelCount1_pointwise1Before == -2 ). If true, it means a second depthwise might be needed.
  *
  * @member {boolean} bDepthwise1
  *   If true, the first depthwise convolution (or average pooling, or maximum pooling) exists.
@@ -512,12 +516,6 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *
  * @member {string} depthwiseActivationName
  *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution.
- *
- * @member {boolean} bConcat1Requested
- *   If true, the concat1 (after depthwise and before pointwise2) is needed.
- *
- * @member {boolean} bConcat2ShuffleSplitRequested
- *   If true, the concat2 (after pointwise2) is needed. It may or may not follow channel shuffling and splitting.
  *
  * @member {boolean} bPointwise2
  *   If true, the pointwise2 (i.e. pointwise21 or/and pointwise22)  convolution exists.
@@ -540,14 +538,17 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * @member {number} inChannels1
  *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). This is the same as this.channelCount1_pointwise1Before (from initer()).
  *
+
+//!!! ...unfinished... (2021/08/22) What outChannels0, outChannels1, outChannels if shuffleSplit?
+
  * @member {number} outChannels0
- *   The channel count of the first output tensor. It is the same as this.channelCount_pointwise21After (from initer()).
+ *   The channel count of the first output tensor. It is the same as this.channelCount_pointwise21After_concat2Before (from initer()).
  *
  * @member {number} outChannels1
- *   The channel count of the second output tensor. It is the same as this.channelCount_pointwise22After (from initer()).
+ *   The channel count of the second output tensor. It is the same as this.channelCount_pointwise22After_concat2Before (from initer()).
  *
  * @member {number} outChannels
- *   The channel count of all output tensor. It is the same as this.channelCount_pointwise2After (from initer()).
+ *   The channel count of all output tensor. It is the same as this.channelCount_pointwise2After_concat2Before (from initer()).
  *
  * @member {number} channelCount_pointwise1After_depthwise1Before
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
@@ -583,26 +584,27 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *   - If ( this.bConcat1Requested == false ), it is
  *       ( this.channelCount_depthwise1After_concat1Before ).
  *
- * @member {number} channelCount_pointwise21After
- *   The channel count after the first pointwise2 convolution. If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
+ * @member {number} channelCount_pointwise21After_concat2Before
+ *   The channel count after the pointwise21 convolution. If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
  * If ( pointwise21ChannelCount == 0 ), it will be 0.
  *
- * @member {number} channelCount_pointwise22After
- *   The channel count after the second pointwise2 convolution. If ( pointwise22ChannelCount > 0 ), it equals pointwise22ChannelCount.
+ * @member {number} channelCount_pointwise22After_concat2Before
+ *   The channel count after the pointwise22 convolution. If ( pointwise22ChannelCount > 0 ), it equals pointwise22ChannelCount.
  * If ( pointwise22ChannelCount == 0 ), it will be 0.
  *
- * @member {number} channelCount_pointwise2After
- *   The channel count after all pointwise2 convolution. Basically, it will be ( channelCount_pointwise21After + channelCount_pointwise22After )
- * if at least one pointwise2 convolution existed. If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it
- * will be channelCount_concat1After_pointwise2Before.
+ * @member {number} channelCount_pointwise2After_concat2Before
+ *   The channel count after all pointwise2 convolution.
  *
- * @member {number} outputTensorCount
- *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2. It is
- * determined by bPointwise21 and bPointwise22.
+ *     - Basically, it will be ( channelCount_pointwise21After_concat2Before + channelCount_pointwise22After_concat2Before )
+ *         if at least one pointwise2 convolution existed.
  *
- * @member {boolean} bAddInputToOutputRequested
- *   It will be true when ( this.channelCount1_pointwise1Before == -1 ). The input (in this case, the main input (i.e. inputTensorArray[ 0 ])
- * will be added to the output for achieving skip connection.
+ *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
+ *
+
+//!!! ...unfinished... (2021/08/22)
+// channelCount_concat2After_shuffleBefore
+// channelCount_shuffleSplitAfter?
+
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
  *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
@@ -862,9 +864,9 @@ class Base extends ReturnOrClone.Base {
 
     this.bPointwise21 = this.pointwise21.bExisted;
     if ( this.bPointwise21 ) {
-      this.channelCount_pointwise21After = this.pointwise21ChannelCount;
+      this.channelCount_pointwise21After_concat2Before = this.pointwise21ChannelCount;
     } else {
-      this.channelCount_pointwise21After = 0;  // No first pointwise2 convolution.
+      this.channelCount_pointwise21After_concat2Before = 0;  // No first pointwise2 convolution.
     }
 
     // 5.2 Pointwise22
@@ -878,20 +880,20 @@ class Base extends ReturnOrClone.Base {
 
     this.bPointwise22 = this.pointwise22.bExisted;
     if ( this.bPointwise22 ) {
-      this.channelCount_pointwise22After = this.pointwise22ChannelCount;
+      this.channelCount_pointwise22After_concat2Before = this.pointwise22ChannelCount;
     } else {
-      this.channelCount_pointwise22After = 0;  // No second pointwise2 convolution.
+      this.channelCount_pointwise22After_concat2Before = 0;  // No second pointwise2 convolution.
     }
 
     // 5.3 Pointwise2 (= Pointwise21 + Pointwise22 )
     this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
-    this.channelCount_pointwise2After = this.pointwise21ChannelCount + this.pointwise22ChannelCount;
+    this.channelCount_pointwise2After_concat2Before = this.pointwise21ChannelCount + this.pointwise22ChannelCount;
 
     if ( !this.bPointwise2 ) {
       // If there is not any pointwise2 convolution, the result channel count will not be zero. It should be the channel count after
       // depthwise operation together with the second input channel count (if existed). And it should be at the first output tensor
       // (i.e. outputTensors[ 0 ]).
-      this.channelCount_pointwise2After = this.channelCount_pointwise21After = this.channelCount_concat1After_pointwise2Before;
+      this.channelCount_pointwise2After_concat2Before = this.channelCount_pointwise21After_concat2Before = this.channelCount_concat1After_pointwise2Before;
     }
 
 //!!! ...unfinished... (2021/08/21 Remarked) outputChannelCount should already determined in the above.
@@ -930,17 +932,17 @@ class Base extends ReturnOrClone.Base {
       // Usually, if no pointwise22, then no addInput0ToPointwise22.
       //
       // However, there is one exception: When both no pointwise21 and no pointwise22, there might be addInput0ToPointwise21
-      // if channelCount_concat1After_pointwise2Before (which is already assigned to channelCount_pointwise21After in this case)
+      // if channelCount_concat1After_pointwise2Before (which is already assigned to channelCount_pointwise21After_concat2Before in this case)
       // has the same dimension as inputTensors[ 0 ].
 
-      if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise21After ) {
+      if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise21After_concat2Before ) {
         this.bShould_addInput0ToPointwise21 = true;
         this.addInput0ToPointwise21 = new AddTwoTensors.Base();
       }
 
       // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount0_pointwise1Before
       // (not channelCount1_pointwise1Before).
-      if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise22After ) {
+      if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise22After_concat2Before ) {
         this.bShould_addInput0ToPointwise22 = true;
         this.addInput0ToPointwise22 = new AddTwoTensors.Base();
       }
@@ -1463,13 +1465,13 @@ class Base extends ReturnOrClone.Base {
   get inChannels1()    { return this.channelCount1_pointwise1Before; }
 
   /** @return {number} The channel count of the first output tensor (i.e. outputTensors[ 0 ]). */
-  get outChannels0()   { return this.channelCount_pointwise21After; }
+  get outChannels0()   { return this.channelCount_pointwise21After_concat2Before; }
 
   /** @return {number} The channel count of the second output tensor (i.e. outputTensors[ 1 ]). */
-  get outChannels1()   { return this.channelCount_pointwise22After; }
+  get outChannels1()   { return this.channelCount_pointwise22After_concat2Before; }
 
   /** @return {number} The channel count of both the first and second output tensors. */
-  get outChannelsAll() { return this.channelCount_pointwise2After; }
+  get outChannelsAll() { return this.channelCount_pointwise2After_concat2Before; }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
