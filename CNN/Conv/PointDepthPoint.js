@@ -564,14 +564,8 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *       which is channelCount_pointwise1After_depthwise1Before.
  *
  * @member {number} channelCount_depthwise2After_concat1Before
- *   The channel count after the second depthwise convolution which applies to input0 or input1.
- *   - If depthwise2 exists, i.e. ONE_INPUT_TWO_DEPTHWISE. It will be the channel count of depthwise2's output.
- *   - If ( bDepthwise2Requested == true ) but depthwise2 does not exist, i.e. no depthwise operation.
- *       It will be the same as channelCount0_pointwise1Before.
- *   - If ( bDepthwise2Requested == false ) and ( bConcat1Requested == true ), i.e. TWO_INPUTS.
- *       It will be the same as channelCount1_pointwise1Before.
- *   - If ( bDepthwise2Requested == false ) and ( bConcat1Requested == false ), i.e. ONE_INPUT or ONE_INPUT_ADD_TO_OUTPUT.
- *       It will be zero.
+ *   The channel count after the second depthwise convolution which applies to input0 or input1. If depthwise2 does not exist,
+ * this will be the same as channelCount1_pointwise1Before (i.e. the depthwise2 will be viewed as short circui to input1).
  *
  * @member {number} channelCount_concat1After_pointwise2Before
  *   The channel count after depthwise1 operation together with input0 (after depthwise2) or input1 (without depthwise2).
@@ -812,27 +806,15 @@ class Base extends ReturnOrClone.Base {
       }
 
     } else {
-      // The depthwise2 is not requested and concat1 exists. It means TWO_INPUTS. In this case, the depthwise2 should
-      // be short circuit to inputTensor[ 1 ] (i.e. not inputTensor[ 0 ]).
-      if ( this.bConcat1Requested == true ) {
-        this.channelCount_depthwise2After_concat1Before = this.channelCount1_pointwise1Before;
-        TensorOpCounters.depthwise2 = TensorOpCounters.input1;
-
-//!!! ...unfinished... (2021/08/22)
-
-      // The depthwise2 is not requested and concat1 does not exist. It means ONE_INPUT or ONE_INPUT_ADD_TO_OUTPUT. In this case,
-      // the depthwise2 will be short circuit to inputTensor[ 1 ] but it will be zero (i.e. no input) in fact.
-      } else {
-        this.channelCount_depthwise2After_concat1Before = 0;
-        TensorOpCounters.depthwise2 = TensorOpCounters.input1;
-
-//!!! ...unfinished... (2021/08/22)
-
-      }
+      // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
+      this.channelCount_depthwise2After_concat1Before = this.channelCount1_pointwise1Before;
+      TensorOpCounters.depthwise2 = TensorOpCounters.input1;
     }
 
     ++progressToAdvance.value;
     yield progressRoot;  // depthwise filters was ready. Report progress.
+
+//!!! ...unfinished... (2021/08/22)
 
     // 4. Concat1
     //
