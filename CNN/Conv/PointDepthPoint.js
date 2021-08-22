@@ -402,7 +402,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *
  * There six main combinations:
  *
- *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: (simplified ShuffleNetV2's head)
+ *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: (our adjusted ShuffleNetV2's head)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - pointwise21
  *        \------------- depthwise2 /         \ pointwise22
@@ -424,20 +424,17 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *                                                 \ pointwise22
  * </pre>
  *
-
-//!!! ...unfinished... (2021/08/19)
-
  *
  *   - When ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -2 ): TWO_INPUTS: TWO_OUTPUT: (ShuffleNetV2's body)
  * <pre>
  * input0 - pointwise1 - depthwise1 - pointwise21 - concat2ShuffleSplit - output0
- * input1 ----------------------------------------/                    \ output1
+ * input1 ----------------------------------------/                     \ output1
  * </pre>
  *
  *
  *   - When ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount == -1 ): TWO_INPUTS: ONE_OUTPUT: (ShuffleNetV2's tail)
  * <pre>
- * input0 - pointwise1 - depthwise1 - pointwise21 - concat2ShuffleSplit - output0
+ * input0 - pointwise1 - depthwise1 - pointwise21 - concat2(ShuffleSplit) - output0
  * input1 ----------------------------------------/
  * </pre>
  *
@@ -759,7 +756,7 @@ class Base extends ReturnOrClone.Base {
 
     // 3. The depthwise operation.
     //
-    // Note: When pad=valid, it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
+    // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
 
     // 3.1 The first depthwise operation.
     this.depthwise1 = new Depthwise.Base(
@@ -815,17 +812,22 @@ class Base extends ReturnOrClone.Base {
       }
 
     } else {
-      // The depthwise2 is not requested and concatenator exists. It means TWO_INPUTS. In this case, the depthwise2 should
+      // The depthwise2 is not requested and concat1 exists. It means TWO_INPUTS. In this case, the depthwise2 should
       // be short circuit to inputTensor[ 1 ] (i.e. not inputTensor[ 0 ]).
       if ( this.bConcat1Requested == true ) {
         this.channelCount_depthwise2After_concat1Before = this.channelCount1_pointwise1Before;
         TensorOpCounters.depthwise2 = TensorOpCounters.input1;
 
-      // The depthwise2 is not requested and concatenator does not exist. It means ONE_INPUT or ONE_INPUT_ADD_TO_OUTPUT. In this case,
+//!!! ...unfinished... (2021/08/22)
+
+      // The depthwise2 is not requested and concat1 does not exist. It means ONE_INPUT or ONE_INPUT_ADD_TO_OUTPUT. In this case,
       // the depthwise2 will be short circuit to inputTensor[ 1 ] but it will be zero (i.e. no input) in fact.
       } else {
         this.channelCount_depthwise2After_concat1Before = 0;
         TensorOpCounters.depthwise2 = TensorOpCounters.input1;
+
+//!!! ...unfinished... (2021/08/22)
+
       }
     }
 
