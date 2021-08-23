@@ -199,10 +199,12 @@ class Base {
       testParams.in.bKeepInputTensor
     );
 
+//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
     let bInitOk = pointDepthPoint.init( progress, extractedParams );
 
     let flags = {};
-    PointDepthPoint.Params.setFlags_by_channelCount1_pointwise1Before.call( flags, testParams.out.channelCount1_pointwise1Before );
+    PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount.call( flags,
+      testParams.out.channelCount1_pointwise1Before, testParams.out.pointwise22ChannelCount );
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
