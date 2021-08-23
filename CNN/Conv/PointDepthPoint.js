@@ -151,8 +151,8 @@ class Params extends Weights.Params {
    * @param {number} pointwise22ChannelCount
    *   The output channel count of the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
    * evolution). If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution
-   * after depthwise convolution. This second pointwise2 convolution This could achieve some kinds of channel shuffling of ShuffleNetV2.
-   * See channelCount1_pointwise1Before explanation.
+   * after depthwise convolution. The pointwise22 convolution could achieve some kinds of channel shuffling of ShuffleNetV2. Please
+   * see channelCount1_pointwise1Before explanation.
    *
    * @param {boolean} bPointwise22Bias
    *   If true, there will be a bias after the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
@@ -569,12 +569,8 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * to input1).
  *
  * @member {number} channelCount_concat1After_pointwise2Before
- *   The channel count after depthwise1 operation together with input0 (after depthwise2) or input1 (without depthwise2).
- * That is ( channelCount_depthwiseAfter_concat1Before + channelCount0_pointwise1Before ).
- *   - If ( this.bConcat1Requested == true ), it is
- *       ( this.channelCount_depthwise1After_concat1Before + this.channelCount_depthwise2After_concat1Before ).
- *   - If ( this.bConcat1Requested == false ), it is
- *       ( this.channelCount_depthwise1After_concat1Before ).
+ *   The channel count before pointwise2. It is may be the concatenated result of input0 (with depthwise1, with/without depthwise2)
+ * with/without input1 (without depthwise2).
  *
  * @member {number} channelCount_pointwise21After_concat2Before
  *   The channel count after the pointwise21 convolution. If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
@@ -712,8 +708,6 @@ class Base extends ReturnOrClone.Base {
     this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
     this.outputTensorCount = params.outputTensorCount;
 
-//!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
-
     this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
 
     ++progressToAdvance.value;
@@ -815,12 +809,7 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // depthwise filters was ready. Report progress.
 
-//!!! ...unfinished... (2021/08/22)
-
     // 4. Concat1
-    //
-    // If ( there are two input tensors ) or ( there is one input tensor but there is depthwise2 ), the channel count for pointwise2 input
-    // will be the concatenated channel count (= depthwise1_channel_count + depthwise2_channel_count ).
     if ( this.bConcat1Requested ) {
       
       this.channelCount_concat1After_pointwise2Before
@@ -835,6 +824,8 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_concat1After_pointwise2Before = this.channelCount_depthwise1After_concat1Before;
       TensorOpCounters.concat1 = TensorOpCounters.depthwise1;
     }
+
+//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
 
     // 5. The pointwise2 convolution.
 
