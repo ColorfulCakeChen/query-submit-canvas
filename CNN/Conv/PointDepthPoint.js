@@ -1003,7 +1003,7 @@ class Base extends ReturnOrClone.Base {
       this.outChannels0 = this.channelCount_pointwise21After_concat2Before;
       this.outChannels1 = this.channelCount_pointwise22After_concat2Before;
 
-//!!! ...unfinished... (2021/08/23) How about the second input (i.e. TensorOpCounters.addInput0ToPointwise22)?
+      // Note: It should also be okay to set to TensorOpCounters.addInput0ToPointwise22).
       TensorOpCounters.concat2ShuffleSplit = TensorOpCounters.addInput0ToPointwise21;
     }
 
@@ -1012,10 +1012,9 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
 
-//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
-
     // 8. Configure correct function pointers according to whether keeping or destroying input tensor.
 
+//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
     // 8.1 Determine which apply_Xxx() function should be used.
     //
     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
@@ -1034,7 +1033,8 @@ class Base extends ReturnOrClone.Base {
       let TensorOpCounterSet = new Set( [
         TensorOpCounters.pointwise1,  TensorOpCounters.depthwise1, TensorOpCounters.depthwise2, TensorOpCounters.concat1,
         TensorOpCounters.pointwise21, TensorOpCounters.addInput0ToPointwise21,
-        TensorOpCounters.pointwise22, TensorOpCounters.addInput0ToPointwise22
+        TensorOpCounters.pointwise22, TensorOpCounters.addInput0ToPointwise22,
+        TensorOpCounters.concat2ShuffleSplit
       ] );
 
       for ( let TensorOpCounter of TensorOpCounterSet ) {
@@ -1137,6 +1137,9 @@ class Base extends ReturnOrClone.Base {
    * @return {function} Return one of the apply_Xxx function.
    */
   static Determine_apply_and_destroy_or_keep() {
+
+//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
+
 
     switch ( this.channelCount1_pointwise1Before ) {
 
@@ -1506,17 +1509,6 @@ class Base extends ReturnOrClone.Base {
 
   /** @return {number} The channel count of the second input tensor (i.e. inputTensors[ 1 ]). */
   get inChannels1()    { return this.channelCount1_pointwise1Before; }
-
-//!!! ...unfinished... (2021/08/23 Remarked) Replaced by read/write property.
-//
-//   /** @return {number} The channel count of the first output tensor (i.e. outputTensors[ 0 ]). */
-//   get outChannels0()   { return this.channelCount_pointwise21After_concat2Before; }
-//
-//   /** @return {number} The channel count of the second output tensor (i.e. outputTensors[ 1 ]). */
-//   get outChannels1()   { return this.channelCount_pointwise22After_concat2Before; }
-/
-//   /** @return {number} The channel count of both the first and second output tensors. */
-//   get outChannelsAll() { return this.channelCount_pointwise2After_concat2Before; }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
