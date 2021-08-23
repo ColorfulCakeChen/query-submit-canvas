@@ -941,26 +941,42 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // add-input-to-output was ready. Report progress.
 
-//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
     // 7. Concat2-Shuffle-Split
     if ( this.bConcat2ShuffleSplitRequested ) {
-//!!!
+
+//!!! ...unfinished... (2021/08/23)
+      let bShuffleSplit, TensorOpCounters_NamePostfix;
+      if ( this.outputTensorCount == 1 ) {
+        bShuffleSplit = false;
+        TensorOpCounters_NamePostfix = "_concat2"; // only concat2, no shuffle, no split.
+
+      } else { // ( this.outputTensorCount == 2 )
+        bShuffleSplit = true;
+        TensorOpCounters_NamePostfix = "_concat2ShuffleSplit";
+      }
+
       this.outChannels0
+      this.outChannels1
+      this.outChannelsAll
       this.channelCount_concat2After_pointwise2Before
         = this.channelCount_depthwise1After_concat1Before + this.channelCount_depthwise2After_concat1Before;
 
-      this.concat2ShuffleSplit = new Concat2ShuffleSplit.Base(  channelShuffler_ConcatPointwiseConv, true, false, false );
+      this.concat2ShuffleSplit = new Concat2ShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
 
-      TensorOpCounters.concat1 = new TensorOpCounter.Base(
-        ( ++TensorOpCounterId ) + "_concat2ShuffleSplit", this.concat2ShuffleSplit, TensorOpCounters.??depthwise1, TensorOpCounters.??depthwise2 );
+      TensorOpCounters.concat1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + TensorOpCounters_NamePostfix,
+        this.concat2ShuffleSplit, TensorOpCounters.??depthwise1, TensorOpCounters.input1 );
 
     } else {
+
+//!!! ...unfinished... (2021/08/23)
       this.channelCount_concat1After_pointwise2Before = this.channelCount_depthwise1After_concat1Before;
       TensorOpCounters.concat1 = TensorOpCounters.depthwise1;
     }
 
     ++progressToAdvance.value;
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
+
+//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
 
     // 8. Configure correct function pointers according to whether keeping or destroying input tensor.
 
@@ -1488,14 +1504,16 @@ class Base extends ReturnOrClone.Base {
   /** @return {number} The channel count of the second input tensor (i.e. inputTensors[ 1 ]). */
   get inChannels1()    { return this.channelCount1_pointwise1Before; }
 
-  /** @return {number} The channel count of the first output tensor (i.e. outputTensors[ 0 ]). */
-  get outChannels0()   { return this.channelCount_pointwise21After_concat2Before; }
-
-  /** @return {number} The channel count of the second output tensor (i.e. outputTensors[ 1 ]). */
-  get outChannels1()   { return this.channelCount_pointwise22After_concat2Before; }
-
-  /** @return {number} The channel count of both the first and second output tensors. */
-  get outChannelsAll() { return this.channelCount_pointwise2After_concat2Before; }
+//!!! ...unfinished... (2021/08/23 Remarked) Replaced by read/write property.
+//
+//   /** @return {number} The channel count of the first output tensor (i.e. outputTensors[ 0 ]). */
+//   get outChannels0()   { return this.channelCount_pointwise21After_concat2Before; }
+//
+//   /** @return {number} The channel count of the second output tensor (i.e. outputTensors[ 1 ]). */
+//   get outChannels1()   { return this.channelCount_pointwise22After_concat2Before; }
+/
+//   /** @return {number} The channel count of both the first and second output tensors. */
+//   get outChannelsAll() { return this.channelCount_pointwise2After_concat2Before; }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
@@ -1503,7 +1521,7 @@ class Base extends ReturnOrClone.Base {
         `inputTensorCount=${this.inputTensorCount}, `
     
       + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
-      + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, `
+      + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
 
       + `channelCount1_pointwise1Before_Name=${this.channelCount1_pointwise1Before_Name}, `
     
