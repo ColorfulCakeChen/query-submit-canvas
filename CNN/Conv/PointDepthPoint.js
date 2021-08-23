@@ -229,8 +229,8 @@ class Params extends Weights.Params {
    *   - this.inputTensorCount
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
-   *   - this.bConcat2ShuffleSplitRequested
    *   - this.bAddInputToOutputRequested
+   *   - this.bConcat2ShuffleSplitRequested
    *   - this.outputTensorCount
    *
    * @param {number} channelCount1_pointwise1Before
@@ -479,6 +479,9 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by initer(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {number} inputTensorCount
+ *   How many input tensors will be past into apply_and_destroy_or_keep() as parameter inputTensors[].
+ *
  * @member {boolean} bDepthwise2Requested
  *   It will be true only when ( channelCount1_pointwise1Before == -2 ). If true, it means a second depthwise might be needed.
  *
@@ -707,8 +710,8 @@ class Base extends ReturnOrClone.Base {
     this.inputTensorCount = params.inputTensorCount;
     this.bDepthwise2Requested = params.bDepthwise2Requested;
     this.bConcat1Requested = params.bConcat1Requested;
-    this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
     this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
+    this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
     this.outputTensorCount = params.outputTensorCount;
 
     this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
@@ -937,9 +940,21 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
     // 7. Concat2-Shuffle-Split
+    if ( this.bConcat2ShuffleSplitRequested ) {
+//!!!
+      this.channelCount_concat2After_pointwise2Before
+        = this.channelCount_depthwise1After_concat1Before + this.channelCount_depthwise2After_concat1Before;
 
+      this.concat2ShuffleSplit = new Concat2ShuffleSplit.Base(  channelShuffler_ConcatPointwiseConv, true, false, false );
 
-    // 7.?
+      TensorOpCounters.concat1 = new TensorOpCounter.Base(
+        ( ++TensorOpCounterId ) + "_concat2ShuffleSplit", this.concat2ShuffleSplit, TensorOpCounters.??depthwise1, TensorOpCounters.??depthwise2 );
+
+    } else {
+      this.channelCount_concat1After_pointwise2Before = this.channelCount_depthwise1After_concat1Before;
+      TensorOpCounters.concat1 = TensorOpCounters.depthwise1;
+    }
+
     ++progressToAdvance.value;
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
 
@@ -1075,13 +1090,21 @@ class Base extends ReturnOrClone.Base {
       this.addInputToPointwise22Output = null;
     }
 
+    if ( this.concat2ShuffleSplit ) {
+      this.concat2ShuffleSplit = null;
+    }
+
     this.intermediateTensorsArray = null;
 
-    this.bPointwise1
+    this.inputTensorCount
+      = this.bPointwise1
       = this.bDepthwise1 = this.bDepthwise2 = this.bDepthwise2Requested
       = this.bConcat1Requested
-      = this.bPointwise21 = this.bPointwise22
-      = this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22 = false;
+      = this.bPointwise21 = this.bPointwise22 = this.bAddInputToOutputRequested
+      = this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22
+      = this.bConcat2ShuffleSplitRequested
+      = this.outputTensorCount
+      = undefined;
 
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
@@ -1473,7 +1496,9 @@ class Base extends ReturnOrClone.Base {
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
     let str =
-        `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
+        `inputTensorCount=${this.inputTensorCount}, `
+    
+      + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, `
 
       + `channelCount1_pointwise1Before_Name=${this.channelCount1_pointwise1Before_Name}, `
@@ -1483,6 +1508,7 @@ class Base extends ReturnOrClone.Base {
       + `pointwise1ActivationName=${this.pointwise1ActivationName}, `
 
       + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
+
       + `depthwise_AvgMax_Or_ChannelMultiplier=${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseStridesPad=${this.depthwiseStridesPad}, `
@@ -1492,20 +1518,16 @@ class Base extends ReturnOrClone.Base {
       + `bConcat1Requested=${this.bConcat1Requested}, `
 
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
-      + `pointwise21ChannelCountName=${this.pointwise21ChannelCountName}, `
-    
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
       + `pointwise21ActivationName=${this.pointwise21ActivationName}, `
 
       + `pointwise22ChannelCount=${this.pointwise22ChannelCount}, `
+      + `pointwise22ChannelCountName=${this.pointwise22ChannelCountName}, `
       + `bPointwise22Bias=${this.bPointwise22Bias}, `
       + `pointwise22ActivationName=${this.pointwise22ActivationName}, `
 
-      + `inputTensorCount=${this.inputTensorCount}, `
-      + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
-      + `bConcat1Requested=${this.bConcat1Requested}, `
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
-
+      + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
       + `outputTensorCount=${this.outputTensorCount}, `
     
       + `bKeepInputTensor=${this.bKeepInputTensor}`
