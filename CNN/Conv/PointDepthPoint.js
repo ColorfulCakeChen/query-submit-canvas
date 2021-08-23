@@ -644,7 +644,10 @@ class Base extends ReturnOrClone.Base {
       1    // for extracting parameters from inputFloat32Array.
       + 1  // for extracting pointwise1 filters (and biases) from inputFloat32Array and building tensors.
       + 1  // for extracting depthwise filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for concat1.
       + 1  // for extracting pointwise2 filters (and biases) from inputFloat32Array and building tensors.
+      + 1  // for add-input-to-output.
+      + 1  // for concat2-shuffle-split.
       + 1  // for all pointwise1-depthwise-pointwise2 filters (and biases) ready.
       ;
 
@@ -825,6 +828,9 @@ class Base extends ReturnOrClone.Base {
       TensorOpCounters.concat1 = TensorOpCounters.depthwise1;
     }
 
+    ++progressToAdvance.value;
+    yield progressRoot;  // concat1 was ready. Report progress.
+
     // 5. The pointwise2 convolution.
 
     // 5.1 Pointwise21
@@ -865,13 +871,8 @@ class Base extends ReturnOrClone.Base {
 
     if ( !this.bPointwise2 ) {
       // If there is not any pointwise2 convolution, the result channel count will not be zero. It should be the channel count after
-      // depthwise1 operation together with the input1 channel count (if existed).
-
-//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
-
-      // And it should be at the first output tensor
+      // depthwise1 operation together with the input1 channel count (if existed). And it should be at the first output tensor
       // (i.e. outputTensors[ 0 ]).
-
       this.channelCount_pointwise2After_concat2Before = this.channelCount_pointwise21After_concat2Before
         = this.channelCount_concat1After_pointwise2Before;
     }
@@ -889,9 +890,7 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise2 filters was ready. Report progress.
 
-//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
-
-    // 6. Configure correct function pointers according to whether keeping or destroying input tensor.
+    // 6. Add-input-to-output
 
     // 6.1
     //
@@ -932,6 +931,22 @@ class Base extends ReturnOrClone.Base {
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
+    // 6.2
+    ++progressToAdvance.value;
+    yield progressRoot;  // add-input-to-output was ready. Report progress.
+
+//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
+    // 7. Concat2-Shuffle-Split
+
+
+    // 7.?
+    ++progressToAdvance.value;
+    yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
+
+    // 8. Configure correct function pointers according to whether keeping or destroying input tensor.
+
+    // 8.1
+    //
     // Q: Why not create TensorOpCounter in the above codes?
     // A: The reason is that let addInput0ToPointwise21 in front of pointwise22.
     //    This is because apply_X_X_and_destroy_or_keep_AddInputToOutput_X() does them in this order.
@@ -963,13 +978,13 @@ class Base extends ReturnOrClone.Base {
         TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
     }
 
-    // 6.2 Determine which apply_Xxx() function should be used.
+    // 8.2 Determine which apply_Xxx() function should be used.
     //
     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
     // because the adjustment might also need to select different apply_Xxx() function.
     this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
 
-    // 6.3 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
+    // 8.3 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
     {
       let alwaysKeepSet;
       if ( this.bKeepInputTensor ) { // User requests to keep input tensors.
@@ -989,7 +1004,7 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
-    // 6.4
+    // 8.4
     ++progressToAdvance.value;
     yield progressRoot;  // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
 
