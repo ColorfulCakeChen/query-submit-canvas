@@ -1137,9 +1137,6 @@ class Base extends ReturnOrClone.Base {
    */
   static Determine_apply_and_destroy_or_keep() {
 
-//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
-
-
     switch ( this.channelCount1_pointwise1Before ) {
 
       // 1.
@@ -1252,6 +1249,11 @@ class Base extends ReturnOrClone.Base {
       //
       // ( this.inputTensorCount > 1 ).
       default: // Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX (> 0) (simplified ShuffleNetV2's tail)
+        
+//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
+
+
+
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
             return Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 4.1 Both pointwise21 and pointwise22 existed.
