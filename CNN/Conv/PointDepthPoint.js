@@ -826,8 +826,8 @@ class Base extends ReturnOrClone.Base {
 
       this.concat1 = new ConcatAlongAxisId2.Base( false, false );
 
-      TensorOpCounters.concat1 = new TensorOpCounter.Base(
-        ( ++TensorOpCounterId ) + "_concat1", this.concat1, TensorOpCounters.depthwise1, TensorOpCounters.depthwise2 );
+      TensorOpCounters.concat1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_concat1",
+        this.concat1, TensorOpCounters.depthwise1, TensorOpCounters.depthwise2 );
 
     } else {
       this.channelCount_concat1After_pointwise2Before = this.channelCount_depthwise1After_concat1Before;
@@ -938,6 +938,39 @@ class Base extends ReturnOrClone.Base {
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
     // 6.2
+    //
+    // Q: Why not create TensorOpCounter in the above codes?
+    // A: The reason is that let addInput0ToPointwise21 in front of pointwise22.
+    //    This is because apply_X_X_and_destroy_or_keep_AddInputToOutput_X() does them in this order.
+    {
+      if ( this.bPointwise21 )
+        TensorOpCounters.pointwise21 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise21",
+          this.pointwise21, TensorOpCounters.concat1 );
+      else
+        TensorOpCounters.pointwise21 = TensorOpCounters.concat1; // Its output is just its input tensor.
+
+      // Note: This should be before pointwise22.
+      if ( this.bShould_addInput0ToPointwise21 )
+        TensorOpCounters.addInput0ToPointwise21 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_addInput0ToPointwise21",
+          this.addInput0ToPointwise21, TensorOpCounters.input0, TensorOpCounters.pointwise21 );
+      else
+        TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
+
+      if ( this.bPointwise22 )
+        TensorOpCounters.pointwise22 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise22",
+          this.pointwise22, TensorOpCounters.concat1 );
+      else
+        TensorOpCounters.pointwise22 = TensorOpCounters.concat1; // Its output is just its input tensor.
+
+      // Only inputTensors[ 0 ] will be used to add to output. So still use TensorOpCounters.input0 (not TensorOpCounters.input1) as input.
+      if ( this.bShould_addInput0ToPointwise22 )
+        TensorOpCounters.addInput0ToPointwise22 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_addInput0ToPointwise22",
+          this.addInput0ToPointwise22, TensorOpCounters.input0, TensorOpCounters.pointwise22 );
+      else
+        TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
+    }
+
+    // 6.3
     ++progressToAdvance.value;
     yield progressRoot;  // add-input-to-output was ready. Report progress.
 
@@ -963,14 +996,16 @@ class Base extends ReturnOrClone.Base {
 
       this.concat2ShuffleSplit = new Concat2ShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
 
-      TensorOpCounters.concat1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + TensorOpCounters_NamePostfix,
-        this.concat2ShuffleSplit, TensorOpCounters.??depthwise1, TensorOpCounters.input1 );
+      // In theory, concat2 use the result of add-input0-to-pointwise21 as first parameter. In reality, it usually uses the result
+      // of pointwise21 (without add-input0-to-output) as first parameter.
+      TensorOpCounters.concat2ShuffleSplit = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + TensorOpCounters_NamePostfix,
+        this.concat2ShuffleSplit, TensorOpCounters.addInput0ToPointwise21, TensorOpCounters.input1 );
 
     } else {
 
 //!!! ...unfinished... (2021/08/23)
       this.channelCount_concat1After_pointwise2Before = this.channelCount_depthwise1After_concat1Before;
-      TensorOpCounters.concat1 = TensorOpCounters.depthwise1;
+      TensorOpCounters.concat2ShuffleSplit = TensorOpCounters.addInput0ToPointwise21;
     }
 
     ++progressToAdvance.value;
@@ -980,46 +1015,13 @@ class Base extends ReturnOrClone.Base {
 
     // 8. Configure correct function pointers according to whether keeping or destroying input tensor.
 
-    // 8.1
-    //
-    // Q: Why not create TensorOpCounter in the above codes?
-    // A: The reason is that let addInput0ToPointwise21 in front of pointwise22.
-    //    This is because apply_X_X_and_destroy_or_keep_AddInputToOutput_X() does them in this order.
-    {
-      if ( this.bPointwise21 )
-        TensorOpCounters.pointwise21 = new TensorOpCounter.Base(
-          ( ++TensorOpCounterId ) + "_pointwise21", this.pointwise21, TensorOpCounters.concat1 );
-      else
-        TensorOpCounters.pointwise21 = TensorOpCounters.concat1; // Its output is just its input tensor.
-
-      // Note: This should be before pointwise22.
-      if ( this.bShould_addInput0ToPointwise21 )
-        TensorOpCounters.addInput0ToPointwise21 = new TensorOpCounter.Base(
-          ( ++TensorOpCounterId ) + "_addInput0ToPointwise21", this.addInput0ToPointwise21, TensorOpCounters.input0, TensorOpCounters.pointwise21 );
-      else
-        TensorOpCounters.addInput0ToPointwise21 = TensorOpCounters.pointwise21;
-
-      if ( this.bPointwise22 )
-        TensorOpCounters.pointwise22 = new TensorOpCounter.Base(
-          ( ++TensorOpCounterId ) + "_pointwise22", this.pointwise22, TensorOpCounters.concat1 );
-      else
-        TensorOpCounters.pointwise22 = TensorOpCounters.concat1; // Its output is just its input tensor.
-
-      // Only inputTensors[ 0 ] will be used to add to output. So still use TensorOpCounters.input0 (not TensorOpCounters.input1) as input.
-      if ( this.bShould_addInput0ToPointwise22 )
-        TensorOpCounters.addInput0ToPointwise22 = new TensorOpCounter.Base(
-          ( ++TensorOpCounterId ) + "_addInput0ToPointwise22", this.addInput0ToPointwise22, TensorOpCounters.input0, TensorOpCounters.pointwise22 );
-      else
-        TensorOpCounters.addInput0ToPointwise22 = TensorOpCounters.pointwise22;
-    }
-
-    // 8.2 Determine which apply_Xxx() function should be used.
+    // 8.1 Determine which apply_Xxx() function should be used.
     //
     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
     // because the adjustment might also need to select different apply_Xxx() function.
     this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
 
-    // 8.3 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
+    // 8.2 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
     {
       let alwaysKeepSet;
       if ( this.bKeepInputTensor ) { // User requests to keep input tensors.
@@ -1039,7 +1041,7 @@ class Base extends ReturnOrClone.Base {
       }
     }
 
-    // 8.4
+    // 8.3
     ++progressToAdvance.value;
     yield progressRoot;  // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
 
