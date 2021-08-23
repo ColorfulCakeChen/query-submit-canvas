@@ -565,7 +565,8 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *
  * @member {number} channelCount_depthwise2After_concat1Before
  *   The channel count after the second depthwise convolution which applies to input0 or input1. If depthwise2 does not exist,
- * this will be the same as channelCount1_pointwise1Before (i.e. the depthwise2 will be viewed as short circui to input1).
+ * this will be the same as Math.max( 0, channelCount1_pointwise1Before ) (i.e. the depthwise2 will be viewed as short circuit
+ * to input1).
  *
  * @member {number} channelCount_concat1After_pointwise2Before
  *   The channel count after depthwise1 operation together with input0 (after depthwise2) or input1 (without depthwise2).
@@ -807,7 +808,7 @@ class Base extends ReturnOrClone.Base {
 
     } else {
       // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
-      this.channelCount_depthwise2After_concat1Before = this.channelCount1_pointwise1Before;
+      this.channelCount_depthwise2After_concat1Before = Math.max( 0, this.channelCount1_pointwise1Before ); // At least 0. Avoid negative.
       TensorOpCounters.depthwise2 = TensorOpCounters.input1;
     }
 
