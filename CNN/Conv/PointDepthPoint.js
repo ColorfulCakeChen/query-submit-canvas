@@ -825,8 +825,6 @@ class Base extends ReturnOrClone.Base {
       TensorOpCounters.concat1 = TensorOpCounters.depthwise1;
     }
 
-//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
-
     // 5. The pointwise2 convolution.
 
     // 5.1 Pointwise21
@@ -867,9 +865,15 @@ class Base extends ReturnOrClone.Base {
 
     if ( !this.bPointwise2 ) {
       // If there is not any pointwise2 convolution, the result channel count will not be zero. It should be the channel count after
-      // depthwise operation together with the second input channel count (if existed). And it should be at the first output tensor
+      // depthwise1 operation together with the input1 channel count (if existed).
+
+//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
+
+      // And it should be at the first output tensor
       // (i.e. outputTensors[ 0 ]).
-      this.channelCount_pointwise2After_concat2Before = this.channelCount_pointwise21After_concat2Before = this.channelCount_concat1After_pointwise2Before;
+
+      this.channelCount_pointwise2After_concat2Before = this.channelCount_pointwise21After_concat2Before
+        = this.channelCount_concat1After_pointwise2Before;
     }
 
 //!!! ...unfinished... (2021/08/21 Remarked) outputChannelCount should already determined in the above.
@@ -884,6 +888,8 @@ class Base extends ReturnOrClone.Base {
     // 5.4
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise2 filters was ready. Report progress.
+
+//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
 
     // 6. Configure correct function pointers according to whether keeping or destroying input tensor.
 
