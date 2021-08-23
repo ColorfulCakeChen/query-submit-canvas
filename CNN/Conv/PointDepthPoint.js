@@ -969,7 +969,6 @@ class Base extends ReturnOrClone.Base {
     // 7. Concat2-Shuffle-Split
     if ( this.bConcat2ShuffleSplitRequested ) {
 
-//!!! ...unfinished... (2021/08/23)
       let bShuffleSplit, TensorOpCounters_NamePostfix;
       if ( this.outputTensorCount == 1 ) {
         bShuffleSplit = false;
