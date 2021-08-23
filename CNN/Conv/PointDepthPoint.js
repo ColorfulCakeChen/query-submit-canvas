@@ -322,17 +322,17 @@ class Params extends Weights.Params {
   get depthwiseActivationName()   { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
 
   get pointwise21ChannelCount()   { return this.parameterMapModified.get( Params.pointwise21ChannelCount ); }
-  
-  /** @return {string} The string version of pointwise21ChannelCount. */
-  get pointwise21ChannelCountName() {
-    return Params.pointwise21ChannelCount.getStringOfValue( this.pointwise21ChannelCount );
-  }
-
   get bPointwise21Bias()          { return this.parameterMapModified.get( Params.bPointwise21Bias ); }
   get pointwise21ActivationId()   { return this.parameterMapModified.get( Params.pointwise21ActivationId ); }
   get pointwise21ActivationName() { return Params.pointwise21ActivationId.getStringOfValue( this.pointwise21ActivationId ); }
 
   get pointwise22ChannelCount()   { return this.parameterMapModified.get( Params.pointwise22ChannelCount ); }
+
+  /** @return {string} The string version of pointwise22ChannelCount. */
+  get pointwise22ChannelCountName() {
+    return Params.pointwise21ChannelCount.getStringOfValue( this.pointwise21ChannelCount );
+  }
+
   get bPointwise22Bias()          { return this.parameterMapModified.get( Params.bPointwise22Bias ); }
   get pointwise22ActivationId()   { return this.parameterMapModified.get( Params.pointwise22ActivationId ); }
   get pointwise22ActivationName() { return Params.pointwise22ActivationId.getStringOfValue( this.pointwise22ActivationId ); }
@@ -498,6 +498,9 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * @member {number} outputTensorCount
  *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2. It is
  * determined by channelCount1_pointwise1Before and pointwise22ChannelCount.
+ *
+ * @member {string} pointwise22ChannelCountName
+ *   The string version of pointwise22ChannelCount. Useful for negative value.
  *
  * @member {boolean} bPointwise1
  *   If true, the pointwise1 convolution exists.
@@ -942,6 +945,7 @@ class Base extends ReturnOrClone.Base {
     // 7. Concat2-Shuffle-Split
     if ( this.bConcat2ShuffleSplitRequested ) {
 //!!!
+      this.outChannels0
       this.channelCount_concat2After_pointwise2Before
         = this.channelCount_depthwise1After_concat1Before + this.channelCount_depthwise2After_concat1Before;
 
