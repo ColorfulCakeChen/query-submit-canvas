@@ -982,17 +982,24 @@ class Base extends ReturnOrClone.Base {
       if ( this.outputTensorCount == 1 ) {
         bShuffleSplit = false;
         TensorOpCounters_NamePostfix = "_concat2"; // only concat2, no shuffle, no split.
+        this.outChannels0 = this.channelCount_pointwise21After_concat2Before + this.channelCount1_pointwise1Before;
+        this.outChannels1 = 0;
 
       } else { // ( this.outputTensorCount == 2 )
         bShuffleSplit = true;
         TensorOpCounters_NamePostfix = "_concat2ShuffleSplit";
+        this.outChannels0 = this.channelCount_pointwise21After_concat2Before;
+        this.outChannels1 = this.channelCount_pointwise21After_concat2Before;
+
+        // If ( pointwise21ChannelCount != channelCount1_pointwise1Before ), the shuffle-split algorithm can not work.
+        tf.util.assert( ( this.channelCount_pointwise21After_concat2Before == this.channelCount1_pointwise1Before ),
+          `PointDepthPoint.initer(): When concat2-shuffle-split, `
+            + `input1's channel count ( ${this.channelCount1_pointwise1Before} ) `
+            + `should be the same as output0's channel count ( ${this.channelCount_pointwise21After_concat2Before} ).`
+        );
       }
 
-      this.outChannels0
-      this.outChannels1
-      this.outChannelsAll
-      this.channelCount_concat2After_pointwise2Before
-        = this.channelCount_depthwise1After_concat1Before + this.channelCount_depthwise2After_concat1Before;
+      this.outChannelsAll = this.outChannels0 + this.outChannels1;
 
       this.concat2ShuffleSplit = new Concat2ShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
 
