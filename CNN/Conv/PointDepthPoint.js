@@ -541,17 +541,15 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * @member {number} inChannels1
  *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). This is the same as this.channelCount1_pointwise1Before (from initer()).
  *
-
-//!!! ...unfinished... (2021/08/22) What outChannels0, outChannels1, outChannels if shuffleSplit?
-
  * @member {number} outChannels0
- *   The channel count of the first output tensor. It is the same as this.channelCount_pointwise21After_concat2Before (from initer()).
+ *   The channel count of the outputTensor[ 0 ]. Even if ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ),
+ * this will still be non-zero.
  *
  * @member {number} outChannels1
- *   The channel count of the second output tensor. It is the same as this.channelCount_pointwise22After_concat2Before (from initer()).
+ *   The channel count of the outputTensor[ 1 ]. If ( pointwise22ChannelCount == 0 ), this will be zero.
  *
  * @member {number} outChannels
- *   The channel count of all output tensor. It is the same as this.channelCount_pointwise2After_concat2Before (from initer()).
+ *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
  *
  * @member {number} channelCount_pointwise1After_depthwise1Before
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
@@ -593,12 +591,6 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *         if at least one pointwise2 convolution existed.
  *
  *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
- *
-
-//!!! ...unfinished... (2021/08/22)
-// channelCount_concat2After_shuffleBefore
-// channelCount_shuffleSplitAfter?
-
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
  *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
@@ -988,8 +980,8 @@ class Base extends ReturnOrClone.Base {
       } else { // ( this.outputTensorCount == 2 )
         bShuffleSplit = true;
         TensorOpCounters_NamePostfix = "_concat2ShuffleSplit";
-        this.outChannels0 = this.channelCount_pointwise21After_concat2Before;
-        this.outChannels1 = this.channelCount_pointwise21After_concat2Before;
+        this.outChannels0 =
+        this.outChannels1 = this.channelCount_pointwise21After_concat2Before; // Both output0 and output1 will have the same channel count.
 
         // If ( pointwise21ChannelCount != channelCount1_pointwise1Before ), the shuffle-split algorithm can not work.
         tf.util.assert( ( this.channelCount_pointwise21After_concat2Before == this.channelCount1_pointwise1Before ),
@@ -999,8 +991,6 @@ class Base extends ReturnOrClone.Base {
         );
       }
 
-      this.outChannelsAll = this.outChannels0 + this.outChannels1;
-
       this.concat2ShuffleSplit = new Concat2ShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
 
       // In theory, concat2 use the result of add-input0-to-pointwise21 as first parameter. In reality, it usually uses the result
@@ -1009,11 +999,15 @@ class Base extends ReturnOrClone.Base {
         this.concat2ShuffleSplit, TensorOpCounters.addInput0ToPointwise21, TensorOpCounters.input1 );
 
     } else {
+      // Since no concat2(-shuffle-split), the final output come from pointwise2 (and add-input-to-output) directly.
+      this.outChannels0 = this.channelCount_pointwise21After_concat2Before;
+      this.outChannels1 = this.channelCount_pointwise22After_concat2Before;
 
-//!!! ...unfinished... (2021/08/23)
-      this.channelCount_concat1After_pointwise2Before = this.channelCount_depthwise1After_concat1Before;
+//!!! ...unfinished... (2021/08/23) How about the second input (i.e. TensorOpCounters.addInput0ToPointwise22)?
       TensorOpCounters.concat2ShuffleSplit = TensorOpCounters.addInput0ToPointwise21;
     }
+
+    this.outChannelsAll = this.outChannels0 + this.outChannels1;
 
     ++progressToAdvance.value;
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
