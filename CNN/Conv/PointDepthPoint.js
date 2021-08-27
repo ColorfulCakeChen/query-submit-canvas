@@ -875,15 +875,6 @@ class Base extends ReturnOrClone.Base {
         = this.channelCount_concat1After_pointwise2Before;
     }
 
-//!!! ...unfinished... (2021/08/21 Remarked) outputChannelCount should already determined in the above.
-//     // If both pointwise21 and pointwise22 existed, the pointwise21 should keep-input-tensor.
-//     // Otherwise, the pointwise22 will fail to process it.
-//     if ( this.bPointwise21 && this.bPointwise22 ) {
-//       this.outputTensorCount = 2; // This is the only case which will output two tensors. 
-//     } else {
-//       this.outputTensorCount = 1; // All other cases, there will be only one output tensor.
-//     }
-
     // 5.4
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise2 filters was ready. Report progress.
@@ -970,24 +961,34 @@ class Base extends ReturnOrClone.Base {
     if ( this.bConcat2ShuffleSplitRequested ) {
 
       let bShuffleSplit, TensorOpCounters_NamePostfix;
-      if ( this.outputTensorCount == 1 ) {
-        bShuffleSplit = false;
-        TensorOpCounters_NamePostfix = "_concat2"; // only concat2, no shuffle, no split.
-        this.outChannels0 = this.channelCount_pointwise21After_concat2Before + this.channelCount1_pointwise1Before;
-        this.outChannels1 = 0;
+      switch ( this.outputTensorCount ) {
+        case 1:
+          bShuffleSplit = false;
+          TensorOpCounters_NamePostfix = "_concat2"; // only concat2, no shuffle, no split.
+          this.outChannels0 = this.channelCount_pointwise21After_concat2Before + this.channelCount1_pointwise1Before;
+          this.outChannels1 = 0;
+          break;
 
-      } else { // ( this.outputTensorCount == 2 )
-        bShuffleSplit = true;
-        TensorOpCounters_NamePostfix = "_concat2ShuffleSplit";
-        this.outChannels0 =
-        this.outChannels1 = this.channelCount_pointwise21After_concat2Before; // Both output0 and output1 will have the same channel count.
+        case 2:
+          bShuffleSplit = true;
+          TensorOpCounters_NamePostfix = "_concat2ShuffleSplit";
+          this.outChannels0 =
+          this.outChannels1 = this.channelCount_pointwise21After_concat2Before; // Both output0 and output1 will have the same channel count.
 
-        // If ( pointwise21ChannelCount != channelCount1_pointwise1Before ), the shuffle-split algorithm can not work.
-        tf.util.assert( ( this.channelCount_pointwise21After_concat2Before == this.channelCount1_pointwise1Before ),
-          `PointDepthPoint.initer(): When concat2-shuffle-split, `
-            + `input1's channel count ( ${this.channelCount1_pointwise1Before} ) `
-            + `should be the same as output0's channel count ( ${this.channelCount_pointwise21After_concat2Before} ).`
-        );
+          // If ( pointwise21ChannelCount != channelCount1_pointwise1Before ), the shuffle-split algorithm can not work.
+          tf.util.assert( ( this.channelCount_pointwise21After_concat2Before == this.channelCount1_pointwise1Before ),
+            `PointDepthPoint.initer(): When concat2-shuffle-split, `
+              + `input1's channel count ( ${this.channelCount1_pointwise1Before} ) `
+              + `should be the same as output0's channel count ( ${this.channelCount_pointwise21After_concat2Before} ).`
+          );
+          break;
+
+        default:
+          tf.util.assert( ( this.channelCount_pointwise21After_concat2Before == this.channelCount1_pointwise1Before ),
+            `PointDepthPoint.initer(): When concat2-shuffle-split, `
+              + `output channel count ( ${this.outputTensorCount} ) must be either 1 or 2.`
+          );
+          break;
       }
 
       this.concat2ShuffleSplit = new Concat2ShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
@@ -1013,7 +1014,6 @@ class Base extends ReturnOrClone.Base {
 
     // 8. Configure correct function pointers according to whether keeping or destroying input tensor.
 
-//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
     // 8.1 Determine which apply_Xxx() function should be used.
     //
     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
@@ -1250,16 +1250,11 @@ class Base extends ReturnOrClone.Base {
       // ( this.inputTensorCount > 1 ).
       default: // Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX (> 0) (simplified ShuffleNetV2's tail)
 
-//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
-
         if ( this.bConcat2ShuffleSplitRequested ) { // 4.1 ShuffleNetV2's body or tail.
 
 //!!! ...unfinished... (2021/08/27)
           // Note: Here, always ( this.bPointwise22 == false ).
-          switch ( this.outputTensorCount ) {
-            case 1: return Base.apply_2_2_Concat2_pointwise21_input1;       break; // 4.1.1
-            case 2: return Base.apply_2_2_Concat2_pointwise21_input1_Split; break; // 4.1.2
-          }
+          return Base.apply_2_Concat2_pointwise21_input1_ShuffleSplit; // 4.1.2
 
         } else { // 4.2 slower ShuffleNetV2's body or tail.
 
@@ -1495,9 +1490,8 @@ class Base extends ReturnOrClone.Base {
    * If ( this.inputTensorCount == 2 ), the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
    *
    * @param {tf.tensor[]} outputTensors
-   *   An array for returning the result (output) tensors. If ( this.outputTensorCount == 0 ) or ( this.outputTensorCount == 1 ),
-   * the outputTensors[ 0 ] will be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will
-   * be the result.
+   *   An array for returning the result (output) tensors. If ( this.outputTensorCount == 1 ), the outputTensors[ 0 ] will
+   * be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will be the result.
    */
   static apply_2_2_Concat1_depthwise1_input1( inputTensors, outputTensors ) {
     let t0, t1;
@@ -1513,7 +1507,30 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
   }
 
-//!!! ...unfinished... (2021/08/20) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit
+  /**
+   * The inputTensors[ 1 ] will be concatenated with pointwise21. If only outputTensors[ 0 ]. it is the result.
+   * It both outputTensors[ 0 ] and outputTensors[ 1 ], it will be shuffled and splitted.
+   * The input tensors may or may not be disposed.
+   *
+   * @param {tf.tensor[]} inputTensors
+   *   An array of tensors. Both the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
+   *
+   * @param {tf.tensor[]} outputTensors
+   *   An array for returning the result (output) tensors. If ( this.outputTensorCount == 1 ), the outputTensors[ 0 ] will
+   * be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will be the result.
+   */
+  static apply_2_Concat2_pointwise21_input1_ShuffleSplit( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+
+//!!! ...unfinished... (2021/08/27) What if not pointwise21? or, no depthwise1?
+    this.intermediateTensorsArray[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
+
+    this.concat2ShuffleSplit.pfnConcatShuffleSplit( this.intermediateTensorsArray, outputTensors );
+  }
 
 
   /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]). */
