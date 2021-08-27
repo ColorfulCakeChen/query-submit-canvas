@@ -35,11 +35,11 @@ class Params extends Weights.Params {
    * (not to the inputFloat32Array.byteOffset).
    *
    * @param {number} channelCount0_pointwise1Before
-   *   The channel count of apply_and_destroy_or_keep()'s first input image (i.e. inputTensors[ 0 ]). If null, it will be extracted
+   *   The channel count of apply()'s first input image (i.e. inputTensors[ 0 ]). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
    * @param {number} channelCount1_pointwise1Before
-   *   The channel count of apply_and_destroy_or_keep()'s second input image (i.e. inputTensors[ 1 ]). If null, it will be extracted
+   *   The channel count of apply()'s second input image (i.e. inputTensors[ 1 ]). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE (-2): The inputTensors[ 1 ] will not be used at
@@ -164,7 +164,7 @@ class Params extends Weights.Params {
    * will also be ignored.
    *
    * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
+   *   If true, apply() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
    * For another example, the input image should be shared across many neural networks. If it is null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
    *
@@ -480,7 +480,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {number} inputTensorCount
- *   How many input tensors will be past into apply_and_destroy_or_keep() as parameter inputTensors[].
+ *   How many input tensors will be past into apply() as parameter inputTensors[].
  *
  * @member {boolean} bDepthwise2Requested
  *   It will be true only when ( channelCount1_pointwise1Before == -2 ). If true, it means a second depthwise might be needed.
@@ -496,7 +496,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * will be added to the output for achieving skip connection.
  *
  * @member {number} outputTensorCount
- *   How many output tensors will be returned by the parameter outputTensors of apply_and_destroy_or_keep(). At least 1. At most 2. It is
+ *   How many output tensors will be returned by the parameter outputTensors of apply(). At least 1. At most 2. It is
  * determined by channelCount1_pointwise1Before and pointwise22ChannelCount.
  *
  * @member {string} pointwise22ChannelCountName
@@ -606,12 +606,12 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
  *         of pointwise21 and input1.
  *
- * @member {function} apply_and_destroy_or_keep
+ * @member {function} apply
  *   This is a method. It has two parameters inputTensors and outputTensors. The inputTensors (tf.tensor3d[]) represents the images
  * ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed one or two tf.tensor3d as
  * the result. All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls
- * one of apply_X_Y_and_destroy_or_keep_ConcatInput0Depthwise2(), apply_X_Y_and_destroy_AddInputToOutput(),
- * apply_X_Y_and_destroy_or_keep_NoSkipConnection(), apply_X_Y_and_destroy_or_keep_ConcatInput1(),
+ * one of apply_X_Y_Concat1_depthwise1_depthwise2(), apply_X_Y_and_destroy_AddInputToOutput(),
+ * apply_X_Y_NoSkipConnection(), apply_X_Y_ConcatInput1(),
  * return_input_directly_array(), keep_input_return_copy_array() according to the initer()'s parameters.
  */
 class Base extends ReturnOrClone.Base {
@@ -933,7 +933,7 @@ class Base extends ReturnOrClone.Base {
     //
     // Q: Why not create TensorOpCounter in the above codes?
     // A: The reason is that let addInput0ToPointwise21 in front of pointwise22.
-    //    This is because apply_X_X_and_destroy_or_keep_AddInputToOutput_X() does them in this order.
+    //    This is because apply_X_X_AddInputToOutput_X() does them in this order.
     {
       if ( this.bPointwise21 )
         TensorOpCounters.pointwise21 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise21",
@@ -1018,7 +1018,7 @@ class Base extends ReturnOrClone.Base {
     //
     // This should be done before adjusting the first operation from "Xxx_destroy" to "Xxx_keep",
     // because the adjustment might also need to select different apply_Xxx() function.
-    this.apply_and_destroy_or_keep = Base.Determine_apply_and_destroy_or_keep.call( this );
+    this.apply = Base.Determine_apply.call( this );
 
     // 8.2 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the first operation or last operation.
     {
@@ -1135,7 +1135,7 @@ class Base extends ReturnOrClone.Base {
   /** Determine which apply_Xxx() function should be used.
    * @return {function} Return one of the apply_Xxx function.
    */
-  static Determine_apply_and_destroy_or_keep() {
+  static Determine_apply() {
 
     switch ( this.channelCount1_pointwise1Before ) {
 
@@ -1143,15 +1143,15 @@ class Base extends ReturnOrClone.Base {
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2) (simplified ShuffleNetV2's head)
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
-            return Base.apply_1_2_and_destroy_or_keep_ConcatInput0Depthwise2;  // 4.1 Both pointwise21 and pointwise22 existed.
+            return Base.apply_1_2_Concat1_depthwise1_depthwise2;  // 4.1 Both pointwise21 and pointwise22 existed.
           } else {
-            return Base.apply_1_21_and_destroy_or_keep_ConcatInput0Depthwise2; // 4.2 Only pointwise21 existed (and no pointwise22).
+            return Base.apply_1_21_Concat1_depthwise1_depthwise2; // 4.2 Only pointwise21 existed (and no pointwise22).
           }
         } else {
           if ( this.bPointwise22 ) {
-            return Base.apply_1_22_and_destroy_or_keep_ConcatInput0Depthwise2; // 4.3 Only pointwise22 existed (and no pointwise21).
+            return Base.apply_1_22_Concat1_depthwise1_depthwise2; // 4.3 Only pointwise22 existed (and no pointwise21).
           } else {
-            return Base.apply_1_21_and_destroy_or_keep_ConcatInput0Depthwise2; // 4.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+            return Base.apply_1_21_Concat1_depthwise1_depthwise2; // 4.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           }
         }
         break;
@@ -1173,21 +1173,21 @@ class Base extends ReturnOrClone.Base {
               if ( this.bShould_addInput0ToPointwise21 ) {
                 if ( this.bShould_addInput0ToPointwise22 ) {
                   // 2.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21 and addInput0ToPointwise22 exist.
-                  return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_2;
+                  return Base.apply_1_2_AddInputToOutput_2;
                 } else {
                   // 2.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21 exists.
-                  return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_21;
+                  return Base.apply_1_2_AddInputToOutput_21;
                 }
               } else {
                 if ( this.bShould_addInput0ToPointwise22 ) {
                   // 2.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22 exists.
-                  return Base.apply_1_2_and_destroy_or_keep_AddInputToOutput_22;
+                  return Base.apply_1_2_AddInputToOutput_22;
                 } else {
                   // 2.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21 and addInput0ToPointwise22 do not exist.
 
                   // It should not execute to here.
                   tf.util.assert( false,
-                    `PointDepthPoint.Determine_apply_and_destroy_or_keep(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
+                    `PointDepthPoint.Determine_apply(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
                       + `should equal this.bShould_addInput0ToPointwise21 (${this.bShould_addInput0ToPointwise21}) `
                       + ` or this.bShould_addInput0ToPointwise22 (${this.bShould_addInput0ToPointwise22}). ${this.parametersDescription}`);
 
@@ -1196,14 +1196,14 @@ class Base extends ReturnOrClone.Base {
               }
 
             } else {
-              return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput; // 2.2 Only pointwise21 exists (and no pointwise22).
+              return Base.apply_1_21_AddInputToOutput; // 2.2 Only pointwise21 exists (and no pointwise22).
             }
           } else {
             if ( this.bPointwise22 ) {
-              return Base.apply_1_22_and_destroy_or_keep_AddInputToOutput; // 2.3 Only pointwise22 exists (and no pointwise21).
+              return Base.apply_1_22_AddInputToOutput; // 2.3 Only pointwise22 exists (and no pointwise21).
             } else {
               // 2.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel count is the same as channel count before pointwise2.)
-              return Base.apply_1_21_and_destroy_or_keep_AddInputToOutput;
+              return Base.apply_1_21_AddInputToOutput;
             }
           }
 
@@ -1215,13 +1215,13 @@ class Base extends ReturnOrClone.Base {
 
           if ( this.bPointwise21 ) {
             if ( this.bPointwise22 ) {
-              return Base.apply_1_2_and_destroy_or_keep_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
+              return Base.apply_1_2_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
             } else {
-              return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
+              return Base.apply_1_21_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
             }
           } else {
             if ( this.bPointwise22 ) {
-              return Base.apply_1_22_and_destroy_or_keep_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
+              return Base.apply_1_22_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
             } else {
               // 3.4 Both pointwise21 and pointwise22 not existed.
 
@@ -1236,7 +1236,7 @@ class Base extends ReturnOrClone.Base {
                   return Base.return_input_directly_array;  // 3.4.2
 
               } else {
-                return Base.apply_1_21_and_destroy_or_keep_NoSkipConnection; // 3.4.3 At least, there are pointwise1 or depthwise. (Use pointwise21.)
+                return Base.apply_1_21_NoSkipConnection; // 3.4.3 At least, there are pointwise1 or depthwise. (Use pointwise21.)
               }
 
             }
@@ -1249,23 +1249,34 @@ class Base extends ReturnOrClone.Base {
       //
       // ( this.inputTensorCount > 1 ).
       default: // Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX (> 0) (simplified ShuffleNetV2's tail)
-        
+
 //!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
 
+        if ( this.bConcat2ShuffleSplitRequested ) { // 4.1 ShuffleNetV2's body or tail.
 
+//!!! ...unfinished... (2021/08/27)
+          // Note: Here, always ( this.bPointwise22 == false ).
+          switch ( this.outputTensorCount ) {
+            case 1: return Base.apply_2_2_Concat2_pointwise21_input1;       break; // 4.1.1
+            case 2: return Base.apply_2_2_Concat2_pointwise21_input1_Split; break; // 4.1.2
+          }
 
-        if ( this.bPointwise21 ) {
-          if ( this.bPointwise22 ) {
-            return Base.apply_2_2_and_destroy_or_keep_ConcatInput1;  // 4.1 Both pointwise21 and pointwise22 existed.
+        } else { // 4.2 slower ShuffleNetV2's body or tail.
+
+          if ( this.bPointwise21 ) {
+            if ( this.bPointwise22 ) {
+              return Base.apply_2_2_Concat1_depthwise1_input1;  // 4.2.1 Both pointwise21 and pointwise22 existed.
+            } else {
+              return Base.apply_2_21_Concat1_depthwise1_input1; // 4.2.2 Only pointwise21 existed (and no pointwise22).
+            }
           } else {
-            return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 4.2 Only pointwise21 existed (and no pointwise22).
+            if ( this.bPointwise22 ) {
+              return Base.apply_2_22_Concat1_depthwise1_input1; // 4.2.3 Only pointwise22 existed (and no pointwise21).
+            } else {
+              return Base.apply_2_21_Concat1_depthwise1_input1; // 4.2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+            }
           }
-        } else {
-          if ( this.bPointwise22 ) {
-            return Base.apply_2_22_and_destroy_or_keep_ConcatInput1; // 4.3 Only pointwise22 existed (and no pointwise21).
-          } else {
-            return Base.apply_2_21_and_destroy_or_keep_ConcatInput1; // 4.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
-          }
+
         }
         break;
     }
@@ -1273,7 +1284,7 @@ class Base extends ReturnOrClone.Base {
 
 
   /** The inputTensors[ 0 ] will be branched by depthwise2 and concatenated before outputTensors[ 0 ]. */
-  static apply_1_21_and_destroy_or_keep_ConcatInput0Depthwise2( inputTensors, outputTensors ) {
+  static apply_1_21_Concat1_depthwise1_depthwise2( inputTensors, outputTensors ) {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
@@ -1290,7 +1301,7 @@ class Base extends ReturnOrClone.Base {
   }
 
   /** The inputTensors[ 0 ] will be branched by depthwise2 and concatenated before outputTensors[ 1 ]. */
-  static apply_1_22_and_destroy_or_keep_ConcatInput0Depthwise2( inputTensors, outputTensors ) {
+  static apply_1_22_Concat1_depthwise1_depthwise2( inputTensors, outputTensors ) {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
@@ -1310,7 +1321,7 @@ class Base extends ReturnOrClone.Base {
    * The inputTensors[ 0 ] will be branched by depthwise2 and concatenated before outputTensors[ 0 ] and outputTensors[ 1 ].
    * The input tensors may or may not be disposed.
    */
-  static apply_1_2_and_destroy_or_keep_ConcatInput0Depthwise2( inputTensors, outputTensors ) {
+  static apply_1_2_Concat1_depthwise1_depthwise2( inputTensors, outputTensors ) {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
@@ -1328,7 +1339,7 @@ class Base extends ReturnOrClone.Base {
 
 
   /** The only one input will be added to the only one output (pointwise21). The inputTensor may or may not be disposed.*/
-  static apply_1_21_and_destroy_or_keep_AddInputToOutput( inputTensors, outputTensors ) {
+  static apply_1_21_AddInputToOutput( inputTensors, outputTensors ) {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
@@ -1343,7 +1354,7 @@ class Base extends ReturnOrClone.Base {
   }
 
   /** The only one input will be added to the only one output (pointwise22). The inputTensor may or may not be disposed.*/
-  static apply_1_22_and_destroy_or_keep_AddInputToOutput( inputTensors, outputTensors ) {
+  static apply_1_22_AddInputToOutput( inputTensors, outputTensors ) {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
@@ -1361,7 +1372,7 @@ class Base extends ReturnOrClone.Base {
   /** Both outputTensors[ 0 ] and outputTensors[ 1 ] exist. The inputTensors[ 0 ] will be added to both of them.
    * The inputTensor may or may not be disposed.
    */
-  static apply_1_2_and_destroy_or_keep_AddInputToOutput_2( inputTensors, outputTensors ) {
+  static apply_1_2_AddInputToOutput_2( inputTensors, outputTensors ) {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
@@ -1379,7 +1390,7 @@ class Base extends ReturnOrClone.Base {
   /** Both outputTensors[ 0 ] and outputTensors[ 1 ] exist. The inputTensors[ 0 ] will be added to only outputTensors[ 0 ].
    * The inputTensor may or may not be disposed.
    */
-  static apply_1_2_and_destroy_or_keep_AddInputToOutput_21( inputTensors, outputTensors ) {
+  static apply_1_2_AddInputToOutput_21( inputTensors, outputTensors ) {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
@@ -1396,7 +1407,7 @@ class Base extends ReturnOrClone.Base {
   /** Both outputTensors[ 0 ] and outputTensors[ 1 ] exist. The inputTensors[ 0 ] will be added to only outputTensors[ 1 ].
    * The inputTensor may or may not be disposed.
    */
-  static apply_1_2_and_destroy_or_keep_AddInputToOutput_22( inputTensors, outputTensors ) {
+  static apply_1_2_AddInputToOutput_22( inputTensors, outputTensors ) {
     let t0, t1;
 
     let inputTensor = inputTensors[ 0 ];
@@ -1412,7 +1423,7 @@ class Base extends ReturnOrClone.Base {
 
 
   /** One input to one output (pointwise21) (i.e. no residual connection). The input tensors may or may not be disposed. */
-  static apply_1_21_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+  static apply_1_21_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
@@ -1423,7 +1434,7 @@ class Base extends ReturnOrClone.Base {
   }
 
   /** One input to one output (pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
-  static apply_1_22_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+  static apply_1_22_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
@@ -1434,7 +1445,7 @@ class Base extends ReturnOrClone.Base {
   }
 
   /** One input to two output (pointwise21 and pointwise22) (i.e. no residual connection). The input tensors may or may not be disposed. */
-  static apply_1_2_and_destroy_or_keep_NoSkipConnection( inputTensors, outputTensors ) {
+  static apply_1_2_NoSkipConnection( inputTensors, outputTensors ) {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
@@ -1446,7 +1457,7 @@ class Base extends ReturnOrClone.Base {
 
 
   /** The inputTensors[ 1 ] will be concatenated before outputTensors[ 0 ]. */
-  static apply_2_21_and_destroy_or_keep_ConcatInput1( inputTensors, outputTensors ) {
+  static apply_2_21_Concat1_depthwise1_input1( inputTensors, outputTensors ) {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
@@ -1461,7 +1472,7 @@ class Base extends ReturnOrClone.Base {
   }
 
   /** The inputTensors[ 1 ] will be concatenated before outputTensors[ 1 ]. */
-  static apply_2_22_and_destroy_or_keep_ConcatInput1( inputTensors, outputTensors ) {
+  static apply_2_22_Concat1_depthwise1_input1( inputTensors, outputTensors ) {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
@@ -1488,7 +1499,7 @@ class Base extends ReturnOrClone.Base {
    * the outputTensors[ 0 ] will be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will
    * be the result.
    */
-  static apply_2_2_and_destroy_or_keep_ConcatInput1( inputTensors, outputTensors ) {
+  static apply_2_2_Concat1_depthwise1_input1( inputTensors, outputTensors ) {
     let t0, t1;
 
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
