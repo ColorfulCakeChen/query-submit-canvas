@@ -1250,11 +1250,8 @@ class Base extends ReturnOrClone.Base {
       // ( this.inputTensorCount > 1 ).
       default: // Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX (> 0) (simplified ShuffleNetV2's tail)
 
-        if ( this.bConcat2ShuffleSplitRequested ) { // 4.1 ShuffleNetV2's body or tail.
-
-//!!! ...unfinished... (2021/08/27)
-          // Note: Here, always ( this.bPointwise22 == false ).
-          return Base.apply_2_Concat2_pointwise21_input1_ShuffleSplit; // 4.1.2
+        if ( this.bConcat2ShuffleSplitRequested ) { // 4.1 ShuffleNetV2's body or tail. (Note: always ( this.bPointwise22 == false ))
+          return Base.apply_2_Concat2_pointwise21_input1_ShuffleSplit;
 
         } else { // 4.2 slower ShuffleNetV2's body or tail.
 
@@ -1525,7 +1522,6 @@ class Base extends ReturnOrClone.Base {
     t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
     t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
 
-//!!! ...unfinished... (2021/08/27) What if not pointwise21? or, no depthwise1?
     this.intermediateTensorsArray[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
     this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
 
