@@ -1283,7 +1283,7 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-  /** The inputTensors[ 0 ] will be branched by depthwise2 and concatenated before outputTensors[ 0 ]. */
+  /** The inputTensors[ 0 ] will be branched by depthwise2 and concatenated with depthwise1 before outputTensors[ 0 ]. */
   static apply_1_21_Concat1_depthwise1_depthwise2( inputTensors, outputTensors ) {
     let t0, t1;
 
@@ -1300,7 +1300,7 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 1 ] = null;
   }
 
-  /** The inputTensors[ 0 ] will be branched by depthwise2 and concatenated before outputTensors[ 1 ]. */
+  /** The inputTensors[ 0 ] will be branched by depthwise2 and concatenated with depthwise1 before outputTensors[ 1 ]. */
   static apply_1_22_Concat1_depthwise1_depthwise2( inputTensors, outputTensors ) {
     let t0, t1;
 
@@ -1318,7 +1318,7 @@ class Base extends ReturnOrClone.Base {
   }
 
   /**
-   * The inputTensors[ 0 ] will be branched by depthwise2 and concatenated before outputTensors[ 0 ] and outputTensors[ 1 ].
+   * The inputTensors[ 0 ] will be branched by depthwise2 and concatenated with depthwise1 before outputTensors[ 0 ] and outputTensors[ 1 ].
    * The input tensors may or may not be disposed.
    */
   static apply_1_2_Concat1_depthwise1_depthwise2( inputTensors, outputTensors ) {
@@ -1456,7 +1456,7 @@ class Base extends ReturnOrClone.Base {
   }
 
 
-  /** The inputTensors[ 1 ] will be concatenated before outputTensors[ 0 ]. */
+  /** The inputTensors[ 1 ] will be concatenated with depthwise1 before outputTensors[ 0 ]. */
   static apply_2_21_Concat1_depthwise1_input1( inputTensors, outputTensors ) {
     let t0, t1;
 
@@ -1471,7 +1471,7 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 1 ] = null;
   }
 
-  /** The inputTensors[ 1 ] will be concatenated before outputTensors[ 1 ]. */
+  /** The inputTensors[ 1 ] will be concatenated with depthwise1 before outputTensors[ 1 ]. */
   static apply_2_22_Concat1_depthwise1_input1( inputTensors, outputTensors ) {
     let t0, t1;
 
@@ -1487,7 +1487,7 @@ class Base extends ReturnOrClone.Base {
   }
 
   /**
-   * The inputTensors[ 1 ] will be concatenated before outputTensors[ 0 ] and outputTensors[ 1 ].
+   * The inputTensors[ 1 ] will be concatenated with depthwise1 before outputTensors[ 0 ] and outputTensors[ 1 ].
    * The input tensors may or may not be disposed.
    *
    * @param {tf.tensor[]} inputTensors
