@@ -999,11 +999,14 @@ class Base {
 
         for ( let c = 0; c < concatenatedChannelCount; ++c ) {
           let outImageIndex = c % imageCount;               // to which output image.
-          let inImageIndex = Math.floor( c / imageDepth );  // from which input image.
+          let outChannel = Math.floor( c / imageCount );    // to which channel (of the output image).
 
+          let inImageIndex = Math.floor( c / imageDepth );  // from which input image.
+          let inChannel = c % imageCount;                   // from which channel (of the input image).
+
+          
 //!!! ...unfinished... (2021/08/28)
 
-          let out0Channel = Math.floor( c / 2 );
           let out1Channel = Math.ceil( ( imageDepth + c ) / 2 );
 
           let out0In0Channel = Math.floor( out0Channel / 2 );
@@ -1015,31 +1018,31 @@ class Base {
     }
 
 //!!! Reference from concat    
-    for ( let y = 0; y < imageIn1.height; ++y ) {
-      let indexBaseX = ( y * imageIn1.width );
-
-      for ( let x = 0; x < imageIn1.width; ++x ) {
-        let indexBaseC = ( indexBaseX + x );
-        let outIndexBaseC = ( indexBaseC * imageOut.depth );
-
-        let outChannel = 0;
-
-        let in1IndexBaseC  = ( indexBaseC * imageIn1.depth );
-        for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
-          let in1Index = in1IndexBaseC + in1Channel;
-          let outIndex = outIndexBaseC + outChannel;
-          imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
-        }
-
-        let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
-        for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
-          let in2Index = in2IndexBaseC + in2Channel;
-          let outIndex = outIndexBaseC + outChannel;
-          imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
-        }
-
-      }
-    }
+//     for ( let y = 0; y < imageIn1.height; ++y ) {
+//       let indexBaseX = ( y * imageIn1.width );
+//
+//       for ( let x = 0; x < imageIn1.width; ++x ) {
+//         let indexBaseC = ( indexBaseX + x );
+//         let outIndexBaseC = ( indexBaseC * imageOut.depth );
+//
+//         let outChannel = 0;
+//
+//         let in1IndexBaseC  = ( indexBaseC * imageIn1.depth );
+//         for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
+//           let in1Index = in1IndexBaseC + in1Channel;
+//           let outIndex = outIndexBaseC + outChannel;
+//           imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
+//         }
+//
+//         let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
+//         for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
+//           let in2Index = in2IndexBaseC + in2Channel;
+//           let outIndex = outIndexBaseC + outChannel;
+//           imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
+//         }
+//
+//       }
+//     }
 
   }
   
