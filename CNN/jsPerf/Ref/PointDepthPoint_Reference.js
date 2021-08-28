@@ -412,7 +412,7 @@ class Base {
       }
     }
 
-    // 3. Concat (along image depth)
+    // 3. Concat1 (along image depth)
 
     // TWO_INPUTS (> 0)
     if ( testParams.out.channelCount1_pointwise1Before > 0 ) {
@@ -487,6 +487,9 @@ class Base {
         nextImageOutArray = [ null, null ];
       }
     }
+
+//!!! ...unfinished... (2021/08/28)
+//    Base.calcConcatShuffleSplit( imageInArray, imageOutArray, this.paramsOutDescription );
 
     return nextImageOutArray;
   }
@@ -988,62 +991,27 @@ class Base {
       imageOutArray[ i ].dataArray = new Float32Array( imageInArray[ i ].dataArray.length );
     }
 
-//!!! ...unfinished... (2021/08/28) Use 2 loop [ 0, (n/2), 1, (n/2)+1, ... ] to do concat-channelShuffle-split
+    // Swap two images interleavely.
     let concatenatedChannelCount = ( imageDepth * imageCount );
     for ( let y = 0; y < imageHeight; ++y ) {
       let indexBaseX = ( y * imageWidth );
 
       for ( let x = 0; x < imageWidth; ++x ) {
-        let indexBaseC = ( indexBaseX + x );
-        let outIndexBaseC = ( indexBaseC * imageDepth );
+        let indexBaseC = ( ( indexBaseX + x ) * imageDepth );
 
         for ( let c = 0; c < concatenatedChannelCount; ++c ) {
-          let outImageIndex = c % imageCount;               // to which output image.
-          let outChannel = Math.floor( c / imageCount );    // to which channel (of the output image).
-
           let inImageIndex = Math.floor( c / imageDepth );  // from which input image.
           let inChannel = c % imageDepth;                   // from which channel (of the input image).
 
-          
-//!!! ...unfinished... (2021/08/28)
+          let outImageIndex = c % imageCount;               // to which output image.
+          let outChannel = Math.floor( c / imageCount );    // to which channel (of the output image).
 
-          let out1Channel = Math.ceil( ( imageDepth + c ) / 2 );
-
-          let out0In0Channel = Math.floor( out0Channel / 2 );
-
-          let index
-          imageOutArray[ 0 ].dataArray[ ] = imageInArray[ 0 ].dataArray[ ];
+          let inIndex = indexBaseC + inChannel;
+          let outIndex = indexBaseC + outChannel;
+          imageOutArray[ outImageIndex ].dataArray[ outIndex ] = imageInArray[ inImageIndex ].dataArray[ inIndex ];
         }
       }
     }
-
-//!!! Reference from concat    
-//     for ( let y = 0; y < imageIn1.height; ++y ) {
-//       let indexBaseX = ( y * imageIn1.width );
-//
-//       for ( let x = 0; x < imageIn1.width; ++x ) {
-//         let indexBaseC = ( indexBaseX + x );
-//         let outIndexBaseC = ( indexBaseC * imageOut.depth );
-//
-//         let outChannel = 0;
-//
-//         let in1IndexBaseC  = ( indexBaseC * imageIn1.depth );
-//         for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
-//           let in1Index = in1IndexBaseC + in1Channel;
-//           let outIndex = outIndexBaseC + outChannel;
-//           imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
-//         }
-//
-//         let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
-//         for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
-//           let in2Index = in2IndexBaseC + in2Channel;
-//           let outIndex = outIndexBaseC + outChannel;
-//           imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
-//         }
-//
-//       }
-//     }
-
   }
   
 }
