@@ -960,9 +960,26 @@ class Base {
    * @param {number}   imageOutArray[ 1 ].width     width of the second output image.
    * @param {number}   imageOutArray[ 1 ].depth     channel count of the second output image.
    * @param {number[]} imageOutArray[ 1 ].dataArray Image data of the second output image.
+   *
+   * @param {string}   parametersDesc               A string for debug message of this point-depth-point.
    */
-  static calcConcatShuffleSplit( imageInArray, imageOutArray ) {
+  static calcConcatShuffleSplit( imageInArray, imageOutArray, parametersDesc ) {
+
+    tf.util.assert( ( imageInArray[ 0 ].depth == imageInArray[ 1 ].depth ),
+      `ConcatShuffleSplit: The first input image's depth (${imageInArray[ 0 ].depth}) `
+        + `should be the same as the second input image's depth (${imageInArray[ 0 ].depth}). (${parametersDesc})`);
+
+    let imageCount = 2; // No matter input or input, both are two images.
+
+    // Output images have the same shape as input images.
+    for ( let i = 0; i < imageCount; ++i ) {
+      imageOutArray[ i ].height = imageInArray[ i ].height;
+      imageOutArray[ i ].width = imageInArray[ i ].width;
+      imageOutArray[ i ].depth = imageInArray[ i ].depth;
+    }
+
 //!!! ...unfinished... (2021/08/28) Use 2 loop [ 0, (n/2), 1, (n/2)+1, ... ] to do concat-channelShuffle-split
+
   }
   
 }
