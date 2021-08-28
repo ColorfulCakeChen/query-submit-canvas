@@ -771,7 +771,7 @@ class Base extends ReturnOrClone.Base {
     // 3.2 The second depthwise operation.
     this.bDepthwise2 = false;
     if ( this.bDepthwise2Requested ) {
-      
+
       // Q: Why does depthwise2 use the same configuration as depthwise1?
       // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
       //    true for StridesPad.
@@ -848,15 +848,22 @@ class Base extends ReturnOrClone.Base {
     }
 
     // 5.2 Pointwise22
-    this.pointwise22 = new Pointwise.Base(
-      this.channelCount_concat1After_pointwise2Before,
-      this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId );
+    if ( this.pointwise22ChannelCount > 0 ) {
 
-    if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd ) )
-      return false;  // e.g. input array does not have enough data.
-    this.byteOffsetEnd = this.pointwise22.byteOffsetEnd;
+      this.pointwise22 = new Pointwise.Base(
+        this.channelCount_concat1After_pointwise2Before,
+        this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId );
 
-    this.bPointwise22 = this.pointwise22.bExisted;
+      if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd ) )
+        return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = this.pointwise22.byteOffsetEnd;
+
+      this.bPointwise22 = this.pointwise22.bExisted;
+
+    } else { // Since pointwise22 is not requested (i.e. channel count is not positive), do not create the object for saving memory.
+      this.bPointwise22 = false;
+    }
+
     if ( this.bPointwise22 ) {
       this.channelCount_pointwise22After_concat2Before = this.pointwise22ChannelCount;
     } else {
