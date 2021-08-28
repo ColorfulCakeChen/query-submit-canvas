@@ -938,9 +938,31 @@ class Base {
 
     return imageIn;
   }
-  
-  static calcConcatShuffleSplit() {
-//!!! ...unfinished... (2021/08/20) Use 2 loop [ 0, (n/2), 1, (n/2)+1, ... ] to do concat-channelShuffle-split
+
+  /**
+   *
+   * @param {number}   imageInArray[ 0 ].height    height of the first input image.
+   * @param {number}   imageInArray[ 0 ].width     width of the first input image.
+   * @param {number}   imageInArray[ 0 ].depth     channel count of the first input image.
+   * @param {number[]} imageInArray[ 0 ].dataArray Image data of the first input image.
+   *
+   * @param {number}   imageInArray[ 1 ].height    height of the second input image.
+   * @param {number}   imageInArray[ 1 ].width     width of the second input image.
+   * @param {number}   imageInArray[ 1 ].depth     channel count of the second input image.
+   * @param {number[]} imageInArray[ 1 ].dataArray Image data of the second input image.
+   *
+   * @param {number}   imageOutArray[ 0 ].height    height of the first output image.
+   * @param {number}   imageOutArray[ 0 ].width     width of the first output image.
+   * @param {number}   imageOutArray[ 0 ].depth     channel count of the first output image.
+   * @param {number[]} imageOutArray[ 0 ].dataArray Image data of the first output image.
+   *
+   * @param {number}   imageOutArray[ 1 ].height    height of the second output image.
+   * @param {number}   imageOutArray[ 1 ].width     width of the second output image.
+   * @param {number}   imageOutArray[ 1 ].depth     channel count of the second output image.
+   * @param {number[]} imageOutArray[ 1 ].dataArray Image data of the second output image.
+   */
+  static calcConcatShuffleSplit( imageInArray, imageOutArray ) {
+//!!! ...unfinished... (2021/08/28) Use 2 loop [ 0, (n/2), 1, (n/2)+1, ... ] to do concat-channelShuffle-split
   }
   
 }
