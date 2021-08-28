@@ -1002,7 +1002,7 @@ class Base {
           let outChannel = Math.floor( c / imageCount );    // to which channel (of the output image).
 
           let inImageIndex = Math.floor( c / imageDepth );  // from which input image.
-          let inChannel = c % imageCount;                   // from which channel (of the input image).
+          let inChannel = c % imageDepth;                   // from which channel (of the input image).
 
           
 //!!! ...unfinished... (2021/08/28)
