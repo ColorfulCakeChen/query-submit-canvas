@@ -965,21 +965,37 @@ class Base {
    */
   static calcConcatShuffleSplit( imageInArray, imageOutArray, parametersDesc ) {
 
-    tf.util.assert( ( imageInArray[ 0 ].depth == imageInArray[ 1 ].depth ),
-      `ConcatShuffleSplit: The first input image's depth (${imageInArray[ 0 ].depth}) `
-        + `should be the same as the second input image's depth (${imageInArray[ 0 ].depth}). (${parametersDesc})`);
+    tf.util.assert(
+      (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
+       && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
+       && ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth ) ),
+      `ConcatShuffleSplit: The first input image's shape ( height, width, depth ) = `
+        + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
+        + `should be the same as the second input image's shape `
+        + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
+        + `(${parametersDesc})`);
 
     let imageCount = 2; // No matter input or input, both are two images.
+    let imageHeight = imageInArray[ 0 ].height;
+    let imageWidth = imageInArray[ 0 ].width;
+    let imageDepth = imageInArray[ 0 ].depth;
 
     // Output images have the same shape as input images.
     for ( let i = 0; i < imageCount; ++i ) {
       imageOutArray[ i ].height = imageInArray[ i ].height;
       imageOutArray[ i ].width = imageInArray[ i ].width;
       imageOutArray[ i ].depth = imageInArray[ i ].depth;
+      imageOutArray[ i ].dataArray = new Float32Array( imageInArray[ i ].dataArray.length );
     }
 
 //!!! ...unfinished... (2021/08/28) Use 2 loop [ 0, (n/2), 1, (n/2)+1, ... ] to do concat-channelShuffle-split
-
+    for ( let i = 0; i < imageDepth; ++i ) {
+      for ( let y = 0; y < imageHeight; ++y ) {
+        for ( let x = 0; x < imageWidth; ++x ) {
+          imageOutArray[ 0 ].dataArray[ ] = imageInArray[ 0 ].dataArray[ ];
+        }
+      }
+    }
   }
   
 }
