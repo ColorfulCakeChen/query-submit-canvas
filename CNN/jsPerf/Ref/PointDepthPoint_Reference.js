@@ -460,7 +460,7 @@ class Base {
     }
 
     // 4. Pointwise2
-    let pointwise21Result, pointwise22Result;
+    let pointwise21Result = null, pointwise22Result = null;
     if ( ( testParams.out.pointwise21ChannelCount == 0 ) && ( testParams.out.pointwise22ChannelCount == 0 ) ) {
 
       // 4.0 No Pointwise21 and No Pointwise22.
@@ -500,80 +500,42 @@ class Base {
         pointwise22Result = Base.modifyByInput(
           pointwise22Result, flags.bAddInputToOutputRequested, imageInArray[ 0 ], "ImageOut2", this.paramsOutDescription );
       }
-
     }
-
-//!!! ...unfinished... (2021/08/29)
 
     // 4.3 Integrate pointwise21 and pointwise22 into pointwise2.
-    let nextImageOutArray;
-    if ( pointwise21Result ) {
-      if ( pointwise22Result ) {
-        nextImageOutArray = [ pointwise21Result, pointwise22Result ];
-      } else {
-        nextImageOutArray = [ pointwise21Result, null ];
-      }
-    } else {
-      if ( pointwise22Result ) {
-        nextImageOutArray = [ null, pointwise22Result ];
-      } else {
-        nextImageOutArray = [ null, null ];
-      }
-    }
-
-    
-//!!! ...unfinished... (2021/08/29)
-//    *
-//    *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT ),
-//    *         (-2), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
-//    *         result will be channel-shuffled and splitted into [ output0, output1 ].
-//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
-//    *           - The output0 and output1 will have the same channel count as pointwise21 (i.e. pointwise21ChannelCount).
-//    *
-//    *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1 ),
-//    *         (-1), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
-//    *         result will become output0.
-//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
-//    *           - The output0 will have channel count as ( pointwise21ChannelCount + channelCount1_pointwise1Before ).
-//    *
-//    *       - If ( pointwise22ChannelCount >= 0 ), input1 will be concatenated with the result of depthwise operation
-//    *         of input0. The concatenated result will be processed by pointwise2 convolution.
-//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
-//    *           - The output0 will be the result of pointwise21.
-//    *           - The output1 will be the result of pointwise22.
-//    *
+    let imageArray_pointwise2After = [ pointwise21Result, pointwise22Result ];
 
     // 5. Concat2 (along image depth), shuffle, split.
+    let imageOutArray = [ null, null ];
+    if (   ( testParams.out.channelCount1_pointwise1Before > 0 ) // TWO_INPUTS (> 0)
+        && ( testParams.out.pointwise22ChannelCount < 0 )        // CONCAT_POINTWISE21_INPUT1
+       ) {
 
-    // TWO_INPUTS (> 0)
-    if ( testParams.out.channelCount1_pointwise1Before > 0 ) {
-      
-      if ( testParams.out.pointwise22ChannelCount < 0 ) {
+      tf.util.assert( ( !imageArray_pointwise2After[ 1 ] ),
+        `PointDepthPoint imageArray_pointwise2After[ 1 ] ( ${imageArray_pointwise2After[ 1 ]} ) `
+          + `should be null, since there is no pointwise22. ${this.paramsOutDescription}`);
 
-        switch ( testParams.out.pointwise22ChannelCount ) {
+      imageArray_pointwise2After[ 1 ] = imageInArray[ 1 ]; // i.e. input1.
 
-//!!! ...unfinished... (2021/08/29)
-          case ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT: // (-2)
-            break;
+      switch ( testParams.out.pointwise22ChannelCount ) {
+        case ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT: // (-2)
+          Base.calcConcatShuffleSplit( imageArray_pointwise2After, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
+          break;
 
-          case ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1: // (-1)
+        case ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1: // (-1)
+          imageOutArray[ 0 ] = Base.calcConcatAlongAxisId2(
+            imageArray_pointwise2After[ 0 ], imageArray_pointwise2After[ 1 ], "Concat2_pointwise21_input1", this.paramsOutDescription );
+          break;
 
-//!!! ...unfinished... (2021/08/29)
-            break;
-
-          default:
-            tf.util.assert( false,
-              `PointDepthPoint testParams.out.pointwise22ChannelCount ( ${testParams.out.pointwise22ChannelCount} ) `
-                + `is unknown value. ${this.paramsOutDescription}`);
-            break;
-        }
+        default:
+          tf.util.assert( false,
+            `PointDepthPoint testParams.out.pointwise22ChannelCount ( ${testParams.out.pointwise22ChannelCount} ) `
+              + `is unknown value. ${this.paramsOutDescription}`);
+          break;
       }
     }
 
-//!!! ...unfinished... (2021/08/28)
-//    Base.calcConcatShuffleSplit( imageInArray, imageOutArray, this.paramsOutDescription );
-
-    return nextImageOutArray;
+    return imageOutArray;
   }
 
   /**
@@ -1046,19 +1008,22 @@ class Base {
    * @param {number}   imageOutArray[ 1 ].depth     channel count of the second output image.
    * @param {number[]} imageOutArray[ 1 ].dataArray Image data of the second output image.
    *
+   * @param {string}   concatShuffleSplitName       A string for debug message of this concatenation-shuffle-split.
    * @param {string}   parametersDesc               A string for debug message of this point-depth-point.
    */
-  static calcConcatShuffleSplit( imageInArray, imageOutArray, parametersDesc ) {
+  static calcConcatShuffleSplit( imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
 
     tf.util.assert(
       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
        && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
        && ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth ) ),
-      `ConcatShuffleSplit: The first input image's shape ( height, width, depth ) = `
+
+      `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
         + `should be the same as the second input image's shape `
         + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
-        + `(${parametersDesc})`);
+        + `(${parametersDesc})`
+    );
 
     let imageCount = 2; // No matter input or input, both are two images.
     let imageHeight = imageInArray[ 0 ].height;
