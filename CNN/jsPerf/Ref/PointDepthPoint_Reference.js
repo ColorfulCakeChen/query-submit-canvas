@@ -104,7 +104,7 @@ class Base {
       let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
 
       let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
-      pointDepthPoint.apply_and_destroy_or_keep( inputTensor3dArray, outputTensor3dArray );
+      pointDepthPoint.apply( inputTensor3dArray, outputTensor3dArray );
       let memoryInfo_apply_after = tf.memory();
 
       tf.util.assert( inputTensor3dArray.length == 2,
@@ -113,14 +113,26 @@ class Base {
       tf.util.assert( outputTensor3dArray.length == 2,
         `PointDepthPoint outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
 
+      Base.AssertTwoEqualValues( "outChannels0", // Test output0's channel count.
+        pointDepthPoint.outChannels0, outputTensor3dArray[ 0 ].shape[ outputTensor3dArray[ 0 ].shape.length - 1 ], strNote );
+
+      if ( outputTensor3dArray[ 1 ] ) { // Test output1's channel count.
+        Base.AssertTwoEqualValues( "outChannels1",
+          pointDepthPoint.outChannels1, outputTensor3dArray[ 1 ].shape[ outputTensor3dArray[ 1 ].shape.length - 1 ], 
+                                 );
+      } else {
+        Base.AssertTwoEqualValues( "outChannels1",
+          pointDepthPoint.outChannels1, 0, strNote );
+      }
+
       tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-        `PointDepthPoint.apply_and_destroy_or_keep() memory leak. `
+        `PointDepthPoint.apply() memory leak. `
           + `result tensor count (${memoryInfo_apply_after.numTensors}) `
           + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
-          + `${parametersDescription}` );
+          + `${strNote}` );
 
       // Test correctness of pointDepthPoint apply.
-      this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, parametersDescription );
+      this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, strNote );
 
       pointDepthPoint.disposeTensors();
       let memoryInfo_afterDispose = tf.memory();
@@ -129,7 +141,7 @@ class Base {
         `PointDepthPoint create/dispose memory leak. `
           + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
           + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
-          + `${parametersDescription}` );
+          + `${strNote}` );
 
       tf.dispose( outputTensor3dArray );
 
@@ -179,7 +191,7 @@ class Base {
    *
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
-  static pointDepthPoint_create( testParams ) {
+  static pointDepthPoint_create( testParams, channelShuffler_ConcatPointwiseConv ) {
 
     let pointDepthPoint = new PointDepthPoint.Base();
 
@@ -199,8 +211,7 @@ class Base {
       testParams.in.bKeepInputTensor
     );
 
-//!!! ...unfinished... (2021/08/23) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
-    let bInitOk = pointDepthPoint.init( progress, extractedParams );
+    let bInitOk = pointDepthPoint.init( progress, extractedParams, channelShuffler_ConcatPointwiseConv );
 
     let flags = {};
     PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount.call( flags,
@@ -237,19 +248,21 @@ class Base {
     Base.AssertTwoEqualValues( "inChannels0", pointDepthPoint.inChannels0, testParams.out.channelCount0_pointwise1Before, parametersDescription );
     Base.AssertTwoEqualValues( "inChannels1",
       pointDepthPoint.inChannels1, testParams.out.channelCount1_pointwise1Before, parametersDescription );
+
     Base.AssertTwoEqualValues( "channelCount1_pointwise1Before",
       pointDepthPoint.channelCount1_pointwise1Before, testParams.out.channelCount1_pointwise1Before, parametersDescription );
 
     Base.AssertTwoEqualValues( "inputTensorCount", pointDepthPoint.inputTensorCount, flags.inputTensorCount, parametersDescription );
     Base.AssertTwoEqualValues( "bDepthwise2Requested", pointDepthPoint.bDepthwise2Requested, flags.bDepthwise2Requested, parametersDescription );
-
-    Base.AssertTwoEqualValues( "bConcatenatorRequested",
-      pointDepthPoint.bConcatenatorRequested, flags.bConcatenatorRequested, parametersDescription );
+    Base.AssertTwoEqualValues( "bConcat1Requested", pointDepthPoint.bConcat1Requested, flags.bConcat1Requested, parametersDescription );
 
     Base.AssertTwoEqualValues( "bAddInputToOutputRequested",
       pointDepthPoint.bAddInputToOutputRequested, flags.bAddInputToOutputRequested, parametersDescription );
 
-    Base.AssertTwoEqualValues( "bKeepInputTensor", pointDepthPoint.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
+    Base.AssertTwoEqualValues( "bConcat2ShuffleSplitRequested",
+      pointDepthPoint.bConcat2ShuffleSplitRequested, flags.bConcat2ShuffleSplitRequested, parametersDescription );
+
+    Base.AssertTwoEqualValues( "outputTensorCount", pointDepthPoint.outputTensorCount, flags.outputTensorCount, parametersDescription );
 
     // pointwise1 parameters.
     Base.AssertTwoEqualValues( "pointwise1ChannelCount",
@@ -314,12 +327,7 @@ class Base {
       pointDepthPoint.pointwise22ActivationName, pointwise22ActivationName, parametersDescription );
 
     // Other parameters.
-    Base.AssertTwoEqualValues( "bKeepInputTensor",
-      pointDepthPoint.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
-
-//!!! ...unfinished...
-//     tf.util.assert( ( pointDepthPoint.outChannels == outChannels ),
-//       `PointDepthPoint outChannels (${pointDepthPoint.outChannels}) should be (${outChannels}). ${parametersDescription}`);
+    Base.AssertTwoEqualValues( "bKeepInputTensor", pointDepthPoint.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
 
     return pointDepthPoint;
   }
@@ -347,6 +355,9 @@ class Base {
   calcResult( imageInArray ) {
 
     let testParams = this.testParams;
+
+
+//!!! ...unfinished... (2021/08/29) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
 
     let flags = {};
     PointDepthPoint.Params.setFlags_by_channelCount1_pointwise1Before.call( flags, testParams.out.channelCount1_pointwise1Before );
