@@ -113,16 +113,21 @@ class Base {
       tf.util.assert( outputTensor3dArray.length == 2,
         `PointDepthPoint outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
 
-      Base.AssertTwoEqualValues( "outChannels0", // Test output0's channel count.
-        pointDepthPoint.outChannels0, outputTensor3dArray[ 0 ].shape[ outputTensor3dArray[ 0 ].shape.length - 1 ], strNote );
+      { // Test output channel count.
+        const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
+        let outChannels0 = 0, outChannels1 = 0;
 
-      if ( outputTensor3dArray[ 1 ] ) { // Test output1's channel count.
-        Base.AssertTwoEqualValues( "outChannels1",
-          pointDepthPoint.outChannels1, outputTensor3dArray[ 1 ].shape[ outputTensor3dArray[ 1 ].shape.length - 1 ], 
-                                 );
-      } else {
-        Base.AssertTwoEqualValues( "outChannels1",
-          pointDepthPoint.outChannels1, 0, strNote );
+        if ( outputTensor3dArray[ 0 ] && ( outputTensor3dArray[ 0 ].shape.length > CHANNEL_AXIS_ID ) )
+          outChannels0 = outputTensor3dArray[ 0 ].shape[ CHANNEL_AXIS_ID ];
+
+        if ( outputTensor3dArray[ 1 ] && ( outputTensor3dArray[ 1 ].shape.length > CHANNEL_AXIS_ID ) )
+          outChannels1 = outputTensor3dArray[ 1 ].shape[ CHANNEL_AXIS_ID ];
+
+        let outChannelsAll = outChannels0 + outChannels1;
+
+        Base.AssertTwoEqualValues( "outChannels0", pointDepthPoint.outChannels0, outChannels0, strNote );
+        Base.AssertTwoEqualValues( "outChannels1", pointDepthPoint.outChannels1, outChannels1, strNote );
+        Base.AssertTwoEqualValues( "outChannelsAll", pointDepthPoint.outChannelsAll, outChannelsAll, strNote );
       }
 
       tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
