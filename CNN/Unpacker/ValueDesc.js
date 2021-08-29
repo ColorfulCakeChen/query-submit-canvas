@@ -141,16 +141,13 @@ class Int {
 
 /**
  * Describe activation function parameter's id, range, name.
- *
- *
- * It could be shared between different parameter description.
  */
 class ActivationFunction extends Int {
 
   constructor() {
     super( 0, 7,
-      [ "NONE",  "SIGMOID",  "SOFTPLUS",  "RELU",  "RELU6",  "COS",  "SIN",  "TANH" ],
-      [   null, tf.sigmoid, tf.softplus, tf.relu, tf.relu6, tf.cos, tf.sin, tf.tanh ]
+      [ "NONE",  "RELU6",  "SIGMOID",  "RELU",  "SOFTPLUS",  "COS",  "SIN",  "TANH" ],
+      [   null, tf.relu6, tf.sigmoid, tf.relu, tf.softplus, tf.cos, tf.sin, tf.tanh ]
     );
   }
 
