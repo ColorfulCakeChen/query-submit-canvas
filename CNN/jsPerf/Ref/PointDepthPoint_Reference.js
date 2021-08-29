@@ -503,6 +503,24 @@ class Base {
 
     }
 
+//!!! ...unfinished... (2021/08/29)
+
+    // 4.3 Integrate pointwise21 and pointwise22 into pointwise2.
+    let nextImageOutArray;
+    if ( pointwise21Result ) {
+      if ( pointwise22Result ) {
+        nextImageOutArray = [ pointwise21Result, pointwise22Result ];
+      } else {
+        nextImageOutArray = [ pointwise21Result, null ];
+      }
+    } else {
+      if ( pointwise22Result ) {
+        nextImageOutArray = [ null, pointwise22Result ];
+      } else {
+        nextImageOutArray = [ null, null ];
+      }
+    }
+
     
 //!!! ...unfinished... (2021/08/29)
 //    *
@@ -549,24 +567,6 @@ class Base {
                 + `is unknown value. ${this.paramsOutDescription}`);
             break;
         }
-      }
-    }
-
-//!!! ...unfinished... (2021/08/29)
-
-    // 4.3 Integrate pointwise21 and pointwise22 into pointwise2.
-    let nextImageOutArray;
-    if ( pointwise21Result ) {
-      if ( pointwise22Result ) {
-        nextImageOutArray = [ pointwise21Result, pointwise22Result ];
-      } else {
-        nextImageOutArray = [ pointwise21Result, null ];
-      }
-    } else {
-      if ( pointwise22Result ) {
-        nextImageOutArray = [ null, pointwise22Result ];
-      } else {
-        nextImageOutArray = [ null, null ];
       }
     }
 
