@@ -533,12 +533,12 @@ class Base {
 
       switch ( testParams.out.pointwise22ChannelCount ) {
         // 5.1 Concat2, shuffle, split.
-        case ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT: // (-2)
+        case ValueDesc.pointwise22ChannelCount.Singleton.Ids.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT: // (-2)
           Base.calcConcatShuffleSplit( imageArray_pointwise2After, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
           break;
 
         // 5.2 Concat2.
-        case ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1: // (-1)
+        case ValueDesc.pointwise22ChannelCount.Singleton.Ids.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1: // (-1)
           imageOutArray[ 0 ] = Base.calcConcatAlongAxisId2(
             imageArray_pointwise2After[ 0 ], imageArray_pointwise2After[ 1 ], "Concat2_pointwise21_input1", this.paramsOutDescription );
           break;
