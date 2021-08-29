@@ -32,8 +32,22 @@ class Base {
    *
    * @param {PointDepthPoint_TestParams.Base} testParams
    *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
+   *
+   * @param {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
+   *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
+   *
+   *     - It will not be disposed by this object (i.e. it is supposed to be shared with outter callers).
+   *
+   *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
+   *
+   *     - It is only used when ( channelCount1_pointwise1Before > 1 ) (i.e. TWO_INPUTS) and
+   *         ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT )
+   *         (-2) (i.e. channel shuffle the concatenated pointwise21 and input1).
+   *
+   *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
+   *         of pointwise21 and input1.
    */
-  testCorrectness( imageSourceBag, testParams ) {
+  testCorrectness( imageSourceBag, testParams, channelShuffler_ConcatPointwiseConv ) {
     this.testParams = testParams;
 
     try {
@@ -94,7 +108,7 @@ class Base {
       }
 
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-      let pointDepthPoint = Base.pointDepthPoint_create( testParams );
+      let pointDepthPoint = Base.pointDepthPoint_create( testParams, channelShuffler_ConcatPointwiseConv );
 
       let parametersDescription = pointDepthPoint.parametersDescription;
       strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
