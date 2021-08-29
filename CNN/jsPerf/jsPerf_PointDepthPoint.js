@@ -38,6 +38,7 @@ class HeightWidthDepth {
 
     this.valueCount = height * width * depth;
     this.concatenatedShape = [ height, width, depth ];
+    this.outputGroupCount = 2; // Only support two convolution groups.
   }
 
   disposeTensors() {
@@ -172,7 +173,10 @@ class HeightWidthDepth {
     });
 
 
-//!!! ...unfinished... (2021/08/29) Create shared ChannelShuffler.
+    // Create shared ChannelShuffler.
+    let concatenatedShape = [ this.height, this.width, this.depth * this.outputGroupCount ]; 
+    let channelShuffler_ConcatPointwiseConv = this.channelShuffler_ConcatPointwiseConv
+          = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, this.outputGroupCount );
 
 
     // channelCount0_pointwise1Before, channelCount1_pointwise1Before,
@@ -286,35 +290,43 @@ class HeightWidthDepth {
       // The pointDepthPoint for performance testing.
       this.pointDepthPoint_DConv_1_bias_COS_AddInputToOutput
         = PointDepthPoint_Reference.Base.pointDepthPoint_create(
-            testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput ),
+            testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput,
+            channelShuffler_ConcatPointwiseConv ),
 
       this.pointDepthPoint_Avg_bias_COS_AddInputToOutput
         = PointDepthPoint_Reference.Base.pointDepthPoint_create(
-            testCase_pointwise1_4to8_bias_COS_depthwise_avg_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput ),
+            testCase_pointwise1_4to8_bias_COS_depthwise_avg_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput,
+            channelShuffler_ConcatPointwiseConv  ),
 
       this.pointDepthPoint_Max_bias_COS_AddInputToOutput
         = PointDepthPoint_Reference.Base.pointDepthPoint_create(
-            testCase_pointwise1_4to8_bias_COS_depthwise_max_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput ),
+            testCase_pointwise1_4to8_bias_COS_depthwise_max_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput,
+            channelShuffler_ConcatPointwiseConv  ),
 
       this.pointDepthPoint_DConv_2_bias_COS_AddInputToOutput
         = PointDepthPoint_Reference.Base.pointDepthPoint_create(
-            testCase_pointwise1_4to8_bias_COS_depthwise_8to16_strides_1_pad_same_bias_COS_pointwise2_16to4_bias_COS_AddInputToOutput ),
+            testCase_pointwise1_4to8_bias_COS_depthwise_8to16_strides_1_pad_same_bias_COS_pointwise2_16to4_bias_COS_AddInputToOutput,
+            channelShuffler_ConcatPointwiseConv  ),
 
       this.pointDepthPoint_DConv_2_COS_AddInputToOutput
         = PointDepthPoint_Reference.Base.pointDepthPoint_create(
-            testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS_AddInputToOutput ),
+            testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS_AddInputToOutput,
+            channelShuffler_ConcatPointwiseConv  ),
 
       this.pointDepthPoint_DConv_2_COS
         = PointDepthPoint_Reference.Base.pointDepthPoint_create(
-            testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS ),
+            testCase_pointwise1_4to8_noBias_COS_depthwise_8to16_strides_1_pad_same_noBias_COS_pointwise2_16to4_noBias_COS,
+            channelShuffler_ConcatPointwiseConv  ),
 
       this.pointDepthPoint_DConv_32_bias_COS_P128_bias
         = PointDepthPoint_Reference.Base.pointDepthPoint_create(
-            testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias ),
+            testCase_pointwise1_none_depthwise_4to128_strides_1_pad_same_bias_COS_pointwise2_128to128_bias,
+            channelShuffler_ConcatPointwiseConv  ),
 
       this.pointDepthPoint_P128_bias_COS_P128_bias
         = PointDepthPoint_Reference.Base.pointDepthPoint_create(
-            testCase_pointwise1_4to128_bias_COS_depthwise_none_COS_pointwise2_128to128_bias ),
+            testCase_pointwise1_4to128_bias_COS_depthwise_none_COS_pointwise2_128to128_bias,
+            channelShuffler_ConcatPointwiseConv  ),
 
     ];
 
@@ -328,9 +340,11 @@ class HeightWidthDepth {
       }
       this.pointDepthPoint_list = this.pointDepthPoint_DConv = null;
     }
-    
 
-//!!! ...unfinished... (2021/08/29) Release shared ChannelShuffler.
+    if ( this.channelShuffler_ConcatPointwiseConv ) { // Release shared ChannelShuffler.
+      this.channelShuffler_ConcatPointwiseConv.disposeTensors();
+      this.channelShuffler_ConcatPointwiseConv = null;
+    }
   }
 
 //!!! ...unfinished...
@@ -428,16 +442,16 @@ class HeightWidthDepth {
         { height: 3, width: 5, depth: 4 },
       ];
 
-//!!! ...unfinished... (2021/08/29) Create shared ChannelShuffler.
-
       for ( let originalImageSize of originalImageSizeArray ) {
+
+        let outputGroupCount = 2; // Only support two convolution groups.
+        let concatenatedShape = [ originalImageSize.height, originalImageSize.width, originalImageSize.depth * outputGroupCount ]; 
+        let channelShuffler_ConcatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, outputGroupCount );
 
         // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors dynamically created in imageSourceBag.
         let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
 
         let testParams = new PointDepthPoint_TestParams.Base();
-//!!! (2021/08/10 Remarked) input0's channel count already become one member of Params.
-//        let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
         let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width );
         let testReference = new PointDepthPoint_Reference.Base();
 
@@ -448,10 +462,11 @@ class HeightWidthDepth {
               + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
               + `testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
 
-          testReference.testCorrectness( imageSourceBag, testParams );
+          testReference.testCorrectness( imageSourceBag, testParams, channelShuffler_ConcatPointwiseConv );
         }
 
         imageSourceBag.disposeTensors();
+        channelShuffler_ConcatPointwiseConv.disposeTensors();
       }
     });
 
