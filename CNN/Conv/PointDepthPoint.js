@@ -61,10 +61,6 @@ class Params extends Weights.Params {
    *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
    *     will not be processed by any pointwise1 and depthwise operation.
    *
-
-//!!! ...unfinished... (2021/08/19) Perhaps, combine channelCount1_pointwise1Before and pointwise21ChannelCount,
-// since they should be the same in many cases.
-
    *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT ),
    *         (-2), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
    *         result will be channel-shuffled and splitted into [ output0, output1 ].
