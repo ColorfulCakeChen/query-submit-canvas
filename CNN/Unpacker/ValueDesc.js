@@ -1,4 +1,5 @@
-export { Same, Bool, Int, ActivationFunction, AvgMax_Or_ChannelMultiplier, channelCount1_pointwise1Before };
+export { Same, Bool, Int, ActivationFunction };
+export { AvgMax_Or_ChannelMultiplier, channelCount1_pointwise1Before, pointwise22ChannelCount };
 
 import * as ValueRange from "./ValueRange.js";
 
