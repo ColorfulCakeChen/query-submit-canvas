@@ -205,12 +205,9 @@ class Base {
     // Initialize successfully or failed.
     let extractedParams = new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
       testParams.in.channelCount0_pointwise1Before, testParams.in.channelCount1_pointwise1Before,
-
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
-
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
-
       testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
       testParams.in.pointwise22ChannelCount, testParams.in.bPointwise22Bias, testParams.in.pointwise22ActivationId,
       testParams.in.bKeepInputTensor
@@ -361,11 +358,9 @@ class Base {
 
     let testParams = this.testParams;
 
-
-//!!! ...unfinished... (2021/08/29) channelShuffler_ConcatPointwiseConv, ConcatShuffleSplit, outputChannelCount
-
     let flags = {};
-    PointDepthPoint.Params.setFlags_by_channelCount1_pointwise1Before.call( flags, testParams.out.channelCount1_pointwise1Before );
+    PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount.call( flags,
+      testParams.out.channelCount1_pointwise1Before, testParams.out.pointwise22ChannelCount );
 
     // Create description for debug easily.
     this.paramsOutDescription =
@@ -443,12 +438,59 @@ class Base {
       }
     }
 
+//!!! ...unfinished... (2021/08/29)
+//    *
+//    *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT ),
+//    *         (-2), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
+//    *         result will be channel-shuffled and splitted into [ output0, output1 ].
+//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
+//    *           - The output0 and output1 will have the same channel count as pointwise21 (i.e. pointwise21ChannelCount).
+//    *
+//    *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1 ),
+//    *         (-1), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
+//    *         result will become output0.
+//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
+//    *           - The output0 will have channel count as ( pointwise21ChannelCount + channelCount1_pointwise1Before ).
+//    *
+//    *       - If ( pointwise22ChannelCount >= 0 ), input1 will be concatenated with the result of depthwise operation
+//    *         of input0. The concatenated result will be processed by pointwise2 convolution.
+//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
+//    *           - The output0 will be the result of pointwise21.
+//    *           - The output1 will be the result of pointwise22.
+//    *
+
     // 3. Concat1 (along image depth)
 
     // TWO_INPUTS (> 0)
     if ( testParams.out.channelCount1_pointwise1Before > 0 ) {
-      // Concatenate depthwise1's result and input1.
-      nextImageIn = Base.calcConcatAlongAxisId2( nextImageIn, imageInArray[ 1 ], "ConcatAlongDepth_TWO_INPUTS", this.paramsOutDescription );
+      
+      if ( testParams.out.pointwise22ChannelCount >= 0 ) {
+
+        // Concatenate depthwise1's result and input1. (i.e. concat1)
+        nextImageIn = Base.calcConcatAlongAxisId2( nextImageIn, imageInArray[ 1 ],
+          "Concat1_depthwise1_input1 (TWO_INPUTS)", this.paramsOutDescription );
+
+      } else {
+        
+        switch ( testParams.out.pointwise22ChannelCount ) {
+
+//!!! ...unfinished... (2021/08/29)
+          case ValueDesc.pointwise22ChannelCount.Singleton.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT: // (-2)
+            break;
+
+          case ValueDesc.pointwise22ChannelCount.Singleton.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1: // (-1)
+
+//!!! ...unfinished... (2021/08/29)
+            break;
+
+          default:
+            tf.util.assert( false,
+              `PointDepthPoint testParams.out.pointwise22ChannelCount ( ${testParams.out.pointwise22ChannelCount} ) `
+                + `is unknown value. ${this.paramsOutDescription}`);
+            break;
+        }
+
+      }
 
     // ONE_INPUT_TWO_DEPTHWISE (-2) (simplified ShuffleNetV2's head)
     } else if ( testParams.out.channelCount1_pointwise1Before
@@ -456,7 +498,7 @@ class Base {
 
       // Concatenate depthwise1's result and depthwise2's result.
       nextImageIn = Base.calcConcatAlongAxisId2(
-        nextImageIn, depthwise2Result, "ConcatAlongDepth_ONE_INPUT_TWO_DEPTHWISE", this.paramsOutDescription );
+        nextImageIn, depthwise2Result, "Concat1_depthwise1_depthwise2 (ONE_INPUT_TWO_DEPTHWISE)", this.paramsOutDescription );
     }
 
     // 4. Pointwise2
