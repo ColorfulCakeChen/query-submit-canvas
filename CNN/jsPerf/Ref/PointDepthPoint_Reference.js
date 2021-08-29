@@ -370,20 +370,35 @@ class Base {
     // Create description for debug easily.
     this.paramsOutDescription =
         `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
+    
+      + `channelCount1_pointwise1Before_Name=`
+      + `${PointDepthPoint.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}, `
 
-      + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `// pointwise1ActivationName=${pointwise1ActivationName}, `
+      + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `
+      + `pointwise1ActivationId=${testParams.out.pointwise1ActivationId}, pointwise1ActivationName=`
+      + `${PointDepthPoint.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}, `
+
       + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
       + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
       + `depthwiseStridesPad=${testParams.out.depthwiseStridesPad}, `
       + `bDepthwiseBias=${testParams.out.bDepthwiseBias}, `
-//      + `depthwiseActivationName=${depthwiseActivationName}, `
-      + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `//pointwise21ActivationName=${pointwise21ActivationName}, `
-      + `pointwise22ChannelCount=${testParams.out.pointwise22ChannelCount}, bPointwise22Bias=${testParams.out.bPointwise22Bias}, `//pointwise22ActivationName=${pointwise22ActivationName}, `
+      + `depthwiseActivationId=${testParams.out.depthwiseActivationId}, depthwiseActivationName=`
+      + `${PointDepthPoint.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}, `
+
+      + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `
+      + `pointwise21ActivationId=${testParams.out.pointwise21ActivationId}, pointwise21ActivationName=`
+      + `${PointDepthPoint.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}, `
+
+      + `pointwise22ChannelCount=${testParams.out.pointwise22ChannelCount}, bPointwise22Bias=${testParams.out.bPointwise22Bias}, `
+      + `pointwise22ActivationId=${testParams.out.pointwise22ActivationId}, pointwise22ActivationName=`
+      + `${PointDepthPoint.Params.pointwise22ActivationId.getStringOfValue( testParams.out.pointwise22ActivationId )}, `
 
       + `inputTensorCount=${flags.inputTensorCount}, `
       + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
-      + `bConcatenatorRequested=${flags.bConcatenatorRequested}, `
+      + `bConcat1Requested=${flags.bConcat1Requested}, `
       + `bAddInputToOutputRequested=${flags.bAddInputToOutputRequested}`
+      + `bConcat2ShuffleSplitRequested=${flags.bConcat2ShuffleSplitRequested}, `
+      + `outputTensorCount=${flags.outputTensorCount}, `
 
       + `bKeepInputTensor=${testParams.out.bKeepInputTensor}, `
     ;
