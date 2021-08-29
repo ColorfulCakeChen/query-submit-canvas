@@ -5,6 +5,7 @@ import * as ValueRange from "../Unpacker/ValueRange.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
+import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 //import * as TensorTools from "../util/TensorTools.js";
 import * as PointDepthPoint_Reference from "./Ref/PointDepthPoint_Reference.js";
 import * as PointDepthPoint_TestParams from "./Ref/PointDepthPoint_TestParams.js"; 
@@ -36,10 +37,7 @@ class HeightWidthDepth {
     this.depth = depth;
 
     this.valueCount = height * width * depth;
-
-//!!! ...unfinished... (2021/06/08) seems not used.
-//    this.concatenatedShape = [ height, width, depth ];
-
+    this.concatenatedShape = [ height, width, depth ];
   }
 
   disposeTensors() {
@@ -172,6 +170,10 @@ class HeightWidthDepth {
 
       return dataTensor3dArray;
     });
+
+
+//!!! ...unfinished... (2021/08/29) Create shared ChannelShuffler.
+
 
     // channelCount0_pointwise1Before, channelCount1_pointwise1Before,
     // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
@@ -326,6 +328,9 @@ class HeightWidthDepth {
       }
       this.pointDepthPoint_list = this.pointDepthPoint_DConv = null;
     }
+    
+
+//!!! ...unfinished... (2021/08/29) Release shared ChannelShuffler.
   }
 
 //!!! ...unfinished...
@@ -422,6 +427,8 @@ class HeightWidthDepth {
         { height: 3, width: 4, depth: 4 },
         { height: 3, width: 5, depth: 4 },
       ];
+
+//!!! ...unfinished... (2021/08/29) Create shared ChannelShuffler.
 
       for ( let originalImageSize of originalImageSizeArray ) {
 
