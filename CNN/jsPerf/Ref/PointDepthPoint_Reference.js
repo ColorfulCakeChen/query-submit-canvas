@@ -475,7 +475,7 @@ class Base {
 
     // 4. Pointwise2
     let pointwise21Result = null, pointwise22Result = null;
-    if ( ( testParams.out.pointwise21ChannelCount == 0 ) && ( testParams.out.pointwise22ChannelCount == 0 ) ) {
+    if ( ( testParams.out.pointwise21ChannelCount == 0 ) && ( testParams.out.pointwise22ChannelCount <= 0 ) ) {
 
       // 4.0 No Pointwise21 and No Pointwise22.
 
