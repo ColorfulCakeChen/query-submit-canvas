@@ -75,8 +75,14 @@ class Base {
                       == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
           bTwoInputs = true; // Two inputs.
 
-//!!! ...unfinished... (2021/08/31) WRING! pointwise21ChannelCount may be zero!
-          input1ChannelCount = this.testParams.out.pointwise21ChannelCount; // The second input's channel count should be the same as pointwise21.
+          // Although The second input's channel count seems pointwise21ChannelCount, however, it is not because pointwise21ChannelCount
+          // may be zero. Precisely speaking, it should be PointDepthPoint.channelCount_pointwise21After_concat2Before. Unfortunately,
+          // it is not available here.
+          //
+          // For the purpose of this testing, it may use channelCount0_pointwise1Before.
+//!!! ...unfinished... (2021/08/31) WRING! pointwise21ChannelCount may be zero! It should be channelCount_pointwise21After_concat2Before.
+//          input1ChannelCount = this.testParams.out.pointwise21ChannelCount; // The second input's channel count should be the same as pointwise21.
+          input1ChannelCount = channelCount0_pointwise1Before;
 
         } else {
           bTwoInputs = false; // One input.
