@@ -59,6 +59,10 @@ class Params extends Weights.Params {
    * from inputFloat32Array (i.e. by evolution).
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): The input1 should exist. The
+   
+
+//!!! ...unfinished... (2021/08/31) WRING! pointwise21ChannelCount may be zero!
+
    *       channel count of input1 must be the same as pointwise21 (i.e. pointwise21ChannelCount). The result of pointwise21 (which
    *       operates on input0) will be concatenated with input1.
    *
