@@ -1056,6 +1056,7 @@ class Base {
         width:     imageInArray[ i ].width,
         depth:     imageInArray[ i ].depth,
         dataArray: new Float32Array( imageInArray[ i ].dataArray.length ),
+      };
     }
 
     // Swap two images interleavely.
