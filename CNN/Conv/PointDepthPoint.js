@@ -221,7 +221,7 @@ class Params extends Weights.Params {
       return false;
 
     // Determine input tensor count and whether request add-input-to-output.
-    Params.setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount.call(
+    Params.setFlags_by__channelCount1_pointwise1Before__bPointwise22.call(
       this, this.channelCount1_pointwise1Before, this.bPointwise22 );
 
     return bExtractOk;
@@ -239,7 +239,7 @@ class Params extends Weights.Params {
    * @param {number} channelCount1_pointwise1Before
    * @param {boolean} bPointwise22
    */
-  static setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount(
+  static setFlags_by__channelCount1_pointwise1Before__bPointwise22(
             channelCount1_pointwise1Before, bPointwise22 ) {
 
     // 0. Prepare.
