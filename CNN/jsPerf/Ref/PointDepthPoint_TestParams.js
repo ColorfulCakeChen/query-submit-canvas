@@ -143,8 +143,11 @@ class Base extends TestParams.Base {
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.maxKindsRestrict = {
 //      PerParameter: 5,
-      Pointwise:    3,
-      Pointwise22ChannelCount: 5,
+      pointwiseChannelCount: 3,
+
+      bPointwise22: undefined,
+//!!! (2021/08/31 Remarked) inferred from bPointwise22.
+//      Pointwise22ChannelCount: 5,
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( maxKinds == 0 )) for speeding up testing.
@@ -159,7 +162,7 @@ class Base extends TestParams.Base {
       depthwise_AvgMax_Or_ChannelMultiplier: 5,
       depthwiseFilterHeight: depthwiseFilterMaxSize,
       depthwiseStridesPad: undefined,
-      
+
       bKeepInputTensor: undefined,
     };
 
@@ -168,12 +171,16 @@ class Base extends TestParams.Base {
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.maxKindsRestrict.Pointwise ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.maxKindsRestrict.pointwiseChannelCount ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.maxKindsRestrict.Bias ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.maxKindsRestrict.ActivationId ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise22ChannelCount, this.maxKindsRestrict.Pointwise22ChannelCount ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise22Bias,        this.maxKindsRestrict.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise22ActivationId, this.maxKindsRestrict.ActivationId ),
+
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise22,            this.maxKindsRestrict.bPointwise22 ),
+
+//!!! (2021/08/31 Remarked) inferred from bPointwise22.
+//       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise22ChannelCount, this.maxKindsRestrict.Pointwise22ChannelCount ),
+//       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise22Bias,        this.maxKindsRestrict.Bias ),
+//       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise22ActivationId, this.maxKindsRestrict.ActivationId ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.maxKindsRestrict.Bias ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.maxKindsRestrict.ActivationId ),
@@ -192,7 +199,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.maxKindsRestrict.Bias ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.maxKindsRestrict.ActivationId ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.maxKindsRestrict.Pointwise ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.maxKindsRestrict.pointwiseChannelCount ),
       
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bKeepInputTensor,        this.maxKindsRestrict.bKeepInputTensor ),
     ];
@@ -391,9 +398,13 @@ Base.paramsNameOrderArray = [
   PointDepthPoint.Params.pointwise21ChannelCount.paramName,
   PointDepthPoint.Params.bPointwise21Bias.paramName,
   PointDepthPoint.Params.pointwise21ActivationId.paramName,
-  PointDepthPoint.Params.pointwise22ChannelCount.paramName,
-  PointDepthPoint.Params.bPointwise22Bias.paramName,
-  PointDepthPoint.Params.pointwise22ActivationId.paramName,
+  PointDepthPoint.Params.bPointwise22.paramName,
+
+//!!! (2021/08/31 Remarked) inferred from bPointwise22.
+//   PointDepthPoint.Params.pointwise22ChannelCount.paramName,
+//   PointDepthPoint.Params.bPointwise22Bias.paramName,
+//   PointDepthPoint.Params.pointwise22ActivationId.paramName,
+
   PointDepthPoint.Params.bKeepInputTensor.paramName,
   
   "pointwise1Filters",
