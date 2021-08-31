@@ -613,9 +613,9 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *
  *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
  *
- *     - It is only used when ( channelCount1_pointwise1Before > 1 ) (i.e. TWO_INPUTS) and
- *         ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.Ids.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT )
- *         (-2) (i.e. channel shuffle the concatenated pointwise21 and input1).
+ *     - It is only used when
+ *         ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+ *         (-3) (i.e. channel shuffle the concatenated pointwise21 and input1).
  *
  *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
  *         of pointwise21 and input1.
