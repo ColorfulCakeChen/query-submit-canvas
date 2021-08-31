@@ -347,10 +347,6 @@ class Params extends Weights.Params {
       return 0; // No pointwisw22.
   }
 
-  get pointwise22ChannelCountName() {
-    return Params.pointwise21ChannelCount.getStringOfValue( this.pointwise21ChannelCount );
-  }
-
   get bPointwise22Bias()          { return this.bPointwise21Bias; }
   get pointwise22ActivationId()   { return this.pointwise21ActivationId; }
   get pointwise22ActivationName() { return this.pointwise21ActivationName; }
