@@ -42,8 +42,37 @@ class Params extends Weights.Params {
    *   The channel count of apply()'s second input image (i.e. inputTensors[ 1 ]). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
+
+//!!! ...unfinished... (2021/08/31) Replace pointwise22ChannelCount with bPointwise22.
+// So that its channel count either is 0 or the same pointwise21 (i.e. pointwise21ChannelCount).
+
+//!!! ...unfinished... (2021/08/31)
+// Perhaps, ( channelCount1_pointwise1Before == -3 ): TWO_INPUTS__CONCAT_POINTWISE21_INPUT1
+// so that input1's channel count will not be different from pointwise21's channel count.
+
+   *
+   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS__CONCAT_POINTWISE21_INPUT1 (-3): The input1 should exist. The
+   *       channel count of input1 must be the same as pointwise21 (i.e. pointwise21ChannelCount). The result of pointwise21 (which
+   *       operates on input0) will be concatenated with input1.
+   *
+   *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.Ids.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT ),
+   *         (-2), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
+   *         result will be channel-shuffled and splitted into [ output0, output1 ].
+   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
+   *           - The output0 and output1 will have the same channel count as pointwise21 (i.e. pointwise21ChannelCount).
+   *
+   *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.Ids.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1 ),
+   *         (-1), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
+   *         result will become output0.
+   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
+   *           - The output0 will have channel count as ( pointwise21ChannelCount + channelCount1_pointwise1Before ).
+   *
+   *
+   *
+   *
+   *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE (-2): The inputTensors[ 1 ] will not be used at
-   *     all (will be ignored completel). The inputTensors[ 0 ] will be processed by two pathes: one is by pointwise1 and one
+   *     all (will be ignored completely). The inputTensors[ 0 ] will be processed by two pathes: one is by pointwise1 and one
    *     depthwise operation, the other is by another depthwise operation (without pointwise1). These two depthwise operations will
    *     have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
    *     bDepthwiseBias, depthwiseActivationId) but have different (filter and bias) weights. The two depthwise results will be
@@ -58,20 +87,25 @@ class Params extends Weights.Params {
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0): The inputTensors[ 1 ] will not be used at all (will be
    *     ignored completely). The inputTensors[ 0 ] will be processed by pointwise1, one depthwise operation, and pointwise2 convolution.
    *
-   *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: It should be the channel count of inputTensors[ 1 ]. The inputTensors[ 1 ]
-   *     will not be processed by any pointwise1 and depthwise operation.
+   *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: It should be the channel count of input1. The input1 will not be processed
+   *     by any pointwise1 and depthwise operation.
    *
-   *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.Ids.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT ),
-   *         (-2), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
-   *         result will be channel-shuffled and splitted into [ output0, output1 ].
-   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
-   *           - The output0 and output1 will have the same channel count as pointwise21 (i.e. pointwise21ChannelCount).
-   *
-   *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.Ids.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1 ),
-   *         (-1), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
-   *         result will become output0.
-   *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
-   *           - The output0 will have channel count as ( pointwise21ChannelCount + channelCount1_pointwise1Before ).
+
+//!!! ...unfinished... (2021/08/31)
+// Perhaps, ( channelCount1_pointwise1Before == -3 ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1
+// so that input1's channel count will not be different from pointwise21's channel count.
+//
+//    *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.Ids.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT ),
+//    *         (-2), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
+//    *         result will be channel-shuffled and splitted into [ output0, output1 ].
+//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) must be the same as pointwise21 (i.e. pointwise21ChannelCount).
+//    *           - The output0 and output1 will have the same channel count as pointwise21 (i.e. pointwise21ChannelCount).
+//    *
+//    *       - If ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.Ids.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1 ),
+//    *         (-1), input1 will be concatenated with the result of pointwise21 operation of input0. The concatenated
+//    *         result will become output0.
+//    *           - The input1's channel count (i.e. channelCount1_pointwise1Before) could be any value (i.e. needs not be pointwise21ChannelCount).
+//    *           - The output0 will have channel count as ( pointwise21ChannelCount + channelCount1_pointwise1Before ).
    *
    *       - If ( pointwise22ChannelCount >= 0 ), input1 will be concatenated with the result of depthwise operation
    *         of input0. The concatenated result will be processed by pointwise2 convolution.
@@ -82,7 +116,7 @@ class Params extends Weights.Params {
    *
 
 //!!! ...unfinished... (2021/07/27)
-// Perhaps, ( channelCount1_pointwise1Before == -3 ): ONE_INPUT_TWO_DEPTHWISE_ONE_MAX_POOLING
+// Perhaps, ( channelCount1_pointwise1Before == -4 ): ONE_INPUT_TWO_DEPTHWISE_ONE_MAX_POOLING
 //
 // A max pooling will be used as a branch of input0. The max pooling result of input0 should be concatenated with the
 // two depthwise convolutions' result of input0. The reason is that max pooling could provide information which is difficult achieved
