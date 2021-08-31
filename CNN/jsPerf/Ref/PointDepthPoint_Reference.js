@@ -40,9 +40,9 @@ class Base {
    *
    *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
    *
-   *     - It is only used when ( channelCount1_pointwise1Before > 1 ) (i.e. TWO_INPUTS) and
-   *         ( pointwise22ChannelCount == ValueDesc.pointwise22ChannelCount.Singleton.Ids.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT )
-   *         (-2) (i.e. channel shuffle the concatenated pointwise21 and input1).
+   *     - It is only used when
+   *         ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+   *         (-3) (i.e. channel shuffle the concatenated pointwise21 and input1).
    *
    *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
    *         of pointwise21 and input1.
@@ -64,13 +64,21 @@ class Base {
 
       let strNote;
 
+      let bTwoInputs; // The input tensor count is determined by channelCount1_pointwise1Before totally.
+      if (   ( channelCount1_pointwise1Before > 0 )
+          || ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+         )
+        bTwoInputs = true; // Two inputs.
+      else
+        bTwoInputs = false; // One input.
+
       let imageOutReferenceArray;
       {
         strNote = `( this.testParams.id=${this.testParams.id} )`;
 
         imageInArraySelected.fill( undefined );
         imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
-        if ( channelCount1_pointwise1Before > 0 ) { // Pass two input images according to parameters.
+        if ( bTwoInputs ) { // Pass two input images according to parameters.
           imageInArraySelected[ 1 ] = imageSourceBag.getImage_by(
             channelCount1_pointwise1Before, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
         }
@@ -88,7 +96,7 @@ class Base {
       inputTensor3dArray.fill( undefined );
 
       inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
-      if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
+      if ( bTwoInputs ) { // Pass two input tensors according to parameters.
         inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
           channelCount1_pointwise1Before, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
       }
@@ -101,7 +109,7 @@ class Base {
         inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
         inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
 
-        if ( channelCount1_pointwise1Before > 0 ) { // Pass two input tensors according to parameters.
+        if ( bTwoInputs ) { // Pass two input tensors according to parameters.
           inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
           inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
         }
