@@ -272,7 +272,7 @@ class Params extends Weights.Params {
         case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
           this.bDepthwise2Requested = this.bConcat1Requested = false; this.bAddInputToOutputRequested =  true; break;
 
-        // 1.3 The only case uses depthwise2. (our adjusted ShuffleNetV2's head)
+        // 1.3 The only case uses depthwise2. (simplified ShuffleNetV2's head)
         case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
           this.bDepthwise2Requested = this.bConcat1Requested =  true; this.bAddInputToOutputRequested = false; break;
       }
@@ -418,7 +418,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *
  * There six main combinations:
  *
- *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: (our adjusted ShuffleNetV2's head)
+ *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: (simplified ShuffleNetV2's head)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - pointwise21
  *        \------------- depthwise2 /         \ pointwise22
@@ -1157,18 +1157,34 @@ class Base extends ReturnOrClone.Base {
     switch ( this.channelCount1_pointwise1Before ) {
 
       // 1.
+      //
+      // ( this.inputTensorCount > 1 ).
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3) (ShuffleNetV2's body/tail)
+        
+        tf.util.assert( ( this.bConcat2ShuffleSplitRequested == true ),
+            `PointDepthPoint.Determine_apply(): When concat2-shuffle-split, `
+              + `bConcat2ShuffleSplitRequested ( ${this.bConcat2ShuffleSplitRequested} ) should be true `
+              + `when channelCount1_pointwise1Before ( ${this.channelCount1_pointwise1Before} ) is TWO_INPUTS_CONCAT_POINTWISE21_INPUT1.`
+          );
+
+        return Base.apply_2_Concat2_pointwise21_input1_ShuffleSplit; // 1.1 ShuffleNetV2's body or tail.
+        break;
+
+      // 2.
+      //
+      // ( this.inputTensorCount == 1 )
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2) (simplified ShuffleNetV2's head)
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
-            return Base.apply_1_2_Concat1_depthwise1_depthwise2;  // 4.1 Both pointwise21 and pointwise22 existed.
+            return Base.apply_1_2_Concat1_depthwise1_depthwise2;  // 2.1 Both pointwise21 and pointwise22 existed.
           } else {
-            return Base.apply_1_21_Concat1_depthwise1_depthwise2; // 4.2 Only pointwise21 existed (and no pointwise22).
+            return Base.apply_1_21_Concat1_depthwise1_depthwise2; // 2.2 Only pointwise21 existed (and no pointwise22).
           }
         } else {
           if ( this.bPointwise22 ) {
-            return Base.apply_1_22_Concat1_depthwise1_depthwise2; // 4.3 Only pointwise22 existed (and no pointwise21).
+            return Base.apply_1_22_Concat1_depthwise1_depthwise2; // 2.3 Only pointwise22 existed (and no pointwise21).
           } else {
-            return Base.apply_1_21_Concat1_depthwise1_depthwise2; // 4.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+            return Base.apply_1_21_Concat1_depthwise1_depthwise2; // 2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
           }
         }
         break;
@@ -1178,29 +1194,31 @@ class Base extends ReturnOrClone.Base {
 
         if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
 
-          // 2. add-input-to-output and (keep-input or destroy-input).
+          // 3. add-input-to-output.
+          //
+          // ( this.inputTensorCount == 1 )
 
           if ( this.bPointwise21 ) {
             if ( this.bPointwise22 ) {
 
-              // 2.1 Both pointwise21 and pointwise22 exist.
+              // 3.1 Both pointwise21 and pointwise22 exist.
               //
               // Although both pointwise21 and pointwise22 exist, but it may be only pointwise21 or pointwise22 could (or need) add-input-to-output.
 
               if ( this.bShould_addInput0ToPointwise21 ) {
                 if ( this.bShould_addInput0ToPointwise22 ) {
-                  // 2.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21 and addInput0ToPointwise22 exist.
+                  // 3.1.1 Both pointwise21 and pointwise22 exist, and both addInput0ToPointwise21 and addInput0ToPointwise22 exist.
                   return Base.apply_1_2_AddInputToOutput_2;
                 } else {
-                  // 2.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21 exists.
+                  // 3.1.2 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise21 exists.
                   return Base.apply_1_2_AddInputToOutput_21;
                 }
               } else {
                 if ( this.bShould_addInput0ToPointwise22 ) {
-                  // 2.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22 exists.
+                  // 3.1.3 Both pointwise21 and pointwise22 exist, but only addInput0ToPointwise22 exists.
                   return Base.apply_1_2_AddInputToOutput_22;
                 } else {
-                  // 2.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21 and addInput0ToPointwise22 do not exist.
+                  // 3.1.4 Both pointwise21 and pointwise22 exist, but both addInput0ToPointwise21 and addInput0ToPointwise22 do not exist.
 
                   // It should not execute to here.
                   tf.util.assert( false,
@@ -1213,34 +1231,34 @@ class Base extends ReturnOrClone.Base {
               }
 
             } else {
-              return Base.apply_1_21_AddInputToOutput; // 2.2 Only pointwise21 exists (and no pointwise22).
+              return Base.apply_1_21_AddInputToOutput; // 3.2 Only pointwise21 exists (and no pointwise22).
             }
           } else {
             if ( this.bPointwise22 ) {
-              return Base.apply_1_22_AddInputToOutput; // 2.3 Only pointwise22 exists (and no pointwise21).
+              return Base.apply_1_22_AddInputToOutput; // 3.3 Only pointwise22 exists (and no pointwise21).
             } else {
-              // 2.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel count is the same as channel count before pointwise2.)
+              // 3.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel count is the same as channel count before pointwise2.)
               return Base.apply_1_21_AddInputToOutput;
             }
           }
 
         } else {
 
-          // 3. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
+          // 4. no-add-input-to-output, no-concat, and destroy-input (or keep-input).
           //
           // ( this.inputTensorCount == 1 ) or ( ( this.bAddInputToOutputRequested == true ) but not-possible to add-input-to-output ).
 
           if ( this.bPointwise21 ) {
             if ( this.bPointwise22 ) {
-              return Base.apply_1_2_NoSkipConnection;  // 3.1 Both pointwise21 and pointwise22 existed.
+              return Base.apply_1_2_NoSkipConnection;  // 4.1 Both pointwise21 and pointwise22 existed.
             } else {
-              return Base.apply_1_21_NoSkipConnection; // 3.2 Only pointwise21 existed (and no pointwise22).
+              return Base.apply_1_21_NoSkipConnection; // 4.2 Only pointwise21 existed (and no pointwise22).
             }
           } else {
             if ( this.bPointwise22 ) {
-              return Base.apply_1_22_NoSkipConnection; // 3.3 Only pointwise22 existed (and no pointwise21).
+              return Base.apply_1_22_NoSkipConnection; // 4.3 Only pointwise22 existed (and no pointwise21).
             } else {
-              // 3.4 Both pointwise21 and pointwise22 not existed.
+              // 4.4 Both pointwise21 and pointwise22 not existed.
 
               // no pointwise1, no depthwise1, no concat1, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
               if ( !this.bPointwise1 && !this.bDepthwise1 ) {
@@ -1248,12 +1266,12 @@ class Base extends ReturnOrClone.Base {
                 // Note: This may be wrong, however, if there are wrongly two input tensors (there should be only one input
                 // (i.e. inputTensors[ 0 ]) for should-add-input-to-output).
                 if ( this.bKeepInputTensor )
-                  return Base.keep_input_return_copy_array; // 3.4.1
+                  return Base.keep_input_return_copy_array; // 4.4.1
                 else
-                  return Base.return_input_directly_array;  // 3.4.2
+                  return Base.return_input_directly_array;  // 4.4.2
 
               } else {
-                return Base.apply_1_21_NoSkipConnection; // 3.4.3 At least, there are pointwise1 or depthwise. (Use pointwise21.)
+                return Base.apply_1_21_NoSkipConnection; // 4.4.3 At least, there are pointwise1 or depthwise. (Use pointwise21.)
               }
 
             }
@@ -1262,33 +1280,50 @@ class Base extends ReturnOrClone.Base {
         }
         break;
 
-      // 4. (no-add-input-to-output but has) concat and destroy-input (or keep-input).
+      // 5. (no-add-input-to-output but has) concat1.
       //
       // ( this.inputTensorCount > 1 ).
-      default: // Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX (> 0) (simplified ShuffleNetV2's tail)
+      default: // Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX (> 0) (slower ShuffleNetV2's body/tail)
 
-        if ( this.bConcat2ShuffleSplitRequested ) { // 4.1 ShuffleNetV2's body or tail. (Note: always ( this.bPointwise22 == false ))
-          return Base.apply_2_Concat2_pointwise21_input1_ShuffleSplit;
-
-        } else { // 4.2 slower ShuffleNetV2's body or tail.
-
-          if ( this.bPointwise21 ) {
-            if ( this.bPointwise22 ) {
-              return Base.apply_2_2_Concat1_depthwise1_input1;  // 4.2.1 Both pointwise21 and pointwise22 existed.
-            } else {
-              return Base.apply_2_21_Concat1_depthwise1_input1; // 4.2.2 Only pointwise21 existed (and no pointwise22).
-            }
+        if ( this.bPointwise21 ) {
+          if ( this.bPointwise22 ) {
+            return Base.apply_2_2_Concat1_depthwise1_input1;  // 5.1 Both pointwise21 and pointwise22 existed.
           } else {
-            if ( this.bPointwise22 ) {
-              return Base.apply_2_22_Concat1_depthwise1_input1; // 4.2.3 Only pointwise22 existed (and no pointwise21).
-            } else {
-              return Base.apply_2_21_Concat1_depthwise1_input1; // 4.2.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
-            }
+            return Base.apply_2_21_Concat1_depthwise1_input1; // 5.2 Only pointwise21 existed (and no pointwise22).
           }
-
+        } else {
+          if ( this.bPointwise22 ) {
+            return Base.apply_2_22_Concat1_depthwise1_input1; // 5.3 Only pointwise22 existed (and no pointwise21).
+          } else {
+            return Base.apply_2_21_Concat1_depthwise1_input1; // 5.4 Both pointwise21 and pointwise22 not existed. (Use pointwise21.)
+          }
         }
         break;
     }
+  }
+
+  /**
+   * The inputTensors[ 1 ] will be concatenated with pointwise21. If only outputTensors[ 0 ]. it is the result.
+   * It both outputTensors[ 0 ] and outputTensors[ 1 ], it will be shuffled and splitted.
+   * The input tensors may or may not be disposed.
+   *
+   * @param {tf.tensor[]} inputTensors
+   *   An array of tensors. Both the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
+   *
+   * @param {tf.tensor[]} outputTensors
+   *   An array for returning the result (output) tensors. If ( this.outputTensorCount == 1 ), the outputTensors[ 0 ] will
+   * be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will be the result.
+   */
+  static apply_2_Concat2_pointwise21_input1_ShuffleSplit( inputTensors, outputTensors ) {
+    let t0, t1;
+
+    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
+    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
+
+    this.intermediateTensorsArray[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
+    this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
+
+    this.concat2ShuffleSplit.pfnConcatShuffleSplit( this.intermediateTensorsArray, outputTensors );
   }
 
 
@@ -1519,30 +1554,6 @@ class Base extends ReturnOrClone.Base {
 
     outputTensors[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
-  }
-
-  /**
-   * The inputTensors[ 1 ] will be concatenated with pointwise21. If only outputTensors[ 0 ]. it is the result.
-   * It both outputTensors[ 0 ] and outputTensors[ 1 ], it will be shuffled and splitted.
-   * The input tensors may or may not be disposed.
-   *
-   * @param {tf.tensor[]} inputTensors
-   *   An array of tensors. Both the inputTensors[ 0 ] and inputTensors[ 1 ] will be used.
-   *
-   * @param {tf.tensor[]} outputTensors
-   *   An array for returning the result (output) tensors. If ( this.outputTensorCount == 1 ), the outputTensors[ 0 ] will
-   * be the result. If ( this.outputTensorCount == 2 ), the outputTensors[ 0 ] and outputTensors[ 1 ] will be the result.
-   */
-  static apply_2_Concat2_pointwise21_input1_ShuffleSplit( inputTensors, outputTensors ) {
-    let t0, t1;
-
-    t0 = this.pointwise1.pfnConvBiasActivation( inputTensors[ 0 ] );
-    t1 = this.depthwise1.pfnOperationBiasActivation( t0 );
-
-    this.intermediateTensorsArray[ 0 ] = this.pointwise21.pfnConvBiasActivation( t1 );
-    this.intermediateTensorsArray[ 1 ] = inputTensors[ 1 ];
-
-    this.concat2ShuffleSplit.pfnConcatShuffleSplit( this.intermediateTensorsArray, outputTensors );
   }
 
 
