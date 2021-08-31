@@ -989,7 +989,7 @@ class Base extends ReturnOrClone.Base {
         case 1:
           bShuffleSplit = false;
           TensorOpCounters_NamePostfix = "_concat2"; // only concat2, no shuffle, no split.
-          this.outChannels0 = this.channelCount_pointwise21After_concat2Before + this.channelCount1_pointwise1Before;
+          this.outChannels0 = ( this.channelCount_pointwise21After_concat2Before * 2 ); // Twice of pointwise21.
           this.outChannels1 = 0;
           break;
 
@@ -998,17 +998,10 @@ class Base extends ReturnOrClone.Base {
           TensorOpCounters_NamePostfix = "_concat2ShuffleSplit";
           this.outChannels0 =
           this.outChannels1 = this.channelCount_pointwise21After_concat2Before; // Both output0 and output1 will have the same channel count.
-
-          // If ( pointwise21ChannelCount != channelCount1_pointwise1Before ), the shuffle-split algorithm can not work.
-          tf.util.assert( ( this.channelCount_pointwise21After_concat2Before == this.channelCount1_pointwise1Before ),
-            `PointDepthPoint.initer(): When concat2-shuffle-split, `
-              + `input1's channel count ( ${this.channelCount1_pointwise1Before} ) `
-              + `should be the same as output0's channel count ( ${this.channelCount_pointwise21After_concat2Before} ).`
-          );
           break;
 
         default:
-          tf.util.assert( ( this.channelCount_pointwise21After_concat2Before == this.channelCount1_pointwise1Before ),
+          tf.util.assert( ( ( this.outputTensorCount == 1 ) || ( this.outputTensorCount == 2 ) ),
             `PointDepthPoint.initer(): When concat2-shuffle-split, `
               + `output channel count ( ${this.outputTensorCount} ) must be either 1 or 2.`
           );
