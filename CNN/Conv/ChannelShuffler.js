@@ -1,5 +1,4 @@
 export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv };
-//export { GroupCount2, Pool };
 
 /**
  * The information for channel shuffler.
@@ -365,6 +364,9 @@ class SplitConcat {
    * @param {number} outputGroupCount
    *   Used to calculate shuffleInfo.
    *
+   * @return {boolean}
+   *   If failed (e.g. out of GPU memory), return false. Otherwise, return true.
+   *
    * @see ConcatGather
    */
   init( concatenatedShape, outputGroupCount ) {
@@ -506,6 +508,9 @@ class ConcatPointwiseConv {
    * @param {number} outputGroupCount
    *   Used to calculate shuffleInfo.
    *
+   * @return {boolean}
+   *   If failed (e.g. out of GPU memory), return false. Otherwise, return true.
+   *
    * @see ConcatGather
    */
   init( concatenatedShape, outputGroupCount ) {
@@ -615,28 +620,3 @@ class ConcatPointwiseConv {
   }
 
 }
-
-
-//!!! ...unfinished... (2021/08/20 Remarked)
-// /**
-//  *
-//  */
-// class Pool {
-//
-//   /**
-//    *
-//    * @see ChannelShuffler.ShuffleInfo
-//    */
-//   getBy( concatenatedShape, outputGroupCount ) {
-//
-// //!!! ...unfinished... (2021/08/19)
-// // Return a ChannelShuffler if existed. Otherwise, create new one.
-// // If ( outputGroupCount == 2 ), return optimized (loop-unrolled) channelShuffler.
-//
-//   }
-//
-//   disposeTensors() {
-// //!!! ...unfinished... (2021/08/19)
-//   }
-//
-// }
