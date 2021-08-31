@@ -223,15 +223,15 @@ class Base {
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
       testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
-      testParams.in.pointwise22ChannelCount, testParams.in.bPointwise22Bias, testParams.in.pointwise22ActivationId,
+      testParams.in.bPointwise22,
       testParams.in.bKeepInputTensor
     );
 
     let bInitOk = pointDepthPoint.init( progress, extractedParams, channelShuffler_ConcatPointwiseConv );
 
     let flags = {};
-    PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount.call( flags,
-      testParams.out.channelCount1_pointwise1Before, testParams.out.pointwise22ChannelCount );
+    PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__bPointwise22.call( flags,
+      testParams.out.channelCount1_pointwise1Before, testParams.out.bPointwise22 );
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
