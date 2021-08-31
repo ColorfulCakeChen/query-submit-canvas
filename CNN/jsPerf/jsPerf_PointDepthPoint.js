@@ -183,7 +183,7 @@ class HeightWidthDepth {
     // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     // pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-    // pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+    // bPointwise22,
     // bKeepInputTensor
     //
 
@@ -198,7 +198,7 @@ class HeightWidthDepth {
           8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           1,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
-          0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+      false,
        true
     );
 
@@ -210,7 +210,7 @@ class HeightWidthDepth {
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,
                  3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
-          0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+      false,
        true
     );
 
@@ -222,7 +222,7 @@ class HeightWidthDepth {
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,
                  3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
-          0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+      false,
        true
     );
 
@@ -233,7 +233,7 @@ class HeightWidthDepth {
           8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
-          0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+      false,
        true
     );
 
@@ -244,7 +244,7 @@ class HeightWidthDepth {
           8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4, false, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
-          0, false, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+      false,
        true
     );
 
@@ -255,7 +255,7 @@ class HeightWidthDepth {
           8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4, false, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
-          0, false, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.COS,
+      false,
        true
     );
 
@@ -266,7 +266,7 @@ class HeightWidthDepth {
           0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
          32,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
         128,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
-          0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE,
+      false,
        true
     );
 
@@ -277,7 +277,7 @@ class HeightWidthDepth {
         128,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
           0,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
         128,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
-          0,  true, PointDepthPoint.Params.pointwise22ActivationId.valueDesc.Ids.NONE,
+      false,
        true
     );
 
