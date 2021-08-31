@@ -380,8 +380,8 @@ class Base {
     let testParams = this.testParams;
 
     let flags = {};
-    PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount.call( flags,
-      testParams.out.channelCount1_pointwise1Before, testParams.out.pointwise22ChannelCount );
+    PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__bPointwise22.call( flags,
+      testParams.out.channelCount1_pointwise1Before, testParams.out.bPointwise22 );
 
     // Create description for debug easily.
     this.paramsOutDescription =
