@@ -282,7 +282,7 @@ class Params extends Weights.Params {
       this.bDepthwise2Requested = false; // Two inputs never use depthwise2.
       this.bAddInputToOutputRequested = false; // Two inputs never do add-input-to-output. (It always use concatenation.)
 
-      if ( channelCount1_pointwise1Before > 0 ) // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_XXX)
+      if ( channelCount1_pointwise1Before > 0 ) { // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_XXX)
 
         // According to ( this.outputTensorCount ), it could be:
         //
