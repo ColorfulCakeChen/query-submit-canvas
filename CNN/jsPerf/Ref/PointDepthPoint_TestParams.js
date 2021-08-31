@@ -19,8 +19,8 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  *   The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
  * it has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
  * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
- * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, pointwise22ChannelCount,
- * bPointwise22Bias, pointwise22ActivationId, bKeepInputTensor. It also has the following properties:
+ * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, bPointwise22,
+ * bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - inputFloat32Array
  *   - byteOffsetBegin
@@ -54,6 +54,8 @@ class Base extends TestParams.Base {
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+    bPointwise22,
+//!!! (2021/08/31 Remarked) inferred from bPointwise22.
     pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
     bKeepInputTensor
   ) {
@@ -64,7 +66,9 @@ class Base extends TestParams.Base {
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
       pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
+      bPointwise22,
+//!!! (2021/08/31 Remarked) inferred from bPointwise22.
+//      pointwise22ChannelCount, bPointwise22Bias, pointwise22ActivationId,
       bKeepInputTensor
     };
 
@@ -84,9 +88,10 @@ class Base extends TestParams.Base {
    * The name should be one of Base.paramsInArrayOrder[] elements.
    *
    * @param {object} this.out
-   *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-   * pointwise1ChannelCount, bPointwise1Bias, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
-   * bDepthwiseBias, pointwise21ChannelCount, bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, bKeepInputTensor.
+   *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
+   * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
+   * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, bPointwise22,
+   * bKeepInputTensor. It also has the following properties:
    *
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
@@ -158,7 +163,10 @@ class Base extends TestParams.Base {
        ActivationId: 1,
 
       channelCount0_pointwise1Before: 4,
-      channelCount1_pointwise1Before: 5,
+
+      // Test all named values plus two more un-named values.
+      channelCount1_pointwise1Before: ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2,
+
       depthwise_AvgMax_Or_ChannelMultiplier: 5,
       depthwiseFilterHeight: depthwiseFilterMaxSize,
       depthwiseStridesPad: undefined,
