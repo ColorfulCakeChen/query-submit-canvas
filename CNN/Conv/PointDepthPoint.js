@@ -21,6 +21,22 @@ import * as TensorOpCounter from "./TensorOpCounter.js";
 
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
+ *
+ * @member {number} pointwise22ChannelCount
+ *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ) and
+ * ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution. The pointwise22
+ * convolution could achieve some kinds of channel shuffling of ShuffleNetV2.
+ *     - If ( bPointwise22 == false ), it will be 0.
+ *     - If ( bPointwise22 == true ), it will be the same as pointwise21ChannelCount.
+ *
+ * @member {boolean} bPointwise22Bias
+ *   If true, there will be a bias after the second pointwise2 convolution. It is always the same as bPointwise21Bias.
+ * It is only meaningful if ( pointwise22ChannelCount > 0 ) (i.e. ( bPointwise22 == true ) and ( pointwise21ChannelCount > 0 ) ).
+ *
+ * @member {number} pointwise22ActivationId
+ *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the second pointwise2 convolution. It
+ * is always the same as pointwise22ActivationId. It is only meaningful if ( pointwise22ChannelCount > 0 )
+ * (i.e. ( bPointwise22 == true ) and ( pointwise21ChannelCount > 0 ) ).
  */
 class Params extends Weights.Params {
 
@@ -177,33 +193,13 @@ class Params extends Weights.Params {
    *   The activation function id (Params.pointwise21ActivationId.valueDesc.Ids.Xxx) after the first pointwise1 convolution. If null,
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise21ChannelCount == 0 ), this activation function
    * will also be ignored.
-   *
    *   
    * @param {number} bPointwise22
-   *   Control whether the pointwise22 will be created. This ensures pointwise22ChannelCount is either 0 or the same as pointwise21.
+   *   Control whether the pointwise22 will be created. The reason why not let caller specify pointwise22ChannelCount is for ensuring
+   * that the pointwise22ChannelCount is either 0 or the same as pointwise21.
    *     - If null, it will be extracted from inputFloat32Array (i.e. by evolution). 
    *     - If false, the pointwise22 will not exist (i.e. ( pointwise22ChannelCount == 0 ) ).
    *     - If true, the pointwise22 will exist. The channel count, bias, activation function will be the same as pointwise21.
-   *
-//!!! ...unfinished... (2021/08/31) Replace pointwise22ChannelCount with bPointwise22.
-// So that its channel count either is 0 or the same pointwise21 (i.e. pointwise21ChannelCount).
-
-//!!! ...unfinished... (2021/08/31 Remarked) inferred from bPointwise22.
-//   
-//    * @param {number} pointwise22ChannelCount
-//    *   The output channel count of the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
-//    * evolution). If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution
-//    * after depthwise convolution. The pointwise22 convolution could achieve some kinds of channel shuffling of ShuffleNetV2. Please
-//    * see channelCount1_pointwise1Before explanation.
-//    *
-//    * @param {boolean} bPointwise22Bias
-//    *   If true, there will be a bias after the second pointwise2 convolution. If null, it will be extracted from inputFloat32Array (i.e. by
-//    * evolution). If ( pointwise22ChannelCount == 0 ), this bias will also be ignored.
-//    *
-//    * @param {number} pointwise22ActivationId
-//    *   The activation function id (Params.pointwise22ActivationId.valueDesc.Ids.Xxx) after the second pointwise2 convolution. If null,
-//    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise22ChannelCount == 0 ), this activation function
-//    * will also be ignored.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
@@ -372,20 +368,22 @@ class Params extends Weights.Params {
   get pointwise21ActivationId()   { return this.parameterMapModified.get( Params.pointwise21ActivationId ); }
   get pointwise21ActivationName() { return Params.pointwise21ActivationId.getStringOfValue( this.pointwise21ActivationId ); }
 
-  get bPointwise22()          { return this.parameterMapModified.get( Params.bPointwise22 ); }
+  get bPointwise22()              { return this.parameterMapModified.get( Params.bPointwise22 ); }
 
-//!!! ...unfinished... (2021/08/31 Remarked) inferred from bPointwise22.
-//
-//   get pointwise22ChannelCount()   { return this.parameterMapModified.get( Params.pointwise22ChannelCount ); }
-//
-//   /** @return {string} The string version of pointwise22ChannelCount. */
-//   get pointwise22ChannelCountName() {
-//     return Params.pointwise21ChannelCount.getStringOfValue( this.pointwise21ChannelCount );
-//   }
-//
-//   get bPointwise22Bias()          { return this.parameterMapModified.get( Params.bPointwise22Bias ); }
-//   get pointwise22ActivationId()   { return this.parameterMapModified.get( Params.pointwise22ActivationId ); }
-//   get pointwise22ActivationName() { return Params.pointwise22ActivationId.getStringOfValue( this.pointwise22ActivationId ); }
+  get pointwise22ChannelCount()   {
+    if ( this.bPointwise22 )
+      return this.pointwise21ChannelCount;
+    else
+      return 0; // No pointwisw22.
+  }
+
+  get pointwise22ChannelCountName() {
+    return Params.pointwise21ChannelCount.getStringOfValue( this.pointwise21ChannelCount );
+  }
+
+  get bPointwise22Bias()          { return this.bPointwise21Bias; }
+  get pointwise22ActivationId()   { return this.pointwise21ActivationId; }
+  get pointwise22ActivationName() { return this.pointwise21ActivationName; }
 
   get bKeepInputTensor()          { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
 }
@@ -434,11 +432,6 @@ Params.bPointwise21Bias =        new ParamDesc.Bool(                    "bPointw
 Params.pointwise21ActivationId = new ParamDesc.ActivationFunction(      "pointwise21ActivationId" );
 
 Params.bPointwise22 =            new ParamDesc.Bool(                    "bPointwise22" );
-
-//!!! ...unfinished... (2021/08/31 Remarked) inferred from bPointwise22.
-// Params.pointwise22ChannelCount = new ParamDesc.pointwise22ChannelCount( "pointwise22ChannelCount" );
-// Params.bPointwise22Bias =        new ParamDesc.Bool(                    "bPointwise22Bias" );
-// Params.pointwise22ActivationId = new ParamDesc.ActivationFunction(      "pointwise22ActivationId" );
 
 Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepInputTensor" );
 
@@ -557,6 +550,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
 //
 //  * @member {string} pointwise22ChannelCountName
 //  *   The string version of pointwise22ChannelCount. Useful for negative value.
+
  *
  * @member {boolean} bPointwise1
  *   If true, the pointwise1 convolution exists.
@@ -588,25 +582,9 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * @member {string} pointwise21ActivationName
  *   The activation function id (Params.pointwise21ActivationId.valueDesc.Ids.Xxx) after the first pointwise2 convolution.
  *
- 
- * @member {number} pointwise22ChannelCount
- *   The output channel count of the second pointwise2 convolution. If ( bPointwise22 == false ), it will be 0. If
- * ( bPointwise22 == true ), it will be the same as pointwise21ChannelCount. If ( pointwise21ChannelCount == 0 ) and
- * ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution. The pointwise22
- * convolution could achieve some kinds of channel shuffling of ShuffleNetV2.
- *
- * @member {boolean} bPointwise22Bias
- *   If true, there will be a bias after the second pointwise2 convolution. It is only meaningful if ( pointwise22ChannelCount > 0 )
- * (i.e. ( bPointwise22 == true ) and ( pointwise21ChannelCount > 0 ) ).
- *
-!!! 
- * @member {number} pointwise22ActivationId
- *   The activation function id (ValueDesc.ActivationId.singleton.Ids.Xxx) after the second pointwise2 convolution. If null,
- * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise22ChannelCount == 0 ), this activation function
- * will also be ignored.
-
  * @member {string} pointwise22ActivationName
- *   The activation function id (Params.pointwise22ActivationId.valueDesc.Ids.Xxx) after the second pointwise2 convolution.
+ *   The name of activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the second pointwise2 convolution.
+ * It is only meaningful if ( pointwise22ChannelCount > 0 ) (i.e. ( bPointwise22 == true ) and ( pointwise21ChannelCount > 0 ) ).
  *
  * @member {number} inChannels0
  *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount0_pointwise1Before (from initer()).
@@ -766,6 +744,7 @@ class Base extends ReturnOrClone.Base {
     this.pointwise21ActivationId = params.pointwise21ActivationId;
     this.pointwise21ActivationName = params.pointwise21ActivationName;
 
+    this.bPointwise22 = params.bPointwise22;
     this.pointwise22ChannelCount = params.pointwise22ChannelCount;
     this.pointwise22ChannelCountName = params.pointwise22ChannelCountName;
     this.bPointwise22Bias = params.bPointwise22Bias;
@@ -775,12 +754,14 @@ class Base extends ReturnOrClone.Base {
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // The parameters which are determined (inferenced) from the above parameters.
-    this.inputTensorCount = params.inputTensorCount;
-    this.bDepthwise2Requested = params.bDepthwise2Requested;
-    this.bConcat1Requested = params.bConcat1Requested;
-    this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
-    this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
-    this.outputTensorCount = params.outputTensorCount;
+    {
+      this.inputTensorCount = params.inputTensorCount;
+      this.bDepthwise2Requested = params.bDepthwise2Requested;
+      this.bConcat1Requested = params.bConcat1Requested;
+      this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
+      this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
+      this.outputTensorCount = params.outputTensorCount;
+    }
 
     this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
 
@@ -1643,6 +1624,7 @@ class Base extends ReturnOrClone.Base {
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
       + `pointwise21ActivationName=${this.pointwise21ActivationName}, `
 
+      + `bPointwise22=${this.bPointwise22}, `
       + `pointwise22ChannelCount=${this.pointwise22ChannelCount}, `
       + `pointwise22ChannelCountName=${this.pointwise22ChannelCountName}, `
       + `bPointwise22Bias=${this.bPointwise22Bias}, `
