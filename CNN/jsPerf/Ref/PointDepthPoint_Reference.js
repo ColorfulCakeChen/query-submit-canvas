@@ -329,18 +329,25 @@ class Base {
       pointDepthPoint.pointwise21ActivationName, pointwise21ActivationName, parametersDescription );
 
     // pointwise22 parameters.
-    Base.AssertTwoEqualValues( "pointwise22ChannelCount",
-      pointDepthPoint.pointwise22ChannelCount, testParams.out.pointwise22ChannelCount, parametersDescription );
+    Base.AssertTwoEqualValues( "bPointwise22",
+      pointDepthPoint.bPointwise22, testParams.out.bPointwise22, parametersDescription );
 
+    if ( testParams.out.bPointwise22 ) {
+      Base.AssertTwoEqualValues( "pointwise22ChannelCount", // Either same as pointwise21 (if exists).
+        pointDepthPoint.pointwise22ChannelCount, testParams.out.pointwise21ChannelCount, parametersDescription );
+    } else {
+      Base.AssertTwoEqualValues( "pointwise22ChannelCount", // or 0 (if not exists).
+        pointDepthPoint.pointwise22ChannelCount, 0, parametersDescription );
+    }
+    
     Base.AssertTwoEqualValues( "bPointwise22Bias",
-      pointDepthPoint.bPointwise22Bias, testParams.out.bPointwise22Bias, parametersDescription );
+      pointDepthPoint.bPointwise22Bias, testParams.out.bPointwise21Bias, parametersDescription ); // Always same as pointwise21.
 
     Base.AssertTwoEqualValues( "pointwise22ActivationId",
-      pointDepthPoint.pointwise22ActivationId, testParams.out.pointwise22ActivationId, parametersDescription );
+      pointDepthPoint.pointwise22ActivationId, testParams.out.pointwise21ActivationId, parametersDescription ); // Always same as pointwise21.
 
-    let pointwise22ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise22ActivationId );
     Base.AssertTwoEqualValues( "pointwise22ActivationName",
-      pointDepthPoint.pointwise22ActivationName, pointwise22ActivationName, parametersDescription );
+      pointDepthPoint.pointwise22ActivationName, pointwise21ActivationName, parametersDescription ); // Always same as pointwise21.
 
     // Other parameters.
     Base.AssertTwoEqualValues( "bKeepInputTensor", pointDepthPoint.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
