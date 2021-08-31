@@ -65,12 +65,22 @@ class Base {
       let strNote;
 
       let bTwoInputs; // The input tensor count is determined by channelCount1_pointwise1Before totally.
-      if (   ( channelCount1_pointwise1Before > 0 )
-          || ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
-         )
-        bTwoInputs = true; // Two inputs.
-      else
-        bTwoInputs = false; // One input.
+      let input1ChannelCount;
+      {
+        if ( channelCount1_pointwise1Before > 0 ) {
+          bTwoInputs = true; // Two inputs.
+          input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
+
+        } else if ( channelCount1_pointwise1Before
+                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
+          bTwoInputs = true; // Two inputs.
+          input1ChannelCount = this.testParams.out.pointwise21Channel; // The second input's channel count should be the same as pointwise21.
+
+        } else {
+          bTwoInputs = false; // One input.
+          input1ChannelCount = 0;
+        }
+      }
 
       let imageOutReferenceArray;
       {
@@ -80,7 +90,7 @@ class Base {
         imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
         if ( bTwoInputs ) { // Pass two input images according to parameters.
           imageInArraySelected[ 1 ] = imageSourceBag.getImage_by(
-            channelCount1_pointwise1Before, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+            input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
         }
 
         tf.util.assert( imageInArraySelected.length == 2,
@@ -98,7 +108,7 @@ class Base {
       inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
       if ( bTwoInputs ) { // Pass two input tensors according to parameters.
         inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
-          channelCount1_pointwise1Before, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+          input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
       }
 
       let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
