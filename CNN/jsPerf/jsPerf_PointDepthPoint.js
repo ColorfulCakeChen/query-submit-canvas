@@ -175,8 +175,8 @@ class HeightWidthDepth {
 
     // Create shared ChannelShuffler.
     let concatenatedShape = [ this.height, this.width, this.depth * this.outputGroupCount ]; 
-    let channelShuffler_ConcatPointwiseConv = this.channelShuffler_ConcatPointwiseConv
-          = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, this.outputGroupCount );
+    let channelShuffler_ConcatPointwiseConv = this.channelShuffler_ConcatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv();
+    channelShuffler_ConcatPointwiseConv.init( concatenatedShape, this.outputGroupCount );
 
 
     // channelCount0_pointwise1Before, channelCount1_pointwise1Before,
@@ -446,7 +446,8 @@ class HeightWidthDepth {
 
         let outputGroupCount = 2; // Only support two convolution groups.
         let concatenatedShape = [ originalImageSize.height, originalImageSize.width, originalImageSize.depth * outputGroupCount ]; 
-        let channelShuffler_ConcatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, outputGroupCount );
+        let channelShuffler_ConcatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv();
+        channelShuffler_ConcatPointwiseConv.init( concatenatedShape, outputGroupCount );
 
         // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors dynamically created in imageSourceBag.
         let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
