@@ -74,6 +74,8 @@ class Base {
         } else if ( channelCount1_pointwise1Before
                       == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
           bTwoInputs = true; // Two inputs.
+
+//!!! ...unfinished... (2021/08/31) WRING! pointwise21ChannelCount may be zero!
           input1ChannelCount = this.testParams.out.pointwise21ChannelCount; // The second input's channel count should be the same as pointwise21.
 
         } else {
