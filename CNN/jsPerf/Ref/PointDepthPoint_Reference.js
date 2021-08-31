@@ -1051,10 +1051,11 @@ class Base {
 
     // Output images have the same shape as input images.
     for ( let i = 0; i < imageCount; ++i ) {
-      imageOutArray[ i ].height = imageInArray[ i ].height;
-      imageOutArray[ i ].width = imageInArray[ i ].width;
-      imageOutArray[ i ].depth = imageInArray[ i ].depth;
-      imageOutArray[ i ].dataArray = new Float32Array( imageInArray[ i ].dataArray.length );
+      imageOutArray[ i ] = {
+        height:    imageInArray[ i ].height,
+        width:     imageInArray[ i ].width,
+        depth:     imageInArray[ i ].depth,
+        dataArray: new Float32Array( imageInArray[ i ].dataArray.length ),
     }
 
     // Swap two images interleavely.
