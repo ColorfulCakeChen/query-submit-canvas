@@ -398,9 +398,11 @@ class Base {
       + `pointwise21ActivationId=${testParams.out.pointwise21ActivationId}, pointwise21ActivationName=`
       + `${PointDepthPoint.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}, `
 
-      + `pointwise22ChannelCount=${testParams.out.pointwise22ChannelCount}, bPointwise22Bias=${testParams.out.bPointwise22Bias}, `
-      + `pointwise22ActivationId=${testParams.out.pointwise22ActivationId}, pointwise22ActivationName=`
-      + `${PointDepthPoint.Params.pointwise22ActivationId.getStringOfValue( testParams.out.pointwise22ActivationId )}, `
+      + `bPointwise22=${testParams.out.bPointwise22}, `
+//!!! ...unfinished... (2021/08/31 Remarked) inferred from bPointwise22.
+//       + `pointwise22ChannelCount=${testParams.out.pointwise22ChannelCount}, bPointwise22Bias=${testParams.out.bPointwise22Bias}, `
+//       + `pointwise22ActivationId=${testParams.out.pointwise22ActivationId}, pointwise22ActivationName=`
+//       + `${PointDepthPoint.Params.pointwise22ActivationId.getStringOfValue( testParams.out.pointwise22ActivationId )}, `
 
       + `inputTensorCount=${flags.inputTensorCount}, `
       + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
