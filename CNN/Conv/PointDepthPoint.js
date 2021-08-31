@@ -222,7 +222,7 @@ class Params extends Weights.Params {
 
     // Determine input tensor count and whether request add-input-to-output.
     Params.setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount.call(
-       this, this.channelCount1_pointwise1Before, this.pointwise22ChannelCount );
+      this, this.channelCount1_pointwise1Before, this.bPointwise22 );
 
     return bExtractOk;
   }
@@ -237,21 +237,31 @@ class Params extends Weights.Params {
    *   - this.outputTensorCount
    *
    * @param {number} channelCount1_pointwise1Before
-   * @param {number} pointwise22ChannelCount
+   * @param {boolean} bPointwise22
    */
   static setFlags_by__channelCount1_pointwise1Before__pointwise22ChannelCount(
-            channelCount1_pointwise1Before, pointwise22ChannelCount ) {
+            channelCount1_pointwise1Before, bPointwise22 ) {
 
-    // 1. 
-    if ( channelCount1_pointwise1Before <= 0 ) {
+    // 0. Prepare.
 
+    // 0.1 The input tensor count is determined by channelCount1_pointwise1Before totally.
+    if (   ( channelCount1_pointwise1Before > 0 )
+        || ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+       ) {
+      this.inputTensorCount = 2; // Two inputs.
+    else
       this.inputTensorCount = 1; // One input.
-      this.bConcat2ShuffleSplitRequested = false; // One input never uses concat2-shuffle-split.
 
-      if ( pointwise22ChannelCount > 0 ) // One input's output count is determined by pointwise22ChannelCount totally.
-        this.outputTensorCount = 2;
-      else
-        this.outputTensorCount = 1;
+    // 0.2 The output tensor count is determined by pointwise22ChannelCount totally.
+    if ( bPointwise22 == true )
+      this.outputTensorCount = 2; // Two outputs.
+    else
+      this.outputTensorCount = 1; // One output.
+
+    // 1. One input.
+    if ( this.inputTensorCount == 1 ) {
+
+      this.bConcat2ShuffleSplitRequested = false; // One input never uses concat2-shuffle-split.
 
       switch ( channelCount1_pointwise1Before ) {
         // 1.1
@@ -262,34 +272,33 @@ class Params extends Weights.Params {
         case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1)
           this.bDepthwise2Requested = this.bConcat1Requested = false; this.bAddInputToOutputRequested =  true; break;
 
-        // 1.3 The only case uses depthwise2. (ShuffleNetV2's head)
+        // 1.3 The only case uses depthwise2. (our adjusted ShuffleNetV2's head)
         case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE: // (-2)
           this.bDepthwise2Requested = this.bConcat1Requested =  true; this.bAddInputToOutputRequested = false; break;
       }
 
-    } else { // 2. ( channelCount1_pointwise1Before > 0 ) (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_XXX)
+    } else { // 2. Two inputs. //( this.inputTensorCount == 2 )
 
-      this.inputTensorCount = 2; // Two inputs.
       this.bDepthwise2Requested = false; // Two inputs never use depthwise2.
       this.bAddInputToOutputRequested = false; // Two inputs never do add-input-to-output. (It always use concatenation.)
 
-      if ( pointwise22ChannelCount > 0 ) { // 2.1 Two-inputs-two-outputs: by concat1. (slower ShuffleNetV2's body)
-        this.bConcat1Requested = true; this.bConcat2ShuffleSplitRequested = false; this.outputTensorCount = 2;
+      if ( channelCount1_pointwise1Before > 0 ) // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_XXX)
 
-      } else {
-        switch ( pointwise22ChannelCount ) {
-          // 2.2 Two-inputs-one-output: by concat1. (slower ShuffleNetV2's tail)
-          case ValueDesc.pointwise22ChannelCount.Singleton.Ids.ONE_OUTPUT__POINTWISE21: // ( 0)
-            this.bConcat1Requested =  true; this.bConcat2ShuffleSplitRequested = false; this.outputTensorCount = 1; break;
+        // According to ( this.outputTensorCount ), it could be:
+        //
+        // 2.1 Two-inputs-one-output: by concat1. (slower ShuffleNetV2's tail)
+        // 2.2 Two-inputs-two-outputs: by concat1. (slower ShuffleNetV2's body)
+        //
+        this.bConcat1Requested =  true; this.bConcat2ShuffleSplitRequested = false;
+              
+      } else { // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) )
 
-          // 2.3 Two-inputs-one-output: by concat2(-shuffle-split). (ShuffleNetV2's tail)
-          case ValueDesc.pointwise22ChannelCount.Singleton.Ids.ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1: // (-1)
-            this.bConcat1Requested = false; this.bConcat2ShuffleSplitRequested =  true; this.outputTensorCount = 1; break;
-
-          // 2.4 Two-inputs-two-outputs: by concat2-shuffle-split. (ShuffleNetV2's body)
-          case ValueDesc.pointwise22ChannelCount.Singleton.Ids.TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT: // (-2)
-            this.bConcat1Requested = false; this.bConcat2ShuffleSplitRequested =  true; this.outputTensorCount = 2; break;
-        }
+        // According to ( this.outputTensorCount ), it could be:
+        //
+        // 2.3 Two-inputs-one-output: by concat2(-shuffle-split). (ShuffleNetV2's tail)
+        // 2.4 Two-inputs-two-outputs: by concat2-shuffle-split. (ShuffleNetV2's body)
+        //
+        this.bConcat1Requested = false; this.bConcat2ShuffleSplitRequested =  true;
       }
 
     }
