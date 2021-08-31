@@ -1,5 +1,8 @@
 export { Same, Bool, Int, ActivationFunction };
-export { AvgMax_Or_ChannelMultiplier, channelCount1_pointwise1Before, pointwise22ChannelCount };
+export { AvgMax_Or_ChannelMultiplier, channelCount1_pointwise1Before };
+
+//!!! ...unfinished... (2021/08/31 Remarked) inferred from bPointwise22.
+//export { pointwise22ChannelCount };
 
 import * as ValueRange from "./ValueRange.js";
 
@@ -181,6 +184,7 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 /** Describe id, range, name of channelCount1_pointwise1Before.
  *
  * Convert number value into integer between [ -2, ( 10 * 1024 ) ] representing operation:
+ *   - -3: TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3)
  *   - -2: ONE_INPUT_TWO_DEPTHWISE
  *   - -1: ONE_INPUT_ADD_TO_OUTPUT
  *   -  0: ONE_INPUT
@@ -189,10 +193,11 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 class channelCount1_pointwise1Before extends Int {
 
   constructor() {
-    super( -2, ( 10 * 1024 ), [
-      "ONE_INPUT_TWO_DEPTHWISE", // (-2)
-      "ONE_INPUT_ADD_TO_OUTPUT", // (-1)
-      "ONE_INPUT",               // ( 0)
+    super( -3, ( 10 * 1024 ), [
+      "TWO_INPUTS_CONCAT_POINTWISE21_INPUT1", // (-3)
+      "ONE_INPUT_TWO_DEPTHWISE",              // (-2)
+      "ONE_INPUT_ADD_TO_OUTPUT",              // (-1)
+      "ONE_INPUT",                            // ( 0)
 
       // (2021/07/13 Remarked) Do not define these names because they will occupy too many memory.
       //
@@ -207,25 +212,27 @@ class channelCount1_pointwise1Before extends Int {
 channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
 
 
-/** Describe id, range, name of pointwise22ChannelCount.
- *
- * Convert number value into integer between [ -2, ( 10 * 1024 ) ] representing operation:
- *   - -2: TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT
- *   - -1: ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1
- *   -  0: ONE_OUTPUT__POINTWISE21 (i.e. uss depthwise result to generate pointwisw21).
- *   - [ 1, ( 10 * 1024 ) ]: TWO_OUTPUTS with the second output channel count between 1 and 10240 (inclusive). (without names defined.)
- */
-class pointwise22ChannelCount extends Int {
-
-  constructor() {
-    super( -2, ( 10 * 1024 ), [
-      "TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT", // (-2)
-      "ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1",                  // (-1)
-      "ONE_OUTPUT__POINTWISE21",                                // ( 0)
-    ] );
-  }
-
-}
-
-/** The only one ValueDesc.pointwise22ChannelCount instance. */
-pointwise22ChannelCount.Singleton = new pointwise22ChannelCount;
+//!!! ...unfinished... (2021/08/31 Remarked) inferred from bPointwise22.
+//
+// /** Describe id, range, name of pointwise22ChannelCount.
+//  *
+//  * Convert number value into integer between [ -2, ( 10 * 1024 ) ] representing operation:
+//  *   - -2: TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT
+//  *   - -1: ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1
+//  *   -  0: ONE_OUTPUT__POINTWISE21 (i.e. uss depthwise result to generate pointwisw21).
+//  *   - [ 1, ( 10 * 1024 ) ]: TWO_OUTPUTS with the second output channel count between 1 and 10240 (inclusive). (without names defined.)
+//  */
+// class pointwise22ChannelCount extends Int {
+//
+//   constructor() {
+//     super( -2, ( 10 * 1024 ), [
+//       "TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT", // (-2)
+//       "ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1",                  // (-1)
+//       "ONE_OUTPUT__POINTWISE21",                                // ( 0)
+//     ] );
+//   }
+//
+// }
+//
+// /** The only one ValueDesc.pointwise22ChannelCount instance. */
+// pointwise22ChannelCount.Singleton = new pointwise22ChannelCount;
