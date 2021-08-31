@@ -247,7 +247,7 @@ class Params extends Weights.Params {
     // 0.1 The input tensor count is determined by channelCount1_pointwise1Before totally.
     if (   ( channelCount1_pointwise1Before > 0 )
         || ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
-       ) {
+       )
       this.inputTensorCount = 2; // Two inputs.
     else
       this.inputTensorCount = 1; // One input.
