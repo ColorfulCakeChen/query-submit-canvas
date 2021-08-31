@@ -994,7 +994,7 @@ class Base extends ReturnOrClone.Base {
           break;
       }
 
-      this.concat2ShuffleSplit = new Concat2ShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
+      this.concat2ShuffleSplit = new ConcatShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
 
       // In theory, concat2 use the result of add-input0-to-pointwise21 as first parameter. In reality, it usually uses the result
       // of pointwise21 (without add-input0-to-output) as first parameter.
