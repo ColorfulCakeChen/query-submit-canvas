@@ -59,12 +59,9 @@ class Params extends Weights.Params {
    * from inputFloat32Array (i.e. by evolution).
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): The input1 should exist. The
-   
-
-//!!! ...unfinished... (2021/08/31) WRING! pointwise21ChannelCount may be zero!
-
-   *       channel count of input1 must be the same as pointwise21 (i.e. pointwise21ChannelCount). The result of pointwise21 (which
-   *       operates on input0) will be concatenated with input1.
+   *       channel count of input1 must be the same as pointwise21's result (i.e. channelCount_pointwise21After_concat2Before) (Note:
+   *       not pointwise21ChannelCount because pointwise21ChannelCount may be zero). The result of pointwise21 (which operates on
+   *       input0) will be concatenated with input1.
    *
    *       - If ( bPointwise22 == true ), the concatenated [ pointwise21, input1 ] will be channel-shuffled and splitted into [ output0, output1 ].
    *           - The output0 and output1 will have the same channel count as pointwise21 (i.e. pointwise21ChannelCount).
@@ -591,8 +588,10 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * with/without input1 (without depthwise2).
  *
  * @member {number} channelCount_pointwise21After_concat2Before
- *   The channel count after the pointwise21 convolution. If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
- * If ( pointwise21ChannelCount == 0 ), it will be 0.
+ *   The channel count after the pointwise21 convolution.
+ *     - If ( pointwise21ChannelCount > 0 ), it equals pointwise21ChannelCount.
+ *     - If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount != 0 ), it will be 0.
+ *     - If ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it equals channelCount_concat1After_pointwise2Before.
  *
  * @member {number} channelCount_pointwise22After_concat2Before
  *   The channel count after the pointwise22 convolution. If ( pointwise22ChannelCount > 0 ), it equals pointwise22ChannelCount.
