@@ -509,8 +509,17 @@ class Base {
     }
 
     // 4. Pointwise2
+    
+    let pointwise22ChannelCount = 0;
+    if ( testParams.out.bPointwise22 ) { // If pointwise22 exists, its output channel count is the same as pointwise21's output channel count.
+      pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
+    }
+
+    let bPointwise22Bias = testParams.out.bPointwise21Bias; // pointwise22's bias flag is the same as pointwise21.
+    let bPointwise22ActivationId = testParams.out.bPointwise21ActivationId; // pointwise22's activation function is the same as pointwise21.
+    
     let pointwise21Result = null, pointwise22Result = null;
-    if ( ( testParams.out.pointwise21ChannelCount == 0 ) && ( testParams.out.pointwise22ChannelCount <= 0 ) ) {
+    if ( ( testParams.out.pointwise21ChannelCount == 0 ) && ( pointwise22ChannelCount <= 0 ) ) {
 
       // 4.0 No Pointwise21 and No Pointwise22.
 
@@ -535,12 +544,12 @@ class Base {
       }
 
       // 4.2 Pointwise22
-      if ( testParams.out.pointwise22ChannelCount > 0 ) {
+      if ( pointwise22ChannelCount > 0 ) {
         pointwise22Result = Base.calcPointwise(
           nextImageIn,
-          testParams.out.pointwise22ChannelCount,
-          testParams.in.paramsNumberArrayObject.pointwise22Filters, testParams.out.bPointwise22Bias,
-          testParams.in.paramsNumberArrayObject.pointwise22Biases, testParams.out.pointwise22ActivationId,
+          pointwise22ChannelCount,
+          testParams.in.paramsNumberArrayObject.pointwise22Filters, bPointwise22Bias,
+          testParams.in.paramsNumberArrayObject.pointwise22Biases, pointwise22ActivationId,
           "Pointwise22", this.paramsOutDescription );
 
         // Residual Connection.
@@ -556,15 +565,16 @@ class Base {
 
     // 5. Concat2 (along image depth), shuffle, split.
     let imageOutArray = [ null, null ];
-    if (   ( testParams.out.channelCount1_pointwise1Before > 0 ) // TWO_INPUTS (> 0)
-        && ( testParams.out.pointwise22ChannelCount < 0 )        // CONCAT_POINTWISE21_INPUT1
-       ) {
+    if ( testParams.out.channelCount1_pointwise1Before
+           == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
 
       tf.util.assert( ( !imageArray_pointwise2After[ 1 ] ),
         `PointDepthPoint imageArray_pointwise2After[ 1 ] ( ${imageArray_pointwise2After[ 1 ]} ) `
           + `should be null, since there is no pointwise22. ${this.paramsOutDescription}`);
 
       imageArray_pointwise2After[ 1 ] = imageInArray[ 1 ]; // i.e. input1.
+
+//!!! ...unfinished... (2021/09/02)
 
       switch ( testParams.out.pointwise22ChannelCount ) {
         // 5.1 Concat2, shuffle, split.
