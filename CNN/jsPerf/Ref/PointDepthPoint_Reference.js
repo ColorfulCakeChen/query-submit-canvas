@@ -83,14 +83,14 @@ class Base {
           if ( input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
 
             input1ChannelCount = this.testParams.out.pointwise1ChannelCount;
+            if ( input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
+              input1ChannelCount = channelCount0_pointwise1Before;
+            }
+
             if ( this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
               input1ChannelCount *= this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
 
             } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
-
-            if ( input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
-              input1ChannelCount = channelCount0_pointwise1Before;
-            }
           }
           
         } else {
