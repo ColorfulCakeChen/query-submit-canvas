@@ -178,6 +178,10 @@ class Params extends Weights.Params {
 
    *     - If ( bOutput1Requested == true ), the pointwise22 may or may not exist. The channel count, bias, activation function will
    *         be the same as pointwise21. Note that the pointwise22 will still not exist because of ( pointwise21ChannelCount == 0 ).
+!!!   
+   *         - If ( channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ),
+   *           (-3), (ShuffleNetV2's body/tail): there 
+
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
@@ -365,11 +369,23 @@ class Params extends Weights.Params {
 
   get bOutput1Requested()         { return this.parameterMapModified.get( Params.bOutput1Requested ); }
 
+  /**
+   * Determined by channelCount1_pointwise1Before, bOutput1Requested, pointwise21ChannelCount.
+   */
   get pointwise22ChannelCount()   {
-    if ( this.bOutput1Requested )
-      return this.pointwise21ChannelCount;
-    else
-      return 0; // No pointwisw22.
+
+    // In ShuffleNetV2's body/tail, there is always no pointwise22.
+    if ( this.channelCount1_pointwise1Before
+           == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3) (ShuffleNetV2's body/tail)
+      return 0;
+
+    // Otherwise, pointwise22 is output1 directly. It is determined by both bOutput1Requested and pointwise21ChannelCount.
+    } else {
+      if ( this.bOutput1Requested )
+        return this.pointwise21ChannelCount; // Still may be 0.
+      else
+        return 0; // No pointwisw22.
+    }
   }
 
   get bPointwise22Bias()          { return this.bPointwise21Bias; }
@@ -894,6 +910,11 @@ class Base extends ReturnOrClone.Base {
     }
 
     // 5.2 Pointwise22
+    
+//!!! ...unfinished... (2021/09/02)
+// When Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) (ShuffleNetV2's body/tail),
+// there is always no pointwise22 even if ( bOutput1Requested == true ).
+
     if ( this.pointwise22ChannelCount > 0 ) {
 
       this.pointwise22 = new Pointwise.Base(
