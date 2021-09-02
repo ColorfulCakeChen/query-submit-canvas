@@ -373,7 +373,7 @@ class Base extends TestParams.Base {
       pointwise22ChannelCount = paramsAll.pointwise21ChannelCount;
     }
 
-    let bPointwise22Bias = paramsAll.bPointwise21Bias; // pointwise22's bias should always be the same as pointwise21's bias.
+    let bPointwise22Bias = paramsAll.bPointwise21Bias; // pointwise22's bias flag should always be the same as pointwise21.
 
     let pointwise22 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
       pointwise22ChannelCount, bPointwise22Bias );
