@@ -412,7 +412,7 @@ Base.paramsNameOrderArray = [
   PointDepthPoint.Params.pointwise21ChannelCount.paramName,
   PointDepthPoint.Params.bPointwise21Bias.paramName,
   PointDepthPoint.Params.pointwise21ActivationId.paramName,
-  PointDepthPoint.Params.bPointwise22Requested.paramName,
+  PointDepthPoint.Params.bOutput1Requested.paramName,
 
   PointDepthPoint.Params.bKeepInputTensor.paramName,
   
