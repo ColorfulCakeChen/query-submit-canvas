@@ -556,8 +556,11 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount0_pointwise1Before (from initer()).
  *
  * @member {number} inChannels1
- *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). If ( this.channelCount1_pointwise1Before >= 0 ), 
- * inChannels1 is the same as this.channelCount1_pointwise1Before. Otherwise, inChannels1 will be zero (never negative).
+ *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). It is zero or positive (never negative).
+ *     - If ( this.channelCount1_pointwise1Before >= 0 ), inChannels1 is the same as this.channelCount1_pointwise1Before.
+ *     - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ),
+ *         (-3), inChannels1 will be the same as channelCount_pointwise21After_concat2Before.
+ *     - Otherwise, inChannels1 will be zero.
  *
  * @member {number} outChannels0
  *   The channel count of the outputTensor[ 0 ]. Even if ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ),
@@ -730,8 +733,6 @@ class Base extends ReturnOrClone.Base {
       this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
       this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
       this.outputTensorCount = params.outputTensorCount;
-      
-      this.inChannels1 = Math.max( 0, this.channelCount1_pointwise1Before );
     }
 
     this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
@@ -906,6 +907,15 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise2After_concat2Before = this.channelCount_pointwise21After_concat2Before
         = this.channelCount_concat1After_pointwise2Before;
     }
+
+    // Determine inChannels1.
+    if ( this.channelCount1_pointwise1Before
+                  == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
+      this.inChannels1 = this.channelCount_pointwise21After_concat2Before; // The channel count of pointwise21's result.
+
+    } else {
+      this.inChannels1 = Math.max( 0, this.channelCount1_pointwise1Before );
+    }      
 
     // 5.4
     ++progressToAdvance.value;
