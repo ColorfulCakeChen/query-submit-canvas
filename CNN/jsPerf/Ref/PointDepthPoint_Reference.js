@@ -405,44 +405,45 @@ class Base {
 
     let testParams = this.testParams;
 
-    // (2021/09/02 Remarked)
-    //let flags = {};
-    //PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__bPointwise22.call( flags,
-    //  testParams.out.channelCount1_pointwise1Before, testParams.out.bPointwise22 );
+    {
+      let flags = {};
+      PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__bPointwise22.call( flags,
+       testParams.out.channelCount1_pointwise1Before, testParams.out.bPointwise22 );
 
-    // Create description for debug easily.
-    this.paramsOutDescription =
-        `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
-    
-      + `channelCount1_pointwise1Before_Name=`
-      + `${PointDepthPoint.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}, `
+      // Create description for debug easily.
+      this.paramsOutDescription =
+          `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
 
-      + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `
-      + `pointwise1ActivationId=${testParams.out.pointwise1ActivationId}, pointwise1ActivationName=`
-      + `${PointDepthPoint.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}, `
+        + `channelCount1_pointwise1Before_Name=`
+        + `${PointDepthPoint.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}, `
 
-      + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
-      + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
-      + `depthwiseStridesPad=${testParams.out.depthwiseStridesPad}, `
-      + `bDepthwiseBias=${testParams.out.bDepthwiseBias}, `
-      + `depthwiseActivationId=${testParams.out.depthwiseActivationId}, depthwiseActivationName=`
-      + `${PointDepthPoint.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}, `
+        + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `
+        + `pointwise1ActivationId=${testParams.out.pointwise1ActivationId}, pointwise1ActivationName=`
+        + `${PointDepthPoint.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}, `
 
-      + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `
-      + `pointwise21ActivationId=${testParams.out.pointwise21ActivationId}, pointwise21ActivationName=`
-      + `${PointDepthPoint.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}, `
+        + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
+        + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
+        + `depthwiseStridesPad=${testParams.out.depthwiseStridesPad}, `
+        + `bDepthwiseBias=${testParams.out.bDepthwiseBias}, `
+        + `depthwiseActivationId=${testParams.out.depthwiseActivationId}, depthwiseActivationName=`
+        + `${PointDepthPoint.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}, `
 
-      + `bPointwise22=${testParams.out.bPointwise22}, `
+        + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `
+        + `pointwise21ActivationId=${testParams.out.pointwise21ActivationId}, pointwise21ActivationName=`
+        + `${PointDepthPoint.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}, `
 
-      + `inputTensorCount=${flags.inputTensorCount}, `
-      + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
-      + `bConcat1Requested=${flags.bConcat1Requested}, `
-      + `bAddInputToOutputRequested=${flags.bAddInputToOutputRequested}`
-      + `bConcat2ShuffleSplitRequested=${flags.bConcat2ShuffleSplitRequested}, `
-      + `outputTensorCount=${flags.outputTensorCount}, `
+        + `bPointwise22=${testParams.out.bPointwise22}, `
 
-      + `bKeepInputTensor=${testParams.out.bKeepInputTensor}, `
-    ;
+        + `inputTensorCount=${flags.inputTensorCount}, `
+        + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
+        + `bConcat1Requested=${flags.bConcat1Requested}, `
+        + `bAddInputToOutputRequested=${flags.bAddInputToOutputRequested}`
+        + `bConcat2ShuffleSplitRequested=${flags.bConcat2ShuffleSplitRequested}, `
+        + `outputTensorCount=${flags.outputTensorCount}, `
+
+        + `bKeepInputTensor=${testParams.out.bKeepInputTensor}, `
+      ;
+    }
 
     let imageIn0 = imageInArray[ 0 ];
     let imageIn1 = imageInArray[ 1 ];
