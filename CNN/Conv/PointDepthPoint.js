@@ -345,6 +345,7 @@ class Params extends Weights.Params {
 
   get bPointwise22()              { return this.parameterMapModified.get( Params.bPointwise22 ); }
 
+//!!! ...unfinished... (2021/09/02) What if pointwise21ChannelCount also zero?
   get pointwise22ChannelCount()   {
     if ( this.bPointwise22 )
       return this.pointwise21ChannelCount;
@@ -874,6 +875,9 @@ class Base extends ReturnOrClone.Base {
     }
 
     // 5.2 Pointwise22
+    
+//!!! ...unfinished... (2021/09/02) What if ( this.bPointwise22 == true ) but ( pointwise21ChannelCount == 0 )?
+
     if ( this.pointwise22ChannelCount > 0 ) {
 
       this.pointwise22 = new Pointwise.Base(
