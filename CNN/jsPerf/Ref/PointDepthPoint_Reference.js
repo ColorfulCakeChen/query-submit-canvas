@@ -591,17 +591,17 @@ class Base {
         `PointDepthPoint imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
           + `should be null, since there is no pointwise22. ${this.paramsOutDescription}`);
 
-      let imageConcat2Array = new Array( imageOutArray );
-      imageConcat2Array[ 1 ] = imageIn1; // i.e. input1.
+      let imageConcat2InArray = Array.from( imageOutArray );
+      imageConcat2InArray[ 1 ] = imageIn1; // i.e. input1.
 
       // 5.1 Concat2, shuffle, split.
       if ( testParams.out.bPointwise22 == true ) {
-        Base.calcConcatShuffleSplit( imageConcat2Array, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
+        Base.calcConcatShuffleSplit( imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
 
       // 5.2 Concat2 only.
       } else { // ( bPointwise22 == true )
         imageOutArray[ 0 ] = Base.calcConcatAlongAxisId2(
-          imageConcat2Array[ 0 ], imageConcat2Array[ 1 ], "Concat2_pointwise21_input1", this.paramsOutDescription );
+          imageConcat2InArray[ 0 ], imageConcat2InArray[ 1 ], "Concat2_pointwise21_input1", this.paramsOutDescription );
       }
 
     } else {
