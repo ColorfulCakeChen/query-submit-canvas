@@ -416,24 +416,27 @@ class Base {
       this.paramsOutDescription =
           `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
 
-        + `channelCount1_pointwise1Before=${testParams.out.channelCount1_pointwise1Before}, `
         + `channelCount1_pointwise1Before_Name=`
-        + `${PointDepthPoint.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}, `
+        + `${PointDepthPoint.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )} `
+        + `(${testParams.out.channelCount1_pointwise1Before}), `
 
         + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `
-        + `pointwise1ActivationId=${testParams.out.pointwise1ActivationId}, pointwise1ActivationName=`
-        + `${PointDepthPoint.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}, `
+        + `pointwise1ActivationName=`
+        + `${PointDepthPoint.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )} `
+        + `(${testParams.out.pointwise1ActivationId}), `
 
         + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
         + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
         + `depthwiseStridesPad=${testParams.out.depthwiseStridesPad}, `
         + `bDepthwiseBias=${testParams.out.bDepthwiseBias}, `
-        + `depthwiseActivationId=${testParams.out.depthwiseActivationId}, depthwiseActivationName=`
-        + `${PointDepthPoint.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}, `
+        + `depthwiseActivationName=`
+        + `${PointDepthPoint.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )} `
+        + `(${testParams.out.depthwiseActivationId}), `
 
         + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `
-        + `pointwise21ActivationId=${testParams.out.pointwise21ActivationId}, pointwise21ActivationName=`
+        + `pointwise21ActivationName=`
         + `${PointDepthPoint.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}, `
+        + `(${testParams.out.pointwise21ActivationId}), `
 
         + `bPointwise22=${testParams.out.bPointwise22}, `
 
