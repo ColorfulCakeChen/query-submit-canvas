@@ -19,7 +19,7 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  *   The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
  * it has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
  * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
- * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, bPointwise22,
+ * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, bPointwise22Requested,
  * bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - inputFloat32Array
@@ -54,7 +54,7 @@ class Base extends TestParams.Base {
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-    bPointwise22,
+    bPointwise22Requested,
     bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
@@ -64,7 +64,7 @@ class Base extends TestParams.Base {
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
       pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-      bPointwise22,
+      bPointwise22Requested,
       bKeepInputTensor
     };
 
@@ -146,7 +146,7 @@ class Base extends TestParams.Base {
 //      PerParameter: 5,
       pointwiseChannelCount: 3,
 
-      bPointwise22: undefined,
+      bPointwise22Requested: undefined,
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( maxKinds == 0 )) for speeding up testing.
@@ -177,7 +177,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.maxKindsRestrict.Bias ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.maxKindsRestrict.ActivationId ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise22,            this.maxKindsRestrict.bPointwise22 ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise22Requested,   this.maxKindsRestrict.bPointwise22Requested ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.maxKindsRestrict.Bias ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.maxKindsRestrict.ActivationId ),
@@ -301,9 +301,9 @@ class Base extends TestParams.Base {
    *
    * @param {object} paramsAll
    *   An object which must have all the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-   * pointwise1ChannelCount, bPointwise1Bias, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
-   * bDepthwiseBias, pointwise21ChannelCount, bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias, inputTensorCount.
-   *  They will be used to modify io_paramsNumberArrayObject.
+   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+   * bPointwise22Requested, inputTensorCount. They will be used to modify io_paramsNumberArrayObject.
    *
    * @param {object} io_paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
@@ -369,7 +369,7 @@ class Base extends TestParams.Base {
     // Pointwise22
     
     let pointwise22ChannelCount = 0;
-    if ( paramsAll.bPointwise22 ) { // If pointwise22 exists, its output channel count is the same as pointwise21's output channel count.
+    if ( paramsAll.bPointwise22Requested ) { // If pointwise22 exists, its output channel count is the same as pointwise21's output channel count.
       pointwise22ChannelCount = paramsAll.pointwise21ChannelCount;
     }
 
@@ -403,7 +403,7 @@ Base.paramsNameOrderArray = [
   PointDepthPoint.Params.pointwise21ChannelCount.paramName,
   PointDepthPoint.Params.bPointwise21Bias.paramName,
   PointDepthPoint.Params.pointwise21ActivationId.paramName,
-  PointDepthPoint.Params.bPointwise22.paramName,
+  PointDepthPoint.Params.bPointwise22Requested.paramName,
 
   PointDepthPoint.Params.bKeepInputTensor.paramName,
   
