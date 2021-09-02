@@ -1608,7 +1608,6 @@ class Base extends ReturnOrClone.Base {
 
       + `bPointwise22=${this.bPointwise22}, `
       + `pointwise22ChannelCount=${this.pointwise22ChannelCount}, `
-      + `pointwise22ChannelCountName=${this.pointwise22ChannelCountName}, `
       + `bPointwise22Bias=${this.bPointwise22Bias}, `
       + `pointwise22ActivationName=${this.pointwise22ActivationName}(${this.pointwise22ActivationId}), `
 
