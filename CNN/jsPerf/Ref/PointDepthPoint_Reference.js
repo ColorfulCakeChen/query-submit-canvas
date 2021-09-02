@@ -148,6 +148,9 @@ class Base {
       let parametersDescription = pointDepthPoint.parametersDescription;
       strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
 
+      // Test input channel count.
+      Base.AssertTwoEqualValues( "inChannels1", pointDepthPoint.inChannels1, input1ChannelCount, parametersDescription );
+
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
       let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
@@ -297,10 +300,6 @@ class Base {
 
     // input tensor parameters.
     Base.AssertTwoEqualValues( "inChannels0", pointDepthPoint.inChannels0, testParams.out.channelCount0_pointwise1Before, parametersDescription );
-    
-    let inChannels1 = Math.max( 0, testParams.out.channelCount1_pointwise1Before );
-    Base.AssertTwoEqualValues( "inChannels1",
-      pointDepthPoint.inChannels1, inChannels1, parametersDescription );
 
     Base.AssertTwoEqualValues( "channelCount1_pointwise1Before",
       pointDepthPoint.channelCount1_pointwise1Before, testParams.out.channelCount1_pointwise1Before, parametersDescription );
