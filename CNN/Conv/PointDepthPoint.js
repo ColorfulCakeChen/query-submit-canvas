@@ -250,12 +250,12 @@ class Params extends Weights.Params {
    * @param {number} channelCount1_pointwise1Before
    * @param {boolean} bOutput1Requested
    */
-  static setFlags_by__channelCount1_pointwise1Before__bOutput1Requested(
-            channelCount1_pointwise1Before, bOutput1Requested ) {
+  static setFlags_by__channelCount1_pointwise1Before__pointwise21ChannelCount__bOutput1Requested(
+           channelCount1_pointwise1Before, pointwise21ChannelCount, bOutput1Requested ) {
 
     // 0. Prepare.
 
-    // 0.1 The input tensor count is determined by channelCount1_pointwise1Before totally.
+    // 0.1 The input tensor count is totally determined by channelCount1_pointwise1Before.
     if (   ( channelCount1_pointwise1Before > 0 )
         || ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
        )
@@ -263,15 +263,25 @@ class Params extends Weights.Params {
     else
       this.inputTensorCount = 1; // One input.
 
-//!!! ...unfinished... (2021/09/02) WRONG! pointwise21ChannelCount should also be considered! and depthwise1, pointwise1, input0.
-// If TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): The output tensor count is determined by bOutput1Requested totally.
-// Otherwise, the pointwise21ChannelCount should also be considered! 
+    // 0.2 The output tensor count.
+    {
+      if ( bOutput1Requested == true )
+        this.outputTensorCount = 2; // Two outputs.
+      else
+        this.outputTensorCount = 1; // One output.
 
-    // 0.2 The output tensor count is determined by pointwise22ChannelCount totally.
-    if ( bOutput1Requested == true )
-      this.outputTensorCount = 2; // Two outputs.
-    else
-      this.outputTensorCount = 1; // One output.
+      // 0.2.1 In ShuffleNetV2's body/tail, The output tensor count is totally determined by bOutput1Requested.
+      if ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
+        // Do nothing.
+
+      // 0.2.2 Otherwise, pointwise22 is output1 directly. The pointwise22ChannelCount (which is determined by pointwise21ChannelCount)
+      //       determine it.
+      } else {
+        if ( pointwise21ChannelCount == 0 ) { // No pointwise21, then no pointwise22. So only one output.
+          this.outputTensorCount = 1; // One output.
+        }
+      }
+    }
 
     // 1. One input.
     if ( this.inputTensorCount == 1 ) {
