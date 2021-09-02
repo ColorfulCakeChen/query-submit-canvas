@@ -556,7 +556,8 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.channelCount0_pointwise1Before (from initer()).
  *
  * @member {number} inChannels1
- *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). This is the same as this.channelCount1_pointwise1Before (from initer()).
+ *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). If ( this.channelCount1_pointwise1Before >= 0 ), 
+ * inChannels1 is the same as this.channelCount1_pointwise1Before. Otherwise, inChannels1 will be zero (never negative).
  *
  * @member {number} outChannels0
  *   The channel count of the outputTensor[ 0 ]. Even if ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ),
@@ -729,6 +730,8 @@ class Base extends ReturnOrClone.Base {
       this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
       this.bConcat2ShuffleSplitRequested = params.bConcat2ShuffleSplitRequested;
       this.outputTensorCount = params.outputTensorCount;
+      
+      this.inChannels1 = Math.max( 0, this.channelCount1_pointwise1Before );
     }
 
     this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
@@ -1565,9 +1568,6 @@ class Base extends ReturnOrClone.Base {
   /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]). */
   get inChannels0()    { return this.channelCount0_pointwise1Before; }
 
-  /** @return {number} The channel count of the second input tensor (i.e. inputTensors[ 1 ]). */
-  get inChannels1()    { return this.channelCount1_pointwise1Before; }
-
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
     let str =
@@ -1576,8 +1576,9 @@ class Base extends ReturnOrClone.Base {
       + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
 
+      + `channelCount1_pointwise1Before=${this.channelCount1_pointwise1Before}, `
       + `channelCount1_pointwise1Before_Name=${this.channelCount1_pointwise1Before_Name}, `
-    
+
       + `pointwise1ChannelCount=${this.pointwise1ChannelCount}, `
       + `bPointwise1Bias=${this.bPointwise1Bias}, `
       + `pointwise1ActivationName=${this.pointwise1ActivationName}, `
