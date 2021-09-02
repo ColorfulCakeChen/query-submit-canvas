@@ -169,24 +169,30 @@ class Params extends Weights.Params {
    *   The activation function id (Params.pointwise21ActivationId.valueDesc.Ids.Xxx) after the first pointwise1 convolution. If null,
    * it will be extracted from inputFloat32Array (i.e. by evolution). If ( pointwise21ChannelCount == 0 ), this activation function
    * will also be ignored.
-   *   
+   *
    * @param {number} bOutput1Requested
    *   Whether to generate output1. Sometimes, it also control whether to create pointwise22. The reason why not let caller specify
-   * pointwise22ChannelCount directly is for ensuring that the pointwise22ChannelCount is either 0 or the same as pointwise21
-   * (otherwise the concat-shuffle-split could not work).
+   * pointwise22ChannelCount directly is for ensuring that the pointwise22ChannelCount is either 0 or the same as pointwise21's
+   * result (otherwise the concat-shuffle-split could not work). (Please see the explanation of channelCount1_pointwise1Before and
+   * pointwise22ChannelCount, too.)
+   *
    *     - If ( bOutput1Requested == null ), it will be extracted from inputFloat32Array (i.e. by evolution). 
-   *     - If ( bOutput1Requested == false ), the pointwise22 will not exist (i.e. ( pointwise22ChannelCount == 0 ) ).
-
-//!!! ...unfinished... (2021/09/02)
-// If TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): The output tensor count is determined by bOutput1Requested totally.
-// Otherwise, the pointwise21ChannelCount should also be considered! 
-
-   *     - If ( bOutput1Requested == true ), the pointwise22 may or may not exist. The channel count, bias, activation function will
-   *         be the same as pointwise21. Note that the pointwise22 will still not exist because of ( pointwise21ChannelCount == 0 ).
-!!!   
-   *         - If ( channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ),
-   *           (-3), (ShuffleNetV2's body/tail): there 
-
+   *
+   *     - If ( bOutput1Requested == false ), there is always no output1.
+   *
+   *     - If ( bOutput1Requested == true ):
+   *
+   *       - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+   *           (-3) (ShuffleNetV2's body/tail), the outut1 will always exist. Its channel count will be
+   *           channelCount_pointwise21After_concat2Before.
+   *
+   *       - Otherwise:
+   *
+   *         - If ( pointwise21ChannelCount > 0 ), then ( pointwise22ChannelCount > 0 ), the output1 will exist. Its channel
+   *             count will be pointwise22ChannelCount. Its bias flag and activation function will also  be the same as pointwise21.
+   *
+   *         - If ( pointwise21ChannelCount <= 0 ), then ( pointwise22ChannelCount <= 0 ), there will be no output1.
+   *
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. keep). For example, for the branch of step 0 of ShuffleNetV2.
