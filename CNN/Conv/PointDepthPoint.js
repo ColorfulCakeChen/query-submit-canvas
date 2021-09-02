@@ -247,8 +247,8 @@ class Params extends Weights.Params {
       return false;
 
     // Determine input tensor count and whether request add-input-to-output.
-    Params.setFlags_by__channelCount1_pointwise1Before__bOutput1Requested.call(
-      this, this.channelCount1_pointwise1Before, this.bOutput1Requested );
+    Params.setFlags_by__channelCount1_pointwise1Before__pointwise21ChannelCount__bOutput1Requested.call(
+      this, this.channelCount1_pointwise1Before, this.pointwise21ChannelCount, this.bOutput1Requested );
 
     return bExtractOk;
   }
@@ -263,6 +263,7 @@ class Params extends Weights.Params {
    *   - this.outputTensorCount
    *
    * @param {number} channelCount1_pointwise1Before
+   * @param {number} pointwise21ChannelCount
    * @param {boolean} bOutput1Requested
    */
   static setFlags_by__channelCount1_pointwise1Before__pointwise21ChannelCount__bOutput1Requested(
