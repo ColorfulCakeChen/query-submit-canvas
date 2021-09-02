@@ -159,6 +159,12 @@ class Base {
       pointDepthPoint.apply( inputTensor3dArray, outputTensor3dArray );
       let memoryInfo_apply_after = tf.memory();
 
+      tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
+        `PointDepthPoint.apply() memory leak. `
+          + `result tensor count (${memoryInfo_apply_after.numTensors}) `
+          + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
+          + `${strNote}` );
+
       tf.util.assert( inputTensor3dArray.length == 2,
         `PointDepthPoint inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}`);
 
@@ -182,11 +188,17 @@ class Base {
         Base.AssertTwoEqualValues( "outChannelsAll", pointDepthPoint.outChannelsAll, outChannelsAll, strNote );
       }
 
-      tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-        `PointDepthPoint.apply() memory leak. `
-          + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-          + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
-          + `${strNote}` );
+      { // Test output tensor count.
+        let outputTensorCount = 0;
+
+        if ( outputTensor3dArray[ 0 ] )
+          ++outputTensorCount;
+
+        if ( outputTensor3dArray[ 1 ] )
+          ++outputTensorCount;
+
+        Base.AssertTwoEqualValues( "outputTensorCount", pointDepthPoint.outputTensorCount, outputTensorCount, strNote );
+      }
 
       // Test correctness of pointDepthPoint apply.
       this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, strNote );
@@ -313,8 +325,6 @@ class Base {
 
     Base.AssertTwoEqualValues( "bConcat2ShuffleSplitRequested",
       pointDepthPoint.bConcat2ShuffleSplitRequested, flags.bConcat2ShuffleSplitRequested, parametersDescription );
-
-    Base.AssertTwoEqualValues( "outputTensorCount", pointDepthPoint.outputTensorCount, flags.outputTensorCount, parametersDescription );
 
     // pointwise1 parameters.
     Base.AssertTwoEqualValues( "pointwise1ChannelCount",
