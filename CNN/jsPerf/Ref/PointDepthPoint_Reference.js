@@ -288,8 +288,10 @@ class Base {
 
     // input tensor parameters.
     Base.AssertTwoEqualValues( "inChannels0", pointDepthPoint.inChannels0, testParams.out.channelCount0_pointwise1Before, parametersDescription );
+    
+    let inChannels1 = Math.max( 0, testParams.out.channelCount1_pointwise1Before );
     Base.AssertTwoEqualValues( "inChannels1",
-      pointDepthPoint.inChannels1, testParams.out.channelCount1_pointwise1Before, parametersDescription );
+      pointDepthPoint.inChannels1, inChannels1, parametersDescription );
 
     Base.AssertTwoEqualValues( "channelCount1_pointwise1Before",
       pointDepthPoint.channelCount1_pointwise1Before, testParams.out.channelCount1_pointwise1Before, parametersDescription );
@@ -365,7 +367,7 @@ class Base {
       Base.AssertTwoEqualValues( "pointwise22ChannelCount", // or 0 (if not exists).
         pointDepthPoint.pointwise22ChannelCount, 0, parametersDescription );
     }
-    
+
     Base.AssertTwoEqualValues( "bPointwise22Bias",
       pointDepthPoint.bPointwise22Bias, testParams.out.bPointwise21Bias, parametersDescription ); // Always same as pointwise21.
 
@@ -414,6 +416,7 @@ class Base {
       this.paramsOutDescription =
           `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
 
+        + `channelCount1_pointwise1Before=${testParams.out.channelCount1_pointwise1Before}, `
         + `channelCount1_pointwise1Before_Name=`
         + `${PointDepthPoint.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}, `
 
