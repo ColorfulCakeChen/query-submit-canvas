@@ -171,7 +171,12 @@ class Params extends Weights.Params {
    * (otherwise the concat-shuffle-split could not work).
    *     - If ( bOutput1Requested == null ), it will be extracted from inputFloat32Array (i.e. by evolution). 
    *     - If ( bOutput1Requested == false ), the pointwise22 will not exist (i.e. ( pointwise22ChannelCount == 0 ) ).
-   *     - If ( bOutput1Requested == true ), the pointwise22 might exist. The channel count, bias, activation function will
+
+//!!! ...unfinished... (2021/09/02)
+// If TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): The output tensor count is determined by bOutput1Requested totally.
+// Otherwise, the pointwise21ChannelCount should also be considered! 
+
+   *     - If ( bOutput1Requested == true ), the pointwise22 may or may not exist. The channel count, bias, activation function will
    *         be the same as pointwise21. Note that the pointwise22 will still not exist because of ( pointwise21ChannelCount == 0 ).
    *
    * @param {boolean} bKeepInputTensor
@@ -879,9 +884,6 @@ class Base extends ReturnOrClone.Base {
     }
 
     // 5.2 Pointwise22
-    
-//!!! ...unfinished... (2021/09/02) What if ( this.bPointwise22 == true ) but ( pointwise21ChannelCount == 0 )?
-
     if ( this.pointwise22ChannelCount > 0 ) {
 
       this.pointwise22 = new Pointwise.Base(
@@ -1165,7 +1167,7 @@ class Base extends ReturnOrClone.Base {
       = this.bPointwise1
       = this.bDepthwise1 = this.bDepthwise2 = this.bDepthwise2Requested
       = this.bConcat1Requested
-      = this.bPointwise21 = this.bPointwise22 = this.bAddInputToOutputRequested
+      = this.bPointwise21 = this.bPointwise22 = this.bOutput1Requested = this.bAddInputToOutputRequested
       = this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22
       = this.bConcat2ShuffleSplitRequested
       = this.outputTensorCount
@@ -1614,7 +1616,8 @@ class Base extends ReturnOrClone.Base {
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
       + `pointwise21ActivationName=${this.pointwise21ActivationName}(${this.pointwise21ActivationId}), `
 
-      + `bPointwise22=${this.bPointwise22}, `
+      + `bOutput1Requested=${this.bOutput1Requested}, `
+//      + `bPointwise22=${this.bPointwise22}, `
       + `pointwise22ChannelCount=${this.pointwise22ChannelCount}, `
       + `bPointwise22Bias=${this.bPointwise22Bias}, `
       + `pointwise22ActivationName=${this.pointwise22ActivationName}(${this.pointwise22ActivationId}), `
