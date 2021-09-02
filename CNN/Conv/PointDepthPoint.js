@@ -171,7 +171,7 @@ class Params extends Weights.Params {
    * will also be ignored.
    *   
    * @param {number} bOutput1Requested
-   *   Whether to generate output1. Usually, it also control whether to create pointwise22. The reason why not let caller specify
+   *   Whether to generate output1. Sometimes, it also control whether to create pointwise22. The reason why not let caller specify
    * pointwise22ChannelCount directly is for ensuring that the pointwise22ChannelCount is either 0 or the same as pointwise21
    * (otherwise the concat-shuffle-split could not work).
    *     - If ( bOutput1Requested == null ), it will be extracted from inputFloat32Array (i.e. by evolution). 
