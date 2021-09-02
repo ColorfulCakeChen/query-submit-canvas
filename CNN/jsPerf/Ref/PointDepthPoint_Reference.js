@@ -149,7 +149,7 @@ class Base {
       strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
 
       // Test input channel count.
-      Base.AssertTwoEqualValues( "inChannels1", pointDepthPoint.inChannels1, input1ChannelCount, parametersDescription );
+      Base.AssertTwoEqualValues( "inChannels1", pointDepthPoint.inChannels1, input1ChannelCount, strNote );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
