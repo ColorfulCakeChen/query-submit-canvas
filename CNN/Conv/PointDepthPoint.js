@@ -348,11 +348,10 @@ class Params extends Weights.Params {
   get pointwise21ActivationId()   { return this.parameterMapModified.get( Params.pointwise21ActivationId ); }
   get pointwise21ActivationName() { return Params.pointwise21ActivationId.getStringOfValue( this.pointwise21ActivationId ); }
 
-  get bPointwise22Requested()     { return this.parameterMapModified.get( Params.bPointwise22Requested ); }
+  get bOutput1Requested()         { return this.parameterMapModified.get( Params.bOutput1Requested ); }
 
-//!!! ...unfinished... (2021/09/02) What if pointwise21ChannelCount also zero?
   get pointwise22ChannelCount()   {
-    if ( this.bPointwise22Requested )
+    if ( this.bOutput1Requested )
       return this.pointwise21ChannelCount;
     else
       return 0; // No pointwisw22.
@@ -408,7 +407,7 @@ Params.pointwise21ChannelCount = new ParamDesc.Int(                     "pointwi
 Params.bPointwise21Bias =        new ParamDesc.Bool(                    "bPointwise21Bias" );
 Params.pointwise21ActivationId = new ParamDesc.ActivationFunction(      "pointwise21ActivationId" );
 
-Params.bPointwise22Requested =   new ParamDesc.Bool(                    "bPointwise22Requested" );
+Params.bOutput1Requested =       new ParamDesc.Bool(                    "bOutput1Requested" );
 
 Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepInputTensor" );
 
@@ -425,7 +424,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *
  * There are six main combinations:
  *
- *   - When ( channelCount1_pointwise1Before == -3 ) and ( bPointwise22Requested == true ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: TWO_OUTPUT:
+ *   - When ( channelCount1_pointwise1Before == -3 ) and ( bOutput1Requested == true ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: TWO_OUTPUT:
  * (ShuffleNetV2's body)
  * <pre>
  * input0 - pointwise1 - depthwise1 - pointwise21 - concat2ShuffleSplit - output0
@@ -433,7 +432,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == -3 ) and ( bPointwise22Requested == false ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: ONE_OUTPUT:
+ *   - When ( channelCount1_pointwise1Before == -3 ) and ( bOutput1Requested == false ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: ONE_OUTPUT:
  * (ShuffleNetV2's tail)
  * <pre>
  * input0 - pointwise1 - depthwise1 - pointwise21 - concat2(ShuffleSplit) - output0
@@ -722,7 +721,7 @@ class Base extends ReturnOrClone.Base {
     this.pointwise21ActivationId = params.pointwise21ActivationId;
     this.pointwise21ActivationName = params.pointwise21ActivationName;
 
-    this.bPointwise22 = params.bPointwise22;
+    this.bOutput1Requested = params.bOutput1Requested;
     this.pointwise22ChannelCount = params.pointwise22ChannelCount;
     this.pointwise22ChannelCountName = params.pointwise22ChannelCountName;
     this.bPointwise22Bias = params.bPointwise22Bias;
