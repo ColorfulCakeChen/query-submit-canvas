@@ -25,9 +25,14 @@ import * as TensorOpCounter from "./TensorOpCounter.js";
  * @member {number} pointwise22ChannelCount
  *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ) and
  * ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution. The pointwise22
- * convolution could achieve some kinds of channel shuffling of ShuffleNetV2.
- *     - If ( bOutput1Requested == false ), it will be 0.
- *     - If ( bOutput1Requested == true ), it will be the same as pointwise21ChannelCount (note: might also be 0).
+ * convolution could achieve some kinds of channel shuffling of (slower) ShuffleNetV2.
+ *
+ *     - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+ *         (-3) (ShuffleNetV2's body/tail), it is always 0.
+ *
+ *     - Otherwise,
+ *         - If ( bOutput1Requested == false ), it will be 0.
+ *         - If ( bOutput1Requested == true ), it will be the same as pointwise21ChannelCount (note: might also be 0).
  *
  * @member {boolean} bPointwise22Bias
  *   If true, there will be a bias after the second pointwise2 convolution. It is always the same as bPointwise21Bias.
