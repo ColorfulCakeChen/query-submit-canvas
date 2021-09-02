@@ -417,7 +417,23 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * activation function.
  *
  *
- * There six main combinations:
+ * There are six main combinations:
+ *
+ *   - When ( channelCount1_pointwise1Before == -3 ) and ( bPointwise22 == true ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: TWO_OUTPUT:
+ * (ShuffleNetV2's body)
+ * <pre>
+ * input0 - pointwise1 - depthwise1 - pointwise21 - concat2ShuffleSplit - output0
+ * input1 ----------------------------------------/                     \ output1
+ * </pre>
+ *
+ *
+ *   - When ( channelCount1_pointwise1Before == -3 ) and ( bPointwise22 == false ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: ONE_OUTPUT:
+ * (ShuffleNetV2's tail)
+ * <pre>
+ * input0 - pointwise1 - depthwise1 - pointwise21 - concat2(ShuffleSplit) - output0
+ * input1 ----------------------------------------/
+ * </pre>
+ *
  *
  *   - When ( channelCount1_pointwise1Before == -2 ): ONE_INPUT_TWO_DEPTHWISE: (simplified ShuffleNetV2's head)
  * <pre>
@@ -442,23 +458,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == -3 ) and ( bPointwise22 == true ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: TWO_OUTPUT:
- * (ShuffleNetV2's body)
- * <pre>
- * input0 - pointwise1 - depthwise1 - pointwise21 - concat2ShuffleSplit - output0
- * input1 ----------------------------------------/                     \ output1
- * </pre>
- *
- *
- *   - When ( channelCount1_pointwise1Before == -3 ) and ( bPointwise22 == false ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: ONE_OUTPUT:
- * (ShuffleNetV2's tail)
- * <pre>
- * input0 - pointwise1 - depthwise1 - pointwise21 - concat2(ShuffleSplit) - output0
- * input1 ----------------------------------------/
- * </pre>
- *
- *
- *   - When ( channelCount1_pointwise1Before > 0 ) and ( pointwise22ChannelCount >= 0 ): TWO_INPUTS: (slower ShuffleNetV2's body and tail)
+ *   - When ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (slower ShuffleNetV2's body and tail)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - pointwise21
  * input1 --------------------------/         \ pointwise22
