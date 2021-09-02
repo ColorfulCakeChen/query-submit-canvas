@@ -75,15 +75,24 @@ class Base {
                       == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
           bTwoInputs = true; // Two inputs.
 
-          // Although The second input's channel count seems pointwise21ChannelCount, however, it is not because pointwise21ChannelCount
-          // may be zero. Precisely speaking, it should be PointDepthPoint.channelCount_pointwise21After_concat2Before. Unfortunately,
-          // it is not available here.
-          //
-          // For the purpose of this testing, it may use channelCount0_pointwise1Before.
-//!!! ...unfinished... (2021/08/31) WRING! pointwise21ChannelCount may be zero! It should be channelCount_pointwise21After_concat2Before.
-//          input1ChannelCount = this.testParams.out.pointwise21ChannelCount; // The second input's channel count should be the same as pointwise21.
-          input1ChannelCount = channelCount0_pointwise1Before;
+          // Although The second input's channel count should be the same as pointwise21's result. Note that it is not the
+          // same as pointwise21ChannelCount directly because pointwise21ChannelCount may be zero. It should be determined
+          // by pointwise21, depthewise1, pointwise1, input0.
 
+          input1ChannelCount = this.testParams.out.pointwise21ChannelCount;
+          if ( input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
+
+            input1ChannelCount = this.testParams.out.pointwise1ChannelCount;
+            if ( this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+              input1ChannelCount *= this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
+
+            } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
+
+            if ( input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
+              input1ChannelCount = channelCount0_pointwise1Before;
+            }
+          }
+          
         } else {
           bTwoInputs = false; // One input.
           input1ChannelCount = 0;
