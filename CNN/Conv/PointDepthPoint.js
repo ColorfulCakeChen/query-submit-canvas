@@ -1586,11 +1586,11 @@ class Base extends ReturnOrClone.Base {
       + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
 
-      + `channelCount1_pointwise1Before_Name=${this.channelCount1_pointwise1Before_Name} (${this.channelCount1_pointwise1Before}), `
+      + `channelCount1_pointwise1Before_Name=${this.channelCount1_pointwise1Before_Name}(${this.channelCount1_pointwise1Before}), `
 
       + `pointwise1ChannelCount=${this.pointwise1ChannelCount}, `
       + `bPointwise1Bias=${this.bPointwise1Bias}, `
-      + `pointwise1ActivationName=${this.pointwise1ActivationName} (${this.pointwise1ActivationId}), `
+      + `pointwise1ActivationName=${this.pointwise1ActivationName}(${this.pointwise1ActivationId}), `
 
       + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
 
@@ -1598,19 +1598,19 @@ class Base extends ReturnOrClone.Base {
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseStridesPad=${this.depthwiseStridesPad}, `
       + `bDepthwiseBias=${this.bDepthwiseBias}, `
-      + `depthwiseActivationName=${this.depthwiseActivationName} (${this.depthwiseActivationId}), `
+      + `depthwiseActivationName=${this.depthwiseActivationName}(${this.depthwiseActivationId}), `
 
       + `bConcat1Requested=${this.bConcat1Requested}, `
 
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
       + `bPointwise21Bias=${this.bPointwise21Bias}, `
-      + `pointwise21ActivationName=${this.pointwise21ActivationName} (${this.pointwise21ActivationId}), `
+      + `pointwise21ActivationName=${this.pointwise21ActivationName}(${this.pointwise21ActivationId}), `
 
       + `bPointwise22=${this.bPointwise22}, `
       + `pointwise22ChannelCount=${this.pointwise22ChannelCount}, `
       + `pointwise22ChannelCountName=${this.pointwise22ChannelCountName}, `
       + `bPointwise22Bias=${this.bPointwise22Bias}, `
-      + `pointwise22ActivationName=${this.pointwise22ActivationName} (${this.pointwise22ActivationId}), `
+      + `pointwise22ActivationName=${this.pointwise22ActivationName}(${this.pointwise22ActivationId}), `
 
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
