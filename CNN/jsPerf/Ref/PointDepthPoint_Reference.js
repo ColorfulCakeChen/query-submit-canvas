@@ -273,15 +273,15 @@ class Base {
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
       testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
-      testParams.in.bPointwise22,
+      testParams.in.bOutput1Requested,
       testParams.in.bKeepInputTensor
     );
 
     let bInitOk = pointDepthPoint.init( progress, extractedParams, channelShuffler_ConcatPointwiseConv );
 
     let flags = {};
-    PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__bPointwise22.call( flags,
-      testParams.out.channelCount1_pointwise1Before, testParams.out.bPointwise22 );
+    PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__pointwise21ChannelCount__bOutput1Requested.call( flags,
+      testParams.out.channelCount1_pointwise1Before, testParams.out.pointwise21ChannelCount, testParams.out.bOutput1Requested );
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
@@ -375,15 +375,27 @@ class Base {
       pointDepthPoint.pointwise21ActivationName, pointwise21ActivationName, parametersDescription );
 
     // pointwise22 parameters.
-    Base.AssertTwoEqualValues( "bPointwise22",
-      pointDepthPoint.bPointwise22, testParams.out.bPointwise22, parametersDescription );
+    Base.AssertTwoEqualValues( "bOutput1Requested",
+      pointDepthPoint.bOutput1Requested, testParams.out.bOutput1Requested, parametersDescription );
+    
+    { // Test pointwise22ChannelCount.
 
-    if ( testParams.out.bPointwise22 ) {
-      Base.AssertTwoEqualValues( "pointwise22ChannelCount", // Either same as pointwise21 (if exists).
-        pointDepthPoint.pointwise22ChannelCount, testParams.out.pointwise21ChannelCount, parametersDescription );
-    } else {
-      Base.AssertTwoEqualValues( "pointwise22ChannelCount", // or 0 (if not exists).
-        pointDepthPoint.pointwise22ChannelCount, 0, parametersDescription );
+      // In ShuffleNetV2's body/tail, there is always no pointwise22.
+      if ( this.channelCount1_pointwise1Before
+             == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3) (ShuffleNetV2's body/tail)
+
+        Base.AssertTwoEqualValues( "pointwise22ChannelCount", pointDepthPoint.pointwise22ChannelCount, 0, parametersDescription );
+
+      // Otherwise, pointwise22 is output1 directly. It is determined by both bOutput1Requested and pointwise21ChannelCount.
+      } else {
+        if ( testParams.out.bOutput1Requested ) {
+          Base.AssertTwoEqualValues( "pointwise22ChannelCount", // Either same as pointwise21 (if requested). (Still may be 0.)
+            pointDepthPoint.pointwise22ChannelCount, testParams.out.pointwise21ChannelCount, parametersDescription );
+        } else {
+          Base.AssertTwoEqualValues( "pointwise22ChannelCount", // or 0 (if not requested).
+            pointDepthPoint.pointwise22ChannelCount, 0, parametersDescription );
+        }
+      }
     }
 
     Base.AssertTwoEqualValues( "bPointwise22Bias",
@@ -427,8 +439,8 @@ class Base {
 
     {
       let flags = {};
-      PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__bPointwise22.call( flags,
-       testParams.out.channelCount1_pointwise1Before, testParams.out.bPointwise22 );
+      PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__pointwise21ChannelCount__bOutput1Requested.call( flags,
+        testParams.out.channelCount1_pointwise1Before, testParams.out.pointwise21ChannelCount, testParams.out.bOutput1Requested );
 
       // Create description for debug easily.
       this.paramsOutDescription =
@@ -456,7 +468,7 @@ class Base {
         + `${PointDepthPoint.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}`
         + `(${testParams.out.pointwise21ActivationId}), `
 
-        + `bPointwise22=${testParams.out.bPointwise22}, `
+        + `bOutput1Requested=${testParams.out.bOutput1Requested}, `
 
         + `inputTensorCount=${flags.inputTensorCount}, `
         + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
@@ -565,7 +577,9 @@ class Base {
 
     let imageOutArray = [ pointwise21Result, null ]; // Assume no pointwise22.
 
-    // ONE_INPUT_TWO_DEPTHWISE (-2) or ONE_INPUT_ADD_TO_OUTPUT (-1) or ONE_INPUT (0) or TWO_INPUTS (> 0)
+    // 4.2 Pointwise22
+    //
+    // ONE_INPUT_TWO_DEPTHWISE (-2) or ONE_INPUT_ADD_TO_OUTPUT (-1) or ONE_INPUT (0) or TWO_INPUTS (> 0). (i.e. Not ShuffleNetV2's body/tail)
     if (   ( testParams.out.channelCount1_pointwise1Before
                == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) // (-2)
         || ( testParams.out.channelCount1_pointwise1Before
@@ -575,9 +589,9 @@ class Base {
         || ( testParams.out.channelCount1_pointwise1Before > 0 )
        ) {
 
-      // 4.2 Pointwise22
+      // If output1 is requested, it comes from pointwise22 directly. The pointwise22 will have the same output channel count as pointwise21.
       let pointwise22ChannelCount;
-      if ( testParams.out.bPointwise22 ) { // If pointwise22 exists, its output channel count is the same as pointwise21's output channel count.
+      if ( testParams.out.bOutput1Requested ) {
         pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
       } else {
         pointwise22ChannelCount = 0;
@@ -607,7 +621,7 @@ class Base {
 
     // 5. Concat2 (along image depth), shuffle, split.
     //
-    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3)
+    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3). (i.e. ShuffleNetV2's body/tail)
     } else if ( testParams.out.channelCount1_pointwise1Before
                   == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) {
 
@@ -619,11 +633,11 @@ class Base {
       imageConcat2InArray[ 1 ] = imageIn1; // i.e. input1.
 
       // 5.1 Concat2, shuffle, split.
-      if ( testParams.out.bPointwise22 == true ) {
+      if ( testParams.out.bOutput1Requested == true ) {
         Base.calcConcatShuffleSplit( imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
 
       // 5.2 Concat2 only.
-      } else { // ( bPointwise22 == true )
+      } else { // ( bOutput1Requested == true )
         imageOutArray[ 0 ] = Base.calcConcatAlongAxisId2(
           imageConcat2InArray[ 0 ], imageConcat2InArray[ 1 ], "Concat2_pointwise21_input1", this.paramsOutDescription );
       }
