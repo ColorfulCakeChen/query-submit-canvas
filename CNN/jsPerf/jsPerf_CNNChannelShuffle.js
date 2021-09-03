@@ -35,7 +35,7 @@ class HeightWidthDepthGroup {
     this.valueCount = height * width * depth;
 
     this.concatenatedShape = [ height, width, depth ];
-    
+
     this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.3 );
 
     this.dataTensor3dArray = tf.tidy( () => {
@@ -202,8 +202,8 @@ class HeightWidthDepthGroup {
       // Test reference shuffle-split. (Only support two groups).
       if ( this.groupCount == 2 ) {
         let imageInArray = [
-          { height: this.height, width: this.width, depth: this.depth, dataArray: this.dataTensor3dArray[ 0 ].dataSync() },
-          { height: this.height, width: this.width, depth: this.depth, dataArray: this.dataTensor3dArray[ 1 ].dataSync() },
+          { height: this.height, width: this.width, depth: ( this.depth / this.groupCount ), dataArray: this.dataTensor3dArray[ 0 ].dataSync() },
+          { height: this.height, width: this.width, depth: ( this.depth / this.groupCount ), dataArray: this.dataTensor3dArray[ 1 ].dataSync() },
         ];
 
         let imageOutArray = [ null, null ];
