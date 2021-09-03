@@ -3,6 +3,7 @@ export { init, testResultSame, testDifferentDisposeStrategy_All, disposeTensors 
 //import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler_PerformanceTest.js";
 import * as TensorTools from "../util/TensorTools.js";
+import * as PointDepthPoint_Reference from "../Conv/PointDepthPoint_Reference.js";
 
 /**
  * Test different channel shuffle implementation for CNN ShuffleNet.
@@ -34,6 +35,8 @@ class HeightWidthDepthGroup {
     this.valueCount = height * width * depth;
 
     this.concatenatedShape = [ height, width, depth ];
+    
+    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.3 );
 
     this.dataTensor3dArray = tf.tidy( () => {
       let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
@@ -196,6 +199,23 @@ class HeightWidthDepthGroup {
       let memoryInfo4 = tf.memory();
       tf.util.assert( memoryInfo4.numTensors == ( memoryInfo3.numTensors + t4Array.length ), `PointwiseConv() memory leak`);
 
+      // Test reference shuffle-split. (Only support two groups).
+      if ( this.groupCount == 2 ) {
+        let imageInArray = [
+          { height: this.height, width: this.width, depth: this.depth, dataArray: this.dataTensor3dArray[ 0 ].arraySync() },
+          { height: this.height, width: this.width, depth: this.depth, dataArray: this.dataTensor3dArray[ 1 ].arraySync() },
+        ];
+
+        let imageOutArray = [ null, null ];
+        PointDepthPoint_Reference.calcConcatShuffleSplit( imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
+
+        for ( let i = 0; i < t1Array.length; ++i ) {
+          this.asserter_Tensor_NumberArray.assert(
+            t1Array[ 0 ], imageOutArray[ 0 ],
+            "ConcatShuffleSplit", `output${i}`, `outputRef${i}`, "PointDepthPoint_Reference.calcConcatShuffleSplit"
+          );
+        }
+      }
 
       tf.util.assert(
         TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ),
