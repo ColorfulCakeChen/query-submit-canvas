@@ -471,7 +471,7 @@ class HeightWidthDepth {
         }
 
         imageSourceBag.disposeTensors();
-        channelShuffler_ConcatPointwiseConv.disposeTensors();
+        channelShufflerPool.disposeTensors();
       }
     });
 
