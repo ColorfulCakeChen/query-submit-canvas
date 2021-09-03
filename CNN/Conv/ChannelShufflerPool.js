@@ -61,9 +61,15 @@ class Base {
     return channelShuffler;
   }
 
-  /** Release all channel shuffler and their tf.tensor. */
+  /** Release all channel shufflers and their tf.tensor. */
   disposeTensors() {
-//!!! ...unfinished... (2021/09/03)
+    if ( this.channelShufflersBy_height_width_depth_group ) {
+      for ( let channelShuffler of MapTools.values_recursively( this.channelShufflersBy_height_width_depth_group ) ) {
+        channelShuffler.disposeTensors();
+      }
+
+      this.channelShufflersBy_height_width_depth_group.clear();
+    }
   }
 
 }
