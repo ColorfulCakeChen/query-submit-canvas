@@ -382,7 +382,7 @@ class Base {
 
       // In ShuffleNetV2's body/tail, there is always no pointwise22.
       if ( this.channelCount1_pointwise1Before
-             == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3) (ShuffleNetV2's body/tail)
+             == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
 
         Base.AssertTwoEqualValues( "pointwise22ChannelCount", pointDepthPoint.pointwise22ChannelCount, 0, parametersDescription );
 
