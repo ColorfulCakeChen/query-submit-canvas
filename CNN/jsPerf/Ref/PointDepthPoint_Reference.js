@@ -39,10 +39,6 @@ class Base {
    *     - It is only used when
    *         ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
    *         (-3) (i.e. channel shuffle the concatenated pointwise21 and input1).
-   *
-//!!! ...unfinished... (2021/09/03 Remarrked) channelShuffler_ConcatPointwiseConv
-//    *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
-//    *         of pointwise21 and input1.
    */
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
@@ -98,6 +94,7 @@ class Base {
         }
       }
 
+      let channelShuffler_ConcatPointwiseConv;
       let imageOutReferenceArray;
       {
         strNote = `( this.testParams.id=${this.testParams.id} )`;
@@ -112,7 +109,19 @@ class Base {
         tf.util.assert( imageInArraySelected.length == 2,
           `PointDepthPoint imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
 
-        imageOutReferenceArray = this.calcResult( imageInArraySelected ); // Output is an array with two elements.
+        // Prepare channel shuffler.
+        {
+          if ( channelCount1_pointwise1Before
+                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
+            let outputGroupCount = 2; // Only use two convolution groups.
+            let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+            channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
+              imageInArraySelected[ 0 ].height, imageInArraySelected[ 0 ].width, concatenatedDepth, outputGroupCount );
+          }
+        }
+
+        // Output is an array with two elements.
+        imageOutReferenceArray = this.calcResult( imageInArraySelected, channelShuffler_ConcatPointwiseConv );
 
         tf.util.assert( imageOutReferenceArray.length == 2,
           `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
@@ -138,18 +147,6 @@ class Base {
         if ( bTwoInputs ) { // Pass two input tensors according to parameters.
           inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
           inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
-        }
-      }
-
-      // Prepare channel shuffler.
-      let channelShuffler_ConcatPointwiseConv;
-      {
-        if ( channelCount1_pointwise1Before
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
-          let outputGroupCount = 2; // Only use two convolution groups.
-          let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
-          channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
-            imageInArraySelected[ 0 ].height, imageInArraySelected[ 0 ].width, concatenatedDepth, outputGroupCount );
         }
       }
 
@@ -442,9 +439,12 @@ class Base {
    * @param {number}   imageInArray[ i ].depth     Image channel count
    * @param {number[]} imageInArray[ i ].dataArray Image data
    *
+   * @param {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
+   *   Used when concat-shuffle-split.
+   *
    * @return {number[]} Return output image data as array.
    */ 
-  calcResult( imageInArray ) {
+  calcResult( imageInArray, channelShuffler_ConcatPointwiseConv ) {
 
     let testParams = this.testParams;
 
@@ -645,7 +645,8 @@ class Base {
 
       // 5.1 Concat2, shuffle, split.
       if ( testParams.out.bOutput1Requested == true ) {
-        Base.calcConcatShuffleSplit( imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
+        Base.calcConcatShuffleSplit( channelShuffler_ConcatPointwiseConv,
+          imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
 
       // 5.2 Concat2 only.
       } else { // ( bOutput1Requested == true )
