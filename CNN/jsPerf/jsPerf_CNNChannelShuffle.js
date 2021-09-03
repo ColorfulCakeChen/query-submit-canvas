@@ -3,7 +3,7 @@ export { init, testResultSame, testDifferentDisposeStrategy_All, disposeTensors 
 //import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler_PerformanceTest.js";
 import * as TensorTools from "../util/TensorTools.js";
-import * as PointDepthPoint_Reference from "../Conv/PointDepthPoint_Reference.js";
+import * as PointDepthPoint_Reference from "../jsPerf/Ref/PointDepthPoint_Reference.js";
 
 /**
  * Test different channel shuffle implementation for CNN ShuffleNet.
