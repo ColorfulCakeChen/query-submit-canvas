@@ -1,5 +1,6 @@
 export { Base };
 
+import * as MapTools from "../../util/MapTools.js";
 import * as RandTools from "../../util/RandTools.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
@@ -89,15 +90,24 @@ class Base {
    */
   static internal_getImage_by( channelCount, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
 
-    let imagesBy_filterHeight_stridesPad = this.imagesBy_channelCount_filterHeight_stridesPad.get( channelCount );
-    if ( !imagesBy_filterHeight_stridesPad )
-      this.imagesBy_channelCount_filterHeight_stridesPad.set( channelCount, imagesBy_filterHeight_stridesPad = new Map() );
+//!!! (2021/09/03 Remarked) Using MapTools instead.
+//     let imagesBy_filterHeight_stridesPad = this.imagesBy_channelCount_filterHeight_stridesPad.get( channelCount );
+//     if ( !imagesBy_filterHeight_stridesPad )
+//       this.imagesBy_channelCount_filterHeight_stridesPad.set( channelCount, imagesBy_filterHeight_stridesPad = new Map() );
+//
+//     let imagesBy_stridesPad = imagesBy_filterHeight_stridesPad.get( depthwiseFilterHeight );
+//     if ( !imagesBy_stridesPad )
+//       imagesBy_filterHeight_stridesPad.set( depthwiseFilterHeight, imagesBy_stridesPad = new Map() );
+//
+//     let image = imagesBy_stridesPad.get( depthwiseStridesPad );
+//     if ( image )
+//       return image; // 1. The requested image has already been created. Re-use it. Return it directly.
 
-    let imagesBy_stridesPad = imagesBy_filterHeight_stridesPad.get( depthwiseFilterHeight );
-    if ( !imagesBy_stridesPad )
-      imagesBy_filterHeight_stridesPad.set( depthwiseFilterHeight, imagesBy_stridesPad = new Map() );
 
-    let image = imagesBy_stridesPad.get( depthwiseStridesPad );
+    let imagesBy_filterHeight_stridesPad = MapTools.get_or_create( this.imagesBy_channelCount_filterHeight_stridesPad, channelCount );
+    let imagesBy_stridesPad = MapTools.get_or_create( imagesBy_filterHeight_stridesPad, depthwiseFilterHeight );
+    let image = MapTools.get_or_create( imagesBy_stridesPad, depthwiseStridesPad );
+
     if ( image )
       return image; // 1. The requested image has already been created. Re-use it. Return it directly.
 
@@ -135,15 +145,24 @@ class Base {
    */
   static internal_getTensor3d_by( channelCount, depthwiseFilterHeight = 1, depthwiseStridesPad = 0 ) {
 
-    let tensorsBy_filterHeight_stridesPad = this.tensorsBy_channelCount_filterHeight_stridesPad.get( channelCount );
-    if ( !tensorsBy_filterHeight_stridesPad )
-      this.tensorsBy_channelCount_filterHeight_stridesPad.set( channelCount, tensorsBy_filterHeight_stridesPad = new Map() );
+//!!! (2021/09/03 Remarked) Using MapTools instead.
+//     let tensorsBy_filterHeight_stridesPad = this.tensorsBy_channelCount_filterHeight_stridesPad.get( channelCount );
+//     if ( !tensorsBy_filterHeight_stridesPad )
+//       this.tensorsBy_channelCount_filterHeight_stridesPad.set( channelCount, tensorsBy_filterHeight_stridesPad = new Map() );
+//
+//     let tensorsBy_stridesPad = tensorsBy_filterHeight_stridesPad.get( depthwiseFilterHeight );
+//     if ( !tensorsBy_stridesPad )
+//       tensorsBy_filterHeight_stridesPad.set( depthwiseFilterHeight, tensorsBy_stridesPad = new Map() );
+//
+//     let tensor = tensorsBy_stridesPad.get( depthwiseStridesPad );
+//     if ( tensor )
+//       return tensor; // 1. The requested tensor has already been created. Re-use it. Return it directly.
 
-    let tensorsBy_stridesPad = tensorsBy_filterHeight_stridesPad.get( depthwiseFilterHeight );
-    if ( !tensorsBy_stridesPad )
-      tensorsBy_filterHeight_stridesPad.set( depthwiseFilterHeight, tensorsBy_stridesPad = new Map() );
 
-    let tensor = tensorsBy_stridesPad.get( depthwiseStridesPad );
+    let tensorsBy_filterHeight_stridesPad = MapTools.get_or_create( this.tensorsBy_channelCount_filterHeight_stridesPad, channelCount );
+    let tensorsBy_stridesPad = MapTools.get_or_create( tensorsBy_filterHeight_stridesPad, depthwiseFilterHeight );
+    let tensor = MapTools.get_or_create( tensorsBy_stridesPad, depthwiseStridesPad );
+
     if ( tensor )
       return tensor; // 1. The requested tensor has already been created. Re-use it. Return it directly.
 
