@@ -201,10 +201,11 @@ class HeightWidthDepthGroup {
 
       // Test reference shuffle-split.
       {
-        let imageInArray = [
-          { height: this.height, width: this.width, depth: ( this.depth / this.groupCount ), dataArray: this.dataTensor3dArray[ 0 ].dataSync() },
-          { height: this.height, width: this.width, depth: ( this.depth / this.groupCount ), dataArray: this.dataTensor3dArray[ 1 ].dataSync() },
-        ];
+        let imageInArray = new Array( this.dataTensor3dArray.length );
+        for ( let i = 0; i < this.dataTensor3dArray.length; ++i ) {
+          let t = this.dataTensor3dArray[ i ];
+          imageInArray[ i ] = { height: t.shape[ 0 ], width: t.shape[ 1 ], depth: t.shape[ 2 ], dataArray: t.dataSync() };
+        }
 
         let imageOutArray = [ null, null ];
         PointDepthPoint_Reference.Base.calcConcatShuffleSplit( this.concatPointwiseConv,
