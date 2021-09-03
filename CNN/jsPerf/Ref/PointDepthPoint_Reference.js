@@ -148,7 +148,7 @@ class Base {
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
           let outputGroupCount = 2; // Only use two convolution groups.
           let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
-          channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffer_by(
+          channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
             imageInArraySelected[ 0 ].height, imageInArraySelected[ 0 ].width, concatenatedDepth, outputGroupCount );
         }
       }
