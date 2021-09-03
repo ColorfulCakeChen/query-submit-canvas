@@ -6,6 +6,7 @@ import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
+import * as ChannelShufflerPool from "../Conv/ChannelShufflerPool.js";
 //import * as TensorTools from "../util/TensorTools.js";
 import * as PointDepthPoint_Reference from "./Ref/PointDepthPoint_Reference.js";
 import * as PointDepthPoint_TestParams from "./Ref/PointDepthPoint_TestParams.js"; 
@@ -444,12 +445,15 @@ class HeightWidthDepth {
 
       for ( let originalImageSize of originalImageSizeArray ) {
 
-        let outputGroupCount = 2; // Only support two convolution groups.
-        let concatenatedShape = [ originalImageSize.height, originalImageSize.width, originalImageSize.depth * outputGroupCount ]; 
-        let channelShuffler_ConcatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv();
-        channelShuffler_ConcatPointwiseConv.init( concatenatedShape, outputGroupCount );
+//!!! (2021/09/03 Remarked) Using channelShufflerPool instead.
+//         let outputGroupCount = 2; // Only support two convolution groups.
+//         let concatenatedShape = [ originalImageSize.height, originalImageSize.width, originalImageSize.depth * outputGroupCount ]; 
+//         let channelShuffler_ConcatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv();
+//         channelShuffler_ConcatPointwiseConv.init( concatenatedShape, outputGroupCount );
 
-        // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors dynamically created in imageSourceBag.
+        // Note: channelShufflerPool and imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
+        //       dynamically created in them.
+        let channelShufflerPool = new ChannelShufflerPool.Base( ChannelShuffler.ConcatPointwiseConv );
         let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
 
         let testParams = new PointDepthPoint_TestParams.Base();
@@ -463,7 +467,7 @@ class HeightWidthDepth {
               + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
               + `testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
 
-          testReference.testCorrectness( imageSourceBag, testParams, channelShuffler_ConcatPointwiseConv );
+          testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
         }
 
         imageSourceBag.disposeTensors();
