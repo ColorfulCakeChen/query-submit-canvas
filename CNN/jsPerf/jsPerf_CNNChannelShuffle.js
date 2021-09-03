@@ -349,9 +349,13 @@ class HeightWidthDepthGroup {
 }
 
 function init() {
-  let height = 110;
-  let width = 100;
-  let depth = 24;
+  let height = 3;
+  let width = 3;
+  let depth = 2;
+//!!! (2021/09/03 Temp Remarked) For Debug.
+//   let height = 110;
+//   let width = 100;
+//   let depth = 24;
 //!!! (2021/09/03 Temp Remarked) For Debug.
 //   globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( height, width, depth, 8 ); // height, width, depth, groupCount
 //   globalThis.testSet_110x110x24_g4 = new HeightWidthDepthGroup( height, width, depth, 4 );
