@@ -207,7 +207,8 @@ class HeightWidthDepthGroup {
         ];
 
         let imageOutArray = [ null, null ];
-        PointDepthPoint_Reference.calcConcatShuffleSplit( imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
+        PointDepthPoint_Reference.Base.calcConcatShuffleSplit(
+          imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
 
         for ( let i = 0; i < t1Array.length; ++i ) {
           this.asserter_Tensor_NumberArray.assert(
