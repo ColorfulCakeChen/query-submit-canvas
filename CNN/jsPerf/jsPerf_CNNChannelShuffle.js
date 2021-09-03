@@ -349,19 +349,26 @@ class HeightWidthDepthGroup {
 }
 
 function init() {
-  globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( 110, 110, 24, 8 ); // height, width, depth, groupCount
-  globalThis.testSet_110x110x24_g4 = new HeightWidthDepthGroup( 110, 110, 24, 4 );
-  globalThis.testSet_110x110x24_g3 = new HeightWidthDepthGroup( 110, 110, 24, 3 );
-  globalThis.testSet_110x110x24_g2 = new HeightWidthDepthGroup( 110, 110, 24, 2 );
-  globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( 110, 110, 24, 1 );
+  let height = 110;
+  let width = 100;
+  let depth = 24;
+//!!! (2021/09/03 Temp Remarked) For Debug.
+//   globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( height, width, depth, 8 ); // height, width, depth, groupCount
+//   globalThis.testSet_110x110x24_g4 = new HeightWidthDepthGroup( height, width, depth, 4 );
+//   globalThis.testSet_110x110x24_g3 = new HeightWidthDepthGroup( height, width, depth, 3 );
+  globalThis.testSet_110x110x24_g2 = new HeightWidthDepthGroup( height, width, depth, 2 );
+//!!! (2021/09/03 Temp Remarked) For Debug.
+//  globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( height, width, depth, 1 );
 }
 
 function testResultSame() {
-  globalThis.testSet_110x110x24_g8.testResultSame();
-  globalThis.testSet_110x110x24_g4.testResultSame();
-  globalThis.testSet_110x110x24_g3.testResultSame();
+//!!! (2021/09/03 Temp Remarked) For Debug.
+//   globalThis.testSet_110x110x24_g8.testResultSame();
+//   globalThis.testSet_110x110x24_g4.testResultSame();
+//   globalThis.testSet_110x110x24_g3.testResultSame();
   globalThis.testSet_110x110x24_g2.testResultSame();
-  globalThis.testSet_110x110x24_g1.testResultSame();
+//!!! (2021/09/03 Temp Remarked) For Debug.
+//  globalThis.testSet_110x110x24_g1.testResultSame();
 }
 
 function testDifferentDisposeStrategy_All() {
