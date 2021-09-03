@@ -171,10 +171,16 @@ class Base {
   /** Release all tensors. */
   disposeTensors() {
     if ( this.tensorsBy_channelCount_filterHeight_stridesPad ) {
-      for ( let tensorsBy_filterHeight_stridesPad of this.tensorsBy_channelCount_filterHeight_stridesPad.values() )
-        for ( let tensorsBy_stridesPad of tensorsBy_filterHeight_stridesPad.values() )
-          for ( let tensor of tensorsBy_stridesPad.values() )
-            tensor.dispose();
+
+//!!! (2021/09/03 Remarked) Using MapTools instead.
+//       for ( let tensorsBy_filterHeight_stridesPad of this.tensorsBy_channelCount_filterHeight_stridesPad.values() )
+//         for ( let tensorsBy_stridesPad of tensorsBy_filterHeight_stridesPad.values() )
+//           for ( let tensor of tensorsBy_stridesPad.values() )
+//             tensor.dispose();
+
+      for ( let tensor of MapTools.values_recursively( this.tensorsBy_channelCount_filterHeight_stridesPad ) ) {
+        tensor.dispose();
+      }
 
       this.tensorsBy_channelCount_filterHeight_stridesPad.clear();
     }
