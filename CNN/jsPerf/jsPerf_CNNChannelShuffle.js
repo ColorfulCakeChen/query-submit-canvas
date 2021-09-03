@@ -57,9 +57,9 @@ class HeightWidthDepthGroup {
     this.shufflers_release();
 
     this.shuffleInfo = new ChannelShuffler.ShuffleInfo( this.concatenatedShape, this.groupCount );
-    ( this.concatGatherUnsorted = new ChannelShuffler.ConcatGather() ).init( this.concatenatedShape, this.groupCount );
-    ( this.splitConcatSortedShared = new ChannelShuffler.SplitConcat() ).init( this.concatenatedShape, this.groupCount );
-    ( this.concatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv() ).init( this.concatenatedShape, this.groupCount );
+    this.concatGatherUnsorted = new ChannelShuffler.ConcatGather( this.concatenatedShape, this.groupCount );
+    this.splitConcatSortedShared = new ChannelShuffler.SplitConcat( this.concatenatedShape, this.groupCount );
+    this.concatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv( this.concatenatedShape, this.groupCount );
   }
 
   shufflers_release() {
