@@ -351,7 +351,7 @@ class HeightWidthDepthGroup {
 function init() {
   let height = 2;
   let width = 2;
-  let depth = 2;
+  let depth = 4;
 //!!! (2021/09/03 Temp Remarked) For Debug.
 //   let height = 110;
 //   let width = 100;
