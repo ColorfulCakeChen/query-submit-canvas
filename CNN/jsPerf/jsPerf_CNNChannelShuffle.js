@@ -199,9 +199,7 @@ class HeightWidthDepthGroup {
       let memoryInfo4 = tf.memory();
       tf.util.assert( memoryInfo4.numTensors == ( memoryInfo3.numTensors + t4Array.length ), `PointwiseConv() memory leak`);
 
-      // Test reference shuffle-split. (Only support two groups).
-//!!! (2021/09/03 Temp Remarked) No only groups 2.
-//      if ( this.groupCount == 2 ) {
+      // Test reference shuffle-split.
       {
         let imageInArray = [
           { height: this.height, width: this.width, depth: ( this.depth / this.groupCount ), dataArray: this.dataTensor3dArray[ 0 ].dataSync() },
@@ -351,30 +349,28 @@ class HeightWidthDepthGroup {
 }
 
 function init() {
-  let height = 1;
-  let width = 1;
-  let depth = 8;
-//!!! (2021/09/03 Temp Remarked) For Debug.
-//   let height = 110;
-//   let width = 100;
-//   let depth = 24;
-//!!! (2021/09/03 Temp Remarked) For Debug.
-//   globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( height, width, depth, 8 ); // height, width, depth, groupCount
-//   globalThis.testSet_110x110x24_g4 = new HeightWidthDepthGroup( height, width, depth, 4 );
-//   globalThis.testSet_110x110x24_g3 = new HeightWidthDepthGroup( height, width, depth, 3 );
+//!!! (2021/09/03 Temp) For Debug.
+//   let height = 1;
+//   let width = 1;
+//   let depth = 8;
+
+  let height = 110;
+  let width = 100;
+  let depth = 24;
+
+  globalThis.testSet_110x110x24_g8 = new HeightWidthDepthGroup( height, width, depth, 8 ); // height, width, depth, groupCount
+  globalThis.testSet_110x110x24_g4 = new HeightWidthDepthGroup( height, width, depth, 4 );
+  globalThis.testSet_110x110x24_g3 = new HeightWidthDepthGroup( height, width, depth, 3 );
   globalThis.testSet_110x110x24_g2 = new HeightWidthDepthGroup( height, width, depth, 2 );
-//!!! (2021/09/03 Temp Remarked) For Debug.
-//  globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( height, width, depth, 1 );
+  globalThis.testSet_110x110x24_g1 = new HeightWidthDepthGroup( height, width, depth, 1 );
 }
 
 function testResultSame() {
-//!!! (2021/09/03 Temp Remarked) For Debug.
-//   globalThis.testSet_110x110x24_g8.testResultSame();
-//   globalThis.testSet_110x110x24_g4.testResultSame();
-//   globalThis.testSet_110x110x24_g3.testResultSame();
+  globalThis.testSet_110x110x24_g8.testResultSame();
+  globalThis.testSet_110x110x24_g4.testResultSame();
+  globalThis.testSet_110x110x24_g3.testResultSame();
   globalThis.testSet_110x110x24_g2.testResultSame();
-//!!! (2021/09/03 Temp Remarked) For Debug.
-//  globalThis.testSet_110x110x24_g1.testResultSame();
+  globalThis.testSet_110x110x24_g1.testResultSame();
 }
 
 function testDifferentDisposeStrategy_All() {
