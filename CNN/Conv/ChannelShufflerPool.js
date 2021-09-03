@@ -1,6 +1,6 @@
 export { Base };
 
-import * as MapTools from "../../util/MapTools.js";
+import * as MapTools from "../util/MapTools.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
 /**
