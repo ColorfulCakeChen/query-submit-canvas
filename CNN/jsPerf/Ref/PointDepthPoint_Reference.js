@@ -33,21 +33,18 @@ class Base {
    * @param {PointDepthPoint_TestParams.Base} testParams
    *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
    *
-   * @param {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
-   *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
-   *
-   *     - It will not be disposed by this object (i.e. it is supposed to be shared with outter callers).
-   *
-   *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
+   * @param {ChannelShufflerPool.Base} channelShufflerPool
+   *   The channelShufflers provider. It must be initialized with ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
    *
    *     - It is only used when
    *         ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
    *         (-3) (i.e. channel shuffle the concatenated pointwise21 and input1).
    *
-   *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
-   *         of pointwise21 and input1.
+//!!! ...unfinished... (2021/09/03 Remarrked) channelShuffler_ConcatPointwiseConv
+//    *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
+//    *         of pointwise21 and input1.
    */
-  testCorrectness( imageSourceBag, testParams, channelShuffler_ConcatPointwiseConv ) {
+  testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
 
     try {
@@ -66,6 +63,7 @@ class Base {
 
       let bTwoInputs; // The input tensor count is determined by channelCount1_pointwise1Before totally.
       let input1ChannelCount;
+      let channelShuffler_ConcatPointwiseConv;
       {
         if ( channelCount1_pointwise1Before > 0 ) {
           bTwoInputs = true; // Two inputs.
@@ -75,24 +73,34 @@ class Base {
                       == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
           bTwoInputs = true; // Two inputs.
 
-          // Although The second input's channel count should be the same as pointwise21's result. Note that it is not the
+          // Find out input1's channel count.
+          //
+          // Although The second input's channel count should be the same as pointwise21's result, however, it is not the
           // same as pointwise21ChannelCount directly because pointwise21ChannelCount may be zero. It should be determined
           // by pointwise21, depthewise1, pointwise1, input0.
+          {
+            input1ChannelCount = this.testParams.out.pointwise21ChannelCount;
+            if ( input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
 
-          input1ChannelCount = this.testParams.out.pointwise21ChannelCount;
-          if ( input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
+              input1ChannelCount = this.testParams.out.pointwise1ChannelCount;
+              if ( input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
+                input1ChannelCount = channelCount0_pointwise1Before;
+              }
 
-            input1ChannelCount = this.testParams.out.pointwise1ChannelCount;
-            if ( input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
-              input1ChannelCount = channelCount0_pointwise1Before;
+              if ( this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+                input1ChannelCount *= this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
+
+              } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
             }
-
-            if ( this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-              input1ChannelCount *= this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
-
-            } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
           }
-          
+
+          { // Prepare channel shuffler.
+            let outputGroupCount = 2; // Only use two convolution groups.
+            let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+            channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffer_by(
+              imageInArraySelected[ 0 ].height, imageInArraySelected[ 0 ].width, concatenatedDepth, outputGroupCount );
+          }
+
         } else {
           bTwoInputs = false; // One input.
           input1ChannelCount = 0;
