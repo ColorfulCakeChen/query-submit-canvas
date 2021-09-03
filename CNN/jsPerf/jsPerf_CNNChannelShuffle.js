@@ -207,7 +207,7 @@ class HeightWidthDepthGroup {
           imageInArray[ i ] = { height: t.shape[ 0 ], width: t.shape[ 1 ], depth: t.shape[ 2 ], dataArray: t.dataSync() };
         }
 
-        let imageOutArray = [ null, null ];
+        let imageOutArray = new Array( this.dataTensor3dArray.length );
         PointDepthPoint_Reference.Base.calcConcatShuffleSplit( this.concatPointwiseConv,
           imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
 
