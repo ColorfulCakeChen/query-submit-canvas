@@ -1163,7 +1163,14 @@ class Base {
 
     // Converty output tensors to images.
     for ( let i = 0; i < imageOutArray.length; ++i ) {
-      imageOutArray[ i ] = tensorOutArray[ i ].dataSync();
+      let t = tensorOutArray[ i ];
+      
+      imageOutArray[ i ] = {
+        height:    t.shape[ 0 ],
+        width:     t.shape[ 1 ],
+        depth:     t.shape[ 2 ],
+        dataArray: t.dataSync(),
+      };
     }
 
     // Release temporary tensors.
