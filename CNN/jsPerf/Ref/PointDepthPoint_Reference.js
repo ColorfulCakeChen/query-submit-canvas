@@ -1135,7 +1135,8 @@ class Base {
    * @param {string}   concatShuffleSplitName       A string for debug message of this concatenation-shuffle-split.
    * @param {string}   parametersDesc               A string for debug message of this point-depth-point.
    */
-  static calcConcatShuffleSplit( imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
+  static calcConcatShuffleSplit(
+    channelShuffler_ConcatPointwiseConv, imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
 
     tf.util.assert(
       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
@@ -1149,42 +1150,62 @@ class Base {
         + `(${parametersDesc})`
     );
 
-    let imageCount = 2; // No matter input or input, both are two images.
-    let imageHeight = imageInArray[ 0 ].height;
-    let imageWidth = imageInArray[ 0 ].width;
-    let imageDepth = imageInArray[ 0 ].depth;
-
-    // Output images have the same shape as input images.
-    for ( let i = 0; i < imageCount; ++i ) {
-      imageOutArray[ i ] = {
-        height:    imageInArray[ i ].height,
-        width:     imageInArray[ i ].width,
-        depth:     imageInArray[ i ].depth,
-        dataArray: new Float32Array( imageInArray[ i ].dataArray.length ),
-      };
+    // Converty input images to tensors.
+    let tensorInArray = new Array( imageInArray.length );
+    for ( let i = 0; i < imageInArray.length; ++i ) {
+      let t = tf.tensor( imageInArray[ i ].dataArray, [ imageInArray[ i ].height, imageInArray[ i ].width, imageInArray[ i ].depth ] );
+      tensorInArray[ i ] = t;
     }
 
-    // Swap two images interleavely.
-    let concatenatedChannelCount = ( imageDepth * imageCount );
-    for ( let y = 0; y < imageHeight; ++y ) {
-      let indexBaseX = ( y * imageWidth );
+    // Concat-shuffle-split.
+    let tensorOutArray = channelShuffler_ConcatPointwiseConv.concatGather( tensorInArray );
 
-      for ( let x = 0; x < imageWidth; ++x ) {
-        let indexBaseC = ( ( indexBaseX + x ) * imageDepth );
-
-        for ( let c = 0; c < concatenatedChannelCount; ++c ) {
-          let inImageIndex = Math.floor( c / imageDepth );  // from which input image.
-          let inChannel = c % imageDepth;                   // from which channel (of the input image).
-
-          let outImageIndex = c % imageCount;               // to which output image.
-          let outChannel = Math.floor( c / imageCount );    // to which channel (of the output image).
-
-          let inIndex = indexBaseC + inChannel;
-          let outIndex = indexBaseC + outChannel;
-          imageOutArray[ outImageIndex ].dataArray[ outIndex ] = imageInArray[ inImageIndex ].dataArray[ inIndex ];
-        }
-      }
+    // Converty output tensors to images.
+    for ( let i = 0; i < imageOutArray.length; ++i ) {
+      imageOutArray[ i ] = tensorOutArray[ i ].dataSync();
     }
+
+    // Release temporary tensors.
+    tf.dispose( tensorInArray );
+    tf.dispose( tensorOutArray );
+
+//!!! (2021/09/03 Remarked) The indexes is no so simple.
+//     let imageCount = 2; // No matter input or input, both are two images.
+//     let imageHeight = imageInArray[ 0 ].height;
+//     let imageWidth = imageInArray[ 0 ].width;
+//     let imageDepth = imageInArray[ 0 ].depth;
+//
+//     // Output images have the same shape as input images.
+//     for ( let i = 0; i < imageCount; ++i ) {
+//       imageOutArray[ i ] = {
+//         height:    imageInArray[ i ].height,
+//         width:     imageInArray[ i ].width,
+//         depth:     imageInArray[ i ].depth,
+//         dataArray: new Float32Array( imageInArray[ i ].dataArray.length ),
+//       };
+//     }
+//
+//     // Swap two images interleavely.
+//     let concatenatedChannelCount = ( imageDepth * imageCount );
+//     for ( let y = 0; y < imageHeight; ++y ) {
+//       let indexBaseX = ( y * imageWidth );
+//
+//       for ( let x = 0; x < imageWidth; ++x ) {
+//         let indexBaseC = ( ( indexBaseX + x ) * imageDepth );
+//
+//         for ( let c = 0; c < concatenatedChannelCount; ++c ) {
+//           let inImageIndex = Math.floor( c / imageDepth );  // from which input image.
+//           let inChannel = c % imageDepth;                   // from which channel (of the input image).
+//
+//           let outImageIndex = c % imageCount;               // to which output image.
+//           let outChannel = Math.floor( c / imageCount );    // to which channel (of the output image).
+//
+//           let inIndex = indexBaseC + inChannel;
+//           let outIndex = indexBaseC + outChannel;
+//           imageOutArray[ outImageIndex ].dataArray[ outIndex ] = imageInArray[ inImageIndex ].dataArray[ inIndex ];
+//         }
+//       }
+//     }
   }
   
 }
