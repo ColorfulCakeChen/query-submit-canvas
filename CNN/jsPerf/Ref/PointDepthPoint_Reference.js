@@ -63,7 +63,6 @@ class Base {
 
       let bTwoInputs; // The input tensor count is determined by channelCount1_pointwise1Before totally.
       let input1ChannelCount;
-      let channelShuffler_ConcatPointwiseConv;
       {
         if ( channelCount1_pointwise1Before > 0 ) {
           bTwoInputs = true; // Two inputs.
@@ -78,27 +77,19 @@ class Base {
           // Although The second input's channel count should be the same as pointwise21's result, however, it is not the
           // same as pointwise21ChannelCount directly because pointwise21ChannelCount may be zero. It should be determined
           // by pointwise21, depthewise1, pointwise1, input0.
-          {
-            input1ChannelCount = this.testParams.out.pointwise21ChannelCount;
-            if ( input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
+          //
+          input1ChannelCount = this.testParams.out.pointwise21ChannelCount;
+          if ( input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
 
-              input1ChannelCount = this.testParams.out.pointwise1ChannelCount;
-              if ( input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
-                input1ChannelCount = channelCount0_pointwise1Before;
-              }
-
-              if ( this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-                input1ChannelCount *= this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
-
-              } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
+            input1ChannelCount = this.testParams.out.pointwise1ChannelCount;
+            if ( input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
+              input1ChannelCount = channelCount0_pointwise1Before;
             }
-          }
 
-          { // Prepare channel shuffler.
-            let outputGroupCount = 2; // Only use two convolution groups.
-            let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
-            channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffer_by(
-              imageInArraySelected[ 0 ].height, imageInArraySelected[ 0 ].width, concatenatedDepth, outputGroupCount );
+            if ( this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+              input1ChannelCount *= this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
+
+            } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
           }
 
         } else {
@@ -147,6 +138,18 @@ class Base {
         if ( bTwoInputs ) { // Pass two input tensors according to parameters.
           inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
           inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+        }
+      }
+
+      // Prepare channel shuffler.
+      let channelShuffler_ConcatPointwiseConv;
+      {
+        if ( channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
+          let outputGroupCount = 2; // Only use two convolution groups.
+          let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+          channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffer_by(
+            imageInArraySelected[ 0 ].height, imageInArraySelected[ 0 ].width, concatenatedDepth, outputGroupCount );
         }
       }
 
