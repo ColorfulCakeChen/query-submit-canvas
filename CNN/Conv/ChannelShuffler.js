@@ -56,7 +56,7 @@ class ShuffleInfo {
 
   constructor( concatenatedShape, outputGroupCount ) {
 
-    this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    //this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     outputGroupCount = Math.trunc( outputGroupCount || 1 );
     if ( outputGroupCount < 1 )
@@ -227,7 +227,7 @@ class ShuffleInfo {
  *
  *
  * @member {ShuffleInfo} shuffleInfo
- *   The information calculated from init()'s concatenatedShape and outputGroupCount.
+ *   The information calculated from concatenatedShape and outputGroupCount.
  *
  * @member {tf.tensor1d[]} shuffledChannelIndicesTensor1dArray
  *   The look up table for tf.gather()'s channel index. This table is composed of tensor1d so should be released
@@ -250,9 +250,9 @@ class ConcatGather {
    *
    * @see ShuffleInfo
    */
-  init( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount ) {
 
-    this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    //this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     this.shuffleInfo = new ShuffleInfo( concatenatedShape, outputGroupCount );
 
@@ -263,21 +263,19 @@ class ConcatGather {
     //
     // Not like SplitConcat, the channel indexes will not be sorted here. According to testing, sorted
     // channel seems slow down memory access when using them as tf.gather()'s index list.
-    try {
+    {
       this.shuffledChannelIndicesTensor1dArray
         = tf.tidy( "ChannelShuffler.ConcatGather.init.shuffledChannelIndicesTensor1dArray", () => {
           let channelIndices = tf.range( 0, this.shuffleInfo.totalChannelCount, 1, "int32" );
           let channelIndicesShuffleInfo = new ShuffleInfo( channelIndices.shape, outputGroupCount );
           return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
         });
-    } catch ( e ) {
-      return false; // e.g. out of (GPU) memory.
+
+    // Exception if failed (e.g. out of (GPU) memory).
     }
 
     this.gather = this.gather_loop;
     this.concatGather = this.concatGather_dispose_finally_call_loop;
-
-    return true;
   }
 
   /** Release tf.tensor. */
@@ -345,7 +343,7 @@ class ConcatGather {
  *
  *
  * @member {ShuffleInfo} shuffleInfo
- *   The information calculated from init()'s concatenatedShape and outputGroupCount.
+ *   The information calculated from concatenatedShape and outputGroupCount.
  *
  * @member {number[][]} shuffledChannelIndicesArray
  *   The look up table for tf.gather()'s channel index. This table is composed of array of integers.
@@ -369,38 +367,37 @@ class SplitConcat {
    *
    * @see ConcatGather
    */
-  init( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount ) {
 
-    this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    //this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
-    let concatGather = new ConcatGather();
-    let initOk = concatGather.init( concatenatedShape, outputGroupCount );
+    let concatGather = new ConcatGather( concatenatedShape, outputGroupCount );
 
     try {
-      if ( initOk ) {
-        // Shuffled channel indices (one dimension integers) for SplitConcat()
-        this.shuffledChannelIndicesArray = new Array( concatGather.shuffledChannelIndicesTensor1dArray.length );
-        concatGather.shuffledChannelIndicesTensor1dArray.forEach( ( shuffledChannelIndicesTensor1d, i ) => {
-          let shuffledChannelIndices = shuffledChannelIndicesTensor1d.arraySync(); // Download from GPU memory.
+      // Shuffled channel indices (one dimension integers) for SplitConcat()
+      this.shuffledChannelIndicesArray = new Array( concatGather.shuffledChannelIndicesTensor1dArray.length );
+      concatGather.shuffledChannelIndicesTensor1dArray.forEach( ( shuffledChannelIndicesTensor1d, i ) => {
+        let shuffledChannelIndices = shuffledChannelIndicesTensor1d.arraySync(); // Download from GPU memory.
 
-          // Sorting from small to large for improving memory locality (and memory access performance).
-          this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndices.sort( ( n1, n2 ) => ( n1 - n2 ) );
-        });
+        // Sorting from small to large for improving memory locality (and memory access performance).
+        this.shuffledChannelIndicesArray[ i ] = shuffledChannelIndices.sort( ( n1, n2 ) => ( n1 - n2 ) );
+      });
 
-        this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
+      this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
 
-        // Shared pre-allocate memory could speed up the process of splitting.
-        this.singleChannelTensorArray = new Array( this.shuffleInfo.totalChannelCount );
-        this.tensorArrayForOneGroup = new Array( this.shuffleInfo.channelCountPerGroup );
-      }
+      // Shared pre-allocate memory could speed up the process of splitting.
+      this.singleChannelTensorArray = new Array( this.shuffleInfo.totalChannelCount );
+      this.tensorArrayForOneGroup = new Array( this.shuffleInfo.channelCountPerGroup );
+
+    // Exception if failed (e.g. out of (GPU) memory).
+    } catch ( e ) {
+      throw e;
 
     } finally {
       concatGather.disposeTensors(); // Always release the look up table (by tensor1d).
     }
 
     this.splitConcat = this.splitConcat_loop;
-
-    return initOk;
   }
 
   /** Release tf.tensor. */
@@ -490,6 +487,11 @@ class SplitConcat {
  *
  *
  *
+ * @member {ShuffleInfo} shuffleInfo
+ *   The information calculated from concatenatedShape and outputGroupCount.
+ *
+ * @member {tf.tensor4d[]} filtersTensor4dArray
+ *   The pointwise convolution filters. They are used to achieve shuffle-split, and will be released by calling disposeTensors().
  *
  * @member {function} gather
  *   Permute and split the input tensor by gather. It is a function pointer to one of this.gather_XXX().
@@ -513,48 +515,46 @@ class ConcatPointwiseConv {
    *
    * @see ConcatGather
    */
-  init( concatenatedShape, outputGroupCount ) {
+  constructor( concatenatedShape, outputGroupCount ) {
 
-    this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    //this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
-    let concatGather = new ConcatGather();
-    let initOk = concatGather.init( concatenatedShape, outputGroupCount );
+    let concatGather = new ConcatGather( concatenatedShape, outputGroupCount );
 
     // Build 1x1 convolution filters for channel shuffling. (as an array of tf.tensor4d).
     try {
-      if ( initOk ) {
-        let filterHeight = 1; // Pointwise convolution is convolution 2d with 1 x 1 filter.
-        let filterWidth = 1;
-        let inDepth = concatGather.shuffleInfo.totalChannelCount;
-        let outDepth = concatGather.shuffleInfo.channelCountPerGroup;
+      let filterHeight = 1; // Pointwise convolution is convolution 2d with 1 x 1 filter.
+      let filterWidth = 1;
+      let inDepth = concatGather.shuffleInfo.totalChannelCount;
+      let outDepth = concatGather.shuffleInfo.channelCountPerGroup;
 
-        // Every filter is a tensor3d [ filterHeight, filterWidth, inDepth ].
-        // All filters composes a tensor4d.
-        let filtersShape = [ filterHeight, filterWidth, inDepth, outDepth ];
+      // Every filter is a tensor3d [ filterHeight, filterWidth, inDepth ].
+      // All filters composes a tensor4d.
+      let filtersShape = [ filterHeight, filterWidth, inDepth, outDepth ];
 
-        this.filtersTensor4dArray = tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray", () => {
-          return concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
-            return tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
+      this.filtersTensor4dArray = tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray", () => {
+        return concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
+          return tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
 
-              // Generate oneHotIndices (tensor2d) by shuffledChannelIndices (tensor1d).
-              let filtersOfOneGroupTensor2d = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
+            // Generate oneHotIndices (tensor2d) by shuffledChannelIndices (tensor1d).
+            let filtersOfOneGroupTensor2d = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
 
-              // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
-              // of tf.conv2d()'s filters.
-              filtersOfOneGroupTensor2d = filtersOfOneGroupTensor2d.transpose();
+            // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
+            // of tf.conv2d()'s filters.
+            filtersOfOneGroupTensor2d = filtersOfOneGroupTensor2d.transpose();
 
-              // Reinterpret the tensor2d to tensor4d so that it can be used as tf.conv2d()'s filters.
-              let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d.reshape( filtersShape );
-              return filtersOfOneGroupTensor4d;
-            });
+            // Reinterpret the tensor2d to tensor4d so that it can be used as tf.conv2d()'s filters.
+            let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d.reshape( filtersShape );
+            return filtersOfOneGroupTensor4d;
           });
         });
+      });
 
-        this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
-      }
+      this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
 
+    // Exception if failed (e.g. out of (GPU) memory).
     } catch ( e ) {
-      initOk = false; // e.g. out of (GPU) memory.
+      throw e;
 
     } finally {
       concatGather.disposeTensors(); // Always release the look up table (by tensor1d).
@@ -562,8 +562,6 @@ class ConcatPointwiseConv {
 
     this.gather = this.gather_loop;
     this.concatGather = this.concatGather_dispose_finally_call_loop;
-
-    return initOk; 
   }
 
   /** Release tf.tensor. */
