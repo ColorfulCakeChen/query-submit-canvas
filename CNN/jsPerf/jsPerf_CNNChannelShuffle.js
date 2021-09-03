@@ -202,8 +202,8 @@ class HeightWidthDepthGroup {
       // Test reference shuffle-split. (Only support two groups).
       if ( this.groupCount == 2 ) {
         let imageInArray = [
-          { height: this.height, width: this.width, depth: this.depth, dataArray: this.dataTensor3dArray[ 0 ].arraySync() },
-          { height: this.height, width: this.width, depth: this.depth, dataArray: this.dataTensor3dArray[ 1 ].arraySync() },
+          { height: this.height, width: this.width, depth: this.depth, dataArray: this.dataTensor3dArray[ 0 ].dataSync() },
+          { height: this.height, width: this.width, depth: this.depth, dataArray: this.dataTensor3dArray[ 1 ].dataSync() },
         ];
 
         let imageOutArray = [ null, null ];
