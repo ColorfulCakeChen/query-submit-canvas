@@ -200,14 +200,16 @@ class HeightWidthDepthGroup {
       tf.util.assert( memoryInfo4.numTensors == ( memoryInfo3.numTensors + t4Array.length ), `PointwiseConv() memory leak`);
 
       // Test reference shuffle-split. (Only support two groups).
-      if ( this.groupCount == 2 ) {
+//!!! (2021/09/03 Temp Remarked) No only groups 2.
+//      if ( this.groupCount == 2 ) {
+      {
         let imageInArray = [
           { height: this.height, width: this.width, depth: ( this.depth / this.groupCount ), dataArray: this.dataTensor3dArray[ 0 ].dataSync() },
           { height: this.height, width: this.width, depth: ( this.depth / this.groupCount ), dataArray: this.dataTensor3dArray[ 1 ].dataSync() },
         ];
 
         let imageOutArray = [ null, null ];
-        PointDepthPoint_Reference.Base.calcConcatShuffleSplit(
+        PointDepthPoint_Reference.Base.calcConcatShuffleSplit( this.concatPointwiseConv,
           imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
 
         for ( let i = 0; i < t1Array.length; ++i ) {
