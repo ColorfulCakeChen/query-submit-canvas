@@ -469,7 +469,7 @@ class HeightWidthDepth {
         channelShufflerPool.disposeTensors();
         imageSourceBag.disposeTensors();
       }
-      
+
       let memoryInfo_testCorrectness_after = tf.memory();
 
       tf.util.assert( ( memoryInfo_testCorrectness_after.numTensors == memoryInfo_testCorrectness_before.numTensors ),
