@@ -476,7 +476,7 @@ class HeightWidthDepth {
         `testCorrectness() memory leak. `
           + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
           + `should be (${memoryInfo_testCorrectness_before.numTensors} `
-          + `${strNote}` );
+          + `` );
     });
 
     // After correctness testing done, create all PointDepthPoint for performance testing.
