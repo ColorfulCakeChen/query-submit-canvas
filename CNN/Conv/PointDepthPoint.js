@@ -291,7 +291,7 @@ class Params extends Weights.Params {
         // Do nothing.
 
       // 0.2.2 Otherwise, pointwise22 is output1 directly. The pointwise22ChannelCount (which is determined by pointwise21ChannelCount)
-      //       determine it.
+      //       determines it.
       } else {
         if ( pointwise21ChannelCount == 0 ) { // No pointwise21, then no pointwise22. So only one output.
           this.outputTensorCount = 1; // One output.
