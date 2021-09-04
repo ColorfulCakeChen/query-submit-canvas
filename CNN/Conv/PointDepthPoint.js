@@ -766,7 +766,6 @@ class Base extends ReturnOrClone.Base {
 
     this.bOutput1Requested = params.bOutput1Requested;
     this.pointwise22ChannelCount = params.pointwise22ChannelCount;
-    this.pointwise22ChannelCountName = params.pointwise22ChannelCountName;
     this.bPointwise22Bias = params.bPointwise22Bias;
     this.pointwise22ActivationId = params.pointwise22ActivationId;
     this.pointwise22ActivationName = params.pointwise22ActivationName;
