@@ -176,8 +176,8 @@ class HeightWidthDepth {
 
     // Create shared ChannelShuffler.
     let concatenatedShape = [ this.height, this.width, this.depth * this.outputGroupCount ]; 
-    let channelShuffler_ConcatPointwiseConv = this.channelShuffler_ConcatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv();
-    channelShuffler_ConcatPointwiseConv.init( concatenatedShape, this.outputGroupCount );
+    let channelShuffler_ConcatPointwiseConv = this.channelShuffler_ConcatPointwiseConv
+          = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, this.outputGroupCount );
 
 
     // channelCount0_pointwise1Before, channelCount1_pointwise1Before,
@@ -436,7 +436,9 @@ class HeightWidthDepth {
     this.test_ValueRange_valueInputOutputGenerator();
 
     tf.tidy( () => {
-      
+
+      let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerPool.
+
       // Test different input image width (even and odd).
       let originalImageSizeArray = [
         { height: 3, width: 4, depth: 4 },
@@ -445,16 +447,10 @@ class HeightWidthDepth {
 
       for ( let originalImageSize of originalImageSizeArray ) {
 
-//!!! (2021/09/03 Remarked) Using channelShufflerPool instead.
-//         let outputGroupCount = 2; // Only support two convolution groups.
-//         let concatenatedShape = [ originalImageSize.height, originalImageSize.width, originalImageSize.depth * outputGroupCount ]; 
-//         let channelShuffler_ConcatPointwiseConv = new ChannelShuffler.ConcatPointwiseConv();
-//         channelShuffler_ConcatPointwiseConv.init( concatenatedShape, outputGroupCount );
-
-        // Note: channelShufflerPool and imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
+        // Note: imageSourceBag and channelShufflerPool should not be created outside tidy() because tidy() will dispose tensors
         //       dynamically created in them.
-        let channelShufflerPool = new ChannelShufflerPool.Base( ChannelShuffler.ConcatPointwiseConv );
         let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
+        let channelShufflerPool = new ChannelShufflerPool.Base( ChannelShuffler.ConcatPointwiseConv );
 
         let testParams = new PointDepthPoint_TestParams.Base();
         let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width );
@@ -470,9 +466,17 @@ class HeightWidthDepth {
           testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
         }
 
-        imageSourceBag.disposeTensors();
         channelShufflerPool.disposeTensors();
+        imageSourceBag.disposeTensors();
       }
+      
+      let memoryInfo_testCorrectness_after = tf.memory();
+
+      tf.util.assert( memoryInfo_testCorrectness_after.numTensors == memoryInfo_testCorrectness_before.numTensors ),
+        `testCorrectness() memory leak. `
+          + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
+          + `should be (${memoryInfo_testCorrectness_before.numTensors} `
+          + `${strNote}` );
     });
 
     // After correctness testing done, create all PointDepthPoint for performance testing.
