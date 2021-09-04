@@ -1,4 +1,4 @@
-export { get_or_create };
+export { get_or_create, values_recursively };
 
 /**
  * @param {Map} containerMap
