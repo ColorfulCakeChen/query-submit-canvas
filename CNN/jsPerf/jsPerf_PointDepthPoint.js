@@ -352,49 +352,49 @@ class HeightWidthDepth {
   // Test apply by depthwise convolution.
   test_DConv_1_bias_COS_AddInputToOutput() {
     let outputTensor3dArray = [];
-    this.pointDepthPoint_DConv_1_bias_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3dArray, outputTensor3dArray );
+    this.pointDepthPoint_DConv_1_bias_COS_AddInputToOutput.apply( this.dataTensor3dArray, outputTensor3dArray );
     tf.dispose( outputTensor3dArray );
   }
 
   test_Avg_bias_COS_AddInputToOutput() {
     let outputTensor3dArray = [];
-    this.pointDepthPoint_Avg_bias_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3dArray, outputTensor3dArray );
+    this.pointDepthPoint_Avg_bias_COS_AddInputToOutput.apply( this.dataTensor3dArray, outputTensor3dArray );
     tf.dispose( outputTensor3dArray );
   }
 
   test_Max_bias_COS_AddInputToOutput() {
     let outputTensor3dArray = [];
-    this.pointDepthPoint_Max_bias_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3dArray, outputTensor3dArray );
+    this.pointDepthPoint_Max_bias_COS_AddInputToOutput.apply( this.dataTensor3dArray, outputTensor3dArray );
     tf.dispose( outputTensor3dArray );
   }
 
   test_DConv_2_bias_COS_AddInputToOutput() {
     let outputTensor3dArray = [];
-    this.pointDepthPoint_DConv_2_bias_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3dArray, outputTensor3dArray );
+    this.pointDepthPoint_DConv_2_bias_COS_AddInputToOutput.apply( this.dataTensor3dArray, outputTensor3dArray );
     tf.dispose( outputTensor3dArray );
   }
 
   test_DConv_2_COS_AddInputToOutput() {
     let outputTensor3dArray = [];
-    this.pointDepthPoint_DConv_2_COS_AddInputToOutput.apply_and_destroy_or_keep( this.dataTensor3dArray, outputTensor3dArray );
+    this.pointDepthPoint_DConv_2_COS_AddInputToOutput.apply( this.dataTensor3dArray, outputTensor3dArray );
     tf.dispose( outputTensor3dArray );
   }
 
   test_DConv_2_COS() {
     let outputTensor3dArray = [];
-    this.pointDepthPoint_DConv_2_COS.apply_and_destroy_or_keep( this.dataTensor3dArray, outputTensor3dArray );
+    this.pointDepthPoint_DConv_2_COS.apply( this.dataTensor3dArray, outputTensor3dArray );
     tf.dispose( outputTensor3dArray );
   }
 
   test_DConv_32_bias_COS_P128_bias() {
     let outputTensor3dArray = [];
-    this.pointDepthPoint_DConv_32_bias_COS_P128_bias.apply_and_destroy_or_keep( this.dataTensor3dArray, outputTensor3dArray );
+    this.pointDepthPoint_DConv_32_bias_COS_P128_bias.apply( this.dataTensor3dArray, outputTensor3dArray );
     tf.dispose( outputTensor3dArray );
   }
 
   test_P128_bias_COS_P128_bias() {
     let outputTensor3dArray = [];
-    this.pointDepthPoint_P128_bias_COS_P128_bias.apply_and_destroy_or_keep( this.dataTensor3dArray, outputTensor3dArray );
+    this.pointDepthPoint_P128_bias_COS_P128_bias.apply( this.dataTensor3dArray, outputTensor3dArray );
     tf.dispose( outputTensor3dArray );
   }
 
