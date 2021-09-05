@@ -93,7 +93,7 @@ class ShuffleInfo {
     this.concatReshapeTransposeReshapeSplit = this.concatReshapeTransposeReshapeSplit_dispose_finally_calls;
   }
 
-  /** Release tf.tensor. */
+  /** Release tf.tensor. (In fact, no tensors needed to be disposed in ShuffleInfo. */
   disposeTensors() {
     // No tensors need to be disposed.
 
@@ -226,6 +226,12 @@ class ShuffleInfo {
  * The extra cost is a pre-built channel index look up table (with tensor1d).
  *
  *
+ * @member {number[]} concatenatedShape
+ *   (Please see ShuffleInfo explanation.)
+ *
+ * @member {number} outputGroupCount
+ *   (Please see ShuffleInfo explanation.)
+ *
  * @member {ShuffleInfo} shuffleInfo
  *   The information calculated from concatenatedShape and outputGroupCount.
  *
@@ -291,6 +297,14 @@ class ConcatGather {
     }
   }
 
+  get concatenatedShape() {
+    return this.shuffleInfo.concatenatedShape;
+  }
+
+  get outputGroupCount() {
+    return this.shuffleInfo.outputGroupCount;
+  }
+
   /**
    * Permute and split the input tensor by gather.
    *
@@ -341,6 +355,12 @@ class ConcatGather {
  *
  * The extra cost is a pre-built channel index look up table (with integers, not tensor1d).
  *
+ *
+ * @member {number[]} concatenatedShape
+ *   (Please see ShuffleInfo explanation.)
+ *
+ * @member {number} outputGroupCount
+ *   (Please see ShuffleInfo explanation.)
  *
  * @member {ShuffleInfo} shuffleInfo
  *   The information calculated from concatenatedShape and outputGroupCount.
@@ -406,6 +426,14 @@ class SplitConcat {
       this.shuffleInfo.disposeTensors();
       this.shuffleInfo = null;
     }
+  }
+
+  get concatenatedShape() {
+    return this.shuffleInfo.concatenatedShape;
+  }
+
+  get outputGroupCount() {
+    return this.shuffleInfo.outputGroupCount;
   }
 
   /**
@@ -486,6 +514,12 @@ class SplitConcat {
  * filters. The reason seems that the tf.split() is a slow operation (especially in mobile).
  *
  *
+ *
+ * @member {number[]} concatenatedShape
+ *   (Please see ShuffleInfo explanation.)
+ *
+ * @member {number} outputGroupCount
+ *   (Please see ShuffleInfo explanation.)
  *
  * @member {ShuffleInfo} shuffleInfo
  *   The information calculated from concatenatedShape and outputGroupCount.
@@ -575,6 +609,14 @@ class ConcatPointwiseConv {
       this.shuffleInfo.disposeTensors();
       this.shuffleInfo = null;
     }
+  }
+
+  get concatenatedShape() {
+    return this.shuffleInfo.concatenatedShape;
+  }
+
+  get outputGroupCount() {
+    return this.shuffleInfo.outputGroupCount;
   }
 
   /**
