@@ -3,6 +3,7 @@ export { Base };
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as ChannelShuffler from "../../Conv/ChannelShuffler.js";
 import * as ChannelShufflerPool from "../../Conv/ChannelShufflerPool.js";
 import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
