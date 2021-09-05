@@ -62,7 +62,7 @@ class ShuffleInfo {
     if ( outputGroupCount < 1 )
       outputGroupCount = 1; // At least one (means: no shuffle and split (i.e. just concatenate only)).
 
-    this.concatenatedShape = concatenatedShape;
+    this.concatenatedShape = Array.from( concatenatedShape ); // Clone it (by shallow-copy) because the outside may modify it.
     this.outputGroupCount = outputGroupCount;
 
     let lastAxisId = this.lastAxisId = concatenatedShape.length - 1;
