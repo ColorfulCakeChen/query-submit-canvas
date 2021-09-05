@@ -648,7 +648,7 @@ class Base {
 
       // 5.1 Concat2, shuffle, split.
       if ( testParams.out.bOutput1Requested == true ) {
-        Base.calcConcatShuffleSplit( channelShuffler_ConcatPointwiseConv,
+        this.calcConcatShuffleSplit( channelShuffler_ConcatPointwiseConv,
           imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
 
       // 5.2 Concat2 only.
@@ -1139,7 +1139,7 @@ class Base {
    * @param {string}   concatShuffleSplitName       A string for debug message of this concatenation-shuffle-split.
    * @param {string}   parametersDesc               A string for debug message of this point-depth-point.
    */
-  static calcConcatShuffleSplit(
+  calcConcatShuffleSplit(
     channelShuffler_ConcatPointwiseConv, imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
 
     tf.util.assert(
