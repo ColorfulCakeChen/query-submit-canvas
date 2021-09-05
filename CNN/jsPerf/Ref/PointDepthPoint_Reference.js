@@ -1170,13 +1170,33 @@ class Base {
         + `(${parametersDesc})`
     );
 
-    let channelShuffler_ShuffleInfo = this.channelShufflerPool.getChannelShuffler_by(
-      channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ],
-      channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ],
-      channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ],
-      channelShuffler_ConcatPointwiseConv.outputGroupCount
-    );
+    let channelShuffler_ShuffleInfo;
+    {
+      channelShuffler_ShuffleInfo = this.channelShufflerPool.getChannelShuffler_by(
+        channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ],
+        channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ],
+        channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ],
+        channelShuffler_ConcatPointwiseConv.outputGroupCount
+      );
 
+      for ( let i = 0; i < 2; ++i ) {
+        tf.util.assert(
+          channelShuffler_ShuffleInfo.concatenatedShape[ i ] == channelShuffler_ConcatPointwiseConv.concatenatedShape[ i ],
+          `${concatShuffleSplitName}: `
+            + `channelShuffler_ShuffleInfo.concatenatedShape[ ${i} ] ( ${channelShuffler_ShuffleInfo.concatenatedShape[ i ]} ) `
+            + `should be the same as `
+            + `channelShuffler_ConcatPointwiseConv.concatenatedShape[ ${i} ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ i ]} ) `
+            + `${parametersDesc}`);
+      }
+
+        tf.util.assert(
+          channelShuffler_ShuffleInfo.outputGroupCount == channelShuffler_ConcatPointwiseConv.outputGroupCount,
+          `${concatShuffleSplitName}: `
+            + `channelShuffler_ShuffleInfo.outputGroupCount ( ${channelShuffler_ShuffleInfo.outputGroupCount} ) `
+            + `should be the same as `
+            + `channelShuffler_ConcatPointwiseConv.outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
+            + `${parametersDesc}`);
+    }
 
     // Converty input images to tensors.
     let tensorInArray = new Array( imageInArray.length );
