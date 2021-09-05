@@ -120,6 +120,22 @@ class Base {
             let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
             channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
               imageInArraySelected[ 0 ].height, imageInArraySelected[ 0 ].width, concatenatedDepth, outputGroupCount );
+
+            tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageInArraySelected[ 0 ].height,
+              `ChannelShuffler concatenatedShape[ 0 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]} ) `
+                + `should be the same as image height ( ${imageInArraySelected[ 0 ].height} ). ${strNote}`);
+
+            tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageInArraySelected[ 0 ].width,
+              `ChannelShuffler concatenatedShape[ 1 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]} ) `
+                + `should be the same as image width ( ${imageInArraySelected[ 0 ].heigwidthht} ). ${strNote}`);
+
+            tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth,
+              `ChannelShuffler concatenatedShape[ 2 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
+                + `should be the same as image concatenatedDepth ( ${concatenatedDepth} ). ${strNote}`);
+
+            tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
+              `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
+                + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
           }
         }
 
