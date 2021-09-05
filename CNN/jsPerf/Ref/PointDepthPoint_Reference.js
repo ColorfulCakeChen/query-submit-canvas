@@ -3,10 +3,10 @@ export { Base };
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as ChannelShufflerPool from "../../Conv/ChannelShufflerPool.js";
 import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
 import * as ImageSourceBag from "./ImageSourceBag.js";
-
 
 /**
  * Reference computation of class PointDepthPoint.Base.
@@ -17,6 +17,8 @@ class Base {
    *
    */
   constructor() {
+    this.channelShufflerPool = new ChannelShufflerPool.Base( ChannelShuffler.ShuffleInfo );
+
     // For reducing memory allocation.
     this.imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
     this.outputTensor3dArray = new Array( 2 );
@@ -1151,6 +1153,14 @@ class Base {
         + `(${parametersDesc})`
     );
 
+    let channelShuffler_ShuffleInfo = this.channelShufflerPool.getChannelShuffler_by(
+      channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ],
+      channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ],
+      channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ],
+      channelShuffler_ConcatPointwiseConv.outputGroupCount
+    );
+
+
     // Converty input images to tensors.
     let tensorInArray = new Array( imageInArray.length );
     for ( let i = 0; i < imageInArray.length; ++i ) {
@@ -1159,7 +1169,11 @@ class Base {
     }
 
     // Concat-shuffle-split.
-    let tensorOutArray = channelShuffler_ConcatPointwiseConv.concatGather( tensorInArray );
+    // 
+    // Using different channel shuffler implementation for comparsion correctness.
+//!!! (2021/09/05 Remarked) Using different channel shuffler implementation for comparsion correctness.
+//    let tensorOutArray = channelShuffler_ConcatPointwiseConv.concatGather( tensorInArray );
+    let tensorOutArray = channelShuffler_ShuffleInfo.concatReshapeTransposeReshapeSplit( tensorInArray );
 
     // Converty output tensors to images.
     for ( let i = 0; i < imageOutArray.length; ++i ) {
