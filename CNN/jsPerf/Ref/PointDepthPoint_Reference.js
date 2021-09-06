@@ -60,7 +60,7 @@ class Base {
 
       let strNote;
 
-//!!! ...unfinished... (2021/09/06) Move to PointDepthPoint.Params.estimate_input1ChannelCount.
+//!!! ...unfinished... (2021/09/06) Move to PointDepthPoint.Params.estimate_input1ChannelCount. (estimate_inChannels1)
 
       let bTwoInputs; // The input tensor count is determined by channelCount1_pointwise1Before totally.
       let input1ChannelCount;
