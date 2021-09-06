@@ -8,6 +8,12 @@ import * as PointDepthPoint from "./PointDepthPoint.js";
 
 /**
  * Convolution block parameters.
+ *
+ * @member {number} outputHeight
+ *   The height of output image. It is half of the input height (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
+ *
+ * @member {number} outputWidth
+ *   The width of output image. It is half of the input width (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
  */
 class Params extends Weights.Params {
 
@@ -123,6 +129,46 @@ class Params extends Weights.Params {
     return super.init( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
+  /**
+   * Extract parameters from inputFloat32Array.
+   *
+   * @return {boolean} Return false, if extraction failed.
+   *
+   * @override
+   */
+  extract() {
+    let bExtractOk = super.extract();
+    if ( !bExtractOk )
+      return false;
+
+    Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( this, this.sourceHeight, this.sourceWidth );
+
+    return bExtractOk;
+  }
+
+//!!! ...unfinished... (2021/09/06) How about outputChannelCount?
+
+  /**
+   * Determine the following properties:
+   *   - this.outputHeight
+   *   - this.outputWidth
+   *
+   * @param {number} sourceHeight  The height of source image.
+   * @param {number} sourceWidth   The width of source image.
+   */
+  static set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( sourceHeight, sourceWidth ) {
+
+    // By default, the output ( height, width ) is half of the input (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
+    //
+    // Note: This calculation copied from the getPadAndOutInfo() of
+    // (https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts).
+    //
+
+    let stridesHeight = 2, stridesWidth = 2;
+    this.outputHeight = Math.ceil( sourceHeight / stridesHeight );
+    this.outputWidth =  Math.ceil( sourceWidth  / stridesWidth );
+  }
+  
   get sourceHeight()                { return this.parameterMapModified.get( Params.sourceHeight ); }
   get sourceWidth()                 { return this.parameterMapModified.get( Params.sourceWidth ); }
   get sourceChannelCount()          { return this.parameterMapModified.get( Params.sourceChannelCount ); }
@@ -281,19 +327,6 @@ class Base {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-
-//!!! ...unfinished... (2021/07/30) Perhaps, moved to Params.outputHeight() as a standalone function.
-
-    // By default, the output ( height, width ) is half of the input (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
-    //
-    // Note: This calculation copied from the getPadAndOutInfo() of
-    // (https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts).
-    //
-    {
-      let stridesHeight = 2, stridesWidth = 2;
-      this.outputHeight = Math.ceil( this.sourceHeight / stridesHeight );
-      this.outputWidth =  Math.ceil( this.sourceWidth  / stridesWidth );
-    }
 
 
 //!!! ...unfinished... (2021/09/06)
