@@ -296,6 +296,10 @@ class Base {
     }
 
 
+//!!! ...unfinished... (2021/09/06)
+// Determine ( height, width, depth ) of concatenatedShape of channel shuffler by input1 (not input0) of PointDepthPoint.
+
+
     let stepParamsMaker = Base.create_Params_to_PointDepthPointParams( params );
     stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last(); // Calculate the real step count.
 
