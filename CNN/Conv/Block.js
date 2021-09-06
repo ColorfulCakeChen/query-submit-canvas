@@ -808,7 +808,7 @@ class Params_to_PointDepthPointParams_ShuffleNetV2 extends Params_to_PointDepthP
 
     // In ShuffleNetV2, all steps' pointwise22 has bias and activation. It achieves both pointwise and channel-shuffling.
     //
-    // Note: Comparing to the original ShuffleNetV2, this moght be a little more expensive because every all non-step0
+    // Note: Comparing to the original ShuffleNetV2, this might be a little more expensive because every all non-step0
     //       (i.e. step1, step2, ..., stepLast) will do one more bias and activation (although do one less pointwise
     //       convolution).
     this.pointwise22ChannelCount = blockParams.sourceChannelCount; // All steps' (except stepLast) output1 is the same depth as source input1.
