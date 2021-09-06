@@ -113,21 +113,22 @@ class Base {
           `PointDepthPoint imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
 
         // Prepare channel shuffler.
-        {
+        let imageIn1 = imageInArraySelected[ 1 ]; // The shape of input1 (not input0) determine the concatenatedShape of channel shuffler.
+        if ( imageIn1 ) {
           if ( channelCount1_pointwise1Before
                  == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
             let outputGroupCount = 2; // Only use two convolution groups.
             let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
             channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
-              imageInArraySelected[ 0 ].height, imageInArraySelected[ 0 ].width, concatenatedDepth, outputGroupCount );
+              imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
 
-            tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageInArraySelected[ 0 ].height,
+            tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height,
               `ChannelShuffler concatenatedShape[ 0 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]} ) `
-                + `should be the same as image height ( ${imageInArraySelected[ 0 ].height} ). ${strNote}`);
+                + `should be the same as image height ( ${imageIn1.height} ). ${strNote}`);
 
-            tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageInArraySelected[ 0 ].width,
+            tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width,
               `ChannelShuffler concatenatedShape[ 1 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]} ) `
-                + `should be the same as image width ( ${imageInArraySelected[ 0 ].heigwidthht} ). ${strNote}`);
+                + `should be the same as image width ( ${imageIn1.width} ). ${strNote}`);
 
             tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth,
               `ChannelShuffler concatenatedShape[ 2 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
