@@ -617,7 +617,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * @member {number} outChannels1
  *   The channel count of the outputTensor[ 1 ]. If ( pointwise22ChannelCount == 0 ), this will be zero.
  *
- * @member {number} outChannels
+ * @member {number} outChannelsAll
  *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
  *
  * @member {number} channelCount_pointwise1After_depthwise1Before
