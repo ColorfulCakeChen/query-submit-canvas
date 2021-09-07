@@ -443,24 +443,31 @@ class Base {
    */
   static create_Params_to_PointDepthPointParams( blockParams ) {
 
-//!!! ...unfninished... (2021/09/07) nWhetherShuffleChannel
-
     if ( this.stepCountPerBlock == 0 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
       return new Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet( blockParams );
 
     } else {
-      if ( this.bChannelShuffler == true ) { // 2. ShuffleNetV2
-        return new Params.to_PointDepthPointParams.ShuffleNetV2_Slower( blockParams );
-//!!! ...unfinished... (2021/09/07) How to choose?
-//        return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams );
+      swtich ( this.nWhetherShuffleChannel ) {
+        case Value.WhetherShuffleChannelSingleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
+          // ( pointwise1ChannelCountRate == 0 ), will be similar to MobileNetV1.
+          // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV2 without expanding.
+          // ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
+          return new Params.to_PointDepthPointParams.MobileNetV2( blockParams );
+          break;
 
-      } else { // ( bChannelShuffler == false )
-        // 3. MobileNetV2
-        //
-        // ( pointwise1ChannelCountRate == 0 ), will be similar to MobileNetV1.
-        // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV2 without expanding.
-        // ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
-        return new Params.to_PointDepthPointParams.MobileNetV2( blockParams );
+        case Value.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
+          return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams );
+          break;
+
+        case Value.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
+          return new Params.to_PointDepthPointParams.ShuffleNetV2_Slower( blockParams );
+          break;
+
+        default:
+          tf.util.assert( false,
+            `Block.create_Params_to_PointDepthPointParams(): `
+              + `unknown this.nWhetherShuffleChannel ( ${this.nWhetherShuffleChannel} ) value.` );
+          break;
       }
     }
   }
@@ -695,11 +702,11 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
 }
 
 
-/** Provide parameters for ShuffleNetV2 (i.e. with pointwise1, with concatenator).
+/** Provide parameters for slower ShuffleNetV2 (i.e. shuffle channel by pointwise22).
  *
- * 1. (Our) Adjusted ShuffleNetV2:
+ * 1. Slower ShuffleNetV2:
  *
- * Since channel shuffler could achieved efficiently by pointwise convolution, it may be possible to combine the pointwise2
+ * Since channel shuffler could achieved efficiently by pointwise convolution, it is possible to combine the pointwise2
  * convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
  *   - Concatenate the output of depthwise convolution and the other output group.
  *   - Pointwise convolution to generate output group 1.
@@ -755,6 +762,8 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
  *   - But more independent pointwise weights, more bias and more activation function.
  *   - Ours may be better or worse.
  *
+ * In summary, this method may result in a slower ShuffleNetV2.
+ *
 
 !!! ...unfinished... (2021/08/19) How to improve?
 
@@ -797,6 +806,9 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
  *
  *
  */
+
+//!!! ...unfninished... (2021/09/07) nWhetherShuffleChannel, class Params.to_PointDepthPointParams.ShuffleNetV2.
+
 Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_PointDepthPointParams {
 
   /** @override */
