@@ -277,8 +277,7 @@ class Params extends Weights.Params {
    * Determine the following properties:
    *   - this.outputTensorCount
    */
-  static set_outputTensorCount_by(
-           channelCount1_pointwise1Before, pointwise21ChannelCount, bOutput1Requested ) {
+  static set_outputTensorCount_by( channelCount1_pointwise1Before, pointwise21ChannelCount, bOutput1Requested ) {
 
     // 1.
     if ( bOutput1Requested == true )
