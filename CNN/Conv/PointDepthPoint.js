@@ -23,8 +23,8 @@ import * as TensorOpCounter from "./TensorOpCounter.js";
  * Pointwise-depthwise-pointwise convolution layer parameters.
  *
  * @member {number} input1ChannelCount
- *   The channel count of the second input (i.e. input1). This is referred from other parameters. The inputTensors[ 1 ]'s channel count
- * of PointDepthPoint.apply() should match this value.
+ *   The channel count of the second input (i.e. input1). This is referred (estimated) from other parameters. The inputTensors[ 1 ]'s
+ * channel count of PointDepthPoint.apply() should match this value.
  *
  * @member {number} pointwise22ChannelCount
  *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ) and
