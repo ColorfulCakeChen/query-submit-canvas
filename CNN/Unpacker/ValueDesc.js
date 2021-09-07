@@ -1,8 +1,6 @@
 export { Same, Bool, Int, ActivationFunction };
 export { AvgMax_Or_ChannelMultiplier, channelCount1_pointwise1Before };
-
-//!!! ...unfinished... (2021/08/31 Remarked) inferred from bPointwise22.
-//export { pointwise22ChannelCount };
+export { WhetherShuffleChannel };
 
 import * as ValueRange from "./ValueRange.js";
 
@@ -212,27 +210,24 @@ class channelCount1_pointwise1Before extends Int {
 channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
 
 
-//!!! ...unfinished... (2021/08/31 Remarked) inferred from bPointwise22.
-//
-// /** Describe id, range, name of pointwise22ChannelCount.
-//  *
-//  * Convert number value into integer between [ -2, ( 10 * 1024 ) ] representing operation:
-//  *   - -2: TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT
-//  *   - -1: ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1
-//  *   -  0: ONE_OUTPUT__POINTWISE21 (i.e. uss depthwise result to generate pointwisw21).
-//  *   - [ 1, ( 10 * 1024 ) ]: TWO_OUTPUTS with the second output channel count between 1 and 10240 (inclusive). (without names defined.)
-//  */
-// class pointwise22ChannelCount extends Int {
-//
-//   constructor() {
-//     super( -2, ( 10 * 1024 ), [
-//       "TWO_OUTPUTS__CONCAT_POINTWISE21_INPUT1__SHUFFLE__SPLIT", // (-2)
-//       "ONE_OUTPUT__CONCAT_POINTWISE21_INPUT1",                  // (-1)
-//       "ONE_OUTPUT__POINTWISE21",                                // ( 0)
-//     ] );
-//   }
-//
-// }
-//
-// /** The only one ValueDesc.pointwise22ChannelCount instance. */
-// pointwise22ChannelCount.Singleton = new pointwise22ChannelCount;
+/** Describe id, range, name of WhetherShuffleChannel.
+ *
+ * Convert number value into integer between [ 0, 2 ] representing operation:
+ *   - 0: NONE (i.e. NotShuffleNet_NotMobileNet, or MobileNet)
+ *   - 2: BY_CHANNEL_SHUFFLER (i.e. ShuffleNetV2)
+ *   - 1: BY_POINTWISE22 (i.e. Slower ShuffleNetV2)
+ */
+class WhetherShuffleChannel extends Int {
+
+  constructor() {
+    super( 0, 2, [
+      "NONE",                // (0)
+      "BY_CHANNEL_SHUFFLER", // (1)
+      "BY_POINTWISE22",      // (2)
+    ] );
+  }
+
+}
+
+/** The only one ValueDesc.WhetherShuffleChannel instance. */
+WhetherShuffleChannel.Singleton = new WhetherShuffleChannel;
