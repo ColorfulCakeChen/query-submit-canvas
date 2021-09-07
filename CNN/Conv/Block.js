@@ -438,13 +438,10 @@ class Base {
 
     } else {
       if ( this.bChannelShuffler == true ) { // 2. ShuffleNetV2
-        if ( this.pointwise1ChannelCountRate == 0 ) { // 2.1 will be simplified ShuffleNetV2 (expanding by once depthwise).
-          return new Params_to_PointDepthPointParams.ShuffleNetV2_Simplified( blockParams );
+        return new Params_to_PointDepthPointParams.ShuffleNetV2_Slower( blockParams );
+//!!! ...unfinished... (2021/09/07) How to choose?
+//        return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams );
 
-        } else { // 2.2 ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
-          return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams );
-
-        }
       } else { // ( bChannelShuffler == false )
         // 3. MobileNetV2
         //
