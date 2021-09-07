@@ -5,6 +5,7 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as PointDepthPoint from "./PointDepthPoint.js";
+import * as ChannelShuffler from "./ChannelShuffler.js";
 
 /**
  * Convolution block parameters.
@@ -369,6 +370,8 @@ class Base {
 
       stepParams = stepParamsMaker.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
 
+//!!! ...unfninished... (2021/09/07) this.channelShuffler = null;
+
       step = this.stepsArray[ i ] = new PointDepthPoint.Base();
       stepIniter = step.initer( progressForSteps.children[ i ], stepParams );
 
@@ -531,6 +534,8 @@ Params.to_PointDepthPointParams = class {
 
     this.depthwiseFilterHeight_Default = -1; // The default depthwise filter size.
     this.depthwiseFilterHeight_Last =  -1;   // The last step's depthwise filter size.
+
+    this.channelShuffler = null;
   }
 
   /** Called to determine stepCount, depthwiseFilterHeight_Default and depthwiseFilterHeight_Last.
@@ -806,9 +811,6 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
  *
  *
  */
-
-//!!! ...unfninished... (2021/09/07) nWhetherShuffleChannel, class Params.to_PointDepthPointParams.ShuffleNetV2.
-
 Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_PointDepthPointParams {
 
   /** @override */
@@ -847,6 +849,94 @@ Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_Po
     this.pointwise1ChannelCount = this.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate; // In ShuffleNetV2, the rate is usually 1.
 
     this.bShouldKeepInputTensor = blockParams.bKeepInputTensor;    // Step0 may or may not keep input tensor according to caller's necessary.
+
+    // NoPointwise1 ShuffleNetV2 (expanding by once depthwise).
+    //
+    // If step0 does not have pointwise1 convolution before depthwise convolution, the depthwise2
+    // convolution (in original ShuffleNetV2) is not needed. Then, a simpler configuration could be used.
+    //
+    // Just use once depthwise convolution (but with channel multipler 2) to double the channel count.
+    if ( this.pointwise1ChannelCount == 0 ) {
+      this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;  // Step0 double the channel count by depthwise channel multiplier.
+    }
+  }
+
+  /** @override */
+  configTo_afterStep0( step0 ) {
+
+    // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
+    this.channelCount0_pointwise1Before = step0.outChannels0;
+    this.channelCount1_pointwise1Before = step0.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
+
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
+    this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+
+    this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+  }
+
+  /** @override */
+  configTo_beforeStepLast() {
+    super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
+
+    // In ShuffleNetV2, the stepLast only has output0 (no output1). And the output0 has double channel count of source input0.
+    //
+    // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
+    // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
+    // not changed.
+    this.pointwise21ChannelCount = this.blockParams.sourceChannelCount * 2;
+    this.pointwise22ChannelCount = 0;
+  }
+}
+
+
+/**
+ *
+ */
+Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDepthPointParams {
+
+//!!! ...unfninished... (2021/09/07) this.channelShuffler = null;
+  
+  /** @override */
+  configTo_beforeStep0() {
+    let blockParams = this.blockParams;
+    this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenation.
+
+    this.pointwise1Bias = true;
+    this.pointwise1ActivationId = blockParams.nActivationId;
+
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                  // All steps will not double the channel count.
+    this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps uses default depthwise filter size.
+    this.depthwiseStridesPad = 2;                                    // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
+
+    // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
+    this.depthwiseBias = false;
+    this.depthwiseActivationId = ValueDesc.Activation.Singleton.Ids.NONE; // In ShuffleNetV2, depthwise convolution doesn't have activation.
+
+    // In ShuffleNetV2, all steps' pointwise21 always has bias and activation. It achieves both pointwise and channel-shuffling.
+    this.pointwise21ChannelCount = blockParams.sourceChannelCount; // All steps' (except stepLast) output0 is the same depth as source input0.
+    this.pointwise21Bias = true;
+    this.pointwise21ActivationId = blockParams.nActivationId;
+
+    // In ShuffleNetV2, all steps' pointwise22 has bias and activation. It achieves both pointwise and channel-shuffling.
+    //
+    // Note: Comparing to the original ShuffleNetV2, this might be a little more expensive because every all non-step0
+    //       (i.e. step1, step2, ..., stepLast) will do one more bias and activation (although do one less pointwise
+    //       convolution).
+    this.pointwise22ChannelCount = blockParams.sourceChannelCount; // All steps' (except stepLast) output1 is the same depth as source input1.
+    this.pointwise22Bias = true;
+    this.pointwise22ActivationId = blockParams.nActivationId;
+
+    // In ShuffleNetV2, all steps have pointwise1 convolution before depthwise convolution. Its channel count is adjustable by user's request.
+    // If ( pointwise1ChannelCountRate == 0 ), it is the same as no pointwise1.
+    this.pointwise1ChannelCount = this.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate; // In ShuffleNetV2, the rate is usually 1.
+
+    this.bShouldKeepInputTensor = blockParams.bKeepInputTensor;    // Step0 may or may not keep input tensor according to caller's necessary.
+
+
+//!!! ...unfninished... (2021/09/07) this.channelShuffler = null;
+
 
     // NoPointwise1 ShuffleNetV2 (expanding by once depthwise).
     //
