@@ -24,7 +24,7 @@ import * as TensorOpCounter from "./TensorOpCounter.js";
  *
  * @member {number} input1ChannelCount
  *   The channel count of the second input (i.e. input1). This is referred (estimated) from other parameters. The inputTensors[ 1 ]'s
- * channel count of PointDepthPoint.apply() should match this value.
+ * channel count of PointDepthPoint.apply() should match this value. The PointDepthPoint.inChannels1 should also the same this value.
  *
  * @member {number} pointwise22ChannelCount
  *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ) and
@@ -1037,6 +1037,11 @@ class Base extends ReturnOrClone.Base {
     } else {
       this.inChannels1 = Math.max( 0, this.channelCount1_pointwise1Before );
     }      
+
+    tf.util.assert( this.inChannels1 == params.input1ChannelCount,
+      `PointDepthPoint.initer(): this.inChannels1 ( ${this.inChannels1} ) `
+        + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
+    );
 
     // 5.4
     ++progressToAdvance.value;
