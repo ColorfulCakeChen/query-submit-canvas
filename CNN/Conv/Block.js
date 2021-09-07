@@ -57,7 +57,10 @@ class Params extends Weights.Params {
    *       height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until
    *       the block end.
    *
-   * @param {boolean} bChannelShuffler
+
+!!! ...unfninished... (2021/09/07)
+
+   * @param {boolean} nWhetherShuffleChannel
    *   Whether a (concatenator and) channel shuffler will be used.
    *   - If ( stepCountPerBlock == 0 ), this flag will be ignored. There will be no channel shuffler.
    *   - If ( bChannelShuffler == true ), this block will be similar to ShuffleNetV2 (i.e. split and concat channels).
@@ -97,7 +100,7 @@ class Params extends Weights.Params {
   init( inputFloat32Array, byteOffsetBegin,
     sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
-    bChannelShuffler,
+    nWhetherShuffleChannel,
     pointwise1ChannelCountRate,
     depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd,
     bKeepInputTensor
@@ -119,7 +122,7 @@ class Params extends Weights.Params {
       [ Params.sourceWidth,                sourceWidth ],
       [ Params.sourceChannelCount,         sourceChannelCount ],
       [ Params.stepCountPerBlock,          stepCountPerBlock ],
-      [ Params.bChannelShuffler,           bChannelShuffler ],
+      [ Params.nWhetherShuffleChannel,     nWhetherShuffleChannel ],
       [ Params.pointwise1ChannelCountRate, pointwise1ChannelCountRate ],
       [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
       [ Params.nActivationId,              nActivationId ],
@@ -175,7 +178,7 @@ class Params extends Weights.Params {
   get sourceChannelCount()          { return this.parameterMapModified.get( Params.sourceChannelCount ); }
 
   get stepCountPerBlock()           { return this.parameterMapModified.get( Params.stepCountPerBlock ); }
-  get bChannelShuffler()            { return this.parameterMapModified.get( Params.bChannelShuffler ); }
+  get nWhetherShuffleChannel()      { return this.parameterMapModified.get( Params.nWhetherShuffleChannel ); }
   get pointwise1ChannelCountRate()  { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
 
   get depthwiseFilterHeight()       { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
@@ -189,16 +192,16 @@ class Params extends Weights.Params {
 
 
 // Define parameter descriptions.
-Params.sourceHeight =               new ParamDesc.Int(                "sourceHeight",               1, ( 10 * 1024 ) );
-Params.sourceWidth =                new ParamDesc.Int(                "sourceWidth",                1, ( 10 * 1024 ) );
-Params.sourceChannelCount =         new ParamDesc.Int(                "sourceChannelCount",         1, ( 10 * 1024 ) );
-Params.stepCountPerBlock =          new ParamDesc.Int(                "stepCountPerBlock",          0, (  1 * 1024 ) );
-Params.bChannelShuffler =           new ParamDesc.Bool(               "bChannelShuffler" );
-Params.pointwise1ChannelCountRate = new ParamDesc.Int(                "pointwise1ChannelCountRate", 0,             2 );
-Params.depthwiseFilterHeight =      new ParamDesc.Int(                "depthwiseFilterHeight",      1,             9 );
-Params.nActivationId =              new ParamDesc.ActivationFunction( "nActivationId" );
-Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction( "nActivationIdAtBlockEnd" );
-Params.bKeepInputTensor =           new ParamDesc.Bool(               "bKeepInputTensor" );
+Params.sourceHeight =               new ParamDesc.Int(                   "sourceHeight",               1, ( 10 * 1024 ) );
+Params.sourceWidth =                new ParamDesc.Int(                   "sourceWidth",                1, ( 10 * 1024 ) );
+Params.sourceChannelCount =         new ParamDesc.Int(                   "sourceChannelCount",         1, ( 10 * 1024 ) );
+Params.stepCountPerBlock =          new ParamDesc.Int(                   "stepCountPerBlock",          0, (  1 * 1024 ) );
+Params.nWhetherShuffleChannel =     new ParamDesc.WhetherShuffleChannel( "nWhetherShuffleChannel" );
+Params.pointwise1ChannelCountRate = new ParamDesc.Int(                   "pointwise1ChannelCountRate", 0,             2 );
+Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1,             9 );
+Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
+Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction(    "nActivationIdAtBlockEnd" );
+Params.bKeepInputTensor =           new ParamDesc.Bool(                  "bKeepInputTensor" );
 
 
 /**
