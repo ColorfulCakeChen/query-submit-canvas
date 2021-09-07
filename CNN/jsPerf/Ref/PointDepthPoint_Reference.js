@@ -73,7 +73,7 @@ class Base {
           this.testParams.out.pointwise21ChannelCount,
           this.testParams.out.bOutput1Requested );
 
-        bTwoInputs = ( referredParams.outputTensorCount == 2 );
+        bTwoInputs = ( referredParams.inputTensorCount == 2 );
         input1ChannelCount = referredParams.input1ChannelCount;
       }
 
