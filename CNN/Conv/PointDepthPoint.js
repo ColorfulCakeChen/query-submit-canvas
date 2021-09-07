@@ -262,7 +262,7 @@ class Params extends Weights.Params {
    * Determine the following properties:
    *   - this.inputTensorCount
    */
-  static set__inputTensorCount__by__channelCount1_pointwise1Before( channelCount1_pointwise1Before ) {
+  static set_inputTensorCount_by( channelCount1_pointwise1Before ) {
 
     // The input tensor count is totally determined by channelCount1_pointwise1Before.
     if (   ( channelCount1_pointwise1Before > 0 )
