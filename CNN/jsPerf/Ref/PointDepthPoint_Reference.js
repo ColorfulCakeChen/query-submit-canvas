@@ -60,44 +60,60 @@ class Base {
 
       let strNote;
 
-//!!! ...unfinished... (2021/09/06) Move to PointDepthPoint.Params.estimate_input1ChannelCount. (estimate_inChannels1)
-
-      let bTwoInputs; // The input tensor count is determined by channelCount1_pointwise1Before totally.
-      let input1ChannelCount;
+      let referredParams = {};
+      let bTwoInputs, input1ChannelCount;
       {
-        if ( channelCount1_pointwise1Before > 0 ) {
-          bTwoInputs = true; // Two inputs.
-          input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
+        // The input tensor count is determined by channelCount1_pointwise1Before totally.
+        PointDepthPoint.Params.set_inputTensorCount_by.call( referredParams, channelCount1_pointwise1Before );
 
-        } else if ( channelCount1_pointwise1Before
-                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
-          bTwoInputs = true; // Two inputs.
+        PointDepthPoint.Params.set_input1ChannelCount_by.call( referredParams,
+          channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+          this.testParams.out.pointwise1ChannelCount,
+          this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+          this.testParams.out.pointwise21ChannelCount,
+          this.testParams.out.bOutput1Requested );
 
-          // Find out input1's channel count.
-          //
-          // Although The second input's channel count should be the same as pointwise21's result, however, it is not the
-          // same as pointwise21ChannelCount directly because pointwise21ChannelCount may be zero. It should be determined
-          // by pointwise21, depthewise1, pointwise1, input0.
-          //
-          input1ChannelCount = this.testParams.out.pointwise21ChannelCount;
-          if ( input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
-
-            input1ChannelCount = this.testParams.out.pointwise1ChannelCount;
-            if ( input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
-              input1ChannelCount = channelCount0_pointwise1Before;
-            }
-
-            if ( this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-              input1ChannelCount *= this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
-
-            } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
-          }
-
-        } else {
-          bTwoInputs = false; // One input.
-          input1ChannelCount = 0;
-        }
+        bTwoInputs = ( referredParams.outputTensorCount == 2 );
+        input1ChannelCount = referredParams.input1ChannelCount;
       }
+
+//!!! (2021/09/07 Remarked) Using PointDepthPoint.Params static function.
+//       let bTwoInputs; // The input tensor count is determined by channelCount1_pointwise1Before totally.
+//       let input1ChannelCount;
+//       {
+//         if ( channelCount1_pointwise1Before > 0 ) {
+//           bTwoInputs = true; // Two inputs.
+//           input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
+//
+//         } else if ( channelCount1_pointwise1Before
+//                       == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
+//           bTwoInputs = true; // Two inputs.
+//
+//           // Find out input1's channel count.
+//           //
+//           // Although The second input's channel count should be the same as pointwise21's result, however, it is not the
+//           // same as pointwise21ChannelCount directly because pointwise21ChannelCount may be zero. It should be determined
+//           // by pointwise21, depthewise1, pointwise1, input0.
+//           //
+//           input1ChannelCount = this.testParams.out.pointwise21ChannelCount;
+//           if ( input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
+//
+//             input1ChannelCount = this.testParams.out.pointwise1ChannelCount;
+//             if ( input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
+//               input1ChannelCount = channelCount0_pointwise1Before;
+//             }
+//
+//             if ( this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+//               input1ChannelCount *= this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
+//
+//             } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
+//           }
+//
+//         } else {
+//           bTwoInputs = false; // One input.
+//           input1ChannelCount = 0;
+//         }
+//       }
 
       let channelShuffler_ConcatPointwiseConv;
       let imageOutReferenceArray;
@@ -310,8 +326,12 @@ class Base {
     let bInitOk = pointDepthPoint.init( progress, extractedParams, channelShuffler_ConcatPointwiseConv );
 
     let flags = {};
-    PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__pointwise21ChannelCount__bOutput1Requested.call( flags,
-      testParams.out.channelCount1_pointwise1Before, testParams.out.pointwise21ChannelCount, testParams.out.bOutput1Requested );
+    PointDepthPoint.Params.setFlags_by.call( flags,
+      testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
+      testParams.out.pointwise1ChannelCount,
+      testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+      testParams.out.pointwise21ChannelCount,
+      testParams.out.bOutput1Requested );
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
@@ -472,12 +492,16 @@ class Base {
 
     {
       let flags = {};
-      PointDepthPoint.Params.setFlags_by__channelCount1_pointwise1Before__pointwise21ChannelCount__bOutput1Requested.call( flags,
-        testParams.out.channelCount1_pointwise1Before, testParams.out.pointwise21ChannelCount, testParams.out.bOutput1Requested );
+      PointDepthPoint.Params.setFlags_by.call( flags,
+        testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
+        testParams.out.pointwise1ChannelCount,
+        testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+        testParams.out.pointwise21ChannelCount,
+        testParams.out.bOutput1Requested );
 
       // Create description for debug easily.
       this.paramsOutDescription =
-          `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${testParams.out.channelCount1_pointwise1Before}, `
+          `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${flags.input1ChannelCount}, `
 
         + `channelCount1_pointwise1Before_Name=`
         + `${PointDepthPoint.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}`
