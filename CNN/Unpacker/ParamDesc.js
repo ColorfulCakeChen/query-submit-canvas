@@ -1,5 +1,5 @@
 export { Base, Same, Bool, Int, ActivationFunction, AvgMax_Or_ChannelMultiplier };
-export {  channelCount1_pointwise1Before, pointwise22ChannelCount };
+export { channelCount1_pointwise1Before, WhetherShuffleChannel };
 
 import * as ValueDesc from "./ValueDesc.js";
 
@@ -34,8 +34,6 @@ class Base {
    */
   constructor( paramName, valueDesc ) {
     this.paramName = paramName;
-    // (2021/04/09 Remarked) There is no longer need Symbol() key. Because the whole ParamDesc object is used as key.
-    //this.paramNameKey = Symbol( paramName );
     this.valueDesc = valueDesc;
   }
 
@@ -52,12 +50,8 @@ class Base {
 /**
  * Describe some properties of a non-converting parameter.
  *
- * @member {string} paramName
- *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
- *
  * @member {ValueDesc.Same} valueDesc
- *   The range of the parameter's all possible values. It is an ValueDesc.Same object.
- *
+ *   The range of the parameter's all possible values. It is a ValueDesc.Same object.
  */
 class Same extends Base {
 
@@ -70,12 +64,8 @@ class Same extends Base {
 /**
  * Describe some properties of a boolean parameter.
  *
- * @member {string} paramName
- *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
- *
  * @member {ValueDesc.Bool} valueDesc
- *   The boolean range of the parameter's all possible values. It is an ValueDesc.Bool object.
- *
+ *   The boolean range of the parameter's all possible values. It is a ValueDesc.Bool object.
  */
 class Bool extends Base {
 
@@ -88,12 +78,8 @@ class Bool extends Base {
 /**
  * Describe some properties of an integer parameter.
  *
- * @member {string} paramName
- *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
- *
  * @member {ValueDesc.Int} valueDesc
- *   The integer range of the parameter's all possible values. It is an ValueDesc.Bool object.
- *
+ *   The integer range of the parameter's all possible values. It is a ValueDesc.Bool object.
  */
 class Int extends Base {
 
@@ -106,11 +92,8 @@ class Int extends Base {
 /**
  * Describe some properties of an activation function parameter.
  *
- * @member {string} paramName
- *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
- *
  * @member {ValueDesc.ActivationFunction} valueDesc
- *   The range of the parameter's all possible values. It is an ValueDesc.ActivationFunction object.
+ *   The range of the parameter's all possible values. It is a ValueDesc.ActivationFunction object.
  */
 class ActivationFunction extends Base {
 
@@ -123,11 +106,8 @@ class ActivationFunction extends Base {
 /**
  * Describe some properties of an depthwise operation parameter.
  *
- * @member {string} paramName
- *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
- *
  * @member {ValueDesc.AvgMax_Or_ChannelMultiplier} valueDesc
- *   The range of the parameter's all possible values. It is an ValueDesc.AvgMax_Or_ChannelMultiplier object.
+ *   The range of the parameter's all possible values. It is a ValueDesc.AvgMax_Or_ChannelMultiplier object.
  */
 class AvgMax_Or_ChannelMultiplier extends Base {
 
@@ -140,11 +120,8 @@ class AvgMax_Or_ChannelMultiplier extends Base {
 /**
  * Describe some properties of an channelCount1_pointwise1Before parameter.
  *
- * @member {string} paramName
- *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
- *
  * @member {ValueDesc.channelCount1_pointwise1Before} valueDesc
- *   The range of the parameter's all possible values. It is an ValueDesc.channelCount1_pointwise1Before object.
+ *   The range of the parameter's all possible values. It is a ValueDesc.channelCount1_pointwise1Before object.
  */
 class channelCount1_pointwise1Before extends Base {
 
@@ -155,17 +132,14 @@ class channelCount1_pointwise1Before extends Base {
 
 
 /**
- * Describe some properties of an pointwise22ChannelCount parameter.
+ * Describe some properties of an WhetherShuffleChannel parameter.
  *
- * @member {string} paramName
- *   The name of the parameter. It is a string. It should be a legal identifer too (i.e. A-Z, a-z, 0-9 (not at first character), and "_").
- *
- * @member {ValueDesc.pointwise22ChannelCount} valueDesc
- *   The range of the parameter's all possible values. It is an ValueDesc.pointwise22ChannelCount object.
+ * @member {ValueDesc.WhetherShuffleChannel} valueDesc
+ *   The range of the parameter's all possible values. It is a ValueDesc.WhetherShuffleChannel object.
  */
-class pointwise22ChannelCount extends Base {
+class WhetherShuffleChannel extends Base {
 
   constructor( paramName ) {
-    super( paramName, ValueDesc.pointwise22ChannelCount.Singleton );
+    super( paramName, ValueDesc.WhetherShuffleChannel.Singleton );
   }
 }
