@@ -340,6 +340,7 @@ class Params extends Weights.Params {
   /**
    * Determine the following properties:
    *   - this.inputTensorCount
+   *   - this.input1ChannelCount
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
    *   - this.bAddInputToOutputRequested
