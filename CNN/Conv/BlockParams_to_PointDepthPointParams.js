@@ -3,6 +3,9 @@ export { NotShuffleNet_NotMobileNet };
 export { ShuffleNetV2_Simplified, ShuffleNetV2_Slower };
 export { MobileNetV2 };
 
+import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as PointDepthPoint from "./PointDepthPoint.js";
+
 
 /**
  * Basic class for all BlockParams_to_PointDepthPointParams.Xxx classes.
@@ -26,7 +29,7 @@ class Base {
     this.pointwise1Bias = this.depthwiseBias = this.pointwise21Bias = this.pointwise22Bias = false;
 
     this.pointwise1ActivationId = this.depthwiseActivationId = this.pointwise21ActivationId = this.pointwise22ActivationId
-      = PointDepthPoint.Params.Activation.Ids.NONE;
+      = ValueDesc.Activation.Singleton.Ids.NONE;
 
     this.bShouldKeepInputTensor = false;
 
@@ -178,7 +181,7 @@ class NotShuffleNet_NotMobileNet extends Base {
 
     // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
     this.depthwiseBias = false;
-    this.depthwiseActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+    this.depthwiseActivationId = ValueDesc.Activation.Singleton.Ids.NONE;
 
     this.pointwise21ChannelCount = blockParams.sourceChannelCount * blockParams.depthwise_AvgMax_Or_ChannelMultiplier; // Step0 double channel count.
     this.pointwise21Bias = true;
@@ -186,7 +189,7 @@ class NotShuffleNet_NotMobileNet extends Base {
 
     this.pointwise22ChannelCount = 0;                                // In this mode, always no second output.
     this.pointwise22Bias = true;
-    this.pointwise22ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+    this.pointwise22ActivationId = ValueDesc.Activation.Singleton.Ids.NONE;
 
     // All steps have pointwise1 convolution before depthwise convolution. Its channel count is adjustable by user's request.
     // If ( pointwise1ChannelCountRate == 0 ), it is the same as no pointwise1.
@@ -351,7 +354,7 @@ class ShuffleNetV2_Slower extends Base {
 
     // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
     this.depthwiseBias = false;
-    this.depthwiseActivationId = PointDepthPoint.Params.Activation.Ids.NONE; // In ShuffleNetV2, depthwise convolution doesn't have activation.
+    this.depthwiseActivationId = ValueDesc.Activation.Singleton.Ids.NONE; // In ShuffleNetV2, depthwise convolution doesn't have activation.
 
     // In ShuffleNetV2, all steps' pointwise21 always has bias and activation. It achieves both pointwise and channel-shuffling.
     this.pointwise21ChannelCount = blockParams.sourceChannelCount; // All steps' (except stepLast) output0 is the same depth as source input0.
@@ -431,11 +434,11 @@ class MobileNetV2 extends Base {
     // In MobileNetV2, the second 1x1 pointwise convolution doesn't have activation function in default.
     //
     // But it could be changed by nActivationIdAtBlockEnd for the last step of the block.
-    this.pointwise21ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+    this.pointwise21ActivationId = ValueDesc.Activation.Singleton.Ids.NONE;
 
     this.pointwise22ChannelCount = 0;                                  // In MobileNetV2, all steps do not have output1.
     this.pointwise22Bias = false;
-    this.pointwise22ActivationId = PointDepthPoint.Params.Activation.Ids.NONE;
+    this.pointwise22ActivationId = ValueDesc.Activation.Singleton.Ids.NONE;
 
     // In MobileNet, all steps have pointwise1 convolution before depthwise convolution. Its channel count is adjustable by user's request.
     // If ( pointwise1ChannelCountRate == 0 ), it is the same as no pointwise1.
