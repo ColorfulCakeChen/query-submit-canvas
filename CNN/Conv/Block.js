@@ -4,7 +4,6 @@ import * as ValueMax from "../ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
-//import * as Params_to_PointDepthPointParams from "./Params_to_PointDepthPointParams.js";
 import * as PointDepthPoint from "./PointDepthPoint.js";
 
 /**
@@ -57,16 +56,6 @@ class Params extends Weights.Params {
    *       height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until
    *       the block end.
    *
-
-!!! ...unfninished... (2021/09/07)
-
-   * @param {boolean} nWhetherShuffleChannel
-   *   Whether a (concatenator and) channel shuffler will be used.
-   *   - If ( stepCountPerBlock == 0 ), this flag will be ignored. There will be no channel shuffler.
-   *   - If ( bChannelShuffler == true ), this block will be similar to ShuffleNetV2 (i.e. split and concat channels).
-   *   - If ( bChannelShuffler == false ), this block will be similar to MobileNetV1 or MobileNetV2 (i.e. with add-input-to-output).
-   *   - If ( bChannelShuffler == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
-   *
    * @param {number} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
    * That is, pointwise1ChannelCount = ( pointwise21ChannelCount * pointwise1ChannelCountRate ).
@@ -88,6 +77,23 @@ class Params extends Weights.Params {
    * (i.e. nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE) so that it will not be restricted by the range
    * of the activation function.
    *
+   * @param {boolean} nWhetherShuffleChannel
+   *   Whether a (concatenator and) channel shuffler will be used.
+   *
+   *   - If ( nWhetherShuffleChannel == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
+   *
+   *   - If ( stepCountPerBlock == 0 ), this flag will be ignored.
+   *       This block will be NotShuffleNet_NotMobileNet. There will be no channel shuffler.
+   *
+   *   - If ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.NONE ), (0),
+   *       this block will be MobileNetV1 or MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
+   *
+   *   - If ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER ), (1),
+   *       this block will be ShuffleNetV2. There is a channel shuffler by concat-shuffle-split.
+   *
+   *   - If ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ), (2),
+   *       this block will be ShuffleNetV2_Slower. There is a channel shuffler by pointwise22.
+   *
    * @param {boolean} bKeepInputTensor
    *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
@@ -100,9 +106,9 @@ class Params extends Weights.Params {
   init( inputFloat32Array, byteOffsetBegin,
     sourceHeight, sourceWidth, sourceChannelCount,
     stepCountPerBlock,
-    nWhetherShuffleChannel,
     pointwise1ChannelCountRate,
     depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd,
+    nWhetherShuffleChannel,
     bKeepInputTensor
   ) {
 
@@ -122,11 +128,11 @@ class Params extends Weights.Params {
       [ Params.sourceWidth,                sourceWidth ],
       [ Params.sourceChannelCount,         sourceChannelCount ],
       [ Params.stepCountPerBlock,          stepCountPerBlock ],
-      [ Params.nWhetherShuffleChannel,     nWhetherShuffleChannel ],
       [ Params.pointwise1ChannelCountRate, pointwise1ChannelCountRate ],
       [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
       [ Params.nActivationId,              nActivationId ],
       [ Params.nActivationIdAtBlockEnd,    nActivationIdAtBlockEnd ],
+      [ Params.nWhetherShuffleChannel,     nWhetherShuffleChannel ],
       [ Params.bKeepInputTensor,           bKeepInputTensor ],
     ] );
 
@@ -178,7 +184,6 @@ class Params extends Weights.Params {
   get sourceChannelCount()          { return this.parameterMapModified.get( Params.sourceChannelCount ); }
 
   get stepCountPerBlock()           { return this.parameterMapModified.get( Params.stepCountPerBlock ); }
-  get nWhetherShuffleChannel()      { return this.parameterMapModified.get( Params.nWhetherShuffleChannel ); }
   get pointwise1ChannelCountRate()  { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
 
   get depthwiseFilterHeight()       { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
@@ -186,6 +191,8 @@ class Params extends Weights.Params {
   get nActivationIdName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
   get nActivationIdAtBlockEndId()   { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
   get nActivationIdAtBlockEndName() { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
+
+  get nWhetherShuffleChannel()      { return this.parameterMapModified.get( Params.nWhetherShuffleChannel ); }
 
   get bKeepInputTensor()            { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
 }
@@ -196,11 +203,11 @@ Params.sourceHeight =               new ParamDesc.Int(                   "source
 Params.sourceWidth =                new ParamDesc.Int(                   "sourceWidth",                1, ( 10 * 1024 ) );
 Params.sourceChannelCount =         new ParamDesc.Int(                   "sourceChannelCount",         1, ( 10 * 1024 ) );
 Params.stepCountPerBlock =          new ParamDesc.Int(                   "stepCountPerBlock",          0, (  1 * 1024 ) );
-Params.nWhetherShuffleChannel =     new ParamDesc.WhetherShuffleChannel( "nWhetherShuffleChannel" );
 Params.pointwise1ChannelCountRate = new ParamDesc.Int(                   "pointwise1ChannelCountRate", 0,             2 );
 Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1,             9 );
 Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
 Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction(    "nActivationIdAtBlockEnd" );
+Params.nWhetherShuffleChannel =     new ParamDesc.WhetherShuffleChannel( "nWhetherShuffleChannel" );
 Params.bKeepInputTensor =           new ParamDesc.Bool(                  "bKeepInputTensor" );
 
 
@@ -315,13 +322,13 @@ class Base {
     this.sourceWidth = params.sourceWidth;
     this.sourceChannelCount = params.sourceChannelCount;
     this.stepCountPerBlock = params.stepCountPerBlock;
-    this.bChannelShuffler = params.bChannelShuffler
     this.pointwise1ChannelCountRate = params.pointwise1ChannelCountRate;
     this.depthwiseFilterHeight = params.depthwiseFilterHeight; // Assume depthwise filter's width equals its height.
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
     this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
+    this.nWhetherShuffleChannel = params.nWhetherShuffleChannel;
     this.bKeepInputTensor = params.bKeepInputTensor;
 
     // Pre-allocate array to place intermediate 2 input tensors and 2 output tensors. This could reduce memory re-allocation.
@@ -435,6 +442,8 @@ class Base {
    *   The Block.Params object to be reference.
    */
   static create_Params_to_PointDepthPointParams( blockParams ) {
+
+//!!! ...unfninished... (2021/09/07) nWhetherShuffleChannel
 
     if ( this.stepCountPerBlock == 0 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
       return new Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet( blockParams );
