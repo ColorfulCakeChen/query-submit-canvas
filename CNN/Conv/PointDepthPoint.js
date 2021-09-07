@@ -22,6 +22,10 @@ import * as TensorOpCounter from "./TensorOpCounter.js";
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
  *
+ * @member {number} input1ChannelCount
+ *   The channel count of the second input (i.e. input1). This is referred from other parameters. The inputTensors[ 1 ]'s channel count
+ * of PointDepthPoint.apply() should match this value.
+ *
  * @member {number} pointwise22ChannelCount
  *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ) and
  * ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution. The pointwise22
@@ -247,10 +251,91 @@ class Params extends Weights.Params {
       return false;
 
     // Determine input tensor count and whether request add-input-to-output.
-    Params.setFlags_by__channelCount1_pointwise1Before__pointwise21ChannelCount__bOutput1Requested.call(
-      this, this.channelCount1_pointwise1Before, this.pointwise21ChannelCount, this.bOutput1Requested );
+    Params.setFlags_by.call( this,
+      this.channelCount0_pointwise1Before, this.channelCount1_pointwise1Before,
+      this.pointwise1ChannelCount, this.depthwise_AvgMax_Or_ChannelMultiplier, this.pointwise21ChannelCount, this.bOutput1Requested );
 
     return bExtractOk;
+  }
+
+  /**
+   * Determine the following properties:
+   *   - this.inputTensorCount
+   */
+  static set__inputTensorCount__by__channelCount1_pointwise1Before( channelCount1_pointwise1Before ) {
+
+    // The input tensor count is totally determined by channelCount1_pointwise1Before.
+    if (   ( channelCount1_pointwise1Before > 0 )
+        || ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+       )
+      this.inputTensorCount = 2; // Two inputs.
+    else
+      this.inputTensorCount = 1; // One input.
+  }
+
+  /**
+   * Determine the following properties:
+   *   - this.outputTensorCount
+   */
+  static set_outputTensorCount_by(
+           channelCount1_pointwise1Before, pointwise21ChannelCount, bOutput1Requested ) {
+
+    // 1.
+    if ( bOutput1Requested == true )
+      this.outputTensorCount = 2; // Two outputs.
+    else
+      this.outputTensorCount = 1; // One output.
+
+    // 2.1 In ShuffleNetV2's body/tail, The output tensor count is totally determined by bOutput1Requested.
+    if ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
+      // Do nothing.
+
+    // 2.2 Otherwise, pointwise22 is output1 directly. The pointwise22ChannelCount (which is determined by pointwise21ChannelCount)
+    //     determines it.
+    } else {
+      if ( pointwise21ChannelCount == 0 ) { // No pointwise21, then no pointwise22. So only one output.
+        this.outputTensorCount = 1; // One output.
+      }
+    }
+  }
+
+  /**
+   * Determine the following properties:
+   *   - this.input1ChannelCount
+   */
+  static set_input1ChannelCount_by(
+           channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount, bOutput1Requested ) {
+
+      if ( channelCount1_pointwise1Before > 0 ) { // Two inputs.
+        this.input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
+
+      } else if ( channelCount1_pointwise1Before
+                    == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3) Two inputs.
+
+        // Find out input1's channel count.
+        //
+        // Although The second input's channel count should be the same as pointwise21's result, however, it is not the
+        // same as pointwise21ChannelCount directly because pointwise21ChannelCount may be zero. It should be determined
+        // by pointwise21, depthewise1, pointwise1, input0.
+        //
+        this.input1ChannelCount = pointwise21ChannelCount;
+        if ( this.input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
+
+          this.input1ChannelCount = pointwise1ChannelCount;
+          if ( this.input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
+            this.input1ChannelCount = channelCount0_pointwise1Before;
+          }
+
+          if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+            this.input1ChannelCount *= depthwise_AvgMax_Or_ChannelMultiplier;
+
+          } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
+        }
+
+      } else { // One input.
+        this.input1ChannelCount = 0;
+      }
   }
 
   /**
@@ -266,38 +351,22 @@ class Params extends Weights.Params {
    * @param {number} pointwise21ChannelCount
    * @param {boolean} bOutput1Requested
    */
-  static setFlags_by__channelCount1_pointwise1Before__pointwise21ChannelCount__bOutput1Requested(
-           channelCount1_pointwise1Before, pointwise21ChannelCount, bOutput1Requested ) {
+  static setFlags_by(
+           channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount, bOutput1Requested ) {
 
     // 0. Prepare.
 
     // 0.1 The input tensor count is totally determined by channelCount1_pointwise1Before.
-    if (   ( channelCount1_pointwise1Before > 0 )
-        || ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
-       )
-      this.inputTensorCount = 2; // Two inputs.
-    else
-      this.inputTensorCount = 1; // One input.
+    Params.set_inputTensorCount_by.call( this, channelCount1_pointwise1Before );
 
     // 0.2 The output tensor count.
-    {
-      if ( bOutput1Requested == true )
-        this.outputTensorCount = 2; // Two outputs.
-      else
-        this.outputTensorCount = 1; // One output.
+    Params.set_outputTensorCount_by.call( this, channelCount1_pointwise1Before, pointwise21ChannelCount, bOutput1Requested );
 
-      // 0.2.1 In ShuffleNetV2's body/tail, The output tensor count is totally determined by bOutput1Requested.
-      if ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
-        // Do nothing.
-
-      // 0.2.2 Otherwise, pointwise22 is output1 directly. The pointwise22ChannelCount (which is determined by pointwise21ChannelCount)
-      //       determines it.
-      } else {
-        if ( pointwise21ChannelCount == 0 ) { // No pointwise21, then no pointwise22. So only one output.
-          this.outputTensorCount = 1; // One output.
-        }
-      }
-    }
+    // 0.3 The (estimated) input1 channel count.
+    Params.set_input1ChannelCount_by.call( this,
+      channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+      pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount, bOutput1Requested );
 
     // 1. One input.
     if ( this.inputTensorCount == 1 ) {
