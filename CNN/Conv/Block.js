@@ -418,7 +418,6 @@ class Base {
 
     this.step0 = this.stepLast = null; // It has already de disposed by this.step0 or this.steps1After.
 
-    this.apply_and_destroy_or_keep = null;
     this.outputChannelCount = -1;
 
     this.intermediateInputTensors = this.intermediateOutputTensors = null;
@@ -465,7 +464,7 @@ class Base {
    * @return {tf.tensor3d}
    *   Return a new tensor. All other intermediate tensors were disposed.
    */
-  apply_and_destroy_or_keep( inputTensor ) {
+  apply( inputTensor ) {
     let inputTensors = this.intermediateInputTensors;
     let outputTensors = this.intermediateOutputTensors;
 
@@ -477,7 +476,7 @@ class Base {
       inputTensors[ 1 ] = outputTensors[ 1 ];
 
       let step = this.stepsArray[ i ];
-      step.apply_and_destroy_or_keep( inputTensors, outputTensors );
+      step.apply( inputTensors, outputTensors );
     }
 
     return outputTensors[ 0 ]; // Note: The last step should only output one tensor.
