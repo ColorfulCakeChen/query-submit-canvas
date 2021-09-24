@@ -97,7 +97,7 @@ class Params extends Weights.Params {
    *       The inputTensors[ 1 ] will not be used at all (will be ignored completely). The inputTensors[ 0 ] will be processed
    *       by pointwise1, one depthwise operation, and pointwise2 convolution.
    *
-   *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (slower ShuffleNetV2's body and tail)
+   *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (slower ShuffleNetV2's body/tail)
    *       It should be the channel count of input1.
    *
    *       - The input1 will not be processed by any pointwise1 and depthwise operation.
@@ -304,7 +304,7 @@ class Params extends Weights.Params {
    */
   static set_input1ChannelCount_by(
            channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount, bOutput1Requested ) {
+           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount ) {
 
       if ( channelCount1_pointwise1Before > 0 ) { // Two inputs.
         this.input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
@@ -366,7 +366,7 @@ class Params extends Weights.Params {
     // 0.3 The (estimated) input1 channel count.
     Params.set_input1ChannelCount_by.call( this,
       channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-      pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount, bOutput1Requested );
+      pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
 
     // 1. One input.
     if ( this.inputTensorCount == 1 ) {
