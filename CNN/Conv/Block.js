@@ -973,22 +973,17 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
     this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
 
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
-
-//!!! ...unfinished... (2021/09/24) How about this.bOutput1Requested?
-
   }
 
   /** @override */
   configTo_beforeStepLast() {
     super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
 
-    // In ShuffleNetV2, the stepLast only has output0 (no output1). And the output0 has double channel count of source input0.
+    // In ShuffleNetV2, the stepLast only has output0 (no output1).
     //
-???
-    // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
-    // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
-    // not changed.
-    this.pointwise21ChannelCount = this.blockParams.sourceChannelCount * 2;
+    // The output0:
+    //   - It will have double channel count of source input0.
+    //   - It is the concatenation of pointwise21's result and input1.
     this.bOutput1Requested = false;
   }
 }
