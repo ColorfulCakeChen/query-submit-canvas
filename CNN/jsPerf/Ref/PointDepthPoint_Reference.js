@@ -338,6 +338,15 @@ class Base {
     Base.AssertTwoEqualValues( "bConcat2ShuffleSplitRequested",
       pointDepthPoint.bConcat2ShuffleSplitRequested, flags.bConcat2ShuffleSplitRequested, parametersDescription );
 
+    // Only if channel shuffler is used, it is recorded.
+    if ( pointDepthPoint.bConcat2ShuffleSplitRequested ) {
+      Base.AssertTwoEqualValues( "channelShuffler_ConcatPointwiseConv",
+        pointDepthPoint.channelShuffler_ConcatPointwiseConv, channelShuffler_ConcatPointwiseConv, parametersDescription );
+    } else {
+      Base.AssertTwoEqualValues( "channelShuffler_ConcatPointwiseConv",
+        pointDepthPoint.channelShuffler_ConcatPointwiseConv, null, parametersDescription );
+    }
+
     // pointwise1 parameters.
     Base.AssertTwoEqualValues( "pointwise1ChannelCount",
       pointDepthPoint.pointwise1ChannelCount, testParams.out.pointwise1ChannelCount, parametersDescription );
