@@ -1277,6 +1277,10 @@ class Base extends ReturnOrClone.Base {
       this.concat2ShuffleSplit = null;
     }
 
+    if ( this.channelShuffler_ConcatPointwiseConv ) {
+      this.channelShuffler_ConcatPointwiseConv = null; // Note: Do not dispose the channel shuffler here.
+    }
+
     this.intermediateTensorsArray = null;
 
     this.inputTensorCount
