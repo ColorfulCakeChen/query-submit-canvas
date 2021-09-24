@@ -369,11 +369,10 @@ class Base {
       }
 
       stepParams = stepParamsMaker.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
-
-//!!! ...unfninished... (2021/09/07) this.channelShuffler = null;
+      this.channelShuffler = stepParamsMaker.channelShuffler;
 
       step = this.stepsArray[ i ] = new PointDepthPoint.Base();
-      stepIniter = step.initer( progressForSteps.children[ i ], stepParams );
+      stepIniter = step.initer( progressForSteps.children[ i ], stepParams, this.channelShuffler );
 
       this.bInitOk = yield* stepIniter;
       if ( !this.bInitOk )
@@ -428,6 +427,11 @@ class Base {
         step.disposeTensors();
       }
       this.stepsArray.length = 0;
+    }
+
+    if ( this.channelShuffler ) {
+      this.channelShuffler.disposeTensors();
+      this.channelShuffler = false;
     }
 
     this.step0 = this.stepLast = null; // It has already de disposed by this.step0 or this.steps1After.
@@ -897,7 +901,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_Po
  */
 Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDepthPointParams {
 
-//!!! ...unfninished... (2021/09/07) this.channelShuffler = null;
+//!!! ...unfninished... (2021/09/07) this.channelShuffler should be ChannelShuffler.ConcatPointwiseConv
 
 //!!! ...unfinished... (2021/09/24) How about this.bOutput1Requested?
 
