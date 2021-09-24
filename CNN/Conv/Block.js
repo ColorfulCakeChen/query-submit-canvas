@@ -463,7 +463,7 @@ class Base {
           break;
 
         case Value.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
-          return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams );
+          return new Params.to_PointDepthPointParams.ShuffleNetV2( blockParams );
           break;
 
         case Value.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
@@ -901,7 +901,10 @@ Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_Po
  */
 Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDepthPointParams {
 
-//!!! ...unfninished... (2021/09/07) this.channelShuffler should be ChannelShuffler.ConcatPointwiseConv
+//!!! ...unfinished... (2021/09/07) this.channelShuffler should be ChannelShuffler.ConcatPointwiseConv
+
+//!!! ...unfinished... (2021/09/06)
+// Determine ( height, width, depth ) of concatenatedShape of channel shuffler by input1 (not input0) of PointDepthPoint.
 
 //!!! ...unfinished... (2021/09/24) How about this.bOutput1Requested?
 
