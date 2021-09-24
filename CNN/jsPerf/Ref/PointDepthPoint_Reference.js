@@ -70,50 +70,12 @@ class Base {
           channelCount0_pointwise1Before, channelCount1_pointwise1Before,
           this.testParams.out.pointwise1ChannelCount,
           this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-          this.testParams.out.pointwise21ChannelCount,
-          this.testParams.out.bOutput1Requested );
+          this.testParams.out.pointwise21ChannelCount
+        );
 
         bTwoInputs = ( referredParams.inputTensorCount == 2 );
         input1ChannelCount = referredParams.input1ChannelCount;
       }
-
-//!!! (2021/09/07 Remarked) Using PointDepthPoint.Params static function.
-//       let bTwoInputs; // The input tensor count is determined by channelCount1_pointwise1Before totally.
-//       let input1ChannelCount;
-//       {
-//         if ( channelCount1_pointwise1Before > 0 ) {
-//           bTwoInputs = true; // Two inputs.
-//           input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
-//
-//         } else if ( channelCount1_pointwise1Before
-//                       == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
-//           bTwoInputs = true; // Two inputs.
-//
-//           // Find out input1's channel count.
-//           //
-//           // Although The second input's channel count should be the same as pointwise21's result, however, it is not the
-//           // same as pointwise21ChannelCount directly because pointwise21ChannelCount may be zero. It should be determined
-//           // by pointwise21, depthewise1, pointwise1, input0.
-//           //
-//           input1ChannelCount = this.testParams.out.pointwise21ChannelCount;
-//           if ( input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
-//
-//             input1ChannelCount = this.testParams.out.pointwise1ChannelCount;
-//             if ( input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
-//               input1ChannelCount = channelCount0_pointwise1Before;
-//             }
-//
-//             if ( this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-//               input1ChannelCount *= this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
-//
-//             } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
-//           }
-//
-//         } else {
-//           bTwoInputs = false; // One input.
-//           input1ChannelCount = 0;
-//         }
-//       }
 
       let channelShuffler_ConcatPointwiseConv;
       let imageOutReferenceArray;
