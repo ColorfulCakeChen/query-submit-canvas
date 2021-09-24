@@ -369,6 +369,8 @@ class Base {
       }
 
       stepParams = stepParamsMaker.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
+
+//!!! ...unfinished... (2021/09/24) step0 will not use channelShuffler. 
       this.channelShuffler = stepParamsMaker.channelShuffler;
 
       step = this.stepsArray[ i ] = new PointDepthPoint.Base();
@@ -430,7 +432,7 @@ class Base {
     }
 
     if ( this.channelShuffler ) {
-      this.channelShuffler.disposeTensors();
+      this.channelShuffler.disposeTensors(); // Block is responsible for releasing the channel shuffler shared by all steps of the block.
       this.channelShuffler = false;
     }
 
@@ -840,12 +842,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_Po
     // Note: Comparing to the original ShuffleNetV2, this might be a little more expensive because every all non-step0
     //       (i.e. step1, step2, ..., stepLast) will do one more bias and activation (although do one less pointwise
     //       convolution).
-    this.pointwise22ChannelCount = blockParams.sourceChannelCount; // All steps' (except stepLast) output1 is the same depth as source input1.
-    this.pointwise22Bias = true;
-    this.pointwise22ActivationId = blockParams.nActivationId;
-
-//!!! ...unfinished... (2021/09/24) How about this.bOutput1Requested?
-
+    this.bOutput1Requested = true;                                 // All steps' (except stepLast) output1 is the same depth as source input1.
 
     // In ShuffleNetV2, all steps have pointwise1 convolution before depthwise convolution. Its channel count is adjustable by user's request.
     // If ( pointwise1ChannelCountRate == 0 ), it is the same as no pointwise1.
@@ -888,10 +885,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_Po
     // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
     // not changed.
     this.pointwise21ChannelCount = this.blockParams.sourceChannelCount * 2;
-    this.pointwise22ChannelCount = 0;
-
-//!!! ...unfinished... (2021/09/24) How about this.bOutput1Requested?
-
+    this.bOutput1Requested = false;
   }
 }
 
