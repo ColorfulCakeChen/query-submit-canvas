@@ -890,7 +890,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_Po
 }
 
 
-/**
+/** Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
  *
  */
 Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDepthPointParams {
