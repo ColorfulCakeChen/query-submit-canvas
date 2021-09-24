@@ -794,8 +794,6 @@ class Base extends ReturnOrClone.Base {
 
     this.disposeTensors();  // Also initialize some member function pointers to no_operation().
 
-    this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
-
     // 1. Extract parameters.
     if ( !params )
       return false;
@@ -1151,6 +1149,9 @@ class Base extends ReturnOrClone.Base {
           );
           break;
       }
+
+      // Only if channel shuffler is used, it is recorded in data member.
+      this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
 
       this.concat2ShuffleSplit = new ConcatShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
 
