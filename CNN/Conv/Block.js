@@ -779,46 +779,6 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
  *
  * In summary, this method may result in a slower ShuffleNetV2.
  *
-
-!!! ...unfinished... (2021/08/19) How to improve?
-
- *
- * 2. A special case: NoPointwise1 ShuffleNetV2 (i.e. without pointwise1, with concatenator).
- * 
- * Q: How to specify this configuration?
- * A: By ( bChannelShuffler == true ) and ( pointwise1ChannelCountRate == 0 ) in the parameters of Block.Params.
- *
- * What is the different of this configuration?
- *
- * When the poitwise1 convolution (of every step (include step 0 too)) is discarded (i.e. ( pointwise1ChannelCountRate == 0 ) ),
- * the step 0 and step 0's branch could be achieved simultaneously by:
- *   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS).
- *   - No need to concatenate because the above operation already double channel count.
- *   - twice pointwise2 convolution (every has same as block's input channel count).
- *
- * And, the step 1 (, 2, 3, ..., ( n - 2 ) ) could be achieved by:
- *   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
- *   - concatenate.
- *   - twice pointwise2 convolution (every has same as block's input channel count).
- *
- * And, the last step (i.e. step ( n - 1 ) ) of the block could be achieved by:
- *   - once depthwise convolution (channelMultipler = 1, strides = 1, pad = same, bias, COS).
- *   - concatenate.
- *   - once pointwise2 convolution (has double of block's input channel count).
- *
- * Note that:
- *   - The depthwise1 convolution (channelMultipler = 2, strides = 2) of step 0 achieves simultaneously two depthwise
- *     convolution (channelMultipler = 1, strides = 2) of step 0 and step 0's branch. So, it is one less depthwise
- *     convolution and one less concatenating (than original and our adjusted ShuffleNetV2).
- *
- *   - Even if the pointwise1 convolution is discarded, just two steps of this simplied ShuffleNetV2 still compose an
- *     effective Fourier series which should have enough expressive power for approximating any function. By given
- *     the following configuration in the Block.Params:
- *       - ( bChannelShuffler == true )
- *       - ( pointwise1ChannelCountRate == 0 )
- *       - ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.COS) 
- *       - ( nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE)
- *
  *
  */
 Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_PointDepthPointParams.ShuffleNetV2 {
@@ -853,17 +813,38 @@ Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_Po
 
 /** Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
  *
+ * 1. A special case: NoPointwise1 ShuffleNetV2 (i.e. without pointwise1, with concatenator).
+ * 
+ * Q: How to specify this configuration?
+ * A: By  (   ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER )
+ *         or ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ) )
+ *    and ( pointwise1ChannelCountRate == 0 )
+ *    in the parameters of Block.Params.
+ *
+ * What is the different of this configuration?
+ *
+ * When the poitwise1 convolution (of every step (including step 0)) is discarded (i.e. ( pointwise1ChannelCountRate == 0 ) ),
+ * the step 0 and step 0's branch could be achieved simultaneously by:
+ *   - once depthwise convolution (channelMultipler = 2, strides = 2, pad = same, bias, COS).
+ *   - No need to concatenate because the above operation already double channel count.
+ *
+ * Note that:
+ *   - The depthwise1 convolution (channelMultipler = 2, strides = 2) of step 0 achieves simultaneously two depthwise
+ *     convolution (channelMultipler = 1, strides = 2) of step0 and step0's branch. So, it is one less depthwise
+ *     convolution and one less concatenating (than original ShuffleNetV2).
+ *
+ *   - Even if the pointwise1 convolution is discarded, just two steps of this simplied ShuffleNetV2 still compose an
+ *     effective Fourier series which should have enough expressive power for approximating any function. By given
+ *     the following configuration in the Block.Params:
+ *       - (   ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER )
+ *          or ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ) )
+ *       - ( pointwise1ChannelCountRate == 0 )
+ *       - ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.COS) 
+ *       - ( nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE)
+ *
  */
 Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDepthPointParams {
 
-//!!! ...unfinished... (2021/09/07) this.channelShuffler should be ChannelShuffler.ConcatPointwiseConv
-
-//!!! ...unfinished... (2021/09/06)
-// Determine ( height, width, depth ) of concatenatedShape of channel shuffler by input1 (not input0) of PointDepthPoint.
-
-//!!! ...unfinished... (2021/09/24) How about this.bOutput1Requested?
-
-  
   /** @override */
   configTo_beforeStep0() {
     let blockParams = this.blockParams;
