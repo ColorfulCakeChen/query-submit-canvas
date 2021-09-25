@@ -927,12 +927,26 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
 
-//!!! ...unfinished... (2021/09/24) How about this.channelShuffler (ChannelShuffler.ConcatPointwiseConv)?
+    // In ShuffleNetV2, all steps (except step0) uses channel shuffler (with two convolution groups).
+    {
+      let input1ChannelCount; // Estimate input1's channel count of all steps (except step0 which does not have input1).
+      {
+        let referredParams = {};
+        PointDepthPoint.Params.set_input1ChannelCount_by.call( referredParams,
+          this.channelCount0_pointwise1Before, this.channelCount1_pointwise1Before,
+          this.pointwise1ChannelCount,
+          this.depthwise_AvgMax_Or_ChannelMultiplier,
+          this.pointwise21ChannelCount
+        );
 
-    // In ShuffleNetV2, all steps (except step0) uses channel shuffler (with two groups).
-    let concatenatedShape = ??;
-    let outputGroupCount = 2;
-    this.channelShuffler = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, outputGroupCount );
+        input1ChannelCount = referredParams.input1ChannelCount;
+      }
+
+      let outputGroupCount = 2;
+      let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+      let concatenatedShape = [ this.blockParams.sourceHeight, this.blockParams.sourceWidth, concatenatedDepth ];
+      this.channelShuffler = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, outputGroupCount );
+    }
   }
 
   /** @override */
