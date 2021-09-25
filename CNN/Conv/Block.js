@@ -370,8 +370,19 @@ class Base {
 
       stepParams = stepParamsMaker.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
 
-//!!! ...unfinished... (2021/09/24) step0 will not use channelShuffler. 
-      this.channelShuffler = stepParamsMaker.channelShuffler;
+      // If channelShuffler is not null, keep it so that its tensors could be released.
+      let channelShuffler = stepParamsMaker.channelShuffler;
+      if ( channelShuffler ) {
+
+        tf.util.assert( ( !this.channelShuffler ) || ( this.channelShuffler == channelShuffler ),
+            `Block.initer(): `
+              + `At most, only one (and same) channel shuffler could be used (and shared by all steps of a block).` );
+
+        this.channelShuffler = channelShuffler;
+
+      // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
+      // for releasing tensors.
+      }
 
       step = this.stepsArray[ i ] = new PointDepthPoint.Base();
       stepIniter = step.initer( progressForSteps.children[ i ], stepParams, this.channelShuffler );
