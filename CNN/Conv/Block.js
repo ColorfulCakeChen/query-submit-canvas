@@ -157,8 +157,6 @@ class Params extends Weights.Params {
     return bExtractOk;
   }
 
-//!!! ...unfinished... (2021/09/06) How about outputChannelCount?
-
   /**
    * Determine the following properties:
    *   - this.outputHeight
@@ -396,6 +394,12 @@ class Base {
     this.stepLast = this.stepsArray[ this.stepsArray.length - 1 ]; // Shortcut to the last step.
 
     this.outputChannelCount = this.stepLast.outChannelsAll;
+
+    // In our Block design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
+    tf.util.assert( ( this.outputChannelCount == ( this.sourceChannelCount * 2 ) ),
+        `Block.initer(): `
+          + `the outputChannelCount ( ${this.outputChannelCount} ) should always be twice as `
+          + `sourceChannelCount ( ${this.sourceChannelCount} ).` );
 
     this.bInitOk = true;
     return this.bInitOk;
