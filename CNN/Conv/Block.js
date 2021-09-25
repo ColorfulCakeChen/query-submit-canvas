@@ -339,12 +339,7 @@ class Base {
     ++progressToAdvance.value;
     yield progressRoot;  // Parameters extracted. Report progress.
 
-
-
-//!!! ...unfinished... (2021/09/06)
-// Determine ( height, width, depth ) of concatenatedShape of channel shuffler by input1 (not input0) of PointDepthPoint.
-
-
+    // 2. Create every steps.
     let stepParamsMaker = Base.create_Params_to_PointDepthPointParams( params );
     stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last(); // Calculate the real step count.
 
@@ -506,17 +501,19 @@ class Base {
     let outputTensors = this.intermediateOutputTensors;
 
     outputTensors[ 0 ] = inputTensor;
-    outputTensors[ 1 ] = null;
+    outputTensors[ 1 ] = null; // Note: The step0 should only input one tensor.
 
-    for ( let i = 0; i < this.stepsArray.length ) {
+    let stepsArray = this.stepsArray;
+    let step;
+    for ( let i = 0; i < stepsArray.length; ++i ) {
       inputTensors[ 0 ] = outputTensors[ 0 ]; // Previous step's output becomes next step's input.
       inputTensors[ 1 ] = outputTensors[ 1 ];
 
-      let step = this.stepsArray[ i ];
+      step = stepsArray[ i ];
       step.apply( inputTensors, outputTensors );
     }
 
-    return outputTensors[ 0 ]; // Note: The last step should only output one tensor.
+    return outputTensors[ 0 ]; // Note: The stepLast should only output one tensor.
   }
 }
 
