@@ -929,6 +929,10 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 
 //!!! ...unfinished... (2021/09/24) How about this.channelShuffler (ChannelShuffler.ConcatPointwiseConv)?
 
+    // In ShuffleNetV2, all steps (except step0) uses channel shuffler (with two groups).
+    let concatenatedShape = ??;
+    let outputGroupCount = 2;
+    this.channelShuffler = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, outputGroupCount );
   }
 
   /** @override */
