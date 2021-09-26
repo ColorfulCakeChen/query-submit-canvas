@@ -911,21 +911,25 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 
     // In ShuffleNetV2, all steps (except step0) uses channel shuffler (with two convolution groups).
     {
-      let input1ChannelCount; // Estimate input1's channel count of all steps (except step0 which does not have input1).
-      {
-        let referredParams = {};
-        PointDepthPoint.Params.set_input1ChannelCount_by.call( referredParams,
-          this.channelCount0_pointwise1Before, this.channelCount1_pointwise1Before,
-          this.pointwise1ChannelCount,
-          this.depthwise_AvgMax_Or_ChannelMultiplier,
-          this.pointwise21ChannelCount
-        );
+//!!! (2021/09/26 Remarked)
+//       let input1ChannelCount; // Estimate input1's channel count of all steps (except step0 which does not have input1).
+//       {
+//         let referredParams = {};
+//         PointDepthPoint.Params.set_input1ChannelCount_by.call( referredParams,
+//           this.channelCount0_pointwise1Before, this.channelCount1_pointwise1Before,
+//           this.pointwise1ChannelCount,
+//           this.depthwise_AvgMax_Or_ChannelMultiplier,
+//           this.pointwise21ChannelCount
+//         );
+//
+//         input1ChannelCount = referredParams.input1ChannelCount;
+//       }
+//
+//       let outputGroupCount = 2;
+//       let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
 
-        input1ChannelCount = referredParams.input1ChannelCount;
-      }
-
-      let outputGroupCount = 2;
-      let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+      let outputGroupCount = 2; // Always with two convolution groups.
+      let concatenatedDepth = step0.outChannelsAll; // All steps always have the same total output channel count as step0.
       let concatenatedShape = [ this.blockParams.sourceHeight, this.blockParams.sourceWidth, concatenatedDepth ];
       this.channelShuffler = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, outputGroupCount );
     }
