@@ -80,14 +80,32 @@ class Base extends TestParams.Base {
    */
   set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
-//!!! ...unfinished... (2021/08/09)
+//!!! ...unfinished... (2021/09/27)
 
     Base.generate_Filters_Biases( channelCount0_pointwise1Before, this.out, this.in.paramsNumberArrayObject );
+
+    let blockParams = ???;
+    let stepParamsMaker = Block.Base.create_Params_to_PointDepthPointParams( blockParams );
 
 //!!! ...unfinished... (2021/09/27)
     let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
     for ( let i = 0; i < steps?; ++i ) {
-      paramsNameOrderArray.push( `step${i}` );
+      let stepName = `step${i}`;
+      paramsNameOrderArray.push( stepName );
+
+      
+
+      let step_in_paramsNumberArrayObject = new PointDepthPoint_TestParams.Base();
+      step_in_paramsNumberArrayObject.set_By_ParamsScattered(
+        channelCount0_pointwise1Before,
+        channelCount1_pointwise1Before,
+        pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+        pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+        bOutput1Requested,
+        bKeepInputTensor
+      );
+      this.in.paramsNumberArrayObject[ stepName ] = step_in_paramsNumberArrayObject;
     }
 
     let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
