@@ -18,9 +18,9 @@ import * as Block from "../../Conv/Block.js";
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the Block.Params's constructor. That is,
- * it has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock, bChannelShuffler,
- * pointwise1ChannelCountRate, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd, bKeepInputTensor.
- * It also has the following properties:
+ * it has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock,
+ * pointwise1ChannelCountRate, depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel,
+ * bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - inputFloat32Array
  *   - byteOffsetBegin
@@ -42,13 +42,13 @@ class Base extends TestParams.Base {
    *   Return this object self.
    */
   set_By_ParamsScattered(
-    sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock, bChannelShuffler,
-    pointwise1ChannelCountRate, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd, bKeepInputTensor
+    sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock, pointwise1ChannelCountRate,
+    depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
-      sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock, bChannelShuffler,
-      pointwise1ChannelCountRate, depthwiseFilterHeight, bBias, nActivationId, nActivationIdAtBlockEnd, bKeepInputTensor
+      sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock, pointwise1ChannelCountRate,
+      depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
     };
 
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
@@ -67,9 +67,9 @@ class Base extends TestParams.Base {
    * The name should be one of Base.paramsInArrayOrder[] elements.
    *
    * @param {object} this.out
-   *   An object which has the following data members: channelCount1_pointwise1Before, pointwise1ChannelCount, bPointwise1Bias,
-   * depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, pointwise21ChannelCount,
-   * bPointwise21Bias, pointwise22ChannelCount, bPointwise22Bias. This object will be recorded in this.out directly.
+   *   An object which has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock,
+   * pointwise1ChannelCountRate, depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel,
+   * bKeepInputTensor.
    *
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
@@ -84,8 +84,14 @@ class Base extends TestParams.Base {
 
     Base.generate_Filters_Biases( channelCount0_pointwise1Before, this.out, this.in.paramsNumberArrayObject );
 
+//!!! ...unfinished... (2021/09/27)
+    let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
+    for ( let i = 0; i < steps?; ++i ) {
+      paramsNameOrderArray.push( `step${i}` );
+    }
+
     let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
-    Float32Array_ByteOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
+    Float32Array_ByteOffsetBegin.setByConcat( paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
@@ -149,4 +155,42 @@ class Base extends TestParams.Base {
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
   }
 
+  
+  /**
+   *
+   * @param {object} paramsAll
+   *   An object which must have all the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+   * bOutput1Requested, inputTensorCount. They will be used to modify io_paramsNumberArrayObject.
+   *
+   * @param {object} io_paramsNumberArrayObject
+   *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
+   * The name should be one of Base.paramsInArrayOrder[] elements.
+   */
+  static generate_Steps( paramsAll, io_paramsNumberArrayObject ) {
+
+//!!! ...unfinished... (2021/09/27)
+
+  }
+
 }
+
+
+/**
+ * The order when generate weightsFloat32Array[].
+ *
+ * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Block.initer().
+ */
+Base.paramsNameOrderArray_Basic = [
+  Block.Params.sourceHeight.paramName,
+  Block.Params.sourceWidth.paramName,
+  Block.Params.sourceChannelCount.paramName,
+  Block.Params.stepCountPerBlock.paramName,
+  Block.Params.pointwise1ChannelCountRate.paramName,
+  Block.Params.depthwiseFilterHeight.paramName,
+  Block.Params.nActivationId.paramName,
+  Block.Params.nActivationIdAtBlockEnd.paramName,
+  Block.Params.nWhetherShuffleChannel.paramName,
+  Block.Params.bKeepInputTensor.paramName,
+];
