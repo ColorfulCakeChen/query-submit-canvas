@@ -118,16 +118,15 @@ class Base extends TestParams.Base {
       sourceWidth:  5,
       sourceChannelCount: 4,
       stepCountPerBlock: 5,
-      bChannelShuffler: undefined,
       pointwise1ChannelCountRate: undefined,
+      depthwiseFilterHeight: undefined,
 
-      // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
+      // Because the logic of activation function is simpler than other, it is just randomly tested once
       // (i.e. ( maxKinds == 0 )) for speeding up testing.
-      bBias:         0,
       nActivationId: 0,
       nActivationIdAtBlockEnd: 0,
 
-      depthwiseFilterHeight: undefined,
+      nWhetherShuffleChannel: undefined,
       bKeepInputTensor: undefined,
     };
 
@@ -139,12 +138,11 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.sourceWidth,                this.maxKindsRestrict.sourceWidth ),
       new TestParams.ParamDescConfig( Block.Params.sourceChannelCount,         this.maxKindsRestrict.sourceChannelCount ),
       new TestParams.ParamDescConfig( Block.Params.stepCountPerBlock,          this.maxKindsRestrict.stepCountPerBlock ),
-      new TestParams.ParamDescConfig( Block.Params.bChannelShuffler,           this.maxKindsRestrict.bChannelShuffler ),
       new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCountRate, this.maxKindsRestrict.pointwise1ChannelCountRate ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,      this.maxKindsRestrict.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Block.Params.bBias,                      this.maxKindsRestrict.bBias ),
       new TestParams.ParamDescConfig( Block.Params.nActivationId,              this.maxKindsRestrict.nActivationId ),
       new TestParams.ParamDescConfig( Block.Params.nActivationIdAtBlockEnd,    this.maxKindsRestrict.nActivationIdAtBlockEnd ),
+      new TestParams.ParamDescConfig( Block.Params.nWhetherShuffleChannel,     this.maxKindsRestrict.nWhetherShuffleChannel ),
       new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,           this.maxKindsRestrict.bKeepInputTensor ),
     ];
 
