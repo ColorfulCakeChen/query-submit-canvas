@@ -112,9 +112,9 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2021/09/27)
       
       let stepName = `step${i}`;
-      paramsNameOrderArray.push( stepName ); // Every step has its own parameters.
+      paramsNameOrderArray.push( stepName ); // Place every step's parameters in sequence.
 
-      
+
 //!!! ...unfinished... (2021/09/27)
 
       let stepTestParams = new PointDepthPoint_TestParams.Base();
