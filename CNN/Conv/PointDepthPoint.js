@@ -686,9 +686,6 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * @member {number} outChannels1
  *   The channel count of the outputTensor[ 1 ]. If ( pointwise22ChannelCount == 0 ), this will be zero.
  *
- * @member {number} outChannelsAll
- *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
- *
  * @member {number} channelCount_pointwise1After_depthwise1Before
  *   The channel count after the first 1x1 pointwise convolution. If ( pointwise1ChannelCount > 0 ), it equals pointwise1ChannelCount.
  * If ( pointwise1ChannelCount == 0 ), it equals inChannels0.
@@ -1168,8 +1165,6 @@ class Base extends ReturnOrClone.Base {
       // Note: It should also be okay to set to TensorOpCounters.addInput0ToPointwise22).
       TensorOpCounters.concat2ShuffleSplit = TensorOpCounters.addInput0ToPointwise21;
     }
-
-    this.outChannelsAll = this.outChannels0 + this.outChannels1;
 
     ++progressToAdvance.value;
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
@@ -1708,6 +1703,14 @@ class Base extends ReturnOrClone.Base {
 
   /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]). */
   get inChannels0()    { return this.channelCount0_pointwise1Before; }
+
+  /**
+   * @member {number} outChannelsAll
+   *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
+   */
+  get outChannelsAll() {
+     return ( this.outChannels0 + this.outChannels1 );
+  }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
