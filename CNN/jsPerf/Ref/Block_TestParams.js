@@ -84,16 +84,38 @@ class Base extends TestParams.Base {
 
     Base.generate_Filters_Biases( channelCount0_pointwise1Before, this.out, this.in.paramsNumberArrayObject );
 
-    let blockParams = ???;
+    let blockParams = this.out;
     let stepParamsMaker = Block.Base.create_Params_to_PointDepthPointParams( blockParams );
 
 //!!! ...unfinished... (2021/09/27)
     let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
-    for ( let i = 0; i < steps?; ++i ) {
+    
+//!!! ...unfinished... (2021/09/27)
+//    this.stepsArray = new Array( stepParamsMaker.stepCount );
+    for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Step1, 2, 3, ...
+
+      if ( 0 == i ) { // Step0.
+        stepParamsMaker.configTo_beforeStep0();
+      }
+
+      if ( ( this.stepsArray.length - 1 ) == i ) { // StepLast.
+        stepParamsMaker.configTo_beforeStepLast();
+      }
+
+//      stepParams = stepParamsMaker.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
+
+      // If channelShuffler is not null, keep it so that its tensors could be released.
+//      let channelShuffler = stepParamsMaker.channelShuffler;
+
+      //stepParamsMaker, this.channelShuffler;
+
+//!!! ...unfinished... (2021/09/27)
+      
       let stepName = `step${i}`;
       paramsNameOrderArray.push( stepName );
 
       
+//!!! ...unfinished... (2021/09/27)
 
       let step_in_paramsNumberArrayObject = new PointDepthPoint_TestParams.Base();
       step_in_paramsNumberArrayObject.set_By_ParamsScattered(
@@ -106,7 +128,18 @@ class Base extends TestParams.Base {
         bKeepInputTensor
       );
       this.in.paramsNumberArrayObject[ stepName ] = step_in_paramsNumberArrayObject;
+
+
+      let step0_outChannels0 = ???;
+      let step0_outChannels1 = ???;
+
+      if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
+        stepParamsMaker.configTo_afterStep0( step0_outChannels0, step0_outChannels1 );
+      }
     }
+
+
+//!!! ...unfinished... (2021/09/27)
 
     let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
     Float32Array_ByteOffsetBegin.setByConcat( paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
