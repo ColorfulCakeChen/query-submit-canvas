@@ -386,7 +386,7 @@ class Base {
       this.byteOffsetEnd = this.step.byteOffsetEnd;
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
-        stepParamsMaker.configTo_afterStep0( step );
+        stepParamsMaker.configTo_afterStep0( step.outChannels0, step.outChannels1 );
       }
     }
 
@@ -578,10 +578,13 @@ Params.to_PointDepthPointParams = class {
 
   /** Called after step0 is created (i.e. before step1, 2, 3, ...). Sub-class should override this method to adjust data members.
    *
-   * @param {PointDepthPoint.Base} step0
-   *   The just created step0 object.
+   * @param {number} step0_outChannels0
+   *   The output0's channel count of step0 object.
+   *
+   * @param {number} step0_outChannels1
+   *   The output1's channel count of step0 object.
    */
-  configTo_afterStep0( step0 ) {}
+  configTo_afterStep0( step0_outChannels0, step0_outChannels1 ) {}
 
   /** Called before stepLast is about to be created. Sub-class could override this method to adjust data members. */
   configTo_beforeStepLast() {
@@ -712,10 +715,11 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
   }
 
   /** @override */
-  configTo_afterStep0( step0 ) {
-    this.channelCount0_pointwise1Before = step0.outChannelsAll; // Step0's output channel count is all the other steps' input channel count.
+  configTo_afterStep0( step0_outChannels0, step0_outChannels1 ) {
+    let step0_outChannelsAll = step0_outChannels0 + step0_outChannels1;
+    this.channelCount0_pointwise1Before = step0_outChannelsAll; // Step0's output channel count is all the other steps' input channel count.
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;             // Except step0, all other steps will not double the channel count.
-    this.pointwise21ChannelCount = step0.outChannelsAll;        // Step0's output channel count is all the other steps' output channel count.
+    this.pointwise21ChannelCount = step0_outChannelsAll;        // Step0's output channel count is all the other steps' output channel count.
     this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
 }
@@ -788,11 +792,12 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
 Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_PointDepthPointParams.ShuffleNetV2 {
 
   /** @override */
-  configTo_afterStep0( step0 ) {
+  configTo_afterStep0( step0_outChannels0, step0_outChannels1 ) {
+    let step0_outChannelsAll = step0_outChannels0 + step0_outChannels1;
 
     // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
-    this.channelCount0_pointwise1Before = step0.outChannels0;
-    this.channelCount1_pointwise1Before = step0.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
+    this.channelCount0_pointwise1Before = step0_outChannels0;
+    this.channelCount1_pointwise1Before = step0_outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
     this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
@@ -893,10 +898,11 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
   }
 
   /** @override */
-  configTo_afterStep0( step0 ) {
+  configTo_afterStep0( step0_outChannels0, step0_outChannels1 ) {
+    let step0_outChannelsAll = step0_outChannels0 + step0_outChannels1;
 
     // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
-    this.channelCount0_pointwise1Before = step0.outChannels0;
+    this.channelCount0_pointwise1Before = step0_outChannels0;
 
     // (with concatenation, without add-input-to-output).
     //
@@ -929,7 +935,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 //       let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
 
       let outputGroupCount = 2; // Always with two convolution groups.
-      let concatenatedDepth = step0.outChannelsAll; // All steps always have the same total output channel count as step0.
+      let concatenatedDepth = step0_outChannelsAll; // All steps always have the same total output channel count as step0.
       let concatenatedShape = [ this.blockParams.sourceHeight, this.blockParams.sourceWidth, concatenatedDepth ];
       this.channelShuffler = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, outputGroupCount );
     }
@@ -1000,9 +1006,9 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
   }
 
   /** @override */
-  configTo_afterStep0( step0 ) {
+  configTo_afterStep0( step0_outChannels0, step0_outChannels1 ) {
     // The input0 of all steps (except step0) have the same depth as previous (also step0's) step's output0.
-    this.channelCount0_pointwise1Before = step0.outChannels0;
+    this.channelCount0_pointwise1Before = step0_outChannels0;
 
     // In MobileNetV2:
     //   - All steps (except step0) do add-input-to-output (without concatenation).
