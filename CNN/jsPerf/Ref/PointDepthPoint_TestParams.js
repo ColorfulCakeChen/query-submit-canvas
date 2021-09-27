@@ -81,7 +81,7 @@ class Base extends TestParams.Base {
    *
    * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Base.paramsInArrayOrder[] elements.
+   * The name should be one of Base.paramsNameOrderArray[] elements.
    *
    * @param {object} this.out
    *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
