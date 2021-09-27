@@ -64,7 +64,7 @@ class Base extends TestParams.Base {
    *
    * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Base.paramsInArrayOrder[] elements.
+   * The name should be one of Base.paramsNameOrderArray[] elements.
    *
    * @param {object} this.out
    *   An object which has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock,
@@ -112,22 +112,26 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2021/09/27)
       
       let stepName = `step${i}`;
-      paramsNameOrderArray.push( stepName );
+      paramsNameOrderArray.push( stepName ); // Every step has its own parameters.
 
       
 //!!! ...unfinished... (2021/09/27)
 
-      let step_in_paramsNumberArrayObject = new PointDepthPoint_TestParams.Base();
-      step_in_paramsNumberArrayObject.set_By_ParamsScattered(
-        channelCount0_pointwise1Before,
-        channelCount1_pointwise1Before,
-        pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
-        pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-        bOutput1Requested,
-        bKeepInputTensor
+      let stepTestParams = new PointDepthPoint_TestParams.Base();
+      stepTestParams.set_By_ParamsScattered(
+        stepParamsMaker.channelCount0_pointwise1Before,
+        stepParamsMaker.channelCount1_pointwise1Before,
+        stepParamsMaker.pointwise1ChannelCount, stepParamsMaker.bPointwise1Bias, stepParamsMaker.pointwise1ActivationId,
+        stepParamsMaker.depthwise_AvgMax_Or_ChannelMultiplier, stepParamsMaker.depthwiseFilterHeight, stepParamsMaker.depthwiseStridesPad,
+        stepParamsMaker.bDepthwiseBias, stepParamsMaker.depthwiseActivationId,
+        stepParamsMaker.pointwise21ChannelCount, stepParamsMaker.bPointwise21Bias, stepParamsMaker.pointwise21ActivationId,
+        stepParamsMaker.bOutput1Requested,
+        stepParamsMaker.bKeepInputTensor
       );
-      this.in.paramsNumberArrayObject[ stepName ] = step_in_paramsNumberArrayObject;
+
+      this.in[ stepName ] = stepTestParams.in;
+      this.in.paramsNumberArrayObject[ stepName ] = stepTestParams.weightsFloat32Array;
+      this.out[ stepName ] = stepTestParams.out;
 
 
       let step0_outChannels0 = ???;
