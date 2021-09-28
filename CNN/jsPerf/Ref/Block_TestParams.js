@@ -18,7 +18,7 @@ import * as Block from "../../Conv/Block.js";
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the Block.Params's constructor. That is,
- * it has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock,
+ * it has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested,
  * pointwise1ChannelCountRate, depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel,
  * bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
@@ -42,12 +42,12 @@ class Base extends TestParams.Base {
    *   Return this object self.
    */
   set_By_ParamsScattered(
-    sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock, pointwise1ChannelCountRate,
+    sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, pointwise1ChannelCountRate,
     depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
-      sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock, pointwise1ChannelCountRate,
+      sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, pointwise1ChannelCountRate,
       depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
     };
 
@@ -67,7 +67,7 @@ class Base extends TestParams.Base {
    * The name should be one of Base.paramsNameOrderArray[] elements.
    *
    * @param {object} this.out
-   *   An object which has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountPerBlock,
+   *   An object which has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested,
    * pointwise1ChannelCountRate, depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel,
    * bKeepInputTensor.
    *
@@ -179,7 +179,7 @@ class Base extends TestParams.Base {
       sourceHeight: 5,
       sourceWidth:  5,
       sourceChannelCount: 4,
-      stepCountPerBlock: 5,
+      stepCountRequested: 5,
       pointwise1ChannelCountRate: undefined,
       depthwiseFilterHeight: undefined,
 
@@ -199,7 +199,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( Block.Params.sourceHeight,               this.maxKindsRestrict.sourceHeight ),
       new TestParams.ParamDescConfig( Block.Params.sourceWidth,                this.maxKindsRestrict.sourceWidth ),
       new TestParams.ParamDescConfig( Block.Params.sourceChannelCount,         this.maxKindsRestrict.sourceChannelCount ),
-      new TestParams.ParamDescConfig( Block.Params.stepCountPerBlock,          this.maxKindsRestrict.stepCountPerBlock ),
+      new TestParams.ParamDescConfig( Block.Params.stepCountRequested,          this.maxKindsRestrict.stepCountRequested ),
       new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCountRate, this.maxKindsRestrict.pointwise1ChannelCountRate ),
       new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,      this.maxKindsRestrict.depthwiseFilterHeight ),
       new TestParams.ParamDescConfig( Block.Params.nActivationId,              this.maxKindsRestrict.nActivationId ),
@@ -242,7 +242,7 @@ Base.paramsNameOrderArray_Basic = [
   Block.Params.sourceHeight.paramName,
   Block.Params.sourceWidth.paramName,
   Block.Params.sourceChannelCount.paramName,
-  Block.Params.stepCountPerBlock.paramName,
+  Block.Params.stepCountRequested.paramName,
   Block.Params.pointwise1ChannelCountRate.paramName,
   Block.Params.depthwiseFilterHeight.paramName,
   Block.Params.nActivationId.paramName,
