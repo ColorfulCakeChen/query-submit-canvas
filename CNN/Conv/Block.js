@@ -346,12 +346,14 @@ class Base {
     let stepParams, step, stepIniter;
 
     this.stepsArray = new Array( stepParamsMaker.stepCount );
-    for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step1, 2, 3, ...
+    for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
 
       if ( 0 == i ) { // Step0.
         stepParamsMaker.configTo_beforeStep0();
       }
 
+      // StepLast. (Note: Step0 may also be StepLast.) 
+      //
       // If this is the last step of this block (i.e. at-block-end)
       //   - a different depthwise filter size may be used.
       //   - a different activation function may be used after pointwise2 convolution.
