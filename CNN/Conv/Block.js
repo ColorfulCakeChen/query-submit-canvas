@@ -386,7 +386,7 @@ class Base {
       this.byteOffsetEnd = this.step.byteOffsetEnd;
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
-        stepParamsMaker.configTo_afterStep0( step.outChannels0, step.outChannels1 );
+        stepParamsMaker.configTo_afterStep0();
       }
     }
 
@@ -534,6 +534,13 @@ class Base {
  * Note: In modern deep learning CNN, there is batch normalization after convolution and before activation. The batch normalization
  * has bias internally. We do not have batch normalization in architecture so an explicit bias will be used before every activation
  * function.
+ *
+ * @member {number} outChannels0
+ *   The output0's channel count in current configuration.
+ *
+ * @member {number} outChannels1
+ *   The output1's channel count in current configuration.
+ *
  */
 Params.to_PointDepthPointParams = class {
   /**
@@ -557,6 +564,7 @@ Params.to_PointDepthPointParams = class {
     this.depthwiseFilterHeight_Default = -1; // The default depthwise filter size.
     this.depthwiseFilterHeight_Last =  -1;   // The last step's depthwise filter size.
 
+    this.outChannels0 = this.outChannels1 = -1;
     this.channelShuffler = null;
   }
 
@@ -583,14 +591,8 @@ Params.to_PointDepthPointParams = class {
   configTo_beforeStep0() {}
 
   /** Called after step0 is created (i.e. before step1, 2, 3, ...). Sub-class should override this method to adjust data members.
-   *
-   * @param {number} step0_outChannels0
-   *   The output0's channel count of step0 object.
-   *
-   * @param {number} step0_outChannels1
-   *   The output1's channel count of step0 object.
    */
-  configTo_afterStep0( step0_outChannels0, step0_outChannels1 ) {}
+  configTo_afterStep0() {}
 
   /** Called before stepLast is about to be created. Sub-class could override this method to adjust data members. */
   configTo_beforeStepLast() {
@@ -718,11 +720,14 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
     this.pointwise1ChannelCount = this.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
     
     this.bShouldKeepInputTensor = blockParams.bKeepInputTensor;      // Step0 may or may not keep input tensor according to caller's necessary.
+
+    this.outChannels0 = this.pointwise21ChannelCount;
+    this.outChannels1 = 0;
   }
 
   /** @override */
-  configTo_afterStep0( step0_outChannels0, step0_outChannels1 ) {
-    let step0_outChannelsAll = step0_outChannels0 + step0_outChannels1;
+  configTo_afterStep0() {
+    let step0_outChannelsAll = this.outChannels0 + this.outChannels1;
     this.channelCount0_pointwise1Before = step0_outChannelsAll; // Step0's output channel count is all the other steps' input channel count.
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;             // Except step0, all other steps will not double the channel count.
     this.pointwise21ChannelCount = step0_outChannelsAll;        // Step0's output channel count is all the other steps' output channel count.
@@ -798,12 +803,10 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
 Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_PointDepthPointParams.ShuffleNetV2 {
 
   /** @override */
-  configTo_afterStep0( step0_outChannels0, step0_outChannels1 ) {
-    let step0_outChannelsAll = step0_outChannels0 + step0_outChannels1;
-
+  configTo_afterStep0() {
     // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
-    this.channelCount0_pointwise1Before = step0_outChannels0;
-    this.channelCount1_pointwise1Before = step0_outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
+    this.channelCount0_pointwise1Before = this.outChannels0;
+    this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
     this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
@@ -901,14 +904,17 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
       this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
       this.depthwise_AvgMax_Or_ChannelMultiplier = 2;  // Step0 double the channel count by depthwise channel multiplier.
     }
+
+    this.outChannels0 = this.pointwise21ChannelCount;
+    this.outChannels1 = this.pointwise22ChannelCount;
   }
 
   /** @override */
-  configTo_afterStep0( step0_outChannels0, step0_outChannels1 ) {
-    let step0_outChannelsAll = step0_outChannels0 + step0_outChannels1;
+  configTo_afterStep0() {
+    let step0_outChannelsAll = this.outChannels0 + this.outChannels1;
 
     // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
-    this.channelCount0_pointwise1Before = step0_outChannels0;
+    this.channelCount0_pointwise1Before = this.outChannels0;
 
     // (with concatenation, without add-input-to-output).
     //
@@ -957,6 +963,9 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
     //   - It will have double channel count of source input0.
     //   - It is the concatenation of pointwise21's result and input1.
     this.bOutput1Requested = false;
+
+    this.outChannels0 = this.outChannels0 + this.outChannels1;
+    this.outChannels1 = 0;
   }
 }
 
@@ -1009,12 +1018,15 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
     this.pointwise1ChannelCount = this.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate; // In MobileNetV2, the rate is usually 2.
 
     this.bShouldKeepInputTensor = blockParams.bKeepInputTensor;    // Step0 may or may not keep input tensor according to caller's necessary.
+
+    this.outChannels0 = this.pointwise21ChannelCount;
+    this.outChannels1 = 0;
   }
 
   /** @override */
-  configTo_afterStep0( step0_outChannels0, step0_outChannels1 ) {
+  configTo_afterStep0() {
     // The input0 of all steps (except step0) have the same depth as previous (also step0's) step's output0.
-    this.channelCount0_pointwise1Before = step0_outChannels0;
+    this.channelCount0_pointwise1Before = this.outChannels0;
 
     // In MobileNetV2:
     //   - All steps (except step0) do add-input-to-output (without concatenation).
