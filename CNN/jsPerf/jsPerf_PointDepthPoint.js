@@ -1,13 +1,13 @@
 export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeTensors };
 
-import * as ValueMax from "../ValueMax.js";
+//import * as ValueMax from "../ValueMax.js";
 import * as ValueRange from "../Unpacker/ValueRange.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
+//import * as TensorTools from "../util/TensorTools.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as ChannelShufflerPool from "../Conv/ChannelShufflerPool.js";
-//import * as TensorTools from "../util/TensorTools.js";
 import * as PointDepthPoint_Reference from "./Ref/PointDepthPoint_Reference.js";
 import * as PointDepthPoint_TestParams from "./Ref/PointDepthPoint_TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
