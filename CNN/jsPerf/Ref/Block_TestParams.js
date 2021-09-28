@@ -85,15 +85,14 @@ class Base extends TestParams.Base {
 
     let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
     
-//!!! ...unfinished... (2021/09/27)
     let channelShuffler;
-    for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Step1, 2, 3, ...
+    for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
 
       if ( 0 == i ) { // Step0.
         stepParamsMaker.configTo_beforeStep0();
       }
 
-      if ( ( this.stepsArray.length - 1 ) == i ) { // StepLast.
+      if ( ( this.stepsArray.length - 1 ) == i ) { // StepLast. (Note: Step0 may also be StepLast.)
         stepParamsMaker.configTo_beforeStepLast();
       }
 
@@ -102,15 +101,8 @@ class Base extends TestParams.Base {
         channelShuffler = stepParamsMaker.channelShuffler;
       }
 
-      //stepParamsMaker, this.channelShuffler;
-
-//!!! ...unfinished... (2021/09/27)
-      
       let stepName = `step${i}`;
       paramsNameOrderArray.push( stepName ); // Place every step's parameters in sequence.
-
-
-//!!! ...unfinished... (2021/09/27)
 
       let stepTestParams = new PointDepthPoint_TestParams.Base();
       stepTestParams.set_By_ParamsScattered(
@@ -128,12 +120,8 @@ class Base extends TestParams.Base {
       this.in.paramsNumberArrayObject[ stepName ] = stepTestParams.weightsFloat32Array;
       this.out[ stepName ] = stepTestParams.out;
 
-
-      let step0_outChannels0 = ???;
-      let step0_outChannels1 = ???;
-
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
-        stepParamsMaker.configTo_afterStep0( step0_outChannels0, step0_outChannels1 );
+        stepParamsMaker.configTo_afterStep0();
       }
     }
 
