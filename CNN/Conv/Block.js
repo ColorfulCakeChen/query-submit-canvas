@@ -49,10 +49,13 @@ class Params extends Weights.Params {
    *       - Every step will use depthwise convolution ( strides = 1, pad = "valid" ) and pointwise21. So every step will
    *         shrink the input a little.
    *       - The step0's depthwise convolution will also use channel multiplier 2 to double the channel count.
-   *       - The stepLast may use a smaller depthwise filter so that it could just make half source size as output size.
+   *       - The stepLast may use a smaller depthwise filter so that it could just make ( output height, width ) as half of source.
    *       - If ( depthwiseFilterHeight == 1 ), the depthwiseFilterHeight will become 2 forcibly. Otherwise, the source size
    *         could not be shrinked.
    *
+
+//!!! ...unfinished... (2021/09/28) If ( stepCountPerBlock == 1 ), Params.to_PointDepthPointParams seems not work.
+
    *   - If positive (>= 1), this block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink (i.e. to halve
    *       height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until
    *       the block end.
@@ -60,12 +63,11 @@ class Params extends Weights.Params {
    * @param {number} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
    * That is, pointwise1ChannelCount = ( pointwise21ChannelCount * pointwise1ChannelCountRate ).
-   *   - If ( stepCountPerBlock == 0 ), this rate will be ignored. There will be no first 1x1 pointwise.
-   *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 0 ), will be simplified ShuffleNetV2 (expanding by once depthwise).
-   *   - If ( bChannelShuffler ==  true ) and ( pointwise1ChannelCountRate == 1 ), will be similar to ShuffleNetV2 (expanding by twice depthwise).
-   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1.
-   *   - If ( bChannelShuffler == false ) and ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
    *   - If ( pointwise1ChannelCountRate == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
+   *   - If ( stepCountPerBlock == 0 ), this rate will be ignored. There will be no first 1x1 pointwise.
+   *   - If ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1.
+   *   - If ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1 (no expanding) or ShuffleNetV2 (expanding by twice depthwise).
+   *   - If ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2 (expanding by twice pointhwise1).
    *
    * @param {string} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
