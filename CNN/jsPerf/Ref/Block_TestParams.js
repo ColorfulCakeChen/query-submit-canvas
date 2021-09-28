@@ -80,18 +80,13 @@ class Base extends TestParams.Base {
    */
   set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
-//!!! ...unfinished... (2021/09/27)
-
-    Base.generate_Filters_Biases( channelCount0_pointwise1Before, this.out, this.in.paramsNumberArrayObject );
-
     let blockParams = this.out;
     let stepParamsMaker = Block.Base.create_Params_to_PointDepthPointParams( blockParams );
 
-//!!! ...unfinished... (2021/09/27)
     let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
     
 //!!! ...unfinished... (2021/09/27)
-//    this.stepsArray = new Array( stepParamsMaker.stepCount );
+    let channelShuffler;
     for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Step1, 2, 3, ...
 
       if ( 0 == i ) { // Step0.
@@ -102,10 +97,10 @@ class Base extends TestParams.Base {
         stepParamsMaker.configTo_beforeStepLast();
       }
 
-//      stepParams = stepParamsMaker.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
-
       // If channelShuffler is not null, keep it so that its tensors could be released.
-//      let channelShuffler = stepParamsMaker.channelShuffler;
+      if ( stepParamsMaker.channelShuffler ) {
+        channelShuffler = stepParamsMaker.channelShuffler;
+      }
 
       //stepParamsMaker, this.channelShuffler;
 
@@ -140,6 +135,12 @@ class Base extends TestParams.Base {
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
         stepParamsMaker.configTo_afterStep0( step0_outChannels0, step0_outChannels1 );
       }
+    }
+
+    // Here (i.e. in Block_TestParams), the channelShuffler is not used. Just release it for avoiding memory leak.
+    if ( channelShuffler ) {
+      channelShuffler.disposeTensors();
+      channelShuffler = null;
     }
 
 
