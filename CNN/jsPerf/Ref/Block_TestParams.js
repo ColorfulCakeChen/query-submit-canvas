@@ -131,9 +131,6 @@ class Base extends TestParams.Base {
       channelShuffler = null;
     }
 
-
-//!!! ...unfinished... (2021/09/27)
-
     let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
     Float32Array_ByteOffsetBegin.setByConcat( paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
 
@@ -197,25 +194,6 @@ class Base extends TestParams.Base {
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
-  }
-
-  
-  /**
-   *
-   * @param {object} paramsAll
-   *   An object which must have all the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
-   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-   * bOutput1Requested, inputTensorCount. They will be used to modify io_paramsNumberArrayObject.
-   *
-   * @param {object} io_paramsNumberArrayObject
-   *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Base.paramsInArrayOrder[] elements.
-   */
-  static generate_Steps( paramsAll, io_paramsNumberArrayObject ) {
-
-//!!! ...unfinished... (2021/09/27)
-
   }
 
 }
