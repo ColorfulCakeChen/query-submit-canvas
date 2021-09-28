@@ -190,6 +190,7 @@ class Params extends Weights.Params {
   get nActivationIdAtBlockEndName() { return Params.nActivationIdAtBlockEnd.getStringOfValue( this.nActivationIdAtBlockEnd ); }
 
   get nWhetherShuffleChannel()      { return this.parameterMapModified.get( Params.nWhetherShuffleChannel ); }
+  get nWhetherShuffleChannelName()  { return Params.nWhetherShuffleChannel.getStringOfValue( this.nWhetherShuffleChannel ); }
 
   get bKeepInputTensor()            { return this.parameterMapModified.get( Params.bKeepInputTensor ); }
 }
@@ -326,7 +327,14 @@ class Base {
     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
     this.nActivationIdAtBlockEndName = params.nActivationIdAtBlockEndName;
     this.nWhetherShuffleChannel = params.nWhetherShuffleChannel;
+    this.nWhetherShuffleChannelName = params.nWhetherShuffleChannelName;
     this.bKeepInputTensor = params.bKeepInputTensor;
+
+    // The parameters which are determined (inferenced) from the above parameters.
+    {
+      this.outputHeight = params.outputHeight;
+      this.outputWidth = params.outputWidth;
+    }
 
     // Pre-allocate array to place intermediate 2 input tensors and 2 output tensors. This could reduce memory re-allocation.
     this.intermediateInputTensors = new Array( 2 );
@@ -523,6 +531,22 @@ class Base {
   /** How many steps inside this blocked are created. (may different from this.stepCountRequested.) */
   get stepCount() {
     return this.stepsArray.length;
+  }
+
+  /** @return {string} The description string of all (adjusted) parameters of initer(). */
+  get parametersDescription() {
+    let str =
+        `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, sourceChannelCount=${this.sourceChannelCount}, `
+      + `stepCountRequested=${this.stepCountRequested}, `
+      + `pointwise1ChannelCountRate=${this.pointwise1ChannelCountRate}, `
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
+      + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
+      + `nActivationIdAtBlockEndName=${this.nActivationIdAtBlockEndName}(${this.nActivationIdAtBlockEnd}), `
+      + `nWhetherShuffleChannel=${this.nWhetherShuffleChannelName}(${this.nWhetherShuffleChannel}), `
+      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
+      + `bKeepInputTensor=${this.bKeepInputTensor}, `
+    ;
+    return str;
   }
 
 }
