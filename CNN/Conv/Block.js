@@ -199,7 +199,7 @@ class Params extends Weights.Params {
 Params.sourceHeight =               new ParamDesc.Int(                   "sourceHeight",               1, ( 10 * 1024 ) );
 Params.sourceWidth =                new ParamDesc.Int(                   "sourceWidth",                1, ( 10 * 1024 ) );
 Params.sourceChannelCount =         new ParamDesc.Int(                   "sourceChannelCount",         1, ( 10 * 1024 ) );
-Params.stepCountRequested =          new ParamDesc.Int(                   "stepCountRequested",          1, (  1 * 1024 ) );
+Params.stepCountRequested =         new ParamDesc.Int(                   "stepCountRequested",         1, (  1 * 1024 ) );
 Params.pointwise1ChannelCountRate = new ParamDesc.Int(                   "pointwise1ChannelCountRate", 0,             2 );
 Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1,             9 );
 Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
