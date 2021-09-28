@@ -1716,7 +1716,7 @@ class Base extends ReturnOrClone.Base {
   get parametersDescription() {
     let str =
         `inputTensorCount=${this.inputTensorCount}, `
-    
+
       + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
 
