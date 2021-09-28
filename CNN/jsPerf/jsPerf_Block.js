@@ -1,6 +1,6 @@
 export { init, testCorrectness, disposeTensors };
 
-import * as ValueMax from "../ValueMax.js";
+//import * as ValueMax from "../ValueMax.js";
 //import * as ValueRange from "../Unpacker/ValueRange.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
 //import * as ValueDesc from "../Unpacker/ValueDesc.js";
@@ -12,7 +12,7 @@ import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
 
 
 /**
- * Test CNN PointDepthPoint.
+ * Test CNN Block.
  *
  * @see {@link https://www.measurethat.net/Benchmarks/Show/??? 11973/430/colorfulcakechen-cnn-pointdepthpoint-0c5cbd1a6ca20d5f24}
  */
@@ -239,7 +239,7 @@ class HeightWidthDepth {
 
     tf.tidy( () => {
 
-      let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerPool.
+      let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
       // Test different input image width (even and odd).
       let originalImageSizeArray = [
@@ -249,14 +249,15 @@ class HeightWidthDepth {
 
       for ( let originalImageSize of originalImageSizeArray ) {
 
-        // Note: imageSourceBag and channelShufflerPool should not be created outside tidy() because tidy() will dispose tensors
+//!!! ...unfinished... (2021/09/28)
+
+        // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
         //       dynamically created in them.
         let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
-        let channelShufflerPool = new ChannelShufflerPool.Base( ChannelShuffler.ConcatPointwiseConv );
 
-        let testParams = new PointDepthPoint_TestParams.Base();
+        let testParams = new Block_TestParams.Base();
         let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width );
-        let testReference = new PointDepthPoint_Reference.Base();
+        let testReference = new Block_Reference.Base();
 
         let batchMessageInterval = 30 * 1000; //100 * 1000; // Every so many test cases, display a message.
         for ( let testParams of testParamsGenerator ) {
@@ -265,10 +266,9 @@ class HeightWidthDepth {
               + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
               + `testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
 
-          testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
+          testReference.testCorrectness( imageSourceBag, testParams );
         }
 
-        channelShufflerPool.disposeTensors();
         imageSourceBag.disposeTensors();
       }
 
@@ -281,8 +281,8 @@ class HeightWidthDepth {
           + `` );
     });
 
-    // After correctness testing done, create all PointDepthPoint for performance testing.
-    this.pointDepthPoint_PerformanceTest_init();
+    // After correctness testing done, create all Block for performance testing.
+    this.block_PerformanceTest_init();
   }
 
 }
