@@ -44,7 +44,7 @@ class Params extends Weights.Params {
    *   There are how many steps inside this block.
    *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   *   - If zero (== 0), the step count will be automatically calculated so that the block's output has half of source's
+   *   - If zero or one (<= 1), the step count will be automatically calculated so that the block's output has half of source's
    *     ( height, width ) and double channel count (depth).
    *       - Every step will use depthwise convolution ( strides = 1, pad = "valid" ) and pointwise21. So every step will
    *         shrink the input a little.
@@ -53,18 +53,14 @@ class Params extends Weights.Params {
    *       - If ( depthwiseFilterHeight == 1 ), the depthwiseFilterHeight will become 2 forcibly. Otherwise, the source size
    *         could not be shrinked.
    *
-
-//!!! ...unfinished... (2021/09/28) If ( stepCountPerBlock == 1 ), Params.to_PointDepthPointParams seems not work.
-
-   *   - If positive (>= 1), this block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink (i.e. to halve
-   *       height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" ) until
-   *       the block end.
+   *   - If ( stepCountPerBlock >= 2 ), this block will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
+   *       (i.e. to halve height x width) and use ( stepCountPerBlock - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
+   *       until the block end. (This can not be achieved by only one step. So there is at least two steps.)
    *
    * @param {number} pointwise1ChannelCountRate
    *   The first 1x1 pointwise convolution output channel count over of the second 1x1 pointwise convolution output channel count.
    * That is, pointwise1ChannelCount = ( pointwise21ChannelCount * pointwise1ChannelCountRate ).
    *   - If ( pointwise1ChannelCountRate == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
-   *   - If ( stepCountPerBlock == 0 ), this rate will be ignored. There will be no first 1x1 pointwise.
    *   - If ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1.
    *   - If ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1 (no expanding) or ShuffleNetV2 (expanding by twice depthwise).
    *   - If ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2 (expanding by twice pointhwise1).
@@ -85,7 +81,7 @@ class Params extends Weights.Params {
    *
    *   - If ( nWhetherShuffleChannel == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   *   - If ( stepCountPerBlock == 0 ), this flag will be ignored.
+   *   - If ( stepCountPerBlock <= 1 ), this flag will be ignored.
    *       This block will be NotShuffleNet_NotMobileNet. There will be no channel shuffler.
    *
    *   - If ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.NONE ), (0),
@@ -122,7 +118,7 @@ class Params extends Weights.Params {
     //     for the next block.
     //
     //   - If depthwiseChannelMultiplierStep0 is specified as Params.depthwiseChannelMultiplierStep0.valueDesc.Ids.NONE (0), the input
-    //     image will not be shrinked a little (for ( stepCountPerBlock <= 0 )) or will not be halven (for ( stepCountPerBlock >= 1 ).
+    //     image will not be shrinked a little (for ( stepCountPerBlock <= 1 )) or will not be halven (for ( stepCountPerBlock >= 2 ).
     //     If it is still a parameter it should be forced to 1 at least (always needs depthwise operation) in this case.
     //
 
@@ -203,7 +199,7 @@ class Params extends Weights.Params {
 Params.sourceHeight =               new ParamDesc.Int(                   "sourceHeight",               1, ( 10 * 1024 ) );
 Params.sourceWidth =                new ParamDesc.Int(                   "sourceWidth",                1, ( 10 * 1024 ) );
 Params.sourceChannelCount =         new ParamDesc.Int(                   "sourceChannelCount",         1, ( 10 * 1024 ) );
-Params.stepCountPerBlock =          new ParamDesc.Int(                   "stepCountPerBlock",          0, (  1 * 1024 ) );
+Params.stepCountPerBlock =          new ParamDesc.Int(                   "stepCountPerBlock",          1, (  1 * 1024 ) );
 Params.pointwise1ChannelCountRate = new ParamDesc.Int(                   "pointwise1ChannelCountRate", 0,             2 );
 Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1,             9 );
 Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
@@ -464,10 +460,10 @@ class Base {
    */
   static create_Params_to_PointDepthPointParams( blockParams ) {
 
-    if ( this.stepCountPerBlock == 0 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
+    if ( this.stepCountPerBlock <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
       return new Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet( blockParams );
 
-    } else {
+    } else { // ( this.stepCountPerBlock >= 2 )
       swtich ( this.nWhetherShuffleChannel ) {
         case Value.WhetherShuffleChannelSingleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
           // ( pointwise1ChannelCountRate == 0 ), will be similar to MobileNetV1.
