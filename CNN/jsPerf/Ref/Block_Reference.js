@@ -18,6 +18,24 @@ class Base {
   }
 
   /**
+   * Testing whether the results of different implementation are the same.
+   *
+   * @param {ImageSourceBag.Base} imageSourceBag
+   *   The provider of image and tensor of variable specification for testing.
+   *
+   * @param {Block_TestParams.Base} testParams
+   *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
+   *
+   */
+  testCorrectness( imageSourceBag, testParams ) {
+    this.testParams = testParams;
+
+
+//!!! ...unfinished... (2021/09/28)
+
+  }
+
+  /**
    * @param {Block_TestParams.Base} testParams
    *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
    *
@@ -41,20 +59,14 @@ class Base {
 
     let bInitOk = Block.init( progress, extractedParams );
 
-//!!! ...unfinished... (2021/09/28)
-
     let flags = {};
-    PointDepthPoint.Params.setFlags_by.call( flags,
-      testParams.out.channelCount0_pointwise1Before, testParams.out.channelCount1_pointwise1Before,
-      testParams.out.pointwise1ChannelCount,
-      testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      testParams.out.pointwise21ChannelCount,
-      testParams.out.bOutput1Requested );
+    PointDepthPoint.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( flags,
+      testParams.out.sourceHeight, testParams.out.sourceWidth );
 
-    let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
+    let parametersDescription = `( ${block.parametersDescription} )`;
 
-    tf.util.assert( ( pointDepthPoint.bInitOk == bInitOk ),
-      `PointDepthPoint validation state (${pointDepthPoint.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
+    tf.util.assert( ( block.bInitOk == bInitOk ),
+      `Block validation state (${block.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
@@ -62,15 +74,16 @@ class Base {
     }
 
     tf.util.assert( ( true == bInitOk ),
-      `Failed to initialize pointDepthPoint object. ${parametersDescription}`);
+      `Failed to initialize block object. ${parametersDescription}`);
 
     tf.util.assert( ( 100 == progress.valuePercentage ),
       `Progress (${progress.valuePercentage}) should be 100 when initializing pointDepthPoint object successfully. ${parametersDescription}`);
 
-
-    if ( pointDepthPoint.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
+    if ( block.byteOffsetEnd != testParams.in.inputFloat32Array.byteLength ) { //!!! For Debug. (parsing ending position)
       debugger;
     }
+
+//!!! ...unfinished... (2021/09/28)
 
     Base.AssertTwoEqualValues( "parsing beginning position",
       pointDepthPoint.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
