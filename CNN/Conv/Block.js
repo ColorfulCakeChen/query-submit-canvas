@@ -126,7 +126,7 @@ class Params extends Weights.Params {
       [ Params.sourceHeight,               sourceHeight ],
       [ Params.sourceWidth,                sourceWidth ],
       [ Params.sourceChannelCount,         sourceChannelCount ],
-      [ Params.stepCountRequested,          stepCountRequested ],
+      [ Params.stepCountRequested,         stepCountRequested ],
       [ Params.pointwise1ChannelCountRate, pointwise1ChannelCountRate ],
       [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
       [ Params.nActivationId,              nActivationId ],
@@ -180,7 +180,7 @@ class Params extends Weights.Params {
   get sourceWidth()                 { return this.parameterMapModified.get( Params.sourceWidth ); }
   get sourceChannelCount()          { return this.parameterMapModified.get( Params.sourceChannelCount ); }
 
-  get stepCountRequested()           { return this.parameterMapModified.get( Params.stepCountRequested ); }
+  get stepCountRequested()          { return this.parameterMapModified.get( Params.stepCountRequested ); }
   get pointwise1ChannelCountRate()  { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
 
   get depthwiseFilterHeight()       { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
