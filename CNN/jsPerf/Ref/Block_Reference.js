@@ -43,58 +43,60 @@ class Base {
   testCorrectness( imageSourceBag, testParams ) {
     this.testParams = testParams;
 
-//!!! ...unfinished... (2021/09/30)
-
     try {
-      let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
-      let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
-      let depthwise_AvgMax_Or_ChannelMultiplier = this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
+      let sourceHeight = this.testParams.out.sourceHeight;
+      let sourceWidth = this.testParams.out.sourceWidth;
+      let sourceChannelCount = this.testParams.out.sourceChannelCount;
+      let stepCountRequested = this.testParams.out.stepCountRequested;
+      let pointwise1ChannelCountRate = this.testParams.out.pointwise1ChannelCountRate;
       let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
-      let depthwiseStridesPad = this.testParams.out.depthwiseStridesPad;
+      let nActivationId = this.testParams.out.nActivationId;
+      let nActivationIdAtBlockEnd = this.testParams.out.nActivationIdAtBlockEnd;
+      let nWhetherShuffleChannel = this.testParams.out.nWhetherShuffleChannel;
       let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
 
+      let referredParams = {};
+      let outputHeight, outputWidth, outputChannelCount;
+      {
+        Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( referredParams, sourceHeight, sourceWidth );
+
+        outputHeight = referredParams.outputHeight;
+        outputWidth = referredParams.outputWidth;
+//!!! ...unfinished... (2021/09/30)
+//        outputChannelCount = referredParams.outputChannelCount;
+      }
+
       let strNote;
+      strNote = `( this.testParams.id=${this.testParams.id} )`;
 
-!!!
-      let imageOutReference = this.calcResult( imageIn,
-        channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
+      let imageIn = imageSourceBag.getImage_by( sourceChannelCount );
+      let imageOutReference = this.calcResult( imageIn );
 
-        tf.util.assert( imageOutReferenceArray.length == 2,
-          `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
-      }
+      let inputTensor3d = imageSourceBag.getTensor3d_by( sourceChannelCount );
 
-      outputTensor3dArray.fill( undefined );
-      inputTensor3dArray.fill( undefined );
-
-      inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
-      if ( bTwoInputs ) { // Pass two input tensors according to parameters.
-        inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
-          input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
-      }
-
-      let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
+      let inputTensorDestroyCount; // How many input tensors will be destroyed by Block.apply().
       if ( bKeepInputTensor ) {
         inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
 
       } else {
-        inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
+        inputTensor3d = inputTensor3d.clone(); // Clone for being destroyed. 
         inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
-
-        if ( bTwoInputs ) { // Pass two input tensors according to parameters.
-          inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
-          inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
-        }
       }
 
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-      let pointDepthPoint = Base.pointDepthPoint_create( testParams, channelShuffler_ConcatPointwiseConv );
+      let block = Base.block_create( testParams );
 
-      let parametersDescription = pointDepthPoint.parametersDescription;
+      let parametersDescription = block.parametersDescription;
       strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
 
-      // Test input channel count.
-      Base.AssertTwoEqualValues( "inChannels1", pointDepthPoint.inChannels1, input1ChannelCount, strNote );
+      Base.AssertTwoEqualValues( "outputHeight", block.outputHeight, outputHeight, strNote );
+      Base.AssertTwoEqualValues( "outputWidth", block.outputWidth, outputWidth, strNote );
 
+//!!! ...unfinished... (2021/09/30)
+//       Base.AssertTwoEqualValues( "outputChannelCount", block.outputChannelCount, outputChannelCount, strNote );
+//       Base.AssertTwoEqualValues( "stepCount", block.stepCount, stepCount, strNote );
+
+//!!! ...unfinished... (2021/09/30)
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
       let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
