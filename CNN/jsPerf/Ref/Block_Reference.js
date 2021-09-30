@@ -14,8 +14,6 @@ import * as ImageSourceBag from "./ImageSourceBag.js";
 class Base {
 
   constructor() {
-
-//!!! ...unfinished... (2021/09/28)
     this.PointDepthPoint_Reference = new PointDepthPoint_Reference();
     this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.3 );
   }
@@ -29,18 +27,7 @@ class Base {
    * @param {Block_TestParams.Base} testParams
    *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
    *
-
-!!!??? ...unfinished... (2021/09/30)
-
-   * @param {ChannelShufflerPool.Base} channelShufflerPool
-   *   The channelShufflers provider. It must be initialized with ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
-   *
-   *     - It is only used when
-   *         ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
-   *         (-3) (i.e. channel shuffle the concatenated pointwise21 and input1).
-   *
    */
-//  testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
   testCorrectness( imageSourceBag, testParams ) {
     this.testParams = testParams;
 
@@ -244,19 +231,17 @@ class Base {
     // Other parameters.
     Base.AssertTwoEqualValues( "bKeepInputTensor", block.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
 
-//!!! ...unfinished... (2021/09/28)
-
     return block;
   }
-
-//!!! ...unfinished... (2021/09/28)
-// Test the generated params of every step of every Block.Base.create_Params_to_PointDepthPointParams_Xxx whether conform with expectation.
-
 
   static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
     tf.util.assert( ( value1 == value2 ),
       `Block ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
   }
+
+//!!! ...unfinished... (2021/09/28)
+// Test the generated params of every step of every Block.Base.create_Params_to_PointDepthPointParams_Xxx whether conform with expectation.
+
 
   /** According to imageIn and this.testParams.in.paramsNumberArrayObject, calculate imageOut.
    *
@@ -268,11 +253,38 @@ class Base {
    * @param {number}   imageIn.depth     Image channel count
    * @param {number[]} imageIn.dataArray Image data
    *
-   * @return {object} Return output image.
+   * @return {object} Return output image as object { height, widthm depth, dataArray }.
    */
   calcResult( imageIn ) {
+    let stepCountRequested = this.testParams.out.stepCountRequested;
+    let nWhetherShuffleChannel = this.testParams.out.nWhetherShuffleChannel;
 
-//!!! ...unfinished... (2021/09/30)
+    let imageOut;
+    if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
+      imageOut = this.calc_NotShuffleNet_NotMobileNet( imageIn );
+
+    } else { // ( this.stepCountRequested >= 2 )
+      swtich ( this.nWhetherShuffleChannel ) {
+        case Value.WhetherShuffleChannelSingleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
+          imageOut = this.calc_MobileNetV2( imageIn );
+          break;
+
+        case Value.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
+          imageOut = this.calc_ShuffleNetV2( imageIn );
+          break;
+
+        case Value.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
+          imageOut = this.calc_ShuffleNetV2_Slower( imageIn );
+          break;
+
+        default:
+          tf.util.assert( false,
+            `Block_Reference.calcResult(): `
+              + `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value.` );
+          break;
+      }
+    }
+
     return imageOut;
   }
 
