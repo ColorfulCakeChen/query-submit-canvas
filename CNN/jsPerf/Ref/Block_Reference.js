@@ -1,5 +1,6 @@
 export { Base };
 
+import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js"; 
@@ -16,7 +17,7 @@ class Base {
 
 //!!! ...unfinished... (2021/09/28)
     this.PointDepthPoint_Reference = new PointDepthPoint_Reference();
-
+    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.3 );
   }
 
   /**
@@ -128,27 +129,37 @@ class Base {
         Base.AssertTwoEqualValues( "outChannels", block.outputChannelCount, outputTensorChannelCount, strNote );
       }
 
-//!!! ...unfinished... (2021/09/30)
+      // Test correctness of Block.apply.
+      {
+        let outputArrayRef;
 
-      // Test correctness of pointDepthPoint apply.
-      this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, strNote );
+        if ( imageOutReference ) {
+          outputArrayRef = imageOutReference.dataArray; // Get referenced result (as number array).
+        } else {
+          outputArrayRef = null;
+        }
 
-      pointDepthPoint.disposeTensors();
+        this.asserter_Tensor_NumberArray.assert(
+          outputTensor3d, outputArrayRef,
+          "Block", `outputTensor`, `outputRef`, parametersDescription
+        );
+      }
+
+      block.disposeTensors();
       let memoryInfo_afterDispose = tf.memory();
 
       tf.util.assert( memoryInfo_afterDispose.numTensors == ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ),
-        `PointDepthPoint create/dispose memory leak. `
+        `Block create/dispose memory leak. `
           + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
           + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
           + `${strNote}` );
 
-      tf.dispose( outputTensor3dArray );
+      tf.dispose( outputTensor3d );
 
     } catch ( e ) {
       let backendName = tf.getBackend();
       console.log( `backendName=${backendName}, `
-//        + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
-        + `PointDepthPoint this.testParams.id = ${this.testParams.id}` );
+        + `Block this.testParams.id = ${this.testParams.id}` );
       throw e;
     }
 
