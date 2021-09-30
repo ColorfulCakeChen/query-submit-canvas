@@ -77,7 +77,7 @@ class Base {
         input1ChannelCount = referredParams.input1ChannelCount;
       }
 
-      let channelShuffler_ConcatPointwiseConv;
+      let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
       let imageOutReferenceArray;
       {
         strNote = `( this.testParams.id=${this.testParams.id} )`;
@@ -117,13 +117,16 @@ class Base {
             tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
               `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
                 + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
+
+            channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
+            channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
           }
         }
 
         // Output is an array with two elements.
         imageOutReferenceArray = this.calcResult( imageInArraySelected,
-          channelShuffler_ConcatPointwiseConv.concatenatedShape, channelShuffler_ConcatPointwiseConv.outputGroupCount );
-        
+          channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
+
         tf.util.assert( imageOutReferenceArray.length == 2,
           `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
       }
