@@ -586,7 +586,7 @@ Params.to_PointDepthPointParams = class {
     this.stepCount = -1; // How many step should be in the block.
 
     this.depthwiseFilterHeight_Default = -1; // The default depthwise filter size.
-    this.depthwiseFilterHeight_Last =  -1;   // The last step's depthwise filter size.
+    this.depthwiseFilterHeight_Last = -1;    // The last step's depthwise filter size.
 
     this.outChannels0 = this.outChannels1 = -1;
     this.channelShuffler = null;
