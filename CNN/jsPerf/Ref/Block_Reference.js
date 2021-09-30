@@ -253,8 +253,31 @@ class Base {
    * @return {object} Return output image as object { height, widthm depth, dataArray }.
    */
   calcResult( imageIn ) {
-    let stepCountRequested = this.testParams.out.stepCountRequested;
-    let nWhetherShuffleChannel = this.testParams.out.nWhetherShuffleChannel;
+    let testParams = this.testParams;
+    
+    {
+      let referredParams = {};
+      let outputHeight, outputWidth; //, outputChannelCount;
+      Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( referredParams, sourceHeight, sourceWidth );
+
+      // Create description for debug easily.
+      this.paramsOutDescription =
+
+          `sourceHeight=${testParams.out.sourceHeight}, sourceWidth=${testParams.out.sourceWidth}, `
+        + `sourceChannelCount=${testParams.out.sourceChannelCount}, `
+        + `stepCountRequested=${testParams.out.stepCountRequested}, `
+        + `pointwise1ChannelCountRate=${testParams.out.pointwise1ChannelCountRate}, `
+        + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
+        + `nActivationIdName=${testParams.out.nActivationIdName}(${testParams.out.nActivationId}), `
+        + `nActivationIdAtBlockEndName=${testParams.out.nActivationIdAtBlockEndName}(${testParams.out.nActivationIdAtBlockEnd}), `
+        + `nWhetherShuffleChannel=${testParams.out.nWhetherShuffleChannelName}(${testParams.out.nWhetherShuffleChannel}), `
+        + `outputHeight=${referredParams.outputHeight}, outputWidth=${referredParams.outputWidth}, `
+        + `bKeepInputTensor=${testParams.out.bKeepInputTensor}, `
+      ;
+    }
+
+    let stepCountRequested = testParams.out.stepCountRequested;
+    let nWhetherShuffleChannel = testParams.out.nWhetherShuffleChannel;
 
     let imageOut;
     if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
@@ -275,9 +298,7 @@ class Base {
           break;
 
         default:
-          tf.util.assert( false,
-            `Block_Reference.calcResult(): `
-              + `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value.` );
+          tf.util.assert( false, `Block_Reference.calcResult(): unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value.` );
           break;
       }
     }
@@ -288,7 +309,18 @@ class Base {
   /** Calculate imageOut by simulating Block as NotShuffleNet_NotMobileNet. */
   calc_NotShuffleNet_NotMobileNet( imageIn ) {
 
+    let stepParamsMaker = new Block.Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet( this.testParams.out );
+    stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last(); // Calculate the real step count.
+
 //!!! ...unfinished... (2021/09/30)
+//    Base.AssertTwoEqualValues( "stepCount", block.stepCount, stepParamsMaker.stepCount, this.paramsOutDescription );
+
+    for ( let step = 0; step < stepParamsMaker.stepCount; ++step ) {
+
+//!!! ...unfinished... (2021/09/30)
+
+    }
+
     return imageOut;
   }
 
