@@ -462,7 +462,7 @@ class Base {
    * @param {number}   channelShuffler_outputGroupCount
    *    The outputGroupCount of channel shuffler. Used when concat-shuffle-split.
    *
-   * @return {number[]} Return output image data as array.
+   * @return {object[]} Return output images array.
    */ 
   calcResult( imageInArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount ) {
 
