@@ -666,7 +666,7 @@ class Base {
 
       // 5.1 Concat2, shuffle, split.
       if ( testParams.out.bOutput1Requested == true ) {
-        this.calcConcatShuffleSplit( channelShuffler_concatenatedShape, channelShuffler_outputGroupCount
+        this.calcConcatShuffleSplit( channelShuffler_concatenatedShape, channelShuffler_outputGroupCount,
           imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
 
       // 5.2 Concat2 only.
