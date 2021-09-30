@@ -16,6 +16,9 @@ class Base {
   constructor() {
     this.PointDepthPoint_Reference = new PointDepthPoint_Reference();
     this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.3 );
+
+    // For reducing memory allocation.
+    this.imageInArray = new Array( 2 ); // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
   }
 
   /**
@@ -257,8 +260,8 @@ class Base {
     
     {
       let referredParams = {};
-      let outputHeight, outputWidth; //, outputChannelCount;
-      Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( referredParams, sourceHeight, sourceWidth );
+      Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( referredParams,
+        testParams.out.sourceHeight, testParams.out.sourceWidth );
 
       // Create description for debug easily.
       this.paramsOutDescription =
@@ -298,7 +301,8 @@ class Base {
           break;
 
         default:
-          tf.util.assert( false, `Block_Reference.calcResult(): unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value.` );
+          tf.util.assert( false, `Block_Reference.calcResult(): `
+            `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value. ${this.paramsOutDescription}` );
           break;
       }
     }
@@ -308,8 +312,9 @@ class Base {
 
   /** Calculate imageOut by simulating Block as NotShuffleNet_NotMobileNet. */
   calc_NotShuffleNet_NotMobileNet( imageIn ) {
+    let testParams = this.testParams;
 
-    let stepParamsMaker = new Block.Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet( this.testParams.out );
+    let stepParamsMaker = new Block.Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet( testParams.out );
     stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last(); // Calculate the real step count.
 
 //!!! ...unfinished... (2021/09/30)
@@ -318,6 +323,11 @@ class Base {
     for ( let step = 0; step < stepParamsMaker.stepCount; ++step ) {
 
 //!!! ...unfinished... (2021/09/30)
+
+//       this.imageInArray[ 0 ] = ; // input0
+//       this.imageInArray[ 1 ] = ; // input1
+
+      let imageOutArray = this.PointDepthPoint_Reference.calcResult( this.imageInArray );
 
     }
 
