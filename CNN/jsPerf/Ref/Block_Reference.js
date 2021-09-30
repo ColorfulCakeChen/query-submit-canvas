@@ -262,15 +262,15 @@ class Base {
 
     } else { // ( this.stepCountRequested >= 2 )
       swtich ( this.nWhetherShuffleChannel ) {
-        case Value.WhetherShuffleChannelSingleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
+        case Value.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
           imageOut = this.calc_MobileNetV2( imageIn );
           break;
 
-        case Value.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
+        case Value.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
           imageOut = this.calc_ShuffleNetV2( imageIn );
           break;
 
-        case Value.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
+        case Value.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
           imageOut = this.calc_ShuffleNetV2_Slower( imageIn );
           break;
 
@@ -285,32 +285,28 @@ class Base {
     return imageOut;
   }
 
-  /** Calculate imageOut by simulating Block as NotShuffleNet_NotMobileNet.
-   */
+  /** Calculate imageOut by simulating Block as NotShuffleNet_NotMobileNet. */
   calc_NotShuffleNet_NotMobileNet( imageIn ) {
 
 //!!! ...unfinished... (2021/09/30)
     return imageOut;
   }
 
-  /** Calculate imageOut by simulating Block as ShuffleNetV2_Slower.
-   */
+  /** Calculate imageOut by simulating Block as ShuffleNetV2_Slower. */
   calc_ShuffleNetV2_Slower( imageIn ) {
 
 //!!! ...unfinished... (2021/09/30)
     return imageOut;
   }
 
-  /** Calculate imageOut by simulating Block as ShuffleNetV2.
-   */
+  /** Calculate imageOut by simulating Block as ShuffleNetV2. */
   calc_ShuffleNetV2( imageIn ) {
 
 //!!! ...unfinished... (2021/09/30)
     return imageOut;
   }
 
-  /** Calculate imageOut by simulating Block as MobileNetV2.
-   */
+  /** Calculate imageOut by simulating Block as MobileNetV2. */
   calc_MobileNetV2( imageIn ) {
 
 //!!! ...unfinished... (2021/09/30)
