@@ -121,8 +121,9 @@ class Base {
         }
 
         // Output is an array with two elements.
-        imageOutReferenceArray = this.calcResult( imageInArraySelected, channelShuffler_ConcatPointwiseConv );
-
+        imageOutReferenceArray = this.calcResult( imageInArraySelected,
+          channelShuffler_ConcatPointwiseConv.concatenatedShape, channelShuffler_ConcatPointwiseConv.outputGroupCount );
+        
         tf.util.assert( imageOutReferenceArray.length == 2,
           `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
       }
@@ -452,12 +453,15 @@ class Base {
    * @param {number}   imageInArray[ i ].depth     Image channel count
    * @param {number[]} imageInArray[ i ].dataArray Image data
    *
-   * @param {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
-   *   Used when concat-shuffle-split.
+   * @param {number[]} channelShuffler_concatenatedShape
+   *   The concatenatedShape of channel shuffler. Used when concat-shuffle-split.
+   *
+   * @param {number}   channelShuffler_outputGroupCount
+   *    The outputGroupCount of channel shuffler. Used when concat-shuffle-split.
    *
    * @return {number[]} Return output image data as array.
    */ 
-  calcResult( imageInArray, channelShuffler_ConcatPointwiseConv ) {
+  calcResult( imageInArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount ) {
 
     let testParams = this.testParams;
 
@@ -662,7 +666,7 @@ class Base {
 
       // 5.1 Concat2, shuffle, split.
       if ( testParams.out.bOutput1Requested == true ) {
-        this.calcConcatShuffleSplit( channelShuffler_ConcatPointwiseConv,
+        this.calcConcatShuffleSplit( channelShuffler_concatenatedShape, channelShuffler_outputGroupCount
           imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
 
       // 5.2 Concat2 only.
@@ -1130,6 +1134,9 @@ class Base {
 
   /**
    *
+   * @param {number[]} concatenatedShape           The concatenatedShape of channel shuffler.
+   * @param {number}   outputGroupCount            The outputGroupCount of channel shuffler.
+   *
    * @param {number}   imageInArray[ 0 ].height    height of the first input image.
    * @param {number}   imageInArray[ 0 ].width     width of the first input image.
    * @param {number}   imageInArray[ 0 ].depth     channel count of the first input image.
@@ -1154,7 +1161,7 @@ class Base {
    * @param {string}   parametersDesc               A string for debug message of this point-depth-point.
    */
   calcConcatShuffleSplit(
-    channelShuffler_ConcatPointwiseConv, imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
+    concatenatedShape, outputGroupCount, imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
 
     tf.util.assert(
       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
@@ -1171,28 +1178,28 @@ class Base {
     let channelShuffler_ShuffleInfo;
     {
       channelShuffler_ShuffleInfo = this.channelShufflerPool.getChannelShuffler_by(
-        channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ],
-        channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ],
-        channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ],
-        channelShuffler_ConcatPointwiseConv.outputGroupCount
+        concatenatedShape[ 0 ],
+        concatenatedShape[ 1 ],
+        concatenatedShape[ 2 ],
+        outputGroupCount
       );
 
       for ( let i = 0; i < 2; ++i ) {
         tf.util.assert(
-          channelShuffler_ShuffleInfo.concatenatedShape[ i ] == channelShuffler_ConcatPointwiseConv.concatenatedShape[ i ],
+          channelShuffler_ShuffleInfo.concatenatedShape[ i ] == concatenatedShape[ i ],
           `${concatShuffleSplitName}: `
             + `channelShuffler_ShuffleInfo.concatenatedShape[ ${i} ] ( ${channelShuffler_ShuffleInfo.concatenatedShape[ i ]} ) `
             + `should be the same as `
-            + `channelShuffler_ConcatPointwiseConv.concatenatedShape[ ${i} ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ i ]} ) `
+            + `concatenatedShape[ ${i} ] ( ${concatenatedShape[ i ]} ) `
             + `${parametersDesc}`);
       }
 
         tf.util.assert(
-          channelShuffler_ShuffleInfo.outputGroupCount == channelShuffler_ConcatPointwiseConv.outputGroupCount,
+          channelShuffler_ShuffleInfo.outputGroupCount == outputGroupCount,
           `${concatShuffleSplitName}: `
             + `channelShuffler_ShuffleInfo.outputGroupCount ( ${channelShuffler_ShuffleInfo.outputGroupCount} ) `
             + `should be the same as `
-            + `channelShuffler_ConcatPointwiseConv.outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
+            + `outputGroupCount ( ${outputGroupCount} ) `
             + `${parametersDesc}`);
     }
 
@@ -1206,8 +1213,6 @@ class Base {
     // Concat-shuffle-split.
     // 
     // Using different channel shuffler implementation for comparsion correctness.
-//!!! (2021/09/05 Remarked) Using different channel shuffler implementation for comparsion correctness.
-//    let tensorOutArray = channelShuffler_ConcatPointwiseConv.concatGather( tensorInArray );
     let tensorOutArray = channelShuffler_ShuffleInfo.concatReshapeTransposeReshapeSplit( tensorInArray );
 
     // Converty output tensors to images.
