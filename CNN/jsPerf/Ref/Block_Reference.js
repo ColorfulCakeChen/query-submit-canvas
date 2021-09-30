@@ -234,14 +234,11 @@ class Base {
     return block;
   }
 
+  /** */
   static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
     tf.util.assert( ( value1 == value2 ),
       `Block ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
   }
-
-//!!! ...unfinished... (2021/09/28)
-// Test the generated params of every step of every Block.Base.create_Params_to_PointDepthPointParams_Xxx whether conform with expectation.
-
 
   /** According to imageIn and this.testParams.in.paramsNumberArrayObject, calculate imageOut.
    *
@@ -319,6 +316,10 @@ class Base {
 //!!! ...unfinished... (2021/09/30)
     return imageOut;
   }
+
+
+//!!! ...unfinished... (2021/09/28)
+// Test the generated params of every step of every Block.Base.create_Params_to_PointDepthPointParams_Xxx whether conform with expectation.
 
 
 }
