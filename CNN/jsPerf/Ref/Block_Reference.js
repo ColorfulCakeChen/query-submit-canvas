@@ -62,8 +62,8 @@ class Base {
 
         outputHeight = referredParams.outputHeight;
         outputWidth = referredParams.outputWidth;
-//!!! ...unfinished... (2021/09/30)
-//        outputChannelCount = referredParams.outputChannelCount;
+
+        outputChannelCount = sourceChannelCount * 2; // In current Block's design, the output channel always is twice as input.
       }
 
       let strNote;
@@ -91,60 +91,44 @@ class Base {
 
       Base.AssertTwoEqualValues( "outputHeight", block.outputHeight, outputHeight, strNote );
       Base.AssertTwoEqualValues( "outputWidth", block.outputWidth, outputWidth, strNote );
+      Base.AssertTwoEqualValues( "outputChannelCount", block.outputChannelCount, outputChannelCount, strNote );
 
 //!!! ...unfinished... (2021/09/30)
-//       Base.AssertTwoEqualValues( "outputChannelCount", block.outputChannelCount, outputChannelCount, strNote );
 //       Base.AssertTwoEqualValues( "stepCount", block.stepCount, stepCount, strNote );
 
-//!!! ...unfinished... (2021/09/30)
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
-      let tensorNumDifference_apply_before_after = pointDepthPoint.outputTensorCount - inputTensorDestroyCount;
+      let block_outputTensorCount = 1;
+      let tensorNumDifference_apply_before_after = block_outputTensorCount - inputTensorDestroyCount;
 
-      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of pointDepthPoint apply.
-      pointDepthPoint.apply( inputTensor3dArray, outputTensor3dArray );
+      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of Block.apply.
+      let outputTensor3d = block.apply( inputTensor3d );
       let memoryInfo_apply_after = tf.memory();
 
       tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
-        `PointDepthPoint.apply() memory leak. `
+        `Block.apply() memory leak. `
           + `result tensor count (${memoryInfo_apply_after.numTensors}) `
           + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
           + `${strNote}` );
 
-      tf.util.assert( inputTensor3dArray.length == 2,
-        `PointDepthPoint inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${strNote}`);
+      tf.util.assert( !inputTensor3d,
+        `Block inputTensor3d ( ${inputTensor3d} ) should not be null. ${strNote}`);
 
-      tf.util.assert( outputTensor3dArray.length == 2,
-        `PointDepthPoint outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${strNote}`);
+      tf.util.assert( !outputTensor3d,
+        `Block outputTensor3d ( ${outputTensor3d} ) should not be null. ${strNote}`);
 
       { // Test output channel count.
         const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
-        let outChannels0 = 0, outChannels1 = 0;
+        let outputTensorChannelCount = 0;
 
-        if ( outputTensor3dArray[ 0 ] && ( outputTensor3dArray[ 0 ].shape.length > CHANNEL_AXIS_ID ) )
-          outChannels0 = outputTensor3dArray[ 0 ].shape[ CHANNEL_AXIS_ID ];
+        if ( outputTensor3d && ( outputTensor3d.shape.length > CHANNEL_AXIS_ID ) )
+          outputTensorChannelCount = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
 
-        if ( outputTensor3dArray[ 1 ] && ( outputTensor3dArray[ 1 ].shape.length > CHANNEL_AXIS_ID ) )
-          outChannels1 = outputTensor3dArray[ 1 ].shape[ CHANNEL_AXIS_ID ];
-
-        let outChannelsAll = outChannels0 + outChannels1;
-
-        Base.AssertTwoEqualValues( "outChannels0", pointDepthPoint.outChannels0, outChannels0, strNote );
-        Base.AssertTwoEqualValues( "outChannels1", pointDepthPoint.outChannels1, outChannels1, strNote );
-        Base.AssertTwoEqualValues( "outChannelsAll", pointDepthPoint.outChannelsAll, outChannelsAll, strNote );
+        // The real channel count of the output tensor should be the same as predicted output channel count.
+        Base.AssertTwoEqualValues( "outChannels", block.outputChannelCount, outputTensorChannelCount, strNote );
       }
 
-      { // Test output tensor count.
-        let outputTensorCount = 0;
-
-        if ( outputTensor3dArray[ 0 ] )
-          ++outputTensorCount;
-
-        if ( outputTensor3dArray[ 1 ] )
-          ++outputTensorCount;
-
-        Base.AssertTwoEqualValues( "outputTensorCount", pointDepthPoint.outputTensorCount, outputTensorCount, strNote );
-      }
+//!!! ...unfinished... (2021/09/30)
 
       // Test correctness of pointDepthPoint apply.
       this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, strNote );
