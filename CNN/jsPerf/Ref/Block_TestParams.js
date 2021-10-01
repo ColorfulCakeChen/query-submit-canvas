@@ -116,9 +116,8 @@ class Base extends TestParams.Base {
         stepParamsMaker.bKeepInputTensor
       );
 
-      this.in[ stepName ] = stepTestParams.in;
+      this[ stepName ] = stepTestParams;
       this.in.paramsNumberArrayObject[ stepName ] = stepTestParams.weightsFloat32Array;
-      this.out[ stepName ] = stepTestParams.out;
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
         stepParamsMaker.configTo_afterStep0();
