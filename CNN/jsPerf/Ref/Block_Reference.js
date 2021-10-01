@@ -14,7 +14,7 @@ import * as ImageSourceBag from "./ImageSourceBag.js";
 class Base {
 
   constructor() {
-    this.PointDepthPoint_Reference = new PointDepthPoint_Reference();
+    this.PointDepthPoint_Reference = new PointDepthPoint_Reference.Base();
     this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.3 );
 
     // For reducing memory allocation.
