@@ -470,11 +470,11 @@ class Base {
    */
   static create_Params_to_PointDepthPointParams( blockParams ) {
 
-    if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
+    if ( blockParams.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
       return new Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet( blockParams );
 
     } else { // ( this.stepCountRequested >= 2 )
-      switch ( this.nWhetherShuffleChannel ) {
+      switch ( blockParams.nWhetherShuffleChannel ) {
         case Value.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
           // ( pointwise1ChannelCountRate == 0 ), will be similar to MobileNetV1.
           // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV2 without expanding.
@@ -493,7 +493,7 @@ class Base {
         default:
           tf.util.assert( false,
             `Block.create_Params_to_PointDepthPointParams(): `
-              + `unknown this.nWhetherShuffleChannel ( ${this.nWhetherShuffleChannel} ) value.` );
+              + `unknown this.nWhetherShuffleChannel ( ${blockParams.nWhetherShuffleChannel} ) value.` );
           break;
       }
     }
