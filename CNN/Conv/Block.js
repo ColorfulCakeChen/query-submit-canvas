@@ -474,7 +474,7 @@ class Base {
       return new Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet( blockParams );
 
     } else { // ( this.stepCountRequested >= 2 )
-      swtich ( this.nWhetherShuffleChannel ) {
+      switch ( this.nWhetherShuffleChannel ) {
         case Value.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
           // ( pointwise1ChannelCountRate == 0 ), will be similar to MobileNetV1.
           // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV2 without expanding.
