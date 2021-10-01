@@ -579,7 +579,7 @@ Params.to_PointDepthPointParams = class {
     this.depthwise_AvgMax_Or_ChannelMultiplier = this.depthwiseFilterHeight = this.depthwiseStridesPad = 0;
 
     this.pointwise1Bias = this.depthwiseBias = this.pointwise21Bias = false;
-    this.pointwise1ActivationId = this.depthwiseActivationId = this.pointwise21ActivationId = ValueDesc.Activation.Singleton.Ids.NONE;
+    this.pointwise1ActivationId = this.depthwiseActivationId = this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
     this.bOutput1Requested = false;
     this.bShouldKeepInputTensor = false;
 
@@ -731,7 +731,7 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
 
     // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
     this.depthwiseBias = false;
-    this.depthwiseActivationId = ValueDesc.Activation.Singleton.Ids.NONE;
+    this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
     this.pointwise21ChannelCount = blockParams.sourceChannelCount * blockParams.depthwise_AvgMax_Or_ChannelMultiplier; // Step0 double channel count.
     this.pointwise21Bias = true;
@@ -809,7 +809,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 
     // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
     this.depthwiseBias = false;
-    this.depthwiseActivationId = ValueDesc.Activation.Singleton.Ids.NONE; // In ShuffleNetV2, depthwise convolution doesn't have activation.
+    this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE; // In ShuffleNetV2, depthwise convolution doesn't have activation.
 
     // In ShuffleNetV2, all steps' pointwise21 always has bias and activation.
     this.pointwise21ChannelCount = blockParams.sourceChannelCount; // All steps' (except stepLast) output0 is the same depth as source input0.
@@ -1026,7 +1026,7 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
     // In MobileNetV2, the second 1x1 pointwise convolution doesn't have activation function in default.
     //
     // But it could be changed by nActivationIdAtBlockEnd for the last step of the block.
-    this.pointwise21ActivationId = ValueDesc.Activation.Singleton.Ids.NONE;
+    this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
     this.bOutput1Requested = false;                                  // In MobileNetV2, all steps do not have output1.
 
