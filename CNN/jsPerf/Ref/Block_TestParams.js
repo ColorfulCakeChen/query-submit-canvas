@@ -26,8 +26,8 @@ import * as Block from "../../Conv/Block.js";
  *   - byteOffsetBegin
  *
  * @member {object} out
- *   The "out" sub-object's data members represent the "should-be" result of Block.Params's extract().
- * That is, it has the above data members except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
+ *   The "out" sub-object's data members represent the "should-be" result of Block.Params's extract(). That is, it has
+ * the above data members (with outputHeight, outputWidth) except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
  *
  * @member {object[]} stepsArray
  *   Every element is an PointDepthPoint_TestParams object for the parameters of the step.
@@ -48,6 +48,9 @@ class Base extends TestParams.Base {
     depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
+
+//!!! ...unfinished... (2021/10/01) need outputHeight, outputWidth.
+
     this.out = {
       sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, pointwise1ChannelCountRate,
       depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
@@ -71,7 +74,7 @@ class Base extends TestParams.Base {
    * @param {object} this.out
    *   An object which has the following data members: sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested,
    * pointwise1ChannelCountRate, depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel,
-   * bKeepInputTensor.
+   * bKeepInputTensor, outputHeight, outputWidth.
    *
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
