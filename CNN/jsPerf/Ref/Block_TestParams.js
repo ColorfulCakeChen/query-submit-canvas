@@ -29,6 +29,8 @@ import * as Block from "../../Conv/Block.js";
  *   The "out" sub-object's data members represent the "should-be" result of Block.Params's extract().
  * That is, it has the above data members except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
  *
+ * @member {object[]} stepsArray
+ *   Every element is an PointDepthPoint_TestParams object for the parameters of the step.
  */
 class Base extends TestParams.Base {
 
@@ -83,8 +85,9 @@ class Base extends TestParams.Base {
     let blockParams = this.out;
     let stepParamsMaker = Block.Base.create_Params_to_PointDepthPointParams( blockParams );
 
+    this.stepsArray = new Array( stepParamsMaker.stepCount );
     let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
-    
+
     let channelShuffler;
     for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
 
@@ -116,7 +119,7 @@ class Base extends TestParams.Base {
         stepParamsMaker.bKeepInputTensor
       );
 
-      this[ stepName ] = stepTestParams;
+      this.stepsArray[ i ] = stepTestParams;
       this.in.paramsNumberArrayObject[ stepName ] = stepTestParams.weightsFloat32Array;
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
