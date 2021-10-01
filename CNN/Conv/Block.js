@@ -760,99 +760,6 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
 }
 
 
-/** Provide parameters for slower ShuffleNetV2 (i.e. shuffle channel by pointwise22).
- *
- * 1. Slower ShuffleNetV2:
- *
- * Since channel shuffler could achieved efficiently by pointwise convolution, it is possible to combine the pointwise2
- * convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
- *   - Concatenate the output of depthwise convolution and the other output group.
- *   - Pointwise convolution to generate output group 1.
- *   - Pointwise convolution to generate output group 2.
- *
- * Although the channel shuffler is achieved by pointwise convolution without bias and activation function, however,
- * the pointwise21 convolution (before channel shuffler) indeed has bias and activation function. After combining
- * these two pointwise convolutions (the original pointwise2 and the channel shuffler), the total result is twice
- * pointwise convolution: pointwise21 and pointwise22. They should all have bias and activation function to achieve
- * both pointwise convolution and channel-shuffling.
- *
- * The pointwise21 and pointwise22 convolution achieves not only pointwise convolution but also channel shuffling.
- * Suppose the input channel count is M. Compare ours to the original ShuffleNetV2:
- *
- * <pre>
- *                         +-------------------------------------------------------------------------------+------------+------------+----------+
- *                         |                       pointwise2 convolution                                  |    bias    | activation | function |
- *                         |-----------------------------------------------------------------+-------------|            |            |   calls  |
- *                         |                             weights                             | computation |            |            |          |
- *                         |--------------------------------+--------------------------------|             |            |            |          |
- *                         |          independent           | shared (for channel shuffling) |             |            |            |          |
- * +----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
- * | Step0    | Original   | ( M *  M ) + ( M *  M ) = 2M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        6M^2 | M + M = 2M | M + M = 2M |        8 |
- * |          | Simplified | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6 |
- * |          | Compare    |                     worse 2M^2 |                    better 4M^2 | better 2M^2 |       same |       same | better 2 |
- * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
- * | Step1    | Original   |              ( M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
- * | Step2    | Slower     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6 |
- * |   :      | Compare    |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M |  worse 2 |
- * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
- * | StepLast | Original   |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
- * |          | Slower     |             ( 2M * 2M ) = 4M^2 |                              0 |        4M^2 |         2M |         2M |        3 |
- * |          | Compare    |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M | better 2 |
- * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
- * | StepLast | Original   |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
- * |          | Simplified |             (  M *  M ) =  M^2 |                              0 |         M^2 |          M |          M |        3 |
- * |          | Compare    |                           same |                    better 4M^2 | better 4M^2 |       same |       same | better 2 |
- * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
- * </pre>
- *
- * Step0:
- *   - Two less pointwise convolution computation. Two less function calls.
- *   - But more independent pointwise weights.
- *   - Ours is better.
- *
- * Step1, Step2, ..., Step(N - 1):
- *   - One less pointwise convolution computation.
- *   - But more independent pointwise weights, more bias, more activation function, two more function calls.
- *   - Ours is worse.
- *
- * StepLast:
- *   - One less pointwise convolution computation. Two less function calls.
- *   - But more independent pointwise weights, more bias and more activation function.
- *   - Ours may be better or worse.
- *
- * In summary, this method may result in a slower ShuffleNetV2.
- *
- *
- */
-Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_PointDepthPointParams.ShuffleNetV2 {
-
-  /** @override */
-  configTo_afterStep0() {
-    // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
-    this.channelCount0_pointwise1Before = this.outChannels0;
-    this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
-
-    this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
-    this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
-
-    this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
-  }
-
-  /** @override */
-  configTo_beforeStepLast() {
-    super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
-
-    // In ShuffleNetV2_Slower, the stepLast only has output0 (no output1). And the output0 has double channel count of source input0.
-    //
-    // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
-    // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
-    // not changed.
-    this.pointwise21ChannelCount = this.blockParams.sourceChannelCount * 2;
-    this.bOutput1Requested = false;
-  }
-}
-
-
 /** Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
  *
  * 1. A special case: NoPointwise1 ShuffleNetV2 (i.e. without pointwise1, with concatenator).
@@ -990,6 +897,99 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 
     this.outChannels0 = this.outChannels0 + this.outChannels1;
     this.outChannels1 = 0;
+  }
+}
+
+
+/** Provide parameters for slower ShuffleNetV2 (i.e. shuffle channel by pointwise22).
+ *
+ * 1. Slower ShuffleNetV2:
+ *
+ * Since channel shuffler could achieved efficiently by pointwise convolution, it is possible to combine the pointwise2
+ * convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
+ *   - Concatenate the output of depthwise convolution and the other output group.
+ *   - Pointwise convolution to generate output group 1.
+ *   - Pointwise convolution to generate output group 2.
+ *
+ * Although the channel shuffler is achieved by pointwise convolution without bias and activation function, however,
+ * the pointwise21 convolution (before channel shuffler) indeed has bias and activation function. After combining
+ * these two pointwise convolutions (the original pointwise2 and the channel shuffler), the total result is twice
+ * pointwise convolution: pointwise21 and pointwise22. They should all have bias and activation function to achieve
+ * both pointwise convolution and channel-shuffling.
+ *
+ * The pointwise21 and pointwise22 convolution achieves not only pointwise convolution but also channel shuffling.
+ * Suppose the input channel count is M. Compare ours to the original ShuffleNetV2:
+ *
+ * <pre>
+ *                         +-------------------------------------------------------------------------------+------------+------------+----------+
+ *                         |                       pointwise2 convolution                                  |    bias    | activation | function |
+ *                         |-----------------------------------------------------------------+-------------|            |            |   calls  |
+ *                         |                             weights                             | computation |            |            |          |
+ *                         |--------------------------------+--------------------------------|             |            |            |          |
+ *                         |          independent           | shared (for channel shuffling) |             |            |            |          |
+ * +----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | Step0    | Original   | ( M *  M ) + ( M *  M ) = 2M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        6M^2 | M + M = 2M | M + M = 2M |        8 |
+ * |          | Simplified | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6 |
+ * |          | Compare    |                     worse 2M^2 |                    better 4M^2 | better 2M^2 |       same |       same | better 2 |
+ * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | Step1    | Original   |              ( M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
+ * | Step2    | Slower     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6 |
+ * |   :      | Compare    |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M |  worse 2 |
+ * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | StepLast | Original   |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
+ * |          | Slower     |             ( 2M * 2M ) = 4M^2 |                              0 |        4M^2 |         2M |         2M |        3 |
+ * |          | Compare    |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M | better 2 |
+ * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | StepLast | Original   |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
+ * |          | Simplified |             (  M *  M ) =  M^2 |                              0 |         M^2 |          M |          M |        3 |
+ * |          | Compare    |                           same |                    better 4M^2 | better 4M^2 |       same |       same | better 2 |
+ * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * </pre>
+ *
+ * Step0:
+ *   - Two less pointwise convolution computation. Two less function calls.
+ *   - But more independent pointwise weights.
+ *   - Ours is better.
+ *
+ * Step1, Step2, ..., Step(N - 1):
+ *   - One less pointwise convolution computation.
+ *   - But more independent pointwise weights, more bias, more activation function, two more function calls.
+ *   - Ours is worse.
+ *
+ * StepLast:
+ *   - One less pointwise convolution computation. Two less function calls.
+ *   - But more independent pointwise weights, more bias and more activation function.
+ *   - Ours may be better or worse.
+ *
+ * In summary, this method may result in a slower ShuffleNetV2.
+ *
+ *
+ */
+Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_PointDepthPointParams.ShuffleNetV2 {
+
+  /** @override */
+  configTo_afterStep0() {
+    // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
+    this.channelCount0_pointwise1Before = this.outChannels0;
+    this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
+
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
+    this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+
+    this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+  }
+
+  /** @override */
+  configTo_beforeStepLast() {
+    super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
+
+    // In ShuffleNetV2_Slower, the stepLast only has output0 (no output1). And the output0 has double channel count of source input0.
+    //
+    // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
+    // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
+    // not changed.
+    this.pointwise21ChannelCount = this.blockParams.sourceChannelCount * 2;
+    this.bOutput1Requested = false;
   }
 }
 
