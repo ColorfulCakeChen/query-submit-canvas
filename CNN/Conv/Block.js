@@ -442,11 +442,11 @@ class Base {
   /** Release all tensors. */
   disposeTensors() {
     if ( this.stepsArray ) {
-      for ( let i = 0; i < this.stepsArray.length ) {
+      for ( let i = 0; i < this.stepsArray.length; ++i ) {
         let step = this.stepsArray[ i ];
         step.disposeTensors();
       }
-      this.stepsArray.length = 0;
+      this.stepsArray = null;
     }
 
     if ( this.channelShuffler ) {
