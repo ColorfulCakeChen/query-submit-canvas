@@ -303,7 +303,7 @@ class Base {
 //       imageOut = this.calc_NotShuffleNet_NotMobileNet( imageIn );
 //
 //     } else { // ( this.stepCountRequested >= 2 )
-//       swtich ( this.nWhetherShuffleChannel ) {
+//       switch ( this.nWhetherShuffleChannel ) {
 //         case Value.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
 //           imageOut = this.calc_MobileNetV2( imageIn );
 //           break;
