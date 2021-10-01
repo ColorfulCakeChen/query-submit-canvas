@@ -215,7 +215,7 @@ class HeightWidthDepth {
 
   }
 
-  Block_PerformanceTest_release() {
+  block_PerformanceTest_release() {
     if ( this.block_list ) {
       for ( let i = 0; i < this.block_list.length; ++i ) {
         let block = this.block_list[ i ];
