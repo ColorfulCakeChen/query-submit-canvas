@@ -81,9 +81,10 @@ class Base extends TestParams.Base {
    *   Return this object self.
    */
   set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
-
     let blockParams = this.out;
+
     let stepParamsMaker = Block.Base.create_Params_to_PointDepthPointParams( blockParams );
+    stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last();
 
     this.stepsArray = new Array( stepParamsMaker.stepCount );
     let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
