@@ -85,7 +85,7 @@ class Base {
       Base.AssertTwoEqualValues( "outputChannelCount", block.outputChannelCount, outputChannelCount, strNote );
 
 //!!! ...unfinished... (2021/09/30)
-//       Base.AssertTwoEqualValues( "stepCount", block.stepCount, stepCount, strNote );
+      Base.AssertTwoEqualValues( "stepCount", block.stepCount, testParams.stepsArray.length, this.paramsOutDescription );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
@@ -257,7 +257,7 @@ class Base {
    */
   calcResult( imageIn ) {
     let testParams = this.testParams;
-    
+
     {
       let referredParams = {};
       Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( referredParams,
@@ -279,58 +279,74 @@ class Base {
       ;
     }
 
-    let stepCountRequested = testParams.out.stepCountRequested;
-    let nWhetherShuffleChannel = testParams.out.nWhetherShuffleChannel;
+    // Calculate every steps in sequence.
+    {
+      let pointDepthPointRef = this.PointDepthPoint_Reference;
 
-    let imageOut;
-    if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
-      imageOut = this.calc_NotShuffleNet_NotMobileNet( imageIn );
-
-    } else { // ( this.stepCountRequested >= 2 )
-      swtich ( this.nWhetherShuffleChannel ) {
-        case Value.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
-          imageOut = this.calc_MobileNetV2( imageIn );
-          break;
-
-        case Value.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
-          imageOut = this.calc_ShuffleNetV2( imageIn );
-          break;
-
-        case Value.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
-          imageOut = this.calc_ShuffleNetV2_Slower( imageIn );
-          break;
-
-        default:
-          tf.util.assert( false, `Block_Reference.calcResult(): `
-            `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value. ${this.paramsOutDescription}` );
-          break;
+      let imageOutArray = this.imageInArray;
+      for ( let i = 0; i < testParams.stepsArray.length; ++i ) {
+        //let stepName = `step${i}`;
+        pointDepthPointRef.testParams = testParams.stepsArray[ i ];
+        imageOutArray = pointDepthPointRef.calcResult( imageOutArray );
       }
+
+      let imageOut = imageOutArray[ 0 ]; // The stepLast should have only input0.
+      return imageOut;
     }
 
-    return imageOut;
+//!!! (2021/10/01 Remarked) Seems needs not different procedure. (Pre-condition: the Block.Params.to_PointDepthPointParams.Xxx is correct.)
+//     let stepCountRequested = testParams.out.stepCountRequested;
+//     let nWhetherShuffleChannel = testParams.out.nWhetherShuffleChannel;
+//
+//     let imageOut;
+//     if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
+//       imageOut = this.calc_NotShuffleNet_NotMobileNet( imageIn );
+//
+//     } else { // ( this.stepCountRequested >= 2 )
+//       swtich ( this.nWhetherShuffleChannel ) {
+//         case Value.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
+//           imageOut = this.calc_MobileNetV2( imageIn );
+//           break;
+//
+//         case Value.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
+//           imageOut = this.calc_ShuffleNetV2( imageIn );
+//           break;
+//
+//         case Value.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
+//           imageOut = this.calc_ShuffleNetV2_Slower( imageIn );
+//           break;
+//
+//         default:
+//           tf.util.assert( false, `Block_Reference.calcResult(): `
+//             `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value. ${this.paramsOutDescription}` );
+//           break;
+//       }
+//     }
+//
+//     return imageOut;
   }
 
   /** Calculate imageOut by simulating Block as NotShuffleNet_NotMobileNet. */
   calc_NotShuffleNet_NotMobileNet( imageIn ) {
-    let testParams = this.testParams;
 
-    let stepParamsMaker = new Block.Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet( testParams.out );
-    stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last(); // Calculate the real step count.
-
-//!!! ...unfinished... (2021/09/30)
-//    Base.AssertTwoEqualValues( "stepCount", block.stepCount, stepParamsMaker.stepCount, this.paramsOutDescription );
-
-    for ( let step = 0; step < stepParamsMaker.stepCount; ++step ) {
-
-//!!! ...unfinished... (2021/09/30)
-
-//       this.imageInArray[ 0 ] = ; // input0
-//       this.imageInArray[ 1 ] = ; // input1
-
-      let imageOutArray = this.PointDepthPoint_Reference.calcResult( this.imageInArray );
-
-    }
-
+//!!! (2021/10/01 Remarked) Seems needs not different procedure. (Pre-condition: the Block.Params.to_PointDepthPointParams.Xxx is correct.)
+//     let testBlockParams = this.testParams;
+//     let pointDepthPointRef = this.PointDepthPoint_Reference;
+//
+//     let stepParamsMaker = new Block.Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet( testBlockParams.out );
+//     stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last(); // Calculate the real step count.
+//
+// //!!! ...unfinished... (2021/09/30)
+// //    Base.AssertTwoEqualValues( "stepCount", block.stepCount, stepParamsMaker.stepCount, this.paramsOutDescription );
+//
+//     let imageOutArray = this.imageInArray;
+//     for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) {
+//       //let stepName = `step${i}`;
+//       pointDepthPointRef.testParams = testBlockParams.stepsArray[ i ];
+//       imageOutArray = pointDepthPointRef.calcResult( imageOutArray );
+//     }
+//
+//     let imageOut = imageOutArray[ 0 ]; // The stepLast should have only input0.
     return imageOut;
   }
 
