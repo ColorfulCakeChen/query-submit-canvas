@@ -48,13 +48,13 @@ class Base extends TestParams.Base {
     depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
   ) {
     this.in.paramsNumberArrayObject = {};
-
-//!!! ...unfinished... (2021/10/01) need outputHeight, outputWidth.
-
     this.out = {
       sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, pointwise1ChannelCountRate,
       depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
     };
+
+    // Fill in outputHeight, outputWidth.
+    Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( this.out, sourceHeight, sourceWidth );
 
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
 
