@@ -391,7 +391,7 @@ class Base {
       this.bInitOk = yield* stepIniter;
       if ( !this.bInitOk )
         return false;
-      this.byteOffsetEnd = this.step.byteOffsetEnd;
+      this.byteOffsetEnd = step.byteOffsetEnd;
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
         stepParamsMaker.configTo_afterStep0();
