@@ -94,7 +94,7 @@ class Params extends Weights.Params {
    *       this block will be ShuffleNetV2_Slower. There is a channel shuffler by pointwise22.
    *
    * @param {boolean} bKeepInputTensor
-   *   If true, apply_and_destroy_or_keep() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
+   *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
    *
    * @return {boolean}
@@ -578,10 +578,10 @@ Params.to_PointDepthPointParams = class {
     this.pointwise1ChannelCount = this.pointwise21ChannelCount =
     this.depthwise_AvgMax_Or_ChannelMultiplier = this.depthwiseFilterHeight = this.depthwiseStridesPad = 0;
 
-    this.pointwise1Bias = this.depthwiseBias = this.pointwise21Bias = false;
+    this.pointwise1Bias = this.depthwiseBias = this.pointwise21Bias = undefined;
     this.pointwise1ActivationId = this.depthwiseActivationId = this.pointwise21ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-    this.bOutput1Requested = false;
-    this.bShouldKeepInputTensor = false;
+    this.bOutput1Requested = undefined;
+    this.bKeepInputTensor = undefined;
 
     this.stepCount = -1; // How many step should be in the block.
 
@@ -589,7 +589,7 @@ Params.to_PointDepthPointParams = class {
     this.depthwiseFilterHeight_Last = -1;    // The last step's depthwise filter size.
 
     this.outChannels0 = this.outChannels1 = -1;
-    this.channelShuffler = null;
+    this.channelShuffler = undefined;
   }
 
   /** Called to determine stepCount, depthwiseFilterHeight_Default and depthwiseFilterHeight_Last.
@@ -651,7 +651,7 @@ Params.to_PointDepthPointParams = class {
       this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
       this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
       this.bOutput1Requested,
-      this.bShouldKeepInputTensor
+      this.bKeepInputTensor
     );
     return params;
   }
@@ -743,7 +743,7 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
     // If ( pointwise1ChannelCountRate == 0 ), it is the same as no pointwise1.
     this.pointwise1ChannelCount = this.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
     
-    this.bShouldKeepInputTensor = blockParams.bKeepInputTensor;      // Step0 may or may not keep input tensor according to caller's necessary.
+    this.bKeepInputTensor = blockParams.bKeepInputTensor;            // Step0 may or may not keep input tensor according to caller's necessary.
 
     this.outChannels0 = this.pointwise21ChannelCount;
     this.outChannels1 = 0;
@@ -755,7 +755,7 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
     this.channelCount0_pointwise1Before = step0_outChannelsAll; // Step0's output channel count is all the other steps' input channel count.
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;             // Except step0, all other steps will not double the channel count.
     this.pointwise21ChannelCount = step0_outChannelsAll;        // Step0's output channel count is all the other steps' output channel count.
-    this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
 }
 
@@ -823,7 +823,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
     // it is the same as no pointwise1.
     this.pointwise1ChannelCount = this.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
 
-    this.bShouldKeepInputTensor = blockParams.bKeepInputTensor;    // Step0 may or may not keep input tensor according to caller's necessary.
+    this.bKeepInputTensor = blockParams.bKeepInputTensor; // Step0 may or may not keep input tensor according to caller's necessary.
 
     // NoPointwise1 ShuffleNetV2 (expanding by once depthwise).
     //
@@ -854,9 +854,9 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1;
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
-    this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    this.depthwiseStridesPad = 1;  // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
 
-    this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
 
     // In ShuffleNetV2, all steps (except step0) uses channel shuffler (with two convolution groups).
     {
@@ -974,9 +974,9 @@ Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_Po
     this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
-    this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    this.depthwiseStridesPad = 1;  // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
 
-    this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
 
   /** @override */
@@ -1041,7 +1041,7 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
     //   - If ( pointwise1ChannelCount >  pointwise21ChannelCount ), similar to MobileNetV2. ( pointwise1ChannelCountRate == 2 )
     this.pointwise1ChannelCount = this.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate; // In MobileNetV2, the rate is usually 2.
 
-    this.bShouldKeepInputTensor = blockParams.bKeepInputTensor;    // Step0 may or may not keep input tensor according to caller's necessary.
+    this.bKeepInputTensor = blockParams.bKeepInputTensor; // Step0 may or may not keep input tensor according to caller's necessary.
 
     this.outChannels0 = this.pointwise21ChannelCount;
     this.outChannels1 = 0;
@@ -1057,8 +1057,8 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
     //   - All steps (include step0) do not use input1.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT;
 
-    this.depthwiseStridesPad = 1;        // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
-    this.bShouldKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+    this.depthwiseStridesPad = 1;  // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
   
   /** @override */
