@@ -84,13 +84,13 @@ class Params extends Weights.Params {
    *   - If ( stepCountRequested <= 1 ), this flag will be ignored.
    *       This block will be NotShuffleNet_NotMobileNet. There will be no channel shuffler.
    *
-   *   - If ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.NONE ), (0),
+   *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.NONE ), (0),
    *       this block will be MobileNetV1 or MobileNetV2 (i.e. with add-input-to-output, no channel shuffler).
    *
-   *   - If ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER ), (1),
+   *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER ), (1),
    *       this block will be ShuffleNetV2. There is a channel shuffler by concat-shuffle-split.
    *
-   *   - If ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ), (2),
+   *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ), (2),
    *       this block will be ShuffleNetV2_Slower. There is a channel shuffler by pointwise22.
    *
    * @param {boolean} bKeepInputTensor
@@ -475,18 +475,18 @@ class Base {
 
     } else { // ( this.stepCountRequested >= 2 )
       switch ( blockParams.nWhetherShuffleChannel ) {
-        case Value.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
+        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
           // ( pointwise1ChannelCountRate == 0 ), will be similar to MobileNetV1.
           // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV2 without expanding.
           // ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
           return new Params.to_PointDepthPointParams.MobileNetV2( blockParams );
           break;
 
-        case Value.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
+        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
           return new Params.to_PointDepthPointParams.ShuffleNetV2( blockParams );
           break;
 
-        case Value.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
+        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
           return new Params.to_PointDepthPointParams.ShuffleNetV2_Slower( blockParams );
           break;
 
@@ -762,8 +762,8 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
  * 1. A special case: NoPointwise1 ShuffleNetV2 (i.e. without pointwise1, with concatenator).
  * 
  * Q: How to specify this configuration?
- * A: By  (   ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER )
- *         or ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ) )
+ * A: By  (   ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER )
+ *         or ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ) )
  *    and ( pointwise1ChannelCountRate == 0 )
  *    in the parameters of Block.Params.
  *
@@ -782,8 +782,8 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
  *   - Even if the pointwise1 convolution is discarded, just two steps of this simplied ShuffleNetV2 still compose an
  *     effective Fourier series which should have enough expressive power for approximating any function. By given
  *     the following configuration in the Block.Params:
- *       - (   ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER )
- *          or ( nWhetherShuffleChannel == Value.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ) )
+ *       - (   ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFLLER )
+ *          or ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ) )
  *       - ( pointwise1ChannelCountRate == 0 )
  *       - ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.COS) 
  *       - ( nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE)
