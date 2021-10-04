@@ -53,9 +53,6 @@ class Base extends TestParams.Base {
       depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
     };
 
-    // Fill in outputHeight, outputWidth.
-    Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( this.out, sourceHeight, sourceWidth );
-
     Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
 
     let weightsElementOffsetBegin = 0;
@@ -66,6 +63,8 @@ class Base extends TestParams.Base {
    * Fills the following proterties:
    *   - this.in.inputFloat32Array
    *   - this.in.byteOffsetBegin
+   *   - this.out.outputHeight
+   *   - this.out.outputWidth
    *
    * @param {object} this.in.paramsNumberArrayObject
    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
@@ -85,6 +84,9 @@ class Base extends TestParams.Base {
    */
   set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
     let blockParams = this.out;
+    
+    // Fill in outputHeight, outputWidth.
+    Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( blockParams, blockParams.sourceHeight, blockParams.sourceWidth );
 
     let stepParamsMaker = Block.Base.create_Params_to_PointDepthPointParams( blockParams );
     stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last();
