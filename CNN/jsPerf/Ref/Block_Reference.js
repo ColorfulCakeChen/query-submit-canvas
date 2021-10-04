@@ -179,9 +179,10 @@ class Base {
 
     let bInitOk = block.init( progress, extractedParams );
 
-    let flags = {};
-    PointDepthPoint.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( flags,
-      testParams.out.sourceHeight, testParams.out.sourceWidth );
+//!!! (2021/10/04 Remarked) should already inside testParams.out
+//     let flags = {};
+//     PointDepthPoint.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( flags,
+//       testParams.out.sourceHeight, testParams.out.sourceWidth );
 
     let parametersDescription = `( ${block.parametersDescription} )`;
 
@@ -228,8 +229,9 @@ class Base {
     Base.AssertTwoEqualValues( "nWhetherShuffleChannel",
       block.nWhetherShuffleChannel, testParams.out.nWhetherShuffleChannel, parametersDescription );
 
-    Base.AssertTwoEqualValues( "outputHeight", block.outputHeight, flags.outputHeight, parametersDescription );
-    Base.AssertTwoEqualValues( "outputWidth", block.outputWidth, flags.outputWidth, parametersDescription );
+    // Referred parameters.
+    Base.AssertTwoEqualValues( "outputHeight", block.outputHeight, testParams.out.outputHeight, parametersDescription );
+    Base.AssertTwoEqualValues( "outputWidth", block.outputWidth, testParams.out.outputWidth, parametersDescription );
 
     // Other parameters.
     Base.AssertTwoEqualValues( "bKeepInputTensor", block.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
