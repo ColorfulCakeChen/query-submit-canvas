@@ -482,7 +482,7 @@ class Base {
           return new Params.to_PointDepthPointParams.MobileNetV2( blockParams );
           break;
 
-        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
+        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) ShuffleNetV2
           return new Params.to_PointDepthPointParams.ShuffleNetV2( blockParams );
           break;
 
