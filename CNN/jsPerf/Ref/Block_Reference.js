@@ -103,7 +103,7 @@ class Base {
           + `${strNote}` );
 
       tf.util.assert( !inputTensor3d,
-        `Block inputTensor3d ( ${inputTensor3d} ) should not be null. ${strNote}`);
+        `Block inputTensor3d should not be null. ${strNote}`); // But may be disposed.
 
       tf.util.assert( !outputTensor3d,
         `Block outputTensor3d ( ${outputTensor3d} ) should not be null. ${strNote}`);
