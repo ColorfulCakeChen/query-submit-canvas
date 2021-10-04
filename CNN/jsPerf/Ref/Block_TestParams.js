@@ -86,7 +86,7 @@ class Base extends TestParams.Base {
     let blockParams = this.out;
     
     // Fill in outputHeight, outputWidth.
-    Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( blockParams, blockParams.sourceHeight, blockParams.sourceWidth );
+    Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( blockParams, blockParams.sourceHeight, blockParams.sourceWidth );
 
     let stepParamsMaker = Block.Base.create_Params_to_PointDepthPointParams( blockParams );
     stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last();
