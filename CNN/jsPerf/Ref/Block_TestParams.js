@@ -126,7 +126,7 @@ class Base extends TestParams.Base {
       );
 
       this.stepsArray[ i ] = stepTestParams;
-      this.in.paramsNumberArrayObject[ stepName ] = stepTestParams.weightsFloat32Array;
+      this.in.paramsNumberArrayObject[ stepName ] = stepTestParams.in.inputFloat32Array;
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
         stepParamsMaker.configTo_afterStep0();
