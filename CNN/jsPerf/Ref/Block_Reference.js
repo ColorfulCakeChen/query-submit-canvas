@@ -177,7 +177,7 @@ class Base {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = Block.init( progress, extractedParams );
+    let bInitOk = block.init( progress, extractedParams );
 
     let flags = {};
     PointDepthPoint.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( flags,
