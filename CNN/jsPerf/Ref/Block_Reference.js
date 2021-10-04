@@ -102,11 +102,11 @@ class Base {
           + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
           + `${strNote}` );
 
-      tf.util.assert( !inputTensor3d,
+      tf.util.assert( inputTensor3d,
         `Block inputTensor3d should not be null. ${strNote}`); // But may be disposed.
 
-      tf.util.assert( !outputTensor3d,
-        `Block outputTensor3d ( ${outputTensor3d} ) should not be null. ${strNote}`);
+      tf.util.assert( outputTensor3d,
+        `Block outputTensor3d should not be null. ${strNote}`);
 
       { // Test output channel count.
         const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
