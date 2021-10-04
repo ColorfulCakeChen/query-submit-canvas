@@ -235,7 +235,7 @@ class Params extends Weights.Params {
       [ Params.bKeepInputTensor,                      bKeepInputTensor ],
     ] );
 
-    return super( inputFloat32Array, byteOffsetBegin, parameterMap );
+    super( inputFloat32Array, byteOffsetBegin, parameterMap );
   }
 
   /**
