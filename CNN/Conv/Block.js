@@ -733,7 +733,7 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
     this.depthwiseBias = false;
     this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
-    this.pointwise21ChannelCount = blockParams.sourceChannelCount * blockParams.depthwise_AvgMax_Or_ChannelMultiplier; // Step0 double channel count.
+    this.pointwise21ChannelCount = blockParams.sourceChannelCount * this.depthwise_AvgMax_Or_ChannelMultiplier; // Step0 double channel count.
     this.pointwise21Bias = true;
     this.pointwise21ActivationId = blockParams.nActivationId;
 
