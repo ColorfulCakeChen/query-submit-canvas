@@ -76,7 +76,7 @@ class Base {
       }
 
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
-      let block = Base.block_create( testParams );
+      let block = Base.Block_create( testParams );
 
       let parametersDescription = block.parametersDescription;
       strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
@@ -85,8 +85,7 @@ class Base {
       Base.AssertTwoEqualValues( "outputWidth", block.outputWidth, outputWidth, strNote );
       Base.AssertTwoEqualValues( "outputChannelCount", block.outputChannelCount, outputChannelCount, strNote );
 
-//!!! ...unfinished... (2021/09/30)
-      Base.AssertTwoEqualValues( "stepCount", block.stepCount, testParams.stepsArray.length, this.paramsOutDescription );
+      Base.AssertTwoEqualValues( "stepCount", block.stepCount, testParams.stepsArray.length, strNote );
 
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
