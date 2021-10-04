@@ -16,7 +16,7 @@ import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
 /**
  * Test CNN PointDepthPoint.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/433/colorfulcakechen-cnn-pointdepthpoint-0f7e06fc0991d9b609}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/434/colorfulcakechen-cnn-pointdepthpoint-73b84c76aa39a80030}
  */
 
 /**
