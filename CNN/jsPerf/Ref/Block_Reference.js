@@ -50,7 +50,7 @@ class Base {
       let referredParams = {};
       let outputHeight, outputWidth, outputChannelCount;
       {
-        Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( referredParams, sourceHeight, sourceWidth );
+        Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( referredParams, sourceHeight, sourceWidth );
 
         outputHeight = referredParams.outputHeight;
         outputWidth = referredParams.outputWidth;
