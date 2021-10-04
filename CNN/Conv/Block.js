@@ -150,7 +150,7 @@ class Params extends Weights.Params {
     if ( !bExtractOk )
       return false;
 
-    Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( this, this.sourceHeight, this.sourceWidth );
+    Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( this, this.sourceHeight, this.sourceWidth );
 
     return bExtractOk;
   }
