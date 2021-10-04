@@ -18,7 +18,8 @@ class Base {
     this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.3 );
 
     // For reducing memory allocation.
-    this.imageInArray = new Array( 2 ); // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
+    this.imageInArray = new Array( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
+    //this.imageOutArray = new Array( 2 ); // imageOutArray[ 0 ] is output0, imageOutArray[ 1 ] is output1.
   }
 
   /**
@@ -282,6 +283,9 @@ class Base {
     // Calculate every steps in sequence.
     {
       let pointDepthPointRef = this.PointDepthPoint_Reference;
+
+      this.imageInArray[ 0 ] = imageIn;
+      this.imageInArray[ 1 ] = null;
 
       let imageOutArray = this.imageInArray;
       for ( let i = 0; i < testParams.stepsArray.length; ++i ) {
