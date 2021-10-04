@@ -147,9 +147,13 @@ class Int {
 class ActivationFunction extends Int {
 
   constructor() {
-    super( 0, 7,
-      [ "NONE",  "RELU6",  "SIGMOID",  "RELU",  "SOFTPLUS",  "COS",  "SIN",  "TANH" ],
-      [   null, tf.relu6, tf.sigmoid, tf.relu, tf.softplus, tf.cos, tf.sin, tf.tanh ]
+//!!! (2021/10/04 Temp Remarked) WASM does not support softplus.
+//     super( 0, 7,
+//       [ "NONE",  "RELU6",  "SIGMOID",  "RELU",  "SOFTPLUS",  "COS",  "SIN",  "TANH" ],
+//       [   null, tf.relu6, tf.sigmoid, tf.relu, tf.softplus, tf.cos, tf.sin, tf.tanh ]
+    super( 0, 6,
+      [ "NONE",  "RELU6",  "SIGMOID",  "RELU",  "COS",  "SIN",  "TANH" ],
+      [   null, tf.relu6, tf.sigmoid, tf.relu, tf.cos, tf.sin, tf.tanh ]
     );
   }
 
