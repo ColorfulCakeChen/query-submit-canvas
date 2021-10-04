@@ -102,7 +102,7 @@ class Params extends Weights.Params {
    *
    * @override
    */
-  init( inputFloat32Array, byteOffsetBegin,
+  constructor( inputFloat32Array, byteOffsetBegin,
     sourceHeight, sourceWidth, sourceChannelCount,
     stepCountRequested,
     pointwise1ChannelCountRate,
