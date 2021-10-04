@@ -259,12 +259,14 @@ class HeightWidthDepth {
         let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width );
         let testReference = new Block_Reference.Base();
 
-        let batchMessageInterval = 30 * 1000; //100 * 1000; // Every so many test cases, display a message.
+//        let batchMessageInterval = 30 * 1000; //100 * 1000; // Every so many test cases, display a message.
+        let batchMessageInterval = 10; //100 * 1000; // Every so many test cases, display a message.
         for ( let testParams of testParamsGenerator ) {
-          if ( ( testParams.id % batchMessageInterval ) == 0 )
+          if ( ( testParams.id % batchMessageInterval ) == 0 ) {
             console.log( `${tf.getBackend()}, `
               + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
               + `testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
+          }
 
           testReference.testCorrectness( imageSourceBag, testParams );
         }
