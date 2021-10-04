@@ -309,15 +309,15 @@ class Base {
 //
 //     } else { // ( this.stepCountRequested >= 2 )
 //       switch ( this.nWhetherShuffleChannel ) {
-//         case Value.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
+//         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
 //           imageOut = this.calc_MobileNetV2( imageIn );
 //           break;
 //
-//         case Value.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER: // (1) ShuffleNetV2
+//         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) ShuffleNetV2
 //           imageOut = this.calc_ShuffleNetV2( imageIn );
 //           break;
 //
-//         case Value.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
+//         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
 //           imageOut = this.calc_ShuffleNetV2_Slower( imageIn );
 //           break;
 //
