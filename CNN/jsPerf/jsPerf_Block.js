@@ -260,7 +260,6 @@ class HeightWidthDepth {
         let testReference = new Block_Reference.Base();
 
         let batchMessageInterval = 30 * 1000; //100 * 1000; // Every so many test cases, display a message.
-        let testParams;
 
         try {
           for ( testParams of testParamsGenerator ) {
