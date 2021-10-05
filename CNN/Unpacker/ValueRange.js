@@ -47,20 +47,36 @@ Same.Singleton = new Same;
 /**
  * Provides methods for converting weight (a number) to boolean.
  */
-class Bool extends Same {
+class Bool extends Int {
 
-  constructor( min, max ) {
-    super();
-    this.kinds = 2; // Boolean has only two kinds.
+  constructor() {
+    super( 0, 1 ); // Boolean has only two kinds [ 0, 1 ].
   }
 
-  /** @return {boolean} Convert number value into false or true. */
+  /** @return {boolean} Convert number value into false or true.
+   * @override
+   */
   adjust( value ) {
-    // If value is not an integer, the remainder will always not zero. So convert it to integer first.
-    //
-    // According to negative or positive, the remainder could be one of [ -1, 0, +1 ].
-    // So simply check it whether is 0 (instead of check both -1 and +1), could result in false or true.
-    return ( ( Math.trunc( value ) % 2 ) != 0 );
+    return ( super.adjust( value ) != 0 ); // Convert into boolean.
+  }
+
+  /**
+   * @param {number} baseIntCongruence
+   *   An integer which is divisible by this.kinds. This will be used to offset the index value to generate valueInput.
+   *
+   * @param {number} index
+   *   An integer between [ 0, this.kinds ).
+   *
+   * @return {object}
+   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value. The valueOutput is a boolean value.
+   * When call this.adjust( valueInput ) will return valueOutput.
+   *
+   * @override
+   */
+  get_valueInputOutput_byIndex( baseIntCongruence, index ) {
+    let valueInputOutput = super.get_valueInputOutput_byIndex( baseIntCongruence, index );
+    valueInputOutput.valueOutput = ( valueInputOutput.valueOutput != 0 ); // Convert into boolean.
+    return valueInputOutput;
   }
 
   /**
@@ -70,56 +86,101 @@ class Bool extends Same {
    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
    * is RandTools.getRandomIntInclusive( -100, +100 ). The -100 and +100 is just chosen arbitrarily.
    *
-   * @param {number} maxKinds
-   *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
-   * When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If zero or negative,
-   * only one value (between [ 0, this.kinds ] randomly) will be generated.
+   * @param {number[]} valueOutMinMax
+   *   An integer restricts the generator range to [ valueOutMin, valueOutMax ]. Itself will be restricted to [ this.min, this.max ]
+   * at most. When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If null or undefined,
+   * only one value (between [ this.min, this.max ] randomly) will be generated.
+   *
+   * @return {object}
+   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value. The valueOutput is a boolean value.
+   * When call this.adjust( valueInput ) will return valueOutput.
    *
    * @override
    */
-  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -100, +100 ), maxKinds = this.kinds ) {
-
-    let baseInt = Math.trunc( offsetMultiplier );
-    let baseIntEven = baseInt * 2; // Any integer multiplied by 2 will be an even number.
-    let baseIntEvenSign = Math.sign( baseIntEven );
-
-    // If no sign (i.e. baseIntEven is zero), choose positive sign. Otherwise, there will no fractional part at all.
-    if ( baseIntEvenSign == 0 ) {
-      baseIntEvenSign = 1;
-    }
-
-    // A: Why not use Math.random() to generate value between [ 0, 1 ) directly?
-    // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
-    //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
-    //    from Float64 to Float32.
-    let randomFractionalPart1 = RandTools.getRandomIntInclusive( 0, 99 ) / 1000;
-    let randomFractionalPart2 = RandTools.getRandomIntInclusive( 0, 99 ) / 1000;
-
-    // An even value with fractional part will become 0 by Bool.adjust().
-    let valueInputZero = ( baseIntEven + 0 ) + ( baseIntEvenSign * randomFractionalPart1 );
-    let valueInputOutputZero = { valueInput: valueInputZero, valueOutput: 0 };
-
-    // A odd value with fractional part will become 1 by Bool.adjust().
-    let valueInputOne  = ( baseIntEven + 1 ) + ( baseIntEvenSign * randomFractionalPart2 );
-    let valueInputOutputOne = { valueInput: valueInputOne, valueOutput: 1 };
-
-    // Yield according to maxKinds.
-    if ( maxKinds >= 2 ) {
-      yield valueInputOutputZero; // Both zero and one.
-      yield valueInputOutputOne;
-    } else if ( maxKinds >= 1 ) {
-      yield valueInputOutputZero; // Always zero. (Although, not so meaningful.)
-      //yield valueInputOutputOne;
-    } else {
-      let index = RandTools.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
-      if ( index == 0 )
-        yield valueInputOutputZero; // Randomly choose zero.
-      else
-        yield valueInputOutputOne;  // Randomly choose one.
-    }
+  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -100, +100 ), valueOutMinMax ) {
+    yield* super.valueInputOutputGenerator( offsetMultiplier, valueOutMinMax );
   }
 
 }
+
+//!!! (2021/10/05 Remarked) Re-implemented by class Int.
+//
+// /**
+//  * Provides methods for converting weight (a number) to boolean.
+//  */
+// class Bool extends Same {
+//
+//   constructor() {
+//     super();
+//     this.kinds = 2; // Boolean has only two kinds.
+//   }
+//
+//   /** @return {boolean} Convert number value into false or true. */
+//   adjust( value ) {
+//     // If value is not an integer, the remainder will always not zero. So convert it to integer first.
+//     //
+//     // According to negative or positive, the remainder could be one of [ -1, 0, +1 ].
+//     // So simply check it whether is 0 (instead of check both -1 and +1), could result in false or true.
+//     return ( ( Math.trunc( value ) % 2 ) != 0 );
+//   }
+//
+//   /**
+//    * For ValueRange.Bool, two two-value pairs will be generated in sequence.
+//    *
+//    * @param {number} offsetMultiplier
+//    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
+//    * is RandTools.getRandomIntInclusive( -100, +100 ). The -100 and +100 is just chosen arbitrarily.
+//    *
+//    * @param {number} maxKinds
+//    *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
+//    * When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If zero or negative,
+//    * only one value (between [ 0, this.kinds ] randomly) will be generated.
+//    *
+//    * @override
+//    */
+//   * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -100, +100 ), maxKinds = this.kinds ) {
+//
+//     let baseInt = Math.trunc( offsetMultiplier );
+//     let baseIntEven = baseInt * 2; // Any integer multiplied by 2 will be an even number.
+//     let baseIntEvenSign = Math.sign( baseIntEven );
+//
+//     // If no sign (i.e. baseIntEven is zero), choose positive sign. Otherwise, there will no fractional part at all.
+//     if ( baseIntEvenSign == 0 ) {
+//       baseIntEvenSign = 1;
+//     }
+//
+//     // A: Why not use Math.random() to generate value between [ 0, 1 ) directly?
+//     // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
+//     //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
+//     //    from Float64 to Float32.
+//     let randomFractionalPart1 = RandTools.getRandomIntInclusive( 0, 99 ) / 1000;
+//     let randomFractionalPart2 = RandTools.getRandomIntInclusive( 0, 99 ) / 1000;
+//
+//     // An even value with fractional part will become 0 by Bool.adjust().
+//     let valueInputZero = ( baseIntEven + 0 ) + ( baseIntEvenSign * randomFractionalPart1 );
+//     let valueInputOutputZero = { valueInput: valueInputZero, valueOutput: 0 };
+//
+//     // A odd value with fractional part will become 1 by Bool.adjust().
+//     let valueInputOne  = ( baseIntEven + 1 ) + ( baseIntEvenSign * randomFractionalPart2 );
+//     let valueInputOutputOne = { valueInput: valueInputOne, valueOutput: 1 };
+//
+//     // Yield according to maxKinds.
+//     if ( maxKinds >= 2 ) {
+//       yield valueInputOutputZero; // Both zero and one.
+//       yield valueInputOutputOne;
+//     } else if ( maxKinds >= 1 ) {
+//       yield valueInputOutputZero; // Always zero. (Although, not so meaningful.)
+//       //yield valueInputOutputOne;
+//     } else {
+//       let index = RandTools.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
+//       if ( index == 0 )
+//         yield valueInputOutputZero; // Randomly choose zero.
+//       else
+//         yield valueInputOutputOne;  // Randomly choose one.
+//     }
+//   }
+//
+// }
 
 /** The only one ValueRange.Bool instance. */
 Bool.Singleton = new Bool;
@@ -209,21 +270,48 @@ class Int extends Same {
    *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
    * is RandTools.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
    *
-   * @param {number} maxKinds
-   *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
-   * When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If zero or negative,
-   * only one value (between [ 0, this.kinds ] randomly) will be generated.
+   * @param {number[]} valueOutMinMax
+   *   An integer restricts the generator range to [ valueOutMin, valueOutMax ]. Itself will be restricted to [ this.min, this.max ]
+   * at most. When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If null or undefined,
+   * only one value (between [ this.min, this.max ] randomly) will be generated.
+   *
+
+//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
+//    * @param {number} maxKinds
+//    *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
+//    * When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If zero or negative,
+//    * only one value (between [ 0, this.kinds ] randomly) will be generated.
+
+   *
+   * @return {object}
+   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value. The valueOutput is an integer value.
+   * When call this.adjust( valueInput ) will return valueOutput.
    *
    * @override
    */
-  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 ), maxKinds = this.kinds ) {
+  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 ), valueOutMinMax ) {
+
+//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
+//      maxKinds = this.kinds ) {
 
     // An integer which has the same remainder as offsetMultiplier when divided by this.kinds.
     let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
 
-    if ( maxKinds > 0 ) {
-      let testKinds = Math.min( maxKinds, this.kinds );
-      for ( let i = 0; i < testKinds; ++i ) {
+//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
+//    if ( maxKinds > 0 ) {
+
+    if ( valueOutMinMax ) {
+      let valueOutMin = Math.max( Math.min( valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.min ); // The smaller one of valueOutMinMax.
+      let valueOutMax = Math.min( Math.max( valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.max ); // The larger one of valueOutMinMax.
+
+      let indexLower = valueOutMin - this.min; // index is 0-base.
+      let indexUpper = valueOutMax - this.min;
+
+//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
+//       let testKinds = Math.min( maxKinds, this.kinds );
+//       for ( let i = 0; i < testKinds; ++i ) {
+
+      for ( let i = indexLower; i <= indexUpper; ++i ) {
         let valueInputOutput = this.get_valueInputOutput_byIndex( baseIntCongruence, i );
         yield valueInputOutput;
       }
