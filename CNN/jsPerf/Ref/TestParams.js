@@ -12,16 +12,24 @@ export { ParamDescConfig, Base };
  * @member {ParamDesc.Base} paramDesc
  *   Which parameter to be used in the permutation.
  *
- * @member {number} maxKinds
- *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, paramDesc.valueDesc.range.kinds ].
- * If ( maxKinds == undefined ), the default is paramDesc.valueDesc.range.kinds. This parameter could lower the kinds
- * to reduce test cases quantity. If zero or negative, only one value (between [ 0, paramDesc.valueDesc.range.kinds ]
- * randomly) will be generated. In fact, this is the maxKinds parameter of ValueRange.XXX.valueInputOutputGenerator().
+ * @member {number[]} valueOutMinMax
+ *   An integer array restricts the generator range to [ valueOutMin, valueOutMax ]. Itself will be restricted to
+ * [ paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ] at most. When this.kinds is large, this parameter
+ * could lower the kinds to reduce test cases quantity. If null or undefined, only one value (between
+ * [ paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ] randomly) will be generated. In fact, this is the
+ * valueOutMinMax parameter of ValueRange.XXX.valueInputOutputGenerator().
+ *
+//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
+//  * @member {number} maxKinds
+//  *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, paramDesc.valueDesc.range.kinds ].
+//  * If ( maxKinds == undefined ), the default is paramDesc.valueDesc.range.kinds. This parameter could lower the kinds
+//  * to reduce test cases quantity. If zero or negative, only one value (between [ 0, paramDesc.valueDesc.range.kinds ]
+//  * randomly) will be generated. In fact, this is the maxKinds parameter of ValueRange.XXX.valueInputOutputGenerator().
  */
 class ParamDescConfig {
-  constructor( paramDesc, maxKinds ) {
+  constructor( paramDesc, valueOutMinMax ) {
     this.paramDesc = paramDesc;
-    this.maxKinds = maxKinds;
+    this.valueOutMinMax = valueOutMinMax;
   }
 }
 
@@ -132,7 +140,7 @@ class Base {
 
     let paramDescConfig = this.config.paramDescConfigArray[ currentParamDescConfigIndex ];
     let paramDesc = paramDescConfig.paramDesc;
-    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( undefined, paramDescConfig.maxKinds ) ) {
+    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( undefined, paramDescConfig.valueOutMinMax ) ) {
 
       //!!! (2021/07/06 Temp Debug) Check the algorithm might be wrong.
       //if ( paramDesc.valueDesc.range.adjust( pair.valueInput ) != pair.valueOutput )
