@@ -201,15 +201,24 @@ class Base extends TestParams.Base {
     this.valueOutMinMax = {
       sourceHeight: [ this.sourceHeight, this.sourceHeight ], //5,
       sourceWidth:  [ this.sourceWidth,  this.sourceWidth  ], //5,
-      sourceChannelCount: [ sourceChannelCount, sourceChannelCount ],
+      sourceChannelCount: [ this.sourceChannelCount, this.sourceChannelCount ],
 
       stepCountRequested: [
         Block.Params.stepCountRequested.valueDesc.range.min,
         Block.Params.stepCountRequested.valueDesc.range.min + 5
       ],
 
-      pointwise1ChannelCountRate: undefined,
-      depthwiseFilterHeight: undefined,
+//      pointwise1ChannelCountRate: undefined,
+      pointwise1ChannelCountRate: [
+        Block.Params.pointwise1ChannelCountRate.valueDesc.range.min,
+        Block.Params.pointwise1ChannelCountRate.valueDesc.range.max
+      ],
+
+//      depthwiseFilterHeight: undefined,
+      depthwiseFilterHeight: [
+        Block.Params.depthwiseFilterHeight.valueDesc.range.min,
+        Block.Params.depthwiseFilterHeight.valueDesc.range.max
+      ],
 
       // Because the logic of activation function is simpler than other, it is just randomly tested once
       // for speeding up testing.
@@ -225,8 +234,17 @@ class Base extends TestParams.Base {
         ValueDesc.ActivationFunction.Singleton.range.max
       ],
 
-      nWhetherShuffleChannel: undefined,
-      bKeepInputTensor: undefined,
+//      nWhetherShuffleChannel: undefined,
+      nWhetherShuffleChannel: [
+        Block.Params.nWhetherShuffleChannel.valueDesc.range.min,
+        Block.Params.nWhetherShuffleChannel.valueDesc.range.max
+      ],
+
+//      bKeepInputTensor: undefined,
+      bKeepInputTensor: [
+        Block.Params.bKeepInputTensor.valueDesc.range.min,
+        Block.Params.bKeepInputTensor.valueDesc.range.max
+      ],
     };
 
     // All the parameters to be tried.
