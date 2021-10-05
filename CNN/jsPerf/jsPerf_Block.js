@@ -275,7 +275,7 @@ class HeightWidthDepth {
         } catch ( e ) {
           let backendName = tf.getBackend();
           console.log( `jsPerf_Block.js: testCorrectness(): backendName=${backendName}, `
-            + `Block testParams.id = ${testParams.id}` );
+            + `Block testParams.id == ${testParams.id}` );
           throw e;
         }
 
