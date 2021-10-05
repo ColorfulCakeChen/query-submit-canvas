@@ -186,22 +186,22 @@ class Base extends TestParams.Base {
    * @param {number} sourceWidth
    *   Only test the width of input image.
    *
+   * @param {number} sourceChannelCount
+   *   Only test the depth of input image.
+   *
    * @yield {Base}
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
-  * ParamsGenerator( sourceHeight, sourceWidth ) {
+  * ParamsGenerator( sourceHeight, sourceWidth, sourceChannelCount ) {
     this.sourceHeight = sourceHeight;
     this.sourceWidth = sourceWidth;
+    this.sourceChannelCount = sourceChannelCount;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
       sourceHeight: [ this.sourceHeight, this.sourceHeight ], //5,
       sourceWidth:  [ this.sourceWidth,  this.sourceWidth  ], //5,
-
-      sourceChannelCount: [
-        Block.Params.sourceChannelCount.valueDesc.range.min,
-        Block.Params.sourceChannelCount.valueDesc.range.min + 4
-      ],
+      sourceChannelCount: [ sourceChannelCount, sourceChannelCount ],
 
       stepCountRequested: [
         Block.Params.stepCountRequested.valueDesc.range.min,
