@@ -129,9 +129,9 @@ class Int extends Same {
    * is RandTools.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
    *
    * @param {number[]} valueOutMinMax
-   *   An integer restricts the generator range to [ valueOutMin, valueOutMax ]. Itself will be restricted to [ this.min, this.max ]
-   * at most. When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If null or undefined,
-   * only one value (between [ this.min, this.max ] randomly) will be generated.
+   *   An integer array restricts the generator range to [ valueOutMin, valueOutMax ]. Itself will be restricted to
+   * [ this.min, this.max ] at most. When this.kinds is large, this parameter could lower the kinds to reduce test
+   * cases quantity. If null or undefined, only one value (between [ this.min, this.max ] randomly) will be generated.
    *
 
 //!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
