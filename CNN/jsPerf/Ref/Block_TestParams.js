@@ -199,13 +199,13 @@ class Base extends TestParams.Base {
       sourceWidth:  [ this.sourceWidth,  this.sourceWidth  ], //5,
 
       sourceChannelCount: [
-        Block.Params.sourceChannelCount.velueDesc.range.min,
-        Block.Params.sourceChannelCount.velueDesc.range.min + 4
+        Block.Params.sourceChannelCount.valueDesc.range.min,
+        Block.Params.sourceChannelCount.valueDesc.range.min + 4
       ],
 
       stepCountRequested: [
-        Block.Params.sourceChannelCount.velueDesc.range.min,
-        Block.Params.sourceChannelCount.velueDesc.range.min + 5
+        Block.Params.sourceChannelCount.valueDesc.range.min,
+        Block.Params.sourceChannelCount.valueDesc.range.min + 5
       ],
 
       pointwise1ChannelCountRate: undefined,
