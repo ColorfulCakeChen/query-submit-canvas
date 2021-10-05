@@ -543,7 +543,7 @@ class Base {
       + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
       + `nActivationIdAtBlockEndName=${this.nActivationIdAtBlockEndName}(${this.nActivationIdAtBlockEnd}), `
       + `nWhetherShuffleChannel=${this.nWhetherShuffleChannelName}(${this.nWhetherShuffleChannel}), `
-      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
+      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, outputChannelCount=${this.outputChannelCount}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
     return str;
