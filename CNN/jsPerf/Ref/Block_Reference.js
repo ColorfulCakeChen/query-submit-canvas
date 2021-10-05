@@ -283,6 +283,7 @@ class Base {
         + `nActivationIdAtBlockEndName=${testParams.out.nActivationIdAtBlockEndName}(${testParams.out.nActivationIdAtBlockEnd}), `
         + `nWhetherShuffleChannel=${testParams.out.nWhetherShuffleChannelName}(${testParams.out.nWhetherShuffleChannel}), `
         + `outputHeight=${referredParams.outputHeight}, outputWidth=${referredParams.outputWidth}, `
+//        + `outputChannelCount=${???.outputChannelCount}, `
         + `bKeepInputTensor=${testParams.out.bKeepInputTensor}`
       ;
     }
@@ -298,6 +299,11 @@ class Base {
       for ( let i = 0; i < testParams.stepsArray.length; ++i ) {
         //let stepName = `step${i}`;
         pointDepthPointRef.testParams = testParams.stepsArray[ i ];
+     
+//!!! ...unfinished... (2021/10/05)
+// Test: ShuffleNet, depthwise should not have bias and activation.
+// Test: MobileNet, pointwise2 should not have bias and activation.
+
         imageOutArray = pointDepthPointRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
       }
 
