@@ -260,10 +260,16 @@ class Base {
   calcResult( imageIn ) {
     let testParams = this.testParams;
 
+    let channelShuffler_concatenatedShape;
+    let channelShuffler_outputGroupCount = 2; // In ShuffleNetV2, channel shuffler always has 2 convolution group.
+
     {
       let referredParams = {};
       Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( referredParams,
         testParams.out.sourceHeight, testParams.out.sourceWidth );
+
+      // In ShuffleNetV2, channel shuffler always has half ( height, width ) and twice channel count of original input0.
+      channelShuffler_concatenatedShape = [ referredParams.outputHeight, referredParams.outputWidth, imageIn.depth * 2 ];
 
       // Create description for debug easily.
       this.paramsOutDescription =
@@ -284,10 +290,6 @@ class Base {
     // Calculate every steps in sequence.
     {
       let pointDepthPointRef = this.PointDepthPoint_Reference;
-
-      // In ShuffleNetV2, channel shuffler always has twice channel count of original input0.
-      let channelShuffler_concatenatedShape = [ imageIn.height, imageIn.width, imageIn.depth * 2 ];
-      let channelShuffler_outputGroupCount = 2; // In ShuffleNetV2, channel shuffler always has 2 convolution group.
 
       this.imageInArray[ 0 ] = imageIn;
       this.imageInArray[ 1 ] = null;
