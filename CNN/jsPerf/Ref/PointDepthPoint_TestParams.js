@@ -165,8 +165,8 @@ class Base extends TestParams.Base {
       ],
 
       channelCount0_pointwise1Before: [
-        Params.channelCount0_pointwise1Before.valueDesc.range.min,
-        Params.channelCount0_pointwise1Before.valueDesc.range.min + 4
+        PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range.min,
+        PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range.min + 4
       ],
 
       // Test all named values plus two more un-named values.
