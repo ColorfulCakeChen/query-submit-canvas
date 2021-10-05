@@ -544,7 +544,7 @@ class Base {
       + `nActivationIdAtBlockEndName=${this.nActivationIdAtBlockEndName}(${this.nActivationIdAtBlockEnd}), `
       + `nWhetherShuffleChannel=${this.nWhetherShuffleChannelName}(${this.nWhetherShuffleChannel}), `
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
-      + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `bKeepInputTensor=${this.bKeepInputTensor} `
     ;
     return str;
   }
