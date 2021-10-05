@@ -148,8 +148,8 @@ class Base {
 
     } catch ( e ) {
       let backendName = tf.getBackend();
-      console.log( `backendName=${backendName}, `
-        + `Block this.testParams.id = ${this.testParams.id}` );
+      console.log( `Block_Reference.js: testCorrectness(): backendName=${backendName}, `
+        + `Block this.testParams.id == ${this.testParams.id}` );
       throw e;
     }
 
