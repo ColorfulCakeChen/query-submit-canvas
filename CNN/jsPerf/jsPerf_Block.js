@@ -249,7 +249,7 @@ class HeightWidthDepth {
 
       for ( let originalImageSize of originalImageSizeArray ) {
 
-//!!! ...unfinished... (2021/09/28)
+//!!! ...unfinished... (2021/10/05)
 
         // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
         //       dynamically created in them.
@@ -259,7 +259,7 @@ class HeightWidthDepth {
         let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width );
         let testReference = new Block_Reference.Base();
 
-        let batchMessageInterval = 30 * 1000; //100 * 1000; // Every so many test cases, display a message.
+        let batchMessageInterval = 10 * 1000; //100 * 1000; // Every so many test cases, display a message.
 
         try {
           for ( testParams of testParamsGenerator ) {
