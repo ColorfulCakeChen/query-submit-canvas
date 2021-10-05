@@ -49,105 +49,11 @@ class HeightWidthDepth {
 
   block_PerformanceTest_init() {
       
-//!!! ...unfinished... (2021/09/28)
-
-
-    let pointwise_4to8_FiltersArray =
-    [
-       1,  4,  2,  3, -3, -2,  4,  1,
-       2,  3, -3, -2,  4,  1,  1,  4,
-      -3, -2,  4,  1,  1,  4,  2,  3,
-       4,  1,  1,  4,  2,  3, -3, -2,
-    ];
-
-    let pointwise_4to8_BiasesArray =
-    [ 3, 4, 5, 6, 7, 8, 9, 10, ];
-
-    // (If value too large (out of float32 range), the result will strange. So, use smaller and negative value.)
-    let depthwise_8to16_FiltersArray =
-    [
-       1, -9, -5,  7,  2,  8,  4,  1, -3,  7, -6,  9,  4, -6,  8, -2,
-       2,  8,  4,  1, -3,  7, -6,  9,  4, -6,  8, -2,  5,  5, -7, -3,
-      -3,  7, -6,  9,  4, -6,  8, -2,  5,  5, -7, -3,  6,  4,  9,  5,
-
-       4, -6,  8, -2,  5,  5, -7, -3,  6,  4,  9,  5,  7,  3, -3,  4,
-       5,  5, -7, -3,  6,  4,  9,  5,  7,  3, -3,  4, -8,  2,  1, -8,
-       6,  4,  9,  5,  7,  3, -3,  4, -8,  2,  1, -8, -9,  1, -2,  6,
-
-       7,  3, -3,  4, -8,  2,  1, -8, -9,  1, -2,  6,  1, -9, -5,  7,
-      -8,  2,  1, -8, -9,  1, -2,  6,  1, -9, -5,  7,  2,  8,  4,  1,
-      -9,  1, -2,  6,  1, -9, -5,  7,  2,  8,  4,  1, -3,  7, -6,  9,
-    ];
-
-    let depthwise_8to16_BiasesArray =
-    [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ];
-
-    let depthwise_4to128_FiltersArray = [ ... new Array( 3 * 3 * 4 * 32 ).keys() ]; // filterHeight * filterWidth * inChannel * channelMultiplier
-    let depthwise_Xto128_BiasesArray =  [ ... new Array(         4 * 32 ).keys() ]; // inChannel * channelMultiplier
-
-    let depthwise_8to8_FiltersArray =
-    [
-       1, -9, -5,  7,  2,  8,  4,  1,
-       2,  8,  4,  1, -3,  7, -6,  9,
-      -3,  7, -6,  9,  4, -6,  8, -2,
-
-       4, -6,  8, -2,  5,  5, -7, -3,
-       5,  5, -7, -3,  6,  4,  9,  5,
-       6,  4,  9,  5,  7,  3, -3,  4,
-
-       7,  3, -3,  4, -8,  2,  1, -8,
-      -8,  2,  1, -8, -9,  1, -2,  6,
-      -9,  1, -2,  6,  1, -9, -5,  7,
-    ];
-
-    let depthwise_8to8_BiasesArray =
-    [ 101, 102, 103, 104, 105, 106, 107, 108, ];
-
-    let pointwise_16to4_FiltersArray =
-    [
-      11, 21, 31, 41,
-      12, 22, 32, 42,
-      13, 23, 33, 43,
-      14, 24, 34, 44,
-      15, 25, 35, 45,
-      16, 26, 36, 46,
-      17, 27, 37, 47,
-      18, 28, 38, 48,
-      19, 29, 39, 49,
-      20, 30, 40, 50,
-      21, 31, 41, 51,
-      22, 32, 42, 52,
-      23, 33, 43, 53,
-      24, 34, 44, 54,
-      25, 35, 45, 55,
-      26, 36, 46, 56,
-    ];
-
-    let pointwise_8to4_FiltersArray =
-    [
-      11, 21, 31, 41,
-      12, 22, 32, 42,
-      13, 23, 33, 43,
-      14, 24, 34, 44,
-      15, 25, 35, 45,
-      16, 26, 36, 46,
-      17, 27, 37, 47,
-      18, 28, 38, 48,
-    ];
-
-    let pointwise_4to128_FiltersArray =   [ ... new Array(   4 * 128 ).keys() ]; // inChannel * outChannel
-    let pointwise_128to128_FiltersArray = [ ... new Array( 128 * 128 ).keys() ]; // inChannel * outChannel
-
-    let pointwise_Xto4_BiasesArray =
-    [ 201, 202, 203, 204, ];
-
-    let pointwise_Xto128_BiasesArray =    [ ... new Array( 128 ).keys() ];       // outChannel
-
     // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
     this.disposeTensors();
 
     // Larger input image for performance testing.
-    let inputTensorCount = 2;
+    let inputTensorCount = 1;
     this.testPerformance_ImageDataArray = new Array( inputTensorCount );
     this.dataTensor3dArray = tf.tidy( () => {
       let dataTensor3dArray = new Array( inputTensorCount );
@@ -174,42 +80,171 @@ class HeightWidthDepth {
 
 
     // sourceHeight, sourceWidth, sourceChannelCount, stepCountRequested, pointwise1ChannelCountRate,
-    // depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd, nWhetherShuffleChannel, bKeepInputTensor
+    // depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd,
+    // nWhetherShuffleChannel, bKeepInputTensor
     //
-
-//!!! ...unfinished... (2021/09/28)
 
     // The block performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
 
-    // Test Case: (pointwise1 (bias, COS), depthwise (channelMultiplier = 1, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
-    let testCase_Xxx =
-    new Block_TestParams.Base().set_By_ParamsScattered(
-      
-//!!! ...unfinished... (2021/09/28)
+    let stepCountRequested = 10;
 
-      this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
-          8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-          1,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
-          4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
-      false,
-       true
+    // Test Case 1: (NotShuffleNet_NotMobileNet, pointwise1ChannelCountRate 0)
+    let testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_0 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, 1, 0,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+      true
+    );
+
+    // Test Case 2: (NotShuffleNet_NotMobileNet, pointwise1ChannelCountRate 1)
+    let testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_1 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, 1, 1,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+      true
+    );
+
+    // Test Case 3: (NotShuffleNet_NotMobileNet, pointwise1ChannelCountRate 2)
+    let testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_2 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, 1, 2,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+      true
     );
 
 
-    // Different Block objects.
+    // Test Case 4: (MobileNet, Step 10, pointwise1ChannelCountRate 0)
+    let testCase_MobileNet_Step_10_Pointwise1Rate_0 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, stepCountRequested, 0,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+      true
+    );
+
+    // Test Case 5: (MobileNet, Step 10, pointwise1ChannelCountRate 1)
+    let testCase_MobileNet_Step_10_Pointwise1Rate_1 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, stepCountRequested, 1,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+      true
+    );
+
+    // Test Case 6: (MobileNet, Step 10, pointwise1ChannelCountRate 2)
+    let testCase_MobileNet_Step_10_Pointwise1Rate_2 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, stepCountRequested, 2,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE,
+      true
+    );
+
+
+    // Test Case 7: (ShuffleNetV2, Step 10, pointwise1ChannelCountRate 0)
+    let testCase_ShuffleNetV2_Step_10_Pointwise1Rate_0 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, stepCountRequested, 0,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER,
+      true
+    );
+
+    // Test Case 8: (ShuffleNetV2, Step 10, pointwise1ChannelCountRate 1)
+    let testCase_ShuffleNetV2_Step_10_Pointwise1Rate_1 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, stepCountRequested, 1,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER,
+      true
+    );
+
+    // Test Case 9: (ShuffleNetV2, Step 10, pointwise1ChannelCountRate 2)
+    let testCase_ShuffleNetV2_Step_10_Pointwise1Rate_2 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, stepCountRequested, 2,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER,
+      true
+    );
+
+
+    // Test Case 10: (ShuffleNetV2_Slower, Step 10, pointwise1ChannelCountRate 0)
+    let testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_0 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, stepCountRequested, 0,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22,
+      true
+    );
+
+    // Test Case 11: (ShuffleNetV2_Slower, Step 10, pointwise1ChannelCountRate 1)
+    let testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_1 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, stepCountRequested, 1,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22,
+      true
+    );
+
+    // Test Case 12: (ShuffleNetV2_Slower, Step 10, pointwise1ChannelCountRate 2)
+    let testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_2 =
+    ( new Block_TestParams.Base() ).set_By_ParamsScattered(
+      this.height, this.width, this.depth, stepCountRequested, 2,
+      3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22,
+      true
+    );
+
+
+    // The different Block objects for performance testing.
     //
     // ( bKeepInputTensor )
     this.block_list = [
 
-//!!! ...unfinished... (2021/09/28)
+      this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_0
+        = Block_Reference.Base.Block_create( testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_0 ),
 
-      // The Block for performance testing.
-      this.block_Xxx
-        = Block_Reference.Base.Block_create(
-            testCase_pointwise1_4to8_bias_COS_depthwise_8to8_strides_1_pad_same_bias_COS_pointwise2_8to4_bias_COS_AddInputToOutput,
-            channelShuffler_ConcatPointwiseConv ),
+      this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_1
+        = Block_Reference.Base.Block_create( testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_1 ),
+
+      this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_2
+        = Block_Reference.Base.Block_create( testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_2 ),
+
+
+      this.block_MobileNet_Step_10_Pointwise1Rate_0
+        = Block_Reference.Base.Block_create( testCase_MobileNet_Step_10_Pointwise1Rate_0 ),
+
+      this.block_MobileNet_Step_10_Pointwise1Rate_1
+        = Block_Reference.Base.Block_create( testCase_MobileNet_Step_10_Pointwise1Rate_1 ),
+
+      this.block_MobileNet_Step_10_Pointwise1Rate_2
+        = Block_Reference.Base.Block_create( testCase_MobileNet_Step_10_Pointwise1Rate_2 ),
+
+
+      this.block_ShuffleNetV2_Step_10_Pointwise1Rate_0
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Step_10_Pointwise1Rate_0 ),
+
+      this.block_ShuffleNetV2_Step_10_Pointwise1Rate_1
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Step_10_Pointwise1Rate_1 ),
+
+      this.block_ShuffleNetV2_Step_10_Pointwise1Rate_2
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Step_10_Pointwise1Rate_2 ),
+
+
+      this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_0
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_0 ),
+
+      this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_1
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_1 ),
+
+      this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_2
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_2 ),
 
     ];
 
@@ -221,18 +256,75 @@ class HeightWidthDepth {
         let block = this.block_list[ i ];
         block.disposeTensors();
       }
-      this.block_list = this.pointDepthPoint_DConv = null;
+      this.block_list = null;
     }
   }
 
-//!!! ...unfinished... (2021/09/28)
 
   // Test apply by Xxx
-  test_Xxx() {
-    let outputTensor3dArray = [];
-    this.pointDepthPoint_DConv_1_bias_COS_AddInputToOutput.apply( this.dataTensor3dArray, outputTensor3dArray );
-    tf.dispose( outputTensor3dArray );
+  test_NotShuffleNet_NotMobileNet_Pointwise1Rate_0() {
+    let outputTensor3d = this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_0( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
   }
+
+  test_NotShuffleNet_NotMobileNet_Pointwise1Rate_1() {
+    let outputTensor3d = this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_1( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+  test_NotShuffleNet_NotMobileNet_Pointwise1Rate_2() {
+    let outputTensor3d = this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_2( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+
+  test_MobileNet_Step_10_Pointwise1Rate_0() {
+    let outputTensor3d = this.block_MobileNet_Step_10_Pointwise1Rate_0( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+  test_MobileNet_Step_10_Pointwise1Rate_1() {
+    let outputTensor3d = this.block_MobileNet_Step_10_Pointwise1Rate_1( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+  test_MobileNet_Step_10_Pointwise1Rate_2() {
+    let outputTensor3d = this.block_MobileNet_Step_10_Pointwise1Rate_2( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+
+  test_ShuffleNetV2_Step_10_Pointwise1Rate_0() {
+    let outputTensor3d = this.block_ShuffleNetV2_Step_10_Pointwise1Rate_0( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+  test_ShuffleNetV2_Step_10_Pointwise1Rate_1() {
+    let outputTensor3d = this.block_ShuffleNetV2_Step_10_Pointwise1Rate_1( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+  test_ShuffleNetV2_Step_10_Pointwise1Rate_2() {
+    let outputTensor3d = this.block_ShuffleNetV2_Step_10_Pointwise1Rate_2( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+
+  test_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_0() {
+    let outputTensor3d = this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_0( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+  test_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_1() {
+    let outputTensor3d = this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_1( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+  test_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_2() {
+    let outputTensor3d = this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_2( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
@@ -249,8 +341,6 @@ class HeightWidthDepth {
 
       for ( let originalImageSize of originalImageSizeArray ) {
 
-//!!! ...unfinished... (2021/10/05)
-
         // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
         //       dynamically created in them.
         let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
@@ -259,7 +349,7 @@ class HeightWidthDepth {
         let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width );
         let testReference = new Block_Reference.Base();
 
-        let batchMessageInterval = 10 * 1000; //100 * 1000; // Every so many test cases, display a message.
+        let batchMessageInterval = 5 * 1000; // Every so many test cases, display a message.
 
         try {
           for ( testParams of testParamsGenerator ) {
