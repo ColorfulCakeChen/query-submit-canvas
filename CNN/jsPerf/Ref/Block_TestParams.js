@@ -35,18 +35,10 @@ import * as Block from "../../Conv/Block.js";
 class Base extends TestParams.Base {
 
   /**
-   * @param {number} sourceHeight
-   *   Only test the height of input image.
-   *
-   * @param {number} sourceWidth
-   *   Only test the width of input image.
    *
    */
-  constructor( sourceHeight, sourceWidth ) {
+  constructor() {
     super();
-    this.sourceHeight = sourceHeight;
-    this.sourceWidth = sourceWidth;
-
     this.stepsArray = new Array();
   }
 
@@ -188,10 +180,18 @@ class Base extends TestParams.Base {
   /**
    * Responsible for generating testing paramters combinations.
    *
+   * @param {number} sourceHeight
+   *   Only test the height of input image.
+   *
+   * @param {number} sourceWidth
+   *   Only test the width of input image.
+   *
    * @yield {Base}
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
-  * ParamsGenerator() {
+  * ParamsGenerator( sourceHeight, sourceWidth ) {
+    this.sourceHeight = sourceHeight;
+    this.sourceWidth = sourceWidth;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
