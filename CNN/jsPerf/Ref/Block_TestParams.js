@@ -216,7 +216,7 @@ class Base extends TestParams.Base {
 
 //      depthwiseFilterHeight: undefined,
       depthwiseFilterHeight: [
-        Block.Params.depthwiseFilterHeight.valueDesc.range.min,
+        2, //Block.Params.depthwiseFilterHeight.valueDesc.range.min, // WASM is fault when filterHeight = 1
         Block.Params.depthwiseFilterHeight.valueDesc.range.max
       ],
 
