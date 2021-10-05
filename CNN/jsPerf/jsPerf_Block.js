@@ -349,7 +349,7 @@ class HeightWidthDepth {
         let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
         let testReference = new Block_Reference.Base();
 
-        let batchMessageInterval = 5 * 1000; // Every so many test cases, display a message.
+        let batchMessageInterval = 10 * 1000; // Every so many test cases, display a message.
 
         try {
           for ( testParams of testParamsGenerator ) {
