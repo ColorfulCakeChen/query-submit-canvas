@@ -285,6 +285,10 @@ class Base {
     {
       let pointDepthPointRef = this.PointDepthPoint_Reference;
 
+      // In ShuffleNetV2, channel shuffler always has twice channel count of original input0.
+      let channelShuffler_concatenatedShape = [ imageIn.height, imageIn.width, imageIn.depth * 2 ];
+      let channelShuffler_outputGroupCount = 2; // In ShuffleNetV2, channel shuffler always has 2 convolution group.
+
       this.imageInArray[ 0 ] = imageIn;
       this.imageInArray[ 1 ] = null;
 
@@ -292,7 +296,7 @@ class Base {
       for ( let i = 0; i < testParams.stepsArray.length; ++i ) {
         //let stepName = `step${i}`;
         pointDepthPointRef.testParams = testParams.stepsArray[ i ];
-        imageOutArray = pointDepthPointRef.calcResult( imageOutArray );
+        imageOutArray = pointDepthPointRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
       }
 
       let imageOut = imageOutArray[ 0 ]; // The stepLast should have only input0.
