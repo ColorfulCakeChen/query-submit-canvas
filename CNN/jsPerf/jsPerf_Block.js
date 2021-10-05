@@ -346,7 +346,7 @@ class HeightWidthDepth {
         let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
 
         let testParams = new Block_TestParams.Base();
-        let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width );
+        let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width, originalImageSize.depth );
         let testReference = new Block_Reference.Base();
 
         let batchMessageInterval = 5 * 1000; // Every so many test cases, display a message.
