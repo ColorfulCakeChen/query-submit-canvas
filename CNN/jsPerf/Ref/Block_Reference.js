@@ -303,6 +303,7 @@ class Base {
 //!!! ...unfinished... (2021/10/05)
 // Test: ShuffleNet, depthwise should not have bias and activation.
 // Test: MobileNet, pointwise2 should not have bias and activation.
+// Test: pointwise1ChannelCountRate and real pointwise1ChannelCount.
 
         imageOutArray = pointDepthPointRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
       }
