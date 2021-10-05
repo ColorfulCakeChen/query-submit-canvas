@@ -1,4 +1,4 @@
-export { Same, Bool, Int };
+export { Same, Int, Bool };
 
 import * as RandTools from "../util/RandTools.js";
 
@@ -42,6 +42,145 @@ class Same {
 
 /** The only one ValueRange.Same instance. */
 Same.Singleton = new Same;
+
+
+/**
+ * Provides methods for converting weight (a number) to integer between min and max (both are integers).
+ */
+class Int extends Same {
+
+  /**
+   * @param {number} min The minimum value (as integer).
+   * @param {number} max The maximum value (as integer).
+   */
+  constructor( min, max ) {
+    super();
+    this.min = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
+    this.max = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
+    this.kinds = ( this.max - this.min ) + 1; // How many possible integer between them.
+  }
+
+  /**
+   * @return {number} Return the trucated value (i.e. integer). The returned value is forcibly between min and max (as integer too).
+   */
+  adjust( value ) {
+    let valueInt = Math.trunc( value ); // Convert to an integer.
+
+    // Rearrange valueInt between min and max fairly (in probability).
+    //
+    // A1: Why not use remainder operator (%) directly?
+    // Q1: Because remainder always has the same sign as dividend, this can not handle the situation which min and
+    //     max have different sign.
+    //
+    // A2: Why not just restrict all value less than min to valueMin and value greater than max to max?
+    // Q2: Although this could restrict value in range, it will skew the probability of every value in the range.
+    //     Unfair probability could be harmful to evolution algorithm.
+    //
+    let quotient = ( valueInt - this.min ) / this.kinds;
+    let quotientInt = Math.floor( quotient );  // So that negative value could be handled correctly.
+    let result = valueInt - ( quotientInt * this.kinds );
+    return result;
+  }
+
+  /**
+   * @param {number} baseIntCongruence
+   *   An integer which is divisible by this.kinds. This will be used to offset the index value to generate valueInput.
+   *
+   * @param {number} index
+   *   An integer between [ 0, this.kinds ).
+   *
+   * @return {object}
+   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value composed from baseIntCongruence, this.min
+   * and index. The valueOutput is an integer value. When call this.adjust( valueInput ) will return valueOutput.
+   */
+  get_valueInputOutput_byIndex( baseIntCongruence, index ) {
+    let valueOutputInt = ( this.min + index );
+
+    // An integer which could become valueOutputInt when adjusted by Int.adjust().
+    let valueInputInt = baseIntCongruence + valueOutputInt;
+    let valueInputIntSign = Math.sign( valueInputInt );
+
+    // If no sign (i.e. valueInputInt is zero), choose positive sign. Otherwise, there will no fractional part at all.
+    if ( valueInputIntSign == 0 ) {
+      valueInputIntSign = 1;
+    }
+
+    // A: Why not use Math.random() to generate value between [ 0, 1 ) directly?
+    // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
+    //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
+    //    from Float64 to Float32.
+    let randomFractionalPart = RandTools.getRandomIntInclusive( 0, 99 ) / 1000;
+
+    // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
+    let valueInputFloat = valueInputInt + ( valueInputIntSign * randomFractionalPart );
+
+    //!!! (2021/07/06 Temp Test) When the random fractional part is converted (from Float64) into Float32, it might shifted to different value.
+    //if ( this.adjust( new Float32Array( [ valueInputFloat ] )[ 0 ] ) != valueOutputInt )
+    //  debugger;
+
+    return { valueInput: valueInputFloat, valueOutput: valueOutputInt };
+  }
+
+  /**
+   * For ValueRange.Int, this.kinds two-value pairs will be generated in sequence.
+   *
+   * @param {number} offsetMultiplier
+   *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
+   * is RandTools.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
+   *
+   * @param {number[]} valueOutMinMax
+   *   An integer restricts the generator range to [ valueOutMin, valueOutMax ]. Itself will be restricted to [ this.min, this.max ]
+   * at most. When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If null or undefined,
+   * only one value (between [ this.min, this.max ] randomly) will be generated.
+   *
+
+//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
+//    * @param {number} maxKinds
+//    *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
+//    * When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If zero or negative,
+//    * only one value (between [ 0, this.kinds ] randomly) will be generated.
+
+   *
+   * @return {object}
+   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value. The valueOutput is an integer value.
+   * When call this.adjust( valueInput ) will return valueOutput.
+   *
+   * @override
+   */
+  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 ), valueOutMinMax ) {
+
+//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
+//      maxKinds = this.kinds ) {
+
+    // An integer which has the same remainder as offsetMultiplier when divided by this.kinds.
+    let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
+
+//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
+//    if ( maxKinds > 0 ) {
+
+    if ( valueOutMinMax ) {
+      let valueOutMin = Math.max( Math.min( valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.min ); // The smaller one of valueOutMinMax.
+      let valueOutMax = Math.min( Math.max( valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.max ); // The larger one of valueOutMinMax.
+
+      let indexLower = valueOutMin - this.min; // index is 0-base.
+      let indexUpper = valueOutMax - this.min;
+
+//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
+//       let testKinds = Math.min( maxKinds, this.kinds );
+//       for ( let i = 0; i < testKinds; ++i ) {
+
+      for ( let i = indexLower; i <= indexUpper; ++i ) {
+        let valueInputOutput = this.get_valueInputOutput_byIndex( baseIntCongruence, i );
+        yield valueInputOutput;
+      }
+    } else {
+      let index = RandTools.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
+      let valueInputOutput = this.get_valueInputOutput_byIndex( baseIntCongruence, index );
+      yield valueInputOutput;
+    }
+  }
+
+}
 
 
 /**
@@ -185,141 +324,3 @@ class Bool extends Int {
 /** The only one ValueRange.Bool instance. */
 Bool.Singleton = new Bool;
 
-
-/**
- * Provides methods for converting weight (a number) to integer between min and max (both are integers).
- */
-class Int extends Same {
-
-  /**
-   * @param {number} min The minimum value (as integer).
-   * @param {number} max The maximum value (as integer).
-   */
-  constructor( min, max ) {
-    super();
-    this.min = Math.trunc( Math.min( min, max ) ); // Confirm the minimum. Convert to an integer.
-    this.max = Math.trunc( Math.max( min, max ) ); // Confirm the maximum. Convert to an integer.
-    this.kinds = ( this.max - this.min ) + 1; // How many possible integer between them.
-  }
-
-  /**
-   * @return {number} Return the trucated value (i.e. integer). The returned value is forcibly between min and max (as integer too).
-   */
-  adjust( value ) {
-    let valueInt = Math.trunc( value ); // Convert to an integer.
-
-    // Rearrange valueInt between min and max fairly (in probability).
-    //
-    // A1: Why not use remainder operator (%) directly?
-    // Q1: Because remainder always has the same sign as dividend, this can not handle the situation which min and
-    //     max have different sign.
-    //
-    // A2: Why not just restrict all value less than min to valueMin and value greater than max to max?
-    // Q2: Although this could restrict value in range, it will skew the probability of every value in the range.
-    //     Unfair probability could be harmful to evolution algorithm.
-    //
-    let quotient = ( valueInt - this.min ) / this.kinds;
-    let quotientInt = Math.floor( quotient );  // So that negative value could be handled correctly.
-    let result = valueInt - ( quotientInt * this.kinds );
-    return result;
-  }
-
-  /**
-   * @param {number} baseIntCongruence
-   *   An integer which is divisible by this.kinds. This will be used to offset the index value to generate valueInput.
-   *
-   * @param {number} index
-   *   An integer between [ 0, this.kinds ).
-   *
-   * @return {object}
-   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value composed from baseIntCongruence, this.min
-   * and index. The valueOutput is an integer value. When call this.adjust( valueInput ) will return valueOutput.
-   */
-  get_valueInputOutput_byIndex( baseIntCongruence, index ) {
-    let valueOutputInt = ( this.min + index );
-
-    // An integer which could become valueOutputInt when adjusted by Int.adjust().
-    let valueInputInt = baseIntCongruence + valueOutputInt;
-    let valueInputIntSign = Math.sign( valueInputInt );
-
-    // If no sign (i.e. valueInputInt is zero), choose positive sign. Otherwise, there will no fractional part at all.
-    if ( valueInputIntSign == 0 ) {
-      valueInputIntSign = 1;
-    }
-
-    // A: Why not use Math.random() to generate value between [ 0, 1 ) directly?
-    // Q: In order to avoid rounded into another integer when converted from Float64 (here) to Float32 (weights array),
-    //    the random value should not too close to 1. For example, 1.9999999999999999999 might become 2.0 when converted
-    //    from Float64 to Float32.
-    let randomFractionalPart = RandTools.getRandomIntInclusive( 0, 99 ) / 1000;
-
-    // An floating-point number (the integer with fractional part) which could become valueOutputInt when adjusted by Int.adjust().
-    let valueInputFloat = valueInputInt + ( valueInputIntSign * randomFractionalPart );
-
-    //!!! (2021/07/06 Temp Test) When the random fractional part is converted (from Float64) into Float32, it might shifted to different value.
-    //if ( this.adjust( new Float32Array( [ valueInputFloat ] )[ 0 ] ) != valueOutputInt )
-    //  debugger;
-
-    return { valueInput: valueInputFloat, valueOutput: valueOutputInt };
-  }
-
-  /**
-   * For ValueRange.Int, this.kinds two-value pairs will be generated in sequence.
-   *
-   * @param {number} offsetMultiplier
-   *   An integer multiplier. The ( offsetMultiplier * this.kinds ) will be used as the first test value. The default value
-   * is RandTools.getRandomIntInclusive( -10, +10 ). The -10 and +10 is just chosen arbitrarily.
-   *
-   * @param {number[]} valueOutMinMax
-   *   An integer restricts the generator range to [ valueOutMin, valueOutMax ]. Itself will be restricted to [ this.min, this.max ]
-   * at most. When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If null or undefined,
-   * only one value (between [ this.min, this.max ] randomly) will be generated.
-   *
-
-//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
-//    * @param {number} maxKinds
-//    *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, this.kinds ]. Default is this.kinds.
-//    * When this.kinds is large, this parameter could lower the kinds to reduce test cases quantity. If zero or negative,
-//    * only one value (between [ 0, this.kinds ] randomly) will be generated.
-
-   *
-   * @return {object}
-   *   Return an object { valueInput, valueOutput }. The valueInput is a floating-point value. The valueOutput is an integer value.
-   * When call this.adjust( valueInput ) will return valueOutput.
-   *
-   * @override
-   */
-  * valueInputOutputGenerator( offsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 ), valueOutMinMax ) {
-
-//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
-//      maxKinds = this.kinds ) {
-
-    // An integer which has the same remainder as offsetMultiplier when divided by this.kinds.
-    let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
-
-//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
-//    if ( maxKinds > 0 ) {
-
-    if ( valueOutMinMax ) {
-      let valueOutMin = Math.max( Math.min( valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.min ); // The smaller one of valueOutMinMax.
-      let valueOutMax = Math.min( Math.max( valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.max ); // The larger one of valueOutMinMax.
-
-      let indexLower = valueOutMin - this.min; // index is 0-base.
-      let indexUpper = valueOutMax - this.min;
-
-//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
-//       let testKinds = Math.min( maxKinds, this.kinds );
-//       for ( let i = 0; i < testKinds; ++i ) {
-
-      for ( let i = indexLower; i <= indexUpper; ++i ) {
-        let valueInputOutput = this.get_valueInputOutput_byIndex( baseIntCongruence, i );
-        yield valueInputOutput;
-      }
-    } else {
-      let index = RandTools.getRandomIntInclusive( 0, ( this.kinds - 1 ) );
-      let valueInputOutput = this.get_valueInputOutput_byIndex( baseIntCongruence, index );
-      yield valueInputOutput;
-    }
-  }
-
-}
