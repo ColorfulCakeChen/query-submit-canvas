@@ -339,7 +339,7 @@ class HeightWidthDepth {
         let pointDepthPoint = this.pointDepthPoint_list[ i ];
         pointDepthPoint.disposeTensors();
       }
-      this.pointDepthPoint_list = this.pointDepthPoint_DConv = null;
+      this.pointDepthPoint_list = null;
     }
 
     if ( this.channelShuffler_ConcatPointwiseConv ) { // Release shared ChannelShuffler.
