@@ -213,17 +213,17 @@ class Base extends TestParams.Base {
 
       // Because the logic of activation function is simpler than other, it is just randomly tested once
       // for speeding up testing.
-      nActivationId: undefined,
-//       [
-//         ValueDesc.ActivationFunction.Singleton.range.min,
-//         ValueDesc.ActivationFunction.Singleton.range.min + 0
-//       ],
+//      nActivationId: undefined,
+      nActivationId: [
+        ValueDesc.ActivationFunction.Singleton.range.min,
+        ValueDesc.ActivationFunction.Singleton.range.max
+      ],
 
-      nActivationIdAtBlockEnd: undefined,
-//       [
-//         ValueDesc.ActivationFunction.Singleton.range.min,
-//         ValueDesc.ActivationFunction.Singleton.range.min + 0
-//       ],
+//      nActivationIdAtBlockEnd: undefined,
+      nActivationIdAtBlockEnd: [
+        ValueDesc.ActivationFunction.Singleton.range.min,
+        ValueDesc.ActivationFunction.Singleton.range.max
+      ],
 
       nWhetherShuffleChannel: undefined,
       bKeepInputTensor: undefined,
