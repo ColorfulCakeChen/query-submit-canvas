@@ -120,6 +120,12 @@ class Base extends TestParams.Base {
   }
 
   /**
+   * @override
+   */
+  onAfter_Yield() {
+  }
+
+  /**
    * Responsible for generating testing paramters combinations.
    *
    * @param {number} inputImageHeight
