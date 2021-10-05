@@ -80,6 +80,16 @@ class Base {
   }
 
   /**
+   * Called by permuteParamRecursively() when a combination of parameters is complete and after this object has been yielded.
+   *
+   * Usually, this method should clear some temperary data members.
+   *
+   * Sub-class should override this method.
+   */
+  onAfter_Yield() {
+  }
+
+  /**
    * Responsible for generating testing paramters combinations.
    *
    * @param {ParamDescConfig[]} paramDescConfigArray
@@ -112,8 +122,9 @@ class Base {
       ++this.id;  // Complete one kind of combination.
 
       this.onBefore_Yield();
-
       yield this;
+      this.onAfter_Yield();
+
       return; // Stop this recusive. Back-track to another parameters combination.
     }
 
