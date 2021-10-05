@@ -34,8 +34,19 @@ import * as Block from "../../Conv/Block.js";
  */
 class Base extends TestParams.Base {
 
-  constructor() {
+  /**
+   * @param {number} sourceHeight
+   *   Only test the height of input image.
+   *
+   * @param {number} sourceWidth
+   *   Only test the width of input image.
+   *
+   */
+  constructor( sourceHeight, sourceWidth ) {
     super();
+    this.sourceHeight = sourceHeight;
+    this.sourceWidth = sourceWidth;
+
     this.stepsArray = new Array();
   }
 
@@ -183,18 +194,36 @@ class Base extends TestParams.Base {
   * ParamsGenerator() {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
-    this.maxKindsRestrict = {
-      sourceHeight: 5,
-      sourceWidth:  5,
-      sourceChannelCount: 4,
-      stepCountRequested: 5,
+    this.valueOutMinMax = {
+      sourceHeight: [ this.sourceHeight, this.sourceHeight ], //5,
+      sourceWidth:  [ this.sourceWidth,  this.sourceWidth  ], //5,
+
+      sourceChannelCount: [
+        Block.Params.sourceChannelCount.velueDesc.range.min,
+        Block.Params.sourceChannelCount.velueDesc.range.min + 4
+      ],
+
+      stepCountRequested: [
+        Block.Params.sourceChannelCount.velueDesc.range.min,
+        Block.Params.sourceChannelCount.velueDesc.range.min + 5
+      ],
+
       pointwise1ChannelCountRate: undefined,
       depthwiseFilterHeight: undefined,
 
       // Because the logic of activation function is simpler than other, it is just randomly tested once
-      // (i.e. ( maxKinds == 0 )) for speeding up testing.
-      nActivationId: 0,
-      nActivationIdAtBlockEnd: 0,
+      // for speeding up testing.
+      nActivationId: undefined,
+//       [
+//         ValueDesc.ActivationFunction.Singleton.range.min,
+//         ValueDesc.ActivationFunction.Singleton.range.min + 0
+//       ],
+
+      nActivationIdAtBlockEnd: undefined,
+//       [
+//         ValueDesc.ActivationFunction.Singleton.range.min,
+//         ValueDesc.ActivationFunction.Singleton.range.min + 0
+//       ],
 
       nWhetherShuffleChannel: undefined,
       bKeepInputTensor: undefined,
@@ -204,16 +233,16 @@ class Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( Block.Params.sourceHeight,               this.maxKindsRestrict.sourceHeight ),
-      new TestParams.ParamDescConfig( Block.Params.sourceWidth,                this.maxKindsRestrict.sourceWidth ),
-      new TestParams.ParamDescConfig( Block.Params.sourceChannelCount,         this.maxKindsRestrict.sourceChannelCount ),
-      new TestParams.ParamDescConfig( Block.Params.stepCountRequested,          this.maxKindsRestrict.stepCountRequested ),
-      new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCountRate, this.maxKindsRestrict.pointwise1ChannelCountRate ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,      this.maxKindsRestrict.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Block.Params.nActivationId,              this.maxKindsRestrict.nActivationId ),
-      new TestParams.ParamDescConfig( Block.Params.nActivationIdAtBlockEnd,    this.maxKindsRestrict.nActivationIdAtBlockEnd ),
-      new TestParams.ParamDescConfig( Block.Params.nWhetherShuffleChannel,     this.maxKindsRestrict.nWhetherShuffleChannel ),
-      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,           this.maxKindsRestrict.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Block.Params.sourceHeight,               this.valueOutMinMax.sourceHeight ),
+      new TestParams.ParamDescConfig( Block.Params.sourceWidth,                this.valueOutMinMax.sourceWidth ),
+      new TestParams.ParamDescConfig( Block.Params.sourceChannelCount,         this.valueOutMinMax.sourceChannelCount ),
+      new TestParams.ParamDescConfig( Block.Params.stepCountRequested,         this.valueOutMinMax.stepCountRequested ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCountRate, this.valueOutMinMax.pointwise1ChannelCountRate ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,      this.valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Block.Params.nActivationId,              this.valueOutMinMax.nActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.nActivationIdAtBlockEnd,    this.valueOutMinMax.nActivationIdAtBlockEnd ),
+      new TestParams.ParamDescConfig( Block.Params.nWhetherShuffleChannel,     this.valueOutMinMax.nWhetherShuffleChannel ),
+      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,           this.valueOutMinMax.bKeepInputTensor ),
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
