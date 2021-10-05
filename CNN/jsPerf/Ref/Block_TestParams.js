@@ -34,6 +34,11 @@ import * as Block from "../../Conv/Block.js";
  */
 class Base extends TestParams.Base {
 
+  constructor() {
+    super();
+    this.stepsArray = new Array();
+  }
+
   /**
    * Use scattered parameters to fills the following proterties:
    *   - this.in.inputFloat32Array
@@ -84,15 +89,18 @@ class Base extends TestParams.Base {
    */
   set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
     let blockParams = this.out;
-    
+
     // Fill in outputHeight, outputWidth.
     Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( blockParams, blockParams.sourceHeight, blockParams.sourceWidth );
 
     let stepParamsMaker = Block.Base.create_Params_to_PointDepthPointParams( blockParams );
     stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last();
 
-    this.stepsArray = new Array( stepParamsMaker.stepCount );
+    this.stepsArray.length = stepParamsMaker.stepCount;
     let paramsNameOrderArray = Base.paramsNameOrderArray_Basic.slice(); // Shallow copy.
+
+    let paramsNumberArrayObject = {};
+    Object.assign( paramsNumberArrayObject, this.in.paramsNumberArrayObject ); // Shallow copy.
 
     let channelShuffler;
     for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
@@ -126,7 +134,7 @@ class Base extends TestParams.Base {
       );
 
       this.stepsArray[ i ] = stepTestParams;
-      this.in.paramsNumberArrayObject[ stepName ] = stepTestParams.in.inputFloat32Array;
+      paramsNumberArrayObject[ stepName ] = stepTestParams.in.inputFloat32Array;
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
         stepParamsMaker.configTo_afterStep0();
@@ -140,7 +148,7 @@ class Base extends TestParams.Base {
     }
 
     let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
-    Float32Array_ByteOffsetBegin.setByConcat( paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
+    Float32Array_ByteOffsetBegin.setByConcat( paramsNameOrderArray, paramsNumberArrayObject, weightsElementOffsetBegin );
 
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
@@ -157,6 +165,13 @@ class Base extends TestParams.Base {
     let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
 
     this.set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin );
+  }
+
+  /**
+   * @override
+   */
+  onAfter_Yield() {
+    this.stepsArray.length = 0; // Clear steps' parameters.
   }
 
   /**
