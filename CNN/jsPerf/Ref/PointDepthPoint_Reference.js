@@ -228,9 +228,9 @@ class Base {
 
     } catch ( e ) {
       let backendName = tf.getBackend();
-      console.log( `backendName=${backendName}, `
+      console.log( `PointDepthPoint_Reference.js: testCorrectness(): backendName=${backendName}, `
 //        + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
-        + `PointDepthPoint this.testParams.id = ${this.testParams.id}` );
+        + `PointDepthPoint this.testParams.id == ${this.testParams.id}` );
       throw e;
     }
   }
