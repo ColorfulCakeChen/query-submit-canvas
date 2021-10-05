@@ -813,7 +813,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
     this.bPointwise21Bias = true;
     this.pointwise21ActivationId = blockParams.nActivationId;
 
-    this.bOutput1Requested = true; // In ShuffleNetV2, all steps (except stepLast) have output1 with same depth as source input1.
+    this.bOutput1Requested = true; // In ShuffleNetV2, all steps (except stepLast) have output1 with same depth as source input0.
 
     // In ShuffleNetV2, all steps usually have pointwise1 convolution before depthwise convolution (i.e. ( pointwise1ChannelCountRate > 0 ) ).
     // Its channel count is adjustable by user's request. Usually, ( pointwise1ChannelCountRate == 1 ). If ( pointwise1ChannelCountRate == 0 ),
@@ -833,8 +833,8 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
       this.depthwise_AvgMax_Or_ChannelMultiplier = 2;  // Step0 double the channel count by depthwise channel multiplier.
     }
 
-    this.outChannels0 = this.pointwise21ChannelCount;
-    this.outChannels1 = this.pointwise22ChannelCount;
+    // In ShuffleNetV2, all steps (except stepLast) have both output0 and output1 with same depth as pointwise21 result.
+    this.outChannels0 = this.outChannels1 = this.pointwise21ChannelCount;
   }
 
   /** @override */
