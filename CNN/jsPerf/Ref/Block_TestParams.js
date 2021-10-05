@@ -223,15 +223,23 @@ class Base extends TestParams.Base {
       // Because the logic of activation function is simpler than other, it is just randomly tested once
       // for speeding up testing.
 //      nActivationId: undefined,
+//       nActivationId: [
+//         ValueDesc.ActivationFunction.Singleton.range.min,
+//         ValueDesc.ActivationFunction.Singleton.range.max
+//       ],
       nActivationId: [
-        ValueDesc.ActivationFunction.Singleton.range.min,
-        ValueDesc.ActivationFunction.Singleton.range.max
+        ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+        ValueDesc.ActivationFunction.Singleton.Ids.RELU6
       ],
 
 //      nActivationIdAtBlockEnd: undefined,
+//       nActivationIdAtBlockEnd: [
+//         ValueDesc.ActivationFunction.Singleton.range.min,
+//         ValueDesc.ActivationFunction.Singleton.range.max
+//       ],
       nActivationIdAtBlockEnd: [
-        ValueDesc.ActivationFunction.Singleton.range.min,
-        ValueDesc.ActivationFunction.Singleton.range.max
+        ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+        ValueDesc.ActivationFunction.Singleton.Ids.RELU6
       ],
 
 //      nWhetherShuffleChannel: undefined,
