@@ -283,7 +283,7 @@ class Base {
         + `nActivationIdAtBlockEndName=${testParams.out.nActivationIdAtBlockEndName}(${testParams.out.nActivationIdAtBlockEnd}), `
         + `nWhetherShuffleChannel=${testParams.out.nWhetherShuffleChannelName}(${testParams.out.nWhetherShuffleChannel}), `
         + `outputHeight=${referredParams.outputHeight}, outputWidth=${referredParams.outputWidth}, `
-        + `bKeepInputTensor=${testParams.out.bKeepInputTensor}, `
+        + `bKeepInputTensor=${testParams.out.bKeepInputTensor}`
       ;
     }
 
