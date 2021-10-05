@@ -148,27 +148,37 @@ class Base extends TestParams.Base {
     let depthwiseFilterMaxSize = Math.min( this.inputImageHeight, this.inputImageWidth );
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
-    this.maxKindsRestrict = {
-//      PerParameter: 5,
-      pointwiseChannelCount: 3,
+    this.valueOutMinMax = {
+      pointwiseChannelCount: [ 0, 2 ], //3,
 
       bOutput1Requested: undefined,
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( maxKinds == 0 )) for speeding up testing.
 //!!! (2021/07/20 Temp Remarked) Fix to none to simplify debug.
-      Bias:         0,
-//      ActivationId: 0,
-//       Bias:         1,
-       ActivationId: 1,
+      Bias:         undefined, //0,
+//      ActivationId: undefined, //0,
+//       Bias:         [ 0, 0 ], //1,
+       ActivationId: [ 0, 0 ], //1,
 
-      channelCount0_pointwise1Before: 4,
+      channelCount0_pointwise1Before: [ 1, 4 ], //4,
 
       // Test all named values plus two more un-named values.
-      channelCount1_pointwise1Before: ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2,
+//!!! (2021/10/05 Remarked) by valueOutMinMax
+//      channelCount1_pointwise1Before: ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2,
+      channelCount1_pointwise1Before: [
+        ValueDesc.channelCount1_pointwise1Before.Singleton.min,
+        ValueDesc.channelCount1_pointwise1Before.Singleton.min + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2
+      ],
 
-      depthwise_AvgMax_Or_ChannelMultiplier: 5,
-      depthwiseFilterHeight: depthwiseFilterMaxSize,
+//!!! (2021/10/05 Remarked) by valueOutMinMax
+//      depthwise_AvgMax_Or_ChannelMultiplier: 5,
+      depthwise_AvgMax_Or_ChannelMultiplier: [
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.min,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.min + 5
+      ],
+
+      depthwiseFilterHeight: [ 1, depthwiseFilterMaxSize ],
       depthwiseStridesPad: undefined,
 
       bKeepInputTensor: undefined,
@@ -179,32 +189,32 @@ class Base extends TestParams.Base {
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.maxKindsRestrict.pointwiseChannelCount ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.maxKindsRestrict.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.maxKindsRestrict.ActivationId ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.valueOutMinMax.pointwiseChannelCount ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.valueOutMinMax.Bias ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.valueOutMinMax.ActivationId ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bOutput1Requested,       this.maxKindsRestrict.bOutput1Requested ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bOutput1Requested,       this.valueOutMinMax.bOutput1Requested ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.maxKindsRestrict.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.maxKindsRestrict.ActivationId ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.valueOutMinMax.ActivationId ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount0_pointwise1Before,
-                                                                                      this.maxKindsRestrict.channelCount0_pointwise1Before ),
+                                                                                      this.valueOutMinMax.channelCount0_pointwise1Before ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
-                                                                                      this.maxKindsRestrict.channelCount1_pointwise1Before ),
+                                                                                      this.valueOutMinMax.channelCount1_pointwise1Before ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
-                                                                                      this.maxKindsRestrict.depthwise_AvgMax_Or_ChannelMultiplier ),
+                                                                                      this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterHeight,   this.maxKindsRestrict.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseStridesPad,     this.maxKindsRestrict.depthwiseStridesPad ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.maxKindsRestrict.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.maxKindsRestrict.ActivationId ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterHeight,   this.valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseStridesPad,     this.valueOutMinMax.depthwiseStridesPad ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.valueOutMinMax.Bias ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.maxKindsRestrict.pointwiseChannelCount ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwiseChannelCount ),
       
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.bKeepInputTensor,        this.maxKindsRestrict.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
