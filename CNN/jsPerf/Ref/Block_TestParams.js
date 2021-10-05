@@ -121,7 +121,7 @@ class Base extends TestParams.Base {
       let stepName = `step${i}`;
       paramsNameOrderArray.push( stepName ); // Place every step's parameters in sequence.
 
-      let stepTestParams = new PointDepthPoint_TestParams.Base();
+      let stepTestParams = new PointDepthPoint_TestParams.Base( this.id );
       stepTestParams.set_By_ParamsScattered(
         stepParamsMaker.channelCount0_pointwise1Before,
         stepParamsMaker.channelCount1_pointwise1Before,
