@@ -156,26 +156,32 @@ class Base extends TestParams.Base {
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( maxKinds == 0 )) for speeding up testing.
 //!!! (2021/07/20 Temp Remarked) Fix to none to simplify debug.
-      Bias:         undefined, //0,
-//      ActivationId: undefined, //0,
-//       Bias:         [ 0, 0 ], //1,
-       ActivationId: [ 0, 0 ], //1,
+      Bias:         undefined,
+//      Bias:         [ 0, 0 ], //1,
+//      ActivationId: undefined,
+      ActivationId: [
+        ValueDesc.ActivationFunction.Singleton.range.min,
+        ValueDesc.ActivationFunction.Singleton.range.min + 0
+      ],
 
-      channelCount0_pointwise1Before: [ 1, 4 ], //4,
+      channelCount0_pointwise1Before: [
+        Params.channelCount0_pointwise1Before.valueDesc.range.min,
+        Params.channelCount0_pointwise1Before.valueDesc.range.min + 4
+      ],
 
       // Test all named values plus two more un-named values.
 //!!! (2021/10/05 Remarked) by valueOutMinMax
 //      channelCount1_pointwise1Before: ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2,
       channelCount1_pointwise1Before: [
-        ValueDesc.channelCount1_pointwise1Before.Singleton.min,
-        ValueDesc.channelCount1_pointwise1Before.Singleton.min + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2
+        ValueDesc.channelCount1_pointwise1Before.Singleton.range.min,
+        ValueDesc.channelCount1_pointwise1Before.Singleton.range.min + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2
       ],
 
 //!!! (2021/10/05 Remarked) by valueOutMinMax
 //      depthwise_AvgMax_Or_ChannelMultiplier: 5,
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.min,
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.min + 5
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5
       ],
 
       depthwiseFilterHeight: [ 1, depthwiseFilterMaxSize ],
