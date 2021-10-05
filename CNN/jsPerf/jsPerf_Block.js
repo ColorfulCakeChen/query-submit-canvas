@@ -151,7 +151,7 @@ class HeightWidthDepth {
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 0,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER,
       true
     );
 
@@ -160,7 +160,7 @@ class HeightWidthDepth {
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 1,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER,
       true
     );
 
@@ -169,7 +169,7 @@ class HeightWidthDepth {
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 2,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFLLER,
+      ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER,
       true
     );
 
