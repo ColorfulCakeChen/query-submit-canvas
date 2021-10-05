@@ -265,7 +265,7 @@ class Base {
 
     {
       let referredParams = {};
-      Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth( referredParams,
+      Block.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( referredParams,
         testParams.out.sourceHeight, testParams.out.sourceWidth );
 
       // In ShuffleNetV2, channel shuffler always has half ( height, width ) and twice channel count of original input0.
