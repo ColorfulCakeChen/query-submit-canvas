@@ -1,10 +1,10 @@
 export { init, testCorrectness, disposeTensors };
 
+//import * as TensorTools from "../util/TensorTools.js";
 //import * as ValueMax from "../ValueMax.js";
 //import * as ValueRange from "../Unpacker/ValueRange.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
-//import * as ValueDesc from "../Unpacker/ValueDesc.js";
-//import * as TensorTools from "../util/TensorTools.js";
+import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Block from "../Conv/Block.js";
 import * as Block_Reference from "./Ref/Block_Reference.js";
 import * as Block_TestParams from "./Ref/Block_TestParams.js"; 
