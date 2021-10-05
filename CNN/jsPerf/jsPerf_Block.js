@@ -263,7 +263,7 @@ class HeightWidthDepth {
         let testParams;
 
         try {
-          for ( let testParams of testParamsGenerator ) {
+          for ( testParams of testParamsGenerator ) {
             if ( ( testParams.id % batchMessageInterval ) == 0 ) {
               console.log( `${tf.getBackend()}, `
                 + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
@@ -275,8 +275,8 @@ class HeightWidthDepth {
 
         } catch ( e ) {
           let backendName = tf.getBackend();
-          console.log( `backendName=${backendName}, `
-            + `Block this.testParams.id = ${this.testParams.id}` );
+          console.log( `jsPerf_Block.js: testCorrectness(): backendName=${backendName}, `
+            + `Block testParams.id = ${testParams.id}` );
           throw e;
         }
 
