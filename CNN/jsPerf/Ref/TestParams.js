@@ -55,8 +55,8 @@ class Base {
   /**
    *
    */
-  constructor() {
-    this.id = -1;
+  constructor( id = -1 ) {
+    this.id = id;
     this.in = { paramsNumberArrayObject: {} };
     this.out = {};
   }
