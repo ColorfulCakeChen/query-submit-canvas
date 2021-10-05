@@ -44,7 +44,7 @@ class Params extends Weights.Params {
    *   How many steps inside this block are wanted.
    *   - If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    *
-   *   - If zero or one (<= 1), the step count will be automatically calculated so that the block's output has half of source's
+   *   - If one (== 1), the step count will be automatically calculated so that the block's output has half of source's
    *     ( height, width ) and double channel count (depth).
    *       - Every step will use depthwise convolution ( strides = 1, pad = "valid" ) and pointwise21. So every step will
    *         shrink the input a little.
