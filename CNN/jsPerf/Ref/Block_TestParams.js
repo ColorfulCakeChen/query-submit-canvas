@@ -204,8 +204,8 @@ class Base extends TestParams.Base {
       ],
 
       stepCountRequested: [
-        Block.Params.sourceChannelCount.valueDesc.range.min,
-        Block.Params.sourceChannelCount.valueDesc.range.min + 5
+        Block.Params.stepCountRequested.valueDesc.range.min,
+        Block.Params.stepCountRequested.valueDesc.range.min + 5
       ],
 
       pointwise1ChannelCountRate: undefined,
