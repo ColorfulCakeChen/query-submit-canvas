@@ -570,21 +570,24 @@ class ConcatPointwiseConv {
         return concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
           return tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
 
-//!!! ...unfinished... (2021/10/06)
-// tf.oneHot() genetates tensor with ( dtype == "int32" ).
-// In backend WASM, if tf.conv2d() with input tensor ( dtype == "float32" ) and filter tensor ( dtype == "int32" ), the result will be wrong.
-// This issue does not exist in backend CPU and WEBGL.
-// For avoiding this problem, convert the filter tensor from ( dtype == "int32" ) into ( dtype == "float32" ).
+            // Generate oneHotIndices (tensor2d, int32) by shuffledChannelIndices (tensor1d).
+            let filtersOfOneGroupTensor2d_int32 = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
 
-            // Generate oneHotIndices (tensor2d) by shuffledChannelIndices (tensor1d).
-            let filtersOfOneGroupTensor2d = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
+            // Generate oneHotIndices (tensor2d, float32).
+            //
+            // The tf.oneHot() genetates tensor with ( dtype == "int32" ). However, in backend WASM, if tf.conv2d()
+            // input tensor ( dtype == "float32" ) and filter tensor ( dtype == "int32" ), the result will be wrong.
+            // This issue does not exist in backend CPU and WEBGL. For avoiding this problem, convert the filter
+            // tensor from ( dtype == "int32" ) into ( dtype == "float32" ).
+            //
+            let filtersOfOneGroupTensor2d = tf.cast( filtersOfOneGroupTensor2d_int32, "float32" );
 
             // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
             // of tf.conv2d()'s filters.
-            filtersOfOneGroupTensor2d = filtersOfOneGroupTensor2d.transpose();
+            let filtersOfOneGroupTensor2d_transposed = filtersOfOneGroupTensor2d.transpose();
 
             // Reinterpret the tensor2d to tensor4d so that it can be used as tf.conv2d()'s filters.
-            let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d.reshape( filtersShape );
+            let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d_transposed.reshape( filtersShape );
             return filtersOfOneGroupTensor4d;
           });
         });
