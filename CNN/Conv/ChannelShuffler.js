@@ -570,6 +570,12 @@ class ConcatPointwiseConv {
         return concatGather.shuffledChannelIndicesTensor1dArray.map( ( shuffledChannelIndicesTensor1d ) => {
           return tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
 
+//!!! ...unfinished... (2021/10/06)
+// tf.oneHot() genetates tensor with ( dtype == "int32" ).
+// In backend WASM, if tf.conv2d() with input tensor ( dtype == "float32" ) and filter tensor ( dtype == "int32" ), the result will be wrong.
+// This issue does not exist in backend CPU and WEBGL.
+// For avoiding this problem, convert the filter tensor from ( dtype == "int32" ) into ( dtype == "float32" ).
+
             // Generate oneHotIndices (tensor2d) by shuffledChannelIndices (tensor1d).
             let filtersOfOneGroupTensor2d = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
 
