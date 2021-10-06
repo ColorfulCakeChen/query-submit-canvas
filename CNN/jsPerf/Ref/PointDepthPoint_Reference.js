@@ -24,7 +24,7 @@ class Base {
     this.imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
     this.outputTensor3dArray = new Array( 2 );
     this.inputTensor3dArray = new Array( 2 );
-    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.3 );
+    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.35 );
   }
 
   /**
