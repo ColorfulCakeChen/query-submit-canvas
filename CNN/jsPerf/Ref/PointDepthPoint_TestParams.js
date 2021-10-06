@@ -149,45 +149,65 @@ class Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
-      pointwiseChannelCount: [ 0, 2 ], //3,
-
-      bOutput1Requested: undefined,
+      pointwiseChannelCount: [ 0, 3 - 1 ],
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
-      // (i.e. ( maxKinds == 0 )) for speeding up testing.
+      // (i.e. ( undefined )) for speeding up testing.
 //!!! (2021/07/20 Temp Remarked) Fix to none to simplify debug.
       Bias:         undefined,
-//      Bias:         [ 0, 0 ], //1,
+//       Bias: [
+//         ValueDesc.Bool.Singleton.range.min,
+//         ValueDesc.Bool.Singleton.range.max
+//       ],
+
 //      ActivationId: undefined,
+//       ActivationId: [
+//         ValueDesc.ActivationFunction.Singleton.range.min,
+//         ValueDesc.ActivationFunction.Singleton.range.min + 0
+//       ],
       ActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min,
-        ValueDesc.ActivationFunction.Singleton.range.min + 0
+        ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       channelCount0_pointwise1Before: [
         PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range.min,
-        PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range.min + 4
+        PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range.min + 4 - 1
       ],
 
       // Test all named values plus two more un-named values.
-//!!! (2021/10/05 Remarked) by valueOutMinMax
-//      channelCount1_pointwise1Before: ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2,
       channelCount1_pointwise1Before: [
         ValueDesc.channelCount1_pointwise1Before.Singleton.range.min,
-        ValueDesc.channelCount1_pointwise1Before.Singleton.range.min + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2
+        ValueDesc.channelCount1_pointwise1Before.Singleton.range.min
+          + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2 - 1
       ],
 
-//!!! (2021/10/05 Remarked) by valueOutMinMax
-//      depthwise_AvgMax_Or_ChannelMultiplier: 5,
       depthwise_AvgMax_Or_ChannelMultiplier: [
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5
       ],
 
-      depthwiseFilterHeight: [ 1, depthwiseFilterMaxSize ],
-      depthwiseStridesPad: undefined,
+//!!! ...(2021/10/06 Temp Remarked) WASM seems not correct when ( depthwiseFilterHeight == 1 )
+//      depthwiseFilterHeight: [ 1, depthwiseFilterMaxSize ],
+      depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
 
-      bKeepInputTensor: undefined,
+//      depthwiseStridesPad: undefined,
+      depthwiseStridesPad: [
+        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
+        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
+      ],
+
+//      bOutput1Requested: undefined,
+      bOutput1Requested: [
+        ValueDesc.Bool.Singleton.range.min,
+        ValueDesc.Bool.Singleton.range.max
+      ],
+
+//      bKeepInputTensor: undefined,
+      bKeepInputTensor: [
+        ValueDesc.Bool.Singleton.range.min,
+        ValueDesc.Bool.Singleton.range.max
+      ],
     };
 
     // All the parameters to be tried.
@@ -219,7 +239,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwiseChannelCount ),
-      
+
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
     ];
 
