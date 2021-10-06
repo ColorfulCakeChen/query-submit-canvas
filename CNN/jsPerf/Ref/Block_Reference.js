@@ -331,7 +331,8 @@ class Base {
         }
 
         let pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
-        this.Step_AssertValue( stepName, stepParams, "pointwise1ChannelCount", pointwise1ChannelCount );
+        this.Step_AssertValue( stepName, stepParams, "bPointwise1Bias", true );
+        this.Step_AssertValue( stepName, stepParams, "pointwise1ActivationId", blockParams.nActivationId );
 
         if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
 
@@ -344,6 +345,11 @@ class Base {
           this.Step_AssertValue( stepName, stepParams, "depthwiseStridesPad", 0 );
           this.Step_AssertValue( stepName, stepParams, "bDepthwiseBias", false );
           this.Step_AssertValue( stepName, stepParams, "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+
+          this.Step_AssertValue( stepName, stepParams, "pointwise21ChannelCount", blockParams.sourceChannelCount * 2 );
+          this.Step_AssertValue( stepName, stepParams, "bPointwise21Bias", true );
+          this.Step_AssertValue( stepName, stepParams, "pointwise21ActivationId", blockParams.nActivationId );
+
           this.Step_AssertValue( stepName, stepParams, "bOutput1Requested", false );
 
 //!!! ...unfinished... (2021/10/06)
@@ -360,8 +366,13 @@ class Base {
                 this.Step_AssertValue( stepName, stepParams, "depthwiseStridesPad", 1 );
               }
 
+              this.Step_AssertValue( stepName, stepParams, "bDepthwiseBias", true );
+              this.Step_AssertValue( stepName, stepParams, "depthwiseActivationId", blockParams.nActivationId );
+
+              this.Step_AssertValue( stepName, stepParams, "pointwise21ChannelCount", blockParams.sourceChannelCount * 2 );
               this.Step_AssertValue( stepName, stepParams, "bPointwise21Bias", false );
               this.Step_AssertValue( stepName, stepParams, "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+
               this.Step_AssertValue( stepName, stepParams, "bOutput1Requested", false );
 
 //!!! ...unfinished... (2021/10/06)
@@ -380,6 +391,10 @@ class Base {
 
               this.Step_AssertValue( stepName, stepParams, "bDepthwiseBias", false );
               this.Step_AssertValue( stepName, stepParams, "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+
+              this.Step_AssertValue( stepName, stepParams, "pointwise21ChannelCount", blockParams.sourceChannelCount );
+              this.Step_AssertValue( stepName, stepParams, "bPointwise21Bias", true );
+              this.Step_AssertValue( stepName, stepParams, "pointwise21ActivationId", blockParams.nActivationId );
 
               if ( ( stepCount - 1 ) != stepIndex ) {
                 this.Step_AssertValue( stepName, stepParams, "bOutput1Requested", true );
