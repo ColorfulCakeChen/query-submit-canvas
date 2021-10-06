@@ -15,7 +15,7 @@ class Base {
 
   constructor() {
     this.PointDepthPoint_Reference = new PointDepthPoint_Reference.Base();
-    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.3 );
+    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.4 );
 
     // For reducing memory allocation.
     this.imageInArray = new Array( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
@@ -304,6 +304,55 @@ class Base {
 // Test: ShuffleNet, depthwise should not have bias and activation.
 // Test: MobileNet, pointwise2 should not have bias and activation.
 // Test: pointwise1ChannelCountRate and real pointwise1ChannelCount.
+
+//!!! ...unfinished... (2021/10/06)
+        // Test every step's parameters.
+        {
+          let stepCountRequested = testParams.out.stepCountRequested;
+          let nWhetherShuffleChannel = testParams.out.nWhetherShuffleChannel;
+          
+          let blockParams = testParams.out;
+          let stepParams = pointDepthPointRef.testParams.out;
+
+          let pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
+          Base.AssertTwoEqualValues( "step_pointwise1ChannelCount",
+            stepParams.pointwise1ChannelCount, pointwise1ChannelCount, this.paramsOutDescription );
+
+          if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
+//!!! ...unfinished... (2021/10/06)
+
+          } else { // ( this.stepCountRequested >= 2 )
+            switch ( this.nWhetherShuffleChannel ) {
+              case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
+
+                Base.AssertTwoEqualValues( "step_depthwise_AvgMax_Or_ChannelMultiplier",
+                  stepParams.depthwise_AvgMax_Or_ChannelMultiplier, 1, this.paramsOutDescription );
+
+                Base.AssertTwoEqualValues( "step_bPointwise21Bias", stepParams.bPointwise21Bias, false, this.paramsOutDescription );
+
+                Base.AssertTwoEqualValues( "step_pointwise21ActivationId",
+                  stepParams.pointwise21ActivationId, ValueDesc.ActivationFunction.Singleton.Ids.NONE, this.paramsOutDescription );
+
+                Base.AssertTwoEqualValues( "step_bOutput1Requested", stepParams.bOutput1Requested, false, this.paramsOutDescription );
+//!!! ...unfinished... (2021/10/06)
+                break;
+
+              case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) 3. ShuffleNetV2
+//!!! ...unfinished... (2021/10/06)
+                break;
+
+              case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. Slower ShuffleNetV2
+//!!! ...unfinished... (2021/10/06)
+                break;
+
+              default:
+//                 tf.util.assert( false, `Block_Reference.calcResult(): `
+//                   `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value. ${this.paramsOutDescription}` );
+                break;
+            }
+          }
+
+        }
 
         imageOutArray = pointDepthPointRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
       }
