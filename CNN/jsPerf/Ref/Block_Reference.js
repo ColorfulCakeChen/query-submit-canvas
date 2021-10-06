@@ -289,73 +289,120 @@ class Base {
     }
 
     // Calculate every steps in sequence.
-    {
-      let pointDepthPointRef = this.PointDepthPoint_Reference;
 
-      this.imageInArray[ 0 ] = imageIn;
-      this.imageInArray[ 1 ] = null;
+    let pointDepthPointRef = this.PointDepthPoint_Reference;
 
-      let imageOutArray = this.imageInArray;
-      for ( let i = 0; i < testParams.stepsArray.length; ++i ) {
-        //let stepName = `step${i}`;
-        pointDepthPointRef.testParams = testParams.stepsArray[ i ];
-     
+    this.imageInArray[ 0 ] = imageIn;
+    this.imageInArray[ 1 ] = null;
+
+    let imageOutArray = this.imageInArray;
+    let stepCount = testParams.stepsArray.length;
+    for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
+      //let stepName = `step${stepIndex}`;
+      pointDepthPointRef.testParams = testParams.stepsArray[ stepIndex ];
+
 //!!! ...unfinished... (2021/10/05)
 // Test: ShuffleNet, depthwise should not have bias and activation.
 // Test: MobileNet, pointwise2 should not have bias and activation.
 // Test: pointwise1ChannelCountRate and real pointwise1ChannelCount.
 
 //!!! ...unfinished... (2021/10/06)
-        // Test every step's parameters.
-        {
-          let stepCountRequested = testParams.out.stepCountRequested;
-          let nWhetherShuffleChannel = testParams.out.nWhetherShuffleChannel;
-          
-          let blockParams = testParams.out;
-          let stepParams = pointDepthPointRef.testParams.out;
+      // Test every step's parameters.
+      {
+        let stepCountRequested = testParams.out.stepCountRequested;
+        let nWhetherShuffleChannel = testParams.out.nWhetherShuffleChannel;
 
-          let pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
-          Base.AssertTwoEqualValues( "step_pointwise1ChannelCount",
-            stepParams.pointwise1ChannelCount, pointwise1ChannelCount, this.paramsOutDescription );
+        let blockParams = testParams.out;
+        let stepParams = pointDepthPointRef.testParams.out;
 
-          if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
-//!!! ...unfinished... (2021/10/06)
+        let pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
+        Base.AssertTwoEqualValues( "step_pointwise1ChannelCount",
+          stepParams.pointwise1ChannelCount, pointwise1ChannelCount, this.paramsOutDescription );
 
-          } else { // ( this.stepCountRequested >= 2 )
-            switch ( this.nWhetherShuffleChannel ) {
-              case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
+        if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
 
-                Base.AssertTwoEqualValues( "step_depthwise_AvgMax_Or_ChannelMultiplier",
-                  stepParams.depthwise_AvgMax_Or_ChannelMultiplier, 1, this.paramsOutDescription );
-
-                Base.AssertTwoEqualValues( "step_bPointwise21Bias", stepParams.bPointwise21Bias, false, this.paramsOutDescription );
-
-                Base.AssertTwoEqualValues( "step_pointwise21ActivationId",
-                  stepParams.pointwise21ActivationId, ValueDesc.ActivationFunction.Singleton.Ids.NONE, this.paramsOutDescription );
-
-                Base.AssertTwoEqualValues( "step_bOutput1Requested", stepParams.bOutput1Requested, false, this.paramsOutDescription );
-//!!! ...unfinished... (2021/10/06)
-                break;
-
-              case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) 3. ShuffleNetV2
-//!!! ...unfinished... (2021/10/06)
-                break;
-
-              case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. Slower ShuffleNetV2
-//!!! ...unfinished... (2021/10/06)
-                break;
-
-              default:
-//                 tf.util.assert( false, `Block_Reference.calcResult(): `
-//                   `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value. ${this.paramsOutDescription}` );
-                break;
-            }
+          if ( 0 == stepIndex ) {
+              Base.AssertTwoEqualValues( "step_depthwise_AvgMax_Or_ChannelMultiplier",
+                stepParams.depthwise_AvgMax_Or_ChannelMultiplier, 2, this.paramsOutDescription );
+          } else {
+              Base.AssertTwoEqualValues( "step_depthwise_AvgMax_Or_ChannelMultiplier",
+                stepParams.depthwise_AvgMax_Or_ChannelMultiplier, 1, this.paramsOutDescription );
           }
 
+          Base.AssertTwoEqualValues( "step_depthwiseStridesPad", stepParams.depthwiseStridesPad, 0, this.paramsOutDescription );
+          Base.AssertTwoEqualValues( "step_bDepthwiseBias", stepParams.bDepthwiseBias, false, this.paramsOutDescription );
+
+          Base.AssertTwoEqualValues( "step_depthwiseActivationId",
+            stepParams.depthwiseActivationId, ValueDesc.ActivationFunction.Singleton.Ids.NONE, this.paramsOutDescription );
+
+          Base.AssertTwoEqualValues( "step_bOutput1Requested", stepParams.bOutput1Requested, false, this.paramsOutDescription );
+//!!! ...unfinished... (2021/10/06)
+
+        } else { // ( this.stepCountRequested >= 2 )
+          switch ( this.nWhetherShuffleChannel ) {
+            case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
+            {
+              Base.AssertTwoEqualValues( "step_depthwise_AvgMax_Or_ChannelMultiplier",
+                stepParams.depthwise_AvgMax_Or_ChannelMultiplier, 1, this.paramsOutDescription );
+
+              if ( 0 == stepIndex ) {
+                Base.AssertTwoEqualValues( "step_depthwiseStridesPad", stepParams.depthwiseStridesPad, 2, this.paramsOutDescription );
+              } else {
+                Base.AssertTwoEqualValues( "step_depthwiseStridesPad", stepParams.depthwiseStridesPad, 1, this.paramsOutDescription );
+              }
+
+              Base.AssertTwoEqualValues( "step_bPointwise21Bias", stepParams.bPointwise21Bias, false, this.paramsOutDescription );
+
+              Base.AssertTwoEqualValues( "step_pointwise21ActivationId",
+                stepParams.pointwise21ActivationId, ValueDesc.ActivationFunction.Singleton.Ids.NONE, this.paramsOutDescription );
+
+              Base.AssertTwoEqualValues( "step_bOutput1Requested", stepParams.bOutput1Requested, false, this.paramsOutDescription );
+//!!! ...unfinished... (2021/10/06)
+            }
+              break;
+
+            case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) 3. ShuffleNetV2
+            {
+              Base.AssertTwoEqualValues( "step_depthwise_AvgMax_Or_ChannelMultiplier",
+                stepParams.depthwise_AvgMax_Or_ChannelMultiplier, 1, this.paramsOutDescription );
+
+              if ( 0 == stepIndex ) {
+                Base.AssertTwoEqualValues( "step_depthwiseStridesPad", stepParams.depthwiseStridesPad, 2, this.paramsOutDescription );
+              } else {
+                Base.AssertTwoEqualValues( "step_depthwiseStridesPad", stepParams.depthwiseStridesPad, 1, this.paramsOutDescription );
+              }
+
+              Base.AssertTwoEqualValues( "step_bDepthwiseBias", stepParams.bDepthwiseBias, false, this.paramsOutDescription );
+
+              Base.AssertTwoEqualValues( "step_depthwiseActivationId",
+                stepParams.depthwiseActivationId, ValueDesc.ActivationFunction.Singleton.Ids.NONE, this.paramsOutDescription );
+
+              if ( ( stepCount - 1 ) != stepIndex ) {
+                Base.AssertTwoEqualValues( "step_bOutput1Requested", stepParams.bOutput1Requested, true, this.paramsOutDescription );
+              } else { // stepLast
+                Base.AssertTwoEqualValues( "step_bOutput1Requested", stepParams.bOutput1Requested, false, this.paramsOutDescription );
+              }
+
+//!!! ...unfinished... (2021/10/06)
+            }
+              break;
+
+            case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. Slower ShuffleNetV2
+            {
+//!!! ...unfinished... (2021/10/06)
+            }
+              break;
+
+            default:
+//                 tf.util.assert( false, `Block_Reference.calcResult(): `
+//                   `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value. ${this.paramsOutDescription}` );
+              break;
+          }
         }
 
-        imageOutArray = pointDepthPointRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
       }
+
+      imageOutArray = pointDepthPointRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
 
       let imageOut = imageOutArray[ 0 ]; // The stepLast should have only input0.
       return imageOut;
