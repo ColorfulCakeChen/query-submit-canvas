@@ -245,6 +245,15 @@ class Base {
       `Block ${valueName} (${value1}) should be (${value2}). ${parametersDescription}`);
   }
 
+  /**
+   * Check ( stepParams[ valueName ] == value ).
+   */
+  Step_AssertValue( stepName, stepParams, valueName, value, parametersDescription = this.paramsOutDescription ) {
+    let stepParamValue = stepParams[ valueName ];
+    tf.util.assert( ( stepParamValue == value ),
+      `Block.${stepName}.${valueName} (${stepParamValue}) should be (${value}). ${parametersDescription}`);
+  }
+
   /** According to imageIn and this.testParams.in.paramsNumberArrayObject, calculate imageOut.
    *
    * @param {object} imageIn
@@ -298,7 +307,7 @@ class Base {
     let imageOutArray = this.imageInArray;
     let stepCount = testParams.stepsArray.length;
     for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
-      //let stepName = `step${stepIndex}`;
+      let stepName = `step${stepIndex}`;
       pointDepthPointRef.testParams = testParams.stepsArray[ stepIndex ];
 
 //!!! ...unfinished... (2021/10/05)
@@ -315,72 +324,67 @@ class Base {
         let blockParams = testParams.out;
         let stepParams = pointDepthPointRef.testParams.out;
 
+        if ( 0 == stepIndex ) {
+          this.Step_AssertValue( stepName, stepParams, "bKeepInputTensor", blockParams.bKeepInputTensor );
+        } else {
+          this.Step_AssertValue( stepName, stepParams, "bKeepInputTensor", false );
+        }
+
         let pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
-        Base.AssertTwoEqualValues( "step_pointwise1ChannelCount",
-          stepParams.pointwise1ChannelCount, pointwise1ChannelCount, this.paramsOutDescription );
+        this.Step_AssertValue( stepName, stepParams, "pointwise1ChannelCount", pointwise1ChannelCount );
 
         if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
 
           if ( 0 == stepIndex ) {
-              Base.AssertTwoEqualValues( "step_depthwise_AvgMax_Or_ChannelMultiplier",
-                stepParams.depthwise_AvgMax_Or_ChannelMultiplier, 2, this.paramsOutDescription );
+            this.Step_AssertValue( stepName, stepParams, "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
           } else {
-              Base.AssertTwoEqualValues( "step_depthwise_AvgMax_Or_ChannelMultiplier",
-                stepParams.depthwise_AvgMax_Or_ChannelMultiplier, 1, this.paramsOutDescription );
+            this.Step_AssertValue( stepName, stepParams, "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
           }
 
-          Base.AssertTwoEqualValues( "step_depthwiseStridesPad", stepParams.depthwiseStridesPad, 0, this.paramsOutDescription );
-          Base.AssertTwoEqualValues( "step_bDepthwiseBias", stepParams.bDepthwiseBias, false, this.paramsOutDescription );
+          this.Step_AssertValue( stepName, stepParams, "depthwiseStridesPad", 0 );
+          this.Step_AssertValue( stepName, stepParams, "bDepthwiseBias", false );
+          this.Step_AssertValue( stepName, stepParams, "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+          this.Step_AssertValue( stepName, stepParams, "bOutput1Requested", false );
 
-          Base.AssertTwoEqualValues( "step_depthwiseActivationId",
-            stepParams.depthwiseActivationId, ValueDesc.ActivationFunction.Singleton.Ids.NONE, this.paramsOutDescription );
-
-          Base.AssertTwoEqualValues( "step_bOutput1Requested", stepParams.bOutput1Requested, false, this.paramsOutDescription );
 //!!! ...unfinished... (2021/10/06)
 
         } else { // ( this.stepCountRequested >= 2 )
           switch ( this.nWhetherShuffleChannel ) {
             case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
             {
-              Base.AssertTwoEqualValues( "step_depthwise_AvgMax_Or_ChannelMultiplier",
-                stepParams.depthwise_AvgMax_Or_ChannelMultiplier, 1, this.paramsOutDescription );
+              this.Step_AssertValue( stepName, stepParams, "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
 
               if ( 0 == stepIndex ) {
-                Base.AssertTwoEqualValues( "step_depthwiseStridesPad", stepParams.depthwiseStridesPad, 2, this.paramsOutDescription );
+                this.Step_AssertValue( stepName, stepParams, "depthwiseStridesPad", 2 );
               } else {
-                Base.AssertTwoEqualValues( "step_depthwiseStridesPad", stepParams.depthwiseStridesPad, 1, this.paramsOutDescription );
+                this.Step_AssertValue( stepName, stepParams, "depthwiseStridesPad", 1 );
               }
 
-              Base.AssertTwoEqualValues( "step_bPointwise21Bias", stepParams.bPointwise21Bias, false, this.paramsOutDescription );
+              this.Step_AssertValue( stepName, stepParams, "bPointwise21Bias", false );
+              this.Step_AssertValue( stepName, stepParams, "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+              this.Step_AssertValue( stepName, stepParams, "bOutput1Requested", false );
 
-              Base.AssertTwoEqualValues( "step_pointwise21ActivationId",
-                stepParams.pointwise21ActivationId, ValueDesc.ActivationFunction.Singleton.Ids.NONE, this.paramsOutDescription );
-
-              Base.AssertTwoEqualValues( "step_bOutput1Requested", stepParams.bOutput1Requested, false, this.paramsOutDescription );
 //!!! ...unfinished... (2021/10/06)
             }
               break;
 
             case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) 3. ShuffleNetV2
             {
-              Base.AssertTwoEqualValues( "step_depthwise_AvgMax_Or_ChannelMultiplier",
-                stepParams.depthwise_AvgMax_Or_ChannelMultiplier, 1, this.paramsOutDescription );
+              this.Step_AssertValue( stepName, stepParams, "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
 
               if ( 0 == stepIndex ) {
-                Base.AssertTwoEqualValues( "step_depthwiseStridesPad", stepParams.depthwiseStridesPad, 2, this.paramsOutDescription );
+                this.Step_AssertValue( stepName, stepParams, "depthwiseStridesPad", 2 );
               } else {
-                Base.AssertTwoEqualValues( "step_depthwiseStridesPad", stepParams.depthwiseStridesPad, 1, this.paramsOutDescription );
+                this.Step_AssertValue( stepName, stepParams, "depthwiseStridesPad", 1 );
               }
 
-              Base.AssertTwoEqualValues( "step_bDepthwiseBias", stepParams.bDepthwiseBias, false, this.paramsOutDescription );
-
-              Base.AssertTwoEqualValues( "step_depthwiseActivationId",
-                stepParams.depthwiseActivationId, ValueDesc.ActivationFunction.Singleton.Ids.NONE, this.paramsOutDescription );
+              this.Step_AssertValue( stepName, stepParams, "bDepthwiseBias", false );
+              this.Step_AssertValue( stepName, stepParams, "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
               if ( ( stepCount - 1 ) != stepIndex ) {
-                Base.AssertTwoEqualValues( "step_bOutput1Requested", stepParams.bOutput1Requested, true, this.paramsOutDescription );
+                this.Step_AssertValue( stepName, stepParams, "bOutput1Requested", true );
               } else { // stepLast
-                Base.AssertTwoEqualValues( "step_bOutput1Requested", stepParams.bOutput1Requested, false, this.paramsOutDescription );
+                this.Step_AssertValue( stepName, stepParams, "bOutput1Requested", false );
               }
 
 //!!! ...unfinished... (2021/10/06)
