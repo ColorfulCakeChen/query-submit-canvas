@@ -153,19 +153,13 @@ class Base extends TestParams.Base {
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
-//!!! (2021/07/20 Temp Remarked) Fix to none to simplify debug.
       Bias:         undefined,
+//      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
 //      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
 //      ActivationId: undefined,
-//       ActivationId: [
-//         ValueDesc.ActivationFunction.Singleton.range.min,
-//         ValueDesc.ActivationFunction.Singleton.range.min + 0
-//       ],
-      ActivationId: [
-        ValueDesc.ActivationFunction.Singleton.range.min,
-        ValueDesc.ActivationFunction.Singleton.range.min + 1
-      ],
+//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       channelCount0_pointwise1Before: [
         PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range.min,
@@ -188,11 +182,11 @@ class Base extends TestParams.Base {
 //      depthwiseFilterHeight: [ 1, depthwiseFilterMaxSize ],
       depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
 
-//      depthwiseStridesPad: undefined,
-      depthwiseStridesPad: [
-        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
-        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
-      ],
+      depthwiseStridesPad: undefined,
+//       depthwiseStridesPad: [
+//         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
+//         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
+//       ],
 
 //      bOutput1Requested: undefined,
       bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
