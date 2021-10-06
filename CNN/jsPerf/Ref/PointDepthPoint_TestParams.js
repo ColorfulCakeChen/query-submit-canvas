@@ -153,7 +153,7 @@ class Base extends TestParams.Base {
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
-      Bias:         undefined,
+      Bias: undefined,
 //      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
 //      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
@@ -173,32 +173,26 @@ class Base extends TestParams.Base {
           + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2 - 1
       ],
 
-//!!! ...(2021/10/06 Temp Remarked) For test WASM bug.
       depthwise_AvgMax_Or_ChannelMultiplier: [
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
       ],
-// (2021/10/06 Temp) For test WASM bug.
-//       depthwise_AvgMax_Or_ChannelMultiplier: [
-//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE,
-//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
-//       ],
 
 //!!! ...(2021/10/06 Temp Remarked) WASM seems not correct when ( depthwiseFilterHeight == 1 )
 //      depthwiseFilterHeight: [ 1, depthwiseFilterMaxSize ],
       depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
 
-      depthwiseStridesPad: undefined,
-//       depthwiseStridesPad: [
-//         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
-//         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
-//       ],
+//      depthwiseStridesPad: undefined,
+      depthwiseStridesPad: [
+        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
+        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
+      ],
 
 //      bOutput1Requested: undefined,
       bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
-      bKeepInputTensor: undefined,
-//      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+//      bKeepInputTensor: undefined,
+      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
     };
 
     // All the parameters to be tried.
