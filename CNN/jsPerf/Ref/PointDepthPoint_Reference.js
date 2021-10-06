@@ -1197,13 +1197,13 @@ class Base {
             + `${parametersDesc}`);
       }
 
-        tf.util.assert(
-          channelShuffler_ShuffleInfo.outputGroupCount == outputGroupCount,
-          `${concatShuffleSplitName}: `
-            + `channelShuffler_ShuffleInfo.outputGroupCount ( ${channelShuffler_ShuffleInfo.outputGroupCount} ) `
-            + `should be the same as `
-            + `outputGroupCount ( ${outputGroupCount} ) `
-            + `${parametersDesc}`);
+      tf.util.assert(
+        channelShuffler_ShuffleInfo.outputGroupCount == outputGroupCount,
+        `${concatShuffleSplitName}: `
+          + `channelShuffler_ShuffleInfo.outputGroupCount ( ${channelShuffler_ShuffleInfo.outputGroupCount} ) `
+          + `should be the same as `
+          + `outputGroupCount ( ${outputGroupCount} ) `
+          + `${parametersDesc}`);
     }
 
     // Converty input images to tensors.
