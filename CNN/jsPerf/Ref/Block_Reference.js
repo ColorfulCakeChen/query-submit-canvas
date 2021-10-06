@@ -336,6 +336,16 @@ class Base {
 
         if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
 
+          let pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
+          if ( 0 == stepIndex ) {
+            this.Step_AssertValue( stepName, stepParams, "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+          } else {
+            this.Step_AssertValue( stepName, stepParams, "channelCount0_pointwise1Before", pointwise21ChannelCount );
+          }
+
+          this.Step_AssertValue( stepName, stepParams, "channelCount1_pointwise1Before",
+            ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
+
           if ( 0 == stepIndex ) {
             this.Step_AssertValue( stepName, stepParams, "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
           } else {
@@ -346,7 +356,7 @@ class Base {
           this.Step_AssertValue( stepName, stepParams, "bDepthwiseBias", false );
           this.Step_AssertValue( stepName, stepParams, "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
-          this.Step_AssertValue( stepName, stepParams, "pointwise21ChannelCount", blockParams.sourceChannelCount * 2 );
+          this.Step_AssertValue( stepName, stepParams, "pointwise21ChannelCount", pointwise21ChannelCount );
           this.Step_AssertValue( stepName, stepParams, "bPointwise21Bias", true );
           this.Step_AssertValue( stepName, stepParams, "pointwise21ActivationId", blockParams.nActivationId );
 
