@@ -368,6 +368,21 @@ class Base {
           switch ( this.nWhetherShuffleChannel ) {
             case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
             {
+              let pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
+              if ( 0 == stepIndex ) {
+                this.Step_AssertValue( stepName, stepParams, "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+              } else {
+                this.Step_AssertValue( stepName, stepParams, "channelCount0_pointwise1Before", pointwise21ChannelCount );
+              }
+
+              if ( 0 == stepIndex ) {
+                this.Step_AssertValue( stepName, stepParams, "channelCount1_pointwise1Before",
+                  ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
+              } else {
+                this.Step_AssertValue( stepName, stepParams, "channelCount1_pointwise1Before",
+                  ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT );
+              }
+
               this.Step_AssertValue( stepName, stepParams, "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
 
               if ( 0 == stepIndex ) {
@@ -379,7 +394,7 @@ class Base {
               this.Step_AssertValue( stepName, stepParams, "bDepthwiseBias", true );
               this.Step_AssertValue( stepName, stepParams, "depthwiseActivationId", blockParams.nActivationId );
 
-              this.Step_AssertValue( stepName, stepParams, "pointwise21ChannelCount", blockParams.sourceChannelCount * 2 );
+              this.Step_AssertValue( stepName, stepParams, "pointwise21ChannelCount", pointwise21ChannelCount );
               this.Step_AssertValue( stepName, stepParams, "bPointwise21Bias", false );
               this.Step_AssertValue( stepName, stepParams, "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
@@ -391,7 +406,26 @@ class Base {
 
             case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) 3. ShuffleNetV2
             {
-              this.Step_AssertValue( stepName, stepParams, "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+              this.Step_AssertValue( stepName, stepParams, "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+
+              if ( 0 == stepIndex ) {
+                if ( this.pointwise1ChannelCount == 0 ) {
+                  this.Step_AssertValue( stepName, stepParams, "channelCount1_pointwise1Before",
+                    ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
+                } else {
+                  this.Step_AssertValue( stepName, stepParams, "channelCount1_pointwise1Before",
+                    ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE );
+                }
+              } else {
+                this.Step_AssertValue( stepName, stepParams, "channelCount1_pointwise1Before",
+                  ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
+              }
+
+              if ( this.pointwise1ChannelCount == 0 ) {
+                this.Step_AssertValue( stepName, stepParams, "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
+              } else {
+                this.Step_AssertValue( stepName, stepParams, "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+              }
 
               if ( 0 == stepIndex ) {
                 this.Step_AssertValue( stepName, stepParams, "depthwiseStridesPad", 2 );
