@@ -475,18 +475,18 @@ class Base {
 
     } else { // ( this.stepCountRequested >= 2 )
       switch ( blockParams.nWhetherShuffleChannel ) {
-        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
+        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
           // ( pointwise1ChannelCountRate == 0 ), will be similar to MobileNetV1.
           // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV2 without expanding.
           // ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
           return new Params.to_PointDepthPointParams.MobileNetV2( blockParams );
           break;
 
-        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) ShuffleNetV2
+        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) 3. ShuffleNetV2
           return new Params.to_PointDepthPointParams.ShuffleNetV2( blockParams );
           break;
 
-        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
+        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. Slower ShuffleNetV2
           return new Params.to_PointDepthPointParams.ShuffleNetV2_Slower( blockParams );
           break;
 
