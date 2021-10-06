@@ -155,10 +155,7 @@ class Base extends TestParams.Base {
       // (i.e. ( undefined )) for speeding up testing.
 //!!! (2021/07/20 Temp Remarked) Fix to none to simplify debug.
       Bias:         undefined,
-//       Bias: [
-//         ValueDesc.Bool.Singleton.range.min,
-//         ValueDesc.Bool.Singleton.range.max
-//       ],
+//      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
 //      ActivationId: undefined,
 //       ActivationId: [
@@ -184,7 +181,7 @@ class Base extends TestParams.Base {
 
       depthwise_AvgMax_Or_ChannelMultiplier: [
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
       ],
 
 //!!! ...(2021/10/06 Temp Remarked) WASM seems not correct when ( depthwiseFilterHeight == 1 )
@@ -198,16 +195,10 @@ class Base extends TestParams.Base {
       ],
 
 //      bOutput1Requested: undefined,
-      bOutput1Requested: [
-        ValueDesc.Bool.Singleton.range.min,
-        ValueDesc.Bool.Singleton.range.max
-      ],
+      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
-//      bKeepInputTensor: undefined,
-      bKeepInputTensor: [
-        ValueDesc.Bool.Singleton.range.min,
-        ValueDesc.Bool.Singleton.range.max
-      ],
+      bKeepInputTensor: undefined,
+//      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
     };
 
     // All the parameters to be tried.
