@@ -45,9 +45,9 @@ class Asserter_Tensor_NumberArray {
    * @param {number} acceptableDifferenceRate
    *   How many difference (in ratio) between the tensor and numberArray (per element) is acceptable. Because floating-point
    * accumulated error of float32 (GPU) and float64 (CPU) is different, a little difference should be allowed. Otherwise,
-   * the comparison may hardly to pass this check. Default is 0.3 (i.e. 30% difference is allowed).
+   * the comparison may hardly to pass this check. Default is 0.4 (i.e. 40% difference is allowed).
    */
-  constructor( acceptableDifferenceRate = 0.3 ) {
+  constructor( acceptableDifferenceRate = 0.4 ) {
     this.acceptableDifferenceRate = acceptableDifferenceRate;
     this.comparator = Asserter_Tensor_NumberArray.ElementComparator.bind( this );
   }
