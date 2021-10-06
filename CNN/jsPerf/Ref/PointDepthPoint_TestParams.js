@@ -173,8 +173,13 @@ class Base extends TestParams.Base {
           + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2 - 1
       ],
 
+//!!! ...(2021/10/06 Temp Remarked) For test WASM bug.
+//       depthwise_AvgMax_Or_ChannelMultiplier: [
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
+//       ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE,
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
       ],
 
