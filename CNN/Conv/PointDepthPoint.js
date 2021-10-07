@@ -29,7 +29,7 @@ import * as TensorOpCounter from "./TensorOpCounter.js";
  * @member {number} pointwise22ChannelCount
  *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ) and
  * ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution. The pointwise22
- * convolution could achieve some kinds of channel shuffling of (slower) ShuffleNetV2.
+ * convolution could achieve some kinds of channel shuffling of ShuffleNetV2_ByPointwise22.
  *
  *     - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
  *         (-3) (ShuffleNetV2's body/tail), it is always 0.
@@ -97,7 +97,7 @@ class Params extends Weights.Params {
    *       The inputTensors[ 1 ] will not be used at all (will be ignored completely). The inputTensors[ 0 ] will be processed
    *       by pointwise1, one depthwise operation, and pointwise2 convolution.
    *
-   *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (slower ShuffleNetV2's body/tail)
+   *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise22's body/tail)
    *       It should be the channel count of input1.
    *
    *       - The input1 will not be processed by any pointwise1 and depthwise operation.
@@ -396,8 +396,8 @@ class Params extends Weights.Params {
 
         // According to ( this.outputTensorCount ), it could be:
         //
-        // 2.1 Two-inputs-one-output: by concat1. (slower ShuffleNetV2's tail)
-        // 2.2 Two-inputs-two-outputs: by concat1. (slower ShuffleNetV2's body)
+        // 2.1 Two-inputs-one-output: by concat1. (ShuffleNetV2_ByPointwise22's tail)
+        // 2.2 Two-inputs-two-outputs: by concat1. (ShuffleNetV2_ByPointwise22's body)
         //
         this.bConcat1Requested =  true; this.bConcat2ShuffleSplitRequested = false;
               
@@ -575,7 +575,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (slower ShuffleNetV2's body and tail)
+ *   - When ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise22's body and tail)
  * <pre>
  * input0 - pointwise1 - depthwise1 - concat1 - pointwise21
  * input1 --------------------------/         \ pointwise22
@@ -1427,7 +1427,7 @@ class Base extends ReturnOrClone.Base {
       // 5. (no-add-input-to-output but has) concat1.
       //
       // ( this.inputTensorCount > 1 ).
-      default: // Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX (> 0) (slower ShuffleNetV2's body/tail)
+      default: // Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX (> 0) (ShuffleNetV2_ByPointwise22's body/tail)
 
         if ( this.bPointwise21 ) {
           if ( this.bPointwise22 ) {
