@@ -40,6 +40,8 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  */ 
 
 
+//!!! ...unfinished... (2021/10/07)
+// prefer ShuffleNetV2 with ( pointwise1ChannelCountRate = 1 ) or ShuffleNetV2_ByPointwise22 with ( pointwise1ChannelCountRate = 0 ) ?
 
 
 //!!! ...unfinished... (2021/08/13) Define:
