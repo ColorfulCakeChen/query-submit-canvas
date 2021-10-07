@@ -272,13 +272,7 @@ class Base {
 
       let asserter = new ObjectPropertyAsserter.Base( `Block.${stepName}`, stepParams, parametersDescription );
 
-//!!! ...unfinished... (2021/10/05)
-// Test: ShuffleNet, depthwise should not have bias and activation.
-// Test: MobileNet, pointwise2 should not have bias and activation.
-// Test: pointwise1ChannelCountRate and real pointwise1ChannelCount.
-
-//!!! ...unfinished... (2021/10/07) Block_create() should check these parameters inside Block.
-//!!! ...unfinished... (2021/10/07) calcResult() shouldcheck these parameters inside testParams.out.
+//!!! ...unfinished... (2021/10/07) outChannels0, outChannels1
 
       let stepCountRequested = blockParams.stepCountRequested;
       let nWhetherShuffleChannel = blockParams.nWhetherShuffleChannel;
@@ -322,7 +316,8 @@ class Base {
 
         asserter.propertyValue( "bOutput1Requested", false );
 
-//!!! ...unfinished... (2021/10/06)
+        asserter.propertyValue( "outChannels0", pointwise21ChannelCount );
+        asserter.propertyValue( "outChannels1", 0 );
 
       } else { // ( this.stepCountRequested >= 2 )
         switch ( this.nWhetherShuffleChannel ) {
@@ -355,12 +350,20 @@ class Base {
             asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
 
             asserter.propertyValue( "pointwise21ChannelCount", pointwise21ChannelCount );
-            asserter.propertyValue( "bPointwise21Bias", false );
+
+            if ( ( stepCount - 1 ) != stepIndex ) {
+              asserter.propertyValue( "bPointwise21Bias", false );
+            } else { // stepLast
+              asserter.propertyValue( "bPointwise21Bias", true );
+            }
+
             asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
             asserter.propertyValue( "bOutput1Requested", false );
 
-//!!! ...unfinished... (2021/10/06)
+            asserter.propertyValue( "outChannels0", pointwise21ChannelCount );
+            asserter.propertyValue( "outChannels1", 0 );
+
           }
             break;
 
@@ -406,13 +409,16 @@ class Base {
               asserter.propertyValue( "bOutput1Requested", false );
             }
 
-//!!! ...unfinished... (2021/10/06)
+//!!! ...unfinished... (2021/10/07) outChannels0, outChannels1
+            asserter.propertyValue( "outChannels0", pointwise21ChannelCount );
+            asserter.propertyValue( "outChannels1", 0 );
+
           }
             break;
 
           case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. ShuffleNetV2_ByPointwise22
           {
-//!!! ...unfinished... (2021/10/06)
+//!!! ...unfinished... (2021/10/07)
           }
             break;
 
