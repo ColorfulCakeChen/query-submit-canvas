@@ -940,17 +940,17 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
  * Step0:
  *   - Two less pointwise convolution computation. Two less function calls.
  *   - But more independent pointwise weights.
- *   - Ours is better.
+ *   - BBetter.
  *
  * Step1, Step2, ..., Step(N - 1):
  *   - One less pointwise convolution computation.
  *   - But more independent pointwise weights, more bias, more activation function, two more function calls.
- *   - Ours is worse.
+ *   - Worse.
  *
  * StepLast:
  *   - One less pointwise convolution computation. Two less function calls.
  *   - But more independent pointwise weights, more bias and more activation function.
- *   - Ours may be better or worse.
+ *   - May be better or worse.
  *
  * In summary, this method may result in a slower ShuffleNetV2.
  *
@@ -961,6 +961,10 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
  * ShufflerNetV2_Slower. The reason is that ShufflerNetV2_Slower uses non-shared pointwise2 instead of channel shuffler.
  * This lets ( pointwise1ChannelCountRate == 0 ) become feasible because it no longer relies on pointwise1 to change the
  * first and last channel position.
+ *
+ * In addition, the redued computation (because of no pointwise1) could compansate the extra computation (because of
+ * non-shared pointwise2).
+ *
  *
  * It is suggested to use ShuffleNetV2_Slower with ( pointwise1ChannelCountRate == 0 ).
  *
