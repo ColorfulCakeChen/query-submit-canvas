@@ -174,8 +174,8 @@ class HeightWidthDepth {
     );
 
 
-    // Test Case 10: (ShuffleNetV2_Slower, Step 10, pointwise1ChannelCountRate 0)
-    let testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_0 =
+    // Test Case 10: (ShuffleNetV2_ByPointwise22, Step 10, pointwise1ChannelCountRate 0)
+    let testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_0 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 0,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -183,8 +183,8 @@ class HeightWidthDepth {
       true
     );
 
-    // Test Case 11: (ShuffleNetV2_Slower, Step 10, pointwise1ChannelCountRate 1)
-    let testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_1 =
+    // Test Case 11: (ShuffleNetV2_ByPointwise22, Step 10, pointwise1ChannelCountRate 1)
+    let testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_1 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 1,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -192,8 +192,8 @@ class HeightWidthDepth {
       true
     );
 
-    // Test Case 12: (ShuffleNetV2_Slower, Step 10, pointwise1ChannelCountRate 2)
-    let testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_2 =
+    // Test Case 12: (ShuffleNetV2_ByPointwise22, Step 10, pointwise1ChannelCountRate 2)
+    let testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_2 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 2,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -237,14 +237,14 @@ class HeightWidthDepth {
         = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Step_10_Pointwise1Rate_2 ),
 
 
-      this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_0
-        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_0 ),
+      this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_0
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_0 ),
 
-      this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_1
-        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_1 ),
+      this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_1
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_1 ),
 
-      this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_2
-        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_2 ),
+      this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_2
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_2 ),
 
     ];
 
@@ -310,18 +310,18 @@ class HeightWidthDepth {
   }
 
 
-  test_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_0() {
-    let outputTensor3d = this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
+  test_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_0() {
+    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
-  test_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_1() {
-    let outputTensor3d = this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
+  test_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_1() {
+    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
-  test_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_2() {
-    let outputTensor3d = this.block_ShuffleNetV2_Slower_Step_10_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
+  test_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_2() {
+    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
