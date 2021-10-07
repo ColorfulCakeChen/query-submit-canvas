@@ -237,7 +237,7 @@ class Base {
     // Other parameters.
     Base.AssertTwoEqualValues( "bKeepInputTensor", block.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
 
-    Base.AssertParameters_Block_steps.call( block, parametersDescription ); // Test every step's parameters.
+    Base.AssertParameters_Block_steps( block, parametersDescription ); // Test every step's parameters.
 
     return block;
   }
@@ -284,42 +284,42 @@ class Base {
       let nWhetherShuffleChannel = blockParams.nWhetherShuffleChannel;
 
       if ( 0 == stepIndex ) {
-        asserter.assertPropertyValue( "bKeepInputTensor", blockParams.bKeepInputTensor );
+        asserter.propertyValue( "bKeepInputTensor", blockParams.bKeepInputTensor );
       } else {
-        asserter.assertPropertyValue( "bKeepInputTensor", false );
+        asserter.propertyValue( "bKeepInputTensor", false );
       }
 
       let pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
-      asserter.assertPropertyValue( "bPointwise1Bias", true );
-      asserter.assertPropertyValue( "pointwise1ActivationId", blockParams.nActivationId );
+      asserter.propertyValue( "bPointwise1Bias", true );
+      asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
 
       if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
 
         let pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
         if ( 0 == stepIndex ) {
-          asserter.assertPropertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+          asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
         } else {
-          asserter.assertPropertyValue( "channelCount0_pointwise1Before", pointwise21ChannelCount );
+          asserter.propertyValue( "channelCount0_pointwise1Before", pointwise21ChannelCount );
         }
 
-        asserter.assertPropertyValue( "channelCount1_pointwise1Before",
+        asserter.propertyValue( "channelCount1_pointwise1Before",
           ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
 
         if ( 0 == stepIndex ) {
-          asserter.assertPropertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
+          asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
         } else {
-          asserter.assertPropertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+          asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
         }
 
-        asserter.assertPropertyValue( "depthwiseStridesPad", 0 );
-        asserter.assertPropertyValue( "bDepthwiseBias", false );
-        asserter.assertPropertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+        asserter.propertyValue( "depthwiseStridesPad", 0 );
+        asserter.propertyValue( "bDepthwiseBias", false );
+        asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
-        asserter.assertPropertyValue( "pointwise21ChannelCount", pointwise21ChannelCount );
-        asserter.assertPropertyValue( "bPointwise21Bias", true );
-        asserter.assertPropertyValue( "pointwise21ActivationId", blockParams.nActivationId );
+        asserter.propertyValue( "pointwise21ChannelCount", pointwise21ChannelCount );
+        asserter.propertyValue( "bPointwise21Bias", true );
+        asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
 
-        asserter.assertPropertyValue( "bOutput1Requested", false );
+        asserter.propertyValue( "bOutput1Requested", false );
 
 //!!! ...unfinished... (2021/10/06)
 
@@ -329,35 +329,35 @@ class Base {
           {
             let pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
             if ( 0 == stepIndex ) {
-              asserter.assertPropertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+              asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
             } else {
-              asserter.assertPropertyValue( "channelCount0_pointwise1Before", pointwise21ChannelCount );
+              asserter.propertyValue( "channelCount0_pointwise1Before", pointwise21ChannelCount );
             }
 
             if ( 0 == stepIndex ) {
-              asserter.assertPropertyValue( "channelCount1_pointwise1Before",
+              asserter.propertyValue( "channelCount1_pointwise1Before",
                 ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
             } else {
-              asserter.assertPropertyValue( "channelCount1_pointwise1Before",
+              asserter.propertyValue( "channelCount1_pointwise1Before",
                 ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT );
             }
 
-            asserter.assertPropertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+            asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
 
             if ( 0 == stepIndex ) {
-              asserter.assertPropertyValue( "depthwiseStridesPad", 2 );
+              asserter.propertyValue( "depthwiseStridesPad", 2 );
             } else {
-              asserter.assertPropertyValue( "depthwiseStridesPad", 1 );
+              asserter.propertyValue( "depthwiseStridesPad", 1 );
             }
 
-            asserter.assertPropertyValue( "bDepthwiseBias", true );
-            asserter.assertPropertyValue( "depthwiseActivationId", blockParams.nActivationId );
+            asserter.propertyValue( "bDepthwiseBias", true );
+            asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
 
-            asserter.assertPropertyValue( "pointwise21ChannelCount", pointwise21ChannelCount );
-            asserter.assertPropertyValue( "bPointwise21Bias", false );
-            asserter.assertPropertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+            asserter.propertyValue( "pointwise21ChannelCount", pointwise21ChannelCount );
+            asserter.propertyValue( "bPointwise21Bias", false );
+            asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
-            asserter.assertPropertyValue( "bOutput1Requested", false );
+            asserter.propertyValue( "bOutput1Requested", false );
 
 //!!! ...unfinished... (2021/10/06)
           }
@@ -365,44 +365,44 @@ class Base {
 
           case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) 3. ShuffleNetV2
           {
-            asserter.assertPropertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
+            asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
 
             if ( 0 == stepIndex ) {
               if ( this.pointwise1ChannelCount == 0 ) {
-                asserter.assertPropertyValue( "channelCount1_pointwise1Before",
+                asserter.propertyValue( "channelCount1_pointwise1Before",
                   ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
               } else {
-                asserter.assertPropertyValue( "channelCount1_pointwise1Before",
+                asserter.propertyValue( "channelCount1_pointwise1Before",
                   ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE );
               }
             } else {
-              asserter.assertPropertyValue( "channelCount1_pointwise1Before",
+              asserter.propertyValue( "channelCount1_pointwise1Before",
                 ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
             }
 
             if ( this.pointwise1ChannelCount == 0 ) {
-              asserter.assertPropertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
+              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
             } else {
-              asserter.assertPropertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             }
 
             if ( 0 == stepIndex ) {
-              asserter.assertPropertyValue( "depthwiseStridesPad", 2 );
+              asserter.propertyValue( "depthwiseStridesPad", 2 );
             } else {
-              asserter.assertPropertyValue( "depthwiseStridesPad", 1 );
+              asserter.propertyValue( "depthwiseStridesPad", 1 );
             }
 
-            asserter.assertPropertyValue( "bDepthwiseBias", false );
-            asserter.assertPropertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+            asserter.propertyValue( "bDepthwiseBias", false );
+            asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
-            asserter.assertPropertyValue( "pointwise21ChannelCount", blockParams.sourceChannelCount );
-            asserter.assertPropertyValue( "bPointwise21Bias", true );
-            asserter.assertPropertyValue( "pointwise21ActivationId", blockParams.nActivationId );
+            asserter.propertyValue( "pointwise21ChannelCount", blockParams.sourceChannelCount );
+            asserter.propertyValue( "bPointwise21Bias", true );
+            asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
 
             if ( ( stepCount - 1 ) != stepIndex ) {
-              asserter.assertPropertyValue( "bOutput1Requested", true );
+              asserter.propertyValue( "bOutput1Requested", true );
             } else { // stepLast
-              asserter.assertPropertyValue( "bOutput1Requested", false );
+              asserter.propertyValue( "bOutput1Requested", false );
             }
 
 //!!! ...unfinished... (2021/10/06)
@@ -467,7 +467,7 @@ class Base {
       ;
     }
 
-    Base.AssertParameters_Block_steps.call( testParams, this.paramsOutDescription ); // Test every step's parameters.
+    Base.AssertParameters_Block_steps( testParams, this.paramsOutDescription ); // Test every step's parameters.
 
     // Calculate every steps in sequence.
 
