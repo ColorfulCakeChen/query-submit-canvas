@@ -315,7 +315,9 @@ class Base {
 // Test: MobileNet, pointwise2 should not have bias and activation.
 // Test: pointwise1ChannelCountRate and real pointwise1ChannelCount.
 
-//!!! ...unfinished... (2021/10/06)
+//!!! ...unfinished... (2021/10/07) Block_create() should check these parameters inside Block.
+//!!! ...unfinished... (2021/10/07) calcResult() shouldcheck these parameters inside testParams.out.
+
       // Test every step's parameters.
       {
         let stepCountRequested = testParams.out.stepCountRequested;
