@@ -374,20 +374,12 @@ class Base {
                   ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE );
               }
             } else {
-!!!
-              asserter.propertyValue( "channelCount1_pointwise1Before",
-                ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
-!!!
               if ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER ) { // (1) ShuffleNetV2
                 asserter.propertyValue( "channelCount1_pointwise1Before",
                   ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
               } else { // ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22 ) (2) ShuffleNetV2_ByPointwise22
-
-                asserter.propertyValue( "channelCount1_pointwise1Before",
-                  ??? );
-
+                asserter.propertyValue( "channelCount1_pointwise1Before", blockParams.sourceChannelCount );
               }
-
             }
 
             if ( this.pointwise1ChannelCount == 0 ) {
@@ -429,11 +421,6 @@ class Base {
               asserter.propertyValue( "outChannels1", 0 );
             }
 
-          }
-            break;
-
-          {
-//!!! ...unfinished... (2021/10/07)
           }
             break;
 
