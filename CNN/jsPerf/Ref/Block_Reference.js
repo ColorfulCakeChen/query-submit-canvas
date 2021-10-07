@@ -272,8 +272,6 @@ class Base {
 
       let asserter = new ObjectPropertyAsserter.Base( `Block.${stepName}`, stepParams, parametersDescription );
 
-//!!! ...unfinished... (2021/10/07) outChannels0, outChannels1
-
       let stepCountRequested = blockParams.stepCountRequested;
       let nWhetherShuffleChannel = blockParams.nWhetherShuffleChannel;
 
@@ -399,7 +397,8 @@ class Base {
             asserter.propertyValue( "bDepthwiseBias", false );
             asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
-            asserter.propertyValue( "pointwise21ChannelCount", blockParams.sourceChannelCount );
+            let pointwise21ChannelCount = blockParams.sourceChannelCount;
+            asserter.propertyValue( "pointwise21ChannelCount", pointwise21ChannelCount );
             asserter.propertyValue( "bPointwise21Bias", true );
             asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
 
@@ -409,9 +408,8 @@ class Base {
               asserter.propertyValue( "bOutput1Requested", false );
             }
 
-//!!! ...unfinished... (2021/10/07) outChannels0, outChannels1
             asserter.propertyValue( "outChannels0", pointwise21ChannelCount );
-            asserter.propertyValue( "outChannels1", 0 );
+            asserter.propertyValue( "outChannels1", pointwise21ChannelCount );
 
           }
             break;
