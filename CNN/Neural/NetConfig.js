@@ -11,16 +11,30 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  *
  * 1. Input larger ( height, width ).
  *
+ *    Problem: This may slower the computation speed.
+ *
+ *
  * 2. Use Embedding2d to let depth of input become larger.
  *
- * 3. Use more blocks. However, the extra blocks will operate at ( height, width ) = ( 1, 1 ).
+ *    Problem: This may slower the computation speed in backend CPU and WASM. (In WEBGL, it still is fast.)
  *
- * 4. Let block have parameter extraOutputChannelCountRate.
+ *
+ * 3. Use more blocks.
+ *
+ *    Problem: The extra blocks will all operate at input ( height, width ) = ( 1, 1 ).
+ *
+ *
+ * 4. Let Block have parameter extraOutputChannelCountRate.
+ *
  *    The outputChannelCount will always be even (i.e. ( 2 * extraOutputChannelCountRate ) ) because ShuffleNetV2 should
  *    always double the channel count at least.
  *
  *
+ * 5. Let Block have parameter bHalveHeightWidth.
  *
+ *    If ( bHalveHeightWidth == false ), Block will keep the ( height, width ) of output the same as input.
+ *
+ *    Problem: How does Neural.Net determine which block should or shoud not halve the ( height, width )?
  *
  *
  */ 
