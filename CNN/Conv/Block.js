@@ -794,7 +794,10 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
  *
  * Channel shuffler has a characteristic that it always does not shuffle the first and last channel (i.e. the channel 0
  * and channel ( N - 1 ) will always be at the same place). In ShuffleNetV2, the pointwise1 could alleviate this issue.
- * However, if ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1 to change the first and last channel place.
+ * However, if ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1 to change the first and last channel
+ * position.
+ *
+ * It is NOT suggested to use ShuffleNetV2 with ( pointwise1ChannelCountRate == 0 ).
  *
  */
 Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDepthPointParams {
@@ -959,10 +962,10 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
  * This lets ( pointwise1ChannelCountRate == 0 ) become feasible because it no longer relies on pointwise1 to change the
  * first and last channel position.
  *
+ * It is suggested to use ShuffleNetV2_Slower with ( pointwise1ChannelCountRate == 0 ).
  *
  Although
  * non-shared pointwise2 is slower than channel shuffler, 
- *
  *
  *
  */
