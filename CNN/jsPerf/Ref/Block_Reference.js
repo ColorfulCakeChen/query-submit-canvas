@@ -474,8 +474,12 @@ class Base {
         + `stepCountRequested=${testParams.out.stepCountRequested}, `
         + `pointwise1ChannelCountRate=${testParams.out.pointwise1ChannelCountRate}, `
         + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
-        + `nActivationIdName=${testParams.out.nActivationIdName}(${testParams.out.nActivationId}), `
-        + `nActivationIdAtBlockEndName=${testParams.out.nActivationIdAtBlockEndName}(${testParams.out.nActivationIdAtBlockEnd}), `
+
+        + `nActivationIdName=${ValueDesc.ActivationFunction.Singleton.getStringOfValue( testParams.out.nActivationId )}`
+        + `(${testParams.out.nActivationId}), `
+        + `nActivationIdAtBlockEndName=${ValueDesc.ActivationFunction.Singleton.getStringOfValue( testParams.out.nActivationIdAtBlockEnd )}`
+        + `(${testParams.out.nActivationIdAtBlockEnd}), `
+
         + `nWhetherShuffleChannel=${testParams.out.nWhetherShuffleChannelName}(${testParams.out.nWhetherShuffleChannel}), `
         + `outputHeight=${referredParams.outputHeight}, outputWidth=${referredParams.outputWidth}, `
 //        + `outputChannelCount=${???.outputChannelCount}, `
