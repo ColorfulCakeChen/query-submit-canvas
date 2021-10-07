@@ -91,7 +91,7 @@ class Params extends Weights.Params {
    *       this block will be ShuffleNetV2. There is a channel shuffler by concat-shuffle-split.
    *
    *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ), (2),
-   *       this block will be ShuffleNetV2_Slower. There is a channel shuffler by pointwise22.
+   *       this block will be ShuffleNetV2_ByPointwise22. There is a channel shuffler by pointwise22.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
@@ -487,7 +487,7 @@ class Base {
           break;
 
         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. Slower ShuffleNetV2
-          return new Params.to_PointDepthPointParams.ShuffleNetV2_Slower( blockParams );
+          return new Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22( blockParams );
           break;
 
         default:
@@ -894,7 +894,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 
 /** Provide parameters for slower ShuffleNetV2 (i.e. shuffle channel by pointwise22).
  *
- * 1. ShuffleNetV2_Slower:
+ * 1. ShuffleNetV2_ByPointwise22:
  *
  * Since channel shuffler could achieved efficiently by pointwise convolution, it is possible to combine the pointwise2
  * convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
@@ -912,35 +912,35 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
  * Suppose the input channel count is M. Compare ours to the original ShuffleNetV2:
  *
  * <pre>
- *                         +-------------------------------------------------------------------------------+------------+------------+----------+
- *                         |                       pointwise2 convolution                                  |    bias    | activation | function |
- *                         |-----------------------------------------------------------------+-------------|            |            |   calls  |
- *                         |                             weights                             | computation |            |            |          |
- *                         |--------------------------------+--------------------------------|             |            |            |          |
- *                         |          independent           | shared (for channel shuffling) |             |            |            |          |
- * +----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
- * | Step0    | Original   | ( M *  M ) + ( M *  M ) = 2M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        6M^2 | M + M = 2M | M + M = 2M |        8 |
- * |          | Simplified | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6 |
- * |          | Compare    |                     worse 2M^2 |                    better 4M^2 | better 2M^2 |       same |       same | better 2 |
- * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
- * | Step1    | Original   |              ( M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
- * | Step2    | Slower     | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6 |
- * |   :      | Compare    |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M |  worse 2 |
- * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
- * | StepLast | Original   |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
- * |          | Slower     |             ( 2M * 2M ) = 4M^2 |                              0 |        4M^2 |         2M |         2M |        3 |
- * |          | Compare    |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M | better 2 |
- * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
- * | StepLast | Original   |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
- * |          | Simplified |             (  M *  M ) =  M^2 |                              0 |         M^2 |          M |          M |        3 |
- * |          | Compare    |                           same |                    better 4M^2 | better 4M^2 |       same |       same | better 2 |
- * |----------+------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ *                            +-------------------------------------------------------------------------------+------------+------------+----------+
+ *                            |                       pointwise2 convolution                                  |    bias    | activation | function |
+ *                            |-----------------------------------------------------------------+-------------|            |            |   calls  |
+ *                            |                             weights                             | computation |            |            |          |
+ *                            |--------------------------------+--------------------------------|             |            |            |          |
+ *                            |          independent           | shared (for channel shuffling) |             |            |            |          |
+ * +----------+---------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | Step0    | Original      | ( M *  M ) + ( M *  M ) = 2M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        6M^2 | M + M = 2M | M + M = 2M |        8 |
+ * |          | Simplified    | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6 |
+ * |          | Compare       |                     worse 2M^2 |                    better 4M^2 | better 2M^2 |       same |       same | better 2 |
+ * |----------+---------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | Step1    | Original      |              ( M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
+ * | Step2    | ByPointwise22 | ( M * 2M ) + ( M * 2M ) = 4M^2 |                              0 |        4M^2 | M + M = 2M | M + M = 2M |        6 |
+ * |   :      | Compare       |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M |  worse 2 |
+ * |----------+---------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | StepLast | Original      |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
+ * |          | ByPointwise22 |             ( 2M * 2M ) = 4M^2 |                              0 |        4M^2 |         2M |         2M |        3 |
+ * |          | Compare       |                     worse 3M^2 |                    better 4M^2 | better  M^2 |    worse M |    worse M | better 2 |
+ * |----------+---------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
+ * | StepLast | Original      |             (  M *  M ) =  M^2 | ( M * 2M ) + ( M * 2M ) = 4M^2 |        5M^2 |          M |          M |        5 |
+ * |          | Simplified    |             (  M *  M ) =  M^2 |                              0 |         M^2 |          M |          M |        3 |
+ * |          | Compare       |                           same |                    better 4M^2 | better 4M^2 |       same |       same | better 2 |
+ * |----------+---------------+--------------------------------+--------------------------------+-------------+------------+------------+----------+
  * </pre>
  *
  * Step0:
  *   - Two less pointwise convolution computation. Two less function calls.
  *   - But more independent pointwise weights.
- *   - BBetter.
+ *   - Better.
  *
  * Step1, Step2, ..., Step(N - 1):
  *   - One less pointwise convolution computation.
@@ -966,14 +966,14 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
  * non-shared pointwise2).
  *
  *
- * It is suggested to use ShuffleNetV2_Slower with ( pointwise1ChannelCountRate == 0 ).
+ * It is suggested to use ShuffleNetV2_ByPointwise22 with ( pointwise1ChannelCountRate == 0 ).
  *
  Although
  * non-shared pointwise2 is slower than channel shuffler, 
  *
  *
  */
-Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_PointDepthPointParams.ShuffleNetV2 {
+Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22 = class extends Params.to_PointDepthPointParams.ShuffleNetV2 {
 
   /** @override */
   configTo_afterStep0() {
@@ -991,7 +991,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2_Slower = class extends Params.to_Po
   configTo_beforeStepLast() {
     super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
 
-    // In ShuffleNetV2_Slower, the stepLast only has output0 (no output1). And the output0 has double channel count of source input0.
+    // In ShuffleNetV2_ByPointwise22, the stepLast only has output0 (no output1). And the output0 has double channel count of source input0.
     //
     // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
     // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
