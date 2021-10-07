@@ -4,10 +4,10 @@ import * as TensorTools from "../../util/TensorTools.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js"; 
-import * as Block from "../../Conv/Block.js";
-import * as Block_TestParams from "./Block_TestParams.js"; 
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
+import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js"; 
+import * as Block_TestParams from "./Block_TestParams.js"; 
+import * as Block from "../../Conv/Block.js";
 
 /**
  * Reference computation of class Block.Base.
@@ -290,6 +290,7 @@ class Base {
       }
 
       let pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
+      asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
       asserter.propertyValue( "bPointwise1Bias", true );
       asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
 
