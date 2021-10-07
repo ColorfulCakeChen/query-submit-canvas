@@ -891,7 +891,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 
 /** Provide parameters for slower ShuffleNetV2 (i.e. shuffle channel by pointwise22).
  *
- * 1. Slower ShuffleNetV2:
+ * 1. ShuffleNetV2_Slower:
  *
  * Since channel shuffler could achieved efficiently by pointwise convolution, it is possible to combine the pointwise2
  * convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
@@ -952,9 +952,16 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
  * In summary, this method may result in a slower ShuffleNetV2.
  *
  *
+ * 2. Better when ( pointwise1ChannelCountRate == 0 )
+ *
+ * Different from ShufflerNetV2, the issue of the first and last channel fixed at stationary place does not exist in this
+ * ShufflerNetV2_Slower. The reason is that ShufflerNetV2_Slower uses non-shared pointwise2 instead of channel shuffler.
+ * This lets ( pointwise1ChannelCountRate == 0 ) become feasible because it no longer relies on pointwise1 to change the
+ * first and last channel position.
  *
  *
- *
+ Although
+ * non-shared pointwise2 is slower than channel shuffler, 
  *
  *
  *
