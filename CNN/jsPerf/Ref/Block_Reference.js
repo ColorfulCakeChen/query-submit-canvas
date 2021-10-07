@@ -316,8 +316,8 @@ class Base {
 
         asserter.propertyValue( "bOutput1Requested", false );
 
-        asserter.propertyValue( "outChannels0", pointwise21ChannelCount );
-        asserter.propertyValue( "outChannels1", 0 );
+        //asserter.propertyValue( "outChannels0", pointwise21ChannelCount );
+        //asserter.propertyValue( "outChannels1", 0 );
 
       } else { // ( stepCountRequested >= 2 )
         switch ( nWhetherShuffleChannel ) {
@@ -361,8 +361,8 @@ class Base {
 
             asserter.propertyValue( "bOutput1Requested", false );
 
-            asserter.propertyValue( "outChannels0", pointwise21ChannelCount );
-            asserter.propertyValue( "outChannels1", 0 );
+            //asserter.propertyValue( "outChannels0", pointwise21ChannelCount );
+            //asserter.propertyValue( "outChannels1", 0 );
 
           }
             break;
@@ -419,13 +419,13 @@ class Base {
 
             if ( ( stepCount - 1 ) != stepIndex ) {
               asserter.propertyValue( "bOutput1Requested", true );
-              asserter.propertyValue( "outChannels0", blockParams.sourceChannelCount );
-              asserter.propertyValue( "outChannels1", blockParams.sourceChannelCount );
+              //asserter.propertyValue( "outChannels0", blockParams.sourceChannelCount );
+              //asserter.propertyValue( "outChannels1", blockParams.sourceChannelCount );
 
             } else { // stepLast
               asserter.propertyValue( "bOutput1Requested", false );
-              asserter.propertyValue( "outChannels0", ( blockParams.sourceChannelCount * 2 ) );
-              asserter.propertyValue( "outChannels1", 0 );
+              //asserter.propertyValue( "outChannels0", ( blockParams.sourceChannelCount * 2 ) );
+              //asserter.propertyValue( "outChannels1", 0 );
             }
 
           }
