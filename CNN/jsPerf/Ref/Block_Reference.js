@@ -480,7 +480,9 @@ class Base {
         + `nActivationIdAtBlockEndName=${ValueDesc.ActivationFunction.Singleton.getStringOfValue( testParams.out.nActivationIdAtBlockEnd )}`
         + `(${testParams.out.nActivationIdAtBlockEnd}), `
 
-        + `nWhetherShuffleChannel=${testParams.out.nWhetherShuffleChannelName}(${testParams.out.nWhetherShuffleChannel}), `
+        + `nWhetherShuffleChannel=${ValueDesc.WhetherShuffleChannelName.Singleton.getStringOfValue( testParams.out.nWhetherShuffleChannel )}`
+        + `(${testParams.out.nWhetherShuffleChannel}), `
+
         + `outputHeight=${referredParams.outputHeight}, outputWidth=${referredParams.outputWidth}, `
 //        + `outputChannelCount=${???.outputChannelCount}, `
         + `bKeepInputTensor=${testParams.out.bKeepInputTensor}`
