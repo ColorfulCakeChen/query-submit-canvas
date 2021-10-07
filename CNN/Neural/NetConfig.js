@@ -4,6 +4,30 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 //import * as ConvBlock from "../Conv/Block.js";
 
 
+//!!! ...unfinished... (2021/10/07)
+/**
+ * How to let block generate more channels?
+ * (For example, for letting the extra output channel combined into the input of the next run.)
+ *
+ * 1. Input larger ( height, width ).
+ *
+ * 2. Use Embedding2d to let depth of input become larger.
+ *
+ * 3. Use more blocks. However, the extra blocks will operate at ( height, width ) = ( 1, 1 ).
+ *
+ * 4. Let block have parameter extraOutputChannelCountRate.
+ *    The outputChannelCount will always be even (i.e. ( 2 * extraOutputChannelCountRate ) ) because ShuffleNetV2 should
+ *    always double the channel count at least.
+ *
+ *
+ *
+ *
+ *
+ */ 
+
+
+
+
 //!!! ...unfinished... (2021/08/13) Define:
 // class NotShuffleNet_NotMobileNet
 // class ShuffleNetV2
