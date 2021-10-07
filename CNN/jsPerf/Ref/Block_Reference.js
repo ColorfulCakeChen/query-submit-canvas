@@ -5,6 +5,7 @@ import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
+import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js"; 
 import * as Block_TestParams from "./Block_TestParams.js"; 
 import * as Block from "../../Conv/Block.js";
