@@ -288,9 +288,6 @@ class Base {
       asserter.propertyValue( "bPointwise1Bias", true );
       asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
 
-//!!! ...unfinished... (2021/10/07) depthwiseFilterHeight?
-
-
       if ( stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
 
         let pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
@@ -312,8 +309,8 @@ class Base {
         if ( ( stepCount - 1 ) != stepIndex ) {
           asserter.propertyValue( "depthwiseFilterHeight", blockParams.depthwiseFilterHeight );
         } else { // stepLast
-//!!! ...unfinished... (2021/10/07) depthwiseFilterHeight?
-//          asserter.propertyValue( "depthwiseFilterHeight", ??? blockParams.depthwiseFilterHeight );
+//!!! ...unfinished... (2021/10/07) could be more precise?
+          asserter.propertyValueLE( "depthwiseFilterHeight", blockParams.depthwiseFilterHeight );
         }
 
         asserter.propertyValue( "depthwiseStridesPad", 0 );
