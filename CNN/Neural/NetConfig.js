@@ -33,8 +33,8 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  * 5. Let Block have parameter bHalveHeightWidth.
  *
  *    If ( bHalveHeightWidth == false ), Block will keep the ( height, width ) of output the same as input.
- *
- *    Problem: How does Neural.Net determine which block should or shoud not halve the ( height, width )?
+ *    Problem1: Block_NotShuffleNet_NotMobileNet will have only one step in this case.
+ *    Problem2: How does Neural.Net determine which block should or shoud not halve the ( height, width )?
  *
  *
  */ 
