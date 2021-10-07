@@ -309,6 +309,13 @@ class Base {
           asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
         }
 
+        if ( ( stepCount - 1 ) != stepIndex ) {
+          asserter.propertyValue( "depthwiseFilterHeight", blockParams.depthwiseFilterHeight );
+        } else { // stepLast
+//!!! ...unfinished... (2021/10/07) depthwiseFilterHeight?
+//          asserter.propertyValue( "depthwiseFilterHeight", ??? blockParams.depthwiseFilterHeight );
+        }
+
         asserter.propertyValue( "depthwiseStridesPad", 0 );
         asserter.propertyValue( "bDepthwiseBias", false );
         asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
@@ -347,6 +354,7 @@ class Base {
             }
 
             asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+            asserter.propertyValue( "depthwiseFilterHeight", blockParams.depthwiseFilterHeight );
 
             if ( 0 == stepIndex ) {
               asserter.propertyValue( "depthwiseStridesPad", 2 );
@@ -406,6 +414,8 @@ class Base {
             } else {
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             }
+
+            asserter.propertyValue( "depthwiseFilterHeight", blockParams.depthwiseFilterHeight );
 
             if ( 0 == stepIndex ) {
               asserter.propertyValue( "depthwiseStridesPad", 2 );
