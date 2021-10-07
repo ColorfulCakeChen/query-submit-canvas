@@ -180,11 +180,6 @@ class Base {
 
     let bInitOk = block.init( progress, extractedParams );
 
-//!!! (2021/10/04 Remarked) should already inside testParams.out
-//     let flags = {};
-//     PointDepthPoint.Params.set_outputHeight_outputWidth_by_sourceHeight_sourceWidth.call( flags,
-//       testParams.out.sourceHeight, testParams.out.sourceWidth );
-
     let parametersDescription = `( ${block.parametersDescription} )`;
 
     tf.util.assert( ( block.bInitOk == bInitOk ),
@@ -286,7 +281,7 @@ class Base {
       asserter.propertyValue( "bPointwise1Bias", true );
       asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
 
-      if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
+      if ( stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
 
         let pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
         if ( 0 == stepIndex ) {
@@ -317,8 +312,8 @@ class Base {
         asserter.propertyValue( "outChannels0", pointwise21ChannelCount );
         asserter.propertyValue( "outChannels1", 0 );
 
-      } else { // ( this.stepCountRequested >= 2 )
-        switch ( this.nWhetherShuffleChannel ) {
+      } else { // ( stepCountRequested >= 2 )
+        switch ( nWhetherShuffleChannel ) {
           case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
           {
             let pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
@@ -366,6 +361,7 @@ class Base {
             break;
 
           case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) 3. ShuffleNetV2
+          case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22:      // (2) 4. ShuffleNetV2_ByPointwise22
           {
             asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
 
@@ -378,8 +374,20 @@ class Base {
                   ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE );
               }
             } else {
+!!!
               asserter.propertyValue( "channelCount1_pointwise1Before",
                 ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
+!!!
+              if ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER ) { // (1) ShuffleNetV2
+                asserter.propertyValue( "channelCount1_pointwise1Before",
+                  ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 );
+              } else { // ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22 ) (2) ShuffleNetV2_ByPointwise22
+
+                asserter.propertyValue( "channelCount1_pointwise1Before",
+                  ??? );
+
+              }
+
             }
 
             if ( this.pointwise1ChannelCount == 0 ) {
@@ -397,24 +405,33 @@ class Base {
             asserter.propertyValue( "bDepthwiseBias", false );
             asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
-            let pointwise21ChannelCount = blockParams.sourceChannelCount;
-            asserter.propertyValue( "pointwise21ChannelCount", pointwise21ChannelCount );
+            if ( ( stepCount - 1 ) != stepIndex ) {
+              asserter.propertyValue( "pointwise21ChannelCount", blockParams.sourceChannelCount );
+            } else { // stepLast
+              if ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER ) { // (1) ShuffleNetV2
+                asserter.propertyValue( "pointwise21ChannelCount", blockParams.sourceChannelCount );
+              } else { // ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22 ) (2) ShuffleNetV2_ByPointwise22
+                asserter.propertyValue( "pointwise21ChannelCount", ( blockParams.sourceChannelCount * 2 ) );
+              }
+            }
+
             asserter.propertyValue( "bPointwise21Bias", true );
             asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
 
             if ( ( stepCount - 1 ) != stepIndex ) {
               asserter.propertyValue( "bOutput1Requested", true );
+              asserter.propertyValue( "outChannels0", blockParams.sourceChannelCount );
+              asserter.propertyValue( "outChannels1", blockParams.sourceChannelCount );
+
             } else { // stepLast
               asserter.propertyValue( "bOutput1Requested", false );
+              asserter.propertyValue( "outChannels0", ( blockParams.sourceChannelCount * 2 ) );
+              asserter.propertyValue( "outChannels1", 0 );
             }
-
-            asserter.propertyValue( "outChannels0", pointwise21ChannelCount );
-            asserter.propertyValue( "outChannels1", pointwise21ChannelCount );
 
           }
             break;
 
-          case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. ShuffleNetV2_ByPointwise22
           {
 //!!! ...unfinished... (2021/10/07)
           }
