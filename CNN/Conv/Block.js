@@ -486,7 +486,7 @@ class Base {
           return new Params.to_PointDepthPointParams.ShuffleNetV2( blockParams );
           break;
 
-        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. Slower ShuffleNetV2
+        case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. ShuffleNetV2_ByPointwise22
           return new Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22( blockParams );
           break;
 
@@ -892,7 +892,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 }
 
 
-/** Provide parameters for slower ShuffleNetV2 (i.e. shuffle channel by pointwise22).
+/** Provide parameters for ShuffleNetV2_ByPointwise22 (i.e. shuffle channel by pointwise22).
  *
  * 1. ShuffleNetV2_ByPointwise22:
  *
@@ -958,18 +958,14 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
  * 2. Better when ( pointwise1ChannelCountRate == 0 )
  *
  * Different from ShufflerNetV2, the issue of the first and last channel fixed at stationary place does not exist in this
- * ShufflerNetV2_Slower. The reason is that ShufflerNetV2_Slower uses non-shared pointwise2 instead of channel shuffler.
- * This lets ( pointwise1ChannelCountRate == 0 ) become feasible because it no longer relies on pointwise1 to change the
- * first and last channel position.
+ * ShuffleNetV2_ByPointwise22. The reason is that it uses non-shared pointwise2 instead of channel shuffler. This lets
+ * ( pointwise1ChannelCountRate == 0 ) become feasible because it no longer relies on pointwise1 to change the first and
+ * last channel position.
  *
  * In addition, the redued computation (because of no pointwise1) could compansate the extra computation (because of
  * non-shared pointwise2).
  *
- *
  * It is suggested to use ShuffleNetV2_ByPointwise22 with ( pointwise1ChannelCountRate == 0 ).
- *
- Although
- * non-shared pointwise2 is slower than channel shuffler, 
  *
  *
  */
@@ -991,7 +987,8 @@ Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22 = class extends Param
   configTo_beforeStepLast() {
     super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
 
-    // In ShuffleNetV2_ByPointwise22, the stepLast only has output0 (no output1). And the output0 has double channel count of source input0.
+    // In ShuffleNetV2_ByPointwise22, the stepLast only has output0 (no output1). And the output0 has double channel count of
+    // source input0.
     //
     // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
     // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
