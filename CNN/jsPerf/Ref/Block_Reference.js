@@ -416,8 +416,8 @@ class Base {
             break;
 
           default:
-//                 tf.util.assert( false, `Block_Reference.calcResult(): `
-//                   `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value. ${this.paramsOutDescription}` );
+            tf.util.assert( false, `Block_Reference.Base.AssertParameters_Block_steps(): `
+               `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value. ${asserter.contextDescription}` );
             break;
         }
       }
