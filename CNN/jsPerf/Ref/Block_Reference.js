@@ -288,6 +288,9 @@ class Base {
       asserter.propertyValue( "bPointwise1Bias", true );
       asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
 
+//!!! ...unfinished... (2021/10/07) depthwiseFilterHeight?
+
+
       if ( stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
 
         let pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
@@ -312,7 +315,12 @@ class Base {
 
         asserter.propertyValue( "pointwise21ChannelCount", pointwise21ChannelCount );
         asserter.propertyValue( "bPointwise21Bias", true );
-        asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
+
+        if ( ( stepCount - 1 ) != stepIndex ) {
+          asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
+        } else { // stepLast
+          asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationIdAtBlockEnd );
+        }
 
         asserter.propertyValue( "bOutput1Requested", false );
 
@@ -357,7 +365,11 @@ class Base {
               asserter.propertyValue( "bPointwise21Bias", true );
             }
 
-            asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+            if ( ( stepCount - 1 ) != stepIndex ) {
+              asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+            } else { // stepLast
+              asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationIdAtBlockEnd );
+            }
 
             asserter.propertyValue( "bOutput1Requested", false );
 
@@ -415,7 +427,12 @@ class Base {
             }
 
             asserter.propertyValue( "bPointwise21Bias", true );
-            asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
+
+            if ( ( stepCount - 1 ) != stepIndex ) {
+              asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
+            } else { // stepLast
+              asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationIdAtBlockEnd );
+            }
 
             if ( ( stepCount - 1 ) != stepIndex ) {
               asserter.propertyValue( "bOutput1Requested", true );
