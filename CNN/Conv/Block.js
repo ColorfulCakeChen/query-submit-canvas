@@ -759,6 +759,7 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
 
 /** Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
  *
+ *
  * 1. A special case: NoPointwise1 ShuffleNetV2 (i.e. without pointwise1, with concatenator).
  * 
  * Q: How to specify this configuration?
@@ -787,6 +788,13 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
  *       - ( pointwise1ChannelCountRate == 0 )
  *       - ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.COS) 
  *       - ( nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE)
+ *
+ *
+ * 2. Drawback when ( pointwise1ChannelCountRate == 0 )
+ *
+ * Channel shuffler has a characteristic that it always does not shuffle the first and last channel (i.e. the channel 0
+ * and channel ( N - 1 ) will always be at the same place). In ShuffleNetV2, the pointwise1 could alleviate this issue.
+ * However, if ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1 to change the first and last channel place.
  *
  */
 Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDepthPointParams {
@@ -942,6 +950,12 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
  *   - Ours may be better or worse.
  *
  * In summary, this method may result in a slower ShuffleNetV2.
+ *
+ *
+ *
+ *
+ *
+ *
  *
  *
  */
