@@ -252,6 +252,11 @@ class Base {
    *
    */
   static AssertParameters_Block_steps( blockParams, parametersDescription ) {
+    if ( blockParams instanceof Block_TestParams.Base ) {
+      blockParams = blockParams.out;
+    } else { // Block.Base
+    }
+
     let stepParamsArray = blockParams.stepsArray; // No matter Block.Base or Block_TestParams.Base
     let stepCount = stepParamsArray.length;
     for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
