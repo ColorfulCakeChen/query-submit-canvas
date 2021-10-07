@@ -450,7 +450,7 @@ class Base {
             }
               break;
 
-            case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. Slower ShuffleNetV2
+            case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. ShuffleNetV2_ByPointwise22
             {
 //!!! ...unfinished... (2021/10/06)
             }
@@ -489,8 +489,8 @@ class Base {
 //           imageOut = this.calc_ShuffleNetV2( imageIn );
 //           break;
 //
-//         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) Slower ShuffleNetV2
-//           imageOut = this.calc_ShuffleNetV2_Slower( imageIn );
+//         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) ShuffleNetV2_ByPointwise22
+//           imageOut = this.calc_ShuffleNetV2_ByPointwise22( imageIn );
 //           break;
 //
 //         default:
@@ -527,8 +527,8 @@ class Base {
     return imageOut;
   }
 
-  /** Calculate imageOut by simulating Block as ShuffleNetV2_Slower. */
-  calc_ShuffleNetV2_Slower( imageIn ) {
+  /** Calculate imageOut by simulating Block as ShuffleNetV2_ByPointwise22. */
+  calc_ShuffleNetV2_ByPointwise22( imageIn ) {
 
 //!!! ...unfinished... (2021/09/30)
     return imageOut;
