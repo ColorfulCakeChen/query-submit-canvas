@@ -568,7 +568,8 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == 0 ): ONE_INPUT: (MobileNetV1)
+ *   - When ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
+ * (MobileNetV1 or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) )
  * <pre>
  * input0 - pointwise1 - depthwise1 ---------------- pointwise21
  *                                                 \ pointwise22
