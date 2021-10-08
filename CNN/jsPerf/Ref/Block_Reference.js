@@ -263,6 +263,10 @@ class Base {
     let nWhetherShuffleChannel = blockParams.nWhetherShuffleChannel;
 
     let stepCount = stepParamsArray.length;
+
+    tf.util.assert( ( stepCount > 0 ),
+      `Block stepCount (${stepCount}) should be larger than 0. ${parametersDescription}`);
+
     for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
       let stepName = `step${stepIndex}`;
 
@@ -283,7 +287,15 @@ class Base {
         asserter.propertyValue( "bKeepInputTensor", false );
       }
 
-      let pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
+      let pointwise1ChannelCount;
+      if ( 0 == stepIndex ) {
+        pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
+      } else {
+        // Although pointwise1ChannelCount is based on pointwise21ChannelCount, it is never changed after step0.
+        // Even if pointwise21ChannelCount is changed after step0 (e.g. ShuffleNetV2_ByPointwise22's stepLast),
+        // pointwise1ChannelCount is still the same as step0.
+      }
+
       asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
       asserter.propertyValue( "bPointwise1Bias", true );
       asserter.propertyValue( "pointwise1ActivationId", blockParams.nActivationId );
