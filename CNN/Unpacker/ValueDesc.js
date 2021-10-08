@@ -151,9 +151,9 @@ class ActivationFunction extends Int {
     //   - NONE: Beware. It easily results in infinity value because it does not have upper bound.
     //   - RELU: Beware. It easily results in infinity value because it does not have upper bound.
     //   - SOFTPLUS: Avoid. Backend WASM does not support it.
-    super( 0, 5,
-      [ "NONE",  "RELU6",  "SIGMOID",  "COS",  "SIN",  "TANH",  "RELU" ], //  "SOFTPLUS" ],
-      [   null, tf.relu6, tf.sigmoid, tf.cos, tf.sin, tf.tanh, tf.relu ]  // tf.softplus ]
+    super( 0, 6,
+      [ "NONE",  "RELU6",  "SIGMOID",  "TANH",  "COS",  "SIN",  "RELU" ], //  "SOFTPLUS" ],
+      [   null, tf.relu6, tf.sigmoid, tf.tanh, tf.cos, tf.sin, tf.relu ]  // tf.softplus ]
     );
   }
 
