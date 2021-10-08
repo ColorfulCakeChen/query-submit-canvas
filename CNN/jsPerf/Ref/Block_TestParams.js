@@ -231,28 +231,28 @@ class Base extends TestParams.Base {
 //         ValueDesc.ActivationFunction.Singleton.range.min,
 //         ValueDesc.ActivationFunction.Singleton.range.max
 //       ],
-      nActivationId: [
-        ValueDesc.ActivationFunction.Singleton.range.min + 1, // Exclude NONE for avoiding infinity.
-        ValueDesc.ActivationFunction.Singleton.range.max - 1  // Exclude RELU for avoiding infinity.
-      ],
 //       nActivationId: [
-//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+//         ValueDesc.ActivationFunction.Singleton.range.min + 1, // Exclude NONE for avoiding infinity.
+//         ValueDesc.ActivationFunction.Singleton.range.max - 1  // Exclude RELU for avoiding infinity.
 //       ],
+      nActivationId: [
+        ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+        ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+      ],
 
 //      nActivationIdAtBlockEnd: undefined,
 //       nActivationIdAtBlockEnd: [
 //         ValueDesc.ActivationFunction.Singleton.range.min,
 //         ValueDesc.ActivationFunction.Singleton.range.max
 //       ],
-      nActivationIdAtBlockEnd: [
-        ValueDesc.ActivationFunction.Singleton.range.min + 1, // Exclude NONE for avoiding infinity.
-        ValueDesc.ActivationFunction.Singleton.range.max - 1  // Exclude RELU for avoiding infinity.
-      ],
 //       nActivationIdAtBlockEnd: [
-//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+//         ValueDesc.ActivationFunction.Singleton.range.min + 1, // Exclude NONE for avoiding infinity.
+//         ValueDesc.ActivationFunction.Singleton.range.max - 1  // Exclude RELU for avoiding infinity.
 //       ],
+      nActivationIdAtBlockEnd: [
+        ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+        ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+      ],
 
 //      nWhetherShuffleChannel: undefined,
       nWhetherShuffleChannel: [
