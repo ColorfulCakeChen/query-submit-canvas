@@ -213,7 +213,7 @@ class HeightWidthDepth {
     this.block_list = [
 
       this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_0
-        = block_NotShuffleNet_NotMobileNet_Pointwise1Rate_0.stepCount,
+        = block_NotShuffleNet_NotMobileNet_Pointwise1Rate_0,
 
       this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_1
         = Block_Reference.Base.Block_create( testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_1 ),
