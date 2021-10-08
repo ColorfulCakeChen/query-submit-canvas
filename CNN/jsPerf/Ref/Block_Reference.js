@@ -267,10 +267,10 @@ class Base {
     tf.util.assert( ( stepCount > 0 ),
       `Block stepCount (${stepCount}) should be larger than 0. ${parametersDescription}`);
 
+    let stepName, stepParams, pointwise1ChannelCount;
     for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
-      let stepName = `step${stepIndex}`;
+      stepName = `step${stepIndex}`;
 
-      let stepParams;
       {
         stepParams = stepParamsArray[ stepIndex ];
         if ( stepParams instanceof PointDepthPoint_TestParams.Base ) {
@@ -287,7 +287,6 @@ class Base {
         asserter.propertyValue( "bKeepInputTensor", false );
       }
 
-      let pointwise1ChannelCount;
       if ( 0 == stepIndex ) {
         pointwise1ChannelCount = stepParams.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
       } else {
