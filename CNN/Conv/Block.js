@@ -667,6 +667,8 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
    * @override
    */
   determine_stepCount_depthwiseFilterHeight_Default_Last() {
+    super.determine_stepCount_depthwiseFilterHeight_Default_Last(); // Got default value.
+
     let blockParams = this.blockParams;
 
     let differenceHeight = blockParams.sourceHeight - blockParams.outputHeight;
