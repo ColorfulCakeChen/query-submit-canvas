@@ -2,8 +2,77 @@
 <html>
   <head>
     <title>Static query-submit-canvas</title>
+
+    <!-- Temp Test WASM int32 bug. -->
+    <!-- script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.9.0/dist/tf.min.js"></script -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js"></script>
+
+    <script>
+// let wasmUrl = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js";
+// await ScriptLoader_createPromise( wasmUrl, false, "wasmBackend" );
+
+// await testBy_filterDType( "int32" ); // Got Problem. WASM has wrong result.
+// await testBy_filterDType( "float32" ); // No Problem.
+
+// function ScriptLoader_createPromise( url, isModule, htmlElementId ) {
+//   if ( htmlElementId ) {
+//     let scriptElement = document.getElementById( htmlElementId );
+//     if ( scriptElement )
+//       return Promise.resolve();
+//   }
+
+//   console.log( "Loading \"" + url + "\"" );
+//   return new Promise( ( resolve, reject ) => {
+//     let attributes = { src: url, onload: e => resolve(e), onerror: e => reject(e) };
+
+//     if ( isModule )
+//       attributes.type = "module";
+
+//     if ( htmlElementId )
+//       attributes.id = htmlElementId;
+
+//     document.head.appendChild( Object.assign( document.createElement("script"), attributes ) );
+//   });
+// }
+
+async function testBy_filterDType( filterDType ) {
+  console.log( "\nfilterDType = " + filterDType );
+  await testBy_backend_filterDType( "wasm", filterDType );
+  await testBy_backend_filterDType( "cpu", filterDType );
+  await testBy_backend_filterDType( "webgl", filterDType );
+}
+
+async function testBy_backend_filterDType( backendName, filterDType ) {
+  //console.log( "Set backend to " + backendName );
+  await tf.setBackend( backendName );
+  console.log( "backend = " + tf.getBackend() );
+
+  let inputArray = [
+    100, 101,
+  ];
+
+  let inputShape = [ 1, 1, 2 ];
+  let inputTensor = tf.tensor( inputArray, inputShape );
+
+  let filterShape = [ 1, 1, 2, 1 ];
+  let filter = tf.tensor( [ 1, 0 ], filterShape, filterDType );
+
+  let strides = 1;
+  let pad = "valid"; //"same";
+  let r = tf.conv2d( inputTensor, filter, strides, pad );
+  r.print();
+}
+</script>
+
   </head>
   <body>
     <h1>This is a static template, there is no bundler or bundling involved!</h1>
+
+    <script>
+      await testBy_filterDType( "int32" ); // Got Problem. WASM has wrong result.
+      await testBy_filterDType( "float32" ); // No Problem.
+    </script>
+
   </body>
 </html>
