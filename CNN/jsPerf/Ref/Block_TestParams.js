@@ -237,7 +237,7 @@ class Base extends TestParams.Base {
 //       ],
       nActivationId: [
         ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+        ValueDesc.ActivationFunction.Singleton.Ids.TANH
       ],
 
 //      nActivationIdAtBlockEnd: undefined,
@@ -255,7 +255,7 @@ class Base extends TestParams.Base {
 //       ],
       nActivationIdAtBlockEnd: [
         ValueDesc.ActivationFunction.Singleton.Ids.NONE,
-        ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+        ValueDesc.ActivationFunction.Singleton.Ids.TANH
       ],
 
 //      nWhetherShuffleChannel: undefined,
