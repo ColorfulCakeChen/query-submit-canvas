@@ -537,7 +537,7 @@ class Base {
   get parametersDescription() {
     let str =
         `sourceHeight=${this.sourceHeight}, sourceWidth=${this.sourceWidth}, sourceChannelCount=${this.sourceChannelCount}, `
-      + `stepCountRequested=${this.stepCountRequested}, `
+      + `stepCountRequested=${this.stepCountRequested}, stepCount=${this.stepCount}, `
       + `pointwise1ChannelCountRate=${this.pointwise1ChannelCountRate}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
