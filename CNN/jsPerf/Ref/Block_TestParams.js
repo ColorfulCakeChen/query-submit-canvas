@@ -228,9 +228,13 @@ class Base extends TestParams.Base {
 //         ValueDesc.ActivationFunction.Singleton.range.max
 //       ],
       nActivationId: [
-        ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+        ValueDesc.ActivationFunction.Singleton.range.min,
+        ValueDesc.ActivationFunction.Singleton.range.min + 2 - 1
       ],
+//       nActivationId: [
+//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+//       ],
 
 //      nActivationIdAtBlockEnd: undefined,
 //       nActivationIdAtBlockEnd: [
@@ -238,9 +242,13 @@ class Base extends TestParams.Base {
 //         ValueDesc.ActivationFunction.Singleton.range.max
 //       ],
       nActivationIdAtBlockEnd: [
-        ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+        ValueDesc.ActivationFunction.Singleton.range.min,
+        ValueDesc.ActivationFunction.Singleton.range.min + 2 - 1
       ],
+//       nActivationIdAtBlockEnd: [
+//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+//       ],
 
 //      nWhetherShuffleChannel: undefined,
       nWhetherShuffleChannel: [
