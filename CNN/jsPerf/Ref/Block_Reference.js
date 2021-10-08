@@ -390,7 +390,7 @@ class Base {
             asserter.propertyValue( "channelCount0_pointwise1Before", blockParams.sourceChannelCount );
 
             if ( 0 == stepIndex ) {
-              if ( this.pointwise1ChannelCount == 0 ) {
+              if ( stepParams.pointwise1ChannelCount == 0 ) {
                 asserter.propertyValue( "channelCount1_pointwise1Before",
                   ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
               } else {
@@ -406,7 +406,7 @@ class Base {
               }
             }
 
-            if ( this.pointwise1ChannelCount == 0 ) {
+            if ( stepParams.pointwise1ChannelCount == 0 ) {
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
             } else {
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
