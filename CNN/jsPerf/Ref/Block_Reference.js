@@ -406,8 +406,12 @@ class Base {
               }
             }
 
-            if ( stepParams.pointwise1ChannelCount == 0 ) {
-              asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
+            if ( 0 == stepIndex ) {
+              if ( stepParams.pointwise1ChannelCount == 0 ) {
+                asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
+              } else {
+                asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
+              }
             } else {
               asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
             }
