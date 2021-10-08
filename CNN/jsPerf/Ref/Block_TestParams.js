@@ -249,8 +249,12 @@ class Base extends TestParams.Base {
 //         ValueDesc.ActivationFunction.Singleton.range.min + 1, // Exclude NONE for avoiding infinity.
 //         ValueDesc.ActivationFunction.Singleton.range.max - 1  // Exclude RELU for avoiding infinity.
 //       ],
+//       nActivationIdAtBlockEnd: [
+//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+//         ValueDesc.ActivationFunction.Singleton.Ids.RELU6
+//       ],
       nActivationIdAtBlockEnd: [
-        ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+        ValueDesc.ActivationFunction.Singleton.Ids.NONE,
         ValueDesc.ActivationFunction.Singleton.Ids.RELU6
       ],
 
