@@ -504,7 +504,7 @@ class Base {
         + `nActivationIdAtBlockEndName=${ValueDesc.ActivationFunction.Singleton.getStringOf( testParams.out.nActivationIdAtBlockEnd )}`
         + `(${testParams.out.nActivationIdAtBlockEnd}), `
 
-        + `nWhetherShuffleChannel=${ValueDesc.WhetherShuffleChannelName.Singleton.getStringOf( testParams.out.nWhetherShuffleChannel )}`
+        + `nWhetherShuffleChannel=${ValueDesc.WhetherShuffleChannel.Singleton.getStringOf( testParams.out.nWhetherShuffleChannel )}`
         + `(${testParams.out.nWhetherShuffleChannel}), `
 
         + `outputHeight=${referredParams.outputHeight}, outputWidth=${referredParams.outputWidth}, `
