@@ -259,6 +259,9 @@ class Base {
     } else { // Block.Base
     }
 
+    let stepCountRequested = blockParams.stepCountRequested;
+    let nWhetherShuffleChannel = blockParams.nWhetherShuffleChannel;
+
     let stepCount = stepParamsArray.length;
     for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
       let stepName = `step${stepIndex}`;
@@ -273,9 +276,6 @@ class Base {
       }
 
       let asserter = new ObjectPropertyAsserter.Base( `Block.${stepName}`, stepParams, parametersDescription );
-
-      let stepCountRequested = blockParams.stepCountRequested;
-      let nWhetherShuffleChannel = blockParams.nWhetherShuffleChannel;
 
       if ( 0 == stepIndex ) {
         asserter.propertyValue( "bKeepInputTensor", blockParams.bKeepInputTensor );
