@@ -793,11 +793,22 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
  * 2. Drawback when ( pointwise1ChannelCountRate == 0 )
  *
  * Channel shuffler has a characteristic that it always does not shuffle the first and last channel (i.e. the channel 0
- * and channel ( N - 1 ) will always be at the same place). In ShuffleNetV2, the pointwise1 could alleviate this issue.
- * However, if ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1 to change the first and last channel
- * position.
+ * and channel ( N - 1 ) will always be at the same place). In ShuffleNetV2, the pointwise1 could alleviate this issue
+ * a little.
+ *   - At the step0's branch of a block, the pointwise1 has a chance (the only one chance) to shuffle the last channel.
+ *   - Through step1 to stepLast, the the last channel will always stay stationary.
+ *     - It is never shuffled by channel shuffler.
+ *     - It is never manipulated by any pointwise2 (because there is no pointwise22 in this ShuffleNetV2 configuration).
  *
- * It is NOT suggested to use ShuffleNetV2 with ( pointwise1ChannelCountRate == 0 ).
+ * It is hard to say this characteristic is good or bad.
+ *   - In good side, it is easy to keep and pass information to the next block.
+ *   - In bad side, it wastes a channel (i.e. the last channel) if there is no information needed to be kept and passed
+ *       to the next block.
+ *
+ * If ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1 (i.e. no chance) to shuffle the (first and) last
+ * channel's position.
+ *
+ * So, it is NOT suggested to use ShuffleNetV2 with ( pointwise1ChannelCountRate == 0 ).
  *
  */
 Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDepthPointParams {
