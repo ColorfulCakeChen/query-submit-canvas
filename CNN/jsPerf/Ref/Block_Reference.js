@@ -525,45 +525,12 @@ class Base {
     let imageOutArray = this.imageInArray;
     let stepCount = testParams.stepsArray.length;
     for ( let stepIndex = 0; stepIndex < stepCount; ++stepIndex ) {
-      //let stepName = `step${stepIndex}`;
       pointDepthPointRef.testParams = testParams.stepsArray[ stepIndex ];
-
       imageOutArray = pointDepthPointRef.calcResult( imageOutArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
-
-      let imageOut = imageOutArray[ 0 ]; // The stepLast should have only input0.
-      return imageOut;
     }
 
-//!!! (2021/10/01 Remarked) Seems needs not different procedure. (Pre-condition: the Block.Params.to_PointDepthPointParams.Xxx is correct.)
-//     let stepCountRequested = testParams.out.stepCountRequested;
-//     let nWhetherShuffleChannel = testParams.out.nWhetherShuffleChannel;
-//
-//     let imageOut;
-//     if ( this.stepCountRequested <= 1 ) {  // 1. Not ShuffleNetV2, Not MobileNetV2.
-//       imageOut = this.calc_NotShuffleNet_NotMobileNet( imageIn );
-//
-//     } else { // ( this.stepCountRequested >= 2 )
-//       switch ( this.nWhetherShuffleChannel ) {
-//         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
-//           imageOut = this.calc_MobileNetV2( imageIn );
-//           break;
-//
-//         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) ShuffleNetV2
-//           imageOut = this.calc_ShuffleNetV2( imageIn );
-//           break;
-//
-//         case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) ShuffleNetV2_ByPointwise22
-//           imageOut = this.calc_ShuffleNetV2_ByPointwise22( imageIn );
-//           break;
-//
-//         default:
-//           tf.util.assert( false, `Block_Reference.calcResult(): `
-//             `unknown nWhetherShuffleChannel ( ${nWhetherShuffleChannel} ) value. ${this.paramsOutDescription}` );
-//           break;
-//       }
-//     }
-//
-//     return imageOut;
+    let imageOut = imageOutArray[ 0 ]; // The stepLast should have only input0.
+    return imageOut;
   }
 
   /** Calculate imageOut by simulating Block as NotShuffleNet_NotMobileNet. */
