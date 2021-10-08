@@ -987,11 +987,6 @@ class Base extends ReturnOrClone.Base {
     }
 
     // 5.2 Pointwise22
-    
-//!!! ...unfinished... (2021/09/02)
-// When Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) (ShuffleNetV2's body/tail),
-// there is always no pointwise22 even if ( bOutput1Requested == true ).
-
     if ( this.pointwise22ChannelCount > 0 ) {
 
       this.pointwise22 = new Pointwise.Base(
