@@ -70,8 +70,8 @@ async function testBy_backend_filterDType( backendName, filterDType ) {
     <h1>This is a static template, there is no bundler or bundling involved!</h1>
 
     <script>
-      await testBy_filterDType( "int32" ); // Got Problem. WASM has wrong result.
-      await testBy_filterDType( "float32" ); // No Problem.
+      testBy_filterDType( "int32" ); // Got Problem. WASM has wrong result.
+      //await testBy_filterDType( "float32" ); // No Problem.
     </script>
 
   </body>
