@@ -222,29 +222,33 @@ class Base extends TestParams.Base {
 
       // Because the logic of activation function is simpler than other, it is just randomly tested once
       // for speeding up testing.
+      //
+      // Beware of NONE and RELU. They easily result in infinity value because they do not have upper bound.
+      //
 //      nActivationId: undefined,
-      nActivationId: [
-        ValueDesc.ActivationFunction.Singleton.range.min,
-        ValueDesc.ActivationFunction.Singleton.range.max
-      ],
+//!!! (2021/10/08 Remarked) Ignore NONE and RELU for avoiding infinity.
 //       nActivationId: [
 //         ValueDesc.ActivationFunction.Singleton.range.min,
-//         ValueDesc.ActivationFunction.Singleton.range.min + 2 - 1
+//         ValueDesc.ActivationFunction.Singleton.range.max
 //       ],
+      nActivationId: [
+        ValueDesc.ActivationFunction.Singleton.range.min + 1, // Exclude NONE for avoiding infinity.
+        ValueDesc.ActivationFunction.Singleton.range.max - 1  // Exclude RELU for avoiding infinity.
+      ],
 //       nActivationId: [
 //         ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
 //         ValueDesc.ActivationFunction.Singleton.Ids.RELU6
 //       ],
 
 //      nActivationIdAtBlockEnd: undefined,
-      nActivationIdAtBlockEnd: [
-        ValueDesc.ActivationFunction.Singleton.range.min,
-        ValueDesc.ActivationFunction.Singleton.range.max
-      ],
 //       nActivationIdAtBlockEnd: [
 //         ValueDesc.ActivationFunction.Singleton.range.min,
-//         ValueDesc.ActivationFunction.Singleton.range.min + 2 - 1
+//         ValueDesc.ActivationFunction.Singleton.range.max
 //       ],
+      nActivationIdAtBlockEnd: [
+        ValueDesc.ActivationFunction.Singleton.range.min + 1, // Exclude NONE for avoiding infinity.
+        ValueDesc.ActivationFunction.Singleton.range.max - 1  // Exclude RELU for avoiding infinity.
+      ],
 //       nActivationIdAtBlockEnd: [
 //         ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
 //         ValueDesc.ActivationFunction.Singleton.Ids.RELU6
