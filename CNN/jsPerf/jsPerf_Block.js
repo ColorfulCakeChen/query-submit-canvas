@@ -88,8 +88,6 @@ class HeightWidthDepth {
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
 
-    let stepCountRequested = 10;
-
     // Test Case 1: (NotShuffleNet_NotMobileNet, pointwise1ChannelCountRate 0)
     let testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_0 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
@@ -118,8 +116,15 @@ class HeightWidthDepth {
     );
 
 
-    // Test Case 4: (MobileNet, Step 10, pointwise1ChannelCountRate 0)
-    let testCase_MobileNet_Step_10_Pointwise1Rate_0 =
+    // For calculate the step count.
+    let block_NotShuffleNet_NotMobileNet_Pointwise1Rate_0
+          = Block_Reference.Base.Block_create( testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_0 );
+
+    let stepCountRequested = block_NotShuffleNet_NotMobileNet_Pointwise1Rate_0.stepCount;
+
+
+    // Test Case 4: (MobileNet, Step N, pointwise1ChannelCountRate 0)
+    let testCase_MobileNet_Step_N_Pointwise1Rate_0 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 0,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -127,8 +132,8 @@ class HeightWidthDepth {
       true
     );
 
-    // Test Case 5: (MobileNet, Step 10, pointwise1ChannelCountRate 1)
-    let testCase_MobileNet_Step_10_Pointwise1Rate_1 =
+    // Test Case 5: (MobileNet, Step N, pointwise1ChannelCountRate 1)
+    let testCase_MobileNet_Step_N_Pointwise1Rate_1 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 1,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -136,8 +141,8 @@ class HeightWidthDepth {
       true
     );
 
-    // Test Case 6: (MobileNet, Step 10, pointwise1ChannelCountRate 2)
-    let testCase_MobileNet_Step_10_Pointwise1Rate_2 =
+    // Test Case 6: (MobileNet, Step N, pointwise1ChannelCountRate 2)
+    let testCase_MobileNet_Step_N_Pointwise1Rate_2 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 2,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -146,8 +151,8 @@ class HeightWidthDepth {
     );
 
 
-    // Test Case 7: (ShuffleNetV2, Step 10, pointwise1ChannelCountRate 0)
-    let testCase_ShuffleNetV2_Step_10_Pointwise1Rate_0 =
+    // Test Case 7: (ShuffleNetV2, Step N, pointwise1ChannelCountRate 0)
+    let testCase_ShuffleNetV2_Step_N_Pointwise1Rate_0 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 0,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -155,8 +160,8 @@ class HeightWidthDepth {
       true
     );
 
-    // Test Case 8: (ShuffleNetV2, Step 10, pointwise1ChannelCountRate 1)
-    let testCase_ShuffleNetV2_Step_10_Pointwise1Rate_1 =
+    // Test Case 8: (ShuffleNetV2, Step N, pointwise1ChannelCountRate 1)
+    let testCase_ShuffleNetV2_Step_N_Pointwise1Rate_1 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 1,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -164,8 +169,8 @@ class HeightWidthDepth {
       true
     );
 
-    // Test Case 9: (ShuffleNetV2, Step 10, pointwise1ChannelCountRate 2)
-    let testCase_ShuffleNetV2_Step_10_Pointwise1Rate_2 =
+    // Test Case 9: (ShuffleNetV2, Step N, pointwise1ChannelCountRate 2)
+    let testCase_ShuffleNetV2_Step_N_Pointwise1Rate_2 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 2,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -174,8 +179,8 @@ class HeightWidthDepth {
     );
 
 
-    // Test Case 10: (ShuffleNetV2_ByPointwise22, Step 10, pointwise1ChannelCountRate 0)
-    let testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_0 =
+    // Test Case 10: (ShuffleNetV2_ByPointwise22, Step N, pointwise1ChannelCountRate 0)
+    let testCase_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_0 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 0,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -183,8 +188,8 @@ class HeightWidthDepth {
       true
     );
 
-    // Test Case 11: (ShuffleNetV2_ByPointwise22, Step 10, pointwise1ChannelCountRate 1)
-    let testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_1 =
+    // Test Case 11: (ShuffleNetV2_ByPointwise22, Step N, pointwise1ChannelCountRate 1)
+    let testCase_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_1 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 1,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -192,8 +197,8 @@ class HeightWidthDepth {
       true
     );
 
-    // Test Case 12: (ShuffleNetV2_ByPointwise22, Step 10, pointwise1ChannelCountRate 2)
-    let testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_2 =
+    // Test Case 12: (ShuffleNetV2_ByPointwise22, Step N, pointwise1ChannelCountRate 2)
+    let testCase_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_2 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
       this.height, this.width, this.depth, stepCountRequested, 2,
       3, ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
@@ -208,7 +213,7 @@ class HeightWidthDepth {
     this.block_list = [
 
       this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_0
-        = Block_Reference.Base.Block_create( testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_0 ),
+        = block_NotShuffleNet_NotMobileNet_Pointwise1Rate_0.stepCount,
 
       this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_1
         = Block_Reference.Base.Block_create( testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_1 ),
@@ -217,34 +222,34 @@ class HeightWidthDepth {
         = Block_Reference.Base.Block_create( testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_2 ),
 
 
-      this.block_MobileNet_Step_10_Pointwise1Rate_0
-        = Block_Reference.Base.Block_create( testCase_MobileNet_Step_10_Pointwise1Rate_0 ),
+      this.block_MobileNet_Step_N_Pointwise1Rate_0
+        = Block_Reference.Base.Block_create( testCase_MobileNet_Step_N_Pointwise1Rate_0 ),
 
-      this.block_MobileNet_Step_10_Pointwise1Rate_1
-        = Block_Reference.Base.Block_create( testCase_MobileNet_Step_10_Pointwise1Rate_1 ),
+      this.block_MobileNet_Step_N_Pointwise1Rate_1
+        = Block_Reference.Base.Block_create( testCase_MobileNet_Step_N_Pointwise1Rate_1 ),
 
-      this.block_MobileNet_Step_10_Pointwise1Rate_2
-        = Block_Reference.Base.Block_create( testCase_MobileNet_Step_10_Pointwise1Rate_2 ),
-
-
-      this.block_ShuffleNetV2_Step_10_Pointwise1Rate_0
-        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Step_10_Pointwise1Rate_0 ),
-
-      this.block_ShuffleNetV2_Step_10_Pointwise1Rate_1
-        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Step_10_Pointwise1Rate_1 ),
-
-      this.block_ShuffleNetV2_Step_10_Pointwise1Rate_2
-        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Step_10_Pointwise1Rate_2 ),
+      this.block_MobileNet_Step_N_Pointwise1Rate_2
+        = Block_Reference.Base.Block_create( testCase_MobileNet_Step_N_Pointwise1Rate_2 ),
 
 
-      this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_0
-        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_0 ),
+      this.block_ShuffleNetV2_Step_N_Pointwise1Rate_0
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Step_N_Pointwise1Rate_0 ),
 
-      this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_1
-        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_1 ),
+      this.block_ShuffleNetV2_Step_N_Pointwise1Rate_1
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Step_N_Pointwise1Rate_1 ),
 
-      this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_2
-        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_2 ),
+      this.block_ShuffleNetV2_Step_N_Pointwise1Rate_2
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_Step_N_Pointwise1Rate_2 ),
+
+
+      this.block_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_0
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_0 ),
+
+      this.block_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_1
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_1 ),
+
+      this.block_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_2
+        = Block_Reference.Base.Block_create( testCase_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_2 ),
 
     ];
 
@@ -278,50 +283,50 @@ class HeightWidthDepth {
   }
 
 
-  test_MobileNet_Step_10_Pointwise1Rate_0() {
-    let outputTensor3d = this.block_MobileNet_Step_10_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
+  test_MobileNet_Step_N_Pointwise1Rate_0() {
+    let outputTensor3d = this.block_MobileNet_Step_N_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
-  test_MobileNet_Step_10_Pointwise1Rate_1() {
-    let outputTensor3d = this.block_MobileNet_Step_10_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
+  test_MobileNet_Step_N_Pointwise1Rate_1() {
+    let outputTensor3d = this.block_MobileNet_Step_N_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
-  test_MobileNet_Step_10_Pointwise1Rate_2() {
-    let outputTensor3d = this.block_MobileNet_Step_10_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-
-  test_ShuffleNetV2_Step_10_Pointwise1Rate_0() {
-    let outputTensor3d = this.block_ShuffleNetV2_Step_10_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-  test_ShuffleNetV2_Step_10_Pointwise1Rate_1() {
-    let outputTensor3d = this.block_ShuffleNetV2_Step_10_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-  test_ShuffleNetV2_Step_10_Pointwise1Rate_2() {
-    let outputTensor3d = this.block_ShuffleNetV2_Step_10_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
+  test_MobileNet_Step_N_Pointwise1Rate_2() {
+    let outputTensor3d = this.block_MobileNet_Step_N_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
 
-  test_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_0() {
-    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
+  test_ShuffleNetV2_Step_N_Pointwise1Rate_0() {
+    let outputTensor3d = this.block_ShuffleNetV2_Step_N_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
-  test_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_1() {
-    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
+  test_ShuffleNetV2_Step_N_Pointwise1Rate_1() {
+    let outputTensor3d = this.block_ShuffleNetV2_Step_N_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
-  test_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_2() {
-    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_10_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
+  test_ShuffleNetV2_Step_N_Pointwise1Rate_2() {
+    let outputTensor3d = this.block_ShuffleNetV2_Step_N_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+
+  test_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_0() {
+    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+  test_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_1() {
+    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
+    tf.dispose( outputTensor3d );
+  }
+
+  test_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_2() {
+    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
 
