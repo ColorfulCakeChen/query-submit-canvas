@@ -729,7 +729,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
     let blockParams = this.blockParams;
 
     // Currently, ShuffleNetV2 (and ShuffleNetV2_ByPointwise22) must have at least 2 steps because PointDepthPoint
-    // can not achieve the head/body/tail of ShuffleNetV2 at the same time. 
+    // can not achieve the head/body/tail of ShuffleNetV2 at the same time.
     tf.util.assert( this.stepCount >= 2,
       `Block.Params.to_PointDepthPointParams.ShuffleNetV2(): `
         + `stepCount ( ${this.stepCount} ) must be at least 2 in ShuffleNetV2 (and ShuffleNetV2_ByPointwise22).` );
@@ -968,6 +968,16 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
   /** @override */
   configTo_beforeStep0() {
     let blockParams = this.blockParams;
+
+    // Currently, MobileNetV2 must have at least 2 steps because PointDepthPoint can not achieve the head/body/tail
+    // of MobileNetV2 at the same time.
+    //
+    // Ideally, this assertion should be placed in determine_stepCount_depthwiseFilterHeight_Default_Last(). However,
+    // the sub-class (i.e. NotShuffleNet_NotMobileNet) could accept step count less than 2. So, assert here.
+    tf.util.assert( this.stepCount >= 2,
+      `Block.Params.to_PointDepthPointParams.MobileNetV2(): `
+        + `stepCount ( ${this.stepCount} ) must be at least 2 in MobileNetV2.` );
+
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
 
     // In MobileNetV2:
