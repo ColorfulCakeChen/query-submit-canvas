@@ -92,6 +92,8 @@ class HeightWidthDepth {
 // ShuffleNetV2_Pointwise1Rate_1, ShuffleNetV2_Pointwise1Rate_2, ShuffleNetV2__ByPointwise22_Pointwise1Rate_2.
 // Because they are unfair.
 
+//!!! ...unfinished... (2021/10/11) Log every configuration's filters and bias weights count.
+
     // Test Case 1: (NotShuffleNet_NotMobileNet, pointwise1ChannelCountRate 0)
     let testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_0 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
