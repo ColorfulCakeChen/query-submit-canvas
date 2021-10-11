@@ -208,7 +208,11 @@ class HeightWidthDepthGroup {
         }
 
         let imageOutArray = new Array( this.dataTensor3dArray.length );
-        PointDepthPoint_Reference.Base.calcConcatShuffleSplit( this.concatPointwiseConv,
+//!!! (2021/10/11 Remarked)
+//         PointDepthPoint_Reference.Base.calcConcatShuffleSplit( this.concatPointwiseConv,
+//           imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
+        PointDepthPoint_Reference.Base.calcConcatShuffleSplit(
+          this.concatPointwiseConv.concatenatedShape, this.concatPointwiseConv.outputGroupCount,
           imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
 
         for ( let i = 0; i < t1Array.length; ++i ) {
