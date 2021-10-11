@@ -1046,7 +1046,8 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
  * depthwiseFilterHeight, bias-activation at pointwise2 (not at depthwise), and withput add-input-to-output.
  *
  * Since it is similar to MobileNetV2, its performance could be compared to MobileNetV2 more eaily. Interestingly,
- * it is usually slower than MobileNetV2.
+ * it is usually slower than MobileNetV2. The reason might be MobileNetV2's step0 uses ( depthwiseStridesPad == 2 ).
+ * This shrinks ( height, width ) quickly so that data are reduced a lot.
  *
  */
 Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Params.to_PointDepthPointParams.MobileNetV2 {
