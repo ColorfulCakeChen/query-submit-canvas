@@ -1036,9 +1036,10 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
 /** Provide parameters for pure depthwise-pointwise convolutions.
  *
  * This configuration is similar to MobileNetV2 but with ( depthwiseStridesPad == 0 ), automatic step count, varing
- * depthwiseFilterHeight, and withput add-input-to-output.
+ * depthwiseFilterHeight, bias-activation at pointwise2 (not at depthwise), and withput add-input-to-output.
  *
- * Since it is similar to MobileNetV2, its performance could be compared to MobileNetV2 more eaily.
+ * Since it is similar to MobileNetV2, its performance could be compared to MobileNetV2 more eaily. Interestingly,
+ * it is usually slower than MobileNetV2.
  *
  */
 //!!! (2021/10/11 Remarked) Inherits from MobileNetV2.
