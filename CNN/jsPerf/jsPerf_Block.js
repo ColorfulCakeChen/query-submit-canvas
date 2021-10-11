@@ -92,7 +92,8 @@ class HeightWidthDepth {
 // This may be more different for ShuffleNetV2_ByPointwise22.
 
 //!!! ...unfinished... (2021/10/11) Perhaps, drop MobileNetV2_Pointwise1Rate_0, MobileNetV2_Pointwise1Rate_1,
-// ShuffleNetV2_Pointwise1Rate_1, ShuffleNetV2_Pointwise1Rate_2. Because they are unfair.
+// ShuffleNetV2_Pointwise1Rate_1, ShuffleNetV2_Pointwise1Rate_2, ShuffleNetV2__ByPointwise22_Pointwise1Rate_2.
+// Because they are unfair.
 
     // Test Case 1: (NotShuffleNet_NotMobileNet, pointwise1ChannelCountRate 0)
     let testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_0 =
