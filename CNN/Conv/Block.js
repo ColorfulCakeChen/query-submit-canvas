@@ -658,7 +658,18 @@ Params.to_PointDepthPointParams = class {
 /** Provide parameters for ShuffleNetV2 (i.e. shuffle channel by ChannelShuffler.ConcatPointwiseConv).
  *
  *
- * 1. A special case: NoPointwise1 ShuffleNetV2 (i.e. without pointwise1, with concatenator).
+ * 1. Be ware of ( pointwise1ChannelCountRate == 2 )
+ *
+ * ShuffleNetV2 always double the channel count. It is achieved by concatenation. This is different from MobileNetV2 which achieves
+ * channel count doubling by pointwise1.
+ *
+ * That is, if ( pointwise1ChannelCountRate == 2 ), there will be 4 times (not 2 times) channels to be processed in fact. It could be
+ * expected that the performance will be slower than ( pointwise1ChannelCountRate == 2 ) in MobileNetV2 unfairly.
+ *
+ * So, the original ShuffleNetV2 is ( pointwise1ChannelCountRate == 1 ).
+ *
+ *
+ * 2. A special case: NoPointwise1 ShuffleNetV2 (i.e. without pointwise1, with concatenator).
  * 
  * Q: How to specify this configuration?
  * A: By  (   ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_CHANNEL_SHUFFLER )
@@ -688,7 +699,7 @@ Params.to_PointDepthPointParams = class {
  *       - ( nActivationIdAtBlockEnd == ValueDesc.ActivationFunction.Singleton.Ids.NONE)
  *
  *
- * 2. Drawback when ( pointwise1ChannelCountRate == 0 )
+ * 3. Drawback when ( pointwise1ChannelCountRate == 0 )
  *
  * Channel shuffler has a characteristic that it always does not shuffle the first and last channel (i.e. the channel 0
  * and channel ( N - 1 ) will always be at the same place). In ShuffleNetV2, the pointwise1 could alleviate this issue
@@ -734,7 +745,8 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
     this.bPointwise1Bias = true;
     this.pointwise1ActivationId = blockParams.nActivationId;
 
-    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                  // All steps will not double the channel count.
+    // In ShuffleNetV2, all steps (except step0 in NoPointwise1) will not double the channel count by depthwise.
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps uses default depthwise filter size.
     this.depthwiseStridesPad = 2;                                    // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
 
@@ -784,7 +796,8 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
     // will be concatenated with input1.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1;
 
-    this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
+    // In ShuffleNetV2, all steps (except step0 in NoPointwise1) will not double the channel count by depthwise.
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     this.depthwiseStridesPad = 1;  // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
@@ -922,7 +935,21 @@ Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22 = class extends Param
 }
 
 
-/** Provide parameters for MobileNetV2 (i.e. with pointwise1, with add-input-to-output). */
+/** Provide parameters for MobileNetV2 (i.e. with pointwise1, with add-input-to-output).
+ *
+ *
+ * 1. Be ware of ( pointwise1ChannelCountRate == 1 )
+ *
+ * MobileNetV2 double the channel count by pointwise1. This is different from ShuffleNetV2 which achieves channel count doubling
+ * by concatenation.
+ *
+ * That is, if ( pointwise1ChannelCountRate <= 1 ), there will be only 1 times (not 2 times) channels to be processed in fact.
+ * It could be expected that the performance will be faser than ( pointwise1ChannelCountRate == 1 ) in ShuffleNetV2 unfairly.
+ *
+ * So, the original MobileNetV2 is ( pointwise1ChannelCountRate == 2 ).
+ *
+ *
+ */
 Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepthPointParams {
 
   /** @override */
