@@ -666,7 +666,7 @@ Params.to_PointDepthPointParams = class {
  * That is, if ( pointwise1ChannelCountRate == 2 ), there will be 4 times (not 2 times) channels to be processed in fact. It could be
  * expected that the performance will be slower than ( pointwise1ChannelCountRate == 2 ) in MobileNetV2 unfairly.
  *
- * So, the original ShuffleNetV2 is ( pointwise1ChannelCountRate == 1 ).
+ * So, the original ShuffleNetV2 should be ( pointwise1ChannelCountRate == 1 ).
  *
  *
  * 2. A special case: NoPointwise1 ShuffleNetV2 (i.e. without pointwise1, with concatenator).
@@ -946,7 +946,7 @@ Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22 = class extends Param
  * That is, if ( pointwise1ChannelCountRate <= 1 ), there will be only 1 times (not 2 times) channels to be processed in fact.
  * It could be expected that the performance will be faser than ( pointwise1ChannelCountRate == 1 ) in ShuffleNetV2 unfairly.
  *
- * So, the original MobileNetV2 is ( pointwise1ChannelCountRate == 2 ).
+ * So, the original MobileNetV2 should be ( pointwise1ChannelCountRate == 2 ).
  *
  *
  */
