@@ -88,16 +88,17 @@ class Params extends Weights.Params {
    *       weights. The two depthwise results will be concatenated. The concatenated result will be processed by pointwise2
    *       convolution. This is the only one case which there will be second depthwise.
    *
-   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT (-1): (MobileNetV2)
+   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT (-1): (MobileNetV2's body and tail).
    *       The inputTensors[ 1 ] will not be used at all (will be ignored completely). The inputTensors[ 0 ] will be processed by
    *       pointwise1, one depthwise operation, and pointwise2 convolution. Finally, the inputTensors[ 0 ] will be added to the
    *       result of pointwise2. This is the only one case which will do add-input-to-output.
    *
-   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0): (MobileNetV1)
+   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0): (MobileNetV1 or MobileNetV2's head
+   *       or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) ).
    *       The inputTensors[ 1 ] will not be used at all (will be ignored completely). The inputTensors[ 0 ] will be processed
    *       by pointwise1, one depthwise operation, and pointwise2 convolution.
    *
-   *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise22's body/tail)
+   *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise22's body/tail).
    *       It should be the channel count of input1.
    *
    *       - The input1 will not be processed by any pointwise1 and depthwise operation.
@@ -560,7 +561,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == -1 ): ONE_INPUT_ADD_TO_OUTPUT: (MobileNetV2)
+ *   - When ( channelCount1_pointwise1Before == -1 ): ONE_INPUT_ADD_TO_OUTPUT: (MobileNetV2's body and tail)
  * <pre>
  *        /------------------------------------------------------\
  * input0 - pointwise1 - depthwise1 ---------------- pointwise21 - addInput0ToPointwise21
@@ -570,7 +571,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *
  *
  *   - When ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
- * (MobileNetV1 or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) )
+ * (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) )
  * <pre>
  * input0 - pointwise1 - depthwise1 ---------------- pointwise21
  *                                                 \ pointwise22
