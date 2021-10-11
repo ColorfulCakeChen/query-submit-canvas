@@ -327,30 +327,14 @@ class Base {
         }
 
         asserter.propertyValue( "depthwiseStridesPad", 0 );
-//!!! (2021/10/11 Remarked) Inherits from MobileNetV2.
-//         asserter.propertyValue( "bDepthwiseBias", false );
-//         asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
-        asserter.propertyValue( "bDepthwiseBias", true );
-        asserter.propertyValue( "depthwiseActivationId", blockParams.nActivationId );
+        asserter.propertyValue( "bDepthwiseBias", false );
+        asserter.propertyValue( "depthwiseActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
         asserter.propertyValue( "pointwise21ChannelCount", pointwise21ChannelCount );
-//!!! (2021/10/11 Remarked) Inherits from MobileNetV2.
-//         asserter.propertyValue( "bPointwise21Bias", true );
-//
-//         if ( ( stepCount - 1 ) != stepIndex ) {
-//           asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
-//         } else { // stepLast
-//           asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationIdAtBlockEnd );
-//         }
+        asserter.propertyValue( "bPointwise21Bias", true );
 
         if ( ( stepCount - 1 ) != stepIndex ) {
-          asserter.propertyValue( "bPointwise21Bias", false );
-        } else { // stepLast
-          asserter.propertyValue( "bPointwise21Bias", true );
-        }
-
-        if ( ( stepCount - 1 ) != stepIndex ) {
-          asserter.propertyValue( "pointwise21ActivationId", ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+          asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationId );
         } else { // stepLast
           asserter.propertyValue( "pointwise21ActivationId", blockParams.nActivationIdAtBlockEnd );
         }
