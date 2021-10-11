@@ -17,7 +17,7 @@ class Base {
 
   constructor() {
     this.PointDepthPoint_Reference = new PointDepthPoint_Reference.Base();
-    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.4 );
+    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.5 );
 
     // For reducing memory allocation.
     this.imageInArray = new Array( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
@@ -311,12 +311,6 @@ class Base {
         asserter.propertyValue( "channelCount1_pointwise1Before",
           ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT );
 
-//!!! (2021/10/11 Remarked) Inherits from MobileNetV2.
-//         if ( 0 == stepIndex ) {
-//           asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 2 );
-//         } else {
-//           asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
-//         }
         asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", 1 );
 
         if ( ( stepCount - 1 ) != stepIndex ) {
