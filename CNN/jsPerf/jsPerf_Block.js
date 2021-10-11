@@ -14,7 +14,7 @@ import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
 /**
  * Test CNN Block.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/15055/0/colorfulcakechen-cnn-block-c853a5e0e99cb69685bdb85a004c}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/15055/85/colorfulcakechen-cnn-block-97a961a599defc52945aca5df9d7}
  */
 
 /**
@@ -87,9 +87,6 @@ class HeightWidthDepth {
     // The block performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
-
-//!!! ...unfinished... (2021/10/11) should compare performance for bias-activation at depthwise or pointwise2.
-// This may be more different for ShuffleNetV2_ByPointwise22.
 
 //!!! ...unfinished... (2021/10/11) Perhaps, drop MobileNetV2_Pointwise1Rate_0, MobileNetV2_Pointwise1Rate_1,
 // ShuffleNetV2_Pointwise1Rate_1, ShuffleNetV2_Pointwise1Rate_2, ShuffleNetV2__ByPointwise22_Pointwise1Rate_2.
