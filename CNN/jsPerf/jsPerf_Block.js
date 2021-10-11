@@ -88,6 +88,9 @@ class HeightWidthDepth {
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
     //
 
+//!!! ...unfinished... (2021/10/11) should compare performance for bias-activation at depthwise or pointwise2.
+// This may be more different for ShuffleNetV2_ByPointwise22.
+
     // Test Case 1: (NotShuffleNet_NotMobileNet, pointwise1ChannelCountRate 0)
     let testCase_NotShuffleNet_NotMobileNet_Pointwise1Rate_0 =
     ( new Block_TestParams.Base() ).set_By_ParamsScattered(
