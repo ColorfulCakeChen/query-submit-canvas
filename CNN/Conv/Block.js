@@ -1106,6 +1106,23 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
 
     let blockParams = this.blockParams;
     this.depthwiseStridesPad = 0; // In NotShuffleNet_NotMobileNet, always ( strides = 1, pad = "valid" ).
+
+//!!! ...unfinished... (2021/10/11) Because there is no add-input-to-output, the pointwise2 should have bias and activation.
+// Otherwise, the pointwise2 and the pointwise1 of the next step will become one (not two) affine transformation.
+
+    // In NotShuffleNet_NotMobileNet, depthwise convolution doesn't have activation.
+    //
+    // Because NotShuffleNet_NotMobileNet does not have add-input-to-output (different from MobileNetV2), its pointwise2 should
+    // have bias and activation. Otherwise, the pointwise2 and the pointwise1 of the next step will become one (not two) affine
+    // transformation.
+
+    // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
+    this.bDepthwiseBias = false;
+    this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+
+    // In NotShuffleNet_NotMobileNet, all steps' pointwise21 always has bias and activation.
+    this.bPointwise21Bias = true;
+    this.pointwise21ActivationId = blockParams.nActivationId;
   }
 
   /** @override */
