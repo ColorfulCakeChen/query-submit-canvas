@@ -816,8 +816,21 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
 Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDepthPointParams {
 
   /** @override */
+  determine_stepCount_depthwiseFilterHeight_Default_Last() {
+    super.determine_stepCount_depthwiseFilterHeight_Default_Last();
+
+    let blockParams = this.blockParams;
+
+    // In current desgin, ShuffleNetV2 (and ShuffleNetV2_ByPointwise22) must have at least 2 steps.
+    tf.util.assert( blockParams.stepCount >= 2,
+      `Block.Params.to_PointDepthPointParams.ShuffleNetV2(): `
+        + ` stepCount ( ${blockParams.stepCount} ) must be at least 2 in ShuffleNetV2 (and ShuffleNetV2_ByPointwise22).` );
+  }
+
+  /** @override */
   configTo_beforeStep0() {
     let blockParams = this.blockParams;
+
     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count (as input0).
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE; // with concatenation.
 
@@ -1083,8 +1096,8 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
   configTo_beforeStepLast() {
     super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
 
-    // In MobileNetV2, although there is no activation function after pointwise21, it should have bias after pointwise21 for the
-    // stepLast. The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
+    // In MobileNetV2, although there is no activation function after pointwise21, it should have bias after pointwise21 for
+    // the stepLast. The reason is the stepLast does not have the next step's pointwise1 to provide bias to complete affine
     // transformation. It must do it by itself.
     this.bPointwise21Bias = true;
   }
