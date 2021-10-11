@@ -821,7 +821,8 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 
     let blockParams = this.blockParams;
 
-    // In current desgin, ShuffleNetV2 (and ShuffleNetV2_ByPointwise22) must have at least 2 steps.
+    // Currently, ShuffleNetV2 (and ShuffleNetV2_ByPointwise22) must have at least 2 steps because PointDepthPoint
+    // can not achieve the head/body/tail of ShuffleNetV2 at the same time. 
     tf.util.assert( this.stepCount >= 2,
       `Block.Params.to_PointDepthPointParams.ShuffleNetV2(): `
         + `stepCount ( ${this.stepCount} ) must be at least 2 in ShuffleNetV2 (and ShuffleNetV2_ByPointwise22).` );
