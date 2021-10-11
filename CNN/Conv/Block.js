@@ -7,6 +7,10 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as PointDepthPoint from "./PointDepthPoint.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
+//!!! ...unfinished... (2021/10/11)
+// Perhaps, a parameter control bias-activation should be at depthwise (like MobileNetV2) or pointwise2 (like ShuffleNetV2).
+// Maybe, combine the parameter with nActivationIdAtBlockEnd into one parameter?
+
 /**
  * Convolution block parameters.
  *
