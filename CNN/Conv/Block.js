@@ -1106,7 +1106,7 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
 
   /** @override */
   configTo_afterStep0() {
-    super.configTo_beforeStep0(); // Almost the same as MobileNetV2.
+    super.configTo_afterStep0(); // Almost the same as MobileNetV2.
 
     // In NotShuffleNet_NotMobileNet:
     //   - All steps (include step0) without add-input-to-output (and without concatenation).
