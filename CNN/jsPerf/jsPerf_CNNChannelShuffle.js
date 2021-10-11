@@ -199,29 +199,30 @@ class HeightWidthDepthGroup {
       let memoryInfo4 = tf.memory();
       tf.util.assert( memoryInfo4.numTensors == ( memoryInfo3.numTensors + t4Array.length ), `PointwiseConv() memory leak`);
 
-      // Test reference shuffle-split.
-      {
-        let imageInArray = new Array( this.dataTensor3dArray.length );
-        for ( let i = 0; i < this.dataTensor3dArray.length; ++i ) {
-          let t = this.dataTensor3dArray[ i ];
-          imageInArray[ i ] = { height: t.shape[ 0 ], width: t.shape[ 1 ], depth: t.shape[ 2 ], dataArray: t.dataSync() };
-        }
-
-        let imageOutArray = new Array( this.dataTensor3dArray.length );
 //!!! (2021/10/11 Remarked)
-//         PointDepthPoint_Reference.Base.calcConcatShuffleSplit( this.concatPointwiseConv,
+//       // Test reference shuffle-split.
+//       {
+//         let imageInArray = new Array( this.dataTensor3dArray.length );
+//         for ( let i = 0; i < this.dataTensor3dArray.length; ++i ) {
+//           let t = this.dataTensor3dArray[ i ];
+//           imageInArray[ i ] = { height: t.shape[ 0 ], width: t.shape[ 1 ], depth: t.shape[ 2 ], dataArray: t.dataSync() };
+//         }
+//
+//         let imageOutArray = new Array( this.dataTensor3dArray.length );
+// //!!! (2021/10/11 Remarked)
+// //         PointDepthPoint_Reference.Base.calcConcatShuffleSplit( this.concatPointwiseConv,
+// //           imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
+//         PointDepthPoint_Reference.Base.calcConcatShuffleSplit(
+//           this.concatPointwiseConv.concatenatedShape, this.concatPointwiseConv.outputGroupCount,
 //           imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
-        PointDepthPoint_Reference.Base.calcConcatShuffleSplit(
-          this.concatPointwiseConv.concatenatedShape, this.concatPointwiseConv.outputGroupCount,
-          imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
-
-        for ( let i = 0; i < t1Array.length; ++i ) {
-          this.asserter_Tensor_NumberArray.assert(
-            t1Array[ i ], imageOutArray[ i ].dataArray,
-            "ConcatShuffleSplit", `output${i}`, `outputRef${i}`, "PointDepthPoint_Reference.calcConcatShuffleSplit"
-          );
-        }
-      }
+//
+//         for ( let i = 0; i < t1Array.length; ++i ) {
+//           this.asserter_Tensor_NumberArray.assert(
+//             t1Array[ i ], imageOutArray[ i ].dataArray,
+//             "ConcatShuffleSplit", `output${i}`, `outputRef${i}`, "PointDepthPoint_Reference.calcConcatShuffleSplit"
+//           );
+//         }
+//       }
 
       tf.util.assert(
         TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ),
