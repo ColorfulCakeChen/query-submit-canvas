@@ -7,10 +7,6 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as PointDepthPoint from "./PointDepthPoint.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
-//!!! ...unfinished... (2021/10/11)
-// Perhaps, a parameter control bias-activation should be at depthwise (like MobileNetV2) or pointwise2 (like ShuffleNetV2).
-// Maybe, combine the parameter with nActivationIdAtBlockEnd into one parameter?
-
 /**
  * Convolution block parameters.
  *
@@ -1042,8 +1038,6 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
  * it is usually slower than MobileNetV2.
  *
  */
-//!!! (2021/10/11 Remarked) Inherits from MobileNetV2.
-//Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Params.to_PointDepthPointParams {
 Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Params.to_PointDepthPointParams.MobileNetV2 {
 
   /**
@@ -1108,9 +1102,6 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
     let blockParams = this.blockParams;
     this.depthwiseStridesPad = 0; // In NotShuffleNet_NotMobileNet, always ( strides = 1, pad = "valid" ).
 
-//!!! ...unfinished... (2021/10/11) Because there is no add-input-to-output, the pointwise2 should have bias and activation.
-// Otherwise, the pointwise2 and the pointwise1 of the next step will become one (not two) affine transformation.
-
     // In NotShuffleNet_NotMobileNet, depthwise convolution doesn't have activation.
     //
     // Because NotShuffleNet_NotMobileNet does not have add-input-to-output (different from MobileNetV2), its pointwise2 should
@@ -1138,64 +1129,4 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
     this.depthwiseStridesPad = 0; // In NotShuffleNet_NotMobileNet, always ( strides = 1, pad = "valid" ).
   }
 
-//!!! (2021/10/11 Remarked) Inherits from MobileNetV2.
-//   /** @override */
-//   configTo_beforeStep0() {
-//     let blockParams = this.blockParams;
-//     this.channelCount0_pointwise1Before = blockParams.sourceChannelCount; // Step0 uses the original input channel count.
-//     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
-//
-//     this.bPointwise1Bias = true;
-//     this.pointwise1ActivationId = blockParams.nActivationId;
-//
-// //!!! ...unfinished... (2021/10/11) Problem: When ( pointwise1ChannelCount == 2 ), this will become 4 times channel count (and slower performance).
-//     this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                  // Step0 double the channel count by depthwise channel multiplier.
-//     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps (except stepLast) uses default depthwise filter size.
-//     this.depthwiseStridesPad = 0;                                    // In this mode, always ( strides = 1, pad = "valid" ).
-//
-//     // Because depthwise-pointwise is a complete (cubic) convolution, the bias and activation are not needed in between.
-//     // The bias and activation function are done after pointwise2.
-//
-//     // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
-//     this.bDepthwiseBias = false;
-//     this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-//
-//     this.pointwise21ChannelCount = blockParams.sourceChannelCount * this.depthwise_AvgMax_Or_ChannelMultiplier; // Step0 double channel count.
-//     this.bPointwise21Bias = true;
-//     this.pointwise21ActivationId = blockParams.nActivationId;
-//
-//     this.bOutput1Requested = false;                                  // In this mode, always no second output.
-//
-//     // All steps have pointwise1 convolution before depthwise convolution. Its channel count is adjustable by user's request.
-//     // If ( pointwise1ChannelCountRate == 0 ), it is the same as no pointwise1.
-//     this.pointwise1ChannelCount = this.pointwise21ChannelCount * blockParams.pointwise1ChannelCountRate;
-    
-// //!!! ...unfinished... (2021/10/11)
-// //     // NoPointwise1 NotShuffleNet_NotMobileNet.
-// //     //
-// //     // By default, NotShuffleNet_NotMobileNet uses pointwise1 to double channel count. However,
-// //     // if ( this.pointwise1ChannelCount <= 1 ), either pointwise1 does not exist or pointwise1 does not double channel count, just 
-// //     // If step0 does not have pointwise1 convolution before depthwise convolution, the depthwise2
-// //     // convolution (in original ShuffleNetV2) is not needed. Then, a simpler configuration could be used.
-// //     //
-// //     // Just use once depthwise convolution (but with channel multipler 2) to double the channel count.
-// //     if ( this.pointwise1ChannelCount <= 1 ) {
-// //       this.depthwise_AvgMax_Or_ChannelMultiplier = 2;  // Step0 double the channel count by depthwise channel multiplier.
-// //     }
-//
-//     this.bKeepInputTensor = blockParams.bKeepInputTensor;            // Step0 may or may not keep input tensor according to caller's necessary.
-//
-//     this.outChannels0 = this.pointwise21ChannelCount;
-//     this.outChannels1 = 0;
-//   }
-//
-//   /** @override */
-//   configTo_afterStep0() {
-//     let step0_outChannelsAll = this.outChannels0 + this.outChannels1;
-//     this.channelCount0_pointwise1Before = step0_outChannelsAll; // Step0's output channel count is all the other steps' input channel count.
-// //!!! ...unfinished... (2021/10/11)
-//     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;             // Except step0, all other steps will not double the channel count.
-//     this.pointwise21ChannelCount = step0_outChannelsAll;        // Step0's output channel count is all the other steps' output channel count.
-//     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
-//   }
 }
