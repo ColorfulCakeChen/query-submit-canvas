@@ -643,7 +643,7 @@ class ConcatPointwiseConv {
         for ( let i = 0; i < this.filtersTensor4dArray.length; ++i ) {
           let filtersTensor4d = this.filtersTensor4dArray[ i ];
           if ( filtersTensor4d ) {
-            this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+            this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d.shape );
           }
         }
       }
