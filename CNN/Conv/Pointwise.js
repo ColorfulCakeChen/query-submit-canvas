@@ -14,6 +14,14 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
  * @member {boolean} bExisted
  *   If true, this pointwise convolution exists. The same as this.bPointwise.
  *
@@ -76,6 +84,8 @@ class Base extends ReturnOrClone_Activation.Base {
       this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
 
       this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
+      this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+
       this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
 
       if ( this.bBias ) {
@@ -85,6 +95,7 @@ class Base extends ReturnOrClone_Activation.Base {
         this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
 
         this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.biasesShape );
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
 
         if ( this.pfnActivation )
           this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
@@ -105,6 +116,15 @@ class Base extends ReturnOrClone_Activation.Base {
       this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
     }
 
+
+// !!! ...unfinished... (2021/10/12)
+//    this.tensorWeightCountExtracted = ???;
+
+
+    return weightCount;
+  }
+
+
     this.bInitOk = true;
     return true;
   }
@@ -120,6 +140,7 @@ class Base extends ReturnOrClone_Activation.Base {
       this.biasesTensor3d = null;
     }
 
+    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.filtersWeights = this.biasesWeights = this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
     this.bPointwise = false;
     this.byteOffsetEnd = -1;
@@ -152,24 +173,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
   get bExisted() {
     return this.bPointwise;
-  }
-
-  /**
-   * @return {number}
-   *   Return the total wieght count of this pointwise convolution (including filter weights and bias weights).
-   */
-  get filterBiasWeightCount() {
-    let weightCount = 0;
-
-    if ( this.filtersTensor4d ) {
-      weightCount += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-    }
-
-    if ( this.biasesTensor3d ) {
-      weightCount += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-    }
-
-    return weightCount;
   }
 
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
