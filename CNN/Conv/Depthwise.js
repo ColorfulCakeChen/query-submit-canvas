@@ -14,6 +14,14 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
  * @member {boolean} bExisted
  *   If true, this depthwise operation exists. The same as this.bDepthwise.
  *
@@ -124,6 +132,8 @@ class Base extends ReturnOrClone_Activation.Base {
         this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
 
         this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+
         this.pfnOperation = Base.Conv_and_destroy; // will dispose inputTensor.
 
       } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
@@ -144,6 +154,7 @@ class Base extends ReturnOrClone_Activation.Base {
         this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
 
         this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.biasesShape );
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
 
         if ( this.pfnActivation )
           this.pfnOperationBiasActivation = Base.OperationBiasActivation_and_destroy_or_keep;
@@ -164,6 +175,11 @@ class Base extends ReturnOrClone_Activation.Base {
       this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
     }
 
+
+// !!! ...unfinished... (2021/10/12)
+//    this.tensorWeightCountExtracted = ???;
+
+
     this.bInitOk = true;
     return true;
   }
@@ -179,6 +195,7 @@ class Base extends ReturnOrClone_Activation.Base {
       this.biasesTensor3d = null;
     }
 
+    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.filtersWeights = this.biasesWeights = this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
     this.outputChannelCount = this.strides = this.pad = null;
     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false; // Assume no depthwise.
@@ -265,24 +282,6 @@ class Base extends ReturnOrClone_Activation.Base {
     return false;
   }
                 
-  /**
-   * @return {number}
-   *   Return the total wieght count of this depthwise convolution (including filter weights and bias weights).
-   */
-  get filterBiasWeightCount() {
-    let weightCount = 0;
-
-    if ( this.filtersTensor4d ) {
-      weightCount += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-    }
-
-    if ( this.biasesTensor3d ) {
-      weightCount += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-    }
-
-    return weightCount;
-  }
-
   /** Depthwise Average Pooling. */
   static Avg_and_keep( inputTensor ) {
     return tf.pool( inputTensor, this.filterHeightWidth, "avg", this.pad, 1, this.strides ); // dilations = 1
