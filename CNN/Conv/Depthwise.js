@@ -265,6 +265,24 @@ class Base extends ReturnOrClone_Activation.Base {
     return false;
   }
                 
+  /**
+   * @return {number}
+   *   Return the total wieght count of this depthwise convolution (including filter weights and bias weights).
+   */
+  get filterBiasWeightCount() {
+    let weightCount = 0;
+
+    if ( this.filtersTensor4d ) {
+      weightCount += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+    }
+
+    if ( this.biasesTensor3d ) {
+      weightCount += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+    }
+
+    return weightCount;
+  }
+
   /** Depthwise Average Pooling. */
   static Avg_and_keep( inputTensor ) {
     return tf.pool( inputTensor, this.filterHeightWidth, "avg", this.pad, 1, this.strides ); // dilations = 1
