@@ -242,6 +242,15 @@ Params.bKeepInputTensor =           new ParamDesc.Bool(                  "bKeepI
  * @member {number} outputChannelCount
  *   The output channel count of this block's last step.
  *
+!!! ...unfinished... (2021/10/12)
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
  */
 class Base {
 
@@ -371,18 +380,26 @@ class Base {
 
       stepParams = stepParamsMaker.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
 
-      // If channelShuffler is not null, keep it so that its tensors could be released.
-      let channelShuffler = stepParamsMaker.channelShuffler;
-      if ( channelShuffler ) {
+      if ( !this.channelShuffler ) { // If channelShuffler is got  first time, keep it.
 
-        tf.util.assert( ( !this.channelShuffler ) || ( this.channelShuffler == channelShuffler ),
-            `Block.initer(): `
-              + `At most, only one (and same) channel shuffler could be used (and shared by all steps of a block).` );
+        // If channelShuffler is not null, keep it so that its tensors could be released.
+        let channelShuffler = stepParamsMaker.channelShuffler;
+        if ( channelShuffler ) {
 
-        this.channelShuffler = channelShuffler;
+          tf.util.assert( ( !this.channelShuffler ) || ( this.channelShuffler == channelShuffler ),
+              `Block.initer(): `
+                + `At most, only one (and same) channel shuffler could be used (and shared by all steps of a block).` );
 
-      // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
-      // for releasing tensors.
+          this.channelShuffler = channelShuffler;
+
+          this.tensorWeightCountTotal = channelShuffler.tensorWeightCountTotal;
+          this.tensorWeightCountExtracted = channelShuffler.tensorWeightCountExtracted;
+
+        // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
+        // for releasing tensors.
+        }
+
+      // If channelShuffler has ever got, never change it.
       }
 
       step = this.stepsArray[ i ] = new PointDepthPoint.Base();
@@ -392,6 +409,9 @@ class Base {
       if ( !this.bInitOk )
         return false;
       this.byteOffsetEnd = step.byteOffsetEnd;
+
+      this.tensorWeightCountTotal = step.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted = step.tensorWeightCountExtracted;
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
         stepParamsMaker.configTo_afterStep0();
@@ -459,33 +479,10 @@ class Base {
     this.outputChannelCount = -1;
 
     this.intermediateInputTensors = this.intermediateOutputTensors = null;
-    
+
+    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
-  }
-
-  /**
-   * @return {number}
-   *   Return the total wieght count of this Block.Base (including filter weights and bias weights and channelShuffler,
-   * excluding Params).
-   */
-  get filterBiasWeightCount() {
-    let weightCount = 0;
-
-    if ( this.stepsArray ) {
-      for ( let i = 0; i < this.stepsArray.length; ++i ) {
-        let step = this.stepsArray[ i ];
-        if ( step ) {
-          weightCount += step.filterBiasWeightCount;
-        }
-      }
-    }
-
-    if ( this.channelShuffler ) {
-      weightCount += this.channelShuffler.filterBiasWeightCount;
-    }
-
-    return weightCount;
   }
 
   /**
