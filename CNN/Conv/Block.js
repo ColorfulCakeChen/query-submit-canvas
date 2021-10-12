@@ -392,8 +392,8 @@ class Base {
 
           this.channelShuffler = channelShuffler;
 
-          this.tensorWeightCountTotal = channelShuffler.tensorWeightCountTotal;
-          this.tensorWeightCountExtracted = channelShuffler.tensorWeightCountExtracted;
+          this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
+          this.tensorWeightCountExtracted += channelShuffler.tensorWeightCountExtracted;
 
         // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
         // for releasing tensors.
@@ -410,8 +410,8 @@ class Base {
         return false;
       this.byteOffsetEnd = step.byteOffsetEnd;
 
-      this.tensorWeightCountTotal = step.tensorWeightCountTotal;
-      this.tensorWeightCountExtracted = step.tensorWeightCountExtracted;
+      this.tensorWeightCountTotal += step.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += step.tensorWeightCountExtracted;
 
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
         stepParamsMaker.configTo_afterStep0();
