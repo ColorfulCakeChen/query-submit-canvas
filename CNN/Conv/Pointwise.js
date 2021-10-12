@@ -4,6 +4,8 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 
+//!!! ...unfinished... (2021/10/12) pre-shuffle by ShuffleInfo (just like ChannelShuffler.ConcatPointwiseConv).
+
 /**
  * Handle pointwise convolution (1x1 conv2d), bias and activation.
  *
