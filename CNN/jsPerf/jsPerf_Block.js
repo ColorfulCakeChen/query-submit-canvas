@@ -259,17 +259,7 @@ class HeightWidthDepth {
 
     ];
 
-//!!! ...unfinished... (2021/10/12) log Xxx.filterBiasWeightCount
-
-// !!! ...unfinished... (2021/10/12)
-//  * @member {number} tensorWeightCountTotal
-//  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
-//  * weights, if they are used in tensors.
-//  *
-//  * @member {number} tensorWeightCountExtracted
-//  *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
-//  * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
-//  *
+// !!! ...unfinished... (2021/10/12) log tensorWeightCountTotal and tensorWeightCountExtracted
 
   }
 
