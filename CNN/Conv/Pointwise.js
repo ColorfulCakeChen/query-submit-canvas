@@ -154,6 +154,24 @@ class Base extends ReturnOrClone_Activation.Base {
     return this.bPointwise;
   }
 
+  /**
+   * @return {number}
+   *   Return the total wieght count of this pointwise convolution (including filter weights and bias weights).
+   */
+  get filterBiasWeightCount() {
+    let weightCount = 0;
+
+    if ( this.filtersTensor4d ) {
+      weightCount += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+    }
+
+    if ( this.biasesTensor3d ) {
+      weightCount += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+    }
+
+    return weightCount;
+  }
+
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" ); // 1x1, Stride = 1
