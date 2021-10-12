@@ -37,6 +37,15 @@ export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv };
  * transposePermutation (so that they are shuffled).
  *
  *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
+ *
  * @member {function} reshapeTransposeReshape
  *   Permute the input tensor by reshape-transpose-reshape. It is a function pointer to one of this.reshapeTransposeReshape_XXX().
  *
@@ -56,7 +65,7 @@ class ShuffleInfo {
 
   constructor( concatenatedShape, outputGroupCount ) {
 
-    //this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     outputGroupCount = Math.trunc( outputGroupCount || 1 );
     if ( outputGroupCount < 1 )
@@ -98,15 +107,7 @@ class ShuffleInfo {
     // No tensors need to be disposed.
 
     this.transposePermutation = null;
-  }
-
-  /**
-   * @return {number}
-   *   Return the total wieght count of this ShuffleInfo (in fact, zero).
-   */
-  get filterBiasWeightCount() {
-    let weightCount = 0;
-    return weightCount; // No tensors.
+    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
   }
 
   /** Not dispose the input. */
@@ -247,6 +248,14 @@ class ShuffleInfo {
  *   The look up table for tf.gather()'s channel index. This table is composed of tensor1d so should be released
  * by calling disposeTensors().
  *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
  * @member {function} gather
  *   Permute and split the input tensor by gather. It is a function pointer to one of this.gather_XXX().
  *
@@ -266,7 +275,7 @@ class ConcatGather {
    */
   constructor( concatenatedShape, outputGroupCount ) {
 
-    //this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     this.shuffleInfo = new ShuffleInfo( concatenatedShape, outputGroupCount );
 
@@ -284,6 +293,15 @@ class ConcatGather {
           let channelIndicesShuffleInfo = new ShuffleInfo( channelIndices.shape, outputGroupCount );
           return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
         });
+
+      if ( this.shuffledChannelIndicesTensor1dArray ) {
+        for ( let i = 0; i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
+          let shuffledChannelIndicesTensor1d = this.shuffledChannelIndicesTensor1dArray[ i ];
+          if ( shuffledChannelIndicesTensor1d ) {
+            this.tensorWeightCountTotal += tf.util.sizeFromShape( shuffledChannelIndicesTensor1d.shape );
+          }
+        }
+      }
 
     // Exception if failed (e.g. out of (GPU) memory).
     }
@@ -303,6 +321,8 @@ class ConcatGather {
       this.shuffleInfo.disposeTensors();
       this.shuffleInfo = null;
     }
+
+    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
   }
 
   get concatenatedShape() {
@@ -311,25 +331,6 @@ class ConcatGather {
 
   get outputGroupCount() {
     return this.shuffleInfo.outputGroupCount;
-  }
-
-  /**
-   * @return {number}
-   *   Return the total wieght count of this ConcatGather.
-   */
-  get filterBiasWeightCount() {
-    let weightCount = 0;
-
-    if ( this.shuffledChannelIndicesTensor1dArray ) {
-      for ( let i = 0; i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
-        let shuffledChannelIndicesTensor1d = this.shuffledChannelIndicesTensor1dArray[ i ];
-        if ( shuffledChannelIndicesTensor1d ) {
-          weightCount += tf.util.sizeFromShape( this.shuffledChannelIndicesTensor1d.shape );
-        }
-      }
-    }
-
-    return weightCount;
   }
 
   /**
@@ -395,6 +396,14 @@ class ConcatGather {
  * @member {number[][]} shuffledChannelIndicesArray
  *   The look up table for tf.gather()'s channel index. This table is composed of array of integers.
  *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
  * @member {function} splitConcat
  *   Concatenate, permute and split the input tensor by split-concat-gather. It is a function pointer to one of
  * this.splitConcat_XXX().
@@ -416,7 +425,7 @@ class SplitConcat {
    */
   constructor( concatenatedShape, outputGroupCount ) {
 
-    //this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     let concatGather = new ConcatGather( concatenatedShape, outputGroupCount );
 
@@ -453,6 +462,8 @@ class SplitConcat {
       this.shuffleInfo.disposeTensors();
       this.shuffleInfo = null;
     }
+
+    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
   }
 
   get concatenatedShape() {
@@ -461,15 +472,6 @@ class SplitConcat {
 
   get outputGroupCount() {
     return this.shuffleInfo.outputGroupCount;
-  }
-
-  /**
-   * @return {number}
-   *   Return the total wieght count of this SplitConcat.
-   */
-  get filterBiasWeightCount() {
-    let weightCount = 0;
-    return weightCount; // No tensors.
   }
 
   /**
@@ -563,6 +565,14 @@ class SplitConcat {
  * @member {tf.tensor4d[]} filtersTensor4dArray
  *   The pointwise convolution filters. They are used to achieve shuffle-split, and will be released by calling disposeTensors().
  *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
  * @member {function} gather
  *   Permute and split the input tensor by gather. It is a function pointer to one of this.gather_XXX().
  *
@@ -587,7 +597,7 @@ class ConcatPointwiseConv {
    */
   constructor( concatenatedShape, outputGroupCount ) {
 
-    //this.disposeTensors(); // So that distinguishable if re-initialization failed.
+    this.disposeTensors(); // So that distinguishable if re-initialization failed.
 
     let concatGather = new ConcatGather( concatenatedShape, outputGroupCount );
 
@@ -629,6 +639,15 @@ class ConcatPointwiseConv {
         });
       });
 
+      if ( this.filtersTensor4dArray ) {
+        for ( let i = 0; i < this.filtersTensor4dArray.length; ++i ) {
+          let filtersTensor4d = this.filtersTensor4dArray[ i ];
+          if ( filtersTensor4d ) {
+            this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+          }
+        }
+      }
+
       this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
 
     // Exception if failed (e.g. out of (GPU) memory).
@@ -654,6 +673,8 @@ class ConcatPointwiseConv {
       this.shuffleInfo.disposeTensors();
       this.shuffleInfo = null;
     }
+
+    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
   }
 
   get concatenatedShape() {
@@ -662,25 +683,6 @@ class ConcatPointwiseConv {
 
   get outputGroupCount() {
     return this.shuffleInfo.outputGroupCount;
-  }
-
-  /**
-   * @return {number}
-   *   Return the total wieght count of this ConcatPointwiseConv.
-   */
-  get filterBiasWeightCount() {
-    let weightCount = 0;
-
-    if ( this.filtersTensor4dArray ) {
-      for ( let i = 0; i < this.filtersTensor4dArray.length; ++i ) {
-        let filtersTensor4d = this.filtersTensor4dArray[ i ];
-        if ( filtersTensor4d ) {
-          weightCount += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-        }
-      }
-    }
-
-    return weightCount;
   }
 
   /**
