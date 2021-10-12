@@ -99,7 +99,6 @@ Params.channelMultiplier = new ParamDesc.Int( "channelMultiplier", 1, 32 );
  * @member {number} outChannels
  *   Output channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
  *
-!!!
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
@@ -262,6 +261,7 @@ class Base extends ReturnOrClone.Base {
       }
 
       this.byteOffsetEnd = nextByteOffsetBegin;
+      this.tensorWeightCountExtracted = this.byteOffsetEnd - params.defaultByteOffsetEnd;
     }
 
     // 4. Build tensor3d[] (or tensor2d[]) of vocabulary tables.
@@ -467,6 +467,7 @@ class Base extends ReturnOrClone.Base {
       this.embeddedTensor3dArray = null;
     }
 
+    this.tensorWeightCountExtracted = -1;
     this.bValid = false;
   }
 
@@ -503,39 +504,7 @@ class Base extends ReturnOrClone.Base {
 //     return false;
   }
 
-  /**
-   * @return {number}
-   *   Return the total wieght count of this Embedding2d (including filter weights and bias weights, excluding Params).
-   */
-  get filterBiasWeightCount() {
-    let weightCount = 0;
-
-    if ( this.vocabularyTablesTensorArray ) {
-      for ( let i = 0; i < this.vocabularyTablesTensorArray.length; ++i ) {
-        let vocabularyTablesTensor = this.vocabularyTablesTensorArray[ i ];
-        if ( vocabularyTablesTensor ) {
-          weightCount += tf.util.sizeFromShape( vocabularyTablesTensor.shape );
-        }
-      }
-    }
-
-    if ( this.vocabularyTableTensor2d ) {
-      weightCount += tf.util.sizeFromShape( this.vocabularyTableTensor2d.shape );
-    }
-
-    if ( this.channelValueOffsetTensor3d ) {
-      weightCount += tf.util.sizeFromShape( this.channelValueOffsetTensor3d.shape );
-    }
-
-    return weightCount;
-  }
-
-!!!
-  /**
-   * @return {number}
-   *   Return the total wieght count of this Embedding2d (including filter weights and bias weights, excluding Params).
-   */
-  get learnableTensorSize() {
+  get tensorWeightCountTotal() {
     let weightCount = 0;
 
     if ( this.vocabularyTablesTensorArray ) {
