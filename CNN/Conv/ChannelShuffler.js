@@ -100,6 +100,14 @@ class ShuffleInfo {
     this.transposePermutation = null;
   }
 
+  /**
+   * @return {number}
+   *   Return the total wieght count of this ShuffleInfo (in fact, zero).
+   */
+  get filterBiasWeightCount() {
+    let weightCount = 0;
+    return weightCount; // No tensors.
+  }
 
   /** Not dispose the input. */
   reshape_to_intermediateShape_keep_input( t ) {
@@ -306,6 +314,25 @@ class ConcatGather {
   }
 
   /**
+   * @return {number}
+   *   Return the total wieght count of this ConcatGather.
+   */
+  get filterBiasWeightCount() {
+    let weightCount = 0;
+
+    if ( this.shuffledChannelIndicesTensor1dArray ) {
+      for ( let i = 0; i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
+        let shuffledChannelIndicesTensor1d = this.shuffledChannelIndicesTensor1dArray[ i ];
+        if ( shuffledChannelIndicesTensor1d ) {
+          weightCount += tf.util.sizeFromShape( this.shuffledChannelIndicesTensor1d.shape );
+        }
+      }
+    }
+
+    return weightCount;
+  }
+
+  /**
    * Permute and split the input tensor by gather.
    *
    * @param {tf.tensor} concatenatedTensor
@@ -434,6 +461,15 @@ class SplitConcat {
 
   get outputGroupCount() {
     return this.shuffleInfo.outputGroupCount;
+  }
+
+  /**
+   * @return {number}
+   *   Return the total wieght count of this SplitConcat.
+   */
+  get filterBiasWeightCount() {
+    let weightCount = 0;
+    return weightCount; // No tensors.
   }
 
   /**
@@ -626,6 +662,25 @@ class ConcatPointwiseConv {
 
   get outputGroupCount() {
     return this.shuffleInfo.outputGroupCount;
+  }
+
+  /**
+   * @return {number}
+   *   Return the total wieght count of this ConcatPointwiseConv.
+   */
+  get filterBiasWeightCount() {
+    let weightCount = 0;
+
+    if ( this.filtersTensor4dArray ) {
+      for ( let i = 0; i < this.filtersTensor4dArray.length; ++i ) {
+        let filtersTensor4d = this.filtersTensor4dArray[ i ];
+        if ( filtersTensor4d ) {
+          weightCount += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+        }
+      }
+    }
+
+    return weightCount;
   }
 
   /**
