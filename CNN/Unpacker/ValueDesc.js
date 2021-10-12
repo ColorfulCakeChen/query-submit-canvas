@@ -202,8 +202,8 @@ class channelCount1_pointwise1Before extends Int {
       "ONE_INPUT_HALF_THROUGH",               // (-5) ShuffleNetV2's body/tail by MobileNet
       "ONE_INPUT_HALF_DEPTHWISE1",            // (-4) ShuffleNetV2's head by MobileNet
 
-      "TWO_INPUTS_CONCAT_POINTWISE21_INPUT1", // (-3)
-      "ONE_INPUT_TWO_DEPTHWISE",              // (-2)
+      "TWO_INPUTS_CONCAT_POINTWISE21_INPUT1", // (-3) ShuffleNetV2's body/tail
+      "ONE_INPUT_TWO_DEPTHWISE",              // (-2) ShuffleNetV2's head
       "ONE_INPUT_ADD_TO_OUTPUT",              // (-1)
       "ONE_INPUT",                            // ( 0)
 
