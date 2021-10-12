@@ -1308,6 +1308,32 @@ class Base extends ReturnOrClone.Base {
     this.bInitOk = false;
   }
 
+  /**
+   * @return {number}
+   *   Return the total wieght count of this PointDepthPoint.Base (including filter weights and bias weights, excluding Params
+   * and channelShuffler).
+   */
+  get filterBiasWeightCount() {
+    let weightCount = 0;
+
+    if ( this.pointwise1 )
+      weightCount += tf.util.sizeFromShape( this.pointwise1.shape );
+
+    if ( this.depthwise1 )
+      weightCount += tf.util.sizeFromShape( this.depthwise1.shape );
+
+    if ( this.depthwise2 )
+      weightCount += tf.util.sizeFromShape( this.depthwise2.shape );
+
+    if ( this.pointwise21 )
+      weightCount += tf.util.sizeFromShape( this.pointwise21.shape );
+
+    if ( this.pointwise22 )
+      weightCount += tf.util.sizeFromShape( this.pointwise22.shape );
+
+    return weightCount;
+  }
+
   /** Determine which apply_Xxx() function should be used.
    * @return {function} Return one of the apply_Xxx function.
    */
