@@ -132,6 +132,9 @@ class Base extends ReturnOrClone_Activation.Base {
         this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
 
         this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
+        
+// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
+        this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
         this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
 
         this.pfnOperation = Base.Conv_and_destroy; // will dispose inputTensor.
@@ -154,6 +157,9 @@ class Base extends ReturnOrClone_Activation.Base {
         this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
 
         this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.biasesShape );
+
+// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
+        this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
         this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
 
         if ( this.pfnActivation )
@@ -174,11 +180,6 @@ class Base extends ReturnOrClone_Activation.Base {
       // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
       this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
     }
-
-
-// !!! ...unfinished... (2021/10/12)
-//    this.tensorWeightCountExtracted = ???;
-
 
     this.bInitOk = true;
     return true;
