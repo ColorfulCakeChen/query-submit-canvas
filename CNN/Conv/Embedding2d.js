@@ -494,6 +494,33 @@ class Base extends ReturnOrClone.Base {
 //     return false;
   }
 
+  /**
+   * @return {number}
+   *   Return the total wieght count of this Embedding2d (including filter weights and bias weights, excluding Params).
+   */
+  get filterBiasWeightCount() {
+    let weightCount = 0;
+
+    if ( this.vocabularyTablesTensorArray ) {
+      for ( let i = 0; i < this.vocabularyTablesTensorArray.length; ++i ) {
+        let vocabularyTablesTensor = this.vocabularyTablesTensorArray[ i ];
+        if ( vocabularyTablesTensor ) {
+          weightCount += tf.util.sizeFromShape( vocabularyTablesTensor.shape );
+        }
+      }
+    }
+
+    if ( this.vocabularyTableTensor2d ) {
+      weightCount += tf.util.sizeFromShape( this.vocabularyTableTensor2d.shape );
+    }
+
+    if ( this.channelValueOffsetTensor3d ) {
+      weightCount += tf.util.sizeFromShape( this.channelValueOffsetTensor3d.shape );
+    }
+
+    return weightCount;
+  }
+
   /** Do nothing. */
   static keep_input( inputTensor3d ) {
   }
