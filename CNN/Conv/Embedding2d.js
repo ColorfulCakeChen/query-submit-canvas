@@ -261,7 +261,7 @@ class Base extends ReturnOrClone.Base {
       }
 
       this.byteOffsetEnd = nextByteOffsetBegin;
-      this.tensorWeightCountExtracted = this.byteOffsetEnd - params.defaultByteOffsetEnd;
+      this.tensorWeightCountExtracted += ( this.byteOffsetEnd - params.defaultByteOffsetEnd );
     }
 
     // 4. Build tensor3d[] (or tensor2d[]) of vocabulary tables.
