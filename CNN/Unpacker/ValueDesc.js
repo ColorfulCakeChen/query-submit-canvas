@@ -195,7 +195,13 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 class channelCount1_pointwise1Before extends Int {
 
   constructor() {
-    super( -3, ( 10 * 1024 ), [
+//!!! ...unfinished... (2021/10/12)
+//    super( -3, ( 10 * 1024 ), [
+    super( -5, ( 10 * 1024 ), [
+//!!! ...unfinished... (2021/10/12)
+      "ONE_INPUT_HALF_THROUGH",               // (-5) ShuffleNetV2's body/tail by MobileNet
+      "ONE_INPUT_HALF_DEPTHWISE1",            // (-4) ShuffleNetV2's head by MobileNet
+
       "TWO_INPUTS_CONCAT_POINTWISE21_INPUT1", // (-3)
       "ONE_INPUT_TWO_DEPTHWISE",              // (-2)
       "ONE_INPUT_ADD_TO_OUTPUT",              // (-1)
