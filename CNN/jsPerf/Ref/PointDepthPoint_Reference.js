@@ -519,6 +519,17 @@ class Base {
     let imageIn0 = imageInArray[ 0 ];
     let imageIn1 = imageInArray[ 1 ];
 
+
+//!!! ...unfinished... (2021/10/12)
+// The following two use same calculation logic:
+//    ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH // (-5) ShuffleNetV2's body/tail by MobileNet
+//    ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 // (-3) (ShuffleNetV2's body/tail)
+//
+// The following two use same calculation logic:
+//    ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_DEPTHWISE1 // (-4) ShuffleNetV2's head by MobileNet
+//    ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE // (-2) (ShuffleNetV2's head)
+
+                                                                                                      
     // 1. Pointwise1
     let pointwise1Result;
     if ( testParams.out.pointwise1ChannelCount > 0 ) {
