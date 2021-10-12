@@ -465,6 +465,30 @@ class Base {
   }
 
   /**
+   * @return {number}
+   *   Return the total wieght count of this Block.Base (including filter weights and bias weights and channelShuffler,
+   * excluding Params).
+   */
+  get filterBiasWeightCount() {
+    let weightCount = 0;
+
+    if ( this.stepsArray ) {
+      for ( let i = 0; i < this.stepsArray.length; ++i ) {
+        let step = this.stepsArray[ i ];
+        if ( step ) {
+          weightCount += step.filterBiasWeightCount;
+        }
+      }
+    }
+
+    if ( this.channelShuffler ) {
+      weightCount += this.channelShuffler.filterBiasWeightCount;
+    }
+
+    return weightCount;
+  }
+
+  /**
    * @param {Params} blockParams
    *   The Block.Params object to be reference.
    */
