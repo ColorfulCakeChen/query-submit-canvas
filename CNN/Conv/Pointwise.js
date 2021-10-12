@@ -116,14 +116,8 @@ class Base extends ReturnOrClone_Activation.Base {
       this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
     }
 
-
-// !!! ...unfinished... (2021/10/12)
-//    this.tensorWeightCountExtracted = ???;
-
-
-    return weightCount;
-  }
-
+// !!! ...unfinished... (2021/10/12) Currently, no weights are inferenced for pointwise convolution.
+    this.tensorWeightCountExtracted = this.tensorWeightCountTotal;
 
     this.bInitOk = true;
     return true;
