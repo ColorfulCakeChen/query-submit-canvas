@@ -242,10 +242,10 @@ class HeightWidthDepth {
       if ( !testCase.block ) {
         testCase.block = Block_Reference.Base.Block_create( testCase.testParams );
       }
-    }
 
-//!!! ...unfinished... (2021/10/11) Log every configuration's filters and bias weights count.
-// !!! ...unfinished... (2021/10/12) log tensorWeightCountTotal and tensorWeightCountExtracted
+      console.log( `Block.${name}: tensorWeightCount = { Extracted: ${testCase.block.tensorWeightCountExtracted}, ` 
+        + `Total: ${testCase.block.tensorWeightCountTotal} }` );
+    }
 
   }
 
@@ -262,71 +262,13 @@ class HeightWidthDepth {
     }
   }
 
-
   // Test apply by Xxx
-  test_NotShuffleNet_NotMobileNet_Pointwise1Rate_0() {
-    let outputTensor3d = this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
+  testBlock_ByName( testCaseName ) {
+    let testCase = this.testCaseMap.get( testCaseName );
+    let block = testCase.block;
+    let outputTensor3d = block.apply( this.dataTensor3dArray[ 0 ] );
     tf.dispose( outputTensor3d );
   }
-
-  test_NotShuffleNet_NotMobileNet_Pointwise1Rate_1() {
-    let outputTensor3d = this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-  test_NotShuffleNet_NotMobileNet_Pointwise1Rate_2() {
-    let outputTensor3d = this.block_NotShuffleNet_NotMobileNet_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-
-  test_MobileNet_Step_N_Pointwise1Rate_0() {
-    let outputTensor3d = this.block_MobileNet_Step_N_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-  test_MobileNet_Step_N_Pointwise1Rate_1() {
-    let outputTensor3d = this.block_MobileNet_Step_N_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-  test_MobileNet_Step_N_Pointwise1Rate_2() {
-    let outputTensor3d = this.block_MobileNet_Step_N_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-
-  test_ShuffleNetV2_Step_N_Pointwise1Rate_0() {
-    let outputTensor3d = this.block_ShuffleNetV2_Step_N_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-  test_ShuffleNetV2_Step_N_Pointwise1Rate_1() {
-    let outputTensor3d = this.block_ShuffleNetV2_Step_N_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-  test_ShuffleNetV2_Step_N_Pointwise1Rate_2() {
-    let outputTensor3d = this.block_ShuffleNetV2_Step_N_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-
-  test_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_0() {
-    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_0.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-  test_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_1() {
-    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_1.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
-  test_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_2() {
-    let outputTensor3d = this.block_ShuffleNetV2_ByPointwise22_Step_N_Pointwise1Rate_2.apply( this.dataTensor3dArray[ 0 ] );
-    tf.dispose( outputTensor3d );
-  }
-
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
