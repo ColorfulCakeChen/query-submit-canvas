@@ -22,7 +22,7 @@ import * as TensorOpCounter from "./TensorOpCounter.js";
 /*
  * Accodring to testing, the original ShuffleNetV2 is faster than MobileNetV2 in backend CPU. This may result from lesser
  * computation. However, in backend WASM and WEBGL, MobileNetV2 is faster than the original ShuffleNetV2. The possible reason
- * may be that the concatenation-shuffle-split (even using pointwise convolution to be achieved) operation is not friendly
+ * may be that the concatenation-shuffle-split (even achieved by pointwise convolution) operation is not friendly
  * for WASM and WEBGL.
  *
  * This results in an idea that:
@@ -763,6 +763,15 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
  *         of pointwise21 and input1.
  *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors. (Not including channelShuffler.)
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ * (Not including channelShuffler.)
+ *
  * @member {function} apply
  *   This is a method. It has two parameters inputTensors and outputTensors. The inputTensors (tf.tensor3d[]) represents the images
  * ( height x width x channel ) which will be processed. The outputTensors (tf.tensor3d[]) will be placed one or two tf.tensor3d as
@@ -891,6 +900,8 @@ class Base extends ReturnOrClone.Base {
     this.bPointwise1 = this.pointwise1.bExisted;
     if ( this.bPointwise1 ) {
       this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount;
+      this.tensorWeightCountTotal += this.pointwise1.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += this.pointwise1.tensorWeightCountExtracted;
       TensorOpCounters.pointwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise1", this.pointwise1, TensorOpCounters.input0 );
 
     } else {
@@ -918,6 +929,8 @@ class Base extends ReturnOrClone.Base {
     this.bDepthwise1 = this.depthwise1.bExisted;
     if ( this.bDepthwise1 ) {
       this.channelCount_depthwise1After_concat1Before = this.depthwise1.outputChannelCount;
+      this.tensorWeightCountTotal += this.depthwise1.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += this.depthwise1.tensorWeightCountExtracted;
       TensorOpCounters.depthwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise1", this.depthwise1, TensorOpCounters.pointwise1 );
 
     } else {
@@ -949,6 +962,8 @@ class Base extends ReturnOrClone.Base {
       if ( this.bDepthwise2 ) {
         // The depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
         this.channelCount_depthwise2After_concat1Before = this.depthwise2.outputChannelCount;
+        this.tensorWeightCountTotal += this.depthwise2.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted += this.depthwise2.tensorWeightCountExtracted;
         TensorOpCounters.depthwise2 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise2", this.depthwise2, TensorOpCounters.input0 );
 
       } else {
@@ -1000,6 +1015,8 @@ class Base extends ReturnOrClone.Base {
     this.bPointwise21 = this.pointwise21.bExisted;
     if ( this.bPointwise21 ) {
       this.channelCount_pointwise21After_concat2Before = this.pointwise21ChannelCount;
+      this.tensorWeightCountTotal += this.pointwise21.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += this.pointwise21.tensorWeightCountExtracted;
     } else {
       this.channelCount_pointwise21After_concat2Before = 0;  // No first pointwise2 convolution.
     }
@@ -1023,6 +1040,8 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bPointwise22 ) {
       this.channelCount_pointwise22After_concat2Before = this.pointwise22ChannelCount;
+      this.tensorWeightCountTotal += this.pointwise22.tensorWeightCountTotal;
+      this.tensorWeightCountExtracted += this.pointwise22.tensorWeightCountExtracted;
     } else {
       this.channelCount_pointwise22After_concat2Before = 0;  // No second pointwise2 convolution.
     }
@@ -1304,34 +1323,9 @@ class Base extends ReturnOrClone.Base {
       = this.outputTensorCount
       = undefined;
 
+    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
-  }
-
-  /**
-   * @return {number}
-   *   Return the total wieght count of this PointDepthPoint.Base (including filter weights and bias weights, excluding Params
-   * and channelShuffler).
-   */
-  get filterBiasWeightCount() {
-    let weightCount = 0;
-
-    if ( this.pointwise1 )
-      weightCount += tf.util.sizeFromShape( this.pointwise1.shape );
-
-    if ( this.depthwise1 )
-      weightCount += tf.util.sizeFromShape( this.depthwise1.shape );
-
-    if ( this.depthwise2 )
-      weightCount += tf.util.sizeFromShape( this.depthwise2.shape );
-
-    if ( this.pointwise21 )
-      weightCount += tf.util.sizeFromShape( this.pointwise21.shape );
-
-    if ( this.pointwise22 )
-      weightCount += tf.util.sizeFromShape( this.pointwise22.shape );
-
-    return weightCount;
   }
 
   /** Determine which apply_Xxx() function should be used.
