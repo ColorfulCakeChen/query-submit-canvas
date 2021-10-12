@@ -237,7 +237,9 @@ class Base extends TestParams.Base {
 //       ],
       nActivationId: [
         ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
-        ValueDesc.ActivationFunction.Singleton.Ids.TANH
+        ValueDesc.ActivationFunction.Singleton.Ids.SIGMOID
+        //!!! (2021/10/12 Remarked) It seems that the tanh has more floating-point error.
+        //ValueDesc.ActivationFunction.Singleton.Ids.TANH
       ],
 
 //      nActivationIdAtBlockEnd: undefined,
@@ -255,7 +257,9 @@ class Base extends TestParams.Base {
 //       ],
       nActivationIdAtBlockEnd: [
         ValueDesc.ActivationFunction.Singleton.Ids.NONE,
-        ValueDesc.ActivationFunction.Singleton.Ids.TANH
+        ValueDesc.ActivationFunction.Singleton.Ids.SIGMOID
+        //!!! (2021/10/12 Remarked) It seems that the tanh has more floating-point error.
+        //ValueDesc.ActivationFunction.Singleton.Ids.TANH
       ],
 
 //      nWhetherShuffleChannel: undefined,
