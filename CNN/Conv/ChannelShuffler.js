@@ -18,6 +18,9 @@ export { ShuffleInfo, ConcatGather, SplitConcat, ConcatPointwiseConv };
  * the output tensor3d list will just be an array with only one tensor3d which is the concatenation of all the
  * input tensor3d list (i.e. no shuffle and split).
  *
+ * @member {ShuffleInfo} shuffleInfo
+ *   The information calculated from concatenatedShape and outputGroupCount. (In fact, it is the this.)
+ *
  *
  * @member {number} lastAxisId
  *   The last axis id of reshapeTransposeReshape()'s input tensor. It will be ( concatenatedShape.length - 1 ).
@@ -73,6 +76,8 @@ class ShuffleInfo {
 
     this.concatenatedShape = Array.from( concatenatedShape ); // Clone it (by shallow-copy) because the outside may modify it.
     this.outputGroupCount = outputGroupCount;
+
+    this.shuffleInfo = this; // So that all ChannelShuffler.Xxx have property "shuffleInfo".
 
     let lastAxisId = this.lastAxisId = concatenatedShape.length - 1;
     let totalChannelCount = this.totalChannelCount = concatenatedShape[ lastAxisId ];
