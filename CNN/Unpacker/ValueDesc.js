@@ -185,8 +185,8 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 
 /** Describe id, range, name of channelCount1_pointwise1Before.
  *
- * Convert number value into integer between [ -2, ( 10 * 1024 ) ] representing operation:
- *   - -3: TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3)
+ * Convert number value into integer between [ -5, ( 10 * 1024 ) ] representing operation:
+ *   - -3: TWO_INPUTS_CONCAT_POINTWISE21_INPUT1
  *   - -2: ONE_INPUT_TWO_DEPTHWISE
  *   - -1: ONE_INPUT_ADD_TO_OUTPUT
  *   -  0: ONE_INPUT
@@ -195,21 +195,20 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 class channelCount1_pointwise1Before extends Int {
 
   constructor() {
-//!!! ...unfinished... (2021/10/12)
-//    super( -3, ( 10 * 1024 ), [
     super( -5, ( 10 * 1024 ), [
-//!!! ...unfinished... (2021/10/12)
-      "ONE_INPUT_HALF_THROUGH",               // (-5) ShuffleNetV2's body/tail by MobileNet
-      "ONE_INPUT_HALF_DEPTHWISE1",            // (-4) ShuffleNetV2's head by MobileNet
-
+      "ONE_INPUT_HALF_THROUGH",               // (-5) ShuffleNetV2_ByMobileNetV1's body/tail
+      "ONE_INPUT_HALF_DEPTHWISE1",            // (-4) ShuffleNetV2_ByMobileNetV1's head
       "TWO_INPUTS_CONCAT_POINTWISE21_INPUT1", // (-3) ShuffleNetV2's body/tail
-      "ONE_INPUT_TWO_DEPTHWISE",              // (-2) ShuffleNetV2's head
-      "ONE_INPUT_ADD_TO_OUTPUT",              // (-1)
-      "ONE_INPUT",                            // ( 0)
+      "ONE_INPUT_TWO_DEPTHWISE",              // (-2) ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head)
+      "ONE_INPUT_ADD_TO_OUTPUT",              // (-1) MobileNetV2
+      "ONE_INPUT",                            // ( 0) MobileNetV1 (General Pointwise1-Depthwise1-Pointwise2)
 
+      // "TWO_INPUTS_1", "TWO_INPUTS_2", ..., "TWO_INPUTS_10240".
+      //
+      // ShuffleNetV2_ByPointwise22's body/tail
+      //
       // (2021/07/13 Remarked) Do not define these names because they will occupy too many memory.
       //
-      // i.e. "TWO_INPUTS_1", "TWO_INPUTS_2", ..., "TWO_INPUTS_10240".
       //... [ ... new Array( 10 * 1024 ).keys() ].map( x => "TWO_INPUTS_" + ( x + 1 ) )
     ] );
   }
@@ -222,10 +221,11 @@ channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
 
 /** Describe id, range, name of WhetherShuffleChannel.
  *
- * Convert number value into integer between [ 0, 2 ] representing operation:
- *   - 0: NONE (i.e. NotShuffleNet_NotMobileNet, or MobileNet)
+ * Convert number value into integer between [ 0, 3 ] representing operation:
+ *   - 0: NONE (i.e. NotShuffleNet_NotMobileNet, or MobileNetV2)
+ *   - 1: BY_POINTWISE22      (i.e. ShuffleNetV2_ByPointwise22)
  *   - 2: BY_CHANNEL_SHUFFLER (i.e. ShuffleNetV2)
- *   - 1: BY_POINTWISE22 (i.e. Slower ShuffleNetV2)
+     - 3: BY_MOBILE_NET_V1    (i.e. ShuffleNetV2_ByMobileNetV1)
  */
 class WhetherShuffleChannel extends Int {
 
@@ -234,6 +234,7 @@ class WhetherShuffleChannel extends Int {
       "NONE",                // (0)
       "BY_CHANNEL_SHUFFLER", // (1)
       "BY_POINTWISE22",      // (2)
+      "BY_MOBILE_NET_V1",    // (3)
     ] );
   }
 
