@@ -1424,8 +1424,10 @@ class Base extends ReturnOrClone.Base {
         }
         break;
 
-      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT: // (-1) (MobileNetV2)
-      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT:               // ( 0) (MobileNetV1)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH:    // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT:   // (-1) (MobileNetV2)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT:                 // ( 0) (MobileNetV1)
 
         if ( this.bShouldAddInputToOutput ) { // ( this.bAddInputToOutputRequested == true ) and possible to add-input-to-output.
 
@@ -1457,7 +1459,7 @@ class Base extends ReturnOrClone.Base {
 
                   // It should not execute to here.
                   tf.util.assert( false,
-                    `PointDepthPoint.Determine_apply(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
+                    `PointDepthPoint.Base.Determine_apply(), this.bShouldAddInputToOutput (${this.bShouldAddInputToOutput}) `
                       + `should equal this.bShould_addInput0ToPointwise21 (${this.bShould_addInput0ToPointwise21}) `
                       + ` or this.bShould_addInput0ToPointwise22 (${this.bShould_addInput0ToPointwise22}). ${this.parametersDescription}`);
 
@@ -1472,7 +1474,8 @@ class Base extends ReturnOrClone.Base {
             if ( this.bPointwise22 ) {
               return Base.apply_1_22_AddInputToOutput; // 3.3 Only pointwise22 exists (and no pointwise21).
             } else {
-              // 3.4 Both pointwise21 and pointwise22 do not exist. (Use pointwise21, but channel count is the same as channel count before pointwise2.)
+              // 3.4 Both pointwise21 and pointwise22 do not exist.
+              //     (Use pointwise21, but channel count is the same as channel count before pointwise2.)
               return Base.apply_1_21_AddInputToOutput;
             }
           }
