@@ -783,12 +783,16 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
 //!!! ...unfinished... (2021/10/13)
 
  *
- *     - It is only used when
- *         ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
- *         (-3) (i.e. channel shuffle the concatenated pointwise21 and input1).
+ *     - It is used when:
+ *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+ *           (-3) (ShuffleNetV2's body/tail) (i.e. channel shuffle the concatenated pointwise21 and input1).
+ *         - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
+ *             of pointwise21 and input1.
  *
- *     - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
- *         of pointwise21 and input1.
+ *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_DEPTHWISE1 )
+ *           (-4) (ShuffleNetV2_ByMobileNetV1's head)
+ *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+ *           (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -915,6 +919,19 @@ class Base extends ReturnOrClone.Base {
       input1: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input1", null, null ),
     };
 
+
+//!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
+// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
+// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
+//
+//       // Only if channel shuffler is used, it is recorded in data member.
+//       this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
+
+
+//!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
+// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
+// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
+
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
       this.channelCount0_pointwise1Before,
@@ -938,6 +955,10 @@ class Base extends ReturnOrClone.Base {
 
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise1 filters was ready. Report progress.
+
+//!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
+// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
+// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
 
     // 3. The depthwise operation.
     //
@@ -1029,6 +1050,10 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // concat1 was ready. Report progress.
 
     // 5. The pointwise2 convolution.
+
+//!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
+// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
+// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
 
     // 5.1 Pointwise21
     this.pointwise21 = new Pointwise.Base(
@@ -1207,6 +1232,10 @@ class Base extends ReturnOrClone.Base {
           );
           break;
       }
+
+//!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
+// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
+// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
 
       // Only if channel shuffler is used, it is recorded in data member.
       this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
