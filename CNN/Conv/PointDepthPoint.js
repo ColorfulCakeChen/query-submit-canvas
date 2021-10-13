@@ -84,10 +84,22 @@ class Params extends Weights.Params {
    *   The channel count of apply()'s second input image (i.e. inputTensors[ 1 ]; input1). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
-//!!! ...unfinished... (2021/10/12)
-      "ONE_INPUT_HALF_THROUGH",               // (-5) ShuffleNetV2's body/tail by MobileNet
-      "ONE_INPUT_HALF_DEPTHWISE1",            // (-4) ShuffleNetV2's head by MobileNet
+//!!! ...unfinished... (2021/10/13)
 
+   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
+   *       The input1 will not be used at all (will be ignored completely). The input0 will be processed by
+   *       pointwise1, depthwise1 operation, and pointwise2 convolution. Usually, ( bOutput1Requested == false ).
+   *
+   *
+   *
+   *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
+   *       The input1 will not be used at all (will be ignored completely). The input0 will be processed by
+   *       pointwise1, depthwise1 operation, and pointwise2 convolution. Usually, ( bOutput1Requested == false ).
+   *
+   *
+
+   *
+   *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail)
    *       The input1 should exist. The channel count of input1 must be the same as pointwise21's result (i.e.
    *       channelCount_pointwise21After_concat2Before) (Note: not pointwise21ChannelCount because pointwise21ChannelCount may be
@@ -102,7 +114,7 @@ class Params extends Weights.Params {
    *           - The output0 will have twice channel count as pointwise21 result (i.e. ( channelCount_pointwise21After_concat2Before * 2 ) ).
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE (-2): (simplified ShuffleNetV2's head).
-   *       The inputTensors[ 1 ] will not be used at all (will be ignored completely). The inputTensors[ 0 ] will be processed by
+   *       The input1 will not be used at all (will be ignored completely). The input0 will be processed by
    *       two pathes: one is by pointwise1 and one depthwise operation, the other is by another depthwise operation (without
    *       pointwise1). These two depthwise operations will have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier,
    *       depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId) but have different (filter and bias)
@@ -110,14 +122,14 @@ class Params extends Weights.Params {
    *       convolution. This is the only one case which there will be second depthwise.
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT (-1): (MobileNetV2's body and tail).
-   *       The inputTensors[ 1 ] will not be used at all (will be ignored completely). The inputTensors[ 0 ] will be processed by
-   *       pointwise1, one depthwise operation, and pointwise2 convolution. Finally, the inputTensors[ 0 ] will be added to the
+   *       The input1 will not be used at all (will be ignored completely). The input0 will be processed by
+   *       pointwise1, depthwise1 operation, and pointwise2 convolution. Finally, the input0 will be added to the
    *       result of pointwise2. This is the only one case which will do add-input-to-output.
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0): (MobileNetV1 or MobileNetV2's head
    *       or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) ).
-   *       The inputTensors[ 1 ] will not be used at all (will be ignored completely). The inputTensors[ 0 ] will be processed
-   *       by pointwise1, one depthwise operation, and pointwise2 convolution.
+   *       The input1 will not be used at all (will be ignored completely). The input0 will be processed by
+   *       pointwise1, depthwise1 operation, and pointwise2 convolution.
    *
    *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise22's body/tail).
    *       It should be the channel count of input1.
@@ -134,7 +146,7 @@ class Params extends Weights.Params {
    *
 
 //!!! ...unfinished... (2021/07/27)
-// Perhaps, ( channelCount1_pointwise1Before == -4 ): ONE_INPUT_TWO_DEPTHWISE_ONE_MAX_POOLING
+// Perhaps, ( channelCount1_pointwise1Before == -6 ): ONE_INPUT_TWO_DEPTHWISE_ONE_MAX_POOLING
 //
 // A max pooling will be used as a branch of input0. The max pooling result of input0 should be concatenated with the
 // two depthwise convolutions' result of input0. The reason is that max pooling could provide information which is difficult achieved
