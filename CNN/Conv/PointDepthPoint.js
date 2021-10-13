@@ -92,13 +92,13 @@ class Params extends Weights.Params {
    *       - The higher half of pointwise1, depthwise1, pointwise2 just pass through (i.e. do not change) the higher half of input0.
    *       - The lower half of pointwise2's result will be shuffled with the higher half of pointwise2's result.
    *       - Compared to TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) (ShuffleNetV2's body/tail), it is slower in backend CPU because
-   *           of more computations. But it is faster in backend WASM and WEBGL.
+   *           of more computations. But strangely, it seems faster in backend WASM and WEBGL.
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
    *       - Almost the same as ONE_INPUT_HALF_THROUGH (-5).
    *       - The only different is that the higher half of depthwise1 does not just pass through.
    *       - Compared to ONE_INPUT_TWO_DEPTHWISE (-2) (simplified ShuffleNetV2's head), it is slower in backend CPU because
-   *           of more computations. But it is faster in backend WASM and WEBGL.
+   *           of more computations. But strangely, it seems faster in backend WASM and WEBGL.
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail)
    *       - The input1 should exist. The channel count of input1 must be the same as pointwise21's result (i.e.
