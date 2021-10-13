@@ -87,8 +87,11 @@ class Params extends Weights.Params {
 //!!! ...unfinished... (2021/10/13)
 
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
-   *       The input1 will not be used at all (will be ignored completely). The input0 will be processed by
-   *       pointwise1, depthwise1 operation, and pointwise2 convolution. Usually, ( bOutput1Requested == false ).
+   *       - The input1 will not be used at all (will be ignored completely).
+   *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
+   *       - It uses the same procedure as Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0).
+   *       - Usually, ( bOutput1Requested == false ).
+   *       - 
    *
    *
    *
@@ -101,9 +104,9 @@ class Params extends Weights.Params {
    *
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail)
-   *       The input1 should exist. The channel count of input1 must be the same as pointwise21's result (i.e.
-   *       channelCount_pointwise21After_concat2Before) (Note: not pointwise21ChannelCount because pointwise21ChannelCount may be
-   *       zero). The result of pointwise21 (which operates on input0) will be concatenated with input1.
+   *       - The input1 should exist. The channel count of input1 must be the same as pointwise21's result (i.e.
+   *           channelCount_pointwise21After_concat2Before) (Note: not pointwise21ChannelCount because pointwise21ChannelCount may
+   *           be zero). The result of pointwise21 (which operates on input0) will be concatenated with input1.
    *
    *       - If ( bOutput1Requested == true ): (ShuffleNetV2's body)
    *           - The concatenated [ pointwise21, input1 ] will be channel-shuffled and splitted into [ output0, output1 ].
@@ -114,25 +117,28 @@ class Params extends Weights.Params {
    *           - The output0 will have twice channel count as pointwise21 result (i.e. ( channelCount_pointwise21After_concat2Before * 2 ) ).
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE (-2): (simplified ShuffleNetV2's head).
-   *       The input1 will not be used at all (will be ignored completely). The input0 will be processed by
-   *       two pathes: one is by pointwise1 and one depthwise operation, the other is by another depthwise operation (without
-   *       pointwise1). These two depthwise operations will have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier,
-   *       depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId) but have different (filter and bias)
-   *       weights. The two depthwise results will be concatenated. The concatenated result will be processed by pointwise2
-   *       convolution. This is the only one case which there will be second depthwise.
+   *       - The input1 will not be used at all (will be ignored completely).
+   *       - The input0 will be processed by two pathes: one is by pointwise1 and depthwise1 operation, the other is by depthwise2
+   *           operation (without pointwise1).
+   *       - These two depthwise operations will have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier,
+   *           depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId) but have different (filter and
+   *           bias) weights.
+   *       - The two depthwise results will be concatenated. The concatenated result will be processed by pointwise2 convolution.
+   *       - This is the only one case which there will be depthwise2.
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT (-1): (MobileNetV2's body and tail).
-   *       The input1 will not be used at all (will be ignored completely). The input0 will be processed by
-   *       pointwise1, depthwise1 operation, and pointwise2 convolution. Finally, the input0 will be added to the
-   *       result of pointwise2. This is the only one case which will do add-input-to-output.
+   *       - The input1 will not be used at all (will be ignored completely).
+   *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
+   *       - The input0 will be added to the result of pointwise2.
+   *       - This is the only one case which will do add-input-to-output.
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0): (MobileNetV1 or MobileNetV2's head
    *       or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) ).
-   *       The input1 will not be used at all (will be ignored completely). The input0 will be processed by
-   *       pointwise1, depthwise1 operation, and pointwise2 convolution.
+   *       - The input1 will not be used at all (will be ignored completely).
+   *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
    *
    *   - ( channelCount1_pointwise1Before > 0 ): TWO_INPUTS: (ShuffleNetV2_ByPointwise22's body/tail).
-   *       It should be the channel count of input1.
+   *       - It should be the channel count of input1.
    *
    *       - The input1 will not be processed by any pointwise1 and depthwise operation.
    *
