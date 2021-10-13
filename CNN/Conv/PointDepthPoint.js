@@ -84,8 +84,6 @@ class Params extends Weights.Params {
    *   The channel count of apply()'s second input image (i.e. inputTensors[ 1 ]; input1). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
    *
-//!!! ...unfinished... (2021/10/13)
-
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
    *       - The input1 will not be used at all (will be ignored completely).
    *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
@@ -406,6 +404,8 @@ class Params extends Weights.Params {
     Params.set_input1ChannelCount_by.call( this,
       channelCount0_pointwise1Before, channelCount1_pointwise1Before,
       pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+
+//!!! ...unfinished... (2021/10/13)
 
     // 1. One input.
     if ( this.inputTensorCount == 1 ) {
