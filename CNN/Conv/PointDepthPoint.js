@@ -405,8 +405,6 @@ class Params extends Weights.Params {
       channelCount0_pointwise1Before, channelCount1_pointwise1Before,
       pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
 
-//!!! ...unfinished... (2021/10/13)
-
     // 1. One input.
     if ( this.inputTensorCount == 1 ) {
 
@@ -415,6 +413,8 @@ class Params extends Weights.Params {
       switch ( channelCount1_pointwise1Before ) {
         // 1.1
         case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT: // ( 0)
+        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_DEPTHWISE1: // (-4)
+        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
           this.bDepthwise2Requested = this.bConcat1Requested = false; this.bAddInputToOutputRequested = false; break;
 
         // 1.2 The only case uses add-input-to-output. (MobileNetV2)
@@ -608,8 +608,11 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * </pre>
  *
  *
- *   - When ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
- * (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) )
+ *   - When
+ *     - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
+ *       (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) )
+ *     - ( channelCount1_pointwise1Before == -4 ): ONE_INPUT_HALF_DEPTHWISE1: (ShuffleNetV2_ByMobileNetV1's head)
+ *     - ( channelCount1_pointwise1Before == -5 ): ONE_INPUT_HALF_THROUGH: (ShuffleNetV2_ByMobileNetV1's body/tail)
  * <pre>
  * input0 - pointwise1 - depthwise1 ---------------- pointwise21
  *                                                 \ pointwise22
@@ -776,6 +779,9 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *     - It will not be disposed by this object (i.e. it is supposed to be shared with outter callers).
  *
  *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
+
+//!!! ...unfinished... (2021/10/13)
+
  *
  *     - It is only used when
  *         ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
