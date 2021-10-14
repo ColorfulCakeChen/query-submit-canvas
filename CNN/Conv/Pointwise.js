@@ -17,6 +17,19 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+
+//!!! ...unfinished... (2021/10/14) should be named as bHigherCopyLower?
+
+ *
+ * @member {boolean} bHigherHalfPassThrough
+ *   If true, the filters for the output channels between ( inputChannelCount - 1 ) to ( outputChannelCount - 1 ) will just pass
+ * through the input to output
+ *
+ * @member {ChannelShuffler.Xxx} channelShuffler
+ *   If not null, the channelShuffler.shuffleInfo will be used to (pre-)shuffle the filters. The total effect will be the same as
+ * applying the channel shuffler (without concatenation and splitting) after pointwise convolution.
+ *
+ *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
@@ -49,7 +62,13 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId ) {
+  constructor(
+    inputChannelCount, outputChannelCount, bBias, nActivationId,
+
+//!!! ...unfinished... (2021/10/14)
+    bHigherHalfPassThrough,
+    @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
+               ) {
     super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
