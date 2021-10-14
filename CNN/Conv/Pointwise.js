@@ -17,26 +17,23 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
-
-//!!! ...unfinished... (2021/10/14) For ShuffleNetV2_ByMopbileNetV1's head, it should be bHigherCopyLower.
-//!!! ...unfinished... (2021/10/14) For ShuffleNetV2_ByMopbileNetV1's body/tail, it is bHigherHalfPassThrough.
-
- *
  * @member {boolean} bHigherHalfDifferent
  *   - If false, it is just a normal poitwise convolution.
  *
  *   - If true:
  *
- *     - If ( channelShuffler == null ), the filters for the output channels between ( inputChannelCount ) and ( outputChannelCount - 1 )
- *         will just copy the input channels between 0 and ( inputChannelCount - 1 ). (bHigherCopyLower, for ShuffleNetV2_ByMopbileNetV1's head)
+ *     - If ( inputChannelCount < outputChannelCount ), the filters for the output channels between ( inputChannelCount ) and
+ *         ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( inputChannelCount - 1 ). (i.e. bHigherCopyLower,
+ *         for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
- *     - If ( channelShuffler != null ), the filters for the output channels between ( inputChannelCount ) to ( outputChannelCount - 1 )
- *         will just pass through the input to output. (bHigherHalfPassThrough, for ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
+ *         to ( outputChannelCount ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
+ *         pointwise1 and pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  * @member {ChannelShuffler.Xxx} channelShuffler
  *   If not null, the channelShuffler.shuffleInfo will be used to (pre-)shuffle the filters. The total effect will be the same as
- * applying the channel shuffler (without concatenation and splitting) after pointwise convolution.
- *
+ * applying the channel shuffler (without concatenation and splitting) after pointwise convolution. (for pointwise2 of
+ * ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -70,18 +67,14 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-  constructor(
-    inputChannelCount, outputChannelCount, bBias, nActivationId,
-
-//!!! ...unfinished... (2021/10/14)
-    bHigherHalfPassThrough,
-    @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
-               ) {
+  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, bHigherHalfDifferent, channelShuffler ) {
     super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
+    this.bHigherHalfDifferent = bHigherHalfDifferent;
+    this.channelShuffler = channelShuffler;
   }
 
   /**
@@ -100,6 +93,10 @@ class Base extends ReturnOrClone_Activation.Base {
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
     this.bPointwise = ( this.outputChannelCount > 0 );
     this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
+
+//!!! ...unfinished... (2021/10/14)
+//     this.bHigherHalfDifferent;
+//     this.channelShuffler;
 
     if ( this.bPointwise ) {
 
