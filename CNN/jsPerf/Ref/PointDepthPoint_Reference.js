@@ -519,16 +519,13 @@ class Base {
     let imageIn0 = imageInArray[ 0 ];
     let imageIn1 = imageInArray[ 1 ];
 
-
-//!!! ...unfinished... (2021/10/12)
-// The following two use same calculation logic:
-//    ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH // (-5) ShuffleNetV2's body/tail by MobileNet
-//    ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 // (-3) (ShuffleNetV2's body/tail)
-//
-// The following two use same calculation logic:
-//    ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_DEPTHWISE1 // (-4) ShuffleNetV2's head by MobileNet
-//    ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE // (-2) (ShuffleNetV2's head)
-
+    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
+    //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    //    TWO_INPUTS_CONCAT_POINTWISE21_INPUT1     // (-3) (ShuffleNetV2's body/tail)
+    //
+    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids..Xxx) use same calculation logic:
+    //    ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+    //    Ids.ONE_INPUT_TWO_DEPTHWISE              // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
                                                                                                       
     // 1. Pointwise1
     let pointwise1Result;
@@ -560,8 +557,12 @@ class Base {
 
     // 2.2 Depthwise2
     let depthwise2Result;
-    if ( testParams.out.channelCount1_pointwise1Before
-           == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) { // (-2) (simplified ShuffleNetV2's head)
+    if (   ( testParams.out.channelCount1_pointwise1Before // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
+
+        || ( testParams.out.channelCount1_pointwise1Before // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) ) {
+
       if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
         depthwise2Result = Base.calcDepthwise(
           imageIn0, // depthwise2 apply to input0 (not input1)
@@ -584,13 +585,18 @@ class Base {
       concat1Result = Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
         "Concat1_depthwise1_input1 (TWO_INPUTS)", this.paramsOutDescription );
 
-    // ONE_INPUT_TWO_DEPTHWISE (-2) (our simplified ShuffleNetV2's head)
-    } else if ( testParams.out.channelCount1_pointwise1Before
-                  == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
+    // ONE_INPUT_TWO_DEPTHWISE                  (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+    // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (ShuffleNetV2_ByMobileNetV1's head)
+    } else if (   ( testParams.out.channelCount1_pointwise1Before
+                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
+               || ( testParams.out.channelCount1_pointwise1Before
+                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) ) {
 
       // Concatenate depthwise1's result and depthwise2's result.
       concat1Result = Base.calcConcatAlongAxisId2(
-        depthwise1Result, depthwise2Result, "Concat1_depthwise1_depthwise2 (ONE_INPUT_TWO_DEPTHWISE)", this.paramsOutDescription );
+        depthwise1Result, depthwise2Result,
+        "Concat1_depthwise1_depthwise2 (ONE_INPUT_TWO_DEPTHWISE or ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1)",
+        this.paramsOutDescription );
     }
 
     // 4. Pointwise2
@@ -625,13 +631,16 @@ class Base {
 
     // 4.2 Pointwise22
     //
-    // ONE_INPUT_TWO_DEPTHWISE (-2) or ONE_INPUT_ADD_TO_OUTPUT (-1) or ONE_INPUT (0) or TWO_INPUTS (> 0). (i.e. Not ShuffleNetV2's body/tail)
+    // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) or ONE_INPUT_TWO_DEPTHWISE (-2) or
+    // ONE_INPUT_ADD_TO_OUTPUT (-1) or ONE_INPUT (0) or TWO_INPUTS (> 0). (i.e. Not ShuffleNetV2's body/tail)
     if (   ( testParams.out.channelCount1_pointwise1Before
-               == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) // (-2)
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
         || ( testParams.out.channelCount1_pointwise1Before
-               == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_ADD_TO_OUTPUT ) // (-1)
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE ) // (-2)
         || ( testParams.out.channelCount1_pointwise1Before
-               == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT ) // (0)
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT ) // (-1)
+        || ( testParams.out.channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT ) // (0)
         || ( testParams.out.channelCount1_pointwise1Before > 0 )
        ) {
 
@@ -667,9 +676,12 @@ class Base {
 
     // 5. Concat2 (along image depth), shuffle, split.
     //
-    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3). (i.e. ShuffleNetV2's body/tail)
-    } else if ( testParams.out.channelCount1_pointwise1Before
-                  == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) {
+    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) (ShuffleNetV2's body/tail)
+    // ONE_INPUT_HALF_THROUGH               (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    } else if (    ( testParams.out.channelCount1_pointwise1Before
+                       == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+                || ( testParams.out.channelCount1_pointwise1Before
+                       == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) ) {
 
       tf.util.assert( ( !imageOutArray[ 1 ] ),
         `PointDepthPoint imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
