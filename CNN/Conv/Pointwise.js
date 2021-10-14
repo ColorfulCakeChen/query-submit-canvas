@@ -27,7 +27,7 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  *         for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
  *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
- *         to ( outputChannelCount ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
+ *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
  *         pointwise1 and pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  * @member {ChannelShuffler.Xxx} channelShuffler
