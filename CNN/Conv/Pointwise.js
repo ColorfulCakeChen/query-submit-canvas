@@ -28,12 +28,12 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  *
  *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
  *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
- *         pointwise1 and pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
  *
  * @member {ChannelShuffler.Xxx} channelShuffler
  *   If not null, the channelShuffler.shuffleInfo will be used to (pre-)shuffle the filters. The total effect will be the same as
  * applying the channel shuffler (without concatenation and splitting) after pointwise convolution. (for pointwise2 of
- * ShuffleNetV2_ByMopbileNetV1's body/tail)
+ * ShuffleNetV2_ByMopbileNetV1's head/body/tail)
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
