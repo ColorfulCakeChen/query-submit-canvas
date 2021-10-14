@@ -956,6 +956,34 @@ Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22 = class extends Param
 }
 
 
+//!!! ...unfinished... (2021/10/14)
+/*
+ * Accodring to testing, the original ShuffleNetV2 is faster than MobileNetV2 in backend CPU. This may result from lesser
+ * computation. However, in backend WASM and WEBGL, MobileNetV2 is faster than the original ShuffleNetV2. The possible
+ * reason may be that the concatenation-shuffle-split (even achieved by pointwise convolution) operation is not friendly
+ * for WASM and WEBGL.
+ *
+ * This results in an idea that:
+ *   - Use MobileNetV2 structure but with ( pointwise1ChannelCountRate == 1 ) and without add-input-to-output. (So, it is more
+ *       like MobileNetV1.)
+ *   - Manipulate the filter weights of pointwise1, depthwise1, pointwise21 so that they achieve the same effect of shuffling
+ *       but without concatenation and splitting.
+ *
+ * This may become a faster ShuffleNetV2 in backend WASM and WEBGL (but a slower ShuffleNetV2 in backend CPU).
+ *
+ *
+ * Q1: Why not just use MobileNet instead of ShuffleNetV2, since its structure is MobileNet?
+ * A1: The filter weights count is different. MobileNet has more (a lot) filter weights needed to be learned than ShuffleNetV2.
+ *     The learning (or say, evolving) performance should be faster by using ShuffleNetV2 (rather than MobileNet).
+ *
+ */
+Params.to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1 = class extends Params.to_PointDepthPointParams.ShuffleNetV2 {
+
+//!!! ...unfinished... (2021/10/14)
+
+}
+
+
 /** Provide parameters for MobileNetV2 (i.e. with pointwise1, with add-input-to-output).
  *
  *
