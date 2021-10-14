@@ -18,12 +18,20 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * Only meaningful when ( this.bInitOk == true ).
  *
 
-//!!! ...unfinished... (2021/10/14) should be named as bHigherCopyLower?
+//!!! ...unfinished... (2021/10/14) For ShuffleNetV2_ByMopbileNetV1's head, it should be bHigherCopyLower.
+//!!! ...unfinished... (2021/10/14) For ShuffleNetV2_ByMopbileNetV1's body/tail, it is bHigherHalfPassThrough.
 
  *
- * @member {boolean} bHigherHalfPassThrough
- *   If true, the filters for the output channels between ( inputChannelCount - 1 ) to ( outputChannelCount - 1 ) will just pass
- * through the input to output
+ * @member {boolean} bHigherHalfDifferent
+ *   - If false, it is just a normal poitwise convolution.
+ *
+ *   - If true:
+ *
+ *     - If ( channelShuffler == null ), the filters for the output channels between ( inputChannelCount ) and ( outputChannelCount - 1 )
+ *         will just copy the input channels between 0 and ( inputChannelCount - 1 ). (bHigherCopyLower, for ShuffleNetV2_ByMopbileNetV1's head)
+ *
+ *     - If ( channelShuffler != null ), the filters for the output channels between ( inputChannelCount ) to ( outputChannelCount - 1 )
+ *         will just pass through the input to output. (bHigherHalfPassThrough, for ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  * @member {ChannelShuffler.Xxx} channelShuffler
  *   If not null, the channelShuffler.shuffleInfo will be used to (pre-)shuffle the filters. The total effect will be the same as
