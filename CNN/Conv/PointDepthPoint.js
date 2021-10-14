@@ -18,23 +18,6 @@ import * as TensorOpCounter from "./TensorOpCounter.js";
 // Whether batchNorm could be used as bias? even activation function?
 //
 
-//!!! ...unfinished... (2021/10/12)
-/*
- * Accodring to testing, the original ShuffleNetV2 is faster than MobileNetV2 in backend CPU. This may result from lesser
- * computation. However, in backend WASM and WEBGL, MobileNetV2 is faster than the original ShuffleNetV2. The possible reason
- * may be that the concatenation-shuffle-split (even achieved by pointwise convolution) operation is not friendly
- * for WASM and WEBGL.
- *
- * This results in an idea that:
- *   - Use MobileNetV2 structure but with ( pointwise1ChannelCountRate == 1 ) and without add-input-to-output.
- *   - Manipulate the filter weights of pointwise1, depthwise1, pointwise21 so that they achieve the same effect of shuffling
- *     but without concatenation and splitting.
- *
- * This may become a faster ShuffleNetV2 in backend WASM and WEBGL (but a slower ShuffleNetV2 in backend CPU).
- *
- *
- */
-
 
 /**
  * Pointwise-depthwise-pointwise convolution layer parameters.
