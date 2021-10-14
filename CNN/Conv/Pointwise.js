@@ -106,6 +106,40 @@ class Base extends ReturnOrClone_Activation.Base {
 //     this.bHigherHalfDifferent;
 //     this.channelShuffler;
 
+//  *     - If ( inputChannelCount < outputChannelCount ), the filters for the output channels between ( inputChannelCount ) and
+//  *         ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( inputChannelCount - 1 ). (i.e.
+//  *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+//  *
+//  *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
+//  *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
+//  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
+//  *
+
+    if ( this.bHigherHalfDifferent ) {
+
+      if ( this.inputChannelCount < this.outputChannelCount ) { // i.e. bHigherHalfCopyLowerHalf
+
+//!!! ...unfinished... (2021/10/14)
+        this.filtersLowerHalfShape =  [ 1, 1, this.inputChannelCount, ( this.inputChannelCount - 1 ) ];
+        this.filtersHigherHalfShape = [ 1, 1, ???this.inputChannelCount, ( this.outputChannelCount - this.inputChannelCount - 1 ) ];
+
+//!!! ...unfinished... (2021/10/14)
+        this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
+        this.biasesShape =       [ 1, 1, this.outputChannelCount ];
+
+      } else { // ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
+
+//!!! ...unfinished... (2021/10/14)
+
+      }
+
+    } else { // Normal pointwise convolution.
+      this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
+      this.biasesShape =       [ 1, 1, this.outputChannelCount ];
+    }
+
+//!!! ...unfinished... (2021/10/14)
+
     //this.filterHeightWidth = [ 1, 1 ];
     this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
     this.biasesShape =       [ 1, 1, this.outputChannelCount ];
