@@ -94,59 +94,60 @@ class Base extends ReturnOrClone_Activation.Base {
     this.bPointwise = ( this.outputChannelCount > 0 );
     this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
 
+    if ( !this.bPointwise ) {
+      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
+      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
+      this.bInitOk = true;
+      return true;
+    }
+
+
 //!!! ...unfinished... (2021/10/14)
 //     this.bHigherHalfDifferent;
 //     this.channelShuffler;
 
-    if ( this.bPointwise ) {
+    //this.filterHeightWidth = [ 1, 1 ];
+    this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
+    this.biasesShape =       [ 1, 1, this.outputChannelCount ];
 
-      //this.filterHeightWidth = [ 1, 1 ];
-      this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
-      this.biasesShape =       [ 1, 1, this.outputChannelCount ];
+    this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
+    if ( !this.filtersWeights.extract() )
+      return false;  // e.g. input array does not have enough data.
 
-      this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
-      if ( !this.filtersWeights.extract() )
+    this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
+
+    this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
+
+// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for pointwise convolution.
+    this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+    this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+
+    this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
+
+    if ( this.bBias ) {
+      this.biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
+      if ( !this.biasesWeights.extract() )
         return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
 
-      this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
-
-      this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
-
-// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for pointwise convolution.
-      this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-      this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-
-      this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
-
-      if ( this.bBias ) {
-        this.biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
-        if ( !this.biasesWeights.extract() )
-          return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
-
-        this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.biasesShape );
+      this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.biasesShape );
 
 // !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for pointwise convolution.
-        this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+      this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+      this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
 
-        if ( this.pfnActivation )
-          this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
-        else
-          this.pfnConvBiasActivation = Base.ConvBias_and_destroy_or_keep;
-
-      } else {
-
-        if ( this.pfnActivation )
-          this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
-         else
-          this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
-
-      }
+      if ( this.pfnActivation )
+        this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
+      else
+        this.pfnConvBiasActivation = Base.ConvBias_and_destroy_or_keep;
 
     } else {
-      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
-      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
+
+      if ( this.pfnActivation )
+        this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
+       else
+        this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
+
     }
 
     this.bInitOk = true;
