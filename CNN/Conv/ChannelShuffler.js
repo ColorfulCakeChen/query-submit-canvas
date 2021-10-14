@@ -299,12 +299,11 @@ class ConcatGather {
           return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
         });
 
-      if ( this.shuffledChannelIndicesTensor1dArray ) {
-        for ( let i = 0; i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
-          let shuffledChannelIndicesTensor1d = this.shuffledChannelIndicesTensor1dArray[ i ];
-          if ( shuffledChannelIndicesTensor1d ) {
-            this.tensorWeightCountTotal += tf.util.sizeFromShape( shuffledChannelIndicesTensor1d.shape );
-          }
+      // Calculate total weight count.
+      for ( let i = 0; i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
+        let shuffledChannelIndicesTensor1d = this.shuffledChannelIndicesTensor1dArray[ i ];
+        if ( shuffledChannelIndicesTensor1d ) {
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( shuffledChannelIndicesTensor1d.shape );
         }
       }
 
