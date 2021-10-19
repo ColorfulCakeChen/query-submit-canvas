@@ -166,49 +166,23 @@ class Base extends ReturnOrClone_Activation.Base {
 
     let bHigherHalfCopyLowerHalf, bHigherHalfPassThrough;
     let inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted;
-
-    let outputChannelCount_higherHalf;
     let higherHalfPassThrough;
 
     try {
 
-      // 1. Determine lower half filters dimension. Generate higher half filters and biases.
+      // 1. Determine lower half filters dimension.
 
       if ( this.bHigherHalfDifferent ) {
 
         if ( this.inputChannelCount < this.outputChannelCount ) { // 1.1 i.e. bHigherHalfCopyLowerHalf
-
           bHigherHalfCopyLowerHalf = true;
-
-          // The lower half filters have the same output channel count as input.
-          inputChannelCount_toBeExtracted = outputChannelCount_toBeExtracted = this.inputChannelCount;
-
-          outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
-
-          higherHalfPassThrough = new PaseThrough(
-            this.inputChannelCount, outputChannelCount_higherHalf,
-            0, outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
-          );
-
-
-//!!! ...unfinished... (2021/10/19)
+          inputChannelCount_toBeExtracted // The lower half filters have the same output channel count as input.
+            = outputChannelCount_toBeExtracted = this.inputChannelCount;
 
         } else { // 1.2 ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
-
           bHigherHalfPassThrough = true;
-
-          // The lower half filters have half the output channel count as input and output.
-          inputChannelCount_toBeExtracted = outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
-
-          outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
-
-          higherHalfPassThrough = new PaseThrough(
-            this.inputChannelCount, outputChannelCount_higherHalf,
-            outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
-          );
-
-//!!! ...unfinished... (2021/10/19)
-
+          inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
+            = outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
         }
 
       } else { // 1.3 Normal pointwise convolution. Use specified input and output channel count.
@@ -223,10 +197,22 @@ class Base extends ReturnOrClone_Activation.Base {
         return false; // Initialization failed.
       }
 
-      // 3. Combine lower half and higher half.
+      if ( !this.bPointwise ) {
+        this.bInitOk = true;
+        return true; // Since there is no pointwise convolution, initialization was done successfully.
+      }
+
+      // 3. Generate higher half filters and biases. Combine lower half and higher half.
 
 //!!! ...unfinished... (2021/10/19) inferenced filters.
       if ( bHigherHalfCopyLowerHalf ) { // 3.1
+
+          let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
+          higherHalfPassThrough = new PaseThrough(
+            this.inputChannelCount, outputChannelCount_higherHalf,
+            0, outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+          );
+
 
 //!!! ...unfinished... (2021/10/19)  (concat along axis 2?)
 // The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
@@ -234,6 +220,12 @@ class Base extends ReturnOrClone_Activation.Base {
 
       } else if ( bHigherHalfPassThrough ) { // 3.2
 
+          let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
+          higherHalfPassThrough = new PaseThrough(
+            this.inputChannelCount, outputChannelCount_higherHalf,
+            outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
+          );
+        
 //!!! ...unfinished... (2021/10/19) (concat along axis 2?)
 // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount)
 // The extra channel's filters are just zero.
@@ -241,13 +233,9 @@ class Base extends ReturnOrClone_Activation.Base {
 // The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
 // The extra channel's biases are just zero.
 
-      } else { // 3.3
+      } else { // 3.3 Normal pointwise convolution. Nothing to be combined.
       }
 
-      if ( !this.bPointwise ) {
-        this.bInitOk = true;
-        return true; // Since there is no pointwise, initialization was done successfully.
-      }
 
 //!!! ...unfinished... (2021/10/19)
 // After calling init_by_inputChannelCount_outputChannelCount(), re-calculate this.tensorWeightCountTotal and this.tensorWeightCountExtracted.
@@ -279,13 +267,11 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
 
-    this.filtersShape = this.biasesShape
-// ???
-//       = this.filtersShapeForExtracting = this.biasesShape
+//!!! (2021/10/19 Remarked)
+//    this.filtersShape = this.biasesShape
 //!!! (2021/10/19 Remarked) So that inputFloat32Array could be released.
 //      = this.filtersWeights = this.biasesWeights
-      = this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation
-      = null;
+    this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
 
     this.bPointwise = false;
     this.byteOffsetEnd = -1;
