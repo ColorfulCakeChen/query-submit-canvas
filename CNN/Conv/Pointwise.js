@@ -198,12 +198,16 @@ class Base extends ReturnOrClone_Activation.Base {
           0, outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
         );
 
+        this.tensorWeightCountTotal = 0; // Since the filters and biases will be changed, the total weights count should be re-calculated.
+
         {
           let allFiltersArray = [ this.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
           let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
 
           this.filtersTensor4d.dispose();
           this.filtersTensor4d = allFiltersTensor4d;
+
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
         }
 
         if ( this.biasesTensor3d ) {
@@ -212,6 +216,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
           this.biasesTensor3d.dispose();
           this.biasesTensor3d = allBiasesTensor3d;
+
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
         }
 
       } else if ( bHigherHalfPassThrough ) { // 3.2
@@ -223,6 +229,8 @@ class Base extends ReturnOrClone_Activation.Base {
             this.inputChannelCount, outputChannelCount_higherHalf,
             outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
           );
+
+          this.tensorWeightCountTotal = 0; // Since the filters and biases will be changed, the total weights count should be re-calculated.
 
           {
             // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount,
@@ -248,9 +256,9 @@ class Base extends ReturnOrClone_Activation.Base {
 
             this.filtersTensor4d.dispose();
             this.filtersTensor4d = allFiltersTensor4d;
-          }
 
-//!!! ...unfinished... (2021/10/19) (concat along axis 2?)
+            this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+          }
 
           if ( this.biasesTensor3d ) {
             let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
@@ -258,6 +266,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
             this.biasesTensor3d.dispose();
             this.biasesTensor3d = allBiasesTensor3d;
+
+            this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
           }
         }
 
@@ -276,8 +286,6 @@ class Base extends ReturnOrClone_Activation.Base {
 // re-set this.filtersShape and this.biasesShape.
 
     } finally {
-
-//!!! ...unfinished... (2021/10/19) release.
 
       if ( higherHalfPassThrough )
         higherHalfPassThrough.disposeTensors();
@@ -392,9 +400,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.filtersTensor4d = tf.tensor4d( filtersWeights.weights, filtersShape );
 
-// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for pointwise convolution.
-    this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-    this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+    this.tensorWeightCountTotal // By default, same as extracted weights count.
+      = ( this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape ) );
 
     this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
 
@@ -406,9 +413,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
       this.biasesTensor3d = tf.tensor3d( biasesWeights.weights, biasesShape );
 
-// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for pointwise convolution.
-      this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-      this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+      this.tensorWeightCountTotal // By default, same as extracted weights count.
+        = ( this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape ) );
 
       if ( this.pfnActivation )
         this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
