@@ -217,29 +217,32 @@ class Base extends ReturnOrClone_Activation.Base {
       } else if ( bHigherHalfPassThrough ) { // 3.2
 
         let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
-        higherHalfPassThrough = new PaseThrough(
-          this.inputChannelCount, outputChannelCount_higherHalf,
-          outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
-        );
-        
+        if ( outputChannelCount_higherHalf > 0 ) {
+
+          higherHalfPassThrough = new PaseThrough(
+            this.inputChannelCount, outputChannelCount_higherHalf,
+            outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
+          );
+
 //!!! ...unfinished... (2021/10/19) (concat along axis 2?)
 // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount)
 // The extra channel's filters are just zero.
 
-        {
-          this.filtersTensor4d;
+          {
+            this.filtersTensor4d;
 
-//!!!???
-//           let expandedBiasesArray = [ this.biasesTensor3d, tf.zeros( ???, this.biasesTensor3d.shape ) ];
-//           let expandedBiasesTensor3d = tf.concat( expandedBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+  //!!!???
+  //           let expandedBiasesArray = [ this.biasesTensor3d, tf.zeros( ???, this.biasesTensor3d.shape ) ];
+  //           let expandedBiasesTensor3d = tf.concat( expandedBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
 
-        }
+          }
 
 //!!! ...unfinished... (2021/10/19) (concat along axis 2?)
 // The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
 // The extra channel's biases are just zero.
 
-        if ( this.biasesTensor3d ) {
+          if ( this.biasesTensor3d ) {
+          }
         }
 
       } else { // 3.3 Normal pointwise convolution. Nothing to be combined.
