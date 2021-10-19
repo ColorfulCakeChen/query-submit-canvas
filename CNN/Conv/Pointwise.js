@@ -166,7 +166,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
     let bHigherHalfCopyLowerHalf, bHigherHalfPassThrough;
     let inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted;
-    let higherHalfPassThrough;
 
     try {
 
@@ -203,15 +202,17 @@ class Base extends ReturnOrClone_Activation.Base {
       }
 
       // 3. Generate higher half filters and biases. Combine lower half and higher half.
+      let higherHalfPassThrough;
 
 //!!! ...unfinished... (2021/10/19) inferenced filters.
+
       if ( bHigherHalfCopyLowerHalf ) { // 3.1
 
-          let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
-          higherHalfPassThrough = new PaseThrough(
-            this.inputChannelCount, outputChannelCount_higherHalf,
-            0, outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
-          );
+        let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
+        higherHalfPassThrough = new PaseThrough(
+          this.inputChannelCount, outputChannelCount_higherHalf,
+          0, outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+        );
 
 
 //!!! ...unfinished... (2021/10/19)  (concat along axis 2?)
@@ -220,11 +221,11 @@ class Base extends ReturnOrClone_Activation.Base {
 
       } else if ( bHigherHalfPassThrough ) { // 3.2
 
-          let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
-          higherHalfPassThrough = new PaseThrough(
-            this.inputChannelCount, outputChannelCount_higherHalf,
-            outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
-          );
+        let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
+        higherHalfPassThrough = new PaseThrough(
+          this.inputChannelCount, outputChannelCount_higherHalf,
+          outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
+        );
         
 //!!! ...unfinished... (2021/10/19) (concat along axis 2?)
 // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount)
