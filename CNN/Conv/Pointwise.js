@@ -169,11 +169,18 @@ class Base extends ReturnOrClone_Activation.Base {
 //!!! ...unfinished... (2021/10/19) inferenced filters.
       if ( bHigherHalfCopyLowerHalf ) { // 2.1
 
+//!!! ...unfinished... (2021/10/19)  (concat along axis 2?)
+// The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
+// The extra channel's biases are just zero.
+
       } else if ( bHigherHalfPassThrough ) { // 2.2
 
-//!!! ...unfinished... (2021/10/19)
-// should expand extracted filters and biases to accepts a larger input channel count (i.e. this.inputChannelCount)
-// but zero out them. (concat along axis 2?)
+//!!! ...unfinished... (2021/10/19) (concat along axis 2?)
+// The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount)
+// The extra channel's filters are just zero.
+
+// The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
+// The extra channel's biases are just zero.
 
       } else { // 2.3
       }
