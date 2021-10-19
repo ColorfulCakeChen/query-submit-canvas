@@ -17,26 +17,17 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 class PassThrough {
 
   /**
-   * @param {number} inputChannelCount
-   *   The channel count of input.
-   *
-   * @param {number} outputChannelCount
-   *   The channel count of output.
-   *
-   * @param {number} inputChannelIndexStart
-   *   The channel count index (included) to start to be copied to the output.
-   *
-   * @param {number} inputChannelIndexStop
-   *   The channel count index (not included) to stop to be copied to the output.
-   *
-   *
+   * @param {number} inputChannelCount      The channel count of input.
+   * @param {number} outputChannelCount     The channel count of output.
+   * @param {number} inputChannelIndexStart The channel count index (included) to start to be copied to the output.
+   * @param {number} inputChannelIndexStop  The channel count index (not included) to stop to be copied to the output.
    */
   constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, inputChannelIndexStop ) {
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
     this.inputChannelIndexStop = inputChannelIndexStop;
-    
+
     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
     let biasesShape =  [ 1, 1, outputChannelCount ];
 
@@ -166,6 +157,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     let bHigherHalfCopyLowerHalf, bHigherHalfPassThrough;
     let inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted;
+    let higherHalfPassThrough;
 
     try {
 
@@ -202,9 +194,6 @@ class Base extends ReturnOrClone_Activation.Base {
       }
 
       // 3. Generate higher half filters and biases. Combine lower half and higher half.
-      let higherHalfPassThrough;
-
-//!!! ...unfinished... (2021/10/19) inferenced filters.
 
       if ( bHigherHalfCopyLowerHalf ) { // 3.1
 
@@ -214,10 +203,17 @@ class Base extends ReturnOrClone_Activation.Base {
           0, outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
         );
 
+//!!! ...unfinished... (2021/10/19)
+
+        if ( this.filtersTensor4d ) {
+        }
 
 //!!! ...unfinished... (2021/10/19)  (concat along axis 2?)
 // The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
 // The extra channel's biases are just zero.
+
+        if ( this.biasesTensor3d ) {
+        }
 
       } else if ( bHigherHalfPassThrough ) { // 3.2
 
@@ -231,8 +227,15 @@ class Base extends ReturnOrClone_Activation.Base {
 // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount)
 // The extra channel's filters are just zero.
 
+        if ( this.filtersTensor4d ) {
+        }
+
+//!!! ...unfinished... (2021/10/19) (concat along axis 2?)
 // The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
 // The extra channel's biases are just zero.
+
+        if ( this.biasesTensor3d ) {
+        }
 
       } else { // 3.3 Normal pointwise convolution. Nothing to be combined.
       }
