@@ -102,16 +102,17 @@ class Base extends ReturnOrClone_Activation.Base {
 //  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
 //  *
 
-    let inputChannelCount_toBeExtracted;
-    let outputChannelCount_toBeExtracted;
+    let bHigherHalfCopyLowerHalf, bHigherHalfPassThrough;
+    let inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted;
     let filtersHigherHalfTensor4d, biasesHigherHalfTensor3d;
 
     try {
 
       if ( this.bHigherHalfDifferent ) {
 
-        if ( this.inputChannelCount < this.outputChannelCount ) { // i.e. bHigherHalfCopyLowerHalf
+        if ( this.inputChannelCount < this.outputChannelCount ) { // 1.1 i.e. bHigherHalfCopyLowerHalf
 
+          bHigherHalfCopyLowerHalf = true;
           inputChannelCount_toBeExtracted = this.inputChannelCount;
           outputChannelCount_toBeExtracted = this.inputChannelCount; // The lower half filters have the same output channel count as input.
 
@@ -119,7 +120,7 @@ class Base extends ReturnOrClone_Activation.Base {
           //this.filtersLowerHalfShape =  [ 1, 1, this.inputChannelCount, this.inputChannelCount ];
           let channelCountHigherHalf = ( this.outputChannelCount - this.inputChannelCount );
           let filtersHigherHalfShape = [ 1, 1, this.inputChannelCount, channelCountHigherHalf ];
-          let biasesHigherHalfShape = [ 1, 1, channelCountHigherHalf ];
+          let biasesHigherHalfShape =  [ 1, 1, channelCountHigherHalf ];
 
           // Generate pointwise filters for just copying the input (until channelCountHigherHalf).
           filtersHigherHalfTensor4d = tf.tidy( () =>
@@ -135,23 +136,17 @@ class Base extends ReturnOrClone_Activation.Base {
             biasesHigherHalfTensor3d = tf.zero( biasesHigherHalfShape );
           }
 
-  //!!! ...unfinished... (2021/10/19)
-  //         tf.util.assert( filtersHigherHalfShape[ 2 ] == filtersHigherHalfShape[ 3 ],
-  //           `Pointwise.Base.init(): filtersHigherHalfShape ( ${filtersHigherHalfShape} ) `
-  //             + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
-  //         );
+        } else { // 1.2 ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
 
-  //!!! ...unfinished... (2021/10/14)
-          this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
-          this.biasesShape =       [ 1, 1, this.outputChannelCount ];
-
-        } else { // ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
+          bHigherHalfPassThrough = true;
+          inputChannelCount_toBeExtracted = this.inputChannelCount;
+          outputChannelCount_toBeExtracted = this.inputChannelCount; // The lower half filters have the same output channel count as input.
 
   //!!! ...unfinished... (2021/10/19)
 
         }
 
-      } else { // Normal pointwise convolution. Use specified input and output channel count.
+      } else { // 1.3 Normal pointwise convolution. Use specified input and output channel count.
         inputChannelCount_toBeExtracted = this.inputChannelCount;
         outputChannelCount_toBeExtracted = this.outputChannelCount;
       }
@@ -285,8 +280,8 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     //let filterHeightWidth = [ 1, 1 ];
-    let filtersShape =      [ 1, 1, inputChannelCount, outputChannelCount ];
-    let biasesShape =       [ 1, 1, outputChannelCount ];
+    let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
+    let biasesShape =  [ 1, 1, outputChannelCount ];
 
     let filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, filtersShape );
     if ( !filtersWeights.extract() )
