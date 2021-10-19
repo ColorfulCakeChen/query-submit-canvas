@@ -1103,7 +1103,7 @@ class Base extends ReturnOrClone.Base {
     }      
 
     tf.util.assert( this.inChannels1 == params.input1ChannelCount,
-      `PointDepthPoint.initer(): this.inChannels1 ( ${this.inChannels1} ) `
+      `PointDepthPoint.Base.initer(): this.inChannels1 ( ${this.inChannels1} ) `
         + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
     );
 
@@ -1210,7 +1210,7 @@ class Base extends ReturnOrClone.Base {
 
         default:
           tf.util.assert( ( ( this.outputTensorCount == 1 ) || ( this.outputTensorCount == 2 ) ),
-            `PointDepthPoint.initer(): When concat2-shuffle-split, `
+            `PointDepthPoint.Base.initer(): When concat2-shuffle-split, `
               + `output channel count ( ${this.outputTensorCount} ) must be either 1 or 2.`
           );
           break;
@@ -1380,7 +1380,7 @@ class Base extends ReturnOrClone.Base {
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3) (ShuffleNetV2's body/tail)
         
         tf.util.assert( ( this.bConcat2ShuffleSplitRequested == true ),
-            `PointDepthPoint.Determine_apply(): When concat2-shuffle-split, `
+            `PointDepthPoint.Base.Determine_apply(): When concat2-shuffle-split, `
               + `bConcat2ShuffleSplitRequested ( ${this.bConcat2ShuffleSplitRequested} ) should be true `
               + `when channelCount1_pointwise1Before ( ${this.channelCount1_pointwise1Before} ) is TWO_INPUTS_CONCAT_POINTWISE21_INPUT1.`
           );
