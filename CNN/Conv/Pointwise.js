@@ -154,18 +154,20 @@ class Base extends ReturnOrClone_Activation.Base {
       outputChannelCount_toBeExtracted = this.outputChannelCount;
     }
 
-    this.bInitOk = Base.init_by_inputChannelCount_outputChannelCount.call( 
-      inputFloat32Array, byteOffsetBegin, inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted );
 
 //!!! ...unfinished... (2021/10/19) inferenced filters.
+//!!! ...unfinished... (2021/10/19) release filtersHigherHalfTensor4d, biasesHigherHalfTensor3d.
 
 
 //!!!
-    if ( !this.bInitOk ) {
+    if ( !Base.init_by_inputChannelCount_outputChannelCount.call( 
+            inputFloat32Array, byteOffsetBegin, inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted ) ) {
+      this.bInitOk = false;
       return false; // Initialization failed.
     }
 
     if ( !this.bPointwise ) {
+      this.bInitOk = true;
       return true; // Since there is no pointwise, initialization was done successfully.
     }
 
@@ -234,7 +236,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
   /**
    * This method uses almost all properties of Pointwise.Base (i.e. this) except inputChannelCount and outputChannelCount.
-   * They should be specified by method parameters explicitly. This method will record the result inside this object directly.
+   * They should be specified by method parameters explicitly. This method will record the result inside this object directly
+   * (except this.bInitOk).
    *
    * @param {Base} this
    *   It should be an object of class Pointwise.Base.
@@ -268,7 +271,6 @@ class Base extends ReturnOrClone_Activation.Base {
     if ( !this.bPointwise ) {
       // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
       this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
-      this.bInitOk = true;
       return true;
     }
 
@@ -316,7 +318,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
     }
 
-    this.bInitOk = true;
     return true;
   }
 
