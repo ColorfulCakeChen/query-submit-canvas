@@ -4,8 +4,6 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 
-//!!! ...unfinished... (2021/10/12) pre-shuffle by ShuffleInfo (just like ChannelShuffler.ConcatPointwiseConv).
-//!!! ...unfinished... (2021/10/13) ChannelShuffler.Xxx.shuffleInfo
 
 /**
  * A pointwise convolution and bias which just pass the input to output.
@@ -141,20 +139,6 @@ class Base extends ReturnOrClone_Activation.Base {
     // Q: Why is the inputFloat32Array not a parameter of constructor?
     // A: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
 
-
-//!!! ...unfinished... (2021/10/14)
-//     this.bHigherHalfDifferent;
-//     this.channelShuffler;
-
-//  *     - If ( inputChannelCount < outputChannelCount ), the filters for the output channels between ( inputChannelCount ) and
-//  *         ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( inputChannelCount - 1 ). (i.e.
-//  *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
-//  *
-//  *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
-//  *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
-//  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
-//  *
-
     let bHigherHalfCopyLowerHalf, bHigherHalfPassThrough;
     let inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted;
     let higherHalfPassThrough;
@@ -194,6 +178,17 @@ class Base extends ReturnOrClone_Activation.Base {
       }
 
       // 3. Generate higher half filters and biases. Combine lower half and higher half.
+
+//!!! ...unfinished... (2021/10/19)
+
+//  *     - If ( inputChannelCount < outputChannelCount ), the filters for the output channels between ( inputChannelCount ) and
+//  *         ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( inputChannelCount - 1 ). (i.e.
+//  *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+//  *
+//  *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
+//  *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
+//  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
+//  *
 
       if ( bHigherHalfCopyLowerHalf ) { // 3.1
 
@@ -238,6 +233,12 @@ class Base extends ReturnOrClone_Activation.Base {
         }
 
       } else { // 3.3 Normal pointwise convolution. Nothing to be combined.
+      }
+
+
+//!!! ...unfinished... (2021/10/19) pre-shuffle by ShuffleInfo (just like ChannelShuffler.ConcatPointwiseConv).
+//!!! ...unfinished... (2021/10/19) ChannelShuffler.Xxx.shuffleInfo
+      if ( this.channelShuffler ) {
       }
 
 
