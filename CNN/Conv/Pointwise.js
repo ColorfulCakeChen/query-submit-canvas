@@ -184,10 +184,12 @@ class Base extends ReturnOrClone_Activation.Base {
           outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
 
           higherHalfPassThrough = new PaseThrough(
-            this.inputChannelCount, outputChannelCount_higherHalf, 0, outputChannelCount_higherHalf );
+            this.inputChannelCount, outputChannelCount_higherHalf,
+            0, outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+          );
 
 
-  //!!! ...unfinished... (2021/10/19)
+//!!! ...unfinished... (2021/10/19)
 
         } else { // 1.2 ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
 
@@ -196,12 +198,14 @@ class Base extends ReturnOrClone_Activation.Base {
           // The lower half filters have half the output channel count as input and output.
           inputChannelCount_toBeExtracted = outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
 
-          let channelCountHigherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
-  //!!! ...unfinished... (2021/10/19)
-          let filtersHigherHalfShape = [ 1, 1, this.inputChannelCount, channelCountHigherHalf ];
-          let biasesHigherHalfShape =  [ 1, 1, channelCountHigherHalf ];
+          outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
 
-  //!!! ...unfinished... (2021/10/19)
+//!!! ...unfinished... (2021/10/19)
+          higherHalfPassThrough = new PaseThrough(
+            this.inputChannelCount, outputChannelCount_higherHalf,
+            outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
+          );
+
 
         }
 
