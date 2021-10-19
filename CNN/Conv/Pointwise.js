@@ -113,12 +113,11 @@ class Base extends ReturnOrClone_Activation.Base {
         if ( this.inputChannelCount < this.outputChannelCount ) { // 1.1 i.e. bHigherHalfCopyLowerHalf
 
           bHigherHalfCopyLowerHalf = true;
-          inputChannelCount_toBeExtracted = this.inputChannelCount;
-          outputChannelCount_toBeExtracted = this.inputChannelCount; // The lower half filters have the same output channel count as input.
 
-  //!!! ...unfinished... (2021/10/19) The high half filter shape?
-          //this.filtersLowerHalfShape =  [ 1, 1, this.inputChannelCount, this.inputChannelCount ];
-          let channelCountHigherHalf = ( this.outputChannelCount - this.inputChannelCount );
+          // The lower half filters have the same output channel count as input.
+          inputChannelCount_toBeExtracted = outputChannelCount_toBeExtracted = this.inputChannelCount;
+
+          let channelCountHigherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
           let filtersHigherHalfShape = [ 1, 1, this.inputChannelCount, channelCountHigherHalf ];
           let biasesHigherHalfShape =  [ 1, 1, channelCountHigherHalf ];
 
@@ -136,11 +135,19 @@ class Base extends ReturnOrClone_Activation.Base {
             biasesHigherHalfTensor3d = tf.zero( biasesHigherHalfShape );
           }
 
+  //!!! ...unfinished... (2021/10/19)
+
         } else { // 1.2 ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
 
           bHigherHalfPassThrough = true;
-          inputChannelCount_toBeExtracted = this.inputChannelCount;
-          outputChannelCount_toBeExtracted = this.inputChannelCount; // The lower half filters have the same output channel count as input.
+
+          // The lower half filters have half the output channel count as input and output.
+          inputChannelCount_toBeExtracted = outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
+
+          let channelCountHigherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
+  //!!! ...unfinished... (2021/10/19)
+          let filtersHigherHalfShape = [ 1, 1, this.inputChannelCount, channelCountHigherHalf ];
+          let biasesHigherHalfShape =  [ 1, 1, channelCountHigherHalf ];
 
   //!!! ...unfinished... (2021/10/19)
 
@@ -152,14 +159,23 @@ class Base extends ReturnOrClone_Activation.Base {
       }
 
 
-  //!!! ...unfinished... (2021/10/19) inferenced filters.
-  
-
   //!!!
       if ( !Base.init_by_inputChannelCount_outputChannelCount.call( 
               inputFloat32Array, byteOffsetBegin, inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted ) ) {
         this.bInitOk = false;
         return false; // Initialization failed.
+      }
+
+//!!! ...unfinished... (2021/10/19) inferenced filters.
+      if ( bHigherHalfCopyLowerHalf ) { // 2.1
+
+      } else if ( bHigherHalfPassThrough ) { // 2.2
+
+//!!! ...unfinished... (2021/10/19)
+// should expand extracted filters and biases to accepts a larger input channel count (i.e. this.inputChannelCount)
+// but zero out them. (concat along axis 2?)
+
+      } else { // 2.3
       }
 
       if ( !this.bPointwise ) {
