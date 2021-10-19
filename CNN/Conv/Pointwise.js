@@ -200,7 +200,12 @@ class Base extends ReturnOrClone_Activation.Base {
 
 //!!! ...unfinished... (2021/10/19)
 
-        if ( this.filtersTensor4d ) {
+        {
+          let allFiltersArray = [ this.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
+          let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. axis id 3).
+
+          this.filtersTensor4d.dispose();
+          this.filtersTensor4d = allFiltersTensor4d;
         }
 
 //!!! ...unfinished... (2021/10/19)  (concat along axis 2?)
@@ -222,7 +227,8 @@ class Base extends ReturnOrClone_Activation.Base {
 // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount)
 // The extra channel's filters are just zero.
 
-        if ( this.filtersTensor4d ) {
+        {
+          this.filtersTensor4d;
         }
 
 //!!! ...unfinished... (2021/10/19) (concat along axis 2?)
