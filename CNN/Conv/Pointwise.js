@@ -198,21 +198,20 @@ class Base extends ReturnOrClone_Activation.Base {
           0, outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
         );
 
-//!!! ...unfinished... (2021/10/19)
-
         {
           let allFiltersArray = [ this.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
-          let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. axis id 3).
+          let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
 
           this.filtersTensor4d.dispose();
           this.filtersTensor4d = allFiltersTensor4d;
         }
 
-//!!! ...unfinished... (2021/10/19)  (concat along axis 2?)
-// The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
-// The extra channel's biases are just zero.
-
         if ( this.biasesTensor3d ) {
+          let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
+          let allBiasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+
+          this.biasesTensor3d.dispose();
+          this.biasesTensor3d = allBiasesTensor3d;
         }
 
       } else if ( bHigherHalfPassThrough ) { // 3.2
@@ -229,6 +228,11 @@ class Base extends ReturnOrClone_Activation.Base {
 
         {
           this.filtersTensor4d;
+
+//!!!???
+//           let expandedBiasesArray = [ this.biasesTensor3d, tf.zeros( ???, this.biasesTensor3d.shape ) ];
+//           let expandedBiasesTensor3d = tf.concat( expandedBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+
         }
 
 //!!! ...unfinished... (2021/10/19) (concat along axis 2?)
