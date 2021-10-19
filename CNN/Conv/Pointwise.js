@@ -88,19 +88,6 @@ class Base extends ReturnOrClone_Activation.Base {
     // Q: Why is the inputFloat32Array not a parameter of constructor?
     // A: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
 
-    this.disposeTensors();
-
-    this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-    this.bPointwise = ( this.outputChannelCount > 0 );
-    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
-
-    if ( !this.bPointwise ) {
-      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
-      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
-      this.bInitOk = true;
-      return true;
-    }
-
 
 //!!! ...unfinished... (2021/10/14)
 //     this.bHigherHalfDifferent;
@@ -134,55 +121,27 @@ class Base extends ReturnOrClone_Activation.Base {
       }
 
     } else { // Normal pointwise convolution.
-      this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
-      this.biasesShape =       [ 1, 1, this.outputChannelCount ];
+      // Use specified input and output channel count.
+      Base.init_by_inputChannelCount_outputChannelCount.call( 
+        inputFloat32Array, byteOffsetBegin, this.inputChannelCount, this.outputChannelCount ) {
     }
 
-//!!! ...unfinished... (2021/10/14)
+//!!! ...unfinished... (2021/10/19) inferenced filters.
 
-    //this.filterHeightWidth = [ 1, 1 ];
-    this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
-    this.biasesShape =       [ 1, 1, this.outputChannelCount ];
 
-    this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
-    if ( !this.filtersWeights.extract() )
-      return false;  // e.g. input array does not have enough data.
-
-    this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
-
-    this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
-
-// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for pointwise convolution.
-    this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-    this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-
-    this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
-
-    if ( this.bBias ) {
-      this.biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
-      if ( !this.biasesWeights.extract() )
-        return false;  // e.g. input array does not have enough data.
-      this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
-
-      this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.biasesShape );
-
-// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for pointwise convolution.
-      this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-      this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-
-      if ( this.pfnActivation )
-        this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
-      else
-        this.pfnConvBiasActivation = Base.ConvBias_and_destroy_or_keep;
-
-    } else {
-
-      if ( this.pfnActivation )
-        this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
-       else
-        this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
-
+//!!!
+    if ( !this.bInitOk ) {
+      return false; // Initialization failed.
     }
+
+    if ( !this.bPointwise ) {
+      return true; // Since there is no pointwise, initialization was done successfully.
+    }
+
+//!!! ...unfinished... (2021/10/19)
+// After calling init_by_inputChannelCount_outputChannelCount(), re-calculate this.tensorWeightCountTotal and this.tensorWeightCountExtracted.
+// re-set this.filtersShape and this.biasesShape.
+
 
     this.bInitOk = true;
     return true;
@@ -200,7 +159,15 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
-    this.filtersWeights = this.biasesWeights = this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
+
+    this.filtersShape = this.biasesShape
+// ???
+//       = this.filtersShapeForExtracting = this.biasesShape
+//!!! (2021/10/19 Remarked) So that inputFloat32Array could be released.
+//      = this.filtersWeights = this.biasesWeights
+      = this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation
+      = null;
+
     this.bPointwise = false;
     this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
@@ -232,6 +199,94 @@ class Base extends ReturnOrClone_Activation.Base {
 
   get bExisted() {
     return this.bPointwise;
+  }
+
+  /**
+   * This method uses almost all properties of Pointwise.Base (i.e. this) except inputChannelCount and outputChannelCount.
+   * They should be specified by method parameters explicitly. This method will record the result inside this object directly.
+   *
+   * @param {Base} this
+   *   It should be an object of class Pointwise.Base.
+   *
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @param {number} byteOffsetBegin
+   *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by this method.
+   *
+   * @param {number} inputChannelCount
+   *   The channel count of the pointwise convolution's input.
+   *
+   * @param {number} outputChannelCount
+   *   The channel count of the pointwise convolution's output.
+   *
+   * @return {boolean} Return true, if succeeded.
+   */
+  static init_by_inputChannelCount_outputChannelCount( inputFloat32Array, byteOffsetBegin, inputChannelCount, outputChannelCount ) {
+
+    // Q: Why not keep filtersWeights and biasesWeights in data members of this?
+    // A: Their underlying ArrayBuffer is inputFloat32Array.buffer. If this.filtersWeights and this.biasesWeights are kept,
+    //    the inputFloat32Array.buffer could not be released by memory garbage collector.
+
+    this.disposeTensors();
+
+    this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
+    this.bPointwise = ( outputChannelCount > 0 );
+    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
+
+    if ( !this.bPointwise ) {
+      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
+      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
+      this.bInitOk = true;
+      return true;
+    }
+
+    //let filterHeightWidth = [ 1, 1 ];
+    let filtersShape =      [ 1, 1, inputChannelCount, outputChannelCount ];
+    let biasesShape =       [ 1, 1, outputChannelCount ];
+
+    let filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, filtersShape );
+    if ( !filtersWeights.extract() )
+      return false;  // e.g. input array does not have enough data.
+
+    this.byteOffsetEnd = filtersWeights.defaultByteOffsetEnd;
+
+    this.filtersTensor4d = tf.tensor4d( filtersWeights.weights, filtersShape );
+
+// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for pointwise convolution.
+    this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+    this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+
+    this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
+
+    if ( this.bBias ) {
+      let biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, biasesShape );
+      if ( !biasesWeights.extract() )
+        return false;  // e.g. input array does not have enough data.
+      this.byteOffsetEnd = biasesWeights.defaultByteOffsetEnd;
+
+      this.biasesTensor3d = tf.tensor3d( biasesWeights.weights, biasesShape );
+
+// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for pointwise convolution.
+      this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+      this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+
+      if ( this.pfnActivation )
+        this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
+      else
+        this.pfnConvBiasActivation = Base.ConvBias_and_destroy_or_keep;
+
+    } else {
+
+      if ( this.pfnActivation )
+        this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
+       else
+        this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
+
+    }
+
+    this.bInitOk = true;
+    return true;
   }
 
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
