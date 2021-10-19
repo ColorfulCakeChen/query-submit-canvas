@@ -104,16 +104,31 @@ class Base extends ReturnOrClone_Activation.Base {
 
     let inputChannelCount_toBeExtracted;
     let outputChannelCount_toBeExtracted;
+    let filtersHigherHalfTensor4d, biasesHigherHalfTensor3d;
 
     if ( this.bHigherHalfDifferent ) {
 
       if ( this.inputChannelCount < this.outputChannelCount ) { // i.e. bHigherHalfCopyLowerHalf
 
-//!!! ...unfinished... (2021/10/14)
         inputChannelCount_toBeExtracted = this.inputChannelCount;
-        outputChannelCount_toBeExtracted = this.inputChannelCount; // The lowere half Same 
-        this.filtersLowerHalfShape =  [ 1, 1, this.inputChannelCount, ( this.inputChannelCount - 1 ) ];
-        this.filtersHigherHalfShape = [ 1, 1, ???this.inputChannelCount, ( this.outputChannelCount - this.inputChannelCount - 1 ) ];
+        outputChannelCount_toBeExtracted = this.inputChannelCount; // The lower half filters have the same output channel count as input.
+
+//!!! ...unfinished... (2021/10/19) The high half filter shape?
+        //this.filtersLowerHalfShape =  [ 1, 1, this.inputChannelCount, this.inputChannelCount ];
+        let filtersHigherHalfShape = [ 1, 1, this.inputChannelCount, ( this.outputChannelCount - this.inputChannelCount ) ];
+
+        filtersHigherHalfTensor4d = tf.tidy( () => {
+          return tf.cast( tf.oneHot( [ ... new Array( ??? ).keys() ], this.inputChannelCount ), "float32" );
+        });
+
+        biasesHigherHalfTensor3d = tf.tidy( () => {
+        });
+
+//!!! ...unfinished... (2021/10/19)
+//         tf.util.assert( filtersHigherHalfShape[ 2 ] == filtersHigherHalfShape[ 3 ],
+//           `Pointwise.Base.init(): filtersHigherHalfShape ( ${filtersHigherHalfShape} ) `
+//             + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
+//         );
 
 //!!! ...unfinished... (2021/10/14)
         this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
