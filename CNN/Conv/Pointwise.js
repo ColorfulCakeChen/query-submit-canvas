@@ -106,75 +106,85 @@ class Base extends ReturnOrClone_Activation.Base {
     let outputChannelCount_toBeExtracted;
     let filtersHigherHalfTensor4d, biasesHigherHalfTensor3d;
 
-    if ( this.bHigherHalfDifferent ) {
+    try {
 
-      if ( this.inputChannelCount < this.outputChannelCount ) { // i.e. bHigherHalfCopyLowerHalf
+      if ( this.bHigherHalfDifferent ) {
 
-        inputChannelCount_toBeExtracted = this.inputChannelCount;
-        outputChannelCount_toBeExtracted = this.inputChannelCount; // The lower half filters have the same output channel count as input.
+        if ( this.inputChannelCount < this.outputChannelCount ) { // i.e. bHigherHalfCopyLowerHalf
 
-//!!! ...unfinished... (2021/10/19) The high half filter shape?
-        //this.filtersLowerHalfShape =  [ 1, 1, this.inputChannelCount, this.inputChannelCount ];
-        let channelCountHigherHalf = ( this.outputChannelCount - this.inputChannelCount );
-        let filtersHigherHalfShape = [ 1, 1, this.inputChannelCount, channelCountHigherHalf ];
-        let biasesHigherHalfShape = [ 1, 1, channelCountHigherHalf ];
+          inputChannelCount_toBeExtracted = this.inputChannelCount;
+          outputChannelCount_toBeExtracted = this.inputChannelCount; // The lower half filters have the same output channel count as input.
 
-        // Generate pointwise filters for just copying the input (until channelCountHigherHalf).
-        filtersHigherHalfTensor4d = tf.tidy( () =>
-          tf.range( 0, channelCountHigherHalf, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
-            .oneHot( this.inputChannelCount )               // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
-            .cast( "float32" )                              // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
-            .transpose()                                    // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
-            .reshape( filtersHigherHalfShape )              // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
-        );
+  //!!! ...unfinished... (2021/10/19) The high half filter shape?
+          //this.filtersLowerHalfShape =  [ 1, 1, this.inputChannelCount, this.inputChannelCount ];
+          let channelCountHigherHalf = ( this.outputChannelCount - this.inputChannelCount );
+          let filtersHigherHalfShape = [ 1, 1, this.inputChannelCount, channelCountHigherHalf ];
+          let biasesHigherHalfShape = [ 1, 1, channelCountHigherHalf ];
 
-        // Generate bias for just adding zero. (i.e. equals no bias).
-        if ( this.bBias ) {
-          biasesHigherHalfTensor3d = tf.zero( biasesHigherHalfShape );
+          // Generate pointwise filters for just copying the input (until channelCountHigherHalf).
+          filtersHigherHalfTensor4d = tf.tidy( () =>
+            tf.range( 0, channelCountHigherHalf, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+              .oneHot( this.inputChannelCount )               // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
+              .cast( "float32" )                              // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
+              .transpose()                                    // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
+              .reshape( filtersHigherHalfShape )              // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
+          );
+
+          // Generate bias for just adding zero. (i.e. equals no bias).
+          if ( this.bBias ) {
+            biasesHigherHalfTensor3d = tf.zero( biasesHigherHalfShape );
+          }
+
+  //!!! ...unfinished... (2021/10/19)
+  //         tf.util.assert( filtersHigherHalfShape[ 2 ] == filtersHigherHalfShape[ 3 ],
+  //           `Pointwise.Base.init(): filtersHigherHalfShape ( ${filtersHigherHalfShape} ) `
+  //             + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
+  //         );
+
+  //!!! ...unfinished... (2021/10/14)
+          this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
+          this.biasesShape =       [ 1, 1, this.outputChannelCount ];
+
+        } else { // ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
+
+  //!!! ...unfinished... (2021/10/19)
+
         }
 
-//!!! ...unfinished... (2021/10/19)
-//         tf.util.assert( filtersHigherHalfShape[ 2 ] == filtersHigherHalfShape[ 3 ],
-//           `Pointwise.Base.init(): filtersHigherHalfShape ( ${filtersHigherHalfShape} ) `
-//             + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
-//         );
-
-//!!! ...unfinished... (2021/10/14)
-        this.filtersShape =      [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
-        this.biasesShape =       [ 1, 1, this.outputChannelCount ];
-
-      } else { // ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
-
-//!!! ...unfinished... (2021/10/14)
-
+      } else { // Normal pointwise convolution. Use specified input and output channel count.
+        inputChannelCount_toBeExtracted = this.inputChannelCount;
+        outputChannelCount_toBeExtracted = this.outputChannelCount;
       }
 
-    } else { // Normal pointwise convolution. Use specified input and output channel count.
-      inputChannelCount_toBeExtracted = this.inputChannelCount;
-      outputChannelCount_toBeExtracted = this.outputChannelCount;
-    }
 
+  //!!! ...unfinished... (2021/10/19) inferenced filters.
+  
 
-//!!! ...unfinished... (2021/10/19) inferenced filters.
-//!!! ...unfinished... (2021/10/19) release filtersHigherHalfTensor4d, biasesHigherHalfTensor3d.
+  //!!!
+      if ( !Base.init_by_inputChannelCount_outputChannelCount.call( 
+              inputFloat32Array, byteOffsetBegin, inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted ) ) {
+        this.bInitOk = false;
+        return false; // Initialization failed.
+      }
 
-
-//!!!
-    if ( !Base.init_by_inputChannelCount_outputChannelCount.call( 
-            inputFloat32Array, byteOffsetBegin, inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted ) ) {
-      this.bInitOk = false;
-      return false; // Initialization failed.
-    }
-
-    if ( !this.bPointwise ) {
-      this.bInitOk = true;
-      return true; // Since there is no pointwise, initialization was done successfully.
-    }
+      if ( !this.bPointwise ) {
+        this.bInitOk = true;
+        return true; // Since there is no pointwise, initialization was done successfully.
+      }
 
 //!!! ...unfinished... (2021/10/19)
 // After calling init_by_inputChannelCount_outputChannelCount(), re-calculate this.tensorWeightCountTotal and this.tensorWeightCountExtracted.
 // re-set this.filtersShape and this.biasesShape.
 
+    } finally {
+
+//!!! ...unfinished... (2021/10/19) release filtersHigherHalfTensor4d, biasesHigherHalfTensor3d.
+      if ( filtersHigherHalfTensor4d )
+        filtersHigherHalfTensor4d.dispose();
+
+      if ( biasesHigherHalfTensor3d )
+        biasesHigherHalfTensor3d.dispose();
+    }
 
     this.bInitOk = true;
     return true;
