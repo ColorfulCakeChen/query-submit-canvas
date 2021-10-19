@@ -8,6 +8,68 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 //!!! ...unfinished... (2021/10/13) ChannelShuffler.Xxx.shuffleInfo
 
 /**
+ * A pointwise convolution and bias which just pass the input to output.
+ *
+ * It is usually used in the inferenced higher half channels of the output channel (for achieving ShuffleNetV2_ByMopbileNetV1).
+ *
+ *
+ */
+class PassThrough {
+
+  /**
+   * @param {number} inputChannelCount
+   *   The channel count of input.
+   *
+   * @param {number} outputChannelCount
+   *   The channel count of output.
+   *
+   * @param {number} inputChannelIndexStart
+   *   The channel count index (included) to start to be copied to the output.
+   *
+   * @param {number} inputChannelIndexStop
+   *   The channel count index (not included) to stop to be copied to the output.
+   *
+   *
+   */
+  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, inputChannelIndexStop ) {
+    this.inputChannelCount = inputChannelCount;
+    this.outputChannelCount = outputChannelCount;
+    this.inputChannelIndexStart = inputChannelIndexStart;
+    this.inputChannelIndexStop = inputChannelIndexStop;
+    
+    let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
+    let biasesShape =  [ 1, 1, outputChannelCount ];
+
+    // Generate pointwise filters for just copying the input (until outputChannelCount_higherHalf).
+    this.filtersTensor4d = tf.tidy( () =>
+      tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+        .oneHot( inputChannelCount )  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
+        .cast( "float32" )            // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
+        .transpose()                  // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
+        .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
+    );
+
+    // Generate bias for just adding zero. (i.e. equals no bias).
+    if ( this.bBias ) {
+      this.biasesTensor3d = tf.zero( biasesShape );
+    }
+  }
+
+  disposeTensors() {
+    if ( this.filtersTensor4d ) {
+      this.filtersTensor4d.dispose();
+      this.filtersTensor4d = null;
+    }
+
+    if ( this.biasesTensor3d ) {
+      this.biasesTensor3d.dispose();
+      this.biasesTensor3d = null;
+    }
+
+}
+
+
+/**
  * Handle pointwise convolution (1x1 conv2d), bias and activation.
  *
  * @member {number} byteOffsetBegin
@@ -105,8 +167,9 @@ class Base extends ReturnOrClone_Activation.Base {
     let bHigherHalfCopyLowerHalf, bHigherHalfPassThrough;
     let inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted;
 
-    let filtersTensor4d_higherHalf, biasesTensor3d_higherHalf;
     let outputChannelCount_higherHalf, filtersShape_higherHalf, biasesShape_higherHalf;
+    let inputChannelIndexStart_higherHalf, inputChannelIndexStop_higherHalf;
+    let filtersTensor4d_higherHalf, biasesTensor3d_higherHalf;
 
     try {
 
@@ -119,13 +182,17 @@ class Base extends ReturnOrClone_Activation.Base {
           // The lower half filters have the same output channel count as input.
           inputChannelCount_toBeExtracted = outputChannelCount_toBeExtracted = this.inputChannelCount;
 
-          let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
+          outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
+          
+          inputChannelIndexStart_higherHalf = 0;
+          inputChannelIndexStop_higherHalf = outputChannelCount_higherHalf;
+
           let filtersShape_higherHalf = [ 1, 1, this.inputChannelCount, outputChannelCount_higherHalf ];
           let biasesShape_higherHalf =  [ 1, 1, outputChannelCount_higherHalf ];
 
           // Generate pointwise filters for just copying the input (until outputChannelCount_higherHalf).
           filtersTensor4d_higherHalf = tf.tidy( () =>
-            tf.range( 0, outputChannelCount_higherHalf, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+            tf.range( inputChannelIndexStart_higherHalf, inputChannelIndexStop_higherHalf, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
               .oneHot( this.inputChannelCount )  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
               .cast( "float32" )                 // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
               .transpose()                       // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
