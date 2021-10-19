@@ -224,25 +224,40 @@ class Base extends ReturnOrClone_Activation.Base {
             outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
           );
 
-          this.filtersTensor4d = tf.tidy( () => {
+          {
+            // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount,
+            // not Math.ceil( this.outputChannelCount / 2 ) ). The extra channel's filters are just zero.
+            let expandedFiltersTensor4d;
+            {
+              let filtersZeroShape = this.filtersTensor4d.shape.slice(); // Clone filters' shape array.
 
-            // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount)
-            // The extra channel's filters are just zero.
-            let expandedFiltersArray = [ this.filtersTensor4d, tf.zeros( this.filtersTensor4d.shape ) ];
-            let expandedFiltersTensor4d = tf.concat( expandedFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
+              // The second last axis (i.e. inDepth axis; axis id 2) should be just fill the difference between real inputChanneCount the
+              // the extracted filters.
+              filtersZeroShape[ 2 ] = this.inputChannelCount - this.filtersTensor4d.shape[ 2 ];
+
+              let filtersZeroTensor4d = tf.zeros( filtersZeroShape );
+
+              let expandedFiltersArray = [ this.filtersTensor4d, filtersZeroTensor4d ];
+              expandedFiltersTensor4d = tf.concat( expandedFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
+
+              filtersZeroTensor4d.dispose();
+            }
 
             let allFiltersArray = [ expandedFiltersTensor4d, higherHalfPassThrough.filtersTensor4d ];
             let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
 
-            this.filtersTensor4d.dispose(); // The tensor generated outside tidy() should be disposed manually.
-            return allFiltersTensor4d;
-          });
+            this.filtersTensor4d.dispose();
+            this.filtersTensor4d = allFiltersTensor4d;
+          }
 
 //!!! ...unfinished... (2021/10/19) (concat along axis 2?)
-// The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
-// The extra channel's biases are just zero.
 
           if ( this.biasesTensor3d ) {
+            let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
+            let allBiasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+
+            this.biasesTensor3d.dispose();
+            this.biasesTensor3d = allBiasesTensor3d;
           }
         }
 
