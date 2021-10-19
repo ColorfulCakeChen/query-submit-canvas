@@ -172,6 +172,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
     try {
 
+      // 1. Determine lower half filters dimension. Generate higher half filters and biases.
+
       if ( this.bHigherHalfDifferent ) {
 
         if ( this.inputChannelCount < this.outputChannelCount ) { // 1.1 i.e. bHigherHalfCopyLowerHalf
@@ -200,12 +202,12 @@ class Base extends ReturnOrClone_Activation.Base {
 
           outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
 
-//!!! ...unfinished... (2021/10/19)
           higherHalfPassThrough = new PaseThrough(
             this.inputChannelCount, outputChannelCount_higherHalf,
             outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
           );
 
+//!!! ...unfinished... (2021/10/19)
 
         }
 
@@ -214,22 +216,23 @@ class Base extends ReturnOrClone_Activation.Base {
         outputChannelCount_toBeExtracted = this.outputChannelCount;
       }
 
-
-  //!!!
+      // 2. Extract lower half filters and biases.
       if ( !Base.init_by_inputChannelCount_outputChannelCount.call( 
               inputFloat32Array, byteOffsetBegin, inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted ) ) {
         this.bInitOk = false;
         return false; // Initialization failed.
       }
 
+      // 3. Combine lower half and higher half.
+
 //!!! ...unfinished... (2021/10/19) inferenced filters.
-      if ( bHigherHalfCopyLowerHalf ) { // 2.1
+      if ( bHigherHalfCopyLowerHalf ) { // 3.1
 
 //!!! ...unfinished... (2021/10/19)  (concat along axis 2?)
 // The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
 // The extra channel's biases are just zero.
 
-      } else if ( bHigherHalfPassThrough ) { // 2.2
+      } else if ( bHigherHalfPassThrough ) { // 3.2
 
 //!!! ...unfinished... (2021/10/19) (concat along axis 2?)
 // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount)
@@ -238,7 +241,7 @@ class Base extends ReturnOrClone_Activation.Base {
 // The extracted biases should be expanded to accepts a larger input channel count (i.e. this.outputChannelCount).
 // The extra channel's biases are just zero.
 
-      } else { // 2.3
+      } else { // 3.3
       }
 
       if ( !this.bPointwise ) {
