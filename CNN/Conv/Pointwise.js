@@ -102,11 +102,16 @@ class Base extends ReturnOrClone_Activation.Base {
 //  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
 //  *
 
+    let inputChannelCount_toBeExtracted;
+    let outputChannelCount_toBeExtracted;
+
     if ( this.bHigherHalfDifferent ) {
 
       if ( this.inputChannelCount < this.outputChannelCount ) { // i.e. bHigherHalfCopyLowerHalf
 
 //!!! ...unfinished... (2021/10/14)
+        inputChannelCount_toBeExtracted = this.inputChannelCount;
+        outputChannelCount_toBeExtracted = this.inputChannelCount; // The lowere half Same 
         this.filtersLowerHalfShape =  [ 1, 1, this.inputChannelCount, ( this.inputChannelCount - 1 ) ];
         this.filtersHigherHalfShape = [ 1, 1, ???this.inputChannelCount, ( this.outputChannelCount - this.inputChannelCount - 1 ) ];
 
@@ -120,11 +125,13 @@ class Base extends ReturnOrClone_Activation.Base {
 
       }
 
-    } else { // Normal pointwise convolution.
-      // Use specified input and output channel count.
-      Base.init_by_inputChannelCount_outputChannelCount.call( 
-        inputFloat32Array, byteOffsetBegin, this.inputChannelCount, this.outputChannelCount ) {
+    } else { // Normal pointwise convolution. Use specified input and output channel count.
+      inputChannelCount_toBeExtracted = this.inputChannelCount;
+      outputChannelCount_toBeExtracted = this.outputChannelCount;
     }
+
+    this.bInitOk = Base.init_by_inputChannelCount_outputChannelCount.call( 
+      inputFloat32Array, byteOffsetBegin, inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted );
 
 //!!! ...unfinished... (2021/10/19) inferenced filters.
 
