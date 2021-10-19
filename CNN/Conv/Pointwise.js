@@ -179,17 +179,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
       // 3. Generate higher half filters and biases. Combine lower half and higher half.
 
-//!!! ...unfinished... (2021/10/19)
-
-//  *     - If ( inputChannelCount < outputChannelCount ), the filters for the output channels between ( inputChannelCount ) and
-//  *         ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( inputChannelCount - 1 ). (i.e.
-//  *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
-//  *
-//  *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
-//  *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
-//  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
-//  *
-
       if ( bHigherHalfCopyLowerHalf ) { // 3.1
 
         let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
@@ -274,22 +263,29 @@ class Base extends ReturnOrClone_Activation.Base {
       } else { // 3.3 Normal pointwise convolution. Nothing to be combined.
       }
 
+      // 4. Pre-shuffle channels by shuffling filters and biases.
+
+//!!! ...unfinished... (2021/10/19)
+
+//  *     - If ( inputChannelCount < outputChannelCount ), the filters for the output channels between ( inputChannelCount ) and
+//  *         ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( inputChannelCount - 1 ). (i.e.
+//  *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+//  *
+//  *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
+//  *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
+//  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
+//  *
 
 //!!! ...unfinished... (2021/10/19) pre-shuffle by ShuffleInfo (just like ChannelShuffler.ConcatPointwiseConv).
 //!!! ...unfinished... (2021/10/19) ChannelShuffler.Xxx.shuffleInfo
       if ( this.channelShuffler ) {
+
+//!!! ...unfinished... (2021/10/19) Both filters and biases should be pre-shuffled.
       }
 
-
-//!!! ...unfinished... (2021/10/19)
-// After calling init_by_inputChannelCount_outputChannelCount(), re-calculate this.tensorWeightCountTotal and this.tensorWeightCountExtracted.
-// re-set this.filtersShape and this.biasesShape.
-
     } finally {
-
       if ( higherHalfPassThrough )
         higherHalfPassThrough.disposeTensors();
-
     }
 
     this.bInitOk = true;
