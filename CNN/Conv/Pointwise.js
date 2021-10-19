@@ -104,7 +104,9 @@ class Base extends ReturnOrClone_Activation.Base {
 
     let bHigherHalfCopyLowerHalf, bHigherHalfPassThrough;
     let inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted;
-    let filtersHigherHalfTensor4d, biasesHigherHalfTensor3d;
+
+    let filtersTensor4d_higherHalf, biasesTensor3d_higherHalf;
+    let outputChannelCount_higherHalf, filtersShape_higherHalf, biasesShape_higherHalf;
 
     try {
 
@@ -117,22 +119,22 @@ class Base extends ReturnOrClone_Activation.Base {
           // The lower half filters have the same output channel count as input.
           inputChannelCount_toBeExtracted = outputChannelCount_toBeExtracted = this.inputChannelCount;
 
-          let channelCountHigherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
-          let filtersHigherHalfShape = [ 1, 1, this.inputChannelCount, channelCountHigherHalf ];
-          let biasesHigherHalfShape =  [ 1, 1, channelCountHigherHalf ];
+          let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
+          let filtersShape_higherHalf = [ 1, 1, this.inputChannelCount, outputChannelCount_higherHalf ];
+          let biasesShape_higherHalf =  [ 1, 1, outputChannelCount_higherHalf ];
 
-          // Generate pointwise filters for just copying the input (until channelCountHigherHalf).
-          filtersHigherHalfTensor4d = tf.tidy( () =>
-            tf.range( 0, channelCountHigherHalf, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
-              .oneHot( this.inputChannelCount )               // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
-              .cast( "float32" )                              // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
-              .transpose()                                    // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
-              .reshape( filtersHigherHalfShape )              // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
+          // Generate pointwise filters for just copying the input (until outputChannelCount_higherHalf).
+          filtersTensor4d_higherHalf = tf.tidy( () =>
+            tf.range( 0, outputChannelCount_higherHalf, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+              .oneHot( this.inputChannelCount )  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
+              .cast( "float32" )                 // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
+              .transpose()                       // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
+              .reshape( filtersShape_higherHalf ) // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
           );
 
           // Generate bias for just adding zero. (i.e. equals no bias).
           if ( this.bBias ) {
-            biasesHigherHalfTensor3d = tf.zero( biasesHigherHalfShape );
+            biasesTensor3d_higherHalf = tf.zero( biasesShape_higherHalf );
           }
 
   //!!! ...unfinished... (2021/10/19)
@@ -196,12 +198,13 @@ class Base extends ReturnOrClone_Activation.Base {
 
     } finally {
 
-//!!! ...unfinished... (2021/10/19) release filtersHigherHalfTensor4d, biasesHigherHalfTensor3d.
-      if ( filtersHigherHalfTensor4d )
-        filtersHigherHalfTensor4d.dispose();
+//!!! ...unfinished... (2021/10/19) release.
 
-      if ( biasesHigherHalfTensor3d )
-        biasesHigherHalfTensor3d.dispose();
+      if ( filtersTensor4d_higherHalf )
+        filtersTensor4d_higherHalf.dispose();
+
+      if ( biasesTensor3d_higherHalf )
+        biasesTensor3d_higherHalf.dispose();
     }
 
     this.bInitOk = true;
