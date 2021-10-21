@@ -4,9 +4,6 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 
-
-//!!! ...unfinished... (2021/10/21) ChannelShuffler for pre-shuffle (for achieving ShuffleNetV2_ByMopbileNetV1).
-
 /**
  * Handle depthwise convolution, bias and activation.
  *
@@ -16,6 +13,12 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * @member {number} byteOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
+ *
+ * @member {boolean} bHigherHalfPassThrough
+ *   - If false, it is just a normal depthwise convolution.
+ *
+ *   - If true, the filters for the output channels between Math.ceil( outputChannelCount / 2 ) to ( outputChannelCount - 1 )
+ *       will just pass through the input to output. (for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -59,7 +62,7 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-  constructor( inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId ) {
+  constructor( inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId, bHigherHalfPassThrough ) {
     super();
     this.inputChannelCount = inputChannelCount;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
@@ -67,6 +70,7 @@ class Base extends ReturnOrClone_Activation.Base {
     this.stridesPad = stridesPad;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
+    this.bHigherHalfPassThrough = bHigherHalfPassThrough;
   }
 
   /**
@@ -85,6 +89,8 @@ class Base extends ReturnOrClone_Activation.Base {
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
     this.outputChannelCount = this.inputChannelCount; // Assume no channel multiplier.
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
+
+//!!! ...unfinished... (2021/10/21) bHigherHalfPassThrough
 
     switch ( this.stridesPad ) {
       case 0:  this.strides = 1; this.pad = "valid"; break;
