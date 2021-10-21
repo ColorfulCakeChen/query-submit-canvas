@@ -4,6 +4,9 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 
+
+//!!! ...unfinished... (2021/10/21) ChannelShuffler for pre-shuffle (for achieving ShuffleNetV2_ByMopbileNetV1).
+
 /**
  * Handle depthwise convolution, bias and activation.
  *
