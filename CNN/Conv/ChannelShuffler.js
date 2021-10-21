@@ -729,44 +729,4 @@ class ConcatPointwiseConv {
     }
   }
 
-//!!! ...unfinished... (2021/10/14)
-  /**
-   * 
-   *
-   *
-   * @param {tf.tensor1d} channelIndicesTensor1d
-   *   
-   *
-   * @param {number} oneHotDepth
-   *
-   *
-   * @return {tf.tensor4d}
-   *   
-   */
-  static ChannelIndices_To_PointwiseFilter( channelIndicesTensor1d, oneHotDepth ) {
-
-          return tf.tidy( "ChannelShuffler.PointwiseConv.init.filtersTensor4dArray.shuffledChannelIndicesTensor1d", () => {
-
-            // Generate oneHotIndices (tensor2d, int32) by shuffledChannelIndices (tensor1d).
-            let filtersOfOneGroupTensor2d_int32 = tf.oneHot( shuffledChannelIndicesTensor1d, inDepth );
-
-            // Generate oneHotIndices (tensor2d, float32).
-            //
-            // The tf.oneHot() genetates tensor with ( dtype == "int32" ). However, in backend WASM, if tf.conv2d()
-            // input tensor ( dtype == "float32" ) and filter tensor ( dtype == "int32" ), the result will be wrong.
-            // This issue does not exist in backend CPU and WEBGL. For avoiding this problem, convert the filter
-            // tensor from ( dtype == "int32" ) into ( dtype == "float32" ).
-            //
-            let filtersOfOneGroupTensor2d = tf.cast( filtersOfOneGroupTensor2d_int32, "float32" );
-
-            // Transpose it so that the last axis is the outDepth (not inDepth) which conforms to the requirement
-            // of tf.conv2d()'s filters.
-            let filtersOfOneGroupTensor2d_transposed = filtersOfOneGroupTensor2d.transpose();
-
-            // Reinterpret the tensor2d to tensor4d so that it can be used as tf.conv2d()'s filters.
-            let filtersOfOneGroupTensor4d = filtersOfOneGroupTensor2d_transposed.reshape( filtersShape );
-            return filtersOfOneGroupTensor4d;
-          });
-
-  }
 }
