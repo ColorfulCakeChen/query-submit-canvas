@@ -3,6 +3,7 @@ export { Base };
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
+import * as ChannelShuffler from "./ChannelShuffler.js";
 
 
 /**
@@ -82,7 +83,7 @@ class PassThrough {
  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
  *
  * @member {ChannelShuffler.Xxx} channelShuffler
- *   If not null, the channelShuffler.shuffleInfo will be used to (pre-)shuffle the filters. The total effect will be the same as
+ *   If not null, the channelShuffler.outputGroupCount will be used to (pre-)shuffle the filters. The total effect will be the same as
  * applying the channel shuffler (without concatenation and splitting) after pointwise convolution. (for pointwise2 of
  * ShuffleNetV2_ByMopbileNetV1's head/body/tail)
  *
@@ -260,27 +261,29 @@ class Base extends ReturnOrClone_Activation.Base {
           }
         }
 
-      } else { // 3.3 Normal pointwise convolution. Nothing to be combined.
+      } else { // 3.3 Normal pointwise convolution.
+        // Nothing needs be combined.
       }
 
-      // 4. Pre-shuffle channels by shuffling filters and biases.
-
-//!!! ...unfinished... (2021/10/19)
-
-//  *     - If ( inputChannelCount < outputChannelCount ), the filters for the output channels between ( inputChannelCount ) and
-//  *         ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( inputChannelCount - 1 ). (i.e.
-//  *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
-//  *
-//  *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
-//  *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
-//  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
-//  *
-
-//!!! ...unfinished... (2021/10/19) pre-shuffle by ShuffleInfo (just like ChannelShuffler.ConcatPointwiseConv).
-//!!! ...unfinished... (2021/10/19) ChannelShuffler.Xxx.shuffleInfo
+      // 4. Pre-shuffle channels by shuffling the filters and biases.
       if ( this.channelShuffler ) {
+        let outputGroupCount = this.channelShuffler.outputGroupCount; // Uses the output group count of the specified channel shuffler.
 
-//!!! ...unfinished... (2021/10/19) Both filters and biases should be pre-shuffled.
+        { // Shuffle the filters along the last (i.e. channel) axis.
+          let filtersChannelShuffler = new ChannelShuffler.ShuffleInfo( this.filtersTensor4d.shape, outputGroupCount );
+          let filtersTensor4d_shuffled = filtersChannelShuffler.reshapeTransposeReshape( this.filtersTensor4d );
+
+          this.filtersTensor4d.dispose();
+          this.filtersTensor4d = filtersTensor4d_shuffled;
+        }
+
+        { // Shuffle the biases along the last (i.e. channel) axis.
+          let biasesChannelShuffler = new ChannelShuffler.ShuffleInfo( this.biasesTensor3d.shape, outputGroupCount );
+          let biasesTensor3d_shuffled = biasesChannelShuffler.reshapeTransposeReshape( this.biasesTensor3d );
+
+          this.biasesTensor3d.dispose();
+          this.biasesTensor3d = biasesTensor3d_shuffled;
+        }
       }
 
     } finally {
