@@ -356,18 +356,30 @@ class Base extends ReturnOrClone_Activation.Base {
       } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
         this.bDepthwise = this.bDepthwiseConv = true;
 
-  //!!! ...unfinished... (2021/10/22) bHigherHalfPassThrough
+        this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+
         if ( this.bHigherHalfPassThrough ) {
+          this.bHigherHalfPassThrough = true;
+          this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
+            = this.outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
+
+          let outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_toBeExtracted;
+
           higherHalfPassThrough = new PassThrough(
-            this.imageInHeight, this.imageInWidth, this.imageInDepth,
+            this.imageInHeight, this.imageInWidth, outputChannelCount_higherHalf,
             this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseStridesPad, this.bBias );
 
-        } else {
+  //!!! ...unfinished... (2021/10/22) bHigherHalfPassThrough
 
+        } else { // Normal depthwise convolution. Use specified input and output channel count.
   //!!! ...unfinished... (2021/10/22)
+
+          this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+          this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
         }
 
-        this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+!!!
 
         this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier ];
 
