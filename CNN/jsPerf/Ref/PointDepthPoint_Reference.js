@@ -3,6 +3,7 @@ export { Base };
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as Depthwise from "../../Conv/Depthwise.js";
 import * as ChannelShuffler from "../../Conv/ChannelShuffler.js";
 import * as ChannelShufflerPool from "../../Conv/ChannelShufflerPool.js";
 import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
@@ -784,74 +785,99 @@ class Base {
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
     depthwiseName, parametersDesc ) {
 
-    if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
+    if ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
       return imageIn; // No depthwise operation.
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 )?
-      
-    let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
-    if (   ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
-        || ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
-      channelMultiplier = 1;
-    }
 
-    let depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
+//!!! (2021/10/22 Remarked) Using Depthwise.PadInfoCalculator.
+//     let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
+//     if (   ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
+//         || ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+//       channelMultiplier = 1;
+//     }
+//
+//     let depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
+//
+//     let imageOutDepth = imageIn.depth * channelMultiplier;
+//
+//     // Strides and Padding.
+//     let depthwiseStrides, depthwisePad;
+//     switch ( depthwiseStridesPad ) {
+//       case 0:  depthwiseStrides = 1; depthwisePad = "valid"; break;
+//       default:
+//       case 1:  depthwiseStrides = 1; depthwisePad = "same";  break;
+//       case 2:  depthwiseStrides = 2; depthwisePad = "same";  break;
+//     }
+//
+//     // Assume strides width equals strides height.
+//     let stridesHeight = depthwiseStrides;
+//     let stridesWidth = depthwiseStrides;
+//
+//     // Currently, we can only handle dilation = 1.
+//     let dilationHeight = 1;
+//     let dilationWidth = 1;
+//
+//     // Effect filter size (includes dilation).
+//     let effectFilterHeight = dilationHeight * ( depthwiseFilterHeight - 1 ) + 1;
+//     let effectFilterWidth =  dilationWidth  * ( depthwiseFilterWidth  - 1 ) + 1;
+//     let effectFilterSize = effectFilterHeight * effectFilterWidth;
+//
+//     let padHeight, padHeightTop, padHeightBottom, padWidth, padWidthLeft, padWidthRight, imageInBeginY, imageInBeginX;
+//     let imageOutHeight, imageOutWidth;
+//
+//     // (The following codes for output image height and width and padding calculation are copied from
+//     // https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
+//     {
+//       // Determine output image height and width without padding.
+//       if ( depthwisePad == "valid" ) {
+//         imageOutHeight = Math.ceil( ( imageIn.height - effectFilterHeight + 1 ) / stridesHeight );
+//         imageOutWidth =  Math.ceil( ( imageIn.width  - effectFilterWidth  + 1 ) / stridesWidth  );
+//
+//         padHeight = padHeightTop = padHeightBottom = padWidth = padWidthLeft = padWidthRight
+//           = imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will never happen. for ( pad == "valid" ).
+//
+//       // Determine output image height and width with padding around the input image height and width.
+//       } else if ( depthwisePad == "same" ) {
+//         imageOutHeight = Math.ceil( imageIn.height / stridesHeight );
+//         imageOutWidth =  Math.ceil( imageIn.width  / stridesWidth  );
+//
+//         padHeight = Math.max( 0, ( imageOutHeight - 1 ) * stridesHeight + effectFilterHeight - imageIn.height );
+//         padWidth =  Math.max( 0, ( imageOutWidth  - 1 ) * stridesWidth  + effectFilterWidth  - imageIn.width  );
+//
+//         padHeightTop = Math.floor( padHeight / 2 );
+//         padHeightBottom = padHeight - padHeightTop;
+//         padWidthLeft = Math.floor( padWidth /  2 );
+//         padWidthRight =   padWidth  - padWidthLeft;
+//
+//         imageInBeginY = - padHeightTop; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. for ( pad == "same" ).
+//         imageInBeginX = - padWidthLeft;
+//       }
+//     }
+//
+//     // If not AVG, MAX, NONE, the filters shape should match input image channel count.
+//     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+//       tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
+//         `${depthwiseName} filters shape `
+//           + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
+//           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+//     }
+//
+//     let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth );
+//     let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
 
-    let imageOutDepth = imageIn.depth * channelMultiplier;
 
-    // Strides and Padding.
-    let depthwiseStrides, depthwisePad;
-    switch ( depthwiseStridesPad ) {
-      case 0:  depthwiseStrides = 1; depthwisePad = "valid"; break;
-      default:
-      case 1:  depthwiseStrides = 1; depthwisePad = "same";  break;
-      case 2:  depthwiseStrides = 2; depthwisePad = "same";  break;
-    }
+    let padInfo = new Depthwise.PadInfoCalculator( imageIn.height, imageIn.width, imageIn.depth, 
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
 
-    // Assume strides width equals strides height.
-    let stridesHeight = depthwiseStrides;
-    let stridesWidth = depthwiseStrides;
+    let { depthwiseFilterWidth, channelMultiplier, dilationHeight, dilationWidth,
+          stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
+          imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = padInfo;
 
-    // Currently, we can only handle dilation = 1.
-    let dilationHeight = 1;
-    let dilationWidth = 1;
-
-    // Effect filter size (includes dilation).
-    let effectFilterHeight = dilationHeight * ( depthwiseFilterHeight - 1 ) + 1;
-    let effectFilterWidth =  dilationWidth  * ( depthwiseFilterWidth  - 1 ) + 1;
-    let effectFilterSize = effectFilterHeight * effectFilterWidth;
-
-    let padHeight, padHeightTop, padHeightBottom, padWidth, padWidthLeft, padWidthRight, imageInBeginY, imageInBeginX;
-    let imageOutHeight, imageOutWidth;
-
-    // (The following codes for output image height and width and padding calculation are copied from
-    // https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
-    {
-      // Determine output image height and width without padding.
-      if ( depthwisePad == "valid" ) {
-        imageOutHeight = Math.ceil( ( imageIn.height - effectFilterHeight + 1 ) / stridesHeight );
-        imageOutWidth =  Math.ceil( ( imageIn.width  - effectFilterWidth  + 1 ) / stridesWidth  );
-
-        padHeight = padHeightTop = padHeightBottom = padWidth = padWidthLeft = padWidthRight
-          = imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will never happen. for ( pad == "valid" ).
-
-      // Determine output image height and width with padding around the input image height and width.
-      } else if ( depthwisePad == "same" ) {
-        imageOutHeight = Math.ceil( imageIn.height / stridesHeight );
-        imageOutWidth =  Math.ceil( imageIn.width  / stridesWidth  );
-
-        padHeight = Math.max( 0, ( imageOutHeight - 1 ) * stridesHeight + effectFilterHeight - imageIn.height );
-        padWidth =  Math.max( 0, ( imageOutWidth  - 1 ) * stridesWidth  + effectFilterWidth  - imageIn.width  );
-
-        padHeightTop = Math.floor( padHeight / 2 );
-        padHeightBottom = padHeight - padHeightTop;
-        padWidthLeft = Math.floor( padWidth /  2 );
-        padWidthRight =   padWidth  - padWidthLeft;
-
-        imageInBeginY = - padHeightTop; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. for ( pad == "same" ).
-        imageInBeginX = - padWidthLeft;
-      }
-    }
+    // For ( pad == "valid" ), negative ( inX, inY ) will never happen.
+    // For ( pad == "same"  ), negative ( inX, inY ) may happen, but those pixels will be viewed as zero value.
+    let imageInBeginY = - padHeightTop;
+    let imageInBeginX = - padWidthLeft;
 
     // If not AVG, MAX, NONE, the filters shape should match input image channel count.
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
@@ -861,11 +887,10 @@ class Base {
           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
     }
 
-    let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth );
     let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
 
     // Max pooling
-    if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
+    if ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
         imageOut.dataArray.fill( Number.NEGATIVE_INFINITY ); // So that any value is greater than initialized value.
     }
 
@@ -926,11 +951,11 @@ class Base {
                     let filterIndex = filterIndexBaseSubC + outChannelSub;
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-                      case PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG: // Avg pooling
+                      case ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
                         imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ];
                         break;
 
-                      case PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX: // Max pooling
+                      case ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: // Max pooling
                         imageOut.dataArray[ outIndex ] = Math.max( imageOut.dataArray[ outIndex ], imageIn.dataArray[ inIndex ] );
                         break;
 
@@ -944,7 +969,7 @@ class Base {
             }
 
             // Avg pooling
-            if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
+            if ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
               imageOut.dataArray[ outIndex ] /= avgDivisor; // So that every sum is averaged.
             }
           }
