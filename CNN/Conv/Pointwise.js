@@ -1,4 +1,4 @@
-export { Base };
+export { PassThrough, Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
