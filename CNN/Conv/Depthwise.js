@@ -133,15 +133,17 @@ class PassThrough {
    */
   constructor(
     imageInHeight, imageInWidth, imageInDepth,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad ) {
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bBias ) {
+
+    this.padInfo = new PadInfoCalculator( imageInHeight, imageInWidth, imageInDepth,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+
+    this.bBias = bBias;
 
     if (   ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
         || ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
       return; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
     }
-
-    this.padInfo = new PadInfoCalculator( imageInHeight, imageInWidth, imageInDepth,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
 
     let { depthwiseFilterWidth, channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
@@ -170,8 +172,6 @@ class PassThrough {
                 if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                   continue;
 
-    //!!! ...unfinished... (2021/10/22)
-
                 let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
                 let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
 
@@ -189,26 +189,11 @@ class PassThrough {
       }
     }
 
+    let filtersShape = [ depthwiseFilterHeight, depthwiseFilterWidth, imageInDepth, channelMultiplier ];
+    let biasesShape =  [ 1, 1, imageOutDepth ];
 
-
-//!!! ...unfinished... (2021/10/22)
-
-    this.inputChannelCount = inputChannelCount;
-    this.outputChannelCount = outputChannelCount;
-    this.inputChannelIndexStart = inputChannelIndexStart;
-    this.inputChannelIndexStop = inputChannelIndexStop;
-
-    let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
-    let biasesShape =  [ 1, 1, outputChannelCount ];
-
-    // Generate pointwise filters for just copying the input (until outputChannelCount_higherHalf).
-    this.filtersTensor4d = tf.tidy( () =>
-      tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
-        .oneHot( inputChannelCount )  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
-        .cast( "float32" )            // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
-        .transpose()                  // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
-        .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
-    );
+    // Generate depthwise filters for just pass input to output.
+    this.filtersTensor4d = tf.tensor( this.depthwiseFiltersArray, filtersShape );
 
     // Generate bias for just adding zero. (i.e. equals no bias).
     if ( this.bBias ) {
@@ -316,7 +301,7 @@ class Base extends ReturnOrClone_Activation.Base {
     this.outputChannelCount = this.inputChannelCount; // Assume no channel multiplier.
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
-//!!! ...unfinished... (2021/10/21) bHigherHalfPassThrough
+//!!! ...unfinished... (2021/10/22) bHigherHalfPassThrough
 
     switch ( this.stridesPad ) {
       case 0:  this.strides = 1; this.pad = "valid"; break;
