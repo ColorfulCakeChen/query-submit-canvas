@@ -313,6 +313,9 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
 
+    this.bHigherHalfCopyLowerHalf = this.bHigherHalfPassThrough
+      = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = undefined;
+
 //!!! (2021/10/19 Remarked)
 //    this.filtersShape = this.biasesShape
 //!!! (2021/10/19 Remarked) So that inputFloat32Array could be released.
