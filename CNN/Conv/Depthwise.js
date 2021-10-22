@@ -383,7 +383,6 @@ class Base extends ReturnOrClone_Activation.Base {
         }
 
         let filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier ];
-
         let filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
         if ( !filtersWeights.extract() )
           return false;  // e.g. input array does not have enough data.
@@ -414,21 +413,23 @@ class Base extends ReturnOrClone_Activation.Base {
         if ( this.bBias ) {
 
           let biasesShape = [ 1, 1, this.outputChannelCount_toBeExtracted ];
-
-//!!! ...unfinished... (2021/10/22) bHigherHalfPassThrough
-          if ( this.bHigherHalfPassThrough ) {
-          }
-
           let biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, biasesShape );
           if ( !biasesWeights.extract() )
             return false;  // e.g. input array does not have enough data.
           this.byteOffsetEnd = biasesWeights.defaultByteOffsetEnd;
 
           this.biasesTensor3d = tf.tensor3d( biasesWeights.weights, biasesShape );
-
-  // !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
           this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+
+          if ( this.bHigherHalfPassThrough ) {
+            let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
+            let allBiasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+
+            this.biasesTensor3d.dispose();
+            this.biasesTensor3d = allBiasesTensor3d;
+          }
+
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape ); // After combining the pass-through biases, it is total.
 
           if ( this.pfnActivation )
             this.pfnOperationBiasActivation = Base.OperationBiasActivation_and_destroy_or_keep;
