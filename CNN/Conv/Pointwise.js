@@ -183,7 +183,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( this.bHigherHalfCopyLowerHalf ) { // 3.1
 
-        let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
+        let outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_toBeExtracted;
         higherHalfPassThrough = new PaseThrough(
           this.inputChannelCount, outputChannelCount_higherHalf,
           0, outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
