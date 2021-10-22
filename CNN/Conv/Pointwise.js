@@ -399,7 +399,6 @@ class Base extends ReturnOrClone_Activation.Base {
     let filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, filtersShape );
     if ( !filtersWeights.extract() )
       return false;  // e.g. input array does not have enough data.
-
     this.byteOffsetEnd = filtersWeights.defaultByteOffsetEnd;
 
     this.filtersTensor4d = tf.tensor4d( filtersWeights.weights, filtersShape );
