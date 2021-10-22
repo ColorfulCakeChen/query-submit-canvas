@@ -1,15 +1,12 @@
-export { Base };
+export { PadInfoCalculator, PassThrough, Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 
 
-//!!! ...unfinished... (2021/10/22)
 /**
  * According to input image size and depthwise convolution parameters, calculate the padding information of the depthwise convolution.
- *
- *
  *
  * @member {number} imageInHeight         Input image height.
  * @member {number} imageInWidth          Input image width.
@@ -19,7 +16,7 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * @member {number} depthwiseFilterWidth  The width of the depthwise convolution's filter.
  * @member {number} depthwiseStridesPad   The strides and padding of depthwise convolution. (PointDepthPoint.Params.depthwiseStridesPad)
  *
- * @member {number} channelMultiplier     The channel multiplier of the depthwise operation.
+ * @member {number} channelMultiplier     The channel multiplier of the depthwise operation (according to depthwise_AvgMax_Or_ChannelMultiplier).
  *
  * @member {number} dilationHeight        The depthwise filters's dilation across height dimension.
  * @member {number} dilationWidth         The depthwise filters's dilation across width dimension.
@@ -28,9 +25,11 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * @member {number} effectFilterWidth     The effect width of the depthwise convolution's filter including the dilationWidth.
  * @member {number} effectFilterSize      The effect size of the depthwise convolution's filter. (= effectFilterHeight * effectFilterWidth)
  *
+ * @member {number} depthwiseStrides      The strides along the image's height and width dimension (according to depthwiseStridesPad).
  * @member {number} stridesHeight         The strides along the image's height dimension (according to depthwiseStridesPad).
  * @member {number} stridesWidth          The strides along the image's width dimension (according to depthwiseStridesPad).
 
+ * @member {number} depthwisePad          The padding along the image's height and width dimension (according to depthwiseStridesPad).
  * @member {number} padHeight             The padding along the input image's height dimension.
  * @member {number} padHeightTop          The padding along the input image's height dimension at the top.
  * @member {number} padHeightBottom       The padding along the input image's height dimension at the bottom.
@@ -45,46 +44,52 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 class PadInfoCalculator {
   
   constructor(
-    imageIn,
+    imageInHeight, imageInWidth, imageInDepth,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad ) {
 
-    if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
-      return imageIn; // No depthwise operation.
+    this.imageInHeight = imageInHeight;
+    this.imageInWidth = imageInWidth;
+    this.imageInDepth = imageInDepth;
+    this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
+    this.depthwiseFilterHeight = depthwiseFilterHeight;
+    this.depthwiseStridesPad = depthwiseStridesPad;
+
+//!!! ...unfinished... (2021/10/22)
+//     if ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
+//       return; // No depthwise operation.
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 )?
-      
-    let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
-    if (   ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
-        || ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
-      channelMultiplier = 1;
+
+    this.channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
+    if (   ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
+        || ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+      this.channelMultiplier = 1;
     }
 
-    let depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
-
-    let imageOutDepth = imageIn.depth * channelMultiplier;
+    this.depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
 
     // Strides and Padding.
-    let depthwiseStrides, depthwisePad;
     switch ( depthwiseStridesPad ) {
-      case 0:  depthwiseStrides = 1; depthwisePad = "valid"; break;
+      case 0:  this.depthwiseStrides = 1; this.depthwisePad = "valid"; break;
       default:
-      case 1:  depthwiseStrides = 1; depthwisePad = "same";  break;
-      case 2:  depthwiseStrides = 2; depthwisePad = "same";  break;
+      case 1:  this.depthwiseStrides = 1; this.depthwisePad = "same";  break;
+      case 2:  this.depthwiseStrides = 2; this.depthwisePad = "same";  break;
     }
 
     // Assume strides width equals strides height.
-    let stridesHeight = depthwiseStrides;
-    let stridesWidth = depthwiseStrides;
+    this.stridesHeight = this.depthwiseStrides;
+    this.stridesWidth = this.depthwiseStrides;
 
     // Currently, we can only handle dilation = 1.
-    let dilationHeight = 1;
-    let dilationWidth = 1;
+    this.dilationHeight = 1;
+    this.dilationWidth = 1;
 
     // Effect filter size (includes dilation).
-    let effectFilterHeight = dilationHeight * ( depthwiseFilterHeight - 1 ) + 1;
-    let effectFilterWidth =  dilationWidth  * ( depthwiseFilterWidth  - 1 ) + 1;
-    let effectFilterSize = effectFilterHeight * effectFilterWidth;
+    this.effectFilterHeight = this.dilationHeight * ( this.depthwiseFilterHeight - 1 ) + 1;
+    this.effectFilterWidth =  this.dilationWidth  * ( this.depthwiseFilterWidth  - 1 ) + 1;
+    this.effectFilterSize = this.effectFilterHeight * this.effectFilterWidth;
 
+//!!! ...unfinished... (2021/10/22)
     let padHeight, padHeightTop, padHeightBottom, padWidth, padWidthLeft, padWidthRight, imageInBeginY, imageInBeginX;
     let imageOutHeight, imageOutWidth;
 
@@ -124,6 +129,8 @@ class PadInfoCalculator {
           + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
     }
+
+    this.imageOutDepth = imageInDepth * this.channelMultiplier;
 
     let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth );
     let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
