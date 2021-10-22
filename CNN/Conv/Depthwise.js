@@ -55,10 +55,6 @@ class PadInfoCalculator {
     this.depthwiseFilterHeight = depthwiseFilterHeight;
     this.depthwiseStridesPad = depthwiseStridesPad;
 
-//!!! ...unfinished... (2021/10/22)
-//     if ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
-//       return; // No depthwise operation.
-
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 )?
 
     this.channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
@@ -122,8 +118,58 @@ class PadInfoCalculator {
 }
 
 
-//!!! ...unfinished... (2021/10/22)
+/**
+ * A depthwise convolution and bias which just pass the input to output.
+ *
+ * It is usually used in passing the higher half channels of the input to output (for achieving ShuffleNetV2_ByMopbileNetV1's body/tail).
+ *
+ *
+ */
 class PassThrough {
+
+//!!! ...unfinished... (2021/10/22)
+
+  /**
+   * @param {number} inputChannelCount      The channel count of input.
+   * @param {number} outputChannelCount     The channel count of output.
+   * @param {number} inputChannelIndexStart The channel count index (included) to start to be copied to the output.
+   * @param {number} inputChannelIndexStop  The channel count index (not included) to stop to be copied to the output.
+   */
+  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, inputChannelIndexStop ) {
+    this.inputChannelCount = inputChannelCount;
+    this.outputChannelCount = outputChannelCount;
+    this.inputChannelIndexStart = inputChannelIndexStart;
+    this.inputChannelIndexStop = inputChannelIndexStop;
+
+    let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
+    let biasesShape =  [ 1, 1, outputChannelCount ];
+
+    // Generate pointwise filters for just copying the input (until outputChannelCount_higherHalf).
+    this.filtersTensor4d = tf.tidy( () =>
+      tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+        .oneHot( inputChannelCount )  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
+        .cast( "float32" )            // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
+        .transpose()                  // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
+        .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
+    );
+
+    // Generate bias for just adding zero. (i.e. equals no bias).
+    if ( this.bBias ) {
+      this.biasesTensor3d = tf.zero( biasesShape );
+    }
+  }
+
+  disposeTensors() {
+    if ( this.filtersTensor4d ) {
+      this.filtersTensor4d.dispose();
+      this.filtersTensor4d = null;
+    }
+
+    if ( this.biasesTensor3d ) {
+      this.biasesTensor3d.dispose();
+      this.biasesTensor3d = null;
+    }
+  }
 }
 
 
