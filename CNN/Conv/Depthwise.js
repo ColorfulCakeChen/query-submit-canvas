@@ -40,6 +40,7 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * @member {number} imageOutHeight        Output image height.
  * @member {number} imageOutWidth         Output image width.
  * @member {number} imageOutDepth         Output image channel count.
+ * @member {number} imageOutLength        Output image elements count (= ( imageOutHeight * imageOutWidth * imageOutDepth ) ).
  */
 class PadInfoCalculator {
   
@@ -89,52 +90,34 @@ class PadInfoCalculator {
     this.effectFilterWidth =  this.dilationWidth  * ( this.depthwiseFilterWidth  - 1 ) + 1;
     this.effectFilterSize = this.effectFilterHeight * this.effectFilterWidth;
 
-//!!! ...unfinished... (2021/10/22)
-    let padHeight, padHeightTop, padHeightBottom, padWidth, padWidthLeft, padWidthRight, imageInBeginY, imageInBeginX;
-    let imageOutHeight, imageOutWidth;
-
     // (The following codes for output image height and width and padding calculation are copied from
     // https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
     {
       // Determine output image height and width without padding.
-      if ( depthwisePad == "valid" ) {
-        imageOutHeight = Math.ceil( ( imageIn.height - effectFilterHeight + 1 ) / stridesHeight );
-        imageOutWidth =  Math.ceil( ( imageIn.width  - effectFilterWidth  + 1 ) / stridesWidth  );
+      if ( this.depthwisePad == "valid" ) {
+        this.imageOutHeight = Math.ceil( ( imageInHeight - this.effectFilterHeight + 1 ) / this.stridesHeight );
+        this.imageOutWidth =  Math.ceil( ( imageInWidth  - this.effectFilterWidth  + 1 ) / this.stridesWidth  );
 
-        padHeight = padHeightTop = padHeightBottom = padWidth = padWidthLeft = padWidthRight
-          = imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will never happen. for ( pad == "valid" ).
+        this.padHeight = this.padHeightTop = this.padHeightBottom = this.padWidth = this.padWidthLeft = this.padWidthRight = 0;
 
       // Determine output image height and width with padding around the input image height and width.
-      } else if ( depthwisePad == "same" ) {
-        imageOutHeight = Math.ceil( imageIn.height / stridesHeight );
-        imageOutWidth =  Math.ceil( imageIn.width  / stridesWidth  );
+      } else if ( this.depthwisePad == "same" ) {
+        this.imageOutHeight = Math.ceil( imageInHeight / this.stridesHeight );
+        this.imageOutWidth =  Math.ceil( imageInWidth  / this.stridesWidth  );
 
-        padHeight = Math.max( 0, ( imageOutHeight - 1 ) * stridesHeight + effectFilterHeight - imageIn.height );
-        padWidth =  Math.max( 0, ( imageOutWidth  - 1 ) * stridesWidth  + effectFilterWidth  - imageIn.width  );
+        this.padHeight = Math.max( 0, ( this.imageOutHeight - 1 ) * this.stridesHeight + this.effectFilterHeight - imageInHeight );
+        this.padWidth =  Math.max( 0, ( this.imageOutWidth  - 1 ) * this.stridesWidth  + this.effectFilterWidth  - imageInWidth  );
 
-        padHeightTop = Math.floor( padHeight / 2 );
-        padHeightBottom = padHeight - padHeightTop;
-        padWidthLeft = Math.floor( padWidth /  2 );
-        padWidthRight =   padWidth  - padWidthLeft;
-
-        imageInBeginY = - padHeightTop; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. for ( pad == "same" ).
-        imageInBeginX = - padWidthLeft;
+        this.padHeightTop =    Math.floor( this.padHeight / 2 );
+        this.padHeightBottom = this.padHeight - this.padHeightTop;
+        this.padWidthLeft =    Math.floor( this.padWidth /  2 );
+        this.padWidthRight =   this.padWidth  - this.padWidthLeft;
       }
     }
 
-    // If not AVG, MAX, NONE, the filters shape should match input image channel count.
-    if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-      tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
-        `${depthwiseName} filters shape `
-          + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
-          + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
-    }
-
     this.imageOutDepth = imageInDepth * this.channelMultiplier;
-
-    let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth );
-    let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
-    }
+    this.imageOutLength = ( this.imageOutHeight * this.imageOutWidth * this.imageOutDepth );
+  }
 
 }
 
