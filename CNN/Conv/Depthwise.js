@@ -301,8 +301,11 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   init( inputFloat32Array, byteOffsetBegin ) {
 
-    // Q: Why is the inputFloat32Array not a parameter of constructor?
-    // A: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
+    // Q1: Why is the inputFloat32Array not a parameter of constructor?
+    // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
+    //
+    // Q2: Why are not filtersWeights and biasesWeights kept in this?
+    // A2: So that inputFloat32Array could be released.
 
     this.disposeTensors();
 
@@ -353,52 +356,51 @@ class Base extends ReturnOrClone_Activation.Base {
             break;
         }
 
+        this.filterHeightWidth = [ this.filterHeight, this.filterWidth ];
+
+        // In normal depthwise avg/max pooling, use specified specified channel count as extracted channel count.
+        // Although they are not used to extract avg/max filters, they will be used for extracting bias.
+        this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+        this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
       } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
         this.bDepthwise = this.bDepthwiseConv = true;
 
         this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
         if ( this.bHigherHalfPassThrough ) {
-
           this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
             = this.outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
 
           let outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_toBeExtracted;
-
           higherHalfPassThrough = new PassThrough(
             this.imageInHeight, this.imageInWidth, outputChannelCount_higherHalf,
             this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseStridesPad, this.bBias );
 
-  //!!! ...unfinished... (2021/10/22) bHigherHalfPassThrough
-
         } else { // Normal depthwise convolution. Use specified input and output channel count.
-  //!!! ...unfinished... (2021/10/22)
-
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
         }
 
-!!!
+        let filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier ];
 
-        this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier ];
-
-        this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
-        if ( !this.filtersWeights.extract() )
+        let filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
+        if ( !filtersWeights.extract() )
           return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
+        this.byteOffsetEnd = filtersWeights.defaultByteOffsetEnd;
 
-        this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
-
-  // !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
+        this.filtersTensor4d = tf.tensor4d( filtersWeights.weights, filtersShape );
         this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
 
         if ( this.bHigherHalfPassThrough ) {
-  //!!! ...unfinished... (2021/10/22)
+          let allFiltersArray = [ this.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
+          let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+
+          this.filtersTensor4d.dispose();
+          this.filtersTensor4d = allFiltersTensor4d;
         }
 
-        // After combining 
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape ); // After combining the pass-through filters, it is total.
 
         this.pfnOperation = Base.Conv_and_destroy; // will dispose inputTensor.
 
@@ -407,18 +409,22 @@ class Base extends ReturnOrClone_Activation.Base {
 
       this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
 
-      this.filterHeightWidth = [ this.filterHeight, this.filterWidth ];
-      this.biasesShape =       [ 1, 1, this.outputChannelCount ];
-
       if ( this.bDepthwise ) {
 
         if ( this.bBias ) {
-          this.biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
-          if ( !this.biasesWeights.extract() )
-            return false;  // e.g. input array does not have enough data.
-          this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
 
-          this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.biasesShape );
+          let biasesShape = [ 1, 1, this.outputChannelCount_toBeExtracted ];
+
+//!!! ...unfinished... (2021/10/22) bHigherHalfPassThrough
+          if ( this.bHigherHalfPassThrough ) {
+          }
+
+          let biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, biasesShape );
+          if ( !biasesWeights.extract() )
+            return false;  // e.g. input array does not have enough data.
+          this.byteOffsetEnd = biasesWeights.defaultByteOffsetEnd;
+
+          this.biasesTensor3d = tf.tensor3d( biasesWeights.weights, biasesShape );
 
   // !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
           this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
@@ -468,8 +474,14 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
-    this.filtersWeights = this.biasesWeights = this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
-    this.outputChannelCount = this.strides = this.pad = null;
+//!!! (2021/10/19 Remarked) So that inputFloat32Array could be released.
+//    this.filtersWeights = this.biasesWeights = this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
+    this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
+    this.outputChannelCount = this.strides = this.pad
+      = this.bHigherHalfPassThrough = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+      = this.imageInHeight = this.imageInWidth = this.imageInDepth
+      = this.filterHeightWidth
+      = undefined;
     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false; // Assume no depthwise.
     this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
