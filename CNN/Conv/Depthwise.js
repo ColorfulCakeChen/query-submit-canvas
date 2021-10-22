@@ -281,6 +281,12 @@ class PassThrough {
  */
 class Base extends ReturnOrClone_Activation.Base {
 
+//!!! ...unfinished... (2021/10/22)
+// In ShuffleNetV2's head, the filters and biases of depthwise2 are after depthwise1.
+// In ShuffleNetV2_ByMobileNetV1's head, although depthwise1 and depthwise2 are combined into depthwise1,
+// they should be extracted in sequence and then combined. So that they could use the same filters and biases weights array
+// to generate the same result.
+
   constructor( inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId, channelShuffler ) {
     super();
     this.inputChannelCount = inputChannelCount;
