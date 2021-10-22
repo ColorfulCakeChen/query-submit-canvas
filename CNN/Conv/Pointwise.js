@@ -140,8 +140,9 @@ class Base extends ReturnOrClone_Activation.Base {
     // Q: Why is the inputFloat32Array not a parameter of constructor?
     // A: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
 
-    let bHigherHalfCopyLowerHalf, bHigherHalfPassThrough;
-    let inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted;
+//!!! (2021/10/22 Remarked) become data property.
+//     let bHigherHalfCopyLowerHalf, bHigherHalfPassThrough;
+//     let inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted;
     let higherHalfPassThrough;
 
     try {
@@ -151,24 +152,24 @@ class Base extends ReturnOrClone_Activation.Base {
       if ( this.bHigherHalfDifferent ) {
 
         if ( this.inputChannelCount < this.outputChannelCount ) { // 1.1 i.e. bHigherHalfCopyLowerHalf
-          bHigherHalfCopyLowerHalf = true;
-          inputChannelCount_toBeExtracted // The lower half filters have the same output channel count as input.
-            = outputChannelCount_toBeExtracted = this.inputChannelCount;
+          this.bHigherHalfCopyLowerHalf = true;
+          this.inputChannelCount_toBeExtracted // The lower half filters have the same output channel count as input.
+            = this.outputChannelCount_toBeExtracted = this.inputChannelCount;
 
         } else { // 1.2 ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
-          bHigherHalfPassThrough = true;
-          inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
-            = outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
+          this.bHigherHalfPassThrough = true;
+          this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
+            = this.outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
         }
 
       } else { // 1.3 Normal pointwise convolution. Use specified input and output channel count.
-        inputChannelCount_toBeExtracted = this.inputChannelCount;
-        outputChannelCount_toBeExtracted = this.outputChannelCount;
+        this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+        this.outputChannelCount_toBeExtracted = this.outputChannelCount;
       }
 
       // 2. Extract lower half filters and biases.
       if ( !Base.init_by_inputChannelCount_outputChannelCount.call( 
-              inputFloat32Array, byteOffsetBegin, inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted ) ) {
+              inputFloat32Array, byteOffsetBegin, this.inputChannelCount_toBeExtracted, this.outputChannelCount_toBeExtracted ) ) {
         this.bInitOk = false;
         return false; // Initialization failed.
       }
@@ -180,7 +181,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
       // 3. Generate higher half filters and biases. Combine lower half and higher half.
 
-      if ( bHigherHalfCopyLowerHalf ) { // 3.1
+      if ( this.bHigherHalfCopyLowerHalf ) { // 3.1
 
         let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
         higherHalfPassThrough = new PaseThrough(
@@ -210,9 +211,9 @@ class Base extends ReturnOrClone_Activation.Base {
           this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
         }
 
-      } else if ( bHigherHalfPassThrough ) { // 3.2
+      } else if ( this.bHigherHalfPassThrough ) { // 3.2
 
-        let outputChannelCount_higherHalf = this.outputChannelCount - inputChannelCount_toBeExtracted;
+        let outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_toBeExtracted;
         if ( outputChannelCount_higherHalf > 0 ) {
 
           higherHalfPassThrough = new PaseThrough(
