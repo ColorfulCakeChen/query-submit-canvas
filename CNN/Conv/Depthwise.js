@@ -124,6 +124,8 @@ class PadInfoCalculator {
  * It is usually used in passing the higher half channels of the input to output (for achieving ShuffleNetV2_ByMopbileNetV1's body/tail).
  *
  *
+ * @member {number[]} depthwiseFiltersArray
+ *   The depthwise convolution filter which could pass the input to output unchangely.
  */
 class PassThrough {
 
@@ -133,6 +135,11 @@ class PassThrough {
     imageInHeight, imageInWidth, imageInDepth,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad ) {
 
+    if (   ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
+        || ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+      return; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+    }
+
     this.padInfo = new PadInfoCalculator( imageInHeight, imageInWidth, imageInDepth,
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
 
@@ -140,23 +147,24 @@ class PassThrough {
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
           imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = this.padInfo;
 
-    // There is only one position (inside the effect depthwise filter) with value one. All other position of the filter should be zero.
-    //
-    // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
+    // There is only one position (inside the effect depthwise filter) with value one. All other positions of the filter should be zero.
     let oneEffectFilterY = padHeightTop;
     let oneEffectFilterX = padWidthLeft;
 
-//!!! ...unfinished... (2021/10/22)
+    // Make up a depthwise convolution filter which 
+    this.depthwiseFiltersArray = new Array( depthwiseFilterHeight * depthwiseFilterWidth * imageInDepth * channelMultiplier );
+
+    // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
     for ( let inChannel = 0; inChannel < imageInDepth; ++inChannel ) {
 
       for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
 
-        for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
-          for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY ) {
+        for ( let filterY = 0, effectFilterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
+          for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY, ++effectFilterY ) {
             let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
-            for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
-              for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX ) {
+            for ( let filterX = 0, effectFilterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
+              for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX, ++effectFilterX ) {
 
                 // The filter's dilation part can not be manipulated. (They are always zero.)
                 if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
@@ -166,21 +174,20 @@ class PassThrough {
 
                 let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
                 let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
+
+                let filterIndex = filterIndexBaseSubC + outChannelSub;
+
+                if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
+                  this.depthwiseFiltersArray[ filterIndex ] = 1; // The only one position with value one.
+                } else {
+                  this.depthwiseFiltersArray[ filterIndex ] = 0; // All other positions of the filter are value zero.
+                }
               }
             }
           }
         }
       }
     }
-
-
-
-
-
-
-
-
-
 
 
 
