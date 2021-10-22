@@ -533,7 +533,7 @@ class Base {
     //
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids..Xxx) use same calculation logic:
     //    ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-    //    Ids.ONE_INPUT_TWO_DEPTHWISE              // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+    //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
                                                                                                       
     // 1. Pointwise1
     let pointwise1Result;
