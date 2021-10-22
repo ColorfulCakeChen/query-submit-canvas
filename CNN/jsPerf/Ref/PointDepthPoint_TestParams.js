@@ -338,6 +338,17 @@ class Base extends TestParams.Base {
    */
   static generate_Filters_Biases( paramsAll, io_paramsNumberArrayObject ) {
 
+//!!! ...unfinished... (2021/10/22)
+
+    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
+    //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    //    TWO_INPUTS_CONCAT_POINTWISE21_INPUT1     // (-3) (ShuffleNetV2's body/tail)
+    //
+    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
+    //    ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+    //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+
+
     // Pointwise1
     let pointwise1 = Base.generate_pointwise_filters_biases( paramsAll.channelCount0_pointwise1Before,
       paramsAll.pointwise1ChannelCount, paramsAll.bPointwise1Bias );
@@ -355,10 +366,12 @@ class Base extends TestParams.Base {
     // Depthwise2
     let depthwise2;
     {
-      // (-2) (simplified ShuffleNetV2's head)
-      if ( paramsAll.channelCount1_pointwise1Before
-             == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
-
+      // In ShuffleNetV2's head.
+      if (   ( paramsAll.channelCount1_pointwise1Before // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
+          || ( paramsAll.channelCount1_pointwise1Before // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
+         ) {
         depthwise2 = Base.generate_depthwise_filters_biases( paramsAll.channelCount0_pointwise1Before, // Use input0.
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight,
           paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
@@ -375,9 +388,11 @@ class Base extends TestParams.Base {
     // Concat
     let pointwise2_inputChannelCount = depthwise1.outputChannelCount;
     {
-      // (-2) (simplified ShuffleNetV2's head)
-      if ( paramsAll.channelCount1_pointwise1Before
-             == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
+      if (   ( paramsAll.channelCount1_pointwise1Before // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
+          || ( paramsAll.channelCount1_pointwise1Before // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
+         ) {
         pointwise2_inputChannelCount += depthwise2.outputChannelCount; // Add the channel count of the branch of the first input image.
 
       // (> 0) Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX  (simplified ShuffleNetV2's tail)
@@ -398,8 +413,11 @@ class Base extends TestParams.Base {
       let pointwise22ChannelCount;
 
       // In ShuffleNetV2's body/tail, there is always no pointwise22.
-      if ( paramsAll.channelCount1_pointwise1Before
-             == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) {
+      if (   ( paramsAll.channelCount1_pointwise1Before // (-3) (ShuffleNetV2's body/tail)
+                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+          || ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+         ) {
         pointwise22ChannelCount = 0;
 
       } else { // Otherwise, pointwise22 is output1 directly.
