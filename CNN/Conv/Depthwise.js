@@ -6,7 +6,129 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 
 
 //!!! ...unfinished... (2021/10/22)
+/**
+ * According to input image size and depthwise convolution parameters, calculate the padding information of the depthwise convolution.
+ *
+ *
+ *
+ * @member {number} imageInHeight         Input image height.
+ * @member {number} imageInWidth          Input image width.
+ * @member {number} imageInDepth          Input image channel count.
+ * @member {number} depthwise_AvgMax_Or_ChannelMultiplier   Depthwise operation. (ValueDesc.AvgMax_Or_ChannelMultiplier)
+ * @member {number} depthwiseFilterHeight The height of the depthwise convolution's filter.
+ * @member {number} depthwiseFilterWidth  The width of the depthwise convolution's filter.
+ * @member {number} depthwiseStridesPad   The strides and padding of depthwise convolution. (PointDepthPoint.Params.depthwiseStridesPad)
+ *
+ * @member {number} channelMultiplier     The channel multiplier of the depthwise operation.
+ *
+ * @member {number} dilationHeight        The depthwise filters's dilation across height dimension.
+ * @member {number} dilationWidth         The depthwise filters's dilation across width dimension.
+ *
+ * @member {number} effectFilterHeight    The effect height of the depthwise convolution's filter including the dilationHeight.
+ * @member {number} effectFilterWidth     The effect width of the depthwise convolution's filter including the dilationWidth.
+ * @member {number} effectFilterSize      The effect size of the depthwise convolution's filter. (= effectFilterHeight * effectFilterWidth)
+ *
+ * @member {number} stridesHeight         The strides along the image's height dimension (according to depthwiseStridesPad).
+ * @member {number} stridesWidth          The strides along the image's width dimension (according to depthwiseStridesPad).
+
+ * @member {number} padHeight             The padding along the input image's height dimension.
+ * @member {number} padHeightTop          The padding along the input image's height dimension at the top.
+ * @member {number} padHeightBottom       The padding along the input image's height dimension at the bottom.
+ * @member {number} padWidth              The padding along the input image's width dimension.
+ * @member {number} padWidthLeft          The padding along the input image's width dimension at the left.
+ * @member {number} padWidthRight         The padding along the input image's width dimension at the right.
+ *
+ * @member {number} imageOutHeight        Output image height.
+ * @member {number} imageOutWidth         Output image width.
+ * @member {number} imageOutDepth         Output image channel count.
+ */
 class PadInfoCalculator {
+  
+  constructor(
+    imageIn,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad ) {
+
+    if ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
+      return imageIn; // No depthwise operation.
+
+//!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 )?
+      
+    let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
+    if (   ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
+        || ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+      channelMultiplier = 1;
+    }
+
+    let depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
+
+    let imageOutDepth = imageIn.depth * channelMultiplier;
+
+    // Strides and Padding.
+    let depthwiseStrides, depthwisePad;
+    switch ( depthwiseStridesPad ) {
+      case 0:  depthwiseStrides = 1; depthwisePad = "valid"; break;
+      default:
+      case 1:  depthwiseStrides = 1; depthwisePad = "same";  break;
+      case 2:  depthwiseStrides = 2; depthwisePad = "same";  break;
+    }
+
+    // Assume strides width equals strides height.
+    let stridesHeight = depthwiseStrides;
+    let stridesWidth = depthwiseStrides;
+
+    // Currently, we can only handle dilation = 1.
+    let dilationHeight = 1;
+    let dilationWidth = 1;
+
+    // Effect filter size (includes dilation).
+    let effectFilterHeight = dilationHeight * ( depthwiseFilterHeight - 1 ) + 1;
+    let effectFilterWidth =  dilationWidth  * ( depthwiseFilterWidth  - 1 ) + 1;
+    let effectFilterSize = effectFilterHeight * effectFilterWidth;
+
+    let padHeight, padHeightTop, padHeightBottom, padWidth, padWidthLeft, padWidthRight, imageInBeginY, imageInBeginX;
+    let imageOutHeight, imageOutWidth;
+
+    // (The following codes for output image height and width and padding calculation are copied from
+    // https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
+    {
+      // Determine output image height and width without padding.
+      if ( depthwisePad == "valid" ) {
+        imageOutHeight = Math.ceil( ( imageIn.height - effectFilterHeight + 1 ) / stridesHeight );
+        imageOutWidth =  Math.ceil( ( imageIn.width  - effectFilterWidth  + 1 ) / stridesWidth  );
+
+        padHeight = padHeightTop = padHeightBottom = padWidth = padWidthLeft = padWidthRight
+          = imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will never happen. for ( pad == "valid" ).
+
+      // Determine output image height and width with padding around the input image height and width.
+      } else if ( depthwisePad == "same" ) {
+        imageOutHeight = Math.ceil( imageIn.height / stridesHeight );
+        imageOutWidth =  Math.ceil( imageIn.width  / stridesWidth  );
+
+        padHeight = Math.max( 0, ( imageOutHeight - 1 ) * stridesHeight + effectFilterHeight - imageIn.height );
+        padWidth =  Math.max( 0, ( imageOutWidth  - 1 ) * stridesWidth  + effectFilterWidth  - imageIn.width  );
+
+        padHeightTop = Math.floor( padHeight / 2 );
+        padHeightBottom = padHeight - padHeightTop;
+        padWidthLeft = Math.floor( padWidth /  2 );
+        padWidthRight =   padWidth  - padWidthLeft;
+
+        imageInBeginY = - padHeightTop; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. for ( pad == "same" ).
+        imageInBeginX = - padWidthLeft;
+      }
+    }
+
+    // If not AVG, MAX, NONE, the filters shape should match input image channel count.
+    if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+      tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
+        `${depthwiseName} filters shape `
+          + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
+          + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+    }
+
+    let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth );
+    let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
+    }
+
 }
 
 
