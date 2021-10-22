@@ -41,8 +41,11 @@ class Base {
    *   The channelShufflers provider. It must be initialized with ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
    *
    *     - It is only used when
-   *         ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
-   *         (-3) (i.e. channel shuffle the concatenated pointwise21 and input1).
+   *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+   *           (-3) (i.e. channel shuffle the concatenated pointwise21 and input1).
+   *
+   *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+   *           (-5) (i.e. ShuffleNetV2_ByMobileNetV1's body/tail).
    */
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
@@ -96,8 +99,12 @@ class Base {
         // Prepare channel shuffler.
         let imageIn1 = imageInArraySelected[ 1 ]; // The shape of input1 (not input0) determine the concatenatedShape of channel shuffler.
         if ( imageIn1 ) {
-          if ( channelCount1_pointwise1Before
-                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
+          if (   ( channelCount1_pointwise1Before
+                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+              || ( channelCount1_pointwise1Before
+                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+             ) {
+
             let outputGroupCount = 2; // Only use two convolution groups.
             let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
             channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
