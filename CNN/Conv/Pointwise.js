@@ -30,7 +30,7 @@ class PassThrough {
     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
     let biasesShape =  [ 1, 1, outputChannelCount ];
 
-    // Generate pointwise filters for just copying the input (until outputChannelCount_higherHalf).
+    // Generate pointwise filters for just copying the input (from inputChannelIndexStart to inputChannelIndexStop).
     this.filtersTensor4d = tf.tidy( () =>
       tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
         .oneHot( inputChannelCount )  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
