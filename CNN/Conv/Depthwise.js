@@ -127,15 +127,65 @@ class PadInfoCalculator {
  */
 class PassThrough {
 
+  /**
+   */
+  constructor(
+    imageInHeight, imageInWidth, imageInDepth,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad ) {
+
+    this.padInfo = new PadInfoCalculator( imageInHeight, imageInWidth, imageInDepth,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+
+    let { depthwiseFilterWidth, channelMultiplier, dilationHeight, dilationWidth,
+          stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
+          imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = this.padInfo;
+
+    // There is only one position (inside the effect depthwise filter) with value one. All other position of the filter should be zero.
+    //
+    // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
+    let oneEffectFilterY = padHeightTop;
+    let oneEffectFilterX = padWidthLeft;
+
+//!!! ...unfinished... (2021/10/22)
+    for ( let inChannel = 0; inChannel < imageInDepth; ++inChannel ) {
+
+      for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
+
+        for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
+          for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY ) {
+            let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
+
+            for ( let filterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
+              for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX ) {
+
+                // The filter's dilation part can not be manipulated. (They are always zero.)
+                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                  continue;
+
+    //!!! ...unfinished... (2021/10/22)
+
+                let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
+                let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
+              }
+            }
+          }
+        }
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 //!!! ...unfinished... (2021/10/22)
 
-  /**
-   * @param {number} inputChannelCount      The channel count of input.
-   * @param {number} outputChannelCount     The channel count of output.
-   * @param {number} inputChannelIndexStart The channel count index (included) to start to be copied to the output.
-   * @param {number} inputChannelIndexStop  The channel count index (not included) to stop to be copied to the output.
-   */
-  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, inputChannelIndexStop ) {
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
