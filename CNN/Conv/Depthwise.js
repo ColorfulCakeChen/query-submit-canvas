@@ -359,7 +359,7 @@ class Base extends ReturnOrClone_Activation.Base {
         this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
         if ( this.bHigherHalfPassThrough ) {
-          this.bHigherHalfPassThrough = true;
+
           this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
             = this.outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
 
@@ -381,18 +381,23 @@ class Base extends ReturnOrClone_Activation.Base {
 
 !!!
 
-        this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier ];
+        this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier ];
 
         this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
         if ( !this.filtersWeights.extract() )
           return false;  // e.g. input array does not have enough data.
-
         this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
 
         this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
 
   // !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
         this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+
+        if ( this.bHigherHalfPassThrough ) {
+  //!!! ...unfinished... (2021/10/22)
+        }
+
+        // After combining 
         this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
 
         this.pfnOperation = Base.Conv_and_destroy; // will dispose inputTensor.
