@@ -84,8 +84,8 @@ class PassThrough {
  *
  * @member {ChannelShuffler.Xxx} channelShuffler
  *   If not null, the channelShuffler.outputGroupCount will be used to (pre-)shuffle the filters. The total effect will be the same as
- * applying the channel shuffler (without concatenation and splitting) after pointwise convolution. (for pointwise2 of
- * ShuffleNetV2_ByMopbileNetV1's head/body/tail)
+ * applying the channel shuffler (without concatenation and splitting) after pointwise convolution. The channelShuffler will not be
+ * disposed by this object. (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -304,6 +304,10 @@ class Base extends ReturnOrClone_Activation.Base {
     if ( this.biasesTensor3d ) {
       this.biasesTensor3d.dispose();
       this.biasesTensor3d = null;
+    }
+
+    if ( this.channelShuffler ) {
+      this.channelShuffler = null; // Do not dispose channel shuffler here. Just set to null.
     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
