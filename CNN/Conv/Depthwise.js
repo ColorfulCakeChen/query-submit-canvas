@@ -301,8 +301,6 @@ class Base extends ReturnOrClone_Activation.Base {
     this.outputChannelCount = this.inputChannelCount; // Assume no channel multiplier.
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
-//!!! ...unfinished... (2021/10/22) bHigherHalfPassThrough
-
     switch ( this.stridesPad ) {
       case 0:  this.strides = 1; this.pad = "valid"; break;
       default:
@@ -337,30 +335,30 @@ class Base extends ReturnOrClone_Activation.Base {
           break;
       }
 
-    } else {
-      if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
-        this.bDepthwise = this.bDepthwiseConv = true;
+//!!! ...unfinished... (2021/10/22) bHigherHalfPassThrough
 
-        this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+    } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
+      this.bDepthwise = this.bDepthwiseConv = true;
 
-        this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier ];
+      this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
-        this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
-        if ( !this.filtersWeights.extract() )
-          return false;  // e.g. input array does not have enough data.
+      this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier ];
 
-        this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
+      this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
+      if ( !this.filtersWeights.extract() )
+        return false;  // e.g. input array does not have enough data.
 
-        this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
-        
+      this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
+
+      this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
+
 // !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
-        this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+      this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+      this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
 
-        this.pfnOperation = Base.Conv_and_destroy; // will dispose inputTensor.
+      this.pfnOperation = Base.Conv_and_destroy; // will dispose inputTensor.
 
-      } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
-      }
+    } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
     }
 
     this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
