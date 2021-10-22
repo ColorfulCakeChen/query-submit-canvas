@@ -225,6 +225,14 @@ class PassThrough {
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {ChannelShuffler.Xxx} channelShuffler
+ *   - If null, it is just a normal depthwise convolution.
+ *
+ *   - If not null, it is viewed as ( bHigherHalfPassThrough == true ). The channelShuffler.concatenatedShape[ 0 ] and
+ *       channelShuffler.concatenatedShape[ 1 ] will be used as imageInHeight and imageInWidth. They are used to generate the
+ *       higher-half-pass-through depthwise filters. The channelShuffler will not be disposed by this object. (for depthwise1
+ *       of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *
  * @member {boolean} bHigherHalfPassThrough
  *   - If false, it is just a normal depthwise convolution.
  *
@@ -273,7 +281,7 @@ class PassThrough {
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-  constructor( inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId, bHigherHalfPassThrough ) {
+  constructor( inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId, channelShuffler ) {
     super();
     this.inputChannelCount = inputChannelCount;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
@@ -281,7 +289,8 @@ class Base extends ReturnOrClone_Activation.Base {
     this.stridesPad = stridesPad;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-    this.bHigherHalfPassThrough = bHigherHalfPassThrough;
+    this.channelShuffler = channelShuffler;
+    this.bHigherHalfPassThrough = ( channelShuffler != null );
   }
 
   /**
@@ -301,6 +310,12 @@ class Base extends ReturnOrClone_Activation.Base {
     this.outputChannelCount = this.inputChannelCount; // Assume no channel multiplier.
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
+    if ( this.channelShuffler ) {
+      this.imageInHeight = this.channelShuffler.concatenatedShape[ 0 ];
+      this.imageInWidth = this.channelShuffler.concatenatedShape[ 1 ];
+      this.imageInDepth = this.channelShuffler.concatenatedShape[ 2 ];
+    }
+
     switch ( this.stridesPad ) {
       case 0:  this.strides = 1; this.pad = "valid"; break;
       default:
@@ -308,95 +323,112 @@ class Base extends ReturnOrClone_Activation.Base {
       case 2:  this.strides = 2; this.pad = "same";  break;
     }
 
-    if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
+    let higherHalfPassThrough;
+    try {
 
-      // if 1x1 AVG pooling ( and strides is 1 ), or 1x1 MAX pooling ( and strides is 1 ), or illegal pooling type (i.e. not AVG, not MAX):
-      //   - As no depthwise operation (i.e. ( this.bDepthwise == false ) )
-      //   - Just return input (i.e. ( this.pfnOperation == Base.return_input_directly ) )
+      if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
-      // When 1x1 AVG or MAX pooling (and strides is 1), the result of depthwise operation (not include bias and activation) is the same as input.
-      let bOperationResultSameAsInput = ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) );
+        // if 1x1 AVG pooling ( and strides is 1 ), or 1x1 MAX pooling ( and strides is 1 ), or illegal pooling type (i.e. not AVG, not MAX):
+        //   - As no depthwise operation (i.e. ( this.bDepthwise == false ) )
+        //   - Just return input (i.e. ( this.pfnOperation == Base.return_input_directly ) )
 
-      switch ( this.AvgMax_Or_ChannelMultiplier ) {
-        case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
-          this.bDepthwise = this.bDepthwiseAvg = true;
-          if ( bOperationResultSameAsInput )
-            this.pfnOperation = Base.return_input_directly; // For speeding up performance. (Note: It might still has bias and/or activation.)
-          else
-            this.pfnOperation = Base.Avg_and_destroy;
-          break;
+        // When 1x1 AVG or MAX pooling (and strides is 1), the result of depthwise operation (not include bias and activation) is the same as input.
+        let bOperationResultSameAsInput = ( ( 1 == this.filterHeight ) && ( 1 == this.filterWidth ) && ( 1 == this.strides ) );
 
-        case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
-          this.bDepthwise = this.bDepthwiseMax = true;
-          if ( bOperationResultSameAsInput )
-            this.pfnOperation = Base.return_input_directly; // For speeding up performance. (Note: It might still has bias and/or activation.)
-          else
-            this.pfnOperation = Base.Max_and_destroy;
-          break;
+        switch ( this.AvgMax_Or_ChannelMultiplier ) {
+          case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
+            this.bDepthwise = this.bDepthwiseAvg = true;
+            if ( bOperationResultSameAsInput )
+              this.pfnOperation = Base.return_input_directly; // For speeding up performance. (Note: It might still has bias and/or activation.)
+            else
+              this.pfnOperation = Base.Avg_and_destroy;
+            break;
+
+          case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
+            this.bDepthwise = this.bDepthwiseMax = true;
+            if ( bOperationResultSameAsInput )
+              this.pfnOperation = Base.return_input_directly; // For speeding up performance. (Note: It might still has bias and/or activation.)
+            else
+              this.pfnOperation = Base.Max_and_destroy;
+            break;
+        }
+
+      } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
+        this.bDepthwise = this.bDepthwiseConv = true;
+
+  //!!! ...unfinished... (2021/10/22) bHigherHalfPassThrough
+        if ( this.bHigherHalfPassThrough ) {
+          higherHalfPassThrough = new PassThrough(
+            this.imageInHeight, this.imageInWidth, this.imageInDepth,
+            this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseStridesPad, this.bBias );
+
+        } else {
+
+  //!!! ...unfinished... (2021/10/22)
+        }
+
+        this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+
+        this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier ];
+
+        this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
+        if ( !this.filtersWeights.extract() )
+          return false;  // e.g. input array does not have enough data.
+
+        this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
+
+        this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
+
+  // !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
+        this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+
+        this.pfnOperation = Base.Conv_and_destroy; // will dispose inputTensor.
+
+      } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
       }
 
-//!!! ...unfinished... (2021/10/22) bHigherHalfPassThrough
+      this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
 
-    } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
-      this.bDepthwise = this.bDepthwiseConv = true;
+      this.filterHeightWidth = [ this.filterHeight, this.filterWidth ];
+      this.biasesShape =       [ 1, 1, this.outputChannelCount ];
 
-      this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+      if ( this.bDepthwise ) {
 
-      this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.AvgMax_Or_ChannelMultiplier ];
+        if ( this.bBias ) {
+          this.biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
+          if ( !this.biasesWeights.extract() )
+            return false;  // e.g. input array does not have enough data.
+          this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
 
-      this.filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
-      if ( !this.filtersWeights.extract() )
-        return false;  // e.g. input array does not have enough data.
+          this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.biasesShape );
 
-      this.byteOffsetEnd = this.filtersWeights.defaultByteOffsetEnd;
+  // !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
+          this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
 
-      this.filtersTensor4d = tf.tensor4d( this.filtersWeights.weights, this.filtersShape );
+          if ( this.pfnActivation )
+            this.pfnOperationBiasActivation = Base.OperationBiasActivation_and_destroy_or_keep;
+          else
+            this.pfnOperationBiasActivation = Base.OperationBias_and_destroy_or_keep;
 
-// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
-      this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-      this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+        } else {
 
-      this.pfnOperation = Base.Conv_and_destroy; // will dispose inputTensor.
+          if ( this.pfnActivation )
+            this.pfnOperationBiasActivation = Base.OperationActivation_and_destroy_or_keep;
+           else
+            this.pfnOperationBiasActivation = Base.Operation_and_destroy_or_keep;
 
-    } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
-    }
-
-    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
-
-    this.filterHeightWidth = [ this.filterHeight, this.filterWidth ];
-    this.biasesShape =       [ 1, 1, this.outputChannelCount ];
-
-    if ( this.bDepthwise ) {
-
-      if ( this.bBias ) {
-        this.biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.biasesShape );
-        if ( !this.biasesWeights.extract() )
-          return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = this.biasesWeights.defaultByteOffsetEnd;
-
-        this.biasesTensor3d = tf.tensor3d( this.biasesWeights.weights, this.biasesShape );
-
-// !!! ...unfinished... (2021/10/12) Currently, all weights are extracted (not inferenced) for depthwise convolution.
-        this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-
-        if ( this.pfnActivation )
-          this.pfnOperationBiasActivation = Base.OperationBiasActivation_and_destroy_or_keep;
-        else
-          this.pfnOperationBiasActivation = Base.OperationBias_and_destroy_or_keep;
+        }
 
       } else {
-
-        if ( this.pfnActivation )
-          this.pfnOperationBiasActivation = Base.OperationActivation_and_destroy_or_keep;
-         else
-          this.pfnOperationBiasActivation = Base.Operation_and_destroy_or_keep;
-
+        // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
+        this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
       }
 
-    } else {
-      // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-      this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
+    } finally {
+      if ( higherHalfPassThrough )
+        higherHalfPassThrough.disposeTensors();
     }
 
     this.bInitOk = true;
@@ -412,6 +444,10 @@ class Base extends ReturnOrClone_Activation.Base {
     if ( this.biasesTensor3d ) {
       this.biasesTensor3d.dispose();
       this.biasesTensor3d = null;
+    }
+
+    if ( this.channelShuffler ) {
+      this.channelShuffler = null; // Do not dispose channel shuffler here. Just set to null.
     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
