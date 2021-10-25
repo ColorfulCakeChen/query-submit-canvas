@@ -341,17 +341,6 @@ class Base extends ReturnOrClone_Activation.Base {
       this.imageInDepth = this.channelShuffler.concatenatedShape[ 2 ];
     }
 
-     
-
-//!!! ...unfinished... (2021/10/25)
-//  * @member {boolean} bHigherHalfDepthwise2
-//  *   If ( bHigherHalfDifferent == true ) and ( channelShuffler == null ), this will be true.
-//  *
-//  * @member {boolean} bHigherHalfPassThrough
-//  *   If ( bHigherHalfDifferent == true ) and ( channelShuffler != null ), this will be true.
-
-//     this.bHigherHalfPassThrough = ( channelShuffler != null );
-
     switch ( this.stridesPad ) {
       case 0:  this.strides = 1; this.pad = "valid"; break;
       default:
@@ -361,6 +350,17 @@ class Base extends ReturnOrClone_Activation.Base {
 
     let higherHalfPassThrough;
     try {
+
+
+//!!! ...unfinished... (2021/10/25)
+//  * @member {boolean} bHigherHalfDepthwise2
+//  *   If ( bHigherHalfDifferent == true ) and ( channelShuffler == null ), this will be true.
+//  *
+//  * @member {boolean} bHigherHalfPassThrough
+//  *   If ( bHigherHalfDifferent == true ) and ( channelShuffler != null ), this will be true.
+//
+//     this.bHigherHalfPassThrough = ( channelShuffler != null );
+
 
       if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
@@ -439,6 +439,7 @@ class Base extends ReturnOrClone_Activation.Base {
       } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
       }
 
+//!!! ...unfinished... (2021/10/25)
       this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
 
       if ( this.bDepthwise ) {
@@ -483,6 +484,9 @@ class Base extends ReturnOrClone_Activation.Base {
         this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
       }
 
+!!!
+      Base.Setup_pfn.call( this );
+
     } finally {
       if ( higherHalfPassThrough )
         higherHalfPassThrough.disposeTensors();
@@ -521,6 +525,32 @@ class Base extends ReturnOrClone_Activation.Base {
     this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
+  }
+
+  /** Determine this.pfnXxx data members.
+   *
+   * @param {Base} this
+   *   The Base object to be determined (i.e. modified).
+   */
+  static Setup_pfn() {
+    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
+
+    if ( this.bDepthwise ) {
+      if ( this.bBias ) {
+        if ( this.pfnActivation )
+          this.pfnOperationBiasActivation = Base.OperationBiasActivation_and_destroy_or_keep;
+        else
+          this.pfnOperationBiasActivation = Base.OperationBias_and_destroy_or_keep;
+      } else {
+        if ( this.pfnActivation )
+          this.pfnOperationBiasActivation = Base.OperationActivation_and_destroy_or_keep;
+         else
+          this.pfnOperationBiasActivation = Base.Operation_and_destroy_or_keep;
+      }
+    } else {
+      // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
+      this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
+    }
   }
 
   /**
