@@ -381,21 +381,27 @@ class Base extends ReturnOrClone_Activation.Base {
               this.imageInHeight, this.imageInWidth, outputChannelCount_higherHalf,
               this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
 
-//!!! ...unfinished... (2021/10/25)
-            
-            this.filtersTensor4d = Base.extractFilters.call( this,
-              inputFloat32Array, this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
+            {
+              let lowerHalfFiltersTensor4d = Base.extractFilters.call( this, inputFloat32Array,
+                this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
 
-            let allFiltersArray = [ this.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
-            let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+              let allFiltersArray = [ lowerHalfFiltersTensor4d, higherHalfPassThrough.filtersTensor4d ];
+              this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+              lowerHalfFiltersTensor4d.dispose();
+            }
 
-            this.filtersTensor4d.dispose();
-            this.filtersTensor4d = allFiltersTensor4d;
+            {
+              let lowerHalfBiasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
 
-//???
-            this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape ); // After combining the pass-through filters, it is total.
+              let allBiasesArray = [ lowerHalfBiasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
+              this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
 
-            this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
+              lowerHalfBiasesTensor3d.dispose();
+            }
+
+            // Combine the high-half-pass-through filters and biases weights count.
+            this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+            this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
           }
 
         } else { // 2.3 Normal depthwise convolution.
@@ -404,16 +410,14 @@ class Base extends ReturnOrClone_Activation.Base {
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-          this.filtersTensor4d = Base.extractFilters.call( this,
-            inputFloat32Array, this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
+          this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array,
+            this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
 
           this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
         }
 
 
 //!!! ...unfinished... (2021/10/25)
-//      this.filtersTensor4d = Base.extractFilters.call( this,
-//          inputFloat32Array, this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
 
         if ( this.bHigherHalfPassThrough ) {
           this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
