@@ -535,50 +535,29 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.tensorWeightCountExtracted
    *   - this.tensorWeightCountTotal
    *
-   * @param {Base} this   The Base object to be determined (i.e. modified).
+   * @param {Base} this                       The Base object to be determined and modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   * @param {number} filterHeight             The height of the depthwise filters.
+   * @param {number} filterWidth              The width of the depthwise filters.
+   * @param {number} inputChannelCount        The input channel count of the depthwise filters.
+   * @param {number} channelMultiplier        The channel multiplier of the depthwise filters.
    *
-   * @param {Float32Array} inputFloat32Array   A Float32Array whose values will be interpreted as weights.
-   *
-   * @param {number} inputChannelCount   The input channel count of the depthwise filters.
-   *
-   * @return {tf.tensor3d}
-   *   The extracted biases.
+   * @return {tf.tensor4d}                    The extracted depthwise filters. Return null, if failed.
    */
   static extractFilters( inputFloat32Array, filterHeight, filterWidth, inputChannelCount, channelMultiplier ) {
-        this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+    //let outputChannelCount = inputChannelCount * channelMultiplier;
 
-        if ( this.bHigherHalfPassThrough ) {
-          this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
-            = this.outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
+    let filtersShape = [ filterHeight, filterWidth, inputChannelCount, channelMultiplier ];
+    let filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, filtersShape );
+    if ( !filtersWeights.extract() )
+      return null;  // e.g. input array does not have enough data.
+    this.byteOffsetEnd = filtersWeights.defaultByteOffsetEnd;
 
-          let outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_toBeExtracted;
-          higherHalfPassThrough = new PassThrough(
-            this.imageInHeight, this.imageInWidth, outputChannelCount_higherHalf,
-            this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseStridesPad, this.bBias );
+    filtersTensor4d = tf.tensor4d( filtersWeights.weights, filtersShape );
+    this.tensorWeightCountExtracted += tf.util.sizeFromShape( filtersTensor4d.shape );
+    this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d.shape );
 
-        } else { // Normal depthwise convolution. Use specified input and output channel count.
-          this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-          this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-        }
-
-        let filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier ];
-        let filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, this.filtersShape );
-        if ( !filtersWeights.extract() )
-          return false;  // e.g. input array does not have enough data.
-        this.byteOffsetEnd = filtersWeights.defaultByteOffsetEnd;
-
-        this.filtersTensor4d = tf.tensor4d( filtersWeights.weights, filtersShape );
-        this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-
-        if ( this.bHigherHalfPassThrough ) {
-          let allFiltersArray = [ this.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
-          let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-
-          this.filtersTensor4d.dispose();
-          this.filtersTensor4d = allFiltersTensor4d;
-        }
-
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape ); // After combining the pass-through filters, it is total.
+    return filtersTensor4d;
   }
 
   /**
@@ -587,29 +566,23 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.tensorWeightCountExtracted
    *   - this.tensorWeightCountTotal
    *
-   * @param {Base} this
-   *   The Base object to be determined (i.e. modified).
+   * @param {Base} this                       The Base object to be determined (i.e. modified).
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   * @param {number} channelCount             The (input and output) channel count of the biases.
    *
-   * @param {Float32Array} inputFloat32Array
-   *   A Float32Array whose values will be interpreted as weights.
-   *
-   * @param {number} channelCount
-   *   The channel count of the biases.
-   *
-   * @return {tf.tensor3d}
-   *   The extracted biases.
+   * @return {tf.tensor3d}                    The extracted biases. Return null, if failed.
    */
   static extractBiases( inputFloat32Array, channelCount ) {
     let biasesShape = [ 1, 1, channelCount ];
     let biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, biasesShape );
     if ( !biasesWeights.extract() )
-      return false;  // e.g. input array does not have enough data.
+      return null;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = biasesWeights.defaultByteOffsetEnd;
 
     let biasesTensor3d = tf.tensor3d( biasesWeights.weights, biasesShape );
 
     this.tensorWeightCountExtracted += tf.util.sizeFromShape( biasesTensor3d.shape );
-    this.tensorWeightCountTotal += tf.util.sizeFromShape( biasesTensor3d.shape ); // After combining the pass-through biases, it is total.
+    this.tensorWeightCountTotal += tf.util.sizeFromShape( biasesTensor3d.shape );
 
     return biasesTensor3d;
   }
