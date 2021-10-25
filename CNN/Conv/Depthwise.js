@@ -11,12 +11,12 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * @member {number} imageInHeight         Input image height.
  * @member {number} imageInWidth          Input image width.
  * @member {number} imageInDepth          Input image channel count.
- * @member {number} depthwise_AvgMax_Or_ChannelMultiplier   Depthwise operation. (ValueDesc.AvgMax_Or_ChannelMultiplier)
- * @member {number} depthwiseFilterHeight The height of the depthwise convolution's filter.
- * @member {number} depthwiseFilterWidth  The width of the depthwise convolution's filter.
- * @member {number} depthwiseStridesPad   The strides and padding of depthwise convolution. (PointDepthPoint.Params.depthwiseStridesPad)
+ * @member {number} AvgMax_Or_ChannelMultiplier   Depthwise operation. (ValueDesc.AvgMax_Or_ChannelMultiplier)
+ * @member {number} filterHeight          The height of the depthwise convolution's filter.
+ * @member {number} filterWidth           The width of the depthwise convolution's filter.
+ * @member {number} stridesPad            The strides and padding of depthwise convolution. (PointDepthPoint.Params.stridesPad)
  *
- * @member {number} channelMultiplier     The channel multiplier of the depthwise operation (according to depthwise_AvgMax_Or_ChannelMultiplier).
+ * @member {number} channelMultiplier     The channel multiplier of the depthwise operation (according to AvgMax_Or_ChannelMultiplier).
  *
  * @member {number} dilationHeight        The depthwise filters's dilation across height dimension.
  * @member {number} dilationWidth         The depthwise filters's dilation across width dimension.
@@ -25,11 +25,11 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * @member {number} effectFilterWidth     The effect width of the depthwise convolution's filter including the dilationWidth.
  * @member {number} effectFilterSize      The effect size of the depthwise convolution's filter. (= effectFilterHeight * effectFilterWidth)
  *
- * @member {number} depthwiseStrides      The strides along the image's height and width dimension (according to depthwiseStridesPad).
- * @member {number} stridesHeight         The strides along the image's height dimension (according to depthwiseStridesPad).
- * @member {number} stridesWidth          The strides along the image's width dimension (according to depthwiseStridesPad).
+ * @member {number} strides      The strides along the image's height and width dimension (according to stridesPad).
+ * @member {number} stridesHeight         The strides along the image's height dimension (according to stridesPad).
+ * @member {number} stridesWidth          The strides along the image's width dimension (according to stridesPad).
 
- * @member {number} depthwisePad          The padding along the image's height and width dimension (according to depthwiseStridesPad).
+ * @member {number} pad          The padding along the image's height and width dimension (according to stridesPad).
  * @member {number} padHeight             The padding along the input image's height dimension.
  * @member {number} padHeightTop          The padding along the input image's height dimension at the top.
  * @member {number} padHeightBottom       The padding along the input image's height dimension at the bottom.
@@ -44,60 +44,57 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  */
 class PadInfoCalculator {
   
-  constructor(
-    imageInHeight, imageInWidth, imageInDepth,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad ) {
-
+  constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad ) {
     this.imageInHeight = imageInHeight;
     this.imageInWidth = imageInWidth;
     this.imageInDepth = imageInDepth;
-    this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
-    this.depthwiseFilterHeight = depthwiseFilterHeight;
-    this.depthwiseStridesPad = depthwiseStridesPad;
+    this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
+    this.filterHeight = filterHeight;
+    this.stridesPad = stridesPad;
 
-//!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 )?
+//!!! ...unfinished... (2021/03/17) What about ( filterHeight <= 0 )?
 
-    this.channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
-    if (   ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
-        || ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+    this.channelMultiplier = AvgMax_Or_ChannelMultiplier;
+    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
+        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
       this.channelMultiplier = 1;
     }
 
-    this.depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
+    this.filterWidth = filterHeight; // Assume filter's width equals height.
 
     // Strides and Padding.
-    switch ( depthwiseStridesPad ) {
-      case 0:  this.depthwiseStrides = 1; this.depthwisePad = "valid"; break;
+    switch ( stridesPad ) {
+      case 0:  this.strides = 1; this.pad = "valid"; break;
       default:
-      case 1:  this.depthwiseStrides = 1; this.depthwisePad = "same";  break;
-      case 2:  this.depthwiseStrides = 2; this.depthwisePad = "same";  break;
+      case 1:  this.strides = 1; this.pad = "same";  break;
+      case 2:  this.strides = 2; this.pad = "same";  break;
     }
 
     // Assume strides width equals strides height.
-    this.stridesHeight = this.depthwiseStrides;
-    this.stridesWidth = this.depthwiseStrides;
+    this.stridesHeight = this.strides;
+    this.stridesWidth = this.strides;
 
     // Currently, we can only handle dilation = 1.
     this.dilationHeight = 1;
     this.dilationWidth = 1;
 
     // Effect filter size (includes dilation).
-    this.effectFilterHeight = this.dilationHeight * ( this.depthwiseFilterHeight - 1 ) + 1;
-    this.effectFilterWidth =  this.dilationWidth  * ( this.depthwiseFilterWidth  - 1 ) + 1;
+    this.effectFilterHeight = this.dilationHeight * ( this.filterHeight - 1 ) + 1;
+    this.effectFilterWidth =  this.dilationWidth  * ( this.filterWidth  - 1 ) + 1;
     this.effectFilterSize = this.effectFilterHeight * this.effectFilterWidth;
 
     // (The following codes for output image height and width and padding calculation are copied from
     // https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
     {
       // Determine output image height and width without padding.
-      if ( this.depthwisePad == "valid" ) {
+      if ( this.pad == "valid" ) {
         this.imageOutHeight = Math.ceil( ( imageInHeight - this.effectFilterHeight + 1 ) / this.stridesHeight );
         this.imageOutWidth =  Math.ceil( ( imageInWidth  - this.effectFilterWidth  + 1 ) / this.stridesWidth  );
 
         this.padHeight = this.padHeightTop = this.padHeightBottom = this.padWidth = this.padWidthLeft = this.padWidthRight = 0;
 
       // Determine output image height and width with padding around the input image height and width.
-      } else if ( this.depthwisePad == "same" ) {
+      } else if ( this.pad == "same" ) {
         this.imageOutHeight = Math.ceil( imageInHeight / this.stridesHeight );
         this.imageOutWidth =  Math.ceil( imageInWidth  / this.stridesWidth  );
 
@@ -131,21 +128,19 @@ class PassThrough {
 
   /**
    */
-  constructor(
-    imageInHeight, imageInWidth, imageInDepth,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bBias ) {
+  constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias ) {
 
     this.padInfo = new PadInfoCalculator( imageInHeight, imageInWidth, imageInDepth,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+      AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad );
 
     this.bBias = bBias;
 
-    if (   ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
-        || ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
+    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
+        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
       return; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
     }
 
-    let { depthwiseFilterWidth, channelMultiplier, dilationHeight, dilationWidth,
+    let { filterWidth, channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
           imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = this.padInfo;
 
@@ -154,18 +149,18 @@ class PassThrough {
     let oneEffectFilterX = padWidthLeft;
 
     // Make up a depthwise convolution filter which 
-    this.depthwiseFiltersArray = new Array( depthwiseFilterHeight * depthwiseFilterWidth * imageInDepth * channelMultiplier );
+    this.depthwiseFiltersArray = new Array( filterHeight * filterWidth * imageInDepth * channelMultiplier );
 
     // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
     for ( let inChannel = 0; inChannel < imageInDepth; ++inChannel ) {
 
       for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
 
-        for ( let filterY = 0, effectFilterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
+        for ( let filterY = 0, effectFilterY = 0; filterY < filterHeight; ++filterY ) {
           for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY, ++effectFilterY ) {
-            let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
+            let filterIndexBaseX = ( filterY * filterWidth );
 
-            for ( let filterX = 0, effectFilterX = 0; filterX < depthwiseFilterWidth; ++filterX ) {
+            for ( let filterX = 0, effectFilterX = 0; filterX < filterWidth; ++filterX ) {
               for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX, ++effectFilterX ) {
 
                 // The filter's dilation part can not be manipulated. (They are always zero.)
@@ -189,7 +184,7 @@ class PassThrough {
       }
     }
 
-    let filtersShape = [ depthwiseFilterHeight, depthwiseFilterWidth, imageInDepth, channelMultiplier ];
+    let filtersShape = [ filterHeight, filterWidth, imageInDepth, channelMultiplier ];
     let biasesShape =  [ 1, 1, imageOutDepth ];
 
     // Generate depthwise filters for just pass input to output.
@@ -348,13 +343,12 @@ class Base extends ReturnOrClone_Activation.Base {
       case 2:  this.strides = 2; this.pad = "same";  break;
     }
 
+    Base.Setup_bDepthwise_pfn.call( this );
+
     let higherHalfPassThrough;
     try {
 
-//!!! ...unfinished... (2021/10/25)
-      Base.Setup_bDepthwise_pfn.call( this );
-
-      if ( this.bDepthwiseAvg || this.bDepthwiseMax ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
+      if ( this.bDepthwiseAvg || this.bDepthwiseMax ) { // 1. Depthwise by AVG or MAX pooling (so no channel multiplier).
 
         this.filterHeightWidth = [ this.filterHeight, this.filterWidth ];
 
@@ -365,31 +359,54 @@ class Base extends ReturnOrClone_Activation.Base {
 
         this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
 
-      } else if ( this.bDepthwiseConv ) { // Depthwise by convolution (with channel multiplier).
+      } else if ( this.bDepthwiseConv ) { // 2. Depthwise by convolution (with channel multiplier).
 
         this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
         if ( this.bHigherHalfDifferent == true ) {
           
-          if ( this.channelShuffler == null ) {
+          if ( this.channelShuffler == null ) { // 2.1
             this.bHigherHalfDepthwise2 = true;
 
 //!!! ...unfinished... (2021/10/25)
-          } else { // ( channelShuffler != null )
+
+          } else { // ( channelShuffler != null ), 2.2
             this.bHigherHalfPassThrough = true;
 
+            this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
+              = this.outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
+
+            let outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_toBeExtracted;
+            higherHalfPassThrough = new PassThrough(
+              this.imageInHeight, this.imageInWidth, outputChannelCount_higherHalf,
+              this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
+
 //!!! ...unfinished... (2021/10/25)
+            
+            this.filtersTensor4d = Base.extractFilters.call( this,
+              inputFloat32Array, this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
+
+            let allFiltersArray = [ this.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
+            let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+
+            this.filtersTensor4d.dispose();
+            this.filtersTensor4d = allFiltersTensor4d;
+
+//???
+            this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape ); // After combining the pass-through filters, it is total.
+
+            this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
           }
 
-        } else { // Normal depthwise convolution.
-        
+        } else { // 2.3 Normal depthwise convolution.
+
 //!!! ...unfinished... (2021/10/25)
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
           this.filtersTensor4d = Base.extractFilters.call( this,
             inputFloat32Array, this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
-          
+
           this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
         }
 
@@ -405,7 +422,7 @@ class Base extends ReturnOrClone_Activation.Base {
           let outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_toBeExtracted;
           higherHalfPassThrough = new PassThrough(
             this.imageInHeight, this.imageInWidth, outputChannelCount_higherHalf,
-            this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseStridesPad, this.bBias );
+            this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
 
         } else { // Normal depthwise convolution. Use specified input and output channel count.
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;
