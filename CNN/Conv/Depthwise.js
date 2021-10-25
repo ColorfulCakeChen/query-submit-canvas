@@ -386,12 +386,27 @@ class Base extends ReturnOrClone_Activation.Base {
 
 //!!! ...unfinished... (2021/10/25) What if ( channelMultipler > 1 )?
 
-            this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
-              = this.outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
+//!!! (2021/10/25 Remarked)
+//             this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
+//               = this.outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
+//
+//             let inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_toBeExtracted;
+//             //let outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_toBeExtracted;
 
-            let outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_toBeExtracted;
+            let inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
+            let inputChannelCount_higherHalf = this.inputChannelCount - inputChannelCount_lowerHalf;
+
+            let outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
+            let outputChannelCount_higherHalf = this.outputChannelCount - outputChannelCount_lowerHalf;
+
             higherHalfPassThrough = new PassThrough(
-              this.imageInHeight, this.imageInWidth, outputChannelCount_higherHalf,
+              this.imageInHeight, this.imageInWidth,
+
+//!!! ...unfinished... (2021/10/25) should be inputChannelCount_higherHalf?
+// //  constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias ) {
+//               ??? outputChannelCount_higherHalf,
+              inputChannelCount_higherHalf,
+
               this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
 
             {
