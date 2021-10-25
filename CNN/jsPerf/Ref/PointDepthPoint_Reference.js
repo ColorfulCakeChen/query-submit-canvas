@@ -877,9 +877,11 @@ class Base {
     let padInfo = new Depthwise.PadInfoCalculator( imageIn.height, imageIn.width, imageIn.depth, 
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
 
-    let { depthwiseFilterWidth, channelMultiplier, dilationHeight, dilationWidth,
+    let { channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
           imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = padInfo;
+
+    let depthwiseFilterWidth = padInfo.filterWidth;
 
     // For ( pad == "valid" ), negative ( inX, inY ) will never happen.
     // For ( pad == "same"  ), negative ( inX, inY ) may happen, but those pixels will be viewed as zero value.
@@ -897,7 +899,7 @@ class Base {
     let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
 
     // Max pooling
-    if ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
+    if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
         imageOut.dataArray.fill( Number.NEGATIVE_INFINITY ); // So that any value is greater than initialized value.
     }
 
@@ -958,11 +960,11 @@ class Base {
                     let filterIndex = filterIndexBaseSubC + outChannelSub;
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
-                      case ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
+                      case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
                         imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ];
                         break;
 
-                      case ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: // Max pooling
+                      case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: // Max pooling
                         imageOut.dataArray[ outIndex ] = Math.max( imageOut.dataArray[ outIndex ], imageIn.dataArray[ inIndex ] );
                         break;
 
@@ -976,7 +978,7 @@ class Base {
             }
 
             // Avg pooling
-            if ( ValueDesc.depthwise_AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
+            if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
               imageOut.dataArray[ outIndex ] /= avgDivisor; // So that every sum is averaged.
             }
           }
