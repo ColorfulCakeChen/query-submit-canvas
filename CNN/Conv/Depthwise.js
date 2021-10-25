@@ -230,12 +230,11 @@ class PassThrough {
  *
  *   - If true:
  *
- 
-//!!! ...unfinished... (2021/10/25)
-
- *     - If ( channelShuffler == null ), the filters for the output channels between ( inputChannelCount ) and
- *         ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( inputChannelCount - 1 ). (i.e.
- *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+ *     - If ( channelShuffler == null ), the filters for the input channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 )
+ *         are depthwise1, between Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) are depthwise2. These
+ *         two filters (and biases) are extracted in sequence. But they will be combined into one larger filters (and biases).
+ *         This makes these filters' weights are arranged the same as ShuffleNetV2's head. So that they can be exchanged for
+ *         comparing performance. (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
  *     - If ( channelShuffler != null ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
  *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
@@ -247,9 +246,7 @@ class PassThrough {
  * They are used to generate the higher-half-pass-through depthwise filters. The channelShuffler will not be disposed by this object.
  * (for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
-
-!!!
- * @member {boolean} bHigherHalf ??? PassThrough
+ * @member {boolean} bHigherHalfDepthwise2
  *   If ( bHigherHalfDifferent == true ) and ( channelShuffler == null ), this will be true.
  *
  * @member {boolean} bHigherHalfPassThrough
@@ -313,9 +310,8 @@ class Base extends ReturnOrClone_Activation.Base {
     this.stridesPad = stridesPad;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-!!!
+    this.bHigherHalfDifferent = bHigherHalfDifferent;
     this.channelShuffler = channelShuffler;
-    this.bHigherHalfPassThrough = ( channelShuffler != null );
   }
 
   /**
@@ -343,6 +339,17 @@ class Base extends ReturnOrClone_Activation.Base {
       this.imageInWidth = this.channelShuffler.concatenatedShape[ 1 ];
       this.imageInDepth = this.channelShuffler.concatenatedShape[ 2 ];
     }
+
+     
+
+//!!! ...unfinished... (2021/10/25)
+//  * @member {boolean} bHigherHalfDepthwise2
+//  *   If ( bHigherHalfDifferent == true ) and ( channelShuffler == null ), this will be true.
+//  *
+//  * @member {boolean} bHigherHalfPassThrough
+//  *   If ( bHigherHalfDifferent == true ) and ( channelShuffler != null ), this will be true.
+
+//     this.bHigherHalfPassThrough = ( channelShuffler != null );
 
     switch ( this.stridesPad ) {
       case 0:  this.strides = 1; this.pad = "valid"; break;
@@ -504,7 +511,8 @@ class Base extends ReturnOrClone_Activation.Base {
 //    this.filtersWeights = this.biasesWeights = this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
     this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
     this.outputChannelCount = this.strides = this.pad
-      = this.bHigherHalfPassThrough = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+      = this.bHigherHalfDepthwise2 = this.bHigherHalfPassThrough
+      = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
       = this.imageInHeight = this.imageInWidth = this.imageInDepth
       = this.filterHeightWidth
       = undefined;
