@@ -14,7 +14,7 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * @member {number} AvgMax_Or_ChannelMultiplier   Depthwise operation. (ValueDesc.AvgMax_Or_ChannelMultiplier)
  * @member {number} filterHeight          The height of the depthwise convolution's filter.
  * @member {number} filterWidth           The width of the depthwise convolution's filter.
- * @member {number} stridesPad            The strides and padding of depthwise convolution. (PointDepthPoint.Params.stridesPad)
+ * @member {number} stridesPad            The strides and padding of depthwise convolution. (PointDepthPoint.Params.depthwiseStridesPad)
  *
  * @member {number} channelMultiplier     The channel multiplier of the depthwise operation (according to AvgMax_Or_ChannelMultiplier).
  *
@@ -25,11 +25,11 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  * @member {number} effectFilterWidth     The effect width of the depthwise convolution's filter including the dilationWidth.
  * @member {number} effectFilterSize      The effect size of the depthwise convolution's filter. (= effectFilterHeight * effectFilterWidth)
  *
- * @member {number} strides      The strides along the image's height and width dimension (according to stridesPad).
+ * @member {number} strides               The strides along the image's height and width dimension (according to stridesPad).
  * @member {number} stridesHeight         The strides along the image's height dimension (according to stridesPad).
  * @member {number} stridesWidth          The strides along the image's width dimension (according to stridesPad).
 
- * @member {number} pad          The padding along the image's height and width dimension (according to stridesPad).
+ * @member {number} pad                   The padding along the image's height and width dimension (according to stridesPad).
  * @member {number} padHeight             The padding along the input image's height dimension.
  * @member {number} padHeightTop          The padding along the input image's height dimension at the top.
  * @member {number} padHeightBottom       The padding along the input image's height dimension at the bottom.
