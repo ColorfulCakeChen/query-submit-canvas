@@ -527,6 +527,39 @@ class Base extends ReturnOrClone_Activation.Base {
     this.bInitOk = false;
   }
 
+  /**
+   * Extract biases from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *
+   * @param {Base} this
+   *   The Base object to be determined (i.e. modified).
+   *
+   * @param {Float32Array} inputFloat32Array
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @param {number} channelCount
+   *   The channel count of the biases.
+   *
+   * @return {tf.tensor3d}
+   *   The extracted biases.
+   */
+  static extractBias( inputFloat32Array, channelCount ) {
+    let biasesShape = [ 1, 1, channelCount ];
+    let biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, biasesShape );
+    if ( !biasesWeights.extract() )
+      return false;  // e.g. input array does not have enough data.
+    this.byteOffsetEnd = biasesWeights.defaultByteOffsetEnd;
+
+    let biasesTensor3d = tf.tensor3d( biasesWeights.weights, biasesShape );
+
+    this.tensorWeightCountExtracted += tf.util.sizeFromShape( biasesTensor3d.shape );
+    this.tensorWeightCountTotal += tf.util.sizeFromShape( biasesTensor3d.shape ); // After combining the pass-through biases, it is total.
+
+    return biasesTensor3d;
+  }
+
   /** Determine this.pfnXxx data members.
    *
    * @param {Base} this
