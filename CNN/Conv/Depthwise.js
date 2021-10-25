@@ -225,19 +225,35 @@ class PassThrough {
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
- * @member {ChannelShuffler.Xxx} channelShuffler
- *   - If null, it is just a normal depthwise convolution.
- *
- *   - If not null, it is viewed as ( bHigherHalfPassThrough == true ). The channelShuffler.concatenatedShape[ 0 ] and
- *       channelShuffler.concatenatedShape[ 1 ] will be used as imageInHeight and imageInWidth. They are used to generate the
- *       higher-half-pass-through depthwise filters. The channelShuffler will not be disposed by this object. (for depthwise1
- *       of ShuffleNetV2_ByMopbileNetV1's body/tail)
- *
- * @member {boolean} bHigherHalfPassThrough
+ * @member {boolean} bHigherHalfDifferent
  *   - If false, it is just a normal depthwise convolution.
  *
- *   - If true, the filters for the output channels between Math.ceil( outputChannelCount / 2 ) to ( outputChannelCount - 1 )
- *       will just pass through the input to output. (for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *   - If true:
+ *
+ 
+//!!! ...unfinished... (2021/10/25)
+
+ *     - If ( channelShuffler == null ), the filters for the output channels between ( inputChannelCount ) and
+ *         ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( inputChannelCount - 1 ). (i.e.
+ *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+ *
+ *     - If ( channelShuffler != null ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
+ *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
+ *         for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *
+ * @member {ChannelShuffler.Xxx} channelShuffler
+ *   Only be used if ( bHigherHalfDifferent == true ). If not null, it is viewed as ( bHigherHalfPassThrough == true ). The
+ * channelShuffler.concatenatedShape[ 0 ] and channelShuffler.concatenatedShape[ 1 ] will be used as imageInHeight and imageInWidth.
+ * They are used to generate the higher-half-pass-through depthwise filters. The channelShuffler will not be disposed by this object.
+ * (for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *
+
+!!!
+ * @member {boolean} bHigherHalf ??? PassThrough
+ *   If ( bHigherHalfDifferent == true ) and ( channelShuffler == null ), this will be true.
+ *
+ * @member {boolean} bHigherHalfPassThrough
+ *   If ( bHigherHalfDifferent == true ) and ( channelShuffler != null ), this will be true.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -287,7 +303,9 @@ class Base extends ReturnOrClone_Activation.Base {
 // they should be extracted in sequence and then combined. So that they could use the same filters and biases weights array
 // to generate the same result.
 
-  constructor( inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId, channelShuffler ) {
+  constructor(
+    inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId, bHigherHalfDifferent, channelShuffler ) {
+
     super();
     this.inputChannelCount = inputChannelCount;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
@@ -295,6 +313,7 @@ class Base extends ReturnOrClone_Activation.Base {
     this.stridesPad = stridesPad;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
+!!!
     this.channelShuffler = channelShuffler;
     this.bHigherHalfPassThrough = ( channelShuffler != null );
   }
