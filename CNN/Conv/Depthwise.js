@@ -408,7 +408,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
               let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
               this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
-
               biasesTensor3d_lowerHalf.dispose();
             }
 
