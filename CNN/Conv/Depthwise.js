@@ -365,12 +365,12 @@ class Base extends ReturnOrClone_Activation.Base {
 
         if ( this.bHigherHalfDifferent == true ) {
           
-          if ( this.channelShuffler == null ) { // 2.1
+          if ( this.channelShuffler == null ) { // 2.1 i.e. bHigherHalfDepthwise2
             this.bHigherHalfDepthwise2 = true;
 
 //!!! ...unfinished... (2021/10/25)
 
-          } else { // ( channelShuffler != null ), 2.2
+          } else { // 2.2 ( channelShuffler != null ), i.e. bHigherHalfPassThrough
             this.bHigherHalfPassThrough = true;
 
             this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
@@ -406,7 +406,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
         } else { // 2.3 Normal depthwise convolution.
 
-//!!! ...unfinished... (2021/10/25)
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
