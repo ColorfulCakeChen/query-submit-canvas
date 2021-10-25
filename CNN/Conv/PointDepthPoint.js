@@ -1368,6 +1368,10 @@ class Base extends ReturnOrClone.Base {
   }
 
   /** Determine which apply_Xxx() function should be used.
+   *
+   * @param {Base} this
+   *   The Base object to be determined.
+   *
    * @return {function} Return one of the apply_Xxx function.
    */
   static Determine_apply() {
