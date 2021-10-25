@@ -87,6 +87,12 @@ class PassThrough {
  * applying the channel shuffler (without concatenation and splitting) after pointwise convolution. The channelShuffler will not be
  * disposed by this object. (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
  *
+ * @member {boolean} bHigherHalfCopyLowerHalf
+ *   If ( bHigherHalfDifferent == true ) and ( inputChannelCount < outputChannelCount ), this will be true.
+ *
+ * @member {boolean} bHigherHalfPassThrough
+ *   If ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), this will be true.
+ *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
