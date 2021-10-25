@@ -354,16 +354,6 @@ class Base extends ReturnOrClone_Activation.Base {
 //!!! ...unfinished... (2021/10/25)
       Base.Setup_bDepthwise_pfn.call( this );
 
-//!!! ...unfinished... (2021/10/25)
-//  * @member {boolean} bHigherHalfDepthwise2
-//  *   If ( bHigherHalfDifferent == true ) and ( channelShuffler == null ), this will be true.
-//  *
-//  * @member {boolean} bHigherHalfPassThrough
-//  *   If ( bHigherHalfDifferent == true ) and ( channelShuffler != null ), this will be true.
-//
-//     this.bHigherHalfPassThrough = ( channelShuffler != null );
-
-
       if ( this.bDepthwiseAvg || this.bDepthwiseMax ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
         this.filterHeightWidth = [ this.filterHeight, this.filterWidth ];
@@ -378,6 +368,31 @@ class Base extends ReturnOrClone_Activation.Base {
       } else if ( this.bDepthwiseConv ) { // Depthwise by convolution (with channel multiplier).
 
         this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+
+        if ( this.bHigherHalfDifferent == true ) {
+          
+          if ( this.channelShuffler == null ) {
+            this.bHigherHalfDepthwise2 = true;
+
+//!!! ...unfinished... (2021/10/25)
+          } else { // ( channelShuffler != null )
+            this.bHigherHalfPassThrough = true;
+
+//!!! ...unfinished... (2021/10/25)
+          }
+
+        } else { // Normal depthwise convolution.
+        
+//!!! ...unfinished... (2021/10/25)
+          this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+          this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+          this.filtersTensor4d = Base.extractFilters.call( this,
+            inputFloat32Array, this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
+          
+          this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
+        }
+
 
 //!!! ...unfinished... (2021/10/25)
 //      this.filtersTensor4d = Base.extractFilters.call( this,
@@ -421,52 +436,50 @@ class Base extends ReturnOrClone_Activation.Base {
       } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
       }
 
-//!!! ...unfinished... (2021/10/25)
-      this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
-
-      if ( this.bDepthwise ) {
-
-        if ( this.bBias ) {
-
-          let biasesShape = [ 1, 1, this.outputChannelCount_toBeExtracted ];
-          let biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, biasesShape );
-          if ( !biasesWeights.extract() )
-            return false;  // e.g. input array does not have enough data.
-          this.byteOffsetEnd = biasesWeights.defaultByteOffsetEnd;
-
-          this.biasesTensor3d = tf.tensor3d( biasesWeights.weights, biasesShape );
-          this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-
-          if ( this.bHigherHalfPassThrough ) {
-            let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
-            let allBiasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
-
-            this.biasesTensor3d.dispose();
-            this.biasesTensor3d = allBiasesTensor3d;
-          }
-
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape ); // After combining the pass-through biases, it is total.
-
-          if ( this.pfnActivation )
-            this.pfnOperationBiasActivation = Base.OperationBiasActivation_and_destroy_or_keep;
-          else
-            this.pfnOperationBiasActivation = Base.OperationBias_and_destroy_or_keep;
-
-        } else {
-
-          if ( this.pfnActivation )
-            this.pfnOperationBiasActivation = Base.OperationActivation_and_destroy_or_keep;
-           else
-            this.pfnOperationBiasActivation = Base.Operation_and_destroy_or_keep;
-
-        }
-
-      } else {
-        // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-        this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
-      }
-
-!!!
+//!!! ...unfinished... (2021/10/25 Remarked) already in Setup_bDepthwise_pfn() and extractBiases().
+//       this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
+//
+//       if ( this.bDepthwise ) {
+//
+//         if ( this.bBias ) {
+//
+//           let biasesShape = [ 1, 1, this.outputChannelCount_toBeExtracted ];
+//           let biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, biasesShape );
+//           if ( !biasesWeights.extract() )
+//             return false;  // e.g. input array does not have enough data.
+//           this.byteOffsetEnd = biasesWeights.defaultByteOffsetEnd;
+//
+//           this.biasesTensor3d = tf.tensor3d( biasesWeights.weights, biasesShape );
+//           this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+//
+//           if ( this.bHigherHalfPassThrough ) {
+//             let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
+//             let allBiasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+//
+//             this.biasesTensor3d.dispose();
+//             this.biasesTensor3d = allBiasesTensor3d;
+//           }
+//
+//           this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape ); // After combining the pass-through biases, it is total.
+//
+//           if ( this.pfnActivation )
+//             this.pfnOperationBiasActivation = Base.OperationBiasActivation_and_destroy_or_keep;
+//           else
+//             this.pfnOperationBiasActivation = Base.OperationBias_and_destroy_or_keep;
+//
+//         } else {
+//
+//           if ( this.pfnActivation )
+//             this.pfnOperationBiasActivation = Base.OperationActivation_and_destroy_or_keep;
+//            else
+//             this.pfnOperationBiasActivation = Base.Operation_and_destroy_or_keep;
+//
+//         }
+//
+//       } else {
+//         // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
+//         this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
+//       }
 
     } finally {
       if ( higherHalfPassThrough )
