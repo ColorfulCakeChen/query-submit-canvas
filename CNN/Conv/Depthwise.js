@@ -232,9 +232,10 @@ class PassThrough {
  *
  *     - If ( channelShuffler == null ), the filters for the input channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 )
  *         are depthwise1, between Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) are depthwise2. These
- *         two filters (and biases) are extracted in sequence. But they will be combined into one larger filters (and biases).
- *         This makes these filters' weights are arranged the same as ShuffleNetV2's head. So that they can be exchanged for
- *         comparing performance. (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+ *         two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
+ *         This makes these filters' weights are arranged the same as ShuffleNetV2's head. So that the same filters weights could
+ *         be used in these two architectures for comparing performance. (i.e. bHigherHalfDepthwise2, for depthwise1 of
+ *         ShuffleNetV2_ByMopbileNetV1's head)
  *
  *     - If ( channelShuffler != null ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
  *         to ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
@@ -294,12 +295,6 @@ class PassThrough {
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-//!!! ...unfinished... (2021/10/22)
-// In ShuffleNetV2's head, the filters and biases of depthwise2 are after depthwise1.
-// In ShuffleNetV2_ByMobileNetV1's head, although depthwise1 and depthwise2 are combined into depthwise1,
-// they should be extracted in sequence and then combined. So that they could use the same filters and biases weights array
-// to generate the same result.
-
   constructor(
     inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId, bHigherHalfDifferent, channelShuffler ) {
 
@@ -313,6 +308,12 @@ class Base extends ReturnOrClone_Activation.Base {
     this.bHigherHalfDifferent = bHigherHalfDifferent;
     this.channelShuffler = channelShuffler;
   }
+
+//!!! ...unfinished... (2021/10/22)
+// In ShuffleNetV2's head, the filters and biases of depthwise2 are after depthwise1.
+// In ShuffleNetV2_ByMobileNetV1's head, although depthwise1 and depthwise2 are combined into depthwise1,
+// they should be extracted in sequence and then combined. So that they could use the same filters and biases weights array
+// to generate the same result.
 
   /**
    * @param {Float32Array} inputFloat32Array
