@@ -321,10 +321,11 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
 
-    this.bHigherHalfCopyLowerHalf = this.bHigherHalfPassThrough
-      = this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
-      = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
-      = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = undefined;
+    // (2021/10/27 Remarked) If these properties does not exist, assigning value (even undefined) to them will create them. This is un-wanted.
+    //this.bHigherHalfCopyLowerHalf = this.bHigherHalfPassThrough
+    //  = this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+    //  = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
+    //  = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = undefined;
 
 //!!! (2021/10/19 Remarked)
 //    this.filtersShape = this.biasesShape
