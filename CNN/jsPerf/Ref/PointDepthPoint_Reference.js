@@ -342,10 +342,7 @@ class Base {
     asserter.propertyValue( "channelCount1_pointwise1Before", testParams.out.channelCount1_pointwise1Before );
 
     asserter.propertyValue( "inputTensorCount", flags.inputTensorCount );
-
-//!!! ...unfinished... (2021/10/27)
-    bHigherHalfDifferent
-
+    asserter.propertyValue( "bHigherHalfDifferent", flags.bHigherHalfDifferent );
     asserter.propertyValue( "bDepthwise2Requested", flags.bDepthwise2Requested );
     asserter.propertyValue( "bConcat1Requested", flags.bConcat1Requested );
     asserter.propertyValue( "bAddInputToOutputRequested", flags.bAddInputToOutputRequested );
@@ -378,53 +375,41 @@ class Base {
 
     // pointwise21 parameters.
     asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise21ChannelCount );
-//    asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise21ChannelCount );
 
-    Base.AssertTwoEqualValues( "bPointwise21Bias",
-      pointDepthPoint.bPointwise21Bias, testParams.out.bPointwise21Bias, parametersDescription );
-
-    Base.AssertTwoEqualValues( "pointwise21ActivationId",
-      pointDepthPoint.pointwise21ActivationId, testParams.out.pointwise21ActivationId, parametersDescription );
+    asserter.propertyValue( "bPointwise21Bias", testParams.out.bPointwise21Bias );
+    asserter.propertyValue( "pointwise21ActivationId", testParams.out.pointwise21ActivationId );
 
     let pointwise21ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise21ActivationId );
-    Base.AssertTwoEqualValues( "pointwise21ActivationName",
-      pointDepthPoint.pointwise21ActivationName, pointwise21ActivationName, parametersDescription );
+    asserter.propertyValue( "pointwise21ActivationName", pointwise21ActivationName );
 
     // pointwise22 parameters.
-    Base.AssertTwoEqualValues( "bOutput1Requested",
-      pointDepthPoint.bOutput1Requested, testParams.out.bOutput1Requested, parametersDescription );
-    
+    asserter.propertyValue( "bOutput1Requested", testParams.out.bOutput1Requested );
+
     { // Test pointwise22ChannelCount.
 
       // In ShuffleNetV2's body/tail, there is always no pointwise22.
       if ( testParams.out.channelCount1_pointwise1Before
              == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
 
-        Base.AssertTwoEqualValues( "pointwise22ChannelCount", pointDepthPoint.pointwise22ChannelCount, 0, parametersDescription );
+        asserter.propertyValue( "pointwise22ChannelCount", 0 );
 
       // Otherwise, pointwise22 is output1 directly. It is determined by both bOutput1Requested and pointwise21ChannelCount.
       } else {
         if ( testParams.out.bOutput1Requested ) {
-          Base.AssertTwoEqualValues( "pointwise22ChannelCount", // Either same as pointwise21 (if requested). (Still may be 0.)
-            pointDepthPoint.pointwise22ChannelCount, testParams.out.pointwise21ChannelCount, parametersDescription );
+          // Either same as pointwise21 (if requested). (Still may be 0.)
+          asserter.propertyValue( "pointwise22ChannelCount", testParams.out.pointwise21ChannelCount );
         } else {
-          Base.AssertTwoEqualValues( "pointwise22ChannelCount", // or 0 (if not requested).
-            pointDepthPoint.pointwise22ChannelCount, 0, parametersDescription );
+          asserter.propertyValue( "pointwise22ChannelCount", 0 ); // or 0 (if not requested).
         }
       }
     }
 
-    Base.AssertTwoEqualValues( "bPointwise22Bias",
-      pointDepthPoint.bPointwise22Bias, testParams.out.bPointwise21Bias, parametersDescription ); // Always same as pointwise21.
-
-    Base.AssertTwoEqualValues( "pointwise22ActivationId",
-      pointDepthPoint.pointwise22ActivationId, testParams.out.pointwise21ActivationId, parametersDescription ); // Always same as pointwise21.
-
-    Base.AssertTwoEqualValues( "pointwise22ActivationName",
-      pointDepthPoint.pointwise22ActivationName, pointwise21ActivationName, parametersDescription ); // Always same as pointwise21.
+    asserter.propertyValue( "bPointwise22Bias", testParams.out.bPointwise21Bias ); // Always same as pointwise21.
+    asserter.propertyValue( "pointwise22ActivationId", testParams.out.pointwise21ActivationId ); // Always same as pointwise21.
+    asserter.propertyValue( "pointwise22ActivationName", pointwise21ActivationName ); // Always same as pointwise21.
 
     // Other parameters.
-    Base.AssertTwoEqualValues( "bKeepInputTensor", pointDepthPoint.bKeepInputTensor, testParams.out.bKeepInputTensor, parametersDescription );
+    asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
 
     return pointDepthPoint;
   }
