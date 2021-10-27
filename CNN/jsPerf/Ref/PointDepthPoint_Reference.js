@@ -1,6 +1,7 @@
 export { Base };
 
 import * as TensorTools from "../../util/TensorTools.js";
+import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
@@ -328,6 +329,8 @@ class Base {
       debugger;
     }
 
+    let asserter = new ObjectPropertyAsserter.Base( `PointDepthPoint`, pointDepthPoint, parametersDescription );
+
     Base.AssertTwoEqualValues( "parsing beginning position",
       pointDepthPoint.byteOffsetBegin, testParams.in.byteOffsetBegin, parametersDescription );
 
@@ -335,67 +338,47 @@ class Base {
       pointDepthPoint.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
     // input tensor parameters.
-    Base.AssertTwoEqualValues( "inChannels0", pointDepthPoint.inChannels0, testParams.out.channelCount0_pointwise1Before, parametersDescription );
+    asserter.propertyValue( "inChannels0", testParams.out.channelCount0_pointwise1Before );
+    asserter.propertyValue( "channelCount1_pointwise1Before", testParams.out.channelCount1_pointwise1Before );
 
-    Base.AssertTwoEqualValues( "channelCount1_pointwise1Before",
-      pointDepthPoint.channelCount1_pointwise1Before, testParams.out.channelCount1_pointwise1Before, parametersDescription );
+    asserter.propertyValue( "inputTensorCount", flags.inputTensorCount );
 
-    Base.AssertTwoEqualValues( "inputTensorCount", pointDepthPoint.inputTensorCount, flags.inputTensorCount, parametersDescription );
-    Base.AssertTwoEqualValues( "bDepthwise2Requested", pointDepthPoint.bDepthwise2Requested, flags.bDepthwise2Requested, parametersDescription );
-    Base.AssertTwoEqualValues( "bConcat1Requested", pointDepthPoint.bConcat1Requested, flags.bConcat1Requested, parametersDescription );
+//!!! ...unfinished... (2021/10/27)
+    bHigherHalfDifferent
 
-    Base.AssertTwoEqualValues( "bAddInputToOutputRequested",
-      pointDepthPoint.bAddInputToOutputRequested, flags.bAddInputToOutputRequested, parametersDescription );
-
-    Base.AssertTwoEqualValues( "bConcat2ShuffleSplitRequested",
-      pointDepthPoint.bConcat2ShuffleSplitRequested, flags.bConcat2ShuffleSplitRequested, parametersDescription );
+    asserter.propertyValue( "bDepthwise2Requested", flags.bDepthwise2Requested );
+    asserter.propertyValue( "bConcat1Requested", flags.bConcat1Requested );
+    asserter.propertyValue( "bAddInputToOutputRequested", flags.bAddInputToOutputRequested );
+    asserter.propertyValue( "bConcat2ShuffleSplitRequested", flags.bConcat2ShuffleSplitRequested );
 
     // Only if channel shuffler is used, it is recorded.
     if ( pointDepthPoint.bConcat2ShuffleSplitRequested ) {
-      Base.AssertTwoEqualValues( "channelShuffler_ConcatPointwiseConv",
-        pointDepthPoint.channelShuffler_ConcatPointwiseConv, channelShuffler_ConcatPointwiseConv, parametersDescription );
+      asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", channelShuffler_ConcatPointwiseConv );
     } else {
-      Base.AssertTwoEqualValues( "channelShuffler_ConcatPointwiseConv",
-        pointDepthPoint.channelShuffler_ConcatPointwiseConv, null, parametersDescription );
+      asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", null );
     }
 
     // pointwise1 parameters.
-    Base.AssertTwoEqualValues( "pointwise1ChannelCount",
-      pointDepthPoint.pointwise1ChannelCount, testParams.out.pointwise1ChannelCount, parametersDescription );
-
-    Base.AssertTwoEqualValues( "bPointwise1Bias",
-      pointDepthPoint.bPointwise1Bias, testParams.out.bPointwise1Bias, parametersDescription );
-
-    Base.AssertTwoEqualValues( "pointwise1ActivationId",
-      pointDepthPoint.pointwise1ActivationId, testParams.out.pointwise1ActivationId, parametersDescription );
+    asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
+    asserter.propertyValue( "bPointwise1Bias", testParams.out.bPointwise1Bias );
+    asserter.propertyValue( "pointwise1ActivationId", testParams.out.pointwise1ActivationId );
 
     let pointwise1ActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.pointwise1ActivationId );
-    Base.AssertTwoEqualValues( "pointwise1ActivationName",
-      pointDepthPoint.pointwise1ActivationName, pointwise1ActivationName, parametersDescription );
+    asserter.propertyValue( "pointwise1ActivationName", pointwise1ActivationName );
 
     // depthwise parameters.
-    Base.AssertTwoEqualValues( "depthwise_AvgMax_Or_ChannelMultiplier",
-      pointDepthPoint.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, parametersDescription );
-
-    Base.AssertTwoEqualValues( "depthwiseFilterHeight",
-      pointDepthPoint.depthwiseFilterHeight, testParams.out.depthwiseFilterHeight, parametersDescription );
-
-    Base.AssertTwoEqualValues( "depthwiseStridesPad",
-      pointDepthPoint.depthwiseStridesPad, testParams.out.depthwiseStridesPad, parametersDescription );
-
-    Base.AssertTwoEqualValues( "bDepthwiseBias",
-      pointDepthPoint.bDepthwiseBias, testParams.out.bDepthwiseBias, parametersDescription );
-
-    Base.AssertTwoEqualValues( "depthwiseActivationId",
-      pointDepthPoint.depthwiseActivationId, testParams.out.depthwiseActivationId, parametersDescription );
+    asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
+    asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
+    asserter.propertyValue( "depthwiseStridesPad", testParams.out.depthwiseStridesPad );
+    asserter.propertyValue( "bDepthwiseBias", testParams.out.bDepthwiseBias );
+    asserter.propertyValue( "depthwiseActivationId", testParams.out.depthwiseActivationId );
 
     let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.integerToNameMap.get( testParams.out.depthwiseActivationId );
-    Base.AssertTwoEqualValues( "depthwiseActivationName",
-      pointDepthPoint.depthwiseActivationName, depthwiseActivationName, parametersDescription );
+    asserter.propertyValue( "depthwiseActivationName", depthwiseActivationName );
 
     // pointwise21 parameters.
-    Base.AssertTwoEqualValues( "pointwise21ChannelCount",
-      pointDepthPoint.pointwise21ChannelCount, testParams.out.pointwise21ChannelCount, parametersDescription );
+    asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise21ChannelCount );
+//    asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise21ChannelCount );
 
     Base.AssertTwoEqualValues( "bPointwise21Bias",
       pointDepthPoint.bPointwise21Bias, testParams.out.bPointwise21Bias, parametersDescription );
