@@ -922,26 +922,12 @@ class Base extends ReturnOrClone.Base {
       input1: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input1", null, null ),
     };
 
-
-//!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
-// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
-// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
-//
-//       // Only if channel shuffler is used, it is recorded in data member.
-//       this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
-
-
-//!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
-// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
-// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
-// this.bHigherHalfDifferent
-
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
       this.channelCount0_pointwise1Before,
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
-      this.bHigherHalfDifferent,
-      null // pointwise1 never has channel shuffler.
+      this.bHigherHalfDifferent, // pointwise1 may have higher-half-different.
+      null // pointwise1 never uses channel shuffler.
     );
 
     if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -963,10 +949,6 @@ class Base extends ReturnOrClone.Base {
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise1 filters was ready. Report progress.
 
-//!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
-// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
-// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
-
     // 3. The depthwise operation.
     //
     // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
@@ -976,8 +958,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise1After_depthwise1Before,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-      this.bHigherHalfDifferent,
-      channelShuffler_ConcatPointwiseConv // depthwise1 always has channel shuffler (if existed).
+      this.bHigherHalfDifferent, channelShuffler_ConcatPointwiseConv
     );
 
     if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -1013,7 +994,7 @@ class Base extends ReturnOrClone.Base {
         this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
 
         false, // depthwise2 never has higher-half-different.
-        null   // depthwise2 never has channel shuffler.
+        null   // depthwise2 never uses channel shuffler.
       );
 
       if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -1065,18 +1046,11 @@ class Base extends ReturnOrClone.Base {
 
     // 5. The pointwise2 convolution.
 
-//!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
-// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
-// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
-
     // 5.1 Pointwise21
     this.pointwise21 = new Pointwise.Base(
       this.channelCount_concat1After_pointwise2Before,
       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
-???
-      this.bHigherHalfDifferent,
-      channelShuffler_ConcatPointwiseConv // depthwise1 always has channel shuffler (if existed).
-
+      this.bHigherHalfDifferent, channelShuffler_ConcatPointwiseConv
     );
 
     if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -1097,7 +1071,9 @@ class Base extends ReturnOrClone.Base {
 
       this.pointwise22 = new Pointwise.Base(
         this.channelCount_concat1After_pointwise2Before,
-        this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId );
+        this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
+        this.bHigherHalfDifferent, channelShuffler_ConcatPointwiseConv
+      );
 
       if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd ) )
         return false;  // e.g. input array does not have enough data.
@@ -1251,13 +1227,6 @@ class Base extends ReturnOrClone.Base {
           );
           break;
       }
-
-//!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
-// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
-// Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
-
-      // Only if channel shuffler is used, it is recorded in data member.
-      this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
 
       this.concat2ShuffleSplit = new ConcatShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
 
