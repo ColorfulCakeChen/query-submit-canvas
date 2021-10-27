@@ -362,19 +362,19 @@ class Base extends ReturnOrClone_Activation.Base {
           if ( this.channelShuffler == null ) { // 2.1 i.e. bHigherHalfDepthwise2
             this.bHigherHalfDepthwise2 = true;
 
-//!!! ...unfinished... (2021/10/25)
-            this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-            this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-//!!! ...unfinished... (2021/10/25) What if ( channelMultipler > 1 )?
-
             let inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
             let inputChannelCount_higherHalf = this.inputChannelCount - inputChannelCount_lowerHalf;
 
             let outputChannelCount_lowerHalf = inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
             let outputChannelCount_higherHalf = this.outputChannelCount - outputChannelCount_lowerHalf;
 
-//!!! ...unfinished... (2021/10/25)
+            // Extract filters and biases for the specified channel count, but in different sequence.
+            this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+            this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+//!!! ...unfinished... (2021/10/27)
+
+//!!! ...unfinished... (2021/10/27)
 // In ShuffleNetV2's head, the filters and biases of depthwise2 are after depthwise1.
 // In ShuffleNetV2_ByMobileNetV1's head, although depthwise1 and depthwise2 are combined into depthwise1,
 // they should be extracted in sequence and then combined. So that they could use the same filters and biases weights array
@@ -384,16 +384,17 @@ class Base extends ReturnOrClone_Activation.Base {
           } else { // 2.2 ( channelShuffler != null ), i.e. bHigherHalfPassThrough
             this.bHigherHalfPassThrough = true;
 
-//!!! ...unfinished... (2021/10/27)
-            this.inputChannelCount_toBeExtracted = ??? this.inputChannelCount;
-            this.outputChannelCount_toBeExtracted = ??? this.outputChannelCount;
-
             let inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
             let inputChannelCount_higherHalf = this.inputChannelCount - inputChannelCount_lowerHalf;
 
             let outputChannelCount_lowerHalf = inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
             let outputChannelCount_higherHalf = this.outputChannelCount - outputChannelCount_lowerHalf;
 
+            // Just extract filters and biases for half of the specified channel count.
+            this.inputChannelCount_toBeExtracted = inputChannelCount_lowerHalf;
+            this.outputChannelCount_toBeExtracted = outputChannelCount_lowerHalf;
+
+            // The other half is just filters and biases for pass-through.
             higherHalfPassThrough = new PassThrough(
               this.imageInHeight, this.imageInWidth, inputChannelCount_higherHalf,
               this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
