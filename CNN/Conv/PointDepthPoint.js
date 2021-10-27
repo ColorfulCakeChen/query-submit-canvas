@@ -906,6 +906,9 @@ class Base extends ReturnOrClone.Base {
       this.outputTensorCount = params.outputTensorCount;
     }
 
+    // No matter whether the channel shuffler is used, it is always recorded in data member.
+    this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
+
     this.intermediateTensorsArray = new Array( 2 ); // Pre-allocate array to place intermediate 2 tensors. This could reduce memory re-allocation.
 
     ++progressToAdvance.value;
@@ -931,11 +934,15 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2021/10/13) pass extra parameter to Pointwise and Depthwise
 // Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
 // Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
+// this.bHigherHalfDifferent
 
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
       this.channelCount0_pointwise1Before,
-      this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId );
+      this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
+      this.bHigherHalfDifferent,
+      null // pointwise1 never has channel shuffler.
+    );
 
     if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
       return false;  // e.g. input array does not have enough data.
@@ -968,7 +975,10 @@ class Base extends ReturnOrClone.Base {
     this.depthwise1 = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwise1Before,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
-      this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId );
+      this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
+      this.bHigherHalfDifferent,
+      channelShuffler_ConcatPointwiseConv // depthwise1 always has channel shuffler (if existed).
+    );
 
     if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd ) )
       return false;  // e.g. input array does not have enough data.
@@ -1000,7 +1010,11 @@ class Base extends ReturnOrClone.Base {
         this.channelCount0_pointwise1Before,
 
         this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
-        this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId );
+        this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
+
+        false, // depthwise2 never has higher-half-different.
+        null   // depthwise2 never has channel shuffler.
+      );
 
       if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd ) )
         return false;  // e.g. input array does not have enough data.
@@ -1058,7 +1072,12 @@ class Base extends ReturnOrClone.Base {
     // 5.1 Pointwise21
     this.pointwise21 = new Pointwise.Base(
       this.channelCount_concat1After_pointwise2Before,
-      this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId );
+      this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
+???
+      this.bHigherHalfDifferent,
+      channelShuffler_ConcatPointwiseConv // depthwise1 always has channel shuffler (if existed).
+
+    );
 
     if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd ) )
       return false;  // e.g. input array does not have enough data.
