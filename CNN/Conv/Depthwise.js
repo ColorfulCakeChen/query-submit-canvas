@@ -484,14 +484,17 @@ class Base extends ReturnOrClone_Activation.Base {
 //!!! (2021/10/19 Remarked) So that inputFloat32Array could be released.
 //    this.filtersWeights = this.biasesWeights = this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
     this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
-    this.outputChannelCount = this.strides = this.pad
-      = this.bHigherHalfDepthwise2 = this.bHigherHalfPassThrough
-      = this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
-      = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
-      = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
-      = this.imageInHeight = this.imageInWidth = this.imageInDepth
-      = this.filterHeightWidth
-      = undefined;
+
+    // (2021/10/27 Remarked) If these properties does not exist, assigning value (even undefined) to them will create them. This is un-wanted.
+    //this.outputChannelCount = this.strides = this.pad
+    //  = this.bHigherHalfDepthwise2 = this.bHigherHalfPassThrough
+    //  = this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+    //  = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
+    //  = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+    //  = this.imageInHeight = this.imageInWidth = this.imageInDepth
+    //  = this.filterHeightWidth
+    //  = undefined;
+
     this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false; // Assume no depthwise.
     this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
