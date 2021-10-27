@@ -176,7 +176,7 @@ class Base extends ReturnOrClone_Activation.Base {
       }
 
       // 2. Extract lower half filters and biases.
-      if ( !Base.init_by_inputChannelCount_outputChannelCount.call( 
+      if ( !Base.init_by_inputChannelCount_outputChannelCount.call( this,
               inputFloat32Array, byteOffsetBegin, this.inputChannelCount_toBeExtracted, this.outputChannelCount_toBeExtracted ) ) {
         this.bInitOk = false;
         return false; // Initialization failed.
@@ -397,13 +397,11 @@ class Base extends ReturnOrClone_Activation.Base {
     this.disposeTensors();
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-    this.bPointwise = ( outputChannelCount > 0 );
-    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
+
+    Base.Setup_bPointwise_pfn.call( this );
 
     if ( !this.bPointwise ) {
-      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
-      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
-      return true;
+      return true; // no operation at all.
     }
 
     //let filterHeightWidth = [ 1, 1 ];
@@ -420,8 +418,6 @@ class Base extends ReturnOrClone_Activation.Base {
     this.tensorWeightCountTotal // By default, same as extracted weights count.
       = ( this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape ) );
 
-    this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
-
     if ( this.bBias ) {
       let biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, biasesShape );
       if ( !biasesWeights.extract() )
@@ -432,22 +428,40 @@ class Base extends ReturnOrClone_Activation.Base {
 
       this.tensorWeightCountTotal // By default, same as extracted weights count.
         = ( this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape ) );
+    }
 
+    return true;
+  }
+
+  /** Determine this.bPointwiseXxx and this.pfnXxx data members.
+   *
+   * @param {Base} this
+   *   The Base object to be determined and modified.
+   */
+  static Setup_bPointwise_pfn() {
+
+    this.bPointwise = ( this.outputChannelCount > 0 );
+    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
+
+    if ( !this.bPointwise ) {
+      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
+      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
+      return true;
+    }
+
+    this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
+
+    if ( this.bBias ) {
       if ( this.pfnActivation )
         this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
       else
         this.pfnConvBiasActivation = Base.ConvBias_and_destroy_or_keep;
-
     } else {
-
       if ( this.pfnActivation )
         this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
        else
         this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
-
     }
-
-    return true;
   }
 
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
