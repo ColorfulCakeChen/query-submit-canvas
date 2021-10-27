@@ -486,6 +486,8 @@ class Base extends ReturnOrClone_Activation.Base {
     this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
     this.outputChannelCount = this.strides = this.pad
       = this.bHigherHalfDepthwise2 = this.bHigherHalfPassThrough
+      = this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+      = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
       = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
       = this.imageInHeight = this.imageInWidth = this.imageInDepth
       = this.filterHeightWidth
