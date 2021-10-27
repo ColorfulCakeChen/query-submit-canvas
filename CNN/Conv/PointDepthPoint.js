@@ -778,9 +778,6 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *     - It will not be disposed by this object (i.e. it is supposed to be shared with outter callers).
  *
  *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
-
-//!!! ...unfinished... (2021/10/13)
-
  *
  *     - It is used when:
  *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
@@ -790,6 +787,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *
  *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
  *           (-4) (ShuffleNetV2_ByMobileNetV1's head)
+ *
  *       - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
  *           (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
  *
