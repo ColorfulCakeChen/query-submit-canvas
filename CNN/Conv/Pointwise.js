@@ -159,13 +159,15 @@ class Base extends ReturnOrClone_Activation.Base {
 
         if ( this.inputChannelCount < this.outputChannelCount ) { // 1.1 i.e. bHigherHalfCopyLowerHalf
           this.bHigherHalfCopyLowerHalf = true;
-          this.inputChannelCount_toBeExtracted // The lower half filters have the same output channel count as input.
-            = this.outputChannelCount_toBeExtracted = this.inputChannelCount;
+          this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+            = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+            = this.inputChannelCount; // The lower half filters have the same output channel count as input.
 
         } else { // 1.2 ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
           this.bHigherHalfPassThrough = true;
-          this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
-            = this.outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
+          this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+            = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+            = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
         }
 
       } else { // 1.3 Normal pointwise convolution. Use specified input and output channel count.
@@ -189,10 +191,10 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( this.bHigherHalfCopyLowerHalf ) { // 3.1
 
-        let outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_toBeExtracted;
+        this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
         higherHalfPassThrough = new PaseThrough(
-          this.inputChannelCount, outputChannelCount_higherHalf,
-          0, outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+          this.inputChannelCount, this.outputChannelCount_higherHalf,
+          0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
         );
 
         this.tensorWeightCountTotal = 0; // Since the filters and biases will be changed, the total weights count should be re-calculated.
@@ -219,12 +221,12 @@ class Base extends ReturnOrClone_Activation.Base {
 
       } else if ( this.bHigherHalfPassThrough ) { // 3.2
 
-        let outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_toBeExtracted;
-        if ( outputChannelCount_higherHalf > 0 ) {
+        this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
+        if ( this.outputChannelCount_higherHalf > 0 ) {
 
           higherHalfPassThrough = new PaseThrough(
-            this.inputChannelCount, outputChannelCount_higherHalf,
-            outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
+            this.inputChannelCount, this.outputChannelCount_higherHalf,
+            this.outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
           );
 
           this.tensorWeightCountTotal = 0; // Since the filters and biases will be changed, the total weights count should be re-calculated.
@@ -320,6 +322,8 @@ class Base extends ReturnOrClone_Activation.Base {
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
 
     this.bHigherHalfCopyLowerHalf = this.bHigherHalfPassThrough
+      = this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+      = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
       = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = undefined;
 
 //!!! (2021/10/19 Remarked)
