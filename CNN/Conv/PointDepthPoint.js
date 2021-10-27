@@ -898,6 +898,7 @@ class Base extends ReturnOrClone.Base {
     // The parameters which are determined (inferenced) from the above parameters.
     {
       this.inputTensorCount = params.inputTensorCount;
+      this.bHigherHalfDifferent = params.bHigherHalfDifferent;
       this.bDepthwise2Requested = params.bDepthwise2Requested;
       this.bConcat1Requested = params.bConcat1Requested;
       this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
