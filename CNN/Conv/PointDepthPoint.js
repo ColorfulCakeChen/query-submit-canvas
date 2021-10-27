@@ -361,13 +361,17 @@ class Params extends Weights.Params {
    * Determine the following properties:
    *   - this.inputTensorCount
    *   - this.input1ChannelCount
+   *   - this.bHigherHalfDifferent
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
    *   - this.bAddInputToOutputRequested
    *   - this.bConcat2ShuffleSplitRequested
    *   - this.outputTensorCount
    *
+   * @param {number} channelCount0_pointwise1Before
    * @param {number} channelCount1_pointwise1Before
+   * @param {number} pointwise1ChannelCount
+   * @param {number} depthwise_AvgMax_Or_ChannelMultiplier
    * @param {number} pointwise21ChannelCount
    * @param {boolean} bOutput1Requested
    */
@@ -387,6 +391,18 @@ class Params extends Weights.Params {
     Params.set_input1ChannelCount_by.call( this,
       channelCount0_pointwise1Before, channelCount1_pointwise1Before,
       pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+
+    // 0.4 Whether manipulate the higher half channel of convolution.
+    switch ( channelCount1_pointwise1Before ) {
+      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+        this.bHigherHalfDifferent = true;
+        break;
+
+      default:
+        this.bHigherHalfDifferent = false;
+        break;
+    }
 
     // 1. One input.
     if ( this.inputTensorCount == 1 ) {
