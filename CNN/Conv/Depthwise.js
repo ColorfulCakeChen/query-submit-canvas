@@ -372,14 +372,33 @@ class Base extends ReturnOrClone_Activation.Base {
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-//!!! ...unfinished... (2021/10/27)
+            // The extraction order is important: filter1, bias1, filter2, bias2.
+            //
+            // In ShuffleNetV2's head, the filters and biases of depthwise2 are after depthwise1. In ShuffleNetV2_ByMobileNetV1's
+            // head, although depthwise1 and depthwise2 are combined into depthwise1, they should be extracted in sequence and
+            // then combined. So that they could use the same filters and biases weights array to generate the same result.
+            {
+              let filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
+                this.filterHeight, this.filterWidth, inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
 
-//!!! ...unfinished... (2021/10/27)
-// In ShuffleNetV2's head, the filters and biases of depthwise2 are after depthwise1.
-// In ShuffleNetV2_ByMobileNetV1's head, although depthwise1 and depthwise2 are combined into depthwise1,
-// they should be extracted in sequence and then combined. So that they could use the same filters and biases weights array
-// to generate the same result.
+              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, outputChannelCount_lowerHalf );
 
+              let filtersTensor4d_higherHalf = Base.extractFilters.call( this, inputFloat32Array,
+                this.filterHeight, this.filterWidth, inputChannelCount_higherHalf, this.AvgMax_Or_ChannelMultiplier );
+
+              let biasesTensor3d_higherHalf = Base.extractBiases.call( this, inputFloat32Array, outputChannelCount_higherHalf );
+
+              // Combine lower-half and higher-half.
+              let allFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_higherHalf ];
+              this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+              filtersTensor4d_lowerHalf.dispose();
+              filtersTensor4d_higherHalf.dispose();
+
+              let allBiasesArray = [ biasesTensor3d_lowerHalf, biasesTensor3d_higherHalf ];
+              this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+              biasesTensor3d_lowerHalf.dispose();
+              biasesTensor3d_higherHalf.dispose();
+            }
 
           } else { // 2.2 ( channelShuffler != null ), i.e. bHigherHalfPassThrough
             this.bHigherHalfPassThrough = true;
@@ -401,7 +420,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
             {
               let filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
-                this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
+                this.filterHeight, this.filterWidth, inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
 
               let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
               this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
@@ -409,14 +428,14 @@ class Base extends ReturnOrClone_Activation.Base {
             }
 
             {
-              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
+              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, outputChannelCount_lowerHalf );
 
               let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
               this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
               biasesTensor3d_lowerHalf.dispose();
             }
 
-            // Combine the high-half-pass-through filters and biases weights count.
+            // Include the weights count of the higher-half-pass-through filters and biases.
             this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
             this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
           }
