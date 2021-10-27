@@ -225,15 +225,15 @@ class PassThrough {
  *
  *   - If true:
  *
- *     - If ( channelShuffler == null ), the filters for the input channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 )
- *         are depthwise1, between Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) are depthwise2. These
+ *     - If ( channelShuffler == null ), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 )
+ *         are depthwise1, between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are depthwise2. These
  *         two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
  *         This makes these filters' weights are arranged the same as ShuffleNetV2's head. So that the same filters weights could
  *         be used in these two architectures for comparing performance. (i.e. bHigherHalfDepthwise2, for depthwise1 of
  *         ShuffleNetV2_ByMopbileNetV1's head)
  *
- *     - If ( channelShuffler != null ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
- *         and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
+ *     - If ( channelShuffler != null ), the filters for the input channels between Math.ceil( inputChannelCount / 2 )
+ *         and ( inputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
  *         for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  * @member {ChannelShuffler.Xxx} channelShuffler
@@ -371,7 +371,7 @@ class Base extends ReturnOrClone_Activation.Base {
             let inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
             let inputChannelCount_higherHalf = this.inputChannelCount - inputChannelCount_lowerHalf;
 
-            let outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
+            let outputChannelCount_lowerHalf = inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
             let outputChannelCount_higherHalf = this.outputChannelCount - outputChannelCount_lowerHalf;
 
 //!!! ...unfinished... (2021/10/25)
@@ -396,7 +396,7 @@ class Base extends ReturnOrClone_Activation.Base {
             let inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
             let inputChannelCount_higherHalf = this.inputChannelCount - inputChannelCount_lowerHalf;
 
-            let outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
+            let outputChannelCount_lowerHalf = inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
             let outputChannelCount_higherHalf = this.outputChannelCount - outputChannelCount_lowerHalf;
 
             higherHalfPassThrough = new PassThrough(
