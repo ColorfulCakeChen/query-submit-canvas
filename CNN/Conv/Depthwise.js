@@ -384,14 +384,9 @@ class Base extends ReturnOrClone_Activation.Base {
           } else { // 2.2 ( channelShuffler != null ), i.e. bHigherHalfPassThrough
             this.bHigherHalfPassThrough = true;
 
-//!!! ...unfinished... (2021/10/25) What if ( channelMultipler > 1 )?
-
-//!!! (2021/10/25 Remarked)
-//             this.inputChannelCount_toBeExtracted // The lower half filters have half the output channel count as input and output.
-//               = this.outputChannelCount_toBeExtracted = Math.ceil( this.outputChannelCount / 2 );
-//
-//             let inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_toBeExtracted;
-//             //let outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_toBeExtracted;
+//!!! ...unfinished... (2021/10/27)
+            this.inputChannelCount_toBeExtracted = ??? this.inputChannelCount;
+            this.outputChannelCount_toBeExtracted = ??? this.outputChannelCount;
 
             let inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
             let inputChannelCount_higherHalf = this.inputChannelCount - inputChannelCount_lowerHalf;
@@ -400,13 +395,7 @@ class Base extends ReturnOrClone_Activation.Base {
             let outputChannelCount_higherHalf = this.outputChannelCount - outputChannelCount_lowerHalf;
 
             higherHalfPassThrough = new PassThrough(
-              this.imageInHeight, this.imageInWidth,
-
-//!!! ...unfinished... (2021/10/25) should be inputChannelCount_higherHalf?
-// //  constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias ) {
-//               ??? outputChannelCount_higherHalf,
-              inputChannelCount_higherHalf,
-
+              this.imageInHeight, this.imageInWidth, inputChannelCount_higherHalf,
               this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
 
             {
