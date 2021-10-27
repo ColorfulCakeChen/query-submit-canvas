@@ -362,11 +362,11 @@ class Base extends ReturnOrClone_Activation.Base {
           if ( this.channelShuffler == null ) { // 2.1 i.e. bHigherHalfDepthwise2
             this.bHigherHalfDepthwise2 = true;
 
-            let inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
-            let inputChannelCount_higherHalf = this.inputChannelCount - inputChannelCount_lowerHalf;
+            this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
+            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
 
-            let outputChannelCount_lowerHalf = inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
-            let outputChannelCount_higherHalf = this.outputChannelCount - outputChannelCount_lowerHalf;
+            this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
+            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
             // Extract filters and biases for the specified channel count, but in different sequence.
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
@@ -379,14 +379,14 @@ class Base extends ReturnOrClone_Activation.Base {
             // then combined. So that they could use the same filters and biases weights array to generate the same result.
             {
               let filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
-                this.filterHeight, this.filterWidth, inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
+                this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
 
-              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, outputChannelCount_lowerHalf );
+              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
 
               let filtersTensor4d_higherHalf = Base.extractFilters.call( this, inputFloat32Array,
-                this.filterHeight, this.filterWidth, inputChannelCount_higherHalf, this.AvgMax_Or_ChannelMultiplier );
+                this.filterHeight, this.filterWidth, this.inputChannelCount_higherHalf, this.AvgMax_Or_ChannelMultiplier );
 
-              let biasesTensor3d_higherHalf = Base.extractBiases.call( this, inputFloat32Array, outputChannelCount_higherHalf );
+              let biasesTensor3d_higherHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_higherHalf );
 
               // Combine lower-half and higher-half.
               let allFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_higherHalf ];
@@ -403,24 +403,24 @@ class Base extends ReturnOrClone_Activation.Base {
           } else { // 2.2 ( channelShuffler != null ), i.e. bHigherHalfPassThrough
             this.bHigherHalfPassThrough = true;
 
-            let inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
-            let inputChannelCount_higherHalf = this.inputChannelCount - inputChannelCount_lowerHalf;
+            this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
+            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
 
-            let outputChannelCount_lowerHalf = inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
-            let outputChannelCount_higherHalf = this.outputChannelCount - outputChannelCount_lowerHalf;
+            this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
+            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
             // Just extract filters and biases for half of the specified channel count.
-            this.inputChannelCount_toBeExtracted = inputChannelCount_lowerHalf;
-            this.outputChannelCount_toBeExtracted = outputChannelCount_lowerHalf;
+            this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
+            this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
 
             // The other half is just filters and biases for pass-through.
             higherHalfPassThrough = new PassThrough(
-              this.imageInHeight, this.imageInWidth, inputChannelCount_higherHalf,
+              this.imageInHeight, this.imageInWidth, this.inputChannelCount_higherHalf,
               this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
 
             {
               let filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
-                this.filterHeight, this.filterWidth, inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
+                this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
 
               let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
               this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
@@ -428,7 +428,7 @@ class Base extends ReturnOrClone_Activation.Base {
             }
 
             {
-              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, outputChannelCount_lowerHalf );
+              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
 
               let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
               this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
