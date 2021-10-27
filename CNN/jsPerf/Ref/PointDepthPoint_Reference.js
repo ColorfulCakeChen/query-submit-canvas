@@ -455,16 +455,22 @@ class Base {
 
       // Create description for debug easily.
       this.paramsOutDescription =
-          `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${flags.input1ChannelCount}, `
+          `inputTensorCount=${flags.inputTensorCount}, `
+
+        + `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${flags.input1ChannelCount}, `
 
         + `channelCount1_pointwise1Before_Name=`
         + `${PointDepthPoint.Params.channelCount1_pointwise1Before.getStringOfValue( testParams.out.channelCount1_pointwise1Before )}`
         + `(${testParams.out.channelCount1_pointwise1Before}), `
 
+        + `bHigherHalfDifferent=${flags.bHigherHalfDifferent}, `
+
         + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `
         + `pointwise1ActivationName=`
         + `${PointDepthPoint.Params.pointwise1ActivationId.getStringOfValue( testParams.out.pointwise1ActivationId )}`
         + `(${testParams.out.pointwise1ActivationId}), `
+
+        + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
 
         + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
         + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
@@ -474,6 +480,8 @@ class Base {
         + `${PointDepthPoint.Params.depthwiseActivationId.getStringOfValue( testParams.out.depthwiseActivationId )}`
         + `(${testParams.out.depthwiseActivationId}), `
 
+        + `bConcat1Requested=${flags.bConcat1Requested}, `
+
         + `pointwise21ChannelCount=${testParams.out.pointwise21ChannelCount}, bPointwise21Bias=${testParams.out.bPointwise21Bias}, `
         + `pointwise21ActivationName=`
         + `${PointDepthPoint.Params.pointwise21ActivationId.getStringOfValue( testParams.out.pointwise21ActivationId )}`
@@ -481,9 +489,6 @@ class Base {
 
         + `bOutput1Requested=${testParams.out.bOutput1Requested}, `
 
-        + `inputTensorCount=${flags.inputTensorCount}, `
-        + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
-        + `bConcat1Requested=${flags.bConcat1Requested}, `
         + `bAddInputToOutputRequested=${flags.bAddInputToOutputRequested}`
         + `bConcat2ShuffleSplitRequested=${flags.bConcat2ShuffleSplitRequested}, `
         + `outputTensorCount=${flags.outputTensorCount}, `
