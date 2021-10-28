@@ -92,27 +92,27 @@ class Base {
 
         imageInArraySelected.fill( undefined );
         imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
-        if ( bTwoInputs ) { // Pass two input images according to parameters.
-          imageInArraySelected[ 1 ] = imageSourceBag.getImage_by(
+
+        // Although input1 is only needed when ( bTwoInputs == true ), it is always prepared for calculating the shape of channel shuffler.
+        // 
+        // The shape of input1 (not input0) determines the concatenatedShape of channel shuffler because the input0 might be shrinked
+        // by depthwise convolution.
+        let imageIn1 = imageSourceBag.getImage_by(
             input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+
+        if ( bTwoInputs ) { // Pass two input images according to parameters.
+          imageInArraySelected[ 1 ] = imageIn1;
         }
 
         tf.util.assert( imageInArraySelected.length == 2,
           `PointDepthPoint imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
 
         // Prepare channel shuffler.
-        let imageIn1 = imageInArraySelected[ 1 ]; // The shape of input1 (not input0) determine the concatenatedShape of channel shuffler.
-        if ( imageIn1 ) {
-          if (   ( channelCount1_pointwise1Before
-                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
-
-              || ( channelCount1_pointwise1Before
-                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
-
-              || ( channelCount1_pointwise1Before
-                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
-             ) {
-
+        switch ( channelCount1_pointwise1Before ) {
+          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
+          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+          {
             let outputGroupCount = 2; // Only use two convolution groups.
             let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
             channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
@@ -137,6 +137,7 @@ class Base {
             channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
             channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
           }
+            break;
         }
 
         // Output is an array with two elements.
