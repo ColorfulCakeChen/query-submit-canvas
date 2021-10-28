@@ -45,6 +45,9 @@ class Base {
    *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
    *           (-3) (i.e. channel shuffle the concatenated pointwise21 and input1).
    *
+   *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
+   *           (-4) (ShuffleNetV2_ByMobileNetV1's head)
+   *
    *         - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
    *           (-5) (i.e. ShuffleNetV2_ByMobileNetV1's body/tail).
    */
@@ -102,6 +105,10 @@ class Base {
         if ( imageIn1 ) {
           if (   ( channelCount1_pointwise1Before
                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+
+              || ( channelCount1_pointwise1Before
+                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
+
               || ( channelCount1_pointwise1Before
                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
              ) {
