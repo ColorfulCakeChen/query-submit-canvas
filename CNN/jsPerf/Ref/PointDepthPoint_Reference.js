@@ -306,7 +306,8 @@ class Base {
       testParams.out.pointwise1ChannelCount,
       testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
       testParams.out.pointwise21ChannelCount,
-      testParams.out.bOutput1Requested );
+      testParams.out.bOutput1Requested,
+      channelShuffler_ConcatPointwiseConv );
 
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
