@@ -375,10 +375,16 @@ class Params extends Weights.Params {
    * @param {number} depthwise_AvgMax_Or_ChannelMultiplier
    * @param {number} pointwise21ChannelCount
    * @param {boolean} bOutput1Requested
+   *
+   * @param {ChannelShuffler.Xxx} channelShuffler
+   *   The channelShuffler must not null when:
+   *    - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
+   *    - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
    */
   static setFlags_by(
            channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount, bOutput1Requested ) {
+           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount, bOutput1Requested,
+           channelShuffler ) {
 
     // 0. Prepare.
 
@@ -393,19 +399,25 @@ class Params extends Weights.Params {
       channelCount0_pointwise1Before, channelCount1_pointwise1Before,
       pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
 
-    // 0.4 Whether manipulate the higher half channel of convolution.
-    switch ( channelCount1_pointwise1Before ) {
-      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-        
 //!!! ...unfinished... (2021/10/28) need ( channelShuffler != null )
 
-        this.bHigherHalfDifferent =  true; this.bHigherHalfDepthwise2 =  true; break;
+
+    // 0.4 Whether manipulate the higher half channel of convolution.
+    this.bHigherHalfDifferent = this.bHigherHalfDepthwise2 = false;
+    switch ( channelCount1_pointwise1Before ) {
+      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+        this.bHigherHalfDepthwise2 = true;
+        // No break. Falling-through.
 
       case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
-        this.bHigherHalfDifferent =  true; this.bHigherHalfDepthwise2 = false; break;
+        this.bHigherHalfDifferent = true;
 
-      default:
-        this.bHigherHalfDifferent = false; this.bHigherHalfDepthwise2 = false; break;
+        tf.util.assert( channelShuffler != null, `PointDepthPoint.Params.setFlags_by(): `
+          `channelShuffler must NOT null when `
+            + `channelCount1_pointwise1Before=`
+            + `${Params.channelCount1_pointwise1Before.getStringOfValue( channelCount1_pointwise1Before )}`
+            + `(${channelCount1_pointwise1Before})` );
+        break;
     }
 
     // 1. One input.
