@@ -98,11 +98,12 @@ class PassThrough {
  *           and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
  *           pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
+
 //!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
 
  *       - If ( channelShuffler != null ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
  *           and ( outputChannelCount - 1 ) will just pass through the input to output. But they will be arranged just like applying
- *           channel shuffler on the output.  (i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
+ *           channel shuffler on the output. (i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
  *           body/tail)
  *
 
