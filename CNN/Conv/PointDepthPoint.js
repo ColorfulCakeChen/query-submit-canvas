@@ -1079,7 +1079,13 @@ class Base extends ReturnOrClone.Base {
     this.pointwise21 = new Pointwise.Base(
       this.channelCount_concat1After_pointwise2Before,
       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
-      this.bHigherHalfDifferent, channelShuffler_ConcatPointwiseConv
+      this.bHigherHalfDifferent,
+
+//!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+// The pointwise2 needs not channel shuffler, but needs extract weights in filter1-bias1-filter2-bias2 in sequence.
+// So that one pointwise21 simulates combined pointwise21 and pointwise22.
+
+      channelShuffler_ConcatPointwiseConv
     );
 
     if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -1101,7 +1107,13 @@ class Base extends ReturnOrClone.Base {
       this.pointwise22 = new Pointwise.Base(
         this.channelCount_concat1After_pointwise2Before,
         this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
-        this.bHigherHalfDifferent, channelShuffler_ConcatPointwiseConv
+        this.bHigherHalfDifferent,
+
+//!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+// The pointwise2 needs not channel shuffler, but needs extract weights in filter1-bias1-filter2-bias2 in sequence.
+// So that one pointwise21 simulates combined pointwise21 and pointwise22.
+
+        channelShuffler_ConcatPointwiseConv
       );
 
       if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd ) )
