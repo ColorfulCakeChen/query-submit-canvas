@@ -290,6 +290,8 @@ class PassThrough {
  */
 class Base extends ReturnOrClone_Activation.Base {
 
+//!!! ...unfinished... (2021/10/28) Why not pas imageHeight and imageWidth instead of channelShuffler?
+  
   constructor(
     inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId, bHigherHalfDifferent, channelShuffler ) {
 
