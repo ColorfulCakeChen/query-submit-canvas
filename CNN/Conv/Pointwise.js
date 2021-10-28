@@ -79,6 +79,20 @@ class PassThrough {
  *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
  *     - If ( inputChannelCount >= outputChannelCount ):
+
+//!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+// The pointwise2 needs not channel shuffler, but needs extract weights in filter1-bias1-filter2-bias2 in sequence.
+// So that one pointwise21 simulates combined pointwise21 and pointwise22.
+//
+// i.e. bHigherHalfPointwise22
+
+ *       - If ( channelShuffler == null ), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 )
+ *         are pointwise21, between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are pointwise22. These
+ *         two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
+ *         This makes these filters' weights are arranged the same as ShuffleNetV2's concat-shuffle-split. So that the same filters
+ *         weights could be used in these two architectures for comparing performance. (i.e. bHigherHalfPointwise22, for
+ *         pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+ *
  *
  *       - If ( channelShuffler == null ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
  *         and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
@@ -90,20 +104,8 @@ class PassThrough {
  *         and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThroughShuffle, for
  *         pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
 
-//!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
-// The pointwise2 needs not channel shuffler, but needs extract weights in filter1-bias1-filter2-bias2 in sequence.
-// So that one pointwise21 simulates combined pointwise21 and pointwise22.
-//
-// i.e. bHigherHalfPointwise22
 
- *       - If ( channelShuffler != null ), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 )
- *         are pointwise21, between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are pointwise22. These
- *         two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
- *         This makes these filters' weights are arranged the same as ShuffleNetV2's concat-shuffle-split. So that the same filters
- *         weights could be used in these two architectures for comparing performance. (i.e. bHigherHalfPointwise22, for
- *         pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
- *
-//!!! ...unfinished... (2021/10/28 Remarked)
+//!!! ...unfinished... (2021/10/28 Remarked) Old
 //  *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
 //  *         and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
 //  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
