@@ -89,9 +89,9 @@ class PassThrough {
  *       - If ( channelShuffler == null ), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 )
  *         are pointwise21, between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are pointwise22. These
  *         two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
- *         This makes these filters' weights are arranged the same as ShuffleNetV2's concat-shuffle-split. So that the same filters
- *         weights could be used in these two architectures for comparing performance. (i.e. bHigherHalfPointwise22, for
- *         pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+ *         This makes these filters' weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that
+ *         the same filters weights could be used in these two architectures for comparing performance. (i.e. bHigherHalfPointwise22,
+ *         for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
  *
  *
  *       - If ( channelShuffler == null ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
