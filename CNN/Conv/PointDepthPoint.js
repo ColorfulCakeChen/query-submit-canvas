@@ -362,6 +362,7 @@ class Params extends Weights.Params {
    *   - this.inputTensorCount
    *   - this.input1ChannelCount
    *   - this.bHigherHalfDifferent
+   *   - this.bHigherHalfDepthwise2
    *   - this.bDepthwise2Requested
    *   - this.bConcat1Requested
    *   - this.bAddInputToOutputRequested
@@ -395,13 +396,13 @@ class Params extends Weights.Params {
     // 0.4 Whether manipulate the higher half channel of convolution.
     switch ( channelCount1_pointwise1Before ) {
       case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+        this.bHigherHalfDifferent =  true; this.bHigherHalfDepthwise2 =  true; break;
+
       case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
-        this.bHigherHalfDifferent = true;
-        break;
+        this.bHigherHalfDifferent =  true; this.bHigherHalfDepthwise2 = false; break;
 
       default:
-        this.bHigherHalfDifferent = false;
-        break;
+        this.bHigherHalfDifferent = false; this.bHigherHalfDepthwise2 = false; break;
     }
 
     // 1. One input.
@@ -661,6 +662,16 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * @member {number} inputTensorCount
  *   How many input tensors will be past into apply() as parameter inputTensors[].
  *
+
+//!!! ...unfinished... (2021/10/28) bHigherHalfDepthwise2
+
+ * @member {boolean} bHigherHalfDifferent
+ *   
+ *
+ * @member {boolean} bHigherHalfDepthwise2
+ *   
+ *
+
  * @member {boolean} bDepthwise2Requested
  *   It will be true only when ( channelCount1_pointwise1Before == -2 ). If true, it means a second depthwise might be needed.
  *
@@ -897,6 +908,7 @@ class Base extends ReturnOrClone.Base {
     {
       this.inputTensorCount = params.inputTensorCount;
       this.bHigherHalfDifferent = params.bHigherHalfDifferent;
+      this.bHigherHalfDepthwise2 = params.bHigherHalfDepthwise2;
       this.bDepthwise2Requested = params.bDepthwise2Requested;
       this.bConcat1Requested = params.bConcat1Requested;
       this.bAddInputToOutputRequested = params.bAddInputToOutputRequested;
@@ -1807,6 +1819,7 @@ class Base extends ReturnOrClone.Base {
       + `channelCount1_pointwise1Before_Name=${this.channelCount1_pointwise1Before_Name}(${this.channelCount1_pointwise1Before}), `
 
       + `bHigherHalfDifferent=${this.bHigherHalfDifferent}, `
+      + `bHigherHalfDepthwise2=${this.bHigherHalfDepthwise2}, `
 
       + `pointwise1ChannelCount=${this.pointwise1ChannelCount}, `
       + `bPointwise1Bias=${this.bPointwise1Bias}, `
