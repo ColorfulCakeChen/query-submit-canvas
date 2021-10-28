@@ -943,6 +943,8 @@ class Base extends ReturnOrClone.Base {
       input1: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input1", null, null ),
     };
 
+//!!! ...unfinished... (2021/10/28) channelShuffler_outputGroupCount
+
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
       this.channelCount0_pointwise1Before,
