@@ -413,10 +413,10 @@ class Params extends Weights.Params {
         this.bHigherHalfDifferent = true;
 
         tf.util.assert( channelShuffler != null, `PointDepthPoint.Params.setFlags_by(): `
-          `channelShuffler must NOT null when `
-            + `channelCount1_pointwise1Before=`
-            + `${Params.channelCount1_pointwise1Before.getStringOfValue( channelCount1_pointwise1Before )}`
-            + `(${channelCount1_pointwise1Before})` );
+          + `channelShuffler must NOT null when `
+          + `channelCount1_pointwise1Before=`
+          + `${Params.channelCount1_pointwise1Before.getStringOfValue( channelCount1_pointwise1Before )}`
+          + `(${channelCount1_pointwise1Before})` );
         break;
     }
 
