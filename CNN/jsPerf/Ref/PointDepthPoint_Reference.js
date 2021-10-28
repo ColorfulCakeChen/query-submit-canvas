@@ -134,7 +134,9 @@ class Base {
 
         // Output is an array with two elements.
         imageOutReferenceArray = this.calcResult( imageInArraySelected,
-          channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
+//!!! (2021/10/28 Remarked) need channel shuffler.                                                 
+//          channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
+          channelShuffler_ConcatPointwiseConv );
 
         tf.util.assert( imageOutReferenceArray.length == 2,
           `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
@@ -434,6 +436,10 @@ class Base {
    * @param {number}   imageInArray[ i ].depth     Image channel count
    * @param {number[]} imageInArray[ i ].dataArray Image data
    *
+   * @param {ChannelShuffler.Xxx} channelShuffler
+   *   The channel shuffler. Used when concat-shuffle-split.
+   *
+//!!! (2021/10/28 Remarked) need channel shuffler.                                                 
    * @param {number[]} channelShuffler_concatenatedShape
    *   The concatenatedShape of channel shuffler. Used when concat-shuffle-split.
    *
@@ -442,7 +448,9 @@ class Base {
    *
    * @return {object[]} Return output images array.
    */ 
-  calcResult( imageInArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount ) {
+//!!! (2021/10/28 Remarked) need channel shuffler.                                                 
+//  calcResult( imageInArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount ) {
+  calcResult( imageInArray, channelShuffler ) {
 
     let testParams = this.testParams;
 
@@ -453,7 +461,8 @@ class Base {
         testParams.out.pointwise1ChannelCount,
         testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
         testParams.out.pointwise21ChannelCount,
-        testParams.out.bOutput1Requested );
+        testParams.out.bOutput1Requested,
+        channelShuffler );
 
       // Create description for debug easily.
       this.paramsOutDescription =
