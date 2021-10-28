@@ -229,12 +229,12 @@ class PassThrough {
  *         are depthwise1, between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are depthwise2. These
  *         two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
  *         This makes these filters' weights are arranged the same as ShuffleNetV2's head. So that the same filters weights could
- *         be used in these two architectures for comparing performance. (i.e. bHigherHalfDepthwise2, for depthwise1 of
- *         ShuffleNetV2_ByMopbileNetV1's head)
+ *         be used in these two architectures for comparing performance and corectness. (i.e. bHigherHalfDepthwise2, for depthwise1
+ *         of ShuffleNetV2_ByMopbileNetV1's head)
  *
  *     - If ( channelShuffler != null ), the filters for the input channels between Math.ceil( inputChannelCount / 2 )
- *         and ( inputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
- *         for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *         and ( inputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for depthwise1
+ *         of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  * @member {ChannelShuffler.Xxx} channelShuffler
  *   Only be used if ( bHigherHalfDifferent == true ). If not null, it is viewed as ( bHigherHalfPassThrough == true ). The
