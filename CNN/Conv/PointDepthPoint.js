@@ -977,16 +977,20 @@ class Base extends ReturnOrClone.Base {
     //
     // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
 
-
-//!!! ...unfinished... (2021/10/28) bHigherHalfDepthwise2, need ( channelShuffler != null )
-
-
     // 3.1 The first depthwise operation.
+
+    // If depthwise1's higher half is responsible for achieving depthwise2, it needs channel shuffler.
+    let channelShufflerForDepthwise1;
+    if ( this.bHigherHalfDepthwise2 )
+      channelShufflerForDepthwise1 = channelShuffler_ConcatPointwiseConv;
+    else
+      channelShufflerForDepthwise1 = null; // Otherwise, never give channel shuffler to depthwise1.
+
     this.depthwise1 = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwise1Before,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-      this.bHigherHalfDifferent, channelShuffler_ConcatPointwiseConv
+      this.bHigherHalfDifferent, channelShufflerForDepthwise1
     );
 
     if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd ) )
