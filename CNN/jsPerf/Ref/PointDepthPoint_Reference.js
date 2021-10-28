@@ -343,6 +343,7 @@ class Base {
 
     asserter.propertyValue( "inputTensorCount", flags.inputTensorCount );
     asserter.propertyValue( "bHigherHalfDifferent", flags.bHigherHalfDifferent );
+    asserter.propertyValue( "bHigherHalfDepthwise2", flags.bHigherHalfDepthwise2 );
     asserter.propertyValue( "bDepthwise2Requested", flags.bDepthwise2Requested );
     asserter.propertyValue( "bConcat1Requested", flags.bConcat1Requested );
     asserter.propertyValue( "bAddInputToOutputRequested", flags.bAddInputToOutputRequested );
@@ -464,6 +465,7 @@ class Base {
         + `(${testParams.out.channelCount1_pointwise1Before}), `
 
         + `bHigherHalfDifferent=${flags.bHigherHalfDifferent}, `
+        + `bHigherHalfDepthwise2=${flags.bHigherHalfDepthwise2}, `
 
         + `pointwise1ChannelCount=${testParams.out.pointwise1ChannelCount}, bPointwise1Bias=${testParams.out.bPointwise1Bias}, `
         + `pointwise1ActivationName=`
