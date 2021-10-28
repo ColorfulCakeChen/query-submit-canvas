@@ -93,6 +93,8 @@ class Base {
         imageInArraySelected.fill( undefined );
         imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
 
+//!!! ...unfinished... (2021/10/28) input1ChannelCount may zero.
+
         // Although input1 is only needed when ( bTwoInputs == true ), it is always prepared for calculating the shape of channel shuffler.
         // 
         // The shape of input1 (not input0) determines the concatenatedShape of channel shuffler because the input0 might be shrinked
@@ -114,6 +116,9 @@ class Base {
           case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
           {
             let outputGroupCount = 2; // Only use two convolution groups.
+
+//!!! ...unfinished... (2021/10/28) What concatenatedDepth should be if ( input1ChannelCount == 0 )?
+
             let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
             channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
               imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
