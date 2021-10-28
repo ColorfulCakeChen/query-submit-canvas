@@ -86,7 +86,7 @@ class PassThrough {
 //
 // i.e. bHigherHalfPointwise22
 
- *       - If ( channelShuffler == null ), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 )
+ *       - If ( channelShuffler_outputGroupCount < 0 ), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 )
  *           are pointwise21, between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are pointwise22. These
  *           two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
  *           This makes these filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's
@@ -94,14 +94,14 @@ class PassThrough {
  *           (i.e. bHigherHalfPointwise22, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
  *
  *
- *       - If ( channelShuffler == null ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
+ *       - If ( channelShuffler_outputGroupCount == 0 ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
  *           and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
  *           pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
 
 //!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
 
- *       - If ( channelShuffler != null ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
+ *       - If ( channelShuffler_outputGroupCount > 0 ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
  *           and ( outputChannelCount - 1 ) will just pass through the input to output. But they will be arranged just like applying
  *           channel shuffler on the output. (i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
  *           body/tail)
@@ -113,11 +113,10 @@ class PassThrough {
 //  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
  *
 
- * @member {ChannelShuffler.Xxx} channelShuffler
- *   Only if ( inputChannelCount >= outputChannelCount ), it is meaningful. If not null, the channelShuffler.outputGroupCount will
- * be used to (pre-)shuffle the filters. The total effect will be the same as applying the channel shuffler (without concatenation
- * and splitting) after pointwise convolution. The channelShuffler will not be disposed by this object. (for pointwise2 of
- * ShuffleNetV2_ByMopbileNetV1's head/body/tail)
+ * @member {number} channelShuffler_outputGroupCount
+ *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
+ * be used to (pre-)shuffle the filters and biases. The total effect will be the same as applying a channel shuffler (without
+ * concatenation and splitting) after pointwise convolution. (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  * @member {boolean} bHigherHalfCopyLowerHalf
  *   If ( bHigherHalfDifferent == true ) and ( inputChannelCount < outputChannelCount ), this will be true.
@@ -156,6 +155,8 @@ class PassThrough {
  * ConvActivation_and_destroy_or_keep(), ConvBiasActivation_and_destroy_or_keep() according to the parameters.
  */
 class Base extends ReturnOrClone_Activation.Base {
+
+//!!! ...unfinished... (2021/10/28) channelShuffler_outputGroupCount
 
   constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, bHigherHalfDifferent, channelShuffler ) {
     super();
