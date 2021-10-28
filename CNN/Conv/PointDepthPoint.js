@@ -396,6 +396,9 @@ class Params extends Weights.Params {
     // 0.4 Whether manipulate the higher half channel of convolution.
     switch ( channelCount1_pointwise1Before ) {
       case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+        
+//!!! ...unfinished... (2021/10/28) need ( channelShuffler != null )
+
         this.bHigherHalfDifferent =  true; this.bHigherHalfDepthwise2 =  true; break;
 
       case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
@@ -650,7 +653,7 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  *
  *
  * @member {boolean} bInitOk
- *  If true, this object initialized (i.e. initer()) successfully.
+ *   If true, this object initialized (i.e. initer()) successfully.
  *
  * @member {number} byteOffsetBegin
  *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by initer().
@@ -666,10 +669,15 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
 //!!! ...unfinished... (2021/10/28) bHigherHalfDepthwise2
 
  * @member {boolean} bHigherHalfDifferent
- *   
+ *   If true, the higher half input channels are processed differently. For pointwise convolution, the higher half may copy lower half,
+ * or the higher half may just pass through the input to output. For depthwise convolution, 
  *
+
+//!!! ...unfinished... (2021/10/28) need ( channelShuffler != null )
+
  * @member {boolean} bHigherHalfDepthwise2
- *   
+ *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
+ * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
  *
 
  * @member {boolean} bDepthwise2Requested
