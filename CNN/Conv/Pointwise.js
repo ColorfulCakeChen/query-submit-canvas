@@ -79,13 +79,7 @@ class PassThrough {
  *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
  *     - If ( inputChannelCount >= outputChannelCount ):
-
-//!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
-// The pointwise2 needs not channel shuffler, but needs extract weights in filter1-bias1-filter2-bias2 in sequence.
-// So that one pointwise21 simulates combined pointwise21 and pointwise22.
-//
-// i.e. bHigherHalfPointwise22
-
+ *
  *       - If ( channelShuffler_outputGroupCount < 0 ), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 )
  *           are pointwise21, between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are pointwise22. These
  *           two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
@@ -93,14 +87,10 @@ class PassThrough {
  *           head. So that the same filters weights could be used in these two architectures for comparing performance and correctness.
  *           (i.e. bHigherHalfPointwise22, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
  *
- *
  *       - If ( channelShuffler_outputGroupCount == 0 ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
  *           and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
  *           pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
-
-//!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
-
  *       - If ( channelShuffler_outputGroupCount > 0 ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
  *           and ( outputChannelCount - 1 ) will just pass through the input to output. But they will be arranged just like applying
  *           channel shuffler on the output. (i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
@@ -156,16 +146,14 @@ class PassThrough {
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-//!!! ...unfinished... (2021/10/28) channelShuffler_outputGroupCount
-
-  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, bHigherHalfDifferent, channelShuffler ) {
+  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, bHigherHalfDifferent, channelShuffler_outputGroupCount ) {
     super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.bHigherHalfDifferent = bHigherHalfDifferent;
-    this.channelShuffler = channelShuffler;
+    this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
   }
 
   /**
@@ -179,9 +167,8 @@ class Base extends ReturnOrClone_Activation.Base {
     // Q: Why is the inputFloat32Array not a parameter of constructor?
     // A: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
 
-//!!! (2021/10/22 Remarked) become data property.
-//     let bHigherHalfCopyLowerHalf, bHigherHalfPassThrough;
-//     let inputChannelCount_toBeExtracted, outputChannelCount_toBeExtracted;
+//!!! ...unfinished... (2021/10/28) channelShuffler_outputGroupCount
+
     let higherHalfPassThrough;
 
     try {
@@ -348,9 +335,10 @@ class Base extends ReturnOrClone_Activation.Base {
       this.biasesTensor3d = null;
     }
 
-    if ( this.channelShuffler ) {
-      this.channelShuffler = null; // Do not dispose channel shuffler here. Just set to null.
-    }
+//!!! (2021/10/28 Remarked)
+//     if ( this.channelShuffler ) {
+//       this.channelShuffler = null; // Do not dispose channel shuffler here. Just set to null.
+//     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
 
