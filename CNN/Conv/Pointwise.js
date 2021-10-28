@@ -82,6 +82,13 @@ class PassThrough {
  *         and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
  *
+
+//!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+// The pointwise2 needs not channel shuffler, but needs extract weights in filter1-bias1-filter2-bias2 in sequence.
+// So that one pointwise21 simulates combined pointwise21 and pointwise22.
+//
+// i.e. bHigherHalfPointwise22
+
  * @member {ChannelShuffler.Xxx} channelShuffler
  *   If not null, the channelShuffler.outputGroupCount will be used to (pre-)shuffle the filters. The total effect will be the same as
  * applying the channel shuffler (without concatenation and splitting) after pointwise convolution. The channelShuffler will not be
