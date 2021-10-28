@@ -677,21 +677,15 @@ Params.bKeepInputTensor =        new ParamDesc.Bool(                    "bKeepIn
  * @member {number} inputTensorCount
  *   How many input tensors will be past into apply() as parameter inputTensors[].
  *
-
-//!!! ...unfinished... (2021/10/28) bHigherHalfDepthwise2
-
  * @member {boolean} bHigherHalfDifferent
- *   If true, the higher half input channels are processed differently. For pointwise convolution, the higher half may copy lower half,
- * or the higher half may just pass through the input to output. For depthwise convolution, 
+ *   Only if ( channelShuffler != null ), this is meaningful. If true, the higher half input channels are processed differently.
+ * For pointwise convolution, the higher half may copy lower half, or the higher half may just pass through the input to output.
+ * For depthwise convolution, please see bHigherHalfDepthwise2.
  *
-
-//!!! ...unfinished... (2021/10/28) need ( channelShuffler != null )
-
  * @member {boolean} bHigherHalfDepthwise2
  *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
  * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
  *
-
  * @member {boolean} bDepthwise2Requested
  *   It will be true only when ( channelCount1_pointwise1Before == -2 ). If true, it means a second depthwise might be needed.
  *
@@ -982,6 +976,10 @@ class Base extends ReturnOrClone.Base {
     // 3. The depthwise operation.
     //
     // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
+
+
+//!!! ...unfinished... (2021/10/28) bHigherHalfDepthwise2, need ( channelShuffler != null )
+
 
     // 3.1 The first depthwise operation.
     this.depthwise1 = new Depthwise.Base(
