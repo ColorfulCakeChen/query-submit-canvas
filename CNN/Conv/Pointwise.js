@@ -90,7 +90,7 @@ class PassThrough {
  *           are pointwise21, between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are pointwise22. These
  *           two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
  *           This makes these filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's
- *           head. So that the same filters weights could be used in these two architectures for comparing performance and corectness.
+ *           head. So that the same filters weights could be used in these two architectures for comparing performance and correctness.
  *           (i.e. bHigherHalfPointwise22, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
  *
  *
