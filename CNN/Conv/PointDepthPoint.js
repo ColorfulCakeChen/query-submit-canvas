@@ -399,9 +399,6 @@ class Params extends Weights.Params {
       channelCount0_pointwise1Before, channelCount1_pointwise1Before,
       pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
 
-//!!! ...unfinished... (2021/10/28) need ( channelShuffler != null )
-
-
     // 0.4 Whether manipulate the higher half channel of convolution.
     this.bHigherHalfDifferent = this.bHigherHalfDepthwise2 = false;
     switch ( channelCount1_pointwise1Before ) {
