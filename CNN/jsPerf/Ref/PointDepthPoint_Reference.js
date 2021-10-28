@@ -453,11 +453,11 @@ class Base {
    *   The channel shuffler. Used when concat-shuffle-split.
    *
 //!!! (2021/10/28 Remarked) need channel shuffler.                                                 
-   * @param {number[]} channelShuffler_concatenatedShape
-   *   The concatenatedShape of channel shuffler. Used when concat-shuffle-split.
-   *
-   * @param {number}   channelShuffler_outputGroupCount
-   *    The outputGroupCount of channel shuffler. Used when concat-shuffle-split.
+//    * @param {number[]} channelShuffler_concatenatedShape
+//    *   The concatenatedShape of channel shuffler. Used when concat-shuffle-split.
+//    *
+//    * @param {number}   channelShuffler_outputGroupCount
+//    *    The outputGroupCount of channel shuffler. Used when concat-shuffle-split.
    *
    * @return {object[]} Return output images array.
    */ 
@@ -532,7 +532,10 @@ class Base {
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
     //    ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
-                                                                                                      
+
+//!!! ...unfinished... (2021/10/28) How to compare ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) and ONE_INPUT_TWO_DEPTHWISE (-2)?
+// The former has only one output tensor, the later has two output tensors.
+
     // 1. Pointwise1
     let pointwise1Result;
     if ( testParams.out.pointwise1ChannelCount > 0 ) {
