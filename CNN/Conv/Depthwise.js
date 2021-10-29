@@ -503,64 +503,6 @@ class Base extends ReturnOrClone_Activation.Base {
     this.bInitOk = false;
   }
 
-  /**
-   * Extract filters from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
-   *   - this.byteOffsetEnd
-   *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
-   *
-   * @param {Base} this                       The Base object to be determined and modified.
-   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
-   * @param {number} filterHeight             The height of the depthwise filters.
-   * @param {number} filterWidth              The width of the depthwise filters.
-   * @param {number} inputChannelCount        The input channel count of the depthwise filters.
-   * @param {number} channelMultiplier        The channel multiplier of the depthwise filters.
-   *
-   * @return {tf.tensor4d}                    The extracted depthwise filters. Return null, if failed.
-   */
-  static extractFilters( inputFloat32Array, filterHeight, filterWidth, inputChannelCount, channelMultiplier ) {
-    //let outputChannelCount = inputChannelCount * channelMultiplier;
-
-    let filtersShape = [ filterHeight, filterWidth, inputChannelCount, channelMultiplier ];
-    let filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, filtersShape );
-    if ( !filtersWeights.extract() )
-      return null;  // e.g. input array does not have enough data.
-    this.byteOffsetEnd = filtersWeights.defaultByteOffsetEnd;
-
-    filtersTensor4d = tf.tensor4d( filtersWeights.weights, filtersShape );
-    this.tensorWeightCountExtracted += tf.util.sizeFromShape( filtersTensor4d.shape );
-    this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d.shape );
-
-    return filtersTensor4d;
-  }
-
-  /**
-   * Extract biases from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
-   *   - this.byteOffsetEnd
-   *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
-   *
-   * @param {Base} this                       The Base object to be determined (i.e. modified).
-   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
-   * @param {number} channelCount             The (input and output) channel count of the biases.
-   *
-   * @return {tf.tensor3d}                    The extracted biases. Return null, if failed.
-   */
-  static extractBiases( inputFloat32Array, channelCount ) {
-    let biasesShape = [ 1, 1, channelCount ];
-    let biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, biasesShape );
-    if ( !biasesWeights.extract() )
-      return null;  // e.g. input array does not have enough data.
-    this.byteOffsetEnd = biasesWeights.defaultByteOffsetEnd;
-
-    let biasesTensor3d = tf.tensor3d( biasesWeights.weights, biasesShape );
-
-    this.tensorWeightCountExtracted += tf.util.sizeFromShape( biasesTensor3d.shape );
-    this.tensorWeightCountTotal += tf.util.sizeFromShape( biasesTensor3d.shape );
-
-    return biasesTensor3d;
-  }
-
   /** Determine this.bDepthwiseXxx and this.pfnXxx data members.
    *
    * @param {Base} this
@@ -624,6 +566,26 @@ class Base extends ReturnOrClone_Activation.Base {
       // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
       this.pfnOperationBiasActivation = this.pfnOperation = Base.return_input_directly;
     }
+  }
+
+  /**
+   * Extract depthwise convolution filters from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   * @param {number} filterHeight             The height of the depthwise convolution filters.
+   * @param {number} filterWidth              The width of the depthwise convolution filters.
+   * @param {number} inputChannelCount        The input channel count of the depthwise convolution filters.
+   * @param {number} channelMultiplier        The channel multiplier of the depthwise convolution filters.
+   *
+   * @return {tf.tensor4d}                    The extracted depthwise filters. Return null, if failed.
+   */
+  static extractFilters( inputFloat32Array, filterHeight, filterWidth, inputChannelCount, channelMultiplier ) {
+    let filtersShape = [ filterHeight, filterWidth, inputChannelCount, channelMultiplier ];
+    return Base.extractTensor.call( inputFloat32Array, filtersShape );
   }
 
   /**
