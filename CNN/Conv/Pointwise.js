@@ -171,12 +171,35 @@ class Base extends ReturnOrClone_Activation.Base {
     // A2: Their underlying ArrayBuffer is inputFloat32Array.buffer. If this.filtersWeights and this.biasesWeights are kept,
     //     the inputFloat32Array.buffer could not be released by memory garbage collector.
 
+    this.disposeTensors();
+
+    this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
+
+    Base.Setup_bPointwise_pfn.call( this );
+
+    if ( !this.bPointwise ) {
+      this.bInitOk = true;
+      return true; // no operation at all.
+    }
 
 //!!! ...unfinished... (2021/10/28) channelShuffler_outputGroupCount
 
     let higherHalfPassThrough;
 
     try {
+
+//!!! ...unfinished... (2021/10/29)
+      if ( this.bHigherHalfDifferent ) {
+
+      } else { // ???. Normal pointwise convolution and bias.
+        this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array, this.inputChannelCount, this.outputChannelCount );
+        this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount );
+      }
+
+
+
+
+//!!! ...unfinished... (2021/10/29) Old Codes
 
       // 1. Determine lower half filters dimension.
 
