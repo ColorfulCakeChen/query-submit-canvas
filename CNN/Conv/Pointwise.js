@@ -184,7 +184,11 @@ class Base extends ReturnOrClone_Activation.Base {
 
     if ( this.bHigherHalfDifferent ) { // 1. Normal pointwise convolution and bias.
       this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array, this.inputChannelCount, this.outputChannelCount );
-      this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount );
+
+      if ( this.bBias ) {
+        this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount );
+      }
+
       this.bInitOk = true;
       return true;
     }
@@ -200,9 +204,40 @@ class Base extends ReturnOrClone_Activation.Base {
 
 //!!! ...unfinished... (2021/10/29)
 
-        this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+        this.outputChannelCount_lowerHalf
           = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
           = this.inputChannelCount; // The lower half filters have the same output channel count as input.
+
+        this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
+        higherHalfPassThrough = new PaseThrough(
+          this.inputChannelCount, this.outputChannelCount_higherHalf,
+          0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+        );
+
+        {
+          let filtersTensor4d_lowerHalf = Base.extractFilters.call( this,
+            inputFloat32Array, this.inputChannelCount, this.outputChannelCount_lowerHalf );
+
+          let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
+          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+          filtersTensor4d_lowerHalf.dispose();
+
+          // Include the weights count of the higher-half-pass-through filters and biases.
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+        }
+
+        if ( this.bBias ) {
+          let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
+
+          let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
+          this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+          biasesTensor3d_lowerHalf.dispose();
+
+          // Include the weights count of the higher-half-pass-through filters and biases.
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
+        }
+
+//!!! ...unfinished... (2021/10/29)
 
       } else { // ( inputChannelCount >= outputChannelCount )
 
