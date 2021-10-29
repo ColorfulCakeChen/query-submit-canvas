@@ -239,8 +239,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
 //!!! ...unfinished... (2021/10/29)
 
-        } else if ( this.channelShuffler_outputGroupCount == 0 ) { // 3. i.e. bHigherHalfPassThrough
-          this.bHigherHalfPassThrough = true;
+        } else if ( this.channelShuffler_outputGroupCount >= 0 ) { // 3. i.e. bHigherHalfPassThrough or bHigherHalfPassThroughShuffle
 
           this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
             = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
@@ -297,15 +296,18 @@ class Base extends ReturnOrClone_Activation.Base {
             // Do nothing, because the lower-half is all.
           }
 
-        } else { // 4. ( channelShuffler_outputGroupCount > 0 ), i.e. bHigherHalfPassThroughShuffle
-          this.bHigherHalfPassThroughShuffle = true;
+          if ( this.channelShuffler_outputGroupCount == 0 ) { // 3.3 i.e. bHigherHalfPassThrough
+            this.bHigherHalfPassThrough = true;
 
-//!!! ...unfinished... (2021/10/29) fetch
+          } else { // 4. ( channelShuffler_outputGroupCount > 0 ), i.e. bHigherHalfPassThroughShuffle
+            this.bHigherHalfPassThroughShuffle = true;
 
-//!!! ...unfinished... (2021/10/29) Pre-shuffle
+
+  //!!! ...unfinished... (2021/10/29) Pre-shuffle
+
+          }
 
         }
-
 
 //!!! ...unfinished... (2021/10/29)
 
