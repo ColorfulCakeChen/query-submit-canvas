@@ -247,7 +247,7 @@ class Base extends ReturnOrClone_Activation.Base {
             = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
 
           this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
-          if ( this.outputChannelCount_higherHalf > 0 ) {
+          if ( this.outputChannelCount_higherHalf > 0 ) { // 3.1
 
             higherHalfPassThrough = new PaseThrough(
               this.inputChannelCount, this.outputChannelCount_higherHalf,
@@ -273,8 +273,8 @@ class Base extends ReturnOrClone_Activation.Base {
                   filtersTensor4d_zeros = tf.zeros( zeroShape );
                 }
 
-                // Along the second last axis (i.e. inDepth axis; axis id 2).
-                filtersTensor4d_lowerHalf_expanded = tf.concat( [ filtersTensor4d_lowerHalf, filtersTensor4d_zeros ], 2 );
+                let expandedFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_zeros ];
+                filtersTensor4d_lowerHalf_expanded = tf.concat( expandedFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
                 filtersTensor4d_zeros.dispose();
                 filtersTensor4d_lowerHalf.dispose();
               }
@@ -284,18 +284,15 @@ class Base extends ReturnOrClone_Activation.Base {
               filtersTensor4d_lowerHalf_expanded.dispose();
             }
 
-//!!! ...unfinished... (2021/10/29)
-            if ( this.biasesTensor3d ) {
-              let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
-              let allBiasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+            if ( this.bBias ) {
+              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
 
-              this.biasesTensor3d.dispose();
-              this.biasesTensor3d = allBiasesTensor3d;
-
-              this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+              let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
+              this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+              biasesTensor3d_lowerHalf.dispose();
             }
 
-          } else { // ( outputChannelCount_higherHalf <= 0 )
+          } else { // 3.2 ( outputChannelCount_higherHalf <= 0 )
             // e.g. ( outputChannelCount == 1 ). The lower-half of it will be also 1. The higher-half will be 0.
             // Do nothing, because the lower-half is all.
           }
