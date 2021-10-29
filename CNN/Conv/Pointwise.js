@@ -485,6 +485,24 @@ class Base extends ReturnOrClone_Activation.Base {
     }
   }
 
+  /**
+   * Extract pointwise convolution filters from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   * @param {number} inputChannelCount        The input channel count of the pointwise convolution filters.
+   * @param {number} outputChannelCount       The output channel count of the pointwise convolution filters.
+   *
+   * @return {tf.tensor4d}                    The extracted depthwise filters. Return null, if failed.
+   */
+  static extractPointwiseFilters( inputFloat32Array, inputChannelCount, outputChannelCount ) {
+    let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
+    return Base.extractTensor.call( inputFloat32Array, filtersShape );
+  }
+
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" ); // 1x1, Stride = 1
