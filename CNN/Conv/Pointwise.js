@@ -182,19 +182,55 @@ class Base extends ReturnOrClone_Activation.Base {
       return true; // no operation at all.
     }
 
+    if ( this.bHigherHalfDifferent ) { // 1. Normal pointwise convolution and bias.
+      this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array, this.inputChannelCount, this.outputChannelCount );
+      this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount );
+      this.bInitOk = true;
+      return true;
+    }
+
 //!!! ...unfinished... (2021/10/28) channelShuffler_outputGroupCount
 
     let higherHalfPassThrough;
 
     try {
 
-//!!! ...unfinished... (2021/10/29)
-      if ( this.bHigherHalfDifferent ) {
+      if ( this.inputChannelCount < this.outputChannelCount ) { // 2. i.e. bHigherHalfCopyLowerHalf
+        this.bHigherHalfCopyLowerHalf = true;
 
-      } else { // ???. Normal pointwise convolution and bias.
-        this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array, this.inputChannelCount, this.outputChannelCount );
-        this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount );
-      }
+//!!! ...unfinished... (2021/10/29)
+
+        this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+          = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+          = this.inputChannelCount; // The lower half filters have the same output channel count as input.
+
+      } else { // ( inputChannelCount >= outputChannelCount )
+
+        if ( this.channelShuffler_outputGroupCount < 0 ) { // 2. i.e. bHigherHalfPointwise22
+          this.bHigherHalfPointwise22 = true;
+
+//!!! ...unfinished... (2021/10/29)
+
+        } else if ( this.channelShuffler_outputGroupCount == 0 ) { // 3. i.e. bHigherHalfPassThrough
+          this.bHigherHalfPassThrough = true;
+
+//!!! ...unfinished... (2021/10/29)
+          this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+            = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+            = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
+
+        } else { // 4. i.e. bHigherHalfPassThroughShuffle
+          this.bHigherHalfPassThroughShuffle = true;
+
+//!!! ...unfinished... (2021/10/29)
+
+        }
+
+
+//!!! ...unfinished... (2021/10/29)
+
+
+
 
 
 
@@ -371,7 +407,7 @@ class Base extends ReturnOrClone_Activation.Base {
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
 
     // (2021/10/27 Remarked) If these properties does not exist, assigning value (even undefined) to them will create them. This is un-wanted.
-    //this.bHigherHalfCopyLowerHalf = this.bHigherHalfPassThrough
+    //this.bHigherHalfCopyLowerHalf = this.bHigherHalfPointwise22 = this.bHigherHalfPassThrough = this.bHigherHalfPassThroughShuffle
     //  = this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
     //  = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
     //  = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = undefined;
