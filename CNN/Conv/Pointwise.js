@@ -202,13 +202,12 @@ class Base extends ReturnOrClone_Activation.Base {
       if ( this.inputChannelCount < this.outputChannelCount ) { // 2. i.e. bHigherHalfCopyLowerHalf
         this.bHigherHalfCopyLowerHalf = true;
 
-//!!! ...unfinished... (2021/10/29)
-
         this.outputChannelCount_lowerHalf
           = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
           = this.inputChannelCount; // The lower half filters have the same output channel count as input.
 
         this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
+
         higherHalfPassThrough = new PaseThrough(
           this.inputChannelCount, this.outputChannelCount_higherHalf,
           0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
@@ -237,9 +236,9 @@ class Base extends ReturnOrClone_Activation.Base {
           this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
         }
 
-//!!! ...unfinished... (2021/10/29)
-
       } else { // ( inputChannelCount >= outputChannelCount )
+
+//!!! ...unfinished... (2021/10/29)
 
         if ( this.channelShuffler_outputGroupCount < 0 ) { // 2. i.e. bHigherHalfPointwise22
           this.bHigherHalfPointwise22 = true;
@@ -254,7 +253,7 @@ class Base extends ReturnOrClone_Activation.Base {
             = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
             = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
 
-        } else { // 4. i.e. bHigherHalfPassThroughShuffle
+        } else { // 4. ( channelShuffler_outputGroupCount > 0 ), i.e. bHigherHalfPassThroughShuffle
           this.bHigherHalfPassThroughShuffle = true;
 
 //!!! ...unfinished... (2021/10/29)
