@@ -164,8 +164,13 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   init( inputFloat32Array, byteOffsetBegin ) {
 
-    // Q: Why is the inputFloat32Array not a parameter of constructor?
-    // A: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
+    // Q1: Why is the inputFloat32Array not a parameter of constructor?
+    // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
+    //
+    // Q2: Why not keep filtersWeights and biasesWeights in data members of this?
+    // A2: Their underlying ArrayBuffer is inputFloat32Array.buffer. If this.filtersWeights and this.biasesWeights are kept,
+    //     the inputFloat32Array.buffer could not be released by memory garbage collector.
+
 
 //!!! ...unfinished... (2021/10/28) channelShuffler_outputGroupCount
 
@@ -411,6 +416,8 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   static init_by_inputChannelCount_outputChannelCount( inputFloat32Array, byteOffsetBegin, inputChannelCount, outputChannelCount ) {
 
+//!!! ...unfinished... (2021/10/29)
+
     // Q: Why not keep filtersWeights and biasesWeights in data members of this?
     // A: Their underlying ArrayBuffer is inputFloat32Array.buffer. If this.filtersWeights and this.biasesWeights are kept,
     //    the inputFloat32Array.buffer could not be released by memory garbage collector.
@@ -498,7 +505,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *
    * @return {tf.tensor4d}                    The extracted depthwise filters. Return null, if failed.
    */
-  static extractPointwiseFilters( inputFloat32Array, inputChannelCount, outputChannelCount ) {
+  static extractFilters( inputFloat32Array, inputChannelCount, outputChannelCount ) {
     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
     return Base.extractTensor.call( inputFloat32Array, filtersShape );
   }
