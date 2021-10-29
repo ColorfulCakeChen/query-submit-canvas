@@ -220,9 +220,6 @@ class Base extends ReturnOrClone_Activation.Base {
           let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
           this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
           filtersTensor4d_lowerHalf.dispose();
-
-          // Include the weights count of the higher-half-pass-through filters and biases.
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
         }
 
         if ( this.bBias ) {
@@ -231,9 +228,6 @@ class Base extends ReturnOrClone_Activation.Base {
           let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
           this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
           biasesTensor3d_lowerHalf.dispose();
-
-          // Include the weights count of the higher-half-pass-through filters and biases.
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
         }
 
       } else { // ( inputChannelCount >= outputChannelCount )
@@ -248,12 +242,10 @@ class Base extends ReturnOrClone_Activation.Base {
         } else if ( this.channelShuffler_outputGroupCount == 0 ) { // 3. i.e. bHigherHalfPassThrough
           this.bHigherHalfPassThrough = true;
 
-//!!! ...unfinished... (2021/10/29)
           this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
             = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
             = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
 
-//!!! ...unfinished... (2021/10/29)
           this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
           if ( this.outputChannelCount_higherHalf > 0 ) {
 
@@ -262,36 +254,37 @@ class Base extends ReturnOrClone_Activation.Base {
               this.outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
             );
 
-            this.tensorWeightCountTotal = 0; // Since the filters and biases will be changed, the total weights count should be re-calculated.
-
             {
-              // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount,
+              // The extracted filters should be expanded to accept a larger input channel count (i.e. this.inputChannelCount,
               // not Math.ceil( this.outputChannelCount / 2 ) ). The extra channel's filters are just zero.
-              let expandedFiltersTensor4d;
+              let filtersTensor4d_lowerHalf_expanded;
               {
-                let filtersZeroShape = this.filtersTensor4d.shape.slice(); // Clone filters' shape array.
+                let filtersTensor4d_lowerHalf = Base.extractFilters.call( this,
+                  inputFloat32Array, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
 
-                // The second last axis (i.e. inDepth axis; axis id 2) should be just fill the difference between real inputChanneCount the
-                // the extracted filters.
-                filtersZeroShape[ 2 ] = this.inputChannelCount - this.filtersTensor4d.shape[ 2 ];
+                let filtersTensor4d_zeros;
+                {
+                  let zeroShape = filtersTensor4d_lowerHalf.shape.slice(); // Clone filters' shape array.
 
-                let filtersZeroTensor4d = tf.zeros( filtersZeroShape );
+                  // The second last axis (i.e. inDepth axis; axis id 2) should be just fill the difference between real inputChanneCount
+                  // and the extracted filters.
+                  zeroShape[ 2 ] = this.inputChannelCount - filtersTensor4d_lowerHalf.shape[ 2 ];
 
-                let expandedFiltersArray = [ this.filtersTensor4d, filtersZeroTensor4d ];
-                expandedFiltersTensor4d = tf.concat( expandedFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
+                  filtersTensor4d_zeros = tf.zeros( zeroShape );
+                }
 
-                filtersZeroTensor4d.dispose();
+                // Along the second last axis (i.e. inDepth axis; axis id 2).
+                filtersTensor4d_lowerHalf_expanded = tf.concat( [ filtersTensor4d_lowerHalf, filtersTensor4d_zeros ], 2 );
+                filtersTensor4d_zeros.dispose();
+                filtersTensor4d_lowerHalf.dispose();
               }
 
-              let allFiltersArray = [ expandedFiltersTensor4d, higherHalfPassThrough.filtersTensor4d ];
-              let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
-
-              this.filtersTensor4d.dispose();
-              this.filtersTensor4d = allFiltersTensor4d;
-
-              this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+              let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalfPassThrough.filtersTensor4d ];
+              this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+              filtersTensor4d_lowerHalf_expanded.dispose();
             }
 
+//!!! ...unfinished... (2021/10/29)
             if ( this.biasesTensor3d ) {
               let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
               let allBiasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
@@ -325,40 +318,41 @@ class Base extends ReturnOrClone_Activation.Base {
 
 //!!! ...unfinished... (2021/10/29) Old Codes
 
-      // 1. Determine lower half filters dimension.
-
-      if ( this.bHigherHalfDifferent ) {
-
-        if ( this.inputChannelCount < this.outputChannelCount ) { // 1.1 i.e. bHigherHalfCopyLowerHalf
-          this.bHigherHalfCopyLowerHalf = true;
-          this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
-            = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
-            = this.inputChannelCount; // The lower half filters have the same output channel count as input.
-
-        } else { // 1.2 ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
-          this.bHigherHalfPassThrough = true;
-          this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
-            = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
-            = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
-        }
-
-      } else { // 1.3 Normal pointwise convolution. Use specified input and output channel count.
-        this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-        this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-      }
-
-      // 2. Extract lower half filters and biases.
-      if ( !Base.init_by_inputChannelCount_outputChannelCount.call( this,
-              inputFloat32Array, byteOffsetBegin, this.inputChannelCount_toBeExtracted, this.outputChannelCount_toBeExtracted ) ) {
-        this.bInitOk = false;
-        return false; // Initialization failed.
-      }
-
-      if ( !this.bPointwise ) {
-        this.bInitOk = true;
-        return true; // Since there is no pointwise convolution, initialization was done successfully.
-      }
-
+//!!! (2021/10/29 Remarked) Old Codes
+//       // 1. Determine lower half filters dimension.
+//
+//       if ( this.bHigherHalfDifferent ) {
+//
+//         if ( this.inputChannelCount < this.outputChannelCount ) { // 1.1 i.e. bHigherHalfCopyLowerHalf
+//           this.bHigherHalfCopyLowerHalf = true;
+//           this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+//             = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+//             = this.inputChannelCount; // The lower half filters have the same output channel count as input.
+//
+//         } else { // 1.2 ( inputChannelCount >= outputChannelCount ), i.e. bHigherHalfPassThrough
+//           this.bHigherHalfPassThrough = true;
+//           this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+//             = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+//             = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
+//         }
+//
+//       } else { // 1.3 Normal pointwise convolution. Use specified input and output channel count.
+//         this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+//         this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+//       }
+//
+//       // 2. Extract lower half filters and biases.
+//       if ( !Base.init_by_inputChannelCount_outputChannelCount.call( this,
+//               inputFloat32Array, byteOffsetBegin, this.inputChannelCount_toBeExtracted, this.outputChannelCount_toBeExtracted ) ) {
+//         this.bInitOk = false;
+//         return false; // Initialization failed.
+//       }
+//
+//       if ( !this.bPointwise ) {
+//         this.bInitOk = true;
+//         return true; // Since there is no pointwise convolution, initialization was done successfully.
+//       }
+//
       // 3. Generate higher half filters and biases. Combine lower half and higher half.
 
       if ( this.bHigherHalfCopyLowerHalf ) { // 3.1
@@ -469,8 +463,17 @@ class Base extends ReturnOrClone_Activation.Base {
       }
 
     } finally {
-      if ( higherHalfPassThrough )
+
+      if ( higherHalfPassThrough ) {
+
+        // Include the weights count of the higher-half-pass-through filters and biases.
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+        if ( higherHalfPassThrough.biasesTensor3d ) {
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
+        }
+
         higherHalfPassThrough.disposeTensors();
+      }
     }
 
     this.bInitOk = true;
