@@ -253,6 +253,60 @@ class Base extends ReturnOrClone_Activation.Base {
             = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
             = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
 
+//!!! ...unfinished... (2021/10/29)
+          this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
+          if ( this.outputChannelCount_higherHalf > 0 ) {
+
+            higherHalfPassThrough = new PaseThrough(
+              this.inputChannelCount, this.outputChannelCount_higherHalf,
+              this.outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
+            );
+
+            this.tensorWeightCountTotal = 0; // Since the filters and biases will be changed, the total weights count should be re-calculated.
+
+            {
+              // The extracted filters should be expanded to accepts a larger input channel count (i.e. this.inputChannelCount,
+              // not Math.ceil( this.outputChannelCount / 2 ) ). The extra channel's filters are just zero.
+              let expandedFiltersTensor4d;
+              {
+                let filtersZeroShape = this.filtersTensor4d.shape.slice(); // Clone filters' shape array.
+
+                // The second last axis (i.e. inDepth axis; axis id 2) should be just fill the difference between real inputChanneCount the
+                // the extracted filters.
+                filtersZeroShape[ 2 ] = this.inputChannelCount - this.filtersTensor4d.shape[ 2 ];
+
+                let filtersZeroTensor4d = tf.zeros( filtersZeroShape );
+
+                let expandedFiltersArray = [ this.filtersTensor4d, filtersZeroTensor4d ];
+                expandedFiltersTensor4d = tf.concat( expandedFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
+
+                filtersZeroTensor4d.dispose();
+              }
+
+              let allFiltersArray = [ expandedFiltersTensor4d, higherHalfPassThrough.filtersTensor4d ];
+              let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+
+              this.filtersTensor4d.dispose();
+              this.filtersTensor4d = allFiltersTensor4d;
+
+              this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+            }
+
+            if ( this.biasesTensor3d ) {
+              let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
+              let allBiasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+
+              this.biasesTensor3d.dispose();
+              this.biasesTensor3d = allBiasesTensor3d;
+
+              this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+            }
+
+          } else { // ( outputChannelCount_higherHalf <= 0 )
+            // e.g. ( outputChannelCount == 1 ). The lower-half of it will be also 1. The higher-half will be 0.
+            // Do nothing, because the lower-half is all.
+          }
+
         } else { // 4. ( channelShuffler_outputGroupCount > 0 ), i.e. bHigherHalfPassThroughShuffle
           this.bHigherHalfPassThroughShuffle = true;
 
@@ -309,33 +363,34 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( this.bHigherHalfCopyLowerHalf ) { // 3.1
 
-        this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
-        higherHalfPassThrough = new PaseThrough(
-          this.inputChannelCount, this.outputChannelCount_higherHalf,
-          0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
-        );
-
-        this.tensorWeightCountTotal = 0; // Since the filters and biases will be changed, the total weights count should be re-calculated.
-
-        {
-          let allFiltersArray = [ this.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
-          let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-
-          this.filtersTensor4d.dispose();
-          this.filtersTensor4d = allFiltersTensor4d;
-
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-        }
-
-        if ( this.biasesTensor3d ) {
-          let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
-          let allBiasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
-
-          this.biasesTensor3d.dispose();
-          this.biasesTensor3d = allBiasesTensor3d;
-
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-        }
+//!!! (2021/10/29 Remarked) Old Codes
+//         this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
+//         higherHalfPassThrough = new PaseThrough(
+//           this.inputChannelCount, this.outputChannelCount_higherHalf,
+//           0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+//         );
+//
+//         this.tensorWeightCountTotal = 0; // Since the filters and biases will be changed, the total weights count should be re-calculated.
+//
+//         {
+//           let allFiltersArray = [ this.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
+//           let allFiltersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+//
+//           this.filtersTensor4d.dispose();
+//           this.filtersTensor4d = allFiltersTensor4d;
+//
+//           this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+//         }
+//
+//         if ( this.biasesTensor3d ) {
+//           let allBiasesArray = [ this.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
+//           let allBiasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+//
+//           this.biasesTensor3d.dispose();
+//           this.biasesTensor3d = allBiasesTensor3d;
+//
+//           this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+//         }
 
       } else if ( this.bHigherHalfPassThrough ) { // 3.2
 
