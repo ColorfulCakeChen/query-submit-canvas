@@ -30,19 +30,25 @@ class PassThrough {
     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
     let biasesShape =  [ 1, 1, outputChannelCount ];
 
-    // Generate pointwise filters for just copying the input (from inputChannelIndexStart to inputChannelIndexStop).
-    this.filtersTensor4d = tf.tidy( () =>
-      tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
-        .oneHot( inputChannelCount )  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
-        .cast( "float32" )            // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
-        .transpose()                  // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
-        .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
-    );
+    [ this.filtersTensor4d, this.biasesTensor3d ] = tf.tidy( () => {
 
-    // Generate bias for just adding zero. (i.e. equals no bias).
-    if ( this.bBias ) {
-      this.biasesTensor3d = tf.tidy( () => tf.zero( biasesShape ) );
-    }
+      // Generate pointwise filters for just copying the input (from inputChannelIndexStart to inputChannelIndexStop).
+      let filtersTensor4d =
+        tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+          .oneHot( inputChannelCount )  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
+          .cast( "float32" )            // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
+          .transpose()                  // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
+          .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
+          ;
+
+      // Generate bias for just adding zero. (i.e. equals no bias).
+      let biasesTensor3d;
+      if ( this.bBias ) {
+        biasesTensor3d = tf.zero( biasesShape );
+      }
+
+      return [ filtersTensor4d, biasesTensor3d ];
+    });
   }
 
   disposeTensors() {
