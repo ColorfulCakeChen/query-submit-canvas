@@ -232,12 +232,50 @@ class Base extends ReturnOrClone_Activation.Base {
 
       } else { // ( inputChannelCount >= outputChannelCount )
 
-//!!! ...unfinished... (2021/10/29)
-
         if ( this.channelShuffler_outputGroupCount < 0 ) { // 2. i.e. bHigherHalfPointwise22
           this.bHigherHalfPointwise22 = true;
 
-//!!! ...unfinished... (2021/10/29)
+          // Extract all weights of specified input/output channels (just like a normal pointwise convolution, but with a different arrangement).
+          this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+          this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+          this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
+          this.outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
+
+          this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+          this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+//!!! ...unfinished... (2021/11/09)
+          // The extracting order is important: lowerHalfFilter, lowerHalfBias, higherHalfFilter, higherHalfBias.
+          let filtersTensor4d_lowerHalf, biasesTensor3d_lowerHalf, filtersTensor4d_higherHalf, biasesTensor3d_higherHalf;
+          {
+            filtersTensor4d_lowerHalf = Base.extractFilters.call( this,
+              inputFloat32Array, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
+
+            if ( this.bBias ) {
+              biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
+            }
+
+            filtersTensor4d_higherHalf = Base.extractFilters.call( this,
+              inputFloat32Array, this.inputChannelCount_higherHalf, this.outputChannelCount_higherHalf );
+
+            if ( this.bBias ) {
+              let biasesTensor3d_higherHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_higherHalf );
+            }
+          }
+
+          // Combine lower and higher into one larger filters and biases.
+          let allFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_higherHalf ];
+          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+          filtersTensor4d_higherHalf.dispose();
+          filtersTensor4d_lowerHalf.dispose();
+
+          if ( this.bBias ) {
+            let allBiasesArray = [ biasesTensor3d_lowerHalf, biasesTensor3d_higherHalf ];
+            this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+            biasesTensor3d_lowerHalf.dispose();
+            biasesTensor3d_higherHalf.dispose();
+          }
 
         } else if ( this.channelShuffler_outputGroupCount >= 0 ) { // 3. i.e. bHigherHalfPassThrough or bHigherHalfPassThroughShuffle
 
@@ -302,6 +340,8 @@ class Base extends ReturnOrClone_Activation.Base {
           } else { // 4. ( channelShuffler_outputGroupCount > 0 ), i.e. bHigherHalfPassThroughShuffle
             this.bHigherHalfPassThroughShuffle = true;
 
+
+//!!! ...unfinished... (2021/11/09)
 
   //!!! ...unfinished... (2021/10/29) Pre-shuffle
 
