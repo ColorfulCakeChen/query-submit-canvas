@@ -505,16 +505,26 @@ class Base extends ReturnOrClone_Activation.Base {
     let higherHalfPassThrough;
     try {
 
+      // 1.
+
       // In order to "pass-through" the higher half, the channel count of input's higher half must be the same as output's higher half.
       this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = Math.floor( this.outputChannelCount / 2 );
 
-      // Note: The channel count of input's lower half might be different from output's lower half. The reason is inputChannelCount
-      // might be different from outputChannelCount.
-      this.inputChannelCount_lowerHalf = this.inputChannelCount_toBeExtracted = this.inputChannelCount - this.inputChannelCount_higherHalf;
-      this.outputChannelCount_lowerHalf = this.outputChannelCount_toBeExtracted = this.outputChannelCount - this.outputChannelCount_higherHalf;
+      // 2.
 
-      let filtersTensor4d, biasesTensor3d;
-      if ( this.outputChannelCount_higherHalf > 0 ) { // 3.1
+      // 2.1 If the channel count can not be halved, extracted as normal pointwise (i.e. nothing to be past-through).
+      // e.g. ( outputChannelCount == 1 ). The lower-half will be 1. The higher-half will be 0.
+      if ( this.outputChannelCount_higherHalf <= 0 ) {
+
+        if ( !Base.extractAs_NormalPointwise.call( this, inputFloat32Array ) )
+          return false;
+
+      } else { // 2.2 The higher half can be past-through.
+
+        // Note: The channel count of input's lower half might be different from output's lower half. The reason is inputChannelCount
+        // might be different from outputChannelCount.
+        this.inputChannelCount_lowerHalf =  this.inputChannelCount_toBeExtracted =  this.inputChannelCount  - this.inputChannelCount_higherHalf;
+        this.outputChannelCount_lowerHalf = this.outputChannelCount_toBeExtracted = this.outputChannelCount - this.outputChannelCount_higherHalf;
 
         higherHalfPassThrough = new PaseThrough(
           this.inputChannelCount, this.outputChannelCount_higherHalf,
@@ -550,7 +560,7 @@ class Base extends ReturnOrClone_Activation.Base {
           }
 
           let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalfPassThrough.filtersTensor4d ];
-          filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
           filtersTensor4d_lowerHalf_expanded.dispose();
         }
 
@@ -561,26 +571,19 @@ class Base extends ReturnOrClone_Activation.Base {
             return false;
 
           let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
-          biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+          this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
           biasesTensor3d_lowerHalf.dispose();
         }
 
-      } else { // 3.2 ( outputChannelCount_higherHalf <= 0 )
-        // e.g. ( outputChannelCount == 1 ). The lower-half of it will be also 1. The higher-half will be 0.
-        // Do nothing, because the lower-half is all.
-
-//!!! ...unfinished... (2021/11/09)
-
       }
 
-      if ( this.channelShuffler_outputGroupCount == 0 ) { // 3.3 i.e. bHigherHalfPassThrough
+      // 3.
+      if ( this.channelShuffler_outputGroupCount == 0 ) { // 3.1 i.e. bHigherHalfPassThrough
         this.bHigherHalfPassThrough = true;
 
-      } else { // 4. ( channelShuffler_outputGroupCount > 0 ), i.e. bHigherHalfPassThroughShuffle
+      } else { // 3.2 ( channelShuffler_outputGroupCount > 0 ), i.e. bHigherHalfPassThroughShuffle
         this.bHigherHalfPassThroughShuffle = true;
 
-
-//!!! ...unfinished... (2021/11/09) Pre-shuffle
         // Pre-shuffle channels by shuffling the filters and biases.
 
         { // Shuffle the filters along the last (i.e. channel) axis.
@@ -600,9 +603,6 @@ class Base extends ReturnOrClone_Activation.Base {
         }
 
       }
-
-
-//!!! ...unfinished... (2021/10/29)
 
     } finally {
 
