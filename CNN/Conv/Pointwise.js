@@ -96,13 +96,6 @@ class PassThrough {
  *           channel shuffler on the output. (i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
  *           body/tail)
  *
-
-//!!! ...unfinished... (2021/10/28 Remarked) Old
-//  *     - If ( inputChannelCount >= outputChannelCount ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
-//  *         and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
-//  *         pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, and pointwise2 of ShuffleNetV2_ByMopbileNetV1's head/body/tail)
- *
-
  * @member {number} channelShuffler_outputGroupCount
  *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
  * be used to (pre-)shuffle the filters and biases. The total effect will be the same as applying a channel shuffler (without
@@ -183,6 +176,11 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     if ( this.bHigherHalfDifferent ) { // 1. Normal pointwise convolution and bias.
+
+      // Extract all weights as specified input/output channels.
+      this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+      this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
       this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array, this.inputChannelCount, this.outputChannelCount );
 
       if ( this.bBias ) {
@@ -193,10 +191,7 @@ class Base extends ReturnOrClone_Activation.Base {
       return true;
     }
 
-//!!! ...unfinished... (2021/10/28) channelShuffler_outputGroupCount
-
     let higherHalfPassThrough;
-
     try {
 
       if ( this.inputChannelCount < this.outputChannelCount ) { // 2. i.e. bHigherHalfCopyLowerHalf
@@ -235,17 +230,18 @@ class Base extends ReturnOrClone_Activation.Base {
         if ( this.channelShuffler_outputGroupCount < 0 ) { // 2. i.e. bHigherHalfPointwise22
           this.bHigherHalfPointwise22 = true;
 
-          // Extract all weights of specified input/output channels (just like a normal pointwise convolution, but with a different arrangement).
+          // Extract all weights as specified input/output channels (just like a normal pointwise convolution, but with a different arrangement).
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
           this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
           this.outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
 
+//!!! ...unfinished... (2021/11/09) What if ( inputChannelCount == 1 ) or ( outputChannelCount == 1 )?
+
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
-//!!! ...unfinished... (2021/11/09)
           // The extracting order is important: lowerHalfFilter, lowerHalfBias, higherHalfFilter, higherHalfBias.
           let filtersTensor4d_lowerHalf, biasesTensor3d_lowerHalf, filtersTensor4d_higherHalf, biasesTensor3d_higherHalf;
           {
@@ -284,6 +280,8 @@ class Base extends ReturnOrClone_Activation.Base {
             = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
 
           this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
+
+          let filtersTensor4d, biasesTensor3d;
           if ( this.outputChannelCount_higherHalf > 0 ) { // 3.1
 
             higherHalfPassThrough = new PaseThrough(
@@ -317,7 +315,7 @@ class Base extends ReturnOrClone_Activation.Base {
               }
 
               let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalfPassThrough.filtersTensor4d ];
-              this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+              filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
               filtersTensor4d_lowerHalf_expanded.dispose();
             }
 
@@ -325,7 +323,7 @@ class Base extends ReturnOrClone_Activation.Base {
               let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
 
               let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
-              this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+              biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
               biasesTensor3d_lowerHalf.dispose();
             }
 
@@ -341,9 +339,24 @@ class Base extends ReturnOrClone_Activation.Base {
             this.bHigherHalfPassThroughShuffle = true;
 
 
-//!!! ...unfinished... (2021/11/09)
+//!!! ...unfinished... (2021/11/09) Pre-shuffle
+            // Pre-shuffle channels by shuffling the filters and biases.
 
-  //!!! ...unfinished... (2021/10/29) Pre-shuffle
+            { // Shuffle the filters along the last (i.e. channel) axis.
+              let filtersChannelShuffler = new ChannelShuffler.ShuffleInfo( this.filtersTensor4d.shape, this.channelShuffler_outputGroupCount );
+              let filtersTensor4d_shuffled = filtersChannelShuffler.reshapeTransposeReshape( this.filtersTensor4d );
+
+              this.filtersTensor4d.dispose();
+              this.filtersTensor4d = filtersTensor4d_shuffled;
+            }
+
+            { // Shuffle the biases along the last (i.e. channel) axis.
+              let biasesChannelShuffler = new ChannelShuffler.ShuffleInfo( this.biasesTensor3d.shape, this.channelShuffler_outputGroupCount );
+              let biasesTensor3d_shuffled = biasesChannelShuffler.reshapeTransposeReshape( this.biasesTensor3d );
+
+              this.biasesTensor3d.dispose();
+              this.biasesTensor3d = biasesTensor3d_shuffled;
+            }
 
           }
 
