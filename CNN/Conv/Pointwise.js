@@ -335,6 +335,11 @@ class Base extends ReturnOrClone_Activation.Base {
 
       this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
 
+      tf.util.assert( this.outputChannelCount_higherHalf > 0,
+        `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
+          + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be greater than zero.`
+      );
+
       higherHalfPassThrough = new PaseThrough(
         this.inputChannelCount, this.outputChannelCount_higherHalf,
         0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
@@ -485,6 +490,8 @@ class Base extends ReturnOrClone_Activation.Base {
    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
    */
   static extractAs_HigherHalfPassThrough_or_HigherHalfPassThroughShuffle( inputFloat32Array ) {
+
+//!!! ...unfinished... (2021/11/09) What if ( inputChannelCount == 1 ) or ( outputChannelCount == 1 )?
 
     let higherHalfPassThrough;
     try {
