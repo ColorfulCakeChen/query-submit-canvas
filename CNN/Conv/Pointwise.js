@@ -176,254 +176,24 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     if ( this.bHigherHalfDifferent ) { // 1. Normal pointwise convolution and bias.
-
-      // Extract all weights as specified input/output channels.
-      this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-      this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-      this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array, this.inputChannelCount, this.outputChannelCount );
-
-      if ( this.bBias ) {
-        this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount );
-      }
-
-      this.bInitOk = true;
-      return true;
+      this.bInitOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
+      return this.bInitOk;
     }
 
-    let higherHalfPassThrough;
-    try {
+    if ( this.inputChannelCount < this.outputChannelCount ) { // 2. i.e. bHigherHalfCopyLowerHalf
+      this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
 
-      if ( this.inputChannelCount < this.outputChannelCount ) { // 2. i.e. bHigherHalfCopyLowerHalf
-        this.bHigherHalfCopyLowerHalf = true;
+    } else { // ( inputChannelCount >= outputChannelCount )
 
-        this.outputChannelCount_lowerHalf
-          = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
-          = this.inputChannelCount; // The lower half filters have the same output channel count as input.
+      if ( this.channelShuffler_outputGroupCount < 0 ) { // 3. i.e. bHigherHalfPointwise22
+        this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
 
-        this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
-
-        higherHalfPassThrough = new PaseThrough(
-          this.inputChannelCount, this.outputChannelCount_higherHalf,
-          0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
-        );
-
-        {
-          let filtersTensor4d_lowerHalf = Base.extractFilters.call( this,
-            inputFloat32Array, this.inputChannelCount, this.outputChannelCount_lowerHalf );
-
-          let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
-          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-          filtersTensor4d_lowerHalf.dispose();
-        }
-
-        if ( this.bBias ) {
-          let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
-
-          let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
-          this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
-          biasesTensor3d_lowerHalf.dispose();
-        }
-
-      } else { // ( inputChannelCount >= outputChannelCount )
-
-        if ( this.channelShuffler_outputGroupCount < 0 ) { // 2. i.e. bHigherHalfPointwise22
-          this.bHigherHalfPointwise22 = true;
-
-          // Extract all weights as specified input/output channels (just like a normal pointwise convolution, but with a different arrangement).
-          this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-          this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-          this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
-          this.outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
-
-//!!! ...unfinished... (2021/11/09) What if ( inputChannelCount == 1 ) or ( outputChannelCount == 1 )?
-
-          this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-          this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
-
-          // The extracting order is important: lowerHalfFilter, lowerHalfBias, higherHalfFilter, higherHalfBias.
-          let filtersTensor4d_lowerHalf, biasesTensor3d_lowerHalf, filtersTensor4d_higherHalf, biasesTensor3d_higherHalf;
-          {
-            filtersTensor4d_lowerHalf = Base.extractFilters.call( this,
-              inputFloat32Array, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
-
-            if ( this.bBias ) {
-              biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
-            }
-
-            filtersTensor4d_higherHalf = Base.extractFilters.call( this,
-              inputFloat32Array, this.inputChannelCount_higherHalf, this.outputChannelCount_higherHalf );
-
-            if ( this.bBias ) {
-              let biasesTensor3d_higherHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_higherHalf );
-            }
-          }
-
-          // Combine lower and higher into one larger filters and biases.
-          let allFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_higherHalf ];
-          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-          filtersTensor4d_higherHalf.dispose();
-          filtersTensor4d_lowerHalf.dispose();
-
-          if ( this.bBias ) {
-            let allBiasesArray = [ biasesTensor3d_lowerHalf, biasesTensor3d_higherHalf ];
-            this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
-            biasesTensor3d_lowerHalf.dispose();
-            biasesTensor3d_higherHalf.dispose();
-          }
-
-        } else if ( this.channelShuffler_outputGroupCount >= 0 ) { // 3. i.e. bHigherHalfPassThrough or bHigherHalfPassThroughShuffle
-
-          this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
-            = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
-            = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
-
-          this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
-
-          let filtersTensor4d, biasesTensor3d;
-          if ( this.outputChannelCount_higherHalf > 0 ) { // 3.1
-
-            higherHalfPassThrough = new PaseThrough(
-              this.inputChannelCount, this.outputChannelCount_higherHalf,
-              this.outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
-            );
-
-            {
-              // The extracted filters should be expanded to accept a larger input channel count (i.e. this.inputChannelCount,
-              // not Math.ceil( this.outputChannelCount / 2 ) ). The extra channel's filters are just zero.
-              let filtersTensor4d_lowerHalf_expanded;
-              {
-                let filtersTensor4d_lowerHalf = Base.extractFilters.call( this,
-                  inputFloat32Array, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
-
-                let filtersTensor4d_zeros;
-                {
-                  let zeroShape = filtersTensor4d_lowerHalf.shape.slice(); // Clone filters' shape array.
-
-                  // The second last axis (i.e. inDepth axis; axis id 2) should be just fill the difference between real inputChanneCount
-                  // and the extracted filters.
-                  zeroShape[ 2 ] = this.inputChannelCount - filtersTensor4d_lowerHalf.shape[ 2 ];
-
-                  filtersTensor4d_zeros = tf.zeros( zeroShape );
-                }
-
-                let expandedFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_zeros ];
-                filtersTensor4d_lowerHalf_expanded = tf.concat( expandedFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
-                filtersTensor4d_zeros.dispose();
-                filtersTensor4d_lowerHalf.dispose();
-              }
-
-              let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalfPassThrough.filtersTensor4d ];
-              filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
-              filtersTensor4d_lowerHalf_expanded.dispose();
-            }
-
-            if ( this.bBias ) {
-              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
-
-              let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
-              biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
-              biasesTensor3d_lowerHalf.dispose();
-            }
-
-          } else { // 3.2 ( outputChannelCount_higherHalf <= 0 )
-            // e.g. ( outputChannelCount == 1 ). The lower-half of it will be also 1. The higher-half will be 0.
-            // Do nothing, because the lower-half is all.
-          }
-
-          if ( this.channelShuffler_outputGroupCount == 0 ) { // 3.3 i.e. bHigherHalfPassThrough
-            this.bHigherHalfPassThrough = true;
-
-          } else { // 4. ( channelShuffler_outputGroupCount > 0 ), i.e. bHigherHalfPassThroughShuffle
-            this.bHigherHalfPassThroughShuffle = true;
-
-
-//!!! ...unfinished... (2021/11/09) Pre-shuffle
-            // Pre-shuffle channels by shuffling the filters and biases.
-
-            { // Shuffle the filters along the last (i.e. channel) axis.
-              let filtersChannelShuffler = new ChannelShuffler.ShuffleInfo( this.filtersTensor4d.shape, this.channelShuffler_outputGroupCount );
-              let filtersTensor4d_shuffled = filtersChannelShuffler.reshapeTransposeReshape( this.filtersTensor4d );
-
-              this.filtersTensor4d.dispose();
-              this.filtersTensor4d = filtersTensor4d_shuffled;
-            }
-
-            { // Shuffle the biases along the last (i.e. channel) axis.
-              let biasesChannelShuffler = new ChannelShuffler.ShuffleInfo( this.biasesTensor3d.shape, this.channelShuffler_outputGroupCount );
-              let biasesTensor3d_shuffled = biasesChannelShuffler.reshapeTransposeReshape( this.biasesTensor3d );
-
-              this.biasesTensor3d.dispose();
-              this.biasesTensor3d = biasesTensor3d_shuffled;
-            }
-
-          }
-
-        }
-
-//!!! ...unfinished... (2021/10/29)
-
-
-
-
-
-
-
-//!!! ...unfinished... (2021/10/29) Old Codes
-
-//!!! (2021/10/29 Remarked) Old Codes
-
-//       // 4. Pre-shuffle channels by shuffling the filters and biases.
-//       if ( this.channelShuffler ) {
-//         let outputGroupCount = this.channelShuffler.outputGroupCount; // Uses the output group count of the specified channel shuffler.
-//
-//         { // Shuffle the filters along the last (i.e. channel) axis.
-//           let filtersChannelShuffler = new ChannelShuffler.ShuffleInfo( this.filtersTensor4d.shape, outputGroupCount );
-//           let filtersTensor4d_shuffled = filtersChannelShuffler.reshapeTransposeReshape( this.filtersTensor4d );
-//
-//           this.filtersTensor4d.dispose();
-//           this.filtersTensor4d = filtersTensor4d_shuffled;
-//         }
-//
-//         { // Shuffle the biases along the last (i.e. channel) axis.
-//           let biasesChannelShuffler = new ChannelShuffler.ShuffleInfo( this.biasesTensor3d.shape, outputGroupCount );
-//           let biasesTensor3d_shuffled = biasesChannelShuffler.reshapeTransposeReshape( this.biasesTensor3d );
-//
-//           this.biasesTensor3d.dispose();
-//           this.biasesTensor3d = biasesTensor3d_shuffled;
-//         }
-//       }
-
-
-
-
-
-
-
-
-//     } catch ( e ) {
-//
-//       return false;
-
-
-
-    } finally {
-
-      if ( higherHalfPassThrough ) {
-
-        // Include the weights count of the higher-half-pass-through filters and biases.
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-        if ( higherHalfPassThrough.biasesTensor3d ) {
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
-        }
-
-        higherHalfPassThrough.disposeTensors();
+      } else if ( this.channelShuffler_outputGroupCount >= 0 ) { // 4. i.e. bHigherHalfPassThrough or bHigherHalfPassThroughShuffle
+        this.bInitOk = Base.extractAs_HigherHalfPassThrough_or_HigherHalfPassThroughShuffle.call( this, inputFloat32Array );
       }
     }
 
-    this.bInitOk = true;
-    return true;
+    return this.bInitOk;
   }
 
   disposeTensors() {
@@ -488,77 +258,6 @@ class Base extends ReturnOrClone_Activation.Base {
   get bExisted() {
     return this.bPointwise;
   }
-
-//!!! (2021/11/09 Remarked) Old Codes
-//   /**
-//    * This method uses almost all properties of Pointwise.Base (i.e. this) except inputChannelCount and outputChannelCount.
-//    * They should be specified by method parameters explicitly. This method will record the result inside this object directly
-//    * (except this.bInitOk).
-//    *
-//    * @param {Base} this
-//    *   It should be an object of class Pointwise.Base.
-//    *
-//    * @param {Float32Array} inputFloat32Array
-//    *   A Float32Array whose values will be interpreted as weights.
-//    *
-//    * @param {number} byteOffsetBegin
-//    *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by this method.
-//    *
-//    * @param {number} inputChannelCount
-//    *   The channel count of the pointwise convolution's input.
-//    *
-//    * @param {number} outputChannelCount
-//    *   The channel count of the pointwise convolution's output.
-//    *
-//    * @return {boolean} Return true, if succeeded.
-//    */
-//   static init_by_inputChannelCount_outputChannelCount( inputFloat32Array, byteOffsetBegin, inputChannelCount, outputChannelCount ) {
-//
-// //!!! ...unfinished... (2021/10/29)
-//
-//     // Q: Why not keep filtersWeights and biasesWeights in data members of this?
-//     // A: Their underlying ArrayBuffer is inputFloat32Array.buffer. If this.filtersWeights and this.biasesWeights are kept,
-//     //    the inputFloat32Array.buffer could not be released by memory garbage collector.
-//
-//     this.disposeTensors();
-//
-//     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-//
-//     Base.Setup_bPointwise_pfn.call( this );
-//
-//     if ( !this.bPointwise ) {
-//       return true; // no operation at all.
-//     }
-//
-//     //let filterHeightWidth = [ 1, 1 ];
-//     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
-//     let biasesShape =  [ 1, 1, outputChannelCount ];
-//
-//     let filtersWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, filtersShape );
-//     if ( !filtersWeights.extract() )
-//       return false;  // e.g. input array does not have enough data.
-//     this.byteOffsetEnd = filtersWeights.defaultByteOffsetEnd;
-//
-//     this.filtersTensor4d = tf.tensor4d( filtersWeights.weights, filtersShape );
-//
-//     this.tensorWeightCountTotal // By default, same as extracted weights count.
-//       = ( this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.filtersTensor4d.shape ) );
-//
-//     if ( this.bBias ) {
-//       let biasesWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, biasesShape );
-//       if ( !biasesWeights.extract() )
-//         return false;  // e.g. input array does not have enough data.
-//       this.byteOffsetEnd = biasesWeights.defaultByteOffsetEnd;
-//
-//       this.biasesTensor3d = tf.tensor3d( biasesWeights.weights, biasesShape );
-//
-//       this.tensorWeightCountTotal // By default, same as extracted weights count.
-//         = ( this.tensorWeightCountExtracted += tf.util.sizeFromShape( this.biasesTensor3d.shape ) );
-//     }
-//
-//     return true;
-//   }
-
 
   /**
    * Extract filters and biases of normal pointwise convolution from inputFloat32Array.
@@ -681,7 +380,6 @@ class Base extends ReturnOrClone_Activation.Base {
     return true;
   }
 
-//!!! ...unfinished... (2021/11/09)
   /**
    * Extract filters and biases of HigherHalfPointwise22 from inputFloat32Array.
    *
@@ -764,7 +462,6 @@ class Base extends ReturnOrClone_Activation.Base {
     return true;
   }
 
-
   /**
    * Extract filters and biases of HigherHalfPassThrough or HigherHalfPassThroughShuffle from inputFloat32Array.
    *
@@ -787,7 +484,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *
    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
    */
-  static extractAs_HigherHalfPassThrough_Or_HigherHalfPassThroughShuffle( inputFloat32Array ) {
+  static extractAs_HigherHalfPassThrough_or_HigherHalfPassThroughShuffle( inputFloat32Array ) {
 
     let higherHalfPassThrough;
     try {
@@ -905,7 +602,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
     return true;
   }
-
 
   /** Determine this.bPointwiseXxx and this.pfnXxx data members.
    *
