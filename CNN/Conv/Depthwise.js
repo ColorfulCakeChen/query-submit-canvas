@@ -187,13 +187,19 @@ class PassThrough {
     let filtersShape = [ filterHeight, filterWidth, imageInDepth, channelMultiplier ];
     let biasesShape =  [ 1, 1, imageOutDepth ];
 
-    // Generate depthwise filters for just pass input to output.
-    this.filtersTensor4d = tf.tensor( this.depthwiseFiltersArray, filtersShape );
+    [ this.filtersTensor4d, this.biasesTensor3d ] = tf.tidy( () => {
 
-    // Generate bias for just adding zero. (i.e. equals no bias).
-    if ( this.bBias ) {
-      this.biasesTensor3d = tf.zero( biasesShape );
-    }
+      // Generate depthwise filters for just pass input to output.
+      let filtersTensor4d = tf.tensor( this.depthwiseFiltersArray, filtersShape );
+
+      // Generate bias for just adding zero. (i.e. equals no bias).
+      let biasesTensor3d;
+      if ( this.bBias ) {
+        biasesTensor3d = tf.zero( biasesShape );
+      }
+
+      return [ filtersTensor4d, biasesTensor3d ];
+    });
   }
 
   disposeTensors() {
