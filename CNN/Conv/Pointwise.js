@@ -41,7 +41,7 @@ class PassThrough {
 
     // Generate bias for just adding zero. (i.e. equals no bias).
     if ( this.bBias ) {
-      this.biasesTensor3d = tf.zero( biasesShape );
+      this.biasesTensor3d = tf.tidy( () => tf.zero( biasesShape ) );
     }
   }
 
