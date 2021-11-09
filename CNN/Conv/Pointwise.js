@@ -424,10 +424,13 @@ class Base extends ReturnOrClone_Activation.Base {
     this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
     this.outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
 
-//!!! ...unfinished... (2021/11/09) What if ( inputChannelCount == 1 ) or ( outputChannelCount == 1 )?
-
     this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
     this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+    // If the channel count can not be halved (e.g. ( inputChannelCount == 1 ) or ( outputChannelCount == 1 ) ), treated as normal pointwise.
+    if ( ( 0 == this.inputChannelCount_higherHalf ) || ( 0 == this.outputChannelCount_higherHalf ) ) {
+      return Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
+    }
 
     // The extracting order is important: lowerHalfFilter, lowerHalfBias, higherHalfFilter, higherHalfBias.
     let filtersTensor4d_lowerHalf, biasesTensor3d_lowerHalf, filtersTensor4d_higherHalf, biasesTensor3d_higherHalf;
