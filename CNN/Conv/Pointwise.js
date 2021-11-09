@@ -505,11 +505,13 @@ class Base extends ReturnOrClone_Activation.Base {
     let higherHalfPassThrough;
     try {
 
-      this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
-        = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
-        = Math.ceil( this.outputChannelCount / 2 ); // The lower half filters have half the output channel count as input and output.
+      // In order to "pass-through" the higher half, the channel count of input's higher half must be the same as output's higher half.
+      this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = Math.floor( this.outputChannelCount / 2 );
 
-      this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
+      // Note: The channel count of input's lower half might be different from output's lower half. The reason is inputChannelCount
+      // might be different from outputChannelCount.
+      this.inputChannelCount_lowerHalf = this.inputChannelCount_toBeExtracted = this.inputChannelCount - this.inputChannelCount_higherHalf;
+      this.outputChannelCount_lowerHalf = this.outputChannelCount_toBeExtracted = this.outputChannelCount - this.outputChannelCount_higherHalf;
 
       let filtersTensor4d, biasesTensor3d;
       if ( this.outputChannelCount_higherHalf > 0 ) { // 3.1
