@@ -500,14 +500,10 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   static extractAs_HigherHalfPassThrough_or_HigherHalfPassThroughShuffle( inputFloat32Array ) {
 
-//!!! ...unfinished... (2021/11/09) What if ( inputChannelCount == 1 ) or ( outputChannelCount == 1 )?
-
     let higherHalfPassThrough;
     try {
 
-      // 1.
-
-      // In order to "pass-through" the higher half, the channel count of input's higher half must be the same as output's higher half.
+      // 1. In order to "pass-through" the higher half, the channel count of input's higher half must be the same as output's higher half.
       this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = Math.floor( this.outputChannelCount / 2 );
 
       // 2.
@@ -531,8 +527,7 @@ class Base extends ReturnOrClone_Activation.Base {
           this.outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
         );
 
-        {
-          // The extracted filters should be expanded to accept a larger input channel count (i.e. this.inputChannelCount,
+        { // The extracted filters should be expanded to accept a larger input channel count (i.e. this.inputChannelCount,
           // not Math.ceil( this.outputChannelCount / 2 ) ). The extra channel's filters are just zero.
           let filtersTensor4d_lowerHalf_expanded;
           {
