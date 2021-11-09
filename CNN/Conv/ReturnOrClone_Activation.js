@@ -27,7 +27,7 @@ class Base extends ReturnOrClone.Base {
   }
 
   /**
-   * Extract tf.tensor4d from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
+   * Extract tf.tensor from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
    *   - this.tensorWeightCountTotal
@@ -44,7 +44,7 @@ class Base extends ReturnOrClone.Base {
       return null;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = tensorWeights.defaultByteOffsetEnd;
 
-    let t = tf.tensor4d( tensorWeights.weights, tensorShape );
+    let t = tf.tensor( tensorWeights.weights, tensorShape );
     let elementCount = tf.util.sizeFromShape( t.shape );
     this.tensorWeightCountExtracted += elementCount;
     this.tensorWeightCountTotal += elementCount;
