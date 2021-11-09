@@ -119,7 +119,23 @@ class Base {
 
 //!!! ...unfinished... (2021/10/28) What concatenatedDepth should be if ( input1ChannelCount == 0 )?
 
-            let concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+            let concatenatedDepth;
+            if ( input1ChannelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
+              concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+
+            } else { // ( input1ChannelCount == 0 )
+              // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+              // ONE_INPUT_HALF_THROUGH: // (-5)
+              //
+              // In these two cases:
+              //   - The input1 does not exist.
+              /    - Fortunately, the concatenatedDepth of channel shuffler is not so important here.
+              //     - Only ( imageInHeight, imageInWidth, outputGroupCount ) of channel shuffler will be used.
+              //     - So a usable (non-zero) value is enough. 
+              //
+              concatenatedDepth = ( 1 * outputGroupCount );
+            }
+
             channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
               imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
 
