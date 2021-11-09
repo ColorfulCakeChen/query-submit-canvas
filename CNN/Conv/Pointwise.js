@@ -180,15 +180,15 @@ class Base extends ReturnOrClone_Activation.Base {
       return this.bInitOk;
     }
 
-    if ( this.inputChannelCount < this.outputChannelCount ) { // 2. i.e. bHigherHalfCopyLowerHalf
+    if ( this.inputChannelCount < this.outputChannelCount ) { // 2. bHigherHalfCopyLowerHalf
       this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
 
     } else { // ( inputChannelCount >= outputChannelCount )
 
-      if ( this.channelShuffler_outputGroupCount < 0 ) { // 3. i.e. bHigherHalfPointwise22
+      if ( this.channelShuffler_outputGroupCount < 0 ) { // 3. bHigherHalfPointwise22
         this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
 
-      } else if ( this.channelShuffler_outputGroupCount >= 0 ) { // 4. i.e. bHigherHalfPassThrough or bHigherHalfPassThroughShuffle
+      } else if ( this.channelShuffler_outputGroupCount >= 0 ) { // 4. bHigherHalfPassThrough or bHigherHalfPassThroughShuffle
         this.bInitOk = Base.extractAs_HigherHalfPassThrough_or_HigherHalfPassThroughShuffle.call( this, inputFloat32Array );
       }
     }
