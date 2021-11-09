@@ -943,14 +943,19 @@ class Base extends ReturnOrClone.Base {
       input1: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input1", null, null ),
     };
 
-//!!! ...unfinished... (2021/10/28) channelShuffler_outputGroupCount
-
     // 2. The first 1x1 pointwise convolution.
     this.pointwise1 = new Pointwise.Base(
       this.channelCount0_pointwise1Before,
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
       this.bHigherHalfDifferent, // pointwise1 may have higher-half-different.
-      null // pointwise1 never uses channel shuffler.
+
+      // If ( bHigherHalfDifferent == true ):
+      //   - If ( inputChannelCount < outputChannelCount ), bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head.
+      //     - channelShuffler_outputGroupCount does not matter.
+      //
+      //   - If ( inputChannelCount >= outputChannelCount ), bHigherHalfPassThrough, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail.
+      //     - ( channelShuffler_outputGroupCount == 0 )
+      0
     );
 
     if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -1077,17 +1082,20 @@ class Base extends ReturnOrClone.Base {
 
     // 5. The pointwise2 convolution.
 
+    // If ( bHigherHalfDifferent == true ):
+    //   - If ( channelShuffler_outputGroupCount < 0 ), bHigherHalfPointwise22, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head.
+    //   - If ( channelShuffler_outputGroupCount > 0 ), bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail.
+    //
+    let channelShuffler_outputGroupCount = -1;
+    if ( channelShuffler_ConcatPointwiseConv )
+      channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
+
     // 5.1 Pointwise21
     this.pointwise21 = new Pointwise.Base(
       this.channelCount_concat1After_pointwise2Before,
       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
       this.bHigherHalfDifferent,
-
-//!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
-// The pointwise2 needs not channel shuffler, but needs extract weights in filter1-bias1-filter2-bias2 in sequence.
-// So that one pointwise21 simulates combined pointwise21 and pointwise22.
-
-      channelShuffler_ConcatPointwiseConv
+      channelShuffler_outputGroupCount
     );
 
     if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -1110,12 +1118,7 @@ class Base extends ReturnOrClone.Base {
         this.channelCount_concat1After_pointwise2Before,
         this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
         this.bHigherHalfDifferent,
-
-//!!! ...unfinished... (2021/10/28) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
-// The pointwise2 needs not channel shuffler, but needs extract weights in filter1-bias1-filter2-bias2 in sequence.
-// So that one pointwise21 simulates combined pointwise21 and pointwise22.
-
-        channelShuffler_ConcatPointwiseConv
+        channelShuffler_outputGroupCount
       );
 
       if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -1150,7 +1153,7 @@ class Base extends ReturnOrClone.Base {
 
     // Determine inChannels1.
     if ( this.channelCount1_pointwise1Before
-                  == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
+           == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
       this.inChannels1 = this.channelCount_pointwise21After_concat2Before; // The channel count of pointwise21's result.
 
     } else {
