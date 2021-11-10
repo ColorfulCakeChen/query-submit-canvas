@@ -2,7 +2,7 @@ export { Base };
 
 import * as ReturnOrClone from "./ReturnOrClone.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
-
+import * as Weights from "../Unpacker/Weights.js";
 
 /**
  * Shared common base class for Pointwise and Depthwise.
