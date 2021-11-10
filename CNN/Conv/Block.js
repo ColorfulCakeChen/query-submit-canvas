@@ -362,6 +362,9 @@ class Base {
 
     let stepParams, step, stepIniter;
 
+//!!! ...unfinished... (2021/11/10) should check whether channel shuffler is created successfully.
+// bInitOk
+
     this.stepsArray = new Array( stepParamsMaker.stepCount );
     for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
 
@@ -380,7 +383,7 @@ class Base {
 
       stepParams = stepParamsMaker.create_PointDepthPointParams( params.defaultInput, this.byteOffsetEnd );
 
-      if ( !this.channelShuffler ) { // If channelShuffler is got  first time, keep it.
+      if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
         // If channelShuffler is not null, keep it so that its tensors could be released.
         let channelShuffler = stepParamsMaker.channelShuffler;
