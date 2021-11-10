@@ -207,13 +207,13 @@ class Params extends Weights.Params {
    *     - If ( bOutput1Requested == true ):
    *
    *       - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
-   *           (-3) (ShuffleNetV2's body/tail), the outut1 will always exist. Its channel count will be
+   *           (-3) (ShuffleNetV2's body/tail), the output1 will always exist. Its channel count will be
    *           channelCount_pointwise21After_concat2Before.
    *
    *       - Otherwise:
    *
    *         - If ( pointwise21ChannelCount > 0 ), then ( pointwise22ChannelCount > 0 ), the output1 will exist. Its channel
-   *             count will be pointwise22ChannelCount. Its bias flag and activation function will also  be the same as pointwise21.
+   *             count will be pointwise22ChannelCount. Its bias flag and activation function will also be the same as pointwise21.
    *
    *         - If ( pointwise21ChannelCount <= 0 ), then ( pointwise22ChannelCount <= 0 ), there will be no output1.
    *
@@ -508,17 +508,25 @@ class Params extends Weights.Params {
    */
   get pointwise22ChannelCount()   {
 
-    // In ShuffleNetV2's body/tail, there is always no pointwise22.
-    if ( this.channelCount1_pointwise1Before
-           == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3) (ShuffleNetV2's body/tail)
-      return 0;
+    // In the following cases, there is always no pointwise22.
+    //   - ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
+    //   - ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
+    //   - TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail)
+    //
+    switch ( this.channelCount1_pointwise1Before ) {
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH: // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1:  // (-3) (ShuffleNetV2's body/tail)
+        return 0;
+        break;
 
     // Otherwise, pointwise22 is output1 directly. It is determined by both bOutput1Requested and pointwise21ChannelCount.
-    } else {
-      if ( this.bOutput1Requested )
-        return this.pointwise21ChannelCount; // Still may be 0.
-      else
-        return 0; // No pointwisw22.
+      default:
+        if ( this.bOutput1Requested )
+          return this.pointwise21ChannelCount; // Still may be 0.
+        else
+          return 0; // No pointwisw22.
+        break;
     }
   }
 
@@ -1564,6 +1572,12 @@ class Base extends ReturnOrClone.Base {
 //      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
 //
 // If no pointwise2, who is responsible for shuffling the channels?
+//
+// Perhapse, the channelShuffler_ConcatPointwiseConv (without concatenation) should be used.
+//
+// If ( bHigherHalfDifferent == true ) and ( channelShuffler_ConcatPointwiseConv != null ),
+//   ( i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail ),
+//
 
 
               // no pointwise1, no depthwise1, no concat1, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
