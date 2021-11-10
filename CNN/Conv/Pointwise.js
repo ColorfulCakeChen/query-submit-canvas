@@ -270,6 +270,55 @@ class Base extends ReturnOrClone_Activation.Base {
     return this.bPointwise;
   }
 
+  /** Determine this.bPointwiseXxx and this.pfnXxx data members.
+   *
+   * @param {Base} this
+   *   The Base object to be determined and modified.
+   */
+  static Setup_bPointwise_pfn() {
+
+    this.bPointwise = ( this.outputChannelCount > 0 );
+    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
+
+    if ( !this.bPointwise ) {
+      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
+      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
+      return true;
+    }
+
+    this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
+
+    if ( this.bBias ) {
+      if ( this.pfnActivation )
+        this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
+      else
+        this.pfnConvBiasActivation = Base.ConvBias_and_destroy_or_keep;
+    } else {
+      if ( this.pfnActivation )
+        this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
+       else
+        this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
+    }
+  }
+
+  /**
+   * Extract pointwise convolution filters from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   * @param {number} inputChannelCount        The input channel count of the pointwise convolution filters.
+   * @param {number} outputChannelCount       The output channel count of the pointwise convolution filters.
+   *
+   * @return {tf.tensor4d}                    The extracted depthwise filters. Return null, if failed.
+   */
+  static extractFilters( inputFloat32Array, inputChannelCount, outputChannelCount ) {
+    let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
+    return Base.extractTensor.call( inputFloat32Array, filtersShape );
+  }
+
   /**
    * Extract filters and biases of normal pointwise convolution from inputFloat32Array.
    *
@@ -671,55 +720,6 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     return true;
-  }
-
-  /** Determine this.bPointwiseXxx and this.pfnXxx data members.
-   *
-   * @param {Base} this
-   *   The Base object to be determined and modified.
-   */
-  static Setup_bPointwise_pfn() {
-
-    this.bPointwise = ( this.outputChannelCount > 0 );
-    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
-
-    if ( !this.bPointwise ) {
-      // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
-      this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
-      return true;
-    }
-
-    this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
-
-    if ( this.bBias ) {
-      if ( this.pfnActivation )
-        this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
-      else
-        this.pfnConvBiasActivation = Base.ConvBias_and_destroy_or_keep;
-    } else {
-      if ( this.pfnActivation )
-        this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
-       else
-        this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
-    }
-  }
-
-  /**
-   * Extract pointwise convolution filters from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
-   *   - this.byteOffsetEnd
-   *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
-   *
-   * @param {Base} this                       The Base object to be modified.
-   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
-   * @param {number} inputChannelCount        The input channel count of the pointwise convolution filters.
-   * @param {number} outputChannelCount       The output channel count of the pointwise convolution filters.
-   *
-   * @return {tf.tensor4d}                    The extracted depthwise filters. Return null, if failed.
-   */
-  static extractFilters( inputFloat32Array, inputChannelCount, outputChannelCount ) {
-    let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
-    return Base.extractTensor.call( inputFloat32Array, filtersShape );
   }
 
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
