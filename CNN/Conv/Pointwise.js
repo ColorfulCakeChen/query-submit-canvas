@@ -107,6 +107,14 @@ class PassThrough {
  *           channel shuffler on the output. (i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
  *           body/tail)
  *
+
+//!!! ...unfinished... (2021/11/10) needs one more mode:
+// All (not only higher half) pointwise convolution is pass-through, and it is also responsible for shuffling channels.
+// This is used for pointwise2 of ShuffleNetV2_ByMopbileNetV1's headbody/tail when pointwise2 does not exist.
+
+
+
+
  * @member {number} channelShuffler_outputGroupCount
  *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
  * be used to (pre-)shuffle the filters and biases. The total effect will be the same as applying a channel shuffler (without
