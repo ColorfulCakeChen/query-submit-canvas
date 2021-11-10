@@ -71,7 +71,7 @@ class Base extends ReturnOrClone.Base {
    */
   static extractBiases( inputFloat32Array, channelCount ) {
     let biasesShape = [ 1, 1, channelCount ];
-    return Base.extractTensor.call( inputFloat32Array, biasesShape );
+    return Base.extractTensor.call( this, inputFloat32Array, biasesShape );
   }
 
 }
