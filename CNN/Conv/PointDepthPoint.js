@@ -376,10 +376,11 @@ class Params extends Weights.Params {
    * @param {number} pointwise21ChannelCount
    * @param {boolean} bOutput1Requested
    *
-   * @param {ChannelShuffler.Xxx} channelShuffler
-   *   The channelShuffler must not null when:
-   *    - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
-   *    - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
+//!!! (2021/11/10 Remarked) should not past it here.
+//    * @param {ChannelShuffler.Xxx} channelShuffler
+//    *   The channelShuffler must not null when:
+//    *    - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
+//    *    - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
    */
   static setFlags_by(
            channelCount0_pointwise1Before, channelCount1_pointwise1Before,
@@ -409,11 +410,12 @@ class Params extends Weights.Params {
       case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
         this.bHigherHalfDifferent = true;
 
-        tf.util.assert( channelShuffler != null, `PointDepthPoint.Params.setFlags_by(): `
-          + `channelShuffler must NOT null when `
-          + `channelCount1_pointwise1Before=`
-          + `${Params.channelCount1_pointwise1Before.getStringOfValue( channelCount1_pointwise1Before )}`
-          + `(${channelCount1_pointwise1Before})` );
+//!!! (2021/11/10 Remarked) should not past it here.
+//         tf.util.assert( channelShuffler != null, `PointDepthPoint.Params.setFlags_by(): `
+//           + `channelShuffler must NOT null when `
+//           + `channelCount1_pointwise1Before=`
+//           + `${Params.channelCount1_pointwise1Before.getStringOfValue( channelCount1_pointwise1Before )}`
+//           + `(${channelCount1_pointwise1Before})` );
         break;
     }
 
