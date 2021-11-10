@@ -337,8 +337,7 @@ class Base {
       testParams.out.pointwise1ChannelCount,
       testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
       testParams.out.pointwise21ChannelCount,
-      testParams.out.bOutput1Requested,
-      channelShuffler_ConcatPointwiseConv );
+      testParams.out.bOutput1Requested );
 
     // The channelShuffler must not null when:
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
@@ -484,20 +483,27 @@ class Base {
    * @param {ChannelShuffler.Xxx} channelShuffler
    *   The channel shuffler. Used when concat-shuffle-split.
    *
-//!!! (2021/10/28 Remarked) need channel shuffler.                                                 
-//    * @param {number[]} channelShuffler_concatenatedShape
-//    *   The concatenatedShape of channel shuffler. Used when concat-shuffle-split.
-//    *
-//    * @param {number}   channelShuffler_outputGroupCount
-//    *    The outputGroupCount of channel shuffler. Used when concat-shuffle-split.
-   *
    * @return {object[]} Return output images array.
    */ 
-//!!! (2021/10/28 Remarked) need channel shuffler.                                                 
-//  calcResult( imageInArray, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount ) {
   calcResult( imageInArray, channelShuffler ) {
 
     let testParams = this.testParams;
+
+    // The channelShuffler must not null when:
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
+    //
+    switch ( testParams.out.channelCount1_pointwise1Before ) {
+      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+
+        tf.util.assert( channelShuffler != null, `PointDepthPoint_Reference.Base.pointDepthPoint_create(): `
+          + `channelShuffler must NOT null when `
+          + `channelCount1_pointwise1Before=`
+          + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
+          + `(${testParams.out.channelCount1_pointwise1Before})` );
+        break;
+    }
 
     {
       let flags = {};
@@ -506,8 +512,7 @@ class Base {
         testParams.out.pointwise1ChannelCount,
         testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
         testParams.out.pointwise21ChannelCount,
-        testParams.out.bOutput1Requested,
-        channelShuffler );
+        testParams.out.bOutput1Requested );
 
       // Create description for debug easily.
       this.paramsOutDescription =
