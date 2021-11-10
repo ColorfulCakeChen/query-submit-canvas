@@ -630,7 +630,9 @@ class Base extends ReturnOrClone_Activation.Base {
 
       // Combine lower-half and higher-half.
       let allFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_higherHalf ];
-      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+//!!! (2021/11/10 Remarked)
+//      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+      this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the last second axis (i.e. input channel axis; axis id 2).
 
       if ( this.bBias ) {
         let allBiasesArray = [ biasesTensor3d_lowerHalf, biasesTensor3d_higherHalf ];
@@ -658,7 +660,6 @@ class Base extends ReturnOrClone_Activation.Base {
     return true;
   }
 
-//!!! ...unfinished... (2021/11/10)
   /**
    * Extract filters and biases of HigherHalfPassThrough from inputFloat32Array.
    *
@@ -685,8 +686,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
    */
   static extractAs_HigherHalfPassThrough( inputFloat32Array ) {
-
-//!!! ...unfinished... (2021/11/10) should check whether null (failed). use try-catch-finally.
 
     this.bHigherHalfPassThrough = true;
 
@@ -722,7 +721,9 @@ class Base extends ReturnOrClone_Activation.Base {
           return false;
 
         let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
-        this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+//!!! (2021/11/10 Remarked)
+//      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+        this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the last second axis (i.e. input channel axis; axis id 2).
 
       } finally {
         if ( filtersTensor4d_lowerHalf )
