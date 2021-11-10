@@ -334,7 +334,8 @@ class Base extends ReturnOrClone_Activation.Base {
     this.disposeTensors();
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-    this.outputChannelCount = this.inputChannelCount; // Assume no channel multiplier.
+//!!!
+//    this.outputChannelCount = this.inputChannelCount; // Assume no channel multiplier.
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
     if ( this.channelShuffler ) {
@@ -632,12 +633,12 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.filterHeight
    *   - this.filterWidth
    *   - this.inputChannelCount
-   *   - this.outputChannelCount
    *
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
    *   - this.tensorWeightCountTotal
+   *   - this.outputChannelCount
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
    *   - this.biasesTensor3d
@@ -648,6 +649,8 @@ class Base extends ReturnOrClone_Activation.Base {
    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
    */
   static extractAs_AvgMaxPooling( inputFloat32Array ) {
+
+    this.outputChannelCount = this.inputChannelCount; // No channel multiplier.
 
     this.filterHeightWidth = [ this.filterHeight, this.filterWidth ];
 
@@ -665,7 +668,6 @@ class Base extends ReturnOrClone_Activation.Base {
     return true;
   }
 
-//!!! ...unfinished... (2021/11/10)
   /**
    * Extract filters and biases of HigherHalfDepthwise2 from inputFloat32Array.
    *
@@ -674,6 +676,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.filterHeight
    *   - this.filterWidth
    *   - this.inputChannelCount
+   *   - this.AvgMax_Or_ChannelMultiplier
    *
    * The following data members will be modified:
    *   - this.byteOffsetEnd
@@ -690,9 +693,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *
    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
    */
-  static extractAs_AvgMaxPooling( inputFloat32Array ) {
-
-//!!! ...unfinished... (2021/11/10) should check whether null (failed). use try-catch-finally.
+  static extractAs_HigherHalfDepthwise2( inputFloat32Array ) {
 
     this.bHigherHalfDepthwise2 = true;
 
@@ -720,8 +721,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( !filtersTensor4d_lowerHalf )
         return false;
-
-//!!! ...unfinished... (2021/11/10) should check whether null (failed).
 
       if ( this.bBias ) {
         biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
@@ -771,50 +770,79 @@ class Base extends ReturnOrClone_Activation.Base {
     return true;
   }
 
+//!!! ...unfinished... (2021/11/10)
+  /**
+   * Extract filters and biases of HigherHalfPassThrough from inputFloat32Array.
+   *
+   * The following data members will be used:
+   *   - this.byteOffsetEnd
+   *   - this.filterHeight
+   *   - this.filterWidth
+   *   - this.inputChannelCount
+   *   - this.AvgMax_Or_ChannelMultiplier
+   *
+   * The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *   - this.outputChannelCount
+   *   - this.inputChannelCount_toBeExtracted
+   *   - this.outputChannelCount_toBeExtracted
+   *   - this.filtersTensor4d
+   *   - this.biasesTensor3d
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   *
+   * @return {boolean}                        Return true, if succeeded. Return false, if failed.
+   */
+  static extractAs_HigherHalfPassThrough( inputFloat32Array ) {
 
+//!!! ...unfinished... (2021/11/10) should check whether null (failed). use try-catch-finally.
 
+    this.bHigherHalfPassThrough = true;
 
+    this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
+    let higherHalfPassThrough;
+    try {
 
+        this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
+        this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
 
-          } else { // 2.2 ( channelShuffler != null ), i.e. bHigherHalfPassThrough
-            this.bHigherHalfPassThrough = true;
+        this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
+        this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
-            this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
-            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+        // Just extract filters and biases for half of the specified channel count.
+        this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
+        this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
 
-            this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
-            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
-
-            // Just extract filters and biases for half of the specified channel count.
-            this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
-            this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
-
-            // The other half is just filters and biases for pass-through.
-            higherHalfPassThrough = new PassThrough(
-              this.imageInHeight, this.imageInWidth, this.inputChannelCount_higherHalf,
-              this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
+        // The other half is just filters and biases for pass-through.
+        higherHalfPassThrough = new PassThrough(
+          this.imageInHeight, this.imageInWidth, this.inputChannelCount_higherHalf,
+          this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
 
 //!!! ...unfinished... (2021/11/10) should check whether null (failed).
 //            bInitOk
-            
-            {
-              let filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
-                this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
 
-              let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
-              this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-              filtersTensor4d_lowerHalf.dispose();
-            }
+        {
+          let filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
+            this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
 
-            if ( this.bBias ) {
-              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
+          let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
+          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+          filtersTensor4d_lowerHalf.dispose();
+        }
 
-              let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
-              this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
-              biasesTensor3d_lowerHalf.dispose();
-            }
-          }
+        if ( this.bBias ) {
+          let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
+
+          let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
+          this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+          biasesTensor3d_lowerHalf.dispose();
+        }
+      }
+
 
         } else { // 2.3 Normal depthwise convolution.
 
@@ -852,6 +880,53 @@ class Base extends ReturnOrClone_Activation.Base {
   }
 
 
+
+  /**
+   * Extract filters and biases of normal dethwise convolution from inputFloat32Array.
+   *
+   * The following data members will be used:
+   *   - this.byteOffsetEnd
+   *   - this.filterHeight
+   *   - this.filterWidth
+   *   - this.inputChannelCount
+   *   - this.AvgMax_Or_ChannelMultiplier
+   *
+   * The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *   - this.outputChannelCount
+   *   - this.inputChannelCount_toBeExtracted
+   *   - this.outputChannelCount_toBeExtracted
+   *   - this.filtersTensor4d
+   *   - this.biasesTensor3d
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   *
+   * @return {boolean}                        Return true, if succeeded. Return false, if failed.
+   */
+  static extractAs_NormalDepthwise( inputFloat32Array ) {
+
+    this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+
+    this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+    this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+    this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array,
+      this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
+
+    if ( !this.filtersTensor4d )
+      return false;
+
+    if ( this.bBias ) {
+      this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
+      if ( !this.biasesTensor3d )
+        return false;
+    }
+
+    return true;
+  }
 
   /**
    * Adjust this.pfnOperation (and this.pfnOperationBiasActivation if need) so that this.pfnOperation() and this.pfnOperationBiasActivation()
