@@ -44,12 +44,17 @@ class Base extends ReturnOrClone.Base {
       return null;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = tensorWeights.defaultByteOffsetEnd;
 
-    let t = tf.tensor( tensorWeights.weights, tensorShape );
-    let elementCount = tf.util.sizeFromShape( t.shape );
-    this.tensorWeightCountExtracted += elementCount;
-    this.tensorWeightCountTotal += elementCount;
+    try {
+      let t = tf.tensor( tensorWeights.weights, tensorShape );
+      let elementCount = tf.util.sizeFromShape( t.shape );
+      this.tensorWeightCountExtracted += elementCount;
+      this.tensorWeightCountTotal += elementCount;
+      return t;
 
-    return t;
+    // If failed (e.g. memory not enough), return null.      
+    } catch ( e ) {
+      return null;
+    }
   }
 
   /**
