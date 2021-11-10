@@ -334,8 +334,6 @@ class Base extends ReturnOrClone_Activation.Base {
     this.disposeTensors();
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-//!!!
-//    this.outputChannelCount = this.inputChannelCount; // Assume no channel multiplier.
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
     if ( this.channelShuffler ) {
@@ -353,153 +351,31 @@ class Base extends ReturnOrClone_Activation.Base {
 
     Base.Setup_bDepthwise_pfn.call( this );
 
-    let higherHalfPassThrough;
-    try {
-
-      if ( this.bDepthwiseAvg || this.bDepthwiseMax ) { // 1. Depthwise by AVG or MAX pooling (so no channel multiplier).
-
-        this.filterHeightWidth = [ this.filterHeight, this.filterWidth ];
-
-        // In normal depthwise avg/max pooling, use specified specified channel count as extracted channel count.
-        // Although they are not used to extract avg/max filters, they will be used for extracting bias.
-        this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-        this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-        if ( this.bBias ) {
-          this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
-        }
-
-//!!! ...unfinished... (2021/11/10) should check whether null (failed). use try-catch-finally.
-
-      } else if ( this.bDepthwiseConv ) { // 2. Depthwise by convolution (with channel multiplier).
-
-        this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
-
-        if ( this.bHigherHalfDifferent == true ) {
-          
-          if ( this.channelShuffler == null ) { // 2.1 i.e. bHigherHalfDepthwise2
-            this.bHigherHalfDepthwise2 = true;
-
-            this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
-            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-
-            this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
-            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
-
-            // Extract filters and biases for the specified channel count, but in different sequence.
-            this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-            this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-            // The extraction order is important: filter1, bias1, filter2, bias2.
-            //
-            // In ShuffleNetV2's head, the filters and biases of depthwise2 are after depthwise1. In ShuffleNetV2_ByMobileNetV1's
-            // head, although depthwise1 and depthwise2 are combined into depthwise1, they should be extracted in sequence and
-            // then combined. So that they could use the same filters and biases weights array to generate the same result.
-            {
-              let filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
-                this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
-
-//!!! ...unfinished... (2021/11/10) should check whether null (failed).
-
-              let biasesTensor3d_lowerHalf;
-              if ( this.bBias ) {
-                biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
-              }
-
-              let filtersTensor4d_higherHalf = Base.extractFilters.call( this, inputFloat32Array,
-                this.filterHeight, this.filterWidth, this.inputChannelCount_higherHalf, this.AvgMax_Or_ChannelMultiplier );
-
-              let biasesTensor3d_higherHalf;
-              if ( this.bBias ) {
-                biasesTensor3d_higherHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_higherHalf );
-              }
-
-              // Combine lower-half and higher-half.
-              let allFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_higherHalf ];
-              this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-              filtersTensor4d_lowerHalf.dispose();
-              filtersTensor4d_higherHalf.dispose();
-
-              if ( this.bBias ) {
-                let allBiasesArray = [ biasesTensor3d_lowerHalf, biasesTensor3d_higherHalf ];
-                this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
-                biasesTensor3d_lowerHalf.dispose();
-                biasesTensor3d_higherHalf.dispose();
-              }
-            }
-
-          } else { // 2.2 ( channelShuffler != null ), i.e. bHigherHalfPassThrough
-            this.bHigherHalfPassThrough = true;
-
-            this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
-            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-
-            this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
-            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
-
-            // Just extract filters and biases for half of the specified channel count.
-            this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
-            this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
-
-            // The other half is just filters and biases for pass-through.
-            higherHalfPassThrough = new PassThrough(
-              this.imageInHeight, this.imageInWidth, this.inputChannelCount_higherHalf,
-              this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
-
-//!!! ...unfinished... (2021/11/10) should check whether null (failed).
-//            bInitOk
-            
-            {
-              let filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
-                this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
-
-              let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
-              this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-              filtersTensor4d_lowerHalf.dispose();
-            }
-
-            if ( this.bBias ) {
-              let biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
-
-              let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
-              this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
-              biasesTensor3d_lowerHalf.dispose();
-            }
-          }
-
-        } else { // 2.3 Normal depthwise convolution.
-
-          this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-          this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-          this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array,
-            this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
-
-          if ( this.bBias ) {
-            this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
-          }
-        }
-
-      } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
-      }
-
-    } finally {
-
-      if ( higherHalfPassThrough ) {
-
-        // Include the weights count of the higher-half-pass-through filters and biases.
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-        if ( higherHalfPassThrough.biasesTensor3d ) {
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
-        }
-
-        higherHalfPassThrough.disposeTensors();
-      }
-
+    if ( !this.bDointwise ) {
+      this.bInitOk = true;
+      return true; // no operation at all. No depthwise (e.g. zero or negative number) (so no channel multiplier, too).
     }
 
-    this.bInitOk = true;
-    return true;
+    if ( this.bDepthwiseAvg || this.bDepthwiseMax ) { // 1. Depthwise by AVG or MAX pooling (so no channel multiplier).
+      this.bInitOk = Base.extractAs_AvgMaxPooling.call( this, inputFloat32Array );
+
+    } else if ( this.bDepthwiseConv ) { // 2. Depthwise by convolution (with channel multiplier).
+
+      if ( this.bHigherHalfDifferent == true ) {
+
+        if ( this.channelShuffler == null ) { // 2.1 i.e. bHigherHalfDepthwise2
+          this.bInitOk = Base.extractAs_HigherHalfDepthwise2.call( this, inputFloat32Array );
+
+        } else { // 2.2 ( channelShuffler != null ), i.e. bHigherHalfPassThrough
+          this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
+
+      } else { // 2.3 Normal depthwise convolution.
+        this.bInitOk = Base.extractAs_NormalDepthwise.call( this, inputFloat32Array );
+
+      }
+    }
+
+    return this.bInitOk;
   }
 
   /** Release tensors.
