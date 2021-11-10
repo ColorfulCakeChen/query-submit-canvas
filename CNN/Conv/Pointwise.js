@@ -102,17 +102,25 @@ class PassThrough {
  *           and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
  *           pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
- *       - If ( channelShuffler_outputGroupCount > 0 ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
- *           and ( outputChannelCount - 1 ) will just pass through the input to output. But they will be arranged just like applying
- *           channel shuffler on the output. (i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
- *           body/tail)
+ *       - If ( channelShuffler_outputGroupCount > 0 ):
+ *
+ *           - If ( outputChannelCount > 0 ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
+ *               and ( outputChannelCount - 1 ) will just pass through the input to output. But they will be arranged just like applying
+ *               channel shuffler on the output. (i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
+ *               body/tail)
+ *
+
+//!!! ...unfinished... (2021/11/10) In this case, the bPointwise should be true (not false), although the specified outputChannelCount is zero.
+
+ *           - If ( outputChannelCount <= 0 ), the filters will pass through all input channels to output. But they will be arranged
+ *               just like applying channel shuffler on the output. (i.e. bAllPassThroughShuffle, for pointwise2 of
+ *               ShuffleNetV2_ByMopbileNetV1's body/tail, when no pointwise2) (i.e. pure channel shuffler)
  *
 
 //!!! ...unfinished... (2021/11/10) needs one more mode:
 // All (not only higher half) pointwise convolution is pass-through, and it is also responsible for shuffling channels.
 // This is used for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail when pointwise2 does not exist.
 //
-// WRONG. A channel shuffler (not a pointwise convolution) should be used in this case.
 
 
 
