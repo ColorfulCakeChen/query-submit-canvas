@@ -368,10 +368,10 @@ class Base extends ReturnOrClone_Activation.Base {
 
         } else { // 2.2 ( channelShuffler != null ), i.e. bHigherHalfPassThrough
           this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
+        }
 
       } else { // 2.3 Normal depthwise convolution.
         this.bInitOk = Base.extractAs_NormalDepthwise.call( this, inputFloat32Array );
-
       }
     }
 
