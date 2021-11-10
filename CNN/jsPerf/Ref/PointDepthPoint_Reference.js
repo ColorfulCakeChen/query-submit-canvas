@@ -339,22 +339,6 @@ class Base {
       testParams.out.pointwise21ChannelCount,
       testParams.out.bOutput1Requested );
 
-    // The channelShuffler must not null when:
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
-    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
-    //
-    switch ( testParams.out.channelCount1_pointwise1Before ) {
-      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
-
-        tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `PointDepthPoint_Reference.Base.pointDepthPoint_create(): `
-          + `channelShuffler must NOT null when `
-          + `channelCount1_pointwise1Before=`
-          + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
-          + `(${testParams.out.channelCount1_pointwise1Before})` );
-        break;
-    }
-
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
     tf.util.assert( ( pointDepthPoint.bInitOk == bInitOk ),
@@ -396,12 +380,47 @@ class Base {
     asserter.propertyValue( "bAddInputToOutputRequested", flags.bAddInputToOutputRequested );
     asserter.propertyValue( "bConcat2ShuffleSplitRequested", flags.bConcat2ShuffleSplitRequested );
 
-    // Only if channel shuffler is used, it is recorded.
+    // The ( pointDepthPoint.bConcat2ShuffleSplitRequested == true ) only if:
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
+    //
     if ( pointDepthPoint.bConcat2ShuffleSplitRequested ) {
+      Base.AssertTwoEqualValues( "bConcat2ShuffleSplitRequested",
+        testParams.out.channelCount1_pointwise1Before,
+        ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1, parametersDescription );
+    }
+
+    // The channelShuffler must not null when:
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
+    //
+    if (   ( testParams.out.channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+        || ( testParams.out.channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
+        || ( testParams.out.channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+       ) {
+
+      tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `PointDepthPoint_Reference.Base.pointDepthPoint_create(): `
+        + `channelShuffler must NOT null when `
+        + `channelCount1_pointwise1Before=`
+        + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
+        + `(${testParams.out.channelCount1_pointwise1Before})` );
+
       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", channelShuffler_ConcatPointwiseConv );
+
     } else {
       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", null );
     }
+
+//!!! (2021/11/10 Remarked)
+//     // Only if channel shuffler is used, it is recorded.
+//     if ( pointDepthPoint.bConcat2ShuffleSplitRequested ) {
+//       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", channelShuffler_ConcatPointwiseConv );
+//     } else {
+//       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", null );
+//     }
 
     // pointwise1 parameters.
     asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
@@ -490,19 +509,23 @@ class Base {
     let testParams = this.testParams;
 
     // The channelShuffler must not null when:
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
     //
-    switch ( testParams.out.channelCount1_pointwise1Before ) {
-      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+    if (   ( testParams.out.channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+        || ( testParams.out.channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
+        || ( testParams.out.channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+       ) {
 
-        tf.util.assert( channelShuffler != null, `PointDepthPoint_Reference.Base.pointDepthPoint_create(): `
-          + `channelShuffler must NOT null when `
-          + `channelCount1_pointwise1Before=`
-          + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
-          + `(${testParams.out.channelCount1_pointwise1Before})` );
-        break;
+      tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `PointDepthPoint_Reference.Base.pointDepthPoint_create(): `
+        + `channelShuffler must NOT null when `
+        + `channelCount1_pointwise1Before=`
+        + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
+        + `(${testParams.out.channelCount1_pointwise1Before})` );
     }
 
     {
