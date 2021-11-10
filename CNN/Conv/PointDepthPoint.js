@@ -376,11 +376,6 @@ class Params extends Weights.Params {
    * @param {number} pointwise21ChannelCount
    * @param {boolean} bOutput1Requested
    *
-//!!! (2021/11/10 Remarked) should not past it here.
-//    * @param {ChannelShuffler.Xxx} channelShuffler
-//    *   The channelShuffler must not null when:
-//    *    - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
-//    *    - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
    */
   static setFlags_by(
            channelCount0_pointwise1Before, channelCount1_pointwise1Before,
@@ -409,13 +404,6 @@ class Params extends Weights.Params {
 
       case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
         this.bHigherHalfDifferent = true;
-
-//!!! (2021/11/10 Remarked) should not past it here.
-//         tf.util.assert( channelShuffler != null, `PointDepthPoint.Params.setFlags_by(): `
-//           + `channelShuffler must NOT null when `
-//           + `channelCount1_pointwise1Before=`
-//           + `${Params.channelCount1_pointwise1Before.getStringOfValue( channelCount1_pointwise1Before )}`
-//           + `(${channelCount1_pointwise1Before})` );
         break;
     }
 
@@ -509,13 +497,18 @@ class Params extends Weights.Params {
   get pointwise22ChannelCount()   {
 
     // In the following cases, there is always no pointwise22.
+
+//!!! ...unfinished... (2021/11/10) really? How about outputTensorCount?
     //   - ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
     //   - ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
+
     //   - TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail)
     //
     switch ( this.channelCount1_pointwise1Before ) {
+//!!! ...unfinished... (2021/11/10) really? How about outputTensorCount?
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH: // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1:  // (-3) (ShuffleNetV2's body/tail)
         return 0;
         break;
