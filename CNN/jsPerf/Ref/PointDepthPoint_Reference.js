@@ -340,6 +340,22 @@ class Base {
       testParams.out.bOutput1Requested,
       channelShuffler_ConcatPointwiseConv );
 
+    // The channelShuffler must not null when:
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
+    //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
+    //
+    switch ( testParams.out.channelCount1_pointwise1Before ) {
+      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+      case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+
+        tf.util.assert( channelShuffler_ConcatPointwiseConv != null, `PointDepthPoint_Reference.Base.pointDepthPoint_create(): `
+          + `channelShuffler must NOT null when `
+          + `channelCount1_pointwise1Before=`
+          + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
+          + `(${testParams.out.channelCount1_pointwise1Before})` );
+        break;
+    }
+
     let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
 
     tf.util.assert( ( pointDepthPoint.bInitOk == bInitOk ),
