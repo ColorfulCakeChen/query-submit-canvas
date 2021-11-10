@@ -1089,8 +1089,11 @@ class Base extends ReturnOrClone.Base {
     //   - If ( channelShuffler_outputGroupCount > 0 ), bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail.
     //
     let channelShuffler_outputGroupCount = -1;
-    if ( channelShuffler_ConcatPointwiseConv )
+    if ( channelShuffler_ConcatPointwiseConv ) {
       channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
+
+//!!! ...unfinished... (2021/11/10) In this case, if pointwise2 does not exist, who is responsible for shuffling the channels?
+    }
 
     // 5.1 Pointwise21
     this.pointwise21 = new Pointwise.Base(
