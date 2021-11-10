@@ -129,7 +129,7 @@ class Base {
               //
               // In these two cases:
               //   - The input1 does not exist.
-              /    - Fortunately, the concatenatedDepth of channel shuffler is not so important here.
+              //   - Fortunately, the concatenatedDepth of channel shuffler is not so important here.
               //     - Only ( imageInHeight, imageInWidth, outputGroupCount ) of channel shuffler will be used.
               //     - So a usable (non-zero) value is enough. 
               //
