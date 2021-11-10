@@ -110,7 +110,7 @@ class PassThrough {
 
 //!!! ...unfinished... (2021/11/10) needs one more mode:
 // All (not only higher half) pointwise convolution is pass-through, and it is also responsible for shuffling channels.
-// This is used for pointwise2 of ShuffleNetV2_ByMopbileNetV1's headbody/tail when pointwise2 does not exist.
+// This is used for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail when pointwise2 does not exist.
 
 
 
