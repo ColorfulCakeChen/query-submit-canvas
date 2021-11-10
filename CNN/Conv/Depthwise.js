@@ -351,7 +351,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     Base.Setup_bDepthwise_pfn.call( this );
 
-    if ( !this.bDointwise ) {
+    if ( !this.bDepthwise ) {
       this.bInitOk = true;
       return true; // no operation at all. No depthwise (e.g. zero or negative number) (so no channel multiplier, too).
     }
