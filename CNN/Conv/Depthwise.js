@@ -702,7 +702,7 @@ class Base extends ReturnOrClone_Activation.Base {
         return false;
 
       let filtersTensor4d_lowerHalf;
-      {
+      try {
         filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
           this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.AvgMax_Or_ChannelMultiplier );
 
