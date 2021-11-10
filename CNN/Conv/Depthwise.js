@@ -410,7 +410,19 @@ class Base extends ReturnOrClone_Activation.Base {
     //  = this.filterHeightWidth
     //  = undefined;
 
-    this.bDepthwise = this.bDepthwiseAvg = this.bDepthwiseMax = this.bDepthwiseConv = false; // Assume no depthwise.
+    // If these properties does not exist, assigning value (even undefined) to them will create them. Avoid it.
+    if ( this.bDepthwise )
+      this.bDepthwise = undefined;
+
+    if ( this.bDepthwiseAvg )
+      this.bDepthwiseAvg = undefined;
+
+    if ( this.bDepthwiseMax )
+      this.bDepthwiseMax = undefined;
+
+    if ( this.bDepthwiseConv )
+      this.bDepthwiseConv = undefined;
+
     this.byteOffsetEnd = -1;
     this.bKeepInputTensor = false;  // Default will dispose input tensor.
     this.bInitOk = false;
