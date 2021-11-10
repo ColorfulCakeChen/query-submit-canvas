@@ -316,7 +316,7 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   static extractFilters( inputFloat32Array, inputChannelCount, outputChannelCount ) {
     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
-    return Base.extractTensor.call( inputFloat32Array, filtersShape );
+    return Base.extractTensor.call( this, inputFloat32Array, filtersShape );
   }
 
   /**
