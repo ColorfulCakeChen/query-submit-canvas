@@ -1017,21 +1017,19 @@ class Base {
     if ( null == imageIn ) {
       return [ null, null ];
 
-//!!! ...unfinished... (2021/11/11)
-//     tf.util.assert( ( imageIn1.height == imageIn2.height ),
-//       `${concatName} shape imageIn1.height (${imageIn1.height}) `
-//         + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})`);
-//
-//     tf.util.assert( ( imageIn1.width == imageIn2.width ),
-//       `${concatName} shape imageIn1.width (${imageIn1.width}) `
-//         + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})`);
+    tf.util.assert( ( ( imageIn.depth % 2 ) == 0 ),
+      `${splitName} shape imageIn.depth (${imageIn.depth}) `
+        + `should be dividable by 2 ( ( ${imageIn.depth} % 2 ) should be zero ). (${parametersDesc})`);
+
+    let imageOutDepth = imageIn.depth / 2;
+    let imageOutLength = ( imageIn.height * imageIn.width * imageOutDepth );
+    let imageOutArray = [
+      { height: imageIn.height, width: imageIn.width, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) },
+      { height: imageIn.height, width: imageIn.width, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) }
+    ];
 
 //!!! ...unfinished... (2021/11/11)
-    let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
-    let imageOut = {
-      height: imageIn1.height, width: imageIn1.width, depth: ( imageIn1.depth + imageIn2.depth ), dataArray: new Float32Array( imageOutLength ) };
-
-    // Concatenate along the image depth.
+    // Split along the image depth.
     for ( let y = 0; y < imageIn1.height; ++y ) {
       let indexBaseX = ( y * imageIn1.width );
 
