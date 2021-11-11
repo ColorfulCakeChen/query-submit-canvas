@@ -201,7 +201,7 @@ class Base extends ReturnOrClone_Activation.Base {
       return true; // no operation at all.
     }
 
-    if ( this.bHigherHalfDifferent ) { // 1. Normal pointwise convolution and bias.
+    if ( !this.bHigherHalfDifferent ) { // 1. Normal pointwise convolution and bias.
       this.bInitOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
       return this.bInitOk;
     }
