@@ -80,6 +80,13 @@ class PassThrough {
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {number} outputChannelCount
+ *   The output channel count of this pointwise convolutiuon.
+ *     - Usually, if ( outputChannelCount == 0 ), it means no operation at all (i.e. bPointwise == bExisted == false ).
+ *     - However, if ( outputChannelCount == 0 ) but ( ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount )
+ *         and ( channelShuffler_outputGroupCount > 0 ) ), this pointwise will exist (i.e. bPointwise == bExisted == true ) and always
+ *         will not have biases (no matter how bBias is). It is all-pass-and-channel-shuffling mode.
+ *
  * @member {boolean} bHigherHalfDifferent
  *   - If false, it is just a normal poitwise convolution.
  *
@@ -113,9 +120,10 @@ class PassThrough {
 //!!! ...unfinished... (2021/11/10)
 
  *           - If ( outputChannelCount <= 0 ), the filters will pass through all input channels to output. But they will be arranged
- *               just like applying channel shuffler on the output. In this case, the bPointwise should be true (not false), although
- *               the specified outputChannelCount is zero.(i.e. bAllPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
- *               body/tail, when no pointwise2) (i.e. pure channel shuffler)
+ *               just like applying channel shuffler on the output. In this case, the bPointwise (and bExisted) will be true (not
+ *               false), although the specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
+ *               (i.e. bAllPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail, when no pointwise2) (i.e. pure
+ *               channel shuffler)
  *
 
 //!!! ...unfinished... (2021/11/10) needs one more mode:
@@ -217,8 +225,17 @@ class Base extends ReturnOrClone_Activation.Base {
       if ( this.channelShuffler_outputGroupCount < 0 ) { // 3. bHigherHalfPointwise22
         this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
 
-      } else if ( this.channelShuffler_outputGroupCount >= 0 ) { // 4. bHigherHalfPassThrough or bHigherHalfPassThroughShuffle
-        this.bInitOk = Base.extractAs_HigherHalfPassThrough_or_HigherHalfPassThroughShuffle.call( this, inputFloat32Array );
+      } else if ( this.channelShuffler_outputGroupCount == 0 ) { // 4. bHigherHalfPassThrough
+        this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
+
+      } else { // ( channelShuffler_outputGroupCount > 0 ), shuffling.
+
+        if ( this.outputChannelCount > 0 ) { // 5. bHigherHalfPassThroughShuffle
+          this.bInitOk = Base.extractAs_HigherHalfPassThroughShuffle.call( this, inputFloat32Array );
+
+        } else { // 6. ( outputChannelCount <= 0 ), bAllPassThroughShuffle
+          this.bInitOk = Base.extractAs_AllPassThroughShuffle( this, inputFloat32Array );
+        }
       }
     }
 
@@ -288,14 +305,27 @@ class Base extends ReturnOrClone_Activation.Base {
     return this.bPointwise;
   }
 
-  /** Determine this.bPointwiseXxx and this.pfnXxx data members.
+  /** Determine this.bPointwise and this.pfnXxx data members.
    *
    * @param {Base} this
    *   The Base object to be determined and modified.
    */
   static Setup_bPointwise_pfn() {
 
-    this.bPointwise = ( this.outputChannelCount > 0 );
+    // Determine whether pointwise operation should exist.
+    if ( this.outputChannelCount > 0 ) {
+      this.bPointwise = true;
+    } else {  // ( outputChannelCount <= 0 )
+      if (   ( this.bHigherHalfDifferent == true )
+          && ( this.inputChannelCount >= this.outputChannelCount )
+          && ( this.channelShuffler_outputGroupCount > 0 )
+         ) {
+        this.bPointwise = true; // all-pass-and-channel-shuffling mode.
+      } else {
+        this.bPointwise = false;
+      }
+    }
+
     this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
 
     if ( !this.bPointwise ) {
@@ -579,7 +609,7 @@ class Base extends ReturnOrClone_Activation.Base {
   }
 
   /**
-   * Extract filters and biases of HigherHalfPassThrough or HigherHalfPassThroughShuffle from inputFloat32Array.
+   * Extract filters and biases of AllPassThroughShuffle from inputFloat32Array.
    *
    * The following data members will be used:
    *   - this.byteOffsetEnd
@@ -600,7 +630,43 @@ class Base extends ReturnOrClone_Activation.Base {
    *
    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
    */
-  static extractAs_HigherHalfPassThrough_or_HigherHalfPassThroughShuffle( inputFloat32Array ) {
+  static extractAs_AllPassThroughShuffle( inputFloat32Array ) {
+
+    this.bAllPassThroughShuffle = true;
+
+//!!! ...unfinished... (2021/11/11)
+
+
+//!!! ...unfinished... (2021/11/11) always does not have biases (no matter how bBias is)
+
+        Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
+  }
+
+  /**
+   * Extract filters and biases of HigherHalfPassThrough from inputFloat32Array.
+   *
+   * The following data members will be used:
+   *   - this.byteOffsetEnd
+   *   - this.inputChannelCount
+   *   - this.outputChannelCount
+   *
+   * The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *   - this.inputChannelCount_toBeExtracted
+   *   - this.outputChannelCount_toBeExtracted
+   *   - this.filtersTensor4d
+   *   - this.biasesTensor3d
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   *
+   * @return {boolean}                        Return true, if succeeded. Return false, if failed.
+   */
+  static extractAs_HigherHalfPassThrough( inputFloat32Array ) {
+
+    this.bHigherHalfPassThrough = true;
 
     let higherHalfPassThrough;
     try {
@@ -693,33 +759,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
       }
 
-      // 3.
-      if ( this.channelShuffler_outputGroupCount == 0 ) { // 3.1 i.e. bHigherHalfPassThrough
-        this.bHigherHalfPassThrough = true;
-
-      } else { // 3.2 ( channelShuffler_outputGroupCount > 0 ), i.e. bHigherHalfPassThroughShuffle
-        this.bHigherHalfPassThroughShuffle = true;
-
-        // Pre-shuffle channels by shuffling the filters and biases.
-
-        { // Shuffle the filters along the last (i.e. channel) axis.
-          let filtersChannelShuffler = new ChannelShuffler.ShuffleInfo( this.filtersTensor4d.shape, this.channelShuffler_outputGroupCount );
-          let filtersTensor4d_shuffled = filtersChannelShuffler.reshapeTransposeReshape( this.filtersTensor4d );
-
-          this.filtersTensor4d.dispose();
-          this.filtersTensor4d = filtersTensor4d_shuffled;
-        }
-
-        { // Shuffle the biases along the last (i.e. channel) axis.
-          let biasesChannelShuffler = new ChannelShuffler.ShuffleInfo( this.biasesTensor3d.shape, this.channelShuffler_outputGroupCount );
-          let biasesTensor3d_shuffled = biasesChannelShuffler.reshapeTransposeReshape( this.biasesTensor3d );
-
-          this.biasesTensor3d.dispose();
-          this.biasesTensor3d = biasesTensor3d_shuffled;
-        }
-
-      }
-
     } catch ( e ) {
       return false; // e.g. memory not enough.
 
@@ -738,6 +777,72 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     return true;
+  }
+
+  /**
+   * Extract filters and biases of HigherHalfPassThroughShuffle from inputFloat32Array.
+   *
+   * The following data members will be used:
+   *   - this.byteOffsetEnd
+   *   - this.inputChannelCount
+   *   - this.outputChannelCount
+   *
+   * The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *   - this.inputChannelCount_toBeExtracted
+   *   - this.outputChannelCount_toBeExtracted
+   *   - this.filtersTensor4d
+   *   - this.biasesTensor3d
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   *
+   * @return {boolean}                        Return true, if succeeded. Return false, if failed.
+   */
+  static extractAs_HigherHalfPassThroughShuffle( inputFloat32Array ) {
+    
+    try {
+      let bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
+      if ( bInitOk ) {
+        this.bHigherHalfPassThroughShuffle = true;
+        Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
+      }
+
+    } catch ( e ) {
+      return false; // e.g. memory not enough.
+    }
+
+    return true;
+  }
+
+  /**
+   * Pre-shuffle channels by shuffling the filters and biases.
+   *
+   * The following data members will be modified:
+   *   - this.filtersTensor4d
+   *   - this.biasesTensor3d
+   *
+   * @param {Base} this                       The Base object to be modified.
+   */
+  static shuffle_filters_biases() {
+
+    if ( this.filtersTensor4d ) { // Shuffle the filters along the last (i.e. channel) axis.
+      let filtersChannelShuffler = new ChannelShuffler.ShuffleInfo( this.filtersTensor4d.shape, this.channelShuffler_outputGroupCount );
+      let filtersTensor4d_shuffled = filtersChannelShuffler.reshapeTransposeReshape( this.filtersTensor4d );
+
+      this.filtersTensor4d.dispose();
+      this.filtersTensor4d = filtersTensor4d_shuffled;
+    }
+
+    if ( this.biasesTensor3d ) { // Shuffle the biases along the last (i.e. channel) axis.
+      let biasesChannelShuffler = new ChannelShuffler.ShuffleInfo( this.biasesTensor3d.shape, this.channelShuffler_outputGroupCount );
+      let biasesTensor3d_shuffled = biasesChannelShuffler.reshapeTransposeReshape( this.biasesTensor3d );
+
+      this.biasesTensor3d.dispose();
+      this.biasesTensor3d = biasesTensor3d_shuffled;
+    }
   }
 
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
