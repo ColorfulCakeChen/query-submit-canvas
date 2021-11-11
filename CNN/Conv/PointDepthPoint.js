@@ -1092,8 +1092,6 @@ class Base extends ReturnOrClone.Base {
     let channelShuffler_outputGroupCount = -1;
     if ( channelShuffler_ConcatPointwiseConv ) {
       channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
-
-//!!! ...unfinished... (2021/11/10) In this case, if pointwise2 does not exist, who is responsible for shuffling the channels?
     }
 
     // 5.1 Pointwise21
@@ -1542,44 +1540,13 @@ class Base extends ReturnOrClone.Base {
             if ( this.bPointwise22 ) {
               return Base.apply_1_2_NoSkipConnection;  // 4.1 Both pointwise21 and pointwise22 existed.
             } else {
-
-//!!! ...unfinished... (2021/11/10)
-// When:
-//      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH:  // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-//
-// If no pointwise2, who is responsible for shuffling the channels?
-
               return Base.apply_1_21_NoSkipConnection; // 4.2 Only pointwise21 existed (and no pointwise22).
             }
           } else {
             if ( this.bPointwise22 ) {
-
-//!!! ...unfinished... (2021/11/10)
-// When:
-//      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH:  // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-//
-// If no pointwise2, who is responsible for shuffling the channels?
-
               return Base.apply_1_22_NoSkipConnection; // 4.3 Only pointwise22 existed (and no pointwise21).
             } else {
               // 4.4 Both pointwise21 and pointwise22 not existed.
-
-
-//!!! ...unfinished... (2021/11/10)
-// When:
-//      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH:  // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-//
-// If no pointwise2, who is responsible for shuffling the channels?
-//
-// Perhapse, the channelShuffler_ConcatPointwiseConv (without concatenation) should be used.
-//
-// If ( bHigherHalfDifferent == true ) and ( channelShuffler_ConcatPointwiseConv != null ),
-//   ( i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail ),
-//
-
 
               // no pointwise1, no depthwise1, no concat1, no pointwise21, no addInput0ToPointwise21, no pointwise22, no addInput0ToPointwise22
               if ( !this.bPointwise1 && !this.bDepthwise1 ) {
