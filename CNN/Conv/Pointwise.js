@@ -623,9 +623,11 @@ class Base extends ReturnOrClone_Activation.Base {
 
       this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
 
+      // The real outputChannelCount is the same as inputChannelCount. (Note: this.outputChannelCount is zero here.)
+      let outputChannelCount = this.inputChannelCount;
       higherHalfPassThrough = new PaseThrough(
-        this.inputChannelCount, this.outputChannelCount,
-        0, this.outputChannelCount // Pass through all the input channels.
+        this.inputChannelCount, outputChannelCount,
+        0, outputChannelCount // Pass through all the input channels.
       );
 
       if ( !higherHalfPassThrough.bInitOk )
