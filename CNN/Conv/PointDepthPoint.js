@@ -1116,7 +1116,9 @@ class Base extends ReturnOrClone.Base {
 
     this.bPointwise21 = this.pointwise21.bExisted;
     if ( this.bPointwise21 ) {
-      this.channelCount_pointwise21After_concat2Before = this.pointwise21ChannelCount;
+//!!! (2021/11/11 Remarked) should use this.pointwise21.outputChannelCount_Real instead of pointwise21ChannelCount.
+//      this.channelCount_pointwise21After_concat2Before = this.pointwise21ChannelCount;
+      this.channelCount_pointwise21After_concat2Before = this.pointwise21.outputChannelCount_Real;
       this.tensorWeightCountTotal += this.pointwise21.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.pointwise21.tensorWeightCountExtracted;
     } else {
@@ -1144,7 +1146,9 @@ class Base extends ReturnOrClone.Base {
     }
 
     if ( this.bPointwise22 ) {
-      this.channelCount_pointwise22After_concat2Before = this.pointwise22ChannelCount;
+//!!! (2021/11/11 Remarked) should use this.pointwise22.outputChannelCount_Real instead of pointwise22ChannelCount.
+//      this.channelCount_pointwise22After_concat2Before = this.pointwise22ChannelCount;
+      this.channelCount_pointwise22After_concat2Before = this.pointwise22.outputChannelCount_Real;
       this.tensorWeightCountTotal += this.pointwise22.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.pointwise22.tensorWeightCountExtracted;
     } else {
@@ -1154,6 +1158,8 @@ class Base extends ReturnOrClone.Base {
     // 5.3 Pointwise2 (= Pointwise21 + Pointwise22 )
     this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
     this.channelCount_pointwise2After_concat2Before = this.pointwise21ChannelCount + this.pointwise22ChannelCount;
+
+//!!! ...unfinished... (2021/11/11) 
 
     if ( !this.bPointwise2 ) {
       // If there is not any pointwise2 convolution, the result channel count will not be zero. It should be the channel count after
