@@ -414,14 +414,6 @@ class Base {
       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", null );
     }
 
-//!!! (2021/11/10 Remarked)
-//     // Only if channel shuffler is used, it is recorded.
-//     if ( pointDepthPoint.bConcat2ShuffleSplitRequested ) {
-//       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", channelShuffler_ConcatPointwiseConv );
-//     } else {
-//       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", null );
-//     }
-
     // pointwise1 parameters.
     asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
     asserter.propertyValue( "bPointwise1Bias", testParams.out.bPointwise1Bias );
@@ -580,6 +572,16 @@ class Base {
 
         + `bKeepInputTensor=${testParams.out.bKeepInputTensor}, `
       ;
+    }
+
+//!!! ...unfinished... (2021/11/11)
+    // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
+    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
+    if ( testParams.out.channelCount1_pointwise1Before
+           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+
+//!!! ...unfinished... (2021/11/11) should split imageInArray[ 0 ] into imageIn0 and imageIn1.
+
     }
 
     let imageIn0 = imageInArray[ 0 ];
@@ -775,6 +777,22 @@ class Base {
         `PointDepthPoint testParams.out.channelCount1_pointwise1Before ( ${testParams.out.channelCount1_pointwise1Before} ) `
           + `is unknown value. ${this.paramsOutDescription}`);
     }
+
+
+//!!! ...unfinished... (2021/11/11) 
+    // The imageOutArray[ 0 ] and imageOutArray[ 1 ] should be concatenated into imageOutArray[ 0 ], because we use the logic of
+    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) and ONE_INPUT_TWO_DEPTHWISE (-2) to handle ONE_INPUT_HALF_THROUGH (-5) and
+    // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4).
+    if (   ( testParams.out.channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+        || ( testParams.out.channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
+        {
+
+//!!! ...unfinished... (2021/11/11) should concatenate imageOutArray[ 0 ] and imageOutArray[ 1 ] into imageOutArray[ 0 ].
+
+    }
+
 
     return imageOutArray;
   }
