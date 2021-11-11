@@ -574,19 +574,6 @@ class Base {
       ;
     }
 
-//!!! ...unfinished... (2021/11/11)
-    // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
-    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
-    if ( testParams.out.channelCount1_pointwise1Before
-           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
-
-//!!! ...unfinished... (2021/11/11) should split imageInArray[ 0 ] into imageIn0 and imageIn1.
-
-    }
-
-    let imageIn0 = imageInArray[ 0 ];
-    let imageIn1 = imageInArray[ 1 ];
-
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
     //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
     //    TWO_INPUTS_CONCAT_POINTWISE21_INPUT1     // (-3) (ShuffleNetV2's body/tail)
@@ -597,6 +584,22 @@ class Base {
 
 //!!! ...unfinished... (2021/10/28) How to compare ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) and ONE_INPUT_TWO_DEPTHWISE (-2)?
 // The former has only one output tensor, the later has two output tensors.
+
+
+    let imageIn0, imageIn1;
+
+//!!! ...unfinished... (2021/11/11)
+    // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
+    // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
+    if ( testParams.out.channelCount1_pointwise1Before
+           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+
+//!!! ...unfinished... (2021/11/11) should split imageInArray[ 0 ] into imageIn0 and imageIn1.
+
+    } else {
+      imageIn0 = imageInArray[ 0 ];
+      imageIn1 = imageInArray[ 1 ];
+    }
 
     // 1. Pointwise1
     let pointwise1Result;
@@ -876,83 +879,6 @@ class Base {
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 )?
 
-//!!! (2021/10/22 Remarked) Using Depthwise.PadInfoCalculator.
-//     let channelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
-//     if (   ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier )
-//         || ( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) ) {
-//       channelMultiplier = 1;
-//     }
-//
-//     let depthwiseFilterWidth = depthwiseFilterHeight; // Assume filter's width equals height.
-//
-//     let imageOutDepth = imageIn.depth * channelMultiplier;
-//
-//     // Strides and Padding.
-//     let depthwiseStrides, depthwisePad;
-//     switch ( depthwiseStridesPad ) {
-//       case 0:  depthwiseStrides = 1; depthwisePad = "valid"; break;
-//       default:
-//       case 1:  depthwiseStrides = 1; depthwisePad = "same";  break;
-//       case 2:  depthwiseStrides = 2; depthwisePad = "same";  break;
-//     }
-//
-//     // Assume strides width equals strides height.
-//     let stridesHeight = depthwiseStrides;
-//     let stridesWidth = depthwiseStrides;
-//
-//     // Currently, we can only handle dilation = 1.
-//     let dilationHeight = 1;
-//     let dilationWidth = 1;
-//
-//     // Effect filter size (includes dilation).
-//     let effectFilterHeight = dilationHeight * ( depthwiseFilterHeight - 1 ) + 1;
-//     let effectFilterWidth =  dilationWidth  * ( depthwiseFilterWidth  - 1 ) + 1;
-//     let effectFilterSize = effectFilterHeight * effectFilterWidth;
-//
-//     let padHeight, padHeightTop, padHeightBottom, padWidth, padWidthLeft, padWidthRight, imageInBeginY, imageInBeginX;
-//     let imageOutHeight, imageOutWidth;
-//
-//     // (The following codes for output image height and width and padding calculation are copied from
-//     // https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
-//     {
-//       // Determine output image height and width without padding.
-//       if ( depthwisePad == "valid" ) {
-//         imageOutHeight = Math.ceil( ( imageIn.height - effectFilterHeight + 1 ) / stridesHeight );
-//         imageOutWidth =  Math.ceil( ( imageIn.width  - effectFilterWidth  + 1 ) / stridesWidth  );
-//
-//         padHeight = padHeightTop = padHeightBottom = padWidth = padWidthLeft = padWidthRight
-//           = imageInBeginY = imageInBeginX = 0; // So that negative ( inX, inY ) will never happen. for ( pad == "valid" ).
-//
-//       // Determine output image height and width with padding around the input image height and width.
-//       } else if ( depthwisePad == "same" ) {
-//         imageOutHeight = Math.ceil( imageIn.height / stridesHeight );
-//         imageOutWidth =  Math.ceil( imageIn.width  / stridesWidth  );
-//
-//         padHeight = Math.max( 0, ( imageOutHeight - 1 ) * stridesHeight + effectFilterHeight - imageIn.height );
-//         padWidth =  Math.max( 0, ( imageOutWidth  - 1 ) * stridesWidth  + effectFilterWidth  - imageIn.width  );
-//
-//         padHeightTop = Math.floor( padHeight / 2 );
-//         padHeightBottom = padHeight - padHeightTop;
-//         padWidthLeft = Math.floor( padWidth /  2 );
-//         padWidthRight =   padWidth  - padWidthLeft;
-//
-//         imageInBeginY = - padHeightTop; // So that negative ( inX, inY ) may happen, but they will be viewed as zero value. for ( pad == "same" ).
-//         imageInBeginX = - padWidthLeft;
-//       }
-//     }
-//
-//     // If not AVG, MAX, NONE, the filters shape should match input image channel count.
-//     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-//       tf.util.assert( ( ( depthwiseFiltersArray.length / ( depthwiseFilterHeight * depthwiseFilterWidth * channelMultiplier ) ) == imageIn.depth ),
-//         `${depthwiseName} filters shape `
-//           + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
-//           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
-//     }
-//
-//     let imageOutLength = ( imageOutHeight * imageOutWidth * imageOutDepth );
-//     let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
-
-
     let padInfo = new Depthwise.PadInfoCalculator( imageIn.height, imageIn.width, imageIn.depth, 
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
 
@@ -1073,6 +999,68 @@ class Base {
 
     return imageOut;
   }
+
+//!!! ...unfinished... (2021/11/11)
+  /**
+   * @param {number}   imageIn.height    Image height
+   * @param {number}   imageIn.width     Image width
+   * @param {number}   imageIn.depth     Image channel count
+   * @param {number[]} imageIn.dataArray Image data
+   * @param {string}   splitName         A string for debug message of this splitting.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {object[]}
+   *   Return splitted images [ imageOut1, imageOut2 ] along the axis id 2. If imageIn is null, return [ null, null ].
+   */
+  static calcSplitAlongAxisId2( imageIn, splitName, parametersDesc ) {
+
+    if ( null == imageIn ) {
+      return [ null, null ];
+
+//!!! ...unfinished... (2021/11/11)
+//     tf.util.assert( ( imageIn1.height == imageIn2.height ),
+//       `${concatName} shape imageIn1.height (${imageIn1.height}) `
+//         + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})`);
+//
+//     tf.util.assert( ( imageIn1.width == imageIn2.width ),
+//       `${concatName} shape imageIn1.width (${imageIn1.width}) `
+//         + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})`);
+
+//!!! ...unfinished... (2021/11/11)
+    let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
+    let imageOut = {
+      height: imageIn1.height, width: imageIn1.width, depth: ( imageIn1.depth + imageIn2.depth ), dataArray: new Float32Array( imageOutLength ) };
+
+    // Concatenate along the image depth.
+    for ( let y = 0; y < imageIn1.height; ++y ) {
+      let indexBaseX = ( y * imageIn1.width );
+
+      for ( let x = 0; x < imageIn1.width; ++x ) {
+        let indexBaseC = ( indexBaseX + x );
+        let outIndexBaseC = ( indexBaseC * imageOut.depth );
+
+        let outChannel = 0;
+
+        let in1IndexBaseC  = ( indexBaseC * imageIn1.depth );
+        for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
+          let in1Index = in1IndexBaseC + in1Channel;
+          let outIndex = outIndexBaseC + outChannel;
+          imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
+        }
+
+        let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
+        for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
+          let in2Index = in2IndexBaseC + in2Channel;
+          let outIndex = outIndexBaseC + outChannel;
+          imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
+        }
+
+      }
+    }
+
+    return imageOut;
+  }
+
 
   /**
    * @param {number}   imageIn1.height    Image1 height
