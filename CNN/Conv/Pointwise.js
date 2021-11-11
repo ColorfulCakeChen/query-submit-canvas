@@ -250,10 +250,6 @@ class Base extends ReturnOrClone_Activation.Base {
     //  = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
     //  = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = undefined;
 
-//!!! (2021/10/19 Remarked)
-//    this.filtersShape = this.biasesShape
-//!!! (2021/10/19 Remarked) So that inputFloat32Array could be released.
-//      = this.filtersWeights = this.biasesWeights
     this.pfnConvBiasActivation = this.pfnConv = this.pfnActivation = null;
 
     this.bPointwise = false;
@@ -631,12 +627,13 @@ class Base extends ReturnOrClone_Activation.Base {
       if ( !higherHalfPassThrough.bInitOk )
         return false;
 
-//!!! ...unfinished... (2021/11/11)
+      this.filtersTensor4d = higherHalfPassThrough.filtersTensor4d; // all pass through.
+      this.biasesTensor3d = null; // always does not have biases (no matter how bBias is).
 
+      this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+      higherHalfPassThrough.filtersTensor4d = null; // So that it will not be disposed. (It has been used as this.filtersTensor4d.)
 
-//!!! ...unfinished... (2021/11/11) always does not have biases (no matter how bBias is)
-
-        Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
+      Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
 
     } catch ( e ) {
       return false; // e.g. memory not enough.
@@ -644,13 +641,6 @@ class Base extends ReturnOrClone_Activation.Base {
     } finally {
 
       if ( higherHalfPassThrough ) {
-
-        // Include the weights count of the higher-half-pass-through filters and biases.
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-        if ( higherHalfPassThrough.biasesTensor3d ) {
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
-        }
-
         higherHalfPassThrough.disposeTensors();
       }
     }
