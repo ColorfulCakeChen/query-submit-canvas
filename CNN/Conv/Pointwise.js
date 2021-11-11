@@ -432,7 +432,7 @@ class Base extends ReturnOrClone_Activation.Base {
           + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be greater than zero.`
       );
 
-      higherHalfPassThrough = new PaseThrough(
+      higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, this.outputChannelCount_higherHalf,
         0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
       );
@@ -625,7 +625,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
       // The real outputChannelCount is the same as inputChannelCount. (Note: this.outputChannelCount is zero here.)
       let outputChannelCount = this.inputChannelCount;
-      higherHalfPassThrough = new PaseThrough(
+      higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, outputChannelCount,
         0, outputChannelCount // Pass through all the input channels.
       );
@@ -702,7 +702,7 @@ class Base extends ReturnOrClone_Activation.Base {
         this.inputChannelCount_lowerHalf =  this.inputChannelCount_toBeExtracted =  this.inputChannelCount  - this.inputChannelCount_higherHalf;
         this.outputChannelCount_lowerHalf = this.outputChannelCount_toBeExtracted = this.outputChannelCount - this.outputChannelCount_higherHalf;
 
-        higherHalfPassThrough = new PaseThrough(
+        higherHalfPassThrough = new PassThrough(
           this.inputChannelCount, this.outputChannelCount_higherHalf,
           this.outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
         );
