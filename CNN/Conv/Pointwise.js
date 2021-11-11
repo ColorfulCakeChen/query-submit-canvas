@@ -111,8 +111,8 @@ class PassThrough {
  *         and ( channelShuffler_outputGroupCount > 0 ) ), this pointwise will exist (i.e. bPointwise == bExisted == true ) and always
  *         will not have biases (no matter how bBias is). It is all-pass-and-channel-shuffling mode.
  *
- * @member {number} outputChannelCountReal
- *   Usually, the same as outputChannelCount. But when ( this.bAllPassThroughShuffle == true ), outputChannelCountReal will be the same
+ * @member {number} outputChannelCount_Real
+ *   Usually, the same as outputChannelCount. But when ( this.bAllPassThroughShuffle == true ), outputChannelCount_Real will be the same
  * as inputChannelCount (in this case, the outputChannelCount is zero).
  *
  * @member {boolean} bHigherHalfDifferent
@@ -391,7 +391,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
    *   - this.tensorWeightCountTotal
-   *   - this.outputChannelCountReal
+   *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
    *   - this.filtersTensor4d
@@ -404,7 +404,7 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   static extractAs_NormalPointwise( inputFloat32Array ) {
 
-    this.outputChannelCountReal = this.outputChannelCount;
+    this.outputChannelCount_Real = this.outputChannelCount;
 
     // Extract all weights as specified input/output channels.
     this.inputChannelCount_toBeExtracted = this.inputChannelCount;
@@ -435,7 +435,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
    *   - this.tensorWeightCountTotal
-   *   - this.outputChannelCountReal
+   *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
    *   - this.filtersTensor4d
@@ -453,7 +453,7 @@ class Base extends ReturnOrClone_Activation.Base {
     let higherHalfPassThrough;
     try {
 
-      this.outputChannelCountReal = this.outputChannelCount;
+      this.outputChannelCount_Real = this.outputChannelCount;
 
       this.outputChannelCount_lowerHalf
         = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
@@ -539,7 +539,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
    *   - this.tensorWeightCountTotal
-   *   - this.outputChannelCountReal
+   *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
    *   - this.filtersTensor4d
@@ -554,7 +554,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.bHigherHalfPointwise22 = true;
 
-    this.outputChannelCountReal = this.outputChannelCount;
+    this.outputChannelCount_Real = this.outputChannelCount;
 
     // Extract all weights as specified input/output channels (just like a normal pointwise convolution, but with a different arrangement).
     this.inputChannelCount_toBeExtracted = this.inputChannelCount;
@@ -641,7 +641,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
    *   - this.tensorWeightCountTotal
-   *   - this.outputChannelCountReal
+   *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
    *   - this.filtersTensor4d
@@ -662,11 +662,11 @@ class Base extends ReturnOrClone_Activation.Base {
       this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
 
       // The real outputChannelCount is the same as inputChannelCount. (Note: this.outputChannelCount is zero here.)
-      this.outputChannelCountReal = this.inputChannelCount;
+      this.outputChannelCount_Real = this.inputChannelCount;
 
       higherHalfPassThrough = new PassThrough(
-        this.inputChannelCount, this.outputChannelCountReal,
-        0, this.outputChannelCountReal // Pass through all the input channels.
+        this.inputChannelCount, this.outputChannelCount_Real,
+        0, this.outputChannelCount_Real // Pass through all the input channels.
       );
 
       if ( !higherHalfPassThrough.bInitOk )
@@ -705,7 +705,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
    *   - this.tensorWeightCountTotal
-   *   - this.outputChannelCountReal
+   *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
    *   - this.filtersTensor4d
@@ -723,7 +723,7 @@ class Base extends ReturnOrClone_Activation.Base {
     let higherHalfPassThrough;
     try {
 
-      this.outputChannelCountReal = this.outputChannelCount;
+      this.outputChannelCount_Real = this.outputChannelCount;
 
       // 1. In order to "pass-through" the higher half, the channel count of input's higher half must be the same as output's higher half.
       this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = Math.floor( this.outputChannelCount / 2 );
@@ -845,7 +845,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
    *   - this.tensorWeightCountTotal
-   *   - this.outputChannelCountReal
+   *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
    *   - this.filtersTensor4d
