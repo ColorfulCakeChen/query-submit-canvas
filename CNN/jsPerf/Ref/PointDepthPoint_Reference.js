@@ -588,13 +588,15 @@ class Base {
 
     let imageIn0, imageIn1;
 
-//!!! ...unfinished... (2021/11/11)
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
     if ( testParams.out.channelCount1_pointwise1Before
            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
 
-//!!! ...unfinished... (2021/11/11) should split imageInArray[ 0 ] into imageIn0 and imageIn1.
+//!!! ...unfinished... (2021/11/11)
+      let imageInArray_Fake = Base.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_imageInArray_0_1", this.paramsOutDescription );
+      imageIn0 = imageInArray_Fake[ 0 ];
+      imageIn1 = imageInArray_Fake[ 1 ];
 
     } else {
       imageIn0 = imageInArray[ 0 ];
