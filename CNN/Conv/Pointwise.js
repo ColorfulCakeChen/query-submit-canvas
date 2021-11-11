@@ -116,23 +116,12 @@ class PassThrough {
  *               channel shuffler on the output. (i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
  *               body/tail)
  *
-
-//!!! ...unfinished... (2021/11/10)
-
  *           - If ( outputChannelCount <= 0 ), the filters will pass through all input channels to output. But they will be arranged
  *               just like applying channel shuffler on the output. In this case, the bPointwise (and bExisted) will be true (not
  *               false), although the specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
  *               (i.e. bAllPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail, when no pointwise2) (i.e. pure
  *               channel shuffler)
  *
-
-//!!! ...unfinished... (2021/11/10) needs one more mode:
-// All (not only higher half) pointwise convolution is pass-through, and it is also responsible for shuffling channels.
-// This is used for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail when pointwise2 does not exist.
-//
-
-
-
  * @member {number} channelShuffler_outputGroupCount
  *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
  * be used to (pre-)shuffle the filters and biases. The total effect will be the same as applying a channel shuffler (without
@@ -252,11 +241,6 @@ class Base extends ReturnOrClone_Activation.Base {
       this.biasesTensor3d.dispose();
       this.biasesTensor3d = null;
     }
-
-//!!! (2021/10/28 Remarked)
-//     if ( this.channelShuffler ) {
-//       this.channelShuffler = null; // Do not dispose channel shuffler here. Just set to null.
-//     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
 
@@ -634,12 +618,44 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.bAllPassThroughShuffle = true;
 
+    let higherHalfPassThrough;
+    try {
+
+      this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
+
+      higherHalfPassThrough = new PaseThrough(
+        this.inputChannelCount, this.outputChannelCount,
+        0, this.outputChannelCount // Pass through all the input channels.
+      );
+
+      if ( !higherHalfPassThrough.bInitOk )
+        return false;
+
 //!!! ...unfinished... (2021/11/11)
 
 
 //!!! ...unfinished... (2021/11/11) always does not have biases (no matter how bBias is)
 
         Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
+
+    } catch ( e ) {
+      return false; // e.g. memory not enough.
+
+    } finally {
+
+      if ( higherHalfPassThrough ) {
+
+        // Include the weights count of the higher-half-pass-through filters and biases.
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+        if ( higherHalfPassThrough.biasesTensor3d ) {
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
+        }
+
+        higherHalfPassThrough.disposeTensors();
+      }
+    }
+
+    return true;
   }
 
   /**
