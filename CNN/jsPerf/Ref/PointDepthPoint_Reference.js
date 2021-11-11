@@ -1000,7 +1000,6 @@ class Base {
     return imageOut;
   }
 
-//!!! ...unfinished... (2021/11/11)
   /**
    * @param {number}   imageIn.height    Image height
    * @param {number}   imageIn.width     Image width
@@ -1030,33 +1029,30 @@ class Base {
 
 //!!! ...unfinished... (2021/11/11)
     // Split along the image depth.
-    for ( let y = 0; y < imageIn1.height; ++y ) {
-      let indexBaseX = ( y * imageIn1.width );
+    for ( let y = 0; y < imageIn.height; ++y ) {
+      let indexBaseX = ( y * imageIn.width );
 
-      for ( let x = 0; x < imageIn1.width; ++x ) {
+      for ( let x = 0; x < imageIn.width; ++x ) {
         let indexBaseC = ( indexBaseX + x );
-        let outIndexBaseC = ( indexBaseC * imageOut.depth );
 
-        let outChannel = 0;
+        let inIndexBaseC  = ( indexBaseC * imageIn.depth );
+        let outIndexBaseC = ( indexBaseC * imageOutDepth );
 
-        let in1IndexBaseC  = ( indexBaseC * imageIn1.depth );
-        for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
-          let in1Index = in1IndexBaseC + in1Channel;
-          let outIndex = outIndexBaseC + outChannel;
-          imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
+        let inChannel = 0;
+
+        for ( let imageOutIndex = 0; imageOutIndex < imageOutArray.length; ++imageOutIndex ) {
+          let imageOut = imageOutArray[ imageOutIndex ];
+
+          for ( let outChannel = 0; outChannel < imageOutDepth; ++outChannel, ++inChannel ) {
+            let inIndex = inIndexBaseC + inChannel;
+            let outIndex = outIndexBaseC + outChannel;
+            imageOut.dataArray[ outIndex ] = imageIn.dataArray[ inIndex ];
+          }
         }
-
-        let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
-        for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
-          let in2Index = in2IndexBaseC + in2Channel;
-          let outIndex = outIndexBaseC + outChannel;
-          imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
-        }
-
       }
     }
 
-    return imageOut;
+    return imageOutArray;
   }
 
 
