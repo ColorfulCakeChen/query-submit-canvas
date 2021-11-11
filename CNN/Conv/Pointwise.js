@@ -45,22 +45,28 @@ class PassThrough {
 //           .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
 //           ;
 
-      let channelIndexesInt32Tensor1d =
-        tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+      let filtersTensor4d;
+      if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separarely.
+        filtersTensor4d = tf.tensor4d( [ 1 ], filtersShape );
 
-      let channelIndexesOneHotInt32Tensor2d =
-        channelIndexesInt32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
+      } else {
+        let channelIndexesInt32Tensor1d =
+          tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
 
-      let channelIndexesOneHotFloat32Tensor2d =
-        channelIndexesOneHotInt32Tensor2d.cast( "float32" );      // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
+        let channelIndexesOneHotInt32Tensor2d =
+          channelIndexesInt32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
 
-      let channelIndexesOneHotFloat32TransposedTensor2d =
-        channelIndexesOneHotFloat32Tensor2d.transpose();          // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
+        let channelIndexesOneHotFloat32Tensor2d =
+          channelIndexesOneHotInt32Tensor2d.cast( "float32" );      // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
 
-      let channelIndexesOneHotFloat32Tensor4d =
-        channelIndexesOneHotFloat32TransposedTensor2d.reshape( filtersShape ); // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
+        let channelIndexesOneHotFloat32TransposedTensor2d =
+          channelIndexesOneHotFloat32Tensor2d.transpose();          // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
 
-      let filtersTensor4d = channelIndexesOneHotFloat32Tensor4d;
+        let channelIndexesOneHotFloat32Tensor4d =
+          channelIndexesOneHotFloat32TransposedTensor2d.reshape( filtersShape ); // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
+
+        filtersTensor4d = channelIndexesOneHotFloat32Tensor4d;
+      }
 
       // Generate bias for just adding zero. (i.e. equals no bias).
       let biasesTensor3d;
