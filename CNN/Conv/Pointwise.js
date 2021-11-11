@@ -110,11 +110,12 @@ class PassThrough {
  *               body/tail)
  *
 
-//!!! ...unfinished... (2021/11/10) In this case, the bPointwise should be true (not false), although the specified outputChannelCount is zero.
+//!!! ...unfinished... (2021/11/10)
 
  *           - If ( outputChannelCount <= 0 ), the filters will pass through all input channels to output. But they will be arranged
- *               just like applying channel shuffler on the output. (i.e. bAllPassThroughShuffle, for pointwise2 of
- *               ShuffleNetV2_ByMopbileNetV1's body/tail, when no pointwise2) (i.e. pure channel shuffler)
+ *               just like applying channel shuffler on the output. In this case, the bPointwise should be true (not false), although
+ *               the specified outputChannelCount is zero.(i.e. bAllPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
+ *               body/tail, when no pointwise2) (i.e. pure channel shuffler)
  *
 
 //!!! ...unfinished... (2021/11/10) needs one more mode:
