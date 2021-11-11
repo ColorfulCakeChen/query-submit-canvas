@@ -292,6 +292,8 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   static Setup_bPointwise_pfn() {
 
+    let bBias = this.bBias;
+
     // Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
       this.bPointwise = true;
@@ -301,6 +303,8 @@ class Base extends ReturnOrClone_Activation.Base {
           && ( this.channelShuffler_outputGroupCount > 0 )
          ) {
         this.bPointwise = true; // all-pass-and-channel-shuffling mode.
+        bBias = false; // In this case, there is always no biases (no matter how bBias is). The 
+
       } else {
         this.bPointwise = false;
       }
@@ -316,7 +320,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
 
-    if ( this.bBias ) {
+    if ( bBias ) {
       if ( this.pfnActivation )
         this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
       else
