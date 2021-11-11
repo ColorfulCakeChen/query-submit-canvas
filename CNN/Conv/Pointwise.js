@@ -223,7 +223,7 @@ class Base extends ReturnOrClone_Activation.Base {
           this.bInitOk = Base.extractAs_HigherHalfPassThroughShuffle.call( this, inputFloat32Array );
 
         } else { // 6. ( outputChannelCount <= 0 ), bAllPassThroughShuffle
-          this.bInitOk = Base.extractAs_AllPassThroughShuffle( this, inputFloat32Array );
+          this.bInitOk = Base.extractAs_AllPassThroughShuffle.call( this, inputFloat32Array );
         }
       }
     }
