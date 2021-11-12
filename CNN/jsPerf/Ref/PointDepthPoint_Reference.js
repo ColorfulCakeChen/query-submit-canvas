@@ -117,8 +117,6 @@ class Base {
           {
             let outputGroupCount = 2; // Only use two convolution groups.
 
-//!!! ...unfinished... (2021/10/28) What concatenatedDepth should be if ( input1ChannelCount == 0 )?
-
             let concatenatedDepth;
             if ( input1ChannelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
               concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
@@ -582,19 +580,17 @@ class Base {
     //    ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
 
-//!!! ...unfinished... (2021/10/28) How to compare ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) and ONE_INPUT_TWO_DEPTHWISE (-2)?
-// The former has only one output tensor, the later has two output tensors.
-
 
     let imageIn0, imageIn1;
+
+    // 0.
 
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
     if ( testParams.out.channelCount1_pointwise1Before
            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
 
-//!!! ...unfinished... (2021/11/11)
-      let imageInArray_Fake = Base.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_imageInArray_0_1", this.paramsOutDescription );
+      let imageInArray_Fake = Base.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
 
@@ -783,8 +779,8 @@ class Base {
           + `is unknown value. ${this.paramsOutDescription}`);
     }
 
+    // 6.
 
-//!!! ...unfinished... (2021/11/11) 
     // The imageOutArray[ 0 ] and imageOutArray[ 1 ] should be concatenated into imageOutArray[ 0 ], because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) and ONE_INPUT_TWO_DEPTHWISE (-2) to handle ONE_INPUT_HALF_THROUGH (-5) and
     // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4).
@@ -792,12 +788,16 @@ class Base {
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
         || ( testParams.out.channelCount1_pointwise1Before
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
-        {
+       ) {
 
-//!!! ...unfinished... (2021/11/11) should concatenate imageOutArray[ 0 ] and imageOutArray[ 1 ] into imageOutArray[ 0 ].
+      let concatResult = Base.calcConcatAlongAxisId2(
+        imageOutArray[ 0 ], imageOutArray[ 1 ],
+        "Concat_imageOutArray_0_1_to_imageOutArray_0 (ONE_INPUT_HALF_THROUGH or ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1)",
+        this.paramsOutDescription );
 
+      imageOutArray[ 0 ] = concatResult;
+      imageOutArray[ 1 ] = null;
     }
-
 
     return imageOutArray;
   }
