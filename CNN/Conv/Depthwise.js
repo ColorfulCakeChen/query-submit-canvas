@@ -236,6 +236,10 @@ class PassThrough {
  *
  *   - If true:
  *
+ *     - Can not be used when:
+ *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
+ *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier )
+ *
  *     - If ( channelShuffler == null ), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 )
  *         are depthwise1, between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are depthwise2. These
  *         two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
@@ -315,6 +319,20 @@ class Base extends ReturnOrClone_Activation.Base {
     this.nActivationId = nActivationId;
     this.bHigherHalfDifferent = bHigherHalfDifferent;
     this.channelShuffler = channelShuffler;
+
+    // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
+        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
+      
+      if ( bHigherHalfDifferent ) {
+        let msg = `Depthwise.constructor(): `
+          + `bHigherHalfDifferent ( ${bHigherHalfDifferent} ) can not be true when `
+          + `AvgMax_Or_ChannelMultiplier is ( ${ValueDesc.AvgMax_Or_ChannelMultiplier.singleton.getStringOf( AvgMax_Or_ChannelMultiplier )} )`
+          ;
+
+        throw msg;
+      }
+    }
   }
 
   /**
