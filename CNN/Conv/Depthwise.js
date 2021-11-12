@@ -356,6 +356,8 @@ class Base extends ReturnOrClone_Activation.Base {
       return true; // no operation at all. No depthwise (e.g. zero or negative number) (so no channel multiplier, too).
     }
 
+//!!! ...unfinished... (2021/11/12) What if ( bHigherHalfDifferent == true ) when average/maximum pooling?
+
     if ( this.bDepthwiseAvg || this.bDepthwiseMax ) { // 1. Depthwise by AVG or MAX pooling (so no channel multiplier).
       this.bInitOk = Base.extractAs_AvgMaxPooling.call( this, inputFloat32Array );
 
@@ -391,9 +393,12 @@ class Base extends ReturnOrClone_Activation.Base {
       this.biasesTensor3d = null;
     }
 
-    if ( this.channelShuffler ) {
-      this.channelShuffler = null; // Do not dispose channel shuffler here. Just set to null.
-    }
+    // Note: Do not clear (or dispose) channel shuffler here, because it is accepted parameter of constructor.
+
+//!!! (2021/11/12 Remarked) Note: Do not clear (or dispose) channel shuffler here, because it is accepted parameter of constructor.
+//     if ( this.channelShuffler ) {
+//       this.channelShuffler = null; // Do not dispose channel shuffler here. Just set to null.
+//     }
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
 //!!! (2021/10/19 Remarked) So that inputFloat32Array could be released.
