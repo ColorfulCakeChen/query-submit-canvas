@@ -375,6 +375,7 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
 //!!! ...unfinished... (2021/11/12) What if ( bHigherHalfDifferent == true ) when average/maximum pooling?
+// when ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE?
 
     if ( this.bDepthwiseAvg || this.bDepthwiseMax ) { // 1. Depthwise by AVG or MAX pooling (so no channel multiplier).
       this.bInitOk = Base.extractAs_AvgMaxPooling.call( this, inputFloat32Array );
