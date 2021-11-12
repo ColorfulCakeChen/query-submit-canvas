@@ -234,6 +234,9 @@ class PassThrough {
  * @member {boolean} bHigherHalfDifferent
  *   - If false, it is just a normal depthwise convolution.
  *
+
+//!!! ...unfinished... (2021/11/12) What if channel multiplier is 0? is 2?
+
  *   - If true:
  *
  *     - Can not be used when:
