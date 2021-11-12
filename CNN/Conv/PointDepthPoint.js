@@ -986,12 +986,11 @@ class Base extends ReturnOrClone.Base {
 
     // 3.1 The first depthwise operation.
 
-    // If depthwise1's higher half is responsible for achieving depthwise2, it needs channel shuffler.
-    let channelShufflerForDepthwise1;
-    if ( this.bHigherHalfDepthwise2 )
+    let channelShufflerForDepthwise1 = null; // In general case, depthwise1 needs not channel shuffler.
+
+    // If depthwise1's higher half is responsible for achieving pass-through, it needs channel shuffler.
+    if ( ( this.bHigherHalfDifferent ) && ( this.bHigherHalfDepthwise2 ) )
       channelShufflerForDepthwise1 = channelShuffler_ConcatPointwiseConv;
-    else
-      channelShufflerForDepthwise1 = null; // Otherwise, never give channel shuffler to depthwise1.
 
     this.depthwise1 = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwise1Before,
