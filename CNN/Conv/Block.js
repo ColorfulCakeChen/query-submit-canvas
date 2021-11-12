@@ -984,6 +984,17 @@ Params.to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1 = class extends Param
 
 //!!! ...unfinished... (2021/10/14)
 
+//!!! ...unfinished... (2021/11/12)
+// When ( pointwise1ChannelCount == 0 ) (i.e. depthwise channel multiplier is 2 ), the depthwise should be just
+// the same as Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22 and Params.to_PointDepthPointParams.ShuffleNetV2.
+//
+//     if ( this.pointwise1ChannelCount == 0 ) {
+//       this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
+//       this.depthwise_AvgMax_Or_ChannelMultiplier = 2;  // Step0 double the channel count by depthwise channel multiplier.
+//     }
+//
+// That is the depthwise needs use ( bHigherHalfDifferent == false ) in this case.
+
 }
 
 
