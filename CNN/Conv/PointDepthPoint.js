@@ -1084,6 +1084,10 @@ class Base extends ReturnOrClone.Base {
 
     // 5. The pointwise2 convolution.
 
+//!!! ...unfinished... (2021/11/12)
+// When Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
+// pointwise2 needs not shuffle channels.
+
     // If ( bHigherHalfDifferent == true ):
     //   - If ( channelShuffler_outputGroupCount < 0 ), bHigherHalfPointwise22, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head.
     //   - If ( channelShuffler_outputGroupCount > 0 ), bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail.
