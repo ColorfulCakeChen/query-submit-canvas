@@ -54,6 +54,16 @@ class Base {
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
 
+    // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
+    //
+    // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting will fail.
+    if ( testParams.out.channelCount1_pointwise1Before
+           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+
+      if ( ( testParams.out.channelCount0_pointwise1Before % 2 ) != 0 )
+        return;
+    }
+
     try {
       let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
       let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
@@ -100,7 +110,7 @@ class Base {
         // The shape of input1 (not input0) determines the concatenatedShape of channel shuffler because the input0 might be shrinked
         // by depthwise convolution.
         let imageIn1 = imageSourceBag.getImage_by(
-            input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+          input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
 
         if ( bTwoInputs ) { // Pass two input images according to parameters.
           imageInArraySelected[ 1 ] = imageIn1;
