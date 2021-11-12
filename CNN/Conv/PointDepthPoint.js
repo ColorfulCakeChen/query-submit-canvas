@@ -948,8 +948,8 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/11/12)
 // When ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (ShuffleNetV2_ByMobileNetV1's head),
-// pointwise1 should be responsible for doubling the channels so that depthwise1 could operate at bHigherHalfDepthwise2 mode
-// with ( channel multiplier == 1 ).
+// pointwise1 should be responsible for doubling the channels so that depthwise1 could include depthwise2 when operate at bHigherHalfDepthwise2
+// mode with ( channel multiplier == 1 ).
 //
 // But what if ( pointwise1ChannelCount == 0 )? what if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
 //
