@@ -1015,7 +1015,7 @@ class Base {
    */
   static calcSplitAlongAxisId2( imageIn, splitName, parametersDesc ) {
 
-    if ( null == imageIn ) {
+    if ( null == imageIn )
       return [ null, null ];
 
     tf.util.assert( ( ( imageIn.depth % 2 ) == 0 ),
@@ -1029,7 +1029,6 @@ class Base {
       { height: imageIn.height, width: imageIn.width, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) }
     ];
 
-//!!! ...unfinished... (2021/11/11)
     // Split along the image depth.
     for ( let y = 0; y < imageIn.height; ++y ) {
       let indexBaseX = ( y * imageIn.width );
