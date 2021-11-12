@@ -254,6 +254,13 @@ class PassThrough {
  *         and ( inputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for depthwise1
  *         of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
+
+//!!! ...unfinished... (2021/11/12) need handle one more case:
+// In ShuffleNetV2_ByMopbileNetV1's head, if ( poinwiseChannelCount1 == 0 ), the depthwise1 will be responsible for doubling
+// the channels (i.e. ( AvgMax_Or_ChannelMultiplier == 2 ) ). In this case, it should be ( bHigherHalfDifferent == false ).
+
+ *
+ *
  * @member {ChannelShuffler.Xxx} channelShuffler
  *   Only be used if ( bHigherHalfDifferent == true ). If not null, it is viewed as ( bHigherHalfPassThrough == true ). The
  * channelShuffler.concatenatedShape[ 0 ] and channelShuffler.concatenatedShape[ 1 ] will be used as imageInHeight and imageInWidth.
