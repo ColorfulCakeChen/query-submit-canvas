@@ -989,6 +989,7 @@ class Base extends ReturnOrClone.Base {
     let channelShufflerForDepthwise1 = null; // In general case, depthwise1 needs not channel shuffler.
 
     // If depthwise1's higher half is responsible for achieving pass-through, it needs channel shuffler.
+    // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
     if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == false ) )
       channelShufflerForDepthwise1 = channelShuffler_ConcatPointwiseConv;
 
@@ -1084,16 +1085,11 @@ class Base extends ReturnOrClone.Base {
 
     // 5. The pointwise2 convolution.
 
-//!!! ...unfinished... (2021/11/12)
-// When Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
-// pointwise2 needs not shuffle channels.
-
-    // If ( bHigherHalfDifferent == true ):
-    //   - If ( channelShuffler_outputGroupCount < 0 ), bHigherHalfPointwise22, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head.
-    //   - If ( channelShuffler_outputGroupCount > 0 ), bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail.
-    //
     let channelShuffler_outputGroupCount = -1;
-    if ( channelShuffler_ConcatPointwiseConv ) {
+
+    // If bHigherHalfPassThroughShuffle (i.e. pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail), needs ( channelShuffler_outputGroupCount > 0 ).
+    // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
+    if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == false ) ) {
       channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
     }
 
