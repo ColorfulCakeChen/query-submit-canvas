@@ -1158,8 +1158,6 @@ class Base extends ReturnOrClone.Base {
     this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
     this.channelCount_pointwise2After_concat2Before = this.pointwise21ChannelCount + this.pointwise22ChannelCount;
 
-//!!! ...unfinished... (2021/11/11) 
-
     if ( !this.bPointwise2 ) {
       // If there is not any pointwise2 convolution, the result channel count will not be zero. It should be the channel count after
       // depthwise1 operation together with the input1 channel count (if existed). And it should be at the first output tensor
