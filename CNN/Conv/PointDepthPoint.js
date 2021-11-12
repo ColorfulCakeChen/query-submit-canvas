@@ -946,6 +946,8 @@ class Base extends ReturnOrClone.Base {
       input1: new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_input1", null, null ),
     };
 
+    // 2. The pointwise1 convolution.
+
 //!!! ...unfinished... (2021/11/12)
 // When ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (ShuffleNetV2_ByMobileNetV1's head),
 // pointwise1 (with bHigherHalfCopyLowerHalf) should be responsible for doubling the channels so that depthwise1 (with bHigherHalfDepthwise2)
@@ -953,8 +955,35 @@ class Base extends ReturnOrClone.Base {
 //
 // But what if ( pointwise1ChannelCount == 0 )? what if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
 //
+    //
+    // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+    // (i.e. (ShuffleNetV2_ByMobileNetV1's head) )
+    //
+    if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == true ) ) {
 
-    // 2. The first 1x1 pointwise convolution.
+//!!! ...unfinished... (2021/11/12)
+      // (i.e. bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+      //  ( inputChannelCount < outputChannelCount ),
+
+
+//!!! ...unfinished... (2021/11/12)
+      // (i.e. bHigherHalfPassThrough, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+      // ( inputChannelCount >= outputChannelCount )
+      // ( channelShuffler_outputGroupCount == 0 )
+
+      if ( 0 == this.pointwise1ChannelCount ) {
+
+//!!! ...unfinished... (2021/11/12)
+
+      } else {
+
+        // doubling channel count and bHigherHalfCopyLowerHalf
+
+//!!! ...unfinished... (2021/11/12)
+      }
+    }
+
+
     this.pointwise1 = new Pointwise.Base(
       this.channelCount0_pointwise1Before,
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
@@ -992,12 +1021,15 @@ class Base extends ReturnOrClone.Base {
     //
     // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
 
-    // 3.1 The first depthwise operation.
+    // 3.1 The depthwise1 operation.
 
     let channelShufflerForDepthwise1 = null; // In general case, depthwise1 needs not channel shuffler.
 
     // If depthwise1's higher half is responsible for achieving pass-through, it needs channel shuffler.
+    //
     // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
+    // (i.e. (ShuffleNetV2_ByMobileNetV1's body/tail) )
+    //
     if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == false ) )
       channelShufflerForDepthwise1 = channelShuffler_ConcatPointwiseConv;
 
@@ -1024,7 +1056,7 @@ class Base extends ReturnOrClone.Base {
       TensorOpCounters.depthwise1 = TensorOpCounters.pointwise1; // Its output is just its input tensor.
     }
 
-    // 3.2 The second depthwise operation.
+    // 3.2 The depthwise2 operation.
     this.bDepthwise2 = false;
     if ( this.bDepthwise2Requested ) {
 
@@ -1096,7 +1128,11 @@ class Base extends ReturnOrClone.Base {
     let channelShuffler_outputGroupCount = -1;
 
     // If bHigherHalfPassThroughShuffle (or bAllPassThroughShuffle), (i.e. pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail), needs
-    // ( channelShuffler_outputGroupCount > 0 ). (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
+    // ( channelShuffler_outputGroupCount > 0 ).
+    //
+    // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
+    // (i.e. (ShuffleNetV2_ByMobileNetV1's body/tail) )
+    //
     if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == false ) ) {
       channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
     }
