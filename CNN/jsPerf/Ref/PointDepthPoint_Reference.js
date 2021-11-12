@@ -64,6 +64,19 @@ class Base {
         return;
     }
 
+    // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+    switch ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
+      case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
+      case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
+
+        switch ( testParams.out.channelCount1_pointwise1Before ) { // bHigherHalfDifferent
+          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+            return;
+            break;
+        }
+    }
+
     try {
       let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
       let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
