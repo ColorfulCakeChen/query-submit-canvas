@@ -327,7 +327,7 @@ class Base extends ReturnOrClone_Activation.Base {
       if ( bHigherHalfDifferent ) {
         let msg = `Depthwise.constructor(): `
           + `bHigherHalfDifferent ( ${bHigherHalfDifferent} ) can not be true when `
-          + `AvgMax_Or_ChannelMultiplier is ( ${ValueDesc.AvgMax_Or_ChannelMultiplier.singleton.getStringOf( AvgMax_Or_ChannelMultiplier )} )`
+          + `AvgMax_Or_ChannelMultiplier is ( ${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( AvgMax_Or_ChannelMultiplier )} )`
           ;
 
         throw msg;
