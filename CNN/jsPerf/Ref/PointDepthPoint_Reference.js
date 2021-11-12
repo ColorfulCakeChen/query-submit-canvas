@@ -729,18 +729,25 @@ class Base {
       // If output1 is requested, it comes from pointwise22 directly. The pointwise22 will have the same output channel count as pointwise21.
       let pointwise22ChannelCount;
 
-      // Special case: Force pointwise22 (although ( bOutput1Requested == false )), because we use the logic of
-      // ONE_INPUT_TWO_DEPTHWISE (-2) to handle ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (which does not have pointwise22, in fact).
-      if ( testParams.out.channelCount1_pointwise1Before
-             == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) { // (-4)
-        pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
+//!!! (2021/11/12 Remarked) wrong.
+//       // Special case: Force pointwise22 (although ( bOutput1Requested == false )), because we use the logic of
+//       // ONE_INPUT_TWO_DEPTHWISE (-2) to handle ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (which does not have pointwise22, in fact).
+//       if ( testParams.out.channelCount1_pointwise1Before
+//              == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) { // (-4)
+//         pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
+//
+//       } else { // Normal case: pointwise22 according to bOutput1Requested.
+//         if ( testParams.out.bOutput1Requested ) {
+//           pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
+//         } else {
+//           pointwise22ChannelCount = 0;
+//         }
+//       }
 
-      } else { // Normal case: pointwise22 according to bOutput1Requested.
-        if ( testParams.out.bOutput1Requested ) {
-          pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
-        } else {
-          pointwise22ChannelCount = 0;
-        }
+      if ( testParams.out.bOutput1Requested ) {
+        pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
+      } else {
+        pointwise22ChannelCount = 0;
       }
 
       let bPointwise22Bias = testParams.out.bPointwise21Bias; // pointwise22's bias flag is the same as pointwise21.
