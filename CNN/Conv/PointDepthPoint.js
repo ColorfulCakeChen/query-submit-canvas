@@ -1087,8 +1087,8 @@ class Base extends ReturnOrClone.Base {
 
     let channelShuffler_outputGroupCount = -1;
 
-    // If bHigherHalfPassThroughShuffle (i.e. pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail), needs ( channelShuffler_outputGroupCount > 0 ).
-    // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
+    // If bHigherHalfPassThroughShuffle (or bAllPassThroughShuffle), (i.e. pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail), needs
+    // ( channelShuffler_outputGroupCount > 0 ). (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
     if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == false ) ) {
       channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
     }
