@@ -963,7 +963,7 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/11/12)
       // (i.e. bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
-      //  ( inputChannelCount < outputChannelCount ),
+      // ( inputChannelCount < outputChannelCount ),
 
 
 //!!! ...unfinished... (2021/11/12)
