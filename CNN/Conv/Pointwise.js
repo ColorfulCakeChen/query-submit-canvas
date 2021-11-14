@@ -150,18 +150,16 @@ class PassThrough {
 //!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
 
  *
- *       - If ( channelShuffler_outputGroupCount > 0 ):
+ *       - If ( channelShuffler_outputGroupCount > 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
- *           - If ( outputChannelCount > 0 ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
- *               and ( outputChannelCount - 1 ) will just pass through the input to output. But they will be arranged just like applying
- *               channel shuffler on the output. (i.e. bHigherHalfPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
- *               body/tail)
+ *           - If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThroughShuffle), the filters for the output channels between
+ *               Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) will just pass through the input to output.
+ *               But they will be arranged just like applying channel shuffler on the output.
  *
- *           - If ( outputChannelCount <= 0 ), the filters will pass through all input channels to output. But they will be arranged
- *               just like applying channel shuffler on the output. In this case, the bPointwise (and bExisted) will be true (not
- *               false), although the specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
- *               (i.e. bAllPassThroughShuffle, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail, when no pointwise2) (i.e. pure
- *               channel shuffler)
+ *           - If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2; i.e. pure channel shuffler),
+ *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
+ *               shuffler on the output. In this case, the bPointwise (and bExisted) will be true (not false), although the
+ *               specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
  *
  * @member {number} channelShuffler_outputGroupCount
  *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
