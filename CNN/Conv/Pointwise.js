@@ -124,6 +124,11 @@ class PassThrough {
  *         ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( inputChannelCount - 1 ). (i.e.
  *         bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
+
+//!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
+
+ *
+ *
  *     - If ( inputChannelCount >= outputChannelCount ):
  *
  *       - If ( channelShuffler_outputGroupCount < 0 ), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 )
@@ -133,9 +138,17 @@ class PassThrough {
  *           head. So that the same filters weights could be used in these two architectures for comparing performance and correctness.
  *           (i.e. bHigherHalfPointwise22, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
  *
+
+//!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
+
+ *
  *       - If ( channelShuffler_outputGroupCount == 0 ), the filters for the output channels between Math.ceil( outputChannelCount / 2 )
  *           and ( outputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for
  *           pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *
+
+//!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
+
  *
  *       - If ( channelShuffler_outputGroupCount > 0 ):
  *
