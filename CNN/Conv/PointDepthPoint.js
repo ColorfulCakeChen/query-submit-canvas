@@ -958,6 +958,9 @@ class Base extends ReturnOrClone.Base {
       // It should be adjusted forcibly so that ( inputChannelCount < outputChannelCount == pointwise1ChannelCount ) and always
       // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
       //
+
+//!!! ...unfinished... (2021/11/15) seems always double, no matter whether ( 0 == this.pointwise1ChannelCount ).
+
       if ( 0 == this.pointwise1ChannelCount ) {
         this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count.
         channelShuffler_outputGroupCount_pointwise1 = -1;
