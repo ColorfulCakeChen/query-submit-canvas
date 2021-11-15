@@ -132,7 +132,7 @@ class PassThrough {
  *
  *           - 2.2 If ( outputChannelCount <= 0 ),
 
-//!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
+//!!! ...unfinished... (2021/11/15) What if ( outputChannelCount <= 0 )?
 // This seems not possible because ( inputChannelCount < outputChannelCount <= 0 ) implies ( inputChannelCount < 0 ) which is impossible.
 
  *
@@ -148,11 +148,10 @@ class PassThrough {
  *               are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters  weights
  *               could be used in these two architectures for comparing performance and correctness.
  *
- *           - 3.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
- *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
- *               shuffler on the output. In this case, the ( bPointwise == bExisted == true ) (not false), although the
- *               specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
- *               (same as 5.2)
+ *           - 3.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler),
+ *               the filters will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
+ *               (not false), although the specified outputChannelCount is zero. And, it always will not have
+ *               biases (no matter how bBias is). (same as 42)
  *
  *       - 4. If ( channelShuffler_outputGroupCount == 0 ): (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
@@ -162,7 +161,7 @@ class PassThrough {
  *           - 4.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler),
  *               the filters will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
  *               (not false), although the specified outputChannelCount is zero. And, it always will not have
- *               biases (no matter how bBias is).
+ *               biases (no matter how bBias is). (same as 3.2)
  *
  *       - 5. If ( channelShuffler_outputGroupCount > 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
@@ -174,7 +173,6 @@ class PassThrough {
  *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
  *               shuffler on the output. In this case, the ( bPointwise == bExisted == true ) (not false), although the
  *               specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
- *               (same as 3.2)
  *
  * @member {number} channelShuffler_outputGroupCount
  *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
@@ -270,8 +268,8 @@ class Base extends ReturnOrClone_Activation.Base {
         if ( this.outputChannelCount > 0 ) { // 3.1 bHigherHalfPointwise22
           this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
 
-        } else { // 3.2 ( outputChannelCount <= 0 ), bAllPassThroughShuffle
-          this.bInitOk = Base.extractAs_AllPassThroughShuffle.call( this, inputFloat32Array );
+        } else { // 3.2 ( outputChannelCount <= 0 ), bAllPassThrough
+          this.bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
         }
 
       } else if ( this.channelShuffler_outputGroupCount == 0 ) {
