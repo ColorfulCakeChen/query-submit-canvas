@@ -948,8 +948,7 @@ class Base extends ReturnOrClone.Base {
 
     // 2. The pointwise1 convolution.
 
-//!!! ...unfinished... (2021/11/12)
-// But what if ( pointwise1ChannelCount == 0 )? what if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
+//!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
 
     // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
     // (i.e. (ShuffleNetV2_ByMobileNetV1's head) )
@@ -960,26 +959,17 @@ class Base extends ReturnOrClone.Base {
       // could include depthwise2.
       //
       // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
-      // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) can not be distinguished.
+      // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
+      // as ( inputChannelCount >= outputChannelCount == pointwise1ChannelCount == 0 ).
       //
-
-//!!! ...unfinished... (2021/11/15) WRONG!
-
-      // It should be adjusted forcibly so that it becomes the same as (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
-      // ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThrough).
+      // It should be adjusted forcibly so that ( inputChannelCount < outputChannelCount == pointwise1ChannelCount ).
       //
       if ( 0 == this.pointwise1ChannelCount ) {
-
-//!!! ...unfinished... (2021/11/15) WRONG!
-        this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count and bHigherHalfCopyLowerHalf
-//!!! ...unfinished... (2021/11/15)
-
-
+        this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count and bHigherHalfCopyLowerHalf.
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
     }
-
 
     this.pointwise1 = new Pointwise.Base(
       this.channelCount0_pointwise1Before,
