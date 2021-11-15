@@ -436,7 +436,32 @@ class Base {
     }
 
     // pointwise1 parameters.
-    asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
+//!!! (2021/11/15 Remarked)
+//    asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
+    
+    // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+    // (i.e. (ShuffleNetV2_ByMobileNetV1's head) )
+    //
+    // In this case, pointwise1 (i.e. bHigherHalfCopyLowerHalf) is responsible for doubling the channels so that depthwise1
+    // could include depthwise2.
+    //
+    // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
+    // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
+    // as ( inputChannelCount >= outputChannelCount == pointwise1ChannelCount == 0 ).
+    //
+    // It should be adjusted forcibly so that ( inputChannelCount < outputChannelCount == pointwise1ChannelCount ) and always
+    // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
+    //
+    if (   ( ( pointDepthPoint.bHigherHalfDifferent == true ) && ( pointDepthPoint.bHigherHalfDepthwise2 == true ) )
+        && ( 0 == testParams.out.pointwise1ChannelCount ) ) {
+
+      let pointwise1ChannelCount = ( testParams.out.channelCount0_pointwise1Before * 2 );
+      asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
+
+    } else {
+      asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
+    }
+
     asserter.propertyValue( "bPointwise1Bias", testParams.out.bPointwise1Bias );
     asserter.propertyValue( "pointwise1ActivationId", testParams.out.pointwise1ActivationId );
 
