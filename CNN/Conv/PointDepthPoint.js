@@ -968,6 +968,9 @@ class Base extends ReturnOrClone.Base {
       if ( 0 == this.pointwise1ChannelCount ) {
         this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count and bHigherHalfCopyLowerHalf.
         this.bPointwise1Bias = false;
+
+//!!! ...unfinished... (2021/11/15) Problem: no weights should be extracted.
+
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
