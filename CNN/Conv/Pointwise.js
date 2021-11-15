@@ -150,8 +150,8 @@ class PassThrough {
  *
  *           - 3.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler),
  *               the filters will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
- *               (not false), although the specified outputChannelCount is zero. And, it always will not have
- *               biases (no matter how bBias is). (same as 42)
+ *               (not false), although the specified outputChannelCount is zero. And, it will always have no biases (no matter
+ *               how bBias is). (same as 4.2)
  *
  *       - 4. If ( channelShuffler_outputGroupCount == 0 ): (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
@@ -160,8 +160,8 @@ class PassThrough {
  *
  *           - 4.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler),
  *               the filters will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
- *               (not false), although the specified outputChannelCount is zero. And, it always will not have
- *               biases (no matter how bBias is). (same as 3.2)
+ *               (not false), although the specified outputChannelCount is zero. And, it will always have no biases (no matter
+ *               how bBias is). (same as 3.2)
  *
  *       - 5. If ( channelShuffler_outputGroupCount > 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
