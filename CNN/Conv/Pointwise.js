@@ -169,7 +169,7 @@ class PassThrough {
  *           - 5.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
  *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
  *               shuffler on the output. In this case, the ( bPointwise == bExisted == true ) (not false), although the specified
- *               outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
+ *               outputChannelCount is zero. And, it will always have no biases (no matter how bBias is).
  *
  * @member {number} channelShuffler_outputGroupCount
  *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
@@ -361,9 +361,10 @@ class Base extends ReturnOrClone_Activation.Base {
     } else {  // ( outputChannelCount <= 0 )
       if (   ( this.bHigherHalfDifferent == true )
           && ( this.inputChannelCount >= this.outputChannelCount )
-          && ( this.channelShuffler_outputGroupCount > 0 )
+//!!! (2021/11/15 Remarked)
+//          && ( this.channelShuffler_outputGroupCount > 0 )
          ) {
-        this.bPointwise = true; // all-pass-and-channel-shuffling mode.
+        this.bPointwise = true; // all-pass-through (with or without channel-shuffling) mode.
         bBias = false; // In this case, there is always no biases (no matter how bBias is). The 
 
       } else {
