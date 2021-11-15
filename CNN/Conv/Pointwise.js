@@ -145,11 +145,11 @@ class PassThrough {
  *               ( Math.ceil( inputChannelCount / 2 ) - 1 ) are pointwise21, between Math.ceil( inputChannelCount / 2 ) and
  *               ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases) will be extracted in sequence, but
  *               they will be combined into one larger filters (and biases). This makes these filters' (and biases') weights
- *               are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters  weights
+ *               are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters weights
  *               could be used in these two architectures for comparing performance and correctness.
  *
- *           - 3.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler),
- *               the filters will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
+ *           - 3.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler), the filters
+ *               will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
  *               (not false), although the specified outputChannelCount is zero. And, it will always have no biases (no matter
  *               how bBias is). (same as 4.2)
  *
@@ -158,8 +158,8 @@ class PassThrough {
  *           - 4.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThrough), the filters for the output channels between
  *               Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) will just pass through the input to output. 
  *
- *           - 4.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler),
- *               the filters will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
+ *           - 4.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler), the filters
+ *               will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
  *               (not false), although the specified outputChannelCount is zero. And, it will always have no biases (no matter
  *               how bBias is). (same as 3.2)
  *
@@ -171,8 +171,8 @@ class PassThrough {
  *
  *           - 5.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
  *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
- *               shuffler on the output. In this case, the ( bPointwise == bExisted == true ) (not false), although the
- *               specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
+ *               shuffler on the output. In this case, the ( bPointwise == bExisted == true ) (not false), although the specified
+ *               outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
  *
  * @member {number} channelShuffler_outputGroupCount
  *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
