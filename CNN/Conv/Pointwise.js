@@ -148,14 +148,10 @@ class PassThrough {
  *           - If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThrough), the filters for the output channels between
  *               Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) will just pass through the input to output. 
  *
-
-//!!! ...unfinished... (2021/11/15)
-
- *           - If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise2 and no channel shuffler),
+ *           - If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler),
  *               the filters will just pass through all input channels to output. In this case, the bPointwise (and bExisted)
  *               will be true (not false), although the specified outputChannelCount is zero. And, it always will not have
  *               biases (no matter how bBias is).
- *
  *
  *       - If ( channelShuffler_outputGroupCount > 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
