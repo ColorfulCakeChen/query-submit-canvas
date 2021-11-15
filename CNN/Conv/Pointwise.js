@@ -115,11 +115,6 @@ class PassThrough {
  *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
  * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
  *
-
-//!!! ...unfinished... (2021/11/15)
- * @member {boolean} bLowerHalfPassThrough
- *
- *
  * @member {boolean} bHigherHalfDifferent
  *   - 1. If false, it is just a normal poitwise convolution.
  *
@@ -133,9 +128,6 @@ class PassThrough {
  *
  *           - If ( outputChannelCount > 0 ):
  *
-
-//!!! ...unfinished... (2021/11/15)
-
  *             - 2.1 If ( channelShuffler_outputGroupCount < 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough), the
  *                  filters for the output channels between 0 and ( inputChannelCount - 1 ) will just pass through the input
  *                  to output. The filters for the output channels between ( inputChannelCount ) and ( outputChannelCount - 1 )
@@ -146,13 +138,7 @@ class PassThrough {
  *                  channels between ( inputChannelCount ) and ( outputChannelCount - 1 ) will just copy the input channels
  *                  between 0 and ( inputChannelCount - 1 ).
  *
- *             - If ( channelShuffler_outputGroupCount > 0 ), unused.
- *
- *
-
-//!!! ...unfinished... (2021/11/15)
-
- *
+ *             - If ( channelShuffler_outputGroupCount > 0 ), unused. Initialization will always failed.
  *
  *           - If ( outputChannelCount <= 0 ), this can not happen because ( inputChannelCount < outputChannelCount <= 0 )
  *               implies ( inputChannelCount < 0 ) which is not possible (not legal). (It will be recognized as 3.2 or 4.2 or
@@ -543,7 +529,7 @@ class Base extends ReturnOrClone_Activation.Base {
         this.inputChannelCount, this.outputChannelCount_lowerHalf,
         0, this.outputChannelCount_lowerHalf // Pass through the lower channels to lower channels (i.e. pass through lower channels).
       );
-      
+
       if ( !lowerHalfPassThrough.bInitOk )
         return false;
 
@@ -551,42 +537,16 @@ class Base extends ReturnOrClone_Activation.Base {
         this.inputChannelCount, this.outputChannelCount_higherHalf,
         0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
       );
-      
+
       if ( !higherHalfPassThrough.bInitOk )
         return false;
 
-//!!! ...unfinished... (2021/11/15)
-      let filtersTensor4d_lowerHalf;
-      try {
-        filtersTensor4d_lowerHalf = Base.extractFilters.call( this,
-          inputFloat32Array, this.inputChannelCount, this.outputChannelCount_lowerHalf );
-
-        if ( !filtersTensor4d_lowerHalf )
-          return false;
-
-        let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
-        this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-
-      } finally {
-        if ( filtersTensor4d_lowerHalf )
-          filtersTensor4d_lowerHalf.dispose();
-      }
+      let allFiltersArray = [ lowerHalfPassThrough.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
+      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
 
       if ( this.bBias ) {
-        let biasesTensor3d_lowerHalf;
-        try {
-          biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
-
-          if ( !biasesTensor3d_lowerHalf )
-            return false;
-
-          let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
-          this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
-
-        } finally {
-          if ( biasesTensor3d_lowerHalf )
-            biasesTensor3d_lowerHalf.dispose();
-        }
+        let allBiasesArray = [ lowerHalfPassThrough.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
+        this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
       }
 
     } catch ( e ) {
@@ -619,8 +579,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
     return true;
   }
-
-
 
   /**
    * Extract filters and biases of HigherHalfCopyLowerHalf from inputFloat32Array.
