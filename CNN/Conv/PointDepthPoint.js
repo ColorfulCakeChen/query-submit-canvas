@@ -962,10 +962,12 @@ class Base extends ReturnOrClone.Base {
       // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
       // as ( inputChannelCount >= outputChannelCount == pointwise1ChannelCount == 0 ).
       //
-      // It should be adjusted forcibly so that ( inputChannelCount < outputChannelCount == pointwise1ChannelCount ).
+      // It should be adjusted forcibly so that ( inputChannelCount < outputChannelCount == pointwise1ChannelCount ) and always
+      // no biases.
       //
       if ( 0 == this.pointwise1ChannelCount ) {
         this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count and bHigherHalfCopyLowerHalf.
+        this.bPointwise1Bias = false;
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
