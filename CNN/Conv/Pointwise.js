@@ -115,6 +115,11 @@ class PassThrough {
  *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
  * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
  *
+
+//!!! ...unfinished... (2021/11/15)
+ * @member {boolean} bLowerHalfPassThrough
+ *
+ *
  * @member {boolean} bHigherHalfDifferent
  *   - 1. If false, it is just a normal poitwise convolution.
  *
@@ -126,11 +131,29 @@ class PassThrough {
  *
  *     - 2. If ( inputChannelCount < outputChannelCount ): (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
- *           - 2.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf), the filters for the output channels between
- *               ( inputChannelCount ) and ( outputChannelCount - 1 ) will just copy the input channels between 0 and
- *               ( inputChannelCount - 1 ).
+ *           - If ( outputChannelCount > 0 ):
  *
- *           - 2.2 If ( outputChannelCount <= 0 ), this can not happen because ( inputChannelCount < outputChannelCount <= 0 )
+
+//!!! ...unfinished... (2021/11/15)
+
+ *             - 2.1 If ( channelShuffler_outputGroupCount < 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough), the
+ *                  filters for the output channels between 0 and ( inputChannelCount - 1 ) will just pass through the input
+ *                  to output. The filters for the output channels between ( inputChannelCount ) and ( outputChannelCount - 1 )
+ *                  will just copy the input channels between 0 and ( inputChannelCount - 1 ).
+ *
+ *             - 2.2 If ( channelShuffler_outputGroupCount == 0 ), (i.e. bHigherHalfCopyLowerHalf), the filters for the output
+ *                  channels between ( inputChannelCount ) and ( outputChannelCount - 1 ) will just copy the input channels
+ *                  between 0 and ( inputChannelCount - 1 ).
+ *
+ *             - If ( channelShuffler_outputGroupCount > 0 ), unused.
+ *
+ *
+
+//!!! ...unfinished... (2021/11/15)
+
+ *
+ *
+ *           - If ( outputChannelCount <= 0 ), this can not happen because ( inputChannelCount < outputChannelCount <= 0 )
  *               implies ( inputChannelCount < 0 ) which is not possible (not legal). (It will be recognized as 3.2 or 4.2 or
  *               5.2 according to channelShuffler_outputGroupCount.)
  *
@@ -255,8 +278,17 @@ class Base extends ReturnOrClone_Activation.Base {
       return this.bInitOk;
     }
 
-    if ( this.inputChannelCount < this.outputChannelCount ) { // 2. bHigherHalfCopyLowerHalf
-      this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
+    if ( this.inputChannelCount < this.outputChannelCount ) {
+
+      if ( this.channelShuffler_outputGroupCount < 0 ) { // 2.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
+        this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
+
+      } else if ( this.channelShuffler_outputGroupCount == 0 ) { // 2.2 bHigherHalfCopyLowerHalf
+        this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
+
+      } else { // ( channelShuffler_outputGroupCount > 0 ), unused.
+        this.bInitOk = false;
+      }
 
     } else { // ( inputChannelCount >= outputChannelCount )
 
@@ -456,6 +488,113 @@ class Base extends ReturnOrClone_Activation.Base {
 
     return true;
   }
+
+  /**
+   * Extract filters and biases of HigherHalfCopyLowerHalf_LowerHalfPassThrough from inputFloat32Array.
+   *
+   * The following data members will be used:
+   *   - this.byteOffsetEnd
+   *   - this.inputChannelCount
+   *   - this.outputChannelCount
+   *
+   * The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *   - this.outputChannelCount_Real
+   *   - this.inputChannelCount_toBeExtracted
+   *   - this.outputChannelCount_toBeExtracted
+   *   - this.filtersTensor4d
+   *   - this.biasesTensor3d
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   *
+   * @return {boolean}                        Return true, if succeeded. Return false, if failed.
+   */
+  static extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough( inputFloat32Array ) {
+
+    this.bHigherHalfCopyLowerHalf_LowerHalfPassThrough = true;
+
+//!!! ...unfinished... (2021/11/15)
+    let higherHalfPassThrough;
+    try {
+
+      this.outputChannelCount_Real = this.outputChannelCount;
+
+      this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+        = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+        = this.inputChannelCount; // The lower half filters have the same output channel count as input.
+
+      this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
+
+      tf.util.assert( this.outputChannelCount_higherHalf > 0,
+        `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
+          + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be greater than zero.`
+      );
+
+      higherHalfPassThrough = new PassThrough(
+        this.inputChannelCount, this.outputChannelCount_higherHalf,
+        0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+      );
+      
+      if ( !higherHalfPassThrough.bInitOk )
+        return false;
+
+      let filtersTensor4d_lowerHalf;
+      try {
+        filtersTensor4d_lowerHalf = Base.extractFilters.call( this,
+          inputFloat32Array, this.inputChannelCount, this.outputChannelCount_lowerHalf );
+
+        if ( !filtersTensor4d_lowerHalf )
+          return false;
+
+        let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
+        this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+
+      } finally {
+        if ( filtersTensor4d_lowerHalf )
+          filtersTensor4d_lowerHalf.dispose();
+      }
+
+      if ( this.bBias ) {
+        let biasesTensor3d_lowerHalf;
+        try {
+          biasesTensor3d_lowerHalf = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_lowerHalf );
+
+          if ( !biasesTensor3d_lowerHalf )
+            return false;
+
+          let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
+          this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+
+        } finally {
+          if ( biasesTensor3d_lowerHalf )
+            biasesTensor3d_lowerHalf.dispose();
+        }
+      }
+
+    } catch ( e ) {
+      return false; // e.g. memory not enough.
+
+    } finally {
+
+      if ( higherHalfPassThrough ) {
+
+        // Include the weights count of the higher-half-pass-through filters and biases.
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+        if ( higherHalfPassThrough.biasesTensor3d ) {
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
+        }
+
+        higherHalfPassThrough.disposeTensors();
+      }
+    }
+
+    return true;
+  }
+
+
 
   /**
    * Extract filters and biases of HigherHalfCopyLowerHalf from inputFloat32Array.
