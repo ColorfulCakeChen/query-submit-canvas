@@ -116,11 +116,15 @@ class PassThrough {
  * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
  *
  * @member {boolean} bHigherHalfDifferent
- *   - If false, it is just a normal poitwise convolution.
+ *   - 1. If false, it is just a normal poitwise convolution.
+ *
+ *     - 1.1 If ( outputChannelCount > 0 ), normal poitwise convolution.
+ *
+ *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. (bPointwise == bExisted== false).
  *
  *   - If true:
  *
- *     - If ( inputChannelCount < outputChannelCount ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head, i.e. bHigherHalfCopyLowerHalf),
+ *     - 2. If ( inputChannelCount < outputChannelCount ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head, i.e. bHigherHalfCopyLowerHalf),
  *         the filters for the output channels between ( inputChannelCount ) and ( outputChannelCount - 1 ) will just copy
  *         the input channels between 0 and ( inputChannelCount - 1 ).
  *
@@ -131,44 +135,42 @@ class PassThrough {
  *
  *     - If ( inputChannelCount >= outputChannelCount ):
  *
- *       - If ( channelShuffler_outputGroupCount < 0 ), (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head
+ *       - 3. If ( channelShuffler_outputGroupCount < 0 ), (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head
  *          
- *           - If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22), the filters for the input channels between 0 and
+ *           - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22), the filters for the input channels between 0 and
  *               ( Math.ceil( inputChannelCount / 2 ) - 1 ) are pointwise21, between Math.ceil( inputChannelCount / 2 ) and
  *               ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases) will be extracted in sequence, but
  *               they will be combined into one larger filters (and biases). This makes these filters' (and biases') weights
  *               are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters  weights
  *              could be used in these two architectures for comparing performance and correctness.
  *
-
-//!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
- *
- *           - If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
+ *           - 3.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
  *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
- *               shuffler on the output. In this case, the bPointwise (and bExisted) will be true (not false), although the
+ *               shuffler on the output. In this case, the ( bPointwise == bExisted == true ) (not false), although the
  *               specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
-
+ *               (same as 5.2)
  *
- *       - If ( channelShuffler_outputGroupCount == 0 ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
+ *       - 4. If ( channelShuffler_outputGroupCount == 0 ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
  *
- *           - If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThrough), the filters for the output channels between
+ *           - 4.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThrough), the filters for the output channels between
  *               Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) will just pass through the input to output. 
  *
- *           - If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler),
- *               the filters will just pass through all input channels to output. In this case, the bPointwise (and bExisted)
- *               will be true (not false), although the specified outputChannelCount is zero. And, it always will not have
+ *           - 4.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler),
+ *               the filters will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
+ *               (not false), although the specified outputChannelCount is zero. And, it always will not have
  *               biases (no matter how bBias is).
  *
- *       - If ( channelShuffler_outputGroupCount > 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *       - 5. If ( channelShuffler_outputGroupCount > 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
- *           - If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThroughShuffle), the filters for the output channels between
+ *           - 5.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThroughShuffle), the filters for the output channels between
  *               Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) will just pass through the input to output.
  *               But they will be arranged just like applying channel shuffler on the output.
  *
- *           - If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
+ *           - 5.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
  *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
- *               shuffler on the output. In this case, the bPointwise (and bExisted) will be true (not false), although the
+ *               shuffler on the output. In this case, the ( bPointwise == bExisted == true ) (not false), although the
  *               specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
+ *               (same as 3.2)
  *
  * @member {number} channelShuffler_outputGroupCount
  *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
