@@ -988,14 +988,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount0_pointwise1Before,
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
       this.bHigherHalfDifferent, // pointwise1 may have higher-half-different.
-
-      // If ( bHigherHalfDifferent == true ):
-      //   - If ( inputChannelCount < outputChannelCount ), bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head.
-      //     - channelShuffler_outputGroupCount does not matter.
-      //
-      //   - If ( inputChannelCount >= outputChannelCount ), bHigherHalfPassThrough, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail.
-      //     - ( channelShuffler_outputGroupCount == 0 )
-      0
+      0 // For pointwise1, the channelShuffler_outputGroupCount should always not positive because always no channel shuffler here.
     );
 
     if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
