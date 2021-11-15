@@ -130,12 +130,9 @@ class PassThrough {
  *               ( inputChannelCount ) and ( outputChannelCount - 1 ) will just copy the input channels between 0 and
  *               ( inputChannelCount - 1 ).
  *
- *           - 2.2 If ( outputChannelCount <= 0 ),
-
-//!!! ...unfinished... (2021/11/15) What if ( outputChannelCount <= 0 )?
-// This seems not possible because ( inputChannelCount < outputChannelCount <= 0 ) implies ( inputChannelCount < 0 ) which is impossible.
-
- *
+ *           - 2.2 If ( outputChannelCount <= 0 ), this can not happen because ( inputChannelCount < outputChannelCount <= 0 )
+ *               implies ( inputChannelCount < 0 ) which is impossible. (It will be recognized as 3.2 or 4.2 or 5.2 according
+ *               to channelShuffler_outputGroupCount.)
  *
  *     - If ( inputChannelCount >= outputChannelCount ):
  *
