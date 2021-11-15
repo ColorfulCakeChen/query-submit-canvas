@@ -120,14 +120,17 @@ class PassThrough {
  *
  *     - 1.1 If ( outputChannelCount > 0 ), normal poitwise convolution.
  *
- *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. (bPointwise == bExisted== false).
+ *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
  *   - If true:
  *
- *     - 2. If ( inputChannelCount < outputChannelCount ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head, i.e. bHigherHalfCopyLowerHalf),
- *         the filters for the output channels between ( inputChannelCount ) and ( outputChannelCount - 1 ) will just copy
- *         the input channels between 0 and ( inputChannelCount - 1 ).
+ *     - 2. If ( inputChannelCount < outputChannelCount ): (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
+ *           - 2.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf), the filters for the output channels between
+ *               ( inputChannelCount ) and ( outputChannelCount - 1 ) will just copy the input channels between 0 and
+ *               ( inputChannelCount - 1 ).
+ *
+ *           - 2.2 If ( outputChannelCount <= 0 ),
 
 //!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
 
@@ -135,14 +138,14 @@ class PassThrough {
  *
  *     - If ( inputChannelCount >= outputChannelCount ):
  *
- *       - 3. If ( channelShuffler_outputGroupCount < 0 ), (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head
+ *       - 3. If ( channelShuffler_outputGroupCount < 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
  *          
  *           - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22), the filters for the input channels between 0 and
  *               ( Math.ceil( inputChannelCount / 2 ) - 1 ) are pointwise21, between Math.ceil( inputChannelCount / 2 ) and
  *               ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases) will be extracted in sequence, but
  *               they will be combined into one larger filters (and biases). This makes these filters' (and biases') weights
  *               are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters  weights
- *              could be used in these two architectures for comparing performance and correctness.
+ *               could be used in these two architectures for comparing performance and correctness.
  *
  *           - 3.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
  *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
@@ -150,7 +153,7 @@ class PassThrough {
  *               specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
  *               (same as 5.2)
  *
- *       - 4. If ( channelShuffler_outputGroupCount == 0 ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
+ *       - 4. If ( channelShuffler_outputGroupCount == 0 ): (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  *           - 4.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThrough), the filters for the output channels between
  *               Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) will just pass through the input to output. 
