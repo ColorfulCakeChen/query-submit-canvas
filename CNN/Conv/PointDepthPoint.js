@@ -970,7 +970,7 @@ class Base extends ReturnOrClone.Base {
         this.bPointwise1Bias = false;
 
 //!!! ...unfinished... (2021/11/15) Problem: no weights should be extracted.
-// should not only bHigherHalfCopyLowerHalf, but also bLowerHalfCopyLowerHalf.
+// should not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough.
 //
 
       }
