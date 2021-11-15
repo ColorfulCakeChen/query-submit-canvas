@@ -120,8 +120,8 @@ class PassThrough {
  *
  *   - If true:
  *
- *     - If ( inputChannelCount < outputChannelCount ), (i.e. bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's
- *         head), the filters for the output channels between ( inputChannelCount ) and ( outputChannelCount - 1 ) will just copy
+ *     - If ( inputChannelCount < outputChannelCount ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head, i.e. bHigherHalfCopyLowerHalf),
+ *         the filters for the output channels between ( inputChannelCount ) and ( outputChannelCount - 1 ) will just copy
  *         the input channels between 0 and ( inputChannelCount - 1 ).
  *
 
@@ -131,8 +131,8 @@ class PassThrough {
  *
  *     - If ( inputChannelCount >= outputChannelCount ):
  *
- *       - If ( channelShuffler_outputGroupCount < 0 ), (i.e. bHigherHalfPointwise22, for pointwise2 of ShuffleNetV2_ByMopbileNetV1's
- *           head), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 ) are pointwise21,
+ *       - If ( channelShuffler_outputGroupCount < 0 ), (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head, i.e. bHigherHalfPointwise22),
+ *           the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 ) are pointwise21,
  *           between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases)
  *           will be extracted in sequence, but they will be combined into one larger filters (and biases). This makes these filters'
  *           (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters
@@ -143,8 +143,8 @@ class PassThrough {
 //!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
 
  *
- *       - If ( channelShuffler_outputGroupCount == 0 ), (i.e. bHigherHalfPassThrough, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's
- *           body/tail), the filters for the output channels between Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 )
+ *       - If ( channelShuffler_outputGroupCount == 0 ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, i.e. bHigherHalfPassThrough),
+ *           the filters for the output channels between Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 )
  *           will just pass through the input to output. 
  *
 
