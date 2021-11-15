@@ -1176,7 +1176,9 @@ class Base extends ReturnOrClone.Base {
 
     // 5.3 Pointwise2 (= Pointwise21 + Pointwise22 )
     this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
-    this.channelCount_pointwise2After_concat2Before = this.pointwise21ChannelCount + this.pointwise22ChannelCount;
+//!!! (2021/11/15 Remarked) Use real output channel count.
+//    this.channelCount_pointwise2After_concat2Before = this.pointwise21ChannelCount + this.pointwise22ChannelCount;
+    this.channelCount_pointwise2After_concat2Before = this.pointwise21.outputChannelCount_Real + this.pointwise22.outputChannelCount_Real;
 
     if ( !this.bPointwise2 ) {
       // If there is not any pointwise2 convolution, the result channel count will not be zero. It should be the channel count after
