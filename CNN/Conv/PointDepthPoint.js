@@ -497,18 +497,9 @@ class Params extends Weights.Params {
   get pointwise22ChannelCount()   {
 
     // In the following cases, there is always no pointwise22.
-
-//!!! ...unfinished... (2021/11/10) really? How about outputTensorCount?
-//    //   - ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
-//    //   - ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
-
     //   - TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail)
     //
     switch ( this.channelCount1_pointwise1Before ) {
-//!!! ...unfinished... (2021/11/10) really? How about outputTensorCount?
-//       case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH: // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//       case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1:  // (-3) (ShuffleNetV2's body/tail)
         return 0;
         break;
@@ -948,6 +939,8 @@ class Base extends ReturnOrClone.Base {
 
     // 2. The pointwise1 convolution.
 
+    let channelShuffler_outputGroupCount_pointwise1 = 0; // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
+
 //!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
 
     // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
@@ -967,10 +960,11 @@ class Base extends ReturnOrClone.Base {
       //
       if ( 0 == this.pointwise1ChannelCount ) {
         this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count and bHigherHalfCopyLowerHalf.
-        this.bPointwise1Bias = false;
+        channelShuffler_outputGroupCount_pointwise1 = -1;
+//        this.bPointwise1Bias = false;
 
 //!!! ...unfinished... (2021/11/15) Problem: no weights should be extracted.
-// should not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough.
+// should not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
 //
 
       }
@@ -982,7 +976,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount0_pointwise1Before,
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
       this.bHigherHalfDifferent, // pointwise1 may have higher-half-different.
-      0 // For pointwise1, the channelShuffler_outputGroupCount should always not positive because always no channel shuffler here.
+      channelShuffler_outputGroupCount_pointwise1
     );
 
     if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -1113,16 +1107,16 @@ class Base extends ReturnOrClone.Base {
 
     // 5. The pointwise2 convolution.
 
-    let channelShuffler_outputGroupCount = -1;
+    let channelShuffler_outputGroupCount_pointwise2 = -1; // Default channelShuffler_outputGroupCount for pointwise2, is negative (never zero).
 
     // If bHigherHalfPassThroughShuffle (or bAllPassThroughShuffle), (i.e. pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail), needs
-    // ( channelShuffler_outputGroupCount > 0 ).
+    // ( channelShuffler_outputGroupCount_pointwise2 > 0 ).
     //
     // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
     // (i.e. (ShuffleNetV2_ByMobileNetV1's body/tail) )
     //
     if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == false ) ) {
-      channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
+      channelShuffler_outputGroupCount_pointwise2 = channelShuffler_ConcatPointwiseConv.outputGroupCount;
     }
 
     // 5.1 Pointwise21
@@ -1138,7 +1132,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_concat1After_pointwise2Before,
       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
       this.bHigherHalfDifferent,
-      channelShuffler_outputGroupCount
+      channelShuffler_outputGroupCount_pointwise2
     );
 
     if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -1163,7 +1157,7 @@ class Base extends ReturnOrClone.Base {
         this.channelCount_concat1After_pointwise2Before,
         this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
         this.bHigherHalfDifferent,
-        channelShuffler_outputGroupCount
+        channelShuffler_outputGroupCount_pointwise2
       );
 
       if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd ) )
