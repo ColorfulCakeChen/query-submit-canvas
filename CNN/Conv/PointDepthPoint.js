@@ -956,17 +956,11 @@ class Base extends ReturnOrClone.Base {
       // as ( inputChannelCount >= outputChannelCount == pointwise1ChannelCount == 0 ).
       //
       // It should be adjusted forcibly so that ( inputChannelCount < outputChannelCount == pointwise1ChannelCount ) and always
-      // no biases.
+      // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
       //
       if ( 0 == this.pointwise1ChannelCount ) {
-        this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count and bHigherHalfCopyLowerHalf.
+        this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count.
         channelShuffler_outputGroupCount_pointwise1 = -1;
-//        this.bPointwise1Bias = false;
-
-//!!! ...unfinished... (2021/11/15) Problem: no weights should be extracted.
-// should not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
-//
-
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
