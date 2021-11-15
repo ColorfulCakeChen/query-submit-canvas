@@ -970,6 +970,7 @@ class Base extends ReturnOrClone.Base {
         this.bPointwise1Bias = false;
 
 //!!! ...unfinished... (2021/11/15) Problem: no weights should be extracted.
+// should become bAllPassThrough. but how change from ( inputChannelCount < outputChannelCount ) to ( inputChannelCount >= outputChannelCount )?
 
       }
 
