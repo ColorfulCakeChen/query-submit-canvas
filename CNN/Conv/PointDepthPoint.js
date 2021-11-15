@@ -949,38 +949,30 @@ class Base extends ReturnOrClone.Base {
     // 2. The pointwise1 convolution.
 
 //!!! ...unfinished... (2021/11/12)
-// When ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (ShuffleNetV2_ByMobileNetV1's head),
-// pointwise1 (with bHigherHalfCopyLowerHalf) should be responsible for doubling the channels so that depthwise1 (with bHigherHalfDepthwise2)
-// could include depthwise2 with ( channel multiplier == 1 ).
-//
 // But what if ( pointwise1ChannelCount == 0 )? what if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
-//
-    //
+
     // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
     // (i.e. (ShuffleNetV2_ByMobileNetV1's head) )
     //
     if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == true ) ) {
 
-//!!! ...unfinished... (2021/11/12)
-      // (i.e. bHigherHalfCopyLowerHalf, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
-      // ( inputChannelCount < outputChannelCount ),
-
-
-//!!! ...unfinished... (2021/11/12)
-      // (i.e. bHigherHalfPassThrough, for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
-      // ( inputChannelCount >= outputChannelCount )
-      // ( channelShuffler_outputGroupCount == 0 )
+      // When ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (ShuffleNetV2_ByMobileNetV1's head), pointwise1 is bHigherHalfCopyLowerHalf
+      // which is responsible for doubling the channels so that depthwise1 could include depthwise2 with ( channel multiplier == 1 ).
+      //
+      // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
+      // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) can not be distinguished.
+      //
+      // In this case, it should be adjusted forcibly so that ( pointwise1ChannelCount == ( 2 * channelCount0_pointwise1Before ) ).
 
       if ( 0 == this.pointwise1ChannelCount ) {
-
-//!!! ...unfinished... (2021/11/12)
-
-      } else {
-
         // doubling channel count and bHigherHalfCopyLowerHalf
 
-//!!! ...unfinished... (2021/11/12)
+//!!! ...unfinished... (2021/11/15)
+
+
       }
+
+    // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
     }
 
 
