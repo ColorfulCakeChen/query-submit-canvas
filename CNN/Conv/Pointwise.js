@@ -489,7 +489,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
       this.outputChannelCount_Real = this.outputChannelCount;
 
-      this.outputChannelCount_lowerHalf
+      this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
         = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
         = this.inputChannelCount; // The lower half filters have the same output channel count as input.
 
