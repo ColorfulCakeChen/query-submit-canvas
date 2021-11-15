@@ -956,17 +956,22 @@ class Base extends ReturnOrClone.Base {
     //
     if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == true ) ) {
 
-      // When ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (ShuffleNetV2_ByMobileNetV1's head), pointwise1 is bHigherHalfCopyLowerHalf
-      // which is responsible for doubling the channels so that depthwise1 could include depthwise2 with ( channel multiplier == 1 ).
+      // In this case, pointwise1 (i.e. bHigherHalfCopyLowerHalf) is responsible for doubling the channels so that depthwise1
+      // could include depthwise2.
       //
       // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
       // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) can not be distinguished.
       //
-      // In this case, it should be adjusted forcibly so that ( pointwise1ChannelCount == ( 2 * channelCount0_pointwise1Before ) ).
 
+//!!! ...unfinished... (2021/11/15) WRONG!
+
+      // It should be adjusted forcibly so that it becomes the same as (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
+      // ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThrough).
+      //
       if ( 0 == this.pointwise1ChannelCount ) {
-        // doubling channel count and bHigherHalfCopyLowerHalf
 
+//!!! ...unfinished... (2021/11/15) WRONG!
+        this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count and bHigherHalfCopyLowerHalf
 //!!! ...unfinished... (2021/11/15)
 
 
