@@ -131,8 +131,8 @@ class PassThrough {
  *               ( inputChannelCount - 1 ).
  *
  *           - 2.2 If ( outputChannelCount <= 0 ), this can not happen because ( inputChannelCount < outputChannelCount <= 0 )
- *               implies ( inputChannelCount < 0 ) which is impossible. (It will be recognized as 3.2 or 4.2 or 5.2 according
- *               to channelShuffler_outputGroupCount.)
+ *               implies ( inputChannelCount < 0 ) which is not possible (not legal). (It will be recognized as 3.2 or 4.2 or
+ *               5.2 according to channelShuffler_outputGroupCount.)
  *
  *     - If ( inputChannelCount >= outputChannelCount ):
  *
