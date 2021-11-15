@@ -112,8 +112,8 @@ class PassThrough {
  *         will not have biases (no matter how bBias is). It is all-pass-and-channel-shuffling mode.
  *
  * @member {number} outputChannelCount_Real
- *   Usually, the same as outputChannelCount. But when ( this.bAllPassThroughShuffle == true ), outputChannelCount_Real will be the same
- * as inputChannelCount (in this case, the outputChannelCount is zero).
+ *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
+ * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
  *
  * @member {boolean} bHigherHalfDifferent
  *   - If false, it is just a normal poitwise convolution.
@@ -143,13 +143,19 @@ class PassThrough {
 //!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
 
  *
- *       - If ( channelShuffler_outputGroupCount == 0 ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail, i.e. bHigherHalfPassThrough),
- *           the filters for the output channels between Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 )
- *           will just pass through the input to output. 
+ *       - If ( channelShuffler_outputGroupCount == 0 ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
+ *
+ *           - If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThrough), the filters for the output channels between
+ *               Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) will just pass through the input to output. 
  *
 
-//!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
+//!!! ...unfinished... (2021/11/15)
 
+ *           - If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise2 and no channel shuffler),
+ *               the filters will just pass through all input channels to output. In this case, the bPointwise (and bExisted)
+ *               will be true (not false), although the specified outputChannelCount is zero. And, it always will not have
+ *               biases (no matter how bBias is).
+ *
  *
  *       - If ( channelShuffler_outputGroupCount > 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
@@ -254,15 +260,21 @@ class Base extends ReturnOrClone_Activation.Base {
       if ( this.channelShuffler_outputGroupCount < 0 ) { // 3. bHigherHalfPointwise22
         this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
 
-      } else if ( this.channelShuffler_outputGroupCount == 0 ) { // 4. bHigherHalfPassThrough
-        this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
+      } else if ( this.channelShuffler_outputGroupCount == 0 ) {
+        
+        if ( this.outputChannelCount > 0 ) { // 4. bHigherHalfPassThrough
+          this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
+          
+        } else { // 5. ( outputChannelCount <= 0 ), bAllPassThrough
+          this.bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
+        }
 
       } else { // ( channelShuffler_outputGroupCount > 0 ), shuffling.
 
-        if ( this.outputChannelCount > 0 ) { // 5. bHigherHalfPassThroughShuffle
+        if ( this.outputChannelCount > 0 ) { // 6. bHigherHalfPassThroughShuffle
           this.bInitOk = Base.extractAs_HigherHalfPassThroughShuffle.call( this, inputFloat32Array );
 
-        } else { // 6. ( outputChannelCount <= 0 ), bAllPassThroughShuffle
+        } else { // 7. ( outputChannelCount <= 0 ), bAllPassThroughShuffle
           this.bInitOk = Base.extractAs_AllPassThroughShuffle.call( this, inputFloat32Array );
         }
       }
@@ -642,70 +654,6 @@ class Base extends ReturnOrClone_Activation.Base {
   }
 
   /**
-   * Extract filters and biases of AllPassThroughShuffle from inputFloat32Array.
-   *
-   * The following data members will be used:
-   *   - this.byteOffsetEnd
-   *   - this.inputChannelCount
-   *   - this.outputChannelCount
-   *
-   * The following data members will be modified:
-   *   - this.byteOffsetEnd
-   *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
-   *   - this.outputChannelCount_Real
-   *   - this.inputChannelCount_toBeExtracted
-   *   - this.outputChannelCount_toBeExtracted
-   *   - this.filtersTensor4d
-   *   - this.biasesTensor3d
-   *
-   * @param {Base} this                       The Base object to be modified.
-   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
-   *
-   * @return {boolean}                        Return true, if succeeded. Return false, if failed.
-   */
-  static extractAs_AllPassThroughShuffle( inputFloat32Array ) {
-
-    this.bAllPassThroughShuffle = true;
-
-    let higherHalfPassThrough;
-    try {
-
-      this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
-
-      // The real outputChannelCount is the same as inputChannelCount. (Note: this.outputChannelCount is zero here.)
-      this.outputChannelCount_Real = this.inputChannelCount;
-
-      higherHalfPassThrough = new PassThrough(
-        this.inputChannelCount, this.outputChannelCount_Real,
-        0, this.outputChannelCount_Real // Pass through all the input channels.
-      );
-
-      if ( !higherHalfPassThrough.bInitOk )
-        return false;
-
-      this.filtersTensor4d = higherHalfPassThrough.filtersTensor4d; // all pass through.
-      this.biasesTensor3d = null; // always does not have biases (no matter how bBias is).
-
-      this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-      higherHalfPassThrough.filtersTensor4d = null; // So that it will not be disposed. (It has been used as this.filtersTensor4d.)
-
-      Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
-
-    } catch ( e ) {
-      return false; // e.g. memory not enough.
-
-    } finally {
-
-      if ( higherHalfPassThrough ) {
-        higherHalfPassThrough.disposeTensors();
-      }
-    }
-
-    return true;
-  }
-
-  /**
    * Extract filters and biases of HigherHalfPassThrough from inputFloat32Array.
    *
    * The following data members will be used:
@@ -846,6 +794,68 @@ class Base extends ReturnOrClone_Activation.Base {
   }
 
   /**
+   * Extract filters and biases of AllPassThrough from inputFloat32Array.
+   *
+   * The following data members will be used:
+   *   - this.byteOffsetEnd
+   *   - this.inputChannelCount
+   *   - this.outputChannelCount
+   *
+   * The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *   - this.outputChannelCount_Real
+   *   - this.inputChannelCount_toBeExtracted
+   *   - this.outputChannelCount_toBeExtracted
+   *   - this.filtersTensor4d
+   *   - this.biasesTensor3d
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   *
+   * @return {boolean}                        Return true, if succeeded. Return false, if failed.
+   */
+  static extractAs_AllPassThrough( inputFloat32Array ) {
+
+    this.bAllPassThrough = true;
+
+    let higherHalfPassThrough;
+    try {
+
+      this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
+
+      // The real outputChannelCount is the same as inputChannelCount. (Note: this.outputChannelCount is zero here.)
+      this.outputChannelCount_Real = this.inputChannelCount;
+
+      higherHalfPassThrough = new PassThrough(
+        this.inputChannelCount, this.outputChannelCount_Real,
+        0, this.outputChannelCount_Real // Pass through all the input channels.
+      );
+
+      if ( !higherHalfPassThrough.bInitOk )
+        return false;
+
+      this.filtersTensor4d = higherHalfPassThrough.filtersTensor4d; // all pass through.
+      this.biasesTensor3d = null; // always does not have biases (no matter how bBias is).
+
+      this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+      higherHalfPassThrough.filtersTensor4d = null; // So that it will not be disposed. (It has been used as this.filtersTensor4d.)
+
+    } catch ( e ) {
+      return false; // e.g. memory not enough.
+
+    } finally {
+
+      if ( higherHalfPassThrough ) {
+        higherHalfPassThrough.disposeTensors();
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Extract filters and biases of HigherHalfPassThroughShuffle from inputFloat32Array.
    *
    * The following data members will be used:
@@ -872,10 +882,53 @@ class Base extends ReturnOrClone_Activation.Base {
     
     try {
       let bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
-      if ( bInitOk ) {
-        this.bHigherHalfPassThroughShuffle = true;
-        Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
-      }
+      if ( !bInitOk )
+        return false;
+
+      this.bHigherHalfPassThrough = undefined; // Cancel the flag of extractAs_HigherHalfPassThrough().
+      this.bHigherHalfPassThroughShuffle = true;
+      Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
+
+    } catch ( e ) {
+      return false; // e.g. memory not enough.
+    }
+
+    return true;
+  }
+
+  /**
+   * Extract filters and biases of AllPassThroughShuffle from inputFloat32Array.
+   *
+   * The following data members will be used:
+   *   - this.byteOffsetEnd
+   *   - this.inputChannelCount
+   *   - this.outputChannelCount
+   *
+   * The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
+   *   - this.outputChannelCount_Real
+   *   - this.inputChannelCount_toBeExtracted
+   *   - this.outputChannelCount_toBeExtracted
+   *   - this.filtersTensor4d
+   *   - this.biasesTensor3d
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   *
+   * @return {boolean}                        Return true, if succeeded. Return false, if failed.
+   */
+  static extractAs_AllPassThroughShuffle( inputFloat32Array ) {
+
+    try {
+      let bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
+      if ( !bInitOk )
+        return false;
+
+      this.bAllPassThrough = undefined; // Cancel the flag of extractAs_AllPassThrough().
+      this.bAllPassThroughShuffle = true;
+      Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
 
     } catch ( e ) {
       return false; // e.g. memory not enough.
