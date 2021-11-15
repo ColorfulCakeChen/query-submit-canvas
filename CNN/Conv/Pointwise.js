@@ -131,16 +131,22 @@ class PassThrough {
  *
  *     - If ( inputChannelCount >= outputChannelCount ):
  *
- *       - If ( channelShuffler_outputGroupCount < 0 ), (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head, i.e. bHigherHalfPointwise22),
- *           the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 ) are pointwise21,
- *           between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases)
- *           will be extracted in sequence, but they will be combined into one larger filters (and biases). This makes these filters'
- *           (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters
- *           weights could be used in these two architectures for comparing performance and correctness.
+ *       - If ( channelShuffler_outputGroupCount < 0 ), (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head
  *          
+ *           - If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22), the filters for the input channels between 0 and
+ *               ( Math.ceil( inputChannelCount / 2 ) - 1 ) are pointwise21, between Math.ceil( inputChannelCount / 2 ) and
+ *               ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases) will be extracted in sequence, but
+ *               they will be combined into one larger filters (and biases). This makes these filters' (and biases') weights
+ *               are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters  weights
+ *              could be used in these two architectures for comparing performance and correctness.
  *
 
 //!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
+ *
+ *           - If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
+ *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
+ *               shuffler on the output. In this case, the bPointwise (and bExisted) will be true (not false), although the
+ *               specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
 
  *
  *       - If ( channelShuffler_outputGroupCount == 0 ), (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
@@ -159,7 +165,7 @@ class PassThrough {
  *               Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) will just pass through the input to output.
  *               But they will be arranged just like applying channel shuffler on the output.
  *
- *           - If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2; i.e. pure channel shuffler),
+ *           - If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
  *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
  *               shuffler on the output. In this case, the bPointwise (and bExisted) will be true (not false), although the
  *               specified outputChannelCount is zero. And, it always will not have biases (no matter how bBias is).
@@ -253,24 +259,30 @@ class Base extends ReturnOrClone_Activation.Base {
 
     } else { // ( inputChannelCount >= outputChannelCount )
 
-      if ( this.channelShuffler_outputGroupCount < 0 ) { // 3. bHigherHalfPointwise22
-        this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
+      if ( this.channelShuffler_outputGroupCount < 0 ) {
+
+        if ( this.outputChannelCount > 0 ) { // 3.1 bHigherHalfPointwise22
+          this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
+
+        } else { // 3.2 ( outputChannelCount <= 0 ), bAllPassThroughShuffle
+          this.bInitOk = Base.extractAs_AllPassThroughShuffle.call( this, inputFloat32Array );
+        }
 
       } else if ( this.channelShuffler_outputGroupCount == 0 ) {
         
-        if ( this.outputChannelCount > 0 ) { // 4. bHigherHalfPassThrough
+        if ( this.outputChannelCount > 0 ) { // 4.1 bHigherHalfPassThrough
           this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
-          
-        } else { // 5. ( outputChannelCount <= 0 ), bAllPassThrough
+
+        } else { // 4.2 ( outputChannelCount <= 0 ), bAllPassThrough
           this.bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
         }
 
       } else { // ( channelShuffler_outputGroupCount > 0 ), shuffling.
 
-        if ( this.outputChannelCount > 0 ) { // 6. bHigherHalfPassThroughShuffle
+        if ( this.outputChannelCount > 0 ) { // 5.1 bHigherHalfPassThroughShuffle
           this.bInitOk = Base.extractAs_HigherHalfPassThroughShuffle.call( this, inputFloat32Array );
 
-        } else { // 7. ( outputChannelCount <= 0 ), bAllPassThroughShuffle
+        } else { // 5.2 ( outputChannelCount <= 0 ), bAllPassThroughShuffle
           this.bInitOk = Base.extractAs_AllPassThroughShuffle.call( this, inputFloat32Array );
         }
       }
