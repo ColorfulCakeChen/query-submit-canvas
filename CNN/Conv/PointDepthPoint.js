@@ -1010,8 +1010,9 @@ class Base extends ReturnOrClone.Base {
     // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
     // (i.e. (ShuffleNetV2_ByMobileNetV1's body/tail) )
     //
-    if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == false ) )
+    if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == false ) ) {
       channelShufflerForDepthwise1 = channelShuffler_ConcatPointwiseConv;
+    }
 
     this.depthwise1 = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwise1Before,
