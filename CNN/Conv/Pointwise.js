@@ -522,22 +522,30 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.bHigherHalfCopyLowerHalf_LowerHalfPassThrough = true;
 
-//!!! ...unfinished... (2021/11/15)
-    let higherHalfPassThrough;
+    let lowerHalfPassThrough, higherHalfPassThrough;
     try {
+
+      this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
 
       this.outputChannelCount_Real = this.outputChannelCount;
 
       this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
-        = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
         = this.inputChannelCount; // The lower half filters have the same output channel count as input.
 
       this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
 
       tf.util.assert( this.outputChannelCount_higherHalf > 0,
-        `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
+        `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough(): `
           + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be greater than zero.`
       );
+
+      lowerHalfPassThrough = new PassThrough(
+        this.inputChannelCount, this.outputChannelCount_lowerHalf,
+        0, this.outputChannelCount_lowerHalf // Pass through the lower channels to lower channels (i.e. pass through lower channels).
+      );
+      
+      if ( !lowerHalfPassThrough.bInitOk )
+        return false;
 
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, this.outputChannelCount_higherHalf,
@@ -547,6 +555,7 @@ class Base extends ReturnOrClone_Activation.Base {
       if ( !higherHalfPassThrough.bInitOk )
         return false;
 
+//!!! ...unfinished... (2021/11/15)
       let filtersTensor4d_lowerHalf;
       try {
         filtersTensor4d_lowerHalf = Base.extractFilters.call( this,
@@ -594,6 +603,17 @@ class Base extends ReturnOrClone_Activation.Base {
         }
 
         higherHalfPassThrough.disposeTensors();
+      }
+
+      if ( lowerHalfPassThrough ) {
+
+        // Include the weights count of the lower-half-pass-through filters and biases.
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( lowerHalfPassThrough.filtersTensor4d.shape );
+        if ( lowerHalfPassThrough.biasesTensor3d ) {
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( lowerHalfPassThrough.biasesTensor3d.shape );
+        }
+
+        lowerHalfPassThrough.disposeTensors();
       }
     }
 
