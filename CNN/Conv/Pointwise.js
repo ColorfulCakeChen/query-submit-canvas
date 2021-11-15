@@ -133,6 +133,7 @@ class PassThrough {
  *           - 2.2 If ( outputChannelCount <= 0 ),
 
 //!!! ...unfinished... (2021/11/14) What if ( outputChannelCount <= 0 )?
+// This seems not possible because ( inputChannelCount < outputChannelCount <= 0 ) implies ( inputChannelCount < 0 ) which is impossible.
 
  *
  *
