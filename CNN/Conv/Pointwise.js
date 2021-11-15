@@ -24,11 +24,12 @@ class PassThrough {
    * @param {number} inputChannelIndexStart The channel count index (included) to start to be copied to the output.
    * @param {number} inputChannelIndexStop  The channel count index (not included) to stop to be copied to the output.
    */
-  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, inputChannelIndexStop ) {
+  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, inputChannelIndexStop, bBias ) {
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
     this.inputChannelIndexStop = inputChannelIndexStop;
+    this.bBias = bBias;
 
     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
     let biasesShape =  [ 1, 1, outputChannelCount ];
@@ -527,7 +528,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
       lowerHalfPassThrough = new PassThrough(
         this.inputChannelCount, this.outputChannelCount_lowerHalf,
-        0, this.outputChannelCount_lowerHalf // Pass through the lower channels to lower channels (i.e. pass through lower channels).
+        0, this.outputChannelCount_lowerHalf, // Pass through the lower channels to lower channels (i.e. pass through lower channels).
+        this.bBias
       );
 
       if ( !lowerHalfPassThrough.bInitOk )
@@ -535,7 +537,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, this.outputChannelCount_higherHalf,
-        0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+        0, this.outputChannelCount_higherHalf, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+        this.bBias
       );
 
       if ( !higherHalfPassThrough.bInitOk )
@@ -625,7 +628,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, this.outputChannelCount_higherHalf,
-        0, this.outputChannelCount_higherHalf // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+        0, this.outputChannelCount_higherHalf, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+        this.bBias
       );
       
       if ( !higherHalfPassThrough.bInitOk )
@@ -839,7 +843,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
         higherHalfPassThrough = new PassThrough(
           this.inputChannelCount, this.outputChannelCount_higherHalf,
-          this.outputChannelCount_higherHalf, this.outputChannelCount // Pass through the higher channels.
+          this.outputChannelCount_higherHalf, this.outputChannelCount, // Pass through the higher channels.
+          this.bBias
         );
 
         if ( !higherHalfPassThrough.bInitOk )
@@ -963,7 +968,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, this.outputChannelCount_Real,
-        0, this.outputChannelCount_Real // Pass through all the input channels.
+        0, this.outputChannelCount_Real, // Pass through all the input channels.
+        this.bBias
       );
 
       if ( !higherHalfPassThrough.bInitOk )
