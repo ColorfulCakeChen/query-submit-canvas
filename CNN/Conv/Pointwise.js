@@ -139,7 +139,8 @@ class PassThrough {
  *             - 2.1 If ( channelShuffler_outputGroupCount < 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough), the
  *                  filters for the output channels between 0 and ( inputChannelCount - 1 ) will just pass through the input
  *                  to output. The filters for the output channels between ( inputChannelCount ) and ( outputChannelCount - 1 )
- *                  will just copy the input channels between 0 and ( inputChannelCount - 1 ).
+ *                  will just copy the input channels between 0 and ( inputChannelCount - 1 ). In this case, it will always
+ *                  have no biases (no matter how bBias is).
  *
  *             - 2.2 If ( channelShuffler_outputGroupCount == 0 ), (i.e. bHigherHalfCopyLowerHalf), the filters for the output
  *                  channels between ( inputChannelCount ) and ( outputChannelCount - 1 ) will just copy the input channels
@@ -390,11 +391,16 @@ class Base extends ReturnOrClone_Activation.Base {
     // Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
       this.bPointwise = true;
+
+      if ( this.inputChannelCount < this.outputChannelCount ) {
+        if ( this.channelShuffler_outputGroupCount < 0 ) { // bHigherHalfCopyLowerHalf_LowerHalfPassThrough
+          bBias = false; // In this case, there is always no biases (no matter how bBias is).
+        }
+      }
+
     } else {  // ( outputChannelCount <= 0 )
       if (   ( this.bHigherHalfDifferent == true )
           && ( this.inputChannelCount >= this.outputChannelCount )
-//!!! (2021/11/15 Remarked)
-//          && ( this.channelShuffler_outputGroupCount > 0 )
          ) {
         this.bPointwise = true; // all-pass-through (with or without channel-shuffling) mode.
         bBias = false; // In this case, there is always no biases (no matter how bBias is). The 
