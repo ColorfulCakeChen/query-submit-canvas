@@ -448,7 +448,7 @@ class Base {
       // could include depthwise2.
       //
       if ( testParams.out.pointwise1ChannelCount > 0 ) {
-        let pointwise1ChannelCount = ( testParams.out.pointwise1ChannelCount * 2 );
+        let pointwise1ChannelCount = ( testParams.out.pointwise1ChannelCount * 2 ); // As doubled specified channel count.
         asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
 
       // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
@@ -459,7 +459,7 @@ class Base {
       // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
       //
       } else { // ( 0 == testParams.out.pointwise1ChannelCount )
-        let pointwise1ChannelCount = ( testParams.out.channelCount0_pointwise1Before * 2 );
+        let pointwise1ChannelCount = ( testParams.out.channelCount0_pointwise1Before * 2 ); // Aa doubled input channel count.
         asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
       }
 
