@@ -143,7 +143,13 @@ class PassThrough {
 
 //!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 )
 
+ * @member {number} inputChannelCount_lowerHalf
+ *
+ *
  * @member {number} outputChannelCount_lowerHalf
+ *
+ *
+ *
 
  * @member {boolean} bHigherHalfDifferent
  *   - 1. If false, it is just a normal poitwise convolution.
@@ -839,6 +845,10 @@ class Base extends ReturnOrClone_Activation.Base {
     // Extract all weights as specified input/output channels (just like a normal pointwise convolution, but with a different arrangement).
     this.inputChannelCount_toBeExtracted = this.inputChannelCount;
     this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 )
+
+//!!! (2021/11/17 Remarked) comes from constructor's parameter.
 
     this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
     this.outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
