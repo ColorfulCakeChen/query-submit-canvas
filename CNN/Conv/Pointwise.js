@@ -517,6 +517,10 @@ class Base extends ReturnOrClone_Activation.Base {
       this.outputChannelCount_Real = this.outputChannelCount;
 
       this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+
+//!!! ...unfinished... (2021/11/17) should just half of input channel count
+
+//!!! (2021/11/17 Remarked)
         = this.inputChannelCount; // The lower half filters have the same output channel count as input.
 
       this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
@@ -615,20 +619,47 @@ class Base extends ReturnOrClone_Activation.Base {
 
       this.outputChannelCount_Real = this.outputChannelCount;
 
-      this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
-        = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+//!!! (2021/11/17 Remarked)
+//       this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
+//         = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
+//         = this.inputChannelCount; // The lower half filters have the same output channel count as input.
+//
+//       this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
+//
+//       tf.util.assert( this.outputChannelCount_higherHalf > 0,
+//         `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
+//           + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be greater than zero.`
+//       );
+
+      this.inputChannelCount_toBeExtracted
         = this.inputChannelCount; // The lower half filters have the same output channel count as input.
 
-      this.outputChannelCount_higherHalf = this.outputChannelCount - this.inputChannelCount_lowerHalf;
+      tf.util.assert( ( this.outputChannelCount % 2 ) > 0,
+        `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
+          + `outputChannelCount ( ${this.outputChannelCount} ) must be divisible by 2.`
+      );
+
+      this.outputChannelCount_lowerHalf
+        = this.outputChannelCount_toBeExtracted
+        = Math.ceil( this.outputChannelCount / 2 );
+
+      // Note: In this case, there is no inputChannelCount_lowerHalf and no inputChannelCount_higherHalf (just has inputChannelCount).
+      this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
       tf.util.assert( this.outputChannelCount_higherHalf > 0,
         `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
           + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be greater than zero.`
       );
 
+      tf.util.assert( this.outputChannelCount_higherHalf == this.outputChannelCount_lowerHalf,
+        `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
+          + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be the same as `
+          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ).`
+      );
+
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, this.outputChannelCount_higherHalf,
-        0, this.outputChannelCount_higherHalf, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+        0, this.outputChannelCount_lowerHalf, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
         this.bBias
       );
       
