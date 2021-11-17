@@ -985,7 +985,9 @@ class Base extends ReturnOrClone.Base {
 
     this.bPointwise1 = this.pointwise1.bExisted;
     if ( this.bPointwise1 ) {
-      this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount;
+//!!! (2021/11/11 Remarked) should use this.pointwise1.outputChannelCount_Real.
+//      this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount;
+      this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount_Real;
       this.tensorWeightCountTotal += this.pointwise1.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.pointwise1.tensorWeightCountExtracted;
       TensorOpCounters.pointwise1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_pointwise1", this.pointwise1, TensorOpCounters.input0 );
