@@ -621,7 +621,7 @@ class Base extends ReturnOrClone_Activation.Base {
 //         return false;
 
 
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 )
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
 
 //!!! (2021/11/17 Remarked) comes from constructor's parameter.
 //       tf.util.assert( ( this.outputChannelCount % 2 ) == 0,
@@ -751,7 +751,7 @@ class Base extends ReturnOrClone_Activation.Base {
       this.inputChannelCount_toBeExtracted = this.inputChannelCount;
       this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
 
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 )
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
 
 //!!! (2021/11/17 Remarked) comes from constructor's parameter.
 //       tf.util.assert( ( this.outputChannelCount % 2 ) == 0,
