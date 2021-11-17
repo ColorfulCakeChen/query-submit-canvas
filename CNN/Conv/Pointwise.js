@@ -258,13 +258,22 @@ class PassThrough {
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, bHigherHalfDifferent, channelShuffler_outputGroupCount ) {
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 )
+
+//!!! (2021/11/17 Remarked)
+//  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, bHigherHalfDifferent, channelShuffler_outputGroupCount ) {
+  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
     super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-    this.bHigherHalfDifferent = bHigherHalfDifferent;
+
+//!!! (2021/11/17 Remarked)
+//    this.bHigherHalfDifferent = bHigherHalfDifferent;
+    this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
+    this.bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 );
+
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
   }
 
@@ -579,12 +588,15 @@ class Base extends ReturnOrClone_Activation.Base {
 //         return false;
 
 
-      tf.util.assert( ( this.outputChannelCount % 2 ) == 0,
-        `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
-          + `outputChannelCount ( ${this.outputChannelCount} ) must be divisible by 2.`
-      );
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 )
 
-      this.outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
+//!!! (2021/11/17 Remarked) comes from constructor's parameter.
+//       tf.util.assert( ( this.outputChannelCount % 2 ) == 0,
+//         `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
+//           + `outputChannelCount ( ${this.outputChannelCount} ) must be divisible by 2.`
+//       );
+//
+//       this.outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
 
       // Note: In this case, there is no inputChannelCount_lowerHalf and no inputChannelCount_higherHalf (just has inputChannelCount).
       this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
@@ -594,11 +606,12 @@ class Base extends ReturnOrClone_Activation.Base {
           + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be greater than zero.`
       );
 
-      tf.util.assert( this.outputChannelCount_higherHalf == this.outputChannelCount_lowerHalf,
-        `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
-          + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be the same as `
-          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ).`
-      );
+//!!! (2021/11/17 Remarked) Since comes from constructor's parameter, no need to be equaled.
+//       tf.util.assert( this.outputChannelCount_higherHalf == this.outputChannelCount_lowerHalf,
+//         `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
+//           + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be the same as `
+//           + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ).`
+//       );
 
       lowerHalfPassThrough = new PassThrough(
         this.inputChannelCount, this.outputChannelCount_lowerHalf,
@@ -701,17 +714,21 @@ class Base extends ReturnOrClone_Activation.Base {
 //           + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be greater than zero.`
 //       );
 
-      this.inputChannelCount_toBeExtracted
-        = this.inputChannelCount; // The lower half filters have the same output channel count as input.
+      
+      this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+      this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
 
-      tf.util.assert( ( this.outputChannelCount % 2 ) == 0,
-        `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
-          + `outputChannelCount ( ${this.outputChannelCount} ) must be divisible by 2.`
-      );
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 )
 
-      this.outputChannelCount_lowerHalf
-        = this.outputChannelCount_toBeExtracted
-        = Math.ceil( this.outputChannelCount / 2 );
+//!!! (2021/11/17 Remarked) comes from constructor's parameter.
+//       tf.util.assert( ( this.outputChannelCount % 2 ) == 0,
+//         `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
+//           + `outputChannelCount ( ${this.outputChannelCount} ) must be divisible by 2.`
+//       );
+//
+//       this.outputChannelCount_lowerHalf
+//         = this.outputChannelCount_toBeExtracted
+//         = Math.ceil( this.outputChannelCount / 2 );
 
       // Note: In this case, there is no inputChannelCount_lowerHalf and no inputChannelCount_higherHalf (just has inputChannelCount).
       this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
@@ -721,11 +738,12 @@ class Base extends ReturnOrClone_Activation.Base {
           + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be greater than zero.`
       );
 
-      tf.util.assert( this.outputChannelCount_higherHalf == this.outputChannelCount_lowerHalf,
-        `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
-          + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be the same as `
-          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ).`
-      );
+//!!! (2021/11/17 Remarked) Since comes from constructor's parameter, no need to be equaled.
+//       tf.util.assert( this.outputChannelCount_higherHalf == this.outputChannelCount_lowerHalf,
+//         `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
+//           + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) should be the same as `
+//           + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ).`
+//       );
 
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, this.outputChannelCount_higherHalf,
