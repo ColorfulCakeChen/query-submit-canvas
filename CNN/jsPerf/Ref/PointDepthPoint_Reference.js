@@ -444,11 +444,11 @@ class Base {
     //
     if ( ( pointDepthPoint.bHigherHalfDifferent == true ) && ( pointDepthPoint.bHigherHalfDepthwise2 == true ) ) {
 
-      // In this case, pointwise1 (i.e. bHigherHalfCopyLowerHalf) is responsible for doubling the channels so that depthwise1
-      // could include depthwise2.
+      // In this case (i.e. bHigherHalfCopyLowerHalf), enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count )
+      // so that depthwise1 could include depthwise2.
       //
       if ( testParams.out.pointwise1ChannelCount > 0 ) {
-        let pointwise1ChannelCount = ( testParams.out.pointwise1ChannelCount * 2 ); // As doubled specified channel count.
+        let pointwise1ChannelCount = ( testParams.out.pointwise1ChannelCount + testParams.out.channelCount0_pointwise1Before );
         asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
 
       // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
