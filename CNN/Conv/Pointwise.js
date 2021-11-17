@@ -63,7 +63,7 @@ class PassThrough {
       } else {
 
         let channelIndexesInt32Tensor1d;
-        if ( indexCountZeros > 0 ) {
+        if ( indexCountZeros <= 0 ) { // Input channel count is greater than or equal to requested, no needs to use zeros.
           channelIndexesInt32Tensor1d =
             tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
 
