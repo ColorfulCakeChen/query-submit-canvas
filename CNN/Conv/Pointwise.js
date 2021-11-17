@@ -50,7 +50,7 @@ class PassThrough {
 
       let indexStart = Math.min( inputChannelIndexStart, inputChannelIndexStop );
       let indexStop = Math.max( inputChannelIndexStart, inputChannelIndexStop );
-      let indexCount = indexStop - indexStart - 1;
+      let indexCount = indexStop - indexStart; // No need to minus one, because the indexStop is not inclusive.
       let indexCountExisted = Math.min( inputChannelCount, indexCount ); // Only the existed input channel could be past-through.
       let indexCountZeros = inputChannelCount - indexCountExisted; // For out of input channel, use zeros instead.
 
