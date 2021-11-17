@@ -144,12 +144,14 @@ class PassThrough {
 //!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
 
  * @member {number} inputChannelCount_lowerHalf
- *
+ *   If positive (and outputChannelCount_lowerHalf should also be positive), then ( bHigherHalfDifferent == true ).
  *
  * @member {number} outputChannelCount_lowerHalf
+ *   If positive (and inputChannelCount_lowerHalf should also be positive), then ( bHigherHalfDifferent == true ).
  *
  *
- *
+
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
 
  * @member {boolean} bHigherHalfDifferent
  *   - 1. If false, it is just a normal poitwise convolution.
