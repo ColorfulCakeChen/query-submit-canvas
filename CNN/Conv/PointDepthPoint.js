@@ -955,7 +955,7 @@ class Base extends ReturnOrClone.Base {
       // could include depthwise2.
       //
       if ( this.pointwise1ChannelCount > 0 ) {
-        this.pointwise1ChannelCount = ( this.pointwise1ChannelCount * 2 ); // doubling specified channel count.
+        this.pointwise1ChannelCount = ( this.pointwise1ChannelCount * 2 ); // As doubled specified channel count.
 
       // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
       // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
@@ -965,8 +965,8 @@ class Base extends ReturnOrClone.Base {
       // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
       //
       } else {
-        this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling input channel count.
-        channelShuffler_outputGroupCount_pointwise1 = -1;
+        this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // As doubled input channel count.
+        channelShuffler_outputGroupCount_pointwise1 = -1; // So that bLowerHalfPassThrough.
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
