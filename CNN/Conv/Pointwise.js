@@ -48,13 +48,35 @@ class PassThrough {
 
 //!!! ...unfinished... (2021/11/17) What if ( inputChannelCount < ( inputChannelIndexStop - inputChannelIndexStart - 1 ) )?
 
+      let indexStart = Math.min( inputChannelIndexStart, inputChannelIndexStop );
+      let indexStop = Math.max( inputChannelIndexStart, inputChannelIndexStop );
+      let indexCount = indexStop - indexStart - 1;
+      let indexCountExisted = Math.min( inputChannelCount, indexCount ); // Only the existed input channel could be past-through.
+      let indexCountZeros = inputChannelCount - indexCountExisted; // For out of input channel, use zeros instead.
+
       let filtersTensor4d;
-      if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separarely.
-        filtersTensor4d = tf.tensor4d( [ 1 ], filtersShape );
+      if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
+        let oneZerosArray = ( new Array( indexCount ) ).fill( 0 );
+        oneZerosArray[ 0 ] = 1; // Only the first element is one.
+        filtersTensor4d = tf.tensor4d( oneZerosArray, filtersShape );
 
       } else {
-        let channelIndexesInt32Tensor1d =
-          tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+
+        let channelIndexesInt32Tensor1d;
+        if ( indexCountZeros > 0 ) {
+          channelIndexesInt32Tensor1d =
+            tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+
+        } else { // Input channel count is less than requested, uses zeros for the last several channels.
+          let channelIndexesExistedInt32Tensor1d =
+            tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesExistedInt32Tensor1d)
+          
+          let channelIndexesZerosInt32Tensor1d =
+            tf.zeros( [ indexCountZeros ], "int32" ); // tf.oneHot() accepts int32. (channelIndexesZerosInt32Tensor1d)
+
+          channelIndexesInt32Tensor1d
+            = tf.concat( channelIndexesExistedInt32Tensor1d, channelIndexesZerosInt32Tensor1d );
+        }
 
         let channelIndexesOneHotInt32Tensor2d =
           channelIndexesInt32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
