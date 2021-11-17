@@ -46,6 +46,8 @@ class PassThrough {
 //           .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
 //           ;
 
+//!!! ...unfinished... (2021/11/17) What if ( inputChannelCount < ( inputChannelIndexStop - inputChannelIndexStart - 1 ) )?
+
       let filtersTensor4d;
       if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separarely.
         filtersTensor4d = tf.tensor4d( [ 1 ], filtersShape );
