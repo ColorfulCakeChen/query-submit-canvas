@@ -143,6 +143,8 @@ class PassThrough {
 
 //!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
 
+//!!! ...unfinished... (2021/11/17) It seems that inputChannelCount_lowerHalf may not be necessary.
+
  * @member {number} inputChannelCount_lowerHalf
  *   If positive (and outputChannelCount_lowerHalf should also be positive), then ( bHigherHalfDifferent == true ).
  *
@@ -564,6 +566,8 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.inputChannelCount
    *   - this.outputChannelCount
+   *   - this.inputChannelCount_lowerHalf
+   *   - this.outputChannelCount_lowerHalf
    *
    * The following data members will be modified:
    *   - this.byteOffsetEnd
@@ -710,6 +714,8 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.inputChannelCount
    *   - this.outputChannelCount
+   *   - this.inputChannelCount_lowerHalf
+   *   - this.outputChannelCount_lowerHalf
    *
    * The following data members will be modified:
    *   - this.byteOffsetEnd
@@ -847,6 +853,8 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.inputChannelCount
    *   - this.outputChannelCount
+   *   - this.inputChannelCount_lowerHalf
+   *   - this.outputChannelCount_lowerHalf
    *
    * The following data members will be modified:
    *   - this.byteOffsetEnd
@@ -953,6 +961,8 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.inputChannelCount
    *   - this.outputChannelCount
+   *   - this.inputChannelCount_lowerHalf
+   *   - this.outputChannelCount_lowerHalf
    *
    * The following data members will be modified:
    *   - this.byteOffsetEnd
@@ -1157,6 +1167,8 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.byteOffsetEnd
    *   - this.inputChannelCount
    *   - this.outputChannelCount
+   *   - this.inputChannelCount_lowerHalf
+   *   - this.outputChannelCount_lowerHalf
    *
    * The following data members will be modified:
    *   - this.byteOffsetEnd
