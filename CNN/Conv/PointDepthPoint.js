@@ -948,21 +948,22 @@ class Base extends ReturnOrClone.Base {
     //
     if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == true ) ) {
 
+
+//!!! ...unfinished... (2021/11/15) seems always double, no matter whether ( 0 == this.pointwise1ChannelCount ).
+
       // In this case, pointwise1 (i.e. bHigherHalfCopyLowerHalf) is responsible for doubling the channels so that depthwise1
       // could include depthwise2.
       //
+      this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count.
+
       // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
       // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
-      // as ( inputChannelCount >= outputChannelCount == pointwise1ChannelCount == 0 ).
+      // as ( inputChannelCount >= outputChannelCount == pointwise1ChannelCount == 0 ) by Pointwise.Base.
       //
       // It should be adjusted forcibly so that ( inputChannelCount < outputChannelCount == pointwise1ChannelCount ) and always
       // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
       //
-
-//!!! ...unfinished... (2021/11/15) seems always double, no matter whether ( 0 == this.pointwise1ChannelCount ).
-
       if ( 0 == this.pointwise1ChannelCount ) {
-        this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // doubling channel count.
         channelShuffler_outputGroupCount_pointwise1 = -1;
       }
 
