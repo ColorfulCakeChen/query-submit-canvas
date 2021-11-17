@@ -141,7 +141,7 @@ class PassThrough {
  * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
  *
 
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 )
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
 
  * @member {number} inputChannelCount_lowerHalf
  *
@@ -171,7 +171,7 @@ class PassThrough {
  *                 In this case, it will always have no biases (no matter how bBias is).
  *
 
-//!!! ...unfinished... (2021/11/17) outputChannelCount_lowerHalf
+//!!! ...unfinished... (2021/11/17) inputChannelCount_lowerHalf, outputChannelCount_lowerHalf
 
 
  *             - 2.2 If ( channelShuffler_outputGroupCount == 0 ), (i.e. bHigherHalfCopyLowerHalf), the filters for the output
@@ -264,11 +264,14 @@ class PassThrough {
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 )
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
 
 //!!! (2021/11/17 Remarked)
 //  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, bHigherHalfDifferent, channelShuffler_outputGroupCount ) {
-  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+  constructor(
+    inputChannelCount, outputChannelCount, bBias, nActivationId,
+    inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+
     super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
@@ -277,8 +280,18 @@ class Base extends ReturnOrClone_Activation.Base {
 
 //!!! (2021/11/17 Remarked)
 //    this.bHigherHalfDifferent = bHigherHalfDifferent;
+
+    this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
-    this.bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 );
+
+    tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ) == ( this.outputChannelCount_lowerHalf > 0 ),
+      `Pointwise.Base.constructor(): `
+        + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) and `
+        + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) `
+        + `should be both positive or both not.`
+    );
+
+    this.bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 );
 
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
   }
