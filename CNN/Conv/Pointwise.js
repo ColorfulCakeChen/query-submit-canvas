@@ -140,6 +140,11 @@ class PassThrough {
  *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
  * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
  *
+
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( outputChannelCount_lowerHalf > 0 )
+
+ * @member {number} outputChannelCount_lowerHalf
+
  * @member {boolean} bHigherHalfDifferent
  *   - 1. If false, it is just a normal poitwise convolution.
  *
@@ -154,14 +159,18 @@ class PassThrough {
  *           - If ( outputChannelCount > 0 ):
  *
  *             - 2.1 If ( channelShuffler_outputGroupCount < 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough), the
- *                  filters for the output channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 ) will just pass
- *                  through the input to output. The filters for the output channels between ( Math.ceil( outputChannelCount / 2 ) )
- *                  and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 ).
- *                  In this case, it will always have no biases (no matter how bBias is).
+ *                 filters for the output channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 ) will just pass
+ *                 through the input to output. The filters for the output channels between ( Math.ceil( outputChannelCount / 2 ) )
+ *                 and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 ).
+ *                 In this case, it will always have no biases (no matter how bBias is).
  *
+
+//!!! ...unfinished... (2021/11/17) outputChannelCount_lowerHalf
+
+
  *             - 2.2 If ( channelShuffler_outputGroupCount == 0 ), (i.e. bHigherHalfCopyLowerHalf), the filters for the output
- *                  channels between ( Math.ceil( outputChannelCount / 2 ) ) and ( outputChannelCount - 1 ) will just copy the
- *                  input channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 ).
+ *                 channels between ( Math.ceil( outputChannelCount / 2 ) ) and ( outputChannelCount - 1 ) will just copy the
+ *                 input channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 ).
  *
  *             - If ( channelShuffler_outputGroupCount > 0 ), unused. Initialization will always failed.
  *
