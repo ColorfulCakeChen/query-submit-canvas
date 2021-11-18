@@ -695,8 +695,7 @@ class Base extends ReturnOrClone_Activation.Base {
       this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
       this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
 
-      // Note: In this case, the inputChannelCount_higherHalf is not used.
-      //this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+      this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
       this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
 //!!! (2021/11/18 Remarked)
@@ -725,16 +724,13 @@ class Base extends ReturnOrClone_Activation.Base {
         if ( !filtersTensor4d_lowerHalf )
           return false;
 
-//!!! ...unfinished... (2021/11/18) may be expand filters (like extractAs_HigherHalfPassThrough()).
-
-        let postfixCount = ;
-        filtersTensor4d_lowerHalf_expanded = Base.expandTensor4d_Zeros_AlongAxisId2( filtersTensor4d_lowerHalf, 0, postfixCount );
+        filtersTensor4d_lowerHalf_expanded = Base.expandTensor4d_Zeros_AlongAxisId2(
+          filtersTensor4d_lowerHalf, 0, this.inputChannelCount_higherHalf ); // So that accepts inputChannelCount as input.
       
         if ( !filtersTensor4d_lowerHalf_expanded )
           return false;
 
-           
-        let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
+        let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalfPassThrough.filtersTensor4d ];
 //!!! (2021/11/18 Remarked)
 //        this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
         this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
