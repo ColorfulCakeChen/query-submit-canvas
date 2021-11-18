@@ -139,9 +139,6 @@ class PassThrough {
  *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
  * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
  *
-
-//!!! ...unfinished... (2021/11/17) It seems that inputChannelCount_lowerHalf may not be necessary.
-
  * @member {number} inputChannelCount_lowerHalf
  *   If positive (and outputChannelCount_lowerHalf should also be positive), then ( bHigherHalfDifferent == true ).
  *
@@ -149,9 +146,6 @@ class PassThrough {
  *   If positive (and inputChannelCount_lowerHalf should also be positive), then ( bHigherHalfDifferent == true ).
  *
  *
-
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
-
  * @member {boolean} bHigherHalfDifferent
  *   - 1. If false, it is just a normal poitwise convolution.
  *
@@ -166,18 +160,14 @@ class PassThrough {
  *           - If ( outputChannelCount > 0 ):
  *
  *             - 2.1 If ( channelShuffler_outputGroupCount < 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough), the
- *                 filters for the output channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 ) will just pass
- *                 through the input to output. The filters for the output channels between ( Math.ceil( outputChannelCount / 2 ) )
- *                 and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 ).
+ *                 filters for the output channels between 0 and ( outputChannelCount_lowerHalf - 1 ) will just pass
+ *                 through the input to output. The filters for the output channels between ( outputChannelCount_lowerHalf )
+ *                 and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
  *                 In this case, it will always have no biases (no matter how bBias is).
  *
-
-//!!! ...unfinished... (2021/11/17) inputChannelCount_lowerHalf, outputChannelCount_lowerHalf
-
-
  *             - 2.2 If ( channelShuffler_outputGroupCount == 0 ), (i.e. bHigherHalfCopyLowerHalf), the filters for the output
- *                 channels between ( Math.ceil( outputChannelCount / 2 ) ) and ( outputChannelCount - 1 ) will just copy the
- *                 input channels between 0 and ( Math.ceil( outputChannelCount / 2 ) - 1 ).
+ *                 channels between ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just copy the
+ *                 input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
  *
  *             - If ( channelShuffler_outputGroupCount > 0 ), unused. Initialization will always failed.
  *
@@ -190,7 +180,7 @@ class PassThrough {
  *       - 3. If ( channelShuffler_outputGroupCount < 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
  *          
  *           - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22), the filters for the input channels between 0 and
- *               ( Math.ceil( inputChannelCount / 2 ) - 1 ) are pointwise21, between Math.ceil( inputChannelCount / 2 ) and
+ *               ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between ( inputChannelCount_lowerHalf ) and
  *               ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases) will be extracted in sequence, but
  *               they will be combined into one larger filters (and biases). This makes these filters' (and biases') weights
  *               are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters weights
@@ -204,7 +194,7 @@ class PassThrough {
  *       - 4. If ( channelShuffler_outputGroupCount == 0 ): (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  *           - 4.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThrough), the filters for the output channels between
- *               Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) will just pass through the input to output. 
+ *               ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just pass through the input to output. 
  *
  *           - 4.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler), the filters
  *               will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
@@ -214,7 +204,7 @@ class PassThrough {
  *       - 5. If ( channelShuffler_outputGroupCount > 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  *           - 5.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThroughShuffle), the filters for the output channels between
- *               Math.ceil( outputChannelCount / 2 ) and ( outputChannelCount - 1 ) will just pass through the input to output.
+ *               ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just pass through the input to output.
  *               But they will be arranged just like applying channel shuffler on the output.
  *
  *           - 5.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
@@ -226,12 +216,6 @@ class PassThrough {
  *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
  * be used to (pre-)shuffle the filters and biases. The total effect will be the same as applying a channel shuffler (without
  * concatenation and splitting) after pointwise convolution. (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
- *
- * @member {boolean} bHigherHalfCopyLowerHalf
- *   If ( bHigherHalfDifferent == true ) and ( inputChannelCount < outputChannelCount ), this will be true.
- *
- * @member {boolean} bHigherHalfPassThrough
- *   If ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), this will be true.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -440,15 +424,13 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   static Setup_bPointwise_pfn() {
 
-    let bBias = this.bBias;
-
     // Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
       this.bPointwise = true;
 
       if ( this.inputChannelCount < this.outputChannelCount ) {
         if ( this.channelShuffler_outputGroupCount < 0 ) { // bHigherHalfCopyLowerHalf_LowerHalfPassThrough
-          bBias = false; // In this case, there is always no biases (no matter how bBias is).
+          this.bBias = false; // In this case, there is always no biases (no matter how bBias is).
         }
       }
 
@@ -457,7 +439,7 @@ class Base extends ReturnOrClone_Activation.Base {
           && ( this.inputChannelCount >= this.outputChannelCount )
          ) {
         this.bPointwise = true; // all-pass-through (with or without channel-shuffling) mode.
-        bBias = false; // In this case, there is always no biases (no matter how bBias is). The 
+        this.bBias = false; // In this case, there is always no biases (no matter how bBias is). The 
 
       } else {
         this.bPointwise = false;
@@ -474,7 +456,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.pfnConv = Base.Conv_and_destroy; // will dispose inputTensor.
 
-    if ( bBias ) {
+    if ( this.bBias ) {
       if ( this.pfnActivation )
         this.pfnConvBiasActivation = Base.ConvBiasActivation_and_destroy_or_keep;
       else
