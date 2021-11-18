@@ -1218,6 +1218,70 @@ class Base extends ReturnOrClone_Activation.Base {
     }
   }
 
+//!!! ...unfinished... (2021/11/18)
+  /** Expand a tensor4d by zeros along the last second axis (i.e. the axis id 2; the inDepth axis of a pointwise convolution's filters).
+   *
+   * @param {tf.tensor4d} inputTensor4d
+   *   The tensor4d to be expanded.
+   *
+   * @param {number} prefixCount
+   *   How many zeros will be added at the prefix of the input along axis id 2.
+   *
+   * @param {number} postCount
+   *   How many zeros will be added at the postfix of the input along axis id 2.
+   *
+   * @return {tf.tensor4d}
+   *   The expanded tensor4d.
+   */
+  static expandTensor4d_Zeros_AlongAxisId2( inputTensor4d, prefixCount, postfixCount ) {
+
+    if ( !inputTensor4d )
+      return null;
+
+    let resultTensor4d, zerosPrefix, zerosPostfix;
+    try {
+      let lastSecondAxisId = 2; // Along the second last axis (i.e. inDepth axis; axis id 2).
+
+      if ( prefixCount > 0 ) {
+        let prefixShape = inputTensor4d.shape.slice(); // Clone the shape array of the input.
+        prefixShape[ lastSecondAxisId ] = prefixCount;
+        zerosPrefix = tf.zeros( prefixShape );
+      }
+
+      if ( postfixCount > 0 ) {
+        let postfixShape = inputTensor4d.shape.slice(); // Clone the shape array of the input.
+        postfixShape[ lastSecondAxisId ] = postfixCount;
+        zerosPostfix = tf.zeros( postfixShape );
+      }
+
+      if ( zerosPrefix ) {
+        if ( zerosPostfix ) {
+          resultTensor4d = tf.concat( [ zerosPrefix, inputTensor4d, zerosPostfix ], lastSecondAxisId ); // Both prefix and postfix.
+        } else {
+          resultTensor4d = tf.concat( [ zerosPrefix, inputTensor4d ], lastSecondAxisId ); // Only prefix.
+        }
+      } else {
+        if ( zerosPostfix ) {
+          resultTensor4d = tf.concat( [ inputTensor4d, zerosPostfix ], lastSecondAxisId ); // Only postfix.
+        } else {
+          resultTensor4d = inputTensor4d.clone(); // No prefix, no postfix.
+        }
+      }
+
+    } catch ( e ) {
+      return null;
+
+    } finally {
+      if ( zerosPostfix )
+        zerosPostfix.dispose();
+
+      if ( zerosPrefix )
+        zerosPrefix.dispose();
+    }
+
+    return resultTensor4d;
+  }
+
   /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
   static Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" ); // 1x1, Stride = 1
