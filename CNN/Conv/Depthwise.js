@@ -231,6 +231,17 @@ class PassThrough {
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {number} inputHeight
+ *   The height of input image. Only used when ( bHigherHalfDifferent == true ). It and inputWidth should be both positive or both not.
+ * It is used to create the PassThrough depthwise convolution.
+ *
+ * @member {number} inputWidth
+ *   The width of input image. Only used when ( bHigherHalfDifferent == true ). It and inputHeight should be both positive or both not.
+ * It is used to create the PassThrough depthwise convolution.
+ *
+ * @member {number} inputChannelCount_lowerHalf
+ *   The lower half channel count of input image. Only used when ( bHigherHalfDifferent == true ).
+ *
  * @member {boolean} bHigherHalfDifferent
  *   - If false, it is just a normal depthwise convolution.
  *
@@ -243,24 +254,33 @@ class PassThrough {
  *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
  *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier )
  *
- *     - If ( channelShuffler == null ), the filters for the input channels between 0 and ( Math.ceil( inputChannelCount / 2 ) - 1 )
- *         are depthwise1, between Math.ceil( inputChannelCount / 2 ) and ( inputChannelCount - 1 ) are depthwise2. These
- *         two filters (and biases) will be extracted in sequence, but they will be combined into one larger filters (and biases).
- *         This makes these filters' weights are arranged the same as ShuffleNetV2's head. So that the same filters weights could
- *         be used in these two architectures for comparing performance and correctness. (i.e. bHigherHalfDepthwise2, for depthwise1
- *         of ShuffleNetV2_ByMopbileNetV1's head)
+
+//!!! ...unfinished... (2021/11/18) needs inputChannelCount_lowerHalf
+ 
+ *     - If ( imageInHeight <= 0 ) or ( imageInWidth <= 0 ), the filters for the input channels between 0 and
+ *         ( Math.ceil( inputChannelCount / 2 ) - 1 ) are depthwise1, between Math.ceil( inputChannelCount / 2 ) and
+ *         ( inputChannelCount - 1 ) are depthwise2. These two filters (and biases) will be extracted in sequence, but they will be
+ *         combined into one larger filters (and biases). This makes these filters' weights are arranged the same as ShuffleNetV2's
+ *         head. So that the same filters weights could be used in these two architectures for comparing performance and correctness.
+ *         (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
- *     - If ( channelShuffler != null ), the filters for the input channels between Math.ceil( inputChannelCount / 2 )
+ *     - If ( imageInHeight > 0 ) and ( imageInWidth > 0 ), the filters for the input channels between Math.ceil( inputChannelCount / 2 )
  *         and ( inputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for depthwise1
  *         of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
 
+
+
+//!!! ...unfinished... (2021/11/18) It is changed: the pointwise1 is responsible for doubling channels in this case.
 //!!! ...unfinished... (2021/11/12) need handle one more case:
 // In ShuffleNetV2_ByMopbileNetV1's head, if ( poinwiseChannelCount1 == 0 ), the depthwise1 will be responsible for doubling
 // the channels (i.e. ( AvgMax_Or_ChannelMultiplier == 2 ) ). In this case, it should be ( bHigherHalfDifferent == false ).
 
  *
  *
+
+//!!! ...unfinished... (2021/11/18) replaced by imageInHeight and imageInWidth.
+
  * @member {ChannelShuffler.Xxx} channelShuffler
  *   Only be used if ( bHigherHalfDifferent == true ). If not null, it is viewed as ( bHigherHalfPassThrough == true ). The
  * channelShuffler.concatenatedShape[ 0 ] and channelShuffler.concatenatedShape[ 1 ] will be used as imageInHeight and imageInWidth.
@@ -317,8 +337,14 @@ class Base extends ReturnOrClone_Activation.Base {
 
 //!!! ...unfinished... (2021/10/28) Why not just pass imageHeight and imageWidth instead of channelShuffler?
 
+//!!! (2021/11/18 Remared) needs inputChannelCount_lowerHalf
+//   constructor(
+//     inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId, bHigherHalfDifferent, channelShuffler ) {
   constructor(
-    inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId, bHigherHalfDifferent, channelShuffler ) {
+    inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId,
+    bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf ) {
+
+//!!! ...unfinished... (2021/11/18) needs inputChannelCount_lowerHalf
 
     super();
     this.inputChannelCount = inputChannelCount;
@@ -328,7 +354,12 @@ class Base extends ReturnOrClone_Activation.Base {
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.bHigherHalfDifferent = bHigherHalfDifferent;
-    this.channelShuffler = channelShuffler;
+    this.inputHeight = inputHeight;
+    this.inputWidth = inputWidth;
+    this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
+
+//!!! (2021/11/18 Remared)
+//    this.channelShuffler = channelShuffler;
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
@@ -343,6 +374,20 @@ class Base extends ReturnOrClone_Activation.Base {
         throw msg;
       }
     }
+
+    tf.util.assert( ( this.inputHeight > 0 ) == ( this.inputWidth > 0 ),
+      `Depthwise.Base.constructor(): `
+        + `inputHeight ( ${this.inputHeight} ) and `
+        + `inputWidth ( ${this.inputWidth} ) `
+        + `should be both positive or both not.`
+    );
+
+    tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
+      `Depthwise.Base.constructor(): `
+        + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
+        + `inputChannelCount ( ${this.inputChannelCount} ).`
+    );
+
   }
 
   /**
