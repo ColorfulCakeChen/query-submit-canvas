@@ -618,7 +618,9 @@ class Base extends ReturnOrClone_Activation.Base {
         return false;
 
       let allFiltersArray = [ lowerHalfPassThrough.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
-      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+//!!! (2021/11/18 Remarked)
+//      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+      this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
 
       if ( this.bBias ) {
         let allBiasesArray = [ lowerHalfPassThrough.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
@@ -715,25 +717,32 @@ class Base extends ReturnOrClone_Activation.Base {
       if ( !higherHalfPassThrough.bInitOk )
         return false;
 
-      let filtersTensor4d_lowerHalf;
+      let filtersTensor4d_lowerHalf, filtersTensor4d_lowerHalf_expanded;
       try {
         filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
-???
-          this.inputChannelCount, // Use all (not just lower half) input channels.
-
-          this.inputChannelCount_lowerHalf,
-                                                             this.outputChannelCount_lowerHalf );
-
-//!!! ...unfinished... (2021/11/18) may be expand filters (like extractAs_HigherHalfPassThrough()).
-
+          this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
 
         if ( !filtersTensor4d_lowerHalf )
           return false;
 
-        let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
-        this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+//!!! ...unfinished... (2021/11/18) may be expand filters (like extractAs_HigherHalfPassThrough()).
 
+        let postfixCount = ;
+        filtersTensor4d_lowerHalf_expanded = Base.expandTensor4d_Zeros_AlongAxisId2( filtersTensor4d_lowerHalf, 0, postfixCount );
+      
+        if ( !filtersTensor4d_lowerHalf_expanded )
+          return false;
+
+           
+        let allFiltersArray = [ filtersTensor4d_lowerHalf, higherHalfPassThrough.filtersTensor4d ];
+//!!! (2021/11/18 Remarked)
+//        this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+        this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
+        
       } finally {
+        if ( filtersTensor4d_lowerHalf_expanded )
+          filtersTensor4d_lowerHalf_expanded.dispose();
+
         if ( filtersTensor4d_lowerHalf )
           filtersTensor4d_lowerHalf.dispose();
       }
@@ -855,7 +864,9 @@ class Base extends ReturnOrClone_Activation.Base {
 
       // Combine lower and higher into one larger filters and biases.
       let allFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_higherHalf ];
-      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+//!!! (2021/11/18 Remarked)
+//      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
+      this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
 
       if ( this.bBias ) {
         let allBiasesArray = [ biasesTensor3d_lowerHalf, biasesTensor3d_higherHalf ];
@@ -956,7 +967,8 @@ class Base extends ReturnOrClone_Activation.Base {
       this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
 
       higherHalfPassThrough = new PassThrough(
-        this.inputChannelCount, this.outputChannelCount_higherHalf,
+        this.inputChannelCount, // Use all (not just higher half) input channels.
+        this.outputChannelCount_higherHalf,
         this.outputChannelCount_higherHalf, this.outputChannelCount, // Pass through the higher channels.
         this.bBias
       );
@@ -1000,7 +1012,9 @@ class Base extends ReturnOrClone_Activation.Base {
           }
 
           let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalfPassThrough.filtersTensor4d ];
-          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+//!!! (2021/11/18 Remarked)
+//          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+          this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
 
         } finally {
           if ( filtersTensor4d_lowerHalf_expanded )
@@ -1072,6 +1086,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.bAllPassThrough = true;
 
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
+
     let higherHalfPassThrough;
     try {
 
@@ -1081,7 +1097,8 @@ class Base extends ReturnOrClone_Activation.Base {
       this.outputChannelCount_Real = this.inputChannelCount;
 
       higherHalfPassThrough = new PassThrough(
-        this.inputChannelCount, this.outputChannelCount_Real,
+        this.inputChannelCount, // Use all (not just higher half) input channels.
+        this.outputChannelCount_Real,
         0, this.outputChannelCount_Real, // Pass through all the input channels.
         this.bBias
       );
@@ -1135,6 +1152,8 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   static extractAs_HigherHalfPassThroughShuffle( inputFloat32Array ) {
     
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
+
     try {
       let bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
       if ( !bInitOk )
@@ -1175,6 +1194,8 @@ class Base extends ReturnOrClone_Activation.Base {
    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
    */
   static extractAs_AllPassThroughShuffle( inputFloat32Array ) {
+
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
 
     try {
       let bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
@@ -1220,7 +1241,6 @@ class Base extends ReturnOrClone_Activation.Base {
     }
   }
 
-//!!! ...unfinished... (2021/11/18)
   /** Expand a tensor4d by zeros along the last second axis (i.e. the axis id 2; the inDepth axis of a pointwise convolution's filters).
    *
    * @param {tf.tensor4d} inputTensor4d
