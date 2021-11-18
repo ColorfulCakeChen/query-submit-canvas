@@ -716,19 +716,26 @@ class Base extends ReturnOrClone_Activation.Base {
       if ( !higherHalfPassThrough.bInitOk )
         return false;
 
-      let filtersTensor4d_lowerHalf, filtersTensor4d_lowerHalf_expanded;
+      let filtersTensor4d_lowerHalf_expanded;
       try {
-        filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
-          this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
+        let filtersTensor4d_lowerHalf;
+        try {
+          filtersTensor4d_lowerHalf = Base.extractFilters.call( this, inputFloat32Array,
+            this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
 
-        if ( !filtersTensor4d_lowerHalf )
-          return false;
+          if ( !filtersTensor4d_lowerHalf )
+            return false;
 
-        filtersTensor4d_lowerHalf_expanded = Base.expandTensor4d_Zeros_AlongAxisId2(
-          filtersTensor4d_lowerHalf, 0, this.inputChannelCount_higherHalf ); // So that accepts inputChannelCount as input.
-      
-        if ( !filtersTensor4d_lowerHalf_expanded )
-          return false;
+          filtersTensor4d_lowerHalf_expanded = Base.expandTensor4d_Zeros_AlongAxisId2(
+            filtersTensor4d_lowerHalf, 0, this.inputChannelCount_higherHalf ); // So that accepts inputChannelCount as input.
+
+          if ( !filtersTensor4d_lowerHalf_expanded )
+            return false;
+
+        } finally {
+          if ( filtersTensor4d_lowerHalf )
+            filtersTensor4d_lowerHalf.dispose();
+        }
 
         let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalfPassThrough.filtersTensor4d ];
 //!!! (2021/11/18 Remarked)
@@ -738,9 +745,6 @@ class Base extends ReturnOrClone_Activation.Base {
       } finally {
         if ( filtersTensor4d_lowerHalf_expanded )
           filtersTensor4d_lowerHalf_expanded.dispose();
-
-        if ( filtersTensor4d_lowerHalf )
-          filtersTensor4d_lowerHalf.dispose();
       }
 
       if ( this.bBias ) {
@@ -830,6 +834,7 @@ class Base extends ReturnOrClone_Activation.Base {
 //!!! ...unfinished... (2021/11/18) may be expand filters (like extractAs_HigherHalfPassThrough()).
 
     let filtersTensor4d_lowerHalf, biasesTensor3d_lowerHalf, filtersTensor4d_higherHalf, biasesTensor3d_higherHalf;
+    let filtersTensor4d_lowerHalf_expanded, filtersTensor4d_higherHalf_expanded;
     try {
       // The extracting order is important: lowerHalfFilter, lowerHalfBias, higherHalfFilter, higherHalfBias.
       {
@@ -858,8 +863,23 @@ class Base extends ReturnOrClone_Activation.Base {
         }
       }
 
+      // Expand the lower (with postfix zeros) and higher (with prefix zeros) filters so that they accept the whole inputChannelCount as input.
+      {
+        filtersTensor4d_lowerHalf_expanded = Base.expandTensor4d_Zeros_AlongAxisId2(
+          filtersTensor4d_lowerHalf, 0, this.inputChannelCount_higherHalf );
+
+        if ( !filtersTensor4d_lowerHalf_expanded )
+            return false;
+
+        filtersTensor4d_higherHalf_expanded = Base.expandTensor4d_Zeros_AlongAxisId2(
+          filtersTensor4d_higherHalf, this.inputChannelCount_lowerHalf, 0 ); // So that accepts inputChannelCount as input.
+
+        if ( !filtersTensor4d_higherHalf_expanded )
+            return false;
+      }
+
       // Combine lower and higher into one larger filters and biases.
-      let allFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_higherHalf ];
+      let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, filtersTensor4d_higherHalf_expanded ];
 //!!! (2021/11/18 Remarked)
 //      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
       this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
@@ -873,6 +893,12 @@ class Base extends ReturnOrClone_Activation.Base {
       return false; // e.g. memory not enough.
 
     } finally {
+      if ( filtersTensor4d_higherHalf_expanded )
+        filtersTensor4d_higherHalf_expanded.dispose();
+
+      if ( filtersTensor4d_lowerHalf_expanded )
+        filtersTensor4d_lowerHalf_expanded.dispose();
+
       if ( biasesTensor3d_higherHalf )
         biasesTensor3d_higherHalf.dispose();
 
