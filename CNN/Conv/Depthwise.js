@@ -233,11 +233,11 @@ class PassThrough {
  *
  * @member {number} inputHeight
  *   The height of input image. Only used when ( bHigherHalfDifferent == true ). It and inputWidth should be both positive or both not.
- * It is used to create the PassThrough depthwise convolution.
+ * It is used to create the higher-half-pass-through depthwise filters.
  *
  * @member {number} inputWidth
  *   The width of input image. Only used when ( bHigherHalfDifferent == true ). It and inputHeight should be both positive or both not.
- * It is used to create the PassThrough depthwise convolution.
+ * It is used to create the higher-half-pass-through depthwise filters.
  *
  * @member {number} inputChannelCount_lowerHalf
  *   The lower half channel count of input image. Only used when ( bHigherHalfDifferent == true ).
@@ -257,14 +257,14 @@ class PassThrough {
 
 //!!! ...unfinished... (2021/11/18) needs inputChannelCount_lowerHalf
  
- *     - If ( imageInHeight <= 0 ) or ( imageInWidth <= 0 ), the filters for the input channels between 0 and
+ *     - If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), the filters for the input channels between 0 and
  *         ( Math.ceil( inputChannelCount / 2 ) - 1 ) are depthwise1, between Math.ceil( inputChannelCount / 2 ) and
  *         ( inputChannelCount - 1 ) are depthwise2. These two filters (and biases) will be extracted in sequence, but they will be
  *         combined into one larger filters (and biases). This makes these filters' weights are arranged the same as ShuffleNetV2's
  *         head. So that the same filters weights could be used in these two architectures for comparing performance and correctness.
  *         (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
- *     - If ( imageInHeight > 0 ) and ( imageInWidth > 0 ), the filters for the input channels between Math.ceil( inputChannelCount / 2 )
+ *     - If ( inputHeight > 0 ) and ( inputWidth > 0 ), the filters for the input channels between Math.ceil( inputChannelCount / 2 )
  *         and ( inputChannelCount - 1 ) will just pass through the input to output. (i.e. bHigherHalfPassThrough, for depthwise1
  *         of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
@@ -280,12 +280,12 @@ class PassThrough {
  *
 
 //!!! ...unfinished... (2021/11/18) replaced by imageInHeight and imageInWidth.
-
- * @member {ChannelShuffler.Xxx} channelShuffler
- *   Only be used if ( bHigherHalfDifferent == true ). If not null, it is viewed as ( bHigherHalfPassThrough == true ). The
- * channelShuffler.concatenatedShape[ 0 ] and channelShuffler.concatenatedShape[ 1 ] will be used as imageInHeight and imageInWidth.
- * They are used to generate the higher-half-pass-through depthwise filters. The channelShuffler will not be disposed by this object.
- * (for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+//
+//  * @member {ChannelShuffler.Xxx} channelShuffler
+//  *   Only be used if ( bHigherHalfDifferent == true ). If not null, it is viewed as ( bHigherHalfPassThrough == true ). The
+//  * channelShuffler.concatenatedShape[ 0 ] and channelShuffler.concatenatedShape[ 1 ] will be used as imageInHeight and imageInWidth.
+//  * They are used to generate the higher-half-pass-through depthwise filters. The channelShuffler will not be disposed by this object.
+//  * (for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  * @member {boolean} bHigherHalfDepthwise2
  *   If ( bHigherHalfDifferent == true ) and ( channelShuffler == null ), this will be true.
@@ -344,8 +344,6 @@ class Base extends ReturnOrClone_Activation.Base {
     inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId,
     bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf ) {
 
-//!!! ...unfinished... (2021/11/18) needs inputChannelCount_lowerHalf
-
     super();
     this.inputChannelCount = inputChannelCount;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
@@ -358,7 +356,7 @@ class Base extends ReturnOrClone_Activation.Base {
     this.inputWidth = inputWidth;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
 
-//!!! (2021/11/18 Remared)
+//!!! ...unfinished... (2021/11/18) replaced by imageInHeight and imageInWidth.
 //    this.channelShuffler = channelShuffler;
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
@@ -409,11 +407,12 @@ class Base extends ReturnOrClone_Activation.Base {
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
-    if ( this.channelShuffler ) {
-      this.imageInHeight = this.channelShuffler.concatenatedShape[ 0 ];
-      this.imageInWidth = this.channelShuffler.concatenatedShape[ 1 ];
-      this.imageInDepth = this.channelShuffler.concatenatedShape[ 2 ];
-    }
+//!!! ...unfinished... (2021/11/18) replaced by imageInHeight and imageInWidth.
+//     if ( this.channelShuffler ) {
+//       this.imageInHeight = this.channelShuffler.concatenatedShape[ 0 ];
+//       this.imageInWidth = this.channelShuffler.concatenatedShape[ 1 ];
+//       this.imageInDepth = this.channelShuffler.concatenatedShape[ 2 ];
+//     }
 
     switch ( this.stridesPad ) {
       case 0:  this.strides = 1; this.pad = "valid"; break;
@@ -439,10 +438,10 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( this.bHigherHalfDifferent == true ) {
 
-        if ( this.channelShuffler == null ) { // 2.1 i.e. bHigherHalfDepthwise2
+        if ( ( this.inputHeight <= 0 ) || ( this.inputWidth <= 0 ) ) { // 2.1 i.e. bHigherHalfDepthwise2
           this.bInitOk = Base.extractAs_HigherHalfDepthwise2.call( this, inputFloat32Array );
 
-        } else { // 2.2 ( channelShuffler != null ), i.e. bHigherHalfPassThrough
+        } else { // 2.2 ( ( this.inputHeight > 0 ) && ( this.inputWidth > 0 ) ), i.e. bHigherHalfPassThrough
           this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
         }
 
@@ -467,16 +466,7 @@ class Base extends ReturnOrClone_Activation.Base {
       this.biasesTensor3d = null;
     }
 
-    // Note: Do not clear (or dispose) channel shuffler here, because it is accepted parameter of constructor.
-
-//!!! (2021/11/12 Remarked) Note: Do not clear (or dispose) channel shuffler here, because it is accepted parameter of constructor.
-//     if ( this.channelShuffler ) {
-//       this.channelShuffler = null; // Do not dispose channel shuffler here. Just set to null.
-//     }
-
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
-//!!! (2021/10/19 Remarked) So that inputFloat32Array could be released.
-//    this.filtersWeights = this.biasesWeights = this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
     this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
 
     // (2021/10/27 Remarked) If these properties does not exist, assigning value (even undefined) to them will create them. This is un-wanted.
@@ -643,6 +633,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.filterHeight
    *   - this.filterWidth
    *   - this.inputChannelCount
+   *   - this.inputChannelCount_lowerHalf
    *   - this.AvgMax_Or_ChannelMultiplier
    *
    * The following data members will be modified:
@@ -663,6 +654,8 @@ class Base extends ReturnOrClone_Activation.Base {
   static extractAs_HigherHalfDepthwise2( inputFloat32Array ) {
 
     this.bHigherHalfDepthwise2 = true;
+
+//!!! ...unfinished... (2021/11/18) needs inputChannelCount_lowerHalf
 
     this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
@@ -747,7 +740,10 @@ class Base extends ReturnOrClone_Activation.Base {
    *   - this.filterHeight
    *   - this.filterWidth
    *   - this.inputChannelCount
+   *   - this.inputChannelCount_lowerHalf
    *   - this.AvgMax_Or_ChannelMultiplier
+   *   - this.inputHeight
+   *   - this.inputWidth
    *
    * The following data members will be modified:
    *   - this.byteOffsetEnd
