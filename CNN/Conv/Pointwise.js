@@ -950,27 +950,14 @@ class Base extends ReturnOrClone_Activation.Base {
 
       this.outputChannelCount_Real = this.outputChannelCount;
 
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
-
-//!!! (2021/11/18 Remarked) comes from constructor's parameter.
-//       // 1. In order to "pass-through" the higher half, the channel count of input's higher half must be the same as output's higher half.
-//       this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = Math.floor( this.outputChannelCount / 2 );
+      this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
+      this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
 
       // 1.
       this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
       this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
       // 2.
-
-//!!! (2021/11/18 Remarked)
-//       // 2.1 If the channel count can not be halved, extracted as normal pointwise (i.e. nothing to be past-through).
-//       // e.g. ( outputChannelCount == 1 ). The lower-half will be 1. The higher-half will be 0.
-//       if ( this.outputChannelCount_higherHalf <= 0 ) {
-//
-//         if ( !Base.extractAs_NormalPointwise.call( this, inputFloat32Array ) )
-//           return false;
-//
-//       } else { // 2.2 The higher half can be past-through.
 
       // 2.1 If the channel count can not be halved (e.g. ( inputChannelCount == 1 ) or ( outputChannelCount == 1 ) ),
       //     treated as normal pointwise.
@@ -979,16 +966,6 @@ class Base extends ReturnOrClone_Activation.Base {
       }
 
       // 2.2 The higher half can be past-through.
-
-//!!! (2021/11/18 Remarked)
-//       // Note: The channel count of input's lower half might be different from output's lower half. The reason is inputChannelCount
-//       // might be different from outputChannelCount.
-//       this.inputChannelCount_lowerHalf =  this.inputChannelCount_toBeExtracted =  this.inputChannelCount  - this.inputChannelCount_higherHalf;
-//       this.outputChannelCount_lowerHalf = this.outputChannelCount_toBeExtracted = this.outputChannelCount - this.outputChannelCount_higherHalf;
-
-      this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
-      this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
-
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, // Use all (not just higher half) input channels.
         this.outputChannelCount_higherHalf,
@@ -1094,15 +1071,13 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.bAllPassThrough = true;
 
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
-
     let higherHalfPassThrough;
     try {
 
-      this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
-
       // The real outputChannelCount is the same as inputChannelCount. (Note: this.outputChannelCount is zero here.)
       this.outputChannelCount_Real = this.inputChannelCount;
+
+      this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
 
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, // Use all (not just higher half) input channels.
@@ -1160,8 +1135,6 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   static extractAs_HigherHalfPassThroughShuffle( inputFloat32Array ) {
     
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
-
     try {
       let bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
       if ( !bInitOk )
@@ -1202,8 +1175,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
    */
   static extractAs_AllPassThroughShuffle( inputFloat32Array ) {
-
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
 
     try {
       let bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
