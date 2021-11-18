@@ -963,7 +963,9 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( !higherHalfPassThrough.bInitOk )
         return false;
-
+!!!
+      Base.expandTensor4d_Zeros_AlongAxisId2( filtersTensor4d_lowerHalf, 
+      
       { // The extracted filters should be expanded to accept a larger input channel count (i.e. this.inputChannelCount,
         // not Math.ceil( this.outputChannelCount / 2 ) ). The extra channel's filters are just zero.
         let filtersTensor4d_lowerHalf_expanded;
