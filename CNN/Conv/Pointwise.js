@@ -46,13 +46,12 @@ class PassThrough {
 //           .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
 //           ;
 
-//!!! ...unfinished... (2021/11/17) What if ( inputChannelCount < ( inputChannelIndexStop - inputChannelIndexStart - 1 ) )?
 
       let indexStart = Math.min( inputChannelIndexStart, inputChannelIndexStop );
       let indexStop = Math.max( inputChannelIndexStart, inputChannelIndexStop );
       let indexCount = indexStop - indexStart; // No need to minus one, because the indexStop is not inclusive.
       let indexCountExisted = Math.min( inputChannelCount, indexCount ); // Only the existed input channel could be past-through.
-      let indexCountZeros = inputChannelCount - indexCountExisted; // For out of input channel, use zeros instead.
+      let indexCountZeros = inputChannelCount - indexCountExisted; // For out of input channel, use so many zeros instead.
 
       let filtersTensor4d;
       if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
@@ -140,8 +139,6 @@ class PassThrough {
  *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
  * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
  *
-
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
 
 //!!! ...unfinished... (2021/11/17) It seems that inputChannelCount_lowerHalf may not be necessary.
 
@@ -268,10 +265,6 @@ class PassThrough {
  */
 class Base extends ReturnOrClone_Activation.Base {
 
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
-
-//!!! (2021/11/17 Remarked)
-//  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId, bHigherHalfDifferent, channelShuffler_outputGroupCount ) {
   constructor(
     inputChannelCount, outputChannelCount, bBias, nActivationId,
     inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
@@ -281,9 +274,6 @@ class Base extends ReturnOrClone_Activation.Base {
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-
-//!!! (2021/11/17 Remarked)
-//    this.bHigherHalfDifferent = bHigherHalfDifferent;
 
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
@@ -812,12 +802,9 @@ class Base extends ReturnOrClone_Activation.Base {
     this.inputChannelCount_toBeExtracted = this.inputChannelCount;
     this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
-
-//!!! (2021/11/17 Remarked) comes from constructor's parameter.
-
-    this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
-    this.outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
+//!!! (2021/11/18 Remarked) comes from constructor's parameter.
+//     this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
+//     this.outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
 
     this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
     this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
@@ -918,6 +905,10 @@ class Base extends ReturnOrClone_Activation.Base {
     try {
 
       this.outputChannelCount_Real = this.outputChannelCount;
+
+//!!! ...unfinished... (2021/11/17) bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 )
+
+//!!! (2021/11/18 Remarked) comes from constructor's parameter.
 
       // 1. In order to "pass-through" the higher half, the channel count of input's higher half must be the same as output's higher half.
       this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf = Math.floor( this.outputChannelCount / 2 );
