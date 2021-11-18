@@ -831,8 +831,6 @@ class Base extends ReturnOrClone_Activation.Base {
       return Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
     }
 
-//!!! ...unfinished... (2021/11/18) may be expand filters (like extractAs_HigherHalfPassThrough()).
-
     let filtersTensor4d_lowerHalf, biasesTensor3d_lowerHalf, filtersTensor4d_higherHalf, biasesTensor3d_higherHalf;
     let filtersTensor4d_lowerHalf_expanded, filtersTensor4d_higherHalf_expanded;
     try {
@@ -997,14 +995,11 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( !higherHalfPassThrough.bInitOk )
         return false;
-!!!
-      Base.expandTensor4d_Zeros_AlongAxisId2( filtersTensor4d_lowerHalf, 
-      
-      { // The extracted filters should be expanded to accept a larger input channel count (i.e. this.inputChannelCount,
-        // not Math.ceil( this.outputChannelCount / 2 ) ). The extra channel's filters are just zero.
+
+      {
         let filtersTensor4d_lowerHalf_expanded;
         try {
-          let filtersTensor4d_lowerHalf, filtersTensor4d_zeros;
+          let filtersTensor4d_lowerHalf;
           try {
             filtersTensor4d_lowerHalf = Base.extractFilters.call( this,
               inputFloat32Array, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf );
@@ -1012,23 +1007,11 @@ class Base extends ReturnOrClone_Activation.Base {
             if ( !filtersTensor4d_lowerHalf )
               return false;
 
-            {
-              let zeroShape = filtersTensor4d_lowerHalf.shape.slice(); // Clone filters' shape array.
-
-              // The second last axis (i.e. inDepth axis; axis id 2) should be just fill the difference between real inputChanneCount
-              // and the extracted filters.
-              zeroShape[ 2 ] = this.inputChannelCount - filtersTensor4d_lowerHalf.shape[ 2 ];
-
-              filtersTensor4d_zeros = tf.zeros( zeroShape );
-            }
-
-            let expandedFiltersArray = [ filtersTensor4d_lowerHalf, filtersTensor4d_zeros ];
-            filtersTensor4d_lowerHalf_expanded = tf.concat( expandedFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
-
+            // Expand the lower (with postfix zeros) filters so that they accept the whole inputChannelCount as input.
+            filtersTensor4d_lowerHalf_expanded = Base.expandTensor4d_Zeros_AlongAxisId2(
+              filtersTensor4d_lowerHalf, 0, this.inputChannelCount_higherHalf );
+      
           } finally {
-            if ( filtersTensor4d_zeros )
-              filtersTensor4d_zeros.dispose();
-
             if ( filtersTensor4d_lowerHalf )
               filtersTensor4d_lowerHalf.dispose();
           }
