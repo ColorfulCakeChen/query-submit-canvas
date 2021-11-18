@@ -724,6 +724,9 @@ class Base extends ReturnOrClone_Activation.Base {
           this.inputChannelCount_lowerHalf,
                                                              this.outputChannelCount_lowerHalf );
 
+//!!! ...unfinished... (2021/11/18) may be expand filters (like extractAs_HigherHalfPassThrough()).
+
+
         if ( !filtersTensor4d_lowerHalf )
           return false;
 
@@ -818,6 +821,8 @@ class Base extends ReturnOrClone_Activation.Base {
     if ( ( 0 == this.inputChannelCount_higherHalf ) || ( 0 == this.outputChannelCount_higherHalf ) ) {
       return Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
     }
+
+//!!! ...unfinished... (2021/11/18) may be expand filters (like extractAs_HigherHalfPassThrough()).
 
     let filtersTensor4d_lowerHalf, biasesTensor3d_lowerHalf, filtersTensor4d_higherHalf, biasesTensor3d_higherHalf;
     try {
