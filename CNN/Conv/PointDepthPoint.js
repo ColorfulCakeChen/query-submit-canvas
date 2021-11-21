@@ -951,11 +951,9 @@ class Base extends ReturnOrClone.Base {
       inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
 
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
-      // (i.e. ShuffleNetV2_ByMobileNetV1's head)
+      // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
       //
       if ( this.bHigherHalfDepthwise2 == true ) {
-
-  //!!! ...unfinished... (2021/11/15) seems always double, no matter whether ( 0 == this.pointwise1ChannelCount ).
 
         // In this case (i.e. bHigherHalfCopyLowerHalf), enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count )
         // so that depthwise1 could include depthwise2.
@@ -963,7 +961,7 @@ class Base extends ReturnOrClone.Base {
         if ( this.pointwise1ChannelCount > 0 ) {
 
           this.pointwise1ChannelCount // Enlarge channel count.
-            = (  this.pointwise1ChannelCount         // For depthwise1
+            = (  this.pointwise1ChannelCount         // For depthwise1 (by specified channel count)
                + this.channelCount0_pointwise1Before // For depthwise2 (by depthwise1)
               );
 
@@ -977,19 +975,15 @@ class Base extends ReturnOrClone.Base {
         } else {
 
           this.pointwise1ChannelCount // Enlarge channel count. (As doubled input channel count.)
-            = (  this.channelCount0_pointwise1Before // For depthwise1
+            = (  this.channelCount0_pointwise1Before // For depthwise1 (by pass-through-input-to-output)
                + this.channelCount0_pointwise1Before // For depthwise2 (by depthwise1)
               );
 
           channelShuffler_outputGroupCount_pointwise1 = -1; // So that bLowerHalfPassThrough.
         }
 
-      // (i.e. ShuffleNetV2_ByMopbileNetV1's body/tail)
-      } else {
-
-//!!! ...unfinished... (2021/11/21)
-        inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
-
+      } else { // (i.e. pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+        // Nothing more needs to be specified.
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
