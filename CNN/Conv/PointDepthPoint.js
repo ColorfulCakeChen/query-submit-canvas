@@ -946,6 +946,10 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bHigherHalfDifferent == true ) {
 
+//!!! ...unfinished... (2021/11/21)
+      // Positive (input and output) lower half implies higher-half-different.
+      inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
+
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
       // (i.e. ShuffleNetV2_ByMobileNetV1's head)
       //
@@ -958,9 +962,10 @@ class Base extends ReturnOrClone.Base {
         //
         if ( this.pointwise1ChannelCount > 0 ) {
 
-  //!!! (2021/11/17 Remarked)  not double.
-  //        this.pointwise1ChannelCount = ( this.pointwise1ChannelCount * 2 ); // As doubled specified channel count.
-          this.pointwise1ChannelCount = ( this.pointwise1ChannelCount + this.channelCount0_pointwise1Before ); // Enlarge channel count.
+          this.pointwise1ChannelCount // Enlarge channel count.
+            = (  this.pointwise1ChannelCount         // For depthwise1
+               + this.channelCount0_pointwise1Before // For depthwise2 (by depthwise1)
+              );
 
         // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
         // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
@@ -970,7 +975,12 @@ class Base extends ReturnOrClone.Base {
         // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
         //
         } else {
-          this.pointwise1ChannelCount = ( this.channelCount0_pointwise1Before * 2 ); // As doubled input channel count.
+
+          this.pointwise1ChannelCount // Enlarge channel count. (As doubled input channel count.)
+            = (  this.channelCount0_pointwise1Before // For depthwise1
+               + this.channelCount0_pointwise1Before // For depthwise2 (by depthwise1)
+              );
+
           channelShuffler_outputGroupCount_pointwise1 = -1; // So that bLowerHalfPassThrough.
         }
 
