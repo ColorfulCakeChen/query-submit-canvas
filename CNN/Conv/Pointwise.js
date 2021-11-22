@@ -55,13 +55,14 @@ class PassThrough {
 //       let indexCountZeros = inputChannelCount - indexCountExisted; // For out of input channel, use so many zeros instead.
       let indexCountZeros = inputChannelCount - indexCountRequested; // For out of input channel, use so many zeros instead.
 
-//!!! ...unfinished... (2021/11/22) What if ( indexCount > inputChannelCount )?
+//!!! ...unfinished... (2021/11/22) What if ( indexCountRequested > inputChannelCount )?
 
       let filtersTensor4d;
       if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
         
-//!!! ...unfinished... (2021/11/22) What if ( indexCount > inputChannelCount )?
-        let oneZerosArray = ( new Array( indexCount ) ).fill( 0 );
+//!!! ...unfinished... (2021/11/22) What if ( indexCountRequested > inputChannelCount )?
+
+        let oneZerosArray = ( new Array( indexCountRequested ) ).fill( 0 );
         oneZerosArray[ 0 ] = 1; // Only the first element is one.
         filtersTensor4d = tf.tensor4d( oneZerosArray, filtersShape );
 
