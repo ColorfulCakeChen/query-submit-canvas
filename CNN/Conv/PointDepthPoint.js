@@ -946,7 +946,6 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bHigherHalfDifferent == true ) {
 
-//!!! ...unfinished... (2021/11/21)
       // Positive (input and output) lower half implies higher-half-different.
       inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
 
@@ -1023,22 +1022,40 @@ class Base extends ReturnOrClone.Base {
 
     // 3.1 The depthwise1 operation.
 
-    let channelShufflerForDepthwise1 = null; // In general case, depthwise1 needs not channel shuffler.
+//!!! ...unfinished... (2021/11/22)
+    let inputHeight = -1, inputWidth = -1, inputChannelCount_lowerHalf_depthwise1 = -1; // In general case, depthwise1 needs not them.
 
     // If depthwise1's higher half is responsible for achieving pass-through, it needs channel shuffler.
     //
     // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
     // (i.e. (ShuffleNetV2_ByMobileNetV1's body/tail) )
     //
-    if ( ( this.bHigherHalfDifferent == true ) && ( this.bHigherHalfDepthwise2 == false ) ) {
-      channelShufflerForDepthwise1 = channelShuffler_ConcatPointwiseConv;
+    if ( this.bHigherHalfDifferent == true ) {
+      
+//!!! ...unfinished... (2021/11/22)
+      inputChannelCount_lowerHalf_depthwise1 = ???;
+
+      // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
+      //
+      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
+      // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+      //
+      if ( this.bHigherHalfDepthwise2 == false ) {
+        inputHeight = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ];
+        inputWidth = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ];
+
+      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+      // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
+      } else {
+        // Nothing more needs to be specified.
+      }
     }
 
     this.depthwise1 = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwise1Before,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-      this.bHigherHalfDifferent, channelShufflerForDepthwise1
+      this.bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf_depthwise1
     );
 
     if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd ) )
