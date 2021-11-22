@@ -947,7 +947,9 @@ class Base extends ReturnOrClone.Base {
     if ( this.bHigherHalfDifferent == true ) {
 
       // Positive (input and output) lower half implies higher-half-different.
-      inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
+//!!! (2021/11/22 Remarked)
+//      inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
+      inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
 
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
       // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
@@ -957,10 +959,13 @@ class Base extends ReturnOrClone.Base {
         // so that depthwise1 could include depthwise2.
         if ( this.pointwise1ChannelCount > 0 ) {
 
-          this.pointwise1ChannelCount // Enlarge channel count.
-            = (  this.pointwise1ChannelCount         // For depthwise1 (by specified channel count)
-               + this.channelCount0_pointwise1Before // For depthwise2 (by depthwise1)
-              );
+          outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount; // For depthwise1 (by specified channel count)
+
+//!!! (2021/11/22 Remarked)
+//           this.pointwise1ChannelCount // Enlarge channel count.
+//             = (  this.pointwise1ChannelCount         // For depthwise1 (by specified channel count)
+//                + this.channelCount0_pointwise1Before // For depthwise2 (by depthwise1)
+//               );
 
         // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
         // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
@@ -970,13 +975,21 @@ class Base extends ReturnOrClone.Base {
         // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
         } else {
 
-          this.pointwise1ChannelCount // Enlarge channel count. (As doubled input channel count.)
-            = (  this.channelCount0_pointwise1Before // For depthwise1 (by pass-through-input-to-output)
-               + this.channelCount0_pointwise1Before // For depthwise2 (by depthwise1)
-              );
+          outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before; // For depthwise1 (by pass-through-input-to-output)
+
+//!!! (2021/11/22 Remarked)
+//           this.pointwise1ChannelCount // Enlarge channel count. (As doubled input channel count.)
+//             = (  this.channelCount0_pointwise1Before // For depthwise1 (by pass-through-input-to-output)
+//                + this.channelCount0_pointwise1Before // For depthwise2 (by depthwise1)
+//               );
 
           channelShuffler_outputGroupCount_pointwise1 = -1; // So that bLowerHalfPassThrough.
         }
+
+        this.pointwise1ChannelCount // Enlarge channel count.
+          = (  outputChannelCount_lowerHalf_pointwise1 // For depthwise1.
+             + this.channelCount0_pointwise1Before     // For depthwise2 (by depthwise1).
+            );
 
       } else { // (i.e. pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
         // Nothing more needs to be specified.
