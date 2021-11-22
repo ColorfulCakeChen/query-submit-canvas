@@ -18,6 +18,8 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
  */
 class PassThrough {
 
+//!!! ...unfinished... (2021/11/22) It seems that inputChannelIndexStop should be dropped (by using outputChannelCount instead)?
+
   /**
    * @param {number} inputChannelCount      The channel count of input.
    * @param {number} outputChannelCount     The channel count of output.
@@ -53,7 +55,7 @@ class PassThrough {
 //!!! (2021/11/22 Remarked)
 //       let indexCountExisted = Math.min( inputChannelCount, indexCountRequested ); // Only the existed input channel could be past-through.
 //       let indexCountZeros = inputChannelCount - indexCountExisted; // For out of input channel, use so many zeros instead.
-      let indexCountZeros = inputChannelCount - indexCountRequested; // For out of input channel, use so many zeros instead.
+      let indexCountZeros = indexCountRequested - inputChannelCount; // For out of input channel, use so many zeros instead.
 
 //!!! ...unfinished... (2021/11/22) What if ( indexCountRequested > inputChannelCount )?
 
@@ -69,14 +71,15 @@ class PassThrough {
       } else {
 
         let channelIndexesInt32Tensor1d;
-        if ( indexCountZeros <= 0 ) { // Input channel count is greater than or equal to requested, no needs to use zeros.
-
-          let indexStop_EqualOrSmaller = indexStop + indexCountZeros; // but needs use lesser indexStop.
-
+        if ( indexCountZeros > 0 ) { // ( inputChannelCount <= indexCountRequested ), uses zeros for the last several channels.
           channelIndexesInt32Tensor1d =
-            tf.range( indexStart, indexStop_EqualOrSmaller, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+            tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
 
-        } else { // Input channel count is less than requested, uses zeros for the last several channels.
+        } else if ( indexCountZeros == 0 ) { // ( inputChannelCount == indexCountRequested ), no needs to use zeros.
+          channelIndexesInt32Tensor1d =
+            tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+
+        } else { // ( inputChannelCount > indexCountRequested ), no needs to use zeros.
           let channelIndexesExistedInt32Tensor1d =
             tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesExistedInt32Tensor1d)
 
@@ -92,6 +95,8 @@ class PassThrough {
 
         let channelIndexesOneHotFloat32Tensor2d =
           channelIndexesOneHotInt32Tensor2d.cast( "float32" );      // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
+
+//!!! ...unfinished... (2021/11/22) filled zeros should be appended to channelIndexesOneHotFloat32Tensor2d (not to channelIndexesInt32Tensor1d).
 
         let channelIndexesOneHotFloat32TransposedTensor2d =
           channelIndexesOneHotFloat32Tensor2d.transpose();          // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
