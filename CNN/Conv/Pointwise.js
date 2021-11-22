@@ -49,14 +49,18 @@ class PassThrough {
 
       let indexStart = Math.min( inputChannelIndexStart, inputChannelIndexStop );
       let indexStop = Math.max( inputChannelIndexStart, inputChannelIndexStop );
-      let indexCount = indexStop - indexStart; // No need to minus one, because the indexStop is not inclusive.
-      let indexCountExisted = Math.min( inputChannelCount, indexCount ); // Only the existed input channel could be past-through.
-      let indexCountZeros = inputChannelCount - indexCountExisted; // For out of input channel, use so many zeros instead.
+      let indexCountRequested = indexStop - indexStart; // Note: No need to minus one, because the indexStop is not inclusive.
+//!!! (2021/11/22 Remarked)
+//       let indexCountExisted = Math.min( inputChannelCount, indexCountRequested ); // Only the existed input channel could be past-through.
+//       let indexCountZeros = inputChannelCount - indexCountExisted; // For out of input channel, use so many zeros instead.
+      let indexCountZeros = inputChannelCount - indexCountRequested; // For out of input channel, use so many zeros instead.
 
 //!!! ...unfinished... (2021/11/22) What if ( indexCount > inputChannelCount )?
 
       let filtersTensor4d;
       if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
+        
+//!!! ...unfinished... (2021/11/22) What if ( indexCount > inputChannelCount )?
         let oneZerosArray = ( new Array( indexCount ) ).fill( 0 );
         oneZerosArray[ 0 ] = 1; // Only the first element is one.
         filtersTensor4d = tf.tensor4d( oneZerosArray, filtersShape );
@@ -65,13 +69,16 @@ class PassThrough {
 
         let channelIndexesInt32Tensor1d;
         if ( indexCountZeros <= 0 ) { // Input channel count is greater than or equal to requested, no needs to use zeros.
+
+          let indexStop_EqualOrSmaller = indexStop + indexCountZeros; // but needs use lesser indexStop.
+
           channelIndexesInt32Tensor1d =
-            tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+            tf.range( indexStart, indexStop_EqualOrSmaller, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
 
         } else { // Input channel count is less than requested, uses zeros for the last several channels.
           let channelIndexesExistedInt32Tensor1d =
             tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesExistedInt32Tensor1d)
-          
+
           let channelIndexesZerosInt32Tensor1d =
             tf.zeros( [ indexCountZeros ], "int32" ); // tf.oneHot() accepts int32. (channelIndexesZerosInt32Tensor1d)
 
