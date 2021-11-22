@@ -998,8 +998,6 @@ class Base extends ReturnOrClone.Base {
 
     this.bPointwise1 = this.pointwise1.bExisted;
     if ( this.bPointwise1 ) {
-//!!! (2021/11/11 Remarked) should use this.pointwise1.outputChannelCount_Real.
-//      this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount;
       this.channelCount_pointwise1After_depthwise1Before = this.pointwise1.outputChannelCount_Real;
       this.tensorWeightCountTotal += this.pointwise1.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.pointwise1.tensorWeightCountExtracted;
@@ -1145,11 +1143,17 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/11/22)
       // Positive (input and output) lower half implies higher-half-different.
-      inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = ??? this.channelCount0_pointwise1Before;
+      if ( this.bDepthwise1 ) { // If depthwise1 exists, the lower half input of pointwise2 is the lower half output of depthwise1.
+        inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise2 = this.depthwise1.outputChannelCount_lowerHalf;
+
+      } else { // If depthwise1 does not exist, the lower half input of pointwise2 is the lower half output of pointwise1.
+        inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise1;
+      }
 
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
+        // No needs to shuffle channels. It is just enough to let pointwise21 do both pointwise21 and pointwise22. (i.e. bHigherHalfPointwise22)
 
       // If bHigherHalfPassThroughShuffle (or bAllPassThroughShuffle), (i.e. pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail), needs
       // ( channelShuffler_outputGroupCount_pointwise2 > 0 ).
