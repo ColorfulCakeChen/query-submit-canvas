@@ -56,9 +56,6 @@ class PassThrough {
       let inputChannelIndexStop = inputChannelIndexStart + outputChannelCount; // Note: needs not minus one, because it is not inclusive.
       if ( inputChannelIndexStop > inputChannelCount ) {
         inputChannelIndexStop = inputChannelCount; // Do not extract outside input channels.
-
-//!!! ...unfinished... (2021/11/22)
-
       }
 
       let indexCountZeros = outputChannelCount - inputChannelCount; // For out of input channel, use so many zeros instead.
@@ -76,14 +73,22 @@ class PassThrough {
 
       } else {
 
-        let channelIndexesInt32Tensor1d;
+        let channelIndexesInt32Tensor1d =
+            tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+
+        let channelIndexesOneHotInt32Tensor2d =
+          channelIndexesInt32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
+
+        let channelIndexesOneHotFloat32Tensor2d =
+          channelIndexesOneHotInt32Tensor2d.cast( "float32" );      // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
+
+
+
+
+//!!! ...unfinished... (2021/11/22) filled zeros should be appended to channelIndexesOneHotFloat32Tensor2d (not to channelIndexesInt32Tensor1d).
         if ( indexCountZeros > 0 ) { // ( inputChannelCount < outputChannelCount ), uses zeros for the last several channels.
-          channelIndexesInt32Tensor1d =
-            tf.range( inputChannelIndexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
 
         } else if ( indexCountZeros == 0 ) { // ( inputChannelCount == outputChannelCount ), no needs to use zeros.
-          channelIndexesInt32Tensor1d =
-            tf.range( inputChannelIndexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
 
         } else { // ( inputChannelCount > outputChannelCount ), no needs to use zeros.
           let channelIndexesExistedInt32Tensor1d =
@@ -96,13 +101,8 @@ class PassThrough {
             = tf.concat( channelIndexesExistedInt32Tensor1d, channelIndexesZerosInt32Tensor1d );
         }
 
-        let channelIndexesOneHotInt32Tensor2d =
-          channelIndexesInt32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
 
-        let channelIndexesOneHotFloat32Tensor2d =
-          channelIndexesOneHotInt32Tensor2d.cast( "float32" );      // tf.conv2d() accepts float32. (channelIndexesOneHotFloat32Tensor2d)
 
-//!!! ...unfinished... (2021/11/22) filled zeros should be appended to channelIndexesOneHotFloat32Tensor2d (not to channelIndexesInt32Tensor1d).
 
         let channelIndexesOneHotFloat32TransposedTensor2d =
           channelIndexesOneHotFloat32Tensor2d.transpose();          // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
