@@ -1033,7 +1033,8 @@ class Base extends ReturnOrClone.Base {
     if ( this.bHigherHalfDifferent == true ) {
       
 //!!! ...unfinished... (2021/11/22)
-      inputChannelCount_lowerHalf_depthwise1 = ???;
+      // The lower half of depthwise1 input is just the lower half of pointwise1 output.
+      inputChannelCount_lowerHalf_depthwise1 = outputChannelCount_lowerHalf_pointwise1;
 
       // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
       //
