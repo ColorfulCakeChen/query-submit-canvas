@@ -1022,7 +1022,6 @@ class Base extends ReturnOrClone.Base {
 
     // 3.1 The depthwise1 operation.
 
-//!!! ...unfinished... (2021/11/22)
     let inputHeight = -1, inputWidth = -1, inputChannelCount_lowerHalf_depthwise1 = -1; // In general case, depthwise1 needs not them.
 
     // If depthwise1's higher half is responsible for achieving pass-through, it needs channel shuffler.
@@ -1091,8 +1090,7 @@ class Base extends ReturnOrClone.Base {
         this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
         this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
 
-        false, // depthwise2 never has higher-half-different.
-        null   // depthwise2 never uses channel shuffler.
+        false, -1, -1, -1 // depthwise2 never has higher-half-different.
       );
 
       if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd ) )
