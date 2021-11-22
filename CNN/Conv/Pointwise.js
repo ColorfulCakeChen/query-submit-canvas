@@ -24,13 +24,17 @@ class PassThrough {
    * @param {number} inputChannelCount      The channel count of input.
    * @param {number} outputChannelCount     The channel count of output.
    * @param {number} inputChannelIndexStart The channel count index (included) to start to be copied to the output.
-   * @param {number} inputChannelIndexStop  The channel count index (not included) to stop to be copied to the output.
+//!!! (2021/11/22 Remarked)
+//   * @param {number} inputChannelIndexStop  The channel count index (not included) to stop to be copied to the output.
    */
-  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, inputChannelIndexStop, bBias ) {
+//!!! (2021/11/22 Remarked)
+//  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, inputChannelIndexStop, bBias ) {
+  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias ) {
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
-    this.inputChannelIndexStop = inputChannelIndexStop;
+//!!! (2021/11/22 Remarked)
+//    this.inputChannelIndexStop = inputChannelIndexStop;
     this.bBias = bBias;
 
     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
@@ -49,15 +53,17 @@ class PassThrough {
 //           ;
 
 
-      let indexStart = Math.min( inputChannelIndexStart, inputChannelIndexStop );
-      let indexStop = Math.max( inputChannelIndexStart, inputChannelIndexStop );
-      let indexCountRequested = indexStop - indexStart; // Note: No need to minus one, because the indexStop is not inclusive.
-//!!! (2021/11/22 Remarked)
-//       let indexCountExisted = Math.min( inputChannelCount, indexCountRequested ); // Only the existed input channel could be past-through.
-//       let indexCountZeros = inputChannelCount - indexCountExisted; // For out of input channel, use so many zeros instead.
-      let indexCountZeros = indexCountRequested - inputChannelCount; // For out of input channel, use so many zeros instead.
+      let inputChannelIndexStop = inputChannelIndexStart + outputChannelCount; // Note: needs not minus one, because it is not inclusive.
+      if ( inputChannelIndexStop > inputChannelCount ) {
+        inputChannelIndexStop = inputChannelCount; // Do not extract outside input channels.
 
-//!!! ...unfinished... (2021/11/22) What if ( indexCountRequested > inputChannelCount )?
+//!!! ...unfinished... (2021/11/22)
+
+      }
+
+      let indexCountZeros = outputChannelCount - inputChannelCount; // For out of input channel, use so many zeros instead.
+
+//!!! ...unfinished... (2021/11/22) What if ( outputChannelCount > inputChannelCount )?
 
       let filtersTensor4d;
       if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
@@ -71,17 +77,17 @@ class PassThrough {
       } else {
 
         let channelIndexesInt32Tensor1d;
-        if ( indexCountZeros > 0 ) { // ( inputChannelCount <= indexCountRequested ), uses zeros for the last several channels.
+        if ( indexCountZeros > 0 ) { // ( inputChannelCount < outputChannelCount ), uses zeros for the last several channels.
           channelIndexesInt32Tensor1d =
-            tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+            tf.range( inputChannelIndexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
 
-        } else if ( indexCountZeros == 0 ) { // ( inputChannelCount == indexCountRequested ), no needs to use zeros.
+        } else if ( indexCountZeros == 0 ) { // ( inputChannelCount == outputChannelCount ), no needs to use zeros.
           channelIndexesInt32Tensor1d =
-            tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
+            tf.range( inputChannelIndexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
 
-        } else { // ( inputChannelCount > indexCountRequested ), no needs to use zeros.
+        } else { // ( inputChannelCount > outputChannelCount ), no needs to use zeros.
           let channelIndexesExistedInt32Tensor1d =
-            tf.range( indexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesExistedInt32Tensor1d)
+            tf.range( inputChannelIndexStart, indexStop, 1, "int32" ); // tf.oneHot() accepts int32. (channelIndexesExistedInt32Tensor1d)
 
           let channelIndexesZerosInt32Tensor1d =
             tf.zeros( [ indexCountZeros ], "int32" ); // tf.oneHot() accepts int32. (channelIndexesZerosInt32Tensor1d)
@@ -957,7 +963,10 @@ class Base extends ReturnOrClone_Activation.Base {
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, // Use all (not just higher half) input channels.
         this.outputChannelCount_higherHalf,
+
+//... unfinished... (2021/11/22) seems should be outputChannelCount_lowerHalf (not outputChannelCount_higherHalf)
         this.outputChannelCount_higherHalf, this.outputChannelCount, // Pass through the higher channels.
+
         this.bBias
       );
 
