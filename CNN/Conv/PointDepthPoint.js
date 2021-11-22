@@ -1031,7 +1031,6 @@ class Base extends ReturnOrClone.Base {
     //
     if ( this.bHigherHalfDifferent == true ) {
       
-//!!! ...unfinished... (2021/11/22)
       // The lower half of depthwise1 input is just the lower half of pointwise1 output.
       inputChannelCount_lowerHalf_depthwise1 = outputChannelCount_lowerHalf_pointwise1;
 
@@ -1141,6 +1140,9 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // concat1 was ready. Report progress.
 
     // 5. The pointwise2 convolution.
+
+//!!! ...unfinished... (2021/11/22)
+    let inputChannelCount_lowerHalf_pointwise2 = -1, outputChannelCount_lowerHalf_pointwise2 = -1; // Assume not higher-half-different.
 
     let channelShuffler_outputGroupCount_pointwise2 = -1; // Default channelShuffler_outputGroupCount for pointwise2, is negative (never zero).
 
