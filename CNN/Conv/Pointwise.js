@@ -53,6 +53,8 @@ class PassThrough {
       let indexCountExisted = Math.min( inputChannelCount, indexCount ); // Only the existed input channel could be past-through.
       let indexCountZeros = inputChannelCount - indexCountExisted; // For out of input channel, use so many zeros instead.
 
+//!!! ...unfinished... (2021/11/22) What if ( indexCount > inputChannelCount )?
+
       let filtersTensor4d;
       if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
         let oneZerosArray = ( new Array( indexCount ) ).fill( 0 );
