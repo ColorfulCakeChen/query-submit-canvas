@@ -265,11 +265,21 @@ class Base extends ReturnOrClone_Activation.Base {
         + `inputChannelCount ( ${this.inputChannelCount} ).`
     );
 
-    tf.util.assert( ( this.outputChannelCount_lowerHalf <= outputChannelCount ),
-      `Pointwise.Base.constructor(): `
-        + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
-        + `outputChannelCount ( ${this.outputChannelCount} ).`
-    );
+    if ( this.outputChannelCount > 0 ) {
+      tf.util.assert( ( this.outputChannelCount_lowerHalf <= outputChannelCount ),
+        `Pointwise.Base.constructor(): `
+          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
+          + `outputChannelCount ( ${this.outputChannelCount} ).`
+      );
+
+    } else { // ( this.outputChannelCount <= 0 ), the outputChannelCount_Real will be inputChannelCount.
+      tf.util.assert( ( this.outputChannelCount_lowerHalf <= inputChannelCount ),
+        `Pointwise.Base.constructor(): `
+          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
+          + `inputChannelCount ( ${this.inputChannelCount} ) when `
+          + `outputChannelCount ( ${this.outputChannelCount} ) is zero or negative.`
+      );
+    }
 
     tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ) == ( this.outputChannelCount_lowerHalf > 0 ),
       `Pointwise.Base.constructor(): `
