@@ -1137,11 +1137,10 @@ class Base extends ReturnOrClone.Base {
     // 5. The pointwise2 convolution.
 
     let inputChannelCount_lowerHalf_pointwise2 = -1, outputChannelCount_lowerHalf_pointwise2 = -1; // Assume not higher-half-different.
-    let channelShuffler_outputGroupCount_pointwise2 = -1; // Default channelShuffler_outputGroupCount for pointwise2, is negative (never zero).
+    let channelShuffler_outputGroupCount_pointwise2; // Default channelShuffler_outputGroupCount for pointwise2, is never zero.
 
     if ( this.bHigherHalfDifferent == true ) {
 
-//!!! ...unfinished... (2021/11/22)
       // Positive (input and output) lower half implies higher-half-different.
       if ( this.bDepthwise1 ) { // If depthwise1 exists, the lower half input of pointwise2 is the lower half output of depthwise1.
         inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise2 = this.depthwise1.outputChannelCount_lowerHalf;
@@ -1150,23 +1149,20 @@ class Base extends ReturnOrClone.Base {
         inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise1;
       }
 
+      // For bHigherHalfPointwise22 or bAllPassThrough.
+      //
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
-        // No needs to shuffle channels. It is just enough to let pointwise21 do both pointwise21 and pointwise22. (i.e. bHigherHalfPointwise22)
+        channelShuffler_outputGroupCount_pointwise2 = -1; // negative value.
 
-      // If bHigherHalfPassThroughShuffle (or bAllPassThroughShuffle), (i.e. pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail), needs
-      // ( channelShuffler_outputGroupCount_pointwise2 > 0 ).
+      // For bHigherHalfPassThroughShuffle or bAllPassThroughShuffle.
       //
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
       } else {
-
-//!!! ...unfinished... (2021/11/22)
-        channelShuffler_outputGroupCount_pointwise2 = channelShuffler_ConcatPointwiseConv.outputGroupCount;
-
+        channelShuffler_outputGroupCount_pointwise2 = channelShuffler_ConcatPointwiseConv.outputGroupCount; // positive value.
       }
-
     }
 
     // 5.1 Pointwise21
@@ -1191,8 +1187,6 @@ class Base extends ReturnOrClone.Base {
 
     this.bPointwise21 = this.pointwise21.bExisted;
     if ( this.bPointwise21 ) {
-//!!! (2021/11/11 Remarked) should use this.pointwise21.outputChannelCount_Real instead of pointwise21ChannelCount.
-//      this.channelCount_pointwise21After_concat2Before = this.pointwise21ChannelCount;
       this.channelCount_pointwise21After_concat2Before = this.pointwise21.outputChannelCount_Real;
       this.tensorWeightCountTotal += this.pointwise21.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.pointwise21.tensorWeightCountExtracted;
@@ -1206,8 +1200,7 @@ class Base extends ReturnOrClone.Base {
       this.pointwise22 = new Pointwise.Base(
         this.channelCount_concat1After_pointwise2Before,
         this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
-//!!! ...unfinished... (2021/11/22)
-        this.bHigherHalfDifferent,
+        inputChannelCount_lowerHalf_pointwise2, outputChannelCount_lowerHalf_pointwise2,
         channelShuffler_outputGroupCount_pointwise2
       );
 
@@ -1222,8 +1215,6 @@ class Base extends ReturnOrClone.Base {
     }
 
     if ( this.bPointwise22 ) {
-//!!! (2021/11/11 Remarked) should use this.pointwise22.outputChannelCount_Real instead of pointwise22ChannelCount.
-//      this.channelCount_pointwise22After_concat2Before = this.pointwise22ChannelCount;
       this.channelCount_pointwise22After_concat2Before = this.pointwise22.outputChannelCount_Real;
       this.tensorWeightCountTotal += this.pointwise22.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += this.pointwise22.tensorWeightCountExtracted;
@@ -1233,8 +1224,6 @@ class Base extends ReturnOrClone.Base {
 
     // 5.3 Pointwise2 (= Pointwise21 + Pointwise22 )
     this.bPointwise2 = ( this.bPointwise21 || this.bPointwise22 );
-//!!! (2021/11/15 Remarked) Use real output channel count.
-//    this.channelCount_pointwise2After_concat2Before = this.pointwise21ChannelCount + this.pointwise22ChannelCount;
     this.channelCount_pointwise2After_concat2Before
       = this.channelCount_pointwise21After_concat2Before + this.channelCount_pointwise22After_concat2Before;
 
