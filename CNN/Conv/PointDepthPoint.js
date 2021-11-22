@@ -1019,29 +1019,23 @@ class Base extends ReturnOrClone.Base {
 
     let inputHeight = -1, inputWidth = -1, inputChannelCount_lowerHalf_depthwise1 = -1; // In general case, depthwise1 needs not them.
 
-    // If depthwise1's higher half is responsible for achieving pass-through, it needs channel shuffler.
-    //
-    // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
-    // (i.e. (ShuffleNetV2_ByMobileNetV1's body/tail) )
-    //
     if ( this.bHigherHalfDifferent == true ) {
       
       // The lower half of depthwise1 input is just the lower half of pointwise1 output.
       inputChannelCount_lowerHalf_depthwise1 = outputChannelCount_lowerHalf_pointwise1;
 
+      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
+      // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
+      if ( this.bHigherHalfDepthwise2 == true ) {
+        // Nothing more needs to be specified.
+
       // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
       //
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
       // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
-      //
-      if ( this.bHigherHalfDepthwise2 == false ) {
+      } else {
         inputHeight = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ];
         inputWidth = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ];
-
-      // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
-      // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
-      } else {
-        // Nothing more needs to be specified.
       }
     }
 
