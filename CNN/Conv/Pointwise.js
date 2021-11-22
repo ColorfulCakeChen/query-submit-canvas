@@ -212,9 +212,7 @@ class PassThrough {
  *               outputChannelCount is zero. And, it will always have no biases (no matter how bBias is).
  *
  * @member {number} channelShuffler_outputGroupCount
- *   Only if ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount ), it is meaningful. If positive, it will
- * be used to (pre-)shuffle the filters and biases. The total effect will be the same as applying a channel shuffler (without
- * concatenation and splitting) after pointwise convolution. (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *   Only if ( bHigherHalfDifferent == true ), it is meaningful.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
