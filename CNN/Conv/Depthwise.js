@@ -266,10 +266,10 @@ class PassThrough {
  *         through the input to output.
  *
  * @member {boolean} bHigherHalfDepthwise2
- *   If ( bHigherHalfDifferent == true ) and ( channelShuffler == null ), this will be true.
+ *   If ( bHigherHalfDifferent == true ) and ( ( inputHeight <= 0 ) or ( inputWidth <= 0 ) ), this will be true.
  *
  * @member {boolean} bHigherHalfPassThrough
- *   If ( bHigherHalfDifferent == true ) and ( channelShuffler != null ), this will be true.
+ *   If ( bHigherHalfDifferent == true ) and ( ( inputHeight > 0 ) and ( inputWidth > 0 ) ), this will be true.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
