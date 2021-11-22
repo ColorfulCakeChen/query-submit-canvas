@@ -578,14 +578,6 @@ class Base extends ReturnOrClone_Activation.Base {
       //this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
       this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
-//!!! (2021/11/18 Remarked)
-//       // In this case, all the input are viewed as lower half.
-//       tf.util.assert( this.inputChannelCount_lowerHalf == this.inputChannelCount,
-//         `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough(): `
-//           + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) should be the same as `
-//           + `inputChannelCount ( ${this.inputChannelCount} ).`
-//       );
-
       lowerHalfPassThrough = new PassThrough(
         this.inputChannelCount, // Use all (not just lower half) input channels.
         this.outputChannelCount_lowerHalf,
@@ -608,8 +600,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
       let allFiltersArray = [ lowerHalfPassThrough.filtersTensor4d, higherHalfPassThrough.filtersTensor4d ];
 //!!! (2021/11/18 Remarked)
-//      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-      this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
+      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+//      this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
 
       if ( this.bBias ) {
         let allBiasesArray = [ lowerHalfPassThrough.biasesTensor3d, higherHalfPassThrough.biasesTensor3d ];
@@ -687,14 +679,6 @@ class Base extends ReturnOrClone_Activation.Base {
       this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
       this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
-//!!! (2021/11/18 Remarked)
-//       // In this case, all the input are viewed as lower half.
-//       tf.util.assert( this.inputChannelCount_lowerHalf == this.inputChannelCount,
-//         `Pointwise.Base.extractAs_HigherHalfCopyLowerHalf(): `
-//           + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) should be the same as `
-//           + `inputChannelCount ( ${this.inputChannelCount} ).`
-//       );
-
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, // Use all (not just higher half) input channels.
         this.outputChannelCount_higherHalf,
@@ -730,8 +714,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
           let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalfPassThrough.filtersTensor4d ];
   //!!! (2021/11/18 Remarked)
-  //        this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-          this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
+          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+  //        this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
 
         } finally {
           if ( filtersTensor4d_lowerHalf_expanded )
@@ -811,10 +795,6 @@ class Base extends ReturnOrClone_Activation.Base {
     this.inputChannelCount_toBeExtracted = this.inputChannelCount;
     this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-//!!! (2021/11/18 Remarked) comes from constructor's parameter.
-//     this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
-//     this.outputChannelCount_lowerHalf = Math.ceil( this.outputChannelCount / 2 );
-
     this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
     this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
@@ -871,8 +851,8 @@ class Base extends ReturnOrClone_Activation.Base {
       // Combine lower and higher into one larger filters and biases.
       let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, filtersTensor4d_higherHalf_expanded ];
 //!!! (2021/11/18 Remarked)
-//      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. channel axis; axis id 3).
-      this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
+      this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+//      this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
 
       if ( this.bBias ) {
         let allBiasesArray = [ biasesTensor3d_lowerHalf, biasesTensor3d_higherHalf ];
@@ -987,8 +967,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
           let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalfPassThrough.filtersTensor4d ];
 //!!! (2021/11/18 Remarked)
-//          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
-          this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
+          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+//          this.filtersTensor4d = tf.concat( allFiltersArray, 2 ); // Along the second last axis (i.e. inDepth axis; axis id 2).
 
         } finally {
           if ( filtersTensor4d_lowerHalf_expanded )
