@@ -600,7 +600,9 @@ class Base extends ReturnOrClone_Activation.Base {
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, // Use all (not just higher half) input channels.
         this.outputChannelCount_higherHalf,
-        0, this.outputChannelCount_lowerHalf, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+//!!! (2021/11/22 Remarked)
+//        0, this.outputChannelCount_lowerHalf, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+        0, this.outputChannelCount_higherHalf, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
         this.bBias
       );
 
@@ -691,7 +693,9 @@ class Base extends ReturnOrClone_Activation.Base {
       higherHalfPassThrough = new PassThrough(
         this.inputChannelCount, // Use all (not just higher half) input channels.
         this.outputChannelCount_higherHalf,
-        0, this.outputChannelCount_lowerHalf, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+//!!! (2021/11/22 Remarked)
+//        0, this.outputChannelCount_lowerHalf, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
+        0, this.outputChannelCount_higherHalf, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
         this.bBias
       );
 
