@@ -805,21 +805,6 @@ class Base {
       // If output1 is requested, it comes from pointwise22 directly. The pointwise22 will have the same output channel count as pointwise21.
       let pointwise22ChannelCount;
 
-//!!! (2021/11/12 Remarked) wrong.
-//       // Special case: Force pointwise22 (although ( bOutput1Requested == false )), because we use the logic of
-//       // ONE_INPUT_TWO_DEPTHWISE (-2) to handle ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (which does not have pointwise22, in fact).
-//       if ( testParams.out.channelCount1_pointwise1Before
-//              == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) { // (-4)
-//         pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
-//
-//       } else { // Normal case: pointwise22 according to bOutput1Requested.
-//         if ( testParams.out.bOutput1Requested ) {
-//           pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
-//         } else {
-//           pointwise22ChannelCount = 0;
-//         }
-//       }
-
       if ( testParams.out.bOutput1Requested ) {
         pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
       } else {
@@ -866,12 +851,15 @@ class Base {
 
       // 5.1 Concat2, shuffle, split.
 
-//!!! ...unfinished... (2021/11/23) When ONE_INPUT_HALF_THROUGH (-5), although ( bOutput1Requested == false ), it still needs shuffle.
+//!!! (2021/11/23 Remarked) When ONE_INPUT_HALF_THROUGH (-5), although ( bOutput1Requested == false ), it still needs shuffle.
+//      if ( testParams.out.bOutput1Requested == true ) {
 
-//                 || ( testParams.out.channelCount1_pointwise1Before
-//                        == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) ) { // (-5)
-
-      if ( testParams.out.bOutput1Requested == true ) {
+      // Note: When ONE_INPUT_HALF_THROUGH (-5), although ( bOutput1Requested == false ), it still needs shuffle.
+      if (   ( testParams.out.bOutput1Requested == true )
+          || ( testParams.out.channelCount1_pointwise1Before
+                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+         ) {
+        
         this.calcConcatShuffleSplit( channelShuffler_concatenatedShape, channelShuffler_outputGroupCount,
           imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
 
@@ -1468,7 +1456,7 @@ class Base {
           + `${parametersDesc}`);
     }
 
-    // Converty input images to tensors.
+    // Convert input images to tensors.
     let tensorInArray = new Array( imageInArray.length );
     for ( let i = 0; i < imageInArray.length; ++i ) {
       let t = tf.tensor( imageInArray[ i ].dataArray, [ imageInArray[ i ].height, imageInArray[ i ].width, imageInArray[ i ].depth ] );
