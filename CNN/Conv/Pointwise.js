@@ -970,11 +970,12 @@ class Base extends ReturnOrClone_Activation.Base {
       // 2.
 
 //!!! ...unfinished... (2021/11/23)
-// If ( 0 == this.inputChannelCount_higherHalf ), just concatenating the following (instead of higherHalfPassThrough) is enough.
+// If ( 0 == this.inputChannelCount_higherHalf ), just concatenating filtersTensor4d_lowerHalf_expanded with the following
+// (instead of higherHalfPassThrough) is enough.
 //    higherHalfAllZeros = tf.zeros( [ 1, 1, inputChannelCount, outputChannelCount_higherHalf ] )
 //
 //
-// If ( 0 == this.outputChannelCount_higherHalf ), ???
+// If ( 0 == this.outputChannelCount_higherHalf ), nothing more to be done. (filtersTensor4d_lowerHalf_expanded is enough.)
 //
 //
 
