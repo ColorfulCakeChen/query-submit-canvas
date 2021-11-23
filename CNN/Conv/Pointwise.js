@@ -103,6 +103,8 @@ class PassThrough {
         let oneHotInt32Tensor2d;
         try {
           oneHotInt32Tensor2d = int32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (oneHotInt32Tensor2d)
+        } catch ( e ) {
+          throw e; // So that bInitOk will not be true.
         } finally {
           int32Tensor1d.dispose();
         }
@@ -110,6 +112,8 @@ class PassThrough {
         let oneHotTensor2d;
         try {
           oneHotTensor2d = oneHotInt32Tensor2d.cast( "float32" );    // tf.conv2d() accepts float32. (oneHotFloat32Tensor2d)
+        } catch ( e ) {
+          throw e; // So that bInitOk will not be true.
         } finally {
           oneHotInt32Tensor2d.dispose();
         }
@@ -125,9 +129,13 @@ class PassThrough {
             let zerosFloat32Tensor2d = tf.zeros( [ zerosCount, inputChannelCount ] );
             try {
               oneHotAdjustedTensor2d = tf.concat( oneHotTensor2d, zerosFloat32Tensor2d );
+            } catch ( e ) {
+              throw e; // So that bInitOk will not be true.
             } finally {
               zerosFloat32Tensor2d.dispose();
             }
+          } catch ( e ) {
+            throw e; // So that bInitOk will not be true.
           } finally {
             oneHotTensor2d.dispose();
           }
@@ -136,6 +144,8 @@ class PassThrough {
         let oneHotTransposedTensor2d;
         try {
           oneHotTransposedTensor2d = oneHotAdjustedTensor2d.transpose(); // looks like tf.conv2d()'s filter.
+        } catch ( e ) {
+          throw e; // So that bInitOk will not be true.
         } finally {
           oneHotAdjustedTensor2d.dispose();
         }
@@ -143,11 +153,12 @@ class PassThrough {
         // tf.conv2d()'s filter is tensor4d. (oneHotFloat32Tensor4d)
         try {
           this.filtersTensor4d = oneHotTransposedTensor2d.reshape( filtersShape );
+        } catch ( e ) {
+          throw e; // So that bInitOk will not be true.
         } finally {
           oneHotTransposedTensor2d.dispose();
         }
       }
-
     }
 
     // Generate bias for just adding zero. (i.e. equals no bias).
