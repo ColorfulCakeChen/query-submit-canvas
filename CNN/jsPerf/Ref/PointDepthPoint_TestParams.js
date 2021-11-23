@@ -349,6 +349,19 @@ class Base extends TestParams.Base {
     //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
 
 
+//!!! ...unfinished... (2021/11/23) should:
+// - double the channelCount0_pointwise1Before with the same pointwise1 filters. Or,
+// - the same channelCount0_pointwise1Before with half pointwise1 filters.
+
+//     // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
+//     //
+//     // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting will fail.
+//     if ( testParams.out.channelCount1_pointwise1Before
+//            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+//
+//     }
+
+
     // Pointwise1
     let pointwise1 = Base.generate_pointwise_filters_biases( paramsAll.channelCount0_pointwise1Before,
       paramsAll.pointwise1ChannelCount, paramsAll.bPointwise1Bias );
