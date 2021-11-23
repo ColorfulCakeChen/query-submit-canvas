@@ -103,58 +103,48 @@ class PassThrough {
         let oneHotInt32Tensor2d;
         try {
           oneHotInt32Tensor2d = int32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (oneHotInt32Tensor2d)
-
         } finally {
-          if ( int32Tensor1d )
-            int32Tensor1d.dispose();
+          int32Tensor1d.dispose();
         }
 
-        let oneHotFloat32Tensor2d;
+        let oneHotTensor2d;
         try {
-          oneHotFloat32Tensor2d = oneHotInt32Tensor2d.cast( "float32" );    // tf.conv2d() accepts float32. (oneHotFloat32Tensor2d)
-
+          oneHotTensor2d = oneHotInt32Tensor2d.cast( "float32" );    // tf.conv2d() accepts float32. (oneHotFloat32Tensor2d)
         } finally {
-          if ( oneHotInt32Tensor2d )
-            oneHotInt32Tensor2d.dispose();
+          oneHotInt32Tensor2d.dispose();
         }
 
-        if ( zerosCount > 0 ) { // Uses zeros for the last several channels.
-          let zerosFloat32Tensor2d;
+        let oneHotAdjustedTensor2d;
+        if ( zerosCount <= 0 ) { // No need to append zeros.
+          oneHotAdjustedTensor2d = oneHotTensor2d;
+          oneHotTensor2d = null; // So that it will not be disposed now.
+          
+        } else { // ( zerosCount > 0 ) Uses zeros for the last several channels.
+
           try {
-            zerosFloat32Tensor2d = tf.zeros( [ zerosCount, inputChannelCount ] );
-
-            let oneHotFloat32Tensor2d_old;
+            let zerosFloat32Tensor2d = tf.zeros( [ zerosCount, inputChannelCount ] );
             try {
-              oneHotFloat32Tensor2d_old = oneHotFloat32Tensor2d; // So that it will be disposed when the concatenation succeeded.
-              oneHotFloat32Tensor2d = tf.concat( oneHotFloat32Tensor2d, zerosFloat32Tensor2d );
-
+              oneHotAdjustedTensor2d = tf.concat( oneHotTensor2d, zerosFloat32Tensor2d );
             } finally {
-              if ( oneHotFloat32Tensor2d_old )
-                oneHotFloat32Tensor2d_old.dispose();
-            }
-
-          } finally {
-            if ( zerosFloat32Tensor2d )
               zerosFloat32Tensor2d.dispose();
+            }
+          } finally {
+            oneHotTensor2d.dispose();
           }
         }
 
-        let oneHotFloat32TransposedTensor2d;
+        let oneHotTransposedTensor2d;
         try {
-          oneHotFloat32TransposedTensor2d = oneHotFloat32Tensor2d.transpose(); // looks like tf.conv2d()'s filter. (oneHotFloat32TransposedTensor2d)
-
+          oneHotTransposedTensor2d = oneHotAdjustedTensor2d.transpose(); // looks like tf.conv2d()'s filter.
         } finally {
-          if ( oneHotFloat32Tensor2d )
-            oneHotFloat32Tensor2d.dispose();
+          oneHotAdjustedTensor2d.dispose();
         }
 
         // tf.conv2d()'s filter is tensor4d. (oneHotFloat32Tensor4d)
         try {
-          this.filtersTensor4d = oneHotFloat32TransposedTensor2d.reshape( filtersShape );
-
+          this.filtersTensor4d = oneHotTransposedTensor2d.reshape( filtersShape );
         } finally {
-          if ( oneHotFloat32TransposedTensor2d )
-            oneHotFloat32TransposedTensor2d.dispose();
+          oneHotTransposedTensor2d.dispose();
         }
       }
 
