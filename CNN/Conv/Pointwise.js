@@ -1026,9 +1026,16 @@ class Base extends ReturnOrClone_Activation.Base {
 // i.e. new AllZeros( inputChannelCount, outputChannelCount_higherHalf );
 //
 //
-// If ( 0 == this.outputChannelCount_higherHalf ), nothing more to be done. (filtersTensor4d_lowerHalf_expanded is enough.)
+// If ( 0 == this.outputChannelCount_higherHalf ), nothing more needs to be done. (filtersTensor4d_lowerHalf_expanded is enough.)
 //
 //
+      let higherHalf;
+      if () {
+        higherHalf = new PassThrouh();
+      } else if () {
+        higherHalf = new AllZeros();
+      } else {
+      }
 
 
 //!!! (2021/11/23 Remarked)
