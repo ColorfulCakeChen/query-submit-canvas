@@ -356,6 +356,11 @@ class Base extends ReturnOrClone_Activation.Base {
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
 
+    tf.util.assert( ( inputChannelCount > 0 ),
+      `Pointwise.Base.constructor(): `
+        + `inputChannelCount ( ${this.inputChannelCount} ) must be positive integer.`
+    );
+
     tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
       `Pointwise.Base.constructor(): `
         + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
@@ -1005,7 +1010,9 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.bHigherHalfPassThrough = true;
 
-    let higherHalfPassThrough;
+//!!! (2021/11/23 Remarked)
+//    let higherHalfPassThrough;
+    let higherHalf;
     try {
 
       this.outputChannelCount_Real = this.outputChannelCount;
@@ -1019,46 +1026,49 @@ class Base extends ReturnOrClone_Activation.Base {
 
       // 2.
 
-//!!! ...unfinished... (2021/11/23)
-// If ( 0 == this.inputChannelCount_higherHalf ), just concatenating filtersTensor4d_lowerHalf_expanded with the following
-// (instead of higherHalfPassThrough) is enough.
-//    higherHalfAllZeros = tf.zeros( [ 1, 1, inputChannelCount, outputChannelCount_higherHalf ] )
-// i.e. new AllZeros( inputChannelCount, outputChannelCount_higherHalf );
-//
-//
-// If ( 0 == this.outputChannelCount_higherHalf ), nothing more needs to be done. (filtersTensor4d_lowerHalf_expanded is enough.)
-//
-//
-      let higherHalf;
-      if () {
-        higherHalf = new PassThrouh();
-      } else if () {
-        higherHalf = new AllZeros();
+      if ( this.outputChannelCount_higherHalf <= 0 ) {
+        // 2.1 Nothing more needs to be done. (filtersTensor4d_lowerHalf_expanded is enough.)
+        
       } else {
-      }
 
+        if ( this.inputChannelCount_higherHalf <= 0 ) { // 2.2 higherHalfAllZeros
+          higherHalf = new AllZeros( this.inputChannelCount, this.outputChannelCount_higherHalf );
+          
+        } else { // 2.3 ( inputChannelCount_higherHalf > 0 ) && ( outputChannelCount_higherHalf > 0 ), higherHalfPassThrough
+          higherHalf = new PassThrough(
+            this.inputChannelCount, // Use all (not just higher half) input channels.
+            this.outputChannelCount_higherHalf,
+            this.outputChannelCount_lowerHalf, // Pass through the higher channels.
+            this.bBias
+          );
+        }
+
+        if ( !higherHalf.bInitOk )
+          return false;
+      }
 
 //!!! (2021/11/23 Remarked)
 //!!! ...unfinished... (2021/11/23) This seems wrong. Even if one of it is zero, it can not become NormalPointwise
 // because filters weights can not fit.
+//
+//       // 2.1 If the channel count can not be halved (e.g. ( inputChannelCount == 1 ) or ( outputChannelCount == 1 ) ),
+//       //     treated as normal pointwise.
+//       if ( ( 0 == this.inputChannelCount_higherHalf ) || ( 0 == this.outputChannelCount_higherHalf ) ) {
+//         return Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
+//       }
+//
+//       // 2.2 The higher half can be past-through.
+//       higherHalfPassThrough = new PassThrough(
+//         this.inputChannelCount, // Use all (not just higher half) input channels.
+//         this.outputChannelCount_higherHalf,
+//         this.outputChannelCount_lowerHalf, // Pass through the higher channels.
+//         this.bBias
+//       );
+//
+//       if ( !higherHalfPassThrough.bInitOk )
+//         return false;
 
-      // 2.1 If the channel count can not be halved (e.g. ( inputChannelCount == 1 ) or ( outputChannelCount == 1 ) ),
-      //     treated as normal pointwise.
-      if ( ( 0 == this.inputChannelCount_higherHalf ) || ( 0 == this.outputChannelCount_higherHalf ) ) {
-        return Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
-      }
-
-      // 2.2 The higher half can be past-through.
-      higherHalfPassThrough = new PassThrough(
-        this.inputChannelCount, // Use all (not just higher half) input channels.
-        this.outputChannelCount_higherHalf,
-        this.outputChannelCount_lowerHalf, // Pass through the higher channels.
-        this.bBias
-      );
-
-      if ( !higherHalfPassThrough.bInitOk )
-        return false;
-
+      // 3.
       {
         let filtersTensor4d_lowerHalf_expanded;
         try {
@@ -1079,8 +1089,13 @@ class Base extends ReturnOrClone_Activation.Base {
               filtersTensor4d_lowerHalf.dispose();
           }
 
-          let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalfPassThrough.filtersTensor4d ];
-          this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+          if ( higherHalf ) {
+            let allFiltersArray = [ filtersTensor4d_lowerHalf_expanded, higherHalf.filtersTensor4d ];
+            this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
+          } else {
+            this.filtersTensor4d = filtersTensor4d_lowerHalf_expanded;
+            filtersTensor4d_lowerHalf_expanded = null; // So that it will not be disposed now.
+          }
 
         } finally {
           if ( filtersTensor4d_lowerHalf_expanded )
@@ -1088,6 +1103,7 @@ class Base extends ReturnOrClone_Activation.Base {
         }
       }
 
+      // 4.
       if ( this.bBias ) {
         let biasesTensor3d_lowerHalf;
         try {
@@ -1096,8 +1112,13 @@ class Base extends ReturnOrClone_Activation.Base {
           if ( !biasesTensor3d_lowerHalf )
             return false;
 
-          let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalfPassThrough.biasesTensor3d ];
-          this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+          if ( higherHalf ) {
+            let allBiasesArray = [ biasesTensor3d_lowerHalf, higherHalf.biasesTensor3d ];
+            this.biasesTensor3d = tf.concat( allBiasesArray, 2 ); // Along the last axis (i.e. channel axis; axis id 2).
+          } else {
+            this.biasesTensor3d = biasesTensor3d_lowerHalf;
+            biasesTensor3d_lowerHalf = null; // So that it will not be disposed now.
+          }
 
         } finally {
           if ( biasesTensor3d_lowerHalf )
@@ -1110,15 +1131,15 @@ class Base extends ReturnOrClone_Activation.Base {
 
     } finally {
 
-      if ( higherHalfPassThrough ) {
+      if ( higherHalf ) {
 
-        // Include the weights count of the higher-half-pass-through filters and biases.
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-        if ( higherHalfPassThrough.biasesTensor3d ) {
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
+        // Include the weights count of the higher-half (-pass-through or -all-zeros) filters and biases.
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalf.filtersTensor4d.shape );
+        if ( higherHalf.biasesTensor3d ) {
+          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalf.biasesTensor3d.shape );
         }
 
-        higherHalfPassThrough.disposeTensors();
+        higherHalf.disposeTensors();
       }
     }
 
