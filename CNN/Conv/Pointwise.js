@@ -77,9 +77,10 @@ class PassThrough {
       let endIndexMax = inputChannelCount;
       let endIndex = Math.max( 0, Maxt.min( inputChannelIndexStart + outputChannelCount, endIndexMax ) );
 
-//!!! ...unfinished... (2021/11/23)
-      let indexCountBeginEnd = endIndex - beginIndex; // So many channels will be past-through from input to output.
+      let extractedCount = endIndex - beginIndex; // So many channels will be past-through from input to output.
+      let zerosCount = outputChannelCount - extractedCount; // The output channels which no extracted values could be used will be filled by zeros.
 
+//!!! ...unfinished... (2021/11/23)
       let inputChannelIndexStop = inputChannelIndexStart + outputChannelCount; // Note: needs not minus one, because it is not inclusive.
       if ( inputChannelIndexStop > inputChannelCount ) {
         inputChannelIndexStop = inputChannelCount; // Do not extract outside input channels.
