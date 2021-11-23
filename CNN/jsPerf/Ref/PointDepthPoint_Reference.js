@@ -859,7 +859,9 @@ class Base {
           || ( testParams.out.channelCount1_pointwise1Before
                  == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
          ) {
-        
+
+        let channelShuffler_concatenatedShape = channelShuffler.concatenatedShape;
+        let channelShuffler_outputGroupCount = channelShuffler.outputGroupCount;
         this.calcConcatShuffleSplit( channelShuffler_concatenatedShape, channelShuffler_outputGroupCount,
           imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
 
