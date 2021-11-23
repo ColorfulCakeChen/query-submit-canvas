@@ -54,20 +54,22 @@ class Base {
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
 
+
 //!!! ...unfinished... (2021/11/23) should get imageIn1 and concatenate it into imageIn0 (not avoid it) so that them could be splitted.
 // get imageIn1 by fake ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
 // No. Just double imageIn0 should be enough.
 
-    
-    // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
-    //
-    // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting will fail.
-    if ( testParams.out.channelCount1_pointwise1Before
-           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+//!!! (2021/11/23 Remarked)    
+//     // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
+//     //
+//     // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting will fail.
+//     if ( testParams.out.channelCount1_pointwise1Before
+//            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+//
+//       if ( ( testParams.out.channelCount0_pointwise1Before % 2 ) != 0 )
+//         return;
+//     }
 
-      if ( ( testParams.out.channelCount0_pointwise1Before % 2 ) != 0 )
-        return;
-    }
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
     switch ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
@@ -119,7 +121,18 @@ class Base {
         strNote = `( this.testParams.id=${this.testParams.id} )`;
 
         imageInArraySelected.fill( undefined );
-        imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
+
+        let input0ChannelCount = channelCount0_pointwise1Before;
+
+        // For ONE_INPUT_HALF_THROUGH (-5), double the input channel count so that they could be divided by 2.
+        //
+        // The reason is that the calcResult() will splitted it into two input images. If it is doubled, the splitting may fail.
+        if ( testParams.out.channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+          input0ChannelCount *= 2;
+        }
+
+        imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( input0ChannelCount );
 
 //!!! ...unfinished... (2021/10/28) input1ChannelCount may zero.
 
