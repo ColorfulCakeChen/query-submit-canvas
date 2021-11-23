@@ -115,14 +115,14 @@ class Base {
         input1ChannelCount = referredParams.input1ChannelCount;
       }
 
+      let input0ChannelCount = channelCount0_pointwise1Before;
+
       let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
       let imageOutReferenceArray;
       {
         strNote = `( this.testParams.id=${this.testParams.id} )`;
 
         imageInArraySelected.fill( undefined );
-
-        let input0ChannelCount = channelCount0_pointwise1Before;
 
         // For ONE_INPUT_HALF_THROUGH (-5), double the input channel count so that they could be divided by 2.
         //
@@ -213,7 +213,7 @@ class Base {
       outputTensor3dArray.fill( undefined );
       inputTensor3dArray.fill( undefined );
 
-      inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
+      inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( input0ChannelCount );
       if ( bTwoInputs ) { // Pass two input tensors according to parameters.
         inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
           input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
