@@ -946,6 +946,8 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bHigherHalfDifferent == true ) {
 
+//!!! ...unfinished... (2021/11/23)
+
       // Positive (input and output) lower half implies higher-half-different.
       inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
 
@@ -975,6 +977,12 @@ class Base extends ReturnOrClone.Base {
             );
 
       } else { // (i.e. pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+        
+//!!! ...unfinished... (2021/11/23) Perhaps, should both be Math.ceil( this.channelCount0_pointwise1Before / 2 )
+
+        // Positive (input and output) lower half implies higher-half-different.
+        inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
+
         outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1; // So that bHigherHalfPassThrough (or bAllPassThrough).
       }
 
