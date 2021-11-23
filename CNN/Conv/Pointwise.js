@@ -52,6 +52,33 @@ class PassThrough {
 //           .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
 //           ;
 
+      if ( inputChannelCount <= 0 )
+        throw `Pointwise.PassThrough.constructor(): inputChannelCount ( ${inputChannelCount} ) must be positive integer.`;
+
+      if ( outputChannelCount <= 0 )
+        throw `Pointwise.PassThrough.constructor(): outputChannelCount ( ${outputChannelCount} ) must be positive integer.`;
+
+      //!!! (2021/11/23 Remarked) Instead by restricting their value range.
+      //
+      //if ( inputChannelIndexStart < 0 )
+      //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) can not be negative.`;
+      //
+      //if ( inputChannelIndexStart >= inputChannelCount )
+      //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) `
+      //   + ` must be less than inputChannelCount ( ${inputChannelCount} ).`;
+
+      // Restrict beginIndex between [ 0, inputChannelCount ).
+      let beginIndexMax = ( inputChannelCount - 1 );
+      let beginIndex = Math.max( 0, Math.min( inputChannelIndexStart, startIndexMax ) );
+
+      // Restrict endIndex between [ 0, inputChannelIndexStart + outputChannelCount ].
+      //
+      // Note: endIndexMax and endIndex need not be minus one, because they are not inclusive.
+      let endIndexMax = inputChannelCount;
+      let endIndex = Math.max( 0, Maxt.min( inputChannelIndexStart + outputChannelCount, endIndexMax ) );
+
+//!!! ...unfinished... (2021/11/23)
+      let indexCountBeginEnd = endIndex - beginIndex; // So many channels will be past-through from input to output.
 
       let inputChannelIndexStop = inputChannelIndexStart + outputChannelCount; // Note: needs not minus one, because it is not inclusive.
       if ( inputChannelIndexStop > inputChannelCount ) {
