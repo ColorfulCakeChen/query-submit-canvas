@@ -54,7 +54,7 @@ class Base {
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
 
-//!!! ...unfinished... (2021/11/23) should double the input channels (not avoid it, not split it)
+//!!! ...unfinished... (2021/11/23) should get imageIn1 and concatenate it into imageIn0 (not avoid it) so that them could be splitted.
 
     // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
     //
