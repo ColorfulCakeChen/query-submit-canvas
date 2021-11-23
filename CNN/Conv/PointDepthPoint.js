@@ -946,14 +946,12 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bHigherHalfDifferent == true ) {
 
-//!!! ...unfinished... (2021/11/23)
-
-      // Positive (input and output) lower half implies higher-half-different.
-      inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
-
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
       // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
+
+        // Positive (input and output) lower half implies higher-half-different.
+        inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
 
         // In this case (i.e. bHigherHalfCopyLowerHalf), enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count )
         // so that depthwise1 could include depthwise2.
@@ -979,6 +977,7 @@ class Base extends ReturnOrClone.Base {
       } else { // (i.e. pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
         
 //!!! ...unfinished... (2021/11/23) Perhaps, should both be Math.ceil( this.channelCount0_pointwise1Before / 2 )
+// Perhaps, not divided by 2.
 
         // Positive (input and output) lower half implies higher-half-different.
         inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
