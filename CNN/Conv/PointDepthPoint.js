@@ -974,7 +974,7 @@ class Base extends ReturnOrClone.Base {
              + this.channelCount0_pointwise1Before     // For depthwise2 (by depthwise1).
             );
 
-      } else { // (i.e. pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+      } else { // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
 
         // Positive (input and output) lower half implies higher-half-different.
         // So that bHigherHalfPassThrough (or bAllPassThrough).
@@ -1031,7 +1031,7 @@ class Base extends ReturnOrClone.Base {
       // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
       //
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
-      // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+      // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
       } else {
         inputHeight = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ];
         inputWidth = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ];
