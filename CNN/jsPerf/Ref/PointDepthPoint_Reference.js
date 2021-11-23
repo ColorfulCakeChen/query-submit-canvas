@@ -84,6 +84,11 @@ class Base {
         }
     }
 
+//!!! (2021/11/23 Remarked)
+//!!! ...unfinished... (2021/11/23) How to modify channelCount0_pointwise1Before in the packed Float32Array?
+// Perhaps, it should be done in the PointDepthPoint_TestParams.js.
+//    let channelCount0_pointwise1Before_old = this.testParams.out.channelCount0_pointwise1Before; // For restore.
+
     try {
       let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
       let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
@@ -115,7 +120,8 @@ class Base {
         input1ChannelCount = referredParams.input1ChannelCount;
       }
 
-      let input0ChannelCount = channelCount0_pointwise1Before;
+//!!! (2021/11/23 Remarked)
+//      let input0ChannelCount = channelCount0_pointwise1Before;
 
       let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
       let imageOutReferenceArray;
@@ -124,15 +130,18 @@ class Base {
 
         imageInArraySelected.fill( undefined );
 
-        // For ONE_INPUT_HALF_THROUGH (-5), double the input channel count so that they could be divided by 2.
-        //
-        // The reason is that the calcResult() will splitted it into two input images. If it is doubled, the splitting may fail.
-        if ( testParams.out.channelCount1_pointwise1Before
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
-          input0ChannelCount *= 2;
-        }
+//!!! (2021/11/23 Remarked)
+//         // For ONE_INPUT_HALF_THROUGH (-5), double the input channel count so that they could be divided by 2.
+//         //
+//         // The reason is that the calcResult() will splitted it into two input images. If it is doubled, the splitting may fail.
+//         if ( testParams.out.channelCount1_pointwise1Before
+//                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+//           input0ChannelCount *= 2;
+//         }
+//
+//         imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( input0ChannelCount );
 
-        imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( input0ChannelCount );
+        imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
 
 //!!! ...unfinished... (2021/10/28) input1ChannelCount may zero.
 
@@ -213,7 +222,9 @@ class Base {
       outputTensor3dArray.fill( undefined );
       inputTensor3dArray.fill( undefined );
 
-      inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( input0ChannelCount );
+//!!! (2021/11/23 Remarked)
+//      inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( input0ChannelCount );
+      inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
       if ( bTwoInputs ) { // Pass two input tensors according to parameters.
         inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
           input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
@@ -234,6 +245,9 @@ class Base {
       }
 
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
+
+//!!! (2021/11/23 Remarked) Perhaps, it should be done in the PointDepthPoint_TestParams.js.
+////!!! ...unfinished... (2021/11/23) How to use input0ChannelCount instead of channelCount0_pointwise1Before?
       let pointDepthPoint = Base.pointDepthPoint_create( testParams, channelShuffler_ConcatPointwiseConv );
 
       let parametersDescription = pointDepthPoint.parametersDescription;
