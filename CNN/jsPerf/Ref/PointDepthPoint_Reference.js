@@ -865,6 +865,12 @@ class Base {
       imageConcat2InArray[ 1 ] = imageIn1; // i.e. input1.
 
       // 5.1 Concat2, shuffle, split.
+
+//!!! ...unfinished... (2021/11/23) When ONE_INPUT_HALF_THROUGH (-5), although ( bOutput1Requested == false ), it still needs shuffle.
+
+//                 || ( testParams.out.channelCount1_pointwise1Before
+//                        == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) ) { // (-5)
+
       if ( testParams.out.bOutput1Requested == true ) {
         this.calcConcatShuffleSplit( channelShuffler_concatenatedShape, channelShuffler_outputGroupCount,
           imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
