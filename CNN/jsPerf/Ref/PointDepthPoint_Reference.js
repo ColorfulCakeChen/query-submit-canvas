@@ -1418,25 +1418,10 @@ class Base {
   calcConcatShuffleSplit(
     concatenatedShape, outputGroupCount, imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
 
-//!!! (2021/11/23 Remarked ) Although different depth is wierd, it might still work.
-//     tf.util.assert(
-//       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
-//        && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
-//        && ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth ) ),
-//
-//       `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
-//         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
-//         + `should be the same as the second input image's shape `
-//         + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
-//         + `(${parametersDesc})`
-//     );
-
-    // Note: Although different depth is wierd, it might still work. So, allow it.
     tf.util.assert(
       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
        && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
-       //&& ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth )
-      ),
+       && ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth ) ),
 
       `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
@@ -1444,6 +1429,21 @@ class Base {
         + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
         + `(${parametersDesc})`
     );
+
+//!!! (2021/11/23 Remarked) It seems not work.
+//     // Note: Although different depth is wierd, it might still work. So, allow it.
+//     tf.util.assert(
+//       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
+//        && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
+//        //&& ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth )
+//       ),
+//
+//       `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
+//         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
+//         + `should be the same as the second input image's shape `
+//         + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
+//         + `(${parametersDesc})`
+//     );
 
     let channelShuffler_ShuffleInfo;
     {
