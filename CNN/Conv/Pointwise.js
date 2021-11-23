@@ -985,6 +985,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
       // 2.
 
+//!!! ...unfinished... (2021/11/23) This seems wrong. Even if one of it is zero, can become NormalPointwise.
+
       // 2.1 If the channel count can not be halved (e.g. ( inputChannelCount == 1 ) or ( outputChannelCount == 1 ) ),
       //     treated as normal pointwise.
       if ( ( 0 == this.inputChannelCount_higherHalf ) || ( 0 == this.outputChannelCount_higherHalf ) ) {
