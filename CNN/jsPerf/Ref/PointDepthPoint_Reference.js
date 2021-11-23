@@ -656,8 +656,6 @@ class Base {
 
     // 0.
 
-//!!! ...unfinished... (2021/11/23) should double the input channels (not avoid it, not split it)
-
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
     if ( testParams.out.channelCount1_pointwise1Before
