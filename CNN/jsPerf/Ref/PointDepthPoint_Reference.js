@@ -61,16 +61,16 @@ class Base {
 // No. Just double imageIn0 should be enough.
 
 //!!! (2021/11/23 Remarked)
-//     // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
-//     //
-//     // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting will fail.
-//     if ( testParams.out.channelCount1_pointwise1Before
-//            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
-//
-//       if ( ( testParams.out.channelCount0_pointwise1Before % 2 ) != 0 )
-//         return;
-//     }
+    // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
+    //
+    // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting may still work but
+    // the concat-shuffle-split can not work.
+    if ( testParams.out.channelCount1_pointwise1Before
+           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
 
+      if ( ( testParams.out.channelCount0_pointwise1Before % 2 ) != 0 )
+        return;
+    }
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
     switch ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
