@@ -985,7 +985,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
       // 2.
 
-//!!! ...unfinished... (2021/11/23) This seems wrong. Even if one of it is zero, can become NormalPointwise.
+//!!! ...unfinished... (2021/11/23) This seems wrong. Even if one of it is zero, it can not become NormalPointwise
+// because filters weights can not fit.
 
       // 2.1 If the channel count can not be halved (e.g. ( inputChannelCount == 1 ) or ( outputChannelCount == 1 ) ),
       //     treated as normal pointwise.
