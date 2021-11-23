@@ -1,9 +1,29 @@
-export { PassThrough, Base };
+export { filtersTensor4d_biasesTensor3d, PassThrough, AllZeros, Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
+
+
+/**
+ * An object contains filtersTensor4d and biasesTensor3d, and a method to dispose them. It is the base class of PassThrough and AllZeros.
+ */
+class filtersTensor4d_biasesTensor3d {
+
+  disposeTensors() {
+    if ( this.filtersTensor4d ) {
+      this.filtersTensor4d.dispose();
+      this.filtersTensor4d = null;
+    }
+
+    if ( this.biasesTensor3d ) {
+      this.biasesTensor3d.dispose();
+      this.biasesTensor3d = null;
+    }
+  }
+
+}
 
 
 /**
@@ -16,12 +36,13 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
  * @member {boolean} bInitOk
  *   If true, this object initialized (i.e. constructor()) successfully.
  */
-class PassThrough {
+class PassThrough extends filtersTensor4d_biasesTensor3d {
 
   /**
-   * @param {number} inputChannelCount      The channel count of input.
-   * @param {number} outputChannelCount     The channel count of output.
-   * @param {number} inputChannelIndexStart The channel count index (included) to start to be copied to the output.
+   * @param {number}  inputChannelCount      The channel count of input.
+   * @param {number}  outputChannelCount     The channel count of output.
+   * @param {number}  inputChannelIndexStart The channel count index (included) to start to be copied to the output.
+   * @param {boolean} bBias                  Whether generate biases (although all zeros).
    */
   constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias ) {
     this.inputChannelCount = inputChannelCount;
@@ -151,17 +172,46 @@ class PassThrough {
     this.bInitOk = true;
   }
 
-  disposeTensors() {
-    if ( this.filtersTensor4d ) {
-      this.filtersTensor4d.dispose();
-      this.filtersTensor4d = null;
+}
+
+
+//!!! ...unfinished... (2021/11/23)
+/**
+ * A pointwise convolution and bias which just output zeros.
+ *
+ * @member {boolean} bInitOk
+ *   If true, this object initialized (i.e. constructor()) successfully.
+ */
+class AllZeros extends filtersTensor4d_biasesTensor3d {
+
+  /**
+   * @param {number}  inputChannelCount      The channel count of input.
+   * @param {number}  outputChannelCount     The channel count of output.
+   * @param {boolean} bBias                  Whether generate biases (although all zeros).
+   */
+  constructor( inputChannelCount, outputChannelCount, bBias ) {
+    this.inputChannelCount = inputChannelCount;
+    this.outputChannelCount = outputChannelCount;
+    this.bBias = bBias;
+
+    if ( inputChannelCount <= 0 )
+      throw `Pointwise.AllZeros.constructor(): inputChannelCount ( ${inputChannelCount} ) must be positive integer.`;
+
+    if ( outputChannelCount <= 0 )
+      throw `Pointwise.AllZeros.constructor(): outputChannelCount ( ${outputChannelCount} ) must be positive integer.`;
+
+    let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
+    let biasesShape =  [ 1, 1, outputChannelCount ];
+
+    this.filtersTensor4d = tf.zeros( filtersShape );
+
+    if ( this.bBias ) {
+      this.biasesTensor3d = tf.zero( biasesShape );    // Generate bias for just adding zero. (i.e. equals no bias).
     }
 
-    if ( this.biasesTensor3d ) {
-      this.biasesTensor3d.dispose();
-      this.biasesTensor3d = null;
-    }
+    this.bInitOk = true;
   }
+
 }
 
 
@@ -973,6 +1023,7 @@ class Base extends ReturnOrClone_Activation.Base {
 // If ( 0 == this.inputChannelCount_higherHalf ), just concatenating filtersTensor4d_lowerHalf_expanded with the following
 // (instead of higherHalfPassThrough) is enough.
 //    higherHalfAllZeros = tf.zeros( [ 1, 1, inputChannelCount, outputChannelCount_higherHalf ] )
+// i.e. new AllZeros( inputChannelCount, outputChannelCount_higherHalf );
 //
 //
 // If ( 0 == this.outputChannelCount_higherHalf ), nothing more to be done. (filtersTensor4d_lowerHalf_expanded is enough.)
