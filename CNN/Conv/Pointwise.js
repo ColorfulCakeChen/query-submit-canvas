@@ -18,27 +18,36 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
  */
 class PassThrough {
 
-//!!! ...unfinished... (2021/11/22) It seems that inputChannelIndexStop should be dropped (by using outputChannelCount instead)?
-
   /**
    * @param {number} inputChannelCount      The channel count of input.
    * @param {number} outputChannelCount     The channel count of output.
    * @param {number} inputChannelIndexStart The channel count index (included) to start to be copied to the output.
-//!!! (2021/11/22 Remarked)
-//   * @param {number} inputChannelIndexStop  The channel count index (not included) to stop to be copied to the output.
    */
-//!!! (2021/11/22 Remarked)
-//  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, inputChannelIndexStop, bBias ) {
   constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias ) {
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
-//!!! (2021/11/22 Remarked)
-//    this.inputChannelIndexStop = inputChannelIndexStop;
     this.bBias = bBias;
+
+    if ( inputChannelCount <= 0 )
+      throw `Pointwise.PassThrough.constructor(): inputChannelCount ( ${inputChannelCount} ) must be positive integer.`;
+
+    if ( outputChannelCount <= 0 )
+      throw `Pointwise.PassThrough.constructor(): outputChannelCount ( ${outputChannelCount} ) must be positive integer.`;
+
+    //!!! (2021/11/23 Remarked) Instead by restricting their value range.
+    //
+    //if ( inputChannelIndexStart < 0 )
+    //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) can not be negative.`;
+    //
+    //if ( inputChannelIndexStart >= inputChannelCount )
+    //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) `
+    //   + ` must be less than inputChannelCount ( ${inputChannelCount} ).`;
 
     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
     let biasesShape =  [ 1, 1, outputChannelCount ];
+
+    oneHotFloat32Tensor4d
 
     [ this.filtersTensor4d, this.biasesTensor3d ] = tf.tidy( () => {
 
@@ -52,24 +61,9 @@ class PassThrough {
 //           .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
 //           ;
 
-      if ( inputChannelCount <= 0 )
-        throw `Pointwise.PassThrough.constructor(): inputChannelCount ( ${inputChannelCount} ) must be positive integer.`;
-
-      if ( outputChannelCount <= 0 )
-        throw `Pointwise.PassThrough.constructor(): outputChannelCount ( ${outputChannelCount} ) must be positive integer.`;
-
-      //!!! (2021/11/23 Remarked) Instead by restricting their value range.
-      //
-      //if ( inputChannelIndexStart < 0 )
-      //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) can not be negative.`;
-      //
-      //if ( inputChannelIndexStart >= inputChannelCount )
-      //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) `
-      //   + ` must be less than inputChannelCount ( ${inputChannelCount} ).`;
-
       // Restrict beginIndex between [ 0, inputChannelCount ).
       let beginIndexMax = ( inputChannelCount - 1 );
-      let beginIndex = Math.max( 0, Math.min( inputChannelIndexStart, startIndexMax ) );
+      let beginIndex = Math.max( 0, Math.min( inputChannelIndexStart, beginIndexMax ) );
 
       // Restrict endIndex between [ 0, inputChannelIndexStart + outputChannelCount ].
       //
@@ -82,7 +76,6 @@ class PassThrough {
 
 //!!! ...unfinished... (2021/11/22) What if ( outputChannelCount > inputChannelCount )?
 
-      let filtersTensor4d;
       if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
         
 //!!! ...unfinished... (2021/11/22) What if ( indexCountRequested > inputChannelCount )?
@@ -95,34 +88,71 @@ class PassThrough {
 
         // These tensors represents input channel indexes.
 
-        let int32Tensor1d = tf.range( beginIndex, endIndex, 1, "int32" ); // tf.oneHot() accepts int32. (int32Tensor1d)
+//        let int32Tensor1d, oneHotInt32Tensor2d, oneHotFloat32Tensor2d, oneHotFloat32TransposedTensor2d;
 
-        let oneHotInt32Tensor2d = int32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (oneHotInt32Tensor2d)
-        int32Tensor1d.dispose();
+        let int32Tensor1d;
+        try {
+          int32Tensor1d = tf.range( beginIndex, endIndex, 1, "int32" ); // tf.oneHot() accepts int32. (int32Tensor1d)
 
-        let oneHotFloat32Tensor2d = oneHotInt32Tensor2d.cast( "float32" );      // tf.conv2d() accepts float32. (oneHotFloat32Tensor2d)
-        oneHotInt32Tensor2d.dispose();
+          let oneHotInt32Tensor2d;
+          try {
+            oneHotInt32Tensor2d = int32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (oneHotInt32Tensor2d)
 
-        if ( zerosCount > 0 ) { // Uses zeros for the last several channels.
-          let zerosFloat32Tensor2d = tf.zeros( [ zerosCount, inputChannelCount ] );
+            let oneHotFloat32Tensor2d;
+            try {
+              oneHotFloat32Tensor2d = oneHotInt32Tensor2d.cast( "float32" );    // tf.conv2d() accepts float32. (oneHotFloat32Tensor2d)
 
-          let oneHot_zeros_Float32Tensor2d = tf.concat( oneHotFloat32Tensor2d, zerosFloat32Tensor2d );
-          zerosFloat32Tensor2d.dispose();
+              if ( zerosCount > 0 ) { // Uses zeros for the last several channels.
+                let zerosFloat32Tensor2d;
+                try {
+                  zerosFloat32Tensor2d = tf.zeros( [ zerosCount, inputChannelCount ] );
+                  
+                  let oneHotFloat32Tensor2d_old;
+                  try {
+                    oneHotFloat32Tensor2d_old = oneHotFloat32Tensor2d; // So that it will be disposed when the concatenation succeeded.
+                    oneHotFloat32Tensor2d = tf.concat( oneHotFloat32Tensor2d, zerosFloat32Tensor2d );
 
-          oneHotFloat32Tensor2d = oneHot_zeros_Float32Tensor2d;
-          oneHot_zeros_Float32Tensor2d.dispose();
-        }
+                  } finally {
+                    if ( oneHotFloat32Tensor2d_old )
+                      oneHotFloat32Tensor2d_old.dispose();
+                  }
 
-//!!! ...unfinished... (2021/11/23)
+                } finally {
+                  if ( zerosFloat32Tensor2d )
+                    zerosFloat32Tensor2d.dispose();
+                }
+              }
 
-        let oneHotFloat32TransposedTensor2d = oneHotFloat32Tensor2d.transpose(); // looks like tf.conv2d()'s filter. (oneHotFloat32TransposedTensor2d)
-        oneHotFloat32Tensor2d.dispose();
+  //!!! ...unfinished... (2021/11/23)
 
-        // tf.conv2d()'s filter is tensor4d. (oneHotFloat32Tensor4d)
-        let oneHotFloat32Tensor4d = oneHotFloat32TransposedTensor2d.reshape( filtersShape );
-        oneHotFloat32TransposedTensor2d.dispose();
+              let int32Tensor1d, oneHotInt32Tensor2d, \;
 
-        filtersTensor4d = oneHotFloat32Tensor4d;
+              let oneHotFloat32TransposedTensor2d = oneHotFloat32Tensor2d.transpose(); // looks like tf.conv2d()'s filter. (oneHotFloat32TransposedTensor2d)
+              oneHotFloat32Tensor2d.dispose();
+
+              // tf.conv2d()'s filter is tensor4d. (oneHotFloat32Tensor4d)
+              try {
+                this.filtersTensor4d = oneHotFloat32TransposedTensor2d.reshape( filtersShape );
+
+              } finally {
+                if ( oneHotFloat32TransposedTensor2d )
+                  oneHotFloat32TransposedTensor2d.dispose();
+              }
+
+            } finally {
+              if ( oneHotFloat32Tensor2d )
+                oneHotFloat32Tensor2d.dispose();
+            }
+ 
+          } finally {
+            if ( oneHotInt32Tensor2d )
+              oneHotInt32Tensor2d.dispose();
+          }
+
+        } finally {
+          if ( int32Tensor1d )
+            int32Tensor1d.dispose();
+         }
       }
 
       // Generate bias for just adding zero. (i.e. equals no bias).
