@@ -78,7 +78,7 @@ class PassThrough {
     //
     // Note: endIndexMax and endIndex need not be minus one, because they are not inclusive.
     let endIndexMax = inputChannelCount;
-    let endIndex = Math.max( 0, Maxt.min( inputChannelIndexStart + outputChannelCount, endIndexMax ) );
+    let endIndex = Math.max( 0, Math.min( inputChannelIndexStart + outputChannelCount, endIndexMax ) );
 
     let extractedCount = endIndex - beginIndex; // So many channels will be past-through from input to output.
     let zerosCount = outputChannelCount - extractedCount; // The output channels which no extracted values could be used will be filled by zeros.
