@@ -54,6 +54,8 @@ class Base {
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
 
+//!!! ...unfinished... (2021/11/23) should double the input channels (not avoid it, not split it)
+
     // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
     //
     // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting will fail.
@@ -637,6 +639,8 @@ class Base {
     let imageIn0, imageIn1;
 
     // 0.
+
+//!!! ...unfinished... (2021/11/23) should double the input channels (not avoid it, not split it)
 
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
