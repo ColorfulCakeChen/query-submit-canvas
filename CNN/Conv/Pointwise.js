@@ -969,6 +969,17 @@ class Base extends ReturnOrClone_Activation.Base {
 
       // 2.
 
+//!!! ...unfinished... (2021/11/23)
+// If ( 0 == this.inputChannelCount_higherHalf ), just concatenating the following (instead of higherHalfPassThrough) is enough.
+//    higherHalfAllZeros = tf.zeros( [ 1, 1, inputChannelCount, outputChannelCount_higherHalf ] )
+//
+//
+// If ( 0 == this.outputChannelCount_higherHalf ), ???
+//
+//
+
+
+//!!! (2021/11/23 Remarked)
 //!!! ...unfinished... (2021/11/23) This seems wrong. Even if one of it is zero, it can not become NormalPointwise
 // because filters weights can not fit.
 
