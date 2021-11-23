@@ -56,6 +56,7 @@ class Base {
 
 //!!! ...unfinished... (2021/11/23) should get imageIn1 and concatenate it into imageIn0 (not avoid it) so that them could be splitted.
 // get imageIn1 by fake ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
+// No. Just double imageIn0 should be enough.
 
     
     // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
