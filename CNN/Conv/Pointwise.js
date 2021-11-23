@@ -1236,6 +1236,8 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   static shuffle_filters_biases() {
 
+//!!! ...unfinished... (2021/11/23) What if input (or output) channel count can not be divided by 2 (= outputGroupCount)?
+
     if ( this.filtersTensor4d ) { // Shuffle the filters along the last (i.e. channel) axis.
       let filtersChannelShuffler = new ChannelShuffler.ShuffleInfo( this.filtersTensor4d.shape, this.channelShuffler_outputGroupCount );
       let filtersTensor4d_shuffled = filtersChannelShuffler.reshapeTransposeReshape( this.filtersTensor4d );
