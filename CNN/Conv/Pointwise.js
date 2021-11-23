@@ -83,16 +83,10 @@ class PassThrough {
     let extractedCount = endIndex - beginIndex; // So many channels will be past-through from input to output.
     let zerosCount = outputChannelCount - extractedCount; // The output channels which no extracted values could be used will be filled by zeros.
 
-//!!! ...unfinished... (2021/11/22) What if ( outputChannelCount > inputChannelCount )?
-
     if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
-
-//!!! ...unfinished... (2021/11/22) What if ( indexCountRequested > inputChannelCount )?
-
-//!!! ...unfinished... (2021/11/23)
-      let oneZerosArray = ( new Array( indexCountRequested ) ).fill( 0 );
+      let oneZerosArray = ( new Array( outputChannelCount ) ).fill( 0 );
       oneZerosArray[ 0 ] = 1; // Only the first element is one.
-      filtersTensor4d = tf.tensor4d( oneZerosArray, filtersShape );
+      this.filtersTensor4d = tf.tensor4d( oneZerosArray, filtersShape );
 
     } else {
 
