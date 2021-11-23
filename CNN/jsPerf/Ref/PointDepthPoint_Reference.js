@@ -1119,16 +1119,33 @@ class Base {
     if ( null == imageIn )
       return [ null, null ];
 
-    tf.util.assert( ( ( imageIn.depth % 2 ) == 0 ),
-      `${splitName} shape imageIn.depth (${imageIn.depth}) `
-        + `should be dividable by 2 ( ( ${imageIn.depth} % 2 ) should be zero ). (${parametersDesc})`);
+//!!! (2021/11/23 Remarked) If not divided by 2, let lower half have one more.
+//     tf.util.assert( ( ( imageIn.depth % 2 ) == 0 ),
+//       `${splitName} shape imageIn.depth (${imageIn.depth}) `
+//         + `should be dividable by 2 ( ( ${imageIn.depth} % 2 ) should be zero ). (${parametersDesc})`);
 
-    let imageOutDepth = imageIn.depth / 2;
-    let imageOutLength = ( imageIn.height * imageIn.width * imageOutDepth );
+//!!! (2021/11/23 Remarked) If not divided by 2, let lower half have one more.
+//     let imageOutDepth = imageIn.depth / 2;
+//     let imageOutLength = ( imageIn.height * imageIn.width * imageOutDepth );
+//     let imageOutArray = [
+//       { height: imageIn.height, width: imageIn.width, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) },
+//       { height: imageIn.height, width: imageIn.width, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) }
+//     ];
+
+    // If not divided by 2, let lower half have one more.
+    let imageOutDepth_lowerHalf = Math.ceil( imageIn.depth / 2 );
+    let imageOutDepth_higherHalf = imageIn.depth - imageOutDepth_lowerHalf;
+
+    let imageOutLength_lowerHalf = ( imageIn.height * imageIn.width * imageOutDepth_lowerHalf );
+    let imageOutLength_higherHalf = ( imageIn.height * imageIn.width * imageOutDepth_higherHalf );
+
     let imageOutArray = [
-      { height: imageIn.height, width: imageIn.width, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) },
-      { height: imageIn.height, width: imageIn.width, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) }
+      { height: imageIn.height, width: imageIn.width, depth: imageOutDepth_lowerHalf, dataArray: new Float32Array( imageOutLength_lowerHalf ) },
+      { height: imageIn.height, width: imageIn.width, depth: imageOutDepth_higherHalf, dataArray: new Float32Array( imageOutLength_higherHalf ) }
     ];
+
+    let imageOut0 = imageOutArray[ 0 ];
+    let imageOut1 = imageOutArray[ 1 ];
 
     // Split along the image depth.
     for ( let y = 0; y < imageIn.height; ++y ) {
@@ -1138,19 +1155,37 @@ class Base {
         let indexBaseC = ( indexBaseX + x );
 
         let inIndexBaseC  = ( indexBaseC * imageIn.depth );
-        let outIndexBaseC = ( indexBaseC * imageOutDepth );
 
         let inChannel = 0;
 
-        for ( let imageOutIndex = 0; imageOutIndex < imageOutArray.length; ++imageOutIndex ) {
-          let imageOut = imageOutArray[ imageOutIndex ];
+//!!! (2021/11/23 Remarked) If not divided by 2, let lower half have one more.
+//         let outIndexBaseC = ( indexBaseC * imageOutDepth );
+//
+//         for ( let imageOutIndex = 0; imageOutIndex < imageOutArray.length; ++imageOutIndex ) {
+//           let imageOut = imageOutArray[ imageOutIndex ];
+//
+//           for ( let outChannel = 0; outChannel < imageOutDepth; ++outChannel, ++inChannel ) {
+//             let inIndex = inIndexBaseC + inChannel;
+//             let outIndex = outIndexBaseC + outChannel;
+//             imageOut.dataArray[ outIndex ] = imageIn.dataArray[ inIndex ];
+//           }
+//         }
 
-          for ( let outChannel = 0; outChannel < imageOutDepth; ++outChannel, ++inChannel ) {
-            let inIndex = inIndexBaseC + inChannel;
-            let outIndex = outIndexBaseC + outChannel;
-            imageOut.dataArray[ outIndex ] = imageIn.dataArray[ inIndex ];
-          }
+        let outIndexBaseC_lowerHalf = ( indexBaseC * imageOutDepth_lowerHalf );
+        let outIndexBaseC_higherHalf = ( indexBaseC * imageOutDepth_higherHalf );
+
+        for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
+          let inIndex = inIndexBaseC + inChannel;
+          let outIndex_lowerHalf = outIndexBaseC_lowerHalf + outChannel;
+          imageOut0.dataArray[ outIndex_lowerHalf ] = imageIn.dataArray[ inIndex ];
         }
+
+        for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
+          let inIndex = inIndexBaseC + inChannel;
+          let outIndex_higherHalf = outIndexBaseC_higherHalf + outChannel;
+          imageOut1.dataArray[ outIndex_higherHalf ] = imageIn.dataArray[ inIndex ];
+        }
+
       }
     }
 
