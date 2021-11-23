@@ -55,7 +55,9 @@ class Base {
     this.testParams = testParams;
 
 //!!! ...unfinished... (2021/11/23) should get imageIn1 and concatenate it into imageIn0 (not avoid it) so that them could be splitted.
+// get imageIn1 by fake ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
 
+    
     // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
     //
     // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting will fail.
