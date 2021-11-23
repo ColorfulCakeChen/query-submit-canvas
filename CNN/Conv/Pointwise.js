@@ -47,12 +47,10 @@ class PassThrough {
     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
     let biasesShape =  [ 1, 1, outputChannelCount ];
 
-    oneHotFloat32Tensor4d
-
-    [ this.filtersTensor4d, this.biasesTensor3d ] = tf.tidy( () => {
-
-      // Generate pointwise filters for just copying the input (from inputChannelIndexStart to inputChannelIndexStop).
-//!!! (2021/11/11/ Remarked)
+//!!! (2021/11/22/ Remarked)
+//     [ this.filtersTensor4d, this.biasesTensor3d ] = tf.tidy( () => {
+//
+//       // Generate pointwise filters for just copying the input (from inputChannelIndexStart to inputChannelIndexStop).
 //       let filtersTensor4d =
 //         tf.range( inputChannelIndexStart, inputChannelIndexStop, 1, "int32" ) // tf.oneHot() accepts int32. (channelIndexesInt32Tensor1d)
 //           .oneHot( inputChannelCount )  // tf.oneHot() generates int32. (channelIndexesOneHotInt32Tensor2d)
@@ -60,111 +58,114 @@ class PassThrough {
 //           .transpose()                  // looks like tf.conv2d()'s filter. (channelIndexesOneHotFloat32TransposedTensor2d)
 //           .reshape( filtersShape )      // tf.conv2d()'s filter is tensor4d. (channelIndexesOneHotFloat32Tensor4d)
 //           ;
+//
+//       // Generate bias for just adding zero. (i.e. equals no bias).
+//       let biasesTensor3d;
+//       if ( this.bBias ) {
+//         biasesTensor3d = tf.zero( biasesShape );
+//       }
+//
+//       this.bInitOk = true;
+//
+//       return [ filtersTensor4d, biasesTensor3d ];
+//     });
 
-      // Restrict beginIndex between [ 0, inputChannelCount ).
-      let beginIndexMax = ( inputChannelCount - 1 );
-      let beginIndex = Math.max( 0, Math.min( inputChannelIndexStart, beginIndexMax ) );
+    // Restrict beginIndex between [ 0, inputChannelCount ).
+    let beginIndexMax = ( inputChannelCount - 1 );
+    let beginIndex = Math.max( 0, Math.min( inputChannelIndexStart, beginIndexMax ) );
 
-      // Restrict endIndex between [ 0, inputChannelIndexStart + outputChannelCount ].
-      //
-      // Note: endIndexMax and endIndex need not be minus one, because they are not inclusive.
-      let endIndexMax = inputChannelCount;
-      let endIndex = Math.max( 0, Maxt.min( inputChannelIndexStart + outputChannelCount, endIndexMax ) );
+    // Restrict endIndex between [ 0, inputChannelIndexStart + outputChannelCount ].
+    //
+    // Note: endIndexMax and endIndex need not be minus one, because they are not inclusive.
+    let endIndexMax = inputChannelCount;
+    let endIndex = Math.max( 0, Maxt.min( inputChannelIndexStart + outputChannelCount, endIndexMax ) );
 
-      let extractedCount = endIndex - beginIndex; // So many channels will be past-through from input to output.
-      let zerosCount = outputChannelCount - extractedCount; // The output channels which no extracted values could be used will be filled by zeros.
+    let extractedCount = endIndex - beginIndex; // So many channels will be past-through from input to output.
+    let zerosCount = outputChannelCount - extractedCount; // The output channels which no extracted values could be used will be filled by zeros.
 
 //!!! ...unfinished... (2021/11/22) What if ( outputChannelCount > inputChannelCount )?
 
-      if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
-        
+    if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
+
 //!!! ...unfinished... (2021/11/22) What if ( indexCountRequested > inputChannelCount )?
 
-        let oneZerosArray = ( new Array( indexCountRequested ) ).fill( 0 );
-        oneZerosArray[ 0 ] = 1; // Only the first element is one.
-        filtersTensor4d = tf.tensor4d( oneZerosArray, filtersShape );
+//!!! ...unfinished... (2021/11/23)
+      let oneZerosArray = ( new Array( indexCountRequested ) ).fill( 0 );
+      oneZerosArray[ 0 ] = 1; // Only the first element is one.
+      filtersTensor4d = tf.tensor4d( oneZerosArray, filtersShape );
 
-      } else {
+    } else {
 
-        // These tensors represents input channel indexes.
+      { // These tensors represents input channel indexes.
 
-//        let int32Tensor1d, oneHotInt32Tensor2d, oneHotFloat32Tensor2d, oneHotFloat32TransposedTensor2d;
+        let int32Tensor1d = tf.range( beginIndex, endIndex, 1, "int32" ); // tf.oneHot() accepts int32. (int32Tensor1d)
 
-        let int32Tensor1d;
+        let oneHotInt32Tensor2d;
         try {
-          int32Tensor1d = tf.range( beginIndex, endIndex, 1, "int32" ); // tf.oneHot() accepts int32. (int32Tensor1d)
-
-          let oneHotInt32Tensor2d;
-          try {
-            oneHotInt32Tensor2d = int32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (oneHotInt32Tensor2d)
-
-            let oneHotFloat32Tensor2d;
-            try {
-              oneHotFloat32Tensor2d = oneHotInt32Tensor2d.cast( "float32" );    // tf.conv2d() accepts float32. (oneHotFloat32Tensor2d)
-
-              if ( zerosCount > 0 ) { // Uses zeros for the last several channels.
-                let zerosFloat32Tensor2d;
-                try {
-                  zerosFloat32Tensor2d = tf.zeros( [ zerosCount, inputChannelCount ] );
-                  
-                  let oneHotFloat32Tensor2d_old;
-                  try {
-                    oneHotFloat32Tensor2d_old = oneHotFloat32Tensor2d; // So that it will be disposed when the concatenation succeeded.
-                    oneHotFloat32Tensor2d = tf.concat( oneHotFloat32Tensor2d, zerosFloat32Tensor2d );
-
-                  } finally {
-                    if ( oneHotFloat32Tensor2d_old )
-                      oneHotFloat32Tensor2d_old.dispose();
-                  }
-
-                } finally {
-                  if ( zerosFloat32Tensor2d )
-                    zerosFloat32Tensor2d.dispose();
-                }
-              }
-
-  //!!! ...unfinished... (2021/11/23)
-
-              let int32Tensor1d, oneHotInt32Tensor2d, \;
-
-              let oneHotFloat32TransposedTensor2d = oneHotFloat32Tensor2d.transpose(); // looks like tf.conv2d()'s filter. (oneHotFloat32TransposedTensor2d)
-              oneHotFloat32Tensor2d.dispose();
-
-              // tf.conv2d()'s filter is tensor4d. (oneHotFloat32Tensor4d)
-              try {
-                this.filtersTensor4d = oneHotFloat32TransposedTensor2d.reshape( filtersShape );
-
-              } finally {
-                if ( oneHotFloat32TransposedTensor2d )
-                  oneHotFloat32TransposedTensor2d.dispose();
-              }
-
-            } finally {
-              if ( oneHotFloat32Tensor2d )
-                oneHotFloat32Tensor2d.dispose();
-            }
- 
-          } finally {
-            if ( oneHotInt32Tensor2d )
-              oneHotInt32Tensor2d.dispose();
-          }
+          oneHotInt32Tensor2d = int32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (oneHotInt32Tensor2d)
 
         } finally {
           if ( int32Tensor1d )
             int32Tensor1d.dispose();
-         }
+        }
+
+        let oneHotFloat32Tensor2d;
+        try {
+          oneHotFloat32Tensor2d = oneHotInt32Tensor2d.cast( "float32" );    // tf.conv2d() accepts float32. (oneHotFloat32Tensor2d)
+
+        } finally {
+          if ( oneHotInt32Tensor2d )
+            oneHotInt32Tensor2d.dispose();
+        }
+
+        if ( zerosCount > 0 ) { // Uses zeros for the last several channels.
+          let zerosFloat32Tensor2d;
+          try {
+            zerosFloat32Tensor2d = tf.zeros( [ zerosCount, inputChannelCount ] );
+
+            let oneHotFloat32Tensor2d_old;
+            try {
+              oneHotFloat32Tensor2d_old = oneHotFloat32Tensor2d; // So that it will be disposed when the concatenation succeeded.
+              oneHotFloat32Tensor2d = tf.concat( oneHotFloat32Tensor2d, zerosFloat32Tensor2d );
+
+            } finally {
+              if ( oneHotFloat32Tensor2d_old )
+                oneHotFloat32Tensor2d_old.dispose();
+            }
+
+          } finally {
+            if ( zerosFloat32Tensor2d )
+              zerosFloat32Tensor2d.dispose();
+          }
+        }
+
+        let oneHotFloat32TransposedTensor2d;
+        try {
+          oneHotFloat32TransposedTensor2d = oneHotFloat32Tensor2d.transpose(); // looks like tf.conv2d()'s filter. (oneHotFloat32TransposedTensor2d)
+
+        } finally {
+          if ( oneHotFloat32Tensor2d )
+            oneHotFloat32Tensor2d.dispose();
+        }
+
+        // tf.conv2d()'s filter is tensor4d. (oneHotFloat32Tensor4d)
+        try {
+          this.filtersTensor4d = oneHotFloat32TransposedTensor2d.reshape( filtersShape );
+
+        } finally {
+          if ( oneHotFloat32TransposedTensor2d )
+            oneHotFloat32TransposedTensor2d.dispose();
+        }
       }
 
-      // Generate bias for just adding zero. (i.e. equals no bias).
-      let biasesTensor3d;
-      if ( this.bBias ) {
-        biasesTensor3d = tf.zero( biasesShape );
-      }
+    }
 
-      this.bInitOk = true;
+    // Generate bias for just adding zero. (i.e. equals no bias).
+    if ( this.bBias ) {
+      this.biasesTensor3d = tf.zero( biasesShape );
+    }
 
-      return [ filtersTensor4d, biasesTensor3d ];
-    });
+    this.bInitOk = true;
   }
 
   disposeTensors() {
