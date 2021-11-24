@@ -976,9 +976,15 @@ class Base extends ReturnOrClone.Base {
 
       } else { // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
 
+//!!! (2021/11/24 Remarked) should half of input and output individually.
+//         // Positive (input and output) lower half implies higher-half-different.
+//         // So that bHigherHalfPassThrough (or bAllPassThrough).
+//         inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
+
         // Positive (input and output) lower half implies higher-half-different.
         // So that bHigherHalfPassThrough (or bAllPassThrough).
-        inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
+        inputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
+        outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.pointwise1ChannelCount / 2 );
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
