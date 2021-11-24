@@ -981,6 +981,10 @@ class Base extends ReturnOrClone.Base {
 //         // So that bHigherHalfPassThrough (or bAllPassThrough).
 //         inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
 
+//!!! ...unfinished... (2021/11/24)
+// It is possible only inputChannelCount_lowerHalf_pointwise1 or only outputChannelCount_lowerHalf_pointwise1 is positive.
+// This will be rejected by Pointwise.Base.constructor().
+
         // Positive (input and output) lower half implies higher-half-different.
         // So that bHigherHalfPassThrough (or bAllPassThrough).
         inputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
