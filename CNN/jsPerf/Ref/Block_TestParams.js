@@ -174,7 +174,6 @@ class Base extends TestParams.Base {
    * @override
    */
   onAfter_Yield() {
-    this.restoreParamValues(); // Restore this object because set_By_ParamsNumberArrayMap_ParamsOut() in onBefore_Yield() may modify it.
     this.stepsArray.length = 0; // Clear steps' parameters.
   }
 
