@@ -117,6 +117,7 @@ class Base {
   }
 
   /**
+   * Modify specified parameter's value and record in this.modifyParamValueHistory so that they could be restore by restoreParamValues().
    *
    * @param {ParamDesc.Xxx} paramDesc
    *   The parameter to be doubled.
@@ -165,7 +166,7 @@ class Base {
    */
   restoreParamValues() {
     for ( let i = this.modifyParamValueHistory.length - 1; i >= 0; --i ) { // From the last to first.
-      let changeRecord = this.modifyParamValueHistoryp[ i ];
+      let changeRecord = this.modifyParamValueHistory[ i ];
       let paramName = changeRecord.paramDesc.paramName;
 
       if ( this.out[ paramName ] != undefined )
@@ -218,6 +219,7 @@ class Base {
       this.onBefore_Yield();
       yield this;
       this.onAfter_Yield();
+      this.restoreParamValues(); // Restore this object because onBefore_Yield() may modify it.
 
       return; // Stop this recusive. Back-track to another parameters combination.
     }
