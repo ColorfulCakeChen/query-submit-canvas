@@ -375,7 +375,8 @@ class Base extends TestParams.Base {
       //   - Double channelCount0_pointwise1Before and pointwise1ChannelCount in paramsAll and io_paramsNumberArrayObject (if existed).
       //   - But use original channelCount0_pointwise1Before and pointwise1ChannelCount to generate filters weights.
       //
-      // The reason is that PointDepthPoint will only extract half filters weigths of channelCount0_pointwise1Before and pointwise1ChannelCount.
+      // The reason is that PointDepthPoint will only extract half filters weights of channelCount0_pointwise1Before and
+      // pointwise1ChannelCount in this case.
       //
       if ( ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
