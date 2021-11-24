@@ -348,23 +348,58 @@ class Base extends TestParams.Base {
 
 
     // Pointwise1
+    {
+//!!! (2021/11/24 Remarked)
+// double channelCount0_pointwise1Before and pointwise1ChannelCount in paramsAll and io_paramsNumberArrayObject (if existed)
+// (instead of half filters weights).
+// But use original channelCount0_pointwise1Before and pointwise1ChannelCount to generate filters weights.
+//
+//     let channelCount0_pointwise1Before = paramsAll.channelCount0_pointwise1Before;
+//
+//     // In ShuffleNetV2_ByMobileNetV1's body/tail, only need the lower half input of pointwise1's filters.
+//     if ( ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+//               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+//        ) {
+//       channelCount0_pointwise1Before = Math.ceil( channelCount0_pointwise1Before / 2 );
+//     }
+//
+// //!!! (2021/11/23 Remarked)
+// //    let pointwise1 = Base.generate_pointwise_filters_biases( paramsAll.channelCount0_pointwise1Before,
+//     let pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before,
+//       paramsAll.pointwise1ChannelCount, paramsAll.bPointwise1Bias );
 
-    let channelCount0_pointwise1Before = paramsAll.channelCount0_pointwise1Before;
+      let channelCount0_pointwise1Before_original = paramsAll.channelCount0_pointwise1Before;
+      let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
 
-    // In ShuffleNetV2_ByMobileNetV1's body/tail, only need the lower half input of pointwise1's filters.
-    if ( ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-              == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
-       ) {
-      channelCount0_pointwise1Before = Math.ceil( channelCount0_pointwise1Before / 2 );
+      // In ShuffleNetV2_ByMobileNetV1's body/tail:
+      //   - Double channelCount0_pointwise1Before and pointwise1ChannelCount in paramsAll and io_paramsNumberArrayObject (if existed).
+      //   - But use original channelCount0_pointwise1Before and pointwise1ChannelCount to generate filters weights.
+      //
+      // The reason is that PointDepthPoint will only extract half filters weigths of channelCount0_pointwise1Before and pointwise1ChannelCount.
+      //
+      if ( ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+         ) {
+
+        let channelCount0_pointwise1Before_doubled = channelCount0_pointwise1Before_original * 2;
+        let pointwise1ChannelCount_doubled = pointwise1ChannelCount_original * 2;
+
+        paramsAll.channelCount0_pointwise1Before = channelCount0_pointwise1Before_doubled;
+        paramsAll.pointwise1ChannelCount = pointwise1ChannelCount_doubled;
+
+        if ( io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] )
+          io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] = channelCount0_pointwise1Before_doubled;
+
+        if ( io_paramsNumberArrayObject[ PointDepthPoint.Params.pointwise1ChannelCount.paramName ] )
+          io_paramsNumberArrayObject[ PointDepthPoint.Params.pointwise1ChannelCount.paramName ] = pointwise1ChannelCount_doubled;
+      }
+
+      let pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
+        pointwise1ChannelCount_original, paramsAll.bPointwise1Bias );
+
+      io_paramsNumberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
+      io_paramsNumberArrayObject.pointwise1Biases =  pointwise1.numberArrayArray[ 1 ];
     }
-
-//!!! (2021/11/23 Remarked)
-//    let pointwise1 = Base.generate_pointwise_filters_biases( paramsAll.channelCount0_pointwise1Before,
-    let pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before,
-      paramsAll.pointwise1ChannelCount, paramsAll.bPointwise1Bias );
-
-    io_paramsNumberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
-    io_paramsNumberArrayObject.pointwise1Biases =  pointwise1.numberArrayArray[ 1 ];
 
     // Depthwise1
     let depthwise1 = Base.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
