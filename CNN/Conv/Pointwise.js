@@ -45,6 +45,7 @@ class PassThrough extends filtersTensor4d_biasesTensor3d {
    * @param {boolean} bBias                  Whether generate biases (although all zeros).
    */
   constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias ) {
+    super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
@@ -175,7 +176,6 @@ class PassThrough extends filtersTensor4d_biasesTensor3d {
 }
 
 
-//!!! ...unfinished... (2021/11/23)
 /**
  * A pointwise convolution and bias which just output zeros.
  *
@@ -190,6 +190,7 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
    * @param {boolean} bBias                  Whether generate biases (although all zeros).
    */
   constructor( inputChannelCount, outputChannelCount, bBias ) {
+    super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
