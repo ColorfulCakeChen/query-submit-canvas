@@ -988,7 +988,14 @@ class Base extends ReturnOrClone.Base {
         // Positive (input and output) lower half implies higher-half-different.
         // So that bHigherHalfPassThrough (or bAllPassThrough).
         inputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
-        outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.pointwise1ChannelCount / 2 );
+//!!! (2021/11/24 Remarked)
+//        outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.pointwise1ChannelCount / 2 );
+
+        if ( this.pointwise1ChannelCount > 0 ) {
+          outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.pointwise1ChannelCount / 2 );
+        } else {
+          outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1; // So that both are positive.
+        }
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
@@ -1143,6 +1150,8 @@ class Base extends ReturnOrClone.Base {
     let channelShuffler_outputGroupCount_pointwise2; // Default channelShuffler_outputGroupCount for pointwise2, is never zero.
 
     if ( this.bHigherHalfDifferent == true ) {
+
+//!!! ...unfinished... (2021/11/24) Perhaps, outputChannelCount_lowerHalf_pointwise2 should be different (just like pointwise1).
 
       // Positive (input and output) lower half implies higher-half-different.
       if ( this.bDepthwise1 ) { // If depthwise1 exists, the lower half input of pointwise2 is the lower half output of depthwise1.
