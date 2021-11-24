@@ -161,17 +161,26 @@ class Base {
   }
 
   /**
-   *
+   * Restore parameters' values according to this.modifyParamValueHistory. And empty this.modifyParamValueHistory.
    */
   restoreParamValues() {
-
-    // From the last to first.
-    for ( let i = this.modifyParamValueHistory.length - 1; i >= 0; --i ) {
+    for ( let i = this.modifyParamValueHistory.length - 1; i >= 0; --i ) { // From the last to first.
       let changeRecord = this.modifyParamValueHistoryp[ i ];
+      let paramName = changeRecord.paramDesc.paramName;
 
-      ParamValueChangeRecord( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
-//!!! ...unfinished... (2021/11/24)
- * @member {ParamValueChangeRecord[]} modifyParamValueHistory
+      if ( this.out[ paramName ] != undefined )
+        this.out[ paramName ] = changeRecord.outValue_original;
+
+      if ( this.in[ paramName ] != undefined ) {
+        this.in[ paramName ] = changeRecord.inValue_original;
+      }
+
+      if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) { // Note: If the element exists, it must be an array.
+        this.in.paramsNumberArrayObject[ paramName ][ 0 ] = changeRecord.inValue_original; // The value is always at the element 0.
+      }
+    }
+    
+    this.modifyParamValueHistory.length = 0; // Clear history.
   }
 
   /**
