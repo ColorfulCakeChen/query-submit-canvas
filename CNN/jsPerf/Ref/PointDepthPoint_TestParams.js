@@ -25,6 +25,10 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  *   - inputFloat32Array
  *   - byteOffsetBegin
  *
+ * @member {object} io_paramsNumberArrayObject
+ *   An object. It is a map from a string name (e.g. parameter name) to a number array. The name should be one of
+ * Base.paramsNameOrderArray[] elements.
+ *
  * @member {object} out
  *   The "out" sub-object's data members represent the "should-be" result of PointDepthPoint.Params's extract().
  * That is, it has the above data members except paramsNumberArrayObject, inputFloat32Array, byteOffsetBegin.
@@ -98,7 +102,9 @@ class Base extends TestParams.Base {
    */
   set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
-    Base.generate_Filters_Biases( this.out, this.in.paramsNumberArrayObject );
+//!!! (2021/11/24 Remarked)
+//    Base.generate_Filters_Biases( this.out, this.in.paramsNumberArrayObject );
+    this.generate_Filters_Biases();
 
     let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
     Float32Array_ByteOffsetBegin.setByConcat( Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightsElementOffsetBegin );
@@ -326,17 +332,28 @@ class Base extends TestParams.Base {
 
   /**
    *
-   * @param {object} paramsAll
-   *   An object which must have all the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-   * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
-   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-   * bOutput1Requested, inputTensorCount. They will be used to modify io_paramsNumberArrayObject.
+   * @param {PointDepthPoint_TestParams.Base} this
+   *   The TestParam object to be referenced (and modified).
    *
-   * @param {object} io_paramsNumberArrayObject
-   *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Base.paramsInArrayOrder[] elements.
+
+//!!! (2021/11/24 Remarked)
+//    * @param {object} paramsAll
+//    *   An object which must have all the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+//    * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
+//    * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+//    * bOutput1Requested, inputTensorCount. They will be used to modify io_paramsNumberArrayObject.
+//    *
+//    * @param {object} io_paramsNumberArrayObject
+//    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
+//    * The name should be one of Base.paramsInArrayOrder[] elements.
+
    */
-  static generate_Filters_Biases( paramsAll, io_paramsNumberArrayObject ) {
+//!!! (2021/11/24 Remarked)
+//  static generate_Filters_Biases( paramsAll, io_paramsNumberArrayObject ) {
+  generate_Filters_Biases() {
+
+    let paramsAll = this.out;
+    let io_paramsNumberArrayObject = this.in.paramsNumberArrayObject;
 
     // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
     //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
@@ -389,7 +406,7 @@ class Base extends TestParams.Base {
         paramsAll.channelCount0_pointwise1Before = channelCount0_pointwise1Before_doubled;
         paramsAll.pointwise1ChannelCount = pointwise1ChannelCount_doubled;
 
-//!!! ...unfinishd... (2021/11/24) TestParams.Base.in.Xxx should also be modified.
+//!!! ...unfinishd... (2021/11/24) if ( TestParams.Base.in[ Xxx ] != undefined ), it should also be modified.
 
 //!!! ...unfinishd... (2021/11/24)
 
@@ -495,6 +512,56 @@ class Base extends TestParams.Base {
 
       io_paramsNumberArrayObject.pointwise22Filters = pointwise22.numberArrayArray[ 0 ];
       io_paramsNumberArrayObject.pointwise22Biases =  pointwise22.numberArrayArray[ 1 ];
+    }
+  }
+
+  /**
+   *
+   * @param {ParamDesc.Xxx} paramDesc
+   *   The parameter to be doubled.
+   */
+  doubleParamValue( paramDesc ) {
+    let paramName = paramDesc.paramName;
+
+    let outValue_original = this.out[ paramName ];
+    if ( outValue_original == undefined )
+      return; // The parameter does not exist. No need to modify it.
+
+    let outValue_doubled = outValue_original * 2;
+    this.modifyParamValue( paramDesc, outValue_doubled );
+  }
+
+  /**
+   *
+   * @param {ParamDesc.Xxx} paramDesc
+   *   The parameter to be doubled.
+   *
+   * @param {integer} newValue
+   *   The new value to be placed at the parameter.
+   */
+  modifyParamValue( paramDesc, newValue ) {
+    let paramName = paramDesc.paramName;
+
+    let outValue_original = this.out[ paramName ];
+    if ( outValue_original == undefined )
+      return; // The parameter does not exist. No need to modify it.
+
+    let valueDesc = paramDesc.valueDesc;
+    let valueRange = valueDesc.range;
+
+    let outValue_modified = valueRange.adjust( newValue ); // force legal.
+
+    let singleMinMax = [ outValue_modified, outValue_modified ]; // Only generate one new value.
+    for ( let pair of valueRange.valueInputOutputGenerator( undefined, singleMinMax ) ) {
+
+      let inValue_original = this.in[ paramName ];
+      if ( inValue_original != undefined ) {
+        this.in[ paramName ] = pair.valueInput;
+      }
+
+      if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {     // Note: If the element exists, it must be an array.
+        this.in.paramsNumberArrayObject[ paramName ][ 0 ] = pair.valueInput; // The value is always at the element 0.
+      }
     }
   }
 
