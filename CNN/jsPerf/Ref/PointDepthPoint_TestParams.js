@@ -348,6 +348,7 @@ class Base extends TestParams.Base {
 
 
     // Pointwise1
+    let pointwise1;
     {
 //!!! (2021/11/24 Remarked)
 // double channelCount0_pointwise1Before and pointwise1ChannelCount in paramsAll and io_paramsNumberArrayObject (if existed)
@@ -395,7 +396,7 @@ class Base extends TestParams.Base {
           io_paramsNumberArrayObject[ PointDepthPoint.Params.pointwise1ChannelCount.paramName ] = pointwise1ChannelCount_doubled;
       }
 
-      let pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
+      pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
         pointwise1ChannelCount_original, paramsAll.bPointwise1Bias );
 
       io_paramsNumberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
