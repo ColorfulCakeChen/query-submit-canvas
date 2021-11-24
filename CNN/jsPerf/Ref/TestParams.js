@@ -19,17 +19,31 @@ export { ParamDescConfig, Base };
  * [ paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ] randomly) will be generated. In fact, this is the
  * valueOutMinMax parameter of ValueRange.XXX.valueInputOutputGenerator().
  *
-//!!! (2021/10/05 Remarked) Replaced by valueOutMinMax.
-//  * @member {number} maxKinds
-//  *   An integer restricts the generator range to [ 0, maxKinds ] instead of [ 0, paramDesc.valueDesc.range.kinds ].
-//  * If ( maxKinds == undefined ), the default is paramDesc.valueDesc.range.kinds. This parameter could lower the kinds
-//  * to reduce test cases quantity. If zero or negative, only one value (between [ 0, paramDesc.valueDesc.range.kinds ]
-//  * randomly) will be generated. In fact, this is the maxKinds parameter of ValueRange.XXX.valueInputOutputGenerator().
  */
 class ParamDescConfig {
   constructor( paramDesc, valueOutMinMax ) {
     this.paramDesc = paramDesc;
     this.valueOutMinMax = valueOutMinMax;
+  }
+}
+
+
+/**
+ * @member {ParamDesc.Xxx} paramDesc    Which parameter is changed.
+ * @member {number}  inValue_original    The parameter's original input value.
+ * @member {integer} outValue_original  The parameter's original output value.
+ * @member {number}  inValue_new         The parameter's new input value.
+ * @member {integer} outValue_new       The parameter's new output value. This is adjusted value of outValue_specified.
+ * @member {integer} outValue_specified The parameter's output value which is wanted.
+ */
+class ParamValueChangeRecord {
+  constructor( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+    this.paramDesc = paramDesc;
+    this.inValue_original = inValue_original;
+    this.outValue_original = outValue_original;
+    this.inValue_new = inValue_new;
+    this.outValue_new = outValue_new;
+    this.outValue_specified = outValue_specified;
   }
 }
 
@@ -57,6 +71,10 @@ class ParamDescConfig {
  *   The "out" sub-object's data members represent the "should-be" result of some (e.g. PointDepthPoint) Params.extract().
  * That is, it has the data members of this.in except inputFloat32Array, byteOffsetBegin, weights.
  *
+ * @member {ParamValueChangeRecord[]} modifyParamValueHistory
+ *   A record will be pushed into this list when calling this.modifyParamValue(). When call this.restoreParamValues(),
+ * these value will be restored and this list will be cleared to empty.
+ *
  */
 class Base {
 
@@ -67,6 +85,7 @@ class Base {
     this.id = id;
     this.in = { paramsNumberArrayObject: {} };
     this.out = {};
+    this.modifyParamValueHistory = [];
   }
 
   /**
@@ -102,34 +121,57 @@ class Base {
    * @param {ParamDesc.Xxx} paramDesc
    *   The parameter to be doubled.
    *
-   * @param {integer} newValue
-   *   The new value to be placed at the parameter.
+   * @param {integer} outValue_specified
+   *   The new value to be placed at the this.out[ paramDesc.paramName ].
    */
-  modifyParamValue( paramDesc, newValue ) {
+  modifyParamValue( paramDesc, outValue_specified ) {
     let paramName = paramDesc.paramName;
 
     let outValue_original = this.out[ paramName ];
     if ( outValue_original == undefined )
       return; // The parameter does not exist. No need to modify it.
-    
+
     let valueDesc = paramDesc.valueDesc;
     let valueRange = valueDesc.range;
 
-    let outValue_modified = valueRange.adjust( newValue ); // Confirm the new value is legal.
+    let outValue_new = valueRange.adjust( outValue_specified ); // Confirm the new value is legal.
 
-    this.out[ paramName ] = outValue_modified;
+    this.out[ paramName ] = outValue_new;
 
-    let singleMinMax = [ outValue_modified, outValue_modified ]; // Only generate one new value.
+    let inValue_original, inValue_new;
+
+    let singleMinMax = [ outValue_new, outValue_new ]; // Only generate one new value.
     for ( let pair of valueRange.valueInputOutputGenerator( undefined, singleMinMax ) ) {
 
+      inValue_new = pair.valueInput;
+
       if ( this.in[ paramName ] != undefined ) {
-        this.in[ paramName ] = pair.valueInput;
+        inValue_original = this.in[ paramName ];
+        this.in[ paramName ] = inValue_new;
       }
 
-      if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {     // Note: If the element exists, it must be an array.
-        this.in.paramsNumberArrayObject[ paramName ][ 0 ] = pair.valueInput; // The value is always at the element 0.
+      if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) { // Note: If the element exists, it must be an array.
+        inValue_original = this.in.paramsNumberArrayObject[ paramName ][ 0 ];
+        this.in.paramsNumberArrayObject[ paramName ][ 0 ] = inValue_new; // The value is always at the element 0.
       }
     }
+
+    let changeRecord = new ParamValueChangeRecord( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
+    this.modifyParamValueHistory.push( changeRecord );
+  }
+
+  /**
+   *
+   */
+  restoreParamValues() {
+
+    // From the last to first.
+    for ( let i = this.modifyParamValueHistory.length - 1; i >= 0; --i ) {
+      let changeRecord = this.modifyParamValueHistoryp[ i ];
+
+      ParamValueChangeRecord( paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
+//!!! ...unfinished... (2021/11/24)
+ * @member {ParamValueChangeRecord[]} modifyParamValueHistory
   }
 
   /**
