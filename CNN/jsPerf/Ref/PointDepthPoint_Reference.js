@@ -65,10 +65,15 @@ class Base {
     //
     // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting may still work but
     // the concat-shuffle-split can not work.
+    //
+    // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() should already double them in this case. 
     if ( testParams.out.channelCount1_pointwise1Before
            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
 
       if ( ( testParams.out.channelCount0_pointwise1Before % 2 ) != 0 )
+        return;
+
+      if ( ( testParams.out.pointwise1ChannelCount % 2 ) != 0 )
         return;
     }
 
