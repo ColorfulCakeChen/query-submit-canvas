@@ -102,6 +102,8 @@ class Base extends TestParams.Base {
    */
   set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
+//!!! ...unfinished... (2021/11/24) should clone this object because generate_Filters_Biases() may modify it.
+
 //!!! (2021/11/24 Remarked)
 //    Base.generate_Filters_Biases( this.out, this.in.paramsNumberArrayObject );
     this.generate_Filters_Biases();
