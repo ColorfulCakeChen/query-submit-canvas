@@ -111,11 +111,13 @@ class Base {
     let outValue_original = this.out[ paramName ];
     if ( outValue_original == undefined )
       return; // The parameter does not exist. No need to modify it.
-
+    
     let valueDesc = paramDesc.valueDesc;
     let valueRange = valueDesc.range;
 
-    let outValue_modified = valueRange.adjust( newValue ); // force legal.
+    let outValue_modified = valueRange.adjust( newValue ); // Confirm the new value is legal.
+
+    this.out[ paramName ] = outValue_modified;
 
     let singleMinMax = [ outValue_modified, outValue_modified ]; // Only generate one new value.
     for ( let pair of valueRange.valueInputOutputGenerator( undefined, singleMinMax ) ) {
