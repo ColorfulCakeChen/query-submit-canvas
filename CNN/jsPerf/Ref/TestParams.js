@@ -98,6 +98,39 @@ class Base {
   }
 
   /**
+   *
+   * @param {ParamDesc.Xxx} paramDesc
+   *   The parameter to be doubled.
+   *
+   * @param {integer} newValue
+   *   The new value to be placed at the parameter.
+   */
+  modifyParamValue( paramDesc, newValue ) {
+    let paramName = paramDesc.paramName;
+
+    let outValue_original = this.out[ paramName ];
+    if ( outValue_original == undefined )
+      return; // The parameter does not exist. No need to modify it.
+
+    let valueDesc = paramDesc.valueDesc;
+    let valueRange = valueDesc.range;
+
+    let outValue_modified = valueRange.adjust( newValue ); // force legal.
+
+    let singleMinMax = [ outValue_modified, outValue_modified ]; // Only generate one new value.
+    for ( let pair of valueRange.valueInputOutputGenerator( undefined, singleMinMax ) ) {
+
+      if ( this.in[ paramName ] != undefined ) {
+        this.in[ paramName ] = pair.valueInput;
+      }
+
+      if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {     // Note: If the element exists, it must be an array.
+        this.in.paramsNumberArrayObject[ paramName ][ 0 ] = pair.valueInput; // The value is always at the element 0.
+      }
+    }
+  }
+
+  /**
    * Responsible for generating testing paramters combinations.
    *
    * @param {ParamDescConfig[]} paramDescConfigArray
