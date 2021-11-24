@@ -399,33 +399,8 @@ class Base extends TestParams.Base {
       if ( ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
          ) {
-
-        let channelCount0_pointwise1Before_doubled = channelCount0_pointwise1Before_original * 2;
-        let pointwise1ChannelCount_doubled = pointwise1ChannelCount_original * 2;
-
-        paramsAll.channelCount0_pointwise1Before = channelCount0_pointwise1Before_doubled;
-        paramsAll.pointwise1ChannelCount = pointwise1ChannelCount_doubled;
-
-//!!! ...unfinishd... (2021/11/24) if ( TestParams.Base.in[ Xxx ] != undefined ), it should also be modified.
-
-//!!! ...unfinishd... (2021/11/24)
-
-        if ( io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] != undefined ) {
-          let valueRange = PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range;
-          let originalValue = valueRange.adjust( io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] );
-          let doubledValue = originalValue * 2;
-          
-          let offsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 );
-          let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
-
-          valueRange.get_valueInputOutput_byIndex( baseIntCongruence, doubledValue )
-
-          io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] = channelCount0_pointwise1Before_doubled;
-        }
-
-//!!! ...unfinishd... (2021/11/24)
-        if ( io_paramsNumberArrayObject[ PointDepthPoint.Params.pointwise1ChannelCount.paramName ] )
-          io_paramsNumberArrayObject[ PointDepthPoint.Params.pointwise1ChannelCount.paramName ] = pointwise1ChannelCount_doubled;
+        this.doubleParamValue( PointDepthPoint.Params.channelCount0_pointwise1Before );
+        this.doubleParamValue( PointDepthPoint.Params.pointwise1ChannelCount );
       }
 
       pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
