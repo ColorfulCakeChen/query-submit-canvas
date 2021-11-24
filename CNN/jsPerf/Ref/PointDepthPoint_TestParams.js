@@ -389,6 +389,8 @@ class Base extends TestParams.Base {
         paramsAll.channelCount0_pointwise1Before = channelCount0_pointwise1Before_doubled;
         paramsAll.pointwise1ChannelCount = pointwise1ChannelCount_doubled;
 
+//!!! ...unfinishd... (2021/11/24) TestParams.Base.in.Xxx should also be modified.
+
 //!!! ...unfinishd... (2021/11/24)
 
         if ( io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] != undefined ) {
