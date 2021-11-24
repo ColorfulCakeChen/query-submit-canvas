@@ -389,9 +389,22 @@ class Base extends TestParams.Base {
         paramsAll.channelCount0_pointwise1Before = channelCount0_pointwise1Before_doubled;
         paramsAll.pointwise1ChannelCount = pointwise1ChannelCount_doubled;
 
-        if ( io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] )
-          io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] = channelCount0_pointwise1Before_doubled;
+//!!! ...unfinishd... (2021/11/24)
 
+        if ( io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] != undefined ) {
+          let valueRange = PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range;
+          let originalValue = valueRange.adjust( io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] );
+          let doubledValue = originalValue * 2;
+          
+          let offsetMultiplier = RandTools.getRandomIntInclusive( -10, +10 );
+          let baseIntCongruence = Math.trunc( offsetMultiplier ) * this.kinds;
+
+          valueRange.get_valueInputOutput_byIndex( baseIntCongruence, doubledValue )
+
+          io_paramsNumberArrayObject[ PointDepthPoint.Params.channelCount0_pointwise1Before.paramName ] = channelCount0_pointwise1Before_doubled;
+        }
+
+//!!! ...unfinishd... (2021/11/24)
         if ( io_paramsNumberArrayObject[ PointDepthPoint.Params.pointwise1ChannelCount.paramName ] )
           io_paramsNumberArrayObject[ PointDepthPoint.Params.pointwise1ChannelCount.paramName ] = pointwise1ChannelCount_doubled;
       }
