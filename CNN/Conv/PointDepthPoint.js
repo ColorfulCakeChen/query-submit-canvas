@@ -1208,6 +1208,9 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bHigherHalfDifferent == true ) {
 
+//!!! ...unfinished... (2021/11/26) Perhaps, outputChannelCount_lowerHalf_pointwise2 should be according yo half of pointwise21ChannelCount
+// (just like pointwise1), not according to half of depthwise1.
+
 //!!! ...unfinished... (2021/11/24) Perhaps, outputChannelCount_lowerHalf_pointwise2 should be different (just like pointwise1).
 
       // Positive (input and output) lower half implies higher-half-different.
