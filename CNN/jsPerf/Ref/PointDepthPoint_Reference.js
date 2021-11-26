@@ -54,13 +54,6 @@ class Base {
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
 
-//!!! (2021/11/23 Remarked) It should be done in the PointDepthPoint_TestParams.js.
-
-//!!! ...unfinished... (2021/11/23) should get imageIn1 and concatenate it into imageIn0 (not avoid it) so that them could be splitted.
-// get imageIn1 by fake ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) (-3)
-// No. Just double imageIn0 should be enough.
-
-//!!! (2021/11/23 Remarked)
     // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
     //
     // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting may still work but
@@ -89,11 +82,6 @@ class Base {
             break;
         }
     }
-
-//!!! (2021/11/23 Remarked)
-//!!! ...unfinished... (2021/11/23) How to modify channelCount0_pointwise1Before in the packed Float32Array?
-// Perhaps, it should be done in the PointDepthPoint_TestParams.js.
-//    let channelCount0_pointwise1Before_old = this.testParams.out.channelCount0_pointwise1Before; // For restore.
 
     try {
       let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
@@ -173,6 +161,8 @@ class Base {
               //
               concatenatedDepth = ( 1 * outputGroupCount );
 
+//!!! ...unfinished... (2021/11/26) What about ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) ?
+
               // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
               if ( ( channelCount1_pointwise1Before
                        == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
@@ -183,15 +173,18 @@ class Base {
                 //   - PointDepthPoint.initer() and PointDepthPoint_Reference.calResutl() will have them.
                 //
                 // For simulating the same procedure, halve them here, too.
-                let channelCount0_pointwise1Before_half = Math.ceil( this.testParams.out.channelCount0_pointwise1Before / 2 );
-                let pointwise1ChannelCount_half = Math.ceil( this.testParams.out.pointwise1ChannelCount / 2 );
+                let channelCount0_pointwise1Before_lowerHalf = Math.ceil( this.testParams.out.channelCount0_pointwise1Before / 2 );
+                let pointwise1ChannelCount_lowerHalf = Math.ceil( this.testParams.out.pointwise1ChannelCount / 2 );
 
-//!!! ...unfinished... (2021/11/26)
                 // Note: The channel count of pointwise21's result may not the same as pointwise21ChannelCount (which may be zero).
                 let pointwise21ResultChannelCount = Params.calc_pointwise21ResultChannelCount(
-                  channelCount0_pointwise1Before_half,
-                  pointwise1ChannelCount_half, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+                  channelCount0_pointwise1Before_lowerHalf,
+                  pointwise1ChannelCount_lowerHalf, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
 
+                let channelCount0_pointwise1Before_higherHalf = channelCount0_pointwise1Before - channelCount0_pointwise1Before_lowerHalf;
+                concatenatedDepth = 
+                  pointwise21ResultChannelCount
+                    + channelCount0_pointwise1Before_higherHalf; // Just like the past-through input1.
               }
             }
 
@@ -233,8 +226,6 @@ class Base {
       outputTensor3dArray.fill( undefined );
       inputTensor3dArray.fill( undefined );
 
-//!!! (2021/11/23 Remarked)
-//      inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( input0ChannelCount );
       inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
       if ( bTwoInputs ) { // Pass two input tensors according to parameters.
         inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
@@ -257,8 +248,6 @@ class Base {
 
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
 
-//!!! (2021/11/23 Remarked) Perhaps, it should be done in the PointDepthPoint_TestParams.js.
-////!!! ...unfinished... (2021/11/23) How to use input0ChannelCount instead of channelCount0_pointwise1Before?
       let pointDepthPoint = Base.pointDepthPoint_create( testParams, channelShuffler_ConcatPointwiseConv );
 
       let parametersDescription = pointDepthPoint.parametersDescription;
