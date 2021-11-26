@@ -102,10 +102,6 @@ class Base extends TestParams.Base {
    */
   set_By_ParamsNumberArrayMap_ParamsOut( weightsElementOffsetBegin = 0 ) {
 
-//!!! ...unfinished... (2021/11/24) should clone this object because generate_Filters_Biases() may modify it.
-
-//!!! (2021/11/24 Remarked)
-//    Base.generate_Filters_Biases( this.out, this.in.paramsNumberArrayObject );
     this.generate_Filters_Biases();
 
     let Float32Array_ByteOffsetBegin = new NameNumberArrayObject_To_Float32Array.Base();
@@ -337,21 +333,7 @@ class Base extends TestParams.Base {
    * @param {PointDepthPoint_TestParams.Base} this
    *   The TestParam object to be referenced (and modified).
    *
-
-//!!! (2021/11/24 Remarked)
-//    * @param {object} paramsAll
-//    *   An object which must have all the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-//    * pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight,
-//    * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-//    * bOutput1Requested, inputTensorCount. They will be used to modify io_paramsNumberArrayObject.
-//    *
-//    * @param {object} io_paramsNumberArrayObject
-//    *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-//    * The name should be one of Base.paramsInArrayOrder[] elements.
-
    */
-//!!! (2021/11/24 Remarked)
-//  static generate_Filters_Biases( paramsAll, io_paramsNumberArrayObject ) {
   generate_Filters_Biases() {
 
     let paramsAll = this.out;
@@ -369,27 +351,11 @@ class Base extends TestParams.Base {
     // Pointwise1
     let pointwise1;
     {
-//!!! (2021/11/24 Remarked)
-// double channelCount0_pointwise1Before and pointwise1ChannelCount in paramsAll and io_paramsNumberArrayObject (if existed)
-// (instead of half filters weights).
-// But use original channelCount0_pointwise1Before and pointwise1ChannelCount to generate filters weights.
-//
-//     let channelCount0_pointwise1Before = paramsAll.channelCount0_pointwise1Before;
-//
-//     // In ShuffleNetV2_ByMobileNetV1's body/tail, only need the lower half input of pointwise1's filters.
-//     if ( ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
-//        ) {
-//       channelCount0_pointwise1Before = Math.ceil( channelCount0_pointwise1Before / 2 );
-//     }
-//
-// //!!! (2021/11/23 Remarked)
-// //    let pointwise1 = Base.generate_pointwise_filters_biases( paramsAll.channelCount0_pointwise1Before,
-//     let pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before,
-//       paramsAll.pointwise1ChannelCount, paramsAll.bPointwise1Bias );
-
       let channelCount0_pointwise1Before_original = paramsAll.channelCount0_pointwise1Before;
       let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
+
+//!!! ...unfinished... (2021/11/26) Problem: pointwise21ChannelCount is also contains the higher-pass-through part.
+// So, pointwise21ChannelCount may also be doubled.
 
       // In ShuffleNetV2_ByMobileNetV1's body/tail:
       //   - Double channelCount0_pointwise1Before and pointwise1ChannelCount in paramsAll and io_paramsNumberArrayObject (if existed).
