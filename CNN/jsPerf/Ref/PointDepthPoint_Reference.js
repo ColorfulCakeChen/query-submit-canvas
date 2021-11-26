@@ -98,9 +98,11 @@ class Base {
     try {
       let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
       let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
+      let pointwise1ChannelCount = this.testParams.out.pointwise1ChannelCount;
       let depthwise_AvgMax_Or_ChannelMultiplier = this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
       let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
       let depthwiseStridesPad = this.testParams.out.depthwiseStridesPad;
+      let pointwise21ChannelCount = this.testParams.out.pointwise21ChannelCount;
       let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
 
       let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
@@ -117,17 +119,11 @@ class Base {
 
         PointDepthPoint.Params.set_input1ChannelCount_by.call( referredParams,
           channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-          this.testParams.out.pointwise1ChannelCount,
-          this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-          this.testParams.out.pointwise21ChannelCount
-        );
+          pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
 
         bTwoInputs = ( referredParams.inputTensorCount == 2 );
         input1ChannelCount = referredParams.input1ChannelCount;
       }
-
-//!!! (2021/11/23 Remarked)
-//      let input0ChannelCount = channelCount0_pointwise1Before;
 
       let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
       let imageOutReferenceArray;
@@ -135,18 +131,6 @@ class Base {
         strNote = `( this.testParams.id=${this.testParams.id} )`;
 
         imageInArraySelected.fill( undefined );
-
-//!!! (2021/11/23 Remarked)
-//         // For ONE_INPUT_HALF_THROUGH (-5), double the input channel count so that they could be divided by 2.
-//         //
-//         // The reason is that the calcResult() will splitted it into two input images. If it is doubled, the splitting may fail.
-//         if ( testParams.out.channelCount1_pointwise1Before
-//                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
-//           input0ChannelCount *= 2;
-//         }
-//
-//         imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( input0ChannelCount );
-
         imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
 
 //!!! ...unfinished... (2021/10/28) input1ChannelCount may zero.
@@ -188,12 +172,25 @@ class Base {
               //     - So a usable (non-zero) value is enough. 
               //
               concatenatedDepth = ( 1 * outputGroupCount );
-              
+
+              // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
               if ( ( channelCount1_pointwise1Before
                        == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
                  ) {
 
+                // Because:
+                //   - PointDepthPoint_TestParams.generate_Filters_Biases() will double channelCount0_pointwise1Before and pointwise1ChannelCount.
+                //   - PointDepthPoint.initer() and PointDepthPoint_Reference.calResutl() will have them.
+                //
+                // For simulating the same procedure, halve them here, too.
+                let channelCount0_pointwise1Before_half = Math.ceil( this.testParams.out.channelCount0_pointwise1Before / 2 );
+                let pointwise1ChannelCount_half = Math.ceil( this.testParams.out.pointwise1ChannelCount / 2 );
+
 //!!! ...unfinished... (2021/11/26)
+                // Note: The channel count of pointwise21's result may not the same as pointwise21ChannelCount (which may be zero).
+                let pointwise21ResultChannelCount = Params.calc_pointwise21ResultChannelCount(
+                  channelCount0_pointwise1Before_half,
+                  pointwise1ChannelCount_half, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
 
               }
             }
