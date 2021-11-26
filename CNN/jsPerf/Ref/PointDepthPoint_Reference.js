@@ -168,23 +168,28 @@ class Base {
                        == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
                  ) {
 
-                // Because:
-                //   - PointDepthPoint_TestParams.generate_Filters_Biases() will double channelCount0_pointwise1Before and pointwise1ChannelCount.
-                //   - PointDepthPoint.initer() and PointDepthPoint_Reference.calResutl() will have them.
-                //
-                // For simulating the same procedure, halve them here, too.
-                let channelCount0_pointwise1Before_lowerHalf = Math.ceil( this.testParams.out.channelCount0_pointwise1Before / 2 );
-                let pointwise1ChannelCount_lowerHalf = Math.ceil( this.testParams.out.pointwise1ChannelCount / 2 );
+//!!! (2021/11/26 Remarked) Now, pointwise21ChannelCount is always positive.
+//                 // Because:
+//                 //   - PointDepthPoint_TestParams.generate_Filters_Biases() will double channelCount0_pointwise1Before and pointwise1ChannelCount.
+//                 //   - PointDepthPoint.initer() and PointDepthPoint_Reference.calResutl() will halve them.
+//                 //
+//                 // For simulating the same procedure, halve them here, too.
+//                 let channelCount0_pointwise1Before_lowerHalf = Math.ceil( this.testParams.out.channelCount0_pointwise1Before / 2 );
+//                 let pointwise1ChannelCount_lowerHalf = Math.ceil( this.testParams.out.pointwise1ChannelCount / 2 );
+//
+//                 // Note: The channel count of pointwise21's result may not the same as pointwise21ChannelCount (which may be zero).
+//                 let pointwise21ResultChannelCount = PointDepthPoint.Params.calc_pointwise21ResultChannelCount(
+//                   channelCount0_pointwise1Before_lowerHalf,
+//                   pointwise1ChannelCount_lowerHalf, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+//
+//                 let channelCount0_pointwise1Before_higherHalf = channelCount0_pointwise1Before - channelCount0_pointwise1Before_lowerHalf;
+//                 concatenatedDepth = 
+//                   pointwise21ResultChannelCount
+//                     + channelCount0_pointwise1Before_higherHalf; // Just like the past-through input1.
 
-                // Note: The channel count of pointwise21's result may not the same as pointwise21ChannelCount (which may be zero).
-                let pointwise21ResultChannelCount = PointDepthPoint.Params.calc_pointwise21ResultChannelCount(
-                  channelCount0_pointwise1Before_lowerHalf,
-                  pointwise1ChannelCount_lowerHalf, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
-
-                let channelCount0_pointwise1Before_higherHalf = channelCount0_pointwise1Before - channelCount0_pointwise1Before_lowerHalf;
-                concatenatedDepth = 
-                  pointwise21ResultChannelCount
-                    + channelCount0_pointwise1Before_higherHalf; // Just like the past-through input1.
+                // Because PointDepthPoint_TestParams.generate_Filters_Biases() will double pointwise21ChannelCount, it must be an even number
+                // which could be splitted (into two groups).
+                concatenatedDepth = pointwise21ChannelCount;
               }
             }
 
