@@ -1019,10 +1019,7 @@ class Base extends ReturnOrClone.Base {
 
       } else { // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
 
-//!!! (2021/11/24 Remarked) should half of input and output individually.
-//         // Positive (input and output) lower half implies higher-half-different.
-//         // So that bHigherHalfPassThrough (or bAllPassThrough).
-//         inputChannelCount_lowerHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
+//!!! (2021/11/26 Remarked) Since pointwise21ChannelCount always not zero, this is not necessary.
 
 //!!! ...unfinished... (2021/11/24)
 // It is possible only inputChannelCount_lowerHalf_pointwise1 or only outputChannelCount_lowerHalf_pointwise1 is positive.
@@ -1031,14 +1028,28 @@ class Base extends ReturnOrClone.Base {
         // Positive (input and output) lower half implies higher-half-different.
         // So that bHigherHalfPassThrough (or bAllPassThrough).
         inputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
-//!!! (2021/11/24 Remarked)
-//        outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.pointwise1ChannelCount / 2 );
 
         if ( this.pointwise1ChannelCount > 0 ) {
           outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.pointwise1ChannelCount / 2 );
         } else {
           outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1; // So that both are positive.
         }
+
+
+//!!! ...unfinished... (2021/11/26)
+        // Since pointwise21ChannelCount is always not zero, the input0's higher half is always the same as it. This guarantees
+        // the output channel count is even (so that could be concat-shuffle-split).
+        let inputChannelCount_higherHalf_pointwise1 = this.pointwise21ChannelCount;
+        inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before - inputChannelCount_higherHalf_pointwise1;
+        
+        if ( this.pointwise1ChannelCount > 0 ) {
+//???
+          outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount - inputChannelCount_lowerHalf_pointwise1;
+        } else {
+//???
+          outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1; // So that both are positive.
+        }
+
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
