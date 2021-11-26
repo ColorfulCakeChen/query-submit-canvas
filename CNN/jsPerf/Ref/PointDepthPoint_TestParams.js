@@ -349,35 +349,34 @@ class Base extends TestParams.Base {
     //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
 
 
-    // Pointwise1
-    let pointwise1;
-    {
-      let channelCount0_pointwise1Before_original = paramsAll.channelCount0_pointwise1Before;
-      let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
-
 //!!! ...unfinished... (2021/11/26) Problem: pointwise21ChannelCount is also contains the higher-pass-through part.
 // So, pointwise21ChannelCount may also be doubled.
 
-      // In ShuffleNetV2_ByMobileNetV1's body/tail:
-      //   - Double channelCount0_pointwise1Before and pointwise1ChannelCount in paramsAll and io_paramsNumberArrayObject (if existed).
-      //   - But use original channelCount0_pointwise1Before and pointwise1ChannelCount to generate filters weights.
-      //
-      // The reason is that PointDepthPoint will only extract half filters weights of channelCount0_pointwise1Before and
-      // pointwise1ChannelCount in this case.
-      //
-      if ( ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
-         ) {
-        this.doubleParamValue( PointDepthPoint.Params.channelCount0_pointwise1Before );
-        this.doubleParamValue( PointDepthPoint.Params.pointwise1ChannelCount );
-      }
+    let channelCount0_pointwise1Before_original = paramsAll.channelCount0_pointwise1Before;
+    let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
+    let pointwise21ChannelCount_original = paramsAll.pointwise21ChannelCount;
 
-      pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
+    // In ShuffleNetV2_ByMobileNetV1's body/tail:
+    //   - channelCount0_pointwise1Before, pointwise1ChannelCount, pointwise21ChannelCount.
+    //   - Double the above parameters in paramsAll and io_paramsNumberArrayObject (if existed).
+    //   - But use original the above parameters to generate filters weights.
+    //
+    // The reason is that PointDepthPoint will only extract filters weights of half the above parameters in this case.
+    //
+    if ( ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+             == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+       ) {
+      this.doubleParamValue( PointDepthPoint.Params.channelCount0_pointwise1Before );
+      this.doubleParamValue( PointDepthPoint.Params.pointwise1ChannelCount );
+      this.doubleParamValue( PointDepthPoint.Params.pointwise21ChannelCount );
+    }
+
+    // Pointwise1
+    let pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
         pointwise1ChannelCount_original, paramsAll.bPointwise1Bias );
 
-      io_paramsNumberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
-      io_paramsNumberArrayObject.pointwise1Biases =  pointwise1.numberArrayArray[ 1 ];
-    }
+    io_paramsNumberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
+    io_paramsNumberArrayObject.pointwise1Biases =  pointwise1.numberArrayArray[ 1 ];
 
     // Depthwise1
     let depthwise1 = Base.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
@@ -426,7 +425,7 @@ class Base extends TestParams.Base {
 
     // Pointwise21
     let pointwise21 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-      paramsAll.pointwise21ChannelCount, paramsAll.bPointwise21Bias );
+      paramsAll.pointwise21ChannelCount_original, paramsAll.bPointwise21Bias );
 
     io_paramsNumberArrayObject.pointwise21Filters = pointwise21.numberArrayArray[ 0 ];
     io_paramsNumberArrayObject.pointwise21Biases =  pointwise21.numberArrayArray[ 1 ];
@@ -445,7 +444,7 @@ class Base extends TestParams.Base {
 
       } else { // Otherwise, pointwise22 is output1 directly.
         if ( paramsAll.bOutput1Requested ) { // If output1 is requested, pointwise22's output channel count is the same as pointwise21's.
-          pointwise22ChannelCount = paramsAll.pointwise21ChannelCount;
+          pointwise22ChannelCount = pointwise21ChannelCount_original;
         }
       }
 
