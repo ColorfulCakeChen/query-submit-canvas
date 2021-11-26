@@ -177,7 +177,7 @@ class Base {
                 let pointwise1ChannelCount_lowerHalf = Math.ceil( this.testParams.out.pointwise1ChannelCount / 2 );
 
                 // Note: The channel count of pointwise21's result may not the same as pointwise21ChannelCount (which may be zero).
-                let pointwise21ResultChannelCount = Params.calc_pointwise21ResultChannelCount(
+                let pointwise21ResultChannelCount = PointDepthPoint.Params.calc_pointwise21ResultChannelCount(
                   channelCount0_pointwise1Before_lowerHalf,
                   pointwise1ChannelCount_lowerHalf, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
 
