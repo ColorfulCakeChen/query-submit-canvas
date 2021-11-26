@@ -318,33 +318,34 @@ class Params extends Weights.Params {
     }
   }
 
-  /**
-   * @return {number}
-   *   Return the output channel count of pointwise21's result.
-   */
-  static calc_pointwise21ResultChannelCount(
-           channelCount0_pointwise1Before,
-           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount ) {
-
-    // The channel count of pointwise21's result may not the same as pointwise21ChannelCount directly because
-    // pointwise21ChannelCount may be zero. It should be determined by pointwise21, depthewise1, pointwise1, input0.
-
-    let result = pointwise21ChannelCount;
-    if ( result <= 0 ) { // If no pointwise21, it is based on depthwise.
-
-      result = pointwise1ChannelCount;
-      if ( result <= 0 ) { // If no pointwise1, it is based on input0.
-        result = channelCount0_pointwise1Before;
-      }
-
-      if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-        result *= depthwise_AvgMax_Or_ChannelMultiplier;
-
-      } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
-    }
-
-    return result;
-  }
+//!!! (2021/11/26 Remarked) Since pointwise21ChannelCount always not zero, this is not necessary.
+//   /**
+//    * @return {number}
+//    *   Return the output channel count of pointwise21's result.
+//    */
+//   static calc_pointwise21ResultChannelCount(
+//            channelCount0_pointwise1Before,
+//            pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount ) {
+//
+//     // The channel count of pointwise21's result may not the same as pointwise21ChannelCount directly because
+//     // pointwise21ChannelCount may be zero. It should be determined by pointwise21, depthewise1, pointwise1, input0.
+//
+//     let result = pointwise21ChannelCount;
+//     if ( result <= 0 ) { // If no pointwise21, it is based on depthwise.
+//
+//       result = pointwise1ChannelCount;
+//       if ( result <= 0 ) { // If no pointwise1, it is based on input0.
+//         result = channelCount0_pointwise1Before;
+//       }
+//
+//       if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+//         result *= depthwise_AvgMax_Or_ChannelMultiplier;
+//
+//       } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
+//     }
+//
+//     return result;
+//   }
 
   /**
    * Determine the following properties:
@@ -381,10 +382,13 @@ class Params extends Weights.Params {
 //           } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
 //         }
 
-        // Find out input1's channel count. It should be the same as pointwise21's result.
-        this.input1ChannelCount = Params.calc_pointwise21ResultChannelCount(
-          channelCount0_pointwise1Before,
-          pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+//!!! (2021/11/26 Remarked) Since pointwise21ChannelCount always not zero, this is not necessary.
+//         // Find out input1's channel count. It should be the same as pointwise21's result.
+//         this.input1ChannelCount = Params.calc_pointwise21ResultChannelCount(
+//           channelCount0_pointwise1Before,
+//           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+
+        this.input1ChannelCount = pointwise21ChannelCount;
 
       } else { // One input.
         this.input1ChannelCount = 0;
@@ -530,10 +534,10 @@ class Params extends Weights.Params {
    */
   get pointwise22ChannelCount()   {
 
-    // In the following cases, there is always no pointwise22.
-    //   - TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail)
-    //
     switch ( this.channelCount1_pointwise1Before ) {
+      // In the following cases, there is always no pointwise22.
+      //   - TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail)
+      //
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1:  // (-3) (ShuffleNetV2's body/tail)
         return 0;
         break;
@@ -594,7 +598,12 @@ Params.depthwiseStridesPad =     new ParamDesc.Int(                     "depthwi
 Params.bDepthwiseBias =          new ParamDesc.Bool(                    "bDepthwiseBias" );
 Params.depthwiseActivationId =   new ParamDesc.ActivationFunction(      "depthwiseActivationId" );
 
-Params.pointwise21ChannelCount = new ParamDesc.Int(                     "pointwise21ChannelCount", 0, ( 10 * 1024 ) );
+//!!! (2021/11/26 Remarked) Force pointwise21ChannelCount always not zero. So that channelCount0_pointwise1Before_higherHalf could be determined.
+//Params.pointwise21ChannelCount = new ParamDesc.Int(                     "pointwise21ChannelCount", 0, ( 10 * 1024 ) );
+
+// Note: Force pointwise21ChannelCount always not zero. So that channelCount0_pointwise1Before_higherHalf could be determined
+// when ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5).
+Params.pointwise21ChannelCount = new ParamDesc.Int(                     "pointwise21ChannelCount", 1, ( 10 * 1024 ) );
 Params.bPointwise21Bias =        new ParamDesc.Bool(                    "bPointwise21Bias" );
 Params.pointwise21ActivationId = new ParamDesc.ActivationFunction(      "pointwise21ActivationId" );
 
