@@ -675,10 +675,14 @@ class Base {
 
     // 0.
 
-    let pointwise1ChannelCount;
+    let pointwise1ChannelCount, pointwise21ChannelCount;
 
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
+    //
+    // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() double channelCount0_pointwise1Before, pointwise1ChannelCount,
+    // pointwise21ChannelCount. So, halve them here.
+    //
     if ( testParams.out.channelCount1_pointwise1Before
            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
 
@@ -686,13 +690,13 @@ class Base {
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
       pointwise1ChannelCount = Math.ceil( testParams.out.pointwise1ChannelCount / 2 );
-
-//!!! ...unfinished... (2021/11/26) pointwise21ChannelCount may also be halved.
+      pointwise21ChannelCount = Math.ceil( testParams.out.pointwise21ChannelCount / 2 );
 
     } else {
       imageIn0 = imageInArray[ 0 ];
       imageIn1 = imageInArray[ 1 ];
       pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
+      pointwise21ChannelCount = testParams.out.pointwise21ChannelCount;
     }
 
     // 1. Pointwise1
@@ -779,10 +783,10 @@ class Base {
     // 4.1 Pointwise21
     let pointwise21Result;
     {
-      if ( testParams.out.pointwise21ChannelCount > 0 ) {
+      if ( pointwise21ChannelCount > 0 ) {
         pointwise21Result = Base.calcPointwise(
           concat1Result,
-          testParams.out.pointwise21ChannelCount,
+          pointwise21ChannelCount,
           testParams.in.paramsNumberArrayObject.pointwise21Filters, testParams.out.bPointwise21Bias,
           testParams.in.paramsNumberArrayObject.pointwise21Biases, testParams.out.pointwise21ActivationId,
           "Pointwise21", this.paramsOutDescription );
@@ -816,7 +820,7 @@ class Base {
       let pointwise22ChannelCount;
 
       if ( testParams.out.bOutput1Requested ) {
-        pointwise22ChannelCount = testParams.out.pointwise21ChannelCount;
+        pointwise22ChannelCount = pointwise21ChannelCount;
       } else {
         pointwise22ChannelCount = 0;
       }
