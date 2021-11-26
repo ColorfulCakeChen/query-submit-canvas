@@ -352,6 +352,11 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2021/11/26) Problem: pointwise21ChannelCount is also contains the higher-pass-through part.
 // So, pointwise21ChannelCount may also be doubled.
 
+//!!! ...unfinished... (2021/11/26)
+// The channelCount0_pointwise1Before and pointwise1ChannelCount should not just be doubled.
+// They should be expanded by pointwise21ChannelCount_original. So that they can be concatenated with pointwise21ChannelCount_original
+// and shuffled and splitted.
+
     let channelCount0_pointwise1Before_original = paramsAll.channelCount0_pointwise1Before;
     let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
     let pointwise21ChannelCount_original = paramsAll.pointwise21ChannelCount;
