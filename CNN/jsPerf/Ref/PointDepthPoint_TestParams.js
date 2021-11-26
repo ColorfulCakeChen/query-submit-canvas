@@ -153,7 +153,8 @@ class Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
-      pointwiseChannelCount: [ 0, 3 - 1 ],
+      pointwiseChannelCount: [ 0, 0 + 3 - 1 ],
+      pointwise21ChannelCount: [ 1, 1 + 3 - 1 ],
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
@@ -204,7 +205,7 @@ class Base extends TestParams.Base {
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.valueOutMinMax.pointwiseChannelCount ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.valueOutMinMax.pointwise21ChannelCount ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.valueOutMinMax.Bias ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ActivationId, this.valueOutMinMax.ActivationId ),
 
