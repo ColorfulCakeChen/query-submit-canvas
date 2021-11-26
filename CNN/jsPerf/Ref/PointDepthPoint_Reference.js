@@ -687,6 +687,8 @@ class Base {
       imageIn1 = imageInArray_Fake[ 1 ];
       pointwise1ChannelCount = Math.ceil( testParams.out.pointwise1ChannelCount / 2 );
 
+//!!! ...unfinished... (2021/11/26) pointwise21ChannelCount may also be halved.
+
     } else {
       imageIn0 = imageInArray[ 0 ];
       imageIn1 = imageInArray[ 1 ];
