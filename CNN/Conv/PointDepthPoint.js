@@ -1208,18 +1208,32 @@ class Base extends ReturnOrClone.Base {
 
     if ( this.bHigherHalfDifferent == true ) {
 
-//!!! ...unfinished... (2021/11/26) Perhaps, outputChannelCount_lowerHalf_pointwise2 should be according yo half of pointwise21ChannelCount
-// (just like pointwise1), not according to half of depthwise1.
 
-//!!! ...unfinished... (2021/11/24) Perhaps, outputChannelCount_lowerHalf_pointwise2 should be different (just like pointwise1).
+//!!! (2021/11/26 Remarked) Perhaps, outputChannelCount_lowerHalf_pointwise2 should be different (just like pointwise1).
+//
+// Perhaps, outputChannelCount_lowerHalf_pointwise2 should be according yo half of pointwise21ChannelCount
+// (just like pointwise1), not according to half of depthwise1.
+//
+//       // Positive (input and output) lower half implies higher-half-different.
+//       if ( this.bDepthwise1 ) { // If depthwise1 exists, the lower half input of pointwise2 is the lower half output of depthwise1.
+//         inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise2 = this.depthwise1.outputChannelCount_lowerHalf;
+//
+//       } else { // If depthwise1 does not exist, the lower half input of pointwise2 is the lower half output of pointwise1.
+//         inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise1;
+//       }
+
 
       // Positive (input and output) lower half implies higher-half-different.
       if ( this.bDepthwise1 ) { // If depthwise1 exists, the lower half input of pointwise2 is the lower half output of depthwise1.
-        inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise2 = this.depthwise1.outputChannelCount_lowerHalf;
+        inputChannelCount_lowerHalf_pointwise2 = this.depthwise1.outputChannelCount_lowerHalf;
 
       } else { // If depthwise1 does not exist, the lower half input of pointwise2 is the lower half output of pointwise1.
-        inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise1;
+        inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise1;
       }
+
+      // In this case, it should be according yo half of pointwise21ChannelCount (just like pointwise1).
+      // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise21ChannelCount is always positive.
+      outputChannelCount_lowerHalf_pointwise2 = Math.ceil( this.pointwise21ChannelCount / 2 );
 
       // For bHigherHalfPointwise22 or bAllPassThrough.
       //
