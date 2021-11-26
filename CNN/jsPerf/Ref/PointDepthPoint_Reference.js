@@ -188,6 +188,14 @@ class Base {
               //     - So a usable (non-zero) value is enough. 
               //
               concatenatedDepth = ( 1 * outputGroupCount );
+              
+              if ( ( channelCount1_pointwise1Before
+                       == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+                 ) {
+
+//!!! ...unfinished... (2021/11/26)
+
+              }
             }
 
             channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
