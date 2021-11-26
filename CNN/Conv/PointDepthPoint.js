@@ -1036,10 +1036,13 @@ class Base extends ReturnOrClone.Base {
         }
 
 
-//!!! ...unfinished... (2021/11/26) Problem: pointwise21ChannelCount is also contains the higher-pass-through part.
-        // Since pointwise21ChannelCount is always not zero, the input0's higher half is always the same as it. This guarantees
-        // the output channel count is even (so that could be concat-shuffle-split).
-        let inputChannelCount_higherHalf_pointwise1 = this.pointwise21ChannelCount;
+//!!! ...unfinished... (2021/11/26) Problem: 
+        // Note: pointwise21ChannelCount is always not zero and contains the higher-pass-through part.
+        let outputChannelCount_lowerHalf_pointwise21 = Math.ceil( this.pointwise21ChannelCount / 2 );
+
+        // In this case, the input0's higher half is always the same as lower half of pointwise21's result. This guarantees
+        // they could be concat-shuffle-split.
+        let inputChannelCount_higherHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise21;
         inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before - inputChannelCount_higherHalf_pointwise1;
         
         if ( this.pointwise1ChannelCount > 0 ) {
