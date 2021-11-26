@@ -676,6 +676,8 @@ class Base {
 
     // 0.
 
+    let pointwise1ChannelCount;
+
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
     if ( testParams.out.channelCount1_pointwise1Before
@@ -684,18 +686,20 @@ class Base {
       let imageInArray_Fake = Base.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
+      pointwise1ChannelCount = Math.ceil( testParams.out.pointwise1ChannelCount / 2 );
 
     } else {
       imageIn0 = imageInArray[ 0 ];
       imageIn1 = imageInArray[ 1 ];
+      pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
     }
 
     // 1. Pointwise1
     let pointwise1Result;
-    if ( testParams.out.pointwise1ChannelCount > 0 ) {
+    if ( pointwise1ChannelCount > 0 ) {
       pointwise1Result = Base.calcPointwise(
         imageIn0,
-        testParams.out.pointwise1ChannelCount,
+        pointwise1ChannelCount,
         testParams.in.paramsNumberArrayObject.pointwise1Filters, testParams.out.bPointwise1Bias,
         testParams.in.paramsNumberArrayObject.pointwise1Biases, testParams.out.pointwise1ActivationId,
         "Pointwise1", this.paramsOutDescription );
