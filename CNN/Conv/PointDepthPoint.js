@@ -493,6 +493,28 @@ class Params extends Weights.Params {
     }
   }
 
+  /**
+   * Determine the following properties:
+   *   - this.inputChannelCount_lowerHalf_pointwise1
+   *   - this.inputChannelCount_higherHalf_pointwise1
+   *   - this.outputChannelCount_lowerHalf_pointwise1
+   *
+   *
+   */
+  static calc_pointwise1_higherHalfPassThrough_by( channelCount0_pointwise1Before, pointwise1ChannelCount ) {
+    this.inputChannelCount_lowerHalf_pointwise1 = Math.ceil( channelCount0_pointwise1Before / 2 );
+
+    // The input channel count to be past-through. (Note: Since it is past-through, it is fixed from input to output.)
+    this.inputChannelCount_higherHalf_pointwise1 = channelCount0_pointwise1Before - inputChannelCount_lowerHalf_pointwise1;
+
+    let outputChannelCount_pointwise1 = pointwise1ChannelCount;
+    if ( outputChannelCount_pointwise1 <= 0 ) // If no specified output channel count, it will be the same as input.
+      outputChannelCount_pointwise1 = channelCount0_pointwise1Before;
+
+    // The non-past-through channel count equals the output channel count minus the fixed (past-through) channel count.
+    this.outputChannelCount_lowerHalf_pointwise1 = outputChannelCount_pointwise1 - inputChannelCount_higherHalf_pointwise1;
+  }
+
   get channelCount0_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount0_pointwise1Before ); }
 
   /** @return {number} The number version of channelCount1_pointwise1Before. */
@@ -1016,32 +1038,30 @@ class Base extends ReturnOrClone.Base {
         // So that bHigherHalfPassThrough (or bAllPassThrough).
         nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
 
-        inputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
+        Params.calc_pointwise1_higherHalfPassThrough_by.call( params, this.channelCount0_pointwise1Before, this.pointwise1ChannelCount );
+        
+        inputChannelCount_lowerHalf_pointwise1 = params.inputChannelCount_lowerHalf_pointwise1;
+        outputChannelCount_lowerHalf_pointwise1 = params.outputChannelCount_lowerHalf_pointwise1;
 
-//!!! (2021/12/01 Remarked)
-//         if ( this.pointwise1ChannelCount > 0 ) {
-//           outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.pointwise1ChannelCount / 2 );
-//         } else {
-//           outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1; // So that both are positive.
-//         }
-
-        // The input channel count to be past-through. (Note: Since it is past-through, it is fixed from input to output.)
-        let inputChannelCount_higherHalf_pointwise1 = this.channelCount0_pointwise1Before - inputChannelCount_lowerHalf_pointwise1;
-
-//!!! (2021/12/01 Remarked)
-//         if ( this.pointwise1ChannelCount > 0 ) {
-//           // The non-past-through channel count equals the specified output channel count minus the fixed (past-through) channel count.
-//           outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount - inputChannelCount_higherHalf_pointwise1;
-//         } else {
-//           outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before - inputChannelCount_higherHalf_pointwise1;
-//         }
-
-        let outputChannelCount_pointwise1 = this.pointwise1ChannelCount;
-        if ( outputChannelCount_pointwise1 <= 0 ) // If no specified output channel count, it will be the same as input.
-          outputChannelCount_pointwise1 = this.channelCount0_pointwise1Before;
-
-        // The non-past-through channel count equals the output channel count minus the fixed (past-through) channel count.
-        outputChannelCount_lowerHalf_pointwise1 = outputChannelCount_pointwise1 - inputChannelCount_higherHalf_pointwise1;
+//!!! (2021/12/01 Remarked) Uses Params.calc_pointwise1_higherHalfPassThrough_by().
+//         inputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
+//
+// //!!! (2021/12/01 Remarked)
+// //         if ( this.pointwise1ChannelCount > 0 ) {
+// //           outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.pointwise1ChannelCount / 2 );
+// //         } else {
+// //           outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1; // So that both are positive.
+// //         }
+//
+//         // The input channel count to be past-through. (Note: Since it is past-through, it is fixed from input to output.)
+//         let inputChannelCount_higherHalf_pointwise1 = this.channelCount0_pointwise1Before - inputChannelCount_lowerHalf_pointwise1;
+//
+//         let outputChannelCount_pointwise1 = this.pointwise1ChannelCount;
+//         if ( outputChannelCount_pointwise1 <= 0 ) // If no specified output channel count, it will be the same as input.
+//           outputChannelCount_pointwise1 = this.channelCount0_pointwise1Before;
+//
+//         // The non-past-through channel count equals the output channel count minus the fixed (past-through) channel count.
+//         outputChannelCount_lowerHalf_pointwise1 = outputChannelCount_pointwise1 - inputChannelCount_higherHalf_pointwise1;
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
