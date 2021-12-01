@@ -230,7 +230,8 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *   The output channel count of this pointwise convolutiuon.
  *     - Usually, if ( outputChannelCount == 0 ), it means no operation at all (i.e. bPointwise == bExisted == false ).
  *     - However, if ( outputChannelCount == 0 ) but ( channelShuffler_outputGroupCount > 0 ), this pointwise will exist
- *         (i.e. bPointwise == bExisted == true ) and always will not have biases (no matter how bBias is). It is channel-shuffling mode.
+ *         (i.e. bPointwise == bExisted == true ) and always will not have biases (no matter how bBias is). It is
+ *         all-pass-through-and-channel-shuffling mode.
  *
  * @member {number} outputChannelCount_Real
  *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
@@ -634,22 +635,41 @@ class Base extends ReturnOrClone_Activation.Base {
    */
   static Setup_bPointwise_pfn() {
 
+//!!! ...unfinished... (2021/12/01) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+//     this.bHigherHalfDifferent
+//           ( nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
+
+//!!! (2021/12/01 Remarked) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+//     // Determine whether pointwise operation should exist.
+//     if ( this.outputChannelCount > 0 ) {
+//       this.bPointwise = true;
+//
+//       if ( this.inputChannelCount < this.outputChannelCount ) {
+//         if ( this.channelShuffler_outputGroupCount < 0 ) { // bHigherHalfCopyLowerHalf_LowerHalfPassThrough
+//           this.bBias = false; // In this case, there is always no biases (no matter how bBias is).
+//         }
+//       }
+//
+//     } else {  // ( outputChannelCount <= 0 )
+//       if (   ( this.bHigherHalfDifferent == true )
+//           && ( this.inputChannelCount >= this.outputChannelCount )
+//          ) {
+//         this.bPointwise = true; // all-pass-through (with or without channel-shuffling) mode.
+//         this.bBias = false; // In this case, there is always no biases (no matter how bBias is). The 
+//
+//       } else {
+//         this.bPointwise = false;
+//       }
+//     }
+
     // Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
       this.bPointwise = true;
 
-      if ( this.inputChannelCount < this.outputChannelCount ) {
-        if ( this.channelShuffler_outputGroupCount < 0 ) { // bHigherHalfCopyLowerHalf_LowerHalfPassThrough
-          this.bBias = false; // In this case, there is always no biases (no matter how bBias is).
-        }
-      }
-
     } else {  // ( outputChannelCount <= 0 )
-      if (   ( this.bHigherHalfDifferent == true )
-          && ( this.inputChannelCount >= this.outputChannelCount )
-         ) {
-        this.bPointwise = true; // all-pass-through (with or without channel-shuffling) mode.
-        this.bBias = false; // In this case, there is always no biases (no matter how bBias is). The 
+      if ( this.channelShuffler_outputGroupCount > 0 ) {
+        this.bPointwise = true; // all-pass-through-and-channel-shuffling mode. (Otherwise, no way to do channel shuffling.)
+        this.bBias = false; // In this case, there is always no biases (no matter how original bBias is).
 
       } else {
         this.bPointwise = false;
