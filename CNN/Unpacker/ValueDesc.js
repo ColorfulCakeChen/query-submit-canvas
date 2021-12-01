@@ -205,8 +205,8 @@ class Pointwise_HigherHalfDifferent extends Int {
 
 }
 
-/** The only one ValueDesc.Pointwise_ChannelShuffler_OutputGroupCount instance. */
-Pointwise_ChannelShuffler_OutputGroupCount.Singleton = new Pointwise_ChannelShuffler_OutputGroupCount;
+/** The only one ValueDesc.Pointwise_HigherHalfDifferent instance. */
+Pointwise_HigherHalfDifferent.Singleton = new Pointwise_HigherHalfDifferent;
 
 
 /** Describe depthwise operation's id, range, name.
