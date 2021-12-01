@@ -339,68 +339,64 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *
  *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *   - If true:
+ *   - 2. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH ):
  *
- *     - 2. If ( inputChannelCount < outputChannelCount ): (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+ *     - 2.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough),
+ *         (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+ *         the filters for the output channels between 0 and ( outputChannelCount_lowerHalf - 1 ) will just pass
+ *         through the input to output. The filters for the output channels between ( outputChannelCount_lowerHalf )
+ *         and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
+ *         In this case, it will always have no biases (no matter how bBias is).
  *
- *           - If ( outputChannelCount > 0 ):
+ *     - 2.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *             - 2.1 If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough), the
- *                 filters for the output channels between 0 and ( outputChannelCount_lowerHalf - 1 ) will just pass
- *                 through the input to output. The filters for the output channels between ( outputChannelCount_lowerHalf )
- *                 and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
- *                 In this case, it will always have no biases (no matter how bBias is).
+ *   - 3. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ):
  *
- *             - 2.2 If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ), (i.e. bHigherHalfCopyLowerHalf), the filters for the output
- *                 channels between ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just copy the
- *                 input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
+ *     - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf),
+ *         (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+ *         the filters for the output
+ *         channels between ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just copy the
+ *         input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
  *
- *             - If ( channelShuffler_outputGroupCount > 0 ), unused. Initialization will always failed.
+ *     - 3.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *           - If ( outputChannelCount <= 0 ), this can not happen because ( inputChannelCount < outputChannelCount <= 0 )
- *               implies ( inputChannelCount < 0 ) which is not possible (not legal). (It will be recognized as 3.2 or 4.2 or
- *               5.2 according to channelShuffler_outputGroupCount.)
- *
- *     - If ( inputChannelCount >= outputChannelCount ):
- *
- *       - 3. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+ *   - 4. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22 ):
  *          
- *           - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22), the filters for the input channels between 0 and
- *               ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between ( inputChannelCount_lowerHalf ) and
- *               ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases) will be extracted in sequence, but
- *               they will be combined into one larger filters (and biases). This makes these filters' (and biases') weights
- *               are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters weights
- *               could be used in these two architectures for comparing performance and correctness.
+ *     - 4.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22),
+ *         (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+ *         the filters for the input channels between 0 and
+ *         ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between ( inputChannelCount_lowerHalf ) and
+ *         ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases) will be extracted in sequence, but
+ *         they will be combined into one larger filters (and biases). This makes these filters' (and biases') weights
+ *         are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters weights
+ *         could be used in these two architectures for comparing performance and correctness.
  *
- *           - 3.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler), the filters
- *               will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
- *               (not false), although the specified outputChannelCount is zero. And, it will always have no biases (no matter
- *               how bBias is). (same as 4.2)
+ *    - 4.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *       - 4. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
- *              (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *  - 5. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
+ *      (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
- *           - 4.1 If ( outputChannelCount > 0 ), the filters for the output channels between
- *               ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just pass through the input to output.
+ *    - 5.1 If ( outputChannelCount > 0 ), the filters for the output channels between
+ *        ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just pass through the input to output.
  *
- *             - 4.1.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfPassThrough).
- *                 (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *      - 5.1.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfPassThrough).
+ *          (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
- *             - 4.1.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfPassThroughShuffle).
- *                 (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
- *                 The output channels will be arranged just like applying channel shuffler on them.
+ *      - 5.1.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfPassThroughShuffle).
+ *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *          The output channels will be arranged just like applying channel shuffler on them.
  *
- *           - 4.2 If ( outputChannelCount <= 0 ), the filters
- *               will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
- *               (not false), although the specified outputChannelCount is zero. And, it will always have no biases (no matter
- *               how bBias is). ??? (same as 3.2)
+ *    - 5.2 If ( outputChannelCount <= 0 ), the filters
+ *        will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
+ *        (not false), although the specified outputChannelCount is zero. And, it will always have no biases (no matter
+ *        how bBias is).
  *
- *             - 4.2.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bAllPassThrough; no pointwise and no channel shuffler).
- *                 (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *      - 5.2.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bAllPassThrough; no pointwise and no channel shuffler).
+ *          (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
- *             - 4.2.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bAllPassThroughShuffle).
- *                 (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
- *                 The output channels will be arranged just like applying channel shuffler on them.
+ *      - 5.2.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bAllPassThroughShuffle).
+ *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *          The output channels will be arranged just like applying channel shuffler on them.
  *
  *
  *
