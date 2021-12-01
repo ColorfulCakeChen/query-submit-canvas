@@ -401,8 +401,8 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *   The lower half output channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
  *
  * @member {number} channelShuffler_outputGroupCount
- *   The output group count of the channel shuffler.
- * Only if ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ), it is meaningful.
+ *   The output group count of the channel shuffler. Usually, it is used when
+ * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
@@ -516,6 +516,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
+    // 1.
     Base.Setup_bPointwise_pfn.call( this );
 
     if ( !this.bPointwise ) {
@@ -523,17 +524,71 @@ class Base extends ReturnOrClone_Activation.Base {
       return true; // no operation at all.
     }
 
-    if ( !this.bHigherHalfDifferent ) { // 1. Normal pointwise convolution and bias.
-      this.bInitOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
-      return this.bInitOk;
-    }
+//!!! (2021/12/01 Remarked) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+//     if ( !this.bHigherHalfDifferent ) { // 1. Normal pointwise convolution and bias.
+//       this.bInitOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
+//       return this.bInitOk;
+//     }
+//
+//     if ( this.inputChannelCount < this.outputChannelCount ) {
+//
+//       if ( this.channelShuffler_outputGroupCount < 0 ) { // 2.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
+//         this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
+//
+//       } else if ( this.channelShuffler_outputGroupCount == 0 ) { // 2.2 bHigherHalfCopyLowerHalf
+//         this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
+//
+//       } else { // ( channelShuffler_outputGroupCount > 0 ), unused.
+//         this.bInitOk = false;
+//       }
+//
+//     } else { // ( inputChannelCount >= outputChannelCount )
+//
+//       if ( this.channelShuffler_outputGroupCount < 0 ) {
+//
+//         if ( this.outputChannelCount > 0 ) { // 3.1 bHigherHalfPointwise22
+//           this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
+//
+//         } else { // 3.2 ( outputChannelCount <= 0 ), bAllPassThrough
+//           this.bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
+//         }
+//
+//       } else if ( this.channelShuffler_outputGroupCount == 0 ) {
+//      
+//         if ( this.outputChannelCount > 0 ) { // 4.1 bHigherHalfPassThrough
+//           this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
+//
+//         } else { // 4.2 ( outputChannelCount <= 0 ), bAllPassThrough
+//           this.bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
+//         }
+//
+//       } else { // ( channelShuffler_outputGroupCount > 0 ), shuffling.
+//
+//         if ( this.outputChannelCount > 0 ) { // 5.1 bHigherHalfPassThroughShuffle
+//           this.bInitOk = Base.extractAs_HigherHalfPassThroughShuffle.call( this, inputFloat32Array );
+//
+//         } else { // 5.2 ( outputChannelCount <= 0 ), bAllPassThroughShuffle
+//           this.bInitOk = Base.extractAs_AllPassThroughShuffle.call( this, inputFloat32Array );
+//         }
+//       }
+//     }
 
-    if ( this.inputChannelCount < this.outputChannelCount ) {
+//!!! ...unfinished... (2021/12/01) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
 
-      if ( this.channelShuffler_outputGroupCount < 0 ) { // 2.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
+    // 2.
+    switch ( this.nHigherHalfDifferent ) {
+      // 2.0 Normal pointwise convolution and bias.
+      case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+        this.bInitOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
+        break;
+
+      // 2.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
+      case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
         this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
+        break;
 
-      } else if ( this.channelShuffler_outputGroupCount == 0 ) { // 2.2 bHigherHalfCopyLowerHalf
+      // 2.2 bHigherHalfCopyLowerHalf
+      case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
         this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
 
       } else { // ( channelShuffler_outputGroupCount > 0 ), unused.
@@ -569,6 +624,11 @@ class Base extends ReturnOrClone_Activation.Base {
           this.bInitOk = Base.extractAs_AllPassThroughShuffle.call( this, inputFloat32Array );
         }
       }
+    }
+
+//!!! ...unfinished... (2021/12/01) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+    if ( this.channelShuffler_outputGroupCount > 0 ) {
+      Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
     }
 
     return this.bInitOk;
