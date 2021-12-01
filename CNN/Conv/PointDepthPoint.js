@@ -1174,30 +1174,12 @@ class Base extends ReturnOrClone.Base {
 
     // 5. The pointwise2 convolution.
 
-//!!! ...unfinished... (2021/12/01) ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
-//    nHigherHalfDifferent_pointwise2
-
+    let nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
     let inputChannelCount_lowerHalf_pointwise2 = -1, outputChannelCount_lowerHalf_pointwise2 = -1; // Assume not higher-half-different.
-    let channelShuffler_outputGroupCount_pointwise2; // Default channelShuffler_outputGroupCount for pointwise2, is never zero.
+    let channelShuffler_outputGroupCount_pointwise2 = 0;
 
     if ( this.bHigherHalfDifferent == true ) {
 
-
-//!!! (2021/11/26 Remarked) Perhaps, outputChannelCount_lowerHalf_pointwise2 should be different (just like pointwise1).
-//
-// Perhaps, outputChannelCount_lowerHalf_pointwise2 should be according yo half of pointwise21ChannelCount
-// (just like pointwise1), not according to half of depthwise1.
-//
-//       // Positive (input and output) lower half implies higher-half-different.
-//       if ( this.bDepthwise1 ) { // If depthwise1 exists, the lower half input of pointwise2 is the lower half output of depthwise1.
-//         inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise2 = this.depthwise1.outputChannelCount_lowerHalf;
-//
-//       } else { // If depthwise1 does not exist, the lower half input of pointwise2 is the lower half output of pointwise1.
-//         inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise1;
-//       }
-
-
-      // Positive (input and output) lower half implies higher-half-different.
       if ( this.bDepthwise1 ) { // If depthwise1 exists, the lower half input of pointwise2 is the lower half output of depthwise1.
         inputChannelCount_lowerHalf_pointwise2 = this.depthwise1.outputChannelCount_lowerHalf;
 
@@ -1205,22 +1187,23 @@ class Base extends ReturnOrClone.Base {
         inputChannelCount_lowerHalf_pointwise2 = outputChannelCount_lowerHalf_pointwise1;
       }
 
-      // In this case, it should be according yo half of pointwise21ChannelCount (just like pointwise1).
+      // In this case, it should be according to half of pointwise21ChannelCount (just like pointwise1).
       // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise21ChannelCount is always positive.
       outputChannelCount_lowerHalf_pointwise2 = Math.ceil( this.pointwise21ChannelCount / 2 );
 
-      // For bHigherHalfPointwise22 or bAllPassThrough.
+      // For bHigherHalfPointwise22 (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThrough (i.e. ( pointwise21ChannelCount == 0 ) ).
       //
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
-        channelShuffler_outputGroupCount_pointwise2 = -1; // negative value.
+        nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22;
 
-      // For bHigherHalfPassThroughShuffle or bAllPassThroughShuffle.
+      // For bHigherHalfPassThroughShuffle (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThroughShuffle (i.e. ( pointwise21ChannelCount == 0 ) ).
       //
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
       } else {
+        nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
         channelShuffler_outputGroupCount_pointwise2 = channelShuffler_ConcatPointwiseConv.outputGroupCount; // positive value.
       }
     }
@@ -1237,6 +1220,7 @@ class Base extends ReturnOrClone.Base {
     this.pointwise21 = new Pointwise.Base(
       this.channelCount_concat1After_pointwise2Before,
       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
+      nHigherHalfDifferent_pointwise2,
       inputChannelCount_lowerHalf_pointwise2, outputChannelCount_lowerHalf_pointwise2,
       channelShuffler_outputGroupCount_pointwise2
     );
@@ -1260,6 +1244,7 @@ class Base extends ReturnOrClone.Base {
       this.pointwise22 = new Pointwise.Base(
         this.channelCount_concat1After_pointwise2Before,
         this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
+        nHigherHalfDifferent_pointwise2,
         inputChannelCount_lowerHalf_pointwise2, outputChannelCount_lowerHalf_pointwise2,
         channelShuffler_outputGroupCount_pointwise2
       );
