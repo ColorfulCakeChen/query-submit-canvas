@@ -378,10 +378,8 @@ class Base extends TestParams.Base {
 //      this.doubleParamValue( PointDepthPoint.Params.pointwise1ChannelCount );
 
       {
-        let outputChannelCount_lowerHalf_pointwise1;
-        if ( pointwise1ChannelCount_original > 0 )
-          outputChannelCount_lowerHalf_pointwise1 = pointwise1ChannelCount_original;
-        else
+        let outputChannelCount_lowerHalf_pointwise1 = pointwise1ChannelCount_original;
+        if ( outputChannelCount_lowerHalf_pointwise1 <= 0 ) // If no specified output channel count, it will be the same as input.
           outputChannelCount_lowerHalf_pointwise1 = channelCount0_pointwise1Before_original;
 
         // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
