@@ -333,13 +333,13 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *   If positive (and inputChannelCount_lowerHalf should also be positive), then ( bHigherHalfDifferent == true ).
  *
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
- *   - 1. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal poitwise convolution.
+ *   - 1. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal poitwise convolution.
  *
  *     - 1.1 If ( outputChannelCount > 0 ), normal poitwise convolution.
  *
  *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *   - 2. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH ):
+ *   - 2. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH ):
  *
  *     - 2.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough),
  *         (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
@@ -350,7 +350,7 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *
  *     - 2.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *   - 3. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ):
+ *   - 3. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ):
  *
  *     - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf),
  *         (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
@@ -360,7 +360,7 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *
  *     - 3.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *   - 4. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22 ):
+ *   - 4. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22 ):
  *          
  *     - 4.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22),
  *         (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
@@ -373,7 +373,7 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *
  *    - 4.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *  - 5. If ( ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
+ *  - 5. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
  *      (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
  *    - 5.1 If ( outputChannelCount > 0 ), the filters for the output channels between
