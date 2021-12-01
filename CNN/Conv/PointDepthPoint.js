@@ -982,8 +982,8 @@ class Base extends ReturnOrClone.Base {
 
     // 2. The pointwise1 convolution.
 
+    let nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
     let inputChannelCount_lowerHalf_pointwise1 = -1, outputChannelCount_lowerHalf_pointwise1 = -1; // Assume not higher-half-different.
-    let channelShuffler_outputGroupCount_pointwise1 = 0; // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
 
 //!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
 
@@ -993,40 +993,29 @@ class Base extends ReturnOrClone.Base {
       // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
 
-        // Positive (input and output) lower half implies higher-half-different.
         inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before;
 
-        // In this case (i.e. bHigherHalfCopyLowerHalf), enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count )
-        // so that depthwise1 could include depthwise2.
         if ( this.pointwise1ChannelCount > 0 ) {
+          nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
           outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount; // For depthwise1 (by specified channel count)
 
-        // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
-        // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
-        // as ( inputChannelCount >= outputChannelCount == pointwise1ChannelCount == 0 ) by Pointwise.Base.
-        //
-        // It should be adjusted forcibly so that ( inputChannelCount < outputChannelCount == pointwise1ChannelCount ) and always
-        // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
         } else {
+          nHigherHalfDifferent_pointwise1
+            = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
           outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before; // For depthwise1 (by pass-through-input-to-output)
-          channelShuffler_outputGroupCount_pointwise1 = -1; // So that bLowerHalfPassThrough.
         }
 
-        this.pointwise1ChannelCount // Enlarge channel count.
+        // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
+        this.pointwise1ChannelCount
           = (  outputChannelCount_lowerHalf_pointwise1 // For depthwise1.
              + this.channelCount0_pointwise1Before     // For depthwise2 (by depthwise1).
             );
 
       } else { // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
 
-//!!! (2021/11/26 Remarked) Since pointwise21ChannelCount always not zero, this is not necessary.
-
-//!!! ...unfinished... (2021/11/24)
-// It is possible only inputChannelCount_lowerHalf_pointwise1 or only outputChannelCount_lowerHalf_pointwise1 is positive.
-// This will be rejected by Pointwise.Base.constructor().
-
-        // Positive (input and output) lower half implies higher-half-different.
         // So that bHigherHalfPassThrough (or bAllPassThrough).
+        nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+
         inputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
 
         if ( this.pointwise1ChannelCount > 0 ) {
@@ -1034,25 +1023,6 @@ class Base extends ReturnOrClone.Base {
         } else {
           outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1; // So that both are positive.
         }
-
-
-//!!! ...unfinished... (2021/11/26) Problem: 
-//         // Note: pointwise21ChannelCount is always not zero and contains the higher-pass-through part.
-//         let outputChannelCount_lowerHalf_pointwise21 = Math.ceil( this.pointwise21ChannelCount / 2 );
-//
-//         // In this case, the input0's higher half is always the same as lower half of pointwise21's result. This guarantees
-//         // they could be concat-shuffle-split.
-//         let inputChannelCount_higherHalf_pointwise1 = outputChannelCount_lowerHalf_pointwise21;
-//         inputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before - inputChannelCount_higherHalf_pointwise1;
-//      
-//         if ( this.pointwise1ChannelCount > 0 ) {
-// //???
-//           outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount - inputChannelCount_lowerHalf_pointwise1;
-//         } else {
-// //???
-//           outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1; // So that both are positive.
-//         }
-
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
@@ -1061,8 +1031,9 @@ class Base extends ReturnOrClone.Base {
     this.pointwise1 = new Pointwise.Base(
       this.channelCount0_pointwise1Before,
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
+      nHigherHalfDifferent_pointwise1,
       inputChannelCount_lowerHalf_pointwise1, outputChannelCount_lowerHalf_pointwise1,
-      channelShuffler_outputGroupCount_pointwise1
+      0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
     );
 
     if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
@@ -1202,6 +1173,9 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // concat1 was ready. Report progress.
 
     // 5. The pointwise2 convolution.
+
+//!!! ...unfinished... (2021/12/01) ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+//    nHigherHalfDifferent_pointwise2
 
     let inputChannelCount_lowerHalf_pointwise2 = -1, outputChannelCount_lowerHalf_pointwise2 = -1; // Assume not higher-half-different.
     let channelShuffler_outputGroupCount_pointwise2; // Default channelShuffler_outputGroupCount for pointwise2, is never zero.
