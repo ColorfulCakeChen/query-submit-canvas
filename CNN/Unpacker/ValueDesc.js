@@ -1,6 +1,6 @@
 export { Same, Bool, Int };
 export { channelCount1_pointwise1Before };
-export { PointwiseHigherHalfDifferent };
+export { Pointwise_ChannelShuffler_OutputGroupCount };
 export { AvgMax_Or_ChannelMultiplier };
 export { ActivationFunction };
 export { WhetherShuffleChannel };
@@ -185,31 +185,29 @@ channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
 /** Describe id, range, name of the processing mode of pointwise convolution's higher half channels.
  *
  * Convert number value into integer between [ -2, 2 ] representing depthwise operation:
- *   - 0: no higher half different. (NONE)               (for normal poitwise convolution)
- *   - 1: bHigherHalfCopyLowerHalf_LowerHalfPassThrough. (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
- *   - 2: bHigherHalfCopyLowerHalf.                      (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
- *   - 3: bHigherHalfPointwise22.                        (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
- *   - 4: bHigherHalfPassThrough.                        (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *   - -4: HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH
+ *   - -3: HIGHER_HALF_COPY_LOWER_HALF
+ *   - -2: HIGHER_HALF_POINTWISE22
+ *   - -1: HIGHER_HALF_PASS_THROUGH
+ *   -  0: NONE
  *   - [ 1, 2 ]: TWO_INPUTS with the second input channel count between 1 and 2 (inclusive). (without names defined.)
  */
 class Pointwise_ChannelShuffler_OutputGroupCount extends Int {
 
-//!!! ...unfinished... (2021/12/01) Perhaps,class Pointwise_OutputChannelCount extends Int {}
-
   constructor() {
-    super( 0, 4, [
-      "NONE",                                                 // (0)
-      "HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH", // (1)
-      "HIGHER_HALF_COPY_LOWER_HALF",                          // (2)
-      "HIGHER_HALF_POINTWISE22",                              // (3)
-      "HIGHER_HALF_PASS_THROUGH",                             // (4)
+    super( -4, 2, [
+      "HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH", // (-4) (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+      "HIGHER_HALF_COPY_LOWER_HALF",                          // (-3) (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+      "HIGHER_HALF_POINTWISE22",                              // (-2) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+      "HIGHER_HALF_PASS_THROUGH",                             // (-1) (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+      "NONE",                                                 // ( 0) (for normal poitwise convolution. no higher half different.)
     ] );
   }
 
 }
 
-/** The only one ValueDesc.PointwiseHigherHalf instance. */
-PointwiseHigherHalf.Singleton = new PointwiseHigherHalf;
+/** The only one ValueDesc.Pointwise_ChannelShuffler_OutputGroupCount instance. */
+Pointwise_ChannelShuffler_OutputGroupCount.Singleton = new Pointwise_ChannelShuffler_OutputGroupCount;
 
 
 /** Describe depthwise operation's id, range, name.
