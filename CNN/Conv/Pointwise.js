@@ -252,6 +252,11 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *
  *   - If true:
  *
+
+//!!! ...unfinished... (2021/12/01)
+// should not use ( inputChannelCount < outputChannelCount ) to distinguish bHigherHalfCopyLowerHalf or bHigherHalfPassThrough.
+
+
  *     - 2. If ( inputChannelCount < outputChannelCount ): (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *
  *           - If ( outputChannelCount > 0 ):
