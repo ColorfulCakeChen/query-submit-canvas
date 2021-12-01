@@ -190,8 +190,11 @@ channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
  *   - 2: bHigherHalfCopyLowerHalf.                      (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
  *   - 3: bHigherHalfPointwise22.                        (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
  *   - 4: bHigherHalfPassThrough.                        (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *   - [ 1, 2 ]: TWO_INPUTS with the second input channel count between 1 and 2 (inclusive). (without names defined.)
  */
-class PointwiseHigherHalfDifferent extends Int {
+class Pointwise_ChannelShuffler_OutputGroupCount extends Int {
+
+//!!! ...unfinished... (2021/12/01) Perhaps,class Pointwise_OutputChannelCount extends Int {}
 
   constructor() {
     super( 0, 4, [
