@@ -689,7 +689,18 @@ class Base {
       let imageInArray_Fake = Base.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
-      pointwise1ChannelCount = Math.ceil( testParams.out.pointwise1ChannelCount / 2 );
+
+//!!! (2021/12/01 Remarked) Use PointDepthPoint.Params.calc_pointwise1_higherHalfPassThrough_by()
+//      pointwise1ChannelCount = Math.ceil( testParams.out.pointwise1ChannelCount / 2 );
+
+      {
+        let pointwise1_higherHalfPassThrough = {};
+        PointDepthPoint.Params.calc_pointwise1_higherHalfPassThrough_by.call( pointwise1_higherHalfPassThrough,
+          testParams.out.channelCount0_pointwise1Before, testParams.out.pointwise1ChannelCount );
+
+        pointwise1ChannelCount = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf_pointwise1;
+      }
+
       pointwise21ChannelCount = Math.ceil( testParams.out.pointwise21ChannelCount / 2 );
 
     } else {
