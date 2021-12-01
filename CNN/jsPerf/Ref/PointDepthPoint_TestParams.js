@@ -372,7 +372,21 @@ class Base extends TestParams.Base {
              == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
        ) {
       this.doubleParamValue( PointDepthPoint.Params.channelCount0_pointwise1Before );
-      this.doubleParamValue( PointDepthPoint.Params.pointwise1ChannelCount );
+
+//!!! (2021/12/01 Remarked) should be ( pointwise1ChannelCount_original + channelCount0_pointwise1Before ) or 
+// ( channelCount0_pointwise1Before + channelCount0_pointwise1Before )
+//      this.doubleParamValue( PointDepthPoint.Params.pointwise1ChannelCount );
+
+      {
+        let pointwise1ChannelCount_enlarged;
+        if ( pointwise1ChannelCount_original > 0 )
+          pointwise1ChannelCount_enlarged = pointwise1ChannelCount_original + channelCount0_pointwise1Before_original;
+        else
+          pointwise1ChannelCount_enlarged = channelCount0_pointwise1Before_original + channelCount0_pointwise1Before_original;
+
+        this.modifyParamValue( PointDepthPoint.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
+      }
+
       this.doubleParamValue( PointDepthPoint.Params.pointwise21ChannelCount );
     }
 
