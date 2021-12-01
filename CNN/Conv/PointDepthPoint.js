@@ -1018,10 +1018,21 @@ class Base extends ReturnOrClone.Base {
 
         inputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.channelCount0_pointwise1Before / 2 );
 
+//!!! (2021/12/01 Remarked)
+//         if ( this.pointwise1ChannelCount > 0 ) {
+//           outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.pointwise1ChannelCount / 2 );
+//         } else {
+//           outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1; // So that both are positive.
+//         }
+
+        // The input channel count to be past-through. (Note: Since it is past-through, it is fixed from input to output.)
+        let inputChannelCount_higherHalf_pointwise1 = this.channelCount0_pointwise1Before - inputChannelCount_lowerHalf_pointwise1;
+
         if ( this.pointwise1ChannelCount > 0 ) {
-          outputChannelCount_lowerHalf_pointwise1 = Math.ceil( this.pointwise1ChannelCount / 2 );
+          // The non-past-through channel count equals the specified output channel count minus the fixed (past-through) channel count.
+          outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount - inputChannelCount_higherHalf_pointwise1;
         } else {
-          outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1; // So that both are positive.
+          outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1;
         }
       }
 
