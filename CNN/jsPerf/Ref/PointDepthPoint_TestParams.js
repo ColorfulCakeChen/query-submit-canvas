@@ -378,7 +378,7 @@ class Base extends TestParams.Base {
 
     // Pointwise1
     let pointwise1 = Base.generate_pointwise_filters_biases( channelCount0_pointwise1Before_original,
-        pointwise1ChannelCount_original, paramsAll.bPointwise1Bias );
+      pointwise1ChannelCount_original, paramsAll.bPointwise1Bias );
 
     io_paramsNumberArrayObject.pointwise1Filters = pointwise1.numberArrayArray[ 0 ];
     io_paramsNumberArrayObject.pointwise1Biases =  pointwise1.numberArrayArray[ 1 ];
@@ -430,7 +430,7 @@ class Base extends TestParams.Base {
 
     // Pointwise21
     let pointwise21 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-      paramsAll.pointwise21ChannelCount_original, paramsAll.bPointwise21Bias );
+      pointwise21ChannelCount_original, paramsAll.bPointwise21Bias );
 
     io_paramsNumberArrayObject.pointwise21Filters = pointwise21.numberArrayArray[ 0 ];
     io_paramsNumberArrayObject.pointwise21Biases =  pointwise21.numberArrayArray[ 1 ];
