@@ -1028,12 +1028,20 @@ class Base extends ReturnOrClone.Base {
         // The input channel count to be past-through. (Note: Since it is past-through, it is fixed from input to output.)
         let inputChannelCount_higherHalf_pointwise1 = this.channelCount0_pointwise1Before - inputChannelCount_lowerHalf_pointwise1;
 
-        if ( this.pointwise1ChannelCount > 0 ) {
-          // The non-past-through channel count equals the specified output channel count minus the fixed (past-through) channel count.
-          outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount - inputChannelCount_higherHalf_pointwise1;
-        } else {
-          outputChannelCount_lowerHalf_pointwise1 = inputChannelCount_lowerHalf_pointwise1;
-        }
+//!!! (2021/12/01 Remarked)
+//         if ( this.pointwise1ChannelCount > 0 ) {
+//           // The non-past-through channel count equals the specified output channel count minus the fixed (past-through) channel count.
+//           outputChannelCount_lowerHalf_pointwise1 = this.pointwise1ChannelCount - inputChannelCount_higherHalf_pointwise1;
+//         } else {
+//           outputChannelCount_lowerHalf_pointwise1 = this.channelCount0_pointwise1Before - inputChannelCount_higherHalf_pointwise1;
+//         }
+
+        let outputChannelCount_pointwise1 = this.pointwise1ChannelCount;
+        if ( outputChannelCount_pointwise1 <= 0 ) // If no specified output channel count, it will be the same as input.
+          outputChannelCount_pointwise1 = this.channelCount0_pointwise1Before;
+
+        // The non-past-through channel count equals the output channel count minus the fixed (past-through) channel count.
+        outputChannelCount_lowerHalf_pointwise1 = outputChannelCount_pointwise1 - inputChannelCount_higherHalf_pointwise1;
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
