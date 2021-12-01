@@ -229,9 +229,8 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  * @member {number} outputChannelCount
  *   The output channel count of this pointwise convolutiuon.
  *     - Usually, if ( outputChannelCount == 0 ), it means no operation at all (i.e. bPointwise == bExisted == false ).
- *     - However, if ( outputChannelCount == 0 ) but ( ( bHigherHalfDifferent == true ) and ( inputChannelCount >= outputChannelCount )
- *         and ( channelShuffler_outputGroupCount > 0 ) ), this pointwise will exist (i.e. bPointwise == bExisted == true ) and always
- *         will not have biases (no matter how bBias is). It is all-pass-and-channel-shuffling mode.
+ *     - However, if ( outputChannelCount == 0 ) but ( channelShuffler_outputGroupCount > 0 ), this pointwise will exist
+ *         (i.e. bPointwise == bExisted == true ) and always will not have biases (no matter how bBias is). It is channel-shuffling mode.
  *
  * @member {number} outputChannelCount_Real
  *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
@@ -324,14 +323,6 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
 
 //!!! ...unfinished... (2021/12/01) ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
 
- * @member {number} inputChannelCount_lowerHalf
- *   If ( channelShuffler_outputGroupCount == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids. 
-
- *   If positive (and outputChannelCount_lowerHalf should also be positive), then ( bHigherHalfDifferent == true ).
- *
- * @member {number} outputChannelCount_lowerHalf
- *   If positive (and inputChannelCount_lowerHalf should also be positive), then ( bHigherHalfDifferent == true ).
- *
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
  *   - 1. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal poitwise convolution.
  *
@@ -398,13 +389,20 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *          The output channels will be arranged just like applying channel shuffler on them.
  *
+ * @member {boolean} bHigherHalfDifferent
+ *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
+ * or ( outputChannelCount <= 0 ) or ( inputChannelCount_lowerHalf <= 0 ) or ( outputChannelCount_lowerHalf <= 0 ).
  *
+ * @member {number} inputChannelCount_lowerHalf
+ *   The lower half input channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
  *
-
+ * @member {number} outputChannelCount_lowerHalf
+ *   The lower half output channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
+ *
  * @member {number} channelShuffler_outputGroupCount
- *   Only if ( bHigherHalfDifferent == true ), it is meaningful.
+ *   The output group count of the channel shuffler.
+ * Only if ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ), it is meaningful.
  *
-
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
@@ -439,7 +437,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
   constructor(
     inputChannelCount, outputChannelCount, bBias, nActivationId,
-    inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
     super();
     this.inputChannelCount = inputChannelCount;
@@ -447,8 +445,17 @@ class Base extends ReturnOrClone_Activation.Base {
     this.bBias = bBias;
     this.nActivationId = nActivationId;
 
+    this.nHigherHalfDifferent = nHigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
+    this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
+
+//!!! ...unfinished... (2021/12/01) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+    this.bHigherHalfDifferent
+      =    ( nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
+        && ( outputChannelCount > 0 )
+        && ( inputChannelCount_lowerHalf > 0 )
+        && ( outputChannelCount_lowerHalf > 0 );
 
     tf.util.assert( ( inputChannelCount > 0 ),
       `Pointwise.Base.constructor(): `
@@ -484,9 +491,9 @@ class Base extends ReturnOrClone_Activation.Base {
         + `should be both positive or both not.`
     );
 
-    this.bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 );
+//!!! (2021/12/01 Remarked)
+//    this.bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 );
 
-    this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
   }
 
   /**
