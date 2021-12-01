@@ -1,5 +1,8 @@
-export { Same, Bool, Int, ActivationFunction };
-export { AvgMax_Or_ChannelMultiplier, channelCount1_pointwise1Before };
+export { Same, Bool, Int };
+export { channelCount1_pointwise1Before };
+export { PointwiseHigherHalfDifferent };
+export { AvgMax_Or_ChannelMultiplier };
+export { ActivationFunction };
 export { WhetherShuffleChannel };
 
 import * as ValueRange from "./ValueRange.js";
@@ -141,48 +144,6 @@ class Int {
 }
 
 
-/**
- * Describe activation function parameter's id, range, name.
- */
-class ActivationFunction extends Int {
-
-  constructor() {
-    // Note:
-    //   - NONE: Beware. It easily results in infinity value because it does not have upper bound.
-    //   - RELU: Beware. It easily results in infinity value because it does not have upper bound.
-    //   - SOFTPLUS: Avoid. Backend WASM does not support it.
-    super( 0, 6,
-      [ "NONE",  "RELU6",  "SIGMOID",  "TANH",  "COS",  "SIN",  "RELU" ], //  "SOFTPLUS" ],
-      [   null, tf.relu6, tf.sigmoid, tf.tanh, tf.cos, tf.sin, tf.relu ]  // tf.softplus ]
-    );
-  }
-
-}
-
-/** The only one ValueDesc.ActivationFunction instance. */
-ActivationFunction.Singleton = new ActivationFunction;
-
-
-/** Describe depthwise operation's id, range, name.
- *
- * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
- *   - -2: average pooling. (AVG)
- *   - -1: maximum pooling. (MAX)
- *   -  0: no depthwise operation. (NONE)
- *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
- */
-class AvgMax_Or_ChannelMultiplier extends Int {
-
-  constructor() {
-    super( -2, 32, [ "AVG", "MAX", "NONE" ] );
-  }
-
-}
-
-/** The only one ValueDesc.AvgMax_Or_ChannelMultiplier instance. */
-AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
-
-
 /** Describe id, range, name of channelCount1_pointwise1Before.
  *
  * Convert number value into integer between [ -5, ( 10 * 1024 ) ] representing operation:
@@ -221,6 +182,75 @@ class channelCount1_pointwise1Before extends Int {
 channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
 
 
+/** Describe id, range, name of the processing mode of pointwise convolution's higher half channels.
+ *
+ * Convert number value into integer between [ -2, 2 ] representing depthwise operation:
+ *   - 0: no higher half different. (NONE)               (for normal poitwise convolution)
+ *   - 1: bHigherHalfCopyLowerHalf_LowerHalfPassThrough. (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+ *   - 2: bHigherHalfCopyLowerHalf.                      (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+ *   - 3: bHigherHalfPointwise22.                        (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+ *   - 4: bHigherHalfPassThrough.                        (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ */
+class PointwiseHigherHalfDifferent extends Int {
+
+  constructor() {
+    super( 0, 4, [
+      "NONE",                                                 // (0)
+      "HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH", // (1)
+      "HIGHER_HALF_COPY_LOWER_HALF",                          // (2)
+      "HIGHER_HALF_POINTWISE22",                              // (3)
+      "HIGHER_HALF_PASS_THROUGH",                             // (4)
+    ] );
+  }
+
+}
+
+/** The only one ValueDesc.PointwiseHigherHalf instance. */
+PointwiseHigherHalf.Singleton = new PointwiseHigherHalf;
+
+
+/** Describe depthwise operation's id, range, name.
+ *
+ * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
+ *   - -2: average pooling. (AVG)
+ *   - -1: maximum pooling. (MAX)
+ *   -  0: no depthwise operation. (NONE)
+ *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
+ */
+class AvgMax_Or_ChannelMultiplier extends Int {
+
+  constructor() {
+    super( -2, 32, [ "AVG", "MAX", "NONE" ] );
+  }
+
+}
+
+/** The only one ValueDesc.AvgMax_Or_ChannelMultiplier instance. */
+AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
+
+
+/**
+ * Describe activation function parameter's id, range, name.
+ */
+class ActivationFunction extends Int {
+
+  constructor() {
+    // Note:
+    //   - NONE: Beware. It easily results in infinity value because it does not have upper bound.
+    //   - RELU: Beware. It easily results in infinity value because it does not have upper bound.
+    //   - SOFTPLUS: Avoid. Backend WASM does not support it.
+    super( 0, 6,
+      [ "NONE",  "RELU6",  "SIGMOID",  "TANH",  "COS",  "SIN",  "RELU" ], //  "SOFTPLUS" ],
+      [   null, tf.relu6, tf.sigmoid, tf.tanh, tf.cos, tf.sin, tf.relu ]  // tf.softplus ]
+    );
+  }
+
+}
+
+/** The only one ValueDesc.ActivationFunction instance. */
+ActivationFunction.Singleton = new ActivationFunction;
+
+
 /** Describe id, range, name of WhetherShuffleChannel.
  *
  * Convert number value into integer between [ 0, 3 ] representing operation:
@@ -244,3 +274,4 @@ class WhetherShuffleChannel extends Int {
 
 /** The only one ValueDesc.WhetherShuffleChannel instance. */
 WhetherShuffleChannel.Singleton = new WhetherShuffleChannel;
+
