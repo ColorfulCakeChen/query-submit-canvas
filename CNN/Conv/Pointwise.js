@@ -691,13 +691,10 @@ class Base extends ReturnOrClone_Activation.Base {
 
   get tensorWeightCountTotal() {
     let result = 0;
-    
     if ( this.filtersTensor4d )
       result += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-
     if ( this.biasesTensor3d )
       result += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-
     return result;
   }
 
