@@ -112,8 +112,65 @@ class PadInfoCalculator {
     this.imageOutLength = ( this.imageOutHeight * this.imageOutWidth * this.imageOutDepth );
   }
 
+  /**
+   *
+   * @return {number[]} 
+   *   Return the depthwise convolution filters which could pass the input to output unchangely.
+   */
+  generate_PassThrough_FiltersArray() {
+
+    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === this.AvgMax_Or_ChannelMultiplier )
+        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === this.AvgMax_Or_ChannelMultiplier ) ) {
+      return; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+    }
+
+    // Make up a depthwise convolution filter.
+    let depthwiseFiltersArray = new Array( this.filterHeight * this.filterWidth * this.imageInDepth * this.channelMultiplier );
+
+    // There is only one position (inside the effect depthwise filter) with value one. All other positions of the filter should be zero.
+    let oneEffectFilterY = this.padHeightTop;
+    let oneEffectFilterX = this.padWidthLeft;
+
+    // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
+    for ( let inChannel = 0; inChannel < this.imageInDepth; ++inChannel ) {
+
+      for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+
+        for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+          for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+            let filterIndexBaseX = ( filterY * this.filterWidth );
+
+            for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+              for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+
+                // The filter's dilation part can not be manipulated. (They are always zero.)
+                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                  continue;
+
+                let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.imageOutDepth );
+                let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
+
+                let filterIndex = filterIndexBaseSubC + outChannelSub;
+
+                if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
+                  depthwiseFiltersArray[ filterIndex ] = 1; // The only one position with value one.
+                } else {
+                  depthwiseFiltersArray[ filterIndex ] = 0; // All other positions of the filter are value zero.
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return depthwiseFiltersArray;
+  }
+
 }
 
+
+//!!! ...unfinished... (2021/12/03) perhaps, provide a pool for DepthwisePassThrough of various size so that needs not regenerate again and again.
 
 /**
  * A depthwise convolution and bias which just pass the input to output.
@@ -127,84 +184,104 @@ class PadInfoCalculator {
  * @member {boolean} bInitOk
  *   If true, this object initialized (i.e. constructor()) successfully.
  */
-class PassThrough {
+class PassThrough extends PadInfoCalculator {
 
   /**
    */
   constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias ) {
 
-    this.padInfo = new PadInfoCalculator( imageInHeight, imageInWidth, imageInDepth,
-      AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad );
+//!!! (2021/12/03 Remarked) call generate_PassThrough_FiltersArray() instead.
+//     this.padInfo = new PadInfoCalculator( imageInHeight, imageInWidth, imageInDepth,
+//       AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad );
+//
+//     this.bBias = bBias;
+//
+//     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
+//         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
+//       return; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+//     }
+//
+//     let { filterWidth, channelMultiplier, dilationHeight, dilationWidth,
+//           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
+//           imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = this.padInfo;
+//
+//     // There is only one position (inside the effect depthwise filter) with value one. All other positions of the filter should be zero.
+//     let oneEffectFilterY = padHeightTop;
+//     let oneEffectFilterX = padWidthLeft;
+//
+//     // Make up a depthwise convolution filter which 
+//     this.depthwiseFiltersArray = new Array( filterHeight * filterWidth * imageInDepth * channelMultiplier );
+//
+//     // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
+//     for ( let inChannel = 0; inChannel < imageInDepth; ++inChannel ) {
+//
+//       for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
+//
+//         for ( let filterY = 0, effectFilterY = 0; filterY < filterHeight; ++filterY ) {
+//           for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+//             let filterIndexBaseX = ( filterY * filterWidth );
+//
+//             for ( let filterX = 0, effectFilterX = 0; filterX < filterWidth; ++filterX ) {
+//               for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+//
+//                 // The filter's dilation part can not be manipulated. (They are always zero.)
+//                 if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+//                   continue;
+//
+//                 let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
+//                 let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
+//
+//                 let filterIndex = filterIndexBaseSubC + outChannelSub;
+//
+//                 if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
+//                   this.depthwiseFiltersArray[ filterIndex ] = 1; // The only one position with value one.
+//                 } else {
+//                   this.depthwiseFiltersArray[ filterIndex ] = 0; // All other positions of the filter are value zero.
+//                 }
+//               }
+//             }
+//           }
+//         }
+//       }
+//     }
+//
+//     let filtersShape = [ filterHeight, filterWidth, imageInDepth, channelMultiplier ];
+//     let biasesShape =  [ 1, 1, imageOutDepth ];
+//
+//     [ this.filtersTensor4d, this.biasesTensor3d ] = tf.tidy( () => {
+//
+//       // Generate depthwise filters for just pass input to output.
+//       let filtersTensor4d = tf.tensor( this.depthwiseFiltersArray, filtersShape );
+//
+//       // Generate bias for just adding zero. (i.e. equals no bias).
+//       let biasesTensor3d;
+//       if ( this.bBias ) {
+//         biasesTensor3d = tf.zero( biasesShape );
+//       }
+//
+//       this.bInitOk = true;
+//
+//       return [ filtersTensor4d, biasesTensor3d ];
+//     });
+
+
+    super( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad );
 
     this.bBias = bBias;
+    this.depthwiseFiltersArray = this.generate_PassThrough_FiltersArray();
 
-    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
-        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
-      return; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+    let filtersShape = [ this.filterHeight, this.filterWidth, this.imageInDepth, this.channelMultiplier ];
+    let biasesShape =  [ 1, 1, this.imageOutDepth ];
+
+    // Generate depthwise filters for just pass input to output.
+    this.filtersTensor4d = tf.tensor( this.depthwiseFiltersArray, filtersShape );
+
+    // Generate bias for just adding zero. (i.e. equals no bias).
+    if ( this.bBias ) {
+      this.biasesTensor3d = tf.zero( biasesShape );
     }
 
-    let { filterWidth, channelMultiplier, dilationHeight, dilationWidth,
-          stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
-          imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = this.padInfo;
-
-    // There is only one position (inside the effect depthwise filter) with value one. All other positions of the filter should be zero.
-    let oneEffectFilterY = padHeightTop;
-    let oneEffectFilterX = padWidthLeft;
-
-    // Make up a depthwise convolution filter which 
-    this.depthwiseFiltersArray = new Array( filterHeight * filterWidth * imageInDepth * channelMultiplier );
-
-    // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
-    for ( let inChannel = 0; inChannel < imageInDepth; ++inChannel ) {
-
-      for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
-
-        for ( let filterY = 0, effectFilterY = 0; filterY < filterHeight; ++filterY ) {
-          for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY, ++effectFilterY ) {
-            let filterIndexBaseX = ( filterY * filterWidth );
-
-            for ( let filterX = 0, effectFilterX = 0; filterX < filterWidth; ++filterX ) {
-              for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX, ++effectFilterX ) {
-
-                // The filter's dilation part can not be manipulated. (They are always zero.)
-                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-                  continue;
-
-                let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
-                let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
-
-                let filterIndex = filterIndexBaseSubC + outChannelSub;
-
-                if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
-                  this.depthwiseFiltersArray[ filterIndex ] = 1; // The only one position with value one.
-                } else {
-                  this.depthwiseFiltersArray[ filterIndex ] = 0; // All other positions of the filter are value zero.
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    let filtersShape = [ filterHeight, filterWidth, imageInDepth, channelMultiplier ];
-    let biasesShape =  [ 1, 1, imageOutDepth ];
-
-    [ this.filtersTensor4d, this.biasesTensor3d ] = tf.tidy( () => {
-
-      // Generate depthwise filters for just pass input to output.
-      let filtersTensor4d = tf.tensor( this.depthwiseFiltersArray, filtersShape );
-
-      // Generate bias for just adding zero. (i.e. equals no bias).
-      let biasesTensor3d;
-      if ( this.bBias ) {
-        biasesTensor3d = tf.zero( biasesShape );
-      }
-
-      this.bInitOk = true;
-
-      return [ filtersTensor4d, biasesTensor3d ];
-    });
+    this.bInitOk = true;
   }
 
   disposeTensors() {
