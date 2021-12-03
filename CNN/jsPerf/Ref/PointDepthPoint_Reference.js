@@ -691,6 +691,8 @@ class Base {
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
 
+//!!! ...unfinished... (2021/12/03) If ( pointwise1ChannelCount == 0 ), should be all-pass-through.
+
       {
         let pointwise1_higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
           testParams.out.channelCount0_pointwise1Before, testParams.out.pointwise1ChannelCount );
