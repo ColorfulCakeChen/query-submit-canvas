@@ -1017,11 +1017,11 @@ class Base extends ReturnOrClone.Base {
         // So that bHigherHalfPassThrough (or bAllPassThrough).
         nHigherHalfDifferent_pointwise1 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
 
-        let higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
+        let pointwise1_higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
           this.channelCount0_pointwise1Before, this.pointwise1ChannelCount );
 
-        inputChannelCount_lowerHalf_pointwise1 = higherHalfPassThrough.inputChannelCount_lowerHalf;
-        outputChannelCount_lowerHalf_pointwise1 = higherHalfPassThrough.outputChannelCount_lowerHalf;
+        inputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
+        outputChannelCount_lowerHalf_pointwise1 = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
       }
 
     // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
