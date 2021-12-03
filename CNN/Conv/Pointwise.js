@@ -1050,8 +1050,10 @@ class Base extends ReturnOrClone_Activation.Base {
           this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
 
         } finally {
-          if ( filtersTensor4d_lowerHalf_expanded )
+          if ( filtersTensor4d_lowerHalf_expanded ) {
+            this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d_lowerHalf_expanded.shape ); // Include the expanded weights count.
             filtersTensor4d_lowerHalf_expanded.dispose();
+          }
         }
       }
 
@@ -1193,11 +1195,15 @@ class Base extends ReturnOrClone_Activation.Base {
       return false; // e.g. memory not enough.
 
     } finally {
-      if ( filtersTensor4d_higherHalf_expanded )
+      if ( filtersTensor4d_higherHalf_expanded ) {
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d_higherHalf_expanded.shape ); // Include the expanded weights count.
         filtersTensor4d_higherHalf_expanded.dispose();
+      }
 
-      if ( filtersTensor4d_lowerHalf_expanded )
+      if ( filtersTensor4d_lowerHalf_expanded ) {
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d_lowerHalf_expanded.shape ); // Include the expanded weights count.
         filtersTensor4d_lowerHalf_expanded.dispose();
+      }
 
       if ( biasesTensor3d_higherHalf )
         biasesTensor3d_higherHalf.dispose();
@@ -1309,8 +1315,10 @@ class Base extends ReturnOrClone_Activation.Base {
           }
 
         } finally {
-          if ( filtersTensor4d_lowerHalf_expanded )
+          if ( filtersTensor4d_lowerHalf_expanded ) {
+            this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d_lowerHalf_expanded.shape ); // Include the expanded weights count.
             filtersTensor4d_lowerHalf_expanded.dispose();
+          }
         }
       }
 
