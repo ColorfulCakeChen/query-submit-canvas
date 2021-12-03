@@ -615,23 +615,24 @@ class Base extends ReturnOrClone_Activation.Base {
       Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
     }
 
-    // Verify the total weight count.
-    {
-      let tensorWeightCountTotal = 0;
-      {
-        tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-
-        if ( this.biasesTensor3d ) {
-          tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-        }
-      }
-
-      tf.util.assert( ( this.tensorWeightCountTotal == tensorWeightCountTotal ),
-        `Pointwise.Base.init(): `
-          + `this.tensorWeightCountTotal ( ${this.tensorWeightCountTotal} ) should be `
-          + `( ${tensorWeightCountTotal} ).`
-      );
-    }
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//     // Verify the total weight count.
+//     {
+//       let tensorWeightCountTotal = 0;
+//       {
+//         tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+//
+//         if ( this.biasesTensor3d ) {
+//           tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+//         }
+//       }
+//
+//       tf.util.assert( ( this.tensorWeightCountTotal == tensorWeightCountTotal ),
+//         `Pointwise.Base.init(): `
+//           + `this.tensorWeightCountTotal ( ${this.tensorWeightCountTotal} ) should be `
+//           + `( ${tensorWeightCountTotal} ).`
+//       );
+//     }
 
     return this.bInitOk;
   }
@@ -647,7 +648,9 @@ class Base extends ReturnOrClone_Activation.Base {
       this.biasesTensor3d = null;
     }
 
-    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
+    this.tensorWeightCountExtracted = 0;
 
     // (2021/10/27 Remarked) If these properties does not exist, assigning value (even undefined) to them will create them. This is un-wanted.
     //this.bHigherHalfCopyLowerHalf = this.bHigherHalfPointwise22 = this.bHigherHalfPassThrough = this.bHigherHalfPassThroughShuffle
@@ -686,6 +689,18 @@ class Base extends ReturnOrClone_Activation.Base {
     }
   }
 
+  get tensorWeightCountTotal() {
+    let result = 0;
+    
+    if ( this.filtersTensor4d )
+      result += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+
+    if ( this.biasesTensor3d )
+      result += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+
+    return result;
+  }
+
   get bExisted() {
     return this.bPointwise;
   }
@@ -696,33 +711,6 @@ class Base extends ReturnOrClone_Activation.Base {
    *   The Base object to be determined and modified.
    */
   static Setup_bPointwise_pfn() {
-
-//!!! ...unfinished... (2021/12/01) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
-//     this.bHigherHalfDifferent
-//           ( nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
-
-//!!! (2021/12/01 Remarked) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
-//     // Determine whether pointwise operation should exist.
-//     if ( this.outputChannelCount > 0 ) {
-//       this.bPointwise = true;
-//
-//       if ( this.inputChannelCount < this.outputChannelCount ) {
-//         if ( this.channelShuffler_outputGroupCount < 0 ) { // bHigherHalfCopyLowerHalf_LowerHalfPassThrough
-//           this.bBias = false; // In this case, there is always no biases (no matter how bBias is).
-//         }
-//       }
-//
-//     } else {  // ( outputChannelCount <= 0 )
-//       if (   ( this.bHigherHalfDifferent == true )
-//           && ( this.inputChannelCount >= this.outputChannelCount )
-//          ) {
-//         this.bPointwise = true; // all-pass-through (with or without channel-shuffling) mode.
-//         this.bBias = false; // In this case, there is always no biases (no matter how bBias is). The 
-//
-//       } else {
-//         this.bPointwise = false;
-//       }
-//     }
 
     // Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
@@ -765,7 +753,10 @@ class Base extends ReturnOrClone_Activation.Base {
    * Extract pointwise convolution filters from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//    *   - this.tensorWeightCountTotal
+
    *
    * @param {Base} this                       The Base object to be modified.
    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
@@ -790,7 +781,10 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//   *   - this.tensorWeightCountTotal
+
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -834,7 +828,10 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//   *   - this.tensorWeightCountTotal
+
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -871,7 +868,9 @@ class Base extends ReturnOrClone_Activation.Base {
       this.filtersTensor4d = higherHalfPassThrough.filtersTensor4d; // all pass through.
       this.biasesTensor3d = null; // always does not have biases (no matter how bBias is).
 
-      this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//      this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+
       higherHalfPassThrough.filtersTensor4d = null; // So that it will not be disposed. (It has been used as this.filtersTensor4d.)
 
     } catch ( e ) {
@@ -900,7 +899,10 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//   *   - this.tensorWeightCountTotal
+
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -962,22 +964,24 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( higherHalfPassThrough ) {
 
-        // Include the weights count of the higher-half-pass-through filters and biases.
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-        if ( higherHalfPassThrough.biasesTensor3d ) {
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
-        }
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//        // Include the weights count of the higher-half-pass-through filters and biases.
+//         this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+//         if ( higherHalfPassThrough.biasesTensor3d ) {
+//           this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
+//         }
 
         higherHalfPassThrough.disposeTensors();
       }
 
       if ( lowerHalfPassThrough ) {
 
-        // Include the weights count of the lower-half-pass-through filters and biases.
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( lowerHalfPassThrough.filtersTensor4d.shape );
-        if ( lowerHalfPassThrough.biasesTensor3d ) {
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( lowerHalfPassThrough.biasesTensor3d.shape );
-        }
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//        // Include the weights count of the lower-half-pass-through filters and biases.
+//         this.tensorWeightCountTotal += tf.util.sizeFromShape( lowerHalfPassThrough.filtersTensor4d.shape );
+//         if ( lowerHalfPassThrough.biasesTensor3d ) {
+//           this.tensorWeightCountTotal += tf.util.sizeFromShape( lowerHalfPassThrough.biasesTensor3d.shape );
+//         }
 
         lowerHalfPassThrough.disposeTensors();
       }
@@ -999,7 +1003,10 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//   *   - this.tensorWeightCountTotal
+
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -1092,11 +1099,12 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( higherHalfPassThrough ) {
 
-        // Include the weights count of the higher-half-pass-through filters and biases.
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-        if ( higherHalfPassThrough.biasesTensor3d ) {
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
-        }
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//        // Include the weights count of the higher-half-pass-through filters and biases.
+//         this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
+//         if ( higherHalfPassThrough.biasesTensor3d ) {
+//           this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
+//         }
 
         higherHalfPassThrough.disposeTensors();
       }
@@ -1118,7 +1126,10 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//   *   - this.tensorWeightCountTotal
+
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -1241,7 +1252,10 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//   *   - this.tensorWeightCountTotal
+
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -1357,11 +1371,13 @@ class Base extends ReturnOrClone_Activation.Base {
 
       if ( higherHalf ) {
 
-        // Include the weights count of the higher-half (-pass-through or -all-zeros) filters and biases.
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalf.filtersTensor4d.shape );
-        if ( higherHalf.biasesTensor3d ) {
-          this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalf.biasesTensor3d.shape );
-        }
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//        // Include the weights count of the higher-half (-pass-through or -all-zeros) filters and biases.
+//         this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalf.filtersTensor4d.shape );
+//         if ( higherHalf.biasesTensor3d ) {
+//           this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalf.biasesTensor3d.shape );
+//         }
 
         higherHalf.disposeTensors();
       }
@@ -1488,8 +1504,11 @@ class Base extends ReturnOrClone_Activation.Base {
 
   /** Expand a tensor4d by zeros along the last second axis (i.e. the axis id 2; the inDepth axis of a pointwise convolution's filters).
    *
-   * The following data members will be modified:
-   *   - this.tensorWeightCountTotal
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//   * The following data members will be modified:
+//   *   - this.tensorWeightCountTotal
+
    *
    * @param {tf.tensor4d} inputTensor4d
    *   The tensor4d to be expanded.
@@ -1543,12 +1562,18 @@ class Base extends ReturnOrClone_Activation.Base {
 
     } finally {
       if ( zerosPostfix ) {
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( zerosPostfix.shape ); // Include the expanded postfix weights count.
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//        this.tensorWeightCountTotal += tf.util.sizeFromShape( zerosPostfix.shape ); // Include the expanded postfix weights count.
+
         zerosPostfix.dispose();
       }
 
       if ( zerosPrefix ) {
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( zerosPrefix.shape ); // Include the expanded prefix weights count.
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//        this.tensorWeightCountTotal += tf.util.sizeFromShape( zerosPrefix.shape ); // Include the expanded prefix weights count.
+
         zerosPrefix.dispose();
       }
     }
