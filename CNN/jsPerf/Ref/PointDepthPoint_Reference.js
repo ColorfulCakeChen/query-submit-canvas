@@ -741,12 +741,16 @@ class Base {
       // be different from pointwise21Result and can not be concatenated together.
       if ( testParams.out.channelCount1_pointwise1Before
              == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+
+        let depthwisePassThrough = new Depthwise.PadInfoCalculator( imageIn1.height, imageIn1.width, imageIn1.depth,
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad );
+        
+        let depthwisePassThroughFiltersArray = depthwisePassThrough.generate_PassThrough_FiltersArray();
+
         imageIn1 = Base.calcDepthwise(
           imageIn1_beforeDepthwise1,
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
-
-//!!! ...unfinished... (2021/12/03) should use a pass-through depthwise filters instead.
-          testParams.in.paramsNumberArrayObject.depthwise1Filters,
+          depthwisePassThroughFiltersArray, // for Pass-through.
           false, null, // no bias
           ValueDesc.ActivationFunction.NONE, // no ActivationId
           "Depthwise1_imageIn1", this.paramsOutDescription );
