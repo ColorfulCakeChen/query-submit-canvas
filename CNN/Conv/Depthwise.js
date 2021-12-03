@@ -271,13 +271,13 @@ class PassThrough extends PadInfoCalculator {
     this.depthwiseFiltersArray = this.generate_PassThrough_FiltersArray();
 
     let filtersShape = [ this.filterHeight, this.filterWidth, this.imageInDepth, this.channelMultiplier ];
-    let biasesShape =  [ 1, 1, this.imageOutDepth ];
 
     // Generate depthwise filters for just pass input to output.
     this.filtersTensor4d = tf.tensor( this.depthwiseFiltersArray, filtersShape );
 
     // Generate bias for just adding zero. (i.e. equals no bias).
     if ( this.bBias ) {
+      let biasesShape =  [ 1, 1, this.imageOutDepth ];
       this.biasesTensor3d = tf.zero( biasesShape );
     }
 
