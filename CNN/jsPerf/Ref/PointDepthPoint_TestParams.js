@@ -349,21 +349,15 @@ class Base extends TestParams.Base {
     //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
 
 
-//!!! ...unfinished... (2021/11/26) Problem: pointwise21ChannelCount is also contains the higher-pass-through part.
-// So, pointwise21ChannelCount may also be doubled.
-
-//!!! ...unfinished... (2021/11/26)
-// The channelCount0_pointwise1Before and pointwise1ChannelCount should not just be doubled.
-// They should be expanded by pointwise21ChannelCount_original. So that they can be concatenated with pointwise21ChannelCount_original
-// and shuffled and splitted.
-
     let channelCount0_pointwise1Before_original = paramsAll.channelCount0_pointwise1Before;
     let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
     let pointwise21ChannelCount_original = paramsAll.pointwise21ChannelCount;
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail:
-    //   - channelCount0_pointwise1Before, pointwise1ChannelCount, pointwise21ChannelCount.
-    //   - Double the above parameters in paramsAll and io_paramsNumberArrayObject (if existed).
+    //   - channelCount0_pointwise1Before, pointwise21ChannelCount.
+    //     - Double them in paramsAll and io_paramsNumberArrayObject (if existed).
+    //   -  pointwise1ChannelCount.
+    //     - Adjust it in paramsAll and io_paramsNumberArrayObject (if existed).
     //   - But use original the above parameters to generate filters weights.
     //
     // The reason is that PointDepthPoint will only extract filters weights of half the above parameters in this case.
@@ -372,26 +366,6 @@ class Base extends TestParams.Base {
              == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
        ) {
       this.doubleParamValue( PointDepthPoint.Params.channelCount0_pointwise1Before );
-
-//!!! (2021/12/01 Remarked) should be ( pointwise1ChannelCount_original + channelCount0_pointwise1Before ) or 
-// ( channelCount0_pointwise1Before + channelCount0_pointwise1Before )
-//      this.doubleParamValue( PointDepthPoint.Params.pointwise1ChannelCount );
-
-//!!! (2021/12/03 Remarked) if ( pointwise1ChannelCount_original == 0 ), then 0.
-// Otherwise, ( pointwise1ChannelCount_original + channelCount0_pointwise1Before ) or 
-// ( channelCount0_pointwise1Before + channelCount0_pointwise1Before )
-//
-//       {
-//         let outputChannelCount_lowerHalf_pointwise1 = pointwise1ChannelCount_original;
-//         if ( outputChannelCount_lowerHalf_pointwise1 <= 0 ) // If no specified output channel count, it will be the same as input.
-//           outputChannelCount_lowerHalf_pointwise1 = channelCount0_pointwise1Before_original;
-//
-//         // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
-//         let inputChannelCount_higherHalf_pointwise1 = channelCount0_pointwise1Before_original;
-//
-//         let pointwise1ChannelCount_enlarged = outputChannelCount_lowerHalf_pointwise1 + inputChannelCount_higherHalf_pointwise1;
-//         this.modifyParamValue( PointDepthPoint.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
-//       }
 
       if ( pointwise1ChannelCount_original == 0 ) {
         // When the output channel count is not specified, keep it zero.
