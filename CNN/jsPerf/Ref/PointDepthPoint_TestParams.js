@@ -377,10 +377,27 @@ class Base extends TestParams.Base {
 // ( channelCount0_pointwise1Before + channelCount0_pointwise1Before )
 //      this.doubleParamValue( PointDepthPoint.Params.pointwise1ChannelCount );
 
-      {
+//!!! (2021/12/03 Remarked) if ( pointwise1ChannelCount_original == 0 ), then 0.
+// Otherwise, ( pointwise1ChannelCount_original + channelCount0_pointwise1Before ) or 
+// ( channelCount0_pointwise1Before + channelCount0_pointwise1Before )
+//
+//       {
+//         let outputChannelCount_lowerHalf_pointwise1 = pointwise1ChannelCount_original;
+//         if ( outputChannelCount_lowerHalf_pointwise1 <= 0 ) // If no specified output channel count, it will be the same as input.
+//           outputChannelCount_lowerHalf_pointwise1 = channelCount0_pointwise1Before_original;
+//
+//         // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
+//         let inputChannelCount_higherHalf_pointwise1 = channelCount0_pointwise1Before_original;
+//
+//         let pointwise1ChannelCount_enlarged = outputChannelCount_lowerHalf_pointwise1 + inputChannelCount_higherHalf_pointwise1;
+//         this.modifyParamValue( PointDepthPoint.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
+//       }
+
+      if ( pointwise1ChannelCount_original == 0 ) {
+        // When the output channel count is not specified, keep it zero.
+
+      } else {
         let outputChannelCount_lowerHalf_pointwise1 = pointwise1ChannelCount_original;
-        if ( outputChannelCount_lowerHalf_pointwise1 <= 0 ) // If no specified output channel count, it will be the same as input.
-          outputChannelCount_lowerHalf_pointwise1 = channelCount0_pointwise1Before_original;
 
         // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
         let inputChannelCount_higherHalf_pointwise1 = channelCount0_pointwise1Before_original;
