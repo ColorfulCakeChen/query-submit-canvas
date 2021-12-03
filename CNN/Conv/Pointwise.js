@@ -448,7 +448,6 @@ class Base extends ReturnOrClone_Activation.Base {
     this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
     this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
 
-//!!! ...unfinished... (2021/12/01) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
     this.bHigherHalfDifferent
       =    ( nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
         && ( outputChannelCount > 0 )
@@ -488,10 +487,6 @@ class Base extends ReturnOrClone_Activation.Base {
         + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) `
         + `should be both positive or both not.`
     );
-
-//!!! (2021/12/01 Remarked)
-//    this.bHigherHalfDifferent = ( inputChannelCount_lowerHalf > 0 ) && ( outputChannelCount_lowerHalf > 0 );
-
   }
 
   /**
@@ -1068,10 +1063,8 @@ class Base extends ReturnOrClone_Activation.Base {
           this.filtersTensor4d = tf.concat( allFiltersArray, 3 ); // Along the last axis (i.e. outDepth axis; axis id 3).
 
         } finally {
-          if ( filtersTensor4d_lowerHalf_expanded ) {
-            this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d_lowerHalf_expanded.shape ); // Include the expanded weights count.
+          if ( filtersTensor4d_lowerHalf_expanded )
             filtersTensor4d_lowerHalf_expanded.dispose();
-          }
         }
       }
 
@@ -1213,15 +1206,11 @@ class Base extends ReturnOrClone_Activation.Base {
       return false; // e.g. memory not enough.
 
     } finally {
-      if ( filtersTensor4d_higherHalf_expanded ) {
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d_higherHalf_expanded.shape ); // Include the expanded weights count.
+      if ( filtersTensor4d_higherHalf_expanded )
         filtersTensor4d_higherHalf_expanded.dispose();
-      }
 
-      if ( filtersTensor4d_lowerHalf_expanded ) {
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d_lowerHalf_expanded.shape ); // Include the expanded weights count.
+      if ( filtersTensor4d_lowerHalf_expanded )
         filtersTensor4d_lowerHalf_expanded.dispose();
-      }
 
       if ( biasesTensor3d_higherHalf )
         biasesTensor3d_higherHalf.dispose();
@@ -1318,7 +1307,7 @@ class Base extends ReturnOrClone_Activation.Base {
             // Expand the lower filters (by postfix zeros) so that they accept the whole inputChannelCount as input.
             filtersTensor4d_lowerHalf_expanded = Base.expandTensor4d_Zeros_AlongAxisId2(
               filtersTensor4d_lowerHalf, 0, this.inputChannelCount_higherHalf );
-      
+
           } finally {
             if ( filtersTensor4d_lowerHalf )
               filtersTensor4d_lowerHalf.dispose();
@@ -1333,10 +1322,8 @@ class Base extends ReturnOrClone_Activation.Base {
           }
 
         } finally {
-          if ( filtersTensor4d_lowerHalf_expanded ) {
-            this.tensorWeightCountTotal += tf.util.sizeFromShape( filtersTensor4d_lowerHalf_expanded.shape ); // Include the expanded weights count.
+          if ( filtersTensor4d_lowerHalf_expanded )
             filtersTensor4d_lowerHalf_expanded.dispose();
-          }
         }
       }
 
@@ -1501,6 +1488,9 @@ class Base extends ReturnOrClone_Activation.Base {
 
   /** Expand a tensor4d by zeros along the last second axis (i.e. the axis id 2; the inDepth axis of a pointwise convolution's filters).
    *
+   * The following data members will be modified:
+   *   - this.tensorWeightCountTotal
+   *
    * @param {tf.tensor4d} inputTensor4d
    *   The tensor4d to be expanded.
    *
@@ -1552,11 +1542,15 @@ class Base extends ReturnOrClone_Activation.Base {
       return null;
 
     } finally {
-      if ( zerosPostfix )
+      if ( zerosPostfix ) {
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( zerosPostfix.shape ); // Include the expanded postfix weights count.
         zerosPostfix.dispose();
+      }
 
-      if ( zerosPrefix )
+      if ( zerosPrefix ) {
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( zerosPrefix.shape ); // Include the expanded prefix weights count.
         zerosPrefix.dispose();
+      }
     }
 
     return resultTensor4d;
