@@ -187,11 +187,11 @@ class Base extends TestParams.Base {
 //      depthwiseFilterHeight: [ 1, depthwiseFilterMaxSize ],
       depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
 
-      depthwiseStridesPad: undefined,
-//       depthwiseStridesPad: [
-//         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
-//         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
-//       ],
+//      depthwiseStridesPad: undefined,
+      depthwiseStridesPad: [
+        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
+        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
+      ],
 
 //      bOutput1Requested: undefined,
       bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
