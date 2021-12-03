@@ -366,8 +366,8 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *  - 5. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
  *      (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
- *    - 5.1 If ( outputChannelCount > 0 ), the filters for the output channels between
- *        ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just pass through the input to output.
+ *    - 5.1 If ( outputChannelCount > 0 ), the filters for the output channels between ( outputChannelCount_lowerHalf )
+ *        and ( outputChannelCount - 1 ) will just pass through the input to output.
  *
  *      - 5.1.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfPassThrough).
  *          (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
@@ -376,10 +376,9 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
  *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *          The output channels will be arranged just like applying channel shuffler on them.
  *
- *    - 5.2 If ( outputChannelCount <= 0 ), the filters
- *        will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
- *        (not false), although the specified outputChannelCount is zero. And, it will always have no biases (no matter
- *        how bBias is).
+ *    - 5.2 If ( outputChannelCount <= 0 ), the filters will just pass through all input channels to output. In this case,
+ *        the ( bPointwise == bExisted == true ) (not false), although the specified outputChannelCount is zero. And, it
+ *        will always have no biases (no matter how bBias is).
  *
  *      - 5.2.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bAllPassThrough; no pointwise and no channel shuffler).
  *          (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
