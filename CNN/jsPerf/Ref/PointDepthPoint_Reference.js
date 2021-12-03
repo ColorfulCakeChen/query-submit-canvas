@@ -740,6 +740,14 @@ class Base {
     }
 
     // 2.2 Depthwise2
+
+//!!! ...unfinished... (2021/12/03) It seems that when:
+//    ( testParams.out.channelCount1_pointwise1Before
+//            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+//
+// should also depthwise2. Otherwise, they can not be concatenated because size is different.
+//
+
     let depthwise2Result;
     if (   ( testParams.out.channelCount1_pointwise1Before // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
