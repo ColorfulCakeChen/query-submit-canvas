@@ -4,6 +4,7 @@ import * as TensorTools from "../../util/TensorTools.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as ChannelCountCalculator from "../../Conv/ChannelCountCalculator.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 import * as ChannelShuffler from "../../Conv/ChannelShuffler.js";
 import * as ChannelShufflerPool from "../../Conv/ChannelShufflerPool.js";
@@ -690,15 +691,11 @@ class Base {
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
 
-//!!! (2021/12/01 Remarked) Use PointDepthPoint.Params.calc_pointwise1_higherHalfPassThrough_by()
-//      pointwise1ChannelCount = Math.ceil( testParams.out.pointwise1ChannelCount / 2 );
-
       {
-        let pointwise1_higherHalfPassThrough = {};
-        PointDepthPoint.Params.calc_pointwise1_higherHalfPassThrough_by.call( pointwise1_higherHalfPassThrough,
+        let pointwise1_higherHalfPassThrough = new ChannelCountCalculator.HigherHalfPassThrough(
           testParams.out.channelCount0_pointwise1Before, testParams.out.pointwise1ChannelCount );
 
-        pointwise1ChannelCount = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf_pointwise1;
+        pointwise1ChannelCount = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
       }
 
       pointwise21ChannelCount = Math.ceil( testParams.out.pointwise21ChannelCount / 2 );
