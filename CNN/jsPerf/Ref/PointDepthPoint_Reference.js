@@ -691,6 +691,7 @@ class Base {
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
 
+      pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
       if ( pointwise1ChannelCount <= 0 ) {
         // When no pointwise1, just keep it all-pass-through.
 
