@@ -735,11 +735,10 @@ class Base {
         testParams.in.paramsNumberArrayObject.depthwise1Filters, testParams.out.bDepthwiseBias,
         testParams.in.paramsNumberArrayObject.depthwise1Biases, testParams.out.depthwiseActivationId,
         "Depthwise1", this.paramsOutDescription );
-    } else {
-      depthwise1Result = pointwise1Result;
-    }
+      
 
-    // 2.2 Depthwise2
+//!!! ...unfinished... (2021/12/03) When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be pre-processed by depthwise.
+// Otherwise, its size may be different from pointwise21Result and can not be concatenated together.
 
 //!!! ...unfinished... (2021/12/03) It seems that when:
 //    ( testParams.out.channelCount1_pointwise1Before
@@ -748,6 +747,12 @@ class Base {
 // should also depthwise2. Otherwise, they can not be concatenated because size is different.
 //
 
+
+    } else {
+      depthwise1Result = pointwise1Result;
+    }
+
+    // 2.2 Depthwise2
     let depthwise2Result;
     if (   ( testParams.out.channelCount1_pointwise1Before // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
@@ -881,15 +886,17 @@ class Base {
           + `should be null, since there is no pointwise22. ${this.paramsOutDescription}`);
 
       let imageConcat2InArray = Array.from( imageOutArray );
+      
+//!!! ...unfinished... (2021/12/03) When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be pre-processed by depthwise.
+// Otherwise, its size may be different from pointwise21Result and can not be concatenated together.
+
       imageConcat2InArray[ 1 ] = imageIn1; // i.e. input1.
 
       // 5.1 Concat2, shuffle, split.
 
-//!!! (2021/11/23 Remarked) When ONE_INPUT_HALF_THROUGH (-5), although ( bOutput1Requested == false ), it still needs shuffle.
-//      if ( testParams.out.bOutput1Requested == true ) {
-
-      // Note: When ONE_INPUT_HALF_THROUGH (-5), although ( bOutput1Requested == false ), it still needs shuffle.
       if (   ( testParams.out.bOutput1Requested == true )
+
+          // Note: When ONE_INPUT_HALF_THROUGH (-5), although ( bOutput1Requested == false ), it still needs shuffle.
           || ( testParams.out.channelCount1_pointwise1Before
                  == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
          ) {
