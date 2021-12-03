@@ -454,13 +454,6 @@ class Base extends ReturnOrClone_Activation.Base {
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
     this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
-//!!! ...unfinished... (2021/11/18) replaced by imageInHeight and imageInWidth.
-//     if ( this.channelShuffler ) {
-//       this.imageInHeight = this.channelShuffler.concatenatedShape[ 0 ];
-//       this.imageInWidth = this.channelShuffler.concatenatedShape[ 1 ];
-//       this.imageInDepth = this.channelShuffler.concatenatedShape[ 2 ];
-//     }
-
     switch ( this.stridesPad ) {
       case 0:  this.strides = 1; this.pad = "valid"; break;
       default:
@@ -495,6 +488,24 @@ class Base extends ReturnOrClone_Activation.Base {
       } else { // 2.3 Normal depthwise convolution.
         this.bInitOk = Base.extractAs_NormalDepthwise.call( this, inputFloat32Array );
       }
+    }
+
+    // Verify the total weight count.
+    {
+      let tensorWeightCountTotal = 0;
+      {
+        tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+
+        if ( this.biasesTensor3d ) {
+          tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+        }
+      }
+
+      tf.util.assert( ( this.tensorWeightCountTotal == tensorWeightCountTotal ),
+        `Depthwise.Base.init(): `
+          + `this.tensorWeightCountTotal ( ${this.tensorWeightCountTotal} ) should be `
+          + `( ${tensorWeightCountTotal} ).`
+      );
     }
 
     return this.bInitOk;
@@ -709,8 +720,6 @@ class Base extends ReturnOrClone_Activation.Base {
         + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
     );
 
-//!!! (2021/11/18 Remarked) comes from parameters.
-//    this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
     this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
 
     this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
@@ -822,8 +831,6 @@ class Base extends ReturnOrClone_Activation.Base {
         + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
     );
 
-//!!! (2021/11/18 Remarked) comes from parameters.
-//    this.inputChannelCount_lowerHalf = Math.ceil( this.inputChannelCount / 2 );
     this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
 
     this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
@@ -838,8 +845,6 @@ class Base extends ReturnOrClone_Activation.Base {
 
       // The other half is just filters and biases for pass-through.
       higherHalfPassThrough = new PassThrough(
-//!!! (2021/11/18 Remarked) comes from parameters.
-//        this.imageInHeight, this.imageInWidth, this.inputChannelCount_higherHalf,
         this.inputHeight, this.inputWidth, this.inputChannelCount_higherHalf,
         this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
 
