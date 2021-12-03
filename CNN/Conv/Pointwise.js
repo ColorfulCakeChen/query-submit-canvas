@@ -620,6 +620,24 @@ class Base extends ReturnOrClone_Activation.Base {
       Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
     }
 
+    // Verify the total weight count.
+    {
+      let tensorWeightCountTotal = 0;
+      {
+        tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
+
+        if ( this.biasesTensor3d ) {
+          tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
+        }
+      }
+
+      tf.util.assert( ( this.tensorWeightCountTotal == tensorWeightCountTotal ),
+        `Pointwise.Base.init(): `
+          + `this.tensorWeightCountTotal ( ${this.tensorWeightCountTotal} ) should be `
+          + `( ${tensorWeightCountTotal} ).`
+      );
+    }
+
     return this.bInitOk;
   }
 
