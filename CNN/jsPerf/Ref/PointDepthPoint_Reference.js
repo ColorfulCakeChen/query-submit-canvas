@@ -659,7 +659,7 @@ class Base {
         + `bConcat2ShuffleSplitRequested=${flags.bConcat2ShuffleSplitRequested}, `
         + `outputTensorCount=${flags.outputTensorCount}, `
 
-        + `bKeepInputTensor=${testParams.out.bKeepInputTensor}, `
+        + `bKeepInputTensor=${testParams.out.bKeepInputTensor}`
       ;
     }
 
