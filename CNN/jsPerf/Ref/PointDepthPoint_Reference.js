@@ -655,7 +655,7 @@ class Base {
 
         + `bOutput1Requested=${testParams.out.bOutput1Requested}, `
 
-        + `bAddInputToOutputRequested=${flags.bAddInputToOutputRequested}`
+        + `bAddInputToOutputRequested=${flags.bAddInputToOutputRequested}, `
         + `bConcat2ShuffleSplitRequested=${flags.bConcat2ShuffleSplitRequested}, `
         + `outputTensorCount=${flags.outputTensorCount}, `
 
