@@ -555,6 +555,84 @@ class Base extends ReturnOrClone_Activation.Base {
     this.bInitOk = false;
   }
 
+  /**
+   * Adjust this.pfnOperation (and this.pfnOperationBiasActivation if need) so that this.pfnOperation() and this.pfnOperationBiasActivation()
+   * will or will not dispose its inputTensor.
+   */
+  setKeepInputTensor( bKeepInputTensor ) {
+    if ( bKeepInputTensor == this.bKeepInputTensor )
+      return;
+
+    this.bKeepInputTensor = bKeepInputTensor;
+    if ( bKeepInputTensor ) {
+
+      switch ( this.pfnOperation ) {
+
+        // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
+        // Note: pfnOperationBiasActivation should not be changed here because there might be bias and activation.
+        case Base.return_input_directly: this.pfnOperation = Base.keep_input_return_copy; break;
+
+        case Base.Avg_and_destroy:       this.pfnOperation = Base.Avg_and_keep;  break;
+        case Base.Max_and_destroy:       this.pfnOperation = Base.Max_and_keep;  break;
+        case Base.Conv_and_destroy:      this.pfnOperation = Base.Conv_and_keep; break;
+
+        // Just clone input if unknown depthwise operation.
+        // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
+        default:                         this.pfnOperation = this.pfnOperationBiasActivation = Base.keep_input_return_copy;
+          tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
+          break;
+      }
+
+    } else {
+
+      switch ( this.pfnOperation ) {
+
+        // Just return input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
+        // Note: pfnOperationBiasActivation should not be changed here because there might be bias and activation.
+        case Base.keep_input_return_copy: this.pfnOperation = Base.return_input_directly; break;
+
+        case Base.Avg_and_keep:           this.pfnOperation = Base.Avg_and_destroy;  break;
+        case Base.Max_and_keep:           this.pfnOperation = Base.Max_and_destroy;  break;
+        case Base.Conv_and_keep:          this.pfnOperation = Base.Conv_and_destroy; break;
+
+        // Just return input if unknown depthwise operation.
+        // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
+        default:                          this.pfnOperation = this.pfnOperationBiasActivation = Base.return_input_directly;
+          tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
+          break;
+      }
+
+    }
+  }
+
+  get bExisted() {
+    return this.bDepthwise;
+  }
+
+  /**
+   * @return {boolean}
+   *   If the ( height, width ) of this depthwise operation output is the same as its input, return true.
+   */
+  is_Output_Same_HeightWidth_As_Input() {
+
+    // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
+    // In fact, they are the same one in this case.
+    if ( !this.bDepthwise )
+      return true;
+
+    if ( this.strides != 1 )
+      return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
+
+    if ( this.pad == "same" )
+      return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
+
+    // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same ( height, width ) as input.
+    if ( ( this.pad == "valid" ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
+      return true;
+
+    return false;
+  }
+
   /** Determine this.bDepthwiseXxx and this.pfnXxx data members.
    *
    * @param {Base} this
@@ -953,84 +1031,6 @@ class Base extends ReturnOrClone_Activation.Base {
     return true;
   }
 
-  /**
-   * Adjust this.pfnOperation (and this.pfnOperationBiasActivation if need) so that this.pfnOperation() and this.pfnOperationBiasActivation()
-   * will or will not dispose its inputTensor.
-   */
-  setKeepInputTensor( bKeepInputTensor ) {
-    if ( bKeepInputTensor == this.bKeepInputTensor )
-      return;
-
-    this.bKeepInputTensor = bKeepInputTensor;
-    if ( bKeepInputTensor ) {
-
-      switch ( this.pfnOperation ) {
-
-        // Just clone input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-        // Note: pfnOperationBiasActivation should not be changed here because there might be bias and activation.
-        case Base.return_input_directly: this.pfnOperation = Base.keep_input_return_copy; break;
-
-        case Base.Avg_and_destroy:       this.pfnOperation = Base.Avg_and_keep;  break;
-        case Base.Max_and_destroy:       this.pfnOperation = Base.Max_and_keep;  break;
-        case Base.Conv_and_destroy:      this.pfnOperation = Base.Conv_and_keep; break;
-
-        // Just clone input if unknown depthwise operation.
-        // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-        default:                         this.pfnOperation = this.pfnOperationBiasActivation = Base.keep_input_return_copy;
-          tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
-          break;
-      }
-
-    } else {
-
-      switch ( this.pfnOperation ) {
-
-        // Just return input if 1x1 AVG/MAX pooling or illegal pooling type (i.e. not AVG, not MAX).
-        // Note: pfnOperationBiasActivation should not be changed here because there might be bias and activation.
-        case Base.keep_input_return_copy: this.pfnOperation = Base.return_input_directly; break;
-
-        case Base.Avg_and_keep:           this.pfnOperation = Base.Avg_and_destroy;  break;
-        case Base.Max_and_keep:           this.pfnOperation = Base.Max_and_destroy;  break;
-        case Base.Conv_and_keep:          this.pfnOperation = Base.Conv_and_destroy; break;
-
-        // Just return input if unknown depthwise operation.
-        // Since there is no operation at all, let pfnOperationBiasActivation ignore pfnOperation completely.
-        default:                          this.pfnOperation = this.pfnOperationBiasActivation = Base.return_input_directly;
-          tf.util.assert( false, `Unknown depthwise operation. (${this.pfnOperation}) when setKeepInputTensor( ${bKeepInputTensor} )` );
-          break;
-      }
-
-    }
-  }
-
-  get bExisted() {
-    return this.bDepthwise;
-  }
-
-  /**
-   * @return {boolean}
-   *   If the ( height, width ) of this depthwise operation output is the same as its input, return true.
-   */
-  is_Output_Same_HeightWidth_As_Input() {
-
-    // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
-    // In fact, they are the same one in this case.
-    if ( !this.bDepthwise )
-      return true;
-
-    if ( this.strides != 1 )
-      return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
-
-    if ( this.pad == "same" )
-      return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
-
-    // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same ( height, width ) as input.
-    if ( ( this.pad == "valid" ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
-      return true;
-
-    return false;
-  }
-                
   /** Depthwise Average Pooling. */
   static Avg_and_keep( inputTensor ) {
     return tf.pool( inputTensor, this.filterHeightWidth, "avg", this.pad, 1, this.strides ); // dilations = 1
