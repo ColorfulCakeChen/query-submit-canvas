@@ -737,15 +737,18 @@ class Base {
         testParams.in.paramsNumberArrayObject.depthwise1Biases, testParams.out.depthwiseActivationId,
         "Depthwise1", this.paramsOutDescription );
 
-      // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be pre-processed by depthwise1. Otherwise, its size may
+      // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
       // be different from pointwise21Result and can not be concatenated together.
       if ( testParams.out.channelCount1_pointwise1Before
              == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
         imageIn1 = Base.calcDepthwise(
           imageIn1_beforeDepthwise1,
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
-          testParams.in.paramsNumberArrayObject.depthwise1Filters, testParams.out.bDepthwiseBias,
-          testParams.in.paramsNumberArrayObject.depthwise1Biases, testParams.out.depthwiseActivationId,
+
+//!!! ...unfinished... (2021/12/03) should use a pass-through depthwise filters instead.
+          testParams.in.paramsNumberArrayObject.depthwise1Filters,
+          false, null, // no bias
+          ValueDesc.ActivationFunction.NONE, // no ActivationId
           "Depthwise1_imageIn1", this.paramsOutDescription );
       }
 
