@@ -681,7 +681,7 @@ class Base {
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
     //
-    // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() double channelCount0_pointwise1Before, pointwise1ChannelCount,
+    // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() double channelCount0_pointwise1Before,
     // pointwise21ChannelCount. So, halve them here.
     //
     if ( testParams.out.channelCount1_pointwise1Before
@@ -727,6 +727,7 @@ class Base {
     // 2. Depthwise
 
     // 2.1 Depthwise1
+    let imageIn1_beforeDepthwise1 = imageIn1;
     let depthwise1Result;
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       depthwise1Result = Base.calcDepthwise(
@@ -735,18 +736,18 @@ class Base {
         testParams.in.paramsNumberArrayObject.depthwise1Filters, testParams.out.bDepthwiseBias,
         testParams.in.paramsNumberArrayObject.depthwise1Biases, testParams.out.depthwiseActivationId,
         "Depthwise1", this.paramsOutDescription );
-      
 
-//!!! ...unfinished... (2021/12/03) When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be pre-processed by depthwise.
-// Otherwise, its size may be different from pointwise21Result and can not be concatenated together.
-
-//!!! ...unfinished... (2021/12/03) It seems that when:
-//    ( testParams.out.channelCount1_pointwise1Before
-//            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
-//
-// should also depthwise2. Otherwise, they can not be concatenated because size is different.
-//
-
+      // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be pre-processed by depthwise1. Otherwise, its size may
+      // be different from pointwise21Result and can not be concatenated together.
+      if ( testParams.out.channelCount1_pointwise1Before
+             == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+        imageIn1 = Base.calcDepthwise(
+          imageIn1_beforeDepthwise1,
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
+          testParams.in.paramsNumberArrayObject.depthwise1Filters, testParams.out.bDepthwiseBias,
+          testParams.in.paramsNumberArrayObject.depthwise1Biases, testParams.out.depthwiseActivationId,
+          "Depthwise1_imageIn1", this.paramsOutDescription );
+      }
 
     } else {
       depthwise1Result = pointwise1Result;
