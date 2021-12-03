@@ -121,7 +121,7 @@ class PadInfoCalculator {
 
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === this.AvgMax_Or_ChannelMultiplier )
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === this.AvgMax_Or_ChannelMultiplier ) ) {
-      return; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+      return null; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
     }
 
     // Make up a depthwise convolution filter.
