@@ -900,7 +900,7 @@ class Base {
           imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
 
       // 5.2 Concat2 only.
-      } else { // ( bOutput1Requested == true )
+      } else { // ( bOutput1Requested == false )
         imageOutArray[ 0 ] = Base.calcConcatAlongAxisId2(
           imageConcat2InArray[ 0 ], imageConcat2InArray[ 1 ], "Concat2_pointwise21_input1", this.paramsOutDescription );
       }
