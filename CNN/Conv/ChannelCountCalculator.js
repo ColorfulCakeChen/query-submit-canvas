@@ -41,7 +41,7 @@ class HigherHalfPassThrough {
     // The input channel count to be past-through. (Note: Since it is past-through, it is fixed from input to output.)
     this.inputChannelCount_higherHalf = inputChannelCount_total - this.inputChannelCount_lowerHalf;
 
-    if ( this.outputChannelCount_total_real <= 0 )
+    if ( this.outputChannelCount_total <= 0 )
       this.outputChannelCount_total_real = inputChannelCount_total; // When output channel count is not specified, it will be the same as input.
     else
       this.outputChannelCount_total_real = outputChannelCount_total;
