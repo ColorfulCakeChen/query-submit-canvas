@@ -30,7 +30,10 @@ class Base extends ReturnOrClone.Base {
    * Extract tf.tensor from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//   *   - this.tensorWeightCountTotal
+
    *
    * @param {Base} this                       The Base object to be modified.
    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
@@ -48,7 +51,10 @@ class Base extends ReturnOrClone.Base {
       let t = tf.tensor( tensorWeights.weights, tensorShape );
       let elementCount = tf.util.sizeFromShape( t.shape );
       this.tensorWeightCountExtracted += elementCount;
-      this.tensorWeightCountTotal += elementCount;
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//      this.tensorWeightCountTotal += elementCount;
+
       return t;
 
     // If failed (e.g. memory not enough), return null.      
@@ -61,7 +67,10 @@ class Base extends ReturnOrClone.Base {
    * Extract biases from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-   *   - this.tensorWeightCountTotal
+
+//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
+//   *   - this.tensorWeightCountTotal
+
    *
    * @param {Base} this                       The Base object to be modified.
    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
