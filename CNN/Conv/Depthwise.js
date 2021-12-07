@@ -170,6 +170,10 @@ class PadInfoCalculator {
 }
 
 
+//!!! ...unfinished... (2021/12/07)
+// Problem: Although depthwise (and pointwise) convolution could be past-through, the activation function will destroy the past-through result.
+
+
 //!!! ...unfinished... (2021/12/03) perhaps, provide a pool for DepthwisePassThrough of various size so that needs not regenerate again and again.
 
 /**
