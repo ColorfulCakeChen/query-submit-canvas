@@ -37,10 +37,17 @@ class filtersTensor4d_biasesTensor3d {
  * It is usually used in the inferenced higher half channels of the output channel (for achieving ShuffleNetV2_ByMopbileNetV1).
  *
  *
- * @member {number}  inputChannelCount      The channel count of input.
- * @member {number}  outputChannelCount     The channel count of output.
- * @member {number}  inputChannelIndexStart The channel count index (included) to start to be copied to the output.
- * @member {boolean} bBias                  Whether generate biases (although all zeros).
+ * @member {number} inputChannelCount
+ *   The channel count of input.
+ *
+ * @member {number} outputChannelCount
+ *   The channel count of output.
+ *
+ * @member {number} inputChannelIndexStart
+ *   The channel count index (included) to start to be copied to the output.
+ *
+ * @member {boolean} bBias
+ *   Whether generate biases (although all zeros).
  *
  * @member {number} filterValue
  *   The value used as the pass-through pointwise convolution filter. Default is 1. If there will be no activation function after this
@@ -181,6 +188,14 @@ class PassThrough extends filtersTensor4d_biasesTensor3d {
         } finally {
           oneHotTransposedTensor2d.dispose();
         }
+      }
+    }
+
+//!!! ...unfinished... (2021/12/07) filterValue, biasValue
+    if ( filterValue != 1 ) {
+      try {
+        let tf.scalar( filterValue )
+        this.filtersTensor4d = this.filtersTensor4d. filterValue;
       }
     }
 
