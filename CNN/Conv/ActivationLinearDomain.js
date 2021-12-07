@@ -114,7 +114,8 @@ class ScaleTranslate {
 /**
  * Describe the input value lower and upper bounds of an activation function for keeping the output almost linear.
  *
- *
+ * Activation function is non-linear in the whole domain. However, inside a part of the domain, it may be very
+ * approximate a linear function. This class describe that part of domain.
  *
  *
  * @member {number} nActivationId
