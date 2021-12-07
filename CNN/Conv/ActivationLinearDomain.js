@@ -6,10 +6,10 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 /**
  *
  * @member {number} min
- *   The lower bound of range.
+ *   The lower bound of the range.
  *
  * @member {number} max
- *   The upper bound of range.
+ *   The upper bound of the range.
  */
 class MinMax {
 
@@ -23,7 +23,7 @@ class MinMax {
 
 
 /**
- * Describe a scale (i.e. multiplier) value and a translate (i.e. offset; bias) value)
+ * Describe a scale (i.e. multiplier) value, and then a translate (i.e. offset; bias) value after the scale.
  *
  */
 class ScaleTranslate {
@@ -31,6 +31,28 @@ class ScaleTranslate {
   constructor( scale, translate ) {
     this.scale = scale;
     this.translate = translate;
+  }
+
+  /**
+   * Set this.scale and this.translate for mapping values from sourceMinMax to targetMinMax.
+   *
+   * @param {MinMax} sourceMinMax
+   *   The range of the source value.
+   *
+   * @param {MinMax} targetMinMax
+   *   The range of the target value.
+   */
+  setBy_FromTo( sourceMinMax, targetMinMax ) {
+
+//!!! ...unfinished... (2021/12/07)
+    // y = 
+
+    let scale = this.distanceLowerUpper / distanceMinMax;
+
+    let translate = this.lowerBound - min;
+
+//!!! ...unfinished... (2021/12/07) translate then scale? scale then translate?
+
   }
 
 }
@@ -62,23 +84,6 @@ class Base {
     this.linearDomain = new MinMax( lowerBound, upperBound );
   }
 
-  /**
-   *
-   * @return {ScaleTranslate}
-   *   Return { scale, translate } for moving [ possibleMin, possibleMax ] into [ this.lowerBound, this.upperBound ].
-   */
-  calc_ScaleTranslate_for_moveIntoLinearDomain( possibleMin, possibleMax ) {
-
-    let originalDomain = new MinMax( possibleMin, possibleMax );
-
-
-    let scale = this.distanceLowerUpper / distanceMinMax;
-
-    let translate = this.lowerBound - min;
-
-//!!! ...unfinished... (2021/12/07) translate then scale? scale then translate?
-
-  }
 }
 
 
