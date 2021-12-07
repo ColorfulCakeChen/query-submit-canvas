@@ -55,17 +55,18 @@ class ScaleTranslate {
     //     = ( ( target.difference / source.difference ) * x ) + ( target.min - ( ( target.difference * source.min ) / source.difference ) )
     //     = ( scale * x ) + translate
     //
-    // scale = ( target.difference / source.difference )
-    // translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) )
+    // Got
+    //   scale = ( target.difference / source.difference )
+    //   translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) )
     //
+    // For example,
+    //   - from [ 2, 12 ] to [ -3, -1 ]
+    //   - scale  = 0.2
+    //   - translate = -3.4
     //
-    //
-    //
-    //
+    this.scale = ( target.difference / source.difference );
+    this.translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) );
 
-    let scale = this.distanceLowerUpper / distanceMinMax;
-
-    let translate = this.lowerBound - min;
 
 //!!! ...unfinished... (2021/12/07) translate then scale? scale then translate?
 
