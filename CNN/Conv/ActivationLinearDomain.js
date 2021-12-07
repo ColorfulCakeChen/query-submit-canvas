@@ -19,7 +19,6 @@ class MinMax {
     this.difference = this.max - this.min;
   }
 
-
   /**
    * @param {MinMax} target
    *   The range of the target value.
@@ -88,28 +87,8 @@ class ScaleTranslate {
    *   The range of the target value.
    */
   setBy_FromTo( source, target ) {
-
-    // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
-    //
-    //   y = target.min + ( target.difference * ( x - source.min ) / source.difference )
-    //     = target.min + ( ( ( target.difference * x ) - ( target.difference * source.min ) ) / source.difference )
-    //     = target.min + ( ( ( target.difference * x ) / source.difference ) - ( ( target.difference * source.min ) / source.difference ) )
-    //     = target.min + ( ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference ) )
-    //     = target.min + ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference )
-    //     = ( ( target.difference / source.difference ) * x ) + ( target.min - ( ( target.difference * source.min ) / source.difference ) )
-    //     = ( scale * x ) + translate
-    //
-    // Got:
-    //   scale = ( target.difference / source.difference )
-    //   translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) )
-    //
-    // For example:
-    //   - from [ 2, 12 ] to [ -3, -1 ]
-    //   - scale  = 0.2
-    //   - translate = -3.4
-    //
-    this.scale = ( target.difference / source.difference );
-    this.translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) );
+    this.scale = source.getScale_ForTo( target );
+    this.translate = source.getTranslate_ForTo( target );
   }
 
   /**
@@ -120,14 +99,13 @@ class ScaleTranslate {
    *   The range of the target value.
    *
    * @return {ScaleTranslate}
-   *   Create and return for mapping values from sourceMinMax to targetMinMax.
+   *   Create and return { scale, translate } for mapping values from sourceMinMax to targetMinMax.
    */
   static createBy_FromTo( source, target ) {
-    // (Please see ScaleTranslate.setBy_FromTo())
-    let scale = ( target.difference / source.difference );
-    let translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) );
-    let r = new ScaleTranslate( scale, translate );
-    return r;
+    let scale = source.getScale_ForTo( target );
+    let translate = source.getTranslate_ForTo( target );
+    let result = new ScaleTranslate( scale, translate );
+    return result;
   }
 
 }
