@@ -37,6 +37,20 @@ class filtersTensor4d_biasesTensor3d {
  * It is usually used in the inferenced higher half channels of the output channel (for achieving ShuffleNetV2_ByMopbileNetV1).
  *
  *
+ * @member {number}  inputChannelCount      The channel count of input.
+ * @member {number}  outputChannelCount     The channel count of output.
+ * @member {number}  inputChannelIndexStart The channel count index (included) to start to be copied to the output.
+ * @member {boolean} bBias                  Whether generate biases (although all zeros).
+ *
+ * @member {number} filterValue
+ *   The value used as the pass-through pointwise convolution filter. Default is 1. If there will be no activation function after this
+ * pass-through convolution, value 1 is enough. However, if there wiil be an activation function, this the past-through result might
+ * be destroyed by the activation function. In order to alleviate this issue, a non-one filter value should be used. For example, if
+ * every input value's range is [ 0,255 ] and RELU6 will be used as activation function, using 0.015625 (= 1 / 64 ) as filterValue is
+ * appropriate because input values will be shrinked from [ 0, 255 ] into [ 0, 3.984375 ] which will not be changed by RELU6.
+ *
+ * @member {number} biasValue
+ *   Default is 0.
  *
  * @member {boolean} bInitOk
  *   If true, this object initialized (i.e. constructor()) successfully.
@@ -44,10 +58,6 @@ class filtersTensor4d_biasesTensor3d {
 class PassThrough extends filtersTensor4d_biasesTensor3d {
 
   /**
-   * @param {number}  inputChannelCount      The channel count of input.
-   * @param {number}  outputChannelCount     The channel count of output.
-   * @param {number}  inputChannelIndexStart The channel count index (included) to start to be copied to the output.
-   * @param {boolean} bBias                  Whether generate biases (although all zeros).
    */
   constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias ) {
     super();
