@@ -113,11 +113,13 @@ class PadInfoCalculator {
   }
 
   /**
+   * @param {number} filterValue
+   *   The (non-zero) value used in the pass-through depthwise convolution filter. Default is 1.
    *
    * @return {number[]} 
    *   Return the depthwise convolution filters which could pass the input to output unchangely.
    */
-  generate_PassThrough_FiltersArray() {
+  generate_PassThrough_FiltersArray( filterValue = 1 ) {
 
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === this.AvgMax_Or_ChannelMultiplier )
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === this.AvgMax_Or_ChannelMultiplier ) ) {
@@ -153,7 +155,10 @@ class PadInfoCalculator {
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
 
                 if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
-                  depthwiseFiltersArray[ filterIndex ] = 1; // The only one position with value one.
+//!!! (2021/12/07 Remarked)
+//                  depthwiseFiltersArray[ filterIndex ] = 1; // The only one position with value one.
+                  depthwiseFiltersArray[ filterIndex ] = filterValue; // The only one position with value non-zero.
+                  filterValue
                 } else {
                   depthwiseFiltersArray[ filterIndex ] = 0; // All other positions of the filter are value zero.
                 }
@@ -182,6 +187,20 @@ class PadInfoCalculator {
  * It is usually used in passing the higher half channels of the input to output (for achieving ShuffleNetV2_ByMopbileNetV1's body/tail).
  *
  *
+ * @member {number} filterValue
+ *   The value used as the pass-through depthwise convolution filter. Default is 1. If there will be no activation function after this
+ * pass-through operation, value 1 is enough. However, if there wiil be an activation function, this past-through result might be
+ * destroyed by the activation function. In order to alleviate this issue, a non-one filter value should be used. For example, if
+ * every input value's range is [ 0,255 ] and RELU6 will be used as activation function, using 0.015625 (= 1 / 64 ) as filterValue is
+ * appropriate because input values will be shrinked from [ 0, 255 ] into [ 0, 3.984375 ] which will still be kept linear by RELU6.
+ *
+ * @member {number} biasValue
+ *   The value used as the pass-through bias (used only if ( bBias == true ) ). Default is 0. If there will be no activation function
+ * after this pass-through operation, value 0 is enough. However, if there wiil be an activation function, this past-through result
+ * might be destroyed by the activation function. In order to alleviate this issue, a non-zero bias value should be used. For example,
+ * if every input value's range is [ -2, +2 ] and RELU6 will be used as activation function, using +2 as biasValue is appropriate
+ * because input values will be shifted from [ -2, +2 ] into [ 0, 4 ] which will still be kept linear by RELU6.
+ *
  * @member {number[]} depthwiseFiltersArray
  *   The depthwise convolution filter which could pass the input to output unchangely.
  *
@@ -192,87 +211,17 @@ class PassThrough extends PadInfoCalculator {
 
   /**
    */
-  constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias ) {
-
-//!!! (2021/12/03 Remarked) call generate_PassThrough_FiltersArray() instead.
-//     this.padInfo = new PadInfoCalculator( imageInHeight, imageInWidth, imageInDepth,
-//       AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad );
-//
-//     this.bBias = bBias;
-//
-//     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
-//         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
-//       return; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
-//     }
-//
-//     let { filterWidth, channelMultiplier, dilationHeight, dilationWidth,
-//           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
-//           imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = this.padInfo;
-//
-//     // There is only one position (inside the effect depthwise filter) with value one. All other positions of the filter should be zero.
-//     let oneEffectFilterY = padHeightTop;
-//     let oneEffectFilterX = padWidthLeft;
-//
-//     // Make up a depthwise convolution filter which 
-//     this.depthwiseFiltersArray = new Array( filterHeight * filterWidth * imageInDepth * channelMultiplier );
-//
-//     // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
-//     for ( let inChannel = 0; inChannel < imageInDepth; ++inChannel ) {
-//
-//       for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
-//
-//         for ( let filterY = 0, effectFilterY = 0; filterY < filterHeight; ++filterY ) {
-//           for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY, ++effectFilterY ) {
-//             let filterIndexBaseX = ( filterY * filterWidth );
-//
-//             for ( let filterX = 0, effectFilterX = 0; filterX < filterWidth; ++filterX ) {
-//               for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX, ++effectFilterX ) {
-//
-//                 // The filter's dilation part can not be manipulated. (They are always zero.)
-//                 if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-//                   continue;
-//
-//                 let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
-//                 let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
-//
-//                 let filterIndex = filterIndexBaseSubC + outChannelSub;
-//
-//                 if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
-//                   this.depthwiseFiltersArray[ filterIndex ] = 1; // The only one position with value one.
-//                 } else {
-//                   this.depthwiseFiltersArray[ filterIndex ] = 0; // All other positions of the filter are value zero.
-//                 }
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//
-//     let filtersShape = [ filterHeight, filterWidth, imageInDepth, channelMultiplier ];
-//     let biasesShape =  [ 1, 1, imageOutDepth ];
-//
-//     [ this.filtersTensor4d, this.biasesTensor3d ] = tf.tidy( () => {
-//
-//       // Generate depthwise filters for just pass input to output.
-//       let filtersTensor4d = tf.tensor( this.depthwiseFiltersArray, filtersShape );
-//
-//       // Generate bias for just adding zero. (i.e. equals no bias).
-//       let biasesTensor3d;
-//       if ( this.bBias ) {
-//         biasesTensor3d = tf.zero( biasesShape );
-//       }
-//
-//       this.bInitOk = true;
-//
-//       return [ filtersTensor4d, biasesTensor3d ];
-//     });
-
+  constructor(
+    imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias,
+    filterValue = 1, biasValue = 0 ) {
 
     super( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad );
 
     this.bBias = bBias;
-    this.depthwiseFiltersArray = this.generate_PassThrough_FiltersArray();
+    this.filterValue = filterValue;
+    this.biasValue = biasValue;
+
+    this.depthwiseFiltersArray = this.generate_PassThrough_FiltersArray( filterValue );
 
     let filtersShape = [ this.filterHeight, this.filterWidth, this.imageInDepth, this.channelMultiplier ];
 
@@ -282,7 +231,9 @@ class PassThrough extends PadInfoCalculator {
     // Generate bias for just adding zero. (i.e. equals no bias).
     if ( this.bBias ) {
       let biasesShape =  [ 1, 1, this.imageOutDepth ];
-      this.biasesTensor3d = tf.zero( biasesShape );
+//!!! (2021/12/07 Remarked)
+//      this.biasesTensor3d = tf.zero( biasesShape );
+      this.biasesTensor3d = tf.fill( biasesShape, biasValue );
     }
 
     this.bInitOk = true;
