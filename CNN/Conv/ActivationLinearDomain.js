@@ -19,6 +19,51 @@ class MinMax {
     this.difference = this.max - this.min;
   }
 
+
+  /**
+   * @param {MinMax} target
+   *   The range of the target value.
+   *
+   * @return {number}
+   *   Return the scale value for mapping values from this range to target range.
+   */
+  getScale_ForTo( target ) {
+
+    // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
+    //
+    //   y = target.min + ( target.difference * ( x - source.min ) / source.difference )
+    //     = target.min + ( ( ( target.difference * x ) - ( target.difference * source.min ) ) / source.difference )
+    //     = target.min + ( ( ( target.difference * x ) / source.difference ) - ( ( target.difference * source.min ) / source.difference ) )
+    //     = target.min + ( ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference ) )
+    //     = target.min + ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference )
+    //     = ( ( target.difference / source.difference ) * x ) + ( target.min - ( ( target.difference * source.min ) / source.difference ) )
+    //     = ( scale * x ) + translate
+    //
+    // Got:
+    //   scale = ( target.difference / source.difference )
+    //   translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) )
+    //
+    // For example:
+    //   - from [ 2, 12 ] to [ -3, -1 ]
+    //   - scale  = 0.2
+    //   - translate = -3.4
+    //
+    let scale = ( target.difference / this.difference );
+    return scale;
+  }
+
+  /**
+   * @param {MinMax} target
+   *   The range of the target value.
+   *
+   * @return {number}
+   *   Return the translate value for mapping values from this range to target range.
+   */
+  getTranslate_ForTo( target ) {
+    let translate = ( target.min - ( ( target.difference * this.min ) / this.difference ) ); // (Please see MinMax.getScale_ForTo().)
+    return translate;
+  }
+
 }
 
 
