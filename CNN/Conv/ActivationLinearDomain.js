@@ -57,7 +57,7 @@ class MinMax {
    * @return {number}
    *   Return the translate value for mapping values from this range to target range.
    */
-  getTranslate_ForTo( target ) {
+  getTranslate_ForMappingTo( target ) {
     let translate = ( target.min - ( ( target.difference * this.min ) / this.difference ) ); // (Please see MinMax.getScale_ForMappingTo().)
     return translate;
   }
@@ -87,7 +87,7 @@ class ScaleTranslate {
    */
   setBy_FromTo( source, target ) {
     this.scale = source.getScale_ForMappingTo( target );
-    this.translate = source.getTranslate_ForTo( target );
+    this.translate = source.getTranslate_ForMappingTo( target );
   }
 
   /**
@@ -102,7 +102,7 @@ class ScaleTranslate {
    */
   static createBy_FromTo( source, target ) {
     let scale = source.getScale_ForMappingTo( target );
-    let translate = source.getTranslate_ForTo( target );
+    let translate = source.getTranslate_ForMappingTo( target );
     let result = new ScaleTranslate( scale, translate );
     return result;
   }
