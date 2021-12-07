@@ -1,6 +1,25 @@
-export { ScaleTranslate, Base };
+export { MinMax, ScaleTranslate, Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
+
+
+/**
+ *
+ * @member {number} min
+ *   The lower bound of range.
+ *
+ * @member {number} max
+ *   The upper bound of range.
+ */
+class MinMax {
+
+  constructor( min, max ) {
+    this.min = Math.min( min, max ); // Confirm ( min <= max ).
+    this.max = Math.max( min, max );
+    this.difference = this.max - this.min;
+  }
+
+}
 
 
 /**
@@ -26,21 +45,21 @@ class ScaleTranslate {
  * @member {number} nActivationId
  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
  *
- * @member {number} lowerBound
- *   The lower bound of domain (i.e. input value of the activation function) for keeping the output almost linear.
- *
- * @member {number} upperBound
- *   The upper bound of domain (i.e. input value of the activation function) for keeping the output almost linear.
- *
- *
+ * @member {MinMax} linearDomain
+ *   The domain (i.e. input value of the activation function) could keep the output almost linear.
  */
 class Base {
 
+  /**
+   * @member {number} lowerBound
+   *   The lower bound of domain (i.e. input value of the activation function) for keeping the output almost linear.
+   *
+   * @member {number} upperBound
+   *   The upper bound of domain (i.e. input value of the activation function) for keeping the output almost linear.
+   */
   constructor( nActivationId, lowerBound, upperBound ) {
     this.nActivationId = nActivationId;
-    this.lowerBound = Math.min( lowerBound, upperBound ); // Confirm ( lowerBound <= upperBound ).
-    this.upperBound = Math.max( lowerBound, upperBound );
-    this.distanceLowerUpper = this.upperBound - this.lowerBound;
+    this.linearDomain = new MinMax( lowerBound, upperBound );
   }
 
   /**
@@ -50,9 +69,8 @@ class Base {
    */
   calc_ScaleTranslate_for_moveIntoLinearDomain( possibleMin, possibleMax ) {
 
-    let min = Math.min( possibleMin, possibleMax );
-    let max = Math.max( possibleMin, possibleMax );
-    let distanceMinMax = max - min;
+    let originalDomain = new MinMax( possibleMin, possibleMax );
+
 
     let scale = this.distanceLowerUpper / distanceMinMax;
 
