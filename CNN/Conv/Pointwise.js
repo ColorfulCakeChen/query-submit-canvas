@@ -26,6 +26,11 @@ class filtersTensor4d_biasesTensor3d {
 }
 
 
+
+//!!! ...unfinished... (2021/12/07)
+// Problem: Although depthwise (and pointwise) convolution could be past-through, the activation function will destroy the past-through result.
+
+
 /**
  * A pointwise convolution and bias which just pass the input to output.
  *
