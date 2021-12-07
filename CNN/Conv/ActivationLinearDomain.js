@@ -1,6 +1,21 @@
-export {};
+export { ScaleTranslate, Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
+
+
+/**
+ * Describe a scale (i.e. multiplier) value and a translate (i.e. offset; bias) value)
+ *
+ */
+class ScaleTranslate {
+
+  constructor( scale, translate ) {
+    this.scale = scale;
+    this.translate = translate;
+  }
+
+}
+
 
 /**
  * Describe the input value lower and upper bounds of an activation function for keeping the output almost linear.
@@ -20,13 +35,32 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  *
  */
 class Base {
-  
+
   constructor( nActivationId, lowerBound, upperBound ) {
     this.nActivationId = nActivationId;
     this.lowerBound = Math.min( lowerBound, upperBound ); // Confirm ( lowerBound <= upperBound ).
     this.upperBound = Math.max( lowerBound, upperBound );
+    this.distanceLowerUpper = this.upperBound - this.lowerBound;
   }
 
+  /**
+   *
+   * @return {ScaleTranslate}
+   *   Return { scale, translate } for moving [ possibleMin, possibleMax ] into [ this.lowerBound, this.upperBound ].
+   */
+  calc_ScaleTranslate_for_moveIntoLinearDomain( possibleMin, possibleMax ) {
+
+    let min = Math.min( possibleMin, possibleMax );
+    let max = Math.max( possibleMin, possibleMax );
+    let distanceMinMax = max - min;
+
+    let scale = this.distanceLowerUpper / distanceMinMax;
+
+    let translate = this.lowerBound - min;
+
+//!!! ...unfinished... (2021/12/07) translate then scale? scale then translate?
+
+  }
 }
 
 
