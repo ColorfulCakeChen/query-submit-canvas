@@ -76,6 +76,8 @@ class PassThrough extends filtersTensor4d_biasesTensor3d {
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
     this.bBias = bBias;
+    this.filterValue = filterValue;
+    this.biasValue = biasValue;
 
     if ( inputChannelCount <= 0 )
       throw `Pointwise.PassThrough.constructor(): inputChannelCount ( ${inputChannelCount} ) must be positive integer.`;
