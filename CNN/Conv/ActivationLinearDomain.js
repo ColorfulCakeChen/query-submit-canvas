@@ -19,49 +19,6 @@ class MinMax {
     this.difference = this.max - this.min;
   }
 
-  /**
-   * @param {MinMax} target
-   *   The range of the target value.
-   *
-   * @return {number}
-   *   Return the scale value for mapping values from this range to target range.
-   */
-  getScale_ForMappingTo( target ) {
-    // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
-    //
-    //   y = target.min + ( target.difference * ( x - source.min ) / source.difference )
-    //     = target.min + ( ( ( target.difference * x ) - ( target.difference * source.min ) ) / source.difference )
-    //     = target.min + ( ( ( target.difference * x ) / source.difference ) - ( ( target.difference * source.min ) / source.difference ) )
-    //     = target.min + ( ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference ) )
-    //     = target.min + ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference )
-    //     = ( ( target.difference / source.difference ) * x ) + ( target.min - ( ( target.difference * source.min ) / source.difference ) )
-    //     = ( scale * x ) + translate
-    //
-    // Got:
-    //   scale = ( target.difference / source.difference )
-    //   translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) )
-    //
-    // For example:
-    //   - from [ 2, 12 ] to [ -3, -1 ]
-    //   - scale  = 0.2
-    //   - translate = -3.4
-    //
-    let scale = ( target.difference / this.difference );
-    return scale;
-  }
-
-  /**
-   * @param {MinMax} target
-   *   The range of the target value.
-   *
-   * @return {number}
-   *   Return the translate value for mapping values from this range to target range.
-   */
-  getTranslate_ForMappingTo( target ) {
-    let translate = ( target.min - ( ( target.difference * this.min ) / this.difference ) ); // (Please see MinMax.getScale_ForMappingTo().)
-    return translate;
-  }
-
 }
 
 
@@ -86,8 +43,29 @@ class ScaleTranslate {
    *   The range of the target value.
    */
   setBy_FromTo( source, target ) {
-    this.scale = source.getScale_ForMappingTo( target );
-    this.translate = source.getTranslate_ForMappingTo( target );
+    // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
+    //
+    //   y = target.min + ( target.difference * ( x - source.min ) / source.difference )
+    //     = target.min + ( ( ( target.difference * x ) - ( target.difference * source.min ) ) / source.difference )
+    //     = target.min + ( ( ( target.difference * x ) / source.difference ) - ( ( target.difference * source.min ) / source.difference ) )
+    //     = target.min + ( ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference ) )
+    //     = target.min + ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference )
+    //     = ( ( target.difference / source.difference ) * x ) + ( target.min - ( ( target.difference * source.min ) / source.difference ) )
+    //     = ( scale * x ) + translate
+    //
+    // Got:
+    //   scale = ( target.difference / source.difference )
+    //   translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) )
+    //             = ( target.min - ( ( target.difference / source.difference ) * source.min ) )
+    //             = ( target.min - ( scale * source.min ) )
+    //
+    // For example:
+    //   - from [ 2, 12 ] to [ -3, -1 ]
+    //   - scale  = 0.2
+    //   - translate = -3.4
+    //
+    this.scale = ( target.difference / source.difference );
+    this.translate = ( target.min - ( this.scale * source.min ) );
   }
 
   /**
@@ -101,9 +79,8 @@ class ScaleTranslate {
    *   Create and return { scale, translate } for mapping values from sourceMinMax to targetMinMax.
    */
   static createBy_FromTo( source, target ) {
-    let scale = source.getScale_ForMappingTo( target );
-    let translate = source.getTranslate_ForMappingTo( target );
-    let result = new ScaleTranslate( scale, translate );
+    let result = new ScaleTranslate();
+    result.setBy_FromTo( source, target );
     return result;
   }
 
