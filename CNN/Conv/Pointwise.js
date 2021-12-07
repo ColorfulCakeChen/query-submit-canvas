@@ -44,13 +44,17 @@ class filtersTensor4d_biasesTensor3d {
  *
  * @member {number} filterValue
  *   The value used as the pass-through pointwise convolution filter. Default is 1. If there will be no activation function after this
- * pass-through convolution, value 1 is enough. However, if there wiil be an activation function, this the past-through result might
- * be destroyed by the activation function. In order to alleviate this issue, a non-one filter value should be used. For example, if
+ * pass-through operation, value 1 is enough. However, if there wiil be an activation function, this past-through result might be
+ * destroyed by the activation function. In order to alleviate this issue, a non-one filter value should be used. For example, if
  * every input value's range is [ 0,255 ] and RELU6 will be used as activation function, using 0.015625 (= 1 / 64 ) as filterValue is
  * appropriate because input values will be shrinked from [ 0, 255 ] into [ 0, 3.984375 ] which will not be changed by RELU6.
  *
  * @member {number} biasValue
- *   Default is 0.
+ *   The value used as the pass-through bias (used only if ( bBias == true ) ). Default is 0. If there will be no activation function
+ * after this pass-through operation, value 0 is enough. However, if there wiil be an activation function, this past-through result
+ * might be destroyed by the activation function. In order to alleviate this issue, a non-zero bias value should be used. For example,
+ * if every input value's range is [ -2, +2 ] and RELU6 will be used as activation function, using +2 as biasValue is appropriate
+ * because input values will be shifted from [ -2, +2 ] into [ 0, 4 ] which will not be changed by RELU6.
  *
  * @member {boolean} bInitOk
  *   If true, this object initialized (i.e. constructor()) successfully.
@@ -59,7 +63,7 @@ class PassThrough extends filtersTensor4d_biasesTensor3d {
 
   /**
    */
-  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias ) {
+  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
     super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
