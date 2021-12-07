@@ -47,7 +47,20 @@ class ScaleTranslate {
 //!!! ...unfinished... (2021/12/07)
     // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
     //
-    // y = target.min + ( target.difference * ( x - source.min ) / source.difference )
+    //   y = target.min + ( target.difference * ( x - source.min ) / source.difference )
+    //     = target.min + ( ( ( target.difference * x ) - ( target.difference * source.min ) ) / source.difference )
+    //     = target.min + ( ( ( target.difference * x ) / source.difference ) - ( ( target.difference * source.min ) / source.difference ) )
+    //     = target.min + ( ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference ) )
+    //     = target.min + ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference )
+    //     = ( ( target.difference / source.difference ) * x ) + ( target.min - ( ( target.difference * source.min ) / source.difference ) )
+    //     = ( scale * x ) + translate
+    //
+    // scale = ( target.difference / source.difference )
+    // translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) )
+    //
+    //
+    //
+    //
     //
 
     let scale = this.distanceLowerUpper / distanceMinMax;
