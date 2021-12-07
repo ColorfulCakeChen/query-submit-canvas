@@ -27,7 +27,6 @@ class MinMax {
    *   Return the scale value for mapping values from this range to target range.
    */
   getScale_ForTo( target ) {
-
     // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
     //
     //   y = target.min + ( target.difference * ( x - source.min ) / source.difference )
