@@ -44,7 +44,6 @@ class ScaleTranslate {
    */
   setBy_FromTo( source, target ) {
 
-//!!! ...unfinished... (2021/12/07)
     // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
     //
     //   y = target.min + ( target.difference * ( x - source.min ) / source.difference )
@@ -55,21 +54,35 @@ class ScaleTranslate {
     //     = ( ( target.difference / source.difference ) * x ) + ( target.min - ( ( target.difference * source.min ) / source.difference ) )
     //     = ( scale * x ) + translate
     //
-    // Got
+    // Got:
     //   scale = ( target.difference / source.difference )
     //   translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) )
     //
-    // For example,
+    // For example:
     //   - from [ 2, 12 ] to [ -3, -1 ]
     //   - scale  = 0.2
     //   - translate = -3.4
     //
     this.scale = ( target.difference / source.difference );
     this.translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) );
+  }
 
-
-//!!! ...unfinished... (2021/12/07) translate then scale? scale then translate?
-
+  /**
+   * @param {MinMax} source
+   *   The range of the source value.
+   *
+   * @param {MinMax} target
+   *   The range of the target value.
+   *
+   * @return {ScaleTranslate}
+   *   Create and return for mapping values from sourceMinMax to targetMinMax.
+   */
+  static createBy_FromTo( source, target ) {
+    // (Please see ScaleTranslate.setBy_FromTo())
+    let scale = ( target.difference / source.difference );
+    let translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) );
+    let r = new ScaleTranslate( scale, translate );
+    return r;
   }
 
 }
