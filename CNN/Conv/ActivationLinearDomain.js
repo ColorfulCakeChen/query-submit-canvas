@@ -36,16 +36,19 @@ class ScaleTranslate {
   /**
    * Set this.scale and this.translate for mapping values from sourceMinMax to targetMinMax.
    *
-   * @param {MinMax} sourceMinMax
+   * @param {MinMax} source
    *   The range of the source value.
    *
-   * @param {MinMax} targetMinMax
+   * @param {MinMax} target
    *   The range of the target value.
    */
-  setBy_FromTo( sourceMinMax, targetMinMax ) {
+  setBy_FromTo( source, target ) {
 
 //!!! ...unfinished... (2021/12/07)
-    // y = 
+    // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
+    //
+    // y = target.min + ( target.difference * ( x - source.min ) / source.difference )
+    //
 
     let scale = this.distanceLowerUpper / distanceMinMax;
 
