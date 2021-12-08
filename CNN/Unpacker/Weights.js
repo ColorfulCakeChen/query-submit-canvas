@@ -159,7 +159,6 @@ class Base {
   static Float32Array_CloneLegal( sourceArray ) {
     const POSITIVE_MIN = Math.pow( 2, -24 );
     const POSITIVE_MAX = Math.pow( 2, +24 );
-
     const NEGATIVE_MIN = - POSITIVE_MAX; // - Math.pow( 2, +24 )
     const NEGATIVE_MAX = - POSITIVE_MIN; // - Math.pow( 2, -24 )
 
