@@ -3,6 +3,7 @@ export { Base };
 //import * as NetProgress from "./NetProgress.js";
 import * as NetConfig from "../NetConfig.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as Weights from "../Unpacker/Weights.js";
 import * as ConvBlock from "../Conv/Block.js";
 
 /**
@@ -40,7 +41,8 @@ class Base {
     this.config = config;
     this.bKeepInputTensor = bKeepInputTensor;
 
-//!!! ...unfinished... (2021/12/08) should call Weights.Float32Array_CloneLegal() on the weights array to restrict the weight value range.
+//!!! ...unfinished... (2021/12/08)
+// should call Weights.Base.ValueBounds.Float32Array_RestrictedClone() on the weights array to restrict the weight value range.
 
 
     let targetHeight = 1; // The final output always has ( height x width ) = ( 1 x 1 ), i.e. only one pixel per channel.
