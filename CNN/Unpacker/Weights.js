@@ -1,9 +1,5 @@
 export { Base, To, Params };
 
-// import * as ParamDesc from "./ParamDesc.js";
-// import * as ValueDesc from "./ValueDesc.js";
-// import * as ValueRange from "./ValueRange.js";
-
 /**
  * A base class for extracting and keeping weights. It composes of a Float32Array and a shape. It can
  * be used as CNN (depthwise, pointwise and bias) filter weights.
@@ -106,6 +102,8 @@ class Base {
     let legalByteOffsetEnd = input.byteOffset + input.byteLength;
     if ( byteOffsetEnd > legalByteOffsetEnd )
       return false;  // Failed, if shape is too large (or NaN).
+
+//!!! ...unfinished... (2021/12/08) Restrict weight value between [ - 2^(-24), 2^24 ]. If ( Number.isNaN() == true ), let become 0.
 
     this.weights = new Float32Array( input.buffer, byteOffsetBegin, weightCount );  // Share the underlying array buffer.
     return true;     // Success.
