@@ -40,6 +40,9 @@ class Base {
     this.config = config;
     this.bKeepInputTensor = bKeepInputTensor;
 
+//!!! ...unfinished... (2021/12/08) should call Weights.Float32Array_CloneLegal() on the weights array to restrict the weight value range.
+
+
     let targetHeight = 1; // The final output always has ( height x width ) = ( 1 x 1 ), i.e. only one pixel per channel.
 
     let differenceHeight = config.sourceHeight - targetHeight;
