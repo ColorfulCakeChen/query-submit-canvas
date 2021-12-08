@@ -1,5 +1,6 @@
 export { filtersTensor4d_biasesTensor3d, PassThrough, AllZeros, Base };
 
+import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
@@ -242,6 +243,23 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
     this.bInitOk = true;
   }
 
+}
+
+
+//!!! ...unfinished... (2021/12/08)
+/**
+ *
+ */
+class Bounds {
+  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId ) {
+
+//!!! ...unfinished... (2021/12/08)
+//     this.input = new FloatValue.Bounds( ??? );
+//     this.filterAfter = new FloatValue.Bounds( ??? );
+//     this.biasAfter = new FloatValue.Bounds( ??? );
+//     this.activationAfter = new FloatValue.Bounds( ??? );
+//     this.output = new FloatValue.Bounds( ??? );
+  }
 }
 
 
