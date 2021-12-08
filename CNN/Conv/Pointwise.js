@@ -1,4 +1,4 @@
-export { filtersTensor4d_biasesTensor3d, PassThrough, AllZeros, Base };
+export { filtersTensor4d_biasesTensor3d, PassThrough, AllZeros, ValueBounds, Base };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
@@ -250,7 +250,7 @@ class AllZeros extends filtersTensor4d_biasesTensor3d {
 /**
  *
  */
-class Bounds {
+class ValueBounds {
   constructor( inputChannelCount, outputChannelCount, bBias, nActivationId ) {
 
 //!!! ...unfinished... (2021/12/08)
