@@ -125,7 +125,7 @@ class Base {
    *   - Suppose depthwise uses 4x4 (= 2^4) filter for every channel.
    *   - Suppose every convolution does not have activation function (so that its result is unbounded).
    *   - If every Math.abs( pointwise1Input ) is restected to 0 or between [ 2^(-24), 2^24 ].
-   *   - If every Math.abs( weight ) of pointwise1, depthwise, pointwise2 is restected either 0 or between [ 2^(-24), 2^24 ].
+   *   - If every Math.abs( weight ) of pointwise1, depthwise, pointwise2 is restected to 0 or between [ 2^(-24), 2^24 ].
    *   - The Math.abs( pointwise1Result ) will be restriced to 0 or between [ 2^(-(24+24)), 2^(24+24+12) ] = [ 2^(-48), 2^60 ].
    *   - The Math.abs( depthwise1Result ) will be restriced to 0 or between [ 2^(-(48+24)), 2^(60+24+4) ] = [ 2^(-72), 2^88 ].
    *   - The Math.abs( pointwise2Result ) will be restriced to 0 or between [ 2^(-(72+24)), 2^(88+24+12) ] = [ 2^(-96), 2^124 ].
