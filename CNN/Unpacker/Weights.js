@@ -131,7 +131,7 @@ class Base {
    *   - The Math.abs( pointwise1Result ) will be restriced either 0 or between [ 2^(-(24+24)), 2^(24+24+12) ] = [ 2^(-48), 2^60 ].
    *   - The Math.abs( depthwise1Result ) will be restriced either 0 or between [ 2^(-(48+24)), 2^(60+24+4) ] = [ 2^(-72), 2^88 ].
    *   - The Math.abs( pointwise2Result ) will be restriced either 0 or between [ 2^(-(72+24)), 2^(88+24+12) ] = [ 2^(-96), 2^124 ].
-   *   - So the result still is legal float32 which could represents either 0 or between [ 2^(-126), 2^126 ].
+   *   - So the result still is legal float32 because Math.abs( float32 ) could be either 0 or between [ 2^(-126), 2^126 ].
    *
    * @param {Float32Array} source
    *   The source Float32Array.
