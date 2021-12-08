@@ -18,6 +18,31 @@ class Bounds {
     this.difference = this.upper - this.lower;
   }
 
+  /**
+   * Confirm:
+   *   - Every element is not NaN. (If it is, become 0.)
+   *   - Every element is between [ lower, upper ].
+   *
+   * @param {Float32Array} source
+   *   The source Float32Array.
+   *
+   * @return {Float32Array}
+   *   Return a copy of source. Every element (float32):
+   *     - If ( Number.isNaN( element ) == true ), let it become 0.
+   *     - Otherwise, Math.max( lower, Math.min( element, upper ) ).
+   */
+  Float32Array_RestrictedClone( sourceArray ) {
+    let resultArray = new Float32Array( sourceArray.length );
+    for ( let i = 0; i < sourceArray.length; ++i ) {
+      let element = sourceArray[ i ];
+      if ( Number.isNaN( element ) )
+        resultArray[ i ] = 0;
+      else
+        resultArray[ i ] = Math.max( this.lower, Math.min( element, this.upper ) );
+    }
+    return resultArray;
+  }
+  
 }
 
 
