@@ -128,9 +128,9 @@ class Base {
    *   - Suppose every convolution does not have activation function (so that its result is unbounded).
    *   - If every Math.abs( element ) of the input of pointwise1 is restected either 0 or between [ 2^(-24), 2^24 ].
    *   - If every Math.abs( weight ) of pointwise1, depthwise, pointwise2 is restected either 0 or between [ 2^(-24), 2^24 ].
-   *   - The Math.abs( pointwise1Result ) will be restriced either 0 or between [ 2^(-(24+10 + 2^4 + 10))
+   *???
+   *   - The Math.abs( pointwise1Result ) will be restriced either 0 or between [ 2^(-(24+24)), 2^(24+24+10) ] = [ 2^(-48), 2^58 ].
    *   - The Math.abs( result ) will be restriced either 0 or between [ 2^((-24) * (10 + 2^4 + 10))
-   *
    *
    * @param {Float32Array} source
    *   The source Float32Array.
