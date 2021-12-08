@@ -1,90 +1,7 @@
 export { MinMax, ScaleTranslate, Base };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
-
-
-/**
- *
- * @member {number} min
- *   The lower bound of the range.
- *
- * @member {number} max
- *   The upper bound of the range.
- */
-class MinMax {
-
-  constructor( min, max ) {
-    this.min = Math.min( min, max ); // Confirm ( min <= max ).
-    this.max = Math.max( min, max );
-    this.difference = this.max - this.min;
-  }
-
-}
-
-
-/**
- * Describe a scale (i.e. multiplier) value, and then a translate (i.e. offset; bias) value after the scale.
- *
- */
-class ScaleTranslate {
-
-  constructor( scale, translate ) {
-    this.scale = scale;
-    this.translate = translate;
-  }
-
-  /**
-   * Set this.scale and this.translate for mapping values from sourceMinMax to targetMinMax.
-   *
-   * @param {MinMax} source
-   *   The range of the source value.
-   *
-   * @param {MinMax} target
-   *   The range of the target value.
-   */
-  setBy_FromTo( source, target ) {
-    // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
-    //
-    //   y = target.min + ( target.difference * ( x - source.min ) / source.difference )
-    //     = target.min + ( ( ( target.difference * x ) - ( target.difference * source.min ) ) / source.difference )
-    //     = target.min + ( ( ( target.difference * x ) / source.difference ) - ( ( target.difference * source.min ) / source.difference ) )
-    //     = target.min + ( ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference ) )
-    //     = target.min + ( ( target.difference / source.difference ) * x ) - ( ( target.difference * source.min ) / source.difference )
-    //     = ( ( target.difference / source.difference ) * x ) + ( target.min - ( ( target.difference * source.min ) / source.difference ) )
-    //     = ( scale * x ) + translate
-    //
-    // Got:
-    //   scale = ( target.difference / source.difference )
-    //   translate = ( target.min - ( ( target.difference * source.min ) / source.difference ) )
-    //             = ( target.min - ( ( target.difference / source.difference ) * source.min ) )
-    //             = ( target.min - ( scale * source.min ) )
-    //
-    // For example:
-    //   - from [ 2, 12 ] to [ -3, -1 ]
-    //   - scale  = 0.2
-    //   - translate = -3.4
-    //
-    this.scale = ( target.difference / source.difference );
-    this.translate = ( target.min - ( this.scale * source.min ) );
-  }
-
-  /**
-   * @param {MinMax} source
-   *   The range of the source value.
-   *
-   * @param {MinMax} target
-   *   The range of the target value.
-   *
-   * @return {ScaleTranslate}
-   *   Create and return { scale, translate } for mapping values from sourceMinMax to targetMinMax.
-   */
-  static createBy_FromTo( source, target ) {
-    let result = new ScaleTranslate();
-    result.setBy_FromTo( source, target );
-    return result;
-  }
-
-}
+import * as FloatValue from "../Unpacker/FloatValue.js";
 
 
 /**
@@ -111,7 +28,10 @@ class Base {
    */
   constructor( nActivationId, lowerBound, upperBound ) {
     this.nActivationId = nActivationId;
-    this.linearDomain = new MinMax( lowerBound, upperBound );
+    this.linearDomain = new FloatValue.Bounds( lowerBound, upperBound );
+
+//!!! ...unfinished... (2021/12/08)
+//    this.outputRange = new FloatValue.Bounds( lowerBound, upperBound );
   }
 
 }
