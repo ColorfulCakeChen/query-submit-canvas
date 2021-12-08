@@ -428,7 +428,7 @@ class HeightWidthDepth {
       POSITIVE_MAX,
     ] );
 
-    let outputArray = Weights.Float32Array_CloneLegal( inputArray );
+    let outputArray = Weights.Base.Float32Array_CloneLegal( inputArray );
 
     tf.util.assert( inputArray.length == outputArray.length,
       `test_Weights_Float32Array_CloneLegal(): `
