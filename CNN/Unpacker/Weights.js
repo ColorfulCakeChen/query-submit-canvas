@@ -115,8 +115,8 @@ class Base {
 
   /**
    * Confirm:
-   *   - Every element is not NaN.
-   *   - The smallest non-zero Math.abs( element ) is 2^(-24).
+   *   - Every element is not NaN. (If it is, become 0.)
+   *   - The smallest non-zero Math.abs( element ) is 2^(-24). (i.e. If ( -2^(-24) < element < +2^(-24) ), become 0.)
    *   - The largest Math.abs( element ) is 2^(+24).
    *
    * This is mainly for ensuring PointDepthPoint's output is legal float32:
@@ -161,23 +161,19 @@ class Base {
       if ( Number.isNaN( element ) ) {
         restricted = 0;
 
-      } else if ( element > 0 ) {
+      } else if ( element >= POSITIVE_MIN ) {
         if ( element > POSITIVE_MAX )
           restricted = POSITIVE_MAX;
-        else if ( element < POSITIVE_MIN )
-          restricted = 0; // Truncate the element value to zero. (Not to POSITIVE_MIN.)
         else
           restricted = element;
 
-      } else if ( element < 0 ) {
-        if ( element > NEGATIVE_MAX )
-          restricted = 0; // Truncate the element value to zero. (Not to NEGATIVE_MAX.)
-        else if ( element < NEGATIVE_MIN )
+      } else if ( element <= NEGATIVE_MAX ) {
+        if ( element < NEGATIVE_MIN )
           restricted = NEGATIVE_MIN;
         else
           restricted = element;
 
-      } else { // ( element == 0 )
+      } else { // ( NEGATIVE_MAX < element < POSITIVE_MIN ) (Note: Zero is inside.)
         restricted = 0;
       }
 
