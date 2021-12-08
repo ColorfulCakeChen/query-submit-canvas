@@ -1,5 +1,6 @@
-export { PadInfoCalculator, PassThrough, Base };
+export { PadInfoCalculator, PassThrough, ValueBounds, Base };
 
+import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
@@ -249,6 +250,23 @@ class PassThrough extends PadInfoCalculator {
       this.biasesTensor3d.dispose();
       this.biasesTensor3d = null;
     }
+  }
+}
+
+
+//!!! ...unfinished... (2021/12/08)
+/**
+ *
+ */
+class ValueBounds {
+  constructor( inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, bBias, nActivationId ) {
+
+//!!! ...unfinished... (2021/12/08)
+//     this.input = new FloatValue.Bounds( ??? );
+//     this.filterAfter = new FloatValue.Bounds( ??? );
+//     this.biasAfter = new FloatValue.Bounds( ??? );
+//     this.activationAfter = new FloatValue.Bounds( ??? );
+//     this.output = new FloatValue.Bounds( ??? );
   }
 }
 
