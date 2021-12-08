@@ -134,7 +134,20 @@ class Base {
    * The 2^24 as input element should be enough for most situation:
    *   - Color image: The R, G, B, A channels are 8 bits (2^8) individually.
    *   - Sound track: 8 bits (2^8), or 16 bits (2^16), or 20 bits (2^20), or 24 bits (2^24). But not 32 bits (2^32)
-   *   - Unicode cod point: 21 bits (2^21).
+   *   - Unicode character code point: 21 bits (2^21).
+   *
+   *
+   * <pre>
+   *              -2^(+24)       -2^(-24)                      +2^(-24)       +2^(+24)
+   *            NEGATIVE_MIN   NEGATIVE_MAX        0         POSITIVE_MIN   POSITIVE_MAX
+   *   --------------|--------------|--------------0--------------|--------------|--------------
+   *
+   *
+   * </pre>
+   *
+   *
+   *
+   *
    *
    *
    * @param {Float32Array} source
