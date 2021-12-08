@@ -124,14 +124,14 @@ class Base {
    *   - Suppose every convolution has 4096 (= 2^12) input channels.
    *   - Suppose depthwise uses 4x4 (= 2^4) filter for every channel.
    *   - Suppose every convolution does not have activation function (so that its result is unbounded).
-   *   - If every Math.abs( pointwise1Input ) is restected either 0 or between [ 2^(-24), 2^24 ].
+   *   - If every Math.abs( pointwise1Input ) is restected to 0 or between [ 2^(-24), 2^24 ].
    *   - If every Math.abs( weight ) of pointwise1, depthwise, pointwise2 is restected either 0 or between [ 2^(-24), 2^24 ].
-   *   - The Math.abs( pointwise1Result ) will be restriced either 0 or between [ 2^(-(24+24)), 2^(24+24+12) ] = [ 2^(-48), 2^60 ].
-   *   - The Math.abs( depthwise1Result ) will be restriced either 0 or between [ 2^(-(48+24)), 2^(60+24+4) ] = [ 2^(-72), 2^88 ].
-   *   - The Math.abs( pointwise2Result ) will be restriced either 0 or between [ 2^(-(72+24)), 2^(88+24+12) ] = [ 2^(-96), 2^124 ].
+   *   - The Math.abs( pointwise1Result ) will be restriced to 0 or between [ 2^(-(24+24)), 2^(24+24+12) ] = [ 2^(-48), 2^60 ].
+   *   - The Math.abs( depthwise1Result ) will be restriced to 0 or between [ 2^(-(48+24)), 2^(60+24+4) ] = [ 2^(-72), 2^88 ].
+   *   - The Math.abs( pointwise2Result ) will be restriced to 0 or between [ 2^(-(72+24)), 2^(88+24+12) ] = [ 2^(-96), 2^124 ].
    *   - So the result still is legal float32 because Math.abs( float32 ) could be either 0 or between [ 2^(-126), 2^126 ].
    *
-   * The 2^24 should be enough for most input situation:
+   * The 2^24 as input element should be enough for most situation:
    *   - Color image: The R, G, B, A channels are 8 bits (2^8) individually.
    *   - Sound track: 8 bits (2^8), or 16 bits (2^16), or 20 bits (2^20), or 24 bits (2^24). But not 32 bits (2^32)
    *   - Unicode cod point: 21 bits (2^21).
