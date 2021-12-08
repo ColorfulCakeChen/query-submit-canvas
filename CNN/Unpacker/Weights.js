@@ -103,8 +103,6 @@ class Base {
     if ( byteOffsetEnd > legalByteOffsetEnd )
       return false;  // Failed, if shape is too large (or NaN).
 
-//!!! ...unfinished... (2021/12/08) Restrict weight value between [ - 2^(-24), 2^24 ]. If ( Number.isNaN() == true ), let become 0.
-
     this.weights = new Float32Array( input.buffer, byteOffsetBegin, weightCount );  // Share the underlying array buffer.
     return true;     // Success.
   }
