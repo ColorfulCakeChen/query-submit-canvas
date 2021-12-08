@@ -204,26 +204,15 @@ class Base {
  *   - Suppose every convolution does not have activation function (so that its result is unbounded).
  *   - If every element of pointwise1Input is bounds to [ -2^24, +2^24 ].
  *   - If every element of weights of pointwise1, depthwise, pointwise2 is bounds to [ -2^24, +2^24 ].
- *   - Every element of pointwise1Result ) will be restriced to 0 or between [ 2^(-(24+24)), 2^(24+24+12) ] = [ 2^(-48), 2^60 ].
- *   - Every element of depthwiseResult  ) will be restriced to 0 or between [ 2^(-(48+24)), 2^(60+24+4)  ] = [ 2^(-72), 2^88 ].
- *   - The Math.abs( pointwise2Result ) will be restriced to 0 or between [ 2^(-(72+24)), 2^(88+24+12) ] = [ 2^(-96), 2^124 ].
- *   - So the result is still legal float32 because Math.abs( float32 ) could be either 0 or between [ 2^(-126), 2^126 ].
+ *   - Every element of pointwise1Result will be bounds to [ -2^(24+24+12), +2^(24+24+12) ] = [ -2^60,  +2^60  ].
+ *   - Every element of depthwiseResult  will be bounds to [ -2^(60+24+4),  +2^(60+24+4)  ] = [ -2^88,  +2^88  ].
+ *   - Every element of pointwise2Result will be bounds to [ -2^(88+24+12), +2^(88+24+12) ] = [ -2^124, +2^124 ].
+ *   - So the result is still legal float32 (which could represent floating-point value between [ -2^126, +2^126 ]).
  *
  * The 2^24 as input element should be enough for most situation:
  *   - Color image: The R, G, B, A channels are 8 bits (2^8) individually.
  *   - Sound track: 8 bits (2^8), or 16 bits (2^16), or 20 bits (2^20), or 24 bits (2^24). But not 32 bits (2^32)
  *   - Unicode character code point: 21 bits (2^21).
- *
- *
- * <pre>
- *              -2^(+24)       -2^(-24)                      +2^(-24)       +2^(+24)
- *            NEGATIVE_MIN   NEGATIVE_MAX        0         POSITIVE_MIN   POSITIVE_MAX
- *   --------------|--------------|--------------|--------------|--------------|--------------
- *
- * Restricted to:
- *                 |--------------|00000000000000000000000000000|--------------|
- * </pre>
- *
  */
 Base.ValueBounds = new FloatValue.Bounds( -( 2 ** 24 ), +( 2 ** 24 ) );
 
