@@ -133,6 +133,12 @@ class Base {
    *   - The Math.abs( pointwise2Result ) will be restriced either 0 or between [ 2^(-(72+24)), 2^(88+24+12) ] = [ 2^(-96), 2^124 ].
    *   - So the result still is legal float32 because Math.abs( float32 ) could be either 0 or between [ 2^(-126), 2^126 ].
    *
+   * The 2^24 should be enough for most input situation:
+   *   - Color image: The R, G, B, A channels are 8 bits (2^8) individually.
+   *   - Sound track: 8 bits (2^8), or 16 bits (2^16), or 20 bits (2^20), or 24 bits (2^24). But not 32 bits (2^32)
+   *   - Unicode cod point: 21 bits (2^21).
+   *
+   *
    * @param {Float32Array} source
    *   The source Float32Array.
    *
