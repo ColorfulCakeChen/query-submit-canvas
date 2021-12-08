@@ -35,10 +35,18 @@ class Bounds {
     let resultArray = new Float32Array( sourceArray.length );
     for ( let i = 0; i < sourceArray.length; ++i ) {
       let element = sourceArray[ i ];
-      if ( Number.isNaN( element ) )
-        resultArray[ i ] = 0;
-      else
+
+//!!! (2021/12/08 Remarked) Float32Array is initialized to 0.
+//       if ( Number.isNaN( element ) )
+//         resultArray[ i ] = 0;
+//       else
+//         resultArray[ i ] = Math.max( this.lower, Math.min( element, this.upper ) );
+      
+      if ( !Number.isNaN( element ) ) {
         resultArray[ i ] = Math.max( this.lower, Math.min( element, this.upper ) );
+
+      // NaN, let it become 0. Because Float32Array is initialized to zero by default, doing nothing is just the same as assigning zero.
+      }
     }
     return resultArray;
   }
