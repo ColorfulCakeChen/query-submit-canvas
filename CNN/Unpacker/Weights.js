@@ -123,14 +123,15 @@ class Base {
    *
    * This is mainly for ensuring PointDepthPoint's output is legal float32:
    *   - PointDepthPoint is composed of 3 convolutions: pointwise1-depthwise-pointwise2.
-   *   - Suppose every convolution has 1024 (= 2^10) input channels.
+   *   - Suppose every convolution has 4096 (= 2^12) input channels.
    *   - Suppose depthwise uses 4x4 (= 2^4) filter for every channel.
    *   - Suppose every convolution does not have activation function (so that its result is unbounded).
-   *   - If every Math.abs( element ) of the input of pointwise1 is restected either 0 or between [ 2^(-24), 2^24 ].
+   *   - If every Math.abs( pointwise1Input ) is restected either 0 or between [ 2^(-24), 2^24 ].
    *   - If every Math.abs( weight ) of pointwise1, depthwise, pointwise2 is restected either 0 or between [ 2^(-24), 2^24 ].
-   *???
-   *   - The Math.abs( pointwise1Result ) will be restriced either 0 or between [ 2^(-(24+24)), 2^(24+24+10) ] = [ 2^(-48), 2^58 ].
-   *   - The Math.abs( result ) will be restriced either 0 or between [ 2^((-24) * (10 + 2^4 + 10))
+   *   - The Math.abs( pointwise1Result ) will be restriced either 0 or between [ 2^(-(24+24)), 2^(24+24+12) ] = [ 2^(-48), 2^60 ].
+   *   - The Math.abs( depthwise1Result ) will be restriced either 0 or between [ 2^(-(48+24)), 2^(60+24+4) ] = [ 2^(-72), 2^88 ].
+   *   - The Math.abs( pointwise2Result ) will be restriced either 0 or between [ 2^(-(72+24)), 2^(88+24+12) ] = [ 2^(-96), 2^124 ].
+   *   - So the result still is legal float32 which could represents either 0 or between [ 2^(-126), 2^126 ].
    *
    * @param {Float32Array} source
    *   The source Float32Array.
