@@ -1,9 +1,11 @@
 export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeTensors };
 
+
 //import * as ValueMax from "../ValueMax.js";
 import * as ValueRange from "../Unpacker/ValueRange.js";
-//import * as ParamDesc from "../Unpacker/ParamDesc.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
+//import * as ParamDesc from "../Unpacker/ParamDesc.js";
+import * as Weights from "../Unpacker/Weights.js";
 //import * as TensorTools from "../util/TensorTools.js";
 import * as PointDepthPoint from "../Conv/PointDepthPoint.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
@@ -398,6 +400,55 @@ class HeightWidthDepth {
     tf.dispose( outputTensor3dArray );
   }
 
+  test_Weights_Float32Array_CloneLegal() {
+    let inputArray = new Float32Array( [
+                    Number.NaN,
+      Number.NEGATIVE_INFINITY,
+           -Math.pow( 2, +25 ), -Math.pow( 2, +24 ), -Math.pow( 2, +23 ),
+           -Math.pow( 2, -23 ), -Math.pow( 2, -24 ), -Math.pow( 2, -25 ),
+                             0,
+           +Math.pow( 2, -25 ), +Math.pow( 2, -24 ), +Math.pow( 2, -23 ),
+           +Math.pow( 2, +23 ), +Math.pow( 2, +24 ), +Math.pow( 2, +25 ),
+      Number.POSITIVE_INFINITY,
+    ] );
+
+    const POSITIVE_MIN = Math.pow( 2, -24 );
+    const POSITIVE_MAX = Math.pow( 2, +24 );
+    const NEGATIVE_MIN = - POSITIVE_MAX; // - Math.pow( 2, +24 )
+    const NEGATIVE_MAX = - POSITIVE_MIN; // - Math.pow( 2, -24 )
+
+    let verifyArray = new Float32Array( [
+                        0,
+             NEGATIVE_MIN,
+             NEGATIVE_MIN, NEGATIVE_MIN, -Math.pow( 2, +23 ),
+      -Math.pow( 2, -23 ), NEGATIVE_MAX,                   0,
+                        0,
+                        0, POSITIVE_MIN, +Math.pow( 2, -23 ),
+      +Math.pow( 2, +23 ), POSITIVE_MAX,        POSITIVE_MAX,
+      POSITIVE_MAX,
+    ] );
+
+    let outputArray = Weights.Float32Array_CloneLegal( inputArray );
+
+    tf.util.assert( inputArray.length == outputArray.length,
+      `test_Weights_Float32Array_CloneLegal(): `
+        + `inputArray.length ( ${inputArray.length} ) `
+        + `should be the same as outputArray.length ( ${outputArray.length} ).`
+    );
+
+    for ( let i = 0; i < inputArray.length; ++i ) {
+      let inputElement = inputArray[ i ];
+      let verifyElement = verifyArray[ i ];
+      let outputElement = outputArray[ i ];
+
+      tf.util.assert( outputElement == verifyElement,
+        `test_Weights_Float32Array_CloneLegal(): `
+          + `Weights.Float32Array_CloneLegal( inputArray[ ${i} ] = ${inputElement} ) `
+          + `should be ( ${verifyElement} ) but got ( ${outputElement} ).`
+      );
+    }
+  }
+
   test_ValueRange_valueInputOutputGenerator() {
 
     // Test ValueRange.Bool().valueInputOutputGenerator().
@@ -433,6 +484,7 @@ class HeightWidthDepth {
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
+    this.test_Weights_Float32Array_CloneLegal();
     this.test_ValueRange_valueInputOutputGenerator();
 
     tf.tidy( () => {
