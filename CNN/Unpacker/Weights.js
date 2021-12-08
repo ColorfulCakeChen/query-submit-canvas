@@ -114,6 +114,47 @@ class Base {
 
   get weightByteCount()          { return this.weights.byteLength; }
   get weightCount()              { return this.weights.length; }
+  
+  /**
+   * Confirm:
+   *   - Every element is not NaN, not infinity.
+   *   - The smallest non-zero Math.abs( element ) is 2^(-24).
+   *   - The largest Math.abs( element ) is 2^(+24).
+   *
+   * The reason is for ensuring PointDepthPoint's output is legal float32:
+   *   - 
+   *
+   *
+   *
+   *
+   * @param {Float32Array} source
+   *   The source Float32Array.
+   *
+   * @return {Float32Array}
+   *   Return a copy of source. Every element (float32):
+   *     - If ( Number.isNaN( element ) == true ), let it become 0.
+   *     - If ( element != 0 ), Math.abs( element ) will be restricted between [ 2^(-24), 2^24 ].
+   *     - ( Math.sign( element ) * Math.abs( element ) ) will be restricted between [ -2^(24), 2^24 ].
+   */
+  static Float32Array_CloneLegal( sourceArray ) {
+    let positiveMax = 
+
+    let resultArray = new Float32Array( sourceArray.length );
+    for ( let i = 0; i < sourceArray.length; ++i ) {
+      let element = sourceArray[ i ];
+      if ( Number.isNaN( element ) ) {
+        element = 0;
+      } else if ( element != 0 ) {
+        let sign = Math.sign( element );
+        let absValue = Math.abs( element );
+        absValue = Math,
+      }
+
+      resultArray[ i ];
+    }
+    return resultArray;
+  }
+
 }
 
 
