@@ -129,7 +129,7 @@ class Base {
    *   - The Math.abs( pointwise1Result ) will be restriced to 0 or between [ 2^(-(24+24)), 2^(24+24+12) ] = [ 2^(-48), 2^60 ].
    *   - The Math.abs( depthwise1Result ) will be restriced to 0 or between [ 2^(-(48+24)), 2^(60+24+4)  ] = [ 2^(-72), 2^88 ].
    *   - The Math.abs( pointwise2Result ) will be restriced to 0 or between [ 2^(-(72+24)), 2^(88+24+12) ] = [ 2^(-96), 2^124 ].
-   *   - So the result still is legal float32 because Math.abs( float32 ) could be either 0 or between [ 2^(-126), 2^126 ].
+   *   - So the result is still legal float32 because Math.abs( float32 ) could be either 0 or between [ 2^(-126), 2^126 ].
    *
    * The 2^24 as input element should be enough for most situation:
    *   - Color image: The R, G, B, A channels are 8 bits (2^8) individually.
