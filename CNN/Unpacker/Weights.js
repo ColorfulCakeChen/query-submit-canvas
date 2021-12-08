@@ -149,20 +149,41 @@ class Base {
    *     - ( Math.sign( element ) * Math.abs( element ) ) will be restricted between [ -2^(24), 2^24 ].
    */
   static Float32Array_CloneLegal( sourceArray ) {
-    let positiveMax = 
+    const POSITIVE_MIN = Math.pow( 2, -24 );
+    const POSITIVE_MAX = Math.pow( 2, +24 );
+
+    const NEGATIVE_MIN = - POSITIVE_MAX; // - Math.pow( 2, +24 )
+    const NEGATIVE_MAX = - POSITIVE_MIN; // - Math.pow( 2, -24 )
 
     let resultArray = new Float32Array( sourceArray.length );
     for ( let i = 0; i < sourceArray.length; ++i ) {
       let element = sourceArray[ i ];
+
+      let restricted;
       if ( Number.isNaN( element ) ) {
-        element = 0;
-      } else if ( element != 0 ) {
-        let sign = Math.sign( element );
-        let absValue = Math.abs( element );
-        absValue = Math,
+        restricted = 0;
+
+      } else if ( element > 0 ) {
+        if ( element > POSITIVE_MAX )
+          restricted = POSITIVE_MAX;
+        else if ( element < POSITIVE_MIN )
+          restricted = 0; // Truncate the element value to zero. (Not to POSITIVE_MIN.)
+        else
+          restricted = element;
+
+      } else if ( element < 0 ) {
+        if ( element > NEGATIVE_MAX )
+          restricted = 0; // Truncate the element value to zero. (Not to NEGATIVE_MAX.)
+        else if ( element < NEGATIVE_MIN )
+          restricted = NEGATIVE_MIN;
+        else
+          restricted = element;
+
+      } else { // ( element == 0 )
+        restricted = 0;
       }
 
-      resultArray[ i ];
+      resultArray[ i ] = restricted;
     }
     return resultArray;
   }
