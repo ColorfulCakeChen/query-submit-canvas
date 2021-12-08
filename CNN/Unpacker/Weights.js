@@ -121,7 +121,7 @@ class Base {
    *
    * This is mainly for ensuring PointDepthPoint's output is legal float32:
    *   - PointDepthPoint is composed of 3 convolutions: pointwise1-depthwise-pointwise2.
-   *   - Suppose every convolution has 4096 (= 2^12) input channels.
+   *   - Suppose every convolution has 4096 (= 2^12) input channels. (The bias is viewed as the last (i.e. 4095th) channels.)
    *   - Suppose depthwise uses 4x4 (= 2^4) filter for every channel.
    *   - Suppose every convolution does not have activation function (so that its result is unbounded).
    *   - If every Math.abs( pointwise1Input ) is restected to 0 or between [ 2^(-24), 2^24 ].
