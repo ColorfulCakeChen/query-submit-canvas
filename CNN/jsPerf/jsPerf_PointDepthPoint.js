@@ -400,7 +400,36 @@ class HeightWidthDepth {
     tf.dispose( outputTensor3dArray );
   }
 
-  test_Weights_Float32Array_CloneLegal() {
+  test_Weights_Float32Array_RestrictedClone() {
+
+//!!! (2021/12/08 Remarked) Using [ -2^24, +2^24 ] should be enough.
+//     let inputArray = new Float32Array( [
+//                     Number.NaN,
+//       Number.NEGATIVE_INFINITY,
+//            -Math.pow( 2, +25 ), -Math.pow( 2, +24 ), -Math.pow( 2, +23 ),
+//            -Math.pow( 2, -23 ), -Math.pow( 2, -24 ), -Math.pow( 2, -25 ),
+//                              0,
+//            +Math.pow( 2, -25 ), +Math.pow( 2, -24 ), +Math.pow( 2, -23 ),
+//            +Math.pow( 2, +23 ), +Math.pow( 2, +24 ), +Math.pow( 2, +25 ),
+//       Number.POSITIVE_INFINITY,
+//     ] );
+//
+//     const POSITIVE_MIN = Math.pow( 2, -24 );
+//     const POSITIVE_MAX = Math.pow( 2, +24 );
+//     const NEGATIVE_MIN = - POSITIVE_MAX; // - Math.pow( 2, +24 )
+//     const NEGATIVE_MAX = - POSITIVE_MIN; // - Math.pow( 2, -24 )
+//
+//     let verifyArray = new Float32Array( [
+//                         0,
+//              NEGATIVE_MIN,
+//              NEGATIVE_MIN, NEGATIVE_MIN, -Math.pow( 2, +23 ),
+//       -Math.pow( 2, -23 ), NEGATIVE_MAX,                   0,
+//                         0,
+//                         0, POSITIVE_MIN, +Math.pow( 2, -23 ),
+//       +Math.pow( 2, +23 ), POSITIVE_MAX,        POSITIVE_MAX,
+//              POSITIVE_MAX,
+//     ] );
+
     let inputArray = new Float32Array( [
                     Number.NaN,
       Number.NEGATIVE_INFINITY,
@@ -412,26 +441,24 @@ class HeightWidthDepth {
       Number.POSITIVE_INFINITY,
     ] );
 
-    const POSITIVE_MIN = Math.pow( 2, -24 );
-    const POSITIVE_MAX = Math.pow( 2, +24 );
-    const NEGATIVE_MIN = - POSITIVE_MAX; // - Math.pow( 2, +24 )
-    const NEGATIVE_MAX = - POSITIVE_MIN; // - Math.pow( 2, -24 )
+    const POSITIVE_MAX = Weights.Base.ValueBounds.upper;
+    const NEGATIVE_MIN = Weights.Base.ValueBounds.lower;
 
     let verifyArray = new Float32Array( [
-                        0,
-             NEGATIVE_MIN,
-             NEGATIVE_MIN, NEGATIVE_MIN, -Math.pow( 2, +23 ),
-      -Math.pow( 2, -23 ), NEGATIVE_MAX,                   0,
-                        0,
-                        0, POSITIVE_MIN, +Math.pow( 2, -23 ),
-      +Math.pow( 2, +23 ), POSITIVE_MAX,        POSITIVE_MAX,
-      POSITIVE_MAX,
+                  0,
+       NEGATIVE_MIN,
+       NEGATIVE_MIN,  NEGATIVE_MIN, -( 2 ** +23 ),
+      -( 2 ** -23 ), -( 2 ** -24 ), -( 2 ** -25 ),
+                  0,
+      +( 2 ** -25 ), +( 2 ** -24 ), +( 2 ** -23 ),
+      +( 2 ** +23 ),  POSITIVE_MAX,  POSITIVE_MAX,
+       POSITIVE_MAX,
     ] );
 
-    let outputArray = Weights.Base.Float32Array_CloneLegal( inputArray );
+    let outputArray = Weights.Base.ValueBounds.Float32Array_RestrictedClone( inputArray );
 
     tf.util.assert( inputArray.length == outputArray.length,
-      `test_Weights_Float32Array_CloneLegal(): `
+      `test_Weights_Float32Array_RestrictedClone(): `
         + `inputArray.length ( ${inputArray.length} ) `
         + `should be the same as outputArray.length ( ${outputArray.length} ).`
     );
@@ -442,8 +469,8 @@ class HeightWidthDepth {
       let outputElement = outputArray[ i ];
 
       tf.util.assert( outputElement == verifyElement,
-        `test_Weights_Float32Array_CloneLegal(): `
-          + `Weights.Float32Array_CloneLegal( inputArray[ ${i} ] = ${inputElement} ) `
+        `test_Weights_Float32Array_RestrictedClone(): `
+          + `Weights.Base.ValueBounds.Float32Array_RestrictedClone( inputArray[ ${i} ] = ${inputElement} ) `
           + `should be ( ${verifyElement} ) but got ( ${outputElement} ).`
       );
     }
@@ -484,7 +511,7 @@ class HeightWidthDepth {
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
-    this.test_Weights_Float32Array_CloneLegal();
+    this.test_Weights_Float32Array_RestrictedClone();
     this.test_ValueRange_valueInputOutputGenerator();
 
     tf.tidy( () => {
