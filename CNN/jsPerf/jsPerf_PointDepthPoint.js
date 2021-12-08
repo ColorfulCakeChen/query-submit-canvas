@@ -18,7 +18,7 @@ import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
 /**
  * Test CNN PointDepthPoint.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/447/colorfulcakechen-cnn-pointdepthpoint-a96a9135b0a35560ac}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/556/colorfulcakechen-cnn-pointdepthpoint-0556b3fb6091ecff43}
  */
 
 /**
@@ -431,7 +431,7 @@ class HeightWidthDepth {
 //     ] );
 
     let inputArray = new Float32Array( [
-                    Number.NaN,
+      undefined, null, "", "A", "2", Number.NaN,
       Number.NEGATIVE_INFINITY,
            -Math.pow( 2, +25 ), -Math.pow( 2, +24 ), -Math.pow( 2, +23 ),
            -Math.pow( 2, -23 ), -Math.pow( 2, -24 ), -Math.pow( 2, -25 ),
@@ -445,7 +445,7 @@ class HeightWidthDepth {
     const NEGATIVE_MIN = Weights.Base.ValueBounds.lower;
 
     let verifyArray = new Float32Array( [
-                  0,
+      0, 0, 0, 0, 2, 0,
        NEGATIVE_MIN,
        NEGATIVE_MIN,  NEGATIVE_MIN, -( 2 ** +23 ),
       -( 2 ** -23 ), -( 2 ** -24 ), -( 2 ** -25 ),
@@ -468,7 +468,7 @@ class HeightWidthDepth {
       let verifyElement = verifyArray[ i ];
       let outputElement = outputArray[ i ];
 
-      tf.util.assert( outputElement == verifyElement,
+      tf.util.assert( outputElement === verifyElement,
         `test_Weights_Float32Array_RestrictedClone(): `
           + `Weights.Base.ValueBounds.Float32Array_RestrictedClone( inputArray[ ${i} ] = ${inputElement} ) `
           + `should be ( ${verifyElement} ) but got ( ${outputElement} ).`
