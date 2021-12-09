@@ -19,7 +19,7 @@ export { Info };
  * almost like a linear function.
  *
  * @member {FloatValue.Bounds} outputRange
- *   The the activation function output value's bounds.
+ *   The output value lower and upper bounds of the activation function.
  */
 class Info {
 
