@@ -13,7 +13,7 @@ import * as FloatValue from "./FloatValue.js";
  *   - TANH is almost linear between[ -0.125, +0.125 ].
  *   - COS is almost linear between[ -( ( PI / 2 ) + 0.025 ), -( ( PI / 2 ) - 0.025 ) ].
  *   - SIN is almost linear between[ -0.025, +0.025 ].
- *   - RELU is linear between[ 0, 6 ].
+ *   - RELU is linear between[ 0, +Infinity ].
  */
 class ActivationFunction extends Int {
 
@@ -29,8 +29,8 @@ class ActivationFunction extends Int {
 //       [   null, tf.relu6, tf.sigmoid, tf.tanh, tf.cos, tf.sin, tf.relu ]  // tf.softplus ]
 //     );
 
-    super( 0, 6,
-      [ "NONE",  "RELU6",  "SIGMOID",  "TANH",  "COS",  "SIN",  "RELU" ], //  "SOFTPLUS" ],
+    super( 0, 5,
+      [ "NONE",  "RELU6",  "SIGMOID",  "TANH",  "COS",  "SIN" ], // "RELU" ], //  "SOFTPLUS" ],
 
       [
         new ActivationFunction.Info( 0, null, null, null ),
@@ -50,10 +50,13 @@ class ActivationFunction extends Int {
         new ActivationFunction.Info( 5, tf.sin,
           new FloatValue.Bounds( -0.025, +0.025 ), new FloatValue.Bounds( -1, +1 ) ),
 
-        // Note: The input linear domain and output range of RELU are [ 0, +INF ].
-        //       However, for PointDepthPoint, using Weights.Base.ValueBounds.upper as upper bound should be sufficient.
-        new ActivationFunction.Info( 6, tf.relu,
-          new FloatValue.Bounds( 0, Weights.Base.ValueBounds.upper ), new FloatValue.Bounds( 0, Weights.Base.ValueBounds.upper ) ),
+        // (2021/12/09 Remarked)
+        // The input linear domain and output range of RELU are [ 0, +Infinity ].
+        // However, in PointDepthPoint, this results in bad behavior for scale-translate into linear domain.
+        // So, give up RELU.
+        //new ActivationFunction.Info( 6, tf.relu,
+        //  //new FloatValue.Bounds( 0, Weights.Base.ValueBounds.upper ), new FloatValue.Bounds( 0, Weights.Base.ValueBounds.upper ) ),
+        //  new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ) ),
 
         //new ActivationFunction.Info( 7, tf.softplus,
         //  new Base( 0, 6 ), Weights.Base.ValueBounds ),
