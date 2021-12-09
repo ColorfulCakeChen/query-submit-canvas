@@ -26,35 +26,69 @@ class Bounds {
   }
 
   /**
-   * Confirm:
-   *   - Every element is not NaN. (If it is, become 0.)
-   *   - Every element is between [ lower, upper ].
-   *
-   * @param {Float32Array} source
-   *   The source Float32Array.
-   *
-   * @return {Float32Array}
-   *   Return a copy of source. Every element (float32):
-   *     - If ( Number.isNaN( element ) == true ), let it become 0.
-   *     - Otherwise, Math.max( lower, Math.min( element, upper ) ).
-   */
-  Float32Array_RestrictedClone( sourceArray ) {
-    let resultArray = new Float32Array( sourceArray.length );
-    for ( let i = 0; i < sourceArray.length; ++i ) {
-      let element = sourceArray[ i ];
-      if ( !Number.isNaN( element ) ) {
-        resultArray[ i ] = Math.max( this.lower, Math.min( element, this.upper ) );
-      } // If NaN, let it become 0. (Just do nothing, because Float32Array is initialized to zero by default.)
-    }
-    return resultArray;
-  }
-
-  /**
    * @return {Bounds}
    *   Return newly created object which is a copy of this Bounds.
    */
   clone() {
     return new Bounds( this.lower, this.upper );
+  }
+
+  /**
+   * @param {Bounds} aBounds
+   *   Set this Bounds by aBounds.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object which copies aBounds.
+   */
+  set_Bounds( aBounds ) {
+    this.lower = aBounds.lower;
+    this.upper = aBounds.upper;
+    return this;
+  }
+
+  /**
+   * @param {number} aLower
+   *   Set this Bounds.lower by aLower.
+   *
+   * @param {number} aUpper
+   *   Set this Bounds.upper by aUpper.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object which is [ aLower, aUpper ].
+   */
+  set_LowerUpper( aLower, aUpper ) {
+    this.lower = aLower;
+    this.upper = aUpper;
+    return this;
+  }
+
+  /**
+   * @param {Bounds} aBounds
+   *   Add this Bounds by aBounds.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object which is added by aBounds.
+   */
+  set_add_Bounds( aBounds ) {
+    this.lower += aBounds.lower;
+    this.upper += aBounds.upper;
+    return this;
+  }
+
+  /**
+   * @param {number} aLower
+   *   Add this Bounds.lower by aLower.
+   *
+   * @param {number} aUpper
+   *   Add this Bounds.upper by aUpper.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object which is added by Bounds [ aLower, aUpper ].
+   */
+  set_add_LowerUpper( aLower, aUpper ) {
+    this.lower += aLower;
+    this.upper += aUpper;
+    return this;
   }
 
   /**
@@ -91,7 +125,7 @@ class Bounds {
    *   The multiplier of this.lower and this.upper.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is the same as repeating N times this.set_add_Bounds( this ).
+   *   Return this (modified) object which is the same as this.set_multiply_LowerUpper( N, N ) or repeating N times this.set_add_Bounds( this ).
    */
   set_multiply_N( N ) {
     this.lower *= N;
@@ -101,56 +135,46 @@ class Bounds {
 
   /**
    * @param {Bounds} aBounds
-   *   Add this Bounds by aBounds.
-   *
-   * @return {Bounds}
-   *   Return this (modified) object which is added by aBounds.
-   */
-  set_add_Bounds( aBounds ) {
-    this.lower += aBounds.lower;
-    this.upper += aBounds.upper;
-    return this;
-  }
-
-  /**
-   * @param {number} aLower
-   *   Add this Bounds.lower by aLower.
-   *
-   * @param {number} aUpper
-   *   Add this Bounds.upper by aUpper.
-   *
-   * @return {Bounds}
-   *   Return this (modified) object which is added by Bounds [ aLower, aUpper ].
-   */
-  set_add_LowerUpper( aLower, aUpper ) {
-    this.lower += aLower;
-    this.upper += aUpper;
-    return this;
-  }
-
-  /**
-   * @param {Bounds} aBounds
-   *   The multiplicand (i.e. first) Bounds.
-   *
-   * @param {Bounds} bBounds
-   *   The multiplier (i.e. second) Bounds.
+   *   The first multiplier (a Bounds).
    *
    * @param {number} N
-   *   How many times to repeat the multiplying.
+   *   The second multiplier (a number).
    *
    * @return {Bounds}
-   *   Return newly created object representing the sumed Bounds of repeating N times of multiplying aBounds by bBounds.
+   *   Return this (modified) object which is the sumed Bounds of repeating N times of multiplying this by aBounds.
    */
-  static new_Bounds_multiply_Bounds_repeat_N( aBounds, bBounds, N ) {
-    let lower = ( aBounds.lower * bBounds.lower ) * N;
-    let upper = ( aBounds.upper * bBounds.upper ) * N;
-    return new Bounds( lower, upper );
+  set_multiply_Bounds_multiply_N( aBounds, N ) {
+    this.lower = ( this.lower * aBounds.lower ) * N;
+    this.upper = ( this.upper * aBounds.upper ) * N;
+    return this;
 
     // The same as:
-    //return aBounds.clone().set_multiply_Bounds( bBounds ).set_multiply_N( N );
+    //return this.set_multiply_Bounds( aBounds ).set_multiply_N( N );
   }
 
-//!!! ...unfinished... (2021/12/09)
+  /**
+   * Confirm:
+   *   - Every element is not NaN. (If it is, become 0.)
+   *   - Every element is between [ lower, upper ].
+   *
+   * @param {Float32Array} source
+   *   The source Float32Array.
+   *
+   * @return {Float32Array}
+   *   Return a copy of source. Every element (float32):
+   *     - If ( Number.isNaN( element ) == true ), let it become 0.
+   *     - Otherwise, Math.max( lower, Math.min( element, upper ) ).
+   */
+  Float32Array_RestrictedClone( sourceArray ) {
+    let resultArray = new Float32Array( sourceArray.length );
+    for ( let i = 0; i < sourceArray.length; ++i ) {
+      let element = sourceArray[ i ];
+      if ( !Number.isNaN( element ) ) {
+        resultArray[ i ] = Math.max( this.lower, Math.min( element, this.upper ) );
+      } // If NaN, let it become 0. (Just do nothing, because Float32Array is initialized to zero by default.)
+    }
+    return resultArray;
+  }
 
 }
 
