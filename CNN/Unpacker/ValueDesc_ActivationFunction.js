@@ -2,6 +2,7 @@ export { ActivationFunction };
 
 import { Int } from "./ValueDesc_Base.js";
 import * as Weights from "./Weights.js";
+import * as FloatValue from "./FloatValue.js";
 
 /**
  * Describe activation function parameter's id, range, name.
