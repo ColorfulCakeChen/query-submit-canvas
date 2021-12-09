@@ -9,13 +9,20 @@ export { Bounds, ScaleTranslate };
  *
  * @member {number} upper
  *   The upper bound of the range.
+ *
+ * @member {number} difference
+ *   The distance between lower and upper.
  */
 class Bounds {
 
   constructor( lower, upper ) {
     this.lower = Math.min( lower, upper ); // Confirm ( lower <= upper ).
     this.upper = Math.max( lower, upper );
-    this.difference = this.upper - this.lower;
+  }
+
+  get difference() {
+    let difference = this.upper - this.lower;
+    return difference;
   }
 
   /**
@@ -36,21 +43,24 @@ class Bounds {
     for ( let i = 0; i < sourceArray.length; ++i ) {
       let element = sourceArray[ i ];
 
-//!!! (2021/12/08 Remarked) Float32Array is initialized to 0.
-//       if ( Number.isNaN( element ) )
-//         resultArray[ i ] = 0;
-//       else
-//         resultArray[ i ] = Math.max( this.lower, Math.min( element, this.upper ) );
-      
       if ( !Number.isNaN( element ) ) {
         resultArray[ i ] = Math.max( this.lower, Math.min( element, this.upper ) );
 
-      // NaN, let it become 0. Because Float32Array is initialized to zero by default, doing nothing is just the same as assigning zero.
+      // NaN, let it become 0. Because Float32Array is initialized to zero by default, just do nothing (which is the same as assigning zero).
       }
     }
     return resultArray;
   }
-  
+
+//!!! ...unfinished... (2021/12/09)
+  /**
+   *
+   */
+  modifyBy_Multiply( anotherBounds ) {
+    this.lower *= anotherBounds.lower;
+    this.upper *= anotherBounds.upper;
+  }
+
 }
 
 
