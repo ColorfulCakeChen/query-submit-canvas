@@ -69,7 +69,7 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is added by aBounds.
    */
-  set_add_Bounds( aBounds ) {
+  add_Bounds( aBounds ) {
     this.lower += aBounds.lower;
     this.upper += aBounds.upper;
     return this;
@@ -85,7 +85,7 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is added by Bounds [ aLower, aUpper ].
    */
-  set_add_LowerUpper( aLower, aUpper ) {
+  add_LowerUpper( aLower, aUpper ) {
     this.lower += aLower;
     this.upper += aUpper;
     return this;
@@ -98,7 +98,7 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is multiplied by aBounds.
    */
-  set_multiply_Bounds( aBounds ) {
+  multiply_Bounds( aBounds ) {
     this.lower *= aBounds.lower;
     this.upper *= aBounds.upper;
     return this;
@@ -114,7 +114,7 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is multiplied by Bounds [ aLower, aUpper ].
    */
-  set_multiply_LowerUpper( aLower, aUpper ) {
+  multiply_LowerUpper( aLower, aUpper ) {
     this.lower *= aLower;
     this.upper *= aUpper;
     return this;
@@ -125,9 +125,9 @@ class Bounds {
    *   The multiplier of this.lower and this.upper.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is the same as this.set_multiply_LowerUpper( N, N ) or repeating N times this.set_add_Bounds( this ).
+   *   Return this (modified) object which is the same as this.multiply_LowerUpper( N, N ) or repeating N times this.add_Bounds( this ).
    */
-  set_multiply_N( N ) {
+  multiply_N( N ) {
     this.lower *= N;
     this.upper *= N;
     return this;
@@ -143,13 +143,13 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is the sumed Bounds of repeating N times of multiplying this by aBounds.
    */
-  set_multiply_Bounds_multiply_N( aBounds, N ) {
+  multiply_Bounds_multiply_N( aBounds, N ) {
     this.lower = ( this.lower * aBounds.lower ) * N;
     this.upper = ( this.upper * aBounds.upper ) * N;
     return this;
 
     // The same as:
-    //return this.set_multiply_Bounds( aBounds ).set_multiply_N( N );
+    //return this.multiply_Bounds( aBounds ).multiply_N( N );
   }
 
   /**
