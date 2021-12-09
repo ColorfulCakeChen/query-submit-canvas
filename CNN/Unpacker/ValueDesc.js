@@ -14,7 +14,7 @@ export { WhetherShuffleChannel };
 // import * as ActivationFunction from "./ActivationFunction.js";
 // import * as Weights from "./Weights.js";
 
-//import { Int } from "./ValueDesc_Base.js";
+import { Int } from "./ValueDesc_Base.js";
 
 
 //!!! (2021/12/09 Remarked)
