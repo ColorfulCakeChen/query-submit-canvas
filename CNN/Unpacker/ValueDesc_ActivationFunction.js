@@ -79,9 +79,6 @@ class ActivationFunction extends Int {
 
 }
 
-/** The only one ValueDesc.ActivationFunction instance. */
-ActivationFunction.Singleton = new ActivationFunction;
-
 /**
  *
  * @member {number} nActivationId
@@ -106,3 +103,6 @@ ActivationFunction.Info = class {
     this.outputRange = outputRange;
   }
 }
+
+/** The only one ValueDesc.ActivationFunction instance. */
+ActivationFunction.Singleton = new ActivationFunction;
