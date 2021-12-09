@@ -79,18 +79,18 @@ class Bounds {
   }
 
 //!!! ...unfinished... (2021/12/09) When to use?
-  /**
-   * @param {number} N
-   *   The multiplier of this.lower and this.upper.
-   *
-   * @return {Bounds}
-   *   Return this (modified) object whose this.lower and this.upper are multiplied by N.
-   */
-  set_multiply_N( N ) {
-    this.lower *= N;
-    this.upper *= N;
-    return this;
-  }
+//   /**
+//    * @param {number} N
+//    *   The multiplier of this.lower and this.upper.
+//    *
+//    * @return {Bounds}
+//    *   Return this (modified) object whose this.lower and this.upper are multiplied by N.
+//    */
+//   set_multiply_N( N ) {
+//     this.lower *= N;
+//     this.upper *= N;
+//     return this;
+//   }
 
   /**
    * @param {Bounds} aBounds
@@ -125,7 +125,7 @@ class Bounds {
    * @param {Bounds} aBounds
    *   The multiplicand (i.e. first) Bounds.
    *
-   * @param {Bounds} aBounds
+   * @param {Bounds} bBounds
    *   The multiplier (i.e. second) Bounds.
    *
    * @param {number} N
@@ -134,7 +134,7 @@ class Bounds {
    * @return {Bounds}
    *   Return newly created object representing the sumed Bounds of repeating N times of multiplying aBounds by bBounds.
    */
-  static new_multiply_and_sum( aBounds, bBounds, N ) {
+  static new_Bounds_multiply_Bounds_repeat_N( aBounds, bBounds, N ) {
     let lower = ( aBounds.lower * bBounds.lower ) * N;
     let upper = ( aBounds.upper * bBounds.upper ) * N;
     return new Bounds( lower, upper );
