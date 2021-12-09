@@ -1,8 +1,8 @@
-export { Same, Bool, Int } from "./ValueDesc_Base.js";
+//export { Same, Bool, Int } from "./ValueDesc/ValueDesc_Base.js";
 export { channelCount1_pointwise1Before };
 export { Pointwise_HigherHalfDifferent };
 export { AvgMax_Or_ChannelMultiplier };
-export { ActivationFunction } from "./ValueDesc_ActivationFunction.js";
+//export { ActivationFunction } from "./ValueDesc/ValueDesc_ActivationFunction.js";
 export { WhetherShuffleChannel };
 
 import { Int } from "./ValueDesc_Base.js";
