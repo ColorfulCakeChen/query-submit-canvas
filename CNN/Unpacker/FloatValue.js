@@ -42,23 +42,86 @@ class Bounds {
     let resultArray = new Float32Array( sourceArray.length );
     for ( let i = 0; i < sourceArray.length; ++i ) {
       let element = sourceArray[ i ];
-
       if ( !Number.isNaN( element ) ) {
         resultArray[ i ] = Math.max( this.lower, Math.min( element, this.upper ) );
-
-      // NaN, let it become 0. Because Float32Array is initialized to zero by default, just do nothing (which is the same as assigning zero).
-      }
+      } // If NaN, let it become 0. (Just do nothing, because Float32Array is initialized to zero by default.)
     }
     return resultArray;
   }
 
+  /**
+   * @param {Bounds} aBounds
+   *   Multiply this Bounds by aBounds.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
+   */
+  set_multiply_Bounds( aBounds ) {
+    this.lower *= aBounds.lower;
+    this.upper *= aBounds.upper;
+    return this;
+  }
+
+  /**
+   * @param {number} aLower
+   *   Multiply this Bounds.lower by aLower.
+   *
+   * @param {number} aUpper
+   *   Multiply this Bounds.upper by aUpper.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
+   */
+  set_multiply_LowerUpper( aLower, aUpper ) {
+    this.lower *= aLower;
+    this.upper *= aUpper;
+    return this;
+  }
+
+  /**
+   * @param {Bounds} aBounds
+   *   Add this Bounds by aBounds.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
+   */
+  set_add_Bounds( aBounds ) {
+    this.lower += aBounds.lower;
+    this.upper += aBounds.upper;
+    return this;
+  }
+
+  /**
+   * @param {number} aLower
+   *   Add this Bounds.lower by aLower.
+   *
+   * @param {number} aUpper
+   *   Add this Bounds.upper by aUpper.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
+   */
+  set_add_LowerUpper( aLower, aUpper ) {
+    this.lower += aLower;
+    this.upper += aUpper;
+    return this;
+  }
+
 //!!! ...unfinished... (2021/12/09)
   /**
+   * @param {Bounds} aBounds
+   *   Multiply this Bounds by aBounds.
    *
+   * @param {number} N
+   *   Add this Bounds.upper by aUpper.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
-  modifyBy_Multiply( anotherBounds ) {
-    this.lower *= anotherBounds.lower;
-    this.upper *= anotherBounds.upper;
+  static new_multiply_sum_Bounds( aBounds, bBounds, N ) {
+    ( aBounds.lower * bBounds.lower ) * N;
+    ( aBounds.upper * bBounds.upper ) * N;
+    return this;
   }
 
 }
