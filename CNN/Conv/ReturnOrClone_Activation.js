@@ -3,12 +3,28 @@ export { Base };
 import * as ReturnOrClone from "./ReturnOrClone.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
+import * as ActivationFunction from "../Unpacker/ActivationFunction.js";
 
 /**
  * Shared common base class for Pointwise and Depthwise.
  *
  */
 class Base extends ReturnOrClone.Base {
+
+  /**
+   * Convert activation function id to information object.
+   *
+   * @param {number} nActivationId
+   *   It should be one of ValueDesc.ActivationFunction.Singleton.Ids.Xxx. (e.g. ValueDesc.ActivationFunction.Singleton.Ids.NONE,
+   * ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.COS, ...)
+   *
+   * @return {ActivationFunction.Info}
+   *   It should be one of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId.
+   */
+  static ActivationFunction_getInfoById( nActivationId ) {
+    let info = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
+    return info;
+  }
 
   /**
    * Convert activation function id to function object.
@@ -18,11 +34,14 @@ class Base extends ReturnOrClone.Base {
    * ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.COS, ...)
    *
    * @return {function}
-   *   It should be one of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId. (e.g. null,
+   *   It should be pfn of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId. (e.g. null,
    * tf.relu6, tf.cos, ...)
    */
-  static getActivationFunctionById( nActivationId ) {
-    let pfn = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
+//!!! (2021/12/09 Remarked)
+//  static getActivationFunctionById( nActivationId ) {
+  static ActivationFunction_getById( nActivationId ) {
+    let info = Base.ActivationFunction_getInfoById( nActivationId );
+    let pfn = info.pfn;
     return pfn;
   }
 
@@ -30,10 +49,6 @@ class Base extends ReturnOrClone.Base {
    * Extract tf.tensor from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *
    * @param {Base} this                       The Base object to be modified.
    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
@@ -51,10 +66,6 @@ class Base extends ReturnOrClone.Base {
       let t = tf.tensor( tensorWeights.weights, tensorShape );
       let elementCount = tf.util.sizeFromShape( t.shape );
       this.tensorWeightCountExtracted += elementCount;
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//      this.tensorWeightCountTotal += elementCount;
-
       return t;
 
     // If failed (e.g. memory not enough), return null.      
@@ -67,10 +78,6 @@ class Base extends ReturnOrClone.Base {
    * Extract biases from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *
    * @param {Base} this                       The Base object to be modified.
    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
