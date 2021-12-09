@@ -51,16 +51,17 @@ class ActivationFunction extends Int {
           new FloatValue.Bounds( -0.025, +0.025 ), new FloatValue.Bounds( -1, +1 ) ),
 
         // (2021/12/09 Remarked)
-        // The input linear domain and output range of RELU are [ 0, +Infinity ].
-        // However, in PointDepthPoint, this results in bad behavior for scale-translate into linear domain.
-        // So, give up RELU.
+        //
+        // The input linear domain and output range of RELU are [ 0, +Infinity ]. However, it is not so friendly to interact with Infinity
+        // because the results may be Infinity or even NaN. This is more obvious for scale-translate into linear domain in PointDepthPoint.
+        // So, the RELU is excluded from the activation function list.
+        //
         //new ActivationFunction.Info( 6, tf.relu,
         //  //new FloatValue.Bounds( 0, Weights.Base.ValueBounds.upper ), new FloatValue.Bounds( 0, Weights.Base.ValueBounds.upper ) ),
         //  new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ) ),
 
         //new ActivationFunction.Info( 7, tf.softplus,
         //  new Base( 0, 6 ), Weights.Base.ValueBounds ),
-
       ]
     );
 
