@@ -770,7 +770,7 @@ class Base extends ReturnOrClone_Activation.Base {
       }
     }
 
-    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
+    this.pfnActivation = Base.ActivationFunction_getById( this.nActivationId );
 
     if ( !this.bPointwise ) {
       // Since there is no operation at all, let pfnConvBiasActivation ignore pfnConv completely.
