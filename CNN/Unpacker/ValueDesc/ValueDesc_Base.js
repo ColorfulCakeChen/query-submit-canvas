@@ -1,6 +1,6 @@
 export { Same, Bool, Int };
 
-import * as ValueRange from "./ValueRange.js";
+import * as ValueRange from "../ValueRange.js";
 
 /**
  * Describe some properties of a non-converting parameter.
