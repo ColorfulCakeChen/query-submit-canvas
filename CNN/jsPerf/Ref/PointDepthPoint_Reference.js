@@ -1423,7 +1423,11 @@ class Base {
    */
   static modifyByActivation( imageIn, nActivationId, parametersDesc ) {
 
-    let pfnActivation = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
+    let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
+    if ( !theActivationFunctionInfo )
+      return imageIn;
+
+    let pfnActivation = theActivationFunctionInfo.pfn;
     if ( !pfnActivation )
       return imageIn;
 
