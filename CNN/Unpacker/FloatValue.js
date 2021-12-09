@@ -54,7 +54,7 @@ class Bounds {
    *   Multiply this Bounds by aBounds.
    *
    * @return {Bounds}
-   *   Return this (modified) object.
+   *   Return this (modified) object which is multiplied by aBounds.
    */
   set_multiply_Bounds( aBounds ) {
     this.lower *= aBounds.lower;
@@ -70,11 +70,25 @@ class Bounds {
    *   Multiply this Bounds.upper by aUpper.
    *
    * @return {Bounds}
-   *   Return this (modified) object.
+   *   Return this (modified) object which is multiplied by Bounds [ aLower, aUpper ].
    */
   set_multiply_LowerUpper( aLower, aUpper ) {
     this.lower *= aLower;
     this.upper *= aUpper;
+    return this;
+  }
+
+//!!! ...unfinished... (2021/12/09) When to use?
+  /**
+   * @param {number} N
+   *   The multiplier of this.lower and this.upper.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object whose this.lower and this.upper are multiplied by N.
+   */
+  set_multiply_N( N ) {
+    this.lower *= N;
+    this.upper *= N;
     return this;
   }
 
@@ -83,7 +97,7 @@ class Bounds {
    *   Add this Bounds by aBounds.
    *
    * @return {Bounds}
-   *   Return this (modified) object.
+   *   Return this (modified) object which is added by aBounds.
    */
   set_add_Bounds( aBounds ) {
     this.lower += aBounds.lower;
@@ -99,7 +113,7 @@ class Bounds {
    *   Add this Bounds.upper by aUpper.
    *
    * @return {Bounds}
-   *   Return this (modified) object.
+   *   Return this (modified) object which is added by Bounds [ aLower, aUpper ].
    */
   set_add_LowerUpper( aLower, aUpper ) {
     this.lower += aLower;
@@ -107,13 +121,12 @@ class Bounds {
     return this;
   }
 
-//!!! ...unfinished... (2021/12/09)
   /**
    * @param {Bounds} aBounds
-   *   The first Bounds to be multiplied.
+   *   The multiplicand (i.e. first) Bounds.
    *
    * @param {Bounds} aBounds
-   *   The second Bounds to be multiplied.
+   *   The multiplier (i.e. second) Bounds.
    *
    * @param {number} N
    *   How many times to repeat the multiplying.
@@ -121,11 +134,13 @@ class Bounds {
    * @return {Bounds}
    *   Return newly created object representing the sumed Bounds of repeating N times of multiplying aBounds by bBounds.
    */
-  static new_multiply_sum( aBounds, bBounds, N ) {
+  static new_multiply_and_sum( aBounds, bBounds, N ) {
     let lower = ( aBounds.lower * bBounds.lower ) * N;
     let upper = ( aBounds.upper * bBounds.upper ) * N;
     return new Bounds( lower, upper );
   }
+
+//!!! ...unfinished... (2021/12/09)
 
 }
 
