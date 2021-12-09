@@ -22,7 +22,7 @@ class Base extends ReturnOrClone.Base {
    *   It should be one of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId.
    */
   static ActivationFunction_getInfoById( nActivationId ) {
-    let info = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
+    let info = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
     return info;
   }
 
@@ -37,8 +37,6 @@ class Base extends ReturnOrClone.Base {
    *   It should be pfn of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId. (e.g. null,
    * tf.relu6, tf.cos, ...)
    */
-//!!! (2021/12/09 Remarked)
-//  static getActivationFunctionById( nActivationId ) {
   static ActivationFunction_getById( nActivationId ) {
     let info = Base.ActivationFunction_getInfoById( nActivationId );
     let pfn = info.pfn;
