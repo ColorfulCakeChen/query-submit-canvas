@@ -3,7 +3,6 @@ export { Base };
 import * as ReturnOrClone from "./ReturnOrClone.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
-import * as ActivationFunction from "../Unpacker/ActivationFunction.js";
 
 /**
  * Shared common base class for Pointwise and Depthwise.
@@ -18,7 +17,7 @@ class Base extends ReturnOrClone.Base {
    *   It should be one of ValueDesc.ActivationFunction.Singleton.Ids.Xxx. (e.g. ValueDesc.ActivationFunction.Singleton.Ids.NONE,
    * ValueDesc.ActivationFunction.Singleton.Ids.RELU6, ValueDesc.ActivationFunction.Singleton.Ids.COS, ...)
    *
-   * @return {ActivationFunction.Info}
+   * @return {ValueDesc.ActivationFunction.Info}
    *   It should be one of ValueDesc.ActivationFunction.Singleton.integerToObjectMap according to the nActivationId.
    */
   static ActivationFunction_getInfoById( nActivationId ) {
