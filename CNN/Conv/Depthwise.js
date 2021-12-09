@@ -662,7 +662,7 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     // 2.
-    this.pfnActivation = Base.getActivationFunctionById( this.nActivationId );
+    this.pfnActivation = Base.ActivationFunction_getById( this.nActivationId );
 
     // 3.
     if ( this.bDepthwise ) {
