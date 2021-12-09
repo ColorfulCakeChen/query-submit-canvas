@@ -110,18 +110,21 @@ class Bounds {
 //!!! ...unfinished... (2021/12/09)
   /**
    * @param {Bounds} aBounds
-   *   Multiply this Bounds by aBounds.
+   *   The first Bounds to be multiplied.
+   *
+   * @param {Bounds} aBounds
+   *   The second Bounds to be multiplied.
    *
    * @param {number} N
-   *   Add this Bounds.upper by aUpper.
+   *   How many times to repeat the multiplying.
    *
    * @return {Bounds}
-   *   Return this (modified) object.
+   *   Return newly created object representing the sumed Bounds of repeating N times of multiplying aBounds by bBounds.
    */
-  static new_multiply_sum_Bounds( aBounds, bBounds, N ) {
-    ( aBounds.lower * bBounds.lower ) * N;
-    ( aBounds.upper * bBounds.upper ) * N;
-    return this;
+  static new_multiply_sum( aBounds, bBounds, N ) {
+    let lower = ( aBounds.lower * bBounds.lower ) * N;
+    let upper = ( aBounds.upper * bBounds.upper ) * N;
+    return new Bounds( lower, upper );
   }
 
 }
