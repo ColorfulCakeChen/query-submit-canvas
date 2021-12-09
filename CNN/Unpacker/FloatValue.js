@@ -50,6 +50,14 @@ class Bounds {
   }
 
   /**
+   * @return {Bounds}
+   *   Return newly created object which is a copy of this Bounds.
+   */
+  clone() {
+    return new Bounds( this.lower, this.upper );
+  }
+
+  /**
    * @param {Bounds} aBounds
    *   Multiply this Bounds by aBounds.
    *
@@ -78,19 +86,18 @@ class Bounds {
     return this;
   }
 
-//!!! ...unfinished... (2021/12/09) When to use?
-//   /**
-//    * @param {number} N
-//    *   The multiplier of this.lower and this.upper.
-//    *
-//    * @return {Bounds}
-//    *   Return this (modified) object whose this.lower and this.upper are multiplied by N.
-//    */
-//   set_multiply_N( N ) {
-//     this.lower *= N;
-//     this.upper *= N;
-//     return this;
-//   }
+  /**
+   * @param {number} N
+   *   The multiplier of this.lower and this.upper.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object which is the same as repeating N times this.set_add_Bounds( this ).
+   */
+  set_multiply_N( N ) {
+    this.lower *= N;
+    this.upper *= N;
+    return this;
+  }
 
   /**
    * @param {Bounds} aBounds
@@ -138,6 +145,9 @@ class Bounds {
     let lower = ( aBounds.lower * bBounds.lower ) * N;
     let upper = ( aBounds.upper * bBounds.upper ) * N;
     return new Bounds( lower, upper );
+
+    // The same as:
+    //return aBounds.clone().set_multiply_Bounds( bBounds ).set_multiply_N( N );
   }
 
 //!!! ...unfinished... (2021/12/09)
