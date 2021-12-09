@@ -1,12 +1,12 @@
 //!!! (2021/12/09 Remarked)
 //export { Same, Bool, Int };
-export { Same, Bool, Int } from "ValueDesc_Base.js";
+export { Same, Bool, Int } from "./ValueDesc_Base.js";
 export { channelCount1_pointwise1Before };
 export { Pointwise_HigherHalfDifferent };
 export { AvgMax_Or_ChannelMultiplier };
 //!!! (2021/12/09 Remarked)
 //export { ActivationFunction };
-export { ActivationFunction } from "ValueDesc_ActivationFunction.js";
+export { ActivationFunction } from "./ValueDesc_ActivationFunction.js";
 export { WhetherShuffleChannel };
 
 //!!! (2021/12/09 Remarked)
@@ -14,7 +14,7 @@ export { WhetherShuffleChannel };
 // import * as ActivationFunction from "./ActivationFunction.js";
 // import * as Weights from "./Weights.js";
 
-//import { Int } from "ValueDesc_Base.js";
+//import { Int } from "./ValueDesc_Base.js";
 
 
 //!!! (2021/12/09 Remarked)
