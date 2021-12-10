@@ -18,9 +18,9 @@ import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of the PointDepthPoint.Params's constructor. That is,
  * it has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
- * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
- * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, bOutput1Requested,
- * bKeepInputTensor. It also has the following properties:
+ * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth,
+ * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+ * bOutput1Requested, bKeepInputTensor. It also has the following properties:
  *   - paramsNumberArrayObject
  *   - inputFloat32Array
  *   - byteOffsetBegin
@@ -56,7 +56,7 @@ class Base extends TestParams.Base {
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
     bOutput1Requested,
     bKeepInputTensor
@@ -66,7 +66,7 @@ class Base extends TestParams.Base {
       channelCount0_pointwise1Before,
       channelCount1_pointwise1Before,
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
       pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
       bOutput1Requested,
       bKeepInputTensor
@@ -89,9 +89,9 @@ class Base extends TestParams.Base {
    *
    * @param {object} this.out
    *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
-   * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
-   * bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId, bOutput1Requested,
-   * bKeepInputTensor.
+   * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth,
+   * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
+   * bOutput1Requested, bKeepInputTensor.
    *
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
@@ -183,9 +183,9 @@ class Base extends TestParams.Base {
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
       ],
 
-//!!! ...(2021/10/06 Temp Remarked) WASM seems not correct when ( depthwiseFilterHeight == 1 )
-//      depthwiseFilterHeight: [ 1, depthwiseFilterMaxSize ],
-      depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
+      // (2021/10/06) Note: WASM seems not correct when ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ).
+      depthwiseFilterHeight: [ PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterWidth: [ PointDepthPoint.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 
 //      depthwiseStridesPad: undefined,
       depthwiseStridesPad: [
@@ -224,6 +224,7 @@ class Base extends TestParams.Base {
                                                                                       this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterHeight,   this.valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseFilterWidth,    this.valueOutMinMax.depthwiseFilterWidth ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseStridesPad,     this.valueOutMinMax.depthwiseStridesPad ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.valueOutMinMax.Bias ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
@@ -300,7 +301,7 @@ class Base extends TestParams.Base {
    * look like [ depthwiseFiltersArray, depthwiseBiasesArray ]. But it may also be no element (i.e. an empty array).
    */
   static generate_depthwise_filters_biases(
-    inputChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bBias ) {
+    inputChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bBias ) {
 
     let result = {
       outputChannelCount: inputChannelCount, // If this depthwise operation does not exist, default outputChannelCount will be inputChannelCount.
@@ -311,7 +312,8 @@ class Base extends TestParams.Base {
       result.outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
       let filtersWeightsRandomOffset = { min: -100, max: +100 };
-      let depthwiseFilterWidth = depthwiseFilterHeight;
+//!!! (2021/12/10 Remarked)
+//      let depthwiseFilterWidth = depthwiseFilterHeight;
       let filtersWeightsCount = result.outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
       let filtersArray = Base.generate_numberArray( filtersWeightsCount, filtersWeightsRandomOffset.min, filtersWeightsRandomOffset.max );
       result.numberArrayArray[ 0 ] = filtersArray; // Note: if AVG or MAX pooling, depthwise.numberArrayArray[ 0 ] will be undefined.
@@ -392,7 +394,8 @@ class Base extends TestParams.Base {
 
     // Depthwise1
     let depthwise1 = Base.generate_depthwise_filters_biases( pointwise1.outputChannelCount,
-      paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
+      paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
+      paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
 
     io_paramsNumberArrayObject.depthwise1Filters = depthwise1.numberArrayArray[ 0 ];
     io_paramsNumberArrayObject.depthwise1Biases =  depthwise1.numberArrayArray[ 1 ];
@@ -407,7 +410,7 @@ class Base extends TestParams.Base {
                  == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
          ) {
         depthwise2 = Base.generate_depthwise_filters_biases( paramsAll.channelCount0_pointwise1Before, // Use input0.
-          paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight,
+          paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
           paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
 
         io_paramsNumberArrayObject.depthwise2Filters = depthwise2.numberArrayArray[ 0 ];
@@ -501,6 +504,7 @@ Base.paramsNameOrderArray = [
   PointDepthPoint.Params.pointwise1ActivationId.paramName,
   PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.paramName,
   PointDepthPoint.Params.depthwiseFilterHeight.paramName,
+  PointDepthPoint.Params.depthwiseFilterWidth.paramName,
   PointDepthPoint.Params.depthwiseStridesPad.paramName,
   PointDepthPoint.Params.bDepthwiseBias.paramName,
   PointDepthPoint.Params.depthwiseActivationId.paramName,
