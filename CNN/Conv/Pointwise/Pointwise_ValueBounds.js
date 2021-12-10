@@ -28,41 +28,45 @@ class ValueBounds {
 
   /**
    *
-   * @param {tf.tensor4d} filtersTensor4d
-   *   The tensor4d for pointwise convolution. If null, it means no pointwise convolution.
+   * @param {boolean} bPointwise
+   *   If true, the pointwise convolution (with/without bias, with/without activation) exists. 
    *
-   * @param {tf.tensor3d} biasesTensor3d
-   *   The tensor3d for bias operation. If null, it means no bias operation.
+   * @param {number} inputChannelCount
+   *   The input channel count of the pointwise convolution. 
+   *
+   * @param {boolean} bBias
+   *   If true, the bias operation exists. 
    *
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
    */
-  set_by( filtersTensor4d, biasesTensor3d, nActivationId ) {
+  set_by( bPointwise, inputChannelCount, bBias, nActivationId ) {
 
     // 0. Default.
     this.beforeActivation = this.input.clone();
     this.output = this.input.clone();
 
-    // 1. Before activation function.
+    // 1. No operation at all.
+    if ( !bPointwise )
+      return;
+
+    // 2. Before activation function.
     {
       // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
       const filtersValueBounds = Weights.Base.ValueBounds;
       const biasesValueBounds = Weights.Base.ValueBounds;
 
-      if ( filtersTensor4d ) {
-        let inDepth = filtersTensor4d.shape[ 2 ]; // i.e. input channel count.
-        this.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, inDepth );
-      }
+      this.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, inputChannelCount );
 
-      if ( biasesTensor3d )
+      if ( bBias )
         this.beforeActivation.add_Bounds( biasesValueBounds );
     }
 
-    // 2. Output.
+    // 3. Output.
 
     // If there is activation function, it dominates the output range.
     if ( this.nActivationId != ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
-      let info = Base.ActivationFunction_getInfoById( this.nActivationId );
+      let info = ValueDesc.ActivationFunction.Singletion.getInfoById( this.nActivationId );
       this.output.set_Bounds( info.outputRange );
 
     // Otherwise, the output range is determined by input domain, filters, biases.
