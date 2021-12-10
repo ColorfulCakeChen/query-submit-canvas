@@ -279,7 +279,7 @@ class Base extends ReturnOrClone_Activation.Base {
       }
     }
 
-    // 6. Determine output value bounds.
+    // 4. Determine output value bounds.
     if ( bExtractOk ) {
       this.valueBounds.set_by( this.filtersTensor4d, this.biasesTensor3d, this.nActivationId );
     }
