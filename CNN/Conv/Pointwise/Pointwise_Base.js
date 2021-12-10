@@ -141,11 +141,17 @@ import { ValueBounds } from "./Pointwise_ValueBounds.js";
  */
 class Base extends ReturnOrClone_Activation.Base {
 
+  /**
+   * @param {FloatValue.Bounds} inputValueBounds
+   *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
+   */
   constructor(
+    inputValueBounds,
     inputChannelCount, outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
     super();
+    this.valueBounds = new ValueBounds( inputValueBounds );
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
@@ -201,12 +207,9 @@ class Base extends ReturnOrClone_Activation.Base {
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {FloatValue.Bounds} inputValueBounds
-   *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
-   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, inputValueBounds ) {
+  init( inputFloat32Array, byteOffsetBegin ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -278,7 +281,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     // 6. Determine output value bounds.
     if ( bExtractOk ) {
-      this.valueBounds = new ValueBounds( inputValueBounds, this.filtersTensor4d, this.biasesTensor3d, this.nActivationId );
+      this.valueBounds.set_by( this.filtersTensor4d, this.biasesTensor3d, this.nActivationId );
     }
 
     this.bInitOk = bExtractOk;
