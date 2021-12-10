@@ -746,8 +746,9 @@ class Base {
              == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
 
         let depthwisePassThrough = new Depthwise.PadInfoCalculator( imageIn1.height, imageIn1.width, imageIn1.depth,
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad );
-        
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+          testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad );
+
         let depthwisePassThroughFiltersArray = depthwisePassThrough.generate_PassThrough_FiltersArray();
 
         imageIn1 = Base.calcDepthwise(
