@@ -25,7 +25,7 @@ class Base {
    *   The bounds of the input element value. Or say, the domain of this convolution-bias-activation.
    */
   constructor( inputValueBounds ) {
-    this.set_All_byClone( inputValueBounds ); // (Copy for preventing from modifying.)
+    this.input = inputValueBounds.clone(); // (Copy for preventing from modifying.)
   }
 
   /**
