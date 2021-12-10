@@ -184,7 +184,7 @@ class HeightWidthDepth {
 
     // channelCount0_pointwise1Before, channelCount1_pointwise1Before,
     // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-    // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     // pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
     // bPointwise22,
     // bKeepInputTensor
@@ -199,7 +199,7 @@ class HeightWidthDepth {
     new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-          1,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          1,     3, 3, 1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -211,7 +211,7 @@ class HeightWidthDepth {
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.AVG,
-                 3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+                 3, 3, 1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -223,7 +223,7 @@ class HeightWidthDepth {
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
         PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.MAX,
-                 3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+                 3, 3, 1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -234,7 +234,7 @@ class HeightWidthDepth {
     new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-          2,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          2,     3, 3, 1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -245,7 +245,7 @@ class HeightWidthDepth {
     new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-          2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          2,     3, 3, 1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4, false, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -256,7 +256,7 @@ class HeightWidthDepth {
     new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           8, false, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-          2,     3,   1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          2,     3, 3, 1, false, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
           4, false, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.COS,
       false,
        true
@@ -267,7 +267,7 @@ class HeightWidthDepth {
     new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
           0,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-         32,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+         32,     3, 3, 1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
         128,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
       false,
        true
@@ -278,7 +278,7 @@ class HeightWidthDepth {
     new PointDepthPoint_TestParams.Base().set_By_ParamsScattered(
       this.testPerformance_ImageDataArray[ 0 ].depth, this.testPerformance_ImageDataArray[ 1 ].depth,
         128,  true, PointDepthPoint.Params.pointwise1ActivationId.valueDesc.Ids.COS,
-          0,     3,   1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
+          0,     3, 3, 1,  true, PointDepthPoint.Params.depthwiseActivationId.valueDesc.Ids.COS,
         128,  true, PointDepthPoint.Params.pointwise21ActivationId.valueDesc.Ids.NONE,
       false,
        true
@@ -401,34 +401,6 @@ class HeightWidthDepth {
   }
 
   test_Weights_Float32Array_RestrictedClone() {
-
-//!!! (2021/12/08 Remarked) Using [ -2^24, +2^24 ] should be enough.
-//     let inputArray = new Float32Array( [
-//                     Number.NaN,
-//       Number.NEGATIVE_INFINITY,
-//            -Math.pow( 2, +25 ), -Math.pow( 2, +24 ), -Math.pow( 2, +23 ),
-//            -Math.pow( 2, -23 ), -Math.pow( 2, -24 ), -Math.pow( 2, -25 ),
-//                              0,
-//            +Math.pow( 2, -25 ), +Math.pow( 2, -24 ), +Math.pow( 2, -23 ),
-//            +Math.pow( 2, +23 ), +Math.pow( 2, +24 ), +Math.pow( 2, +25 ),
-//       Number.POSITIVE_INFINITY,
-//     ] );
-//
-//     const POSITIVE_MIN = Math.pow( 2, -24 );
-//     const POSITIVE_MAX = Math.pow( 2, +24 );
-//     const NEGATIVE_MIN = - POSITIVE_MAX; // - Math.pow( 2, +24 )
-//     const NEGATIVE_MAX = - POSITIVE_MIN; // - Math.pow( 2, -24 )
-//
-//     let verifyArray = new Float32Array( [
-//                         0,
-//              NEGATIVE_MIN,
-//              NEGATIVE_MIN, NEGATIVE_MIN, -Math.pow( 2, +23 ),
-//       -Math.pow( 2, -23 ), NEGATIVE_MAX,                   0,
-//                         0,
-//                         0, POSITIVE_MIN, +Math.pow( 2, -23 ),
-//       +Math.pow( 2, +23 ), POSITIVE_MAX,        POSITIVE_MAX,
-//              POSITIVE_MAX,
-//     ] );
 
     let inputArray = new Float32Array( [
       undefined, null, "", "A", "2", Number.NaN,
