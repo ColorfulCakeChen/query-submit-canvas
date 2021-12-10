@@ -343,6 +343,7 @@ class Base extends ReturnOrClone.Base {
     this.depthwise_AvgMax_Or_ChannelMultiplier = params.depthwise_AvgMax_Or_ChannelMultiplier;
     this.depthwise_AvgMax_Or_ChannelMultiplier_Name = params.depthwise_AvgMax_Or_ChannelMultiplier_Name;
     this.depthwiseFilterHeight = params.depthwiseFilterHeight;
+    this.depthwiseFilterWidth = params.depthwiseFilterWidth;
     this.depthwiseStridesPad = params.depthwiseStridesPad;
     this.bDepthwiseBias = params.bDepthwiseBias;
     this.depthwiseActivationId = params.depthwiseActivationId;
@@ -492,7 +493,7 @@ class Base extends ReturnOrClone.Base {
 
     this.depthwise1 = new Depthwise.Base(
       this.channelCount_pointwise1After_depthwise1Before,
-      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
+      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
       this.bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf_depthwise1
     );
@@ -526,7 +527,7 @@ class Base extends ReturnOrClone.Base {
         // not inputTensors[ 1 ]).
         this.channelCount0_pointwise1Before,
 
-        this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight,
+        this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
         this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
 
         false, -1, -1, -1 // depthwise2 never has higher-half-different.
@@ -1400,7 +1401,7 @@ class Base extends ReturnOrClone.Base {
       + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
 
       + `depthwise_AvgMax_Or_ChannelMultiplier=${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}, `
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `depthwiseStridesPad=${this.depthwiseStridesPad}, `
       + `bDepthwiseBias=${this.bDepthwiseBias}, `
       + `depthwiseActivationName=${this.depthwiseActivationName}(${this.depthwiseActivationId}), `
