@@ -213,7 +213,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     // 5. Determine output value bounds.
     if ( bExtractOk ) {
-      this.valueBounds.set_by( this.bDepthwise, this.filterHeight, this.filterWidth, this.bBias, this.nActivationId );
+      this.valueBounds.set_beforeActivation_output_by( this.bDepthwise, this.filterHeight, this.filterWidth, this.bBias, this.nActivationId );
     }
 
     this.bInitOk = bExtractOk;
