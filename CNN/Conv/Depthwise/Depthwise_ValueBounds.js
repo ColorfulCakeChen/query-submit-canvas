@@ -28,39 +28,45 @@ class ValueBounds {
 
   /**
    *
-   * @param {tf.tensor4d} filtersTensor4d
-   *   The tensor4d for depthwise convolution. If null, it means no depthwise convolution.
+   * @param {boolean} bDepthwise
+   *   If true, the depthwise convolution (with/without bias, with/without activation) exists. 
    *
-   * @param {tf.tensor3d} biasesTensor3d
-   *   The tensor3d for bias operation. If null, it means no bias operation.
+   * @param {number} filterHeight
+   *   The filter height of the depthwise convolution. 
+   *
+   * @param {number} filterWidth
+   *   The filter width of the depthwise convolution. 
+   *
+   * @param {boolean} bBias
+   *   If true, the bias operation exists. 
    *
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
    */
-  set_by( filtersTensor4d, biasesTensor3d, nActivationId ) {
-
-//!!! ...unfinished... (2021/12/10)
+  set_by( bDepthwise, filterHeight, filterWidth, bBias, nActivationId ) {
 
     // 0. Default.
     this.beforeActivation = this.input.clone();
     this.output = this.input.clone();
 
-    // 1. Before activation function.
+    // 1. No operation at all.
+    if ( !bDepthwise )
+      return;
+
+    // 2. Before activation function.
     {
       // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
       const filtersValueBounds = Weights.Base.ValueBounds;
       const biasesValueBounds = Weights.Base.ValueBounds;
 
-      if ( filtersTensor4d ) {
-        let inDepth = filtersTensor4d.shape[ 2 ]; // i.e. input channel count.
-        this.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, inDepth );
-      }
+      let filterSize = filterHeight * filterWidth;
+      this.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, filterSize );
 
-      if ( biasesTensor3d )
+      if ( bBias )
         this.beforeActivation.add_Bounds( biasesValueBounds );
     }
 
-    // 2. Output.
+    // 3. Output.
 
     // If there is activation function, it dominates the output range.
     if ( this.nActivationId != ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
