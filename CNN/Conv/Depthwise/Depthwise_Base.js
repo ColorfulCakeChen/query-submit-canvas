@@ -1,10 +1,11 @@
-export { PadInfoCalculator, PassThrough, ValueBounds, Base };
+export { Base };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
-
+import { PadInfoCalculator, PassThrough } from "./Depthwise_PassThrough.js";
+import { ValueBounds } from "./Depthwise_ValueBounds.js";
 
 /**
  * According to input image size and depthwise convolution parameters, calculate the padding information of the depthwise convolution.
