@@ -1,7 +1,7 @@
-export { PassThrough, AllZeros, ValueBounds };
+export { PassThrough, AllZeros };
 
 import * as TwoTensors from "../../util/TwoTensors.js";
-import * as FloatValue from "../Unpacker/FloatValue.js";
+//import * as FloatValue from "../Unpacker/FloatValue.js";
 //import * as ValueDesc from "../Unpacker/ValueDesc.js";
 //import * as Weights from "../Unpacker/Weights.js";
 
@@ -222,22 +222,4 @@ class AllZeros extends TwoTensors.filtersTensor4d_biasesTensor3d {
   }
 
 }
-
-
-//!!! ...unfinished... (2021/12/08)
-/**
- *
- */
-class ValueBounds {
-  constructor( inputChannelCount, outputChannelCount, bBias, nActivationId ) {
-
-//!!! ...unfinished... (2021/12/08)
-//     this.input = new FloatValue.Bounds( ??? );
-//     this.filterAfter = new FloatValue.Bounds( ??? );
-//     this.biasAfter = new FloatValue.Bounds( ??? );
-//     this.activationAfter = new FloatValue.Bounds( ??? );
-//     this.output = new FloatValue.Bounds( ??? );
-  }
-}
-
 
