@@ -5,7 +5,8 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
-import { PassThrough, AllZeros, ValueBounds } from "./Pointwise_PassThrough.js";
+import { PassThrough, AllZeros } from "./Pointwise_PassThrough.js";
+import { ValueBounds } from "./Pointwise_ValueBounds.js";
 
 /**
  * Handle pointwise convolution (1x1 conv2d), bias and activation.
@@ -17,19 +18,8 @@ import { PassThrough, AllZeros, ValueBounds } from "./Pointwise_PassThrough.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
- * @member {FloatValue.Bounds} inputValueBounds
- *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
- *
-
-!!! ...unfinished... (2021/12/10) should be named as xxxValueBounds ?
-
- * @member {FloatValue.Bounds} outputValueBounds_beforeActivation
- *   The bounds of the output element value. Or say, the range of this pointwise convolution.
- *
-    this.outputValueBounds_beforeActivation = this.inputValueBounds.clone();
- 
- * @member {FloatValue.Bounds} outputValueBounds
- *   The bounds of the output element value. Or say, the range of this pointwise convolution.
+ * @member {ValueBounds} valueBounds
+ *   The element value bounds of input, beforeActivation, and output for this pointwise convolution.
  *
  * @member {number} outputChannelCount
  *   The output channel count of this pointwise convolutiuon.
@@ -152,12 +142,10 @@ import { PassThrough, AllZeros, ValueBounds } from "./Pointwise_PassThrough.js";
 class Base extends ReturnOrClone_Activation.Base {
 
   constructor(
-    inputValueBounds,
     inputChannelCount, outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
     super();
-    this.inputValueBounds = inputValueBounds.clone(); // Copy for preventing from modifying.
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
@@ -213,9 +201,12 @@ class Base extends ReturnOrClone_Activation.Base {
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
+   * @param {FloatValue.Bounds} inputValueBounds
+   *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
+   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin ) {
+  init( inputFloat32Array, byteOffsetBegin, inputValueBounds ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -287,7 +278,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     // 6. Determine output value bounds.
     if ( bExtractOk ) {
-      Base.Setup_outputValueBounds.call( this );
+      this.valueBounds = new ValueBounds( inputValueBounds, this.filtersTensor4d, this.biasesTensor3d, this.nActivationId );
     }
 
     this.bInitOk = bExtractOk;
@@ -398,41 +389,6 @@ class Base extends ReturnOrClone_Activation.Base {
         this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
        else
         this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
-    }
-  }
-
-  /** Determine this.outputValueBounds.
-   *
-   * @param {Base} this The Base object to be determined and modified.
-   */
-  static Setup_outputValueBounds() {
-    // (Copy for preventing from modifying.)
-    this.outputValueBounds_beforeActivation = this.inputValueBounds.clone();
-    this.outputValueBounds = this.inputValueBounds.clone();
-
-    if ( !this.bPointwise )
-      return; // If no operation at all, the output range will be the same as input domain.
-
-    {
-      // Since they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
-      const filtersValueBounds = Weights.Base.ValueBounds;
-      const biasesValueBounds = Weights.Base.ValueBounds;
-
-      if ( this.filtersTensor4d )
-        this.outputValueBounds_beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, this.inputChannelCount );
-
-      if ( this.biasesTensor3d )
-        this.outputValueBounds_beforeActivation.add_Bounds( biasesValueBounds );
-    }
-
-    // If there is activation function, it dominates the output range.
-    if ( this.nActivationId != ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
-      let info = Base.ActivationFunction_getInfoById( this.nActivationId );
-      this.outputValueBounds.set_Bounds( info.outputRange );
-
-    // Otherwise, the output range is determined by input domain, filters, biases.
-    } else {
-      this.outputValueBounds.set_Bounds( this.outputValueBounds_beforeActivation );
     }
   }
 
