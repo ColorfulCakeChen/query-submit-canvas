@@ -1,6 +1,5 @@
 export { Base };
 
-import { Params } from "./PointDepthPoint_Params.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
@@ -13,6 +12,7 @@ import * as AddTwoTensors from "../AddTwoTensors.js";
 import * as ConcatAlongAxisId2 from "../ConcatAlongAxisId2.js";
 import * as ConcatShuffleSplit from "../ConcatShuffleSplit.js";
 import * as TensorOpCounter from "../TensorOpCounter.js";
+import { Params } from "./PointDepthPoint_Params.js";
 
 
 //!!! ...unfinished... (2021/08/18)
