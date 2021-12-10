@@ -717,7 +717,6 @@ class Base extends ReturnOrClone.Base {
         + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
     );
 
-//!!! ...unfinished... (2021/12/10) the output value bounds should be effected by add-input-to-output.
     // Because pointwise21 always exists, it has the default final output value bounds of this PointDepthPoint.
     this.outputValueBounds = this.pointwise21.valueBounds.output.clone();
 
@@ -763,11 +762,13 @@ class Base extends ReturnOrClone.Base {
         this.addInput0ToPointwise22 = new AddTwoTensors.Base();
       }
 
-//!!! ...unfinished... (2021/12/10) the output value bounds should be effected by add-input-to-output.
-  
     }
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
+
+    if ( this.bShouldAddInputToOutput ) { // If add-input-to-output wiil be done indeed, it affects the output value bounds.
+      this.outputValueBounds.add_Bounds( inputValueBounds );
+    }
 
     // 6.2
     //
@@ -970,6 +971,7 @@ class Base extends ReturnOrClone.Base {
       = this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22
       = this.bConcat2ShuffleSplitRequested
       = this.outputTensorCount
+      = this.outputValueBounds
       = undefined;
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
@@ -1406,11 +1408,6 @@ class Base extends ReturnOrClone.Base {
   get inputValueBounds() {
     return this.pointwise1.valueBounds.input; // Even if pointwise1 does no operation, this still works.
   }
-
-//!!! (2021/12/10 Remakred) the output value bounds should be effected by add-input-to-output.
-//   get outputValueBounds() {
-//     return this.pointwise21.valueBounds.output; // Because pointwise21 always exists, it has the final output value bounds of this PointDepthPoint.
-//   }
 
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
