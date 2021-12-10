@@ -419,7 +419,7 @@ class Base extends ReturnOrClone_Activation.Base {
       const biasesValueBounds = Weights.Base.ValueBounds;
 
       if ( this.filtersTensor4d )
-        this.outputValueBounds_beforeActivation.multiply_Bounds( filtersValueBounds );
+        this.outputValueBounds_beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, this.inputChannelCount );
 
       if ( this.biasesTensor3d )
         this.outputValueBounds_beforeActivation.add_Bounds( biasesValueBounds );
