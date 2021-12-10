@@ -45,23 +45,22 @@ import * as ReturnOrClone_Activation from "./ReturnOrClone_Activation.js";
  */
 class PadInfoCalculator {
   
-  constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad ) {
+  constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
     this.imageInHeight = imageInHeight;
     this.imageInWidth = imageInWidth;
     this.imageInDepth = imageInDepth;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
     this.filterHeight = filterHeight;
+    this.filterWidth = filterWidth;
     this.stridesPad = stridesPad;
 
-//!!! ...unfinished... (2021/03/17) What about ( filterHeight <= 0 )?
+//!!! ...unfinished... (2021/03/17) What about ( filterHeight <= 0 ) or ( filterWidth <= 0 )?
 
     this.channelMultiplier = AvgMax_Or_ChannelMultiplier;
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
       this.channelMultiplier = 1;
     }
-
-    this.filterWidth = filterHeight; // Assume filter's width equals height.
 
     // Strides and Padding.
     switch ( stridesPad ) {
@@ -213,10 +212,10 @@ class PassThrough extends PadInfoCalculator {
   /**
    */
   constructor(
-    imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias,
+    imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias,
     filterValue = 1, biasValue = 0 ) {
 
-    super( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad );
+    super( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
     this.bBias = bBias;
     this.filterValue = filterValue;
@@ -259,7 +258,7 @@ class PassThrough extends PadInfoCalculator {
  *
  */
 class ValueBounds {
-  constructor( inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, bBias, nActivationId ) {
+  constructor( inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, bBias, nActivationId ) {
 
 //!!! ...unfinished... (2021/12/08)
 //     this.input = new FloatValue.Bounds( ??? );
@@ -364,13 +363,14 @@ class ValueBounds {
 class Base extends ReturnOrClone_Activation.Base {
 
   constructor(
-    inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, stridesPad, bBias, nActivationId,
+    inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias, nActivationId,
     bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf ) {
 
     super();
     this.inputChannelCount = inputChannelCount;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
     this.filterHeight = filterHeight;
+    this.filterWidth = filterWidth;
     this.stridesPad = stridesPad;
     this.bBias = bBias;
     this.nActivationId = nActivationId;
@@ -425,7 +425,6 @@ class Base extends ReturnOrClone_Activation.Base {
     this.disposeTensors();
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-    this.filterWidth = this.filterHeight;  // Assume depthwise filter's width equals its height.
 
     switch ( this.stridesPad ) {
       case 0:  this.strides = 1; this.pad = "valid"; break;
@@ -498,8 +497,6 @@ class Base extends ReturnOrClone_Activation.Base {
       this.biasesTensor3d = null;
     }
 
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountExtracted = 0;
     this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
 
@@ -510,7 +507,7 @@ class Base extends ReturnOrClone_Activation.Base {
     //  = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
     //  = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
     //  = this.imageInHeight = this.imageInWidth = this.imageInDepth
-    //  = this.filterHeightWidth
+    //  = this.poolWindowShape = this.filterHeight = this.filterWidth
     //  = undefined;
 
     // If these properties does not exist, assigning value (even undefined) to them will create them. Avoid it.
@@ -718,10 +715,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *   - this.outputChannelCount
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -736,7 +729,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     this.outputChannelCount = this.inputChannelCount; // No channel multiplier.
 
-    this.filterHeightWidth = [ this.filterHeight, this.filterWidth ];
+    this.poolWindowShape = [ this.filterHeight, this.filterWidth ];
 
     // In normal depthwise avg/max pooling, use specified specified channel count as extracted channel count.
     // Although they are not used to extract avg/max filters, they will be used for extracting bias.
@@ -766,10 +759,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *   - this.outputChannelCount
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -880,10 +869,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *   - this.outputChannelCount
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -921,7 +906,7 @@ class Base extends ReturnOrClone_Activation.Base {
       // The other half is just filters and biases for pass-through.
       higherHalfPassThrough = new PassThrough(
         this.inputHeight, this.inputWidth, this.inputChannelCount_higherHalf,
-        this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.stridesPad, this.bBias );
+        this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth, this.stridesPad, this.bBias );
 
       if ( !higherHalfPassThrough.bInitOk )
         return false;
@@ -966,14 +951,6 @@ class Base extends ReturnOrClone_Activation.Base {
     } finally {
 
       if ( higherHalfPassThrough ) {
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//        // Include the weights count of the higher-half-pass-through filters and biases.
-//         this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-//         if ( higherHalfPassThrough.biasesTensor3d ) {
-//           this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
-//         }
-
         higherHalfPassThrough.disposeTensors();
       }
 
@@ -995,10 +972,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *   - this.outputChannelCount
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -1034,22 +1007,22 @@ class Base extends ReturnOrClone_Activation.Base {
 
   /** Depthwise Average Pooling. */
   static Avg_and_keep( inputTensor ) {
-    return tf.pool( inputTensor, this.filterHeightWidth, "avg", this.pad, 1, this.strides ); // dilations = 1
+    return tf.pool( inputTensor, this.poolWindowShape, "avg", this.pad, 1, this.strides ); // dilations = 1
   }
 
   static Avg_and_destroy( inputTensor ) {
-    let t = tf.pool( inputTensor, this.filterHeightWidth, "avg", this.pad, 1, this.strides ); // dilations = 1
+    let t = tf.pool( inputTensor, this.poolWindowShape, "avg", this.pad, 1, this.strides ); // dilations = 1
     inputTensor.dispose();
     return t;
   }
 
   /** Depthwise Max Pooling. */
   static Max_and_keep( inputTensor ) {
-    return tf.pool( inputTensor, this.filterHeightWidth, "max", this.pad, 1, this.strides ); // dilations = 1
+    return tf.pool( inputTensor, this.poolWindowShape, "max", this.pad, 1, this.strides ); // dilations = 1
   }
 
   static Max_and_destroy( inputTensor ) {
-    let t = tf.pool( inputTensor, this.filterHeightWidth, "max", this.pad, 1, this.strides ); // dilations = 1
+    let t = tf.pool( inputTensor, this.poolWindowShape, "max", this.pad, 1, this.strides ); // dilations = 1
     inputTensor.dispose();
     return t;
   }
