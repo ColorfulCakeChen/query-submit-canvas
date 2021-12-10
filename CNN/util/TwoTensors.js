@@ -1,9 +1,9 @@
-export { Base };
+export { filtersTensor4d_biasesTensor3d };
 
 /**
  * An object contains filtersTensor4d and biasesTensor3d, and a method to dispose them.
  */
-class Base {
+class filtersTensor4d_biasesTensor3d {
 
   /**
    * Release the tensors.
