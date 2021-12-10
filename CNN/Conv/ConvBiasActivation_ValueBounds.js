@@ -20,12 +20,50 @@ class Base {
 
   /**
    * @param {FloatValue.Bounds} inputValueBounds
-   *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
+   *   The bounds of the input element value. Or say, the domain of this convolution-bias-activation.
    */
   constructor( inputValueBounds ) {
-    this.input = inputValueBounds.clone(); // (Copy for preventing from modifying.)
+    this.set_All_byClone( inputValueBounds ); // (Copy for preventing from modifying.)
+  }
+
+  /**
+   * Set this.input, this.beforeActivation, this.output by copying the specified inputValueBounds.
+   *
+   * @param {FloatValue.Bounds} inputValueBounds
+   *   The bounds of the input element value. Or say, the domain of this convolution-bias-activation.
+   */
+  set_all_byClone( inputValueBounds ) {
+    this.input = inputValueBounds.clone();
+    this.set_beforeActivation_output_byClone_input();
+  }
+
+  /**
+   * Set this.beforeActivation and this.output by copying this.input.
+   */
+  set_beforeActivation_output_byClone_input() {
     this.beforeActivation = this.input.clone();
     this.output = this.input.clone();
+  }
+
+  /**
+   * Set this.output according to nActivationId.
+   *
+   * @param {number} nActivationId
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
+   *     - If ( nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ), this.output will be the same as this.beforeActivation.
+   *     - Otherwise, this.output will be the same as the output range of the activation function.
+   */
+  set_output_byActivationId( nActivationId ) {
+
+    // If there is no activation function, the output range is determined by input domain, filters, biases.
+    if ( this.nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
+      this.output.set_Bounds( this.beforeActivation );
+
+    // Otherwise, the activation function dominates the output range.
+    } else {
+      let info = ValueDesc.ActivationFunction.Singletion.getInfoById( this.nActivationId );
+      this.output.set_Bounds( info.outputRange );
+    }
   }
 
 //!!! ...unfinished... (2021/12/10)
