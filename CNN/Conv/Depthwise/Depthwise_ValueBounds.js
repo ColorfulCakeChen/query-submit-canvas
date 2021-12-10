@@ -59,6 +59,7 @@ class ValueBounds {
       const filtersValueBounds = Weights.Base.ValueBounds;
       const biasesValueBounds = Weights.Base.ValueBounds;
 
+      // Note: For maximum pooling, the multiply_Bounds is a little bit overestimated (but should be acceptable).
       let filterSize = filterHeight * filterWidth;
       this.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, filterSize );
 
