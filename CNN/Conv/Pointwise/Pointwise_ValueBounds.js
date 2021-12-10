@@ -1,29 +1,22 @@
 export { ValueBounds };
 
+import * as ConvBiasActivation_ValueBounds from "../ConvBiasActivation_ValueBounds.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
 /**
- *
- * @member {FloatValue.Bounds} input
- *   The bounds of the input element value. Or say, the domain of the pointwise convolution.
- *
- * @member {FloatValue.Bounds} beforeActivation
- *   The bounds of the element value after pointwise convolution and bias operation (but before activation).
- *
- * @member {FloatValue.Bounds} output
- *   The bounds of the output element value. Or say, the range of the pointwise convolution.
+ * The value bounds for pointwise convolution-bias-activation.
  *
  */
-class ValueBounds {
+class ValueBounds extends ConvBiasActivation_ValueBounds.Base {
 
   /**
    * @param {FloatValue.Bounds} inputValueBounds
    *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
    */
   constructor( inputValueBounds ) {
-    this.input = inputValueBounds.clone(); // (Copy for preventing from modifying.)
+    super( inputValueBounds );
   }
 
   /**
@@ -40,11 +33,10 @@ class ValueBounds {
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
    */
-  set_by( bPointwise, inputChannelCount, bBias, nActivationId ) {
+  set_beforeActivation_output_by( bPointwise, inputChannelCount, bBias, nActivationId ) {
 
-    // 0. Default.
-    this.beforeActivation = this.input.clone();
-    this.output = this.input.clone();
+    // 0. Default as input.
+    this.set_beforeActivation_output_byClone_input();
 
     // 1. No operation at all.
     if ( !bPointwise )
@@ -63,16 +55,7 @@ class ValueBounds {
     }
 
     // 3. Output.
-
-    // If there is activation function, it dominates the output range.
-    if ( this.nActivationId != ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
-      let info = ValueDesc.ActivationFunction.Singletion.getInfoById( this.nActivationId );
-      this.output.set_Bounds( info.outputRange );
-
-    // Otherwise, the output range is determined by input domain, filters, biases.
-    } else {
-      this.output.set_Bounds( this.beforeActivation );
-    }
+    this.set_output_byActivationId( nActivationId );
   }
 
 }
