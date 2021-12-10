@@ -284,93 +284,6 @@ class ValueBounds {
  *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
  * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
  *
-
-//!!! (2021/12/01 Remarked) Uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
-
-//  * @member {number} inputChannelCount_lowerHalf
-//  *   If positive (and outputChannelCount_lowerHalf should also be positive), then ( bHigherHalfDifferent == true ).
-//  *
-//  * @member {number} outputChannelCount_lowerHalf
-//  *   If positive (and inputChannelCount_lowerHalf should also be positive), then ( bHigherHalfDifferent == true ).
-//  *
-//  * @member {boolean} bHigherHalfDifferent
-//  *   - 1. If false, it is just a normal poitwise convolution.
-//  *
-//  *     - 1.1 If ( outputChannelCount > 0 ), normal poitwise convolution.
-//  *
-//  *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
-//  *
-//  *   - If true:
-//  *
-//
-// //!!! ...unfinished... (2021/12/01)
-// // should not use ( inputChannelCount < outputChannelCount ) to distinguish bHigherHalfCopyLowerHalf or bHigherHalfPassThrough.
-//
-//
-//  *     - 2. If ( inputChannelCount < outputChannelCount ): (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
-//  *
-//  *           - If ( outputChannelCount > 0 ):
-//  *
-//  *             - 2.1 If ( channelShuffler_outputGroupCount < 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough), the
-//  *                 filters for the output channels between 0 and ( outputChannelCount_lowerHalf - 1 ) will just pass
-//  *                 through the input to output. The filters for the output channels between ( outputChannelCount_lowerHalf )
-//  *                 and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
-//  *                 In this case, it will always have no biases (no matter how bBias is).
-//  *
-//  *             - 2.2 If ( channelShuffler_outputGroupCount == 0 ), (i.e. bHigherHalfCopyLowerHalf), the filters for the output
-//  *                 channels between ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just copy the
-//  *                 input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
-//  *
-//  *             - If ( channelShuffler_outputGroupCount > 0 ), unused. Initialization will always failed.
-//  *
-//  *           - If ( outputChannelCount <= 0 ), this can not happen because ( inputChannelCount < outputChannelCount <= 0 )
-//  *               implies ( inputChannelCount < 0 ) which is not possible (not legal). (It will be recognized as 3.2 or 4.2 or
-//  *               5.2 according to channelShuffler_outputGroupCount.)
-//  *
-//  *     - If ( inputChannelCount >= outputChannelCount ):
-//  *
-//  *       - 3. If ( channelShuffler_outputGroupCount < 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
-//  *          
-//  *           - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22), the filters for the input channels between 0 and
-//  *               ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between ( inputChannelCount_lowerHalf ) and
-//  *               ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases) will be extracted in sequence, but
-//  *               they will be combined into one larger filters (and biases). This makes these filters' (and biases') weights
-//  *               are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that the same filters weights
-//  *               could be used in these two architectures for comparing performance and correctness.
-//  *
-//  *           - 3.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler), the filters
-//  *               will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
-//  *               (not false), although the specified outputChannelCount is zero. And, it will always have no biases (no matter
-//  *               how bBias is). (same as 4.2)
-//  *
-//  *       - 4. If ( channelShuffler_outputGroupCount == 0 ): (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
-//  *
-//  *           - 4.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThrough), the filters for the output channels between
-//  *               ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just pass through the input to output. 
-//  *
-//  *           - 4.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThrough, i.e. no pointwise1 and no channel shuffler), the filters
-//  *               will just pass through all input channels to output. In this case, the ( bPointwise == bExisted == true )
-//  *               (not false), although the specified outputChannelCount is zero. And, it will always have no biases (no matter
-//  *               how bBias is). (same as 3.2)
-//  *
-//  *       - 5. If ( channelShuffler_outputGroupCount > 0 ): (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
-//  *
-//  *           - 5.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPassThroughShuffle), the filters for the output channels between
-//  *               ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just pass through the input to output.
-//  *               But they will be arranged just like applying channel shuffler on the output.
-//  *
-//  *           - 5.2 If ( outputChannelCount <= 0 ), (i.e. bAllPassThroughShuffle, i.e. no pointwise2 but has channel shuffler),
-//  *               the filters will pass through all input channels to output. But they will be arranged just like applying channel
-//  *               shuffler on the output. In this case, the ( bPointwise == bExisted == true ) (not false), although the specified
-//  *               outputChannelCount is zero. And, it will always have no biases (no matter how bBias is).
-//  *
-//  * @member {number} channelShuffler_outputGroupCount
-//  *   Only if ( bHigherHalfDifferent == true ), it is meaningful.
-
- *
-
-//!!! ...unfinished... (2021/12/01) ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
-
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
  *   - 1. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal poitwise convolution.
  *
@@ -563,58 +476,6 @@ class Base extends ReturnOrClone_Activation.Base {
       return true; // no operation at all.
     }
 
-//!!! (2021/12/01 Remarked) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
-//     if ( !this.bHigherHalfDifferent ) { // 1. Normal pointwise convolution and bias.
-//       this.bInitOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
-//       return this.bInitOk;
-//     }
-//
-//     if ( this.inputChannelCount < this.outputChannelCount ) {
-//
-//       if ( this.channelShuffler_outputGroupCount < 0 ) { // 2.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
-//         this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
-//
-//       } else if ( this.channelShuffler_outputGroupCount == 0 ) { // 2.2 bHigherHalfCopyLowerHalf
-//         this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
-//
-//       } else { // ( channelShuffler_outputGroupCount > 0 ), unused.
-//         this.bInitOk = false;
-//       }
-//
-//     } else { // ( inputChannelCount >= outputChannelCount )
-//
-//       if ( this.channelShuffler_outputGroupCount < 0 ) {
-//
-//         if ( this.outputChannelCount > 0 ) { // 3.1 bHigherHalfPointwise22
-//           this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
-//
-//         } else { // 3.2 ( outputChannelCount <= 0 ), bAllPassThrough
-//           this.bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
-//         }
-//
-//       } else if ( this.channelShuffler_outputGroupCount == 0 ) {
-//      
-//         if ( this.outputChannelCount > 0 ) { // 4.1 bHigherHalfPassThrough
-//           this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
-//
-//         } else { // 4.2 ( outputChannelCount <= 0 ), bAllPassThrough
-//           this.bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
-//         }
-//
-//       } else { // ( channelShuffler_outputGroupCount > 0 ), shuffling.
-//
-//         if ( this.outputChannelCount > 0 ) { // 5.1 bHigherHalfPassThroughShuffle
-//           this.bInitOk = Base.extractAs_HigherHalfPassThroughShuffle.call( this, inputFloat32Array );
-//
-//         } else { // 5.2 ( outputChannelCount <= 0 ), bAllPassThroughShuffle
-//           this.bInitOk = Base.extractAs_AllPassThroughShuffle.call( this, inputFloat32Array );
-//         }
-//       }
-//     }
-
-//!!! ...unfinished... (2021/12/01) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
-
-
     // 2.
 
     if ( this.outputChannelCount <= 0 ) { // bAllPassThrough
@@ -662,25 +523,6 @@ class Base extends ReturnOrClone_Activation.Base {
       Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
     }
 
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//     // Verify the total weight count.
-//     {
-//       let tensorWeightCountTotal = 0;
-//       {
-//         tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-//
-//         if ( this.biasesTensor3d ) {
-//           tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-//         }
-//       }
-//
-//       tf.util.assert( ( this.tensorWeightCountTotal == tensorWeightCountTotal ),
-//         `Pointwise.Base.init(): `
-//           + `this.tensorWeightCountTotal ( ${this.tensorWeightCountTotal} ) should be `
-//           + `( ${tensorWeightCountTotal} ).`
-//       );
-//     }
-
     return this.bInitOk;
   }
 
@@ -695,8 +537,6 @@ class Base extends ReturnOrClone_Activation.Base {
       this.biasesTensor3d = null;
     }
 
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//    this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountExtracted = 0;
 
     // (2021/10/27 Remarked) If these properties does not exist, assigning value (even undefined) to them will create them. This is un-wanted.
@@ -797,10 +637,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * Extract pointwise convolution filters from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//    *   - this.tensorWeightCountTotal
-
    *
    * @param {Base} this                       The Base object to be modified.
    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
@@ -825,10 +661,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -872,10 +704,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -912,9 +740,6 @@ class Base extends ReturnOrClone_Activation.Base {
       this.filtersTensor4d = higherHalfPassThrough.filtersTensor4d; // all pass through.
       this.biasesTensor3d = null; // always does not have biases (no matter how bBias is).
 
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//      this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-
       higherHalfPassThrough.filtersTensor4d = null; // So that it will not be disposed. (It has been used as this.filtersTensor4d.)
 
     } catch ( e ) {
@@ -943,10 +768,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -1005,28 +826,11 @@ class Base extends ReturnOrClone_Activation.Base {
       return false; // e.g. memory not enough.
 
     } finally {
-
       if ( higherHalfPassThrough ) {
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//        // Include the weights count of the higher-half-pass-through filters and biases.
-//         this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-//         if ( higherHalfPassThrough.biasesTensor3d ) {
-//           this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
-//         }
-
         higherHalfPassThrough.disposeTensors();
       }
 
       if ( lowerHalfPassThrough ) {
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//        // Include the weights count of the lower-half-pass-through filters and biases.
-//         this.tensorWeightCountTotal += tf.util.sizeFromShape( lowerHalfPassThrough.filtersTensor4d.shape );
-//         if ( lowerHalfPassThrough.biasesTensor3d ) {
-//           this.tensorWeightCountTotal += tf.util.sizeFromShape( lowerHalfPassThrough.biasesTensor3d.shape );
-//         }
-
         lowerHalfPassThrough.disposeTensors();
       }
     }
@@ -1047,10 +851,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -1140,16 +940,7 @@ class Base extends ReturnOrClone_Activation.Base {
       return false; // e.g. memory not enough.
 
     } finally {
-
       if ( higherHalfPassThrough ) {
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//        // Include the weights count of the higher-half-pass-through filters and biases.
-//         this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.filtersTensor4d.shape );
-//         if ( higherHalfPassThrough.biasesTensor3d ) {
-//           this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalfPassThrough.biasesTensor3d.shape );
-//         }
-
         higherHalfPassThrough.disposeTensors();
       }
     }
@@ -1170,10 +961,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -1296,10 +1083,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *   - this.outputChannelCount_Real
    *   - this.inputChannelCount_toBeExtracted
    *   - this.outputChannelCount_toBeExtracted
@@ -1412,109 +1195,13 @@ class Base extends ReturnOrClone_Activation.Base {
       return false; // e.g. memory not enough.
 
     } finally {
-
       if ( higherHalf ) {
-
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//        // Include the weights count of the higher-half (-pass-through or -all-zeros) filters and biases.
-//         this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalf.filtersTensor4d.shape );
-//         if ( higherHalf.biasesTensor3d ) {
-//           this.tensorWeightCountTotal += tf.util.sizeFromShape( higherHalf.biasesTensor3d.shape );
-//         }
-
         higherHalf.disposeTensors();
       }
     }
 
     return true;
   }
-
-//!!! ...unfinished... (2021/12/01) uses ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
-//
-//   /**
-//    * Extract filters and biases of HigherHalfPassThroughShuffle from inputFloat32Array.
-//    *
-//    * The following data members will be used:
-//    *   - this.byteOffsetEnd
-//    *   - this.inputChannelCount
-//    *   - this.outputChannelCount
-//    *   - this.inputChannelCount_lowerHalf
-//    *   - this.outputChannelCount_lowerHalf
-//    *
-//    * The following data members will be modified:
-//    *   - this.byteOffsetEnd
-//    *   - this.tensorWeightCountExtracted
-//    *   - this.tensorWeightCountTotal
-//    *   - this.outputChannelCount_Real
-//    *   - this.inputChannelCount_toBeExtracted
-//    *   - this.outputChannelCount_toBeExtracted
-//    *   - this.filtersTensor4d
-//    *   - this.biasesTensor3d
-//    *
-//    * @param {Base} this                       The Base object to be modified.
-//    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
-//    *
-//    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
-//    */
-//   static extractAs_HigherHalfPassThroughShuffle( inputFloat32Array ) {
-//
-//     try {
-//       let bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
-//       if ( !bInitOk )
-//         return false;
-//
-//       this.bHigherHalfPassThrough = undefined; // Cancel the flag of extractAs_HigherHalfPassThrough().
-//       this.bHigherHalfPassThroughShuffle = true;
-//       Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
-//
-//     } catch ( e ) {
-//       return false; // e.g. memory not enough.
-//     }
-//
-//     return true;
-//   }
-//
-//   /**
-//    * Extract filters and biases of AllPassThroughShuffle from inputFloat32Array.
-//    *
-//    * The following data members will be used:
-//    *   - this.byteOffsetEnd
-//    *   - this.inputChannelCount
-//    *   - this.outputChannelCount
-//    *
-//    * The following data members will be modified:
-//    *   - this.byteOffsetEnd
-//    *   - this.tensorWeightCountExtracted
-//    *   - this.tensorWeightCountTotal
-//    *   - this.outputChannelCount_Real
-//    *   - this.inputChannelCount_toBeExtracted
-//    *   - this.outputChannelCount_toBeExtracted
-//    *   - this.filtersTensor4d
-//    *   - this.biasesTensor3d
-//    *
-//    * @param {Base} this                       The Base object to be modified.
-//    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
-//    *
-//    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
-//    */
-//   static extractAs_AllPassThroughShuffle( inputFloat32Array ) {
-//
-//     try {
-//       let bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
-//       if ( !bInitOk )
-//         return false;
-//
-//       this.bAllPassThrough = undefined; // Cancel the flag of extractAs_AllPassThrough().
-//       this.bAllPassThroughShuffle = true;
-//       Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
-//
-//     } catch ( e ) {
-//       return false; // e.g. memory not enough.
-//     }
-//
-//     return true;
-//   }
 
   /**
    * Pre-shuffle channels by shuffling the filters and biases.
@@ -1547,12 +1234,6 @@ class Base extends ReturnOrClone_Activation.Base {
   }
 
   /** Expand a tensor4d by zeros along the last second axis (i.e. the axis id 2; the inDepth axis of a pointwise convolution's filters).
-   *
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   * The following data members will be modified:
-//   *   - this.tensorWeightCountTotal
-
    *
    * @param {tf.tensor4d} inputTensor4d
    *   The tensor4d to be expanded.
@@ -1606,18 +1287,10 @@ class Base extends ReturnOrClone_Activation.Base {
 
     } finally {
       if ( zerosPostfix ) {
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//        this.tensorWeightCountTotal += tf.util.sizeFromShape( zerosPostfix.shape ); // Include the expanded postfix weights count.
-
         zerosPostfix.dispose();
       }
 
       if ( zerosPrefix ) {
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//        this.tensorWeightCountTotal += tf.util.sizeFromShape( zerosPrefix.shape ); // Include the expanded prefix weights count.
-
         zerosPrefix.dispose();
       }
     }
