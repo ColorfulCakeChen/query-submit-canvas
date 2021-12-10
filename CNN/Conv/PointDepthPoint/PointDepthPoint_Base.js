@@ -904,7 +904,7 @@ class Base extends ReturnOrClone.Base {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer( progressParent, params, channelShuffler_ConcatPointwiseConv );
+    let initer = this.initer( progressParent, params, inputValueBounds, channelShuffler_ConcatPointwiseConv );
     let initerNext;
     do {
       initerNext = initer.next();
