@@ -241,7 +241,7 @@ class Params extends Weights.Params {
       [ Params.pointwise1ActivationId,                pointwise1ActivationId ],
       [ Params.depthwise_AvgMax_Or_ChannelMultiplier, depthwise_AvgMax_Or_ChannelMultiplier ],
       [ Params.depthwiseFilterHeight,                 depthwiseFilterHeight ],
-      [ Params.depthwiseFilterWidth,                 depthwiseFilterWidth ],
+      [ Params.depthwiseFilterWidth,                  depthwiseFilterWidth ],
       [ Params.depthwiseStridesPad,                   depthwiseStridesPad ],
       [ Params.bDepthwiseBias,                        bDepthwiseBias ],
       [ Params.depthwiseActivationId,                 depthwiseActivationId ],
@@ -514,7 +514,7 @@ class Params extends Weights.Params {
   }
 
   get depthwiseFilterHeight()     { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
-  get depthwiseFilterWidth()     { return this.parameterMapModified.get( Params.depthwiseFilterWidth ); }
+  get depthwiseFilterWidth()      { return this.parameterMapModified.get( Params.depthwiseFilterWidth ); }
   get depthwiseStridesPad()       { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
   get bDepthwiseBias()            { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
   get depthwiseActivationId()     { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
