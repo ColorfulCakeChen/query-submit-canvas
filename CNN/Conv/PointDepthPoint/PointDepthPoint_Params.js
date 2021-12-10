@@ -93,8 +93,8 @@ class Params extends Weights.Params {
    *       - The input0 will be processed by two pathes: one is by pointwise1 and depthwise1 operation, the other is by depthwise2
    *           operation (without pointwise1).
    *       - These two depthwise operations will have the same configurations (i.e. same depthwise_AvgMax_Or_ChannelMultiplier,
-   *           depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId) but have different (filter and
-   *           bias) weights.
+   *           depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId) but have different
+   *           (filter and bias) weights.
    *       - The two depthwise results will be concatenated. The concatenated result will be processed by pointwise2 convolution.
    *       - This is the only one case which there will be depthwise2.
    *
@@ -153,7 +153,11 @@ class Params extends Weights.Params {
    *   - positive integer between [ 1, 32 ]: depthwise convolution and the number indicates channel multiplier.
    *
    * @param {number} depthwiseFilterHeight
-   *   The height (and width) of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   *   The height of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
+   *
+   * @param {number} depthwiseFilterWidth
+   *   The width of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
    * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
    *
    * @param {number} depthwiseStridesPad
@@ -220,7 +224,7 @@ class Params extends Weights.Params {
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId,
     pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
     bOutput1Requested,
     bKeepInputTensor
@@ -237,6 +241,7 @@ class Params extends Weights.Params {
       [ Params.pointwise1ActivationId,                pointwise1ActivationId ],
       [ Params.depthwise_AvgMax_Or_ChannelMultiplier, depthwise_AvgMax_Or_ChannelMultiplier ],
       [ Params.depthwiseFilterHeight,                 depthwiseFilterHeight ],
+      [ Params.depthwiseFilterWidth,                 depthwiseFilterWidth ],
       [ Params.depthwiseStridesPad,                   depthwiseStridesPad ],
       [ Params.bDepthwiseBias,                        bDepthwiseBias ],
       [ Params.depthwiseActivationId,                 depthwiseActivationId ],
@@ -509,6 +514,7 @@ class Params extends Weights.Params {
   }
 
   get depthwiseFilterHeight()     { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
+  get depthwiseFilterWidth()     { return this.parameterMapModified.get( Params.depthwiseFilterWidth ); }
   get depthwiseStridesPad()       { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
   get bDepthwiseBias()            { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
   get depthwiseActivationId()     { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
@@ -575,7 +581,10 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
 
 /** Define suitable value for depthwise convolution filter size.
  *
- * At least 1, because depthwise filter size ( 0 * 0 ) is meaningless.
+ * At least ( 1 * 2 ), because depthwise filter size ( height, width ):
+ *   - ( 0 * 0 ) is meaningless.
+ *   - ( 1 * 1 ) is wrongly calculated in backend WASM.
+ *   - ( 1 * N ) is necessary for processing 1D data (e.g. sound, or text).
  *
  * For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
  * For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
@@ -583,6 +592,7 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
  * Avoid too large filter size. Otherwise, performance may be poor.
  */
 Params.depthwiseFilterHeight =   new ParamDesc.Int(                     "depthwiseFilterHeight", 1, 9 );
+Params.depthwiseFilterWidth =    new ParamDesc.Int(                     "depthwiseFilterWidth",  2, 9 );
 
 /** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
 Params.depthwiseStridesPad =     new ParamDesc.Int(                     "depthwiseStridesPad",   0, 2 );
