@@ -90,6 +90,7 @@ class Base {
       let pointwise1ChannelCount = this.testParams.out.pointwise1ChannelCount;
       let depthwise_AvgMax_Or_ChannelMultiplier = this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
       let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
+      let depthwiseFilterWidth = this.testParams.out.depthwiseFilterWidth;
       let depthwiseStridesPad = this.testParams.out.depthwiseStridesPad;
       let pointwise21ChannelCount = this.testParams.out.pointwise21ChannelCount;
       let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
@@ -129,7 +130,7 @@ class Base {
         // The shape of input1 (not input0) determines the concatenatedShape of channel shuffler because the input0 might be shrinked
         // by depthwise convolution.
         let imageIn1 = imageSourceBag.getImage_by(
-          input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+          input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
         if ( bTwoInputs ) { // Pass two input images according to parameters.
           imageInArraySelected[ 1 ] = imageIn1;
@@ -381,7 +382,7 @@ class Base {
     let extractedParams = new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
       testParams.in.channelCount0_pointwise1Before, testParams.in.channelCount1_pointwise1Before,
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
-      testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight,
+      testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.depthwiseStridesPad, testParams.in.bDepthwiseBias, testParams.in.depthwiseActivationId,
       testParams.in.pointwise21ChannelCount, testParams.in.bPointwise21Bias, testParams.in.pointwise21ActivationId,
       testParams.in.bOutput1Requested,
@@ -514,6 +515,7 @@ class Base {
     // depthwise parameters.
     asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
     asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight );
+    asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth );
     asserter.propertyValue( "depthwiseStridesPad", testParams.out.depthwiseStridesPad );
     asserter.propertyValue( "bDepthwiseBias", testParams.out.bDepthwiseBias );
     asserter.propertyValue( "depthwiseActivationId", testParams.out.depthwiseActivationId );
@@ -639,7 +641,7 @@ class Base {
         + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
 
         + `depthwise_AvgMax_Or_ChannelMultiplier=${testParams.out.depthwise_AvgMax_Or_ChannelMultiplier}, `
-        + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, `
+        + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, depthwiseFilterWidth=${testParams.out.depthwiseFilterWidth}, `
         + `depthwiseStridesPad=${testParams.out.depthwiseStridesPad}, `
         + `bDepthwiseBias=${testParams.out.bDepthwiseBias}, `
         + `depthwiseActivationName=`
@@ -732,7 +734,8 @@ class Base {
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       depthwise1Result = Base.calcDepthwise(
         pointwise1Result,
-        testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
+        testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+        testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
         testParams.in.paramsNumberArrayObject.depthwise1Filters, testParams.out.bDepthwiseBias,
         testParams.in.paramsNumberArrayObject.depthwise1Biases, testParams.out.depthwiseActivationId,
         "Depthwise1", this.paramsOutDescription );
@@ -749,7 +752,8 @@ class Base {
 
         imageIn1 = Base.calcDepthwise(
           imageIn1_beforeDepthwise1,
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+          testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
           depthwisePassThroughFiltersArray, // for Pass-through.
           false, null, // no bias
           ValueDesc.ActivationFunction.NONE, // no ActivationId
@@ -771,7 +775,8 @@ class Base {
       if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
         depthwise2Result = Base.calcDepthwise(
           imageIn0, // depthwise2 apply to input0 (not input1)
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseStridesPad,
+          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+          testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
           testParams.in.paramsNumberArrayObject.depthwise2Filters, testParams.out.bDepthwiseBias,
           testParams.in.paramsNumberArrayObject.depthwise2Biases, testParams.out.depthwiseActivationId,
           "Depthwise2", this.paramsOutDescription );
@@ -1019,23 +1024,24 @@ class Base {
    */
   static calcDepthwise(
     imageIn,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
     depthwiseName, parametersDesc ) {
 
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
       return imageIn; // No depthwise operation.
 
-//!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 )?
+//!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 ) or ( depthwiseFilterWidth <= 0 )?
 
     let padInfo = new Depthwise.PadInfoCalculator( imageIn.height, imageIn.width, imageIn.depth, 
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
     let { channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
           imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = padInfo;
 
-    let depthwiseFilterWidth = padInfo.filterWidth;
+//!!! (2021/12/10 Remarked)
+//    let depthwiseFilterWidth = padInfo.filterWidth;
 
     // For ( pad == "valid" ), negative ( inX, inY ) will never happen.
     // For ( pad == "same"  ), negative ( inX, inY ) may happen, but those pixels will be viewed as zero value.
