@@ -17,6 +17,12 @@ import { PassThrough, AllZeros, ValueBounds } from "./Pointwise_PassThrough.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
+ * @member {FloatValue.Bounds} inputValueBounds
+ *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
+ *
+ * @member {FloatValue.Bounds} outputValueBounds
+ *   The bounds of the output element value. Or say, the range of this pointwise convolution.
+ *
  * @member {number} outputChannelCount
  *   The output channel count of this pointwise convolutiuon.
  *     - Usually, if ( outputChannelCount == 0 ), it means no operation at all (i.e. bPointwise == bExisted == false ).
@@ -138,10 +144,12 @@ import { PassThrough, AllZeros, ValueBounds } from "./Pointwise_PassThrough.js";
 class Base extends ReturnOrClone_Activation.Base {
 
   constructor(
+    inputValueBounds,
     inputChannelCount, outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
     super();
+    this.inputValueBounds = inputValueBounds.clone(); // Copy for preventing from modifying.
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
@@ -216,56 +224,63 @@ class Base extends ReturnOrClone_Activation.Base {
     Base.Setup_bPointwise_pfn.call( this );
 
     if ( !this.bPointwise ) {
-      this.bInitOk = true;
-      return true; // no operation at all.
-    }
-
-    // 2.
-
-    if ( this.outputChannelCount <= 0 ) { // bAllPassThrough
-      this.bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
+      // 2. no operation at all.
 
     } else {
 
-      switch ( this.nHigherHalfDifferent ) {
-        // 2.0 Normal pointwise convolution and bias.
-        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-          this.bInitOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
-          break;
+      if ( this.outputChannelCount <= 0 ) { // 3. bAllPassThrough
+        this.bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
 
-        // 2.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
-        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
-          this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
-          break;
+      } else { // 4.
 
-        // 2.2 bHigherHalfCopyLowerHalf
-        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
-          this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
-          break;
+        switch ( this.nHigherHalfDifferent ) {
+          // 4.0 Normal pointwise convolution and bias.
+          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+            this.bInitOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
+            break;
 
-        // 2.3 bHigherHalfPointwise22
-        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22: // (3)
-          this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
-          break;
+          // 4.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
+          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
+            this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
+            break;
 
-        // 2.4 bHigherHalfPassThrough
-        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
-          this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
-          break;
+          // 4.2 bHigherHalfCopyLowerHalf
+          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
+            this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
+            break;
 
-        default:
-          tf.util.assert( ( false ),
-            `Pointwise.init(): `
-              + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
-          );
-          break;
+          // 4.3 bHigherHalfPointwise22
+          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22: // (3)
+            this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
+            break;
+
+          // 4.4 bHigherHalfPassThrough
+          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
+            this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
+            break;
+
+          default:
+            tf.util.assert( ( false ),
+              `Pointwise.init(): `
+                + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
+            );
+            break;
+        }
       }
+
+      // 5.
+      //
+      // e.g. bHigherHalfPassThroughShuffle or bAllPassThroughShuffle
+      if ( this.channelShuffler_outputGroupCount > 0 ) {
+        Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
+      }
+
     }
 
-    // e.g. bHigherHalfPassThroughShuffle or bAllPassThroughShuffle
-    if ( this.channelShuffler_outputGroupCount > 0 ) {
-      Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
-    }
+//!!! ...unfinished... (2021/12/10)
+    // 6. Determine 
+    Base.Setup_outputValueBounds.call( this );
+    this.bInitOk = true;
 
     return this.bInitOk;
   }
@@ -374,6 +389,31 @@ class Base extends ReturnOrClone_Activation.Base {
         this.pfnConvBiasActivation = Base.ConvActivation_and_destroy_or_keep;
        else
         this.pfnConvBiasActivation = Base.Conv_and_destroy_or_keep;
+    }
+  }
+
+  /** Determine this.outputValueBounds.
+   *
+   * @param {Base} this The Base object to be determined and modified.
+   */
+  static Setup_outputValueBounds() {
+    this.outputValueBounds = this.inputValueBounds.clone(); // Copy for preventing from modifying.
+
+    if ( !this.bPointwise )
+      return; // If no operation at all, the output range will be the same as input domain.
+
+    // If there is activation function, it dominates the output range.
+    if ( this.nActivationId != ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
+      let info = Base.ActivationFunction_getInfoById( this.nActivationId );
+      this.outputValueBounds.set_Bounds( info.outputRange );
+
+    // Otherwise, the output range is determined by input domain, filters, biases.
+    // Note: Here, suppose filters and bias have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
+    } else {
+      if ( this.filtersTensor4d )
+        this.outputValueBounds.multiply_Bounds( Weights.Base.ValueBounds );
+      if ( this.biasesTensor3d )
+        this.outputValueBounds.add_Bounds( Weights.Base.ValueBounds );
     }
   }
 
