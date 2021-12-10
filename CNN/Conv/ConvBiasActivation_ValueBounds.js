@@ -2,7 +2,6 @@ export { Base };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-//import * as Weights from "../../Unpacker/Weights.js";
 
 /**
  *
@@ -15,12 +14,9 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {FloatValue.Bounds} output
  *   The bounds of the output element value. Or say, the range of the convolution-bias-activation.
  *
-
-//!!! ...unfinished... (2021/12/10)
-
  * @member {FloatValue.ScaleTranslate} beforeActivation_to_activationLinearDomain_ScaleTranslate
- *   The scale-translate for letting beforeActivation bounds moving into the linear domain of the activation function.
- *
+ *   The scale-translate for letting beforeActivation bounds moving into the linear domain of the activation function. That is,
+ * for letting beforeActivation escape from activation function's non-linear domain.
  */
 class Base {
 
@@ -76,7 +72,7 @@ class Base {
       }
     }
 
-    // 2. Calculate the scale-translate for escaping activation function.
+    // 2. Calculate the scale-translate for escaping activation function's non-linear domain.
     this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_FromTo( this.beforeActivation, this.output );
   }
 
