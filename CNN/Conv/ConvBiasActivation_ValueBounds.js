@@ -2,7 +2,7 @@ export { Base };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import * as Weights from "../../Unpacker/Weights.js";
+//import * as Weights from "../../Unpacker/Weights.js";
 
 /**
  *
@@ -14,6 +14,12 @@ import * as Weights from "../../Unpacker/Weights.js";
  *
  * @member {FloatValue.Bounds} output
  *   The bounds of the output element value. Or say, the range of the convolution-bias-activation.
+ *
+
+//!!! ...unfinished... (2021/12/10)
+
+ * @member {FloatValue.ScaleTranslate} beforeActivation_to_activationLinearDomain_ScaleTranslate
+ *   The scale-translate for letting beforeActivation bounds moving into the linear domain of the activation function.
  *
  */
 class Base {
@@ -43,10 +49,12 @@ class Base {
   set_beforeActivation_output_byClone_input() {
     this.beforeActivation = this.input.clone();
     this.output = this.input.clone();
+    this.beforeActivation_to_activationLinearDomain_ScaleTranslate( 1, 0 ); // scale 1 and translate 0. i.e. no change.
   }
 
   /**
-   * Set this.output according to nActivationId.
+   * Set this.output according to this.beforeActivation and the specified nActivationId. This method will also calculate
+   * this.beforeActivation_to_activationLinearDomain_ScaleTranslate.
    *
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
@@ -55,66 +63,21 @@ class Base {
    */
   set_output_byActivationId( nActivationId ) {
 
-    // If there is no activation function, the output range is determined by input domain, filters, biases.
-    if ( this.nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
-      this.output.set_Bounds( this.beforeActivation );
-
-    // Otherwise, the activation function dominates the output range.
-    } else {
-      let info = ValueDesc.ActivationFunction.Singletion.getInfoById( this.nActivationId );
-      this.output.set_Bounds( info.outputRange );
-    }
-  }
-
-//!!! ...unfinished... (2021/12/10)
-
-  /**
-   *
-   * @param {boolean} bPointwise
-   *   If true, the pointwise convolution (with/without bias, with/without activation) exists. 
-   *
-   * @param {number} inputChannelCount
-   *   The input channel count of the pointwise convolution. 
-   *
-   * @param {boolean} bBias
-   *   If true, the bias operation exists. 
-   *
-   * @param {number} nActivationId
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
-   */
-  set_by( bPointwise, inputChannelCount, bBias, nActivationId ) {
-
-    // 0. Default.
-    this.beforeActivation = this.input.clone();
-    this.output = this.input.clone();
-
-    // 1. No operation at all.
-    if ( !bPointwise )
-      return;
-
-    // 2. Before activation function.
+    // 1. Determine output value bounds.
     {
-      // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
-      const filtersValueBounds = Weights.Base.ValueBounds;
-      const biasesValueBounds = Weights.Base.ValueBounds;
+      // If there is no activation function, the output range is determined by input domain, filters, biases.
+      if ( this.nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
+        this.output.set_Bounds( this.beforeActivation );
 
-      this.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, inputChannelCount );
-
-      if ( bBias )
-        this.beforeActivation.add_Bounds( biasesValueBounds );
+      // Otherwise, the activation function dominates the output range.
+      } else {
+        let info = ValueDesc.ActivationFunction.Singletion.getInfoById( this.nActivationId );
+        this.output.set_Bounds( info.outputRange );
+      }
     }
 
-    // 3. Output.
-
-    // If there is activation function, it dominates the output range.
-    if ( this.nActivationId != ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
-      let info = ValueDesc.ActivationFunction.Singletion.getInfoById( this.nActivationId );
-      this.output.set_Bounds( info.outputRange );
-
-    // Otherwise, the output range is determined by input domain, filters, biases.
-    } else {
-      this.output.set_Bounds( this.beforeActivation );
-    }
+    // 2. Calculate the scale-translate for escaping activation function.
+    this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_FromTo( this.beforeActivation, this.output );
   }
 
 }
