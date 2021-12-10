@@ -20,6 +20,14 @@ import { PassThrough, AllZeros, ValueBounds } from "./Pointwise_PassThrough.js";
  * @member {FloatValue.Bounds} inputValueBounds
  *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
  *
+
+!!! ...unfinished... (2021/12/10) should be named as xxxValueBounds ?
+
+ * @member {FloatValue.Bounds} outputValueBounds_beforeActivation
+ *   The bounds of the output element value. Or say, the range of this pointwise convolution.
+ *
+    this.outputValueBounds_beforeActivation = this.inputValueBounds.clone();
+ 
  * @member {FloatValue.Bounds} outputValueBounds
  *   The bounds of the output element value. Or say, the range of this pointwise convolution.
  *
@@ -398,10 +406,24 @@ class Base extends ReturnOrClone_Activation.Base {
    * @param {Base} this The Base object to be determined and modified.
    */
   static Setup_outputValueBounds() {
-    this.outputValueBounds = this.inputValueBounds.clone(); // Copy for preventing from modifying.
+    // (Copy for preventing from modifying.)
+    this.outputValueBounds_beforeActivation = this.inputValueBounds.clone();
+    this.outputValueBounds = this.inputValueBounds.clone();
 
     if ( !this.bPointwise )
       return; // If no operation at all, the output range will be the same as input domain.
+
+    {
+      // Since they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
+      const filtersValueBounds = Weights.Base.ValueBounds;
+      const biasesValueBounds = Weights.Base.ValueBounds;
+
+      if ( this.filtersTensor4d )
+        this.outputValueBounds_beforeActivation.multiply_Bounds( filtersValueBounds );
+
+      if ( this.biasesTensor3d )
+        this.outputValueBounds_beforeActivation.add_Bounds( biasesValueBounds );
+    }
 
     // If there is activation function, it dominates the output range.
     if ( this.nActivationId != ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
@@ -409,12 +431,8 @@ class Base extends ReturnOrClone_Activation.Base {
       this.outputValueBounds.set_Bounds( info.outputRange );
 
     // Otherwise, the output range is determined by input domain, filters, biases.
-    // Note: Here, suppose filters and bias have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
     } else {
-      if ( this.filtersTensor4d )
-        this.outputValueBounds.multiply_Bounds( Weights.Base.ValueBounds );
-      if ( this.biasesTensor3d )
-        this.outputValueBounds.add_Bounds( Weights.Base.ValueBounds );
+      this.outputValueBounds.set_Bounds( this.outputValueBounds_beforeActivation );
     }
   }
 
