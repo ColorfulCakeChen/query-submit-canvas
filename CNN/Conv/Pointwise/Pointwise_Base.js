@@ -281,7 +281,7 @@ class Base extends ReturnOrClone_Activation.Base {
 
     // 4. Determine output value bounds.
     if ( bExtractOk ) {
-      this.valueBounds.set_by( this.filtersTensor4d, this.biasesTensor3d, this.nActivationId );
+      this.valueBounds.set_by( this.bPointwise, this.inputChannelCount, this.bBias, this.nActivationId );
     }
 
     this.bInitOk = bExtractOk;
