@@ -35,35 +35,35 @@ import { PassThrough, AllZeros, ValueBounds } from "./Pointwise_PassThrough.js";
  * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
  *
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
- *   - 1. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal poitwise convolution.
+ *   - 0. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal poitwise convolution.
  *
- *     - 1.1 If ( outputChannelCount > 0 ), normal poitwise convolution.
+ *     - 0.1 If ( outputChannelCount > 0 ), normal poitwise convolution.
  *
- *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
+ *     - 0.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *   - 2. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH ):
+ *   - 1. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH ):
  *
- *     - 2.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough),
+ *     - 1.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough),
  *         (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head),
  *         the filters for the output channels between 0 and ( outputChannelCount_lowerHalf - 1 ) will just pass
  *         through the input to output. The filters for the output channels between ( outputChannelCount_lowerHalf )
  *         and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
  *         In this case, it will always have no biases (no matter how bBias is).
  *
- *     - 2.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
+ *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *   - 3. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ):
+ *   - 2. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ):
  *
- *     - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf),
+ *     - 2.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf),
  *         (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head),
  *         the filters for the output channels between ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just copy
  *         the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
  *
- *     - 3.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
+ *     - 2.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *   - 4. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22 ):
+ *   - 3. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22 ):
  *          
- *     - 4.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22),
+ *     - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22),
  *         (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head),
  *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between
  *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases)
@@ -71,29 +71,29 @@ import { PassThrough, AllZeros, ValueBounds } from "./Pointwise_PassThrough.js";
  *         filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that
  *         the same filters weights could be used in these two architectures for comparing performance and correctness.
  *
- *    - 4.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
+ *     - 3.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *  - 5. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
+ *  - 4. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
  *      (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
- *    - 5.1 If ( outputChannelCount > 0 ), the filters for the output channels between ( outputChannelCount_lowerHalf )
+ *    - 4.1 If ( outputChannelCount > 0 ), the filters for the output channels between ( outputChannelCount_lowerHalf )
  *        and ( outputChannelCount - 1 ) will just pass through the input to output.
  *
- *      - 5.1.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfPassThrough).
+ *      - 4.1.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfPassThrough).
  *          (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
- *      - 5.1.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfPassThroughShuffle).
+ *      - 4.1.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfPassThroughShuffle).
  *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *          The output channels will be arranged just like applying channel shuffler on them.
  *
- *    - 5.2 If ( outputChannelCount <= 0 ), the filters will just pass through all input channels to output. In this case,
+ *    - 4.2 If ( outputChannelCount <= 0 ), the filters will just pass through all input channels to output. In this case,
  *        the ( bPointwise == bExisted == true ) (not false), although the specified outputChannelCount is zero. And, it
  *        will always have no biases (no matter how bBias is).
  *
- *      - 5.2.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bAllPassThrough; no pointwise and no channel shuffler).
+ *      - 4.2.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bAllPassThrough; no pointwise and no channel shuffler).
  *          (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *
- *      - 5.2.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bAllPassThroughShuffle).
+ *      - 4.2.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bAllPassThroughShuffle).
  *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *          The output channels will be arranged just like applying channel shuffler on them.
  *
@@ -223,65 +223,66 @@ class Base extends ReturnOrClone_Activation.Base {
     // 1.
     Base.Setup_bPointwise_pfn.call( this );
 
+    let bExtractOk;
     if ( !this.bPointwise ) {
-      // 2. no operation at all.
+      bExtractOk = true; // 2. no operation at all.
 
-    } else {
+    } else { // 3.
 
-      if ( this.outputChannelCount <= 0 ) { // 3. bAllPassThrough
-        this.bInitOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
+      switch ( this.nHigherHalfDifferent ) {
+        // 3.0 Normal pointwise convolution and bias.
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+          bExtractOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
+          break;
 
-      } else { // 4.
+        // 3.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
+          bExtractOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
+          break;
 
-        switch ( this.nHigherHalfDifferent ) {
-          // 4.0 Normal pointwise convolution and bias.
-          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-            this.bInitOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
-            break;
+        // 3.2 bHigherHalfCopyLowerHalf
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
+          bExtractOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
+          break;
 
-          // 4.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
-          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
-            this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
-            break;
+        // 3.3 bHigherHalfPointwise22
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22: // (3)
+          bExtractOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
+          break;
 
-          // 4.2 bHigherHalfCopyLowerHalf
-          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
-            this.bInitOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
-            break;
+        // 3.4
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
+          if ( this.outputChannelCount > 0 ) { // 3.4.1.1 bHigherHalfPassThrough
+            bExtractOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
 
-          // 4.3 bHigherHalfPointwise22
-          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22: // (3)
-            this.bInitOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
-            break;
+          } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
+            bExtractOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
+          }
 
-          // 4.4 bHigherHalfPassThrough
-          case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
-            this.bInitOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
-            break;
+          // 3.4.1.2 bHigherHalfPassThroughShuffle
+          // 3.4.2.2 bAllPassThroughShuffle
+          if ( bExtractOk ) {
+            if ( this.channelShuffler_outputGroupCount > 0 ) {
+              Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
+            }
+          }
+          break;
 
-          default:
-            tf.util.assert( ( false ),
-              `Pointwise.init(): `
-                + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
-            );
-            break;
-        }
+        default:
+          tf.util.assert( ( false ),
+            `Pointwise.init(): `
+              + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
+          );
+          break;
       }
-
-      // 5.
-      //
-      // e.g. bHigherHalfPassThroughShuffle or bAllPassThroughShuffle
-      if ( this.channelShuffler_outputGroupCount > 0 ) {
-        Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
-      }
-
     }
 
-//!!! ...unfinished... (2021/12/10)
-    // 6. Determine 
-    Base.Setup_outputValueBounds.call( this );
-    this.bInitOk = true;
+    // 6. Determine output value bounds.
+    if ( bExtractOk ) {
+      Base.Setup_outputValueBounds.call( this );
+    }
 
+    this.bInitOk = bExtractOk;
     return this.bInitOk;
   }
 
