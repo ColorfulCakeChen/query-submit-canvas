@@ -19,9 +19,14 @@ import * as Weights from "../../Unpacker/Weights.js";
 class ValueBounds {
 
   /**
-   *
    * @param {FloatValue.Bounds} inputValueBounds
    *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
+   */
+  constructor( inputValueBounds ) {
+    this.input = inputValueBounds.clone(); // (Copy for preventing from modifying.)
+  }
+
+  /**
    *
    * @param {tf.tensor4d} filtersTensor4d
    *   The tensor4d for pointwise convolution. If null, it means no pointwise convolution.
@@ -32,12 +37,11 @@ class ValueBounds {
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
    */
-  constructor( inputValueBounds, filtersTensor4d, biasesTensor3d, nActivationId ) {
+  set_by( filtersTensor4d, biasesTensor3d, nActivationId ) {
 
     // 0. Default.
-    this.input = inputValueBounds.clone(); // (Copy for preventing from modifying.)
-    this.beforeActivation = this.inputValueBounds.clone();
-    this.output = this.inputValueBounds.clone();
+    this.beforeActivation = this.input.clone();
+    this.output = this.input.clone();
 
     // 1. Before activation function.
     {
