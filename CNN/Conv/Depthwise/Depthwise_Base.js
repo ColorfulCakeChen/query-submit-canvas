@@ -211,10 +211,9 @@ class Base extends ReturnOrClone_Activation.Base {
       }
     }
 
-//!!! ...unfinished... (2021/12/10) How about avg/max pooling?
     // 5. Determine output value bounds.
     if ( bExtractOk ) {
-      this.valueBounds.set_by( this.filtersTensor4d, this.biasesTensor3d, this.nActivationId );
+      this.valueBounds.set_by( this.bDepthwise, this.filterHeight, this.filterWidth, this.bBias, this.nActivationId );
     }
 
     this.bInitOk = bExtractOk;
