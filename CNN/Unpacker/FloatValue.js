@@ -233,7 +233,7 @@ class ScaleTranslate {
    *   The range of the target value.
    *
    * @return {ScaleTranslate}
-   *   Create and return { scale, translate } for mapping values from sourceMinMax to targetMinMax.
+   *   Create and return a new ScaleTranslate for mapping values from source bounds to target bounds.
    */
   static createBy_FromTo( source, target ) {
     // (Please see ScaleTranslate.setBy_FromTo().)
@@ -243,15 +243,27 @@ class ScaleTranslate {
     return result;
   }
 
+//!!! (2021/12/11 Remarked) seems not so friendly.
+//   /**
+//    * Set this.scale and this.translate so that they could undo the specified previous scale-translate.
+//    *
+//    * @param {ScaleTranslate} previous
+//    *   The scale-translate to be undone.
+//    */
+//   setBy_undo( previous ) {
+//     this.scale = ( 1 / previous.scale );  // Reciprocal will undo the scale.
+//     this.translate = ( - previous.translate ) * this.scale; // Negative translate, and multiply by undo-scale because translate comes after scale.
+//   }
+
   /**
-   * Set this.scale and this.translate so that they could undo the specified previous scale-translate.
-   *
-   * @param {ScaleTranslate} previous
-   *   The scale-translate to be undone.
+   * @return {ScaleTranslate}
+   *   Create and return a new ScaleTranslate for undoing the this scale-translate.
    */
-  setBy_undo( previous ) {
-    this.scale = ( 1 / previous.scale );  // Reciprocal will undo the scale.
-    this.translate = ( - previous.translate ) * this.scale; // Negative translate, and multiply by undo-scale because translate comes after scale.
+  createBy_undoThis() {
+    let scale = ( 1 / this.scale );               // Reciprocal will undo the scale.
+    let translate = ( - this.translate ) * scale; // Negative translate, and multiply by undo-scale because translate comes after scale.
+    let result = new ScaleTranslate( scale, translate );
+    return result;
   }
 
   /**
