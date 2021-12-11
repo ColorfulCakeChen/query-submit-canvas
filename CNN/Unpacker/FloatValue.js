@@ -180,8 +180,8 @@ class Bounds {
 
 
 /**
- * Describe a scale (i.e. multiplier) value, and then a translate (i.e. offset; bias) value after the scale.
- *
+ * Describe a scale (i.e. multiplier) value, and then a translate (i.e. offset; bias) value after the scale. Note that the order
+ * is important: scale first, translate second.
  */
 class ScaleTranslate {
 
@@ -241,6 +241,17 @@ class ScaleTranslate {
     let translate = ( target.lower - ( scale * source.lower ) );
     let result = new ScaleTranslate( scale, translate );
     return result;
+  }
+
+  /**
+   * Set this.scale and this.translate so that they could undo the specified previous scale-translate.
+   *
+   * @param {ScaleTranslate} previous
+   *   The scale-translate to be undone.
+   */
+  setBy_undo( previous ) {
+    this.scale = ( 1 / previous.scale );  // Reciprocal will undo the scale.
+    this.translate = ( - previous.translate ) * this.scale; // Negative translate, and multiply by undo-scale because translate comes after scale.
   }
 
 }
