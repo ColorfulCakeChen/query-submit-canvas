@@ -76,5 +76,7 @@ class Base {
     this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_FromTo( this.beforeActivation, this.output );
   }
 
+//!!! ...unfinished... (2021/12/11) combine undoPreviousScaleTranslate with this keepLinearScaleTranslate.
+
 }
 
