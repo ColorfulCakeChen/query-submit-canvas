@@ -254,5 +254,18 @@ class ScaleTranslate {
     this.translate = ( - previous.translate ) * this.scale; // Negative translate, and multiply by undo-scale because translate comes after scale.
   }
 
+  /**
+   * Scale and translate this object by specified scale-translate.
+   *   - this.scale =     ( this.scale     * another.scale ) + another.translate
+   *   - this.translate = ( this.translate * another.scale ) + another.translate
+   *
+   * @param {ScaleTranslate} another
+   *   The another scale-translate which will be applied on this object.
+   */
+  scaleTranslateBy( another ) {
+   this.scale =     ( this.scale     * another.scale ) + another.translate;
+   this.translate = ( this.translate * another.scale ) + another.translate;
+  }
+
 }
 
