@@ -79,13 +79,17 @@ class Base {
   }
 
 //!!! ...unfinished... (2021/12/11)
-  {
+  /**
+   * @param {Base} previousValueBounds
+   *
+   */
+  ( previousValueBounds ) {
 
     // Calculate the scale-translate for escaping activation function's non-linear domain.
     this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_FromTo( this.beforeActivation, this.output );
 
-    // The scale-translate for pass-through previous to next. Combine both the above.
-    this.undoPrevious_passThrough_ScaleTranslate = previousValueBounds.output.createBy_undoThis();
+    // The scale-translate for pass-through previous to next.
+    this.undoPrevious_passThrough_ScaleTranslate = previousValueBounds.undoPrevious_passThrough_ScaleTranslate.createBy_undoThis();
     this.undoPrevious_passThrough_ScaleTranslate.scaleTranslateBy( this.beforeActivation_to_activationLinearDomain_ScaleTranslate );
   }
 
