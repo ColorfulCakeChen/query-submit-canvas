@@ -20,7 +20,7 @@ class ScaleTranslateSet {
     this.undo = new FloatValue.ScaleTranslate();
   }
 
-  /** Reset all scale-translate values. Default is ( scale = 1, translate = 0 ). */
+  /** Reset all scale-translate values. Default is ( scale = 1, translate = 0 ) (i.e. no scale and no translate). */
   reset( scale = 1, translate = 0 ) {
     this.doWithoutPreviousUndo.set_scale_translate( scale , translate );
     this.do.set_scale_translate( scale , translate );
