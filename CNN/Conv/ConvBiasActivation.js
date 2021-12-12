@@ -88,7 +88,13 @@ class ValueBoundsSet {
     // 2. Calculate the scale-translate for escaping from activation function's non-linear domain.
     //
     // Note: This does not work for avg/max pooling.
-    this.activationEscapingScaleTranslateSet.doWithoutPreviousUndo.setBy_FromTo( this.beforeActivation, this.output );
+    this.activationEscapingScaleTranslateSet.doWithoutPreviousUndo.setBy_fromBounds_ToBounds( this.beforeActivation, this.output );
+
+//!!! ...unfinished... (2021/12/12)
+    this.activationEscapingScaleTranslateSet.do.setBy_ScaleTranslate( previousValueBoundsSet.activationEscapingScaleTranslateSet.undo );
+    this.activationEscapingScaleTranslateSet.do.scaleTranslateBy( this.activationEscapingScaleTranslateSet.doWithoutPreviousUndo );
+
+    this.activationEscapingScaleTranslateSet.undo.setBy_undoScaleTranslate( this.activationEscapingScaleTranslateSet.do );
   }
 
 //!!! ...unfinished... (2021/12/12)
@@ -102,7 +108,7 @@ class ValueBoundsSet {
     // Calculate the scale-translate for escaping activation function's non-linear domain.
     //
     // Note: This does not work for avg/max pooling.
-    this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_FromTo( this.beforeActivation, this.output );
+    this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_fromBounds_ToBounds( this.beforeActivation, this.output );
 
 //!!! ...unfinished... (2021/12/12)
 // class ActivationEscape.ScaleTranslateSet
@@ -112,7 +118,7 @@ class ValueBoundsSet {
 
     // The scale-translate for pass-through previous to next.
     this.activationEscape.do
-    this.undoPrevious_passThrough_ScaleTranslate = previousValueBounds.undoPrevious_passThrough_ScaleTranslate.createBy_undoThis();
+    this.undoPrevious_passThrough_ScaleTranslate = previousValueBounds.undoPrevious_passThrough_ScaleTranslate.setBy_undoScaleTranslate( ??? );
     this.undoPrevious_passThrough_ScaleTranslate.scaleTranslateBy( this.beforeActivation_to_activationLinearDomain_ScaleTranslate );
   }
 
