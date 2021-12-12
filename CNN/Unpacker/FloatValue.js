@@ -212,6 +212,31 @@ class ScaleTranslate {
   }
 
   /**
+   * Set this.scale and this.translate so that they could undo the specified previous scale-translate.
+   *
+   * @param {ScaleTranslate} aScaleTranslate
+   *   The scale-translate to be undone.
+   */
+  setBy_undoScaleTranslate( aScaleTranslate ) {
+    this.scale = ( 1 / aScaleTranslate.scale );  // Reciprocal will undo the scale.
+
+    // Negative translate, and multiply by undo-scale because translate comes after scale.
+    this.translate = ( - aScaleTranslate.translate ) * this.scale;
+  }
+
+//!!! (2021/12/12 Remarked) Use non-create mainly.
+//   /**
+//    * @return {ScaleTranslate}
+//    *   Create and return a new ScaleTranslate for undoing the this scale-translate.
+//    */
+//   createBy_undoThis() {
+//     let scale = ( 1 / this.scale );               // Reciprocal will undo the scale.
+//     let translate = ( - this.translate ) * scale; // Negative translate, and multiply by undo-scale because translate comes after scale.
+//     let result = new ScaleTranslate( scale, translate );
+//     return result;
+//   }
+
+  /**
    * Set this.scale and this.translate for mapping values from source bounds to target bounds.
    *
    * @param {Bounds} source
@@ -261,31 +286,6 @@ class ScaleTranslate {
 //     // (Please see ScaleTranslate.setBy_FromTo().)
 //     let scale = ( target.difference / source.difference );
 //     let translate = ( target.lower - ( scale * source.lower ) );
-//     let result = new ScaleTranslate( scale, translate );
-//     return result;
-//   }
-
-  /**
-   * Set this.scale and this.translate so that they could undo the specified previous scale-translate.
-   *
-   * @param {ScaleTranslate} aScaleTranslate
-   *   The scale-translate to be undone.
-   */
-  setBy_undoScaleTranslate( aScaleTranslate ) {
-    this.scale = ( 1 / aScaleTranslate.scale );  // Reciprocal will undo the scale.
-
-    // Negative translate, and multiply by undo-scale because translate comes after scale.
-    this.translate = ( - aScaleTranslate.translate ) * this.scale;
-  }
-
-//!!! (2021/12/12 Remarked) Use non-create mainly.
-//   /**
-//    * @return {ScaleTranslate}
-//    *   Create and return a new ScaleTranslate for undoing the this scale-translate.
-//    */
-//   createBy_undoThis() {
-//     let scale = ( 1 / this.scale );               // Reciprocal will undo the scale.
-//     let translate = ( - this.translate ) * scale; // Negative translate, and multiply by undo-scale because translate comes after scale.
 //     let result = new ScaleTranslate( scale, translate );
 //     return result;
 //   }
