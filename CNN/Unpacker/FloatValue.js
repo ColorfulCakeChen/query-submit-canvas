@@ -191,12 +191,13 @@ class Bounds {
  */
 class ScaleTranslate {
 
-  constructor( scale, translate ) {
+  constructor( scale = 1, translate = 0 ) {
     this.scale = scale;
     this.translate = translate;
   }
 
-  set_scale_translate( scale, translate ) {
+  /** (Re)set all scale-translate values. Default is ( scale = 1, translate = 0 ) (i.e. no scale and no translate). */
+  set_scale_translate( scale = 1, translate = 0 ) {
     this.scale = scale;
     this.translate = translate;
   }
