@@ -1,4 +1,4 @@
-export { Base };
+export { ValueBoundsSet };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
@@ -18,7 +18,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  *   The scale-translate for letting beforeActivation bounds moving into the linear domain of the activation function. That is,
  * for letting beforeActivation escape from activation function's non-linear domain.
  */
-class Base {
+class ValueBounds {
 
   /**
    * @param {FloatValue.Bounds} inputValueBounds
@@ -72,21 +72,32 @@ class Base {
       }
     }
 
-//!!! ...unfinished... (2021/12/11)
+//!!! ...unfinished... (2021/12/12)
 
     // 2. Calculate the scale-translate for escaping activation function's non-linear domain.
+    //
+    // Note: This does not work for avg/max pooling.
     this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_FromTo( this.beforeActivation, this.output );
   }
 
-//!!! ...unfinished... (2021/12/11)
+//!!! ...unfinished... (2021/12/12)
   /**
-   * @param {Base} previousValueBounds
+   * @param {ValueBounds} previousValueBoundsSet
    *
    */
-  ( previousValueBounds ) {
+  ( previousValueBoundsSet ) {
 
+    
     // Calculate the scale-translate for escaping activation function's non-linear domain.
+    //
+    // Note: This does not work for avg/max pooling.
     this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_FromTo( this.beforeActivation, this.output );
+
+//!!! ...unfinished... (2021/12/12)
+// class ActivationEscape.ScaleTranslateSet
+//   .doWithoutPreviousUndo
+//   .do
+//   .undo
 
     // The scale-translate for pass-through previous to next.
     this.undoPrevious_passThrough_ScaleTranslate = previousValueBounds.undoPrevious_passThrough_ScaleTranslate.createBy_undoThis();
