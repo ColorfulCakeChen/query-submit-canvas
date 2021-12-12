@@ -8,9 +8,19 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  * Several scale-translate for escaping a value bounds from being activated (i.e. being non-linearized) by activation function.
  *
  *
+
+//!!! ...unfinished... (2021/12/12)
+
  * @member {FloatValue.ScaleTranslate} doWithoutPreviousUndo
  *   The scale-translate for letting the value bounds moving into the linear domain of the activation function. That is,
- * for letting beforeActivation escape from activation function's non-linear domain.
+ * for letting ConvBiasActivation.ValueBoundsSet.beforeActivation escape from activation function's non-linear domain.
+ *
+ * @member {FloatValue.ScaleTranslate} do
+ *   The result of combining this.doWithoutPreviousUndo with previous ActivationEscape.ScaleTranslateSet.undo. It both undo the
+ * previous escaping scale-translate and do itself escaping scale-translate.
+ *
+ * @member {FloatValue.ScaleTranslate} undo
+ *   If apply this.undo (important: scale first, translate second), it will have the effect of undoing the this.do.
  */
 class ScaleTranslateSet {
 
