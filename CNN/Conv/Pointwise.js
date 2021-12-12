@@ -1,3 +1,3 @@
 export { PassThrough, AllZeros } from "./Pointwise/Pointwise_PassThrough.js";
-export { ValueBounds } from "./Pointwise/Pointwise_ValueBounds.js";
+export { ValueBoundsSet } from "./Pointwise/Pointwise_ValueBoundsSet.js";
 export { Base } from "./Pointwise/Pointwise_Base.js";
