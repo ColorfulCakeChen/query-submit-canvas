@@ -25,12 +25,14 @@ import * as ActivationEscape from "./ActivationEscape.js";
 class ValueBoundsSet {
 
   /**
-   * @param {FloatValue.Bounds} inputValueBounds
-   *   The bounds of the input element value. Or say, the domain of this convolution-bias-activation.
+   * @param {ConvBiasActivation.ValueBoundsSet} previous
+   *   The previous convolution-bias-activation value bounds set of this depthwise convolution.   
    */
-  constructor( inputValueBounds ) {
+  constructor( previous ) {
 //!!! (2021/12/12 Remarked)
 //    this.input = inputValueBounds.clone(); // (Copy for preventing from modifying.)
+
+//!!! ...unfinished... (2021/12/12) previous?
 
     this.input = new FloatValue.Bounds();
     this.beforeActivation = new FloatValue.Bounds();
