@@ -2,8 +2,12 @@ export { ValueBoundsSet };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as ActivationEscape from "./ActivationEscape.js";
+
 
 /**
+ * Several value bounds for convolution-bias-activation operations.
+ *
  *
  * @member {FloatValue.Bounds} input
  *   The bounds of the input element value. Or say, the domain of the convolution-bias-activation.
@@ -18,14 +22,21 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  *   The scale-translate for letting beforeActivation bounds moving into the linear domain of the activation function. That is,
  * for letting beforeActivation escape from activation function's non-linear domain.
  */
-class ValueBounds {
+class ValueBoundsSet {
 
   /**
    * @param {FloatValue.Bounds} inputValueBounds
    *   The bounds of the input element value. Or say, the domain of this convolution-bias-activation.
    */
   constructor( inputValueBounds ) {
-    this.input = inputValueBounds.clone(); // (Copy for preventing from modifying.)
+//!!! (2021/12/12 Remarked)
+//    this.input = inputValueBounds.clone(); // (Copy for preventing from modifying.)
+
+    this.input = new FloatValue.Bounds();
+    this.beforeActivation = new FloatValue.Bounds();
+    this.output = new FloatValue.Bounds();
+
+    this.activationEscapingScaleTranslateSet = new ActivationEscape.ScaleTranslateSet();
   }
 
   /**
@@ -45,7 +56,7 @@ class ValueBounds {
   set_beforeActivation_output_byClone_input() {
     this.beforeActivation = this.input.clone();
     this.output = this.input.clone();
-    this.beforeActivation_to_activationLinearDomain_ScaleTranslate( 1, 0 ); // scale 1 and translate 0. i.e. no change.
+    this.activationEscapingScaleTranslateSet.reset( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
   }
 
   /**
@@ -74,10 +85,10 @@ class ValueBounds {
 
 //!!! ...unfinished... (2021/12/12)
 
-    // 2. Calculate the scale-translate for escaping activation function's non-linear domain.
+    // 2. Calculate the scale-translate for escaping from activation function's non-linear domain.
     //
     // Note: This does not work for avg/max pooling.
-    this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_FromTo( this.beforeActivation, this.output );
+    this.activationEscapingScaleTranslateSet.doWithoutPreviousUndo.setBy_FromTo( this.beforeActivation, this.output );
   }
 
 //!!! ...unfinished... (2021/12/12)
@@ -100,6 +111,7 @@ class ValueBounds {
 //   .undo
 
     // The scale-translate for pass-through previous to next.
+    this.activationEscape.do
     this.undoPrevious_passThrough_ScaleTranslate = previousValueBounds.undoPrevious_passThrough_ScaleTranslate.createBy_undoThis();
     this.undoPrevious_passThrough_ScaleTranslate.scaleTranslateBy( this.beforeActivation_to_activationLinearDomain_ScaleTranslate );
   }
