@@ -182,10 +182,21 @@ class Bounds {
 /**
  * Describe a scale (i.e. multiplier) value, and then a translate (i.e. offset; bias) value after the scale. Note that the order
  * is important: scale first, translate second.
+ *
+ * @member {number} scale
+ *   The scale (i.e. multiplier) value.
+ *
+ * @member {number} translate
+ *   The translate (i.e. offset) value.
  */
 class ScaleTranslate {
 
   constructor( scale, translate ) {
+    this.scale = scale;
+    this.translate = translate;
+  }
+
+  set_scale_translate( scale, translate ) {
     this.scale = scale;
     this.translate = translate;
   }
