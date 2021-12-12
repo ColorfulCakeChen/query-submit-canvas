@@ -197,18 +197,18 @@ class ScaleTranslate {
   }
 
   /** (Re)set all scale-translate values. Default is ( scale = 1, translate = 0 ) (i.e. no scale and no translate). */
-  set_scale_translate( scale = 1, translate = 0 ) {
+  set( scale = 1, translate = 0 ) {
     this.scale = scale;
     this.translate = translate;
   }
 
   /**
-   * @param {ScaleTranslate} aScaleTranslate
+   * @param {ScaleTranslate} another
    *   The scale-translate to be copied.
    */
-  setBy_ScaleTranslate( aScaleTranslate ) {
-    this.scale = aScaleTranslate.scale;
-    this.translate = aScaleTranslate.translate;
+  setBy_ScaleTranslate( another ) {
+    this.scale = another.scale;
+    this.translate = another.translate;
   }
 
   /**
