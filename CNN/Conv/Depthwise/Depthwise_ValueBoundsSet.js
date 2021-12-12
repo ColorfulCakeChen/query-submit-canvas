@@ -1,22 +1,24 @@
-export { ValueBounds };
+export { ValueBoundsSet };
 
-import * as ConvBiasActivation_ValueBounds from "../ConvBiasActivation_ValueBounds.js";
+import * as ConvBiasActivation from "../ConvBiasActivation.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
 /**
- * The value bounds for depthwise convolution-bias-activatio
+ * The value bounds set for depthwise convolution-bias-activation.
  *
  */
-class ValueBounds extends ConvBiasActivation_ValueBounds.Base {
+class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
 
   /**
-   * @param {FloatValue.Bounds} inputValueBounds
-   *   The bounds of the input element value. Or say, the domain of this depthwise convolution.
+   * @param {ConvBiasActivation.ValueBoundsSet} previous
+   *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    */
-  constructor( inputValueBounds ) {
-    super( inputValueBounds );
+  constructor( previous ) {
+    super( previous );
+
+//!!! ...unfinished... (2021/12/12) previous?
   }
 
   /**
