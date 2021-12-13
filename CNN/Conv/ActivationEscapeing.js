@@ -1,19 +1,15 @@
 export { ScaleTranslateSet };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
-//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-
+import * as ConvBiasActivation from "./ConvBiasActivation.js";
 
 /**
  * Several scale-translate for escaping a value bounds from being activated (i.e. being non-linearized) by activation function.
  *
  *
-
-//!!! ...unfinished... (2021/12/12)
-
  * @member {FloatValue.ScaleTranslate} doWithoutPreviousUndo
- *   The scale-translate for letting the value bounds moving into the linear domain of the activation function. That is,
- * for letting ConvBiasActivation.ValueBoundsSet.beforeActivation escape from activation function's non-linear domain.
+ *   The scale-translate for moving current value bounds into the linear domain of the activation function. That is, for letting
+ * ConvBiasActivation.ValueBoundsSet.beforeActivation escape from activation function's non-linear domain into linear domain.
  *
  * @member {FloatValue.ScaleTranslate} do
  *   The result of combining this.doWithoutPreviousUndo with previous ActivationEscape.ScaleTranslateSet.undo. It both undo the
@@ -37,22 +33,35 @@ class ScaleTranslateSet {
     this.undo.set( scale , translate );
   }
 
-//!!! ...unfinished... (2021/12/13)
+  /**
+   * Set the following properties:
+   *   - this.doWithoutPreviousUndo
+   *   - this.do
+   *   - this.undo
+   *
+   * @param {ConvBiasActivation.ValueBoundsSet} current_ConvBiasActivation_ValueBoundsSet
+   *   The ValueBoundsSet of current convolution-bias-activation for calculating this.doWithoutPreviousUndo.
+   *
+   * @param {ScaleTranslateSet} previous_ActivationEscaping_ScaleTranslateSet
+   *   The ActivationEscaping.ScaleTranslateSet of previous convolution-bias-activation for calculating this.do.
+   */
   setBy_currentValueBoundsSet_previousActivationEscaping(
-//!!! (2021/12/13 Remarked)
-//    current_ValueBoundsSet_beforeActivation, current_ValueBoundsSet_output, previous_ActivationEscaping_undo ) {
-    current_ValueBoundsSet, previous_ActivationEscaping ) {
+    current_ConvBiasActivation_ValueBoundsSet, previous_ActivationEscaping_ScaleTranslateSet) {
 
-    // 2. Calculate the scale-translate for escaping from activation function's non-linear domain into linear domain.
+    // Calculate the scale-translate for escaping from activation function's non-linear domain into linear domain.
     //
     // Note: This does not work for avg/max pooling.
-    this.doWithoutPreviousUndo.setBy_fromBounds_ToBounds( current_ValueBoundsSet.beforeActivation, current_ValueBoundsSet.output );
+    this.doWithoutPreviousUndo.setBy_fromBounds_ToBounds(
+      current_ConvBiasActivation_ValueBoundsSet.beforeActivation, current_ConvBiasActivation_ValueBoundsSet.output );
 
-//!!! ...unfinished... (2021/12/12)
-    this.do.setBy_ScaleTranslate( previous_ActivationEscaping.undo );
+    // Combine the undoing the previous activation escaping scale-translate, and doing current activation escaping scale-translate.
+    this.do.setBy_ScaleTranslate( previous_ActivationEscaping_ScaleTranslateSet.undo );
     this.do.scaleTranslateBy( this.doWithoutPreviousUndo );
 
+    // Prepare the undoing scale-translate for the next convolution-bias-activation.
     this.undo.setBy_undoScaleTranslate( this.do );
   }
+
+//!!! ...unfinished... (2021/12/12)
 }
 
