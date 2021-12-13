@@ -37,5 +37,18 @@ class ScaleTranslateSet {
     this.undo.set( scale , translate );
   }
 
+//!!! ...unfinished... (2021/12/13)
+  setBy_( current_ValueBoundsSet_beforeActivation, current_ValueBoundsSet_output, previous_ActivationEscaping_undo ) {
+    // 2. Calculate the scale-translate for escaping from activation function's non-linear domain.
+    //
+    // Note: This does not work for avg/max pooling.
+    this.doWithoutPreviousUndo.setBy_fromBounds_ToBounds( current_ValueBoundsSet_beforeActivation, current_ValueBoundsSet_output );
+
+//!!! ...unfinished... (2021/12/12)
+    this.do.setBy_ScaleTranslate( previous_ActivationEscaping_undo );
+    this.do.scaleTranslateBy( this.doWithoutPreviousUndo );
+
+    this.undo.setBy_undoScaleTranslate( this.do );
+  }
 }
 
