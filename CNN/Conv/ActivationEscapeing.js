@@ -46,7 +46,7 @@ class ScaleTranslateSet {
    *   The ActivationEscaping.ScaleTranslateSet of previous convolution-bias-activation for calculating this.do.
    */
   setBy_currentValueBoundsSet_previousActivationEscaping(
-    current_ConvBiasActivation_ValueBoundsSet, previous_ActivationEscaping_ScaleTranslateSet) {
+    current_ConvBiasActivation_ValueBoundsSet, previous_ActivationEscaping_ScaleTranslateSet ) {
 
     // Calculate the scale-translate for escaping from activation function's non-linear domain into linear domain.
     //
@@ -62,6 +62,5 @@ class ScaleTranslateSet {
     this.undo.setBy_undoScaleTranslate( this.do );
   }
 
-//!!! ...unfinished... (2021/12/12)
 }
 
