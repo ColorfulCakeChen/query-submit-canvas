@@ -4,7 +4,6 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ActivationEscapeing from "./ActivationEscapeing.js";
 
-
 /**
  * Several value bounds for convolution-bias-activation operations.
  *
@@ -85,43 +84,13 @@ class ValueBoundsSet {
       }
     }
 
-//!!! ...unfinished... (2021/12/12)
+//!!! ...unfinished... (2021/12/13)
 
     // 2. Calculate the scale-translate for escaping from activation function's non-linear domain.
     //
     // Note: This does not work for avg/max pooling.
-    this.activationEscaping_ScaleTranslateSet.doWithoutPreviousUndo.setBy_fromBounds_ToBounds( this.beforeActivation, this.output );
-
-//!!! ...unfinished... (2021/12/12)
-    this.activationEscaping_ScaleTranslateSet.do.setBy_ScaleTranslate( previousValueBoundsSet.activationEscaping_ScaleTranslateSet.undo );
-    this.activationEscaping_ScaleTranslateSet.do.scaleTranslateBy( this.activationEscaping_ScaleTranslateSet.doWithoutPreviousUndo );
-
-    this.activationEscaping_ScaleTranslateSet.undo.setBy_undoScaleTranslate( this.activationEscaping_ScaleTranslateSet.do );
-  }
-
-//!!! ...unfinished... (2021/12/12)
-  /**
-   * @param {ValueBounds} previousValueBoundsSet
-   *
-   */
-  ( previousValueBoundsSet ) {
-
-    
-    // Calculate the scale-translate for escaping activation function's non-linear domain.
-    //
-    // Note: This does not work for avg/max pooling.
-    this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_fromBounds_ToBounds( this.beforeActivation, this.output );
-
-//!!! ...unfinished... (2021/12/12)
-// class ActivationEscapeing.ScaleTranslateSet
-//   .doWithoutPreviousUndo
-//   .do
-//   .undo
-
-    // The scale-translate for pass-through previous to next.
-    this.activationEscape.do
-    this.undoPrevious_passThrough_ScaleTranslate = previousValueBounds.undoPrevious_passThrough_ScaleTranslate.setBy_undoScaleTranslate( ??? );
-    this.undoPrevious_passThrough_ScaleTranslate.scaleTranslateBy( this.beforeActivation_to_activationLinearDomain_ScaleTranslate );
+    this.activationEscaping_ScaleTranslateSet.setBy_currentValueBoundsSet_previousActivationEscaping(
+      this, previousValueBoundsSet.activationEscaping_ScaleTranslateSet );
   }
 
 }
