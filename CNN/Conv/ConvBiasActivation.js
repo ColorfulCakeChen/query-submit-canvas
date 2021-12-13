@@ -66,8 +66,7 @@ class ValueBoundsSet {
   }
 
   /**
-   * Set this.output according to this.beforeActivation and the specified nActivationId. This method will also calculate
-   * this.beforeActivation_to_activationLinearDomain_ScaleTranslate.
+   * Determine output value bounds. Set this.output according to this.beforeActivation and the specified nActivationId.
    *
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
@@ -76,26 +75,16 @@ class ValueBoundsSet {
    */
   set_output_byActivationId( nActivationId ) {
 
-    // 1. Determine output value bounds.
-    {
-      // If there is no activation function, the output range is determined by input domain, filters, biases.
-      if ( this.nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
-        this.output.set_Bounds( this.beforeActivation );
+    // If there is no activation function, the output range is determined by input domain, filters, biases.
+    if ( this.nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
+      this.output.set_Bounds( this.beforeActivation );
 
-      // Otherwise, the activation function dominates the output range.
-      } else {
-        let info = ValueDesc.ActivationFunction.Singletion.getInfoById( this.nActivationId );
-        this.output.set_Bounds( info.outputRange );
-      }
+    // Otherwise, the activation function dominates the output range.
+    } else {
+      let info = ValueDesc.ActivationFunction.Singletion.getInfoById( this.nActivationId );
+      this.output.set_Bounds( info.outputRange );
     }
 
-//!!! ...unfinished... (2021/12/13)
-
-    // 2. Calculate the scale-translate for escaping from activation function's non-linear domain.
-    //
-    // Note: This does not work for avg/max pooling.
-    this.activationEscaping_ScaleTranslateSet.setBy_currentValueBoundsSet_previousActivationEscaping(
-      this, previousValueBoundsSet.activationEscaping_ScaleTranslateSet );
   }
 
 }
