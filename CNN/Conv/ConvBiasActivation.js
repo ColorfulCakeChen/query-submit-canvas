@@ -38,7 +38,7 @@ class ValueBoundsSet {
     this.beforeActivation = new FloatValue.Bounds();
     this.output = new FloatValue.Bounds();
 
-    this.activationEscapingScaleTranslateSet = new ActivationEscapeing.ScaleTranslateSet();
+    this.activationEscaping_ScaleTranslateSet = new ActivationEscapeing.ScaleTranslateSet();
   }
 
   /**
@@ -90,13 +90,13 @@ class ValueBoundsSet {
     // 2. Calculate the scale-translate for escaping from activation function's non-linear domain.
     //
     // Note: This does not work for avg/max pooling.
-    this.activationEscapingScaleTranslateSet.doWithoutPreviousUndo.setBy_fromBounds_ToBounds( this.beforeActivation, this.output );
+    this.activationEscaping_ScaleTranslateSet.doWithoutPreviousUndo.setBy_fromBounds_ToBounds( this.beforeActivation, this.output );
 
 //!!! ...unfinished... (2021/12/12)
-    this.activationEscapingScaleTranslateSet.do.setBy_ScaleTranslate( previousValueBoundsSet.activationEscapingScaleTranslateSet.undo );
-    this.activationEscapingScaleTranslateSet.do.scaleTranslateBy( this.activationEscapingScaleTranslateSet.doWithoutPreviousUndo );
+    this.activationEscaping_ScaleTranslateSet.do.setBy_ScaleTranslate( previousValueBoundsSet.activationEscaping_ScaleTranslateSet.undo );
+    this.activationEscaping_ScaleTranslateSet.do.scaleTranslateBy( this.activationEscaping_ScaleTranslateSet.doWithoutPreviousUndo );
 
-    this.activationEscapingScaleTranslateSet.undo.setBy_undoScaleTranslate( this.activationEscapingScaleTranslateSet.do );
+    this.activationEscaping_ScaleTranslateSet.undo.setBy_undoScaleTranslate( this.activationEscaping_ScaleTranslateSet.do );
   }
 
 //!!! ...unfinished... (2021/12/12)
@@ -113,7 +113,7 @@ class ValueBoundsSet {
     this.beforeActivation_to_activationLinearDomain_ScaleTranslate.setBy_fromBounds_ToBounds( this.beforeActivation, this.output );
 
 //!!! ...unfinished... (2021/12/12)
-// class ActivationEscape.ScaleTranslateSet
+// class ActivationEscapeing.ScaleTranslateSet
 //   .doWithoutPreviousUndo
 //   .do
 //   .undo
