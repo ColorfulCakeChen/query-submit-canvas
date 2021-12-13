@@ -24,39 +24,44 @@ import * as ActivationEscapeing from "./ActivationEscapeing.js";
 class ValueBoundsSet {
 
   /**
-   * @param {ConvBiasActivation.ValueBoundsSet} previous
-   *   The previous convolution-bias-activation value bounds set of this depthwise convolution.   
    */
-  constructor( previous ) {
-//!!! (2021/12/12 Remarked)
-//    this.input = inputValueBounds.clone(); // (Copy for preventing from modifying.)
-
-//!!! ...unfinished... (2021/12/12) previous?
-
+  constructor() {
     this.input = new FloatValue.Bounds();
     this.beforeActivation = new FloatValue.Bounds();
     this.output = new FloatValue.Bounds();
-
     this.activationEscaping_ScaleTranslateSet = new ActivationEscapeing.ScaleTranslateSet();
   }
 
-  /**
-   * Set this.input, this.beforeActivation, this.output by copying the specified inputValueBounds.
-   *
-   * @param {FloatValue.Bounds} inputValueBounds
-   *   The bounds of the input element value. Or say, the domain of this convolution-bias-activation.
-   */
-  set_all_byClone( inputValueBounds ) {
-    this.input = inputValueBounds.clone();
-    this.set_beforeActivation_output_byClone_input();
-  }
+//!!! (2021/12/13 Remarked)
+//   /**
+//    * Set this.input, this.beforeActivation, this.output by copying the specified inputValueBounds.
+//    *
+//    * @param {FloatValue.Bounds} inputValueBounds
+//    *   The bounds of the input element value. Or say, the domain of this convolution-bias-activation.
+//    */
+//   set_all_byClone( inputValueBounds ) {
+//     this.input = inputValueBounds.clone();
+//     this.set_beforeActivation_output_byClone_input();
+//   }
+//
+//   /**
+//    * Set this.beforeActivation and this.output by copying this.input.
+//    */
+//   set_beforeActivation_output_byClone_input() {
+//     this.beforeActivation = this.input.clone();
+//     this.output = this.input.clone();
+//     this.activationEscapingScaleTranslateSet.reset( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
+//   }
 
   /**
-   * Set this.beforeActivation and this.output by copying this.input.
+   * @param {FloatValue.Bounds} aBounds
+   *   Set this.input, this.beforeActivation, this.output all the same as the specified aBounds. Set the
+   * this.activationEscaping_ScaleTranslateSet to default ( 1, 0 );
    */
-  set_beforeActivation_output_byClone_input() {
-    this.beforeActivation = this.input.clone();
-    this.output = this.input.clone();
+  resetBy_Bounds( aBounds ) {
+    this.input.set_Bounds( aBounds );
+    this.beforeActivation.set_Bounds( aBounds );
+    this.output.set_Bounds( aBounds );
     this.activationEscapingScaleTranslateSet.reset( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
   }
 
