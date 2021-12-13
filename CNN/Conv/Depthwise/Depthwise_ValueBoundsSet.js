@@ -12,16 +12,17 @@ import * as Weights from "../../Unpacker/Weights.js";
 class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
 
   /**
-   * @param {ConvBiasActivation.ValueBoundsSet} previous
-   *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    */
-  constructor( previous ) {
-    super( previous );
+  constructor() {
+    super();
 
 //!!! ...unfinished... (2021/12/12) previous?
   }
 
   /**
+   *
+   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+   *   The previous convolution-bias-activation value bounds set of this depthwise convolution.   
    *
    * @param {boolean} bDepthwise
    *   If true, the depthwise convolution (with/without bias, with/without activation) exists. 
@@ -38,10 +39,10 @@ class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
    */
-   set_beforeActivation_output_by( bDepthwise, filterHeight, filterWidth, bBias, nActivationId ) {
+   set_by( previous_ConvBiasActivation_ValueBoundsSet, bDepthwise, filterHeight, filterWidth, bBias, nActivationId ) {
 
-    // 0. Default as input.
-    this.set_beforeActivation_output_byClone_input();
+    // 0. Default as ValueBoundsSet.output of previous convolution-bias-activation.
+    this.resetBy_Bounds( previous_ConvBiasActivation_ValueBoundsSet.output );
 
     // 1. No operation at all.
     if ( !bDepthwise )
