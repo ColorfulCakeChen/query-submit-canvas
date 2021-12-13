@@ -43,7 +43,7 @@ class ScaleTranslateSet {
 //    current_ValueBoundsSet_beforeActivation, current_ValueBoundsSet_output, previous_ActivationEscaping_undo ) {
     current_ValueBoundsSet, previous_ActivationEscaping ) {
 
-    // 2. Calculate the scale-translate for escaping from activation function's non-linear domain.
+    // 2. Calculate the scale-translate for escaping from activation function's non-linear domain into linear domain.
     //
     // Note: This does not work for avg/max pooling.
     this.doWithoutPreviousUndo.setBy_fromBounds_ToBounds( current_ValueBoundsSet.beforeActivation, current_ValueBoundsSet.output );
