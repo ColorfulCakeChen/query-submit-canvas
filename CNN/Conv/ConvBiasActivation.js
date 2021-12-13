@@ -18,9 +18,9 @@ import * as ActivationEscapeing from "./ActivationEscapeing.js";
  * @member {FloatValue.Bounds} output
  *   The bounds of the output element value. Or say, the range of the convolution-bias-activation.
  *
- * @member {FloatValue.ScaleTranslate} beforeActivation_to_activationLinearDomain_ScaleTranslate
- *   The scale-translate for letting beforeActivation bounds moving into the linear domain of the activation function. That is,
- * for letting beforeActivation escape from activation function's non-linear domain.
+ * @member {ActivationEscapeing.ScaleTranslateSet} activationEscaping_ScaleTranslateSet
+ *   The scale-translate for moving beforeActivation bounds into the linear domain of the activation function. That is, for
+ * letting beforeActivation escape from activation function's non-linear domain.
  */
 class ValueBoundsSet {
 
