@@ -15,8 +15,6 @@ class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
    */
   constructor() {
     super();
-
-//!!! ...unfinished... (2021/12/12) previous?
   }
 
   /**
@@ -64,6 +62,10 @@ class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
 
     // 3. Output.
     this.set_output_byActivationId( nActivationId );
+
+    // 4. ActivationEscaping.ScaleTranslateSet.
+    this.activationEscaping_ScaleTranslateSet.setBy_currentValueBoundsSet_previousActivationEscaping(
+      this, previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet );
   }
 
 }
