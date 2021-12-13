@@ -2,7 +2,7 @@ export { ValueBoundsSet };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-import * as ActivationEscape from "./ActivationEscape.js";
+import * as ActivationEscapeing from "./ActivationEscapeing.js";
 
 
 /**
@@ -38,7 +38,7 @@ class ValueBoundsSet {
     this.beforeActivation = new FloatValue.Bounds();
     this.output = new FloatValue.Bounds();
 
-    this.activationEscapingScaleTranslateSet = new ActivationEscape.ScaleTranslateSet();
+    this.activationEscapingScaleTranslateSet = new ActivationEscapeing.ScaleTranslateSet();
   }
 
   /**
