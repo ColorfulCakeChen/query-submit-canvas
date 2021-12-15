@@ -43,9 +43,9 @@ class ValueBoundsSet {
    *   The ValueBoundsSet to be copied.
    */
   setBy_ValueBoundsSet( another ) {
-    this.set_Bounds( another.input );
-    this.set_Bounds( another.beforeActivation );
-    this.set_Bounds( another.output );
+    this.input.set_Bounds( another.input );
+    this.beforeActivation.set_Bounds( another.beforeActivation );
+    this.output.set_Bounds( another.output );
     this.activationEscaping_ScaleTranslateSet.setBy_ScaleTranslateSet( another.activationEscaping_ScaleTranslateSet );
   }
 
