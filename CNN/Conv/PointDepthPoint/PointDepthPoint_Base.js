@@ -241,17 +241,8 @@ import { Params } from "./PointDepthPoint_Params.js";
  *
  *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
  *
-
-//!!! (2021/12/15 Remarked)
-//  * @member {FloatValue.Bounds} inputValueBounds
-//  *   The bounds of the input element value. Or say, the domain of this PointDepthPoint.
-//  *
-//  * @member {FloatValue.Bounds} outputValueBounds
-//  *   The bounds of the output element value. Or say, the range of this PointDepthPoint.
-
- *
- * @member {ConvBiasActivation.ValueBoundsSet} outputValueBoundsSet
- *   The element value bounds set of this PointDepthPoint's output.
+ * @member {ConvBiasActivation.ValueBoundsSet} valueBoundsSet
+ *   The element value bounds of this PointDepthPoint's input/output. (The .beforeActivation is not so meaningful)
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
  *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
@@ -722,11 +713,11 @@ class Base extends ReturnOrClone.Base {
     );
 
     // Because pointwise21 always exists, it has the default final output value bounds of this PointDepthPoint.
-    this.outputValueBoundsSet = new ConvBiasActivation.ValueBoundsSet();
-    this.outputValueBoundsSet.input.set_Bounds( previousValueBoundsSet.output ); // As previous output of this PointDepthPoint.
-    this.outputValueBoundsSet.beforeActivation.set_Bounds( this.pointwise21.valueBoundsSet.beforeActivation ); // As pointwise21.
-    this.outputValueBoundsSet.output.set_Bounds( this.pointwise21.valueBoundsSet.output ); // As pointwise21.
-    // this.outputValueBoundsSet.activationEscaping_ScaleTranslateSet; // Keeps as default ( 1, 0 ).
+    this.valueBoundsSet = new ConvBiasActivation.ValueBoundsSet();
+    this.valueBoundsSet.input.set_Bounds( previousValueBoundsSet.output ); // As previous output of this PointDepthPoint.
+    this.valueBoundsSet.beforeActivation.set_Bounds( this.pointwise21.valueBoundsSet.beforeActivation ); // As pointwise21.
+    this.valueBoundsSet.output.set_Bounds( this.pointwise21.valueBoundsSet.output ); // As pointwise21.
+    // this.valueBoundsSet.activationEscaping_ScaleTranslateSet; // Keeps as default ( 1, 0 ).
 
     // 5.4
     ++progressToAdvance.value;
@@ -775,7 +766,7 @@ class Base extends ReturnOrClone.Base {
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
     if ( this.bShouldAddInputToOutput ) { // If add-input-to-output will be done indeed, it affects the output value bounds.
-      this.outputValueBoundsSet.output.add_Bounds( previousValueBoundsSet.output );
+      this.valueBoundsSet.output.add_Bounds( previousValueBoundsSet.output );
     }
 
     // 6.2
