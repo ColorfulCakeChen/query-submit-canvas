@@ -1,7 +1,7 @@
 export { ValueBoundsSet };
 
-import * as FloatValue from "../../Unpacker/FloatValue.js";
-import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as FloatValue from "../Unpacker/FloatValue.js";
+import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as ActivationEscapeing from "./ActivationEscapeing.js";
 
 /**
