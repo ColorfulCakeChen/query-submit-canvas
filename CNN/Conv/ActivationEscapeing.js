@@ -1,6 +1,6 @@
 export { ScaleTranslateSet };
 
-import * as FloatValue from "../../Unpacker/FloatValue.js";
+import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ConvBiasActivation from "./ConvBiasActivation.js";
 
 /**
