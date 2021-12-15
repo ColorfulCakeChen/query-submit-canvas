@@ -391,7 +391,7 @@ class Base {
       testParams.in.bKeepInputTensor
     );
 
-    let defaultInputValueBoundsSet = ConvBiasActivation.ValueBoundsSet();
+    let defaultInputValueBoundsSet = new ConvBiasActivation.ValueBoundsSet();
     defaultInputValueBoundsSet.resetBy_Bounds( Weights.Base.ValueBounds );
     let bInitOk = pointDepthPoint.init( progress, extractedParams, defaultInputValueBoundsSet, channelShuffler_ConcatPointwiseConv );
 
