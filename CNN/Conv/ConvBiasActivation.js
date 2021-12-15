@@ -5,7 +5,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ActivationEscapeing from "./ActivationEscapeing.js";
 
 /**
- * Several value bounds for convolution-bias-activation operations.
+ * Several element value bounds for convolution-bias-activation operations.
  *
  *
  * @member {FloatValue.Bounds} input
