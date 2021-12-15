@@ -6,7 +6,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 
 /**
- * The value bounds for pointwise convolution-bias-activation.
+ * The element value bounds for pointwise convolution-bias-activation.
  *
  */
 class ValueBoundsSet extends ConvBiasActivation.ValueBoundsBase {
