@@ -301,8 +301,8 @@ class Base extends ReturnOrClone.Base {
    * @param {Params} params
    *   A Params object. The params.extract() will be called to extract parameters.
    *
-   * @param {ConvBiasActivation.ValueBoundsSet} inputValueBoundsSet
-   *   The previous PointDepthPoint's last convolution-bias-activation value bounds set.
+   * @param {ConvBiasActivation.ValueBoundsSet} previousValueBoundsSet
+   *   The previous PointDepthPoint's output convolution-bias-activation value bounds set.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
@@ -311,7 +311,7 @@ class Base extends ReturnOrClone.Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    */
-  * initer( progressParent, params, inputValueBoundsSet, channelShuffler_ConcatPointwiseConv ) {
+  * initer( progressParent, params, previousValueBoundsSet, channelShuffler_ConcatPointwiseConv ) {
 
     // 0. Prepare
 
@@ -460,7 +460,7 @@ class Base extends ReturnOrClone.Base {
       0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
     );
 
-    if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd, inputValueBoundsSet ) )
+    if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd, previousValueBoundsSet ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise1.byteOffsetEnd;
 
@@ -721,10 +721,12 @@ class Base extends ReturnOrClone.Base {
         + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
     );
 
-//!!! ...unfinished... (2021/12/15) What should the .beforeActivation, .output, .activationEscaping_ScaleTranslateSet be?
-
     // Because pointwise21 always exists, it has the default final output value bounds of this PointDepthPoint.
-    this.outputValueBoundsSet = this.pointwise21.valueBoundsSet.clone();
+    this.outputValueBoundsSet = new ConvBiasActivation.ValueBoundsSet();
+    this.outputValueBoundsSet.input.set_Bounds( previousValueBoundsSet.output ); // As previous output of this PointDepthPoint.
+    this.outputValueBoundsSet.beforeActivation.set_Bounds( this.pointwise21.valueBoundsSet.beforeActivation ); // As pointwise21.
+    this.outputValueBoundsSet.output.set_Bounds( this.pointwise21.valueBoundsSet.output ); // As pointwise21.
+    // this.outputValueBoundsSet.activationEscaping_ScaleTranslateSet; // Keeps as default ( 1, 0 ).
 
     // 5.4
     ++progressToAdvance.value;
@@ -773,7 +775,7 @@ class Base extends ReturnOrClone.Base {
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
     if ( this.bShouldAddInputToOutput ) { // If add-input-to-output will be done indeed, it affects the output value bounds.
-      this.outputValueBounds.add_Bounds( inputValueBounds );
+      this.outputValueBoundsSet.output.add_Bounds( previousValueBoundsSet.output );
     }
 
     // 6.2
@@ -906,11 +908,11 @@ class Base extends ReturnOrClone.Base {
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
-  init( progressParent, params, inputValueBoundsSet, channelShuffler_ConcatPointwiseConv ) {
+  init( progressParent, params, previousValueBoundsSet, channelShuffler_ConcatPointwiseConv ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer( progressParent, params, inputValueBoundsSet, channelShuffler_ConcatPointwiseConv );
+    let initer = this.initer( progressParent, params, previousValueBoundsSet, channelShuffler_ConcatPointwiseConv );
     let initerNext;
     do {
       initerNext = initer.next();
