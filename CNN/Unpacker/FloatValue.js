@@ -196,6 +196,10 @@ class ScaleTranslate {
     this.translate = translate;
   }
 
+  clone() {
+    return new ScaleTranslate( this.scale, this.translate );
+  }
+
   /** (Re)set all scale-translate values. Default is ( scale = 1, translate = 0 ) (i.e. no scale and no translate). */
   set( scale = 1, translate = 0 ) {
     this.scale = scale;
