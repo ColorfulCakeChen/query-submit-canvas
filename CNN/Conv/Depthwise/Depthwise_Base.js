@@ -5,19 +5,20 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
 import { PassThrough } from "./Depthwise_PassThrough.js";
-import { ValueBounds } from "./Depthwise_ValueBounds.js";
+import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
 
 /**
  * Handle depthwise convolution, bias and activation.
  *
  * @member {number} byteOffsetBegin
- *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init().
+ *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init(). This is relative to the
+ * inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
  * @member {number} byteOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
+ * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
- * @member {ValueBounds} valueBounds
+ * @member {ValueBoundsSet} valueBoundsSet
  *   The element value bounds of input, beforeActivation, and output for this depthwise convolution.
  *
  * @member {number} inputHeight
@@ -103,16 +104,13 @@ import { ValueBounds } from "./Depthwise_ValueBounds.js";
 class Base extends ReturnOrClone_Activation.Base {
 
   /**
-   * @param {FloatValue.Bounds} inputValueBounds
-   *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
    */
   constructor(
-    inputValueBounds,
     inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias, nActivationId,
     bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf ) {
 
     super();
-    this.valueBounds = new ValueBounds( inputValueBounds );
+    this.valueBoundsSet = new ValueBoundsSet();
     this.inputChannelCount = inputChannelCount;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
     this.filterHeight = filterHeight;
@@ -158,9 +156,12 @@ class Base extends ReturnOrClone_Activation.Base {
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
+   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+   *   The previous convolution-bias-activation value bounds set of this depthwise convolution.   
+   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin ) {
+  init( inputFloat32Array, byteOffsetBegin, previous_ConvBiasActivation_ValueBoundsSet ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -180,7 +181,13 @@ class Base extends ReturnOrClone_Activation.Base {
     }
 
     // 1.
+
+    // 1.1 Determine operation functions.
     Base.Setup_bDepthwise_pfn.call( this );
+
+    // 1.2 Determine output value bounds.
+    this.valueBoundsSet.set_by( previous_ConvBiasActivation_ValueBoundsSet,
+      this.bDepthwise, this.filterHeight, this.filterWidth, this.bBias, this.nActivationId );
 
     let bExtractOk;
     if ( !this.bDepthwise ) {
@@ -209,11 +216,6 @@ class Base extends ReturnOrClone_Activation.Base {
           bExtractOk = Base.extractAs_NormalDepthwise.call( this, inputFloat32Array );
         }
       }
-    }
-
-    // 5. Determine output value bounds.
-    if ( bExtractOk ) {
-      this.valueBounds.set_beforeActivation_output_by( this.bDepthwise, this.filterHeight, this.filterWidth, this.bBias, this.nActivationId );
     }
 
     this.bInitOk = bExtractOk;
