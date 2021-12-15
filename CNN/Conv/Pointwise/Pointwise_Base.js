@@ -6,7 +6,7 @@ import * as Weights from "../../Unpacker/Weights.js";
 import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
 import { PassThrough, AllZeros } from "./Pointwise_PassThrough.js";
-import { ValueBounds } from "./Pointwise_ValueBounds.js";
+import { ValueBoundsSet } from "./Pointwise_ValueBoundsSet.js";
 
 /**
  * Handle pointwise convolution (1x1 conv2d), bias and activation.
@@ -18,8 +18,8 @@ import { ValueBounds } from "./Pointwise_ValueBounds.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ).
  *
- * @member {ValueBounds} valueBounds
- *   The element value bounds of input, beforeActivation, and output for this pointwise convolution.
+ * @member {ValueBoundsSet} valueBoundsSet
+ *   The element value bounds set of input, beforeActivation, and output for this pointwise convolution.
  *
  * @member {number} outputChannelCount
  *   The output channel count of this pointwise convolutiuon.
@@ -142,16 +142,13 @@ import { ValueBounds } from "./Pointwise_ValueBounds.js";
 class Base extends ReturnOrClone_Activation.Base {
 
   /**
-   * @param {FloatValue.Bounds} inputValueBounds
-   *   The bounds of the input element value. Or say, the domain of this pointwise convolution.
    */
   constructor(
-    inputValueBounds,
     inputChannelCount, outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
     super();
-    this.valueBounds = new ValueBounds( inputValueBounds );
+    this.valueBoundsSet = new ValueBoundsSet();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
@@ -207,9 +204,12 @@ class Base extends ReturnOrClone_Activation.Base {
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
+   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+   *   The previous convolution-bias-activation value bounds set of this pointwise convolution.   
+   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin ) {
+  init( inputFloat32Array, byteOffsetBegin, previous_ConvBiasActivation_ValueBoundsSet ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -281,7 +281,8 @@ class Base extends ReturnOrClone_Activation.Base {
 
     // 4. Determine output value bounds.
     if ( bExtractOk ) {
-      this.valueBounds.set_beforeActivation_output_by( this.bPointwise, this.inputChannelCount, this.bBias, this.nActivationId );
+      this.valueBoundsSet.set_by( previous_ConvBiasActivation_ValueBoundsSet,
+        this.bPointwise, this.inputChannelCount, this.bBias, this.nActivationId );
     }
 
     this.bInitOk = bExtractOk;
