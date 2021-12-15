@@ -422,10 +422,6 @@ class Base extends ReturnOrClone_Activation.Base {
    * Extract depthwise convolution filters from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
-
-//!!! (2021/12/03 Remarked) tensorWeightCountTotal become get property.
-//   *   - this.tensorWeightCountTotal
-
    *
    * @param {Base} this                       The Base object to be modified.
    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
@@ -644,7 +640,10 @@ class Base extends ReturnOrClone_Activation.Base {
       // The other half is just filters and biases for pass-through.
       higherHalfPassThrough = new PassThrough(
         this.inputHeight, this.inputWidth, this.inputChannelCount_higherHalf,
-        this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth, this.stridesPad, this.bBias );
+        this.AvgMax_Or_ChannelMultiplier, this.filterHeight, this.filterWidth, this.stridesPad, this.bBias,
+        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
+        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
+      );
 
       if ( !higherHalfPassThrough.bInitOk )
         return false;
