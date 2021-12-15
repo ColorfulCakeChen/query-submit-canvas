@@ -28,10 +28,18 @@ class ScaleTranslateSet {
 
   clone() {
     let result = new ScaleTranslateSet();
-    result.doWithoutPreviousUndo.setBy_ScaleTranslate( this.doWithoutPreviousUndo );
-    result.do.setBy_ScaleTranslate( this.do );
-    result.undo.setBy_ScaleTranslate( this.undo );
+    result.setBy_ScaleTranslateSet( this );
     return result;
+  }
+
+  /**
+   * @param {ScaleTranslateSet} another
+   *   The ScaleTranslateSet to be copied.
+   */
+  setBy_ScaleTranslateSet( another ) {
+    this.doWithoutPreviousUndo.setBy_ScaleTranslate( another.doWithoutPreviousUndo );
+    this.do.setBy_ScaleTranslate( another.do );
+    this.undo.setBy_ScaleTranslate( another.undo );
   }
 
   /** Reset all scale-translate values. Default is ( scale = 1, translate = 0 ) (i.e. no scale and no translate). */
