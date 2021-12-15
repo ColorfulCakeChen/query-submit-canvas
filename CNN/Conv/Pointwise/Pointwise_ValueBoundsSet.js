@@ -9,7 +9,7 @@ import * as Weights from "../../Unpacker/Weights.js";
  * The element value bounds for pointwise convolution-bias-activation.
  *
  */
-class ValueBoundsSet extends ConvBiasActivation.ValueBoundsBase {
+class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
 
   /**
    */
