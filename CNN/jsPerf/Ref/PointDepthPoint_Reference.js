@@ -5,7 +5,7 @@ import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import * as ConvBiasActivation from "../ConvBiasActivation.js";
+import * as ConvBiasActivation from "../../Conv/ConvBiasActivation.js";
 import * as ChannelCountCalculator from "../../Conv/ChannelCountCalculator.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 import * as ChannelShuffler from "../../Conv/ChannelShuffler.js";
