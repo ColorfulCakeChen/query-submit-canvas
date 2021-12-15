@@ -5,6 +5,7 @@ import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import * as ConvBiasActivation from "../ConvBiasActivation.js";
 import * as ChannelCountCalculator from "../../Conv/ChannelCountCalculator.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 import * as ChannelShuffler from "../../Conv/ChannelShuffler.js";
@@ -390,8 +391,9 @@ class Base {
       testParams.in.bKeepInputTensor
     );
 
-    let defaultInputValueBounds = Weights.Base.ValueBounds;
-    let bInitOk = pointDepthPoint.init( progress, extractedParams, defaultInputValueBounds, channelShuffler_ConcatPointwiseConv );
+    let defaultInputValueBoundsSet = ConvBiasActivation.ValueBoundsSet();
+    defaultInputValueBoundsSet.resetBy_Bounds( Weights.Base.ValueBounds );
+    let bInitOk = pointDepthPoint.init( progress, extractedParams, defaultInputValueBoundsSet, channelShuffler_ConcatPointwiseConv );
 
     let flags = {};
     PointDepthPoint.Params.setFlags_by.call( flags,
