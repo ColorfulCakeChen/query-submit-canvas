@@ -185,7 +185,7 @@ class Base extends ReturnOrClone_Activation.Base {
     // 1.1 Determine operation functions.
     Base.Setup_bDepthwise_pfn.call( this );
 
-    // 1.2 Determine output value bounds.
+    // 1.2 Determine output value bounds (and activation escaping scale-translate).
     this.valueBoundsSet.set_by( previous_ConvBiasActivation_ValueBoundsSet,
       this.bDepthwise, this.filterHeight, this.filterWidth, this.bBias, this.nActivationId );
 
