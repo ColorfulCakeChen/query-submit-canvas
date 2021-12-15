@@ -49,27 +49,6 @@ class ValueBoundsSet {
     this.activationEscaping_ScaleTranslateSet.setBy_ScaleTranslateSet( another.activationEscaping_ScaleTranslateSet );
   }
 
-//!!! (2021/12/13 Remarked)
-//   /**
-//    * Set this.input, this.beforeActivation, this.output by copying the specified inputValueBounds.
-//    *
-//    * @param {FloatValue.Bounds} inputValueBounds
-//    *   The bounds of the input element value. Or say, the domain of this convolution-bias-activation.
-//    */
-//   set_all_byClone( inputValueBounds ) {
-//     this.input = inputValueBounds.clone();
-//     this.set_beforeActivation_output_byClone_input();
-//   }
-//
-//   /**
-//    * Set this.beforeActivation and this.output by copying this.input.
-//    */
-//   set_beforeActivation_output_byClone_input() {
-//     this.beforeActivation = this.input.clone();
-//     this.output = this.input.clone();
-//     this.activationEscapingScaleTranslateSet.reset( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
-//   }
-
   /**
    * @param {FloatValue.Bounds} aBounds
    *   Set this.input, this.beforeActivation, this.output all the same as the specified aBounds. Set the
@@ -79,7 +58,7 @@ class ValueBoundsSet {
     this.input.set_Bounds( aBounds );
     this.beforeActivation.set_Bounds( aBounds );
     this.output.set_Bounds( aBounds );
-    this.activationEscapingScaleTranslateSet.reset( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
+    this.activationEscaping_ScaleTranslateSet.reset( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
   }
 
   /**
