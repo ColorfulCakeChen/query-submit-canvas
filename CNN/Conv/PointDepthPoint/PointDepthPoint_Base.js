@@ -244,14 +244,14 @@ import { Params } from "./PointDepthPoint_Params.js";
 
 //!!! ...unfinishd... (2021/12/15)
 
- * @member {FloatValue.Bounds} inputValueBounds
- *   The bounds of the input element value. Or say, the domain of this PointDepthPoint.
+ * @member {ConvBiasActivation.ValueBoundsSet} first_ConvBiasActivation_ValueBoundsSet
+ *   The element value bounds set of this PointDepthPoint's first convolution-bias-activation.
  *
- * @member {FloatValue.Bounds} outputValueBounds
- *   The bounds of the output element value. Or say, the range of this PointDepthPoint.
+ * @member {ConvBiasActivation.ValueBoundsSet} last_ConvBiasActivation_ValueBoundsSet
+ *   The element value bounds set of this PointDepthPoint's last convolution-bias-activation.
  *
  * @member {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
- *   The previous convolution-bias-activation value bounds set of this pointwise-depthwise-pointwise convolutions.
+ *   The previous PointDepthPoint's last convolution-bias-activation value bounds set.
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
  *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
