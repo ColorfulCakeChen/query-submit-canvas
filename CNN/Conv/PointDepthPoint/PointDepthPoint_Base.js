@@ -242,16 +242,16 @@ import { Params } from "./PointDepthPoint_Params.js";
  *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
  *
 
-//!!! ...unfinishd... (2021/12/15)
+//!!! (2021/12/15 Remarked)
+//  * @member {FloatValue.Bounds} inputValueBounds
+//  *   The bounds of the input element value. Or say, the domain of this PointDepthPoint.
+//  *
+//  * @member {FloatValue.Bounds} outputValueBounds
+//  *   The bounds of the output element value. Or say, the range of this PointDepthPoint.
 
- * @member {ConvBiasActivation.ValueBoundsSet} first_ConvBiasActivation_ValueBoundsSet
- *   The element value bounds set of this PointDepthPoint's first convolution-bias-activation.
  *
- * @member {ConvBiasActivation.ValueBoundsSet} last_ConvBiasActivation_ValueBoundsSet
- *   The element value bounds set of this PointDepthPoint's last convolution-bias-activation.
- *
- * @member {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
- *   The previous PointDepthPoint's last convolution-bias-activation value bounds set.
+ * @member {ConvBiasActivation.ValueBoundsSet} outputValueBoundsSet
+ *   The element value bounds set of this PointDepthPoint's output.
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
  *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
@@ -301,6 +301,9 @@ class Base extends ReturnOrClone.Base {
    * @param {Params} params
    *   A Params object. The params.extract() will be called to extract parameters.
    *
+   * @param {ConvBiasActivation.ValueBoundsSet} inputValueBoundsSet
+   *   The previous PointDepthPoint's last convolution-bias-activation value bounds set.
+   *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
@@ -308,7 +311,7 @@ class Base extends ReturnOrClone.Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    */
-  * initer( progressParent, params, inputValueBounds, channelShuffler_ConcatPointwiseConv ) {
+  * initer( progressParent, params, inputValueBoundsSet, channelShuffler_ConcatPointwiseConv ) {
 
     // 0. Prepare
 
@@ -450,7 +453,6 @@ class Base extends ReturnOrClone.Base {
     }
 
     this.pointwise1 = new Pointwise.Base(
-      inputValueBounds,
       this.channelCount0_pointwise1Before,
       this.pointwise1ChannelCount, this.bPointwise1Bias, this.pointwise1ActivationId,
       nHigherHalfDifferent_pointwise1,
@@ -458,7 +460,7 @@ class Base extends ReturnOrClone.Base {
       0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
     );
 
-    if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd ) )
+    if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd, inputValueBoundsSet ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise1.byteOffsetEnd;
 
@@ -506,14 +508,13 @@ class Base extends ReturnOrClone.Base {
     }
 
     this.depthwise1 = new Depthwise.Base(
-      this.pointwise1.valueBounds.output,
       this.channelCount_pointwise1After_depthwise1Before,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
       this.bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf_depthwise1
     );
 
-    if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd ) )
+    if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.valueBoundsSet ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.depthwise1.byteOffsetEnd;
 
@@ -537,7 +538,6 @@ class Base extends ReturnOrClone.Base {
       // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
       //    true for StridesPad.
       this.depthwise2 = new Depthwise.Base(
-        this.pointwise1.valueBounds.output,
 
         // The depthwise2 processes the inputTensors[ 0 ] directly (i.e. not the pointwise1 result of inputTensors[ 0 ], and
         // not inputTensors[ 1 ]).
@@ -549,7 +549,7 @@ class Base extends ReturnOrClone.Base {
         false, -1, -1, -1 // depthwise2 never has higher-half-different.
       );
 
-      if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd ) )
+      if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.valueBoundsSet ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.depthwise2.byteOffsetEnd;
 
@@ -642,7 +642,6 @@ class Base extends ReturnOrClone.Base {
     //       In this case, it will pass through all input to output, but the output will be channel shuffled.
     //
     this.pointwise21 = new Pointwise.Base(
-      this.depthwise1.valueBounds.output,
       this.channelCount_concat1After_pointwise2Before,
       this.pointwise21ChannelCount, this.bPointwise21Bias, this.pointwise21ActivationId,
       nHigherHalfDifferent_pointwise2,
@@ -650,7 +649,7 @@ class Base extends ReturnOrClone.Base {
       channelShuffler_outputGroupCount_pointwise2
     );
 
-    if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd ) )
+    if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd, this.depthwise1.valueBoundsSet ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise21.byteOffsetEnd;
 
@@ -667,11 +666,6 @@ class Base extends ReturnOrClone.Base {
     if ( this.pointwise22ChannelCount > 0 ) {
 
       this.pointwise22 = new Pointwise.Base(
-
-        // Strictly speaking, sometimes pointwise22 is dependent on depthwise2. But it does not matter because depthwise1 and depthwise2
-        // should have the same output value bounds.
-        this.depthwise1.valueBounds.output,
-
         this.channelCount_concat1After_pointwise2Before,
         this.pointwise22ChannelCount, this.bPointwise22Bias, this.pointwise22ActivationId,
         nHigherHalfDifferent_pointwise2,
@@ -679,7 +673,10 @@ class Base extends ReturnOrClone.Base {
         channelShuffler_outputGroupCount_pointwise2
       );
 
-      if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd ) )
+      // Note: Strictly speaking, sometimes pointwise22 is dependent on depthwise2. But it does not matter for ValueBoundsSet
+      // because depthwise1 and depthwise2 should have the same output value bounds.
+      //
+      if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd, this.depthwise1.valueBoundsSet ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.pointwise22.byteOffsetEnd;
 
@@ -724,8 +721,10 @@ class Base extends ReturnOrClone.Base {
         + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
     );
 
+//!!! ...unfinished... (2021/12/15) What should the .beforeActivation, .output, .activationEscaping_ScaleTranslateSet be?
+
     // Because pointwise21 always exists, it has the default final output value bounds of this PointDepthPoint.
-    this.outputValueBounds = this.pointwise21.valueBounds.output.clone();
+    this.outputValueBoundsSet = this.pointwise21.valueBoundsSet.clone();
 
     // 5.4
     ++progressToAdvance.value;
@@ -773,7 +772,7 @@ class Base extends ReturnOrClone.Base {
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
-    if ( this.bShouldAddInputToOutput ) { // If add-input-to-output wiil be done indeed, it affects the output value bounds.
+    if ( this.bShouldAddInputToOutput ) { // If add-input-to-output will be done indeed, it affects the output value bounds.
       this.outputValueBounds.add_Bounds( inputValueBounds );
     }
 
@@ -907,11 +906,11 @@ class Base extends ReturnOrClone.Base {
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
-  init( progressParent, params, inputValueBounds, channelShuffler_ConcatPointwiseConv ) {
+  init( progressParent, params, inputValueBoundsSet, channelShuffler_ConcatPointwiseConv ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer( progressParent, params, inputValueBounds, channelShuffler_ConcatPointwiseConv );
+    let initer = this.initer( progressParent, params, inputValueBoundsSet, channelShuffler_ConcatPointwiseConv );
     let initerNext;
     do {
       initerNext = initer.next();
