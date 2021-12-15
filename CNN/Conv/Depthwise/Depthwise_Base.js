@@ -157,7 +157,7 @@ class Base extends ReturnOrClone_Activation.Base {
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
-   *   The previous convolution-bias-activation value bounds set of this depthwise convolution.   
+   *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    *
    * @return {boolean} Return true, if succeeded.
    */
