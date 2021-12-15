@@ -242,7 +242,7 @@ import { Params } from "./PointDepthPoint_Params.js";
  *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
  *
  * @member {ConvBiasActivation.ValueBoundsSet} valueBoundsSet
- *   The element value bounds of this PointDepthPoint's input/output. (The .beforeActivation is not so meaningful)
+ *   The element value bounds of this PointDepthPoint's input/output.
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
  *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
@@ -715,8 +715,8 @@ class Base extends ReturnOrClone.Base {
     // Because pointwise21 always exists, it has the default final output value bounds of this PointDepthPoint.
     this.valueBoundsSet = new ConvBiasActivation.ValueBoundsSet();
     this.valueBoundsSet.input.set_Bounds( previousValueBoundsSet.output ); // As previous output of this PointDepthPoint.
-    this.valueBoundsSet.beforeActivation.set_Bounds( this.pointwise21.valueBoundsSet.beforeActivation ); // As pointwise21.
-    this.valueBoundsSet.output.set_Bounds( this.pointwise21.valueBoundsSet.output ); // As pointwise21.
+    this.valueBoundsSet.beforeActivation.set_Bounds( this.pointwise21.valueBoundsSet.output ); // As pointwise21.output (not .beforeActivation).
+    this.valueBoundsSet.output.set_Bounds( this.pointwise21.valueBoundsSet.output ); // As pointwise21.output.
     // this.valueBoundsSet.activationEscaping_ScaleTranslateSet; // Keeps as default ( 1, 0 ).
 
     // 5.4
@@ -766,6 +766,7 @@ class Base extends ReturnOrClone.Base {
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
     if ( this.bShouldAddInputToOutput ) { // If add-input-to-output will be done indeed, it affects the output value bounds.
+      this.valueBoundsSet.beforeActivation.add_Bounds( previousValueBoundsSet.output ); // Keep .beforeActivation the same as .output.
       this.valueBoundsSet.output.add_Bounds( previousValueBoundsSet.output );
     }
 
