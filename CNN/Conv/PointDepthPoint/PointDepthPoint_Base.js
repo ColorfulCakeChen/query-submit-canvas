@@ -5,6 +5,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
+import * as ConvBiasActivation from "../ConvBiasActivation.js";
 import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
 import * as Pointwise from "../Pointwise.js";
 import * as Depthwise from "../Depthwise.js";
@@ -240,11 +241,17 @@ import { Params } from "./PointDepthPoint_Params.js";
  *
  *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
  *
+
+//!!! ...unfinishd... (2021/12/15)
+
  * @member {FloatValue.Bounds} inputValueBounds
  *   The bounds of the input element value. Or say, the domain of this PointDepthPoint.
  *
  * @member {FloatValue.Bounds} outputValueBounds
  *   The bounds of the output element value. Or say, the range of this PointDepthPoint.
+ *
+ * @member {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+ *   The previous convolution-bias-activation value bounds set of this pointwise-depthwise-pointwise convolutions.
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
  *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
