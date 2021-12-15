@@ -495,7 +495,9 @@ class Base extends ReturnOrClone_Activation.Base {
         this.inputChannelCount, // Use all (not just higher half) input channels.
         this.outputChannelCount_Real,
         0, // Pass through all the input channels.
-        this.bBias
+        this.bBias,
+        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
+        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
       );
 
       if ( !higherHalfPassThrough.bInitOk )
@@ -562,7 +564,9 @@ class Base extends ReturnOrClone_Activation.Base {
         this.inputChannelCount, // Use all (not just lower half) input channels.
         this.outputChannelCount_lowerHalf,
         0, // Pass through the lower channels to lower channels (i.e. pass through lower channels).
-        this.bBias
+        this.bBias,
+        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
+        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
       );
 
       if ( !lowerHalfPassThrough.bInitOk )
@@ -572,7 +576,9 @@ class Base extends ReturnOrClone_Activation.Base {
         this.inputChannelCount, // Use all (not just higher half) input channels.
         this.outputChannelCount_higherHalf,
         0, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
-        this.bBias
+        this.bBias,
+        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
+        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
       );
 
       if ( !higherHalfPassThrough.bInitOk )
@@ -645,7 +651,9 @@ class Base extends ReturnOrClone_Activation.Base {
         this.inputChannelCount, // Use all (not just higher half) input channels.
         this.outputChannelCount_higherHalf,
         0, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
-        this.bBias
+        this.bBias,
+        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
+        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
       );
 
       if ( !higherHalfPassThrough.bInitOk )
@@ -889,7 +897,9 @@ class Base extends ReturnOrClone_Activation.Base {
             this.inputChannelCount, // Use all (not just higher half) input channels.
             this.outputChannelCount_higherHalf,
             this.outputChannelCount_lowerHalf, // Pass through the higher channels.
-            this.bBias
+            this.bBias,
+            this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
+            this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
           );
         }
 
