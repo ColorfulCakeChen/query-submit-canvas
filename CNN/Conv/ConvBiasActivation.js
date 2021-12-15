@@ -32,6 +32,23 @@ class ValueBoundsSet {
     this.activationEscaping_ScaleTranslateSet = new ActivationEscapeing.ScaleTranslateSet();
   }
 
+  clone() {
+    let result = new ValueBoundsSet();
+    result.setBy_ValueBoundsSet( this );
+    return result;
+  }
+
+  /**
+   * @param {ValueBoundsSet} another
+   *   The ValueBoundsSet to be copied.
+   */
+  setBy_ValueBoundsSet( another ) {
+    this.set_Bounds( another.input );
+    this.set_Bounds( another.beforeActivation );
+    this.set_Bounds( another.output );
+    this.activationEscaping_ScaleTranslateSet.setBy_ScaleTranslateSet( another.activationEscaping_ScaleTranslateSet );
+  }
+
 //!!! (2021/12/13 Remarked)
 //   /**
 //    * Set this.input, this.beforeActivation, this.output by copying the specified inputValueBounds.
