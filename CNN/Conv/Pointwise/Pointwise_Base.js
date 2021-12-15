@@ -12,11 +12,12 @@ import { ValueBoundsSet } from "./Pointwise_ValueBoundsSet.js";
  * Handle pointwise convolution (1x1 conv2d), bias and activation.
  *
  * @member {number} byteOffsetBegin
- *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init().
+ *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init(). This is relative to the
+ * inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
  * @member {number} byteOffsetEnd
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
+ * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
  * @member {ValueBoundsSet} valueBoundsSet
  *   The element value bounds of input, beforeActivation, and output for this pointwise convolution.
@@ -223,7 +224,13 @@ class Base extends ReturnOrClone_Activation.Base {
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
     // 1.
+
+    // 1.1    
     Base.Setup_bPointwise_pfn.call( this );
+
+    // 1.2 Determine output value bounds (and activation escaping scale-translate).
+    this.valueBoundsSet.set_by( previous_ConvBiasActivation_ValueBoundsSet,
+      this.bPointwise, this.inputChannelCount, this.bBias, this.nActivationId );
 
     let bExtractOk;
     if ( !this.bPointwise ) {
@@ -277,12 +284,6 @@ class Base extends ReturnOrClone_Activation.Base {
           );
           break;
       }
-    }
-
-    // 4. Determine output value bounds.
-    if ( bExtractOk ) {
-      this.valueBoundsSet.set_by( previous_ConvBiasActivation_ValueBoundsSet,
-        this.bPointwise, this.inputChannelCount, this.bBias, this.nActivationId );
     }
 
     this.bInitOk = bExtractOk;
