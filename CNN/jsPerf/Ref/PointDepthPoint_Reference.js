@@ -715,6 +715,8 @@ class Base {
       pointwise21ChannelCount = testParams.out.pointwise21ChannelCount;
     }
 
+//!!! ...unfinished... (2021/12/15) may also need ConvBiasActivation.ValueBoundsSet
+
     // 1. Pointwise1
     let pointwise1Result;
     if ( pointwise1ChannelCount > 0 ) {
