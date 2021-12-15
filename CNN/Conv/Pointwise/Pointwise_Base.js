@@ -19,7 +19,7 @@ import { ValueBoundsSet } from "./Pointwise_ValueBoundsSet.js";
  * Only meaningful when ( this.bInitOk == true ).
  *
  * @member {ValueBoundsSet} valueBoundsSet
- *   The element value bounds set of input, beforeActivation, and output for this pointwise convolution.
+ *   The element value bounds of input, beforeActivation, and output for this pointwise convolution.
  *
  * @member {number} outputChannelCount
  *   The output channel count of this pointwise convolutiuon.
