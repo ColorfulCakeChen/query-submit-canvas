@@ -1482,25 +1482,11 @@ class Base {
    * @param {number[]} concatenatedShape           The concatenatedShape of channel shuffler.
    * @param {number}   outputGroupCount            The outputGroupCount of channel shuffler.
    *
-   * @param {number}   imageInArray[ 0 ].height    height of the first input image.
-   * @param {number}   imageInArray[ 0 ].width     width of the first input image.
-   * @param {number}   imageInArray[ 0 ].depth     channel count of the first input image.
-   * @param {number[]} imageInArray[ 0 ].dataArray Image data of the first input image.
+   * @param {NumberImage.Base} imageInArray[ 0 ]   The first input image to be processed.
+   * @param {NumberImage.Base} imageInArray[ 1 ]   The second input image to be processed.
    *
-   * @param {number}   imageInArray[ 1 ].height    height of the second input image.
-   * @param {number}   imageInArray[ 1 ].width     width of the second input image.
-   * @param {number}   imageInArray[ 1 ].depth     channel count of the second input image.
-   * @param {number[]} imageInArray[ 1 ].dataArray Image data of the second input image.
-   *
-   * @param {number}   imageOutArray[ 0 ].height    height of the first output image.
-   * @param {number}   imageOutArray[ 0 ].width     width of the first output image.
-   * @param {number}   imageOutArray[ 0 ].depth     channel count of the first output image.
-   * @param {number[]} imageOutArray[ 0 ].dataArray Image data of the first output image.
-   *
-   * @param {number}   imageOutArray[ 1 ].height    height of the second output image.
-   * @param {number}   imageOutArray[ 1 ].width     width of the second output image.
-   * @param {number}   imageOutArray[ 1 ].depth     channel count of the second output image.
-   * @param {number[]} imageOutArray[ 1 ].dataArray Image data of the second output image.
+   * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
+   * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
    *
    * @param {string}   concatShuffleSplitName       A string for debug message of this concatenation-shuffle-split.
    * @param {string}   parametersDesc               A string for debug message of this point-depth-point.
@@ -1580,12 +1566,13 @@ class Base {
     for ( let i = 0; i < imageOutArray.length; ++i ) {
       let t = tensorOutArray[ i ];
       
-      imageOutArray[ i ] = {
-        height:    t.shape[ 0 ],
-        width:     t.shape[ 1 ],
-        depth:     t.shape[ 2 ],
-        dataArray: t.dataSync(),
-      };
+      imageOutArray[ i ] = new NumberImage.Base(
+        t.shape[ 0 ],
+        t.shape[ 1 ],
+        t.shape[ 2 ],
+        t.dataSync(),
+        imageInArray[ 0 ].valueBoundsSet // Problem: What about imageInArray[ 1 ].valueBoundsSet?
+      );
     }
 
     // Release temporary tensors.
