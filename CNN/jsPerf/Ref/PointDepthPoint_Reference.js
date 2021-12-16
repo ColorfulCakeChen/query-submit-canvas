@@ -989,15 +989,24 @@ class Base {
     previous_ConvBiasActivation_ValueBoundsSet,
     pointwiseName, parametersDesc ) {
 
-//!!! ...unfinished... (2021/12/16)
-
     tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
       `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
-    let imageOut = new Image(
+    let imageOut = new NumberImage(
       imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ), new Pointwise.ValueBoundsSet() );
+
+    // Determine element value bounds.
+    {
+      // Default as ValueBoundsSet.output of previous convolution-bias-activation.
+      imageOut.valueBoundsSet.resetBy_Bounds( previous_ConvBiasActivation_ValueBoundsSet.output );
+
+      // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
+      const filtersValueBounds = Weights.Base.ValueBounds;
+
+      imageOut.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, imageIn.depth );
+    }
 
     // Pointwise Convolution
     for ( let y = 0; y < imageIn.height; ++y ) {
@@ -1027,9 +1036,6 @@ class Base {
 
     // Activation
     Base.modifyByActivation( imageOut, pointwiseActivationId, previous_ConvBiasActivation_ValueBoundsSet, parametersDesc );
-
-    // Determine output value bounds (and activation escaping scale-translate).
-    imageOut.valueBoundsSet.set_by( imageIn.valueBoundsSet, true, imageIn.depth, bPointwiseBias, pointwiseActivationId );
 
     return imageOut;
   }
@@ -1079,7 +1085,8 @@ class Base {
           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
     }
 
-    let imageOut = new NumberImage.Base( imageOutHeight, imageOutWidth, imageOutDepth, new Float32Array( imageOutLength ) );
+    let imageOut = new NumberImage.Base(
+      imageOutHeight, imageOutWidth, imageOutDepth, new Float32Array( imageOutLength ), new Depthwise.ValueBoundsSet() );
 
     // Determine element value bounds.
     {
@@ -1091,7 +1098,7 @@ class Base {
 
       // Note: For maximum pooling, the multiply_Bounds is a little bit overestimated (but should be acceptable).
       let filterSize = depthwiseFilterHeight * depthwiseFilterWidth;
-      this.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, filterSize );
+      imageOut.valueBoundsSet.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, filterSize );
     }
 
     // Max pooling
