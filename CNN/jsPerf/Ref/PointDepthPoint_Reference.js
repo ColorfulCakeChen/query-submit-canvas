@@ -7,11 +7,13 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ConvBiasActivation from "../../Conv/ConvBiasActivation.js";
 import * as ChannelCountCalculator from "../../Conv/ChannelCountCalculator.js";
+import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 import * as ChannelShuffler from "../../Conv/ChannelShuffler.js";
 import * as ChannelShufflerPool from "../../Conv/ChannelShufflerPool.js";
 import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js"; 
+import * as NumberImage from "./NumberImage.js";
 import * as ImageSourceBag from "./ImageSourceBag.js";
 
 /**
@@ -372,6 +374,9 @@ class Base {
    * @param {PointDepthPoint_TestParams.Base} testParams
    *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
    *
+   * @param {ConvBiasActivation.ValueBoundsSet} previousValueBoundsSet
+   *   The previous PointDepthPoint's output convolution-bias-activation value bounds set.
+   *   
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
   static pointDepthPoint_create( testParams, channelShuffler_ConcatPointwiseConv ) {
@@ -576,22 +581,21 @@ class Base {
 
   /** According to imageInArray and this.testParams.in.paramsNumberArrayObject, calculate imageOutArray.
    *
-   * @param {object[]} imageInArray
-   *   The image to be tested.
+   * @param {NumberImage.Base[]} imageInArray
+   *   The images to be tested.
    *     - imageInArray[ 0 ]: input0
    *     - imageInArray[ 1 ]: input1
    *
-   * @param {number}   imageInArray[ i ].height    Image height
-   * @param {number}   imageInArray[ i ].width     Image width
-   * @param {number}   imageInArray[ i ].depth     Image channel count
-   * @param {number[]} imageInArray[ i ].dataArray Image data
+   * @param {ConvBiasActivation.ValueBoundsSet} previousValueBoundsSet
+   *   The element value bounds of previous PointDepthPoint's input/output.
    *
    * @param {ChannelShuffler.Xxx} channelShuffler
    *   The channel shuffler. Used when concat-shuffle-split.
    *
-   * @return {object[]} Return output images array.
+   * @return {NumberImage.Base[]}
+   *   Return output image objects array.
    */ 
-  calcResult( imageInArray, channelShuffler ) {
+  calcResult( imageInArray, previousValueBoundsSet, channelShuffler ) {
 
     let testParams = this.testParams;
 
@@ -716,6 +720,9 @@ class Base {
       pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
       pointwise21ChannelCount = testParams.out.pointwise21ChannelCount;
     }
+
+
+//!!! ...unfinished... (2021/12/16)
 
 //!!! ...unfinished... (2021/12/15) may also need ConvBiasActivation.ValueBoundsSet
 
@@ -962,15 +969,12 @@ class Base {
   }
 
   /**
-   * @param {number}   imageIn.height    Image height
-   * @param {number}   imageIn.width     Image width
-   * @param {number}   imageIn.depth     Image channel count
-   * @param {number[]} imageIn.dataArray Image data
+   * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
    * @param {string}   pointwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
-   * @return {Float32Array}
+   * @return {NumberImage.Base}
    *   The result of the pointwise convolution, bias and activation.
    */
   static calcPointwise(
@@ -978,12 +982,15 @@ class Base {
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
     pointwiseName, parametersDesc ) {
 
+//!!! ...unfinished... (2021/12/16)
+
     tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
       `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
-    let imageOut = { height: imageIn.height, width: imageIn.width, depth: pointwiseChannelCount, dataArray: new Float32Array( imageOutLength ) };
+    let imageOut = new Image(
+      imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ), new Pointwise.ValueBoundsSet() );
 
     // Pointwise Convolution
     for ( let y = 0; y < imageIn.height; ++y ) {
@@ -1014,19 +1021,20 @@ class Base {
     // Activation
     Base.modifyByActivation( imageOut, pointwiseActivationId, parametersDesc );
 
+    // Determine output value bounds (and activation escaping scale-translate).
+    imageOut.valueBoundsSet.set_by( imageIn.valueBoundsSet, true, imageIn.depth, bPointwiseBias, pointwiseActivationId );
+
     return imageOut;
   }
 
   /**
-   * @param {number}   imageIn.height    Image height
-   * @param {number}   imageIn.width     Image width
-   * @param {number}   imageIn.depth     Image channel count
-   * @param {number[]} imageIn.dataArray Image data
+   * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
+   *
    * @param {string}   depthwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
-   * @return {Float32Array}
+   * @return {NumberImage.Base}
    *   The result of the depthwise convolution, bias and activation.
    */
   static calcDepthwise(
@@ -1034,6 +1042,8 @@ class Base {
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
     depthwiseName, parametersDesc ) {
+
+//!!! ...unfinished... (2021/12/16) this_ConvBiasActivation_ValueBoundsSet
 
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
       return imageIn; // No depthwise operation.
@@ -1163,14 +1173,11 @@ class Base {
   }
 
   /**
-   * @param {number}   imageIn.height    Image height
-   * @param {number}   imageIn.width     Image width
-   * @param {number}   imageIn.depth     Image channel count
-   * @param {number[]} imageIn.dataArray Image data
+   * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {string}   splitName         A string for debug message of this splitting.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
-   * @return {object[]}
+   * @return {NumberImage.Base[]}
    *   Return splitted images [ imageOut1, imageOut2 ] along the axis id 2. If imageIn is null, return [ null, null ].
    */
   static calcSplitAlongAxisId2( imageIn, splitName, parametersDesc ) {
@@ -1199,8 +1206,11 @@ class Base {
     let imageOutLength_higherHalf = ( imageIn.height * imageIn.width * imageOutDepth_higherHalf );
 
     let imageOutArray = [
-      { height: imageIn.height, width: imageIn.width, depth: imageOutDepth_lowerHalf, dataArray: new Float32Array( imageOutLength_lowerHalf ) },
-      { height: imageIn.height, width: imageIn.width, depth: imageOutDepth_higherHalf, dataArray: new Float32Array( imageOutLength_higherHalf ) }
+      new NumberImage.Base(
+        imageIn.height, imageIn.width, imageOutDepth_lowerHalf, new Float32Array( imageOutLength_lowerHalf ), imageIn.valueBoundSet ),
+
+      new NumberImage.Base(
+        imageIn.height, imageIn.width, imageOutDepth_higherHalf, new Float32Array( imageOutLength_higherHalf ), imageIn.valueBoundSet )
     ];
 
     let imageOut0 = imageOutArray[ 0 ];
@@ -1253,18 +1263,12 @@ class Base {
 
 
   /**
-   * @param {number}   imageIn1.height    Image1 height
-   * @param {number}   imageIn1.width     Image1 width
-   * @param {number}   imageIn1.depth     Image1 channel count
-   * @param {number[]} imageIn1.dataArray Image1 data
-   * @param {number}   imageIn2.height    Image2 height
-   * @param {number}   imageIn2.width     Image2 width
-   * @param {number}   imageIn2.depth     Image2 channel count
-   * @param {number[]} imageIn2.dataArray Image2 data
+   * @param {NumberImage.Base} imageIn1   The source image1 to be processed.
+   * @param {NumberImage.Base} imageIn2   The source image2 to be processed.
    * @param {string}   concatName        A string for debug message of this concatenation.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
-   * @return {object}
+   * @return {NumberImage.Base}
    *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2. If imageIn2 is null, return imageIn1.
    * If both imageIn1 and imageIn2 is null, return null.
    */
@@ -1291,8 +1295,10 @@ class Base {
         + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})`);
 
     let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
-    let imageOut = {
-      height: imageIn1.height, width: imageIn1.width, depth: ( imageIn1.depth + imageIn2.depth ), dataArray: new Float32Array( imageOutLength ) };
+    let imageOut = new NumberImage.Base(
+      imageIn1.height, imageIn1.width, ( imageIn1.depth + imageIn2.depth ), new Float32Array( imageOutLength ),
+      imageIn1.valueBoundsSet // Problem: What about imageIn2.valueBoundsSet?
+    );
 
     // Concatenate along the image depth.
     for ( let y = 0; y < imageIn1.height; ++y ) {
@@ -1325,24 +1331,25 @@ class Base {
   }
 
   /**
-   * @param {number}   imageOut.height      Output image height
-   * @param {number}   imageOut.width       Output image width
-   * @param {number}   imageOut.depth       Output image channel count
-   * @param {number[]} imageOut.dataArray   Output image data
-   * @param {boolean}  bAddInputToOutput    Whether add input to output.
-   * @param {number}   imageIn.height       Input image height
-   * @param {number}   imageIn.width        Input image width
-   * @param {number}   imageIn.depth        Input image channel count
-   * @param {number[]} imageIn.dataArray    Input image data
+   * @param {NumberImage.Base} imageOut  The source/target image to be modified.
+   * @param {boolean}  bAddInputToOutput Whether add input to output.
+   * @param {NumberImage.Base} imageIn   The source image to be processed.
+   *
+
+//!!! ...unfinished... (2021/12/16)
+
+   * @param {ConvBiasActivation.ValueBoundsSet} this_ConvBiasActivation_ValueBoundsSet
+   *   The element value bounds set of this pointwise/depthwise convolution.
+   *
    * @param {string}   addInputToOutputName A string for debug message of this bias.
    * @param {string}   parametersDesc       A string for debug message of this point-depth-point.
    *
-   * @return {object}
+   * @return {NumberImage.Base}
    *   If no additive, it will be the original imageOut. If additive, the a new imageOut will be created and returned. The new created
    * imageOutNew will have the same ( height, width, depty ) as imageOut but imageOutNew.dataArray will be replaced with
    * new data. Return null, if ( imageOut == null ).
    */
-  static modifyByInput( imageOut, bAddInputToOutput, imageIn, addInputToOutputName, parametersDesc ) {
+  static modifyByInput( imageOut, bAddInputToOutput, imageIn, this_ConvBiasActivation_ValueBoundsSet, addInputToOutputName, parametersDesc ) {
 
     if ( !imageOut )
       return null;
@@ -1370,12 +1377,23 @@ class Base {
 
     // Q: Why not just modify imageOut directly?
     // A: The imageOut might be the original input array which should not be modified at all. (because they might be used in another test.)
-    let imageOutNew = {
-      height:    imageOut.height,
-      width:     imageOut.width,
-      depth:     imageOut.depth,
-      dataArray: resultArray
-    };
+    let imageOutNew = new NumberImage.Base(
+      imageOut.height,
+      imageOut.width,
+      imageOut.depth,
+      resultArray
+    );
+
+    {
+      imageOutNew.valueBoundsSet.input.set_Bounds( imageIn.output ); // As previous output of this PointDepthPoint.
+
+      imageOutNew.valueBoundsSet.output.set_Bounds( imageOut.valueBoundsSet.output ); // As pointwise21.output.
+      imageOutNew.valueBoundsSet.output.add_Bounds( imageIn.output );
+
+      imageOutNew.valueBoundsSet.beforeActivation.set_Bounds( imageOutNew.valueBoundsSet.output ); // Keep .beforeActivation the same as .output.
+
+      //imageOutNew.valueBoundsSet.activationEscaping_ScaleTranslateSet; // Keeps as default ( 1, 0 ).
+    }
 
     return imageOutNew;
   }
@@ -1387,13 +1405,20 @@ class Base {
    * @param {number[]} imageIn.dataArray Image data
    * @param {boolean}  bBias             Whether add bias.
    * @param {number[]} biasesArray       The bias values.
+   *
+
+//!!! ...unfinished... (2021/12/16)
+
+   * @param {ConvBiasActivation.ValueBoundsSet} this_ConvBiasActivation_ValueBoundsSet
+   *   The element value bounds set of this pointwise/depthwise convolution.
+   *
    * @param {string}   biasName          A string for debug message of this bias.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
    * @return {object}
    *   Return imageIn which may or may not be added bias (according to bBias).
    */
-  static modifyByBias( imageIn, bBias, biasesArray, biasName, parametersDesc ) {
+  static modifyByBias( imageIn, bBias, biasesArray, this_ConvBiasActivation_ValueBoundsSet, biasName, parametersDesc ) {
 
     if ( !bBias )
       return imageIn;
@@ -1428,13 +1453,26 @@ class Base {
    * @param {number}   imageIn.depth     Image channel count
    * @param {number[]} imageIn.dataArray Image data
    * @param {string}   nActivationId     The name string of this activation function.
+   *
+
+//!!! ...unfinished... (2021/12/16)
+
+   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+   *   The element value bounds set of previous pointwise/depthwise convolution.
+   *
+   * @param {ConvBiasActivation.ValueBoundsSet} this_ConvBiasActivation_ValueBoundsSet
+   *   The element value bounds set of this pointwise/depthwise convolution.
+   *
    * @param {string}   parametersDesc A string for debug message of this point-depth-point.
    *
    * @return {Float32Array}
    *   The result of the activation function. Its .dataArray may be just the imageIn.dataArray directly (when no activation function).
    * Or, its .dataArray may be a new Float32Array (when has activation function).
    */
-  static modifyByActivation( imageIn, nActivationId, parametersDesc ) {
+  static modifyByActivation(
+    imageIn, nActivationId,
+    previous_ConvBiasActivation_ValueBoundsSet, this_ConvBiasActivation_ValueBoundsSet,
+    parametersDesc ) {
 
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
     if ( !theActivationFunctionInfo )
@@ -1449,6 +1487,14 @@ class Base {
     let tensorOut = pfnActivation( imageIn.dataArray )
     imageIn.dataArray = tensorOut.dataSync();
     tensorOut.dispose();
+
+//!!!
+    {
+      this_ConvBiasActivation_ValueBoundsSet.set_output_byActivationId( nActivationId );
+
+      this_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet.setBy_currentValueBoundsSet_previousActivationEscaping(
+        this_ConvBiasActivation_ValueBoundsSet, previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet );
+    }
 
     return imageIn;
   }
