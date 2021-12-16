@@ -3,6 +3,7 @@ export { Base };
 import * as MapTools from "../../util/MapTools.js";
 import * as RandTools from "../../util/RandTools.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as NumberImage from "./NumberImage.js";
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 
 /**
@@ -49,12 +50,8 @@ class Base {
    *   An integer represents the returned image should be the original image processed by depthwise convolution of this strides and pad.
    * Its should be in the range of ValueDesc.depthwiseStridesPad.Singleton.range.
    *
-   * @return {object}
-   *   Return an image data with the specified specification. It has the following properties:
-   *     - object.height:    Image height
-   *     - object.width:     Image width
-   *     - object.depth:     Image channel count
-   *     - object.dataArray: Image data
+   * @return {NumberImage.Base}
+   *   Return an image data with the specified specification.
    */
   getImage_by(
     channelCount, depthwise_AvgMax_Or_ChannelMultiplier = 0, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
@@ -112,7 +109,7 @@ class Base {
 
     // 2.1 The original image is requested.
     if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseFilterWidth == 1 ) && ( depthwiseStridesPad == 0 ) ) {
-      image = { height: this.originalHeight, width: this.originalWidth, depth: channelCount };
+      image = new NumberImage.Base( this.originalHeight, this.originalWidth, channelCount, null );
       let elementCount = image.height * image.width * image.depth;
       let randomOffsetMin = -200; // Just choosed randomly.
       let randomOffsetMax = +200;
