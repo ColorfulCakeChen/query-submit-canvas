@@ -89,6 +89,32 @@ class PassThrough_FiltersArray_BiasesArray {
 
 
 //!!! ...unfinished... (2021/12/16) Constructed by for-loop instead.
+    this.filtersArray = new Array( inputChannelCount * outputChannelCount );
+    this.biasesArray = new Array( outputChannelCount );
+    for ( let outChannel = 0; outChannel < outputChannelCount; ++outChannel ) {
+
+      for ( let inChannel = 0; inChannel < inputChannelCount; ++inChannel ) {
+
+        let filtersIndex = ( inChannel * outputChannelCount ) + outChannel;
+
+
+        this.filtersArray[ filtersIndex ] = ???;
+
+      }
+
+      this.biasesArray[ outChannel ] = ???;
+    }
+
+
+
+
+
+
+
+
+
+
+//!!! ...unfinished... (2021/12/16) Constructed by for-loop instead.
 
     if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
       let oneZerosArray = ( new Array( outputChannelCount ) ).fill( 0 );
