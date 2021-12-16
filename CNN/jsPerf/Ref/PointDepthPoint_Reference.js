@@ -1335,12 +1335,6 @@ class Base {
    * @param {boolean}  bAddInputToOutput Whether add input to output.
    * @param {NumberImage.Base} imageIn   The source image to be processed.
    *
-
-//!!! ...unfinished... (2021/12/16)
-
-   * @param {ConvBiasActivation.ValueBoundsSet} this_ConvBiasActivation_ValueBoundsSet
-   *   The element value bounds set of this pointwise/depthwise convolution.
-   *
    * @param {string}   addInputToOutputName A string for debug message of this bias.
    * @param {string}   parametersDesc       A string for debug message of this point-depth-point.
    *
@@ -1349,7 +1343,7 @@ class Base {
    * imageOutNew will have the same ( height, width, depty ) as imageOut but imageOutNew.dataArray will be replaced with
    * new data. Return null, if ( imageOut == null ).
    */
-  static modifyByInput( imageOut, bAddInputToOutput, imageIn, this_ConvBiasActivation_ValueBoundsSet, addInputToOutputName, parametersDesc ) {
+  static modifyByInput( imageOut, bAddInputToOutput, imageIn, addInputToOutputName, parametersDesc ) {
 
     if ( !imageOut )
       return null;
@@ -1399,26 +1393,16 @@ class Base {
   }
 
   /**
-   * @param {number}   imageIn.height    Image height
-   * @param {number}   imageIn.width     Image width
-   * @param {number}   imageIn.depth     Image channel count
-   * @param {number[]} imageIn.dataArray Image data
+   * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
    * @param {number[]} biasesArray       The bias values.
-   *
-
-//!!! ...unfinished... (2021/12/16)
-
-   * @param {ConvBiasActivation.ValueBoundsSet} this_ConvBiasActivation_ValueBoundsSet
-   *   The element value bounds set of this pointwise/depthwise convolution.
-   *
    * @param {string}   biasName          A string for debug message of this bias.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
-   * @return {object}
+   * @return {NumberImage.Base}
    *   Return imageIn which may or may not be added bias (according to bBias).
    */
-  static modifyByBias( imageIn, bBias, biasesArray, this_ConvBiasActivation_ValueBoundsSet, biasName, parametersDesc ) {
+  static modifyByBias( imageIn, bBias, biasesArray, biasName, parametersDesc ) {
 
     if ( !bBias )
       return imageIn;
@@ -1444,24 +1428,21 @@ class Base {
       }
     }
 
+    {
+      // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
+      const biasesValueBounds = Weights.Base.ValueBounds;
+      imageIn.beforeActivation.add_Bounds( biasesValueBounds );
+    }
+
     return imageIn;
   }
 
   /**
-   * @param {number}   imageIn.height    Image height
-   * @param {number}   imageIn.width     Image width
-   * @param {number}   imageIn.depth     Image channel count
-   * @param {number[]} imageIn.dataArray Image data
+   * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {string}   nActivationId     The name string of this activation function.
    *
-
-//!!! ...unfinished... (2021/12/16)
-
    * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
    *   The element value bounds set of previous pointwise/depthwise convolution.
-   *
-   * @param {ConvBiasActivation.ValueBoundsSet} this_ConvBiasActivation_ValueBoundsSet
-   *   The element value bounds set of this pointwise/depthwise convolution.
    *
    * @param {string}   parametersDesc A string for debug message of this point-depth-point.
    *
@@ -1469,10 +1450,15 @@ class Base {
    *   The result of the activation function. Its .dataArray may be just the imageIn.dataArray directly (when no activation function).
    * Or, its .dataArray may be a new Float32Array (when has activation function).
    */
-  static modifyByActivation(
-    imageIn, nActivationId,
-    previous_ConvBiasActivation_ValueBoundsSet, this_ConvBiasActivation_ValueBoundsSet,
-    parametersDesc ) {
+  static modifyByActivation( imageIn, nActivationId, previous_ConvBiasActivation_ValueBoundsSet, parametersDesc ) {
+
+    // Determine the element value bounds.
+    {
+      imageIn.valueBoundsSet.set_output_byActivationId( nActivationId );
+
+      imageIn.valueBoundsSet.activationEscaping_ScaleTranslateSet.setBy_currentValueBoundsSet_previousActivationEscaping(
+        imageIn.valueBoundsSet, previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet );
+    }
 
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
     if ( !theActivationFunctionInfo )
@@ -1487,14 +1473,6 @@ class Base {
     let tensorOut = pfnActivation( imageIn.dataArray )
     imageIn.dataArray = tensorOut.dataSync();
     tensorOut.dispose();
-
-//!!!
-    {
-      this_ConvBiasActivation_ValueBoundsSet.set_output_byActivationId( nActivationId );
-
-      this_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet.setBy_currentValueBoundsSet_previousActivationEscaping(
-        this_ConvBiasActivation_ValueBoundsSet, previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet );
-    }
 
     return imageIn;
   }
