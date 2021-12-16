@@ -38,13 +38,23 @@ import * as TwoTensors from "../../util/TwoTensors.js";
  * if every input value's range is [ -2, +2 ] and RELU6 will be used as activation function, using +2 as biasValue is appropriate
  * because input values will be shifted from [ -2, +2 ] into [ 0, 4 ] which will still be kept linear by RELU6.
  *
+ * @member {number[]} filtersShape
+ *   The shape of the pass-through filters array.
+ *
+ * @member {number[]} biasesShape
+ *   The shape of the pass-through biases array.
+ *
+ * @member {number[]} filtersArray
+ *   The pass-through filters array.
+ *
+ * @member {number[]} biasesArray
+ *   The pass-through biases array.
+ *
  * @member {boolean} bInitOk
  *   If true, this object initialized (i.e. constructor()) successfully.
  */
  */
 class PassThrough_FiltersArray_BiasesArray {
-
-//!!! ...unfinished... (2021/12/16) Use for loop instead.
 
   /**
    */
@@ -71,9 +81,6 @@ class PassThrough_FiltersArray_BiasesArray {
     //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) `
     //   + ` must be less than inputChannelCount ( ${inputChannelCount} ).`;
 
-    this.filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
-    this.biasesShape =  [ 1, 1, outputChannelCount ];
-
     // Restrict beginIndex between [ 0, inputChannelCount ).
     let beginIndexMax = ( inputChannelCount - 1 );
     let beginIndex = Math.max( 0, Math.min( inputChannelIndexStart, beginIndexMax ) );
@@ -88,130 +95,22 @@ class PassThrough_FiltersArray_BiasesArray {
     let zerosCount = outputChannelCount - extractedCount; // The output channels which no extracted values could be used will be filled by zeros.
 
 
-//!!! ...unfinished... (2021/12/16) Constructed by for-loop instead.
+    this.filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
+    this.biasesShape =  [ 1, 1, outputChannelCount ];
+
     this.filtersArray = new Array( inputChannelCount * outputChannelCount );
     this.biasesArray = new Array( outputChannelCount );
-    for ( let outChannel = 0; outChannel < outputChannelCount; ++outChannel ) {
 
-      for ( let inChannel = 0; inChannel < inputChannelCount; ++inChannel ) {
+    this.filtersArray.fill( 0 );
+    this.biasesArray.fill( 0 );
 
-        let filtersIndex = ( inChannel * outputChannelCount ) + outChannel;
+    for ( let inChannel = beginIndex; inChannel < endIndex; ++inChannel ) {
+      let outChannel = inChannel; // Only if ( inChannel == outChannel ), the filter value and bias value is non-zero.
 
-        if ( inChannel == outChannel ) {
-
-          this.filtersArray[ filtersIndex ] = filterValue; // one-hot (or say, non-zero-hot).
-
-        } else {
-
-//!!! ...unfinished... (2021/12/16) zerosCount???
-
-          this.filtersArray[ filtersIndex ] = 0;
-
-        }
-
-      }
+      let filtersIndex = ( inChannel * outputChannelCount ) + outChannel;
+      this.filtersArray[ filtersIndex ] = filterValue; // one-hot (or say, non-zero-hot).
 
       this.biasesArray[ outChannel ] = biasValue;
-    }
-
-
-
-
-
-
-
-
-
-
-//!!! ...unfinished... (2021/12/16) Constructed by for-loop instead.
-
-    if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
-      let oneZerosArray = ( new Array( outputChannelCount ) ).fill( 0 );
-//!!! (2021/12/07 Remarked)
-//      oneZerosArray[ 0 ] = 1; // Only the first element is one.
-      oneZerosArray[ 0 ] = filterValue; // Only the first element is non-zero.
-      this.filtersTensor4d = tf.tensor4d( oneZerosArray, filtersShape );
-
-    } else {
-
-      { // These tensors represents input channel indexes.
-
-        let oneHotTransposedTensor2d;
-        {
-          let oneHotExpandedTensor2d;
-          {
-            let oneHotScaledTensor2d;
-            {
-              let oneHotFloat32Tensor2d;
-              {
-                let oneHotInt32Tensor2d;
-                {
-                  let int32Tensor1d = tf.range( beginIndex, endIndex, 1, "int32" ); // tf.oneHot() accepts int32. (int32Tensor1d)
-
-                  try {
-                    oneHotInt32Tensor2d = int32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (oneHotInt32Tensor2d)
-                  } finally {
-                    int32Tensor1d.dispose();
-                  }
-                }
-
-                try {
-                  oneHotFloat32Tensor2d = oneHotInt32Tensor2d.cast( "float32" );    // tf.conv2d() accepts float32. (oneHotFloat32Tensor2d)
-                } finally {
-                  oneHotInt32Tensor2d.dispose();
-                }
-              }
-
-              let scaleFactor;
-              try {
-                scaleFactor = tf.scalar( filterValue );
-                oneHotScaledTensor2d = oneHotFloat32Tensor2d.mul( scaleFactor );    // Not just one-hot, but non-zero-hot.
-              } finally {
-                oneHotFloat32Tensor2d.dispose();
-                scaleFactor.dispose();
-              }
-            }
-
-            if ( zerosCount <= 0 ) { // No need to append zeros.
-              oneHotExpandedTensor2d = oneHotScaledTensor2d;
-              oneHotScaledTensor2d = null; // So that it will not be disposed now.
-
-            } else { // ( zerosCount > 0 ) Uses zeros for the last several channels.
-
-              try {
-                let zerosFloat32Tensor2d = tf.zeros( [ zerosCount, inputChannelCount ] );
-                try {
-                  oneHotExpandedTensor2d = tf.concat( oneHotScaledTensor2d, zerosFloat32Tensor2d );
-                } finally {
-                  zerosFloat32Tensor2d.dispose();
-                }
-              } finally {
-                oneHotScaledTensor2d.dispose();
-              }
-            }
-          }
-
-          try {
-            oneHotTransposedTensor2d = oneHotExpandedTensor2d.transpose(); // looks like tf.conv2d()'s filter.
-          } finally {
-            oneHotExpandedTensor2d.dispose();
-          }
-        }
-
-        // tf.conv2d()'s filter is tensor4d. (oneHotFloat32Tensor4d)
-        try {
-          this.filtersTensor4d = oneHotTransposedTensor2d.reshape( filtersShape );
-        } finally {
-          oneHotTransposedTensor2d.dispose();
-        }
-      }
-    }
-
-    // Generate bias for just adding zero. (i.e. equals no bias).
-    if ( this.bBias ) {
-//!!! (2021/12/07 Remarked)
-//      this.biasesTensor3d = tf.zero( biasesShape );
-      this.biasesTensor3d = tf.fill( biasesShape, biasValue );
     }
 
     this.bInitOk = true;
@@ -256,6 +155,8 @@ class PassThrough_FiltersArray_BiasesArray {
  *   If true, this object initialized (i.e. constructor()) successfully.
  */
 class PassThrough extends TwoTensors.filtersTensor4d_biasesTensor3d {
+
+//!!! ...unfinished... (2021/12/16) Use PassThrough_FiltersArray_BiasesArray instead.
 
   /**
    */
