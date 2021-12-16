@@ -97,12 +97,21 @@ class PassThrough_FiltersArray_BiasesArray {
 
         let filtersIndex = ( inChannel * outputChannelCount ) + outChannel;
 
+        if ( inChannel == outChannel ) {
 
-        this.filtersArray[ filtersIndex ] = ???;
+          this.filtersArray[ filtersIndex ] = filterValue; // one-hot (or say, non-zero-hot).
+
+        } else {
+
+//!!! ...unfinished... (2021/12/16) zerosCount???
+
+          this.filtersArray[ filtersIndex ] = 0;
+
+        }
 
       }
 
-      this.biasesArray[ outChannel ] = ???;
+      this.biasesArray[ outChannel ] = biasValue;
     }
 
 
