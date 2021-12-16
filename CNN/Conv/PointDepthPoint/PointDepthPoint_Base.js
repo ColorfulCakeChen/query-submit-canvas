@@ -293,7 +293,7 @@ class Base extends ReturnOrClone.Base {
    *   A Params object. The params.extract() will be called to extract parameters.
    *
    * @param {ConvBiasActivation.ValueBoundsSet} previousValueBoundsSet
-   *   The previous PointDepthPoint's output convolution-bias-activation value bounds set.
+   *   The element value bounds of previous PointDepthPoint's input/output.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
