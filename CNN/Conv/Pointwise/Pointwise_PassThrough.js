@@ -105,7 +105,7 @@ class PassThrough_FiltersArray_BiasesArray {
     this.biasesArray.fill( 0 );
 
     for ( let i = 0; i < extractedCount; ++i ) {
-      let inChannel = i + beginIndex;
+      let inChannel = beginIndex + i;
       let outChannel = i;
 
       let filtersIndex = ( inChannel * outputChannelCount ) + outChannel;
