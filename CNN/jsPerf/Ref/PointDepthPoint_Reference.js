@@ -733,6 +733,11 @@ class Base {
         testParams.in.paramsNumberArrayObject.pointwise1Filters, testParams.out.bPointwise1Bias,
         testParams.in.paramsNumberArrayObject.pointwise1Biases, testParams.out.pointwise1ActivationId,
         "Pointwise1", this.paramsOutDescription );
+
+//!!! ...unfinished... (2021/12/16)
+// When ONE_INPUT_HALF_THROUGH (-5), if pointwise1 exists, imageIn1 should be higherHalfPassThrough for ValueBoundsSet.ActivationEscaping
+// before depthwise2 by depthwise1.
+
     } else {
       pointwise1Result = imageIn0;
     }
@@ -785,6 +790,10 @@ class Base {
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) ) {
 
       if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
+
+//!!! ...unfinished... (2021/12/16)
+// if pointwise1 exists, imageIn0 should be higherHalfCopyLowerHalf for ValueBoundsSet.ActivationEscaping before depthwise2.
+
         depthwise2Result = Base.calcDepthwise(
           imageIn0, // depthwise2 apply to input0 (not input1)
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
