@@ -2,6 +2,7 @@ export { ValueBoundsSet };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as Weights from "../Unpacker/Weights.js";
 import * as ActivationEscapeing from "./ActivationEscapeing.js";
 
 /**
@@ -26,9 +27,14 @@ class ValueBoundsSet {
   /**
    */
   constructor() {
-    this.input = new FloatValue.Bounds();
-    this.beforeActivation = new FloatValue.Bounds();
-    this.output = new FloatValue.Bounds();
+//!!! (2021/12/16 Remarked) needs specify lower and upper.
+//     this.input = new FloatValue.Bounds();
+//     this.beforeActivation = new FloatValue.Bounds();
+//     this.output = new FloatValue.Bounds();
+
+    this.input = Weights.Base.ValueBounds.clone();
+    this.beforeActivation = Weights.Base.ValueBounds.clone();
+    this.output = Weights.Base.ValueBounds.clone.Bounds();
     this.activationEscaping_ScaleTranslateSet = new ActivationEscapeing.ScaleTranslateSet();
   }
 
