@@ -225,10 +225,7 @@ class Base {
         }
 
         // Output is an array with two elements.
-        imageOutReferenceArray = this.calcResult( imageInArraySelected,
-//!!! (2021/10/28 Remarked) need channel shuffler.                                                 
-//          channelShuffler_concatenatedShape, channelShuffler_outputGroupCount );
-          channelShuffler_ConcatPointwiseConv );
+        imageOutReferenceArray = this.calcResult( imageInArraySelected, channelShuffler_ConcatPointwiseConv );
 
         tf.util.assert( imageOutReferenceArray.length == 2,
           `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
@@ -259,7 +256,9 @@ class Base {
 
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
 
-      let pointDepthPoint = Base.pointDepthPoint_create( testParams, channelShuffler_ConcatPointwiseConv );
+      let pointDepthPoint = Base.pointDepthPoint_create( testParams,
+        imageInArraySelected[ 0 ].valueBoundsSet, // Problem: What about imageInArraySelected[ 1 ].valueBoundsSet?
+        channelShuffler_ConcatPointwiseConv );
 
       let parametersDescription = pointDepthPoint.parametersDescription;
       strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
@@ -317,6 +316,9 @@ class Base {
       }
 
 //!!! ...unfinished... (2021/12/16) assert comparing ValueBoundsSet?
+//       {
+//         imageOutReferenceArray;
+//       }
 
       // Test correctness of pointDepthPoint apply.
       this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, strNote );
@@ -381,7 +383,7 @@ class Base {
    *   
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
-  static pointDepthPoint_create( testParams, channelShuffler_ConcatPointwiseConv ) {
+  static pointDepthPoint_create( testParams, previousValueBoundsSet, channelShuffler_ConcatPointwiseConv ) {
 
     let pointDepthPoint = new PointDepthPoint.Base();
 
@@ -398,9 +400,7 @@ class Base {
       testParams.in.bKeepInputTensor
     );
 
-    let defaultInputValueBoundsSet = new ConvBiasActivation.ValueBoundsSet();
-    defaultInputValueBoundsSet.resetBy_Bounds( Weights.Base.ValueBounds );
-    let bInitOk = pointDepthPoint.init( progress, extractedParams, defaultInputValueBoundsSet, channelShuffler_ConcatPointwiseConv );
+    let bInitOk = pointDepthPoint.init( progress, extractedParams, previousValueBoundsSet, channelShuffler_ConcatPointwiseConv );
 
     let flags = {};
     PointDepthPoint.Params.setFlags_by.call( flags,
@@ -588,16 +588,13 @@ class Base {
    *     - imageInArray[ 0 ]: input0
    *     - imageInArray[ 1 ]: input1
    *
-   * @param {ConvBiasActivation.ValueBoundsSet} previousValueBoundsSet
-   *   The element value bounds of previous PointDepthPoint's input/output.
-   *
    * @param {ChannelShuffler.Xxx} channelShuffler
    *   The channel shuffler. Used when concat-shuffle-split.
    *
    * @return {NumberImage.Base[]}
    *   Return output image objects array.
    */ 
-  calcResult( imageInArray, previousValueBoundsSet, channelShuffler ) {
+  calcResult( imageInArray, channelShuffler ) {
 
     let testParams = this.testParams;
 
@@ -724,9 +721,8 @@ class Base {
     }
 
 
-//!!! ...unfinished... (2021/12/16)
-
-//!!! ...unfinished... (2021/12/15) may also need ConvBiasActivation.ValueBoundsSet
+//!!! ...unfinished... (2021/12/16) also need ConvBiasActivation.ValueBoundsSet
+//    let currentValueBoundsSet = previousValueBoundsSet;
 
     // 1. Pointwise1
     let pointwise1Result;
@@ -973,10 +969,6 @@ class Base {
   /**
    * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
-   *
-   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
-   *   The element value bounds set of previous pointwise/depthwise convolution.
-   *
    * @param {string}   pointwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
@@ -986,7 +978,6 @@ class Base {
   static calcPointwise(
     imageIn,
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-    previous_ConvBiasActivation_ValueBoundsSet,
     pointwiseName, parametersDesc ) {
 
     tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
@@ -999,8 +990,7 @@ class Base {
 
     // Determine element value bounds.
     {
-      // Default as ValueBoundsSet.output of previous convolution-bias-activation.
-      imageOut.valueBoundsSet.resetBy_Bounds( previous_ConvBiasActivation_ValueBoundsSet.output );
+      imageOut.valueBoundsSet.resetBy_Bounds( imageIn.valueBoundsSet.output );
 
       // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
       const filtersValueBounds = Weights.Base.ValueBounds;
@@ -1035,7 +1025,7 @@ class Base {
     Base.modifyByBias( imageOut, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
     // Activation
-    Base.modifyByActivation( imageOut, pointwiseActivationId, previous_ConvBiasActivation_ValueBoundsSet, parametersDesc );
+    Base.modifyByActivation( imageOut, pointwiseActivationId, imageIn.valueBoundsSet, parametersDesc );
 
     return imageOut;
   }
@@ -1043,10 +1033,6 @@ class Base {
   /**
    * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
-   *
-   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
-   *   The element value bounds set of previous pointwise/depthwise convolution.
-   *
    * @param {string}   depthwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
@@ -1057,7 +1043,6 @@ class Base {
     imageIn,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
-    previous_ConvBiasActivation_ValueBoundsSet,
     depthwiseName, parametersDesc ) {
 
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
@@ -1090,8 +1075,7 @@ class Base {
 
     // Determine element value bounds.
     {
-      // Default as ValueBoundsSet.output of previous convolution-bias-activation.
-      imageOut.valueBoundsSet.resetBy_Bounds( previous_ConvBiasActivation_ValueBoundsSet.output );
+      imageOut.valueBoundsSet.resetBy_Bounds( imageIn.valueBoundsSet.output );
 
       // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
       const filtersValueBounds = Weights.Base.ValueBounds;
@@ -1193,7 +1177,7 @@ class Base {
     Base.modifyByBias( imageOut, bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
     // Activation
-    Base.modifyByActivation( imageOut, depthwiseActivationId, previous_ConvBiasActivation_ValueBoundsSet, parametersDesc );
+    Base.modifyByActivation( imageOut, depthwiseActivationId, imageIn.valueBoundsSet, parametersDesc );
 
     return imageOut;
   }
