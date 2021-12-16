@@ -104,8 +104,9 @@ class PassThrough_FiltersArray_BiasesArray {
     this.filtersArray.fill( 0 );
     this.biasesArray.fill( 0 );
 
-    for ( let inChannel = beginIndex; inChannel < endIndex; ++inChannel ) {
-      let outChannel = inChannel; // Only if ( inChannel == outChannel ), the filter value and bias value is non-zero.
+    for ( let i = 0; i < extractedCount; ++i ) {
+      let inChannel = i + beginIndex;
+      let outChannel = i;
 
       let filtersIndex = ( inChannel * outputChannelCount ) + outChannel;
       this.filtersArray[ filtersIndex ] = filterValue; // one-hot (or say, non-zero-hot).
