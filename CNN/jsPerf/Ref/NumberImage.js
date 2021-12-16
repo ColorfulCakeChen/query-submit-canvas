@@ -16,7 +16,7 @@ import * as ConvBiasActivation from "../../../Conv/ConvBiasActivation.js";
  */
 class Base {
   
-  constructor( height, width, depth, dataArray, valueBoundsSet ) {
+  constructor( height, width, depth, dataArray, valueBoundsSet = new ConvBiasActivation.ValueBoundsSet() ) {
     this.height = height;
     this.width = width;
     this.depth = depth;
