@@ -316,6 +316,8 @@ class Base {
         Base.AssertTwoEqualValues( "outputTensorCount", pointDepthPoint.outputTensorCount, outputTensorCount, strNote );
       }
 
+//!!! ...unfinished... (2021/12/16) assert comparing ValueBoundsSet?
+
       // Test correctness of pointDepthPoint apply.
       this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, strNote );
 
@@ -971,6 +973,10 @@ class Base {
   /**
    * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
+   *
+   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+   *   The element value bounds set of previous pointwise/depthwise convolution.
+   *
    * @param {string}   pointwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
@@ -980,6 +986,7 @@ class Base {
   static calcPointwise(
     imageIn,
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+    previous_ConvBiasActivation_ValueBoundsSet,
     pointwiseName, parametersDesc ) {
 
 //!!! ...unfinished... (2021/12/16)
@@ -1019,7 +1026,7 @@ class Base {
     Base.modifyByBias( imageOut, bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
     // Activation
-    Base.modifyByActivation( imageOut, pointwiseActivationId, parametersDesc );
+    Base.modifyByActivation( imageOut, pointwiseActivationId, previous_ConvBiasActivation_ValueBoundsSet, parametersDesc );
 
     // Determine output value bounds (and activation escaping scale-translate).
     imageOut.valueBoundsSet.set_by( imageIn.valueBoundsSet, true, imageIn.depth, bPointwiseBias, pointwiseActivationId );
@@ -1031,6 +1038,9 @@ class Base {
    * @param {NumberImage.Base} imageIn   The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
    *
+   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+   *   The element value bounds set of previous pointwise/depthwise convolution.
+   *
    * @param {string}   depthwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
@@ -1041,9 +1051,8 @@ class Base {
     imageIn,
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+    previous_ConvBiasActivation_ValueBoundsSet,
     depthwiseName, parametersDesc ) {
-
-//!!! ...unfinished... (2021/12/16) this_ConvBiasActivation_ValueBoundsSet
 
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
       return imageIn; // No depthwise operation.
@@ -1056,9 +1065,6 @@ class Base {
     let { channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
           imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = padInfo;
-
-//!!! (2021/12/10 Remarked)
-//    let depthwiseFilterWidth = padInfo.filterWidth;
 
     // For ( pad == "valid" ), negative ( inX, inY ) will never happen.
     // For ( pad == "same"  ), negative ( inX, inY ) may happen, but those pixels will be viewed as zero value.
@@ -1073,7 +1079,20 @@ class Base {
           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
     }
 
-    let imageOut = { height: imageOutHeight, width: imageOutWidth, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) };
+    let imageOut = new NumberImage.Base( imageOutHeight, imageOutWidth, imageOutDepth, new Float32Array( imageOutLength ) );
+
+    // Determine element value bounds.
+    {
+      // Default as ValueBoundsSet.output of previous convolution-bias-activation.
+      imageOut.valueBoundsSet.resetBy_Bounds( previous_ConvBiasActivation_ValueBoundsSet.output );
+
+      // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
+      const filtersValueBounds = Weights.Base.ValueBounds;
+
+      // Note: For maximum pooling, the multiply_Bounds is a little bit overestimated (but should be acceptable).
+      let filterSize = depthwiseFilterHeight * depthwiseFilterWidth;
+      this.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, filterSize );
+    }
 
     // Max pooling
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
@@ -1167,7 +1186,7 @@ class Base {
     Base.modifyByBias( imageOut, bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
     // Activation
-    Base.modifyByActivation( imageOut, depthwiseActivationId, parametersDesc );
+    Base.modifyByActivation( imageOut, depthwiseActivationId, previous_ConvBiasActivation_ValueBoundsSet, parametersDesc );
 
     return imageOut;
   }
