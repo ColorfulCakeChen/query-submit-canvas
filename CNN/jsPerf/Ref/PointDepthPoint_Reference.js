@@ -802,8 +802,9 @@ class Base {
       }
 
       // Residual Connection.
-      pointwise21Result = Base.modifyByInput(
-        pointwise21Result, bAddInputToOutputRequested, imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
+      if ( bAddInputToOutputRequested )
+        pointwise21Result = pointwise21Result.cloneBy_add(
+          imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
     }
 
     let imageOutArray = [ pointwise21Result, null ]; // Assume no pointwise22.
@@ -846,8 +847,9 @@ class Base {
         // Residual Connection.
         //
         // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
-        pointwise22Result = Base.modifyByInput(
-          pointwise22Result, bAddInputToOutputRequested, imageIn0, "Pointwise22_AddInputToOutput", this.paramsOutDescription );
+        if ( bAddInputToOutputRequested )
+          pointwise22Result = pointwise22Result.cloneBy_add(
+            imageIn0, "Pointwise22_AddInputToOutput", this.paramsOutDescription );
       }
 
       // Integrate pointwise21 and pointwise22 into pointwise2.
@@ -1078,68 +1080,6 @@ class Base {
     }
 
     return imageOut;
-  }
-
-  /**
-   * @param {NumberImage.Base} imageOut  The source/target image to be modified.
-   * @param {boolean}  bAddInputToOutput Whether add input to output.
-   * @param {NumberImage.Base} imageIn   The source image to be processed.
-   *
-   * @param {string}   addInputToOutputName A string for debug message of this bias.
-   * @param {string}   parametersDesc       A string for debug message of this point-depth-point.
-   *
-   * @return {NumberImage.Base}
-   *   If no additive, it will be the original imageOut. If additive, the a new imageOut will be created and returned. The new created
-   * imageOutNew will have the same ( height, width, depty ) as imageOut but imageOutNew.dataArray will be replaced with
-   * new data. Return null, if ( imageOut == null ).
-   */
-  static modifyByInput( imageOut, bAddInputToOutput, imageIn, addInputToOutputName, parametersDesc ) {
-
-    if ( !imageOut )
-      return null;
-
-    if ( !bAddInputToOutput )
-      return imageOut;
-
-    // If the output dimensions ( height, width, depth ) is not the same as input, it is impossible to add-input-to-output.
-    if ( ( imageIn.height != imageOut.height ) || ( imageIn.width != imageOut.width ) || ( imageIn.depth != imageOut.depth ) )
-      return imageOut;
-
-    tf.util.assert( ( imageIn.height == imageOut.height ),
-      `${addInputToOutputName} When ( bAddInputToOutput == true ), imageIn.height ( ${imageIn.height} ) `
-        + `should match imageOut.height ( ${imageOut.height} ). (${parametersDesc})`);
-
-    tf.util.assert( ( imageIn.width == imageOut.width ),
-      `${addInputToOutputName} When ( bAddInputToOutput == true ), imageIn.width ( ${imageIn.width} ) `
-        + `should match imageOut.width ( ${imageOut.width} ). (${parametersDesc})`);
-
-    tf.util.assert( ( imageIn.depth == imageOut.depth ),
-      `${addInputToOutputName} When ( bAddInputToOutput == true ), imageIn.depth ( ${imageIn.depth} ) `
-        + `should match imageOut.depth ( ${imageOut.depth} ). (${parametersDesc})`);
-
-    let resultArray = imageIn.dataArray.map( ( value, i ) => ( imageOut.dataArray[ i ] + value ) );
-
-    // Q: Why not just modify imageOut directly?
-    // A: The imageOut might be the original input array which should not be modified at all. (because they might be used in another test.)
-    let imageOutNew = new NumberImage.Base(
-      imageOut.height,
-      imageOut.width,
-      imageOut.depth,
-      resultArray
-    );
-
-    {
-      imageOutNew.valueBoundsSet.input.set_Bounds( imageIn.output ); // As previous output of this PointDepthPoint.
-
-      imageOutNew.valueBoundsSet.output.set_Bounds( imageOut.valueBoundsSet.output ); // As pointwise21.output.
-      imageOutNew.valueBoundsSet.output.add_Bounds( imageIn.output );
-
-      imageOutNew.valueBoundsSet.beforeActivation.set_Bounds( imageOutNew.valueBoundsSet.output ); // Keep .beforeActivation the same as .output.
-
-      //imageOutNew.valueBoundsSet.activationEscaping_ScaleTranslateSet; // Keeps as default ( 1, 0 ).
-    }
-
-    return imageOutNew;
   }
 
   /**
