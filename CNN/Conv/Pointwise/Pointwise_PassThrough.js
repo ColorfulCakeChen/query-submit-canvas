@@ -54,7 +54,7 @@ import * as TwoTensors from "../../util/TwoTensors.js";
  *   If true, this object initialized (i.e. constructor()) successfully.
  */
  */
-class PassThrough_FiltersArray_BiasesArray {
+let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
   /**
    */
@@ -128,7 +128,7 @@ class PassThrough_FiltersArray_BiasesArray {
  * @see PassThrough_FiltersArray_BiasesArray
  * @see TwoTensors.filtersTensor4d_biasesTensor3d
  */
-class PassThrough extends TwoTensors.filtersTensor4d_biasesTensor3d( PassThrough_FiltersArray_BiasesArray ) {
+class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
 
   constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
     super( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
