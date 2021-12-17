@@ -609,15 +609,15 @@ class Base {
       testParams.out.pointwise21ChannelCount,
       testParams.out.bOutput1Requested );
 
-    let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
-
-    tf.util.assert( ( pointDepthPoint.bInitOk == bInitOk ),
-      `PointDepthPoint validation state (${pointDepthPoint.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
-
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
       debugger;
     }
+
+    let parametersDescription = `( ${pointDepthPoint.parametersDescription} )`;
+
+    tf.util.assert( ( pointDepthPoint.bInitOk == bInitOk ),
+      `PointDepthPoint validation state (${pointDepthPoint.bInitOk}) mismatches initer's result (${bInitOk}). ${parametersDescription}`);
 
     tf.util.assert( ( true == bInitOk ),
       `Failed to initialize pointDepthPoint object. ${parametersDescription}`);
