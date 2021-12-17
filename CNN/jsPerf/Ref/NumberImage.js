@@ -19,13 +19,18 @@ import * as Depthwise from "../../Conv/Depthwise.js";
  *   The element value bounds set of the pointwise or depthwise convolution.
  */
 class Base {
-  
+
   constructor( height, width, depth, dataArray, valueBoundsSet = new ConvBiasActivation.ValueBoundsSet() ) {
     this.height = height;
     this.width = width;
     this.depth = depth;
     this.dataArray = dataArray;
     this.valueBoundsSet = valueBoundsSet;
+  }
+
+  clone() {
+    let result = new Base( this.height, this.width, this.depth, new Float32Array( this.dataArray ), this.valueBoundsSet.clone() );
+    return result;
   }
 
   /**
@@ -42,6 +47,9 @@ class Base {
     pointwiseName, parametersDesc ) {
 
     let imageIn = this;
+
+    if ( pointwiseChannelCount <= 0 )
+      return imageIn.clone(); // No pointwise operation.
 
     tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
       `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
@@ -109,9 +117,8 @@ class Base {
 
     let imageIn = this;
 
-//!!! (2021/12/17 Remarked) ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE is deprecated.
-//     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
-//       return imageIn; // No depthwise operation.
+    if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
+      return imageIn.clone(); // No depthwise operation.
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 ) or ( depthwiseFilterWidth <= 0 )?
 
