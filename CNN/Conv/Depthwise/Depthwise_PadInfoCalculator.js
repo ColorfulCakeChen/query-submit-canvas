@@ -40,6 +40,7 @@ export { PadInfoCalculator };
 let PadInfoCalculator = ( Base = Object ) => class extends Base {
 
   constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
+    super();
     this.imageInHeight = imageInHeight;
     this.imageInWidth = imageInWidth;
     this.imageInDepth = imageInDepth;
