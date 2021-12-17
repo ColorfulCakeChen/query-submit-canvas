@@ -190,7 +190,6 @@ class TestCorrectnessInfo {
       }
     }
 
-//!!! ...unfinished... (2021/12/17)
     this.input1ChannelCount = input1ChannelCount;
     this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
     this.inputTensorDestroyCount = inputTensorDestroyCount;
@@ -212,13 +211,7 @@ class Base {
     this.channelShufflerPool = new ChannelShufflerPool.Base( ChannelShuffler.ShuffleInfo );
 
     // For reducing memory allocation.
-
-//!!! (2021/12/17 Remarked)
-//     this.imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
-//     this.inputTensor3dArray = new Array( 2 );
-//     this.outputTensor3dArray = new Array( 2 );
     this.testCorrectnessInfo = new TestCorrectnessInfo();
-
     this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.4 );
   }
 
