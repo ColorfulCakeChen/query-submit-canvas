@@ -2,7 +2,7 @@ export { Base };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import * as ConvBiasActivation from "../../../Conv/ConvBiasActivation.js";
+import * as ConvBiasActivation from "../../Conv/ConvBiasActivation.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 
