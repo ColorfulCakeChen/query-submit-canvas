@@ -101,9 +101,7 @@ class Bounds {
    *   Return this (modified) object which is multiplied by aBounds.
    */
   multiply_Bounds( aBounds ) {
-    this.lower *= aBounds.lower;
-    this.upper *= aBounds.upper;
-    return this;
+    return multiply_LowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -117,8 +115,13 @@ class Bounds {
    *   Return this (modified) object which is multiplied by Bounds [ aLower, aUpper ].
    */
   multiply_LowerUpper( aLower, aUpper ) {
-    this.lower *= aLower;
-    this.upper *= aUpper;
+    // Because the different sign of lower and upper, it needs compute all combination to determine the bounds of result.
+    let lower_lower = this.lower * aLower;
+    let lower_upper = this.lower * aUpper;
+    let upper_lower = this.upper * aLower;
+    let upper_upper = this.upper * aUpper;
+    this.lower = Math.min( lower_lower, lower_upper, upper_lower, upper_upper );
+    this.upper = Math.max( lower_lower, lower_upper, upper_lower, upper_upper );
     return this;
   }
 
