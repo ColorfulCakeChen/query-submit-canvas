@@ -53,7 +53,6 @@ import * as TwoTensors from "../../util/TwoTensors.js";
  * @member {boolean} bInitOk
  *   If true, this object initialized (i.e. constructor()) successfully.
  */
- */
 let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
   /**
