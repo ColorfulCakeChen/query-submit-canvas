@@ -91,6 +91,8 @@ class Bounds {
     return this;
   }
 
+//!!! ...unfinished... (2021/12/17) needs keep the sign of lower and upper.
+
   /**
    * @param {Bounds} aBounds
    *   Multiply this Bounds by aBounds.
