@@ -404,8 +404,8 @@ class HeightWidthDepth {
   test_FloatValue_Bounds() {
     class Case {
       constructor( aBoundsArray, bBoundsArray, N, addedArray, multipledArray, aMultipledNArray ) {
-        this.aBounds = new FloatBounds( aBoundsArray[ 0 ], aBoundsArray[ 1 ] );
-        this.bBounds = new FloatBounds( bBoundsArray[ 0 ], bBoundsArray[ 1 ] );
+        this.aBounds = new FloatValue.Bounds( aBoundsArray[ 0 ], aBoundsArray[ 1 ] );
+        this.bBounds = new FloatValue.Bounds( bBoundsArray[ 0 ], bBoundsArray[ 1 ] );
 
         this.addedBounds = this.aBounds.add_Bounds( this.bBounds );
         this.multipledBounds = this.aBounds.multiply_Bounds( this.bBounds );
