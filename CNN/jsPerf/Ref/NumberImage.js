@@ -42,7 +42,7 @@ class Base {
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
    */
-  pointwiseConv(
+  cloneBy_pointwise(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
     pointwiseName, parametersDesc ) {
 
@@ -110,7 +110,7 @@ class Base {
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
    */
-  depthwiseConv(
+  cloneBy_depthwise(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
     depthwiseName, parametersDesc ) {
@@ -342,6 +342,67 @@ class Base {
     tensorOut.dispose();
 
     return imageIn;
+  }
+
+  /**
+   * @param {NumberImage.Base} this        The first image to be used for adding. It must have the same size as another.
+   * @param {NumberImage.Base} another     The second image to be used for adding. It must have the same size as this.
+   *
+   * @param {string} addInputToOutputName  A string for debug message of this bias.
+   * @param {string} parametersDesc        A string for debug message of this point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of adding this and another.
+   */
+  cloneBy_add( bAddInputToOutput, another, addInputToOutputName, parametersDesc ) {
+
+    // If the output dimensions ( height, width, depth ) is not the same as input, it is impossible to add-input-to-output.
+    {
+//!!! (2021/12/17 Remarked) Alreaddy the following assertion.
+//       if ( ( another.height != this.height ) || ( another.width != this.width ) || ( another.depth != this.depth ) )
+//         return ???imageOut;
+
+      tf.util.assert( ( another.height == this.height ),
+        `${addInputToOutputName}: another.height ( ${another.height} ) `
+          + `should match this.height ( ${this.height} ). (${parametersDesc})`);
+
+      tf.util.assert( ( another.width == this.width ),
+        `${addInputToOutputName}: another.width ( ${another.width} ) `
+          + `should match this.width ( ${this.width} ). (${parametersDesc})`);
+
+      tf.util.assert( ( another.depth == this.depth ),
+        `${addInputToOutputName}: another.depth ( ${another.depth} ) `
+          + `should match this.depth ( ${this.depth} ). (${parametersDesc})`);
+    }
+
+//!!! (2021/12/17 Remarked) Using for-loop is faster.
+//    let resultArray = another.dataArray.map( ( value, i ) => ( this.dataArray[ i ] + value ) );
+
+    let resultArray = new Float32Array( this.dataArray.length );
+    for ( let i = 0; i < this.dataArray.length; ++i ) {
+      resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
+    }
+
+    // Q: Why not just modify this directly?
+    // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
+    let imageOutNew = new Base(
+      this.height,
+      this.width,
+      this.depth,
+      resultArray
+    );
+
+    {
+      imageOutNew.valueBoundsSet.input.set_Bounds( this.valueBoundsSet.output );
+
+      imageOutNew.valueBoundsSet.output.set_Bounds( this.valueBoundsSet.output );
+      imageOutNew.valueBoundsSet.output.add_Bounds( another.valueBoundsSet.output );
+
+      imageOutNew.valueBoundsSet.beforeActivation.set_Bounds( imageOutNew.valueBoundsSet.output ); // Keep .beforeActivation the same as .output.
+      //imageOutNew.valueBoundsSet.activationEscaping_ScaleTranslateSet; // Keeps as default ( 1, 0 ).
+    }
+
+    return imageOutNew;
   }
 
 }
