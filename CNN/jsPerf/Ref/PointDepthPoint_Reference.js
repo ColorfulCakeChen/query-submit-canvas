@@ -437,7 +437,7 @@ class Base {
 //         }
 //       }
 
-      this.testCorrrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerPool );
+      this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerPool );
 
       let {
         imageInArraySelected, inputTensor3dArray, outputTensor3dArray,
