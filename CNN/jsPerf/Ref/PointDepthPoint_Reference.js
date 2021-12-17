@@ -676,7 +676,7 @@ class Base {
     // 1. Pointwise1
     let pointwise1Result;
     if ( pointwise1ChannelCount > 0 ) {
-      pointwise1Result = imageIn0.pointwiseConv(
+      pointwise1Result = imageIn0.cloneBy_pointwise(
         pointwise1ChannelCount,
         testParams.in.paramsNumberArrayObject.pointwise1Filters, testParams.out.bPointwise1Bias,
         testParams.in.paramsNumberArrayObject.pointwise1Biases, testParams.out.pointwise1ActivationId,
@@ -696,7 +696,7 @@ class Base {
     let imageIn1_beforeDepthwise1 = imageIn1;
     let depthwise1Result;
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-      depthwise1Result = pointwise1Result.depthwiseConv(
+      depthwise1Result = pointwise1Result.cloneBy_depthwise(
         testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
         testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
         testParams.in.paramsNumberArrayObject.depthwise1Filters, testParams.out.bDepthwiseBias,
@@ -718,7 +718,7 @@ class Base {
 
         let depthwisePassThroughFiltersArray = depthwisePassThrough.generate_PassThrough_FiltersArray();
 
-        imageIn1 = imageIn1_beforeDepthwise1.depthwiseConv(
+        imageIn1 = imageIn1_beforeDepthwise1.cloneBy_depthwise(
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
           testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
           depthwisePassThroughFiltersArray, // for Pass-through.
@@ -744,7 +744,7 @@ class Base {
 //!!! ...unfinished... (2021/12/16)
 // if pointwise1 exists, imageIn0 should be higherHalfCopyLowerHalf for ValueBoundsSet.ActivationEscaping before depthwise2.
 
-        depthwise2Result = imageIn0.depthwiseConv( // depthwise2 apply to input0 (not input1)
+        depthwise2Result = imageIn0.cloneBy_depthwise( // depthwise2 apply to input0 (not input1)
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
           testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
           testParams.in.paramsNumberArrayObject.depthwise2Filters, testParams.out.bDepthwiseBias,
@@ -792,7 +792,7 @@ class Base {
     let pointwise21Result;
     {
       if ( pointwise21ChannelCount > 0 ) {
-        pointwise21Result = concat1Result.pointwiseConv(
+        pointwise21Result = concat1Result.cloneBy_pointwise(
           pointwise21ChannelCount,
           testParams.in.paramsNumberArrayObject.pointwise21Filters, testParams.out.bPointwise21Bias,
           testParams.in.paramsNumberArrayObject.pointwise21Biases, testParams.out.pointwise21ActivationId,
@@ -838,7 +838,7 @@ class Base {
 
       let pointwise22Result;
       if ( pointwise22ChannelCount > 0 ) {
-        pointwise22Result = concat1Result.pointwiseConv(
+        pointwise22Result = concat1Result.cloneBy_pointwise(
           pointwise22ChannelCount,
           testParams.in.paramsNumberArrayObject.pointwise22Filters, bPointwise22Bias,
           testParams.in.paramsNumberArrayObject.pointwise22Biases, pointwise22ActivationId,
