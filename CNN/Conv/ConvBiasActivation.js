@@ -78,7 +78,7 @@ class ValueBoundsSet {
 
     // Otherwise, the activation function dominates the output range.
     } else {
-      let info = ValueDesc.ActivationFunction.Singletion.getInfoById( this.nActivationId );
+      let info = ValueDesc.ActivationFunction.Singleton.getInfoById( this.nActivationId );
       this.output.set_Bounds( info.outputRange );
     }
 
