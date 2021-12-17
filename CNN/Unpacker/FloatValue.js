@@ -38,12 +38,10 @@ class Bounds {
    *   Set this Bounds by aBounds.
    *
    * @return {Bounds}
-   *   Return this (modified) object which copies aBounds.
+   *   Return this (modified) object whose values are copied from aBounds.
    */
   set_Bounds( aBounds ) {
-    this.lower = aBounds.lower;
-    this.upper = aBounds.upper;
-    return this;
+    return this.set_LowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -57,8 +55,8 @@ class Bounds {
    *   Return this (modified) object which is [ aLower, aUpper ].
    */
   set_LowerUpper( aLower, aUpper ) {
-    this.lower = aLower;
-    this.upper = aUpper;
+    this.lower = Math.min( aLower, aUpper ); // Confirm ( lower <= upper ).
+    this.upper = Math.max( aLower, aUpper );
     return this;
   }
 
@@ -70,9 +68,7 @@ class Bounds {
    *   Return this (modified) object which is added by aBounds.
    */
   add_Bounds( aBounds ) {
-    this.lower += aBounds.lower;
-    this.upper += aBounds.upper;
-    return this;
+    return this.add_LowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -86,12 +82,13 @@ class Bounds {
    *   Return this (modified) object which is added by Bounds [ aLower, aUpper ].
    */
   add_LowerUpper( aLower, aUpper ) {
-    this.lower += aLower;
-    this.upper += aUpper;
+    // Confirm the lower and upper. And then, add corresponds.
+    let lower_lower = Math.min( this.lower, this.upper ) + Math.min( aLower, aUpper );
+    let upper_upper = Math.max( this.lower, this.upper ) + Math.max( aLower, aUpper );
+    this.lower = lower_lower;
+    this.upper = upper_upper;
     return this;
   }
-
-//!!! ...unfinished... (2021/12/17) needs keep the sign of lower and upper.
 
   /**
    * @param {Bounds} aBounds
@@ -101,7 +98,7 @@ class Bounds {
    *   Return this (modified) object which is multiplied by aBounds.
    */
   multiply_Bounds( aBounds ) {
-    return multiply_LowerUpper( aBounds.lower, aBounds.upper );
+    return this.multiply_LowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -133,10 +130,15 @@ class Bounds {
    *   Return this (modified) object which is the same as this.multiply_LowerUpper( N, N ) or repeating N times this.add_Bounds( this ).
    */
   multiply_N( N ) {
-    this.lower *= N;
-    this.upper *= N;
+    // Because the different sign of lower and upper, it needs compute all combinations to determine the bounds of result.
+    let lower_N = this.lower * N;
+    let upper_N = this.upper * N;
+    this.lower = Math.min( lower_N, upper_N );
+    this.upper = Math.max( lower_N, upper_N );
     return this;
   }
+
+//!!! ...unfinished... (2021/12/17) needs keep the sign of lower and upper.
 
   /**
    * @param {Bounds} aBounds
