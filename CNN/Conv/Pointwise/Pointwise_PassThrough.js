@@ -58,6 +58,7 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Ba
   /**
    */
   constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
+    super();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
