@@ -66,7 +66,7 @@ class Base {
       // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
       const filtersValueBounds = Weights.Base.ValueBounds;
 
-      imageOut.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, imageIn.depth );
+      imageOut.valueBoundsSet.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, imageIn.depth );
     }
 
     // Pointwise Convolution
