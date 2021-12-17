@@ -122,7 +122,7 @@ class Base {
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 ) or ( depthwiseFilterWidth <= 0 )?
 
-    let padInfo = new Depthwise.PadInfoCalculator()( imageIn.height, imageIn.width, imageIn.depth, 
+    let padInfo = new ( Depthwise.PadInfoCalculator() )( imageIn.height, imageIn.width, imageIn.depth, 
       depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
     let { channelMultiplier, dilationHeight, dilationWidth,
