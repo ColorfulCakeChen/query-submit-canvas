@@ -131,7 +131,7 @@ class Base {
           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
     }
 
-    let imageOut = new NumberImage.Base(
+    let imageOut = new Base(
       imageOutHeight, imageOutWidth, imageOutDepth, new Float32Array( imageOutLength ), new Depthwise.ValueBoundsSet() );
 
     // Determine element value bounds.
