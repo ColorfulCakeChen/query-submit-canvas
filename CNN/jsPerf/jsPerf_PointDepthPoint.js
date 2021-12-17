@@ -407,9 +407,9 @@ class HeightWidthDepth {
         this.aBounds = new FloatValue.Bounds( aBoundsArray[ 0 ], aBoundsArray[ 1 ] );
         this.bBounds = new FloatValue.Bounds( bBoundsArray[ 0 ], bBoundsArray[ 1 ] );
 
-        this.addedBounds = this.aBounds.add_Bounds( this.bBounds );
-        this.multipledBounds = this.aBounds.multiply_Bounds( this.bBounds );
-        this.aMultipledNBounds = this.aBounds.multiply_N( N );
+        this.addedBounds = this.aBounds.clone().add_Bounds( this.bBounds );
+        this.multipledBounds = this.aBounds.clone().multiply_Bounds( this.bBounds );
+        this.aMultipledNBounds = this.aBounds.clone().multiply_N( N );
 
         this.assert_Bounds_Array( "addedBounds", addedArray );
         this.assert_Bounds_Array( "multipledBounds", multipledArray );
