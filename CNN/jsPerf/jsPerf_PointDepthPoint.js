@@ -2,6 +2,7 @@ export { init, testCorrectness, testDifferentDisposeStrategy_All, disposeTensors
 
 
 //import * as ValueMax from "../ValueMax.js";
+import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 //import * as ParamDesc from "../Unpacker/ParamDesc.js";
@@ -400,6 +401,48 @@ class HeightWidthDepth {
     tf.dispose( outputTensor3dArray );
   }
 
+  test_FloatValue_Bounds() {
+    class Case {
+      constructor( aBoundsArray, bBoundsArray, N, addedArray, multipledArray, aMultipledNArray ) {
+        this.aBounds = new FloatBounds( aBoundsArray[ 0 ], aBoundsArray[ 1 ] );
+        this.bBounds = new FloatBounds( bBoundsArray[ 0 ], bBoundsArray[ 1 ] );
+
+        this.addedBounds = this.aBounds.add_Bounds( this.bBounds );
+        this.multipledBounds = this.aBounds.multiply_Bounds( this.bBounds );
+        this.aMultipledNBounds = this.aBounds.multiply_N( N );
+
+        this.assert_Bounds_Array( "addedBounds", addedArray );
+        this.assert_Bounds_Array( "multipledBounds", multipledArray );
+        this.assert_Bounds_Array( "aMultipledNBounds", aMultipledNArray );
+      }
+
+      assert_Bounds_Array( strBoundsName, arrayVar ) {
+        this.assert_lower_or_upper( strBoundsName, "lower", arrayVar, 0 );
+        this.assert_lower_or_upper( strBoundsName, "upper", arrayVar, 1 );
+      }
+
+      assert_lower_or_upper( strBoundsName, lower_or_upper_name, arrayVar, arrayIndex ) {
+        let thisValue = this[ strBoundsName ][ lower_or_upper_name ];
+        let arrayValue = arrayVar[ arrayIndex ];
+        tf.util.assert( thisValue == arrayValue,
+          `test_FloatValue_Bounds(): Case.${strBoundsName}.${lower_or_upper_name} ( ${thisValue} ) should be ( ${arrayValue} ).` );
+      }
+    }
+
+    let inputArray = [
+      new Case( [  1,  2 ], [  3,  4 ],  5, [  4,  6 ], [  3,  8 ], [   5,  10 ] ),
+      new Case( [ -1,  2 ], [  3,  4 ],  5, [  2,  6 ], [ -4,  8 ], [  -5,  10 ] ),
+      new Case( [  1, -2 ], [  3,  4 ],  5, [  2,  4 ], [ -8,  4 ], [ -10,   5 ] ),
+      new Case( [ -1, -2 ], [  3,  4 ],  5, [  1,  3 ], [ -8, -3 ], [ -10,  -5 ] ),
+
+      new Case( [  1,  2 ], [ -3,  4 ], -5, [ -2,  6 ], [ -6,  6 ], [ -10,  -5 ] ),
+      new Case( [ -1,  2 ], [ -3,  4 ], -5, [ -4,  6 ], [ -6,  8 ], [ -10,   5 ] ),
+      new Case( [  1, -2 ], [ -3,  4 ], -5, [ -5,  5 ], [ -8,  6 ], [  -5,  10 ] ),
+      new Case( [ -1, -2 ], [ -3,  4 ], -5, [ -5, -2 ], [ -8,  6 ], [   5,  10 ] ),
+
+    ];
+  }
+
   test_Weights_Float32Array_RestrictedClone() {
 
     let inputArray = new Float32Array( [
@@ -483,6 +526,7 @@ class HeightWidthDepth {
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
+    this.test_FloatValue_Bounds();
     this.test_Weights_Float32Array_RestrictedClone();
     this.test_ValueRange_valueInputOutputGenerator();
 
