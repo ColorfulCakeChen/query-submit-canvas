@@ -37,8 +37,8 @@ export { PadInfoCalculator };
  * @member {number} imageOutDepth         Output image channel count.
  * @member {number} imageOutLength        Output image elements count (= ( imageOutHeight * imageOutWidth * imageOutDepth ) ).
  */
-class PadInfoCalculator {
-  
+let PadInfoCalculator = ( Base = Object ) => class extends Base {
+
   constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
     this.imageInHeight = imageInHeight;
     this.imageInWidth = imageInWidth;
