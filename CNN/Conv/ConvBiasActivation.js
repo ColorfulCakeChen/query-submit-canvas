@@ -73,7 +73,7 @@ class ValueBoundsSet {
   set_output_byActivationId( nActivationId ) {
 
     // If there is no activation function, the output range is determined by input domain, filters, biases.
-    if ( this.nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ) {
+    if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
       this.output.set_Bounds( this.beforeActivation );
 
     // Otherwise, the activation function dominates the output range.
