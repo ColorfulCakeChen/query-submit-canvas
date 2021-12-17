@@ -443,7 +443,7 @@ class Base {
         imageInArraySelected, inputTensor3dArray, outputTensor3dArray,
         input1ChannelCount, channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
         strNote
-      } = this.testCorrrectnessInfo.steNote;
+      } = this.testCorrrectnessInfo;
 
       let imageOutReferenceArray;
       {
