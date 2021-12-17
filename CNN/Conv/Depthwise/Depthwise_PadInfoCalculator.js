@@ -1,5 +1,7 @@
 export { PadInfoCalculator };
 
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+
 /**
  * According to input image size and depthwise convolution parameters, calculate the padding information of the depthwise convolution.
  *
