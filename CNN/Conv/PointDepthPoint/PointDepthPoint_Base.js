@@ -1405,14 +1405,9 @@ class Base extends ReturnOrClone.Base {
      return ( this.outChannels0 + this.outChannels1 );
   }
 
-  get inputValueBounds() {
-    return this.pointwise1.valueBounds.input; // Even if pointwise1 does no operation, this still works.
-  }
-
   /** @return {string} The description string of all (adjusted) parameters of initer(). */
   get parametersDescription() {
-    let str =
-        `inputValueBounds=[${this.inputValueBounds.lower}, ${this.inputValueBounds.upper}], `
+    let str = ``
       + `inputTensorCount=${this.inputTensorCount}, `
 
       + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
@@ -1449,7 +1444,9 @@ class Base extends ReturnOrClone.Base {
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
       + `outputTensorCount=${this.outputTensorCount}, `
-      + `outputValueBounds=[${this.outputValueBounds.lower}, ${this.outputValueBounds.upper}], `
+
+      + `inputValueBounds=[ ${this.valueBoundsSet.input.lower}, ${this.valueBoundsSet.input.upper} ], `
+      + `outputValueBounds=[ ${this.valueBoundsSet.output.lower}, ${this.valueBoundsSet.output.upper} ], `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
