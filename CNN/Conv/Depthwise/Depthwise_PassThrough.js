@@ -1,5 +1,6 @@
 export { PassThrough };
 
+import * as TwoTensors from "../../util/TwoTensors.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 
@@ -34,8 +35,11 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *
  * @member {boolean} bInitOk
  *   If true, this object initialized (i.e. constructor()) successfully.
+ *
+ * @see PadInfoCalculator
+ * @see TwoTensors.filtersTensor4d_biasesTensor3d
  */
-class PassThrough extends PadInfoCalculator {
+class PassThrough extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
 
   /**
    */
