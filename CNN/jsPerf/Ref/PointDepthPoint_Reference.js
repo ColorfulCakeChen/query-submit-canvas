@@ -16,6 +16,190 @@ import * as PointDepthPoint_TestParams from "./PointDepthPoint_TestParams.js";
 import * as NumberImage from "./NumberImage.js";
 import * as ImageSourceBag from "./ImageSourceBag.js";
 
+
+/**
+ * Information used by Base.testCorrectness().
+ */
+class TestCorrectnessInfo {
+
+  constructor() {
+    // For reducing memory allocation.
+    this.imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+    this.inputTensor3dArray = new Array( 2 );
+    this.outputTensor3dArray = new Array( 2 );
+  }
+
+  prepareBy( imageSourceBag, testParams, channelShufflerPool ) {
+
+    let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
+    let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
+    let pointwise1ChannelCount = this.testParams.out.pointwise1ChannelCount;
+    let depthwise_AvgMax_Or_ChannelMultiplier = this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
+    let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
+    let depthwiseFilterWidth = this.testParams.out.depthwiseFilterWidth;
+    let depthwiseStridesPad = this.testParams.out.depthwiseStridesPad;
+    let pointwise21ChannelCount = this.testParams.out.pointwise21ChannelCount;
+    let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
+
+    let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+    let inputTensor3dArray = this.inputTensor3dArray;
+    let outputTensor3dArray = this.outputTensor3dArray;
+
+    let strNote;
+
+    let referredParams = {};
+    let bTwoInputs, input1ChannelCount;
+    {
+      // The input tensor count is determined by channelCount1_pointwise1Before totally.
+      PointDepthPoint.Params.set_inputTensorCount_by.call( referredParams, channelCount1_pointwise1Before );
+
+      PointDepthPoint.Params.set_input1ChannelCount_by.call( referredParams,
+        channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+        pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+
+      bTwoInputs = ( referredParams.inputTensorCount == 2 );
+      input1ChannelCount = referredParams.input1ChannelCount;
+    }
+
+    let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
+    {
+      strNote = `( this.testParams.id=${this.testParams.id} )`;
+
+      imageInArraySelected.fill( undefined );
+      imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
+
+//!!! ...unfinished... (2021/10/28) input1ChannelCount may zero.
+
+      // Although input1 is only needed when ( bTwoInputs == true ), it is always prepared for calculating the shape of channel shuffler.
+      // 
+      // The shape of input1 (not input0) determines the concatenatedShape of channel shuffler because the input0 might be shrinked
+      // by depthwise convolution.
+      let imageIn1 = imageSourceBag.getImage_by(
+        input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+
+      if ( bTwoInputs ) { // Pass two input images according to parameters.
+        imageInArraySelected[ 1 ] = imageIn1;
+      }
+
+      tf.util.assert( imageInArraySelected.length == 2,
+        `PointDepthPoint imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
+
+      // Prepare channel shuffler.
+      switch ( channelCount1_pointwise1Before ) {
+        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
+        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+        case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+        {
+          let outputGroupCount = 2; // Only use two convolution groups.
+
+          let concatenatedDepth;
+          if ( this.input1ChannelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
+            concatenatedDepth = ( this.input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+
+          } else { // ( input1ChannelCount == 0 )
+            // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+            // ONE_INPUT_HALF_THROUGH: // (-5)
+            //
+            // In these two cases:
+            //   - The input1 does not exist.
+            //   - Fortunately, the concatenatedDepth of channel shuffler is not so important here.
+            //     - Only ( imageInHeight, imageInWidth, outputGroupCount ) of channel shuffler will be used.
+            //     - So a usable (non-zero) value is enough. 
+            //
+            concatenatedDepth = ( 1 * outputGroupCount );
+
+//!!! ...unfinished... (2021/11/26) What about ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) ?
+
+            // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+            if ( ( channelCount1_pointwise1Before
+                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+               ) {
+
+//!!! (2021/11/26 Remarked) Now, pointwise21ChannelCount is always positive.
+//                 // Because:
+//                 //   - PointDepthPoint_TestParams.generate_Filters_Biases() will double channelCount0_pointwise1Before and pointwise1ChannelCount.
+//                 //   - PointDepthPoint.initer() and PointDepthPoint_Reference.calResutl() will halve them.
+//                 //
+//                 // For simulating the same procedure, halve them here, too.
+//                 let channelCount0_pointwise1Before_lowerHalf = Math.ceil( this.testParams.out.channelCount0_pointwise1Before / 2 );
+//                 let pointwise1ChannelCount_lowerHalf = Math.ceil( this.testParams.out.pointwise1ChannelCount / 2 );
+//
+//                 // Note: The channel count of pointwise21's result may not the same as pointwise21ChannelCount (which may be zero).
+//                 let pointwise21ResultChannelCount = PointDepthPoint.Params.calc_pointwise21ResultChannelCount(
+//                   channelCount0_pointwise1Before_lowerHalf,
+//                   pointwise1ChannelCount_lowerHalf, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+//
+//                 let channelCount0_pointwise1Before_higherHalf = channelCount0_pointwise1Before - channelCount0_pointwise1Before_lowerHalf;
+//                 concatenatedDepth = 
+//                   pointwise21ResultChannelCount
+//                     + channelCount0_pointwise1Before_higherHalf; // Just like the past-through input1.
+
+              // Because PointDepthPoint_TestParams.generate_Filters_Biases() will double pointwise21ChannelCount, it must be an even number
+              // which could be splitted (into two groups).
+              concatenatedDepth = pointwise21ChannelCount;
+            }
+          }
+
+          channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
+            imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
+
+          tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height,
+            `ChannelShuffler concatenatedShape[ 0 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]} ) `
+              + `should be the same as image height ( ${imageIn1.height} ). ${strNote}`);
+
+          tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width,
+            `ChannelShuffler concatenatedShape[ 1 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]} ) `
+              + `should be the same as image width ( ${imageIn1.width} ). ${strNote}`);
+
+          tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth,
+            `ChannelShuffler concatenatedShape[ 2 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
+              + `should be the same as image concatenatedDepth ( ${concatenatedDepth} ). ${strNote}`);
+
+          tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
+            `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
+              + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
+
+          channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
+          channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
+        }
+          break;
+      }
+
+    }
+
+    outputTensor3dArray.fill( undefined );
+    inputTensor3dArray.fill( undefined );
+
+    inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
+    if ( bTwoInputs ) { // Pass two input tensors according to parameters.
+      inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
+        input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+    }
+
+    let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
+    if ( bKeepInputTensor ) {
+      inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
+
+    } else {
+      inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
+      inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+
+      if ( bTwoInputs ) { // Pass two input tensors according to parameters.
+        inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
+        inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+      }
+    }
+
+//!!! ...unfinished... (2021/12/17)
+    this.input1ChannelCount = input1ChannelCount;
+    this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
+    this.inputTensorDestroyCount = inputTensorDestroyCount;
+    this.strNote = strNote;
+  }
+
+}
+
+
 /**
  * Reference computation of class PointDepthPoint.Base.
  */
@@ -28,9 +212,13 @@ class Base {
     this.channelShufflerPool = new ChannelShufflerPool.Base( ChannelShuffler.ShuffleInfo );
 
     // For reducing memory allocation.
-    this.imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
-    this.outputTensor3dArray = new Array( 2 );
-    this.inputTensor3dArray = new Array( 2 );
+
+//!!! (2021/12/17 Remarked)
+//     this.imageInArraySelected = new Array( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+//     this.inputTensor3dArray = new Array( 2 );
+//     this.outputTensor3dArray = new Array( 2 );
+    this.testCorrectnessInfo = new TestCorrectnessInfo();
+
     this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.4 );
   }
 
@@ -89,169 +277,188 @@ class Base {
     }
 
     try {
-      let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
-      let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
-      let pointwise1ChannelCount = this.testParams.out.pointwise1ChannelCount;
-      let depthwise_AvgMax_Or_ChannelMultiplier = this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
-      let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
-      let depthwiseFilterWidth = this.testParams.out.depthwiseFilterWidth;
-      let depthwiseStridesPad = this.testParams.out.depthwiseStridesPad;
-      let pointwise21ChannelCount = this.testParams.out.pointwise21ChannelCount;
-      let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
+      
+//!!! (2021/12/17 Remarked)
+//       let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
+//       let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
+//       let pointwise1ChannelCount = this.testParams.out.pointwise1ChannelCount;
+//       let depthwise_AvgMax_Or_ChannelMultiplier = this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
+//       let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
+//       let depthwiseFilterWidth = this.testParams.out.depthwiseFilterWidth;
+//       let depthwiseStridesPad = this.testParams.out.depthwiseStridesPad;
+//       let pointwise21ChannelCount = this.testParams.out.pointwise21ChannelCount;
+//       let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
+//
+//       let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+//       let outputTensor3dArray = this.outputTensor3dArray;
+//       let inputTensor3dArray = this.inputTensor3dArray;
+//
+//       let strNote;
+//
+//       let referredParams = {};
+//       let bTwoInputs, input1ChannelCount;
+//       {
+//         // The input tensor count is determined by channelCount1_pointwise1Before totally.
+//         PointDepthPoint.Params.set_inputTensorCount_by.call( referredParams, channelCount1_pointwise1Before );
+//
+//         PointDepthPoint.Params.set_input1ChannelCount_by.call( referredParams,
+//           channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+//           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+//
+//         bTwoInputs = ( referredParams.inputTensorCount == 2 );
+//         input1ChannelCount = referredParams.input1ChannelCount;
+//       }
+//
+//       let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
+//       let imageOutReferenceArray;
+//       {
+//         strNote = `( this.testParams.id=${this.testParams.id} )`;
+//
+//         imageInArraySelected.fill( undefined );
+//         imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
+//
+// //!!! ...unfinished... (2021/10/28) input1ChannelCount may zero.
+//
+//         // Although input1 is only needed when ( bTwoInputs == true ), it is always prepared for calculating the shape of channel shuffler.
+//         // 
+//         // The shape of input1 (not input0) determines the concatenatedShape of channel shuffler because the input0 might be shrinked
+//         // by depthwise convolution.
+//         let imageIn1 = imageSourceBag.getImage_by(
+//           input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+//
+//         if ( bTwoInputs ) { // Pass two input images according to parameters.
+//           imageInArraySelected[ 1 ] = imageIn1;
+//         }
+//
+//         tf.util.assert( imageInArraySelected.length == 2,
+//           `PointDepthPoint imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
+//
+//         // Prepare channel shuffler.
+//         switch ( channelCount1_pointwise1Before ) {
+//           case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
+//           case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+//           case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+//           {
+//             let outputGroupCount = 2; // Only use two convolution groups.
+//
+//             let concatenatedDepth;
+//             if ( input1ChannelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
+//               concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+//
+//             } else { // ( input1ChannelCount == 0 )
+//               // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
+//               // ONE_INPUT_HALF_THROUGH: // (-5)
+//               //
+//               // In these two cases:
+//               //   - The input1 does not exist.
+//               //   - Fortunately, the concatenatedDepth of channel shuffler is not so important here.
+//               //     - Only ( imageInHeight, imageInWidth, outputGroupCount ) of channel shuffler will be used.
+//               //     - So a usable (non-zero) value is enough. 
+//               //
+//               concatenatedDepth = ( 1 * outputGroupCount );
+//
+// //!!! ...unfinished... (2021/11/26) What about ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) ?
+//
+//               // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+//               if ( ( channelCount1_pointwise1Before
+//                        == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+//                  ) {
+//
+// //!!! (2021/11/26 Remarked) Now, pointwise21ChannelCount is always positive.
+// //                 // Because:
+// //                 //   - PointDepthPoint_TestParams.generate_Filters_Biases() will double channelCount0_pointwise1Before and pointwise1ChannelCount.
+// //                 //   - PointDepthPoint.initer() and PointDepthPoint_Reference.calResutl() will halve them.
+// //                 //
+// //                 // For simulating the same procedure, halve them here, too.
+// //                 let channelCount0_pointwise1Before_lowerHalf = Math.ceil( this.testParams.out.channelCount0_pointwise1Before / 2 );
+// //                 let pointwise1ChannelCount_lowerHalf = Math.ceil( this.testParams.out.pointwise1ChannelCount / 2 );
+// //
+// //                 // Note: The channel count of pointwise21's result may not the same as pointwise21ChannelCount (which may be zero).
+// //                 let pointwise21ResultChannelCount = PointDepthPoint.Params.calc_pointwise21ResultChannelCount(
+// //                   channelCount0_pointwise1Before_lowerHalf,
+// //                   pointwise1ChannelCount_lowerHalf, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
+// //
+// //                 let channelCount0_pointwise1Before_higherHalf = channelCount0_pointwise1Before - channelCount0_pointwise1Before_lowerHalf;
+// //                 concatenatedDepth = 
+// //                   pointwise21ResultChannelCount
+// //                     + channelCount0_pointwise1Before_higherHalf; // Just like the past-through input1.
+//
+//                 // Because PointDepthPoint_TestParams.generate_Filters_Biases() will double pointwise21ChannelCount, it must be an even number
+//                 // which could be splitted (into two groups).
+//                 concatenatedDepth = pointwise21ChannelCount;
+//               }
+//             }
+//
+//             channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
+//               imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
+//
+//             tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height,
+//               `ChannelShuffler concatenatedShape[ 0 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]} ) `
+//                 + `should be the same as image height ( ${imageIn1.height} ). ${strNote}`);
+//
+//             tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width,
+//               `ChannelShuffler concatenatedShape[ 1 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]} ) `
+//                 + `should be the same as image width ( ${imageIn1.width} ). ${strNote}`);
+//
+//             tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth,
+//               `ChannelShuffler concatenatedShape[ 2 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
+//                 + `should be the same as image concatenatedDepth ( ${concatenatedDepth} ). ${strNote}`);
+//
+//             tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
+//               `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
+//                 + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
+//
+//             channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
+//             channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
+//           }
+//             break;
+//         }
+//
+//         // Output is an array with two elements.
+//         imageOutReferenceArray = this.calcResult( imageInArraySelected, channelShuffler_ConcatPointwiseConv );
+//
+//         tf.util.assert( imageOutReferenceArray.length == 2,
+//           `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
+//       }
+//
+//       outputTensor3dArray.fill( undefined );
+//       inputTensor3dArray.fill( undefined );
+//
+//       inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
+//       if ( bTwoInputs ) { // Pass two input tensors according to parameters.
+//         inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
+//           input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+//       }
+//
+//       let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
+//       if ( bKeepInputTensor ) {
+//         inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
+//
+//       } else {
+//         inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
+//         inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+//
+//         if ( bTwoInputs ) { // Pass two input tensors according to parameters.
+//           inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
+//           inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+//         }
+//       }
 
-      let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
-      let outputTensor3dArray = this.outputTensor3dArray;
-      let inputTensor3dArray = this.inputTensor3dArray;
+      this.testCorrrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerPool );
 
-      let strNote;
+      let {
+        imageInArraySelected, inputTensor3dArray, outputTensor3dArray,
+        input1ChannelCount, channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
+        strNote
+      } = this.testCorrrectnessInfo.steNote;
 
-      let referredParams = {};
-      let bTwoInputs, input1ChannelCount;
-      {
-        // The input tensor count is determined by channelCount1_pointwise1Before totally.
-        PointDepthPoint.Params.set_inputTensorCount_by.call( referredParams, channelCount1_pointwise1Before );
-
-        PointDepthPoint.Params.set_input1ChannelCount_by.call( referredParams,
-          channelCount0_pointwise1Before, channelCount1_pointwise1Before,
-          pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
-
-        bTwoInputs = ( referredParams.inputTensorCount == 2 );
-        input1ChannelCount = referredParams.input1ChannelCount;
-      }
-
-      let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
       let imageOutReferenceArray;
       {
-        strNote = `( this.testParams.id=${this.testParams.id} )`;
-
-        imageInArraySelected.fill( undefined );
-        imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
-
-//!!! ...unfinished... (2021/10/28) input1ChannelCount may zero.
-
-        // Although input1 is only needed when ( bTwoInputs == true ), it is always prepared for calculating the shape of channel shuffler.
-        // 
-        // The shape of input1 (not input0) determines the concatenatedShape of channel shuffler because the input0 might be shrinked
-        // by depthwise convolution.
-        let imageIn1 = imageSourceBag.getImage_by(
-          input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
-
-        if ( bTwoInputs ) { // Pass two input images according to parameters.
-          imageInArraySelected[ 1 ] = imageIn1;
-        }
-
-        tf.util.assert( imageInArraySelected.length == 2,
-          `PointDepthPoint imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ${strNote}`);
-
-        // Prepare channel shuffler.
-        switch ( channelCount1_pointwise1Before ) {
-          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
-          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
-          {
-            let outputGroupCount = 2; // Only use two convolution groups.
-
-            let concatenatedDepth;
-            if ( input1ChannelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
-              concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
-
-            } else { // ( input1ChannelCount == 0 )
-              // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-              // ONE_INPUT_HALF_THROUGH: // (-5)
-              //
-              // In these two cases:
-              //   - The input1 does not exist.
-              //   - Fortunately, the concatenatedDepth of channel shuffler is not so important here.
-              //     - Only ( imageInHeight, imageInWidth, outputGroupCount ) of channel shuffler will be used.
-              //     - So a usable (non-zero) value is enough. 
-              //
-              concatenatedDepth = ( 1 * outputGroupCount );
-
-//!!! ...unfinished... (2021/11/26) What about ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) ?
-
-              // (i.e. pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-              if ( ( channelCount1_pointwise1Before
-                       == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
-                 ) {
-
-//!!! (2021/11/26 Remarked) Now, pointwise21ChannelCount is always positive.
-//                 // Because:
-//                 //   - PointDepthPoint_TestParams.generate_Filters_Biases() will double channelCount0_pointwise1Before and pointwise1ChannelCount.
-//                 //   - PointDepthPoint.initer() and PointDepthPoint_Reference.calResutl() will halve them.
-//                 //
-//                 // For simulating the same procedure, halve them here, too.
-//                 let channelCount0_pointwise1Before_lowerHalf = Math.ceil( this.testParams.out.channelCount0_pointwise1Before / 2 );
-//                 let pointwise1ChannelCount_lowerHalf = Math.ceil( this.testParams.out.pointwise1ChannelCount / 2 );
-//
-//                 // Note: The channel count of pointwise21's result may not the same as pointwise21ChannelCount (which may be zero).
-//                 let pointwise21ResultChannelCount = PointDepthPoint.Params.calc_pointwise21ResultChannelCount(
-//                   channelCount0_pointwise1Before_lowerHalf,
-//                   pointwise1ChannelCount_lowerHalf, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
-//
-//                 let channelCount0_pointwise1Before_higherHalf = channelCount0_pointwise1Before - channelCount0_pointwise1Before_lowerHalf;
-//                 concatenatedDepth = 
-//                   pointwise21ResultChannelCount
-//                     + channelCount0_pointwise1Before_higherHalf; // Just like the past-through input1.
-
-                // Because PointDepthPoint_TestParams.generate_Filters_Biases() will double pointwise21ChannelCount, it must be an even number
-                // which could be splitted (into two groups).
-                concatenatedDepth = pointwise21ChannelCount;
-              }
-            }
-
-            channelShuffler_ConcatPointwiseConv = channelShufflerPool.getChannelShuffler_by(
-              imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
-
-            tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height,
-              `ChannelShuffler concatenatedShape[ 0 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]} ) `
-                + `should be the same as image height ( ${imageIn1.height} ). ${strNote}`);
-
-            tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width,
-              `ChannelShuffler concatenatedShape[ 1 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]} ) `
-                + `should be the same as image width ( ${imageIn1.width} ). ${strNote}`);
-
-            tf.util.assert( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth,
-              `ChannelShuffler concatenatedShape[ 2 ] ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
-                + `should be the same as image concatenatedDepth ( ${concatenatedDepth} ). ${strNote}`);
-
-            tf.util.assert( channelShuffler_ConcatPointwiseConv.outputGroupCount == outputGroupCount,
-              `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
-                + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ${strNote}`);
-
-            channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
-            channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
-          }
-            break;
-        }
-
         // Output is an array with two elements.
         imageOutReferenceArray = this.calcResult( imageInArraySelected, channelShuffler_ConcatPointwiseConv );
 
         tf.util.assert( imageOutReferenceArray.length == 2,
           `PointDepthPoint imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. ${strNote}`);
-      }
-
-      outputTensor3dArray.fill( undefined );
-      inputTensor3dArray.fill( undefined );
-
-      inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
-      if ( bTwoInputs ) { // Pass two input tensors according to parameters.
-        inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
-          input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
-      }
-
-      let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
-      if ( bKeepInputTensor ) {
-        inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
-
-      } else {
-        inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
-        inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
-
-        if ( bTwoInputs ) { // Pass two input tensors according to parameters.
-          inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
-          inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
-        }
       }
 
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
@@ -342,7 +549,6 @@ class Base {
       throw e;
     }
   }
-
 
   /**
    * Check the PointDepthPoint's output according to input (for correctness testing).
