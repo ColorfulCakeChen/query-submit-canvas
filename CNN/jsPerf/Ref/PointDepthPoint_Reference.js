@@ -31,15 +31,15 @@ class TestCorrectnessInfo {
 
   prepareBy( imageSourceBag, testParams, channelShufflerPool ) {
 
-    let channelCount0_pointwise1Before = this.testParams.out.channelCount0_pointwise1Before;
-    let channelCount1_pointwise1Before = this.testParams.out.channelCount1_pointwise1Before;
-    let pointwise1ChannelCount = this.testParams.out.pointwise1ChannelCount;
-    let depthwise_AvgMax_Or_ChannelMultiplier = this.testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
-    let depthwiseFilterHeight = this.testParams.out.depthwiseFilterHeight;
-    let depthwiseFilterWidth = this.testParams.out.depthwiseFilterWidth;
-    let depthwiseStridesPad = this.testParams.out.depthwiseStridesPad;
-    let pointwise21ChannelCount = this.testParams.out.pointwise21ChannelCount;
-    let bKeepInputTensor = this.testParams.out.bKeepInputTensor;
+    let channelCount0_pointwise1Before = testParams.out.channelCount0_pointwise1Before;
+    let channelCount1_pointwise1Before = testParams.out.channelCount1_pointwise1Before;
+    let pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
+    let depthwise_AvgMax_Or_ChannelMultiplier = testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
+    let depthwiseFilterHeight = testParams.out.depthwiseFilterHeight;
+    let depthwiseFilterWidth = testParams.out.depthwiseFilterWidth;
+    let depthwiseStridesPad = testParams.out.depthwiseStridesPad;
+    let pointwise21ChannelCount = testParams.out.pointwise21ChannelCount;
+    let bKeepInputTensor = testParams.out.bKeepInputTensor;
 
     let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
     let inputTensor3dArray = this.inputTensor3dArray;
@@ -63,7 +63,7 @@ class TestCorrectnessInfo {
 
     let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
     {
-      strNote = `( this.testParams.id=${this.testParams.id} )`;
+      strNote = `( testParams.id=${testParams.id} )`;
 
       imageInArraySelected.fill( undefined );
       imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
@@ -121,8 +121,8 @@ class TestCorrectnessInfo {
 //                 //   - PointDepthPoint.initer() and PointDepthPoint_Reference.calResutl() will halve them.
 //                 //
 //                 // For simulating the same procedure, halve them here, too.
-//                 let channelCount0_pointwise1Before_lowerHalf = Math.ceil( this.testParams.out.channelCount0_pointwise1Before / 2 );
-//                 let pointwise1ChannelCount_lowerHalf = Math.ceil( this.testParams.out.pointwise1ChannelCount / 2 );
+//                 let channelCount0_pointwise1Before_lowerHalf = Math.ceil( testParams.out.channelCount0_pointwise1Before / 2 );
+//                 let pointwise1ChannelCount_lowerHalf = Math.ceil( testParams.out.pointwise1ChannelCount / 2 );
 //
 //                 // Note: The channel count of pointwise21's result may not the same as pointwise21ChannelCount (which may be zero).
 //                 let pointwise21ResultChannelCount = PointDepthPoint.Params.calc_pointwise21ResultChannelCount(
@@ -461,7 +461,7 @@ class Base {
         channelShuffler_ConcatPointwiseConv );
 
       let parametersDescription = pointDepthPoint.parametersDescription;
-      strNote = `( this.testParams.id=${this.testParams.id}, ${parametersDescription} )`;
+      strNote = `( testParams.id=${testParams.id}, ${parametersDescription} )`;
 
       // Test input channel count.
       Base.AssertTwoEqualValues( "inChannels1", pointDepthPoint.inChannels1, input1ChannelCount, strNote );
@@ -538,7 +538,7 @@ class Base {
       let backendName = tf.getBackend();
       console.log( `PointDepthPoint_Reference.js: testCorrectness(): backendName=${backendName}, `
 //        + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
-        + `PointDepthPoint this.testParams.id == ${this.testParams.id}` );
+        + `PointDepthPoint testParams.id == ${testParams.id}` );
       throw e;
     }
   }
