@@ -4,14 +4,12 @@ export { filtersTensor4d_biasesTensor3d };
  * A function accepts a Base class and returns a sub-class of Base.
  *
  * @param {Class} Base
- *   The base class to be inherited.
+ *   The base class to be inherited. Default is Object.
  *
  * @return {Class}
  *   Return a sub-class of Base. The returned sub-class contains filtersTensor4d and biasesTensor3d, and a method to dispose them.
  */
-let filtersTensor4d_biasesTensor3d = Base => class extends Base {
-//!!! (2021/12/16 Remarked)
-//class filtersTensor4d_biasesTensor3d {
+let filtersTensor4d_biasesTensor3d( ( Base = Object )  => class extends Base {
 
   /**
    * Release the tensors.
