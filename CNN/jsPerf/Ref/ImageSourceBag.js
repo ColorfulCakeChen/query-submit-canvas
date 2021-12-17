@@ -120,8 +120,7 @@ class Base {
       let originalImage = Base.internal_getImage_by.call( this, channelCount ); // Use original image to create shrinked image.
 
       // Borrow the calcDepthwise() function to create an input image which is shrinked by specified filter size and strides and pad.
-      image = PointDepthPoint_Reference.Base.calcDepthwise(
-        originalImage,
+      image = originalImage.cloneBy_depthwise(
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX, // Max Pooling is faster and without filter weights.
         depthwiseFilterHeight, depthwiseFilterWidth,
         depthwiseStridesPad,
