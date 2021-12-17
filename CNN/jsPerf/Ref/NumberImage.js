@@ -1,6 +1,7 @@
 export { Base };
 
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as Weights from "../../Unpacker/Weights.js";
 import * as ConvBiasActivation from "../../../Conv/ConvBiasActivation.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
@@ -28,18 +29,19 @@ class Base {
   }
 
   /**
-   * @param {NumberImage.Base} imageIn   The source image to be processed.
+   * @param {NumberImage.Base} this      The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
    * @param {string}   pointwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
    * @return {NumberImage.Base}
-   *   The result of the pointwise convolution, bias and activation.
+   *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
    */
-  static calcPointwise(
-    imageIn,
+  pointwiseConv(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
     pointwiseName, parametersDesc ) {
+
+    let imageIn = this;
 
     tf.util.assert( ( ( pointwiseFiltersArray.length / pointwiseChannelCount ) == imageIn.depth ),
       `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
@@ -92,22 +94,24 @@ class Base {
   }
 
   /**
-   * @param {NumberImage.Base} imageIn   The source image to be processed.
+   * @param {NumberImage.Base} this      The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
    * @param {string}   depthwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
    * @return {NumberImage.Base}
-   *   The result of the depthwise convolution, bias and activation.
+   *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
    */
-  static calcDepthwise(
-    imageIn,
+  depthwiseConv(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
     depthwiseName, parametersDesc ) {
 
-    if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
-      return imageIn; // No depthwise operation.
+    let imageIn = this;
+
+//!!! (2021/12/17 Remarked) ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE is deprecated.
+//     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
+//       return imageIn; // No depthwise operation.
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 ) or ( depthwiseFilterWidth <= 0 )?
 
