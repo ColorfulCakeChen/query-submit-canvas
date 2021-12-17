@@ -138,8 +138,6 @@ class Bounds {
     return this;
   }
 
-//!!! ...unfinished... (2021/12/17) needs keep the sign of lower and upper.
-
   /**
    * @param {Bounds} aBounds
    *   The first multiplier (a Bounds).
@@ -151,12 +149,7 @@ class Bounds {
    *   Return this (modified) object which is the sumed Bounds of repeating N times of multiplying this by aBounds.
    */
   multiply_Bounds_multiply_N( aBounds, N ) {
-    this.lower = ( this.lower * aBounds.lower ) * N;
-    this.upper = ( this.upper * aBounds.upper ) * N;
-    return this;
-
-    // The same as:
-    //return this.multiply_Bounds( aBounds ).multiply_N( N );
+    return this.multiply_Bounds( aBounds ).multiply_N( N );
   }
 
   /**
