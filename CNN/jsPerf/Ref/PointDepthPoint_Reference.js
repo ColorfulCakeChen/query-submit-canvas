@@ -875,11 +875,7 @@ class Base {
     // 1. Pointwise1
     let pointwise1Result;
     if ( pointwise1ChannelCount > 0 ) {
-      pointwise1Result = imageIn0.cloneBy_pointwise(
-        pointwise1ChannelCount,
-        testParams.in.paramsNumberArrayObject.pointwise1Filters, testParams.out.bPointwise1Bias,
-        testParams.in.paramsNumberArrayObject.pointwise1Biases, testParams.out.pointwise1ActivationId,
-        "Pointwise1", this.paramsOutDescription );
+      pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount,, "Pointwise1", this.paramsOutDescription );
 
 //!!! ...unfinished... (2021/12/16)
 // When ONE_INPUT_HALF_THROUGH (-5), if pointwise1 exists, imageIn1 should be higherHalfPassThrough for ValueBoundsSet.ActivationEscaping
@@ -895,12 +891,7 @@ class Base {
     let imageIn1_beforeDepthwise1 = imageIn1;
     let depthwise1Result;
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-      depthwise1Result = pointwise1Result.cloneBy_depthwise(
-        testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-        testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
-        testParams.in.paramsNumberArrayObject.depthwise1Filters, testParams.out.bDepthwiseBias,
-        testParams.in.paramsNumberArrayObject.depthwise1Biases, testParams.out.depthwiseActivationId,
-        "Depthwise1", this.paramsOutDescription );
+      depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
 
       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
       // be different from pointwise21Result and can not be concatenated together.
@@ -940,12 +931,7 @@ class Base {
 //!!! ...unfinished... (2021/12/16)
 // if pointwise1 exists, imageIn0 should be higherHalfCopyLowerHalf for ValueBoundsSet.ActivationEscaping before depthwise2.
 
-        depthwise2Result = imageIn0.cloneBy_depthwise( // depthwise2 apply to input0 (not input1)
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-          testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
-          testParams.in.paramsNumberArrayObject.depthwise2Filters, testParams.out.bDepthwiseBias,
-          testParams.in.paramsNumberArrayObject.depthwise2Biases, testParams.out.depthwiseActivationId,
-          "Depthwise2", this.paramsOutDescription );
+        depthwise2Result = testParams.use_depthwise2( imageIn0, "Depthwise2", this.paramsOutDescription ); // depthwise2 apply to input0 (not input1).
       } else {
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
       }
@@ -988,19 +974,14 @@ class Base {
     let pointwise21Result;
     {
       if ( pointwise21ChannelCount > 0 ) {
-        pointwise21Result = concat1Result.cloneBy_pointwise(
-          pointwise21ChannelCount,
-          testParams.in.paramsNumberArrayObject.pointwise21Filters, testParams.out.bPointwise21Bias,
-          testParams.in.paramsNumberArrayObject.pointwise21Biases, testParams.out.pointwise21ActivationId,
-          "Pointwise21", this.paramsOutDescription );
+        pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
       } else {
         pointwise21Result = concat1Result;
       }
 
       // Residual Connection.
       if ( bAddInputToOutputRequested )
-        pointwise21Result = pointwise21Result.cloneBy_add(
-          imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
+        pointwise21Result = pointwise21Result.cloneBy_add( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
     }
 
     let imageOutArray = [ pointwise21Result, null ]; // Assume no pointwise22.
@@ -1034,18 +1015,13 @@ class Base {
 
       let pointwise22Result;
       if ( pointwise22ChannelCount > 0 ) {
-        pointwise22Result = concat1Result.cloneBy_pointwise(
-          pointwise22ChannelCount,
-          testParams.in.paramsNumberArrayObject.pointwise22Filters, bPointwise22Bias,
-          testParams.in.paramsNumberArrayObject.pointwise22Biases, pointwise22ActivationId,
-          "Pointwise22", this.paramsOutDescription );
+        pointwise22Result = testParams.use_pointwise22( concat1Result, pointwise22ChannelCount, "Pointwise22", this.paramsOutDescription );
 
         // Residual Connection.
         //
         // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
         if ( bAddInputToOutputRequested )
-          pointwise22Result = pointwise22Result.cloneBy_add(
-            imageIn0, "Pointwise22_AddInputToOutput", this.paramsOutDescription );
+          pointwise22Result = pointwise22Result.cloneBy_add( imageIn0, "Pointwise22_AddInputToOutput", this.paramsOutDescription );
       }
 
       // Integrate pointwise21 and pointwise22 into pointwise2.
