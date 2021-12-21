@@ -125,7 +125,7 @@ class Base {
         depthwiseFilterHeight, depthwiseFilterWidth,
         depthwiseStridesPad,
         null, false,  // depthwiseFiltersArray, bDepthwiseBias, 
-        null, ValueDesc.ActivationFunction.Singleton.NONE, // depthwiseBiasesArray, depthwiseActivationId,
+        null, ValueDesc.ActivationFunction.Singleton.Ids.NONE, // depthwiseBiasesArray, depthwiseActivationId,
         "Base.internal_getImage_by()", ""
       );
     }
