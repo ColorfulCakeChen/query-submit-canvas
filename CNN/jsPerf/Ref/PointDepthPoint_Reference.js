@@ -918,9 +918,8 @@ class Base {
         imageIn1 = imageIn1_beforeDepthwise1.cloneBy_depthwise(
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
           testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
-          depthwisePassThrough.filtersArray, // for Pass-through.
-          testParams.out.bDepthwiseBias, depthwisePassThrough.biasesArray,
-          ValueDesc.ActivationFunction.NONE, // no ActivationId
+          depthwisePassThrough.filtersArray, testParams.out.bDepthwiseBias,
+          depthwisePassThrough.biasesArray, testParams.out.depthwiseActivationId,
           "Depthwise1_imageIn1", this.paramsOutDescription );
       }
 
