@@ -6,6 +6,7 @@ import * as NameNumberArrayObject_To_Float32Array from "../../util/NameNumberArr
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
 import * as TestParams from "./TestParams.js";
+import * as NumberImage from "./NumberImage.js";
 import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 
 /**
@@ -235,6 +236,91 @@ class Base extends TestParams.Base {
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
+  }
+
+  /**
+   * @param {NumberImage.Base} inputImage   The source image to be processed.
+   * @param {number} pointwise1ChannelCount The output channel count of the pointwise1 convolution.
+   * @param {string} pointwiseName          A string for debug message of the pointwise1 convolution.
+   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
+   */
+  use_pointwise1( inputImage, pointwise1ChannelCount, pointwiseName, parametersDesc ) {
+    let result = inputImage.cloneBy_pointwise(
+        pointwise1ChannelCount,
+        this.in.paramsNumberArrayObject.pointwise1Filters, this.out.bPointwise1Bias,
+        this.in.paramsNumberArrayObject.pointwise1Biases, this.out.pointwise1ActivationId,
+        pointwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
+   * @param {NumberImage.Base} inputImage   The source image to be processed.
+   * @param {string} depthwiseName          A string for debug message of the depthwise1 convolution.
+   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
+   */
+  use_depthwise1( inputImage, depthwiseName, parametersDesc ) {
+    let result = inputImage.cloneBy_depthwise(
+        this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+        this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+        this.in.paramsNumberArrayObject.depthwise1Filters, this.out.bDepthwiseBias,
+        this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId,
+        depthwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
+   * @param {NumberImage.Base} inputImage   The source image to be processed.
+   * @param {string} depthwiseName          A string for debug message of the depthwise2 convolution.
+   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise2 convolution, bias and activation.
+   */
+  use_depthwise2( inputImage, depthwiseName, parametersDesc ) {
+    let result = inputImage.cloneBy_depthwise(
+        this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+        this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+        this.in.paramsNumberArrayObject.depthwise2Filters, this.out.bDepthwiseBias,
+        this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId,
+        depthwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
+   * @param {NumberImage.Base} inputImage    The source image to be processed.
+   * @param {number} pointwise21ChannelCount The output channel count of the pointwise21 convolution.
+   * @param {string} pointwiseName           A string for debug message of the pointwise21 convolution.
+   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise21 convolution, bias and activation.
+   */
+  use_pointwise21( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
+    let result = inputImage.cloneBy_pointwise(
+        pointwise21ChannelCount,
+        this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise21Bias,
+        this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise21ActivationId,
+        pointwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
+   * @param {NumberImage.Base} inputImage    The source image to be processed.
+   * @param {number} pointwise22ChannelCount The output channel count of the pointwise22 convolution.
+   * @param {string} pointwiseName           A string for debug message of the pointwise22 convolution.
+   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise22 convolution, bias and activation.
+   */
+  use_pointwise21( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
+    let result = inputImage.cloneBy_pointwise(
+        pointwise22ChannelCount,
+        this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise22Bias,
+        this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise22ActivationId,
+        pointwiseName, parametersDesc );
+    return result;
   }
 
   /**
