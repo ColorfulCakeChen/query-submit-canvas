@@ -91,7 +91,8 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( PadInfoCalculato
     imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias,
     filterValue = 1, biasValue = 0 ) {
 
-    super( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    super( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias,
+      filterValue, biasValue );
 
     this.filtersTensor4d = tf.tensor4d( this.filtersArray, this.filtersShape );
 
