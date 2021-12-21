@@ -70,7 +70,7 @@ class ScaleTranslateSet {
     this.doWithoutPreviousUndo.setBy_fromBounds_ToBounds(
       current_ConvBiasActivation_ValueBoundsSet.beforeActivation, current_ConvBiasActivation_ValueBoundsSet.output );
 
-    // Combine the undoing the previous activation escaping scale-translate, and doing current activation escaping scale-translate.
+    // Combine the undoing previous activation escaping scale-translate, and doing current activation escaping scale-translate.
     this.do.setBy_ScaleTranslate( previous_ActivationEscaping_ScaleTranslateSet.undo );
     this.do.scaleTranslateBy( this.doWithoutPreviousUndo );
 
