@@ -124,7 +124,8 @@ class Base {
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX, // Max Pooling is faster and without filter weights.
         depthwiseFilterHeight, depthwiseFilterWidth,
         depthwiseStridesPad,
-        null, false, null, ValueDesc.ActivationFunction.NONE, //depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+        null, false,  // depthwiseFiltersArray, bDepthwiseBias, 
+        null, ValueDesc.ActivationFunction.Singleton.NONE, // depthwiseBiasesArray, depthwiseActivationId,
         "Base.internal_getImage_by()", ""
       );
     }
