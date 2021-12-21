@@ -907,13 +907,12 @@ class Base {
       if ( testParams.out.channelCount1_pointwise1Before
              == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
 
-        let depthwisePassThrough = new Depthwise.PadInfoCalculator( imageIn1.height, imageIn1.width, imageIn1.depth,
+        let depthwisePassThrough = new ( Depthwise.PadInfoCalculator() )( imageIn1.height, imageIn1.width, imageIn1.depth,
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-          testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
+          testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad
+        );
 
 //!!! ...unfinished... (2021/12/16) filterValue, biasValue
-
-        );
 
         let depthwisePassThroughFiltersArray = depthwisePassThrough.generate_PassThrough_FiltersArray();
 
