@@ -113,8 +113,6 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Ba
 
       this.biasesArray[ outChannel ] = biasValue;
     }
-
-    this.bInitOk = true;
   }
 
 }
