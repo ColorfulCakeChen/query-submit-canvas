@@ -736,6 +736,9 @@ class Base {
           testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
           true, // always bias for escaping activation function.
 
+          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale, // filterValue for pass-through (escaping activation function)
+          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate // biasValue for pass-through (escaping activation function)
+
 //!!! ...unfinished... (2021/12/16) filterValue, biasValue
         );
 
