@@ -1,4 +1,4 @@
-export { PassThrough };
+export { PassThrough_FiltersArray_BiasesArray, PassThrough };
 
 import * as TwoTensors from "../../util/TwoTensors.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
@@ -9,6 +9,7 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 
 //!!! ...unfinished... (2021/12/03) perhaps, provide a pool for DepthwisePassThrough of various size so that needs not regenerate again and again.
+
 
 /**
  * A depthwise convolution and bias which just pass the input to output.
@@ -30,16 +31,21 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  * if every input value's range is [ -2, +2 ] and RELU6 will be used as activation function, using +2 as biasValue is appropriate
  * because input values will be shifted from [ -2, +2 ] into [ 0, 4 ] which will still be kept linear by RELU6.
  *
- * @member {number[]} depthwiseFiltersArray
- *   The depthwise convolution filter which could pass the input to output unchangely.
+ * @member {number[]} filtersShape
+ *   The shape of the pass-through filters array.
  *
- * @member {boolean} bInitOk
- *   If true, this object initialized (i.e. constructor()) successfully.
+ * @member {number[]} biasesShape
+ *   The shape of the pass-through biases array.
+ *
+ * @member {number[]} filtersArray
+ *   The pass-through filters array.
+ *
+ * @member {number[]} biasesArray
+ *   The pass-through biases array.
  *
  * @see PadInfoCalculator
- * @see TwoTensors.filtersTensor4d_biasesTensor3d
  */
-class PassThrough extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
+let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalculator( Base ) {
 
   /**
    */
@@ -53,34 +59,48 @@ class PassThrough extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTe
     this.filterValue = filterValue;
     this.biasValue = biasValue;
 
-    this.depthwiseFiltersArray = this.generate_PassThrough_FiltersArray( filterValue );
+    this.filtersShape = [ this.filterHeight, this.filterWidth, this.imageInDepth, this.channelMultiplier ];
+    this.filtersArray = this.generate_PassThrough_FiltersArray( filterValue );
 
-    let filtersShape = [ this.filterHeight, this.filterWidth, this.imageInDepth, this.channelMultiplier ];
-
-    // Generate depthwise filters for just pass input to output.
-    this.filtersTensor4d = tf.tensor( this.depthwiseFiltersArray, filtersShape );
-
-    // Generate bias for just adding zero. (i.e. equals no bias).
     if ( this.bBias ) {
-      let biasesShape =  [ 1, 1, this.imageOutDepth ];
-//!!! (2021/12/07 Remarked)
-//      this.biasesTensor3d = tf.zero( biasesShape );
-      this.biasesTensor3d = tf.fill( biasesShape, biasValue );
+      this.biasesShape =  [ 1, 1, this.imageOutDepth ];
+      this.biasesArray = new Array( this.imageOutDepth );
+      this.biasesArray.fill( biasValue );
+    }
+
+  }
+
+}
+
+
+/**
+ * A depthwise convolution and bias which just pass the input to output.
+ *
+ * It is usually used in passing the higher half channels of the input to output (for achieving ShuffleNetV2_ByMopbileNetV1's body/tail).
+ *
+ *
+ * @see PassThrough_FiltersArray_BiasesArray
+ * @see PadInfoCalculator
+ * @see TwoTensors.filtersTensor4d_biasesTensor3d
+ */
+class PassThrough extends PassThrough_FiltersArray_BiasesArray( PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d() ) ) {
+
+  /**
+   */
+  constructor(
+    imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias,
+    filterValue = 1, biasValue = 0 ) {
+
+    super( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+
+    this.filtersTensor4d = tf.tensor4d( this.filtersArray, this.filtersShape );
+
+    if ( this.bBias ) {
+      this.biasesTensor3d = tf.tensor3d( this.biasesArray, this.biasesShape );
     }
 
     this.bInitOk = true;
   }
 
-  disposeTensors() {
-    if ( this.filtersTensor4d ) {
-      this.filtersTensor4d.dispose();
-      this.filtersTensor4d = null;
-    }
-
-    if ( this.biasesTensor3d ) {
-      this.biasesTensor3d.dispose();
-      this.biasesTensor3d = null;
-    }
-  }
 }
 
