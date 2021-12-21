@@ -910,7 +910,7 @@ class Base {
         let depthwisePassThrough = new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )( imageIn1.height, imageIn1.width, imageIn1.depth,
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
           testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
-          testParams.out.bDepthwiseBias,
+          true, // always bias for escaping activation function.
 
 //!!! ...unfinished... (2021/12/16) filterValue, biasValue
         );
