@@ -736,8 +736,8 @@ class Base {
           testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
           true, // always bias for escaping activation function.
 
-          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale, // filterValue for pass-through (escaping activation function)
-          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate // biasValue for pass-through (escaping activation function)
+          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale, // filterValue for pass-through (escaping activation).
+          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate // biasValue for pass-through (escaping activation).
 
 //!!! ...unfinished... (2021/12/16) filterValue, biasValue
         );
@@ -745,7 +745,7 @@ class Base {
         imageIn1 = imageIn1_beforeDepthwise1.cloneBy_depthwise(
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
           testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
-          depthwisePassThrough.filtersArray, testParams.out.bDepthwiseBias,
+          depthwisePassThrough.filtersArray, true, // always bias for escaping activation function.
           depthwisePassThrough.biasesArray, testParams.out.depthwiseActivationId,
           "Depthwise1_imageIn1", this.paramsOutDescription );
       }
