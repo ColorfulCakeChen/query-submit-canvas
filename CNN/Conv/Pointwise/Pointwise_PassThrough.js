@@ -49,9 +49,6 @@ import * as TwoTensors from "../../util/TwoTensors.js";
  *
  * @member {number[]} biasesArray
  *   The pass-through biases array.
- *
- * @member {boolean} bInitOk
- *   If true, this object initialized (i.e. constructor()) successfully.
  */
 let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
@@ -96,13 +93,8 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Ba
 
 
     this.filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
-    this.biasesShape =  [ 1, 1, outputChannelCount ];
-
     this.filtersArray = new Array( inputChannelCount * outputChannelCount );
-    this.biasesArray = new Array( outputChannelCount );
-
     this.filtersArray.fill( 0 );
-    this.biasesArray.fill( 0 );
 
     for ( let i = 0; i < extractedCount; ++i ) {
       let inChannel = beginIndex + i;
@@ -110,8 +102,12 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Ba
 
       let filtersIndex = ( inChannel * outputChannelCount ) + outChannel;
       this.filtersArray[ filtersIndex ] = filterValue; // one-hot (or say, non-zero-hot).
+    }
 
-      this.biasesArray[ outChannel ] = biasValue;
+    if ( this.bBias ) {
+      this.biasesShape =  [ 1, 1, outputChannelCount ];
+      this.biasesArray = new Array( outputChannelCount );
+      this.biasesArray.fill( biasValue, 0, extractedCount );
     }
   }
 
