@@ -803,6 +803,20 @@ class Base {
     {
       if ( pointwise21ChannelCount > 0 ) {
         pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
+
+//!!! ...unfinished... (2021/12/22) When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be pre-processed by depthwise.
+//
+//         if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+//           imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
+//             pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
+//             "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", testParams.paramsOutDescription );
+//
+//         } else if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+//           imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
+//             pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
+//             "Pointwise1_imageIn1_HigherHalfPassThrough", testParams.paramsOutDescription );
+//         }
+
       } else {
         pointwise21Result = concat1Result;
       }
