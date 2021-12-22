@@ -323,6 +323,22 @@ class Base extends TestParams.Base {
     return result;
   }
 
+  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-4) (ShuffleNetV2_ByMobileNetV1's head). */
+  is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() {
+    if ( this.out.channelCount1_pointwise1Before
+           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
+      return true;
+    return false;
+  }
+
+  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-5) (ShuffleNetV2_ByMobileNetV1's body/tail). */
+  is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() {
+    if ( this.out.channelCount1_pointwise1Before
+           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+      return true;
+    return false;
+  }
+
   /**
    * @return {number[]}
    *   Return a number array.
