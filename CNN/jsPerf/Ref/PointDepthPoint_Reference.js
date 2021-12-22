@@ -708,12 +708,12 @@ class Base {
       if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
           pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-          "Pointwise1_HigherHalfCopyLowerHalf", testParams.paramsOutDescription );
-        
+          "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", testParams.paramsOutDescription );
+
       } else if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
           pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-          "Pointwise1_HigherHalfPassThrough", testParams.paramsOutDescription );
+          "Pointwise1_imageIn1_HigherHalfPassThrough", testParams.paramsOutDescription );
       }
 
     } else {
@@ -731,31 +731,9 @@ class Base {
       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
       // be different from pointwise21Result and can not be concatenated together.
       if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-
-        let depthwisePassThrough = new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )( imageIn1.height, imageIn1.width, imageIn1.depth,
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-          testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
-          testParams.out.bDepthwiseBias,
-          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
-          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate );
-
-//!!! ...unfinished... (2021/12/16) filterValue, biasValue
-
-        imageIn1 = imageIn1_beforeDepthwise1.cloneBy_depthwise(
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-          testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
-          depthwisePassThrough.filtersArray, testParams.out.bDepthwiseBias,
-          depthwisePassThrough.biasesArray, testParams.out.depthwiseActivationId,
-          "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
-      }
-
-
-//!!! ...unfinished... (2021/12/22)
-      if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-
-        imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1, // pass-through input1 (not input0).
-          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-          "Pointwise1_HigherHalfPassThrough", testParams.paramsOutDescription );
+        imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
+          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of depthwise1.
+          "Depthwise1_imageIn1_HigherHalfPassThrough", testParams.paramsOutDescription );
       }
 
     } else {
@@ -780,7 +758,7 @@ class Base {
 
       if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
 
-//!!! ...unfinished... (2021/12/16)
+//!!! ...unfinished... (2021/12/22)
 // if pointwise1 exists, imageIn0 should be higherHalfCopyLowerHalf for ValueBoundsSet.ActivationEscaping before depthwise2.
 
         // depthwise2 apply to (higher-half-copy-lower-half) input1 (not input0, not original input1).
