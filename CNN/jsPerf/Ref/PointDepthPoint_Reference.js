@@ -698,10 +698,6 @@ class Base {
       pointwise21ChannelCount = testParams.out.pointwise21ChannelCount;
     }
 
-
-//!!! ...unfinished... (2021/12/16) also need ConvBiasActivation.ValueBoundsSet
-//    let currentValueBoundsSet = previousValueBoundsSet;
-
     // 1. Pointwise1
     let imageIn0_beforePointwise1 = imageIn0;
     let imageIn1_beforePointwise1 = imageIn1;
@@ -717,7 +713,7 @@ class Base {
       } else if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
           pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-          "Pointwise1_HigherHalfCopyLowerHalf", testParams.paramsOutDescription );
+          "Pointwise1_HigherHalfPassThrough", testParams.paramsOutDescription );
       }
 
     } else {
@@ -753,24 +749,43 @@ class Base {
           "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
+
+//!!! ...unfinished... (2021/12/22)
+      if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+
+        imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1, // pass-through input1 (not input0).
+          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
+          "Pointwise1_HigherHalfPassThrough", testParams.paramsOutDescription );
+      }
+
     } else {
       depthwise1Result = pointwise1Result;
     }
 
     // 2.2 Depthwise2
     let depthwise2Result;
-    if (   ( testParams.out.channelCount1_pointwise1Before // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
 
-        || ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-       ) {
+    // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
+    if ( testParams.out.channelCount1_pointwise1Before
+           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE ) {
+
+      if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
+        depthwise2Result = testParams.use_depthwise2( imageIn0, "Depthwise2_for_input0", this.paramsOutDescription ); // depthwise2 apply to input0 (not input1).
+      } else {
+        depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
+      }
+
+    // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+    } else if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
 
       if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
 
 //!!! ...unfinished... (2021/12/16)
 // if pointwise1 exists, imageIn0 should be higherHalfCopyLowerHalf for ValueBoundsSet.ActivationEscaping before depthwise2.
 
-        depthwise2Result = testParams.use_depthwise2( imageIn0, "Depthwise2", this.paramsOutDescription ); // depthwise2 apply to input0 (not input1).
+        // depthwise2 apply to (higher-half-copy-lower-half) input1 (not input0, not original input1).
+        depthwise2Result = testParams.use_depthwise2( imageIn1, "Depthwise2_for_input1", this.paramsOutDescription );
+
       } else {
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
       }
