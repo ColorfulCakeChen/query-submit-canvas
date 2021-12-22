@@ -709,29 +709,15 @@ class Base {
     if ( pointwise1ChannelCount > 0 ) {
       pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount, "Pointwise1", this.paramsOutDescription );
 
-//!!! ...unfinished... (2021/12/16)
-// When ONE_INPUT_HALF_THROUGH (-5), if pointwise1 exists, imageIn1 should be higherHalfPassThrough for ValueBoundsSet.ActivationEscaping
-// before depthwise2 by depthwise1.
-
       if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-
-//!!! ...unfinished... (2021/12/22) scale-translate for escaping activation of pointwise1.
-        let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
-          inputChannelCount, outputChannelCount, inputChannelIndexStart,
-          testParams.out.bPointwise1Bias,
-          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
-          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate );
-
-        imageIn1 = imageIn0_beforePointwise1.cloneBy_pointwise(
-          imageIn0_beforePointwise1.depth,
-          pointwisePassThrough.filtersArray, testParams.out.bPointwise1Bias,
-          pointwisePassThrough.biasesArray, testParams.out.pointwise1ActivationId,
+        imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
+          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
           "Pointwise1_HigherHalfCopyLowerHalf", testParams.paramsOutDescription );
-
+        
       } else if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-
-//!!! ...unfinished... (2021/12/22) scale-translate for escaping activation of pointwise1.
-
+        imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
+          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
+          "Pointwise1_HigherHalfCopyLowerHalf", testParams.paramsOutDescription );
       }
 
     } else {
