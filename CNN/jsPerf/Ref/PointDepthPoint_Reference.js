@@ -717,13 +717,16 @@ class Base {
 
 //!!! ...unfinished... (2021/12/22) scale-translate for escaping activation of pointwise1.
         let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
-          inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+          inputChannelCount, outputChannelCount, inputChannelIndexStart,
+          testParams.out.bPointwise1Bias,
+          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
+          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate );
 
         imageIn1 = imageIn0_beforePointwise1.cloneBy_pointwise(
           imageIn0_beforePointwise1.depth,
-          pointwisePassThrough.filtersArray, true, // Always bias for 
-          pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId,
-          "Pointwise1_HigherHalfCopyLowerHalf", this.paramsOutDescription );
+          pointwisePassThrough.filtersArray, testParams.out.bPointwise1Bias,
+          pointwisePassThrough.biasesArray, testParams.out.pointwise1ActivationId,
+          "Pointwise1_HigherHalfCopyLowerHalf", testParams.paramsOutDescription );
 
       } else if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
@@ -750,18 +753,16 @@ class Base {
         let depthwisePassThrough = new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )( imageIn1.height, imageIn1.width, imageIn1.depth,
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
           testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
-          true, // always bias for escaping activation function.
-
-          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale, // filterValue for pass-through (escaping activation).
-          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate // biasValue for pass-through (escaping activation).
+          testParams.out.bDepthwiseBias,
+          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
+          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate );
 
 //!!! ...unfinished... (2021/12/16) filterValue, biasValue
-        );
 
         imageIn1 = imageIn1_beforeDepthwise1.cloneBy_depthwise(
           testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
           testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
-          depthwisePassThrough.filtersArray, true, // always bias for escaping activation function.
+          depthwisePassThrough.filtersArray, testParams.out.bDepthwiseBias,
           depthwisePassThrough.biasesArray, testParams.out.depthwiseActivationId,
           "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
