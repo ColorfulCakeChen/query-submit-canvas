@@ -637,10 +637,8 @@ class Base {
     //
     if (   ( testParams.out.channelCount1_pointwise1Before
                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
-        || ( testParams.out.channelCount1_pointwise1Before
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) // (-4)
-        || ( testParams.out.channelCount1_pointwise1Before
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+        || ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        || ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
        ) {
 
       tf.util.assert( channelShuffler != null, `PointDepthPoint_Reference.Base.pointDepthPoint_create(): `
@@ -674,8 +672,7 @@ class Base {
     // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() double channelCount0_pointwise1Before,
     // pointwise21ChannelCount. So, halve them here.
     //
-    if ( testParams.out.channelCount1_pointwise1Before
-           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+    if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
       let imageInArray_Fake = Base.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
       imageIn0 = imageInArray_Fake[ 0 ];
