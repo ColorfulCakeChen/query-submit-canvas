@@ -758,10 +758,7 @@ class Base {
 
       if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
 
-//!!! ...unfinished... (2021/12/22)
-// if pointwise1 exists, imageIn0 should be higherHalfCopyLowerHalf for ValueBoundsSet.ActivationEscaping before depthwise2.
-
-        // depthwise2 apply to (higher-half-copy-lower-half) input1 (not input0, not original input1).
+        // depthwise2 apply to input1 which higher-half-copy-lower-half from input0 (not original input0, not original input1).
         depthwise2Result = testParams.use_depthwise2( imageIn1, "Depthwise2_for_input1", this.paramsOutDescription );
 
       } else {
@@ -871,7 +868,7 @@ class Base {
 
       let imageConcat2InArray = Array.from( imageOutArray );
       
-//!!! ...unfinished... (2021/12/03) When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be pre-processed by depthwise.
+//!!! ...unfinished... (2021/12/22) When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be pre-processed by depthwise.
 // Otherwise, its size may be different from pointwise21Result and can not be concatenated together.
 
       imageConcat2InArray[ 1 ] = imageIn1; // i.e. input1.
@@ -881,8 +878,8 @@ class Base {
       if (   ( testParams.out.bOutput1Requested == true )
 
           // Note: When ONE_INPUT_HALF_THROUGH (-5), although ( bOutput1Requested == false ), it still needs shuffle.
-          || ( testParams.out.channelCount1_pointwise1Before
-                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+          || ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+
          ) {
 
         let channelShuffler_concatenatedShape = channelShuffler.concatenatedShape;
