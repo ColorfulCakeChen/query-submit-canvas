@@ -8,6 +8,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TestParams from "./TestParams.js";
 import * as NumberImage from "./NumberImage.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
+import * as Depthwise from "../../Conv/Depthwise.js";
 import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 
 /**
@@ -271,7 +272,6 @@ class Base extends TestParams.Base {
     let result = inputImage.cloneBy_pointwise(
       inputImage.depth, pointwisePassThrough.filtersArray, this.out.bPointwise1Bias,
       pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId, pointwiseName, parametersDesc );
-
     return result;
   }
 
@@ -284,11 +284,34 @@ class Base extends TestParams.Base {
    */
   use_depthwise1( inputImage, depthwiseName, parametersDesc ) {
     let result = inputImage.cloneBy_depthwise(
-        this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-        this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-        this.in.paramsNumberArrayObject.depthwise1Filters, this.out.bDepthwiseBias,
-        this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId,
-        depthwiseName, parametersDesc );
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+      this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+      this.in.paramsNumberArrayObject.depthwise1Filters, this.out.bDepthwiseBias,
+      this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId,
+      depthwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
+   * @param {NumberImage.Base} inputImage   The source image to be processed.
+   * @param {FloatValue.ScaleTranslate} aScaleTranslate  The scale and translate used in the pass-through depthwise1 convolution.
+   * @param {string} depthwiseName          A string for debug message of the depthwise1 convolution.
+   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
+   */
+  use_depthwise1_PassThrough( inputImage, aScaleTranslate, depthwiseName, parametersDesc ) {
+    let depthwisePassThrough = new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )( inputImage.height, inputImage.width, inputImage.depth,
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+      this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+      this.out.bDepthwiseBias, aScaleTranslate.scale, aScaleTranslate.translate );
+
+    let result = inputImage.cloneBy_depthwise(
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+      this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+      depthwisePassThrough.filtersArray, this.out.bDepthwiseBias,
+      depthwisePassThrough.biasesArray, this.out.depthwiseActivationId,
+      depthwiseName, parametersDesc );
     return result;
   }
 
