@@ -7,6 +7,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ValueRange from "../../Unpacker/ValueRange.js";
 import * as TestParams from "./TestParams.js";
 import * as NumberImage from "./NumberImage.js";
+import * as Pointwise from "../../Conv/Pointwise.js";
 import * as PointDepthPoint from "../../Conv/PointDepthPoint.js";
 
 /**
@@ -252,6 +253,25 @@ class Base extends TestParams.Base {
         this.in.paramsNumberArrayObject.pointwise1Filters, this.out.bPointwise1Bias,
         this.in.paramsNumberArrayObject.pointwise1Biases, this.out.pointwise1ActivationId,
         pointwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
+   * @param {NumberImage.Base} inputImage   The source image to be processed.
+   * @param {FloatValue.ScaleTranslate} aScaleTranslate  The scale and translate used in the pass-through pointwise1 convolution.
+   * @param {string} pointwiseName          A string for debug message of the pointwise1 convolution.
+   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
+   */
+  use_pointwise1_PassThrough( inputImage, aScaleTranslate, pointwiseName, parametersDesc ) {
+    let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
+      inputImage.depth, inputImage.depth, 0, this.out.bPointwise1Bias, aScaleTranslate.scale, aScaleTranslate.translate );
+
+    let result = inputImage.cloneBy_pointwise(
+      inputImage.depth, pointwisePassThrough.filtersArray, this.out.bPointwise1Bias,
+      pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId, pointwiseName, parametersDesc );
+
     return result;
   }
 
