@@ -703,6 +703,8 @@ class Base {
 //    let currentValueBoundsSet = previousValueBoundsSet;
 
     // 1. Pointwise1
+    let imageIn0_beforePointwise1 = imageIn0;
+    let imageIn1_beforePointwise1 = imageIn1;
     let pointwise1Result;
     if ( pointwise1ChannelCount > 0 ) {
       pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount, "Pointwise1", this.paramsOutDescription );
@@ -713,11 +715,19 @@ class Base {
 
       if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
 
-//!!! ...unfinished... (2021/12/22)
+//!!! ...unfinished... (2021/12/22) scale-translate for escaping activation of pointwise1.
+        let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
+          inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+
+        imageIn1 = imageIn0_beforePointwise1.cloneBy_pointwise(
+          imageIn0_beforePointwise1.depth,
+          pointwisePassThrough.filtersArray, true, // Always bias for 
+          pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId,
+          "Pointwise1_HigherHalfCopyLowerHalf", this.paramsOutDescription );
 
       } else if ( testParams.is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
-//!!! ...unfinished... (2021/12/22)
+//!!! ...unfinished... (2021/12/22) scale-translate for escaping activation of pointwise1.
 
       }
 
@@ -753,7 +763,7 @@ class Base {
           testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth, testParams.out.depthwiseStridesPad,
           depthwisePassThrough.filtersArray, true, // always bias for escaping activation function.
           depthwisePassThrough.biasesArray, testParams.out.depthwiseActivationId,
-          "Depthwise1_imageIn1", this.paramsOutDescription );
+          "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
     } else {
