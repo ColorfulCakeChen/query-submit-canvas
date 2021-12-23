@@ -774,6 +774,10 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps uses default depthwise filter size.
     this.depthwiseStridesPad = 2;                                    // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
 
+//!!! ...unfinished... (2021/12/23) should be changed to like MobileNetV2:
+//   - depthwise always has bias and activation.
+//   - pointwise2 always has no bias and no activation.
+
     // If an operation has no activation function, it can have no bias too. Because the next operation's bias can achieve the same result.
     this.bDepthwiseBias = false;
     this.depthwiseActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE; // In ShuffleNetV2, depthwise convolution doesn't have activation.
