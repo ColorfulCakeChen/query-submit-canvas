@@ -5,9 +5,10 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
+import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 import { PassThrough } from "./Depthwise_PassThrough.js";
 import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
-
+  
 /**
  * Handle depthwise convolution, bias and activation.
  *
@@ -102,13 +103,15 @@ import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
  * Base.return_input_directly(), Base.keep_input_return_copy(), Operation_and_destroy_or_keep(), OperationBias_and_destroy_or_keep(),
  * OperationActivation_and_destroy_or_keep(), OperationBiasActivation_and_destroy_or_keep() according to the parameters.
  */
-class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Activation.Base ) {
+class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Activation.Base ) ) {
 
   /**
    */
   constructor(
     inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias, nActivationId,
     bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf ) {
+
+//!!! ...unfinished... (2021/12/23) PadInfoCalculator constructor needs parameters.
 
     super();
     this.valueBoundsSet = new ValueBoundsSet();
