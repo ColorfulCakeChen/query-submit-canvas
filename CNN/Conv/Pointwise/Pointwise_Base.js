@@ -235,7 +235,11 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
 // The reason is:
 //  - The previous PointDepthPoint's pointwise21 has shuffled the channels.
 //  - The channels tweaked by activation escaping scale-translate are interleaved with other normal channels.
-//  - They are not all in the higher-half channels of this PointDepthPoint's pointwise1
+//  - They are not all in the higher-half channels of this PointDepthPoint's pointwise1.
+//
+// Perhaps, force pointwise21 (which is always exists) always with bias and without activation.
+//   - So the pointwise21 could undo all previous activation escaping scale-translate (because it has bias).
+//   - And itself will not tweak its result by activation escaping scale-translate (because it does not have activation).
 //
 
     // 1.2 Determine output value bounds (and activation escaping scale-translate).
