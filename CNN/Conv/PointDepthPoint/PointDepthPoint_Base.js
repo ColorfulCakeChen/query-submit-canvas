@@ -476,7 +476,8 @@ class Base extends ReturnOrClone.Base {
 
     // 3.1 The depthwise1 operation.
 
-    let inputHeight = -1, inputWidth = -1, inputChannelCount_lowerHalf_depthwise1 = -1; // In general case, depthwise1 needs not them.
+    let inputHeight_depthwise1 = -1, inputWidth_depthwise1 = -1;
+    let inputChannelCount_lowerHalf_depthwise1 = -1; // In general case, depthwise1 needs not them.
 
     if ( this.bHigherHalfDifferent == true ) {
       
@@ -496,8 +497,8 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2021/12/23) Wrong! The ( height, width ) of channel-shuffler is shrinked. It is not the size of the original input0.
 
-        inputHeight = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ];
-        inputWidth = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ];
+        inputHeight_depthwise1 = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ];
+        inputWidth_depthwise1 = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ];
       }
     }
 
@@ -505,7 +506,7 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_pointwise1After_depthwise1Before,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-      this.bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf_depthwise1
+      this.bHigherHalfDifferent, inputHeight_depthwise1, inputWidth_depthwise1, inputChannelCount_lowerHalf_depthwise1
     );
 
     if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.valueBoundsSet ) )
