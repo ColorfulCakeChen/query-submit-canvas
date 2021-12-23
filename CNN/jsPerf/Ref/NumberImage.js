@@ -295,7 +295,7 @@ class Base {
     {
       // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
       const biasesValueBounds = Weights.Base.ValueBounds;
-      imageIn.beforeActivation.add_Bounds( biasesValueBounds );
+      imageIn.valueBoundsSet.beforeActivation.add_Bounds( biasesValueBounds );
     }
 
     return imageIn;
