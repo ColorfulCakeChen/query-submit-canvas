@@ -191,6 +191,12 @@ import { Params } from "./PointDepthPoint_Params.js";
  *         (-3), inChannels1 will be the same as channelCount_pointwise21After_concat2Before.
  *     - Otherwise, inChannels1 will be zero.
  *
+ * @member {number} outputHeight
+ *   The height of the output image.
+ *
+ * @member {number} outputWidth
+ *   The width of the output image.
+ *
  * @member {number} outChannels0
  *   The channel count of the outputTensor[ 0 ]. Even if ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ),
  * this will still be non-zero.
@@ -338,6 +344,8 @@ class Base extends ReturnOrClone.Base {
     // Get parameters' real (adjusted) values.
     //
     // Do not keep params in this.params so that the inputFloat32Array could be released.
+    this.inputHeight0 = params.inputHeight0;
+    this.inputWidth0 = params.inputWidth0;
     this.channelCount0_pointwise1Before = params.channelCount0_pointwise1Before;
     this.channelCount1_pointwise1Before = params.channelCount1_pointwise1Before;
     this.channelCount1_pointwise1Before_Name = params.channelCount1_pointwise1Before_Name;
@@ -1397,6 +1405,13 @@ class Base extends ReturnOrClone.Base {
     outputTensors[ 1 ] = this.pointwise22.pfnConvBiasActivation( t1 );
   }
 
+  get outputHeight() {
+    return this.depthwise1.outputHeight; // Even if ( this.depthwise1.bExisted == false ), it should still work. 
+  }
+
+  get outputWidth() {
+    return this.depthwise1.outputWidth; // Even if ( this.depthwise1.bExisted == false ), it should still work.
+  }
 
   /** @return {number} The channel count of the first input tensor (i.e. inputTensors[ 0 ]). */
   get inChannels0()    { return this.channelCount0_pointwise1Before; }
@@ -1415,6 +1430,9 @@ class Base extends ReturnOrClone.Base {
       + `inputTensorCount=${this.inputTensorCount}, `
 
       + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
+      + `inputHeight0=${this.inputHeight0}, inputWidth0=${this.inputWidth0}, `
+
+      + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
 
       + `channelCount1_pointwise1Before_Name=${this.channelCount1_pointwise1Before_Name}(${this.channelCount1_pointwise1Before}), `
