@@ -51,6 +51,14 @@ class Params extends Weights.Params {
    *   The position to start to decode from the inputFloat32Array. This is relative to the inputFloat32Array.buffer
    * (not to the inputFloat32Array.byteOffset).
    *
+   * @param {number} inputHeight0
+   *   The height of apply()'s first input image (i.e. inputTensors[ 0 ]; input0). If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
+   *
+   * @param {number} inputWidth0
+   *   The width of apply()'s first input image (i.e. inputTensors[ 0 ]; input0). If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
+   *
    * @param {number} channelCount0_pointwise1Before
    *   The channel count of apply()'s first input image (i.e. inputTensors[ 0 ]; input0). If null, it will be extracted
    * from inputFloat32Array (i.e. by evolution).
@@ -221,6 +229,7 @@ class Params extends Weights.Params {
    *
    */
   constructor( inputFloat32Array, byteOffsetBegin,
+    inputHeight0, inputWidth0,
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
@@ -234,6 +243,8 @@ class Params extends Weights.Params {
 // squeeze-and-excitation ?
 
     let parameterMap = new Map( [
+      [ Params.inputHeight0,                          inputHeight0 ],
+      [ Params.inputWidth0,                           inputWidth0 ],
       [ Params.channelCount0_pointwise1Before,        channelCount0_pointwise1Before ],
       [ Params.channelCount1_pointwise1Before,        channelCount1_pointwise1Before ],
       [ Params.pointwise1ChannelCount,                pointwise1ChannelCount ],
@@ -490,6 +501,8 @@ class Params extends Weights.Params {
     }
   }
 
+  get inputHeight0()                        { return this.parameterMapModified.get( Params.inputHeight0 ); }
+  get inputWidth0()                         { return this.parameterMapModified.get( Params.inputWidth0 ); }
   get channelCount0_pointwise1Before()      { return this.parameterMapModified.get( Params.channelCount0_pointwise1Before ); }
 
   /** @return {number} The number version of channelCount1_pointwise1Before. */
@@ -559,6 +572,9 @@ class Params extends Weights.Params {
 
 
 // Define parameter descriptions.
+
+Params.inputHeight0 =            new ParamDesc.Int(                     "inputHeight0",                   1, ( 10 * 1024 ) );
+Params.inputWidth0 =             new ParamDesc.Int(                     "inputWidth0",                    1, ( 10 * 1024 ) );
 
 /** At least, there should be 1 input channel. */
 Params.channelCount0_pointwise1Before =  new ParamDesc.Int(             "channelCount0_pointwise1Before", 1, ( 10 * 1024 ) );
