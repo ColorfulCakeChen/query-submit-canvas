@@ -169,6 +169,9 @@ class Base extends TestParams.Base {
 //       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
        ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
+      inputHeight0: [ 3 ],
+      inputWidth0: [ 4, 5 ],
+
       channelCount0_pointwise1Before: [
         PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range.min,
         PointDepthPoint.Params.channelCount0_pointwise1Before.valueDesc.range.min + 4 - 1
@@ -207,6 +210,9 @@ class Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
+
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.inputHeight0,            this.valueOutMinMax.inputHeight0 ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.inputWidth0,             this.valueOutMinMax.inputWidth0 ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise21ChannelCount, this.valueOutMinMax.pointwise21ChannelCount ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise21Bias,        this.valueOutMinMax.Bias ),
@@ -682,6 +688,8 @@ class Base extends TestParams.Base {
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of PointDepthPoint.initer().
  */
 Base.paramsNameOrderArray = [
+  PointDepthPoint.Params.inputHeight0.paramName,
+  PointDepthPoint.Params.inputWidth0.paramName,
   PointDepthPoint.Params.channelCount0_pointwise1Before.paramName,
   PointDepthPoint.Params.channelCount1_pointwise1Before.paramName,
   PointDepthPoint.Params.pointwise1ChannelCount.paramName,
