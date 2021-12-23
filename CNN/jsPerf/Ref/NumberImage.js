@@ -127,7 +127,7 @@ class Base {
 
     let { channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft,
-          imageOutHeight, imageOutWidth, imageOutDepth, imageOutLength } = padInfo;
+          outputHeight, outputWidth, outputChannelCount, outputElementCount } = padInfo;
 
     // For ( pad == "valid" ), negative ( inX, inY ) will never happen.
     // For ( pad == "same"  ), negative ( inX, inY ) may happen, but those pixels will be viewed as zero value.
@@ -143,7 +143,7 @@ class Base {
     }
 
     let imageOut = new Base(
-      imageOutHeight, imageOutWidth, imageOutDepth, new Float32Array( imageOutLength ), new Depthwise.ValueBoundsSet() );
+      outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ), new Depthwise.ValueBoundsSet() );
 
     // Determine element value bounds.
     {
@@ -163,12 +163,12 @@ class Base {
     }
 
     // Depthwise Convolution
-    for ( let outY = 0; outY < imageOutHeight; ++outY ) {
-      let outIndexBaseX = ( outY * imageOutWidth );
+    for ( let outY = 0; outY < outputHeight; ++outY ) {
+      let outIndexBaseX = ( outY * outputWidth );
       let inYBase = imageInBeginY + ( outY * stridesHeight );
 
-      for ( let outX = 0; outX < imageOutWidth; ++outX ) {
-        let outIndexBaseC = ( ( outIndexBaseX + outX ) * imageOutDepth );
+      for ( let outX = 0; outX < outputWidth; ++outX ) {
+        let outIndexBaseC = ( ( outIndexBaseX + outX ) * outputChannelCount );
         let inXBase = imageInBeginX + ( outX * stridesWidth );
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
@@ -213,7 +213,7 @@ class Base {
 
                     let inIndexBaseC = ( ( inIndexBaseX + inX ) * imageIn.depth );
                     let inIndex = inIndexBaseC + inChannel;
-                    let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * imageOutDepth );
+                    let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * outputChannelCount );
                     let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
 
                     let filterIndex = filterIndexBaseSubC + outChannelSub;
