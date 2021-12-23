@@ -155,7 +155,7 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
 
     this.valueBoundsSet = new ValueBoundsSet();
 
-//!!! (2021/12/23 Remarked)
+//!!! (2021/12/23 Remarked) already in super class.
 //     this.inputHeight = inputHeight;
 //     this.inputWidth = inputWidth;
 //     this.inputChannelCount = inputChannelCount;
@@ -173,11 +173,10 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
 
-//!!! ...unfinished... (2021/12/23) Depthwise_HigherHalfDifferent instead. ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.
-
-      if ( bHigherHalfDifferent ) {
+      if ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) {
         let msg = `Depthwise.constructor(): `
-          + `bHigherHalfDifferent ( ${bHigherHalfDifferent} ) can not be true when `
+          + `nHigherHalfDifferent ( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getStringOf( nHigherHalfDifferent )} ) `
+          + `should be ( NONE ) when `
           + `AvgMax_Or_ChannelMultiplier is ( ${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( AvgMax_Or_ChannelMultiplier )} )`
           ;
 
@@ -185,12 +184,13 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
       }
     }
 
-    tf.util.assert( ( this.inputHeight > 0 ) == ( this.inputWidth > 0 ),
-      `Depthwise.Base.constructor(): `
-        + `inputHeight ( ${this.inputHeight} ) and `
-        + `inputWidth ( ${this.inputWidth} ) `
-        + `should be both positive or both not.`
-    );
+//!!! (2021/12/23 Remarked) no longer used condition.
+//     tf.util.assert( ( this.inputHeight > 0 ) == ( this.inputWidth > 0 ),
+//       `Depthwise.Base.constructor(): `
+//         + `inputHeight ( ${this.inputHeight} ) and `
+//         + `inputWidth ( ${this.inputWidth} ) `
+//         + `should be both positive or both not.`
+//     );
 
     tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
       `Depthwise.Base.constructor(): `
@@ -250,6 +250,8 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
         bExtractOk = Base.extractAs_AvgMaxPooling.call( this, inputFloat32Array );
 
       } else if ( this.bDepthwiseConv ) { // 4. Depthwise by convolution (with channel multiplier).
+
+//!!! ...unfinished... (2021/12/23) Depthwise_HigherHalfDifferent instead. ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.
 
         if ( this.bHigherHalfDifferent == true ) {
 
