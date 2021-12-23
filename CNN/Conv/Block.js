@@ -983,6 +983,23 @@ Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22 = class extends Param
  * A1: The filter weights count is different. MobileNet has more (a lot) filter weights needed to be learned than ShuffleNetV2.
  *     The learning (or say, evolving) performance should be faster by using ShuffleNetV2 (rather than MobileNet).
  *
+
+//!!! ...unfinished... (2021/12/23)
+
+ * Q2: Why pointwise21 has bias but has no activation?
+ * A2: So that the activation escaping scale-translate of pointwise1 and depthwise1 can be undone.
+ *
+ * Otherwise, when channelCount1_pointwise1Before == ONE_INPUT_HALF_THROUGH (-5) (ShuffleNetV2_ByMobileNetV1's body/tail),
+ * the pointwise1's pass-through can not undo the previous PointDepthPoint's pointwise21 activation escaping scale-translate.
+ * The reason is:
+ *  - The previous PointDepthPoint's pointwise21 has shuffled the channels.
+ *  - The channels tweaked by activation escaping scale-translate are interleaved with other normal channels.
+ *  - They are not all in the higher-half channels of this PointDepthPoint's pointwise1.
+ *
+ * So, force pointwise21 (which is always exists) always with bias and without activation.
+ *   - So the pointwise21 could undo all previous activation escaping scale-translate (because it has bias).
+ *   - And itself will not tweak its result by activation escaping scale-translate (because it does not have activation).
+ *
  */
 Params.to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1 = class extends Params.to_PointDepthPointParams.ShuffleNetV2 {
 
