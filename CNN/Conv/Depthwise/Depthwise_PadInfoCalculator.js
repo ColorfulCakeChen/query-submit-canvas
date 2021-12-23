@@ -5,9 +5,9 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 /**
  * According to input image size and depthwise convolution parameters, calculate the padding information of the depthwise convolution.
  *
- * @member {number} imageInHeight         Input image height.
- * @member {number} imageInWidth          Input image width.
- * @member {number} imageInDepth          Input image channel count.
+ * @member {number} inputHeight           Input image height.
+ * @member {number} inputWidth            Input image width.
+ * @member {number} inputDepth            Input image channel count.
  * @member {number} AvgMax_Or_ChannelMultiplier   Depthwise operation. (ValueDesc.AvgMax_Or_ChannelMultiplier)
  * @member {number} filterHeight          The height of the depthwise convolution's filter.
  * @member {number} filterWidth           The width of the depthwise convolution's filter.
@@ -34,18 +34,18 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} padWidthLeft          The padding along the input image's width dimension at the left.
  * @member {number} padWidthRight         The padding along the input image's width dimension at the right.
  *
- * @member {number} imageOutHeight        Output image height.
- * @member {number} imageOutWidth         Output image width.
- * @member {number} imageOutDepth         Output image channel count.
- * @member {number} imageOutLength        Output image elements count (= ( imageOutHeight * imageOutWidth * imageOutDepth ) ).
+ * @member {number} outputHeight          Output image height.
+ * @member {number} outputWidth           Output image width.
+ * @member {number} outputDepth           Output image channel count.
+ * @member {number} outputElementCount    Output image elements count (= ( outputHeight * outputWidth * outputDepth ) ).
  */
 let PadInfoCalculator = ( Base = Object ) => class extends Base {
 
-  constructor( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
+  constructor( inputHeight, inputWidth, inputDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
     super();
-    this.imageInHeight = imageInHeight;
-    this.imageInWidth = imageInWidth;
-    this.imageInDepth = imageInDepth;
+    this.inputHeight = inputHeight;
+    this.inputWidth = inputWidth;
+    this.inputDepth = inputDepth;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
     this.filterHeight = filterHeight;
     this.filterWidth = filterWidth;
@@ -85,18 +85,18 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
     {
       // Determine output image height and width without padding.
       if ( this.pad == "valid" ) {
-        this.imageOutHeight = Math.ceil( ( imageInHeight - this.effectFilterHeight + 1 ) / this.stridesHeight );
-        this.imageOutWidth =  Math.ceil( ( imageInWidth  - this.effectFilterWidth  + 1 ) / this.stridesWidth  );
+        this.outputHeight = Math.ceil( ( inputHeight - this.effectFilterHeight + 1 ) / this.stridesHeight );
+        this.outputWidth =  Math.ceil( ( inputWidth  - this.effectFilterWidth  + 1 ) / this.stridesWidth  );
 
         this.padHeight = this.padHeightTop = this.padHeightBottom = this.padWidth = this.padWidthLeft = this.padWidthRight = 0;
 
       // Determine output image height and width with padding around the input image height and width.
       } else if ( this.pad == "same" ) {
-        this.imageOutHeight = Math.ceil( imageInHeight / this.stridesHeight );
-        this.imageOutWidth =  Math.ceil( imageInWidth  / this.stridesWidth  );
+        this.outputHeight = Math.ceil( inputHeight / this.stridesHeight );
+        this.outputWidth =  Math.ceil( inputWidth  / this.stridesWidth  );
 
-        this.padHeight = Math.max( 0, ( this.imageOutHeight - 1 ) * this.stridesHeight + this.effectFilterHeight - imageInHeight );
-        this.padWidth =  Math.max( 0, ( this.imageOutWidth  - 1 ) * this.stridesWidth  + this.effectFilterWidth  - imageInWidth  );
+        this.padHeight = Math.max( 0, ( this.outputHeight - 1 ) * this.stridesHeight + this.effectFilterHeight - inputHeight );
+        this.padWidth =  Math.max( 0, ( this.outputWidth  - 1 ) * this.stridesWidth  + this.effectFilterWidth  - inputWidth  );
 
         this.padHeightTop =    Math.floor( this.padHeight / 2 );
         this.padHeightBottom = this.padHeight - this.padHeightTop;
@@ -105,8 +105,8 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
       }
     }
 
-    this.imageOutDepth = imageInDepth * this.channelMultiplier;
-    this.imageOutLength = ( this.imageOutHeight * this.imageOutWidth * this.imageOutDepth );
+    this.outputDepth = inputDepth * this.channelMultiplier;
+    this.outputElementCount = ( this.outputHeight * this.outputWidth * this.outputDepth );
   }
 
   /**
@@ -124,14 +124,14 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
     }
 
     // Make up a depthwise convolution filter.
-    let depthwiseFiltersArray = new Array( this.filterHeight * this.filterWidth * this.imageInDepth * this.channelMultiplier );
+    let depthwiseFiltersArray = new Array( this.filterHeight * this.filterWidth * this.inputDepth * this.channelMultiplier );
 
     // There is only one position (inside the effect depthwise filter) with value one. All other positions of the filter should be zero.
     let oneEffectFilterY = this.padHeightTop;
     let oneEffectFilterX = this.padWidthLeft;
 
     // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
-    for ( let inChannel = 0; inChannel < this.imageInDepth; ++inChannel ) {
+    for ( let inChannel = 0; inChannel < this.inputDepth; ++inChannel ) {
 
       for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
@@ -146,7 +146,7 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
                 if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                   continue;
 
-                let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.imageOutDepth );
+                let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputDepth );
                 let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
