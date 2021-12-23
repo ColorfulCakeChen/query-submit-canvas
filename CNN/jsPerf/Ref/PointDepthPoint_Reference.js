@@ -708,12 +708,12 @@ class Base {
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
           pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-          "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", testParams.paramsOutDescription );
+          "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
 
       } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
           pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-          "Pointwise1_imageIn1_HigherHalfPassThrough", testParams.paramsOutDescription );
+          "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
     } else {
@@ -733,7 +733,7 @@ class Base {
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
           depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of depthwise1.
-          "Depthwise1_imageIn1_HigherHalfPassThrough", testParams.paramsOutDescription );
+          "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
     } else {
@@ -796,6 +796,7 @@ class Base {
     }
 
     // 4.1 Pointwise21
+    let imageIn1_beforePointwise21 = imageIn1;
     let pointwise21Result;
     {
       if ( pointwise21ChannelCount > 0 ) {
@@ -806,13 +807,15 @@ class Base {
 //         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
 //           imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
 //             pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-//             "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", testParams.paramsOutDescription );
+//             "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
 //
 //         } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//           imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
-//             pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-//             "Pointwise1_imageIn1_HigherHalfPassThrough", testParams.paramsOutDescription );
-//         }
+
+        if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+          imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (shrinked by depthwise1) (not input0).
+            pointwise21Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,    // scale-translate for escaping activation of pointwise21.
+            "Pointwise21_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
+        }
 
       } else {
         pointwise21Result = concat1Result;
