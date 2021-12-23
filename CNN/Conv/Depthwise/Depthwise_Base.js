@@ -34,6 +34,9 @@ import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
  * @member {number} inputChannelCount_lowerHalf
  *   The lower half channel count of input image. Only used when ( bHigherHalfDifferent == true ). When used, it must be positive integer.
  *
+
+//!!! ...unfinished... (2021/12/23) Depthwise_HigherHalfDifferent instead.
+
  * @member {boolean} bHigherHalfDifferent
  *   - If false, it is just a normal depthwise convolution.
  *
@@ -105,26 +108,35 @@ import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
  */
 class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Activation.Base ) ) {
 
+//!!! ...unfinished... (2021/12/23) PadInfoCalculator constructor needs parameters.
+
   /**
    */
   constructor(
-    inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias, nActivationId,
-    bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf ) {
+//!!! (2021/12/23 Remarked)
+//     inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias, nActivationId,
+//     bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf ) {
 
-//!!! ...unfinished... (2021/12/23) PadInfoCalculator constructor needs parameters.
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, nActivationId,
+    bHigherHalfDifferent, inputChannelCount_lowerHalf ) {
 
-    super();
+    super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+
     this.valueBoundsSet = new ValueBoundsSet();
-    this.inputChannelCount = inputChannelCount;
-    this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
-    this.filterHeight = filterHeight;
-    this.filterWidth = filterWidth;
-    this.stridesPad = stridesPad;
+
+//!!! (2021/12/23 Remarked)
+//     this.inputHeight = inputHeight;
+//     this.inputWidth = inputWidth;
+//     this.inputChannelCount = inputChannelCount;
+//     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
+//     this.filterHeight = filterHeight;
+//     this.filterWidth = filterWidth;
+//     this.stridesPad = stridesPad;
+
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.bHigherHalfDifferent = bHigherHalfDifferent;
-    this.inputHeight = inputHeight;
-    this.inputWidth = inputWidth;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
