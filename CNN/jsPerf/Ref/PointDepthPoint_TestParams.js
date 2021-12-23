@@ -365,7 +365,7 @@ class Base extends TestParams.Base {
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise22 convolution, bias and activation.
    */
-  use_pointwise21( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
+  use_pointwise22( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
     let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
       this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise22Bias,
       this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise22ActivationId, pointwiseName, parametersDesc );
