@@ -493,6 +493,9 @@ class Base extends ReturnOrClone.Base {
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
       // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
       } else {
+
+//!!! ...unfinished... (2021/12/23) Wrong! The ( height, width ) of channel-shuffler is shrinked. It is not the size of the original input0.
+
         inputHeight = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ];
         inputWidth = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ];
       }
