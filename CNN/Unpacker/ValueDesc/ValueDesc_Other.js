@@ -1,5 +1,6 @@
 export { channelCount1_pointwise1Before };
 export { Pointwise_HigherHalfDifferent };
+export { Depthwise_HigherHalfDifferent };
 export { AvgMax_Or_ChannelMultiplier };
 export { WhetherShuffleChannel };
 
@@ -69,6 +70,10 @@ class Pointwise_HigherHalfDifferent extends Int {
 
 /** The only one ValueDesc.Pointwise_HigherHalfDifferent instance. */
 Pointwise_HigherHalfDifferent.Singleton = new Pointwise_HigherHalfDifferent;
+
+
+//!!! ...unfinished... (2021/12/23) Depthwise_HigherHalfDifferent
+
 
 
 /** Describe depthwise operation's id, range, name.
