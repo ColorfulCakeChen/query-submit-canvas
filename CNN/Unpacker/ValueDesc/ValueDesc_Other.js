@@ -73,7 +73,27 @@ Pointwise_HigherHalfDifferent.Singleton = new Pointwise_HigherHalfDifferent;
 
 
 //!!! ...unfinished... (2021/12/23) Depthwise_HigherHalfDifferent
+/** Describe id, range, name of the processing mode of depthwise convolution's higher half channels.
+ *
+ * Convert number value into integer between [ 0, 4 ] representing:
+ *   - 0: NONE
+ *   - 1: HIGHER_HALF_DEPTHWISE2
+ *   - 2: HIGHER_HALF_PASS_THROUGH
+ */
+class Depthwise_HigherHalfDifferent extends Int {
 
+  constructor() {
+    super( 0, 2, [
+      "NONE",                     // (0) (for normal depthwise convolution. no higher half different.)
+      "HIGHER_HALF_DEPTHWISE2",   // (1) (for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head)
+      "HIGHER_HALF_PASS_THROUGH", // (2) (for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+    ] );
+  }
+
+}
+
+/** The only one ValueDesc.Depthwise_HigherHalfDifferent instance. */
+Depthwise_HigherHalfDifferent.Singleton = new Depthwise_HigherHalfDifferent;
 
 
 /** Describe depthwise operation's id, range, name.
