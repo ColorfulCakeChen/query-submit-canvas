@@ -229,19 +229,6 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
     // 1.1    
     Base.Setup_bPointwise_pfn.call( this );
 
-//!!! ...unfinished... (2021/12/23)
-// In fact, when channelCount1_pointwise1Before == ONE_INPUT_HALF_THROUGH (-5) (ShuffleNetV2_ByMobileNetV1's body/tail),
-// the pointwise1_PassThrough can not undo the previous PointDepthPoint's pointwise21 activation escaping scale-translate.
-// The reason is:
-//  - The previous PointDepthPoint's pointwise21 has shuffled the channels.
-//  - The channels tweaked by activation escaping scale-translate are interleaved with other normal channels.
-//  - They are not all in the higher-half channels of this PointDepthPoint's pointwise1.
-//
-// Perhaps, force pointwise21 (which is always exists) always with bias and without activation.
-//   - So the pointwise21 could undo all previous activation escaping scale-translate (because it has bias).
-//   - And itself will not tweak its result by activation escaping scale-translate (because it does not have activation).
-//
-
     // 1.2 Determine output value bounds (and activation escaping scale-translate).
     this.valueBoundsSet.set_by( previous_ConvBiasActivation_ValueBoundsSet,
       this.bPointwise, this.inputChannelCount, this.bBias, this.nActivationId );
