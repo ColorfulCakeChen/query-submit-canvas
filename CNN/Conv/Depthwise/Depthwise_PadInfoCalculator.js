@@ -7,7 +7,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  *
  * @member {number} inputHeight           Input image height.
  * @member {number} inputWidth            Input image width.
- * @member {number} inputDepth            Input image channel count.
+ * @member {number} inputChannelCount     Input image channel count.
  * @member {number} AvgMax_Or_ChannelMultiplier   Depthwise operation. (ValueDesc.AvgMax_Or_ChannelMultiplier)
  * @member {number} filterHeight          The height of the depthwise convolution's filter.
  * @member {number} filterWidth           The width of the depthwise convolution's filter.
@@ -36,16 +36,16 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  *
  * @member {number} outputHeight          Output image height.
  * @member {number} outputWidth           Output image width.
- * @member {number} outputDepth           Output image channel count.
- * @member {number} outputElementCount    Output image elements count (= ( outputHeight * outputWidth * outputDepth ) ).
+ * @member {number} outputChannelCount    Output image channel count.
+ * @member {number} outputElementCount    Output image elements count (= ( outputHeight * outputWidth * outputChannelCount ) ).
  */
 let PadInfoCalculator = ( Base = Object ) => class extends Base {
 
-  constructor( inputHeight, inputWidth, inputDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
+  constructor( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
     super();
     this.inputHeight = inputHeight;
     this.inputWidth = inputWidth;
-    this.inputDepth = inputDepth;
+    this.inputChannelCount = inputChannelCount;
     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
     this.filterHeight = filterHeight;
     this.filterWidth = filterWidth;
@@ -105,8 +105,8 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
       }
     }
 
-    this.outputDepth = inputDepth * this.channelMultiplier;
-    this.outputElementCount = ( this.outputHeight * this.outputWidth * this.outputDepth );
+    this.outputChannelCount = inputChannelCount * this.channelMultiplier;
+    this.outputElementCount = ( this.outputHeight * this.outputWidth * this.outputChannelCount );
   }
 
   /**
@@ -124,14 +124,14 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
     }
 
     // Make up a depthwise convolution filter.
-    let depthwiseFiltersArray = new Array( this.filterHeight * this.filterWidth * this.inputDepth * this.channelMultiplier );
+    let depthwiseFiltersArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
 
     // There is only one position (inside the effect depthwise filter) with value one. All other positions of the filter should be zero.
     let oneEffectFilterY = this.padHeightTop;
     let oneEffectFilterX = this.padWidthLeft;
 
     // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
-    for ( let inChannel = 0; inChannel < this.inputDepth; ++inChannel ) {
+    for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
       for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
@@ -146,7 +146,7 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
                 if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                   continue;
 
-                let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputDepth );
+                let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
                 let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
