@@ -471,6 +471,8 @@ class Base {
     Base.AssertTwoEqualValues( "parsing ending position",
       pointDepthPoint.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
+//!!! ...unfinished... (2021/12/23) should assert input/output height and width.
+
     // input tensor parameters.
     asserter.propertyValue( "inChannels0", testParams.out.channelCount0_pointwise1Before );
     asserter.propertyValue( "channelCount1_pointwise1Before", testParams.out.channelCount1_pointwise1Before );
