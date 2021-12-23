@@ -250,10 +250,10 @@ class Base extends TestParams.Base {
    */
   use_pointwise1( inputImage, pointwise1ChannelCount, pointwiseName, parametersDesc ) {
     let result = inputImage.cloneBy_pointwise(
-        pointwise1ChannelCount,
-        this.in.paramsNumberArrayObject.pointwise1Filters, this.out.bPointwise1Bias,
-        this.in.paramsNumberArrayObject.pointwise1Biases, this.out.pointwise1ActivationId,
-        pointwiseName, parametersDesc );
+      pointwise1ChannelCount,
+      this.in.paramsNumberArrayObject.pointwise1Filters, this.out.bPointwise1Bias,
+      this.in.paramsNumberArrayObject.pointwise1Biases, this.out.pointwise1ActivationId,
+      pointwiseName, parametersDesc );
     return result;
   }
 
@@ -324,11 +324,11 @@ class Base extends TestParams.Base {
    */
   use_depthwise2( inputImage, depthwiseName, parametersDesc ) {
     let result = inputImage.cloneBy_depthwise(
-        this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-        this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-        this.in.paramsNumberArrayObject.depthwise2Filters, this.out.bDepthwiseBias,
-        this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId,
-        depthwiseName, parametersDesc );
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+      this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+      this.in.paramsNumberArrayObject.depthwise2Filters, this.out.bDepthwiseBias,
+      this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId,
+      depthwiseName, parametersDesc );
     return result;
   }
 
@@ -342,10 +342,10 @@ class Base extends TestParams.Base {
    */
   use_pointwise21( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
     let result = inputImage.cloneBy_pointwise(
-        pointwise21ChannelCount,
-        this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise21Bias,
-        this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise21ActivationId,
-        pointwiseName, parametersDesc );
+      pointwise21ChannelCount,
+      this.in.paramsNumberArrayObject.pointwise21Filters, this.out.bPointwise21Bias,
+      this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise21ActivationId,
+      pointwiseName, parametersDesc );
     return result;
   }
 
@@ -359,25 +359,59 @@ class Base extends TestParams.Base {
    */
   use_pointwise21( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
     let result = inputImage.cloneBy_pointwise(
-        pointwise22ChannelCount,
-        this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise22Bias,
-        this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise22ActivationId,
-        pointwiseName, parametersDesc );
+      pointwise22ChannelCount,
+      this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise22Bias,
+      this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise22ActivationId,
+      pointwiseName, parametersDesc );
     return result;
   }
 
   /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-4) (ShuffleNetV2_ByMobileNetV1's head). */
-  is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() {
-    if ( this.out.channelCount1_pointwise1Before
-           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
+  channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() {
+    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
       return true;
     return false;
   }
 
   /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-5) (ShuffleNetV2_ByMobileNetV1's body/tail). */
-  is__channelCount1_pointwise1Before__ONE_INPUT_HALF_THROUGH() {
-    if ( this.out.channelCount1_pointwise1Before
-           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+  channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() {
+    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+      return true;
+    return false;
+  }
+
+  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-3) (ShuffleNetV2's body/tail). */
+  channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() {
+    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+      return true;
+    return false;
+  }
+
+  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head)
+   * (simplified)). */
+  channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() {
+    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
+      return true;
+    return false;
+  }
+
+  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (-1) (MobileNetV2). */
+  channelCount1_pointwise1Before__is__ONE_INPUT_ADD_TO_OUTPUT() {
+    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT )
+      return true;
+    return false;
+  }
+
+  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is ( 0) (MobileNetV1 (General Pointwise1-Depthwise1-Pointwise2)). */
+  channelCount1_pointwise1Before__is__ONE_INPUT() {
+    if ( this.out.channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT )
+      return true;
+    return false;
+  }
+
+  /** @return {boolean} Return true if this.out.channelCount1_pointwise1Before is (> 0) (TWO_INPUTS_XXX). */
+  channelCount1_pointwise1Before__is__TWO_INPUTS() {
+    if ( this.out.channelCount1_pointwise1Before > 0 )
       return true;
     return false;
   }
