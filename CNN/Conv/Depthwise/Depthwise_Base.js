@@ -24,21 +24,54 @@ import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
  *   The element value bounds of input, beforeActivation, and output for this depthwise convolution.
  *
  * @member {number} inputHeight
- *   The height of input image. Only used when ( bHigherHalfDifferent == true ). It and inputWidth should be both positive or both not.
- * It is used to create the higher-half-pass-through depthwise filters.
+ *   The height of input image. When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
+ * it will be used to create the higher-half-pass-through depthwise filters.
  *
  * @member {number} inputWidth
- *   The width of input image. Only used when ( bHigherHalfDifferent == true ). It and inputHeight should be both positive or both not.
- * It is used to create the higher-half-pass-through depthwise filters.
+ *   The width of input image. When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
+ * it will be used to create the higher-half-pass-through depthwise filters.
  *
  * @member {number} inputChannelCount_lowerHalf
- *   The lower half channel count of input image. Only used when ( bHigherHalfDifferent == true ). When used, it must be positive integer.
+ *   The lower half channel count of input image. When ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
+ * it will be used and must be a positive integer.
  *
 
-//!!! ...unfinished... (2021/12/23) Depthwise_HigherHalfDifferent instead.
+//!!! (2021/12/23 Remarked) Depthwise_HigherHalfDifferent instead. ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.
+//
+//  * @member {ValueDesc.Depthwise_HigherHalfDifferent} bHigherHalfDifferent
+//  *   - If false, it is just a normal depthwise convolution.
+//  *
+//
+// //!!! ...unfinished... (2021/11/12) What if channel multiplier is 0? is 2?
+//
+//  *   - If true:
+//  *
+//  *     - Can not be used when:
+//  *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
+//  *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier )
+//  *
+//  *     - If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head),
+//  *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are depthwise1, between
+//  *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are depthwise2. These two filters (and biases) will be
+//  *         extracted in sequence, but they will be combined into one larger filters (and biases). This makes these filters' weights
+//  *         are arranged the same as ShuffleNetV2's head. So that the same filters weights could be used in these two architectures
+//  *         for comparing performance and correctness.
+//  *
+//  *     - If ( inputHeight > 0 ) and ( inputWidth > 0 ), (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
+//  *         the filters for the input channels between ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will just pass
+//  *         through the input to output.
+//  *
+//  * @member {boolean} bHigherHalfDepthwise2
+//  *   If ( bHigherHalfDifferent == true ) and ( ( inputHeight <= 0 ) or ( inputWidth <= 0 ) ), this will be true.
+//  *
+//  * @member {boolean} bHigherHalfPassThrough
+//  *   If ( bHigherHalfDifferent == true ) and ( ( inputHeight > 0 ) and ( inputWidth > 0 ) ), this will be true.
 
- * @member {boolean} bHigherHalfDifferent
- *   - If false, it is just a normal depthwise convolution.
+ *
+
+
+ * @member {ValueDesc.Depthwise_HigherHalfDifferent} nHigherHalfDifferent
+ *   - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal depthwise convolution.
  *
 
 //!!! ...unfinished... (2021/11/12) What if channel multiplier is 0? is 2?
@@ -49,23 +82,20 @@ import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
  *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
  *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier )
  *
- *     - If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head),
+ *     - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2 ),
+ *         (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head),
  *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are depthwise1, between
  *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are depthwise2. These two filters (and biases) will be
  *         extracted in sequence, but they will be combined into one larger filters (and biases). This makes these filters' weights
  *         are arranged the same as ShuffleNetV2's head. So that the same filters weights could be used in these two architectures
  *         for comparing performance and correctness.
  *
- *     - If ( inputHeight > 0 ) and ( inputWidth > 0 ), (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
+ *     - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
+ *         (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
  *         the filters for the input channels between ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will just pass
  *         through the input to output.
  *
- * @member {boolean} bHigherHalfDepthwise2
- *   If ( bHigherHalfDifferent == true ) and ( ( inputHeight <= 0 ) or ( inputWidth <= 0 ) ), this will be true.
- *
- * @member {boolean} bHigherHalfPassThrough
- *   If ( bHigherHalfDifferent == true ) and ( ( inputHeight > 0 ) and ( inputWidth > 0 ) ), this will be true.
- *
+
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
@@ -119,7 +149,7 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
 
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
-    bHigherHalfDifferent, inputChannelCount_lowerHalf ) {
+    nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
@@ -136,13 +166,15 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
 
     this.bBias = bBias;
     this.nActivationId = nActivationId;
-    this.bHigherHalfDifferent = bHigherHalfDifferent;
+    this.nHigherHalfDifferent = nHigherHalfDifferent;
     this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
-      
+
+//!!! ...unfinished... (2021/12/23) Depthwise_HigherHalfDifferent instead. ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.
+
       if ( bHigherHalfDifferent ) {
         let msg = `Depthwise.constructor(): `
           + `bHigherHalfDifferent ( ${bHigherHalfDifferent} ) can not be true when `
