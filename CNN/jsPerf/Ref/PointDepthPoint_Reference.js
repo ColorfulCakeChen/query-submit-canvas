@@ -635,8 +635,7 @@ class Base {
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
     //   - ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) (-5)
     //
-    if (   ( testParams.out.channelCount1_pointwise1Before
-               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+    if (   ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() ) // (-3)
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
        ) {
@@ -744,7 +743,7 @@ class Base {
     let depthwise2Result;
 
     // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
-    if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE ) {
+    if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) {
 
       if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
         depthwise2Result = testParams.use_depthwise2( imageIn0, "Depthwise2_for_input0", this.paramsOutDescription ); // depthwise2 apply to input0 (not input1).
