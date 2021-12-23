@@ -812,7 +812,7 @@ class Base {
 //         } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-          imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (already be shrinked by depthwise1).
+          imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (which is past-through by depthwise1).
             pointwise21Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,    // scale-translate for escaping activation of pointwise21.
             "Pointwise21_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
         }
@@ -880,9 +880,9 @@ class Base {
 
       let imageConcat2InArray = Array.from( imageOutArray );
       
-//!!! ...unfinished... (2021/12/22) When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be pre-processed by depthwise.
-// Otherwise, its size may be different from pointwise21Result and can not be concatenated together.
-
+      // Note: When ONE_INPUT_HALF_THROUGH (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), input1 has already been past-through by pointwise1,
+      //       depthwise1 and pointwise21.
+      //
       imageConcat2InArray[ 1 ] = imageIn1; // i.e. input1.
 
       // 5.1 Concat2, shuffle, split.
