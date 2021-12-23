@@ -4,10 +4,6 @@ import * as TwoTensors from "../../util/TwoTensors.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 
-//!!! ...unfinished... (2021/12/07)
-// Problem: Although depthwise (and pointwise) convolution could be past-through, the activation function will destroy the past-through result.
-
-
 //!!! ...unfinished... (2021/12/03) perhaps, provide a pool for DepthwisePassThrough of various size so that needs not regenerate again and again.
 
 
@@ -50,10 +46,10 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Pa
   /**
    */
   constructor(
-    imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias,
-    filterValue = 1, biasValue = 0 ) {
+    inputHeight, inputWidth, inputDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, filterValue = 1, biasValue = 0 ) {
 
-    super( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    super( inputHeight, inputWidth, inputDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
     this.bBias = bBias;
     this.filterValue = filterValue;
@@ -88,11 +84,11 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( PadInfoCalculato
   /**
    */
   constructor(
-    imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias,
-    filterValue = 1, biasValue = 0 ) {
+    inputHeight, inputWidth, inputDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    bBias, filterValue = 1, biasValue = 0 ) {
 
-    super( imageInHeight, imageInWidth, imageInDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias,
-      filterValue, biasValue );
+    super( inputHeight, inputWidth, inputDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, filterValue, biasValue );
 
     this.filtersTensor4d = tf.tensor4d( this.filtersArray, this.filtersShape );
 
