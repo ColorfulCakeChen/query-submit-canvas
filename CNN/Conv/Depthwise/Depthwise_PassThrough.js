@@ -46,10 +46,10 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Pa
   /**
    */
   constructor(
-    inputHeight, inputWidth, inputDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, filterValue = 1, biasValue = 0 ) {
 
-    super( inputHeight, inputWidth, inputDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
     this.bBias = bBias;
     this.filterValue = filterValue;
@@ -84,10 +84,10 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( PadInfoCalculato
   /**
    */
   constructor(
-    inputHeight, inputWidth, inputDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, filterValue = 1, biasValue = 0 ) {
 
-    super( inputHeight, inputWidth, inputDepth, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, filterValue, biasValue );
 
     this.filtersTensor4d = tf.tensor4d( this.filtersArray, this.filtersShape );
