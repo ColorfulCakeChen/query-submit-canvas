@@ -72,10 +72,9 @@ class Pointwise_HigherHalfDifferent extends Int {
 Pointwise_HigherHalfDifferent.Singleton = new Pointwise_HigherHalfDifferent;
 
 
-//!!! ...unfinished... (2021/12/23) Depthwise_HigherHalfDifferent
 /** Describe id, range, name of the processing mode of depthwise convolution's higher half channels.
  *
- * Convert number value into integer between [ 0, 4 ] representing:
+ * Convert number value into integer between [ 0, 2 ] representing:
  *   - 0: NONE
  *   - 1: HIGHER_HALF_DEPTHWISE2
  *   - 2: HIGHER_HALF_PASS_THROUGH
