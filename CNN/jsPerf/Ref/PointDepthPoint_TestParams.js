@@ -113,10 +113,17 @@ class Base extends TestParams.Base {
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
 
-    this.out.depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
-      this.out.inputHeight0, this.out.inputWidth0, this.out.channelCount0_pointwise1Before, 
-      this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
-      this.out.depthwiseStridesPad );
+    if ( !this.out.depthwisePadInfo ) {
+      this.out.depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
+        this.out.inputHeight0, this.out.inputWidth0, this.out.channelCount0_pointwise1Before, 
+        this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
+        this.out.depthwiseStridesPad );
+    } else { // Re-using (instead of re-creating) may improve runtime speed.
+      this.out.depthwisePadInfo.set(
+        this.out.inputHeight0, this.out.inputWidth0, this.out.channelCount0_pointwise1Before, 
+        this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
+        this.out.depthwiseStridesPad );
+    }
 
     return this;
   }
