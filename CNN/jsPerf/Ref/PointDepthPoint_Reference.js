@@ -577,10 +577,7 @@ class Base {
     asserter.propertyValue( "pointwise22ActivationName", pointwise21ActivationName ); // Always same as pointwise21.
 
     {
-      let depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
-        testParams.out.inputHeight0, testParams.out.inputWidth0, testParams.out.channelCount0_pointwise1Before, 
-        testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth,
-        testParams.out.depthwiseStridesPad );
+      let depthwisePadInfo = testParams.create_depthwisePadInfo();
 
       asserter.propertyValue( "outputHeight", depthwisePadInfo.outputHeight );
       asserter.propertyValue( "outputWidth", depthwisePadInfo.outputWidth );
@@ -625,7 +622,7 @@ class Base {
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
        ) {
 
-      tf.util.assert( channelShuffler != null, `PointDepthPoint_Reference.Base.pointDepthPoint_create(): `
+      tf.util.assert( channelShuffler != null, `PointDepthPoint_Reference.Base.calcResult(): `
         + `channelShuffler must NOT null when `
         + `channelCount1_pointwise1Before=`
         + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
@@ -706,6 +703,14 @@ class Base {
       pointwise1Result = imageIn0;
       
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+
+        tf.util.assert( imageIn1 == null, `PointDepthPoint_Reference.Base.calcResult(): `
+          + `imageIn1 must be null when `
+          + `channelCount1_pointwise1Before=`
+          + `${ValueDesc.channelCount1_pointwise1Before.Singleton.getStringOf( testParams.out.channelCount1_pointwise1Before )}`
+          + `(${testParams.out.channelCount1_pointwise1Before}). `
+          + `${this.paramsOutDescription}` );
+
         imageIn1 = imageIn0; // Not input1 but input0.
       }
     }
@@ -780,11 +785,17 @@ class Base {
     }
 
     // 4. Pointwise2
-    let bAddInputToOutputRequested;
+    let bAddInputToOutputRequested = false;
+
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_ADD_TO_OUTPUT() ) { // (-1) MobileNetV2
-      bAddInputToOutputRequested = true;
-    } else {
-      bAddInputToOutputRequested = false;
+
+      let depthwisePadInfo = testParams.create_depthwisePadInfo();
+      if ( depthwisePadInfo.is_Output_Same_HeightWidth_As_Input() ) {
+
+//!!! ...unfinished... (2021/12/24) channel count should be checked.
+
+        bAddInputToOutputRequested = true;
+      }
     }
 
     // 4.1 Pointwise21
