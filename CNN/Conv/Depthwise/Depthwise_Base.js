@@ -253,17 +253,27 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
 
 //!!! ...unfinished... (2021/12/23) Depthwise_HigherHalfDifferent instead. ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.
 
-        if ( this.bHigherHalfDifferent == true ) {
+        switch ( this.nHigherHalfDifferent ) {
+          case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0) 4.0 Normal depthwise convolution.
+            bExtractOk = Base.extractAs_NormalDepthwise.call( this, inputFloat32Array );
+            break;
 
-          if ( ( this.inputHeight <= 0 ) || ( this.inputWidth <= 0 ) ) { // 4.1 i.e. bHigherHalfDepthwise2
+          case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1) 4.1 bHigherHalfDepthwise2
             bExtractOk = Base.extractAs_HigherHalfDepthwise2.call( this, inputFloat32Array );
+            break;
 
-          } else { // 4.2 ( ( this.inputHeight > 0 ) && ( this.inputWidth > 0 ) ), i.e. bHigherHalfPassThrough
+          case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2) 4.2 bHigherHalfPassThrough
             bExtractOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
-          }
+            break;
 
-        } else { // 4.3 Normal depthwise convolution.
-          bExtractOk = Base.extractAs_NormalDepthwise.call( this, inputFloat32Array );
+          default:
+            tf.util.assert( false,
+              `Depthwise.Base.init(): `
+                + `Unknown nHigherHalfDifferent ( {this.nHigherHalfDifferent} ) `
+                + `( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )} ) `
+                + `value.`
+            );
+            break;
         }
       }
     }
@@ -282,7 +292,6 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
 
     // (2021/10/27 Remarked) If these properties does not exist, assigning value (even undefined) to them will create them. This is un-wanted.
     //this.outputChannelCount = this.strides = this.pad
-    //  = this.bHigherHalfDepthwise2 = this.bHigherHalfPassThrough
     //  = this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
     //  = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
     //  = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
@@ -522,6 +531,52 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
   }
 
   /**
+   * Extract filters and biases of normal dethwise convolution from inputFloat32Array.
+   *
+   * The following data members will be used:
+   *   - this.byteOffsetEnd
+   *   - this.filterHeight
+   *   - this.filterWidth
+   *   - this.inputChannelCount
+   *   - this.AvgMax_Or_ChannelMultiplier
+   *
+   * The following data members will be modified:
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *   - this.outputChannelCount
+   *   - this.inputChannelCount_toBeExtracted
+   *   - this.outputChannelCount_toBeExtracted
+   *   - this.filtersTensor4d
+   *   - this.biasesTensor3d
+   *
+   * @param {Base} this                       The Base object to be modified.
+   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+   *
+   * @return {boolean}                        Return true, if succeeded. Return false, if failed.
+   */
+  static extractAs_NormalDepthwise( inputFloat32Array ) {
+
+    this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+
+    this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+    this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+    this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array,
+      this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
+
+    if ( !this.filtersTensor4d )
+      return false;
+
+    if ( this.bBias ) {
+      this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
+      if ( !this.biasesTensor3d )
+        return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Extract filters and biases of HigherHalfDepthwise2 from inputFloat32Array.
    *
    * The following data members will be used:
@@ -547,8 +602,6 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
    * @return {boolean}                        Return true, if succeeded. Return false, if failed.
    */
   static extractAs_HigherHalfDepthwise2( inputFloat32Array ) {
-
-    this.bHigherHalfDepthwise2 = true;
 
     this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
@@ -658,8 +711,6 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
    */
   static extractAs_HigherHalfPassThrough( inputFloat32Array ) {
 
-    this.bHigherHalfPassThrough = true;
-
     this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
     tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ),
@@ -733,52 +784,6 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
         higherHalfPassThrough.disposeTensors();
       }
 
-    }
-
-    return true;
-  }
-
-  /**
-   * Extract filters and biases of normal dethwise convolution from inputFloat32Array.
-   *
-   * The following data members will be used:
-   *   - this.byteOffsetEnd
-   *   - this.filterHeight
-   *   - this.filterWidth
-   *   - this.inputChannelCount
-   *   - this.AvgMax_Or_ChannelMultiplier
-   *
-   * The following data members will be modified:
-   *   - this.byteOffsetEnd
-   *   - this.tensorWeightCountExtracted
-   *   - this.outputChannelCount
-   *   - this.inputChannelCount_toBeExtracted
-   *   - this.outputChannelCount_toBeExtracted
-   *   - this.filtersTensor4d
-   *   - this.biasesTensor3d
-   *
-   * @param {Base} this                       The Base object to be modified.
-   * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
-   *
-   * @return {boolean}                        Return true, if succeeded. Return false, if failed.
-   */
-  static extractAs_NormalDepthwise( inputFloat32Array ) {
-
-    this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
-
-    this.inputChannelCount_toBeExtracted = this.inputChannelCount;
-    this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-
-    this.filtersTensor4d = Base.extractFilters.call( this, inputFloat32Array,
-      this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.AvgMax_Or_ChannelMultiplier );
-
-    if ( !this.filtersTensor4d )
-      return false;
-
-    if ( this.bBias ) {
-      this.biasesTensor3d = Base.extractBiases.call( this, inputFloat32Array, this.outputChannelCount_toBeExtracted );
-      if ( !this.biasesTensor3d )
-        return false;
     }
 
     return true;
