@@ -119,7 +119,15 @@ class Base extends TestParams.Base {
   /**
    * @override
    */
-  onBefore_Yield() {
+  onYield_isLegal() {
+//!!! ...unfinished... (2021/12/24)
+    return true;
+  }
+  
+  /**
+   * @override
+   */
+  onYield_before() {
     // For testing not start at the offset 0.
     let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
 
@@ -129,7 +137,7 @@ class Base extends TestParams.Base {
   /**
    * @override
    */
-  onAfter_Yield() {
+  onYield_after() {
   }
 
   /**
