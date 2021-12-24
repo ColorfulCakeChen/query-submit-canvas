@@ -153,10 +153,17 @@ class Base {
   /**
    * Similiar to this.getTensor3d_by() but does not consider depthwise_AvgMax_Or_ChannelMultiplier.
    */
-  static internal_getTensor3d_by( channelCount, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
+  static internal_getTensor3d_by(
+    originalHeight, originalWidth, channelCount, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
+
+    let tensorsBy_originalWidth_channelCount_filterHeight_filterWidth_stridesPad
+      = MapTools.get_or_create( this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad, originalHeight );
+
+    let tensorsBy_channelCount_filterHeight_filterWidth_stridesPad
+      = MapTools.get_or_create( tensorsBy_originalWidth_channelCount_filterHeight_filterWidth_stridesPad, originalWidth );
 
     let tensorsBy_filterHeight_filterWidth_stridesPad
-      = MapTools.get_or_create( this.tensorsBy_channelCount_filterHeight_filterWidth_stridesPad, channelCount );
+      = MapTools.get_or_create( tensorsBy_channelCount_filterHeight_filterWidth_stridesPad, channelCount );
 
     let tensorsBy_filterWidth_stridesPad = MapTools.get_or_create( tensorsBy_filterHeight_filterWidth_stridesPad, depthwiseFilterHeight );
     let tensorsBy_stridesPad = MapTools.get_or_create( tensorsBy_filterWidth_stridesPad, depthwiseFilterWidth );
@@ -166,24 +173,27 @@ class Base {
       return tensor; // 1. The requested tensor has already been created. Re-use it. Return it directly.
 
     // 2. Create new tensor according to its corresponding image.
-    let image = Base.internal_getImage_by.call( this, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+    let image = Base.internal_getImage_by.call( this,
+      originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+
     let shape = [ image.height, image.width, image.depth ];
     tensor = tf.tensor3d( image.dataArray, shape ); // Create new tensor of specified specification.
 
     tensorsBy_stridesPad.set( depthwiseStridesPad, tensor ); // Cache it.
-
     return tensor;
   }
 
   /** Release all tensors. */
   disposeTensors() {
-    if ( this.tensorsBy_channelCount_filterHeight_filterWidth_stridesPad ) {
+    if ( this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad ) {
 
-      for ( let tensor of MapTools.values_recursively( this.tensorsBy_channelCount_filterHeight_filterWidth_stridesPad ) ) {
+      for ( let tensor
+        of MapTools.values_recursively( this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad ) ) {
+
         tensor.dispose();
       }
 
-      this.tensorsBy_channelCount_filterHeight_filterWidth_stridesPad.clear();
+      this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad.clear();
     }
   }
 
