@@ -1426,8 +1426,8 @@ class Base extends ReturnOrClone.Base {
     let str = ``
       + `inputTensorCount=${this.inputTensorCount}, `
 
-      + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
       + `inputHeight0=${this.inputHeight0}, inputWidth0=${this.inputWidth0}, `
+      + `inChannels0=${this.inChannels0}, inChannels1=${this.inChannels1}, `
 
       + `outputHeight=${this.outputHeight}, outputWidth=${this.outputWidth}, `
       + `outChannels0=${this.outChannels0}, outChannels1=${this.outChannels1}, outChannelsAll=${this.outChannelsAll}, `
