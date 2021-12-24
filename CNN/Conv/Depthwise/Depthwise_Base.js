@@ -8,7 +8,7 @@ import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 import { PassThrough } from "./Depthwise_PassThrough.js";
 import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
-  
+
 /**
  * Handle depthwise convolution, bias and activation.
  *
@@ -317,29 +317,30 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
     return this.bDepthwise;
   }
 
-  /**
-   * @return {boolean}
-   *   If the ( height, width ) of this depthwise operation output is the same as its input, return true.
-   */
-  is_Output_Same_HeightWidth_As_Input() {
-
-    // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
-    // In fact, they are the same one in this case.
-    if ( !this.bDepthwise )
-      return true;
-
-    if ( this.strides != 1 )
-      return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
-
-    if ( this.pad == "same" )
-      return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
-
-    // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same ( height, width ) as input.
-    if ( ( this.pad == "valid" ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
-      return true;
-
-    return false;
-  }
+//!!! (2021/12/24 Remarked) Moved to parent class.
+//   /**
+//    * @return {boolean}
+//    *   If the ( height, width ) of this depthwise operation output is the same as its input, return true.
+//    */
+//   is_Output_Same_HeightWidth_As_Input() {
+//
+//     // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
+//     // In fact, they are the same one in this case.
+//     if ( !this.bDepthwise )
+//       return true;
+//
+//     if ( this.strides != 1 )
+//       return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
+//
+//     if ( this.pad == "same" )
+//       return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
+//
+//     // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same ( height, width ) as input.
+//     if ( ( this.pad == "valid" ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
+//       return true;
+//
+//     return false;
+//   }
 
   /** Determine this.bDepthwiseXxx and this.pfnXxx data members.
    *
