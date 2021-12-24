@@ -35,41 +35,6 @@ import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
  *   The lower half channel count of input image. When ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
  * it will be used and must be a positive integer.
  *
-
-//!!! (2021/12/23 Remarked) Depthwise_HigherHalfDifferent instead. ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.
-//
-//  * @member {ValueDesc.Depthwise_HigherHalfDifferent} bHigherHalfDifferent
-//  *   - If false, it is just a normal depthwise convolution.
-//  *
-//
-// //!!! ...unfinished... (2021/11/12) What if channel multiplier is 0? is 2?
-//
-//  *   - If true:
-//  *
-//  *     - Can not be used when:
-//  *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
-//  *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier )
-//  *
-//  *     - If ( inputHeight <= 0 ) or ( inputWidth <= 0 ), (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head),
-//  *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are depthwise1, between
-//  *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are depthwise2. These two filters (and biases) will be
-//  *         extracted in sequence, but they will be combined into one larger filters (and biases). This makes these filters' weights
-//  *         are arranged the same as ShuffleNetV2's head. So that the same filters weights could be used in these two architectures
-//  *         for comparing performance and correctness.
-//  *
-//  *     - If ( inputHeight > 0 ) and ( inputWidth > 0 ), (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
-//  *         the filters for the input channels between ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will just pass
-//  *         through the input to output.
-//  *
-//  * @member {boolean} bHigherHalfDepthwise2
-//  *   If ( bHigherHalfDifferent == true ) and ( ( inputHeight <= 0 ) or ( inputWidth <= 0 ) ), this will be true.
-//  *
-//  * @member {boolean} bHigherHalfPassThrough
-//  *   If ( bHigherHalfDifferent == true ) and ( ( inputHeight > 0 ) and ( inputWidth > 0 ) ), this will be true.
-
- *
-
-
  * @member {ValueDesc.Depthwise_HigherHalfDifferent} nHigherHalfDifferent
  *   - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal depthwise convolution.
  *
@@ -95,7 +60,6 @@ import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
  *         the filters for the input channels between ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will just pass
  *         through the input to output.
  *
-
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
@@ -138,15 +102,9 @@ import { ValueBoundsSet } from "./Depthwise_ValueBoundsSet.js";
  */
 class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Activation.Base ) ) {
 
-//!!! ...unfinished... (2021/12/23) PadInfoCalculator constructor needs parameters.
-
   /**
    */
   constructor(
-//!!! (2021/12/23 Remarked)
-//     inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, bBias, nActivationId,
-//     bHigherHalfDifferent, inputHeight, inputWidth, inputChannelCount_lowerHalf ) {
-
     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
@@ -154,16 +112,6 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
     this.valueBoundsSet = new ValueBoundsSet();
-
-//!!! (2021/12/23 Remarked) already in super class.
-//     this.inputHeight = inputHeight;
-//     this.inputWidth = inputWidth;
-//     this.inputChannelCount = inputChannelCount;
-//     this.AvgMax_Or_ChannelMultiplier = AvgMax_Or_ChannelMultiplier;
-//     this.filterHeight = filterHeight;
-//     this.filterWidth = filterWidth;
-//     this.stridesPad = stridesPad;
-
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nHigherHalfDifferent = nHigherHalfDifferent;
@@ -184,20 +132,11 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
       }
     }
 
-//!!! (2021/12/23 Remarked) no longer used condition.
-//     tf.util.assert( ( this.inputHeight > 0 ) == ( this.inputWidth > 0 ),
-//       `Depthwise.Base.constructor(): `
-//         + `inputHeight ( ${this.inputHeight} ) and `
-//         + `inputWidth ( ${this.inputWidth} ) `
-//         + `should be both positive or both not.`
-//     );
-
     tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
       `Depthwise.Base.constructor(): `
         + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
         + `inputChannelCount ( ${this.inputChannelCount} ).`
     );
-
   }
 
   /**
@@ -250,8 +189,6 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
         bExtractOk = Base.extractAs_AvgMaxPooling.call( this, inputFloat32Array );
 
       } else if ( this.bDepthwiseConv ) { // 4. Depthwise by convolution (with channel multiplier).
-
-//!!! ...unfinished... (2021/12/23) Depthwise_HigherHalfDifferent instead. ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.
 
         switch ( this.nHigherHalfDifferent ) {
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0) 4.0 Normal depthwise convolution.
