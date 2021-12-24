@@ -162,7 +162,14 @@ class Base extends TestParams.Base {
   /**
    * @override
    */
-  onBefore_Yield() {
+  onYield_isLegal() {
+    return true;
+  }
+
+  /**
+   * @override
+   */
+  onYield_before() {
 
     // For testing not start at the offset 0.
     let weightsElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
@@ -173,7 +180,7 @@ class Base extends TestParams.Base {
   /**
    * @override
    */
-  onAfter_Yield() {
+  onYield_after() {
     this.stepsArray.length = 0; // Clear steps' parameters.
   }
 
