@@ -485,8 +485,6 @@ class Base {
     Base.AssertTwoEqualValues( "parsing ending position",
       pointDepthPoint.byteOffsetEnd, testParams.in.inputFloat32Array.byteLength, parametersDescription );
 
-//!!! ...unfinished... (2021/12/23) should assert input/output height and width.
-
     // input tensor parameters.
     asserter.propertyValue( "inputHeight0", testParams.out.inputHeight0 );
     asserter.propertyValue( "inputWidth0", testParams.out.inputWidth0 );
@@ -619,6 +617,16 @@ class Base {
     asserter.propertyValue( "bPointwise22Bias", testParams.out.bPointwise21Bias ); // Always same as pointwise21.
     asserter.propertyValue( "pointwise22ActivationId", testParams.out.pointwise21ActivationId ); // Always same as pointwise21.
     asserter.propertyValue( "pointwise22ActivationName", pointwise21ActivationName ); // Always same as pointwise21.
+
+    {
+      let depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
+        testParams.out.inputHeight0, testParams.out.inputWidth0, testParams.out.channelCount0_pointwise1Before, 
+        testParams.out.depthwise_AvgMax_Or_ChannelMultiplier, testParams.out.depthwiseFilterHeight, testParams.out.depthwiseFilterWidth,
+        testParams.out.depthwiseStridesPad );
+
+      asserter.propertyValue( "outputHeight", depthwisePadInfo.outputHeight );
+      asserter.propertyValue( "outputWidth", depthwisePadInfo.outputWidth );
+    }
 
     // Other parameters.
     asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
