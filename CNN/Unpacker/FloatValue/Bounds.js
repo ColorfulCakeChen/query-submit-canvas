@@ -1,5 +1,6 @@
 export { Bounds };
 
+import { ScaleTranslate } from "./ScaleTranslate.js";
 
 /**
  * Describe the [ lower, upper ] bounds of a floating-point value
@@ -161,6 +162,17 @@ class Bounds {
    */
   multiply_Bounds_multiply_N( aBounds, N ) {
     return this.multiply_Bounds( aBounds ).multiply_N( N );
+  }
+
+  /**
+   * @param {ScaleTranslate} aScaleTranslate
+   *   Multiply this Bounds by aScaleTranslate.scale, and then add this Bounds by aScaleTranslate.translate.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object which is the same as this.multiply_N( aScaleTranslate.scale ).add_N( aScaleTranslate.translate ).
+   */
+  apply_ScaleTranslate( aScaleTranslate ) {
+    return this.multiply_N( aScaleTranslate.scale ).add_N( aScaleTranslate.translate );
   }
 
   /**
