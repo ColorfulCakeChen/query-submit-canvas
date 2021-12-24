@@ -436,6 +436,7 @@ class Base {
 
     // Initialize successfully or failed.
     let extractedParams = new PointDepthPoint.Params( testParams.in.inputFloat32Array, testParams.in.byteOffsetBegin,
+      testParams.in.inputHeight0, testParams.in.inputWidth0,
       testParams.in.channelCount0_pointwise1Before, testParams.in.channelCount1_pointwise1Before,
       testParams.in.pointwise1ChannelCount, testParams.in.bPointwise1Bias, testParams.in.pointwise1ActivationId,
       testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
@@ -487,6 +488,9 @@ class Base {
 //!!! ...unfinished... (2021/12/23) should assert input/output height and width.
 
     // input tensor parameters.
+    asserter.propertyValue( "inputHeight0", testParams.out.inputHeight0 );
+    asserter.propertyValue( "inputWidth0", testParams.out.inputWidth0 );
+
     asserter.propertyValue( "inChannels0", testParams.out.channelCount0_pointwise1Before );
     asserter.propertyValue( "channelCount1_pointwise1Before", testParams.out.channelCount1_pointwise1Before );
 
