@@ -144,8 +144,15 @@ class Base extends TestParams.Base {
       if ( ( this.out.channelCount0_pointwise1Before % 2 ) != 0 )
         return;
 
-      if ( ( this.out.pointwise1ChannelCount % 2 ) != 0 )
+//!!! (2021/12/24 Remarked) seems should check pointwise21ChannelCount (not pointwise1ChannelCount).
+//       if ( ( this.out.pointwise1ChannelCount % 2 ) != 0 )
+//         return;
+      if ( ( this.out.pointwise21ChannelCount % 2 ) != 0 )
         return;
+
+//!!! ...untested... (2021/12/24)
+      if ( this.out.channelCount0_pointwise1Before != this.out.pointwise21ChannelCount )
+        return; // The concat2-split-shuffle could not operate properly.
     }
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
