@@ -83,11 +83,22 @@ class Bounds {
    */
   add_LowerUpper( aLower, aUpper ) {
     // Confirm the lower and upper. And then, add corresponds.
-    let lower_lower = Math.min( this.lower, this.upper ) + Math.min( aLower, aUpper );
-    let upper_upper = Math.max( this.lower, this.upper ) + Math.max( aLower, aUpper );
-    this.lower = lower_lower;
-    this.upper = upper_upper;
+    let thisLower = Math.min( this.lower, this.upper );
+    let thisUpper = Math.max( this.lower, this.upper );
+    this.lower = thisLower + Math.min( aLower, aUpper );
+    this.upper = thisUpper + Math.max( aLower, aUpper );
     return this;
+  }
+
+  /**
+   * @param {number} N
+   *   Add this Bounds.lower by N, and also add this Bounds.upper by N.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object which is the same as this.add_LowerUpper( N, N ).
+   */
+  add_N( N ) {
+    return this.add_LowerUpper( N, N );
   }
 
   /**
