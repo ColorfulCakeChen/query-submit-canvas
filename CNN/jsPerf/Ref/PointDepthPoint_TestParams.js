@@ -139,7 +139,7 @@ class Base extends TestParams.Base {
     // the concat-shuffle-split can not work.
     //
     // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() should already double them in this case. 
-    if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5)
+    if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
       if ( ( this.out.channelCount0_pointwise1Before % 2 ) != 0 )
         return;
