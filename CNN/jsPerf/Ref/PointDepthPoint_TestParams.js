@@ -169,7 +169,7 @@ class Base extends TestParams.Base {
 //       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
        ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
-      inputHeight0: [ 3 ],
+      inputHeight0: [ 3, 3 ],
       inputWidth0: [ 4, 5 ],
 
       channelCount0_pointwise1Before: [
