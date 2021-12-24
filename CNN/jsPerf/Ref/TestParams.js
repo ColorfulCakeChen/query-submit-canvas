@@ -233,10 +233,11 @@ class Base {
     if ( currentParamDescConfigIndex >= this.config.paramDescConfigArray.length ) {
       // All parameters are used to be composed as one kind of combination.
 
-      ++this.id;  // Complete one kind of combination.
-
       let bLegalToYield = this.onYield_isLegal();
       if ( bLegalToYield ) {
+
+        ++this.id;  // Complete one kind of combination.
+
         this.onYield_before();
         yield this;
         this.onYield_after();
