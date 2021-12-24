@@ -704,6 +704,10 @@ class Base {
 
     } else {
       pointwise1Result = imageIn0;
+      
+      if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        imageIn1 = imageIn0; // Not input1 but input0.
+      }
     }
 
     // 2. Depthwise
