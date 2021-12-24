@@ -240,54 +240,6 @@ class Base {
   testCorrectness( imageSourceBag, testParams, channelShufflerPool ) {
     this.testParams = testParams;
 
-    // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
-    //
-    // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting may still work but
-    // the concat-shuffle-split can not work.
-    //
-    // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() should already double them in this case. 
-    if ( testParams.out.channelCount1_pointwise1Before
-           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
-
-      if ( ( testParams.out.channelCount0_pointwise1Before % 2 ) != 0 )
-        return;
-
-      if ( ( testParams.out.pointwise1ChannelCount % 2 ) != 0 )
-        return;
-    }
-
-    // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
-    switch ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
-      case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
-      case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
-
-        switch ( testParams.out.channelCount1_pointwise1Before ) { // bHigherHalfDifferent
-          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
-            return;
-            break;
-        }
-    }
-
-    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
-    //
-    // Note: When pad is "same", this restriction does not exist.
-    if ( 0 == testParams.out.depthwiseStridesPad ) {
-
-// //!!! (2021/12/24 Remarked) Compare separately.
-//       let depthwiseFilterMaxSize = Math.min( testParams.out.inputHeight0, testParams.out.inputWidth0 );
-//
-//       if (   ( testParams.out.depthwiseFilterHeight > depthwiseFilterMaxSize )
-//           || ( testParams.out.depthwiseFilterWidth > depthwiseFilterMaxSize ) )
-//         return;
-
-      if (   ( testParams.out.depthwiseFilterHeight > testParams.out.inputHeight0 )
-          || ( testParams.out.depthwiseFilterWidth  > testParams.out.inputWidth0  ) )
-        return;
-
-    // Otherwise, when pad is "same", it should test more filter size.
-    }
-
     try {
       this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerPool );
 
