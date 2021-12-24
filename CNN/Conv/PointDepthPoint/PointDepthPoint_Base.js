@@ -484,7 +484,7 @@ class Base extends ReturnOrClone.Base {
 
     // 3.1 The depthwise1 operation.
 
-    let inputHeight_depthwise1 = -1, inputWidth_depthwise1 = -1;
+    let nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
     let inputChannelCount_lowerHalf_depthwise1 = -1; // In general case, depthwise1 needs not them.
 
     if ( this.bHigherHalfDifferent == true ) {
@@ -495,26 +495,22 @@ class Base extends ReturnOrClone.Base {
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
       // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
-        // Nothing more needs to be specified.
+        nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2;
 
       // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
       //
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5) )
       // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
       } else {
-
-//!!! ...unfinished... (2021/12/23) Wrong! The ( height, width ) of channel-shuffler is shrinked. It is not the size of the original input0.
-
-        inputHeight_depthwise1 = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ];
-        inputWidth_depthwise1 = channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ];
+        nHigherHalfDifferent_depthwise1 = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
       }
     }
 
     this.depthwise1 = new Depthwise.Base(
-      this.channelCount_pointwise1After_depthwise1Before,
+      this.inputHeight0, this.inputWidth0, this.channelCount_pointwise1After_depthwise1Before,
       this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
-      this.bHigherHalfDifferent, inputHeight_depthwise1, inputWidth_depthwise1, inputChannelCount_lowerHalf_depthwise1
+      nHigherHalfDifferent_depthwise1, inputChannelCount_lowerHalf_depthwise1
     );
 
     if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.valueBoundsSet ) )
@@ -541,6 +537,7 @@ class Base extends ReturnOrClone.Base {
       // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
       //    true for StridesPad.
       this.depthwise2 = new Depthwise.Base(
+        this.inputHeight0, this.inputWidth0,
 
         // The depthwise2 processes the inputTensors[ 0 ] directly (i.e. not the pointwise1 result of inputTensors[ 0 ], and
         // not inputTensors[ 1 ]).
@@ -549,7 +546,7 @@ class Base extends ReturnOrClone.Base {
         this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
         this.depthwiseStridesPad, this.bDepthwiseBias, this.depthwiseActivationId,
 
-        false, -1, -1, -1 // depthwise2 never has higher-half-different.
+        ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, -1 // depthwise2 never has higher-half-different.
       );
 
       if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.valueBoundsSet ) )
