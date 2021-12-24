@@ -110,6 +110,30 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
   }
 
   /**
+   * @return {boolean}
+   *   If the ( height, width ) of this depthwise operation output is the same as its input, return true.
+   */
+  is_Output_Same_HeightWidth_As_Input() {
+
+    // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
+    // In fact, they are the same one in this case.
+    if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === this.AvgMax_Or_ChannelMultiplier )
+      return true;
+
+    if ( this.strides != 1 )
+      return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
+
+    if ( this.pad == "same" )
+      return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
+
+    // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same ( height, width ) as input.
+    if ( ( this.pad == "valid" ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
+      return true;
+
+    return false;
+  }
+
+  /**
    * @param {number} filterValue
    *   The (non-zero) value used in the pass-through depthwise convolution filter. Default is 1.
    *
