@@ -89,6 +89,25 @@ class Base {
   }
 
   /**
+   * Called by permuteParamRecursively() before onYield_before() is called.
+   *
+   * The the following data should already be ready:
+   *   - this.id
+   *   - this.in.paramsNumberArrayObject: Every should-be-packed parameter.
+   *   - this.in.Xxx: every non-packed parameter.
+   *   - this.out.Xxx: every parameter.
+   *
+   * Sub-class should override this method.
+   *
+   * @return {boolean}
+   *   If return true, the onYield_before() will be called. If return false, it mean this configuration is illegal so that there
+   * is no yield will be done (i.e. onYield_before() and onYield_after() will not be called).
+   */
+  onYield_isLegal() {
+    return true;
+  }
+
+  /**
    * Called by permuteParamRecursively() when a combination of parameters is complete and before this object to be yielded.
    *
    * The the following data should already be ready:
@@ -103,7 +122,7 @@ class Base {
    *
    * Sub-class should override this method.
    */
-  onBefore_Yield() {
+  onYield_before() {
   }
 
   /**
@@ -113,7 +132,7 @@ class Base {
    *
    * Sub-class should override this method.
    */
-  onAfter_Yield() {
+  onYield_after() {
   }
 
   /**
@@ -216,10 +235,13 @@ class Base {
 
       ++this.id;  // Complete one kind of combination.
 
-      this.onBefore_Yield();
-      yield this;
-      this.onAfter_Yield();
-      this.restoreParamValues(); // Restore this object because onBefore_Yield() may modify it.
+      let bLegalToYield = this.onYield_isLegal();
+      if ( bLegalToYield ) {
+        this.onYield_before();
+        yield this;
+        this.onYield_after();
+        this.restoreParamValues(); // Restore this object because onYield_before() may modify it.
+      }
 
       return; // Stop this recusive. Back-track to another parameters combination.
     }
