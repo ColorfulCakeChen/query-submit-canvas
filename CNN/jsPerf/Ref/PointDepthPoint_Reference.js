@@ -92,8 +92,8 @@ class TestCorrectnessInfo {
           let outputGroupCount = 2; // Only use two convolution groups.
 
           let concatenatedDepth;
-          if ( this.input1ChannelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
-            concatenatedDepth = ( this.input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
+          if ( input1ChannelCount > 0 ) { // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: // (-3)
+            concatenatedDepth = ( input1ChannelCount * outputGroupCount ); // Always twice as input1's channel count.
 
           } else { // ( input1ChannelCount == 0 )
             // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
