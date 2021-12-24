@@ -139,8 +139,7 @@ class Base extends TestParams.Base {
     // the concat-shuffle-split can not work.
     //
     // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() should already double them in this case. 
-    if ( this.out.channelCount1_pointwise1Before
-           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+    if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5)
 
       if ( ( this.out.channelCount0_pointwise1Before % 2 ) != 0 )
         return;
@@ -630,8 +629,7 @@ class Base extends TestParams.Base {
     //
     // The reason is that PointDepthPoint will only extract filters weights of half the above parameters in this case.
     //
-    if ( ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-             == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+    if ( ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
        ) {
       this.doubleParamValue( PointDepthPoint.Params.channelCount0_pointwise1Before );
 
@@ -670,10 +668,8 @@ class Base extends TestParams.Base {
     let depthwise2;
     {
       // In ShuffleNetV2's head.
-      if (   ( paramsAll.channelCount1_pointwise1Before // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
-                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
-          || ( paramsAll.channelCount1_pointwise1Before // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
+      if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
+          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
          ) {
         depthwise2 = Base.generate_depthwise_filters_biases( paramsAll.channelCount0_pointwise1Before, // Use input0.
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
@@ -691,10 +687,8 @@ class Base extends TestParams.Base {
     // Concat
     let pointwise2_inputChannelCount = depthwise1.outputChannelCount;
     {
-      if (   ( paramsAll.channelCount1_pointwise1Before // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
-                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_TWO_DEPTHWISE )
-          || ( paramsAll.channelCount1_pointwise1Before // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-                 == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
+      if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
+          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
          ) {
         pointwise2_inputChannelCount += depthwise2.outputChannelCount; // Add the channel count of the branch of the first input image.
 
@@ -716,10 +710,8 @@ class Base extends TestParams.Base {
       let pointwise22ChannelCount;
 
       // In ShuffleNetV2's body/tail, there is always no pointwise22.
-      if (   ( paramsAll.channelCount1_pointwise1Before // (-3) (ShuffleNetV2's body/tail)
-                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
-          || ( paramsAll.channelCount1_pointwise1Before // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+      if (   ( this.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() ) // (-3) (ShuffleNetV2's body/tail)
+          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
          ) {
         pointwise22ChannelCount = 0;
 
