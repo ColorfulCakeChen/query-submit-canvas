@@ -145,13 +145,13 @@ class Base extends TestParams.Base {
 //     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 //
 //       if ( ( this.out.channelCount0_pointwise1Before % 2 ) != 0 )
-//         return;
+//         return false;
 //
 // //!!! (2021/12/24 Remarked) seems should check pointwise21ChannelCount (not pointwise1ChannelCount).
 // //       if ( ( this.out.pointwise1ChannelCount % 2 ) != 0 )
-// //         return;
+// //         return false;
 //       if ( ( this.out.pointwise21ChannelCount % 2 ) != 0 )
-//         return;
+//         return false;
 //     }
 
 //!!! ...untested... (2021/12/24)
@@ -159,7 +159,7 @@ class Base extends TestParams.Base {
     // could not operate properly.
     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
       if ( this.out.channelCount0_pointwise1Before != this.out.pointwise21ChannelCount )
-        return;
+        return false;
     }
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
