@@ -43,6 +43,13 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
 
   constructor( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
     super();
+    this.set( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+  }
+
+  /**
+   *
+   */
+  set( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
     this.inputHeight = inputHeight;
     this.inputWidth = inputWidth;
     this.inputChannelCount = inputChannelCount;
