@@ -354,7 +354,7 @@ class Base {
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of adding this and another.
    */
-  cloneBy_add( bAddInputToOutput, another, addInputToOutputName, parametersDesc ) {
+  cloneBy_add( another, addInputToOutputName, parametersDesc ) {
 
     // If the output dimensions ( height, width, depth ) is not the same as input, it is impossible to add-input-to-output.
     {
