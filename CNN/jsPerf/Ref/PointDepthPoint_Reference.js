@@ -1241,6 +1241,7 @@ class Base {
     let paramsOutDescription =
         `inputTensorCount=${flags.inputTensorCount}, `
 
+      + `inputHeight0=${testParams.out.inputHeight0}, inputWidth0=${testParams.out.inputWidth0}, `
       + `inChannels0=${testParams.out.channelCount0_pointwise1Before}, inChannels1=${flags.input1ChannelCount}, `
 
       + `channelCount1_pointwise1Before_Name=`
