@@ -269,6 +269,19 @@ class Base {
         }
     }
 
+    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
+    //
+    // Note: When pad is "same", this restriction does not exist.
+    if ( 0 == testParams.out.depthwiseStridesPad ) {
+      let depthwiseFilterMaxSize = Math.min( testParams.out.inputHeight0, testParams.out.inputWidth0 );
+
+      if (   ( testParams.out.depthwiseFilterHeight > depthwiseFilterMaxSize )
+          || ( testParams.out.depthwiseFilterWidth > depthwiseFilterMaxSize ) )
+        return;
+  
+    // Otherwise, when pad is "same", it should test more filter size.
+    }
+
     try {
       this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerPool );
 
