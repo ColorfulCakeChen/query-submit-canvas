@@ -14,22 +14,24 @@ import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
 class Base {
 
   /**
-   * @param {number} originalHeight The original image's height.
-   * @param {number} originalWidth  The original image's width.
    */
-  constructor( originalHeight, originalWidth ) {
-    this.originalHeight = originalHeight;
-    this.originalWidth = originalWidth;
+  constructor() {
 
-    // Images indexed by [ channelCount, filterHeight, filterWidth, stridesPad ].
-    this.imagesBy_channelCount_filterHeight_filterWidth_stridesPad = new Map();
-    this.tensorsBy_channelCount_filterHeight_filterWidth_stridesPad = new Map();
+    // Images indexed by [ originalHeight, originalWidth, channelCount, filterHeight, filterWidth, stridesPad ].
+    this.imagesBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad = new Map();
+    this.tensorsBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad = new Map();
   }
 
   /**
    * If ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ) and ( depthwiseStridesPad == 0 ), the original image will be
    * returned. The original image has the size ( originalHeight, originalWidth, channelCount ). Its value is generated randomly.
    *
+   *
+   * @param {number} originalHeight
+   *   A positive integer which represents the returned image's original height.
+   *
+   * @param {number} originalWidth
+   *   A positive integer which represents the returned image's original width.
    *
    * @param {number} channelCount
    *   A positive integer which represents the returned image's depth.
@@ -54,18 +56,21 @@ class Base {
    *   Return an image data with the specified specification.
    */
   getImage_by(
-    channelCount, depthwise_AvgMax_Or_ChannelMultiplier = 0, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
+    originalHeight, originalWidth, channelCount,
+    depthwise_AvgMax_Or_ChannelMultiplier = 0, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
 
     // 1. When no depthwise operation, the original image is returned directly (i.e. will not be shrinked).
     //
     // Because there is not depthwise operation, there is not possible to shrink.
     if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
-      let originalImage = Base.internal_getImage_by.call( this, channelCount );
+      let originalImage = Base.internal_getImage_by.call( this, originalHeight, originalWidth, channelCount );
       return originalImage;
     }
 
     // 2. Otherwise, return image which is adjusted by depthwise operation.
-    let image = Base.internal_getImage_by.call( this, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+    let image = Base.internal_getImage_by.call( this,
+      originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+
     return image;
   }
 
@@ -75,28 +80,37 @@ class Base {
    *   Return a tensor with the specified specification.
    */
   getTensor3d_by(
-    channelCount, depthwise_AvgMax_Or_ChannelMultiplier = 0, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
+    originalHeight, originalWidth, channelCount,
+    depthwise_AvgMax_Or_ChannelMultiplier = 0, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
 
     // 1. When no depthwise operation, the original image's tensor is returned directly (i.e. will not be shrinked).
     //
     // Because there is not depthwise operation, there is not possible to shrink.
     if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
-      let originalTensor = Base.internal_getTensor3d_by.call( this, channelCount );
+      let originalTensor = Base.internal_getTensor3d_by.call( this, originalHeight, originalWidth, channelCount );
       return originalTensor;
     }
 
     // 2. Otherwise, return image tensor which is adjusted by depthwise operation.
-    let tensor = Base.internal_getTensor3d_by.call( this, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+    let tensor = Base.internal_getTensor3d_by.call( this,
+      originalHeight, originalWidth, channelCount, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
     return tensor;
   }
 
   /**
    * Similiar to this.getImage_by() but does not consider depthwise_AvgMax_Or_ChannelMultiplier.
    */
-  static internal_getImage_by( channelCount, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
+  static internal_getImage_by(
+    originalHeight, originalWidth, channelCount, depthwiseFilterHeight = 1, depthwiseFilterWidth = 1, depthwiseStridesPad = 0 ) {
+
+    let imagesBy_originalWidth_channelCount_filterHeight_filterWidth_stridesPad
+      = MapTools.get_or_create( this.imagesBy_originalHeight_originalWidth_channelCount_filterHeight_filterWidth_stridesPad, originalHeight );
+
+    let imagesBy_channelCount_filterHeight_filterWidth_stridesPad
+      = MapTools.get_or_create( imagesBy_originalWidth_channelCount_filterHeight_filterWidth_stridesPad, originalWidth );
 
     let imagesBy_filterHeight_filterWidth_stridesPad
-      = MapTools.get_or_create( this.imagesBy_channelCount_filterHeight_filterWidth_stridesPad, channelCount );
+      = MapTools.get_or_create( imagesBy_channelCount_filterHeight_filterWidth_stridesPad, channelCount );
 
     let imagesBy_filterWidth_stridesPad = MapTools.get_or_create( imagesBy_filterHeight_filterWidth_stridesPad, depthwiseFilterHeight );
     let imagesBy_stridesPad = MapTools.get_or_create( imagesBy_filterWidth_stridesPad, depthwiseFilterWidth );
@@ -117,7 +131,9 @@ class Base {
 
     // 2.2 The shrinked image requested.
     } else {
-      let originalImage = Base.internal_getImage_by.call( this, channelCount ); // Use original image to create shrinked image.
+
+      // Use original image to create shrinked image.
+      let originalImage = Base.internal_getImage_by.call( this, originalHeight, originalWidth, channelCount );
 
       // Borrow the calcDepthwise() function to create an input image which is shrinked by specified filter size and strides and pad.
       image = originalImage.cloneBy_depthwise(
