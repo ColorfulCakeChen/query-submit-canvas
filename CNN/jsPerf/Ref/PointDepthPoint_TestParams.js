@@ -42,9 +42,9 @@ class Base extends TestParams.Base {
   /**
    *
    */
-//   constructor() {
-//     super();
-//   }
+  //constructor() {
+  //  super();
+  //}
 
   /**
    * Use scattered parameters to fills the following proterties:
@@ -135,24 +135,31 @@ class Base extends TestParams.Base {
   /**
    * Responsible for generating testing paramters combinations.
    *
-   * @param {number} inputImageHeight
-   *   The height of the input image.
-   *
-   * @param {number} inputImageWidth
-   *   The width of the input image.
+
+//!!! (2021/12/24 Remarked) Moved into PointDepthPoint_Reference.
+//    * @param {number} inputImageHeight
+//    *   The height of the input image.
+//    *
+//    * @param {number} inputImageWidth
+//    *   The width of the input image.
+
    *
    * @yield {Base}
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
-  * ParamsGenerator( inputImageHeight, inputImageWidth ) {
-    this.inputImageHeight = inputImageHeight;
-    this.inputImageWidth = inputImageWidth;
+  * ParamsGenerator() {
 
-//!!! ...unfinished... (2021/07/27) When pad is "same", it should test more filter size.
-    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
-    //
-    // Note: When pad is "same", this restriction does not exist.
-    let depthwiseFilterMaxSize = Math.min( this.inputImageHeight, this.inputImageWidth );
+//!!! (2021/12/24 Remarked) Moved into PointDepthPoint_Reference.
+//   * ParamsGenerator( inputImageHeight, inputImageWidth ) {
+//     this.inputImageHeight = inputImageHeight;
+//     this.inputImageWidth = inputImageWidth;
+//
+// //!!! ...unfinished... (2021/07/27) When pad is "same", it should test more filter size.
+//     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
+//     //
+//     // Note: When pad is "same", this restriction does not exist.
+//     let depthwiseFilterMaxSize = Math.min( this.inputImageHeight, this.inputImageWidth );
+    let depthwiseFilterMaxSize = 5;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
