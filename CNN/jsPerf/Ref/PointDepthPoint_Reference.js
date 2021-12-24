@@ -31,15 +31,13 @@ class TestCorrectnessInfo {
 
   prepareBy( imageSourceBag, testParams, channelShufflerPool ) {
 
-    let channelCount0_pointwise1Before = testParams.out.channelCount0_pointwise1Before;
-    let channelCount1_pointwise1Before = testParams.out.channelCount1_pointwise1Before;
-    let pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
-    let depthwise_AvgMax_Or_ChannelMultiplier = testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
-    let depthwiseFilterHeight = testParams.out.depthwiseFilterHeight;
-    let depthwiseFilterWidth = testParams.out.depthwiseFilterWidth;
-    let depthwiseStridesPad = testParams.out.depthwiseStridesPad;
-    let pointwise21ChannelCount = testParams.out.pointwise21ChannelCount;
-    let bKeepInputTensor = testParams.out.bKeepInputTensor;
+    let {
+      inputHeight0, inputWidth0, channelCount0_pointwise1Before, channelCount1_pointwise1Before,
+      pointwise1ChannelCount,
+      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      pointwise21ChannelCount,
+      bKeepInputTensor
+    } = testParams.out;
 
     let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
     let inputTensor3dArray = this.inputTensor3dArray;
@@ -66,7 +64,7 @@ class TestCorrectnessInfo {
       strNote = `( testParams.id=${testParams.id} )`;
 
       imageInArraySelected.fill( undefined );
-      imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( channelCount0_pointwise1Before );
+      imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( inputHeight0, inputWidth0, channelCount0_pointwise1Before );
 
 //!!! ...unfinished... (2021/10/28) input1ChannelCount may zero.
 
@@ -75,7 +73,8 @@ class TestCorrectnessInfo {
       // The shape of input1 (not input0) determines the concatenatedShape of channel shuffler because the input0 might be shrinked
       // by depthwise convolution.
       let imageIn1 = imageSourceBag.getImage_by(
-        input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+        inputHeight0, inputWidth0, input1ChannelCount,
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
       if ( bTwoInputs ) { // Pass two input images according to parameters.
         imageInArraySelected[ 1 ] = imageIn1;
@@ -170,10 +169,11 @@ class TestCorrectnessInfo {
     outputTensor3dArray.fill( undefined );
     inputTensor3dArray.fill( undefined );
 
-    inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( channelCount0_pointwise1Before );
+    inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( inputHeight0, inputWidth0, channelCount0_pointwise1Before );
     if ( bTwoInputs ) { // Pass two input tensors according to parameters.
       inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
-        input1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+        inputHeight0, inputWidth0, input1ChannelCount,
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
     }
 
     let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
