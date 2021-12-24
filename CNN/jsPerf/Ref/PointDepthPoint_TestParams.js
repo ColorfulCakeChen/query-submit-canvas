@@ -310,6 +310,16 @@ class Base extends TestParams.Base {
   }
 
   /**
+   * @return {Depthwise.PadInfoCalculator} Return a newly created object which is the depthwise convolution information.
+   */
+  create_depthwisePadInfo() {
+    let depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
+      this.out.inputHeight0, this.out.inputWidth0, this.out.channelCount0_pointwise1Before, 
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
+      this.out.depthwiseStridesPad );
+  }
+
+  /**
    * @param {NumberImage.Base} inputImage   The source image to be processed.
    * @param {number} pointwise1ChannelCount The output channel count of the pointwise1 convolution.
    * @param {string} pointwiseName          A string for debug message of the pointwise1 convolution.
