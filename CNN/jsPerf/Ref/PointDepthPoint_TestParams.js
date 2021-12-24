@@ -94,7 +94,7 @@ class Base extends TestParams.Base {
    *   An object which has the following data members: channelCount0_pointwise1Before, channelCount1_pointwise1Before, pointwise1ChannelCount,
    * bPointwise1Bias, pointwise1ActivationId, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth,
    * depthwiseStridesPad, bDepthwiseBias, depthwiseActivationId, pointwise21ChannelCount, bPointwise21Bias, pointwise21ActivationId,
-   * bOutput1Requested, bKeepInputTensor.
+   * bOutput1Requested, bKeepInputTensor. And depthwisePadInfo.
    *
    * @param {number} weightsElementOffsetBegin
    *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
@@ -112,6 +112,11 @@ class Base extends TestParams.Base {
 
     this.in.inputFloat32Array = Float32Array_ByteOffsetBegin.weightsFloat32Array;
     this.in.byteOffsetBegin = Float32Array_ByteOffsetBegin.weightsByteOffsetBegin;
+
+    this.out.depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
+      this.out.inputHeight0, this.out.inputWidth0, this.out.channelCount0_pointwise1Before, 
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
+      this.out.depthwiseStridesPad );
 
     return this;
   }
@@ -307,16 +312,6 @@ class Base extends TestParams.Base {
     ];
 
     yield *Base.ParamsGenerator.call( this, paramDescConfigArray );
-  }
-
-  /**
-   * @return {Depthwise.PadInfoCalculator} Return a newly created object which is the depthwise convolution information.
-   */
-  create_depthwisePadInfo() {
-    let depthwisePadInfo = new ( Depthwise.PadInfoCalculator() )(
-      this.out.inputHeight0, this.out.inputWidth0, this.out.channelCount0_pointwise1Before, 
-      this.out.depthwise_AvgMax_Or_ChannelMultiplier, this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth,
-      this.out.depthwiseStridesPad );
   }
 
   /**
