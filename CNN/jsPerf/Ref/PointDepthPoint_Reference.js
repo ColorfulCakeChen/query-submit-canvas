@@ -273,12 +273,18 @@ class Base {
     //
     // Note: When pad is "same", this restriction does not exist.
     if ( 0 == testParams.out.depthwiseStridesPad ) {
-      let depthwiseFilterMaxSize = Math.min( testParams.out.inputHeight0, testParams.out.inputWidth0 );
 
-      if (   ( testParams.out.depthwiseFilterHeight > depthwiseFilterMaxSize )
-          || ( testParams.out.depthwiseFilterWidth > depthwiseFilterMaxSize ) )
+// //!!! (2021/12/24 Remarked) Compare separately.
+//       let depthwiseFilterMaxSize = Math.min( testParams.out.inputHeight0, testParams.out.inputWidth0 );
+//
+//       if (   ( testParams.out.depthwiseFilterHeight > depthwiseFilterMaxSize )
+//           || ( testParams.out.depthwiseFilterWidth > depthwiseFilterMaxSize ) )
+//         return;
+
+      if (   ( testParams.out.depthwiseFilterHeight > testParams.out.inputHeight0 )
+          || ( testParams.out.depthwiseFilterWidth  > testParams.out.inputWidth0  ) )
         return;
-  
+
     // Otherwise, when pad is "same", it should test more filter size.
     }
 
