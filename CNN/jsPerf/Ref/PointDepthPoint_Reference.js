@@ -706,6 +706,8 @@ class Base {
     if ( pointwise1ChannelCount > 0 ) {
       pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount, "Pointwise1", this.paramsOutDescription );
 
+//!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
+
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
           pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
@@ -728,6 +730,8 @@ class Base {
     let depthwise1Result;
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
+
+//!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
 
       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
       // be different from pointwise21Result and can not be concatenated together.
@@ -802,6 +806,8 @@ class Base {
     {
       if ( pointwise21ChannelCount > 0 ) {
         pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
+
+//!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
 
         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
           imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (which is past-through by depthwise1).
