@@ -786,14 +786,9 @@ class Base {
 
     // 4. Pointwise2
     let bAddInputToOutputRequested = false;
-
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_ADD_TO_OUTPUT() ) { // (-1) MobileNetV2
-
       let depthwisePadInfo = testParams.create_depthwisePadInfo();
       if ( depthwisePadInfo.is_Output_Same_HeightWidth_As_Input() ) {
-
-//!!! ...unfinished... (2021/12/24) channel count should be checked.
-
         bAddInputToOutputRequested = true;
       }
     }
@@ -819,7 +814,8 @@ class Base {
 
       // Residual Connection.
       if ( bAddInputToOutputRequested )
-        pointwise21Result = pointwise21Result.cloneBy_add( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
+        if ( pointwise21Result.depth == testParams.out.channelCount0_pointwise1Before )
+          pointwise21Result = pointwise21Result.cloneBy_add( imageIn0, "Pointwise21_AddInputToOutput", this.paramsOutDescription );
     }
 
     let imageOutArray = [ pointwise21Result, null ]; // Assume no pointwise22.
@@ -857,7 +853,8 @@ class Base {
         //
         // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
         if ( bAddInputToOutputRequested )
-          pointwise22Result = pointwise22Result.cloneBy_add( imageIn0, "Pointwise22_AddInputToOutput", this.paramsOutDescription );
+          if ( pointwise22Result.depth == testParams.out.channelCount0_pointwise1Before )
+            pointwise22Result = pointwise22Result.cloneBy_add( imageIn0, "Pointwise22_AddInputToOutput", this.paramsOutDescription );
       }
 
       // Integrate pointwise21 and pointwise22 into pointwise2.
