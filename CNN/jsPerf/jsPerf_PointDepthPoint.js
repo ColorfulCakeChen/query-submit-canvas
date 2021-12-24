@@ -167,7 +167,7 @@ class HeightWidthDepth {
         dataTensor3dArray[ i ] = dataTensor3d;
 
         this.testPerformance_NumberImageArray[ i ] = new NumberImage.Base(
-          this.height, this.width, this.depth, dataArray: dataTensor3d.dataSync() );
+          this.height, this.width, this.depth, dataTensor3d.dataSync() );
       }
 
       return dataTensor3dArray;
