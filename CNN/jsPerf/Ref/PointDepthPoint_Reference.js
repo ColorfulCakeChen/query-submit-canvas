@@ -173,7 +173,7 @@ class TestCorrectnessInfo {
     if ( bTwoInputs ) { // Pass two input tensors according to parameters.
       inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
         inputHeight0, inputWidth0, input1ChannelCount,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseStridesPad );
+        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
     }
 
     let inputTensorDestroyCount; // How many input tensors will be destroyed by PointDepthPoint.apply().
