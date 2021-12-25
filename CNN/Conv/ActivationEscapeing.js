@@ -51,8 +51,13 @@ class ScaleTranslateSet {
 
 //!!! ...unfinished... (2021/12/24)
 //
-// - For depthwise with ( pad == same ), it seems that the activation escaping can not undo completely, because pad is always 0
+// - For depthwise with ( pad == same ), it seems that the activation escaping can not be undone completely, because pad is always 0
 //   (can not scale-translate). Unless, pad can be non-zero?
+//
+//   - Perhaps, force use ( pad == valid ) so that the activation escaping always can be undone completely.
+//   - In original ShuffleNetV2, using ( pad == same ) is necessary for concatenating ( depthwise1, input1 ).
+//   - However, in our combined-depthwise1-with-higher-half-pass-through (i.e. ONE_INPUT_HALF_THROUGH_XXX), the ( depthwise1, input1 )
+//       already combined together. There is no concatenation issue. So using ( pad == valid ) is possible.
 //
 // - If previous convolution does not have activation escaping do (i.e. is a normal convolution without pass-through)，this
 //     this convolution's .do should be different.
