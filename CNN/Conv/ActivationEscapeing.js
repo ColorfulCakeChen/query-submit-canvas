@@ -93,13 +93,6 @@ class ScaleTranslateSet {
     this.doWithoutPreviousUndo.setBy_fromBounds_ToBounds(
       current_ConvBiasActivation_ValueBoundsSet.beforeActivation, current_ConvBiasActivation_ValueBoundsSet.output );
 
-//!!! ...unfinished... (2021/12/26)
-// The .undo should also be applied to the real filter value and bias value of this convolution-bias (i.e. not just applied here ScaleTranslate).
-//
-// Problem: What if this convolution-bias-activation could only undo partially (e.g. this convolution does not have bias)?
-//   How should the .undo of this convolution-bias-activation be calculated?
-
-
     // Combine undoing previous activation escaping scale-translate and doing current activation escaping scale-translate.
     this.do.setBy_ScaleTranslate( previous_ActivationEscaping_ScaleTranslateSet.undo );
     this.do.scaleTranslateBy( this.doWithoutPreviousUndo );
