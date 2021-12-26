@@ -70,7 +70,7 @@ class ValueBoundsSet {
    *     - If ( nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ), this.output will be the same as this.beforeActivation.
    *     - Otherwise, this.output will be the same as the output range of the activation function.
    */
-  set_output_byActivationId( nActivationId ) {
+  set_output_by_beforeActivation_ActivationId( nActivationId ) {
 
     // If there is no activation function, the output range is determined by input domain, filters, biases.
     if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
