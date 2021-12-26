@@ -202,6 +202,9 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
 
   test_findOut_filterIndex_inSequence() {
 
+//    let filterIndexArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
+    let filterIndexArray = new Array();
+
     for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
       for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
@@ -222,7 +225,8 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
 
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-                console.log( `${filterIndex}, ` );
+                filterIndexArray.push( filterIndex );
+                //console.log( `${filterIndex}, ` );
 
               }
             }
@@ -230,6 +234,9 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
         }
       }
 
+      return filterIndexArray;
+      //debugger;
   }
+
 }
 
