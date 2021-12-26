@@ -190,6 +190,13 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
 
       } else if ( this.bDepthwiseConv ) { // 4. Depthwise by convolution (with channel multiplier).
 
+//!!! ...unfinished... (2021/12/26)
+// The valueBoundsSet.activationEscaping_ScaleTranslateSet.undo should also be applied to the real filter value and bias value of
+// this convolution-bias (either normal or pass-through or depthwise2).
+//
+// Problem: What if this convolution-bias-activation could only undo partially (e.g. this convolution does not have bias)?
+//
+
         switch ( this.nHigherHalfDifferent ) {
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0) 4.0 Normal depthwise convolution.
             bExtractOk = Base.extractAs_NormalDepthwise.call( this, inputFloat32Array );
