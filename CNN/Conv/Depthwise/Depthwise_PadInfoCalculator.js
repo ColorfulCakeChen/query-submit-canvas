@@ -218,17 +218,17 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
             if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
               continue;
 
-          for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+            for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
-            for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+              for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-                let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
-                let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
+                  let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
+                  let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
-                let filterIndex = filterIndexBaseSubC + outChannelSub;
+                  let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-                filterIndexArray.push( filterIndex );
-                //console.log( `${filterIndex}, ` );
+                  filterIndexArray.push( filterIndex );
+                  //console.log( `${filterIndex}, ` );
 
               }
             }
