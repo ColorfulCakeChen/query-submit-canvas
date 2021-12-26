@@ -181,11 +181,9 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
             let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
             for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+              let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
               for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
-
-                let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
-
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
 
                 if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
@@ -225,15 +223,13 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
             let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
             for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+              let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
               for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+                let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-                  let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
-
-                  let filterIndex = filterIndexBaseSubC + outChannelSub;
-
-                  filterIndexArray.push( filterIndex );
-                  //console.log( `${filterIndex}, ` );
+                filterIndexArray.push( filterIndex );
+                //console.log( `${filterIndex}, ` );
 
               }
             }
