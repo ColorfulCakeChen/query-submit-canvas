@@ -164,6 +164,10 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
     // Note: Unfortunately, this may not work for ( dilation > 1 ) because the non-zero-filter-value might be just at the dilation
     //       position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
 
+
+//!!! ...unfinished... (2021/12/26) Since these for-loop are in correct order, the filterIndex could just begin at zero and then
+// be increased one by one (i.e. without using multiplication).
+//
 //    let filterIndex = 0; // The index in the filter weights array.
 
     for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
