@@ -205,20 +205,20 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
 //    let filterIndexArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
     let filterIndexArray = new Array();
 
-    for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+    for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+      for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+        let filterIndexBaseX = ( filterY * this.filterWidth );
 
-      for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+        for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+          for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
 
-        for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-          for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
-            let filterIndexBaseX = ( filterY * this.filterWidth );
+            // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+            if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+              continue;
 
-            for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-              for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+          for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
-                // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
-                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-                  continue;
+            for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
                 let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
                 let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
@@ -234,8 +234,22 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
         }
       }
     }
-      return filterIndexArray;
-      //debugger;
+
+    return filterIndexArray;
+    //debugger;
+    
+// let inputHeight = 10;
+// let inputWidth = 10;
+// let inputChannelCount = 2;
+// let AvgMax_Or_ChannelMultiplier = 2; //2;
+// let filterHeight = 2; //3;
+// let filterWidth = 2; //3;
+// let stridesPad = 0;
+//
+// let padInfo = new ( PadInfoCalculator() )( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) ;
+// let filterIndexArray = padInfo.test_findOut_filterIndex_inSequence();
+// console.log( filterIndexArray );
+
   }
 
 }
