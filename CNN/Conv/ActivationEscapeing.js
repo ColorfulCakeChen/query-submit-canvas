@@ -49,7 +49,7 @@ class ScaleTranslateSet {
     this.undo.set( scale , translate );
   }
 
-//!!! ...unfinished... (2021/12/24)
+//!!! ...unfinished... (2021/12/26)
 //
 // - For depthwise with ( pad == same ), it seems that the activation escaping can not be undone completely, because pad is always 0
 //   (can not scale-translate). Unless, pad can be non-zero?
@@ -67,6 +67,9 @@ class ScaleTranslateSet {
 //
 // - When extractFilters() and extractBiases(), pre-apply the per channel undoing scale and translate to filter-value, bias-value,
 //     and their bounds. (The .do and .undo should also affect the value bounds.)
+//
+// - When across Block (i.e. at ShuffleNetV2_ByMobileNetV1's head), the higher-half-copy-lower-half channels's value bounds
+//     does not come from previous corresponding channels. They comes from the lower-half channels which they copied from.
 //
 
   /**
