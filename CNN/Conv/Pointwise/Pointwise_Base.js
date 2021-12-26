@@ -239,6 +239,14 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
 
     } else { // 3.
 
+
+//!!! ...unfinished... (2021/12/26)
+// The valueBoundsSet.activationEscaping_ScaleTranslateSet.undo should also be applied to the real filter value and bias value of
+// this convolution-bias (either normal or pass-through or copy-lower).
+//
+// Problem: What if this convolution-bias-activation could only undo partially (e.g. this convolution does not have bias)?
+//
+
       switch ( this.nHigherHalfDifferent ) {
         // 3.0 Normal pointwise convolution and bias.
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
