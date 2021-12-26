@@ -161,21 +161,23 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
     let oneEffectFilterY = this.padHeightTop;
     let oneEffectFilterX = this.padWidthLeft;
 
-    // Note: Unfortunately, this does not work for ( dilation > 1 ). So, only ( dilation == 1 ) is supported.
-    for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+    // Note: Unfortunately, this may not work for ( dilation > 1 ) because the non-zero-filter-value might be just at the dilation
+    //       position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
 
-      for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+    for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+      for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+        let filterIndexBaseX = ( filterY * this.filterWidth );
 
-        for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-          for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
-            let filterIndexBaseX = ( filterY * this.filterWidth );
+        for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+          for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
 
-            for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-              for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+            // The filter's dilation part can not be manipulated. (They are always zero.)
+            if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+              continue;
 
-                // The filter's dilation part can not be manipulated. (They are always zero.)
-                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-                  continue;
+            for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+
+              for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
                 let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
                 let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
