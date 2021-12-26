@@ -164,8 +164,11 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
     // Note: Unfortunately, this may not work for ( dilation > 1 ) because the non-zero-filter-value might be just at the dilation
     //       position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
 
+//    let filterIndex = 0; // The index in the filter weights array.
+
     for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
       for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+
         let filterIndexBaseX = ( filterY * this.filterWidth );
 
         for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
@@ -175,11 +178,12 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
             if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
               continue;
 
+            let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
+
             for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
               for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-                let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
                 let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
                 let filterIndex = filterIndexBaseSubC + outChannelSub;
@@ -218,11 +222,12 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
             if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
               continue;
 
+            let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
+
             for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
               for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-                  let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
                   let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
                   let filterIndex = filterIndexBaseSubC + outChannelSub;
