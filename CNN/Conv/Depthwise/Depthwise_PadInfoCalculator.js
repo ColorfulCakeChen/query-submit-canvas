@@ -233,7 +233,7 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
           }
         }
       }
-
+    }
       return filterIndexArray;
       //debugger;
   }
