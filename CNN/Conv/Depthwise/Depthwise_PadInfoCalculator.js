@@ -184,7 +184,6 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
 
                 if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
                   depthwiseFiltersArray[ filterIndex ] = filterValue; // The only one position with value non-zero.
-                  filterValue
                 } else {
                   depthwiseFiltersArray[ filterIndex ] = 0; // All other positions of the filter are value zero.
                 }
