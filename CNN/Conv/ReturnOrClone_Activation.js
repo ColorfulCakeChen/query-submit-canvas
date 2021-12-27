@@ -64,7 +64,7 @@ class Base extends ReturnOrClone.Base {
 //!!! (2021/12/27 Remarked)
 //      let elementCount = tf.util.sizeFromShape( t.shape );
 //      this.tensorWeightCountExtracted += elementCount;
-      this.tensorWeightCountExtracted += tensorWeights.length; // (i.e. elementCount)
+      this.tensorWeightCountExtracted += tensorWeights.weights.length; // (i.e. elementCount)
       return t;
 
     // If failed (e.g. memory not enough), return null.      
