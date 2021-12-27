@@ -72,6 +72,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   /**
    * Extract depthwise filters and biases.
    *
+   * The following properties will be modified:
+   *   - this.byteOffsetBegin
+   *   - this.byteOffsetEnd
+   *   - this.tensorWeightCountExtracted
+   *
+   *
+   *
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
@@ -106,12 +113,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2021/12/27)
 
-//    let filterIndexArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
-    let filterIndexArray = new Array();
+    this.filtersArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
+    let filterIndex = 0;
 
     for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
       for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
-        let filterIndexBaseX = ( filterY * this.filterWidth );
+
+        // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
+        //let filterIndexBaseX = ( filterY * this.filterWidth );
 
         for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
           for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
@@ -120,17 +129,22 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
               continue;
 
-            let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
+            // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
+            //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
             for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-              let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
+
+              // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
+              //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
               for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
-                let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-                filterIndexArray.push( filterIndex );
-                //console.log( `${filterIndex}, ` );
+                // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
+                //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
+                this.filtersArray[ filterIndex ] = ???;
+
+                ++filterIndex;
               }
             }
           }
