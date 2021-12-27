@@ -66,7 +66,7 @@ class Bounds {
    *   Return this (modified) object which is [ aLowers, aUppers ].
    */
   set_LowersUppers( aLowers, aUppers ) {
-    for ( let i = 0; i < this.length; ++i ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
       this.lowers[ i ] = Math.min( aLowers[ i ], aUppers[ i ] ); // Confirm ( lower <= upper ).
       this.uppers[ i ] = Math.max( aLowers[ i ], aUppers[ i ] );
     }
@@ -96,7 +96,7 @@ class Bounds {
    */
   add_LowersUppers( aLowers, aUppers ) {
     let thisLower, thisUpper;
-    for ( let i = 0; i < this.length; ++i ) { // Confirm the lower and upper. And then, add corresponds.
+    for ( let i = 0; i < this.lowers.length; ++i ) { // Confirm the lower and upper. And then, add corresponds.
       thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] );
       thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
       this.lowers[ i ] = thisLower + Math.min( aLowers[ i ], aUppers[ i ] );
@@ -140,7 +140,7 @@ class Bounds {
   multiply_LowersUppers( aLowers, aUppers ) {
     // Because the different sign of lower and upper, it needs compute all combination to determine the bounds of result.
     let lower_lower, lower_upper, upper_lower, upper_upper;
-    for ( let i = 0; i < this.length; ++i ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
       lower_lower = this.lowers[ i ] * aLowers[ i ];
       lower_upper = this.lowers[ i ] * aUppers[ i ];
       upper_lower = this.uppers[ i ] * aLowers[ i ];
@@ -161,7 +161,7 @@ class Bounds {
   multiply_Ns( Ns ) {
     // Because the different sign of lower and upper, it needs compute all combinations to determine the bounds of result.
     let lower_N, upper_N;
-    for ( let i = 0; i < this.length; ++i ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
       lower_N = this.lowers[ i ] * Ns[ i ];
       upper_N = this.uppers[ i ] * Ns[ i ];
       this.lowers[ i ] = Math.min( lower_N, upper_N );
