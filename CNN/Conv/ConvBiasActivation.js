@@ -11,13 +11,13 @@ import * as ActivationEscapeing from "./ActivationEscapeing.js";
  * Several element value bounds for convolution-bias-activation operations.
  *
  *
- * @member {FloatValue.Bounds} input
+ * @member {FloatValue.BoundsArray} input
  *   The bounds of the input element value. Or say, the domain of the convolution-bias-activation.
  *
- * @member {FloatValue.Bounds} beforeActivation
+ * @member {FloatValue.BoundsArray} beforeActivation
  *   The bounds of the element value after convolution and bias operation (but before activation).
  *
- * @member {FloatValue.Bounds} output
+ * @member {FloatValue.BoundsArray} output
  *   The bounds of the output element value. Or say, the range of the convolution-bias-activation.
  *
  * @member {ActivationEscapeing.ScaleTranslateSet} activationEscaping_ScaleTranslateSet
@@ -29,12 +29,16 @@ class ValueBoundsSet {
   /**
    */
   constructor( inputChannelCount, outputChannelCount ) {
+    this.input = new FloatValue.BoundsArray( inputChannelCount );
+    this.input.setBounds( Weights.Base.ValueBounds );
+
+    this.beforeActivation = new FloatValue.BoundsArray( outputChannelCount );
+    this.beforeActivation.setBounds( Weights.Base.ValueBounds );
+
+    this.output = new FloatValue.BoundsArray( outputChannelCount );
+    this.output.setBounds( Weights.Base.ValueBounds );
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-
-    this.input = Weights.Base.ValueBounds.clone();
-    this.beforeActivation = Weights.Base.ValueBounds.clone();
-    this.output = Weights.Base.ValueBounds.clone();
     this.activationEscaping_ScaleTranslateSet = new ActivationEscapeing.ScaleTranslateSet();
   }
 
@@ -45,26 +49,40 @@ class ValueBoundsSet {
   }
 
   /**
-   * @param {ValueBoundsSet} another
+   * @param {ValueBoundsSet} aValueBoundsSet
    *   The ValueBoundsSet to be copied.
+   *
+   * @return {ValueBoundsSet}
+   *   Return this (modified) object which is copied from aValueBoundsSet.
    */
-  setBy_ValueBoundsSet( another ) {
-    this.input.set_Bounds( another.input );
-    this.beforeActivation.set_Bounds( another.beforeActivation );
-    this.output.set_Bounds( another.output );
-    this.activationEscaping_ScaleTranslateSet.setBy_ScaleTranslateSet( another.activationEscaping_ScaleTranslateSet );
+  set_ValueBoundsSet( aValueBoundsSet ) {
+    this.input.set_BoundsArray( aValueBoundsSet.input );
+    this.beforeActivation.set_BoundsArray( aValueBoundsSet.beforeActivation );
+    this.output.set_BoundsArray( aValueBoundsSet.output );
+
+//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
+    this.activationEscaping_ScaleTranslateSet.setBy_ScaleTranslateSet( aValueBoundsSet.activationEscaping_ScaleTranslateSet );
+    return this;
   }
+
+//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
 
   /**
    * @param {FloatValue.Bounds} aBounds
    *   Set this.input, this.beforeActivation, this.output all the same as the specified aBounds. Set the
    * this.activationEscaping_ScaleTranslateSet to default ( 1, 0 );
+   *
+   * @return {ValueBoundsSet}
+   *   Return this (modified) object which is copied from aValueBoundsSet.
    */
   resetBy_Bounds( aBounds ) {
-    this.input.set_Bounds( aBounds );
-    this.beforeActivation.set_Bounds( aBounds );
-    this.output.set_Bounds( aBounds );
+    this.input.set_BoundsArray( aBounds );
+    this.beforeActivation.set_BoundsArray( aBounds );
+    this.output.set_BoundsArray( aBounds );
+
+//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
     this.activationEscaping_ScaleTranslateSet.reset( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
+    return this;
   }
 
   /**
