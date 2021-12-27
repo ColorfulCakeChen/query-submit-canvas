@@ -1,2 +1,4 @@
 export { ScaleTranslate } from "./FloatValue/ScaleTranslate.js";
+export { ScaleTranslateArray } from "./FloatValue/ScaleTranslateArray.js";
 export { Bounds } from "./FloatValue/Bounds.js";
+export { BoundsArray } from "./FloatValue/BoundsArray.js";
