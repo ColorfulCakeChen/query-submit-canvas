@@ -70,6 +70,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   }
 
   /**
+   * Extract depthwise filters and biases.
+   *
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
@@ -82,7 +84,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    *
    * @return {boolean} Return true, if succeeded.
    */
-  extract_DepthwiseFiltersBiases(
+  set_filtersArray_biasesArray_by_extract(
     inputFloat32Array, byteOffsetBegin,
     previous_ConvBiasActivation_ValueBoundsSet,
     extraScaleTranslateArray_byChannelIndex,
