@@ -17,6 +17,8 @@ class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
     super();
   }
 
+//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
+
   /**
    *
    * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
