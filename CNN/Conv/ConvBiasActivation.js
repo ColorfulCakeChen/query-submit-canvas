@@ -5,6 +5,8 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as ActivationEscapeing from "./ActivationEscapeing.js";
 
+//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
+
 /**
  * Several element value bounds for convolution-bias-activation operations.
  *
@@ -26,7 +28,10 @@ class ValueBoundsSet {
 
   /**
    */
-  constructor() {
+  constructor( inputChannelCount, outputChannelCount ) {
+
+//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
+
     this.input = Weights.Base.ValueBounds.clone();
     this.beforeActivation = Weights.Base.ValueBounds.clone();
     this.output = Weights.Base.ValueBounds.clone();
