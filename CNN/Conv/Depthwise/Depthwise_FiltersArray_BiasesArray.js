@@ -76,11 +76,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
    *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    *
+   * @param {FloatValue.ScaleTranslateArray} extraScaleTranslateArray_byChannelIndex
+   *   The extra scale-translate of every channel. They will be pre-applied to the filter value, bias value and convolution-bias-activation
+   * value bounds set of this depthwise convolution. They are indexed by input channel index.
+   *
    * @return {boolean} Return true, if succeeded.
    */
   extract_DepthwiseFiltersBiases(
-   inputFloat32Array, byteOffsetBegin, previous_ConvBiasActivation_ValueBoundsSet ) {
-
+    inputFloat32Array, byteOffsetBegin,
+    previous_ConvBiasActivation_ValueBoundsSet,
+    extraScaleTranslateArray_byChannelIndex,
+  ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
