@@ -19,8 +19,8 @@ class ScaleTranslateArray {
 
   clone() {
     let result = new ScaleTranslateArray( this.scales.length );
-    result.set( ??? );
-    return 
+    result.set_ScaleTranslateArray( this );
+    return result;
   }
 
   /** (Re)set all scale-translate values. Default are ( scale = 1, translate = 0 ) (i.e. no scale and no translate).
@@ -108,24 +108,25 @@ class ScaleTranslateArray {
     return this;
   }
 
-  /**
-   * Scale and translate this object by specified scale-translate.
-   *   - this.scale =     ( this.scale     * another.scale ) + another.translate
-   *   - this.translate = ( this.translate * another.scale ) + another.translate
-   *
-   * @param {ScaleTranslateArray} aScaleTranslateArray
-   *   The another scale-translate array which will be applied on this object.
-   *
-   * @return {ScaleTranslateArray}
-   *   Return this (modified) object whose values scaled and translated by the specified scale-translate.
-   */
-  scaleTranslateBy( aScaleTranslateArray ) {
-    for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] =     ( this.scales[ i ]     * aScaleTranslateArray.scales[ i ] ) + another.translates[ i ];
-      this.translates[ i ] = ( this.translates[ i ] * aScaleTranslateArray.scales[ i ] ) + another.translates[ i ];
-    }
-    return this;
-  }
+//!!! (2021/12/27 Remarked) seems not used?
+//   /**
+//    * Scale and translate this object by specified scale-translate.
+//    *   - this.scale =     ( this.scale     * another.scale ) + another.translate
+//    *   - this.translate = ( this.translate * another.scale ) + another.translate
+//    *
+//    * @param {ScaleTranslateArray} aScaleTranslateArray
+//    *   The another scale-translate array which will be applied on this object.
+//    *
+//    * @return {ScaleTranslateArray}
+//    *   Return this (modified) object whose values scaled and translated by the specified scale-translate.
+//    */
+//   scaleTranslateBy( aScaleTranslateArray ) {
+//     for ( let i = 0; i < this.scales.length; ++i ) {
+//       this.scales[ i ] =     ( this.scales[ i ]     * aScaleTranslateArray.scales[ i ] ) + another.translates[ i ];
+//       this.translates[ i ] = ( this.translates[ i ] * aScaleTranslateArray.scales[ i ] ) + another.translates[ i ];
+//     }
+//     return this;
+//   }
 
 }
 
