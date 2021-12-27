@@ -105,51 +105,64 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-
-
-    // Note: Unfortunately, the pass-through feature may not work for ( dilation > 1 ) because the non-zero-filter-value might be
-    //       just at the dilation position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
-
-
+      
 //!!! ...unfinished... (2021/12/27)
 
-    this.filtersArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
-    let filterIndex = 0;
+    if ( this.AvgMax_Or_ChannelMultiplier <= 0 ) { // For AVG pooling or MAX pooling or NONE, no depthwise filter needs be extracted.
+      this.filtersArray = null;
 
-    for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-      for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+    } else {
 
-        // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-        //let filterIndexBaseX = ( filterY * this.filterWidth );
+//!!! ...unfinished... (2021/12/27) for pass-through
+      // There is only one position (inside the effect depthwise filter) with value one. All other positions of the filter should be zero.
+      let oneEffectFilterY = this.padHeightTop;
+      let oneEffectFilterX = this.padWidthLeft;
 
-        for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-          for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
 
-            // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
-            if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-              continue;
+      // Note: Unfortunately, the pass-through feature may not work for ( dilation > 1 ) because the non-zero-filter-value might be
+      //       just at the dilation position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
 
-            // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-            //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
-            for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+      // Make up a depthwise convolution filter.
+      this.filtersArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
+      let filterIndex = 0;
+
+      for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+        for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+
+          // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
+          //let filterIndexBaseX = ( filterY * this.filterWidth );
+
+          for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+            for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+
+              // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+              if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                continue;
 
               // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-              //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
+              //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
-              for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+              for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
                 // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-                //let filterIndex = filterIndexBaseSubC + outChannelSub;
+                //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
-                this.filtersArray[ filterIndex ] = ???;
+                for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-                ++filterIndex;
+                  // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
+                  //let filterIndex = filterIndexBaseSubC + outChannelSub;
+
+                  this.filtersArray[ filterIndex ] = ???;
+
+                  ++filterIndex;
+                }
               }
             }
           }
         }
       }
+
     }
 
     return filterIndexArray;
