@@ -160,12 +160,13 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
-    switch ( this.stridesPad ) {
-      case 0:  this.strides = 1; this.pad = "valid"; break;
-      default:
-      case 1:  this.strides = 1; this.pad = "same";  break;
-      case 2:  this.strides = 2; this.pad = "same";  break;
-    }
+//!!! (2021/12/27 Remarked) Parent class has done this.
+//     switch ( this.stridesPad ) {
+//       case 0:  this.strides = 1; this.pad = "valid"; break;
+//       default:
+//       case 1:  this.strides = 1; this.pad = "same";  break;
+//       case 2:  this.strides = 2; this.pad = "same";  break;
+//     }
 
     // 1.
 
