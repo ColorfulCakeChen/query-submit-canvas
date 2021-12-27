@@ -99,6 +99,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
+
+    // Note: Unfortunately, the pass-through feature may not work for ( dilation > 1 ) because the non-zero-filter-value might be
+    //       just at the dilation position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
+
+
 //!!! ...unfinished... (2021/12/27)
 
 //    let filterIndexArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
