@@ -1,19 +1,17 @@
 export { BoundsArray };
 
+import { Bounds } from "./Bounds.js";
 //import { ScaleTranslate } from "./ScaleTranslate.js";
 import { ScaleTranslateArray } from "./ScaleTranslateArray.js";
 
 /**
  * Describe the [ lower, upper ] bounds of an array of floating-point values.
  *
- * @member {number} lower
- *   The lower bound of the range.
+ * @member {number[]} lowers
+ *   The lower bound array of the range.
  *
- * @member {number} upper
- *   The upper bound of the range.
- *
- * @member {number} difference
- *   The distance between lower and upper.
+ * @member {number[]} uppers
+ *   The upper bound array of the range.
  */
 class Bounds {
 
@@ -36,7 +34,7 @@ class Bounds {
 
   /**
    * @return {Bounds}
-   *   Return newly created object which is a copy of this Bounds.
+   *   Return newly created object which is a copy of this BoundsArray.
    */
   clone() {
     let result = new Bounds( this.lowers.length );
@@ -45,11 +43,40 @@ class Bounds {
   }
 
   /**
+   * @param {Bounds} aBounds
+   *   Set this BoundsArray by aBounds.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object whose values are copied from aBounds.
+   */
+  set_Bounds( aBounds ) {
+    return this.set_LowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number} aLower
+   *   Set this Bounds.lowers by aLower.
+   *
+   * @param {number} aUpper
+   *   Set this Bounds.uppers by aUpper.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object which is [ aLower, aUpper ].
+   */
+  set_LowerUpper( aLower, aUpper ) {
+    let lower = Math.min( aLower, aUpper ); // Confirm ( lower <= upper ).
+    let upper = Math.max( aLower, aUpper );
+    this.lowers.fill( lower );
+    this.uppers.fill( upper );
+    return this;
+  }
+
+  /**
    * @param {Bounds} aBoundsArray
    *   Set this BoundsArray by aBoundsArray.
    *
    * @return {BoundsArray}
-   *   Return this (modified) object whose values are copied from aBounds.
+   *   Return this (modified) object whose values are copied from aBoundsArray.
    */
   set_BoundsArray( aBoundsArray ) {
     return this.set_LowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
