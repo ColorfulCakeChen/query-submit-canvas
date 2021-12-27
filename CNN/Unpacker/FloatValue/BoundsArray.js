@@ -1,6 +1,6 @@
 export { BoundsArray };
 
-import { ScaleTranslate } from "./ScaleTranslate.js";
+//import { ScaleTranslate } from "./ScaleTranslate.js";
 import { ScaleTranslateArray } from "./ScaleTranslateArray.js";
 
 /**
@@ -39,7 +39,7 @@ class Bounds {
    *   Return newly created object which is a copy of this Bounds.
    */
   clone() {
-    let result = new Bounds( this.length );
+    let result = new Bounds( this.lowers.length );
     result.set_BoundsArray( this );
     return result;
   }
