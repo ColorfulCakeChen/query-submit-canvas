@@ -79,6 +79,11 @@ class ScaleTranslateArray {
    *   Return this (modified) object whose values are scale and translate for mapping values from source bounds to target bounds.
    */
   set_fromBoundsArray_ToBoundsArray( source, target ) {
+
+    // Given:
+    //   source.difference = source.upper - source.lower;
+    //   target.difference = target.upper - target.lower;
+    //
     // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
     //
     //   y = target.lower + ( target.difference * ( x - source.lower ) / source.difference )
