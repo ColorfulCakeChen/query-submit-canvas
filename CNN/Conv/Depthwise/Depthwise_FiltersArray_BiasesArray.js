@@ -105,11 +105,23 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-      
+
+//!!! ...unfinished... (2021/12/28)
+    let tensorWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, tensorShape );
+    if ( !tensorWeights.extract() )
+      return null;  // e.g. input array does not have enough data.
+    this.byteOffsetEnd = tensorWeights.defaultByteOffsetEnd;
+
 //!!! ...unfinished... (2021/12/27)
 
     if ( this.AvgMax_Or_ChannelMultiplier <= 0 ) { // For AVG pooling or MAX pooling or NONE, no depthwise filter needs be extracted.
       this.filtersArray = null;
+
+      if ( this.bBias ) {
+        this.biasesArray = new Array( this.outputChannelCount );
+
+//!!! ...unfinished... (2021/12/28) biases
+      }
 
     } else {
 
@@ -124,43 +136,79 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
       // Make up a depthwise convolution filter.
-      this.filtersArray = new Array( this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
-      let filterIndex = 0;
+      this.filtersArray = new Array( this.outputElementCount );
+      if ( this.bBias )
+        this.biasesArray = new Array( this.outputChannelCount );
 
-      for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-        for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+      let sourceIndex, filterIndex, biasIndex;
+      sourceIndex = filterIndex = biasIndex = 0;
 
-          // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-          //let filterIndexBaseX = ( filterY * this.filterWidth );
+      let halfPartCount = 1;
+      if ( ??? )
+          halfPartCount = 2;
 
-          for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-            for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+          
+      // ( halfPartIndex == 0 ), lower half channels.
+      // ( halfPartIndex == 1 ), higher half channels.
+      for ( let halfPartIndex = 0; halfPartIndex < halfPartCount; ++halfPartIndex ) {
 
-              // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
-              if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-                continue;
+//!!! ...unfinished... (2021/12/28) lower half is ceil(), higher half is floor()
+//        let inputChannelCount_half = ceil ??? floor ??? ( this.inputChannelCount / halfPartCount );
 
-              // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-              //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
+        for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+          for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
 
-              for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+            // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
+            //let filterIndexBaseX = ( filterY * this.filterWidth );
+
+            for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+              for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+
+                // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                  continue;
 
                 // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-                //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
+                //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
-                for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+                for ( let inChannel = 0; inChannel < inputChannelCount_half; ++inChannel ) {
 
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-                  //let filterIndex = filterIndexBaseSubC + outChannelSub;
+                  //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
-                  this.filtersArray[ filterIndex ] = ???;
+//!!! ...unfinished... (2021/12/28) 
+                  for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-                  ++filterIndex;
+                    // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
+                    //let filterIndex = filterIndexBaseSubC + outChannelSub;
+
+//!!! ...unfinished... (2021/12/28) 
+                    this.filtersArray[ filterIndex ] = ???;
+
+                    ++sourceIndex;
+                    ++filterIndex;
+                  }
                 }
               }
             }
           }
         }
+
+        if ( this.bBias ) {
+
+//!!! ...unfinished... (2021/12/28) 
+
+          for ( let i = 0; i < ???outputChannelCount_lowerHalf; ++i ) {
+
+//!!! ...unfinished... (2021/12/27) 
+            this.biasesArray[ biasIndex ] = ???;
+
+            ++sourceIndex;
+            ++biasIndex;
+          }
+
+        }
+
       }
 
     }
