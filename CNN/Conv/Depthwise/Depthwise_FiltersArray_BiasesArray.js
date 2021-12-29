@@ -293,6 +293,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       let inChannelEnd = halfPartInfo.inChannelEnd;
 
       if ( this.filtersArray ) {
+        let filterValue;
 
         for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
           for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
@@ -328,7 +329,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
-                    let filterValue;
                     if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
                         filterValue = extraScale; // The only one position with non-zero value.
@@ -359,6 +359,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       }
 
       if ( this.biasesArray ) {
+        let biasValue;
 
 //!!! ...unfinished... (2021/12/28) 
 
@@ -369,7 +370,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
 //!!! ...unfinished... (2021/12/29) pre-translate? pass-through? value-bounds? activation?
-            let biasValue;
             if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
               biasValue = extraTranslate;
 
