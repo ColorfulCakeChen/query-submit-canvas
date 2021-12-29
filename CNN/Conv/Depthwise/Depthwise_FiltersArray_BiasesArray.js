@@ -293,7 +293,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       let inChannelEnd = halfPartInfo.inChannelEnd;
 
       if ( this.filtersArray ) {
-        let filterValue;
+//        let filterValue;
 
         for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
           for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
@@ -331,16 +331,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
                     if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
-                        filterValue = extraScale; // The only one position with non-zero value.
+                        this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
                       } else {
-                        filterValue = 0; // All other positions of the filter are zero.
+                        this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
                       }
 
                     } else { // Not pass-through half channels.
-                      filterValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
+//                      filterValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
+                      this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
                     }
-
-                    this.filtersArray[ filterIndex ] = filterValue;
 
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
                     this.valueBoundsSet.output.lowers[ outChannel ] = this.valueBoundsSet.input.lowers[ inChannel ] multiply_???;
@@ -359,7 +358,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       }
 
       if ( this.biasesArray ) {
-        let biasValue;
+//        let biasValue;
 
 //!!! ...unfinished... (2021/12/28) 
 
@@ -371,13 +370,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2021/12/29) pre-translate? pass-through? value-bounds? activation?
             if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
-              biasValue = extraTranslate;
+              this.biasesArray[ biasIndex ] = extraTranslate;
 
             } else { // Not pass-through half channels.
-              biasValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) + extraTranslate;
+//              biasValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) + extraTranslate;
+              this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ] + extraTranslate;
             }
-
-            this.biasesArray[ biasIndex ] = biasValue;
 
             ++sourceIndex;
             ++biasIndex;
