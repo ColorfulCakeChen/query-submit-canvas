@@ -208,10 +208,21 @@ class BoundsArray {
    * @param {number[]} aUppers  Add this.uppers[ thisIndex ] by aUppers[ aIndex ].
    * @param {number} aIndex     The array index of aLlowers[] and aUppers[].
    *
-   * @return {BoundsArray} Return this (modified) object..
+   * @return {BoundsArray} Return this (modified) object.
    */
   add_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
     return this.add_one_byLowerUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number[]} Ns       Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
+   * @param {number} aIndex     The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_one_byNs( thisIndex, Ns, aIndex ) {
+    return this.add_one_byLowersUppers( thisIndex, Ns, Ns, aIndex );
   }
 
   /**
@@ -222,12 +233,12 @@ class BoundsArray {
    *
    * @param {number} aIndex     The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
-   * @return {BoundsArray}
-   *   Return this (modified) object which is added by aBoundsArray.
+   * @return {BoundsArray} Return this (modified) object.
    */
   add_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
     return this.add_one_byLowersUppers( thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
   }
+
 
   /**
    * @param {number} aLower  Add all this.lowers[] by aLower.
@@ -243,13 +254,12 @@ class BoundsArray {
   }
 
   /**
-   * @param {number[]} Ns  Add all ( this.lowers[], this.uppers[] ) by ( Ns, Ns ).
+   * @param {number} N  Add all ( this.lowers[], this.uppers[] ) by ( N, N ).
    *
-   * @return {Bounds}
-   *   Return this (modified) object which is the same as this.add_all_byLowerUpper( Ns, Ns ).
+   * @return {BoundsArray} Return this (modified) object.
    */
-  add_all_byNs( Ns ) {
-    return this.add_all_byLowerUpper( Ns, Ns );
+  add_all_byN( N ) {
+    return this.add_all_byLowerUpper( N, N );
   }
 
   /**
@@ -275,6 +285,15 @@ class BoundsArray {
   }
 
   /**
+   * @param {number[]} Ns  Add all ( this.lowers[], this.uppers[] ) by ( Ns, Ns ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_all_byNs( Ns ) {
+    return this.add_all_byLowersUppers( Ns, Ns );
+  }
+
+  /**
    * @param {BoundsArray} aBoundsArray  Add all ( this.lowers[], this.uppers[] ) by ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
    *
    * @return {BoundsArray} Return this (modified) object.
@@ -282,6 +301,7 @@ class BoundsArray {
   add_all_byBoundsArray( aBoundsArray ) {
     return this.add_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
   }
+
 
 //!!! ...unfinished... (2021/12/29) byIndex, byAll
   /**
