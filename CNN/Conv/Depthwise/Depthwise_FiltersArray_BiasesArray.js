@@ -254,46 +254,51 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         let inChannelBegin = inChannelBeginArray[ halfPartIndex ];
         let inChannelEnd = inChannelEndArray[ halfPartIndex ];
 
-        for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-          for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+        if ( this.filtersArray ) {
 
-            // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-            //let filterIndexBaseX = ( filterY * this.filterWidth );
+          for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+            for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
 
-            for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-              for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+              // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
+              //let filterIndexBaseX = ( filterY * this.filterWidth );
 
-                // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
-                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-                  continue;
+              for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+                for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
 
-                // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-                //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
-
-                for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+                  // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+                  if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                    continue;
 
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-                  //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
+                  //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
-//!!! ...unfinished... (2021/12/28) 
-                  for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+                  for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
 
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-                    //let filterIndex = filterIndexBaseSubC + outChannelSub;
+                    //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
-//!!! ...unfinished... (2021/12/28) 
-                    this.filtersArray[ filterIndex ] = ???;
+  //!!! ...unfinished... (2021/12/28) 
+                    for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-                    ++sourceIndex;
-                    ++filterIndex;
+                      // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
+                      //let filterIndex = filterIndexBaseSubC + outChannelSub;
+
+  //!!! ...unfinished... (2021/12/28) 
+                      this.filtersArray[ filterIndex ] = ???;
+
+                      ++sourceIndex;
+                      ++filterIndex;
+                    }
                   }
                 }
               }
             }
           }
+
+        // No filters array needs to be filled. (i.e. avg/max pooling)
         }
 
-        if ( this.bBias ) {
+        if ( this.biasesArray ) {
 
 //!!! ...unfinished... (2021/12/28) 
 
