@@ -176,7 +176,10 @@ class Bounds {
   }
 
   /**
-   * @return {number} value
+   * @param {number} value
+   *   The value to be clamped.
+   *
+   * @return {number}
    *   If value is NaN, return zero. Otherwise, return value clamped between this Bounds [ this.lower, this.upper ].
    */
   valueClamped_or_zeroIfNaN( value ) {
