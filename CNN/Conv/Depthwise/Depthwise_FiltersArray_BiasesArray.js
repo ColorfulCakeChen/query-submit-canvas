@@ -171,6 +171,18 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         this.effectFilterY_passThrough = effectFilterY_passThrough;
         this.effectFilterX_passThrough = effectFilterX_passThrough;
       }
+
+      isPassThrough() {
+        if ( ( this.effectFilterY_passThrough < 0 ) || ( this.effectFilterX_passThrough < 0 ) ) // Not pass-through half channels.
+          return false;
+        return true;
+      }
+
+      isPassThrough_Filter_NonZeroPosition( effectFilterY, effectFilterX ) {
+        if ( ( effectFilterY == this.effectFilterY_passThrough ) && ( effectFilterX == this.effectFilterX_passThrough ) ) {
+          return true;
+        return false;
+      }      
     }
 
     // Determine shape of the filters, biases, channels.
@@ -267,8 +279,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       let halfPartInfo = halfPartInfoArray[ halfPartIndex ];
       let inChannelBegin = halfPartInfo.inChannelBegin;
       let inChannelEnd = halfPartInfo.inChannelEnd;
-      let effectFilterY_passThrough = halfPartInfo.effectFilterY_passThrough;
-      let effectFilterX_passThrough = halfPartInfo.effectFilterX_passThrough;
+//       let effectFilterY_passThrough = halfPartInfo.effectFilterY_passThrough;
+//       let effectFilterX_passThrough = halfPartInfo.effectFilterX_passThrough;
 
       if ( this.filtersArray ) {
 
@@ -298,17 +310,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-//!!! ...unfinished... (2021/12/29) pre-scale? pass-through?
+//!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds?
                     let filterValue;
-                    if ( ( effectFilterY_passThrough < 0 ) || ( effectFilterX_passThrough < 0 ) ) { // Not pass-through half channels.
-                      filterValue = sourceWeights[ sourceIndex ];
-
-                    } else { // For pass-through half channels.
-                      if ( ( effectFilterY == effectFilterY_passThrough ) && ( effectFilterX == effectFilterX_passThrough ) ) {
+                    if ( halfPartInfo.isPassThrough() ) { // For pass-through half channels.
+                      if ( halfPartInfo.isPassThrough_Filter_NonZeroPosition( effectFilterY, effectFilterX ) ) {
                         filterValue = 1; // The only one position with non-zero value.
                       } else {
                         filterValue = 0; // All other positions of the filter are zero.
                       }
+
+                    } else { // Not pass-through half channels.
+                      filterValue = sourceWeights[ sourceIndex ];
                     }
 
                     let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
@@ -333,13 +345,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-//!!! ...unfinished... (2021/12/29) pre-translate? pass-through?
+//!!! ...unfinished... (2021/12/29) pre-translate? pass-through? value-bounds?
             let biasValue;
-            if ( ( effectFilterY_passThrough < 0 ) || ( effectFilterX_passThrough < 0 ) ) { // Not pass-through half channels.
-              biasValue = sourceWeights[ sourceIndex ];
-
-            } else { // For pass-through half channels.
+            if ( halfPartInfo.isPassThrough() ) { // For pass-through half channels.
               biasValue = 0;
+
+            } else { // Not pass-through half channels.
+              biasValue = sourceWeights[ sourceIndex ];
             }
 
             let extraTranslate = extraScaleTranslateArray_byChannelIndex.translates[ inChannel ];
