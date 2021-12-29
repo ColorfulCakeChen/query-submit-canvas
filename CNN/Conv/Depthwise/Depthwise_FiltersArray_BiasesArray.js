@@ -155,13 +155,51 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
-//!!! ...unfinished... (2021/12/28)
-    let tensorWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, tensorShape );
-    if ( !tensorWeights.extract() )
-      return null;  // e.g. input array does not have enough data.
-    this.byteOffsetEnd = tensorWeights.defaultByteOffsetEnd;
+//!!! ...unfinished... (2021/12/29)
+    let inChannelBeginArray, inChannelEndArray;
+    let extractedElementCount = 0;
+      
+    if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
-//!!! ...unfinished... (2021/12/27)
+//!!! ...unfinished... (2021/12/29)
+      extractedElementCount = this.inputChannelCount; // for biases.
+
+    } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
+
+//!!! ...unfinished... (2021/12/29)
+      switch ( this.nHigherHalfDifferent ) {
+        default:
+        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+          inChannelBeginArray = [ 0 ];
+          inChannelEndArray = [ this.inputChannelCount ];
+
+          this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
+          if ( this.bBias )
+            this.biassShape = [ this.outputChannelCount ];
+
+          break;
+
+        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
+        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
+          inChannelBeginArray = [                                0, this.inputChannelCount_lowerHalf ];
+          inChannelEndArray =   [ this.inputChannelCount_lowerHalf, this.inputChannelCount           ];
+          break;
+      }
+
+    } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
+    }
+
+    extractedElementCount += tf.util.sizeFromShape( this.filtersShape );
+    if ( this.bBias )
+      extractedElementCount += tf.util.sizeFromShape( this.biassShape );
+
+
+//!!! ...unfinished... (2021/12/28)
+    let sourceWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, extractedElementCount );
+    if ( !sourceWeights.extract() )
+      return false;  // e.g. input array does not have enough data.
+    this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
+
 
     if ( this.AvgMax_Or_ChannelMultiplier <= 0 ) { // For AVG pooling or MAX pooling or NONE, no depthwise filter needs be extracted.
       this.filtersArray = null;
@@ -193,25 +231,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       sourceIndex = filterIndex = biasIndex = 0;
 
 //!!! ...unfinished... (2021/12/29)
-//       let halfPartCount = 1;
-//       if ( ??? )
-//         halfPartCount = 2;
-//
-
-      let inChannelBeginArray, inChannelEndArray;
-      switch ( this.nHigherHalfDifferent ) {
-        default:
-        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-          inChannelBeginArray = [ 0 ];
-          inChannelEndArray = [ this.inputChannelCount ];
-          break;
-
-        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
-        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
-          inChannelBeginArray = [ 0, this.inputChannelCount_lowerHalf ];
-          inChannelEndArray = [ this.inputChannelCount_lowerHalf, this.inputChannelCount ];
-          break;
-      }
 
 
       // ( halfPartIndex == 0 ), lower half channels. (or, all channels)
