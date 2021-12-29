@@ -222,5 +222,22 @@ class Bounds {
     return this.multiply_Ns( aScaleTranslateArray.scales ).add_Ns( aScaleTranslateArray.translates );
   }
 
+  /**
+   * @param {number} value
+   *   The value to be clamped.
+   *
+   * @param {number} arrayIndex
+   *   Use which Bounds of this BoundsArray to clamp the value.
+   *
+   * @return {number}
+   *   If value is NaN, return zero. Otherwise, return value clamped between this BoundsArray[ arrayIndex ][ this.lower, this.upper ].
+   */
+  valueClamped_or_zeroIfNaN( value, arrayIndex ) {
+    if ( !Number.isNaN( value ) )
+      return Math.max( this.lowers[ arrayIndex ], Math.min( value, this.uppers[ arrayIndex ] ) );
+    else
+      return 0; // If NaN, let it become 0.
+  }
+
 }
 
