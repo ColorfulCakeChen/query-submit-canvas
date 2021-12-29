@@ -157,7 +157,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2021/12/29)
     let inChannelBeginArray, inChannelEndArray;
-
     let filtersShape_extracted, biassShape_extracted;
 
     if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
@@ -166,6 +165,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       this.filtersShape = null; // avg/max pooling do not have filters to be extracted.
       if ( this.bBias )
         this.biassShape = biassShape_extracted= [ this.outputChannelCount ];
+
+      inChannelBeginArray = [ 0 ];
+      inChannelEndArray = [ this.inputChannelCount ];
 
     } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
 
@@ -220,6 +222,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     if ( !sourceWeights.extract() )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
+    this.tensorWeightCountExtracted = weightsCount_extracted;
 
 
 //!!! ...unfinished... (2021/12/27) for pass-through
@@ -309,7 +312,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     }
 
 
-    this.tensorWeightCountExtracted = weightsCount_extracted;
     
 // let inputHeight = 10;
 // let inputWidth = 10;
