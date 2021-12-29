@@ -126,7 +126,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
-    this.valueBoundsSet = new ValueBoundsSet();
+    this.valueBoundsSet = new ValueBoundsSet( inputChannelCount, this.outputChannelCount );
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nHigherHalfDifferent = nHigherHalfDifferent;
@@ -185,9 +185,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
     //
-    // Q2: Why are not filtersWeights and biasesWeights kept in this?
+    // Q2: Why is not the sourceWeights kept in this?
     // A2: So that inputFloat32Array could be released.
 
+
+    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_ValueBoundsSet.output.lowers.length ),
+      `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_by_extract(): `
+        + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
+        + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_ValueBoundsSet.output.lowers.length} ).`
+    );
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
@@ -273,8 +279,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
 
-    let sourceIndex, filterIndex, biasIndex;
-    sourceIndex = filterIndex = biasIndex = 0;
+    let sourceIndex, filterIndex, biasIndex, outChannelIndex;
+    sourceIndex = filterIndex = biasIndex = outChannelIndex = 0;
 
 //!!! ...unfinished... (2021/12/29)
 
@@ -285,8 +291,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       let halfPartInfo = halfPartInfoArray[ halfPartIndex ];
       let inChannelBegin = halfPartInfo.inChannelBegin;
       let inChannelEnd = halfPartInfo.inChannelEnd;
-//       let effectFilterY_passThrough = halfPartInfo.effectFilterY_passThrough;
-//       let effectFilterX_passThrough = halfPartInfo.effectFilterX_passThrough;
 
       if ( this.filtersArray ) {
 
@@ -311,12 +315,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                   //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
+//!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
+                  this.valueBoundsSet.input.lowers[ inChannel ] = previous_ConvBiasActivation_ValueBoundsSet.output.lowers[ inChannel ];
+                  this.valueBoundsSet.input.uppers[ inChannel ] = previous_ConvBiasActivation_ValueBoundsSet.output.uppers[ inChannel ];
+
                   for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-//!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds?
+//!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
                     let filterValue;
                     if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
@@ -326,11 +334,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                       }
 
                     } else { // Not pass-through half channels.
-                      filterValue = sourceWeights[ sourceIndex ];
+                      filterValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] );
                     }
 
                     let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
                     this.filtersArray[ filterIndex ] = filterValue * extraScale;
+
+//!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
+                    this.valueBoundsSet.input.lowers[ inChannel ] = previous_ConvBiasActivation_ValueBoundsSet.output.lowers[ inChannel ];
 
                     ++sourceIndex;
                     ++filterIndex;
@@ -351,13 +362,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-//!!! ...unfinished... (2021/12/29) pre-translate? pass-through? value-bounds?
+//!!! ...unfinished... (2021/12/29) pre-translate? pass-through? value-bounds? activation?
             let biasValue;
             if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
               biasValue = 0;
 
             } else { // Not pass-through half channels.
-              biasValue = sourceWeights[ sourceIndex ];
+              biasValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] );
             }
 
             let extraTranslate = extraScaleTranslateArray_byChannelIndex.translates[ inChannel ];
