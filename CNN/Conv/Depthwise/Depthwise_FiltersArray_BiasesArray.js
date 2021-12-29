@@ -316,6 +316,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                   //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
+                  let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
+
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
                   this.valueBoundsSet.input.lowers[ inChannel ] = previous_ConvBiasActivation_ValueBoundsSet.output.lowers[ inChannel ];
                   this.valueBoundsSet.input.uppers[ inChannel ] = previous_ConvBiasActivation_ValueBoundsSet.output.uppers[ inChannel ];
@@ -329,17 +331,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     let filterValue;
                     if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
-                        filterValue = 1; // The only one position with non-zero value.
+                        filterValue = extraScale; // The only one position with non-zero value.
                       } else {
                         filterValue = 0; // All other positions of the filter are zero.
                       }
 
                     } else { // Not pass-through half channels.
-                      filterValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] );
+                      filterValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
                     }
 
-                    let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
-                    this.filtersArray[ filterIndex ] = filterValue * extraScale;
+                    this.filtersArray[ filterIndex ] = filterValue;
 
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
                     this.valueBoundsSet.output.lowers[ outChannel ] = this.valueBoundsSet.input.lowers[ inChannel ] multiply_???;
@@ -363,19 +364,20 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
         let outChannel = inChannelBegin * this.channelMultiplier;
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+          let extraTranslate = extraScaleTranslateArray_byChannelIndex.translates[ inChannel ];
+
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
 //!!! ...unfinished... (2021/12/29) pre-translate? pass-through? value-bounds? activation?
             let biasValue;
             if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
-              biasValue = 0;
+              biasValue = extraTranslate;
 
             } else { // Not pass-through half channels.
-              biasValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] );
+              biasValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) + extraTranslate;
             }
 
-            let extraTranslate = extraScaleTranslateArray_byChannelIndex.translates[ inChannel ];
-            this.biasesArray[ biasIndex ] = biasValue + extraTranslate;
+            this.biasesArray[ biasIndex ] = biasValue;
 
             ++sourceIndex;
             ++biasIndex;
