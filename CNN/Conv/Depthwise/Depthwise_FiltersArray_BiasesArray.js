@@ -6,6 +6,9 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 /**
  * Half channels information. Describe channel index range of lower half or higher half
+ *
+ * @member {boolean} bPassThrough
+ *   If true, this is the half channels for pass-through input to output.
  */
 class HalfPartInfo {
 
@@ -22,15 +25,8 @@ class HalfPartInfo {
     this.inChannelEnd = inChannelEnd;
     this.effectFilterY_passThrough = effectFilterY_passThrough;
     this.effectFilterX_passThrough = effectFilterX_passThrough;
-  }
 
-  /**
-   * @return {boolean} Return true, if this is the half channels for pass-through input to output.
-   */
-  isPassThrough() {
-    if ( ( this.effectFilterY_passThrough < 0 ) || ( this.effectFilterX_passThrough < 0 ) ) // Not pass-through half channels.
-      return false;
-    return true;
+    this.bPassThrough = ( ( this.effectFilterY_passThrough >= 0 ) && ( this.effectFilterX_passThrough >= 0 ) );
   }
 
   /**
@@ -322,7 +318,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds?
                     let filterValue;
-                    if ( halfPartInfo.isPassThrough() ) { // For pass-through half channels.
+                    if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
                         filterValue = 1; // The only one position with non-zero value.
                       } else {
@@ -357,7 +353,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2021/12/29) pre-translate? pass-through? value-bounds?
             let biasValue;
-            if ( halfPartInfo.isPassThrough() ) { // For pass-through half channels.
+            if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
               biasValue = 0;
 
             } else { // Not pass-through half channels.
