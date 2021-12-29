@@ -26,7 +26,7 @@ class BoundsArray {
    */
   clone() {
     let result = new BoundsArray( this.lowers.length );
-    result.set_BoundsArray_byAll( this );
+    result.set_all_byBoundsArray( this );
     return result;
   }
 
@@ -37,23 +37,9 @@ class BoundsArray {
    *
    * @return {BoundsArray} Return this (modified) object.
    */
-  set_LowersUpper_byIndex( thisIndex, aLower, aUpper ) {
+  set_one_byLowerUpper( thisIndex, aLower, aUpper ) {
     this.lowers[ thisIndex ] = Math.min( aLower, aUpper ); // Confirm ( lower <= upper ).
     this.uppers[ thisIndex ] = Math.max( aLower, aUpper );
-    return this;
-  }
-
-  /**
-   * @param {number} aLower  Set this Bounds.lowers by aLower.
-   * @param {number} aUpper  Set this Bounds.uppers by aUpper.
-   *
-   * @return {BoundsArray} Return this (modified) object which is [ aLower, aUpper ].
-   */
-  set_LowerUpper_byAll( aLower, aUpper ) {
-    let lower = Math.min( aLower, aUpper ); // Confirm ( lower <= upper ).
-    let upper = Math.max( aLower, aUpper );
-    this.lowers.fill( lower );
-    this.uppers.fill( upper );
     return this;
   }
 
@@ -63,17 +49,8 @@ class BoundsArray {
    *
    * @return {BoundsArray} Return this (modified) object whose values are copied from aBounds.
    */
-  set_Bounds_byIndex( thisIndex, aBounds ) {
-    return this.set_LowerUpper_byIndex( thisIndex, aBounds.lower, aBounds.upper );
-  }
-
-  /**
-   * @param {Bounds} aBounds   Set this BoundsArray by aBounds.
-   *
-   * @return {BoundsArray} Return this (modified) object whose values are copied from aBounds.
-   */
-  set_Bounds_byAll( aBounds ) {
-    return this.set_LowerUpper( aBounds.lower, aBounds.upper );
+  set_one_byBounds( thisIndex, aBounds ) {
+    return this.set_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -84,9 +61,43 @@ class BoundsArray {
    *
    * @return {BoundsArray} Return this (modified) object.
    */
-  set_LowersUppers_byIndex( thisIndex, aLowers, aUppers, aIndex ) {
-    this.set_LowersUppers_byIndex( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+  set_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
+    this.set_one_byLowersUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
     return this;
+  }
+
+  /**
+   * @param {number} thisIndex     The array index of this.lowers[] and this.uppers[].
+   * @param {Bounds} aBoundsArray  Set this BoundsArray by aBoundsArray.
+   * @param {number} aIndex        The array index of aLlowers[] and aUppers[].
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  set_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
+    return this.set_one_byLowersUppers( thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
+  }
+
+  /**
+   * @param {number} aLower  Set this Bounds.lowers by aLower.
+   * @param {number} aUpper  Set this Bounds.uppers by aUpper.
+   *
+   * @return {BoundsArray} Return this (modified) object which is [ aLower, aUpper ].
+   */
+  set_all_byLowerUpper( aLower, aUpper ) {
+    let lower = Math.min( aLower, aUpper ); // Confirm ( lower <= upper ).
+    let upper = Math.max( aLower, aUpper );
+    this.lowers.fill( lower );
+    this.uppers.fill( upper );
+    return this;
+  }
+
+  /**
+   * @param {Bounds} aBounds   Set this BoundsArray by aBounds.
+   *
+   * @return {BoundsArray} Return this (modified) object whose values are copied from aBounds.
+   */
+  set_all_byBounds( aBounds ) {
+    return this.set_all_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -99,22 +110,11 @@ class BoundsArray {
    * @return {BoundsArray}
    *   Return this (modified) object which is [ aLowers, aUppers ].
    */
-  set_LowersUppers_byAll( aLowers, aUppers ) {
+  set_all_byLowersUppers( aLowers, aUppers ) {
     for ( let i = 0; i < this.lowers.length; ++i ) {
-      this.set_LowersUpper_byIndex( i, aLowers, aUppers, i );
+      this.set_one_byLowersUppers( i, aLowers, aUppers, i );
     }
     return this;
-  }
-
-  /**
-   * @param {number} thisIndex     The array index of this.lowers[] and this.uppers[].
-   * @param {Bounds} aBoundsArray  Set this BoundsArray by aBoundsArray.
-   * @param {number} aIndex        The array index of aLlowers[] and aUppers[].
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  set_BoundsArray_byIndex( thisIndex, aBoundsArray, aIndex ) {
-    return this.set_LowersUpper_byIndex( thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
   }
 
   /**
@@ -124,8 +124,8 @@ class BoundsArray {
    * @return {BoundsArray}
    *   Return this (modified) object whose values are copied from aBoundsArray.
    */
-  set_BoundsArray_byAll( aBoundsArray ) {
-    return this.set_LowersUppers_byAll( aBoundsArray.lowers, aBoundsArray.uppers );
+  set_all_byBoundsArray( aBoundsArray ) {
+    return this.set_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
   }
 
 //!!! ...unfinished... (2021/12/29) byIndex, byAll
