@@ -58,6 +58,9 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *         the filters for the input channels between ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will just pass
  *         through the input to output.
  *
+
+//!!! ...unfinished... (2021/12/29)
+
  * @member {number} tensorWeightCountExtracted
  *   The wieght count extracted from inputFloat32Array and used in tensors.  Not including inferenced weights (even if they are
  * used in tensors), because they are not extracted from inputFloat32Array.
@@ -189,17 +192,33 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       let sourceIndex, filterIndex, biasIndex;
       sourceIndex = filterIndex = biasIndex = 0;
 
-      let halfPartCount = 1;
-      if ( ??? )
-          halfPartCount = 2;
+//!!! ...unfinished... (2021/12/29)
+//       let halfPartCount = 1;
+//       if ( ??? )
+//         halfPartCount = 2;
+//
 
-          
-      // ( halfPartIndex == 0 ), lower half channels.
+      let inChannelBeginArray, inChannelEndArray;
+      switch ( this.nHigherHalfDifferent ) {
+        default:
+        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+          inChannelBeginArray = [ 0 ];
+          inChannelEndArray = [ this.inputChannelCount ];
+          break;
+
+        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
+        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
+          inChannelBeginArray = [ 0, this.inputChannelCount_lowerHalf ];
+          inChannelEndArray = [ this.inputChannelCount_lowerHalf, this.inputChannelCount ];
+          break;
+      }
+
+
+      // ( halfPartIndex == 0 ), lower half channels. (or, all channels)
       // ( halfPartIndex == 1 ), higher half channels.
-      for ( let halfPartIndex = 0; halfPartIndex < halfPartCount; ++halfPartIndex ) {
-
-//!!! ...unfinished... (2021/12/28) lower half is ceil(), higher half is floor()
-//        let inputChannelCount_half = ceil ??? floor ??? ( this.inputChannelCount / halfPartCount );
+      for ( let halfPartIndex = 0; halfPartIndex < inChannelBeginArray.length; ++halfPartIndex ) {
+        let inChannelBegin = inChannelBeginArray[ halfPartIndex ];
+        let inChannelEnd = inChannelEndArray[ halfPartIndex ];
 
         for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
           for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
@@ -217,7 +236,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                 // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                 //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
-                for ( let inChannel = 0; inChannel < inputChannelCount_half; ++inChannel ) {
+                for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
 
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                   //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
