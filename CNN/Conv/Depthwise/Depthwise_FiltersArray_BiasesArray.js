@@ -221,7 +221,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
             halfPartInfoArray = [
-              new HalfPartInfo(                                0, this.inputChannelCount_lowerHalf,  ),
+              new HalfPartInfo(                                0, this.inputChannelCount_lowerHalf ),
               new HalfPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
             filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
             biasesShape_extracted =  [ this.inputChannelCount_lowerHalf ];
@@ -299,16 +299,20 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through?
+                    let filterValue;
                     if ( ( effectFilterY_passThrough < 0 ) || ( effectFilterX_passThrough < 0 ) ) { // Not pass-through half channels.
-                      this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
+                      filterValue = sourceWeights[ sourceIndex ];
 
                     } else { // For pass-through half channels.
                       if ( ( effectFilterY == effectFilterY_passThrough ) && ( effectFilterX == effectFilterX_passThrough ) ) {
-                        this.filtersArray[ filterIndex ] = filterValue; // The only one position with non-zero value.
+                        filterValue = 1; // The only one position with non-zero value.
                       } else {
-                        this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
+                        filterValue = 0; // All other positions of the filter are zero.
                       }
                     }
+
+                    let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
+                    this.filtersArray[ filterIndex ] = filterValue * extraScale;
 
                     ++sourceIndex;
                     ++filterIndex;
@@ -330,12 +334,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
 //!!! ...unfinished... (2021/12/29) pre-translate? pass-through?
+            let biasValue;
             if ( ( effectFilterY_passThrough < 0 ) || ( effectFilterX_passThrough < 0 ) ) { // Not pass-through half channels.
-              this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ];
+              biasValue = sourceWeights[ sourceIndex ];
 
             } else { // For pass-through half channels.
-              this.biasesArray[ biasIndex ] = biasValue;
+              biasValue = 0;
             }
+
+            let extraTranslate = extraScaleTranslateArray_byChannelIndex.translates[ inChannel ];
+            this.biasesArray[ biasIndex ] = biasValue + extraTranslate;
 
             ++sourceIndex;
             ++biasIndex;
