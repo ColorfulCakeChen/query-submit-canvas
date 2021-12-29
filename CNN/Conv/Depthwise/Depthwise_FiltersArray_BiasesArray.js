@@ -155,53 +155,53 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
-//!!! ...unfinished... (2021/12/29)
+    // Determine shape of the filters, biases, channels.
     let inChannelBeginArray, inChannelEndArray;
     let filtersShape_extracted, biassShape_extracted;
+    {
+      if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
-    if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
+        this.poolWindowShape = [ this.filterHeight, this.filterWidth ]; // avg/max pooling do not have this.filtersShape to be extracted.
+        if ( this.bBias )
+          this.biassShape = biassShape_extracted = [ this.outputChannelCount ];
 
-      this.poolWindowShape = [ this.filterHeight, this.filterWidth ];
-      this.filtersShape = null; // avg/max pooling do not have filters to be extracted.
-      if ( this.bBias )
-        this.biassShape = biassShape_extracted= [ this.outputChannelCount ];
+        inChannelBeginArray = [ 0 ];
+        inChannelEndArray = [ this.inputChannelCount ];
 
-      inChannelBeginArray = [ 0 ];
-      inChannelEndArray = [ this.inputChannelCount ];
+      } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
 
-    } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
+        this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
+        if ( this.bBias )
+          this.biassShape = [ this.outputChannelCount ];
 
-      this.poolWindowShape = null; // convolution does not have pooling window to be used.
-      this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
-      if ( this.bBias )
-        this.biassShape = [ this.outputChannelCount ];
+  //!!! ...unfinished... (2021/12/29)
+        switch ( this.nHigherHalfDifferent ) {
+          default:
+          case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+            inChannelBeginArray = [ 0 ];
+            inChannelEndArray = [ this.inputChannelCount ];
+            filtersShape_extracted = this.filtersShape;
+            biassShape_extracted =   this.biassShape;
+            break;
 
-//!!! ...unfinished... (2021/12/29)
-      switch ( this.nHigherHalfDifferent ) {
-        default:
-        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-          inChannelBeginArray = [ 0 ];
-          inChannelEndArray = [ this.inputChannelCount ];
-          filtersShape_extracted = this.filtersShape;
-          biassShape_extracted =   this.biassShape;
-          break;
+          case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
+            inChannelBeginArray = [                                0, this.inputChannelCount_lowerHalf ];
+            inChannelEndArray =   [ this.inputChannelCount_lowerHalf, this.inputChannelCount           ];
+            filtersShape_extracted = this.filtersShape;
+            biassShape_extracted =   this.biassShape;
+            break;
 
-        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
-          inChannelBeginArray = [                                0, this.inputChannelCount_lowerHalf ];
-          inChannelEndArray =   [ this.inputChannelCount_lowerHalf, this.inputChannelCount           ];
-          filtersShape_extracted = this.filtersShape;
-          biassShape_extracted =   this.biassShape;
-          break;
+          case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
+            inChannelBeginArray = [                                0, this.inputChannelCount_lowerHalf ];
+            inChannelEndArray =   [ this.inputChannelCount_lowerHalf, this.inputChannelCount           ];
+            filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
+            biassShape_extracted =   [ this.inputChannelCount_lowerHalf ];
+            break;
+        }
 
-        case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
-          inChannelBeginArray = [                                0, this.inputChannelCount_lowerHalf ];
-          inChannelEndArray =   [ this.inputChannelCount_lowerHalf, this.inputChannelCount           ];
-          filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
-          biassShape_extracted =   [ this.inputChannelCount_lowerHalf ];
-          break;
+      } else { // No depthwise (i.e. zero) (so no channel multiplier).
+        inChannelBeginArray = []; // Note: Even if ( this.bBias == true ), it will not be extracted.
       }
-
-    } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
     }
 
     // Prepare result filters and biases array.
