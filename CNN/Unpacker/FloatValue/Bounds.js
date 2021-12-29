@@ -176,6 +176,17 @@ class Bounds {
   }
 
   /**
+   * @return {number} value
+   *   If value is NaN, return zero. Otherwise, return value clamped between this Bounds [ this.lower, this.upper ].
+   */
+  valueClamped_or_zeroIfNaN( value ) {
+    if ( !Number.isNaN( value ) )
+      return Math.max( this.lower, Math.min( value, this.upper ) );
+    else
+      return 0; // If NaN, let it become 0.
+  }
+
+  /**
    * Confirm:
    *   - Every element is not NaN. (If it is, become 0.)
    *   - Every element is between [ lower, upper ].
