@@ -157,13 +157,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     // Determine shape of the filters, biases, channels.
     let inChannelBeginArray, inChannelEndArray;
-    let filtersShape_extracted, biassShape_extracted;
+    let filtersShape_extracted, biasesShape_extracted;
     {
       if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
         this.poolWindowShape = [ this.filterHeight, this.filterWidth ]; // avg/max pooling do not have this.filtersShape to be extracted.
         if ( this.bBias )
-          this.biassShape = biassShape_extracted = [ this.outputChannelCount ];
+          this.biasesShape = biasesShape_extracted = [ this.outputChannelCount ];
 
         inChannelBeginArray = [ 0 ];
         inChannelEndArray = [ this.inputChannelCount ];
@@ -172,50 +172,49 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
         this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
         if ( this.bBias )
-          this.biassShape = [ this.outputChannelCount ];
+          this.biasesShape = [ this.outputChannelCount ];
 
-  //!!! ...unfinished... (2021/12/29)
         switch ( this.nHigherHalfDifferent ) {
           default:
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
             inChannelBeginArray = [ 0 ];
             inChannelEndArray = [ this.inputChannelCount ];
             filtersShape_extracted = this.filtersShape;
-            biassShape_extracted =   this.biassShape;
+            biasesShape_extracted =  this.biasesShape;
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
             inChannelBeginArray = [                                0, this.inputChannelCount_lowerHalf ];
             inChannelEndArray =   [ this.inputChannelCount_lowerHalf, this.inputChannelCount           ];
             filtersShape_extracted = this.filtersShape;
-            biassShape_extracted =   this.biassShape;
+            biasesShape_extracted =  this.biasesShape;
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
             inChannelBeginArray = [                                0, this.inputChannelCount_lowerHalf ];
             inChannelEndArray =   [ this.inputChannelCount_lowerHalf, this.inputChannelCount           ];
             filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
-            biassShape_extracted =   [ this.inputChannelCount_lowerHalf ];
+            biasesShape_extracted =  [ this.inputChannelCount_lowerHalf ];
             break;
         }
 
       } else { // No depthwise (i.e. zero) (so no channel multiplier).
-        inChannelBeginArray = []; // Note: Even if ( this.bBias == true ), it will not be extracted.
+        inChannelBeginArray = []; // Note: Even if ( this.bBias == true ), the biasesArray will still not be extracted.
       }
     }
 
     // Prepare result filters and biases array.
     if ( this.filtersShape )
       this.filtersArray = new Array( tf.util.sizeFromShape( this.filtersShape ) );
-    if ( this.biassShape )
-      this.biasesArray = new Array( tf.util.sizeFromShape( this.biassShape ) );
+    if ( this.biasesShape )
+      this.biasesArray = new Array( tf.util.sizeFromShape( this.biasesShape ) );
 
     // Calculate weights count of filters and biases to be extracted.
     let weightsCount_extracted = 0;
     if ( filtersShape_extracted )
       weightsCount_extracted += tf.util.sizeFromShape( filtersShape_extracted );
-    if ( biassShape_extracted )
-      weightsCount_extracted += tf.util.sizeFromShape( biassShape_extracted );
+    if ( biasesShape_extracted )
+      weightsCount_extracted += tf.util.sizeFromShape( biasesShape_extracted );
 
     // Prepare source weights to be extracted.
     let sourceWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, weightsCount_extracted );
@@ -276,7 +275,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-//!!! ...unfinished... (2021/12/29) pre-scale?
+//!!! ...unfinished... (2021/12/29) pre-scale? pass-through?
                     this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
 
                     ++sourceIndex;
@@ -298,7 +297,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-//!!! ...unfinished... (2021/12/29) pre-translate?
+//!!! ...unfinished... (2021/12/29) pre-translate? pass-through?
             this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ];
 
             ++sourceIndex;
