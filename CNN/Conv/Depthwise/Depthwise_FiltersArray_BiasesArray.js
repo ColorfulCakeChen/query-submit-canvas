@@ -223,15 +223,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
     this.tensorWeightCountExtracted = weightsCount_extracted;
 
-
-//!!! ...unfinished... (2021/12/27) for pass-through
-    // There is only one position (inside the effect depthwise filter) with value one. All other positions of the filter should be zero.
-    let oneEffectFilterY = this.padHeightTop;
-    let oneEffectFilterX = this.padWidthLeft;
-
-
+    // For pass-through filters, there is only one position (inside the effect depthwise filter) with non-zero value. All other
+    // positions of the filters should be zero.
+    //
     // Note: Unfortunately, the pass-through feature may not work for ( dilation > 1 ) because the non-zero-filter-value might be
     //       just at the dilation position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
+    let effectFilterY_passThrough = this.padHeightTop;
+    let effectFilterX_passThrough = this.padWidthLeft;
 
 
 
@@ -275,8 +273,26 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
+//!!! should depend on inChannel, too.
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through?
-                    this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
+                    switch ( this.nHigherHalfDifferent ) {
+                      default:
+                      case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+                        this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
+                        break;
+
+                      case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
+                        this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
+                        break;
+
+                      case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
+                        if ( ( effectFilterY == effectFilterY_passThrough ) && ( effectFilterX == effectFilterX_passThrough ) ) {
+                          this.filtersArray[ filterIndex ] = filterValue; // The only one position with non-zero value.
+                        } else {
+                          this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
+                        }
+                        break;
+                    }
 
                     ++sourceIndex;
                     ++filterIndex;
