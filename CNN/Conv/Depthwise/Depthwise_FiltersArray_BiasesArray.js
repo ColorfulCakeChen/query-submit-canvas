@@ -279,8 +279,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
 
-    let sourceIndex, filterIndex, biasIndex, outChannelIndex;
-    sourceIndex = filterIndex = biasIndex = outChannelIndex = 0;
+    let sourceIndex, filterIndex, biasIndex;
+    sourceIndex = filterIndex = biasIndex = 0;
 
 //!!! ...unfinished... (2021/12/29)
 
@@ -310,6 +310,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                 // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                 //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
+                let outChannel = inChannelBegin * this.channelMultiplier;
                 for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
 
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
@@ -319,7 +320,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   this.valueBoundsSet.input.lowers[ inChannel ] = previous_ConvBiasActivation_ValueBoundsSet.output.lowers[ inChannel ];
                   this.valueBoundsSet.input.uppers[ inChannel ] = previous_ConvBiasActivation_ValueBoundsSet.output.uppers[ inChannel ];
 
-                  for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+                  for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
@@ -341,7 +342,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     this.filtersArray[ filterIndex ] = filterValue * extraScale;
 
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
-                    this.valueBoundsSet.input.lowers[ inChannel ] = previous_ConvBiasActivation_ValueBoundsSet.output.lowers[ inChannel ];
+                    this.valueBoundsSet.output.lowers[ outChannel ] = this.valueBoundsSet.input.lowers[ inChannel ] multiply_???;
+                    this.valueBoundsSet.output.uppers[ outChannel ] = this.valueBoundsSet.input.uppers[ inChannel ];
 
                     ++sourceIndex;
                     ++filterIndex;
@@ -359,8 +361,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2021/12/28) 
 
+        let outChannel = inChannelBegin * this.channelMultiplier;
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
 //!!! ...unfinished... (2021/12/29) pre-translate? pass-through? value-bounds? activation?
             let biasValue;
