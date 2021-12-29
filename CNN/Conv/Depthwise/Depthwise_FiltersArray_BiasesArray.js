@@ -271,14 +271,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                   //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
-//!!! ...unfinished... (2021/12/28) 
                   for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-//!!! ...unfinished... (2021/12/28) 
-                    this.filtersArray[ filterIndex ] = ???;
+//!!! ...unfinished... (2021/12/29) pre-scale?
+                    this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
 
                     ++sourceIndex;
                     ++filterIndex;
@@ -299,8 +298,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-//!!! ...unfinished... (2021/12/27) 
-            this.biasesArray[ biasIndex ] = ???;
+//!!! ...unfinished... (2021/12/29) pre-translate?
+            this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ];
 
             ++sourceIndex;
             ++biasIndex;
