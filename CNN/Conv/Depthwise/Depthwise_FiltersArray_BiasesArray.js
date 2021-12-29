@@ -339,13 +339,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     } else { // Not pass-through half channels.
 //                      filterValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
+                      ++sourceIndex;
                     }
 
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
                     this.valueBoundsSet.output.lowers[ outChannel ] = this.valueBoundsSet.input.lowers[ inChannel ] multiply_???;
                     this.valueBoundsSet.output.uppers[ outChannel ] = this.valueBoundsSet.input.uppers[ inChannel ];
 
-                    ++sourceIndex;
                     ++filterIndex;
                   }
                 }
@@ -375,9 +375,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             } else { // Not pass-through half channels.
 //              biasValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) + extraTranslate;
               this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ] + extraTranslate;
+              ++sourceIndex;
             }
 
-            ++sourceIndex;
             ++biasIndex;
           }
         }
