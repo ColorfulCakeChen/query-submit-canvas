@@ -32,8 +32,8 @@ class BoundsArray {
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} aLower     Set this BoundsArray.lowers[ thisIndex ] by aLower.
-   * @param {number} aUpper     Set this BoundsArray.uppers[ thisIndex ] by aUpper.
+   * @param {number} aLower     Set this.lowers[ thisIndex ] by aLower.
+   * @param {number} aUpper     Set this.uppers[ thisIndex ] by aUpper.
    *
    * @return {BoundsArray} Return this (modified) object.
    */
@@ -45,7 +45,7 @@ class BoundsArray {
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {Bounds} aBounds    Set this BoundsArray by aBounds.
+   * @param {Bounds} aBounds    Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBounds.lower, aBounds.upper ).
    *
    * @return {BoundsArray} Return this (modified) object whose values are copied from aBounds.
    */
@@ -128,8 +128,77 @@ class BoundsArray {
     return this.set_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
   }
 
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} aLower     Add this.lowers[ thisIndex ] by aLower.
+   * @param {number} aUpper     Add this.uppers[ thisIndex ] by aUpper.
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_one_byLowerUpper( thisIndex, aLower, aUpper ) {
+    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm the lower and upper. And then, add corresponds.
+    let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
+    this.lowers[ thisIndex ] = thisLower + Math.min( aLower, aUpper );
+    this.uppers[ thisIndex ] = thisUpper + Math.max( aLower, aUpper );
+    return this;
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {Bounds} aBounds    Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBounds.lower, aBounds.upper ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_one_byBounds( thisIndex, aBounds ) {
+    return this.add_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number[]} aLowers  Add this.lowers[ thisIndex ] by aLowers[ aIndex ].
+   * @param {number[]} aUppers  Add this.uppers[ thisIndex ] by aUppers[ aIndex ].
+   * @param {number} aIndex     The array index of aLlowers[] and aUppers[].
+   *
+   * @return {BoundsArray} Return this (modified) object..
+   */
+  add_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
+    return this.add_one_byLowerUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+  }
+
 //!!! ...unfinished... (2021/12/29) byIndex, byAll
   /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number[]} aLowers  Add this.lowers[ thisIndex ] by aLowers[ aIndex ].
+   * @param {number[]} aUppers  Add this.uppers[ thisIndex ] by aUppers[ aIndex ].
+   * @param {number} aIndex     The array index of aLlowers[] and aUppers[].
+   *
+   * @return {BoundsArray} Return this (modified) object..
+   */
+  add_all_byLowersUppers( aLowers, aUppers ) {
+    let thisLower, thisUpper;
+    for ( let i = 0; i < this.lowers.length; ++i ) { // Confirm the lower and upper. And then, add corresponds.
+      thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] );
+      thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
+      this.lowers[ i ] = thisLower + Math.min( aLowers[ i ], aUppers[ i ] );
+      this.uppers[ i ] = thisUpper + Math.max( aLowers[ i ], aUppers[ i ] );
+    }
+    return this;
+  }
+
+  /**
+   * @param {number} thisIndex     The array index of this.lowers[] and this.uppers[].
+   * @param {BoundsArray} aBoundsArray
+   *   Add this Bounds by aBounds.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object which is added by aBoundsArray.
+   */
+  add_one_BoundsArray( aBoundsArray ) {
+    return this.add_LowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
+  }
+
+  /**
+   * @param {number} thisIndex     The array index of this.lowers[] and this.uppers[].
    * @param {BoundsArray} aBoundsArray
    *   Add this Bounds by aBounds.
    *
