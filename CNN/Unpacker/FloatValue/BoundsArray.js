@@ -83,8 +83,8 @@ class BoundsArray {
    *
    * @return {BoundsArray} Return this (modified) object.
    */
-  set_BoundsArray_byIndex_byIndex( thisIndex, aBoundsArray, aIndex ) {
-    return this.set_LowersUpper_byIndex_byIndex( thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
+  set_BoundsArray_byIndex( thisIndex, aBoundsArray, aIndex ) {
+    return this.set_LowersUpper_byIndex( thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
   }
 
   /**
@@ -106,7 +106,7 @@ class BoundsArray {
    *
    * @return {BoundsArray} Return this (modified) object.
    */
-  set_LowersUppers_byIndex_byIndex( thisIndex, aLowers, aUppers, aIndex ) {
+  set_LowersUppers_byIndex( thisIndex, aLowers, aUppers, aIndex ) {
     this.set_LowersUppers_byIndex( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
     return this;
   }
@@ -123,7 +123,7 @@ class BoundsArray {
    */
   set_LowersUppers_byAll( aLowers, aUppers ) {
     for ( let i = 0; i < this.lowers.length; ++i ) {
-      this.set_LowersUpper_byIndex_byIndex( i, aLowers, aUppers, i );
+      this.set_LowersUpper_byIndex( i, aLowers, aUppers, i );
     }
     return this;
   }
