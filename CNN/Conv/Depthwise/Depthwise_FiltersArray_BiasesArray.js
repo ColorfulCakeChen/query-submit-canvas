@@ -155,9 +155,39 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
+    /** Half channels information. */
+    class HalfPartInfo {
+      /**
+       * @param {number} effectFilterY_passThrough, effectFilterX_passThrough
+       *   For pass-through filters, there is only one position (inside the effect depthwise filter) with non-zero value. All other
+       * positions of the filters should be zero.
+       *   - Note: Unfortunately, the pass-through feature may not work for ( dilation > 1 ) because the non-zero-filter-value might
+       *       be just at the dilation position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
+       *   - Negative value means this part is not for pass-through.
+       */
+      constructor( inChannelBegin, inChannelEnd, effectFilterY_passThrough = -1, effectFilterX_passThrough = -1 ) {
+        this.inChannelBegin = inChannelBegin;
+        this.inChannelEnd = inChannelEnd;
+        this.effectFilterY_passThrough = effectFilterY_passThrough;
+        this.effectFilterX_passThrough = effectFilterX_passThrough;
+      }
+    }
+
     // Determine shape of the filters, biases, channels.
-    let inChannelBeginArray, inChannelEndArray;
+    let halfPartInfoArray;
     let filtersShape_extracted, biasesShape_extracted;
+
+//!!! (2021/12/29 Remarked)
+//     let inChannelBeginArray, inChannelEndArray;
+//
+//     // For pass-through filters, there is only one position (inside the effect depthwise filter) with non-zero value. All other
+//     // positions of the filters should be zero.
+//     //
+//     // Note: Unfortunately, the pass-through feature may not work for ( dilation > 1 ) because the non-zero-filter-value might be
+//     //       just at the dilation position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
+//     let effectFilterY_passThrough = this.padHeightTop;
+//     let effectFilterX_passThrough = this.padWidthLeft;
+      
     {
       if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
@@ -165,8 +195,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         if ( this.bBias )
           this.biasesShape = biasesShape_extracted = [ this.outputChannelCount ];
 
-        inChannelBeginArray = [ 0 ];
-        inChannelEndArray = [ this.inputChannelCount ];
+        halfPartInfoArray = [ new HalfPartInfo( 0, this.inputChannelCount ) ];
 
       } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
 
@@ -177,29 +206,30 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         switch ( this.nHigherHalfDifferent ) {
           default:
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-            inChannelBeginArray = [ 0 ];
-            inChannelEndArray = [ this.inputChannelCount ];
+            halfPartInfoArray = [ new HalfPartInfo( 0, this.inputChannelCount ) ];
             filtersShape_extracted = this.filtersShape;
             biasesShape_extracted =  this.biasesShape;
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
-            inChannelBeginArray = [                                0, this.inputChannelCount_lowerHalf ];
-            inChannelEndArray =   [ this.inputChannelCount_lowerHalf, this.inputChannelCount           ];
+            halfPartInfoArray = [
+              new HalfPartInfo(                                0, this.inputChannelCount_lowerHalf ),
+              new HalfPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount           ) ];
             filtersShape_extracted = this.filtersShape;
             biasesShape_extracted =  this.biasesShape;
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
-            inChannelBeginArray = [                                0, this.inputChannelCount_lowerHalf ];
-            inChannelEndArray =   [ this.inputChannelCount_lowerHalf, this.inputChannelCount           ];
+            halfPartInfoArray = [
+              new HalfPartInfo(                                0, this.inputChannelCount_lowerHalf,  ),
+              new HalfPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
             filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
             biasesShape_extracted =  [ this.inputChannelCount_lowerHalf ];
             break;
         }
 
       } else { // No depthwise (i.e. zero) (so no channel multiplier).
-        inChannelBeginArray = []; // Note: Even if ( this.bBias == true ), the biasesArray will still not be extracted.
+        halfPartInfoArray = []; // Note: Even if ( this.bBias == true ), the biasesArray will still not be extracted.
       }
     }
 
@@ -223,14 +253,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
     this.tensorWeightCountExtracted = weightsCount_extracted;
 
-    // For pass-through filters, there is only one position (inside the effect depthwise filter) with non-zero value. All other
-    // positions of the filters should be zero.
-    //
-    // Note: Unfortunately, the pass-through feature may not work for ( dilation > 1 ) because the non-zero-filter-value might be
-    //       just at the dilation position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
-    let effectFilterY_passThrough = this.padHeightTop;
-    let effectFilterX_passThrough = this.padWidthLeft;
-
 
 
     let sourceIndex, filterIndex, biasIndex;
@@ -241,9 +263,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     // ( halfPartIndex == 0 ), lower half channels. (or, all channels)
     // ( halfPartIndex == 1 ), higher half channels.
-    for ( let halfPartIndex = 0; halfPartIndex < inChannelBeginArray.length; ++halfPartIndex ) {
-      let inChannelBegin = inChannelBeginArray[ halfPartIndex ];
-      let inChannelEnd = inChannelEndArray[ halfPartIndex ];
+    for ( let halfPartIndex = 0; halfPartIndex < halfPartInfoArray.length; ++halfPartIndex ) {
+      let halfPartInfo = halfPartInfoArray[ halfPartIndex ];
+      let inChannelBegin = halfPartInfo.inChannelBegin;
+      let inChannelEnd = halfPartInfo.inChannelEnd;
+      let effectFilterY_passThrough = halfPartInfo.effectFilterY_passThrough;
+      let effectFilterX_passThrough = halfPartInfo.effectFilterX_passThrough;
 
       if ( this.filtersArray ) {
 
@@ -273,25 +298,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-//!!! should depend on inChannel, too.
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through?
-                    switch ( this.nHigherHalfDifferent ) {
-                      default:
-                      case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-                        this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
-                        break;
-
-                      case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
-                        this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
-                        break;
-
-                      case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
-                        if ( ( effectFilterY == effectFilterY_passThrough ) && ( effectFilterX == effectFilterX_passThrough ) ) {
-                          this.filtersArray[ filterIndex ] = filterValue; // The only one position with non-zero value.
-                        } else {
-                          this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
-                        }
-                        break;
+                    if ( ( effectFilterY_passThrough < 0 ) || ( effectFilterX_passThrough < 0 ) ) { // Not pass-through half channels.
+                      this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
+                    } else { // For pass-through half channels.
+                      if ( ( effectFilterY == effectFilterY_passThrough ) && ( effectFilterX == effectFilterX_passThrough ) ) {
+                        this.filtersArray[ filterIndex ] = filterValue; // The only one position with non-zero value.
+                      } else {
+                        this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
+                      }
                     }
 
                     ++sourceIndex;
