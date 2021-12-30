@@ -62,6 +62,8 @@ class Cases {
       let bUpper = oneRandCase.bBounds.upper;
       let N = oneRandCase.N;
 
+//!!! ...unfinished... (2021/12/30) set
+
 //???
       // BoundsArray all with one same bounds.
       let BoundsArrayLength = aCaseArray.length;
@@ -100,40 +102,14 @@ class Cases {
         this.assert_BoundsArray_all_byArrayArray( "bBoundsArrayOne", aLowersUppers );
       }
 
-//!!!
-      this.aBoundsArrayOne.add_one_byN( 0, N );
-      this.assert_BoundsArray_one_byArray( "aBoundsArrayOne", 0, [ aLower + N, aUpper + N ] );
+//!!! ...unfinished... (2021/12/30) set
 
-      this.aBoundsArrayOne.add_one_byLowerUpper( 1, bLower, bUpper );
-      this.assert_BoundsArray_one_byBounds( "aBoundsArrayOne", 1, oneRandCase.addedBounds );
-
-      this.aBoundsArrayOne.add_one_byBounds( 2, oneRandCase.bBounds );
-      this.assert_BoundsArray_one_byBounds( "aBoundsArrayOne", 2, oneRandCase.addedBounds );
-
-      this.aBoundsArrayOne.add_one_byNs( 3, Ns, 0 );
-      this.assert_BoundsArray_one_byArray( "aBoundsArrayOne", 3, [ aLower + N, aUpper + N ] );
-
-!!!
       this.aBoundsArrayOne.set_all_byBounds( oneRandCase.aBounds );
       this.aBoundsArrayOne.multiply_one_byN( 0, N );
       this.assert_BoundsArray_one_byArray( "aBoundsArrayOne", 0, [ aLower + N, aUpper + N ] );
 
 
 
-//!!!
-    oneRandCase.addedBounds = this.aBounds.clone().add_Bounds( this.bBounds );
-    this.multipledBounds = this.aBounds.clone().multiply_Bounds( this.bBounds );
-    this.aMultipledNBounds = this.aBounds.clone().multiply_N( N );
-
-      
-//!!!
-    this.addedBounds = this.aBounds.clone().add_Bounds( this.bBounds );
-    this.multipledBounds = this.aBounds.clone().multiply_Bounds( this.bBounds );
-    this.aMultipledNBounds = this.aBounds.clone().multiply_N( N );
-
-    this.assert_Bounds_byArray( "addedBounds", addedArray );
-    this.assert_Bounds_byArray( "multipledBounds", multipledArray );
-    this.assert_Bounds_byArray( "aMultipledNBounds", aMultipledNArray );
 
     }
 
@@ -172,6 +148,8 @@ class Cases {
     this.aBoundsArray = new FloatValue.BoundsArray( aCaseArray.length );
     this.bBoundsArray = new FloatValue.BoundsArray( aCaseArray.length );
 
+//!!! ...unfinished... (2021/12/30) set
+
     // Set
     {
       this.aBoundsArray.set_all_byNs( this.Ns );
@@ -186,9 +164,10 @@ class Cases {
 
     // Add
     {
+      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
+
       this.aBoundsArray.add_one_byN( 0, oneRandCase.N );
-      tBounds.set_byLowerUpper( this.aLowers[ 0 ], this.aUppers[ 0 ] );
-      tBounds.add_byN( oneRandCase.N );
+      tBounds.set_byLowerUpper( this.aLowers[ 0 ], this.aUppers[ 0 ] ).add_byN( oneRandCase.N );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, tBounds );
 
       this.aBoundsArray.add_one_byLowerUpper( 1, this.bLowers[ 1 ], this.bUppers[ 1 ] );
@@ -198,14 +177,12 @@ class Cases {
       this.assert_BoundsArray_one_byArray( "aBoundsArray", 2, this.addedArrayArray[ 2 ] );
 
       this.aBoundsArray.add_one_byNs( 3, this.Ns, 3 );
-      tBounds.set_byLowerUpper( this.aLowers[ 3 ], this.aUppers[ 3 ] );
-      tBounds.add_byN( this.Ns[ 3 ] );
+      tBounds.set_byLowerUpper( this.aLowers[ 3 ], this.aUppers[ 3 ] ).add_byN( this.Ns[ 3 ] );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 3, tBounds );
 
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
 
       this.aBoundsArray.add_one_byLowersUppers( 0, this.bLowers, this.bUppers, 0 );
-      tBounds.set_byLowerUpper( this.aLowers[ 0 ], this.aUppers[ 0 ] ).add_byLowerUpper( this.bLowers[ 0 ], this.bUppers[ 0 ] );
       this.assert_BoundsArray_one_byArray( "aBoundsArray", 0, this.addedArrayArray[ 0 ] );
 
       this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
@@ -287,8 +264,7 @@ class Cases {
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
 
       this.aBoundsArray.multiply_one_byLowersUppers( 0, this.bLowers, this.bUppers, 0 );
-      tBounds.set_byLowerUpper( this.aLowers[ 0 ], this.aUppers[ 0 ] ).multiply_byLowerUpper( this.bLowers[ 0 ], this.bUppers[ 0 ] );
-      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, tBounds );
+      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, this.multipledArrayArray[ 0 ] );
 
       this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
       this.aBoundsArray.multiply_one_byBoundsArray( 1, this.bBoundsArray, 1 );
