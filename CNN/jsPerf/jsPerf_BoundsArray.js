@@ -55,12 +55,47 @@ class Cases {
       let aUpper = oneRandCase.aBounds.upper;
       let bLower = oneRandCase.bBounds.lower;
       let bUpper = oneRandCase.bBounds.upper;
+      let N = oneRandCase.N;
 
-      // BoundsArray with only one element.
-      this.aOneBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_one_byLowerUpper( aLower, aLower );
-      this.bOneBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_one_byLowerUpper( bLower, bLower );
+//???
+      // BoundsArray all with one same bounds.
+      let BoundsArrayLength = aCaseArray.length;
+      this.aBoundsArrayOne = new FloatValue.BoundsArray( BoundsArrayLength );
+      this.bBoundsArrayOne = new FloatValue.BoundsArray( BoundsArrayLength );
+
+      this.aBoundsArrayOne.set_one_byN( 0, N );
+      this.assert_BoundsArray_byArray( "aBoundsArrayOne", 0, [ N, N ] );
+
+      this.aBoundsArrayOne.set_one_byLowerUpper( 1, aLower, aUpper );
+      this.assert_BoundsArray_byArray( "aBoundsArrayOne", 1, [ aLower, aUpper ] );
+      
+      this.aBoundsArrayOne.set_one_byBounds( 2, oneRandCase.bBounds );
+      this.assert_BoundsArray_byArray( "aBoundsArrayOne", 2, [ bLower, bUpper ] );
+
+      this.aBoundsArrayOne.set_one_byNs( 3, [ N - 1 , N, N + 1 ], 1 );
+      this.assert_BoundsArray_byArray( "aBoundsArrayOne", 3, [ N, N ] );
+
+
+      this.bBoundsArrayOne.set_one_byLowersUppers( 0, [ aLower, bLower ], [ aUpper, bUpper ], 1 );
+      this.assert_BoundsArray_byArray( "bBoundsArrayOne", 0, [ bLower, bUpper ] );
+
+      this.bBoundsArrayOne.set_one_byBoundsArray( 1, this.aBoundsArrayOne, 1 );
+      this.assert_BoundsArray_byArray( "bBoundsArrayOne", 1, [ aLower, aUpper ] );
+
+      this.bBoundsArrayOne. set_all_byN( N );
+      
+//!!!
+    this.addedBounds = this.aBounds.clone().add_Bounds( this.bBounds );
+    this.multipledBounds = this.aBounds.clone().multiply_Bounds( this.bBounds );
+    this.aMultipledNBounds = this.aBounds.clone().multiply_N( N );
+
+    this.assert_Bounds_byArray( "addedBounds", addedArray );
+    this.assert_Bounds_byArray( "multipledBounds", multipledArray );
+    this.assert_Bounds_byArray( "aMultipledNBounds", aMultipledNArray );
+
     }
 
+    // Convert multiple Bounds into one BoundsArray.
     {
       this.aLowers = new Array( aCaseArray.length ); this.aUppers = new Array( aCaseArray.length );
       this.bLowers = new Array( aCaseArray.length ); this.bUppers = new Array( aCaseArray.length );
@@ -84,8 +119,8 @@ class Cases {
         this.aMultipledNArrayArray[ 1 ][ i ] = oneCase.aMultipledNArray[ 1 ]; // uppers
       }
 
-      this.aBoundsArray = ( new FloatValue.BoundsArray( aCaseArray.length ) ).set_all_byLowerUpper( this.aLowers, this.aUppers );
-      this.bBoundsArray = ( new FloatValue.BoundsArray( aCaseArray.length ) ).set_all_byLowerUpper( this.bLowers, this.bUppers );
+      this.aBoundsArray = ( new FloatValue.BoundsArray( aCaseArray.length ) ).set_all_byLowersUppers( this.aLowers, this.aUppers );
+      this.bBoundsArray = ( new FloatValue.BoundsArray( aCaseArray.length ) ).set_all_byLowersUppers( this.bLowers, this.bUppers );
     }
 
 //!!!
@@ -103,8 +138,8 @@ class Cases {
 
   }
 
-  assert_BoundsArray_byArray( strBoundsArrayTestName, rhsArray ) {
-    let lhsArrayIndex = 0;
+  assert_BoundsArray_byArray( strBoundsArrayTestName, lhsArrayIndex, rhsArray ) {
+    //let lhsArrayIndex = 0;
     this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsArray, 0 );
     this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsArray, 1 );
   }
