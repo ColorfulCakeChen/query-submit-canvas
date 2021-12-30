@@ -19,7 +19,7 @@ class ScaleTranslateArray {
 
   clone() {
     let result = new ScaleTranslateArray( this.scales.length );
-    result.set_ScaleTranslateArray( this );
+    result.set_all_byScaleTranslateArray( this );
     return result;
   }
 
@@ -28,7 +28,7 @@ class ScaleTranslateArray {
    * @return {ScaleTranslateArray}
    *   Return this (modified) object whose values are (re)set as specified values.
    */
-  set_scale_translate( scale = 1, translate = 0 ) {
+  set_all_by_scale_translate( scale = 1, translate = 0 ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
       this.scales[ i ] = scale;
       this.translates[ i ] = translate;
@@ -43,7 +43,7 @@ class ScaleTranslateArray {
    * @return {ScaleTranslateArray}
    *   Return this (modified) object whose values are copied from aScaleTranslateArray.
    */
-  set_ScaleTranslateArray( aScaleTranslateArray ) {
+  set_all_byScaleTranslateArray( aScaleTranslateArray ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
       this.scales[ i ] = aScaleTranslateArray.scales[ i ];
       this.translates[ i ] = aScaleTranslateArray.translates[ i ];
@@ -58,7 +58,7 @@ class ScaleTranslateArray {
    * @return {ScaleTranslateArray}
    *   Return this (modified) object whose values could undo aScaleTranslateArray.
    */
-  set_undoScaleTranslate( aScaleTranslate ) {
+  set_all_byUndo_ScaleTranslate( aScaleTranslate ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
       this.scales[ i ] = ( 1 / aScaleTranslate.scales[ i ] );  // Reciprocal will undo the scale.
 
@@ -78,7 +78,7 @@ class ScaleTranslateArray {
    * @return {ScaleTranslateArray}
    *   Return this (modified) object whose values are scale and translate for mapping values from source bounds to target bounds.
    */
-  set_fromBoundsArray_ToBoundsArray( source, target ) {
+  set_all_by_fromBoundsArray_ToBoundsArray( source, target ) {
 
     // Given:
     //   source.difference = source.upper - source.lower;
@@ -114,9 +114,9 @@ class ScaleTranslateArray {
   }
 
   /**
-   * Scale and translate this object by specified scale-translate.
-   *   - this.scale =     ( this.scale     * another.scale ) + another.translate
-   *   - this.translate = ( this.translate * another.scale ) + another.translate
+   * Scale and translate all this object by specified scale-translate list.
+   *   - this.scales[ i ] =     ( this.scales[ i ]     * aScaleTranslateArray.scales[ i ] ) + aScaleTranslateArray.translates[ i ]
+   *   - this.translates[ i ] = ( this.translates[ i ] * aScaleTranslateArray.scales[ i ] ) + aScaleTranslateArray.translates[ i ]
    *
    * @param {ScaleTranslateArray} aScaleTranslateArray
    *   The another scale-translate array which will be applied on this object.
@@ -124,7 +124,7 @@ class ScaleTranslateArray {
    * @return {ScaleTranslateArray}
    *   Return this (modified) object whose values scaled and translated by the specified scale-translate.
    */
-  scaleTranslateBy( aScaleTranslateArray ) {
+  scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
       this.scales[ i ] =     ( this.scales[ i ]     * aScaleTranslateArray.scales[ i ] ) + aScaleTranslateArray.translates[ i ];
       this.translates[ i ] = ( this.translates[ i ] * aScaleTranslateArray.scales[ i ] ) + aScaleTranslateArray.translates[ i ];
