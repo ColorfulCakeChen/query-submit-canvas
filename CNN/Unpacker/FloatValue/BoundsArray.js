@@ -472,45 +472,37 @@ class BoundsArray {
   }
 
 
-//!!! ...unfinished... (2021/12/29) byIndex, byAll
   /**
-   * @param {BoundsArray} aBoundsArray
-   *   The first multiplier (a BoundsArray).
+   * @param {BoundsArray} aBoundsArray  The first multiplier (a BoundsArray).
+   * @param {number[]} Ns               The second multiplier (a number array).
    *
-   * @param {number[]} Ns
-   *   The second multiplier (a number array).
-   *
-   * @return {BoundsArray}
-   *   Return this (modified) object which is the sumed BoundsArray of repeating N times of multiplying this by aBoundsArray.
+   * @return {BoundsArray} Return this (modified) object.
    */
-  multiply_BoundsArray_multiply_Ns( aBoundsArray, Ns ) {
-    return this.multiply_BoundsArray( aBoundsArray ).multiply_Ns( Ns );
+  multiply_all_byBoundsArray_multiply_all_byNs( aBoundsArray, Ns ) {
+    return this.multiply_all_byBoundsArray( aBoundsArray ).multiply_all_byNs( Ns );
   }
 
   /**
    * @param {ScaleTranslateArray} aScaleTranslateArray
-   *   Multiply this BoundsArray by aScaleTranslateArray.scales, and then add this BoundsArray by aScaleTranslateArray.translates.
+   *   Multiply all this by aScaleTranslateArray.scales[], and then add all this BoundsArray by aScaleTranslateArray.translates[].
    *
    * @return {BoundsArray}
-   *   Return this (modified) object which is the same as this.multiply_N( aScaleTranslate.scale ).add_N( aScaleTranslate.translate ).
+   *   Return this (modified) object.
    */
-  apply_ScaleTranslateArray( aScaleTranslateArray ) {
-    return this.multiply_Ns( aScaleTranslateArray.scales ).add_Ns( aScaleTranslateArray.translates );
+  apply_all_byScaleTranslateArray( aScaleTranslateArray ) {
+    return this.multiply_all_byNs( aScaleTranslateArray.scales ).add_all_byNs( aScaleTranslateArray.translates );
   }
 
   /**
-   * @param {number} value
-   *   The value to be clamped.
-   *
-   * @param {number} arrayIndex
-   *   Use which Bounds of this BoundsArray to clamp the value.
+   * @param {number} thisIndex  Use which Bounds of this BoundsArray to clamp the value.
+   * @param {number} value      The value to be clamped.
    *
    * @return {number}
    *   If value is NaN, return zero. Otherwise, return value clamped between this BoundsArray[ arrayIndex ][ this.lower, this.upper ].
    */
-  valueClamped_or_zeroIfNaN( value, arrayIndex ) {
+  one_clamp_or_zeroIfNaN( thisIndex, value ) {
     if ( !Number.isNaN( value ) )
-      return Math.max( this.lowers[ arrayIndex ], Math.min( value, this.uppers[ arrayIndex ] ) );
+      return Math.max( this.lowers[ thisIndex ], Math.min( value, this.uppers[ thisIndex ] ) );
     else
       return 0; // If NaN, let it become 0.
   }
