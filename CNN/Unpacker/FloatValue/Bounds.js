@@ -40,7 +40,7 @@ class Bounds {
    *
    * @return {Bounds} Return this (modified) object which is [ n, N ].
    */
-  set_N( N ) {
+  set_byN( N ) {
     this.lower = this.upper = N;
     return this;
   }
@@ -55,7 +55,7 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is [ aLower, aUpper ].
    */
-  set_LowerUpper( aLower, aUpper ) {
+  set_byLowerUpper( aLower, aUpper ) {
     this.lower = Math.min( aLower, aUpper ); // Confirm ( lower <= upper ).
     this.upper = Math.max( aLower, aUpper );
     return this;
@@ -68,8 +68,8 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object whose values are copied from aBounds.
    */
-  set_Bounds( aBounds ) {
-    return this.set_LowerUpper( aBounds.lower, aBounds.upper );
+  set_byBounds( aBounds ) {
+    return this.set_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -79,7 +79,7 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is the same as this.add_LowerUpper( N, N ).
    */
-  add_N( N ) {
+  add_byN( N ) {
     // Confirm the lower and upper. And then, add corresponds.
     let thisLower = Math.min( this.lower, this.upper );
     let thisUpper = Math.max( this.lower, this.upper );
@@ -98,7 +98,7 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is added by Bounds [ aLower, aUpper ].
    */
-  add_LowerUpper( aLower, aUpper ) {
+  add_byLowerUpper( aLower, aUpper ) {
     // Confirm the lower and upper. And then, add corresponds.
     let thisLower = Math.min( this.lower, this.upper );
     let thisUpper = Math.max( this.lower, this.upper );
@@ -114,8 +114,8 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is added by aBounds.
    */
-  add_Bounds( aBounds ) {
-    return this.add_LowerUpper( aBounds.lower, aBounds.upper );
+  add_byBounds( aBounds ) {
+    return this.add_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -125,7 +125,7 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is the same as this.multiply_LowerUpper( N, N ) or repeating N times this.add_Bounds( this ).
    */
-  multiply_N( N ) {
+  multiply_byN( N ) {
     // Because the different sign of lower and upper, it needs compute all combinations to determine the bounds of result.
     let lower_N = this.lower * N;
     let upper_N = this.upper * N;
@@ -144,7 +144,7 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is multiplied by Bounds [ aLower, aUpper ].
    */
-  multiply_LowerUpper( aLower, aUpper ) {
+  multiply_byLowerUpper( aLower, aUpper ) {
     // Because the different sign of lower and upper, it needs compute all combination to determine the bounds of result.
     let lower_lower = this.lower * aLower;
     let lower_upper = this.lower * aUpper;
@@ -162,8 +162,8 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is multiplied by aBounds.
    */
-  multiply_Bounds( aBounds ) {
-    return this.multiply_LowerUpper( aBounds.lower, aBounds.upper );
+  multiply_byBounds( aBounds ) {
+    return this.multiply_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -176,8 +176,8 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is the sumed Bounds of repeating N times of multiplying this by aBounds.
    */
-  multiply_Bounds_multiply_N( aBounds, N ) {
-    return this.multiply_Bounds( aBounds ).multiply_N( N );
+  multiply_byBounds_multiply_byN( aBounds, N ) {
+    return this.multiply_byBounds( aBounds ).multiply_byN( N );
   }
 
   /**
@@ -187,8 +187,8 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is the same as this.multiply_N( aScaleTranslate.scale ).add_N( aScaleTranslate.translate ).
    */
-  apply_ScaleTranslate( aScaleTranslate ) {
-    return this.multiply_N( aScaleTranslate.scale ).add_N( aScaleTranslate.translate );
+  apply_byScaleTranslate( aScaleTranslate ) {
+    return this.multiply_byN( aScaleTranslate.scale ).add_byN( aScaleTranslate.translate );
   }
 
   /**
