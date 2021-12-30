@@ -48,27 +48,45 @@ class Cases {
    * @param {Case[]} aCaseArray  Multiple Case objects.
    */
   constructor( aCaseArray ) {
-    let oneRandIndex = RandTools.getRandomIntInclusive( 0, ( aCaseArray.length - 1 ) ); // Randomly select one.
-    let oneRandCase = aCaseArray[ oneRandIndex ];
-    let aLower = oneRandCase.aBounds.lower;
-    let aUpper = oneRandCase.aBounds.upper;
-    let bLower = oneRandCase.bBounds.lower;
-    let bUpper = oneRandCase.bBounds.upper;
+    {
+      let oneRandIndex = RandTools.getRandomIntInclusive( 0, ( aCaseArray.length - 1 ) ); // Randomly select one.
+      let oneRandCase = aCaseArray[ oneRandIndex ];
+      let aLower = oneRandCase.aBounds.lower;
+      let aUpper = oneRandCase.aBounds.upper;
+      let bLower = oneRandCase.bBounds.lower;
+      let bUpper = oneRandCase.bBounds.upper;
 
-    let aLowers = new Array( aCaseArray.length ), aUppers = new Array( aCaseArray.length );
-    let bLowers = new Array( aCaseArray.length ), bUppers = new Array( aCaseArray.length );
-    let Ns = new Array( aCaseArray.length );
-    for ( let i = 0; i < aCaseArray.length; ++i ) {
-      let oneCase = aCaseArray[ i ];
-      aLowers[ i ] = oneCase.aBounds.lower;
-      aUppers[ i ] = oneCase.aBounds.upper;
-      bLowers[ i ] = oneCase.bBounds.lower;
-      bUppers[ i ] = oneCase.bBounds.upper;
-      Ns[ i ] = oneCase.N;
+      // BoundsArray with only one element.
+      this.aOneBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_one_byLowerUpper( aLower, aLower );
+      this.bOneBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_one_byLowerUpper( bLower, bLower );
     }
 
-      this.aBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_one_byLowerUpper( aLowerUpper[ 0 ], aLowerUpper[ 1 ] );
-      this.bBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_one_byLowerUpper( bLowerUpper[ 0 ], bLowerUpper[ 1 ] );
+    {
+      this.aLowers = new Array( aCaseArray.length ); this.aUppers = new Array( aCaseArray.length );
+      this.bLowers = new Array( aCaseArray.length ); this.bUppers = new Array( aCaseArray.length );
+      this.Ns = new Array( aCaseArray.length );
+      this.addedArrayArray = [ new Array( aCaseArray.length ), new Array( aCaseArray.length ) ];
+      this.multipledArrayArray = [ new Array( aCaseArray.length ), new Array( aCaseArray.length ) ];
+      this.aMultipledNArrayArray = [ new Array( aCaseArray.length ), new Array( aCaseArray.length ) ];
+
+      for ( let i = 0; i < aCaseArray.length; ++i ) {
+        let oneCase = aCaseArray[ i ];
+        this.aLowers[ i ] = oneCase.aBounds.lower;
+        this.aUppers[ i ] = oneCase.aBounds.upper;
+        this.bLowers[ i ] = oneCase.bBounds.lower;
+        this.bUppers[ i ] = oneCase.bBounds.upper;
+        this.Ns[ i ] = oneCase.N;
+        this.addedArrayArray[ 0 ][ i ] = oneCase.addedArray[ 0 ]; // lowers
+        this.addedArrayArray[ 1 ][ i ] = oneCase.addedArray[ 1 ]; // uppers
+        this.multipledArrayArray[ 0 ][ i ] = oneCase.multipledArray[ 0 ]; // lowers
+        this.multipledArrayArray[ 1 ][ i ] = oneCase.multipledArray[ 1 ]; // uppers
+        this.aMultipledNArrayArray[ 0 ][ i ] = oneCase.aMultipledNArray[ 0 ]; // lowers
+        this.aMultipledNArrayArray[ 1 ][ i ] = oneCase.aMultipledNArray[ 1 ]; // uppers
+      }
+
+      this.aBoundsArray = ( new FloatValue.BoundsArray( aCaseArray.length ) ).set_all_byLowerUpper( this.aLowers, this.aUppers );
+      this.bBoundsArray = ( new FloatValue.BoundsArray( aCaseArray.length ) ).set_all_byLowerUpper( this.bLowers, this.bUppers );
+    }
 
 //!!!
     let BoundsArrayLength = 1;
