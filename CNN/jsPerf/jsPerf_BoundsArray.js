@@ -48,15 +48,15 @@ class Cases {
    * @param {Case[]} aCaseArray  Multiple Case objects.
    */
   constructor( aCaseArray ) {
-    {
-      let oneRandIndex = RandTools.getRandomIntInclusive( 0, ( aCaseArray.length - 1 ) ); // Randomly select one.
-      let oneRandCase = aCaseArray[ oneRandIndex ];
-      let aLower = oneRandCase.aBounds.lower;
-      let aUpper = oneRandCase.aBounds.upper;
-      let bLower = oneRandCase.bBounds.lower;
-      let bUpper = oneRandCase.bBounds.upper;
-      let N = oneRandCase.N;
+    let oneRandIndex = RandTools.getRandomIntInclusive( 0, ( aCaseArray.length - 1 ) ); // Randomly select one.
+    let oneRandCase = aCaseArray[ oneRandIndex ];
+    let aLower = oneRandCase.aBounds.lower;
+    let aUpper = oneRandCase.aBounds.upper;
+    let bLower = oneRandCase.bBounds.lower;
+    let bUpper = oneRandCase.bBounds.upper;
+    let N = oneRandCase.N;
 
+    {
 //???
       // BoundsArray all with one same bounds.
       let BoundsArrayLength = aCaseArray.length;
@@ -122,9 +122,33 @@ class Cases {
       this.aBoundsArray = new FloatValue.BoundsArray( aCaseArray.length );
       this.bBoundsArray = new FloatValue.BoundsArray( aCaseArray.length );
 
-//!!!
-      this.aBoundsArray.set_all_byN( N );
+      {
+        let Ns = ( new Array( aCaseArray.length ) ).fill( N );
+        this.aBoundsArray.set_all_byN( oneRandCase.N );
+        this.assert_BoundsArray_all_byArray( "aBoundsArray", [ Ns, Ns ] );
+      }
 
+      {
+        let aLowers = ( new Array( aCaseArray.length ) ).fill( aLower );
+        let aUppers = ( new Array( aCaseArray.length ) ).fill( aUpper );
+        this.aBoundsArray.set_all_byLowerUpper( aLower, aUpper );
+        this.assert_BoundsArray_all_byArray( "aBoundsArray", [ aLowers, aUppers ] );
+
+        this.aBoundsArray.set_all_byBounds( oneRandCase.aBounds );
+        this.assert_BoundsArray_all_byArray( "aBoundsArray", [ aLowers, aUppers ] );
+      }
+
+      this.aBoundsArray.set_all_byNs( this.Ns );
+      this.assert_BoundsArray_all_byArray( "aBoundsArray", [ this.Ns, this.Ns ] );
+
+      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
+      this.assert_BoundsArray_all_byArray( "aBoundsArray", [ this.aLowers, this.aUppers ] );
+      
+      this.bBoundsArray.set_all_byBoundsArray( this.aBoundsArray );
+      this.assert_BoundsArray_all_byArray( "bBoundsArray", [ this.aLowers, this.aUppers ] );
+
+
+//!!!
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
       this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
       
@@ -147,6 +171,14 @@ class Cases {
 
   }
 
+  assert_BoundsArray_all_byArray( strBoundsArrayTestName, rhsArray ) {
+    let count = this[ strBoundsArrayTestName ].lowers.length;
+    for ( let lhsArrayIndex = 0; lhsArrayIndex < count; ++lhsArrayIndex ) {
+      this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsArray, 0 );
+      this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsArray, 1 );
+    }
+  }
+
   assert_BoundsArray_one_byArray( strBoundsArrayTestName, lhsArrayIndex, rhsArray ) {
     //let lhsArrayIndex = 0;
     this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsArray, 0 );
@@ -158,13 +190,6 @@ class Cases {
     let rhsArrayValue = rhsArray[ rhsArrayIndex ];
     tf.util.assert( thisValue == rhsArrayValue, `test_FloatValue_Bounds(): `
       + `Case.${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
-  }
-
-//!!! ...unfinished... (2021/12/30)
-  assert_BoundsArray_all_byArray( strBoundsArrayTestName, lhsArrayIndex, rhsArray ) {
-    //let lhsArrayIndex = 0;
-    this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsArray, 0 );
-    this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsArray, 1 );
   }
 
 }
