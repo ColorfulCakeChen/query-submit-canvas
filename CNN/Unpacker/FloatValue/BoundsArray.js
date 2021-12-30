@@ -376,7 +376,6 @@ class BoundsArray {
     return this.multiply_one_byLowerUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
-//!!! ...unfinished... (2021/12/29) byIndex, byAll
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number[]} Ns       Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
@@ -385,26 +384,25 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   multiply_one_byNs( thisIndex, Ns, aIndex ) {
-    return this.add_one_byLowersUppers( thisIndex, Ns, Ns, aIndex );
+    return this.multiply_one_byN( thisIndex, Ns[ aIndex ] );
   }
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    *
    * @param {BoundsArray} aBoundsArray
-   *   Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
+   *   Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
    *
    * @param {number} aIndex     The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
    * @return {BoundsArray} Return this (modified) object.
    */
-  add_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
-    return this.add_one_byLowersUppers( thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
+  multiply_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
+    return this.multiply_one_byLowersUppers( thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
   }
 
 
-
-//!!!
+//!!! ...unfinished... (2021/12/29) byIndex, byAll
   /**
    * @param {BoundsArray} aBoundsArray
    *   Multiply this BoundsArray by aBoundsArray.
