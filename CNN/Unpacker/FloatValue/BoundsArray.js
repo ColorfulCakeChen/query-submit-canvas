@@ -256,10 +256,7 @@ class BoundsArray {
    */
   add_all_byN( N ) {
     for ( let i = 0; i < this.lowers.length; ++i ) {
-      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm the lower and upper. And then, add corresponds.
-      let thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
-      this.lowers[ i ] = thisLower + N;
-      this.uppers[ i ] = thisUpper + N;
+      this.add_one_byN( i, N );
     }
     return this;
   }
@@ -408,6 +405,82 @@ class BoundsArray {
 
 
 //!!! ...unfinished... (2021/12/29) byIndex, byAll
+  /**
+   * @param {number} N  Multiply all ( this.lowers[], this.uppers[] ) by ( N, N ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  multiply_all_byN( N ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      this.multiply_one_byN( i, N );
+    }
+    return this;
+  }
+
+  /**
+   * @param {number} aLower  Add all this.lowers[] by aLower.
+   * @param {number} aUpper  Add all this.uppers[] by aUpper.
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_all_byLowerUpper( aLower, aUpper ) {
+    let extraLower = Math.min( aLower, aUpper ); // Confirm the lower and upper.
+    let extraUpper = Math.max( aLower, aUpper );
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm the lower and upper. And then, add corresponds.
+      let thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
+      this.lowers[ i ] = thisLower + extraLower;
+      this.uppers[ i ] = thisUpper + extraUpper;
+    }
+    return this;
+  }
+
+  /**
+   * @param {Bounds} aBounds  Add all ( this.lowers[], this.uppers[] ) by ( aBounds.lower, aBounds.upper ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_all_byBounds( aBounds ) {
+    return this.add_all_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number[]} Ns  Add all ( this.lowers[], this.uppers[] ) by ( Ns, Ns ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_all_byNs( Ns ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      this.add_one_byN( i, Ns[ i ] );
+    }
+    return this;
+  }
+
+  /**
+   * @param {number[]} aLowers  Add all ( this.lowers[], this.uppers[] ) by ( aLowers[], aUppers[] ).
+   * @param {number[]} aUppers  Add all ( this.lowers[], this.uppers[] ) by ( aLowers[], aUppers[] ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_all_byLowersUppers( aLowers, aUppers ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      this.add_one_byLowerUpper( i, aLowers[ i ], aUppers[ i ] );
+    }
+    return this;
+  }
+
+  /**
+   * @param {BoundsArray} aBoundsArray  Add all ( this.lowers[], this.uppers[] ) by ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_all_byBoundsArray( aBoundsArray ) {
+    return this.add_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
+  }
+
+
+
+//!!!
   /**
    * @param {BoundsArray} aBoundsArray
    *   Multiply this BoundsArray by aBoundsArray.
