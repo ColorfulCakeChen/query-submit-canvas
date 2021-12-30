@@ -35,14 +35,14 @@ class Bounds {
   }
 
   /**
-   * @param {Bounds} aBounds
-   *   Set this Bounds by aBounds.
+   * @param {number} N
+   *   Set ( this.lower, this.upper ) by N.
    *
-   * @return {Bounds}
-   *   Return this (modified) object whose values are copied from aBounds.
+   * @return {Bounds} Return this (modified) object which is [ n, N ].
    */
-  set_Bounds( aBounds ) {
-    return this.set_LowerUpper( aBounds.lower, aBounds.upper );
+  set_N( N ) {
+    this.lower = this.upper = N;
+    return this;
   }
 
   /**
@@ -63,13 +63,29 @@ class Bounds {
 
   /**
    * @param {Bounds} aBounds
-   *   Add this Bounds by aBounds.
+   *   Set this Bounds by aBounds.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is added by aBounds.
+   *   Return this (modified) object whose values are copied from aBounds.
    */
-  add_Bounds( aBounds ) {
-    return this.add_LowerUpper( aBounds.lower, aBounds.upper );
+  set_Bounds( aBounds ) {
+    return this.set_LowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number} N
+   *   Add this Bounds.lower by N, and also add this Bounds.upper by N.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object which is the same as this.add_LowerUpper( N, N ).
+   */
+  add_N( N ) {
+    // Confirm the lower and upper. And then, add corresponds.
+    let thisLower = Math.min( this.lower, this.upper );
+    let thisUpper = Math.max( this.lower, this.upper );
+    this.lower = thisLower + N;
+    this.upper = thisUpper + N;
+    return this;
   }
 
   /**
@@ -92,25 +108,30 @@ class Bounds {
   }
 
   /**
-   * @param {number} N
-   *   Add this Bounds.lower by N, and also add this Bounds.upper by N.
+   * @param {Bounds} aBounds
+   *   Add this Bounds by aBounds.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is the same as this.add_LowerUpper( N, N ).
+   *   Return this (modified) object which is added by aBounds.
    */
-  add_N( N ) {
-    return this.add_LowerUpper( N, N );
+  add_Bounds( aBounds ) {
+    return this.add_LowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {Bounds} aBounds
-   *   Multiply this Bounds by aBounds.
+   * @param {number} N
+   *   The multiplier of this.lower and this.upper.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is multiplied by aBounds.
+   *   Return this (modified) object which is the same as this.multiply_LowerUpper( N, N ) or repeating N times this.add_Bounds( this ).
    */
-  multiply_Bounds( aBounds ) {
-    return this.multiply_LowerUpper( aBounds.lower, aBounds.upper );
+  multiply_N( N ) {
+    // Because the different sign of lower and upper, it needs compute all combinations to determine the bounds of result.
+    let lower_N = this.lower * N;
+    let upper_N = this.upper * N;
+    this.lower = Math.min( lower_N, upper_N );
+    this.upper = Math.max( lower_N, upper_N );
+    return this;
   }
 
   /**
@@ -135,19 +156,14 @@ class Bounds {
   }
 
   /**
-   * @param {number} N
-   *   The multiplier of this.lower and this.upper.
+   * @param {Bounds} aBounds
+   *   Multiply this Bounds by aBounds.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is the same as this.multiply_LowerUpper( N, N ) or repeating N times this.add_Bounds( this ).
+   *   Return this (modified) object which is multiplied by aBounds.
    */
-  multiply_N( N ) {
-    // Because the different sign of lower and upper, it needs compute all combinations to determine the bounds of result.
-    let lower_N = this.lower * N;
-    let upper_N = this.upper * N;
-    this.lower = Math.min( lower_N, upper_N );
-    this.upper = Math.max( lower_N, upper_N );
-    return this;
+  multiply_Bounds( aBounds ) {
+    return this.multiply_LowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -182,7 +198,7 @@ class Bounds {
    * @return {number}
    *   If value is NaN, return zero. Otherwise, return value clamped between this Bounds [ this.lower, this.upper ].
    */
-  valueClamped_or_zeroIfNaN( value ) {
+  clamp_or_zeroIfNaN( value ) {
     if ( !Number.isNaN( value ) )
       return Math.max( this.lower, Math.min( value, this.upper ) );
     else
