@@ -281,24 +281,32 @@ class Cases {
 
       this.aBoundsArray.multiply_one_byN( 0, oneRandCase.N );
       tBounds.set_byLowerUpper( this.aLowers[ 0 ], this.aUppers[ 0 ] );
-      tBounds.add_byN( oneRandCase.N );
+      tBounds.multiply_byN( oneRandCase.N );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, tBounds );
 
       this.aBoundsArray.multiply_one_byLowerUpper( 1, this.bLowers[ 1 ], this.bUppers[ 1 ] );
       tBounds.set_byLowerUpper( this.aLowers[ 1 ], this.aUppers[ 1 ] );
-      tBounds.add_byLowerUpper( this.bLowers[ 1 ], this.bUppers[ 1 ] );
+      tBounds.multiply_byLowerUpper( this.bLowers[ 1 ], this.bUppers[ 1 ] );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 1, tBounds );
 
       this.aBoundsArray.multiply_one_byBounds( 2, aCaseArray[ 2 ].bBounds );
       tBounds.set_byLowerUpper( this.aLowers[ 2 ], this.aUppers[ 2 ] );
-      tBounds.add_byLowerUpper( aCaseArray[ 2 ].bBounds );
+      tBounds.multiply_byBounds( aCaseArray[ 2 ].bBounds );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 2, tBounds );
 
       this.aBoundsArray.multiply_one_byNs( 3, this.Ns, 3 );
       tBounds.set_byLowerUpper( this.aLowers[ 3 ], this.aUppers[ 3 ] );
-      tBounds.add_byN( this.Ns[ 3 ] );
+      tBounds.multiply_byN( this.Ns[ 3 ] );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 3, tBounds );
 
+      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
+
+      this.aBoundsArray.multiply_one_byLowersUppers( 0, this.bLowers, this.bUppers, 0 );
+      tBounds.set_byLowerUpper( this.aLowers[ 0 ], this.aUppers[ 0 ] );
+      tBounds.multiply_byLowerUpper( this.bLowers[ 0 ], this.bUppers[ 0 ] );
+      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, tBounds );
+
+       (
 
 
       (  ( 
