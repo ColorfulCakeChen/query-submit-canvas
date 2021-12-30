@@ -32,6 +32,18 @@ class BoundsArray {
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} N          Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  set_one_byN( thisIndex, N ) {
+    this.lowers[ thisIndex ] = N;
+    this.uppers[ thisIndex ] = N;
+    return this;
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} aLower     Set this.lowers[ thisIndex ] by aLower.
    * @param {number} aUpper     Set this.uppers[ thisIndex ] by aUpper.
    *
@@ -41,16 +53,6 @@ class BoundsArray {
     this.lowers[ thisIndex ] = Math.min( aLower, aUpper ); // Confirm ( lower <= upper ).
     this.uppers[ thisIndex ] = Math.max( aLower, aUpper );
     return this;
-  }
-
-  /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} N          Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  set_one_byN( thisIndex, N ) {
-    return this.set_one_byLowerUpper( thisIndex, N, N );
   }
 
   /**
@@ -65,6 +67,17 @@ class BoundsArray {
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number[]} Ns       Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
+   * @param {number} aIndex     The array index of Ns[].
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  set_one_byNs( thisIndex, Ns, aIndex ) {
+    return this.set_one_byN( thisIndex, Ns[ aIndex ] );
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number[]} aLowers  Set this.lowers[ thisIndex ] by aLowers[ aIndex ].
    * @param {number[]} aUppers  Set this.uppers[ thisIndex ] by aUppers[ aIndex ].
    * @param {number} aIndex     The array index of aLowers[] and aUppers[].
@@ -72,19 +85,7 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   set_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
-    this.set_one_byLowersUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
-    return this;
-  }
-
-  /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number[]} Ns       Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
-   * @param {number} aIndex     The array index of Ns[].
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  set_one_byNs( thisIndex, Ns, aIndex ) {
-    return this.set_one_byLowersUppers( thisIndex, Ns, Ns, aIndex );
+    return this.set_one_byLowersUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
@@ -103,6 +104,17 @@ class BoundsArray {
 
 
   /**
+   * @param {number} N  Set all ( this.lowers[], this.uppers[] ) by ( N, N ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  set_all_byN( N ) {
+    this.lowers.fill( N );
+    this.uppers.fill( N );
+    return this;
+  }
+
+  /**
    * @param {number} aLower  Set all this.lowers[] by aLower.
    * @param {number} aUpper  Set all this.uppers[] by aUpper.
    *
@@ -117,21 +129,24 @@ class BoundsArray {
   }
 
   /**
-   * @param {number} N  Set all ( this.lowers[], this.uppers[] ) by ( N, N ).
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  set_all_byN( N ) {
-    return this.set_all_byLowerUpper( N, N );
-  }
-
-  /**
    * @param {Bounds} aBounds  Set all ( this.lowers[], this.uppers[] ) by ( aBounds.lower, aBounds.upper ).
    *
    * @return {BoundsArray} Return this (modified) object whose values are copied from aBounds.
    */
   set_all_byBounds( aBounds ) {
     return this.set_all_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number[]} Ns  Set all ( this.lowers[], this.uppers[] ) by ( Ns[], Ns[] ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  set_all_byNs( Ns ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      this.set_one_byNs( i, Ns, i );
+    }
+    return this;
   }
 
   /**
@@ -148,15 +163,6 @@ class BoundsArray {
   }
 
   /**
-   * @param {number[]} Ns  Set all ( this.lowers[], this.uppers[] ) by ( Ns[], Ns[] ).
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  set_all_byNs( Ns ) {
-    return this.set_all_byLowersUppers( Ns, Ns );
-  }
-
-  /**
    * @param {Bounds} aBoundsArray  Set all ( this.lowers[], this.uppers[] ) by ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
    *
    * @return {BoundsArray} Return this (modified) object whose values are copied from aBoundsArray.
@@ -165,21 +171,6 @@ class BoundsArray {
     return this.set_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
   }
 
-
-  /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} aLower     Add this.lowers[ thisIndex ] by aLower.
-   * @param {number} aUpper     Add this.uppers[ thisIndex ] by aUpper.
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  add_one_byLowerUpper( thisIndex, aLower, aUpper ) {
-    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm the lower and upper. And then, add corresponds.
-    let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
-    this.lowers[ thisIndex ] = thisLower + Math.min( aLower, aUpper );
-    this.uppers[ thisIndex ] = thisUpper + Math.max( aLower, aUpper );
-    return this;
-  }
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
@@ -198,12 +189,38 @@ class BoundsArray {
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} aLower     Add this.lowers[ thisIndex ] by aLower.
+   * @param {number} aUpper     Add this.uppers[ thisIndex ] by aUpper.
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_one_byLowerUpper( thisIndex, aLower, aUpper ) {
+    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm the lower and upper. And then, add corresponds.
+    let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
+    this.lowers[ thisIndex ] = thisLower + Math.min( aLower, aUpper );
+    this.uppers[ thisIndex ] = thisUpper + Math.max( aLower, aUpper );
+    return this;
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {Bounds} aBounds    Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBounds.lower, aBounds.upper ).
    *
    * @return {BoundsArray} Return this (modified) object.
    */
   add_one_byBounds( thisIndex, aBounds ) {
     return this.add_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number[]} Ns       Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
+   * @param {number} aIndex     The array index of Ns[].
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_one_byNs( thisIndex, Ns, aIndex ) {
+    return this.add_one_byN( thisIndex, Ns[ aIndex ] );
   }
 
   /**
@@ -220,17 +237,6 @@ class BoundsArray {
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number[]} Ns       Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
-   * @param {number} aIndex     The array index of Ns[].
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  add_one_byNs( thisIndex, Ns, aIndex ) {
-    return this.add_one_byN( thisIndex, Ns[ aIndex ] );
-  }
-
-  /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    *
    * @param {BoundsArray} aBoundsArray
    *   Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
@@ -243,6 +249,20 @@ class BoundsArray {
     return this.add_one_byLowersUpper( thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
+  /**
+   * @param {number} N  Add all ( this.lowers[], this.uppers[] ) by ( N, N ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_all_byN( N ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm the lower and upper. And then, add corresponds.
+      let thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
+      this.lowers[ i ] = thisLower + N;
+      this.uppers[ i ] = thisUpper + N;
+    }
+    return this;
+  }
 
   /**
    * @param {number} aLower  Add all this.lowers[] by aLower.
@@ -263,27 +283,24 @@ class BoundsArray {
   }
 
   /**
-   * @param {number} N  Add all ( this.lowers[], this.uppers[] ) by ( N, N ).
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  add_all_byN( N ) {
-    for ( let i = 0; i < this.lowers.length; ++i ) {
-      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm the lower and upper. And then, add corresponds.
-      let thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
-      this.lowers[ i ] = thisLower + N;
-      this.uppers[ i ] = thisUpper + N;
-    }
-    return this;
-  }
-
-  /**
    * @param {Bounds} aBounds  Add all ( this.lowers[], this.uppers[] ) by ( aBounds.lower, aBounds.upper ).
    *
    * @return {BoundsArray} Return this (modified) object.
    */
   add_all_byBounds( aBounds ) {
     return this.add_all_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number[]} Ns  Add all ( this.lowers[], this.uppers[] ) by ( Ns, Ns ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  add_all_byNs( Ns ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      this.add_one_byN( i, Ns[ i ] );
+    }
+    return this;
   }
 
   /**
@@ -300,18 +317,6 @@ class BoundsArray {
   }
 
   /**
-   * @param {number[]} Ns  Add all ( this.lowers[], this.uppers[] ) by ( Ns, Ns ).
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  add_all_byNs( Ns ) {
-    for ( let i = 0; i < this.lowers.length; ++i ) {
-      this.add_one_byN( i, Ns[ i ] );
-    }
-    return this;
-  }
-
-  /**
    * @param {BoundsArray} aBoundsArray  Add all ( this.lowers[], this.uppers[] ) by ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
    *
    * @return {BoundsArray} Return this (modified) object.
@@ -320,6 +325,21 @@ class BoundsArray {
     return this.add_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
   }
 
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} N          Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  multiply_one_byN( thisIndex, N ) {
+    // Because the different sign of lower and upper, it needs compute all combination to determine the bounds of result.
+    let lower_N = this.lowers[ thisIndex ] * N;
+    let upper_N = this.uppers[ thisIndex ] * N;
+    this.lowers[ thisIndex ] = Math.min( lower_N, upper_N );
+    this.uppers[ thisIndex ] = Math.max( lower_N, upper_N );
+    return this;
+  }
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
@@ -341,27 +361,23 @@ class BoundsArray {
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} N          Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  multiply_one_byN( thisIndex, N ) {
-    // Because the different sign of lower and upper, it needs compute all combination to determine the bounds of result.
-    let lower_N = this.lowers[ thisIndex ] * N;
-    let upper_N = this.uppers[ thisIndex ] * N;
-    this.lowers[ thisIndex ] = Math.min( lower_N, upper_N );
-    this.uppers[ thisIndex ] = Math.max( lower_N, upper_N );
-    return this;
-  }
-
-  /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {Bounds} aBounds    Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBounds.lower, aBounds.upper ).
    *
    * @return {BoundsArray} Return this (modified) object.
    */
   multiply_one_byBounds( thisIndex, aBounds ) {
     return this.multiply_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number[]} Ns       Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
+   * @param {number} aIndex     The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  multiply_one_byNs( thisIndex, Ns, aIndex ) {
+    return this.multiply_one_byN( thisIndex, Ns[ aIndex ] );
   }
 
   /**
@@ -374,17 +390,6 @@ class BoundsArray {
    */
   multiply_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
     return this.multiply_one_byLowerUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
-  }
-
-  /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number[]} Ns       Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
-   * @param {number} aIndex     The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  multiply_one_byNs( thisIndex, Ns, aIndex ) {
-    return this.multiply_one_byN( thisIndex, Ns[ aIndex ] );
   }
 
   /**
