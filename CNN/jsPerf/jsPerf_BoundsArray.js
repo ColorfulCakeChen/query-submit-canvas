@@ -306,10 +306,15 @@ class Cases {
       tBounds.multiply_byLowerUpper( this.bLowers[ 0 ], this.bUppers[ 0 ] );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, tBounds );
 
-       (
+      this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
+      this.aBoundsArray.multiply_one_byBoundsArray( 1, this.bBoundsArray, 1 );
+      tBounds.set_byLowerUpper( this.aLowers[ 1 ], this.aUppers[ 1 ] );
+      tBounds.multiply_byBounds( aCaseArray[ 1 ].bBounds );
+      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, tBounds );
 
 
-      (  ( 
+multiply_all_byN( 
+
 //!!!
     }
 
