@@ -409,29 +409,55 @@ class HeightWidthDepth {
 
   test_FloatValue_Bounds() {
     class Case {
-      constructor( aBoundsArray, bBoundsArray, N, addedArray, multipledArray, aMultipledNArray ) {
-        this.aBounds = new FloatValue.Bounds( aBoundsArray[ 0 ], aBoundsArray[ 1 ] );
-        this.bBounds = new FloatValue.Bounds( bBoundsArray[ 0 ], bBoundsArray[ 1 ] );
+      constructor( aLowerUpper, bLowerUpper, N, addedArray, multipledArray, aMultipledNArray ) {
+        this.aBounds = new FloatValue.Bounds( aLowerUpper[ 0 ], aLowerUpper[ 1 ] );
+        this.bBounds = new FloatValue.Bounds( bLowerUpper[ 0 ], bLowerUpper[ 1 ] );
 
         this.addedBounds = this.aBounds.clone().add_Bounds( this.bBounds );
         this.multipledBounds = this.aBounds.clone().multiply_Bounds( this.bBounds );
         this.aMultipledNBounds = this.aBounds.clone().multiply_N( N );
 
-        this.assert_Bounds_Array( "addedBounds", addedArray );
-        this.assert_Bounds_Array( "multipledBounds", multipledArray );
-        this.assert_Bounds_Array( "aMultipledNBounds", aMultipledNArray );
+        this.assert_Bounds_byArray( "addedBounds", addedArray );
+        this.assert_Bounds_byArray( "multipledBounds", multipledArray );
+        this.assert_Bounds_byArray( "aMultipledNBounds", aMultipledNArray );
+
+//!!!
+        let BoundsArrayLength = 1;
+        this.aBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_ aLowerUpper[ 0 ], aLowerUpper[ 1 ] ;
+        this.bBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ). bLowerUpper[ 0 ], bLowerUpper[ 1 ] );
+
+        this.addedBounds = this.aBounds.clone().add_Bounds( this.bBounds );
+        this.multipledBounds = this.aBounds.clone().multiply_Bounds( this.bBounds );
+        this.aMultipledNBounds = this.aBounds.clone().multiply_N( N );
+
+        this.assert_BoundsArray_byArray( "addedBoundsArray", addedArray );
+        this.assert_BoundsArray_byArray( "multipledBoundsArray", multipledArray );
+        this.assert_BoundsArray_byArray( "aMultipledNBoundsArray", aMultipledNArray );
       }
 
-      assert_Bounds_Array( strBoundsName, arrayVar ) {
-        this.assert_lower_or_upper( strBoundsName, "lower", arrayVar, 0 );
-        this.assert_lower_or_upper( strBoundsName, "upper", arrayVar, 1 );
+      assert_Bounds_byArray( strBoundsTestName, rhsArray ) {
+        this.assert_lower_or_upper( strBoundsTestName, "lower", rhsArray, 0 );
+        this.assert_lower_or_upper( strBoundsTestName, "upper", rhsArray, 1 );
       }
 
-      assert_lower_or_upper( strBoundsName, lower_or_upper_name, arrayVar, arrayIndex ) {
-        let thisValue = this[ strBoundsName ][ lower_or_upper_name ];
-        let arrayValue = arrayVar[ arrayIndex ];
-        tf.util.assert( thisValue == arrayValue,
-          `test_FloatValue_Bounds(): Case.${strBoundsName}.${lower_or_upper_name} ( ${thisValue} ) should be ( ${arrayValue} ).` );
+      assert_BoundsArray_byArray( strBoundsArrayTestName, rhsArray ) {
+        let lhsArrayIndex = 0;
+        this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsArray, 0 );
+        this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsArray, 1 );
+      }
+
+      assert_lower_or_upper( strBoundsTestName, lower_or_upper_name, rhsArray, rhsArrayIndex ) {
+        let thisValue = this[ strBoundsTestName ][ lower_or_upper_name ];
+        let rhsArrayValue = rhsArray[ rhsArrayIndex ];
+        tf.util.assert( thisValue == rhsArrayValue,
+          `test_FloatValue_Bounds(): Case.${strBoundsTestName}.${lower_or_upper_name} ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
+      }
+
+      assert_lowers_or_uppers( strBoundsArrayTestName, lowers_or_uppers_name, lhsArrayIndex, rhsArray, rhsArrayIndex ) {
+        let thisValue = this[ strBoundsArrayTestName ][ lowers_or_uppers_name ][ lhsArrayIndex ];
+        let rhsArrayValue = rhsArray[ rhsArrayIndex ];
+        tf.util.assert( thisValue == rhsArrayValue, `test_FloatValue_Bounds(): `
+          + `Case.${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
       }
     }
 
