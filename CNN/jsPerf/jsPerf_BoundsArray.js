@@ -191,6 +191,24 @@ class Cases {
         }
       }
 
+      {
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
+        this.aBoundsArray.add_all_byLowerUpper( oneRandCase.bBounds.lower, oneRandCase.bBounds.upper );
+
+        this.bBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
+        this.bBoundsArray.add_all_byBounds( oneRandCase.bBounds );
+
+        let tBounds = new Bounds( 0, 0 );
+        for ( let i = 0; i < aCaseArray.length; ++i ) {
+          tBounds.set_LowerUpper( this.aLowers[ i ], this.aUppers[ i ] );
+          tBounds.add_LowerUpper( oneRandCase.bBounds.lower, oneRandCase.bBounds.upper );
+          this.assert_BoundsArray_one_byArray( "aBoundsArray", 0, [ tBounds.lower, tBounds.upper ] );
+          this.assert_BoundsArray_one_byArray( "bBoundsArray", 0, [ tBounds.lower, tBounds.upper ] );
+        }
+      }
+
+  add_all_byNs( 
+
 //!!!
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
       this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
