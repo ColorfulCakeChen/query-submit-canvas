@@ -1,12 +1,19 @@
 export { test_FloatValue_Bounds };
 
+import * as RandTools from "../util/RandTools.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
 
 /**
+ * For testing Bounds.
  *
  */
 class Case {
   constructor( aLowerUpper, bLowerUpper, N, addedArray, multipledArray, aMultipledNArray ) {
+    this.N = N;
+    this.addedArray = addedArray;
+    this.multipledArray = multipledArray;
+    this.aMultipledNArray = aMultipledNArray;
+
     this.aBounds = new FloatValue.Bounds( aLowerUpper[ 0 ], aLowerUpper[ 1 ] );
     this.bBounds = new FloatValue.Bounds( bLowerUpper[ 0 ], bLowerUpper[ 1 ] );
 
@@ -17,6 +24,51 @@ class Case {
     this.assert_Bounds_byArray( "addedBounds", addedArray );
     this.assert_Bounds_byArray( "multipledBounds", multipledArray );
     this.assert_Bounds_byArray( "aMultipledNBounds", aMultipledNArray );
+  }
+
+  assert_Bounds_byArray( strBoundsTestName, rhsArray ) {
+    this.assert_lower_or_upper( strBoundsTestName, "lower", rhsArray, 0 );
+    this.assert_lower_or_upper( strBoundsTestName, "upper", rhsArray, 1 );
+  }
+
+  assert_lower_or_upper( strBoundsTestName, lower_or_upper_name, rhsArray, rhsArrayIndex ) {
+    let thisValue = this[ strBoundsTestName ][ lower_or_upper_name ];
+    let rhsArrayValue = rhsArray[ rhsArrayIndex ];
+    tf.util.assert( thisValue == rhsArrayValue,
+      `test_FloatValue_Bounds(): Case.${strBoundsTestName}.${lower_or_upper_name} ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
+  }
+}
+
+/**
+ * For testing BoundsArray.
+ *
+ */
+class Cases {
+  /**
+   * @param {Case[]} aCaseArray  Multiple Case objects.
+   */
+  constructor( aCaseArray ) {
+    let oneRandIndex = RandTools.getRandomIntInclusive( 0, ( aCaseArray.length - 1 ) ); // Randomly select one.
+    let oneRandCase = aCaseArray[ oneRandIndex ];
+    let aLower = oneRandCase.aBounds.lower;
+    let aUpper = oneRandCase.aBounds.upper;
+    let bLower = oneRandCase.bBounds.lower;
+    let bUpper = oneRandCase.bBounds.upper;
+
+    let aLowers = new Array( aCaseArray.length ), aUppers = new Array( aCaseArray.length );
+    let bLowers = new Array( aCaseArray.length ), bUppers = new Array( aCaseArray.length );
+    let Ns = new Array( aCaseArray.length );
+    for ( let i = 0; i < aCaseArray.length; ++i ) {
+      let oneCase = aCaseArray[ i ];
+      aLowers[ i ] = oneCase.aBounds.lower;
+      aUppers[ i ] = oneCase.aBounds.upper;
+      bLowers[ i ] = oneCase.bBounds.lower;
+      bUppers[ i ] = oneCase.bBounds.upper;
+      Ns[ i ] = oneCase.N;
+    }
+
+      this.aBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_one_byLowerUpper( aLowerUpper[ 0 ], aLowerUpper[ 1 ] );
+      this.bBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_one_byLowerUpper( bLowerUpper[ 0 ], bLowerUpper[ 1 ] );
 
 //!!!
     let BoundsArrayLength = 1;
@@ -30,24 +82,13 @@ class Case {
     this.assert_BoundsArray_byArray( "addedBoundsArray", addedArray );
     this.assert_BoundsArray_byArray( "multipledBoundsArray", multipledArray );
     this.assert_BoundsArray_byArray( "aMultipledNBoundsArray", aMultipledNArray );
-  }
 
-  assert_Bounds_byArray( strBoundsTestName, rhsArray ) {
-    this.assert_lower_or_upper( strBoundsTestName, "lower", rhsArray, 0 );
-    this.assert_lower_or_upper( strBoundsTestName, "upper", rhsArray, 1 );
   }
 
   assert_BoundsArray_byArray( strBoundsArrayTestName, rhsArray ) {
     let lhsArrayIndex = 0;
     this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsArray, 0 );
     this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsArray, 1 );
-  }
-
-  assert_lower_or_upper( strBoundsTestName, lower_or_upper_name, rhsArray, rhsArrayIndex ) {
-    let thisValue = this[ strBoundsTestName ][ lower_or_upper_name ];
-    let rhsArrayValue = rhsArray[ rhsArrayIndex ];
-    tf.util.assert( thisValue == rhsArrayValue,
-      `test_FloatValue_Bounds(): Case.${strBoundsTestName}.${lower_or_upper_name} ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
 
   assert_lowers_or_uppers( strBoundsArrayTestName, lowers_or_uppers_name, lhsArrayIndex, rhsArray, rhsArrayIndex ) {
