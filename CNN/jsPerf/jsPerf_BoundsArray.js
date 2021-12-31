@@ -26,19 +26,33 @@ class Case {
     this.assert_Bounds_byArray( "aMultipledNBounds", aMultipledNArray );
 
 //!!! ...unfinished... (2021/12/31)
-  multiply_byBounds_multiply_byN( aBounds, N )
+    { // Test multiply_byBounds_multiply_byN().
+      this.mmBounds = this.aBounds.clone().multiply_byBounds_multiply_byN( this.bBounds, N );
+      let rhsBounds = this.aBounds.clone().multiply_byBounds( this.bBounds ).multiply_byN( N );
+      this.assert_Bounds_byBounds( "mmBounds", rhsBounds );
+    }
+
+//!!! ...unfinished... (2021/12/31)
+    { // Test apply_byScaleTranslate().
+
   apply_byScaleTranslate( aScaleTranslate )
-  clamp_or_zeroIfNaN( value )
+  }
+
+  assert_Bounds_byBounds( strBoundsTestName, rhsBounds ) {
+    this.assert_Bounds_byLowerUpper( strBoundsTestName, rhsBounds.lower, rhsBounds.upper );
   }
 
   assert_Bounds_byArray( strBoundsTestName, rhsArray ) {
-    this.assert_lower_or_upper( strBoundsTestName, "lower", rhsArray, 0 );
-    this.assert_lower_or_upper( strBoundsTestName, "upper", rhsArray, 1 );
+    this.assert_Bounds_byLowerUpper( strBoundsTestName, rhsArray[ 0 ], rhsArray[ 1 ] );
   }
 
-  assert_lower_or_upper( strBoundsTestName, lower_or_upper_name, rhsArray, rhsArrayIndex ) {
+  assert_Bounds_byLowerUpper( strBoundsTestName, rhsLower, rhsUpper ) {
+    this.assert_lower_or_upper( strBoundsTestName, "lower", rhsLower );
+    this.assert_lower_or_upper( strBoundsTestName, "upper", rhsUpper );
+  }
+
+  assert_lower_or_upper( strBoundsTestName, lower_or_upper_name, rhsArrayValue ) {
     let thisValue = this[ strBoundsTestName ][ lower_or_upper_name ];
-    let rhsArrayValue = rhsArray[ rhsArrayIndex ];
     tf.util.assert( thisValue == rhsArrayValue,
       `test_FloatValue_Bounds(): Case.${strBoundsTestName}.${lower_or_upper_name} ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
