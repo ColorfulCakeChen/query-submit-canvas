@@ -14,7 +14,8 @@ import * as PointDepthPoint_Reference from "./Ref/PointDepthPoint_Reference.js";
 import * as PointDepthPoint_TestParams from "./Ref/PointDepthPoint_TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 import * as NumberImage from "./Ref/NumberImage.js"; 
-import * as jsPerf_BoundsArray from "./jsPerf_BoundsArray.js"; 
+import * as jsPerf_FloatValue_BoundsArray from "./jsPerf_FloatValue_BoundsArray.js";
+import * as jsPerf_FloatValue_ScaleTranslate from "./jsPerf_FloatValue_ScaleTranslate.js";
 
 /**
  * Test CNN PointDepthPoint.
@@ -408,8 +409,9 @@ class HeightWidthDepth {
     tf.dispose( outputTensor3dArray );
   }
 
-  test_FloatValue_Bounds() {
-    jsPerf_BoundsArray.test_FloatValue_Bounds();
+  test_FloatValue() {
+    jsPerf_FloatValue_BoundsArray.test();
+    jsPerf_FloatValue_ScaleTranslate.test();
   }
 
   test_Weights_Float32Array_RestrictedClone() {
@@ -503,7 +505,7 @@ class HeightWidthDepth {
 
   // Testing whether the results of different implementation are the same.
   testCorrectness() {
-    this.test_FloatValue_Bounds();
+    this.test_FloatValue();
     this.test_Weights_Float32Array_RestrictedClone();
     this.test_ValueRange_valueInputOutputGenerator();
 
