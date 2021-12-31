@@ -446,9 +446,24 @@ class Cases {
     }
 
 //!!! ...unfinished... (2021/12/31)
-  multiply_byBounds_multiply_byN( aBounds, N )
-  apply_byScaleTranslate( aScaleTranslate )
-  clamp_or_zeroIfNaN( value )
+  scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray )
+  one_clamp_or_zeroIfNaN( )
+
+//!!! ...unfinished... (2021/12/31)
+    { // Test multiply_byBounds_multiply_byN().
+      this.mmBounds = this.aBounds.clone().multiply_byBounds_multiply_byN( this.bBounds, N );
+      let rhsBounds = this.aBounds.clone().multiply_byBounds( this.bBounds ).multiply_byN( N );
+      this.assert_Bounds_byBounds( "mmBounds", rhsBounds );
+    }
+
+    { // Test scaleTranslate_byScaleTranslate().
+      let aScaleTranslate = new Float.ScaleTranslate(
+        RandTools.getRandomIntInclusive( -10, +10 ), RandTools.getRandomIntInclusive( -10, +10 ) );  // Random scale-translate.
+
+      this.stBounds = this.aBounds.clone().scaleTranslate_byScaleTranslate( aScaleTranslate );
+      let rhsBounds = this.aBounds.clone().multiply_byN( aScaleTranslate.scale ).add_byN( aScaleTranslate.translate );
+      this.assert_Bounds_byBounds( "stBounds", rhsBounds );
+    }
 
 //!!!
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
