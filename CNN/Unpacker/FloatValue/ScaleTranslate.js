@@ -43,7 +43,7 @@ class ScaleTranslate {
    *   The scale-translate to be undone.
    */
   setBy_undoScaleTranslate( aScaleTranslate ) {
-    this.scale = ( 1 / aScaleTranslate.scale );  // Reciprocal will undo the scale.
+    this.scale = ( 1 / aScaleTranslate.scale );  // Reciprocal will undo the scale. (Note: Not work for zero.)
 
     // Negative translate, and multiply by undo-scale because translate comes after scale.
     this.translate = ( - aScaleTranslate.translate ) * this.scale;
