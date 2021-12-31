@@ -39,6 +39,26 @@ class Case {
       let rhsBounds = this.aBounds.clone().multiply_byN( aScaleTranslate.scale ).add_byN( aScaleTranslate.translate );
       this.assert_Bounds_byBounds( "stBounds", rhsBounds );
     }
+
+    { // Test clamp_or_zeroIfNaN().
+      let randValue;
+      if ( RandTools.getRandomIntInclusive( 0, 9 ) == 0 ) { // 10% is NaN.
+        randValue = Number.NaN;
+      } else {
+        randValue = RandTools.getRandomIntInclusive( -1000, +1000 );
+      }
+
+      let clampedValue = this.aBounds.clamp_or_zeroIfNaN( randValue );
+
+      tf.util.assert( ( Number.isNaN( clampedValue ) == false ), `jsPerf_FloatValue_Bounds.Cases().one_clamp_or_zeroIfNaN(): `
+        + `clamp ( ${randValue} ) got ( ${clampedValue} ) should never be NaN.` );
+
+      tf.util.assert( ( clampedValue >= this.aBounds.lower ) && ( clampedValue <= this.aBounds.upper ),
+        `jsPerf_FloatValue_Bounds.Cases().one_clamp_or_zeroIfNaN(): `
+          + `clamp ( ${randValue} ) got ( ${clampedValue} ) should between `
+          + `[ ${this.aBounds.lower}, ${this.aBounds.upper} ].` );
+    }
+
   }
 
   assert_Bounds_byBounds( strBoundsTestName, rhsBounds ) {
