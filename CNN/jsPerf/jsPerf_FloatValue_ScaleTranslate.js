@@ -1,9 +1,9 @@
-export { test };
+export { testCorrectness };
 
 import * as RandTools from "../util/RandTools.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
 
-function test() {
+function testCorrectness() {
 
 //!!! ...unfinished... (2021/12/31)
 
