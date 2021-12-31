@@ -73,7 +73,7 @@ class Cases {
     this.aCaseArray = aCaseArray;
 
     this.tAssertNumberArray = [ 0, 0 ]; // For reducing momory allocation.
-    let tBounds = new Bounds( 0, 0 ); // For speed up assertion.
+    let tBounds = new FloatValue.Bounds( 0, 0 ); // For speed up assertion.
 
     let oneRandIndex = RandTools.getRandomIntInclusive( 0, ( aCaseArray.length - 1 ) ); // Randomly select one.
     let oneRandCase = aCaseArray[ oneRandIndex ];
