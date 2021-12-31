@@ -1,4 +1,4 @@
-export { test_FloatValue_Bounds };
+export { test };
 
 import * as RandTools from "../util/RandTools.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
@@ -33,7 +33,7 @@ class Case {
 
     { // Test scaleTranslate_byScaleTranslate().
       let aScaleTranslate = new Float.ScaleTranslate(
-        RandTools.getRandomIntInclusive( -10, +10 ), RandTools.getRandomIntInclusive( -10, +10 ) );  // Random scale-translate.
+        RandTools.getRandomIntInclusive( -10, +10 ), RandTools.getRandomIntInclusive( -10, +10 ) ); // Random scale-translate.
 
       this.stBounds = this.aBounds.clone().scaleTranslate_byScaleTranslate( aScaleTranslate );
       let rhsBounds = this.aBounds.clone().multiply_byN( aScaleTranslate.scale ).add_byN( aScaleTranslate.translate );
@@ -451,26 +451,33 @@ class Cases {
             .multiply_all_byLowerUpper( this.bLowers[ i ], this.bUppers[ i ] ).multiply_all_byN( this.Ns[ i ] );
           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
         }
+      }
+    }
 
-        let rhsBounds = this.aBounds.clone().multiply_byBounds( this.bBounds ).multiply_byN( N );
-        this.assert_Bounds_byBounds( "aBoundsArray", rhsBounds );
+    { // scaleTranslate_all_byScaleTranslateArray().
+      let aScaleTranslateArray = new Float.ScaleTranslateArray( aCaseArray.length );
+      {
+        for ( let i = 0; i < aCaseArray.length; ++i ) { // Random scale-translate.
+          aScaleTranslateArray.scales[ i ] = RandTools.getRandomIntInclusive( -10, +10 );
+          aScaleTranslateArray.translates[ i ] = RandTools.getRandomIntInclusive( -10, +10 );
+        }
+      }
+
+      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray );
+
+      let aScaleTranslate = new Float.ScaleTranslate();
+      for ( let i = 0; i < aCaseArray.length; ++i ) { // Random scale-translate.
+        aScaleTranslate.set( aScaleTranslateArray.scales[ i ], aScaleTranslateArray.translates[ i ] );
+        tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] ).scaleTranslate_byScaleTranslate( aScaleTranslate );
+        this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
       }
     }
 
 //!!! ...unfinished... (2021/12/31)
-  scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray )
   one_clamp_or_zeroIfNaN( )
 
 //!!! ...unfinished... (2021/12/31)
 
-    { // Test scaleTranslate_byScaleTranslate().
-      let aScaleTranslate = new Float.ScaleTranslate(
-        RandTools.getRandomIntInclusive( -10, +10 ), RandTools.getRandomIntInclusive( -10, +10 ) );  // Random scale-translate.
-
-      this.stBounds = this.aBounds.clone().scaleTranslate_byScaleTranslate( aScaleTranslate );
-      let rhsBounds = this.aBounds.clone().multiply_byN( aScaleTranslate.scale ).add_byN( aScaleTranslate.translate );
-      this.assert_Bounds_byBounds( "stBounds", rhsBounds );
-    }
 
 //!!!
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
@@ -535,7 +542,7 @@ class Cases {
 
 }
 
-function test_FloatValue_Bounds() {
+function test() {
 
   let casesArray = [
     new Cases( [
