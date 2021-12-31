@@ -3,7 +3,61 @@ export { testCorrectness };
 import * as RandTools from "../util/RandTools.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
 
+/**
+ * Test ScaleTranslate.
+ */
+class Base {
+
+  assert_PropertyProperty_Value( strThisPropertyName, strThisPropertyPropertyName, rhsValue ) {
+    let thisValue = this[ strThisPropertyName ][ strThisPropertyPropertyName ];
+    tf.util.assert( thisValue == rhsValue, `jsPerf_FloatValue_ScaleTranslate.testCorrectness(): `
+      + `this.${strThisPropertyName}.${strThisPropertyPropertyName} ( ${thisValue} ) should be ( ${rhsValue} ).` );
+  }
+
+}
+
+/**
+ * Test ScaleTranslate.
+ */
+class Case extends Base {
+
+  constructor() {
+
+    { // Test setBy_undoScaleTranslate().
+      let aScaleTranslate = new FloatValue.ScaleTranslate(
+        RandTools.getRandomIntInclusive( -10, +10 ), RandTools.getRandomIntInclusive( -10, +10 ) ); // Random scale-translate.
+
+      let undoScaleTranslate = new FloatValue.ScaleTranslate();
+      undoScaleTranslate.setBy_undoScaleTranslate( aScaleTranslate );
+
+      let originalValue = RandTools.getRandomIntInclusive( -10, +10 );
+      let changedValue = ( originalValue * aScaleTranslate.scale ) + aScaleTranslate.translate;
+      this.undoTest = {
+        undoChangedValue: ( changedValue * undoScaleTranslate.scale ) + undoScaleTranslate.translate
+      };
+
+      this.assert_PropertyProperty_Value( "undoTest", "undoChangedValue", originalValue );
+    }
+  }
+
+}
+
+/**
+ * Test ScaleTranslateArray.
+ */
+class Cases extends Base {
+
+  constructor() {
+  }
+
+}
+
 function testCorrectness() {
+  let casesArray = [
+    new Cases( [
+      new Case(),
+    ] ),
+  ];
 
 //!!! ...unfinished... (2021/12/31)
 
