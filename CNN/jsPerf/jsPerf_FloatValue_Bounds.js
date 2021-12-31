@@ -56,8 +56,8 @@ class Case {
 
   assert_lower_or_upper( strBoundsTestName, lower_or_upper_name, rhsArrayValue ) {
     let thisValue = this[ strBoundsTestName ][ lower_or_upper_name ];
-    tf.util.assert( thisValue == rhsArrayValue,
-      `test_FloatValue_Bounds(): Case.${strBoundsTestName}.${lower_or_upper_name} ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
+    tf.util.assert( thisValue == rhsArrayValue, `jsPerf_FloatValue_Bounds.test(): `
+      + `Case.${strBoundsTestName}.${lower_or_upper_name} ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
 }
 
@@ -466,40 +466,31 @@ class Cases {
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray );
 
       let aScaleTranslate = new Float.ScaleTranslate();
-      for ( let i = 0; i < aCaseArray.length; ++i ) { // Random scale-translate.
-        aScaleTranslate.set( aScaleTranslateArray.scales[ i ], aScaleTranslateArray.translates[ i ] );
+      for ( let i = 0; i < aCaseArray.length; ++i ) {
+        aScaleTranslate.set( aScaleTranslateArray.scales[ i ], aScaleTranslateArray.translates[ i ] ); // Random scale-translate.
         tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] ).scaleTranslate_byScaleTranslate( aScaleTranslate );
         this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
       }
     }
 
-//!!! ...unfinished... (2021/12/31)
-  one_clamp_or_zeroIfNaN( )
-
-//!!! ...unfinished... (2021/12/31)
-
-
-//!!!
+    { // Test one_clamp_or_zeroIfNaN().
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
-      this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
-      
-      
 
+      for ( let i = 0; i < aCaseArray.length; ++i ) {
+        let randValue;
+        if ( RandTools.getRandomIntInclusive( 0, 9 ) == 0 ) { // 10% is NaN.
+          randValue = Number.NaN;
+        } else {
+          randValue = RandTools.getRandomIntInclusive( -1000, +1000 );
+        }
+
+        let lhsValue = this.aBoundsArray.one_clamp_or_zeroIfNaN( i, randValue );
+        let rhsValue = tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] ).clamp_or_zeroIfNaN( randValue );
+
+        tf.util.assert( lhsValue == rhsValue, `jsPerf_FloatValue_Bounds.Cases().one_clamp_or_zeroIfNaN(): `
+          + `lhsValue ( ${lhsValue} ) should be rhsValue ( ${rhsValue} ).` );
+      }
     }
-
-//!!!
-    let BoundsArrayLength = 1;
-    this.aBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_one_byLowerUpper( aLowerUpper[ 0 ], aLowerUpper[ 1 ] );
-    this.bBoundsArray = ( new FloatValue.BoundsArray( BoundsArrayLength ) ).set_one_byLowerUpper( bLowerUpper[ 0 ], bLowerUpper[ 1 ] );
-
-    this.addedBoundsArray = this.aBoundsArray.clone().add_BoundsArray( this.bBoundsArray );
-    this.multipledBoundsArray = this.aBoundsArray.clone().multiply_BoundsArray( this.bBoundsArray );
-    this.aMultipledNBoundsArray = this.aBoundsArray.clone().multiply_N( N );
-
-    this.assert_BoundsArray_byArray( "addedBoundsArray", addedArray );
-    this.assert_BoundsArray_byArray( "multipledBoundsArray", multipledArray );
-    this.assert_BoundsArray_byArray( "aMultipledNBoundsArray", aMultipledNArray );
-
   }
 
   assert_BoundsArray_all_byArrayArray( strBoundsArrayTestName, rhsArrayArray ) {
@@ -536,8 +527,8 @@ class Cases {
     let thisValue = this[ strBoundsArrayTestName ][ lowers_or_uppers_name ][ lhsArrayIndex ];
 //!!! (2021/12/31 Remarked)
 //    let rhsArrayValue = rhsArray[ rhsArrayIndex ];
-    tf.util.assert( thisValue == rhsArrayValue, `test_FloatValue_Bounds(): `
-      + `Case.${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
+    tf.util.assert( thisValue == rhsArrayValue, `jsPerf_FloatValue_Bounds.test(): `
+      + `Cases.${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
 
 }
