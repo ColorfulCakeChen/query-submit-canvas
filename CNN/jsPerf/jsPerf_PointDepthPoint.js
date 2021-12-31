@@ -15,7 +15,7 @@ import * as PointDepthPoint_TestParams from "./Ref/PointDepthPoint_TestParams.js
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 import * as NumberImage from "./Ref/NumberImage.js"; 
 import * as jsPerf_FloatValue_ScaleTranslate from "./jsPerf_FloatValue_ScaleTranslate.js";
-import * as jsPerf_FloatValue_BoundsArray from "./jsPerf_FloatValue_BoundsArray.js";
+import * as jsPerf_FloatValue_Bounds from "./jsPerf_FloatValue_Bounds.js";
 
 /**
  * Test CNN PointDepthPoint.
@@ -411,7 +411,7 @@ class HeightWidthDepth {
 
   test_FloatValue() {
     jsPerf_FloatValue_ScaleTranslate.test();
-    jsPerf_FloatValue_BoundsArray.test();
+    jsPerf_FloatValue_Bounds.test();
   }
 
   test_Weights_Float32Array_RestrictedClone() {
