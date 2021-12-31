@@ -85,7 +85,7 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   set_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
-    return this.set_one_byLowersUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+    return this.set_one_byLowerUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
