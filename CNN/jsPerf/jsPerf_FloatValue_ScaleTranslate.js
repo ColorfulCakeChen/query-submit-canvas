@@ -24,8 +24,10 @@ class Case extends Base {
   constructor() {
 
     { // Test setBy_undoScaleTranslate().
-      let aScaleTranslate = new FloatValue.ScaleTranslate(
-        RandTools.getRandomIntInclusive( -10, +10 ), RandTools.getRandomIntInclusive( -10, +10 ) ); // Random scale-translate.
+      let scale = RandTools.getRandomIntInclusive( -10, +10 ); // 
+      scale = Math.sign( scale ) * ( Math.abs( scale ) + 0.05 );  // Force to non-zero. (Note: undoScaleTranslate does not work for zero.)
+
+      let aScaleTranslate = new FloatValue.ScaleTranslate( scale, RandTools.getRandomIntInclusive( -10, +10 ) ); // Random scale-translate.
 
       let undoScaleTranslate = new FloatValue.ScaleTranslate();
       undoScaleTranslate.setBy_undoScaleTranslate( aScaleTranslate );
