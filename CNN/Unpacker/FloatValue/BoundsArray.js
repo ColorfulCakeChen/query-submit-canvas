@@ -489,7 +489,7 @@ class BoundsArray {
    * @return {BoundsArray}
    *   Return this (modified) object.
    */
-  apply_all_byScaleTranslateArray( aScaleTranslateArray ) {
+  scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray ) {
     return this.multiply_all_byNs( aScaleTranslateArray.scales ).add_all_byNs( aScaleTranslateArray.translates );
   }
 
