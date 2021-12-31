@@ -167,26 +167,27 @@ class Cases {
 
       this.aBoundsArray.set_one_byLowerUpper( 1, this.aLowers[ 1 ], this.aUppers[ 1 ] );
       tBounds.set_byLowerUpper( this.aLowers[ 1 ], this.aUppers[ 1 ] );
-      this.assert_BoundsArray_one_byArray( "aBoundsArray", 1, tBounds );
+      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 1, tBounds );
 
       this.aBoundsArray.set_one_byBounds( 2, aCaseArray[ 2 ].bBounds );
       tBounds.set_one_byBounds( aCaseArray[ 2 ].bBounds );
-      this.assert_BoundsArray_one_byArray( "aBoundsArray", 2, tBounds );
+      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 2, tBounds );
 
       this.aBoundsArray.set_one_byNs( 3, this.Ns, 3 );
       tBounds.set_byN( this.Ns[ 3 ] );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 3, tBounds );
 
-//!!! ...unfinished... (2021/12/31) set
+//      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
 
-      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
-
-      this.aBoundsArray.add_one_byLowersUppers( 0, this.bLowers, this.bUppers, 0 );
-      this.assert_BoundsArray_one_byArray( "aBoundsArray", 0, this.addedArrayArray[ 0 ] );
+      this.aBoundsArray.set_one_byLowersUppers( 0, this.bLowers, this.bUppers, 0 );
+      tBounds.set_byLowerUpper( this.aLowers[ 0 ], this.aUppers[ 0 ] );
+      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, tBounds );
 
       this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
-      this.aBoundsArray.add_one_byBoundsArray( 1, this.bBoundsArray, 1 );
-      this.assert_BoundsArray_one_byArray( "aBoundsArray", 1, this.addedArrayArray[ 1 ] );
+      this.aBoundsArray.set_one_byBoundsArray( 1, this.bBoundsArray, 1 );
+      this.assert_BoundsArray_one_byLowerUpper( "aBoundsArray", 1, this.bBoundsArray.lower, this.bBoundsArray.upper );
+
+//!!! ...unfinished... (2021/12/31) set
 
       { // Test add_all_byN().
         this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byN( oneRandCase.N );
@@ -448,15 +449,11 @@ class Cases {
   assert_BoundsArray_all_byArrayArray( strBoundsArrayTestName, rhsArrayArray ) {
     let count = this[ strBoundsArrayTestName ].lowers.length;
     for ( let lhsArrayIndex = 0; lhsArrayIndex < count; ++lhsArrayIndex ) {
-      this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsArrayArray[ lhsArrayIndex ], 0 );
-      this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsArrayArray[ lhsArrayIndex ], 1 );
+//!!! (2021/12/31 Remarked)
+//       this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsArrayArray[ lhsArrayIndex ], 0 );
+//       this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsArrayArray[ lhsArrayIndex ], 1 );
+      this.assert_BoundsArray_one_byArray( strBoundsArrayTestName, lhsArrayIndex, rhsArrayArray[ lhsArrayIndex ] );
     }
-  }
-
-  assert_BoundsArray_one_byLowerUpper( strBoundsArrayTestName, lhsArrayIndex, rhsLower, rhsUpper ) {
-    this.tAssertNumberArray[ 0 ] = rhsLower
-    this.tAssertNumberArray[ 1 ] = rhsUpper;
-    this.assert_BoundsArray_one_byArray( strBoundsArrayTestName, lhsArrayIndex, this.tAssertNumberArray );
   }
 
   assert_BoundsArray_one_byBounds( strBoundsArrayTestName, lhsArrayIndex, rhsBounds ) {
@@ -464,13 +461,25 @@ class Cases {
   }
 
   assert_BoundsArray_one_byArray( strBoundsArrayTestName, lhsArrayIndex, rhsArray ) {
-    this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsArray, 0 );
-    this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsArray, 1 );
+    this.assert_BoundsArray_one_byLowerUpper( strBoundsArrayTestName, lhsArrayIndex, rhsArray[ 0 ], rhsArray[ 1 ] );
   }
 
-  assert_lowers_or_uppers( strBoundsArrayTestName, lowers_or_uppers_name, lhsArrayIndex, rhsArray, rhsArrayIndex ) {
+  assert_BoundsArray_one_byLowerUpper( strBoundsArrayTestName, lhsArrayIndex, rhsLower, rhsUpper ) {
+//!!! (2021/12/31 Remarked)
+//     this.tAssertNumberArray[ 0 ] = rhsLower
+//     this.tAssertNumberArray[ 1 ] = rhsUpper;
+//     this.assert_BoundsArray_one_byArray( strBoundsArrayTestName, lhsArrayIndex, this.tAssertNumberArray );
+
+    this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsLower );
+    this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsUpper );
+  }
+
+//!!! (2021/12/31 Remarked)
+//  assert_lowers_or_uppers( strBoundsArrayTestName, lowers_or_uppers_name, lhsArrayIndex, rhsArray, rhsArrayIndex ) {
+  assert_lowers_or_uppers( strBoundsArrayTestName, lowers_or_uppers_name, lhsArrayIndex, rhsArrayValue ) {
     let thisValue = this[ strBoundsArrayTestName ][ lowers_or_uppers_name ][ lhsArrayIndex ];
-    let rhsArrayValue = rhsArray[ rhsArrayIndex ];
+//!!! (2021/12/31 Remarked)
+//    let rhsArrayValue = rhsArray[ rhsArrayIndex ];
     tf.util.assert( thisValue == rhsArrayValue, `test_FloatValue_Bounds(): `
       + `Case.${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
