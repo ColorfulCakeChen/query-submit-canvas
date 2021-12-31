@@ -212,7 +212,7 @@ class Base {
 
     // For reducing memory allocation.
     this.testCorrectnessInfo = new TestCorrectnessInfo();
-    this.asserter_Tensor_NumberArray = new TensorTools.Asserter_Tensor_NumberArray( 0.4 );
+    this.asserter_Equal = new TensorTools.Asserter_Tensor_NumberArray( 0.4 );
   }
 
   /**
@@ -370,7 +370,7 @@ class Base {
 
       let outputTensor = outputTensors[ i ];          // Get real (tested target) result (as typed-array).
 
-      this.asserter_Tensor_NumberArray.assert(
+      this.asserter_Equal.assert_Tensor_NumberArray(
         outputTensor, outputArrayRef,
         "PointDepthPoint", `output${i}`, `outputRef${i}`, parametersDescription
       );
