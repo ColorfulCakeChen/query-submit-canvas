@@ -410,8 +410,8 @@ class HeightWidthDepth {
   }
 
   test_FloatValue() {
-    jsPerf_FloatValue_ScaleTranslate.test();
-    jsPerf_FloatValue_Bounds.test();
+    jsPerf_FloatValue_ScaleTranslate.testCorrectness();
+    jsPerf_FloatValue_Bounds.testCorrectness();
   }
 
   test_Weights_Float32Array_RestrictedClone() {
