@@ -1,6 +1,7 @@
 export { testCorrectness };
 
 import * as RandTools from "../util/RandTools.js";
+import * as TensorTools from "../util/TensorTools.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
 
 /**
@@ -8,10 +9,23 @@ import * as FloatValue from "../Unpacker/FloatValue.js";
  */
 class Base {
 
+  constructor() {
+    this.asserter_Equal = TensorTools.Asserter_Tensor_NumberArray();
+  }
+
   assert_PropertyProperty_Value( strThisPropertyName, strThisPropertyPropertyName, rhsValue ) {
     let thisValue = this[ strThisPropertyName ][ strThisPropertyPropertyName ];
-    tf.util.assert( thisValue == rhsValue, `jsPerf_FloatValue_ScaleTranslate.testCorrectness(): `
-      + `this.${strThisPropertyName}.${strThisPropertyPropertyName} ( ${thisValue} ) should be ( ${rhsValue} ).` );
+
+//!!! (2021/12/31 Remarked)
+//     tf.util.assert( thisValue == rhsValue, `jsPerf_FloatValue_ScaleTranslate.testCorrectness(): `
+//       + `this.${strThisPropertyName}.${strThisPropertyPropertyName} ( ${thisValue} ) should be ( ${rhsValue} ).` );
+
+    this.assert_Number_Number( thisValue, rhsValue,
+      `jsPerf_FloatValue_ScaleTranslate.testCorrectness(): this.`, // prefixMsg,
+      `${strThisPropertyName}.${strThisPropertyPropertyName}`, // lhsNumberName,
+      ``, // rhsNumberName,
+      ``  // postfixMsg
+    );
   }
 
 }
