@@ -195,7 +195,7 @@ class Cases {
       tBounds.set_byN( this.Ns[ 3 ] );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 3, tBounds );
 
-      this.aBoundsArray.set_one_byLowersUppers( 0, this.bLowers, this.bUppers, 0 );
+      this.aBoundsArray.set_one_byLowersUppers( 0, this.aLowers, this.aUppers, 0 );
       tBounds.set_byLowerUpper( this.aLowers[ 0 ], this.aUppers[ 0 ] );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, tBounds );
 
@@ -248,7 +248,7 @@ class Cases {
         }
       }
 
-      { // Test add_all_byBoundsArray().
+      { // Test set_all_byBoundsArray().
         this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
         this.aBoundsArray.set_all_byBoundsArray( this.bBoundsArray );
 
