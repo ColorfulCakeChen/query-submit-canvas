@@ -187,7 +187,7 @@ class Bounds {
    * @return {Bounds}
    *   Return this (modified) object which is the same as this.multiply_N( aScaleTranslate.scale ).add_N( aScaleTranslate.translate ).
    */
-  apply_byScaleTranslate( aScaleTranslate ) {
+  scaleTranslate_byScaleTranslate( aScaleTranslate ) {
     return this.multiply_byN( aScaleTranslate.scale ).add_byN( aScaleTranslate.translate );
   }
 
