@@ -56,7 +56,7 @@ class Case {
 
   assert_lower_or_upper( strBoundsTestName, lower_or_upper_name, rhsArrayValue ) {
     let thisValue = this[ strBoundsTestName ][ lower_or_upper_name ];
-    tf.util.assert( thisValue == rhsArrayValue, `jsPerf_FloatValue_Bounds.test(): `
+    tf.util.assert( thisValue == rhsArrayValue, `jsPerf_FloatValue_Bounds.testCorrectness(): `
       + `Case.${strBoundsTestName}.${lower_or_upper_name} ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
 }
@@ -527,7 +527,7 @@ class Cases {
     let thisValue = this[ strBoundsArrayTestName ][ lowers_or_uppers_name ][ lhsArrayIndex ];
 //!!! (2021/12/31 Remarked)
 //    let rhsArrayValue = rhsArray[ rhsArrayIndex ];
-    tf.util.assert( thisValue == rhsArrayValue, `jsPerf_FloatValue_Bounds.test(): `
+    tf.util.assert( thisValue == rhsArrayValue, `jsPerf_FloatValue_Bounds.testCorrectness(): `
       + `Cases.${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
 
