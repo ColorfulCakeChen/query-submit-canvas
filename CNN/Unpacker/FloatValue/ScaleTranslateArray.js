@@ -60,7 +60,7 @@ class ScaleTranslateArray {
    */
   set_all_byUndo_ScaleTranslate( aScaleTranslate ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] = ( 1 / aScaleTranslate.scales[ i ] );  // Reciprocal will undo the scale.
+      this.scales[ i ] = ( 1 / aScaleTranslate.scales[ i ] );  // Reciprocal will undo the scale. (Note: Not work for zero.)
 
       // Negative translate, and multiply by undo-scale because translate comes after scale.
       this.translates[ i ] = ( - aScaleTranslate.translates[ i ] ) * this.scales[ i ];
