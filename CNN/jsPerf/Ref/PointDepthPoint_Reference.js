@@ -212,7 +212,7 @@ class Base {
 
     // For reducing memory allocation.
     this.testCorrectnessInfo = new TestCorrectnessInfo();
-    this.asserter_Equal = new TensorTools.Asserter_Tensor_NumberArray( 0.4 );
+    this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4 );
   }
 
   /**
