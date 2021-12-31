@@ -161,6 +161,88 @@ class Cases {
 
     // Set
     {
+      this.aBoundsArray.set_one_byN( 0, oneRandCase.N );
+      tBounds.set_byN( oneRandCase.N );
+      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, tBounds );
+
+      this.aBoundsArray.set_one_byLowerUpper( 1, this.aLowers[ 1 ], this.aUppers[ 1 ] );
+      tBounds.set_byLowerUpper( this.aLowers[ 1 ], this.aUppers[ 1 ] );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray", 1, tBounds );
+
+      this.aBoundsArray.set_one_byBounds( 2, aCaseArray[ 2 ].bBounds );
+      tBounds.set_one_byBounds( aCaseArray[ 2 ].bBounds );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray", 2, tBounds );
+
+      this.aBoundsArray.set_one_byNs( 3, this.Ns, 3 );
+      tBounds.set_byN( this.Ns[ 3 ] );
+      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 3, tBounds );
+
+//!!! ...unfinished... (2021/12/31) set
+
+      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
+
+      this.aBoundsArray.add_one_byLowersUppers( 0, this.bLowers, this.bUppers, 0 );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray", 0, this.addedArrayArray[ 0 ] );
+
+      this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
+      this.aBoundsArray.add_one_byBoundsArray( 1, this.bBoundsArray, 1 );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray", 1, this.addedArrayArray[ 1 ] );
+
+      { // Test add_all_byN().
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byN( oneRandCase.N );
+
+        let tBounds = new Bounds( 0, 0 );
+        for ( let i = 0; i < aCaseArray.length; ++i ) {
+          tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] ).add_byN( oneRandCase.N );
+          this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
+        }
+      }
+
+      { // Test add_all_byLowerUpper() and add_all_byBounds().
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .add_all_byLowerUpper( oneRandCase.bBounds.lower, oneRandCase.bBounds.upper );
+
+        this.bBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byBounds( oneRandCase.bBounds );
+
+        for ( let i = 0; i < aCaseArray.length; ++i ) {
+          tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] ).add_byLowerUpper( oneRandCase.bBounds.lower, oneRandCase.bBounds.upper );
+          this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
+          this.assert_BoundsArray_one_byBounds( "bBoundsArray", i, tBounds );
+        }
+      }
+
+      { // Test add_all_byNs().
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byNs( this.Ns );
+
+        for ( let i = 0; i < aCaseArray.length; ++i ) {
+          tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] ).add_byN( this.Ns[ i ] );
+          this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
+        }
+      }
+
+      { // Test add_all_byLowersUppers().
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byLowersUppers( this.bLowers, this.bUppers );
+
+        for ( let i = 0; i < aCaseArray.length; ++i ) {
+          tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] ).add_byLowerUpper( this.bLowers[ i ], this.bUppers[ i ] );
+          this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
+        }
+      }
+
+      { // Test add_all_byBoundsArray().
+        this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byBoundsArray( this.bBoundsArray );
+
+        for ( let i = 0; i < aCaseArray.length; ++i ) {
+          tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] ).add_byLowerUpper( this.bLowers[ i ], this.bUppers[ i ] );
+          this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
+        }
+      }
+
+
+
+//!!! ...unfinished... (2021/12/31) set
+
       this.aBoundsArray.set_all_byNs( this.Ns );
       this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.NsNs );
 
@@ -170,6 +252,8 @@ class Cases {
       this.bBoundsArray.set_all_byBoundsArray( this.aBoundsArray );
       this.assert_BoundsArray_all_byArrayArray( "bBoundsArray", this.aLowersUppers );
     }
+
+//!!! ...unfinished... (2021/12/31) by this.addedArrayArray[]
 
     // Add
     {
@@ -249,6 +333,8 @@ class Cases {
         }
       }
     }
+
+//!!! ...unfinished... (2021/12/31) by this.multipledArrayArray[]
 
     // Multiply.
     {
