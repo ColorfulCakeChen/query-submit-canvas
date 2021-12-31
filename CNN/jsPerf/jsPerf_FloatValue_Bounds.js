@@ -32,7 +32,7 @@ class Case {
     }
 
     { // Test scaleTranslate_byScaleTranslate().
-      let aScaleTranslate = new Float.ScaleTranslate(
+      let aScaleTranslate = new FloatValue.ScaleTranslate(
         RandTools.getRandomIntInclusive( -10, +10 ), RandTools.getRandomIntInclusive( -10, +10 ) ); // Random scale-translate.
 
       this.stBounds = this.aBounds.clone().scaleTranslate_byScaleTranslate( aScaleTranslate );
@@ -455,7 +455,7 @@ class Cases {
     }
 
     { // scaleTranslate_all_byScaleTranslateArray().
-      let aScaleTranslateArray = new Float.ScaleTranslateArray( aCaseArray.length );
+      let aScaleTranslateArray = new FloatValue.ScaleTranslateArray( aCaseArray.length );
       {
         for ( let i = 0; i < aCaseArray.length; ++i ) { // Random scale-translate.
           aScaleTranslateArray.scales[ i ] = RandTools.getRandomIntInclusive( -10, +10 );
@@ -465,7 +465,7 @@ class Cases {
 
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray );
 
-      let aScaleTranslate = new Float.ScaleTranslate();
+      let aScaleTranslate = new FloatValue.ScaleTranslate();
       for ( let i = 0; i < aCaseArray.length; ++i ) {
         aScaleTranslate.set( aScaleTranslateArray.scales[ i ], aScaleTranslateArray.translates[ i ] ); // Random scale-translate.
         tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] ).scaleTranslate_byScaleTranslate( aScaleTranslate );
