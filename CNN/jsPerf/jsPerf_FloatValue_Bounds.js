@@ -188,7 +188,7 @@ class Cases {
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 1, tBounds );
 
       this.aBoundsArray.set_one_byBounds( 2, aCaseArray[ 2 ].bBounds );
-      tBounds.set_one_byBounds( aCaseArray[ 2 ].bBounds );
+      tBounds.set_byBounds( aCaseArray[ 2 ].bBounds );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 2, tBounds );
 
       this.aBoundsArray.set_one_byNs( 3, this.Ns, 3 );
