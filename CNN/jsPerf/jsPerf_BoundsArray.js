@@ -441,8 +441,20 @@ class Cases {
         this.assert_BoundsArray_one_byArrayArray( "aBoundsArray", this.multipledArrayArray );
       }
 
-//!!! ...unfinished... (2021/12/30) multiply: multiply_all_byBoundsArray_multiply_all_byNs( 
-      
+      { // Test multiply_all_byBoundsArray_multiply_all_byNs().
+        this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .multiply_all_byBoundsArray_multiply_all_byNs( this.bBoundsArray, this.Ns );
+
+        for ( let i = 0; i < aCaseArray.length; ++i ) {
+          tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] )
+            .multiply_all_byLowerUpper( this.bLowers[ i ], this.bUppers[ i ] ).multiply_all_byN( this.Ns[ i ] );
+          this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
+        }
+
+        let rhsBounds = this.aBounds.clone().multiply_byBounds( this.bBounds ).multiply_byN( N );
+        this.assert_Bounds_byBounds( "aBoundsArray", rhsBounds );
+      }
     }
 
 //!!! ...unfinished... (2021/12/31)
@@ -450,11 +462,6 @@ class Cases {
   one_clamp_or_zeroIfNaN( )
 
 //!!! ...unfinished... (2021/12/31)
-    { // Test multiply_byBounds_multiply_byN().
-      this.mmBounds = this.aBounds.clone().multiply_byBounds_multiply_byN( this.bBounds, N );
-      let rhsBounds = this.aBounds.clone().multiply_byBounds( this.bBounds ).multiply_byN( N );
-      this.assert_Bounds_byBounds( "mmBounds", rhsBounds );
-    }
 
     { // Test scaleTranslate_byScaleTranslate().
       let aScaleTranslate = new Float.ScaleTranslate(
