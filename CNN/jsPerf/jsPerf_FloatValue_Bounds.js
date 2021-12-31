@@ -1,4 +1,4 @@
-export { test };
+export { testCorrectness };
 
 import * as RandTools from "../util/RandTools.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
@@ -533,7 +533,7 @@ class Cases {
 
 }
 
-function test() {
+function testCorrectness() {
 
   let casesArray = [
     new Cases( [
