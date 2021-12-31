@@ -148,6 +148,15 @@ class Cases {
     this.aBoundsArray = new FloatValue.BoundsArray( aCaseArray.length );
     this.bBoundsArray = new FloatValue.BoundsArray( aCaseArray.length );
 
+    // Clone
+    {
+      let clonedBoundsArray = this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).clone();
+
+      for ( let i = 0; i < aCaseArray.length; ++i ) {
+        this.assert_BoundsArray_one_byLowerUpper( "aBoundsArray", i, clonedBoundsArray.lowers[ i ], clonedBoundsArray.uppers[ i ] );
+      }
+    }
+
 //!!! ...unfinished... (2021/12/30) set
 
     // Set
@@ -358,14 +367,17 @@ class Cases {
     }
   }
 
-  assert_BoundsArray_one_byBounds( strBoundsArrayTestName, lhsArrayIndex, rhsBounds ) {
-    this.tAssertNumberArray[ 0 ] = rhsBounds.lower
-    this.tAssertNumberArray[ 1 ] = rhsBounds.upper;
+  assert_BoundsArray_one_byLowerUpper( strBoundsArrayTestName, lhsArrayIndex, rhsLower, rhsUpper ) {
+    this.tAssertNumberArray[ 0 ] = rhsLower
+    this.tAssertNumberArray[ 1 ] = rhsUpper;
     this.assert_BoundsArray_one_byArray( strBoundsArrayTestName, lhsArrayIndex, this.tAssertNumberArray );
   }
 
+  assert_BoundsArray_one_byBounds( strBoundsArrayTestName, lhsArrayIndex, rhsBounds ) {
+    this.assert_BoundsArray_one_byLowerUpper( strBoundsArrayTestName, lhsArrayIndex, rhsBounds.lower, rhsBounds.upper );
+  }
+
   assert_BoundsArray_one_byArray( strBoundsArrayTestName, lhsArrayIndex, rhsArray ) {
-    //let lhsArrayIndex = 0;
     this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsArray, 0 );
     this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsArray, 1 );
   }
