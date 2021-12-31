@@ -50,6 +50,90 @@ class Asserter_Tensor_NumberArray {
   constructor( acceptableDifferenceRate = 0.4 ) {
     this.acceptableDifferenceRate = acceptableDifferenceRate;
     this.comparator = Asserter_Tensor_NumberArray.ElementComparator.bind( this );
+
+    // Used by assert_Number_Number().
+    this.lhsNumberArrayDefault = [ 0 ];
+    this.rhsNumberArrayDefault = [ 0 ];
+  }
+
+  /**
+   *
+   * @param {number[]} lhsNumberArray
+   *   The number array to be checked.
+   *
+   * @param {number[]} rhsNumberArray
+   *   The number array to be compared against lhsNumberArray.
+   *
+   * @param {string} prefixMsg
+   *   The text to be displayed at the beginning when comparison failed.
+   *
+   * @param {string} lhsNumberArrayName
+   *   The text to be displayed for the lhsNumberArray when comparison failed.
+   *
+   * @param {string} rhsNumberArrayName
+   *   The text to be displayed for the rhsNumberArray when comparison failed.
+   *
+   * @param {string} postfixMsg
+   *   The text to be displayed at the tail when comparison failed.
+   */
+  assert_NumberArray_NumberArray( lhsNumberArray, rhsNumberArray, prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg ) {
+
+    // Check both null or non-null.
+    tf.util.assert( ( lhsNumberArray == null ) == ( rhsNumberArray == null ),
+      `${prefixMsg} ${lhsNumberArrayName} ( ${lhsNumberArray} ) and ${rhsNumberArrayName} ( ${rhsNumberArray} ) `
+        + `should be both null or non-null. ${postfixMsg}` );
+
+    if ( !lhsNumberArray )
+      return; // Since null, no element need to be compared futher.
+
+    // Check both length.
+    tf.util.assert( lhsNumberArray.length == rhsNumberArray.length,
+    `${prefixMsg} ${lhsNumberArrayName} length ( ${lhsNumberArray.length} ) should be ( ${rhsNumberArray.length} ). ${postfixMsg}` );
+
+    this.rhsNumberArray = rhsNumberArray; // For ElementComparator() to access.
+
+    // Check both elements.
+    //
+    // Note: Array.every() seems faster than for-loop.
+    tf.util.assert( lhsNumberArray.every( this.comparator ),
+      `${prefixMsg} ${lhsNumberArrayName}[ ${this.elementIndex} ] `
+        + `( ${lhsNumberArray[ this.elementIndex ]} ) should be ( ${rhsNumberArray[ this.elementIndex ]} ) `
+        + `( ${lhsNumberArray} ) should be ( ${rhsNumberArray} ). `
+        + `${postfixMsg}` );
+
+//!!! (2021/08/10 Remarked) Old Codes.
+//         `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
+//           +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
+//           + `${parametersDescription}` );
+
+  }
+
+  /**
+   *
+   * @param {number} lhsNumber
+   *   The number to be checked.
+   *
+   * @param {number} rhsNumber
+   *   The number to be compared against lhsNumber.
+   *
+   * @param {string} prefixMsg
+   *   The text to be displayed at the beginning when comparison failed.
+   *
+   * @param {string} lhsNumberName
+   *   The text to be displayed for the lhsNumber when comparison failed.
+   *
+   * @param {string} rhsNumberName
+   *   The text to be displayed for the rhsNumber when comparison failed.
+   *
+   * @param {string} postfixMsg
+   *   The text to be displayed at the tail when comparison failed.
+   */
+  assert_Number_Number( lhsNumber, rhsNumber, prefixMsg, lhsNumberName, rhsNumberName, postfixMsg ) {
+    this.lhsNumberArrayDefault[ 0 ] = lhsNumber;
+    this.rhsNumberArrayDefault[ 0 ] = rhsNumber;
+
+    this.assert_NumberArray_NumberArray(
+      this.lhsNumberArrayDefault, this.rhsNumberArrayDefault, prefixMsg, lhsNumberName, rhsNumberName, postfixMsg );
   }
 
   /**
@@ -72,50 +156,53 @@ class Asserter_Tensor_NumberArray {
    * @param {string} postfixMsg
    *   The text to be displayed at the tail when comparison failed.
    */
-  assert( tensor, numberArray, prefixMsg, tensorName, numberArrayName, postfixMsg ) {
+  assert_Tensor_NumberArray( tensor, rhsNumberArray, prefixMsg, tensorName, rhsNumberArrayName, postfixMsg ) {
 
     let tensorDataArray = null;
     if ( tensor ) {
       tensorDataArray = tensor.dataSync();
     }
 
-    // Check both null or non-null.
-    tf.util.assert( ( tensorDataArray == null ) == ( numberArray == null ),
-      `${prefixMsg} ${tensorName} ( ${tensorDataArray} ) and ${numberArrayName} ( ${numberArray} ) should be both null or non-null. ${postfixMsg}` );
+    this.assert_NumberArray_NumberArray( tensorDataArray, rhsNumberArray, prefixMsg, tensorName, rhsNumberArrayName, postfixMsg );
 
-    if ( !tensorDataArray )
-      return; // Since null, no element need to be compared futher.
-
-    // Check both length.
-    tf.util.assert( tensorDataArray.length == numberArray.length,
-    `${prefixMsg} ${tensorName} length ( ${tensorDataArray.length} ) should be ( ${numberArray.length} ). ${postfixMsg}` );
-
-    this.numberArray = numberArray; // For ElementComparator() to access.
-
-    // Check both elements.
-    //
-    // Note: Array.every() seems faster than for-loop.
-    tf.util.assert( tensorDataArray.every( this.comparator ),
-      `${prefixMsg} ${tensorName}[ ${this.elementIndex} ] `
-        + `( ${tensorDataArray[ this.elementIndex ]} ) should be ( ${numberArray[ this.elementIndex ]} ) `
-        + `( ${tensorDataArray} ) should be ( ${numberArray} ). `
-        + `${postfixMsg}` );
-
-//!!! (2021/08/10 Remarked) Old Codes.
-//         `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
-//           +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
-//           + `${parametersDescription}` );
+//!!! (2021/12/31 Remarked) use assert_NumberArray_NumberArray() instead.
+//     // Check both null or non-null.
+//     tf.util.assert( ( tensorDataArray == null ) == ( numberArray == null ),
+//       `${prefixMsg} ${tensorName} ( ${tensorDataArray} ) and ${numberArrayName} ( ${numberArray} ) should be both null or non-null. ${postfixMsg}` );
+//
+//     if ( !tensorDataArray )
+//       return; // Since null, no element need to be compared futher.
+//
+//     // Check both length.
+//     tf.util.assert( tensorDataArray.length == numberArray.length,
+//     `${prefixMsg} ${tensorName} length ( ${tensorDataArray.length} ) should be ( ${numberArray.length} ). ${postfixMsg}` );
+//
+//     this.numberArray = numberArray; // For ElementComparator() to access.
+//
+//     // Check both elements.
+//     //
+//     // Note: Array.every() seems faster than for-loop.
+//     tf.util.assert( tensorDataArray.every( this.comparator ),
+//       `${prefixMsg} ${tensorName}[ ${this.elementIndex} ] `
+//         + `( ${tensorDataArray[ this.elementIndex ]} ) should be ( ${numberArray[ this.elementIndex ]} ) `
+//         + `( ${tensorDataArray} ) should be ( ${numberArray} ). `
+//         + `${postfixMsg}` );
+//
+// //!!! (2021/08/10 Remarked) Old Codes.
+// //         `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
+// //           +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
+// //           + `${parametersDescription}` );
 
   }
 
   /**
    * @param {Asserter_Tensor_NumberArray} this
-   *   - The this.numberArray[] and this.acceptableDifferenceRate will be read by this method.
+   *   - The this.rhsNumberArray[] and this.acceptableDifferenceRate will be read by this method.
    *   - The this.elementIndex will be set by this method.
    */
   static ElementComparator( value, index ) {
 
-    let valueRef = this.numberArray[ this.elementIndex = index ];
+    let valueRef = this.rhsNumberArray[ this.elementIndex = index ];
     let delta = Math.abs( value - valueRef );
 
     let valueAbs = Math.abs( value );
