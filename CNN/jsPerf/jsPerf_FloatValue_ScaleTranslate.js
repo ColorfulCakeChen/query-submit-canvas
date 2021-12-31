@@ -22,6 +22,7 @@ class Base {
 class Case extends Base {
 
   constructor() {
+    super();
 
     { // Test setBy_undoScaleTranslate().
       let scale = RandTools.getRandomIntInclusive( -10, +10 ); // 
@@ -50,6 +51,8 @@ class Case extends Base {
 class Cases extends Base {
 
   constructor() {
+    super();
+
   }
 
 }
