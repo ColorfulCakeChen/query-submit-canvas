@@ -457,6 +457,14 @@ class HeightWidthDepth {
           + `Weights.Base.ValueBounds.Float32Array_RestrictedClone( inputArray[ ${i} ] = ${inputElement} ) `
           + `should be ( ${verifyElement} ) but got ( ${outputElement} ).`
       );
+
+      let outputElementSingle = Weights.Base.ValueBounds.clamp_or_zeroIfNaN( inputElement );
+
+      tf.util.assert( outputElementSingle === verifyElement,
+        `test_Weights_Float32Array_RestrictedClone(): `
+          + `Weights.Base.ValueBounds.clamp_or_zeroIfNaN( inputArray[ ${i} ] = ${inputElement} ) `
+          + `should be ( ${verifyElement} ) but got ( ${outputElementSingle} ).`
+      );
     }
   }
 
