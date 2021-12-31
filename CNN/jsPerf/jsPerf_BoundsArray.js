@@ -25,17 +25,20 @@ class Case {
     this.assert_Bounds_byArray( "multipledBounds", multipledArray );
     this.assert_Bounds_byArray( "aMultipledNBounds", aMultipledNArray );
 
-//!!! ...unfinished... (2021/12/31)
     { // Test multiply_byBounds_multiply_byN().
       this.mmBounds = this.aBounds.clone().multiply_byBounds_multiply_byN( this.bBounds, N );
       let rhsBounds = this.aBounds.clone().multiply_byBounds( this.bBounds ).multiply_byN( N );
       this.assert_Bounds_byBounds( "mmBounds", rhsBounds );
     }
 
-//!!! ...unfinished... (2021/12/31)
-    { // Test apply_byScaleTranslate().
+    { // Test scaleTranslate_byScaleTranslate().
+      let aScaleTranslate = new Float.ScaleTranslate(
+        RandTools.getRandomIntInclusive( -10, +10 ), RandTools.getRandomIntInclusive( -10, +10 ) );  // Random scale-translate.
 
-  apply_byScaleTranslate( aScaleTranslate )
+      this.stBounds = this.aBounds.clone().scaleTranslate_byScaleTranslate( aScaleTranslate );
+      let rhsBounds = this.aBounds.clone().multiply_byN( aScaleTranslate.scale ).add_byN( aScaleTranslate.translate );
+      this.assert_Bounds_byBounds( "stBounds", rhsBounds );
+    }
   }
 
   assert_Bounds_byBounds( strBoundsTestName, rhsBounds ) {
