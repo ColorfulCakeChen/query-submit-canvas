@@ -1,4 +1,4 @@
-export { Comparator, Asserter_Tensor_NumberArray };
+export { Comparator, Asserter_Equal };
 
 /**
  *
@@ -37,7 +37,7 @@ class Comparator {
 /**
  * Assert a tensor whether equals to a number array.
  */
-class Asserter_Tensor_NumberArray {
+class Asserter_Equal {
 
   /**
    *
