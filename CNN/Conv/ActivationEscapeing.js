@@ -28,7 +28,7 @@ class ScaleTranslateSet {
 
   clone() {
     let result = new ScaleTranslateSet();
-    result.set_ScaleTranslateSet( this );
+    result.set_byScaleTranslateSet( this );
     return result;
   }
 
@@ -36,7 +36,7 @@ class ScaleTranslateSet {
    * @param {ScaleTranslateSet} aScaleTranslateSet
    *   The ScaleTranslateSet to be copied.
    */
-  set_ScaleTranslateSet( aScaleTranslateSet ) {
+  set_byScaleTranslateSet( aScaleTranslateSet ) {
     this.doWithoutPreviousUndo.set_ScaleTranslateArray( aScaleTranslateSet.doWithoutPreviousUndo );
     this.do.set_ScaleTranslateArray( aScaleTranslateSet.do );
     this.undo.set_ScaleTranslateArray( aScaleTranslateSet.undo );
@@ -44,9 +44,9 @@ class ScaleTranslateSet {
 
   /** Reset all scale-translate values. Default is ( scale = 1, translate = 0 ) (i.e. no scale and no translate). */
   reset( scale = 1, translate = 0 ) {
-    this.doWithoutPreviousUndo.set_scale_translate( scale , translate );
-    this.do.set_scale_translate( scale , translate );
-    this.undo.set_scale_translate( scale , translate );
+    this.doWithoutPreviousUndo.set_all_by_scale_translate( scale , translate );
+    this.do.set_all_by_scale_translate( scale , translate );
+    this.undo.set_all_by_scale_translate( scale , translate );
   }
 
 //!!! ...unfinished... (2021/12/26)
@@ -93,21 +93,21 @@ class ScaleTranslateSet {
    * @param {ScaleTranslateSet} previous_ActivationEscaping_ScaleTranslateSet
    *   The ActivationEscaping.ScaleTranslateSet of previous convolution-bias-activation for calculating this.do.
    */
-  setBy_currentValueBoundsSet_previousActivationEscaping(
+  set_by_currentValueBoundsSet_previousActivationEscaping(
     current_ConvBiasActivation_ValueBoundsSet, previous_ActivationEscaping_ScaleTranslateSet ) {
 
     // Calculate the scale-translate for escaping from activation function's non-linear domain into linear domain.
     //
     // Note: This does not work for avg/max pooling.
-    this.doWithoutPreviousUndo.set_fromBoundsArray_ToBoundsArray(
+    this.doWithoutPreviousUndo.set_all_by_fromBoundsArray_ToBoundsArray(
       current_ConvBiasActivation_ValueBoundsSet.beforeActivation, current_ConvBiasActivation_ValueBoundsSet.output );
 
     // Combine undoing previous activation escaping scale-translate and doing current activation escaping scale-translate.
-    this.do.set_ScaleTranslateArray( previous_ActivationEscaping_ScaleTranslateSet.undo );
-    this.do.scaleTranslateBy( this.doWithoutPreviousUndo );
+    this.do.set_all_byScaleTranslateArray( previous_ActivationEscaping_ScaleTranslateSet.undo );
+    this.do.scaleTranslate_all_byScaleTranslateArray( this.doWithoutPreviousUndo );
 
     // Prepare the undoing scale-translate for the next convolution-bias-activation.
-    this.undo.set_undoScaleTranslate( this.do );
+    this.undo.set_byUndo_ScaleTranslate( this.do );
   }
 
 }
