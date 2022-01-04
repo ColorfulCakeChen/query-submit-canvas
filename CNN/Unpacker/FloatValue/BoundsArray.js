@@ -246,7 +246,7 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   add_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
-    return this.add_one_byLowersUpper( thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.add_one_byLowerUpper( thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
   /**
