@@ -394,11 +394,11 @@ class Cases {
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
 
       this.aBoundsArray.multiply_one_byLowersUppers( 0, this.bLowers, this.bUppers, 0 );
-      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 0, this.multipledArrayArray[ 0 ] );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray", 0, this.multipledArrayArray[ 0 ] );
 
       this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
       this.aBoundsArray.multiply_one_byBoundsArray( 1, this.bBoundsArray, 1 );
-      this.assert_BoundsArray_one_byBounds( "aBoundsArray", 1, this.multipledArrayArray[ 1 ] );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray", 1, this.multipledArrayArray[ 1 ] );
 
       { // Test multiply_all_byN().
         this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).aBoundsArray.multiply_all_byN( oneRandCase.N );
