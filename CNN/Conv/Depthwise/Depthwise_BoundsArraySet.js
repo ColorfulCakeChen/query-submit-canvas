@@ -1,4 +1,4 @@
-export { ValueBoundsSet };
+export { BoundsArraySet };
 
 import * as ConvBiasActivation from "../ConvBiasActivation.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
@@ -9,7 +9,7 @@ import * as Weights from "../../Unpacker/Weights.js";
  * The element value bounds set for depthwise convolution-bias-activation.
  *
  */
-class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
+class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
   /**
    */
@@ -21,7 +21,7 @@ class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
 
   /**
    *
-   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
    *   The previous convolution-bias-activation value bounds set of this depthwise convolution.   
    *
    * @param {boolean} bDepthwise
@@ -39,10 +39,10 @@ class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
    */
-   set_by( previous_ConvBiasActivation_ValueBoundsSet, bDepthwise, filterHeight, filterWidth, bBias, nActivationId ) {
+   set_by( previous_ConvBiasActivation_BoundsArraySet, bDepthwise, filterHeight, filterWidth, bBias, nActivationId ) {
 
-    // 0. Default as ValueBoundsSet.output of previous convolution-bias-activation.
-    this.resetBy_Bounds( previous_ConvBiasActivation_ValueBoundsSet.output );
+    // 0. Default as BoundsArraySet.output of previous convolution-bias-activation.
+    this.reset_byBounds( previous_ConvBiasActivation_BoundsArraySet.output );
 
     // 1. No operation at all.
     if ( !bDepthwise )
@@ -56,10 +56,10 @@ class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
 
       // Note: For maximum pooling, the multiply_Bounds is a little bit overestimated (but should be acceptable).
       let filterSize = filterHeight * filterWidth;
-      this.beforeActivation.multiply_Bounds_multiply_N( filtersValueBounds, filterSize );
+      this.beforeActivation.multiply_all_byBounds( filtersValueBounds ).multiply_all_byN( filterSize );
 
       if ( bBias )
-        this.beforeActivation.add_Bounds( biasesValueBounds );
+        this.beforeActivation.add_all_byBounds( biasesValueBounds );
 
 
 //!!! ...unfinished... (2021/12/26)
@@ -68,10 +68,12 @@ class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
 // Problem: What if this convolution-bias-activation could only undo partially (e.g. this convolution does not have bias)?
 //   How should the .undo of this convolution-bias-activation be calculated?
       {
-        this.valueBoundsSet.beforeActivation.multiply_N( previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet.undo.scale );
+        this.valueBoundsSet.beforeActivation.multiply_all_byN(
+          previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateSet.undo.scale );
 
         if ( this.bBias )
-          this.valueBoundsSet.beforeActivation.add_N( previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet.undo.translate );
+          this.valueBoundsSet.beforeActivation.add_all_byN(
+            previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateSet.undo.translate );
       }
 
     }
@@ -80,8 +82,8 @@ class ValueBoundsSet extends ConvBiasActivation.ValueBoundsSet {
     this.set_output_by_beforeActivation_ActivationId( nActivationId );
 
     // 4. ActivationEscaping.ScaleTranslateSet.
-    this.activationEscaping_ScaleTranslateSet.setBy_currentValueBoundsSet_previousActivationEscaping(
-      this, previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet );
+    this.activationEscaping_ScaleTranslateSet.set_by_currentBoundsArraySet_previousActivationEscaping(
+      this, previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet );
   }
 
 }
