@@ -7,7 +7,7 @@ import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
 import { PassThrough, AllZeros } from "./Pointwise_PassThrough.js";
-import { ValueBoundsSet } from "./Pointwise_ValueBoundsSet.js";
+import { BoundsArraySet } from "./Pointwise_BoundsArraySet.js";
 
 /**
  * Handle pointwise convolution (1x1 conv2d), bias and activation.
@@ -20,8 +20,8 @@ import { ValueBoundsSet } from "./Pointwise_ValueBoundsSet.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
- * @member {ValueBoundsSet} valueBoundsSet
- *   The element value bounds of input, beforeActivation, and output for this pointwise convolution.
+ * @member {BoundsArraySet} boundsArraySet
+ *   The element value bounds (per channel) of input, beforeActivation, and output for this pointwise convolution.
  *
  * @member {number} outputChannelCount
  *   The output channel count of this pointwise convolutiuon.
@@ -150,7 +150,7 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
     super();
-    this.valueBoundsSet = new ValueBoundsSet();
+    this.boundsArraySet = new BoundsArraySet();
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
@@ -206,12 +206,12 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
    *   The previous convolution-bias-activation value bounds set of this pointwise convolution.
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, previous_ConvBiasActivation_ValueBoundsSet ) {
+  init( inputFloat32Array, byteOffsetBegin, previous_ConvBiasActivation_BoundsArraySet ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -230,7 +230,7 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
     Base.Setup_bPointwise_pfn.call( this );
 
     // 1.2 Determine output value bounds (and activation escaping scale-translate).
-    this.valueBoundsSet.set_by( previous_ConvBiasActivation_ValueBoundsSet,
+    this.boundsArraySet.set_by( previous_ConvBiasActivation_BoundsArraySet,
       this.bPointwise, this.inputChannelCount, this.bBias, this.nActivationId );
 
     let bExtractOk;
@@ -241,7 +241,7 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
 
 
 //!!! ...unfinished... (2021/12/26)
-// The valueBoundsSet.activationEscaping_ScaleTranslateSet.undo should also be applied to the real filter value and bias value of
+// The boundsArraySet.activationEscaping_ScaleTranslateSet.undo should also be applied to the real filter value and bias value of
 // this convolution-bias (either normal or pass-through or copy-lower).
 //
 // Problem: What if this convolution-bias-activation could only undo partially (e.g. this convolution does not have bias)?
@@ -497,8 +497,8 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
         this.outputChannelCount_Real,
         0, // Pass through all the input channels.
         this.bBias,
-        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
-        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
+        this.boundsArraySet.activationEscaping_ScaleTranslateSet.do.scale,
+        this.boundsArraySet.activationEscaping_ScaleTranslateSet.do.translate
       );
 
       if ( !higherHalfPassThrough.bInitOk )
@@ -566,8 +566,8 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
         this.outputChannelCount_lowerHalf,
         0, // Pass through the lower channels to lower channels (i.e. pass through lower channels).
         this.bBias,
-        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
-        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
+        this.boundsArraySet.activationEscaping_ScaleTranslateSet.do.scale,
+        this.boundsArraySet.activationEscaping_ScaleTranslateSet.do.translate
       );
 
       if ( !lowerHalfPassThrough.bInitOk )
@@ -578,8 +578,8 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
         this.outputChannelCount_higherHalf,
         0, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
         this.bBias,
-        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
-        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
+        this.boundsArraySet.activationEscaping_ScaleTranslateSet.do.scale,
+        this.boundsArraySet.activationEscaping_ScaleTranslateSet.do.translate
       );
 
       if ( !higherHalfPassThrough.bInitOk )
@@ -653,8 +653,8 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
         this.outputChannelCount_higherHalf,
         0, // Pass through the lower channels to higher channels (i.e. copy them to higher channels).
         this.bBias,
-        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
-        this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
+        this.boundsArraySet.activationEscaping_ScaleTranslateSet.do.scale,
+        this.boundsArraySet.activationEscaping_ScaleTranslateSet.do.translate
       );
 
       if ( !higherHalfPassThrough.bInitOk )
@@ -899,8 +899,8 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
             this.outputChannelCount_higherHalf,
             this.outputChannelCount_lowerHalf, // Pass through the higher channels.
             this.bBias,
-            this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.scale,
-            this.valueBoundsSet.activationEscaping_ScaleTranslateSet.do.translate
+            this.boundsArraySet.activationEscaping_ScaleTranslateSet.do.scale,
+            this.boundsArraySet.activationEscaping_ScaleTranslateSet.do.translate
           );
         }
 
