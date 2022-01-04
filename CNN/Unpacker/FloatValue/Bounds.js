@@ -196,13 +196,13 @@ class Bounds {
    *   The value to be clamped.
    *
    * @return {number}
-   *   If value is NaN, return zero. Otherwise, return value clamped between this Bounds [ this.lower, this.upper ].
+   *   Return value clamped between this Bounds [ this.lower, this.upper ]. If value is NaN, it will become zero first and then be clamped
+   * between this Bounds [ this.lower, this.upper ].
    */
   clamp_or_zeroIfNaN( value ) {
-    if ( !Number.isNaN( value ) )
-      return Math.max( this.lower, Math.min( value, this.upper ) );
-    else
-      return 0; // If NaN, let it become 0.
+    if ( Number.isNaN( value ) )
+      value = 0; // If NaN, view it as 0.
+    return Math.max( this.lower, Math.min( value, this.upper ) );
   }
 
   /**
