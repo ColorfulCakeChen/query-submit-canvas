@@ -47,7 +47,7 @@ class Case extends Base {
       let aScaleTranslate = new FloatValue.ScaleTranslate( scale, RandTools.getRandomIntInclusive( -10, +10 ) ); // Random scale-translate.
 
       let undoScaleTranslate = new FloatValue.ScaleTranslate();
-      undoScaleTranslate.setBy_undoScaleTranslate( aScaleTranslate );
+      undoScaleTranslate.set_byUndo_ScaleTranslate( aScaleTranslate );
 
       if ( Number.isNaN( undoScaleTranslate.scale ) || Number.isNaN( undoScaleTranslate.translate ) ) {
         debugger;
