@@ -1,4 +1,4 @@
-export { ValueBoundsSet };
+export { BoundsArraySet };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
@@ -20,11 +20,11 @@ import * as ActivationEscapeing from "./ActivationEscapeing.js";
  * @member {FloatValue.BoundsArray} output
  *   The bounds of the output element value. Or say, the range of the convolution-bias-activation.
  *
- * @member {ActivationEscapeing.ScaleTranslateSet} activationEscaping_ScaleTranslateSet
+ * @member {ActivationEscapeing.ScaleTranslateArraySet} activationEscaping_ScaleTranslateArraySet
  *   The scale-translate for moving beforeActivation bounds into the linear domain of the activation function. That is, for
  * letting beforeActivation escape from activation function's non-linear domain.
  */
-class ValueBoundsSet {
+class BoundsArraySet {
 
   /**
    */
@@ -39,29 +39,29 @@ class ValueBoundsSet {
     this.output.set_all_byBounds( Weights.Base.ValueBounds );
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-    this.activationEscaping_ScaleTranslateSet = new ActivationEscapeing.ScaleTranslateSet();
+    this.activationEscaping_ScaleTranslateArraySet = new ActivationEscapeing.ScaleTranslateArraySet();
   }
 
   clone() {
-    let result = new ValueBoundsSet();
-    result.set_byValueBoundsSet( this );
+    let result = new BoundsArraySet();
+    result.set_byBoundsArraySet( this );
     return result;
   }
 
   /**
-   * @param {ValueBoundsSet} aValueBoundsSet
-   *   The ValueBoundsSet to be copied.
+   * @param {BoundsArraySet} aBoundsArraySet
+   *   The BoundsArraySet to be copied.
    *
-   * @return {ValueBoundsSet}
-   *   Return this (modified) object which is copied from aValueBoundsSet.
+   * @return {BoundsArraySet}
+   *   Return this (modified) object which is copied from aBoundsArraySet.
    */
-  set_byValueBoundsSet( aValueBoundsSet ) {
-    this.input.set_all_byBoundsArray( aValueBoundsSet.input );
-    this.beforeActivation.set_all_byBoundsArray( aValueBoundsSet.beforeActivation );
-    this.output.set_all_byBoundsArray( aValueBoundsSet.output );
+  set_byBoundsArraySet( aBoundsArraySet ) {
+    this.input.set_all_byBoundsArray( aBoundsArraySet.input );
+    this.beforeActivation.set_all_byBoundsArray( aBoundsArraySet.beforeActivation );
+    this.output.set_all_byBoundsArray( aBoundsArraySet.output );
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-    this.activationEscaping_ScaleTranslateSet.set_byScaleTranslateSet( aValueBoundsSet.activationEscaping_ScaleTranslateSet );
+    this.activationEscaping_ScaleTranslateArraySet.set_byScaleTranslateArraySet( aBoundsArraySet.activationEscaping_ScaleTranslateArraySet );
     return this;
   }
 
@@ -70,10 +70,10 @@ class ValueBoundsSet {
   /**
    * @param {FloatValue.Bounds} aBounds
    *   Set this.input, this.beforeActivation, this.output all the same as the specified aBounds. Set the
-   * this.activationEscaping_ScaleTranslateSet to default ( 1, 0 );
+   * this.activationEscaping_ScaleTranslateArraySet to default ( 1, 0 );
    *
-   * @return {ValueBoundsSet}
-   *   Return this (modified) object which is copied from aValueBoundsSet.
+   * @return {BoundsArraySet}
+   *   Return this (modified) object which is copied from aBoundsArraySet.
    */
   reset_byBounds( aBounds ) {
     this.input.set_all_byBounds( aBounds );
@@ -81,7 +81,7 @@ class ValueBoundsSet {
     this.output.set_all_byBounds( aBounds );
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-    this.activationEscaping_ScaleTranslateSet.reset_by_scale_translate( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
+    this.activationEscaping_ScaleTranslateArraySet.reset_by_scale_translate( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
     return this;
   }
 
