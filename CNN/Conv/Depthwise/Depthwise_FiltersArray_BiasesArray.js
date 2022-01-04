@@ -376,7 +376,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                         this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
 
                         perWeightBounds
-                          .set_byLowerUpper( this.boundsArraySet.input.lowers[ inChannel ], this.boundsArraySet.input.uppers[ inChannel ] )
+                          .set_byBoundsArray( this.boundsArraySet.input, inChannel )
                           .multiply_byN( extraScale ); // pre(-extra)-scale.
 
                       } else {
@@ -391,7 +391,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
                       perWeightBounds
-                        .set_byLowerUpper( this.boundsArraySet.input.lowers[ inChannel ], this.boundsArraySet.input.uppers[ inChannel ] )
+                        .set_byBoundsArray( this.boundsArraySet.input, inChannel )
                         .multiply_byN( extraScale ) // pre(-extra)-scale.
                         .multiply_byN( filtersValueBounds ); // This filters' weight.
 
