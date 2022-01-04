@@ -221,7 +221,7 @@ class Cases {
 
       this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
       this.aBoundsArray.set_one_byBoundsArray( 1, this.bBoundsArray, 1 );
-      this.assert_BoundsArray_one_byLowerUpper( "aBoundsArray", 1, this.bBoundsArray.lower[ 1 ], this.bBoundsArray.upper[ 1 ] );
+      this.assert_BoundsArray_one_byLowerUpper( "aBoundsArray", 1, this.bBoundsArray.lowers[ 1 ], this.bBoundsArray.uppers[ 1 ] );
 
       { // Test set_all_byN().
         this.aBoundsArray.set_all_byN( oneRandCase.N );
