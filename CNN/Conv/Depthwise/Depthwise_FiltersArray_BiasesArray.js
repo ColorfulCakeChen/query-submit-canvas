@@ -319,10 +319,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
                   let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
 
-//!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
-                  this.boundsArraySet.input.lowers[ inChannel ] = previous_ConvBiasActivation_BoundsArraySet.output.lowers[ inChannel ];
-                  this.boundsArraySet.input.uppers[ inChannel ] = previous_ConvBiasActivation_BoundsArraySet.output.uppers[ inChannel ];
-
                   for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
@@ -337,14 +333,19 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                       }
 
                     } else { // Not pass-through half channels.
-//                      filterValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
+//                      filterValue = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
+
+//!!! ...unfinished... (2021/12/29) pre-scale? pass-through?
+                      this.boundsArraySet.input
+                        .set_one_byBoundsArray( inChannel, previous_ConvBiasActivation_BoundsArraySet.output, inChannel );
+
+                      this.boundsArraySet.beforeActivation
+                        .set_one_byBoundsArray( outChannel, this.boundsArraySet.input, inChannel )
+                        .multiply_one_byN( extraScale );
+
                       ++sourceIndex;
                     }
-
-//!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
-                    this.boundsArraySet.output.lowers[ outChannel ] = this.boundsArraySet.input.lowers[ inChannel ] multiply_???;
-                    this.boundsArraySet.output.uppers[ outChannel ] = this.boundsArraySet.input.uppers[ inChannel ];
 
                     ++filterIndex;
                   }
@@ -385,6 +386,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       }
 
     }
+
+//!!! ...unfinished... (2022/01/04) activation?
+//       this.boundsArraySet.output
+//         .set_all_byBoundsArray( this.beforeActivation.input )
+//         .???;
+
+
 
 
     
