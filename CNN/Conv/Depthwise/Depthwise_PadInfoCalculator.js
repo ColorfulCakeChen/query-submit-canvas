@@ -14,6 +14,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} stridesPad            The strides and padding of depthwise convolution. (PointDepthPoint.Params.depthwiseStridesPad)
  *
  * @member {number} channelMultiplier     The channel multiplier of the depthwise operation (according to AvgMax_Or_ChannelMultiplier).
+ * @member {number} filterSize            The size of the depthwise convolution's filter. (= filterHeight * filterWidth)
  *
  * @member {number} dilationHeight        The depthwise filters's dilation across height dimension.
  * @member {number} dilationWidth         The depthwise filters's dilation across width dimension.
@@ -65,6 +66,8 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
       this.channelMultiplier = 1;
     }
+
+    this.filterSize = this.filterHeight * this.filterWidth;
 
     // Strides and Padding.
     switch ( stridesPad ) {
