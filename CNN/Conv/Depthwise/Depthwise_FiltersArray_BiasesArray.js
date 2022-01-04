@@ -411,17 +411,18 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
-        // Only if filters array exists, the pre(-extra)-scale could be applied. (i.e. avg/max pooling can not do pre-scale.)
-        this.boundsArraySet.beforeActivation.???;
 
         let outChannel = inChannelBegin * this.channelMultiplier;
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
           let extraScale = undoScaleTranslateArray.scales[ inChannel ];
+
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-            pendingUndo.scales[ outChannel ] = extraScale; // Since it could not be applied, still pending.
+            pendingUndo.scales[ outChannel ] = extraScale; // Since avg/max pooling can not do pre-scale, it is still pending.
+
+            // Because avg/max pooling will not change value bounds, it is still the same as input.
+            this.boundsArraySet.beforeActivation.set_one_byBoundsArray( outChannel, this.boundsArraySet.input, inChannel );
           }
         }
-
 
       }
 
