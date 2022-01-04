@@ -40,6 +40,11 @@ class Case extends Base {
 
     { // Test setBy_undoScaleTranslate().
       let scale = RandTools.getRandomIntInclusive( -10, +10 ); // 
+
+      if ( 0 == scale ) {
+        debugger;
+      }
+
       scale = Math.sign( scale ) * ( Math.abs( scale ) + 0.05 );  // Force to non-zero. (Note: undoScaleTranslate does not work for zero.)
 
       let aScaleTranslate = new FloatValue.ScaleTranslate( scale, RandTools.getRandomIntInclusive( -10, +10 ) ); // Random scale-translate.
