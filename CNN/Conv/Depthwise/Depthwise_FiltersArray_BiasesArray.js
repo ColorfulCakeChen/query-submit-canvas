@@ -359,7 +359,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
-        // Note: 
         this.boundsArraySet.beforeActivation
           .set_all_byBoundsArray( this.boundsArraySet.input )
           .multiply_all_byNs( extraScaleTranslateArray_byChannelIndex.scales ) // pre(-extra)-scale
@@ -370,6 +369,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           .multiply_all_byN( this.filterSize );
 
       // No filters array needs to be filled. (i.e. avg/max pooling)
+      } else {
+
+//!!! ...unfinished... (2022/01/04) value-bounds?
+        this.boundsArraySet.beforeActivation
+
       }
 
       if ( this.biasesArray ) {
@@ -402,8 +406,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           .add_all_byBounds( biasesValueBounds );
       }
 
-    }
+    // No biases array needs to be filled.
+    } else {
 
+//!!! ...unfinished... (2022/01/04) value-bounds?
+        this.boundsArraySet.beforeActivation
+    }
+ 
     // Value bounds of output (i.e. after activation)
     this.boundsArraySet.set_output_by_beforeActivation_ActivationId( this.nActivationId );
 
