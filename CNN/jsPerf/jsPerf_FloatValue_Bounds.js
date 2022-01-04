@@ -359,7 +359,7 @@ class Cases {
 //           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
 //         }
 
-        this.assert_BoundsArray_one_byArrayArray( "aBoundsArray", this.addedArrayArray );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.addedArrayArray );
       }
     }
 
