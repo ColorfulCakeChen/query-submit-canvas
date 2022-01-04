@@ -282,6 +282,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
     this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
 
+    // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
+    const filtersValueBounds = Weights.Base.ValueBounds;
+    const biasesValueBounds = Weights.Base.ValueBounds;
 
 
     let sourceIndex, filterIndex, biasIndex;
@@ -359,7 +362,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         this.boundsArraySet.beforeActivation
           .set_all_byBoundsArray( this.boundsArraySet.input )
           .multiply_all_byNs( extraScaleTranslateArray_byChannelIndex.scales ) // pre(-extra)-scale
-          .multiply_one_byN( Weights.Base.ValueBounds ); // for weights of this filters. (although this is overestimated for pass-through channels.)
+        
+           // For the weights of this filters. (although this is overestimated for pass-through channels.)
+           // Note: For maximum pooling, it is a little bit overestimated (but should be acceptable).
+          .multiply_all_byBounds( filtersValueBounds )
+          .multiply_all_byN( this.filterSize );
 
       // No filters array needs to be filled. (i.e. avg/max pooling)
       }
@@ -375,7 +382,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
-//!!! ...unfinished... (2021/12/29) pre-translate? pass-through? value-bounds? activation?
             if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
               this.biasesArray[ biasIndex ] = extraTranslate;
 
@@ -389,6 +395,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           }
         }
 
+//!!! ...unfinished... (2022/01/04) value-bounds?
+        this.boundsArraySet.beforeActivation
+          .add_all_byN( extraScaleTranslateArray_byChannelIndex.translates ) // pre(-extra)-translate
+          .add_all_byBounds( biasesValueBounds );
       }
 
     }
