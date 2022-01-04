@@ -412,7 +412,7 @@ class Cases {
 
         for ( let i = 0; i < aCaseArray.length; ++i ) {
           tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] )
-            .multiply_all_byLowerUpper( this.bLowers[ i ], this.bUppers[ i ] ).multiply_all_byN( this.Ns[ i ] );
+            .multiply_byLowerUpper( this.bLowers[ i ], this.bUppers[ i ] ).multiply_byN( this.Ns[ i ] );
           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
         }
       }
