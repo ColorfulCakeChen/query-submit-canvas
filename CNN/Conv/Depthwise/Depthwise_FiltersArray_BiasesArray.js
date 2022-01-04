@@ -346,9 +346,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
                     } else { // Not pass-through half channels.
 //                      filterValue = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
-
-//!!! ...unfinished... (2022/01/04) Perhaps, should only scale ( extraScale / filterSize )?
-
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
