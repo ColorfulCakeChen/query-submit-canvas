@@ -329,12 +329,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-//!!! ...unfinished... (2022/01/04) value-bounds?
-                    this.boundsArraySet.beforeActivation
-                      .set_one_byBoundsArray( outChannel, this.boundsArraySet.input, inChannel )
-                      .multiply_one_byN( extraScale )
-                      .multiply_one_byN( Weights.ValueBounds ); // for the weights of this filters.
-
                     if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
                         this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
@@ -348,9 +342,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //                      filterValue = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
-//!!! ...unfinished... (2022/01/04) value-bounds?
-                      this.boundsArraySet.beforeActivation.multiply_one_byN( extraScale );
-
                       ++sourceIndex;
                     }
 
@@ -361,6 +352,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             }
           }
         }
+
+
+//!!! ...unfinished... (2022/01/04) value-bounds?
+        // Note: 
+        this.boundsArraySet.beforeActivation
+          .set_all_byBoundsArray( this.boundsArraySet.input )
+          .multiply_all_byNs( extraScaleTranslateArray_byChannelIndex.scales ) // pre(-extra)-scale
+          .multiply_one_byN( Weights.Base.ValueBounds ); // for weights of this filters. (although this is overestimated for pass-through channels.)
 
       // No filters array needs to be filled. (i.e. avg/max pooling)
       }
