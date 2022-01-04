@@ -171,16 +171,22 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
    *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    *
-   * @param {FloatValue.ScaleTranslateArray} extraScaleTranslateArray_byChannelIndex
-   *   The extra scale-translate of every channel. They will be pre-applied to the filter value, bias value and convolution-bias-activation
-   * value bounds set of this depthwise convolution. They are indexed by input channel index.
+
+//!!! (2022/01/04 Remarked) use previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet directly.
+//
+//    * @param {FloatValue.ScaleTranslateArray} extraScaleTranslateArray_byChannelIndex
+//    *   The extra scale-translate of every channel. They will be pre-applied to the filter value, bias value and convolution-bias-activation
+//    * value bounds set of this depthwise convolution. They are indexed by input channel index.
+
    *
    * @return {boolean} Return true, if succeeded.
    */
   set_filtersArray_biasesArray_by_extract(
     inputFloat32Array, byteOffsetBegin,
-    previous_ConvBiasActivation_BoundsArraySet,
-    extraScaleTranslateArray_byChannelIndex,
+    previous_ConvBiasActivation_BoundsArraySet
+
+//!!! (2022/01/04 Remarked) use previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet directly.
+//  extraScaleTranslateArray_byChannelIndex,
   ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
@@ -306,6 +312,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //       .multiply_all_byBounds( filtersValueBounds )
 //       .multiply_all_byN( this.filterSize ); // A depthwise filter has so many weights.
 
+    let undoScaleTranslateArray = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo;
+
+    let pendingUndo = new FloatValue.ScaleTranslateArray( this.outputChannelCount );
+//!!! ...unfinished... (2022/01/04) problem: input/output channels are different.
+//    pendingUndo.set_byScaleTranslateArray( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo );
 
 
     let sourceIndex, filterIndex, biasIndex;
@@ -348,7 +359,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                   //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
-                  let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
+//!!! (2022/01/04 Remarked) use previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet directly.
+//                let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
+                  let extraScale = undoScaleTranslateArray.scales[ inChannel ];
 
                   for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
@@ -356,11 +369,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
-
-      // For the weights of this filters.
-      // Note: For maximum pooling (and for pass-through channels), this is a little bit overestimated (but should be acceptable).
-      .multiply_all_byBounds( filtersValueBounds )
-      .multiply_all_byN( this.filterSize ); // A depthwise filter has so many weights.
+                    pendingUndo.scales[ outChannel ] = 1; // Since it could be applied, no more pending.
 
                     if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
@@ -405,6 +414,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         // Only if filters array exists, the pre(-extra)-scale could be applied. (i.e. avg/max pooling can not do pre-scale.)
         this.boundsArraySet.beforeActivation.???;
 
+        let outChannel = inChannelBegin * this.channelMultiplier;
+        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+          let extraScale = undoScaleTranslateArray.scales[ inChannel ];
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+            pendingUndo.scales[ outChannel ] = extraScale; // Since it could not be applied, still pending.
+          }
+        }
+
+
       }
 
 
@@ -415,12 +433,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
         let outChannel = inChannelBegin * this.channelMultiplier;
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-          let extraTranslate = extraScaleTranslateArray_byChannelIndex.translates[ inChannel ];
+          
+//!!! (2022/01/04 Remarked) use previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet directly.
+//        let extraTranslate = extraScaleTranslateArray_byChannelIndex.translates[ inChannel ];
+          let extraTranslate = undoScaleTranslateArray.translates[ inChannel ];
 
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
+            pendingUndo.translates[ outChannel ] = 0; // Since it could be applied, no more pending.
+
             this.boundsArraySet.beforeActivation
-              .add_one_byNs( outChannel, extraScaleTranslateArray_byChannelIndex.translates, inChannel ); // pre(-extra)-translate
+              .add_one_byN( outChannel, extraTranslate ); // pre(-extra)-translate
 
             if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
               this.biasesArray[ biasIndex ] = extraTranslate;
@@ -438,7 +461,18 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           }
         }
 
-      } // ( !this.biasesArray ). No biases array to be extracted.
+      } else { // ( !this.biasesArray ). No biases array to be extracted.
+
+        let outChannel = inChannelBegin * this.channelMultiplier;
+        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+          let extraTranslate = undoScaleTranslateArray.translates[ inChannel ];
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+            pendingUndo.translates[ outChannel ] = extraTranslate; // Since it could not be applied, still pending.
+          }
+        }
+
+
+      }
 
     } // halfPartIndex
  
@@ -451,6 +485,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     this.boundsArraySet.activationEscaping_ScaleTranslateArraySet.set_by_currentBoundsArraySet_previousActivationEscaping(
       this.boundsArraySet, previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet );
 
+//!!! ...unfinished... (2022/01/04) How to combine pendingUndo and newUndo?
 
 
     
