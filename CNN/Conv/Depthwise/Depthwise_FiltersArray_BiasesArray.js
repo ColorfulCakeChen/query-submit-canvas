@@ -287,6 +287,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     const filtersValueBounds = Weights.Base.ValueBounds;
     const biasesValueBounds = Weights.Base.ValueBounds;
 
+    this.boundsArraySet.beforeActivation
+      .set_all_byBoundsArray( this.boundsArraySet.input )
+
+      // For the weights of this filters.
+      // Note: For maximum pooling (and for pass-through channels), this is a little bit overestimated (but should be acceptable).
+      .multiply_all_byBounds( filtersValueBounds )
+      .multiply_all_byN( this.filterSize ); // A depthwise filter has so many weights.
+
+
 
     let sourceIndex, filterIndex, biasIndex;
     sourceIndex = filterIndex = biasIndex = 0;
@@ -360,19 +369,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
         this.boundsArraySet.beforeActivation
-          .set_all_byBoundsArray( this.boundsArraySet.input )
-          .multiply_all_byNs( extraScaleTranslateArray_byChannelIndex.scales ) // pre(-extra)-scale
-        
-           // For the weights of this filters. (although this is overestimated for pass-through channels.)
-           // Note: For maximum pooling, it is a little bit overestimated (but should be acceptable).
-          .multiply_all_byBounds( filtersValueBounds )
-          .multiply_all_byN( this.filterSize );
+          .multiply_all_byNs( extraScaleTranslateArray_byChannelIndex.scales ); // pre(-extra)-scale
 
       // No filters array needs to be filled. (i.e. avg/max pooling)
       } else {
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
         this.boundsArraySet.beforeActivation
+          .set_all_byBoundsArray( this.boundsArraySet.input );
 
       }
 
