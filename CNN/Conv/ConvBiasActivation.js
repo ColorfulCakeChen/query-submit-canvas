@@ -30,13 +30,13 @@ class ValueBoundsSet {
    */
   constructor( inputChannelCount, outputChannelCount ) {
     this.input = new FloatValue.BoundsArray( inputChannelCount );
-    this.input.setBounds( Weights.Base.ValueBounds );
+    this.input.set_all_byBounds( Weights.Base.ValueBounds );
 
     this.beforeActivation = new FloatValue.BoundsArray( outputChannelCount );
-    this.beforeActivation.setBounds( Weights.Base.ValueBounds );
+    this.beforeActivation.set_all_byBounds( Weights.Base.ValueBounds );
 
     this.output = new FloatValue.BoundsArray( outputChannelCount );
-    this.output.setBounds( Weights.Base.ValueBounds );
+    this.output.set_all_byBounds( Weights.Base.ValueBounds );
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
     this.activationEscaping_ScaleTranslateSet = new ActivationEscapeing.ScaleTranslateSet();
