@@ -20,7 +20,7 @@ class Base {
 //     tf.util.assert( thisValue == rhsValue, `jsPerf_FloatValue_ScaleTranslate.testCorrectness(): `
 //       + `this.${strThisPropertyName}.${strThisPropertyPropertyName} ( ${thisValue} ) should be ( ${rhsValue} ).` );
 
-    this.assert_Number_Number( thisValue, rhsValue,
+    this.asserter_Equal.assert_Number_Number( thisValue, rhsValue,
       `jsPerf_FloatValue_ScaleTranslate.testCorrectness(): this.`, // prefixMsg,
       `${strThisPropertyName}.${strThisPropertyPropertyName}`, // lhsNumberName,
       ``, // rhsNumberName,
