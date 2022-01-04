@@ -10,7 +10,7 @@ import * as FloatValue from "../Unpacker/FloatValue.js";
 class Base {
 
   constructor() {
-    this.asserter_Equal = TensorTools.Asserter_Equal();
+    this.asserter_Equal = new TensorTools.Asserter_Equal();
   }
 
   assert_PropertyProperty_Value( strThisPropertyName, strThisPropertyPropertyName, rhsValue ) {
