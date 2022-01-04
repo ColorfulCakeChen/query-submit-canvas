@@ -346,7 +346,7 @@ class Cases {
 //           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
 //         }
 
-        this.assert_BoundsArray_one_byArrayArray( "aBoundsArray", this.addedArrayArray );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.addedArrayArray );
       }
 
       { // Test add_all_byBoundsArray().
@@ -433,7 +433,7 @@ class Cases {
 //           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
 //         }
 
-        this.assert_BoundsArray_one_byArrayArray( "aBoundsArray", this.aMultipledNArrayArray );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.aMultipledNArrayArray );
       }
 
       { // Test multiply_all_byLowersUppers().
@@ -445,7 +445,7 @@ class Cases {
 //           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
 //         }
 
-        this.assert_BoundsArray_one_byArrayArray( "aBoundsArray", this.multipledArrayArray );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.multipledArrayArray );
       }
 
       { // Test multiply_all_byBoundsArray().
@@ -458,7 +458,7 @@ class Cases {
 //           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
 //         }
 
-        this.assert_BoundsArray_one_byArrayArray( "aBoundsArray", this.multipledArrayArray );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.multipledArrayArray );
       }
 
       { // Test multiply_all_byBoundsArray_multiply_all_byNs().
