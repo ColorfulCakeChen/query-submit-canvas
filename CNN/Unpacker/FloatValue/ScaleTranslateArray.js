@@ -58,12 +58,12 @@ class ScaleTranslateArray {
    * @return {ScaleTranslateArray}
    *   Return this (modified) object whose values could undo aScaleTranslateArray.
    */
-  set_all_byUndo_ScaleTranslate( aScaleTranslate ) {
+  set_all_byUndo_ScaleTranslateArray( aScaleTranslateArray ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] = ( 1 / aScaleTranslate.scales[ i ] );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+      this.scales[ i ] = ( 1 / aScaleTranslateArray.scales[ i ] );  // Reciprocal will undo the scale. (Note: Not work for zero.)
 
       // Negative translate, and multiply by undo-scale because translate comes after scale.
-      this.translates[ i ] = ( - aScaleTranslate.translates[ i ] ) * this.scales[ i ];
+      this.translates[ i ] = ( - aScaleTranslateArray.translates[ i ] ) * this.scales[ i ];
     }
     return this;
   }
