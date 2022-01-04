@@ -74,6 +74,16 @@ class Bounds {
   }
 
   /**
+   * @param {number[]} Ns    Set ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
+   * @param {number} aIndex  The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  set_byNs( Ns, aIndex ) {
+    return this.set_byN( Ns[ aIndex ] );
+  }
+
+  /**
    * @param {number[]} aLowers  Set ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
    * @param {number[]} aUppers  Set ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
    * @param {number} aIndex     The array index of aLowers[] and aUppers[].
@@ -138,6 +148,16 @@ class Bounds {
    */
   add_byBounds( aBounds ) {
     return this.add_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {numberp[} Ns    Add ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
+   * @param {number} aIndex  The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  add_byNs( Ns, aIndex ) {
+    return this.add_byN( Ns[ aIndex ] );
   }
 
   /**
@@ -207,6 +227,16 @@ class Bounds {
    */
   multiply_byBounds( aBounds ) {
     return this.multiply_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number[]} Ns    Multiply ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
+   * @param {number} aIndex  The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  multiply_byNs( Ns, aIndex ) {
+    return this.multiply_byN( Ns[ aIndex ] );
   }
 
   /**
