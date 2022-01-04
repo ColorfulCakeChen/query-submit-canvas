@@ -196,6 +196,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_BoundsArraySet.output.lowers.length} ).`
     );
 
+    tf.util.assert( ( this.inputChannelCount == extraScaleTranslateArray_byChannelIndex.scales.length ),
+      `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_by_extract(): `
+        + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
+        + `length of extra ScaleTranslateArray ( ${extraScaleTranslateArray_byChannelIndex.scales.length} ).`
+    );
+
+
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
     // Determine shape of the filters, biases, channels.
@@ -288,18 +295,23 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     const biasesValueBounds = Weights.Base.ValueBounds;
 
     this.boundsArraySet.beforeActivation
-      .set_all_byBoundsArray( this.boundsArraySet.input )
+      .set_all_byN( 0 );
 
-      // For the weights of this filters.
-      // Note: For maximum pooling (and for pass-through channels), this is a little bit overestimated (but should be acceptable).
-      .multiply_all_byBounds( filtersValueBounds )
-      .multiply_all_byN( this.filterSize ); // A depthwise filter has so many weights.
+//!!! ...unfinished... (2022/01/04) input/output channels are different.
+//     this.boundsArraySet.beforeActivation
+//       .set_all_byBoundsArray( this.boundsArraySet.input )
+//
+//       // For the weights of this filters.
+//       // Note: For maximum pooling (and for pass-through channels), this is a little bit overestimated (but should be acceptable).
+//       .multiply_all_byBounds( filtersValueBounds )
+//       .multiply_all_byN( this.filterSize ); // A depthwise filter has so many weights.
 
 
 
     let sourceIndex, filterIndex, biasIndex;
     sourceIndex = filterIndex = biasIndex = 0;
 
+    let perWeightBounds = new FloatValue.Bounds( 0, 0 ); // Value bounds for one element of a filter.
 //!!! ...unfinished... (2021/12/29)
 
 
@@ -330,6 +342,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                 //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
                 let outChannel = inChannelBegin * this.channelMultiplier;
+
                 for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
 
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
@@ -342,11 +355,24 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
+//!!! ...unfinished... (2022/01/04) value-bounds?
+
+      // For the weights of this filters.
+      // Note: For maximum pooling (and for pass-through channels), this is a little bit overestimated (but should be acceptable).
+      .multiply_all_byBounds( filtersValueBounds )
+      .multiply_all_byN( this.filterSize ); // A depthwise filter has so many weights.
+
                     if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
                         this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
+
+                        perWeightBounds
+                          .set_byLowerUpper( this.boundsArraySet.input.lowers[ inChannel ], this.boundsArraySet.input.uppers[ inChannel ] )
+                          .multiply_byN( extraScale ); // pre(-extra)-scale.
+
                       } else {
                         this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
+                        perWeightBounds.set_byN( 0 );
                       }
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
@@ -355,8 +381,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //                      filterValue = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
+                      perWeightBounds
+                        .set_byLowerUpper( this.boundsArraySet.input.lowers[ inChannel ], this.boundsArraySet.input.uppers[ inChannel ] )
+                        .multiply_byN( extraScale ) // pre(-extra)-scale.
+                        .multiply_byN( filtersValueBounds ); // This filters' weight.
+
                       ++sourceIndex;
                     }
+
+                    this.boundsArraySet.beforeActivation.add_one_byBounds( outChannel, perWeightBounds );
 
                     ++filterIndex;
                   }
@@ -366,14 +399,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           }
         }
 
+      } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
         // Only if filters array exists, the pre(-extra)-scale could be applied. (i.e. avg/max pooling can not do pre-scale.)
-        this.boundsArraySet.beforeActivation
-          .multiply_all_byNs( extraScaleTranslateArray_byChannelIndex.scales ); // pre(-extra)-scale
+        this.boundsArraySet.beforeActivation.???;
 
-      // No filters array needs to be filled. (i.e. avg/max pooling)
       }
+
 
       if ( this.biasesArray ) {
 //        let biasValue;
@@ -386,12 +419,18 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
+            this.boundsArraySet.beforeActivation
+              .add_one_byNs( outChannel, extraScaleTranslateArray_byChannelIndex.translates, inChannel ); // pre(-extra)-translate
+
             if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
               this.biasesArray[ biasIndex ] = extraTranslate;
 
             } else { // Not pass-through half channels.
 //              biasValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) + extraTranslate;
-              this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ] + extraTranslate;
+              this.biasesArray[ biasIndex ] = extraTranslate + sourceWeights[ sourceIndex ];
+
+              this.boundsArraySet.beforeActivation.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by this bias.
+
               ++sourceIndex;
             }
 
@@ -399,18 +438,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           }
         }
 
-//!!! ...unfinished... (2022/01/04) value-bounds?
-        this.boundsArraySet.beforeActivation
-          .add_all_byNs( extraScaleTranslateArray_byChannelIndex.translates ) // pre(-extra)-translate
-          .add_all_byBounds( biasesValueBounds );
-      }
+      } // ( !this.biasesArray ). No biases array to be extracted.
 
-    // No biases array needs to be filled.
-    } else {
-
-//!!! ...unfinished... (2022/01/04) value-bounds?
-        this.boundsArraySet.beforeActivation
-    }
+    } // halfPartIndex
  
     // Value bounds of output (i.e. after activation)
     this.boundsArraySet.set_output_by_beforeActivation_ActivationId( this.nActivationId );
