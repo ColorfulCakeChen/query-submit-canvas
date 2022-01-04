@@ -319,12 +319,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
                   let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
 
+//!!! ...unfinished... (2022/01/04) value-bounds?
+                  this.boundsArraySet.input.set_one_byBoundsArray( inChannel, previous_ConvBiasActivation_BoundsArraySet.output, inChannel );
+
                   for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-//!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
                     if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
                         this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
@@ -332,14 +334,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                         this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
                       }
 
+//!!! ...unfinished... (2022/01/04) value-bounds?
+
                     } else { // Not pass-through half channels.
 //                      filterValue = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
-//!!! ...unfinished... (2021/12/29) pre-scale? pass-through?
-                      this.boundsArraySet.input
-                        .set_one_byBoundsArray( inChannel, previous_ConvBiasActivation_BoundsArraySet.output, inChannel );
-
+//!!! ...unfinished... (2022/01/04) value-bounds?
                       this.boundsArraySet.beforeActivation
                         .set_one_byBoundsArray( outChannel, this.boundsArraySet.input, inChannel )
                         .multiply_one_byN( extraScale );
