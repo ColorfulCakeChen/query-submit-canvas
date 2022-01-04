@@ -49,7 +49,7 @@ class Asserter_Equal {
    */
   constructor( acceptableDifferenceRate = 0.4 ) {
     this.acceptableDifferenceRate = acceptableDifferenceRate;
-    this.comparator = Asserter_Tensor_NumberArray.ElementComparator.bind( this );
+    this.comparator = Asserter_Equal.ElementComparator.bind( this );
 
     // Used by assert_Number_Number().
     this.lhsNumberArrayDefault = [ 0 ];
