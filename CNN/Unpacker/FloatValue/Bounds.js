@@ -1,6 +1,7 @@
 export { Bounds };
 
 import { ScaleTranslate } from "./ScaleTranslate.js";
+import { BoundsArray } from "./BoundsArray.js";
 
 /**
  * Describe the [ lower, upper ] bounds of a floating-point value
@@ -73,6 +74,16 @@ class Bounds {
   }
 
   /**
+   * @param {BoundsArray} aBoundsArray  Set ( this.lower, this.upper ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
+   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  set_byBoundsArray( aBoundsArray, aIndex ) {
+    return this.set_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+  }
+
+  /**
    * @param {number} N
    *   Add this Bounds.lower by N, and also add this Bounds.upper by N.
    *
@@ -116,6 +127,16 @@ class Bounds {
    */
   add_byBounds( aBounds ) {
     return this.add_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {BoundsArray} aBoundsArray  Add ( this.lower, this.upper ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
+   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  add_byBoundsArray( aBoundsArray, aIndex ) {
+    return this.add_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
   /**
@@ -164,6 +185,16 @@ class Bounds {
    */
   multiply_byBounds( aBounds ) {
     return this.multiply_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {BoundsArray} aBoundsArray  Multiply ( this.lower, this.upper ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
+   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  multiply_byBoundsArray( aBoundsArray, aIndex ) {
+    return this.multiply_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
   /**
