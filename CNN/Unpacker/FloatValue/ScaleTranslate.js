@@ -31,7 +31,7 @@ class ScaleTranslate {
    * @param {ScaleTranslate} another
    *   The scale-translate to be copied.
    */
-  setBy_ScaleTranslate( another ) {
+  set_byScaleTranslate( another ) {
     this.scale = another.scale;
     this.translate = another.translate;
   }
@@ -42,7 +42,7 @@ class ScaleTranslate {
    * @param {ScaleTranslate} aScaleTranslate
    *   The scale-translate to be undone.
    */
-  setBy_undoScaleTranslate( aScaleTranslate ) {
+  set_byUndo_ScaleTranslate( aScaleTranslate ) {
     this.scale = ( 1 / aScaleTranslate.scale );  // Reciprocal will undo the scale. (Note: Not work for zero.)
 
     // Negative translate, and multiply by undo-scale because translate comes after scale.
@@ -70,7 +70,7 @@ class ScaleTranslate {
    * @param {Bounds} target
    *   The range of the target value.
    */
-  setBy_fromBounds_ToBounds( source, target ) {
+  set_by_fromBounds_ToBounds( source, target ) {
     // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
     //
     //   y = target.lower + ( target.difference * ( x - source.lower ) / source.difference )
@@ -120,12 +120,12 @@ class ScaleTranslate {
    *   - this.scale =     ( this.scale     * another.scale ) + another.translate
    *   - this.translate = ( this.translate * another.scale ) + another.translate
    *
-   * @param {ScaleTranslate} another
+   * @param {ScaleTranslate} aScaleTranslate
    *   The another scale-translate which will be applied on this object.
    */
-  scaleTranslateBy( another ) {
-   this.scale =     ( this.scale     * another.scale ) + another.translate;
-   this.translate = ( this.translate * another.scale ) + another.translate;
+  scaleTranslate_byScaleTranslate( aScaleTranslate ) {
+   this.scale =     ( this.scale     * aScaleTranslate.scale ) + aScaleTranslate.translate;
+   this.translate = ( this.translate * aScaleTranslate.scale ) + aScaleTranslate.translate;
   }
 
 }
