@@ -2,6 +2,7 @@ export { FiltersArray_BiasesArray };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+import * as Weights from "../../Unpacker/Weights.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 /**
@@ -277,6 +278,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
     this.tensorWeightCountExtracted = weightsCount_extracted;
 
+    // Prepare value bounds.
+    // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
+    this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
+
 
 
     let sourceIndex, filterIndex, biasIndex;
@@ -319,13 +324,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
                   let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
 
-//!!! ...unfinished... (2022/01/04) value-bounds?
-                  this.boundsArraySet.input.set_one_byBoundsArray( inChannel, previous_ConvBiasActivation_BoundsArraySet.output, inChannel );
-
                   for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
+
+//!!! ...unfinished... (2022/01/04) value-bounds?
+                    this.boundsArraySet.beforeActivation
+                      .set_one_byBoundsArray( outChannel, this.boundsArraySet.input, inChannel )
+                      .multiply_one_byN( extraScale )
+                      .multiply_one_byN( Weights.ValueBounds ); // for the weights of this filters.
 
                     if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
@@ -341,9 +349,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
-                      this.boundsArraySet.beforeActivation
-                        .set_one_byBoundsArray( outChannel, this.boundsArraySet.input, inChannel )
-                        .multiply_one_byN( extraScale );
+                      this.boundsArraySet.beforeActivation.multiply_one_byN( extraScale );
 
                       ++sourceIndex;
                     }
