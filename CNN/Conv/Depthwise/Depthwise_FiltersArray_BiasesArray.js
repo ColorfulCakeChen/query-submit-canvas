@@ -56,8 +56,8 @@ class HalfPartInfo {
 //!!! ...unfinished... (2021/12/29)
 
  *
- * @member {ValueBoundsSet} valueBoundsSet
- *   The element value bounds of input, beforeActivation, and output for this depthwise convolution.
+ * @member {BoundsArraySet} boundsArraySet
+ *   The element value bounds (per channel) of input, beforeActivation, and output for this depthwise convolution.
  *
  * @member {number} inputHeight
  *   The height of input image. When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
@@ -126,7 +126,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
-    this.valueBoundsSet = new ValueBoundsSet( inputChannelCount, this.outputChannelCount );
+    this.boundsArraySet = new BoundsArraySet( inputChannelCount, this.outputChannelCount );
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nHigherHalfDifferent = nHigherHalfDifferent;
@@ -167,7 +167,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
    *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    *
    * @param {FloatValue.ScaleTranslateArray} extraScaleTranslateArray_byChannelIndex
@@ -178,7 +178,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    */
   set_filtersArray_biasesArray_by_extract(
     inputFloat32Array, byteOffsetBegin,
-    previous_ConvBiasActivation_ValueBoundsSet,
+    previous_ConvBiasActivation_BoundsArraySet,
     extraScaleTranslateArray_byChannelIndex,
   ) {
 
@@ -189,10 +189,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // A2: So that inputFloat32Array could be released.
 
 
-    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_ValueBoundsSet.output.lowers.length ),
+    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.output.lowers.length ),
       `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_by_extract(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
-        + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_ValueBoundsSet.output.lowers.length} ).`
+        + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_BoundsArraySet.output.lowers.length} ).`
     );
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
@@ -320,8 +320,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
 
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
-                  this.valueBoundsSet.input.lowers[ inChannel ] = previous_ConvBiasActivation_ValueBoundsSet.output.lowers[ inChannel ];
-                  this.valueBoundsSet.input.uppers[ inChannel ] = previous_ConvBiasActivation_ValueBoundsSet.output.uppers[ inChannel ];
+                  this.boundsArraySet.input.lowers[ inChannel ] = previous_ConvBiasActivation_BoundsArraySet.output.lowers[ inChannel ];
+                  this.boundsArraySet.input.uppers[ inChannel ] = previous_ConvBiasActivation_BoundsArraySet.output.uppers[ inChannel ];
 
                   for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
@@ -343,8 +343,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     }
 
 //!!! ...unfinished... (2021/12/29) pre-scale? pass-through? value-bounds? activation?
-                    this.valueBoundsSet.output.lowers[ outChannel ] = this.valueBoundsSet.input.lowers[ inChannel ] multiply_???;
-                    this.valueBoundsSet.output.uppers[ outChannel ] = this.valueBoundsSet.input.uppers[ inChannel ];
+                    this.boundsArraySet.output.lowers[ outChannel ] = this.boundsArraySet.input.lowers[ inChannel ] multiply_???;
+                    this.boundsArraySet.output.uppers[ outChannel ] = this.boundsArraySet.input.uppers[ inChannel ];
 
                     ++filterIndex;
                   }
