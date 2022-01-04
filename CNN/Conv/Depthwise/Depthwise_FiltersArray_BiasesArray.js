@@ -398,7 +398,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
         this.boundsArraySet.beforeActivation
-          .add_all_byN( extraScaleTranslateArray_byChannelIndex.translates ) // pre(-extra)-translate
+          .add_all_byNs( extraScaleTranslateArray_byChannelIndex.translates ) // pre(-extra)-translate
           .add_all_byBounds( biasesValueBounds );
       }
 
@@ -406,6 +406,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     // Value bounds of output (i.e. after activation)
     this.boundsArraySet.set_output_by_beforeActivation_ActivationId( this.nActivationId );
+
+//!!! ...unfinished... (2022/01/04) What if this depthwise does not have filters and/or biases, the escaping value-bounds?
 
     // ActivationEscaping.ScaleTranslateArraySet of value bounds.
     this.boundsArraySet.activationEscaping_ScaleTranslateArraySet.set_by_currentBoundsArraySet_previousActivationEscaping(
