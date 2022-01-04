@@ -68,12 +68,12 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 // Problem: What if this convolution-bias-activation could only undo partially (e.g. this convolution does not have bias)?
 //   How should the .undo of this convolution-bias-activation be calculated?
       {
-        this.valueBoundsSet.beforeActivation.multiply_all_byN(
-          previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateSet.undo.scale );
+        this.beforeActivation.multiply_all_byN(
+          previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo.scale );
 
         if ( this.bBias )
-          this.valueBoundsSet.beforeActivation.add_all_byN(
-            previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateSet.undo.translate );
+          this.beforeActivation.add_all_byN(
+            previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo.translate );
       }
 
     }
@@ -81,8 +81,8 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     // 3. Output.
     this.set_output_by_beforeActivation_ActivationId( nActivationId );
 
-    // 4. ActivationEscaping.ScaleTranslateSet.
-    this.activationEscaping_ScaleTranslateSet.set_by_currentBoundsArraySet_previousActivationEscaping(
+    // 4. ActivationEscaping.ScaleTranslateArraySet.
+    this.activationEscaping_ScaleTranslateArraySet.set_by_currentBoundsArraySet_previousActivationEscaping(
       this, previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet );
   }
 
