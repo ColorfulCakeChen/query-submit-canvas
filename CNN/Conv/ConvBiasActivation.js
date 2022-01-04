@@ -3,7 +3,7 @@ export { BoundsArraySet };
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
-import * as ActivationEscapeing from "./ActivationEscapeing.js";
+import * as ActivationEscaping from "./ActivationEscaping.js";
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
 
@@ -20,7 +20,7 @@ import * as ActivationEscapeing from "./ActivationEscapeing.js";
  * @member {FloatValue.BoundsArray} output
  *   The bounds of the output element value. Or say, the range of the convolution-bias-activation.
  *
- * @member {ActivationEscapeing.ScaleTranslateArraySet} activationEscaping_ScaleTranslateArraySet
+ * @member {ActivationEscaping.ScaleTranslateArraySet} activationEscaping_ScaleTranslateArraySet
  *   The scale-translate for moving beforeActivation bounds into the linear domain of the activation function. That is, for
  * letting beforeActivation escape from activation function's non-linear domain.
  */
@@ -39,7 +39,7 @@ class BoundsArraySet {
     this.output.set_all_byBounds( Weights.Base.ValueBounds );
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-    this.activationEscaping_ScaleTranslateArraySet = new ActivationEscapeing.ScaleTranslateArraySet();
+    this.activationEscaping_ScaleTranslateArraySet = new ActivationEscaping.ScaleTranslateArraySet();
   }
 
   clone() {
