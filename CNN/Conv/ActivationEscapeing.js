@@ -107,7 +107,7 @@ class ScaleTranslateSet {
     this.do.scaleTranslate_all_byScaleTranslateArray( this.doWithoutPreviousUndo );
 
     // Prepare the undoing scale-translate for the next convolution-bias-activation.
-    this.undo.set_byUndo_ScaleTranslate( this.do );
+    this.undo.set_byUndo_ScaleTranslateArray( this.do );
   }
 
 }
