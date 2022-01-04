@@ -74,6 +74,17 @@ class Bounds {
   }
 
   /**
+   * @param {number[]} aLowers  Set ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   * @param {number[]} aUppers  Set ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  set_byLowersUppers( aLowers, aUppers, aIndex ) {
+    return this.set_byLowerUpper( aLowers[ aIndex ], aUppers[ aIndex ] );
+  }
+
+  /**
    * @param {BoundsArray} aBoundsArray  Set ( this.lower, this.upper ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
    * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
@@ -127,6 +138,17 @@ class Bounds {
    */
   add_byBounds( aBounds ) {
     return this.add_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {numberp[} aLowers  Add ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   * @param {numberp[} aUppers  Add ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  add_byLowersUppers( aLowers, aUppers, aIndex ) {
+    return this.add_byLowerUpper( aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
@@ -185,6 +207,17 @@ class Bounds {
    */
   multiply_byBounds( aBounds ) {
     return this.multiply_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number[]} aLowers  Multiply ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   * @param {number[]} aUppers  Multiply ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  multiply_byLowersUppers( aLowers, aUppers, aIndex ) {
+    return this.multiply_byLowerUpper( aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
