@@ -44,7 +44,7 @@ class ValueBoundsSet {
 
   clone() {
     let result = new ValueBoundsSet();
-    result.setBy_ValueBoundsSet( this );
+    result.set_byValueBoundsSet( this );
     return result;
   }
 
@@ -55,13 +55,13 @@ class ValueBoundsSet {
    * @return {ValueBoundsSet}
    *   Return this (modified) object which is copied from aValueBoundsSet.
    */
-  set_ValueBoundsSet( aValueBoundsSet ) {
-    this.input.set_BoundsArray( aValueBoundsSet.input );
-    this.beforeActivation.set_BoundsArray( aValueBoundsSet.beforeActivation );
-    this.output.set_BoundsArray( aValueBoundsSet.output );
+  set_byValueBoundsSet( aValueBoundsSet ) {
+    this.input.set_all_byBoundsArray( aValueBoundsSet.input );
+    this.beforeActivation.set_all_byBoundsArray( aValueBoundsSet.beforeActivation );
+    this.output.set_all_byBoundsArray( aValueBoundsSet.output );
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-    this.activationEscaping_ScaleTranslateSet.setBy_ScaleTranslateSet( aValueBoundsSet.activationEscaping_ScaleTranslateSet );
+    this.activationEscaping_ScaleTranslateSet.set_byScaleTranslateSet( aValueBoundsSet.activationEscaping_ScaleTranslateSet );
     return this;
   }
 
@@ -75,13 +75,13 @@ class ValueBoundsSet {
    * @return {ValueBoundsSet}
    *   Return this (modified) object which is copied from aValueBoundsSet.
    */
-  resetBy_Bounds( aBounds ) {
+  reset_byBounds( aBounds ) {
     this.input.set_all_byBounds( aBounds );
     this.beforeActivation.set_all_byBounds( aBounds );
     this.output.set_all_byBounds( aBounds );
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-    this.activationEscaping_ScaleTranslateSet.reset( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
+    this.activationEscaping_ScaleTranslateSet.reset_by_scale_translate( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
     return this;
   }
 
