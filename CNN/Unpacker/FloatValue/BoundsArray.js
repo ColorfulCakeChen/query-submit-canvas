@@ -94,7 +94,7 @@ class BoundsArray {
    * @param {Bounds} aBoundsArray
    *   Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
    *
-   * @param {number} aIndex        The array index of aLowers[] and aUppers[].
+   * @param {number} aIndex        The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
    * @return {BoundsArray} Return this (modified) object.
    */
