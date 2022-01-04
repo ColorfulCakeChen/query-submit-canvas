@@ -431,7 +431,7 @@ class Cases {
 
       let aScaleTranslate = new FloatValue.ScaleTranslate();
       for ( let i = 0; i < aCaseArray.length; ++i ) {
-        aScaleTranslate.set( aScaleTranslateArray.scales[ i ], aScaleTranslateArray.translates[ i ] ); // Random scale-translate.
+        aScaleTranslate.set_by_scale_translate( aScaleTranslateArray.scales[ i ], aScaleTranslateArray.translates[ i ] );
         tBounds.set_byLowerUpper( this.aLowers[ i ], this.aUppers[ i ] ).scaleTranslate_byScaleTranslate( aScaleTranslate );
         this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
       }
