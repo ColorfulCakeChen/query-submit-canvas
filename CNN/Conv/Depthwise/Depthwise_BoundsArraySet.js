@@ -13,8 +13,8 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
   /**
    */
-  constructor() {
-    super();
+  constructor( inputChannelCount, outputChannelCount ) {
+    super( inputChannelCount, outputChannelCount );
   }
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
