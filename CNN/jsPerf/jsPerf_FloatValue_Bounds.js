@@ -401,7 +401,7 @@ class Cases {
       this.assert_BoundsArray_one_byArray( "aBoundsArray", 1, this.multipledArrayArray[ 1 ] );
 
       { // Test multiply_all_byN().
-        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).aBoundsArray.multiply_all_byN( oneRandCase.N );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).multiply_all_byN( oneRandCase.N );
 
         let tBounds = new Bounds( 0, 0 );
         for ( let i = 0; i < aCaseArray.length; ++i ) {
