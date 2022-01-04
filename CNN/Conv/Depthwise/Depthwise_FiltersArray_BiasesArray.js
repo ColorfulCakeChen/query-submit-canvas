@@ -279,6 +279,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     this.tensorWeightCountExtracted = weightsCount_extracted;
 
     // Prepare value bounds.
+
     // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
     this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
 
@@ -403,11 +404,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     }
 
-//!!! ...unfinished... (2022/01/04) activation?
-//       this.boundsArraySet.output
-//         .set_all_byBoundsArray( this.beforeActivation.input )
-//         .???;
+    // Value bounds of output (i.e. after activation)
+    this.boundsArraySet.set_output_by_beforeActivation_ActivationId( this.nActivationId );
 
+    // ActivationEscaping.ScaleTranslateArraySet of value bounds.
+    this.boundsArraySet.activationEscaping_ScaleTranslateArraySet.set_by_currentBoundsArraySet_previousActivationEscaping(
+      this.boundsArraySet, previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet );
 
 
 
