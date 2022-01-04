@@ -323,7 +323,7 @@ class Base {
 
     // Determine the element value bounds.
     {
-      imageIn.valueBoundsSet.set_output_byActivationId( nActivationId );
+      imageIn.valueBoundsSet.set_output_by_beforeActivation_ActivationId( nActivationId );
 
       imageIn.valueBoundsSet.activationEscaping_ScaleTranslateSet.set_by_currentValueBoundsSet_previousActivationEscaping(
         imageIn.valueBoundsSet, previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet );
