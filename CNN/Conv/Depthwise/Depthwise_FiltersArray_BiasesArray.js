@@ -368,16 +368,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
+        // Only if filters array exists, the pre(-extra)-scale could be applied. (i.e. avg/max pooling can not do pre-scale.)
         this.boundsArraySet.beforeActivation
           .multiply_all_byNs( extraScaleTranslateArray_byChannelIndex.scales ); // pre(-extra)-scale
 
       // No filters array needs to be filled. (i.e. avg/max pooling)
-      } else {
-
-//!!! ...unfinished... (2022/01/04) value-bounds?
-        this.boundsArraySet.beforeActivation
-          .set_all_byBoundsArray( this.boundsArraySet.input );
-
       }
 
       if ( this.biasesArray ) {
