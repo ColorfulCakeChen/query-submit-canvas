@@ -76,9 +76,9 @@ class ValueBoundsSet {
    *   Return this (modified) object which is copied from aValueBoundsSet.
    */
   resetBy_Bounds( aBounds ) {
-    this.input.set_BoundsArray( aBounds );
-    this.beforeActivation.set_BoundsArray( aBounds );
-    this.output.set_BoundsArray( aBounds );
+    this.input.set_all_byBounds( aBounds );
+    this.beforeActivation.set_all_byBounds( aBounds );
+    this.output.set_all_byBounds( aBounds );
 
 //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
     this.activationEscaping_ScaleTranslateSet.reset( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
@@ -97,12 +97,12 @@ class ValueBoundsSet {
 
     // If there is no activation function, the output range is determined by input domain, filters, biases.
     if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-      this.output.set_BoundsArray( this.beforeActivation );
+      this.output.set_all_byBoundsArray( this.beforeActivation );
 
     // Otherwise, the activation function dominates the output range.
     } else {
       let info = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
-      this.output.set_Bounds( info.outputRange );
+      this.output.set_all_byBounds( info.outputRange );
     }
 
   }
