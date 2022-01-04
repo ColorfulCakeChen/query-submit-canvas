@@ -47,6 +47,10 @@ class Case extends Base {
       let undoScaleTranslate = new FloatValue.ScaleTranslate();
       undoScaleTranslate.setBy_undoScaleTranslate( aScaleTranslate );
 
+      if ( Number.isNaN( undoScaleTranslate.scale ) || Number.isNaN( undoScaleTranslate.translate ) ) {
+        debugger;
+      }
+
       let originalValue = RandTools.getRandomIntInclusive( -10, +10 );
       let changedValue = ( originalValue * aScaleTranslate.scale ) + aScaleTranslate.translate;
       this.undoTest = {
