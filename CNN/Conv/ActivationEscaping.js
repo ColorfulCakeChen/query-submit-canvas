@@ -126,27 +126,31 @@ class ScaleTranslateArraySet {
  * Suppose
  *   - This pointwise1
  *     - input channel count is q.
- *     - filter weights are Q = ( Q1, Q2, ... Qq ).
- *     - bias weights are R.
+ *     - per output channel filter weights are Q = ( Q1, Q2, ... Qq ).
+ *     - per output channel bias weights are R.
  *     - activation escaping is ( scale = A, translate = B )
  *     - per channel .beforeActivation is X = ( x1, x2, ..., xq ) = ( EW + F ) * Q + R.
  *     - per channel .output is ( AX + B )
  *
  *   - This depthwise
  *     - filter size is s.
- *     - filter weights are S = ( S1, S2, ... Ss ).
- *     - bias weights are T.
+ *     - per output channel filter weights are S = ( S1, S2, ... Ss ).
+ *     - per output channel bias weights are T.
  *     - activation escaping is ( scale = C, translate = D )
  *     - per channel .beforeActivation is Y = ( y1, y2, ..., ys ) = ( AX + B ) * S + T.
  *     - per channel .output is ( CY + D )
  *
  *   - This pointwise2
  *     - input channel count is u.
- *     - filter weights are U = ( U1, U2, ... Uu ).
- *     - bias weights are V.
+ *     - per output channel filter weights are U = ( U1, U2, ... Uu ).
+ *     - per output channel bias weights are V.
  *     - activation escaping is ( scale = E, translate = F )
  *     - per channel .beforeActivation is Z = ( z1, z2, ..., zu ) = ( CY + D ) * U + V.
  *     - per channel .output is ( EZ + F )
+ *
+//!!!??? partial U, partial V
+ * How to get back ( UX + V ) from Z?
+
 //!!!
  *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
  *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
