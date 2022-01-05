@@ -114,11 +114,9 @@ class ScaleTranslateArraySet {
 
 /**
  * Suppose
- *   - The previous convolution-bias-activation
+ *   - The previous PointDepthPoint (or convolution-bias-activation)
  *     - output channel count is q.
- *     - .beforeActivation is W = ( w1, w2, ..., wq ).
- *     - activation escaping is ( scale = E, translate = F )
- *     - .output is ( EW + F )
+ *     - .output is W = ( w1, w2, ..., wq ).
  *
  *
  * 1.
@@ -129,7 +127,7 @@ class ScaleTranslateArraySet {
  *     - per output channel filter weights are Q = ( Q1, Q2, ... Qq ).
  *     - per output channel bias weights are R.
  *     - activation escaping is ( scale = A, translate = B )
- *     - per channel .beforeActivation is X = ( x1, x2, ..., xq ) = ( EW + F ) * Q + R.
+ *     - per channel .beforeActivation is X = ( x1, x2, ..., xq ) = W * Q + R.
  *     - per channel .output is ( AX + B )
  *
  *   - This depthwise
@@ -140,16 +138,15 @@ class ScaleTranslateArraySet {
  *     - per channel .beforeActivation is Y = ( y1, y2, ..., ys ) = ( AX + B ) * S + T.
  *     - per channel .output is ( CY + D )
  *
- *   - This pointwise2
+ *   - This pointwise2 (always has bias, always has no activation)
  *     - input channel count is u.
- *     - per output channel filter weights are U = ( U1, U2, ... Uu ).
- *     - per output channel bias weights are V.
- *     - activation escaping is ( scale = E, translate = F )
- *     - per channel .beforeActivation is Z = ( z1, z2, ..., zu ) = ( CY + D ) * U + V.
- *     - per channel .output is ( EZ + F )
+ *     - per input channel extra scale-translate is ( scale = E, translate = F )
+ *     - per output channel filter weights are E * U = ( EU1, EU2, ... EUu ).
+ *     - per output channel bias weights are F + V.
+ *     - per channel .output is Z = ( z1, z2, ..., zu ) = ( CY + D ) * U + V.
  *
 //!!!??? partial U, partial V
- * How to get back ( UX + V ) from Z?
+ * Find out the extra scale-translate ( E, F ) so that Z = ( ( W * Q + R ) * S + T ) * U + V
 
 //!!!
  *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
