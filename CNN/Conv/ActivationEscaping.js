@@ -138,8 +138,7 @@ class ScaleTranslateArraySet {
  *
  * This pointwise (or depthwise) .output will be:
  *   Z = CY + D
- *     = C * ( ( AU1x1 + BU1 ) + ( AU2x2 + BU2 ) + ... + ( AUmxm + BUm ) + V ) + D
- *     = ( ACU1x1 + BCU1 ) + ( ACU2x2 + BCU2 ) + ... + ( ACUmxm + BCUm ) + CV + D
+ *     = C * ( ( AU1x1 + AU2x2 + ... + AUmxm ) + ( BU1 + BU2 + ... + BUm + V ) ) + D
  *     = ( ACU1x1 + ACU2x2 + ... + ACUmxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D )
  *     = AC * ( U1x1 + U2x2 + ... + Umxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D )
  *
