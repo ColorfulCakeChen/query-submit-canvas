@@ -114,21 +114,23 @@ class ScaleTranslateArraySet {
 
 /**
  * Suppose
- *   - The previous .beforeActivation is x.
+ *   - The previous .beforeActivation is X = ( x1, x2, ..., xn ).
  *   - The previous activation escaping is ( scale = A, translate = B )
- *   - The previous .output is ( Ax + B )
+ *   - The previous .output is ( AX + B )
  *
  *
  * 1.
  *
  * Suppose
  *   - This pointwise input channel count is m. (Or, this depthwise filter size is m.)
- *   - This pointwise (or depthwise) filter weights are ( U1, U2, ... Um ).
+ *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
  *   - This pointwise (or depthwise) bias weights are V.
  *
  * This pointwise (or depthwise) .beforeActivation will be:
- *   y = ( ( Ax + B ) * U1 ) + ( ( Ax + B ) * U2 ) + ... + ( ( Ax + B ) * Um ) + V
- *     = ( AU1x + BU1 ) + ( AU2x + BU2 ) + ... + ( AUmx + BUm ) + V
+ *   Y = ( AX + B ) * U + V
+ *     = ( ( Ax1 + B ) * U1 ) + ( ( Ax2 + B ) * U2 ) + ... + ( ( Axm + B ) * Um ) + V
+ *     = ( AU1x1 + BU1 ) + ( AU2x2 + BU2 ) + ... + ( AUmxm + BUm ) + V
+//!!!
  *     = ( AU1x + AU2x + ... + AUmx ) + ( BU1 + BU2 + ... + BUm ) + V
  *     = ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm + V )
  *
@@ -137,12 +139,18 @@ class ScaleTranslateArraySet {
  *
  *
  * This pointwise (or depthwise) .output will be:
- *   z = Cy + D
+ *   Z = CY + D
+ *     = C * ( ( AU1x1 + BU1 ) + ( AU2x2 + BU2 ) + ... + ( AUmxm + BUm ) + V ) + D
+ *     = ( ACU1x1 + BCU1 ) + ( ACU2x2 + BCU2 ) + ... + ( ACUmxm + BCUm ) + CV + D
+ *     = ( ACU1x1 + ACU2x2 + ... + ACUmxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D )
+//!!!
  *     = C * ( ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm + V ) ) + D
  *     = C * ( AU1 + AU2 + ... + AUm ) * x + ( C * ( BU1 + BU2 + ... + BUm + V ) + D )
  *     = ( ACU1 + ACU2 + ... + ACUm ) * x + ( BCU1 + BCU2 + ... + BCUm + CV + D )
  *
- * How to get back ( Cx + D ) from z?
+ * How to get back ( UX + V ) from Z?
+ *   ( UX + V ) = ( U1x1 + U2x2 + ... + Umxm ) + V
+ *
  *
  * Let:
  *   - undo.scale = 1 / ( AU1 + AU2 + ... + AUm )
@@ -150,8 +158,8 @@ class ScaleTranslateArraySet {
  *                    = D - ( C * ( BU1 + BU2 + ... + BUm + V ) * undo.scale ) - ( D * undo.scale )
  *                    = D - ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale
  *
- * Apply ( undo.scale, undo.translate ) to z:
- *   ( z * undo.scale ) + undo.translate
+ * Apply ( undo.scale, undo.translate ) to Z:
+ *   ( Z * undo.scale ) + undo.translate
  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x + ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) ) * undo.scale + undo.translate
  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x * undo.scale ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x / ( AU1 + AU2 + ... + AUm ) ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
