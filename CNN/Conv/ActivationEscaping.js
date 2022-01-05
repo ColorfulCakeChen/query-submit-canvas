@@ -168,6 +168,25 @@ class ScaleTranslateArraySet {
  *  S' = C * S
  *  R' = C * T + D
  *
+ *
+ * 3.
+ *
+ * Suppose
+ *   - This pointwise2 (always has bias, always has no activation)
+ *     - input channel count is u.
+ *     - per output channel filter weights are U = ( U1, U2, ..., Uu ) and will be modified to U' = ( U1', U2', ..., Uu' ).
+ *     - per output channel bias weights are V and will be modified to V'.
+ *     - activation function is none.
+ *     - per input channel extra scale-translate is ( scale = E, translate = F )
+ *     - per output channel original is Z  = ( z1 , z2 , ..., zu  ) = Y' * U  + V
+//!!!???
+ *     - per output channel modified is Z' = ( z1', z2', ..., zu' ) = Y' * U' + V' = ( AX + B )
+ *     - f(X') = f( AX + B ) is guaranteed still kept linear although activation function f() is non-linear.
+ *
+ *     - per output channel bias weights are F + V.
+ *     - per channel .output is Z = ( z1, z2, ..., zu ) = ( CY + D ) * ( E * U ) + ( F + V ).
+ *
+ * Find out the extra scale-translate ( E, F ) so that Z = ( ( W * Q + R ) * S + T ) * U + V
 
 //!!! ...unfinished... (2022/01/05)
 
