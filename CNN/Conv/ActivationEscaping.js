@@ -124,7 +124,30 @@ class ScaleTranslateArraySet {
  * Suppose
  *   - This pointwise1
  *     - input channel count is q.
- *     - per output channel filter weights are Q = ( Q1, Q2, ... Qq ).
+ *     - per output channel filter weights are Q = ( Q1, Q2, ..., Qq ).
+ *     - per output channel bias weights are R.
+ *     - activation escaping is ( scale = A, translate = B )
+ *     - per channel .beforeActivation is X = ( x1, x2, ..., xq ) = W * Q' + R'.
+ *     - per channel .output is ( AX + B )
+ *
+ * Find out Q' and R' so that X = A * ( W * Q + R ) + B.
+ *   X = A * ( W * Q + R ) + B
+ *     = A * W * Q + A * R + B
+ *     = W * ( A * Q ) + ( A * R  + B )
+ *     = W * Q' + R'
+ *
+ *  Q' = A * Q
+ *  R' = A * R  + B
+ *
+
+//!!! ...unfinished... (2022/01/05)
+
+ * 1.
+ *
+ * Suppose
+ *   - This pointwise1
+ *     - input channel count is q.
+ *     - per output channel filter weights are Q = ( Q1, Q2, ..., Qq ).
  *     - per output channel bias weights are R.
  *     - activation escaping is ( scale = A, translate = B )
  *     - per channel .beforeActivation is X = ( x1, x2, ..., xq ) = W * Q + R.
@@ -132,7 +155,7 @@ class ScaleTranslateArraySet {
  *
  *   - This depthwise
  *     - filter size is s.
- *     - per output channel filter weights are S = ( S1, S2, ... Ss ).
+ *     - per output channel filter weights are S = ( S1, S2, ..., Ss ).
  *     - per output channel bias weights are T.
  *     - activation escaping is ( scale = C, translate = D )
  *     - per channel .beforeActivation is Y = ( y1, y2, ..., ys ) = ( AX + B ) * S + T.
@@ -141,7 +164,7 @@ class ScaleTranslateArraySet {
  *   - This pointwise2 (always has bias, always has no activation)
  *     - input channel count is u.
  *     - per input channel extra scale-translate is ( scale = E, translate = F )
- *     - per output channel filter weights are E * U = ( EU1, EU2, ... EUu ).
+ *     - per output channel filter weights are U = ( U1, U2, ..., Uu ).
  *     - per output channel bias weights are F + V.
  *     - per channel .output is Z = ( z1, z2, ..., zu ) = ( CY + D ) * ( E * U ) + ( F + V ).
  *
