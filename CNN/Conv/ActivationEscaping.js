@@ -130,9 +130,7 @@ class ScaleTranslateArraySet {
  *   Y = ( AX + B ) * U + V
  *     = ( ( Ax1 + B ) * U1 ) + ( ( Ax2 + B ) * U2 ) + ... + ( ( Axm + B ) * Um ) + V
  *     = ( AU1x1 + BU1 ) + ( AU2x2 + BU2 ) + ... + ( AUmxm + BUm ) + V
-//!!!
- *     = ( AU1x + AU2x + ... + AUmx ) + ( BU1 + BU2 + ... + BUm ) + V
- *     = ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm + V )
+ *     = ( AU1x1 + AU2x2 + ... + AUmxm ) + ( BU1 + BU2 + ... + BUm + V )
  *
  * Suppose
  *   - This pointwise (or depthwise) activation escaping is ( scale = C, translate = D )
@@ -143,31 +141,43 @@ class ScaleTranslateArraySet {
  *     = C * ( ( AU1x1 + BU1 ) + ( AU2x2 + BU2 ) + ... + ( AUmxm + BUm ) + V ) + D
  *     = ( ACU1x1 + BCU1 ) + ( ACU2x2 + BCU2 ) + ... + ( ACUmxm + BCUm ) + CV + D
  *     = ( ACU1x1 + ACU2x2 + ... + ACUmxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D )
-//!!!
- *     = C * ( ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm + V ) ) + D
- *     = C * ( AU1 + AU2 + ... + AUm ) * x + ( C * ( BU1 + BU2 + ... + BUm + V ) + D )
- *     = ( ACU1 + ACU2 + ... + ACUm ) * x + ( BCU1 + BCU2 + ... + BCUm + CV + D )
+ *     = AC * ( U1x1 + U2x2 + ... + Umxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D )
  *
  * How to get back ( UX + V ) from Z?
  *   ( UX + V ) = ( U1x1 + U2x2 + ... + Umxm ) + V
  *
- *
  * Let:
- *   - undo.scale = 1 / ( AU1 + AU2 + ... + AUm )
- *   - undo.translate = D - ( C * ( BU1 + BU2 + ... + BUm + V ) / ( AU1 + AU2 + ... + AUm ) ) - ( D / ( AU1 + AU2 + ... + AUm ) )
- *                    = D - ( C * ( BU1 + BU2 + ... + BUm + V ) * undo.scale ) - ( D * undo.scale )
- *                    = D - ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale
+ *   - undo.scale = 1 / AC
+ *   - undo.translate = V - ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale
  *
  * Apply ( undo.scale, undo.translate ) to Z:
  *   ( Z * undo.scale ) + undo.translate
- *   = ( C * ( AU1 + AU2 + ... + AUm ) * x + ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) ) * undo.scale + undo.translate
- *   = ( C * ( AU1 + AU2 + ... + AUm ) * x * undo.scale ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
- *   = ( C * ( AU1 + AU2 + ... + AUm ) * x / ( AU1 + AU2 + ... + AUm ) ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
- *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
- *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + ( D - ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale )
- *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + D
- *        - ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale )
- *   = Cx + D
+ *   = ( AC * ( U1x1 + U2x2 + ... + Umxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D ) ) * undo.scale + undo.translate
+ *   = AC * ( U1x1 + U2x2 + ... + Umxm ) * undo.scale + ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale + undo.translate
+ *   = AC * ( U1x1 + U2x2 + ... + Umxm ) / AC + ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale + undo.translate
+ *   = ( U1x1 + U2x2 + ... + Umxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale + undo.translate
+ *   = ( U1x1 + U2x2 + ... + Umxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale + V
+ *                                  - ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale
+ *   = ( U1x1 + U2x2 + ... + Umxm ) + V
+ *   = ( UX + V )
+ *
+
+//!!! (2022/01/05 Remarked) Old Wrong!
+//  *   - undo.scale = 1 / ( AU1 + AU2 + ... + AUm )
+//  *   - undo.translate = D - ( C * ( BU1 + BU2 + ... + BUm + V ) / ( AU1 + AU2 + ... + AUm ) ) - ( D / ( AU1 + AU2 + ... + AUm ) )
+//  *                    = D - ( C * ( BU1 + BU2 + ... + BUm + V ) * undo.scale ) - ( D * undo.scale )
+//  *                    = D - ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale
+//  *
+//  * Apply ( undo.scale, undo.translate ) to Z:
+//  *   ( Z * undo.scale ) + undo.translate
+//  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x + ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) ) * undo.scale + undo.translate
+//  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x * undo.scale ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
+//  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x / ( AU1 + AU2 + ... + AUm ) ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
+//  *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
+//  *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + ( D - ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale )
+//  *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + D
+//  *        - ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale )
+//  *   = Cx + D
  *
  *
  * 2. What if this pointwise (or depthwise) does not have filter weights ( U1, U2, ... Um )? (e.g avg/max pooling)
