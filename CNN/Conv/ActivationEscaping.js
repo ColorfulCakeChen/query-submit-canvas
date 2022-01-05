@@ -221,7 +221,7 @@ class ScaleTranslateArraySet {
  *     = ( ( W * A * Q * C * S + A * R * C * S + B * C * S ) + ( C * T + D ) ) * U' + V'
  *     = ( W * A * Q * C * S + A * R * C * S + B * C * S + C * T + D ) * U' + V'
  *     = ( W * A * Q * C * S * U' + A * R * C * S * U' + B * C * S * U' + C * T * U' + D * U' ) + V'
-
+ *
  *     = ( W * Q * S * ( U' * A * C ) ) + R * S * ( U' * A * C ) + T * ( U' * C ) + ( B * C * S * U' + D * U' + V' )
  *     = ( W * Q * S * ( U' * A * C ) ) + R * S * ( U' * A * C ) + ( T * ( U' * A * C ) - T * ( U' * A * C ) )
  *         + T * ( U' * C ) + ( B * C * S * U' + D * U' + V' )
@@ -244,6 +244,28 @@ class ScaleTranslateArraySet {
  * Got
  *   U' = U / ( A * C )
  *   V' = V - ( ( T - ( T * A ) + ( B * S ) ) * C ) + D ) * U' )
+ *      = V - ( ( T - ( T * A ) + ( B * S ) ) * C ) + D ) * ( U / ( A * C ) ) )
+ *      = V - ( ( T * C ) - ( T * A * C ) + ( B * S * C ) + D ) * ( U / ( A * C ) ) )
+ *      = V - ( ( T * U / A ) - ( T * U ) + ( B * S * U / A ) + ( D * U / ( A * C ) )
+ *      = V - ( T * U / A ) + ( T * U ) - ( B * S * U / A ) - ( D * U / ( A * C )
+ *
+ * Verification:
+ *   Z = Y' * U' + V'
+ *     = ( X' * ( C * S ) + ( C * T + D ) ) * U' + V'
+ *     = ( ( W * ( A * Q ) + ( A * R + B ) ) * ( C * S ) + ( C * T + D ) ) * U' + V'
+ *     = ( ( W * ( A * Q ) + ( A * R + B ) ) * ( C * S ) + ( C * T + D ) ) * ( U / ( A * C ) ) + V'
+ *     = ( ( W * A * Q * C * S ) + ( A * R * C * S ) + ( B * C * S ) ) + ( C * T ) + D ) * ( U / ( A * C ) ) + V'
+ *     = ( ( W * Q * S * U ) + ( R * S * U ) + ( B * S * U / A ) + ( T * U / A ) + ( D * U / ( A * C ) ) + V'
+ *     = ( ( W * Q * S * U ) + ( R * S * U ) + ( B * S * U / A ) + ( T * U / A ) + ( D * U / ( A * C ) )
+ *         + V - ( T * U / A ) + ( T * U ) - ( B * S * U / A ) - ( D * U / ( A * C )
+ *
+ *     = ( ( W * Q * S * U ) + ( R * S * U ) + ( B * S * U / A ) + ( T * U / A ) + ( D * U / ( A * C ) )
+ *                           + V + ( T * U ) - ( B * S * U / A ) - ( T * U / A ) - ( D * U / ( A * C )
+ *
+ *     = ( W * Q * S * U ) + ( R * S * U ) + V + ( T * U )
+ *     = ( W * Q + R ) * ( S * U ) + V + ( T * U )
+ *     = ( W * Q + R ) * ( S * U ) + ( T * U ) + V
+ *     = ( ( W * Q + R ) * S + T ) * U ) + V
  *
  *
  *
