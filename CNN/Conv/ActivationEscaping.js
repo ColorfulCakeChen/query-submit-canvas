@@ -125,7 +125,7 @@ class ScaleTranslateArraySet {
  *   - This pointwise1
  *     - input channel count is q.
  *     - per output channel filter weights are Q = ( Q1, Q2, ..., Qq ) and will be modified to Q' = ( Q1', Q2', ..., Qq' ).
- *     - per output channel bias weights are R and will be modified to R'.
+ *     - per output channel bias weights are R = ( R1, R2, ..., Rs ) and will be modified to R' = ( R1', R2', ..., Rs' ).
  *     - activation function is f()
  *     - activation escaping is ( scale = a, translate = b )
  *     - per output channel original is X  = ( x1 , x2 , ..., xq  ) = W * Q  + R
@@ -150,7 +150,7 @@ class ScaleTranslateArraySet {
  *   - This depthwise
  *     - filter size is s.
  *     - per output channel filter weights are S = ( S1, S2, ..., Ss ) and will be modified to S' = ( S1', S2', ..., Ss' ).
- *     - per output channel bias weights are T and will be modified to T'.
+ *     - per output channel bias weights are T = ( T1, T2, ..., Tu ) and will be modified to T' = ( T1', T2', ..., Tu' ).
  *     - activation function is g()
  *     - activation escaping is ( scale = c, translate = d )
  *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = X' * S  + T
@@ -208,7 +208,7 @@ class ScaleTranslateArraySet {
  *   - This pointwise2 (always has bias, always has no activation)
  *     - input channel count is u.
  *     - per output channel filter weights are U = ( U1, U2, ..., Uu ) and will be modified to U' = ( U1', U2', ..., Uu' ).
- *     - per output channel bias weights are V and will be modified to V'.
+ *     - per output channel bias weights are V = ( V1, V2, ..., Vu ) and will be modified to V' = ( V1', V2', ..., Vu' ).
  *     - activation function is none.
  *     - per output channel is Z = ( z1 , z2 , ..., zu  ) = Y' * U' + V' = ( ( W * Q + R ) * S + T ) * U + V
  *
