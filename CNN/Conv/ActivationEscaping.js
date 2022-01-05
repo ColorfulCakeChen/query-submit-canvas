@@ -141,11 +141,14 @@ class ScaleTranslateArraySet {
  * How to get ( Cx + D )?
  *
  * Let
- *   - undo.scale = ( AU1 + AU2 + ... + AUm )
+ *   - undo.scale = 1 / ( AU1 + AU2 + ... + AUm )
+ *   - undo.translate = - ( C * ( BU1 + BU2 + ... + BUm + V ) / ( AU1 + AU2 + ... + AUm ) )
+ *                    = - ( C * ( BU1 + BU2 + ... + BUm + V ) * undo.scale )
  *
- * undo.scale * z = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) ) + D ) / ( AU1 + AU2 + ... + AUm )
- *    = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) ) / ( AU1 + AU2 + ... + AUm ) + D / ( ( AU1 + AU2 + ... + AUm ) )
- *
+ * z * undo.scale + undo.translate
+ *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) ) + D ) / ( AU1 + AU2 + ... + AUm ) + undo.translate
+ *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) ) / ( AU1 + AU2 + ... + AUm ) + ( D / ( AU1 + AU2 + ... + AUm ) ) + undo.translate
+ *   = Cx + ( D / ( AU1 + AU2 + ... + AUm ) )
  *
  *
  *
