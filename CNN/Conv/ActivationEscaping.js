@@ -136,7 +136,7 @@ class ScaleTranslateArraySet {
  *   X' = ( AX + B )
  *      = A * ( W * Q + R ) + B
  *      = A * W * Q + A * R + B
- *      = W * ( A * Q ) + ( A * R  + B )
+ *      = W * ( A * Q ) + ( A * R + B )
  *      = W * Q' + R'
  *
  * Got
@@ -159,9 +159,9 @@ class ScaleTranslateArraySet {
  *
  * Find out S' and T' so that Y' = ( CY + D )
  *   Y' = ( CY + D )
- *      = C * ( X' * S  + T ) + D
+ *      = C * ( X' * S + T ) + D
  *      = C * X' * S + C * T + D
- *      = X' * ( C * S ) + ( C * T  + D )
+ *      = X' * ( C * S ) + ( C * T + D )
  *      = X' * S' + T'
  *
  * Got
@@ -177,16 +177,22 @@ class ScaleTranslateArraySet {
  *     - per output channel filter weights are U = ( U1, U2, ..., Uu ) and will be modified to U' = ( U1', U2', ..., Uu' ).
  *     - per output channel bias weights are V and will be modified to V'.
  *     - activation function is none.
- *     - per input channel extra scale-translate is ( scale = E, translate = F )
- *     - per output channel original is Z  = ( z1 , z2 , ..., zu  ) = Y' * U  + V
 //!!!???
- *     - per output channel modified is Z' = ( z1', z2', ..., zu' ) = Y' * U' + V' = ( AX + B )
- *     - f(X') = f( AX + B ) is guaranteed still kept linear although activation function f() is non-linear.
+ *     - per input channel extra scale-translate is ( scale = E, translate = F )
+ *     - per output channel is Z  = ( z1 , z2 , ..., zu  ) = Y' * U' + V' = ( ( W * Q  + R ) * S + T ) * U + V
  *
- *     - per output channel bias weights are F + V.
- *     - per channel .output is Z = ( z1, z2, ..., zu ) = ( CY + D ) * ( E * U ) + ( F + V ).
+ * Find out U' and V':
+ *   Z = Y' * U' + V'
+ *     = ( X' * ( C * S ) + ( C * T  + D ) ) * U' + V'
+ *     = ( ( W * ( A * Q ) + ( A * R  + B ) ) * ( C * S ) + ( C * T + D ) ) * U' + V'
+ *     = ( ( W * A * Q + A * R + B ) * ( C * S ) + ( C * T  + D ) ) * U' + V'
+ *     = ( ( W * A * Q * C * S + A * R * C * S + B * C * S ) + ( C * T + D ) ) * U' + V'
+ *     = ( W * A * Q * C * S + A * R * C * S + B * C * S + C * T + D ) * U' + V'
  *
- * Find out the extra scale-translate ( E, F ) so that Z = ( ( W * Q + R ) * S + T ) * U + V
+ *
+ *     = ( ( W * Q  + R ) * S + T ) * U + V
+ *
+ *
 
 //!!! ...unfinished... (2022/01/05)
 
