@@ -124,19 +124,18 @@ class ScaleTranslateArraySet {
  *   - This pointwise bias weights are V.
  *
  * This pointwise .beforeActivation will be:
- *   y = ( ( Ax + B ) * U1 ) + ( ( Ax + B ) * U2 ) + ... + ( ( Ax + B ) * Um )
- *     = ( AU1x + BU1 ) + ( AU2x + BU2 ) + ... + ( AUmx + BUm )
- *     = ( AU1x + AU2x + ... + AUmx ) + ( BU1 + BU2 + ... + BUm )
- *     = ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm )
+ *   y = ( ( Ax + B ) * U1 ) + ( ( Ax + B ) * U2 ) + ... + ( ( Ax + B ) * Um ) + V
+ *     = ( AU1x + BU1 ) + ( AU2x + BU2 ) + ... + ( AUmx + BUm ) + V
+ *     = ( AU1x + AU2x + ... + AUmx ) + ( BU1 + BU2 + ... + BUm ) + V
+ *     = ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm + V )
  *
  * Suppose
  *   - This pointwise activation escaping is ( scale = C, translate = D )
  *
  * This pointwise .output will be:
  *   z = Cy + D
- *     = C * ( Ax * ( U1 + U2 + ... + Um ) + B * ( U1 + U2 + ... + Um ) ) + D
- *     = C * ( ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm ) ) + D
- *     = ( ACU1 + ACU2 + ... + ACUm ) * x + ( BCU1 + BCU2 + ... + BCUm + D )
+ *     = C * ( ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm + V ) ) + D
+ *     = ( ACU1 + ACU2 + ... + ACUm ) * x + ( BCU1 + BCU2 + ... + BCUm + CV + D )
  *
  *
  *
