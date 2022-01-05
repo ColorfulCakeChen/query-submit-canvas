@@ -209,12 +209,9 @@ class ScaleTranslateArraySet {
  *   V = ( T * U' * C ) - ( T * A * U' * C ) + ( B * S * U' * C ) + ( D * U' ) + V'
  *     = ( T - ( T * A ) + ( B * S ) ) * ( U' * C ) + ( D * U' ) + V'
  *     = ( ( T - ( T * A ) + ( B * S ) ) * C ) + D ) * U' ) + V'
-
- *     = ( - T * A + T + B * S ) * ( U' * C )  + D * U' + V'
- *     = ( ( - T * A + T + B * S ) * C + D ) * U' + V'
  *
  * Got
- *   U' = ( A * C ) / U
+ *   U' = U / ( A * C )
  *   V' = V - ( ( T - ( T * A ) + ( B * S ) ) * C ) + D ) * U' )
  *
  *
