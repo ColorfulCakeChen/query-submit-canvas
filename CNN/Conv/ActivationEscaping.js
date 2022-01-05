@@ -140,20 +140,21 @@ class ScaleTranslateArraySet {
  *
  * How to get ( Cx + D )?
  *
- * Let
+ * Let:
  *   - undo.scale = 1 / ( AU1 + AU2 + ... + AUm )
- *   - undo.translate = - ( C * ( BU1 + BU2 + ... + BUm + V ) / ( AU1 + AU2 + ... + AUm ) ) - ( D / ( AU1 + AU2 + ... + AUm ) ) + D
- *                    = - ( C * ( BU1 + BU2 + ... + BUm + V ) * undo.scale ) - ( D * undo.scale ) + D
- *                    = - ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale + D
+ *   - undo.translate = D - ( C * ( BU1 + BU2 + ... + BUm + V ) / ( AU1 + AU2 + ... + AUm ) ) - ( D / ( AU1 + AU2 + ... + AUm ) )
+ *                    = D - ( C * ( BU1 + BU2 + ... + BUm + V ) * undo.scale ) - ( D * undo.scale )
+ *                    = D - ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale
  *
- * ( z * undo.scale ) + undo.translate
+ * Apply ( undo.scale, undo.translate ) to z:
+ *   ( z * undo.scale ) + undo.translate
  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x + ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) ) * undo.scale + undo.translate
  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x * undo.scale ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x / ( AU1 + AU2 + ... + AUm ) ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
- *   = ( C * ( AU1 + AU2 + ... + AUm ) * x / ( AU1 + AU2 + ... + AUm ) ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
  *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
- *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale )
- *        - ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale + D )
+ *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + ( D - ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale )
+ *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + D
+ *        - ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale )
  *   = Cx + D
  *
  *
@@ -164,10 +165,3 @@ class ScaleTranslateArraySet {
  *
  *
  */
-
-/*
-D = ( D / ( AU1 + AU2 + ... + AUm ) ) + Q
-Q = D - ( D / ( AU1 + AU2 + ... + AUm ) )
-  = D - ( D * undo.scale )
-
-*/
