@@ -135,10 +135,16 @@ class ScaleTranslateArraySet {
  * This pointwise .output will be:
  *   z = Cy + D
  *     = C * ( ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm + V ) ) + D
+ *     = C * ( AU1 + AU2 + ... + AUm ) * x + ( C * ( BU1 + BU2 + ... + BUm + V ) ) + D
  *     = ( ACU1 + ACU2 + ... + ACUm ) * x + ( BCU1 + BCU2 + ... + BCUm + CV + D )
  *
+ * How to get ( Cx + D )?
  *
+ * Let
+ *   - undo.scale = ( AU1 + AU2 + ... + AUm )
  *
+ * undo.scale * z = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) ) + D ) / ( AU1 + AU2 + ... + AUm )
+ *    = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) ) / ( AU1 + AU2 + ... + AUm ) + D / ( ( AU1 + AU2 + ... + AUm ) )
  *
  *
  *
