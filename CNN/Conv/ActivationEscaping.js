@@ -143,10 +143,17 @@ class ScaleTranslateArraySet {
  *     - per input channel extra scale-translate is ( scale = E, translate = F )
  *     - per output channel filter weights are E * U = ( EU1, EU2, ... EUu ).
  *     - per output channel bias weights are F + V.
- *     - per channel .output is Z = ( z1, z2, ..., zu ) = ( CY + D ) * U + V.
+ *     - per channel .output is Z = ( z1, z2, ..., zu ) = ( CY + D ) * ( E * U ) + ( F + V ).
  *
-//!!!??? partial U, partial V
  * Find out the extra scale-translate ( E, F ) so that Z = ( ( W * Q + R ) * S + T ) * U + V
+ *   Z = ( CY + D ) * ( E * U ) + ( F + V )
+ *     = ( C * ( ( AX + B ) * S + T ) + D ) * ( E * U ) + ( F + V )
+ *     = ( C * ( ( A * ( W * Q + R ) + B ) * S + T ) + D ) * ( E * U ) + ( F + V )
+ *     = 
+ *
+ *
+ *
+ *
 
 //!!!
  *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
