@@ -127,21 +127,21 @@ class ScaleTranslateArraySet {
  *     - per output channel filter weights are Q = ( Q1, Q2, ..., Qq ) and will be modified to Q' = ( Q1', Q2', ..., Qq' ).
  *     - per output channel bias weights are R and will be modified to R'.
  *     - activation function is f()
- *     - activation escaping is ( scale = A, translate = B )
+ *     - activation escaping is ( scale = a, translate = b )
  *     - per output channel original is X  = ( x1 , x2 , ..., xq  ) = W * Q  + R
- *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = W * Q' + R' = ( AX + B )
+ *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = W * Q' + R' = ( a * X + b )
  *     - f(X') = f( AX + B ) is guaranteed still kept linear although activation function f() is non-linear.
  *
- * Find out Q' and R' so that X' = ( AX + B )
- *   X' = ( AX + B )
- *      = A * ( W * Q + R ) + B
- *      = A * W * Q + A * R + B
- *      = W * ( A * Q ) + ( A * R + B )
+ * Find out Q' and R' so that X' = ( a * X + B )
+ *   X' = ( a * X + B )
+ *      = a * ( W * Q + R ) + b
+ *      = a * W * Q + a * R + b
+ *      = W * ( a * Q ) + ( a * R + b )
  *   X' = W * Q' + R'
  *
  * Got
- *  Q' = A * Q
- *  R' = A * R + B
+ *  Q' = a * Q
+ *  R' = a * R + b
  *
  *
  * 2.
@@ -152,46 +152,46 @@ class ScaleTranslateArraySet {
  *     - per output channel filter weights are S = ( S1, S2, ..., Ss ) and will be modified to S' = ( S1', S2', ..., Ss' ).
  *     - per output channel bias weights are T and will be modified to T'.
  *     - activation function is g()
- *     - activation escaping is ( scale = C, translate = D )
+ *     - activation escaping is ( scale = c, translate = d )
  *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = X' * S  + T
- *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = X' * S' + T' = ( CY + D )
+ *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = X' * S' + T' = ( c * Y + d )
  *     - g(X') = g( CY + D ) is guaranteed still kept linear although activation function g() is non-linear.
  *
- * Find out S' and T' so that Y' = ( CY + D )
- *   Y' = ( CY + D )
- *      = C * ( X' * S + T ) + D
- *      = C * X' * S + C * T + D
- *      = X' * ( C * S ) + ( C * T + D )
+ * Find out S' and T' so that Y' = ( c * Y + d )
+ *   Y' = ( c * Y + d )
+ *      = c * ( X' * S + T ) + d
+ *      = c * X' * S + c * T + d
+ *      = X' * ( c * S ) + ( c * T + d )
  *   Y' = X' * S' + T'
  *
  * Got
- *  S' = C * S
- *  R' = C * T + D
+ *  S' = c * S
+ *  R' = c * T + d
  *
 
 //!!! ...unfinished... (2022/01/5)
 
  * Find out S" and T" so that Y" = X' * S" + T" = ( W * Q + R ) * S + T
  *   Y" = X' * S" + T"
- *      = ( W * ( A * Q ) + ( A * R + B ) ) * S" + T"
- *      = ( ( W * Q * A ) + ( R * A ) + B ) * S" + T"
- *      = ( ( W * Q + R ) * A ) + B ) * S" + T"
- *      = ( W * Q + R ) * ( A * S" ) + ( B * S" + T" )
+ *      = ( W * ( a * Q ) + ( a * R + b ) ) * S" + T"
+ *      = ( ( W * Q * a ) + ( R * a ) + b ) * S" + T"
+ *      = ( ( W * Q + R ) * a ) + b ) * S" + T"
+ *      = ( W * Q + R ) * ( a * S" ) + ( b * S" + T" )
  *
  *   Y" = ( W * Q + R ) * S + T
  *
  * Got
- *   S = A * S"
- *   T = B * S" + T"
+ *   S = a * S"
+ *   T = b * S" + T"
  *
- *   S" = S / A
- *   T" = T - B * S"
+ *   S" = S / a
+ *   T" = T - b * S"
  *
  * Verification:
  *   Y" = X' * S" + T"
- *      = ( W * ( A * Q ) + ( A * R + B ) ) * S" + T"
- *      = ( W * ( A * Q ) + ( A * R + B ) ) * ( S / A ) + ( T - B * S" )
- *      = ( W * Q * S ) + ( R * S ) + ( B * ( S / A ) ) ) + ( T - B * ( S / A ) )
+ *      = ( W * ( a * Q ) + ( a * R + b ) ) * S" + T"
+ *      = ( W * ( a * Q ) + ( a * R + b ) ) * ( S / a ) + ( T - b * S" )
+ *      = ( W * Q * S ) + ( R * S ) + ( b * ( S / a ) ) ) + ( T - b * ( S / a ) )
  *      = ( W * Q + R ) * S + T
  *
  *
@@ -214,53 +214,53 @@ class ScaleTranslateArraySet {
  *
  * Find out U' and V':
  *   Z = Y' * U' + V'
- *     = ( X' * ( C * S ) + ( C * T + D ) ) * U' + V'
- *     = ( ( W * ( A * Q ) + ( A * R + B ) ) * ( C * S ) + ( C * T + D ) ) * U' + V'
+ *     = ( X' * ( c * S ) + ( c * T + d ) ) * U' + V'
+ *     = ( ( W * ( a * Q ) + ( a * R + b ) ) * ( c * S ) + ( c * T + d ) ) * U' + V'
  *
- *     = ( ( W * A * Q + A * R + B ) * ( C * S ) + ( C * T  + D ) ) * U' + V'
- *     = ( ( W * A * Q * C * S + A * R * C * S + B * C * S ) + ( C * T + D ) ) * U' + V'
- *     = ( W * A * Q * C * S + A * R * C * S + B * C * S + C * T + D ) * U' + V'
- *     = ( W * A * Q * C * S * U' + A * R * C * S * U' + B * C * S * U' + C * T * U' + D * U' ) + V'
+ *     = ( ( W * a * Q + a * R + b ) * ( c * S ) + ( c * T + d ) ) * U' + V'
+ *     = ( ( W * a * Q * c * S + a * R * c * S + B * c * S ) + ( c * T + d ) ) * U' + V'
+ *     = ( W * a * Q * c * S + a * R * c * S + b * c * S + c * T + d ) * U' + V'
+ *     = ( W * a * Q * c * S * U' + a * R * c * S * U' + b * c * S * U' + c * T * U' + d * U' ) + V'
  *
- *     = ( W * Q * S * ( U' * A * C ) ) + R * S * ( U' * A * C ) + T * ( U' * C ) + ( B * C * S * U' + D * U' + V' )
- *     = ( W * Q * S * ( U' * A * C ) ) + R * S * ( U' * A * C ) + ( T * ( U' * A * C ) - T * ( U' * A * C ) )
- *         + T * ( U' * C ) + ( B * C * S * U' + D * U' + V' )
- *     = ( W * Q * S * ( U' * A * C ) ) + R * S * ( U' * A * C ) + T * ( U' * A * C )
- *         - T * ( U' * A * C ) + T * ( U' * C ) + ( B * C * S * U' + D * U' + V' )
+ *     = ( W * Q * S * ( U' * a * c ) ) + R * S * ( U' * a * c ) + T * ( U' * c ) + ( b * c * S * U' + d * U' + V' )
+ *     = ( W * Q * S * ( U' * a * c ) ) + R * S * ( U' * a * c ) + ( T * ( U' * a * c ) - T * ( U' * a * c ) )
+ *         + T * ( U' * c ) + ( b * c * S * U' + d * U' + V' )
+ *     = ( W * Q * S * ( U' * a * c ) ) + R * S * ( U' * a * c ) + T * ( U' * a * c )
+ *         - T * ( U' * a * c ) + T * ( U' * c ) + ( b * c * S * U' + d * U' + V' )
  *
- *     = ( ( W * Q * S ) + R * S + T ) * ( U' * A * C ) + ( ( - T * U' * A * C ) + ( T * U' * C ) + ( B * C * S * U' ) + ( D * U' ) + V' ) )
- *     = ( ( W * Q + R ) * S + T ) * ( U' * A * C ) + ( ( T * U' * C ) - ( T * A * U' * C ) + ( B * S * U' * C ) + ( D * U' ) + V' )
+ *     = ( ( W * Q * S ) + R * S + T ) * ( U' * a * c ) + ( ( - T * U' * a * c ) + ( T * U' * c ) + ( b * c * S * U' ) + ( d * U' ) + V' ) )
+ *     = ( ( W * Q + R ) * S + T ) * ( U' * a * c ) + ( ( T * U' * c ) - ( T * a * U' * c ) + ( b * S * U' * c ) + ( d * U' ) + V' )
  *
  *   Z = ( ( W * Q + R ) * S + T ) * U + V
  *     = ( W * Q * S + R * S + T ) * U + V
  *     = W * Q * S * U + R * S * U + T * U + V
  *
  * Got
- *   U = U' * A * C
- *   V = ( T * U' * C ) - ( T * A * U' * C ) + ( B * S * U' * C ) + ( D * U' ) + V'
- *     = ( T - ( T * A ) + ( B * S ) ) * ( U' * C ) + ( D * U' ) + V'
- *     = ( ( T - ( T * A ) + ( B * S ) ) * C ) + D ) * U' ) + V'
+ *   U = U' * a * c
+ *   V = ( T * U' * c ) - ( T * a * U' * c ) + ( b * S * U' * c ) + ( d * U' ) + V'
+ *     = ( T - ( T * a ) + ( b * S ) ) * ( U' * c ) + ( d * U' ) + V'
+ *     = ( ( T - ( T * a ) + ( b * S ) ) * c ) + d ) * U' ) + V'
  *
  * Got
- *   U' = U / ( A * C )
- *   V' = V - ( ( T - ( T * A ) + ( B * S ) ) * C ) + D ) * U' )
- *      = V - ( ( T - ( T * A ) + ( B * S ) ) * C ) + D ) * ( U / ( A * C ) ) )
- *      = V - ( ( T * C ) - ( T * A * C ) + ( B * S * C ) + D ) * ( U / ( A * C ) ) )
- *      = V - ( ( T * U / A ) - ( T * U ) + ( B * S * U / A ) + ( D * U / ( A * C ) ) )
- *      = V - ( T * U / A ) + ( T * U ) - ( B * S * U / A ) - ( D * U / ( A * C ) )
+ *   U' = U / ( a * c )
+ *   V' = V - ( ( T - ( T * a ) + ( b * S ) ) * c ) + d ) * U' )
+ *      = V - ( ( T - ( T * a ) + ( b * S ) ) * c ) + d ) * ( U / ( a * c ) ) )
+ *      = V - ( ( T * c ) - ( T * A * c ) + ( b * S * c ) + d ) * ( U / ( a * c ) ) )
+ *      = V - ( ( T * U / a ) - ( T * U ) + ( b * S * U / a ) + ( d * U / ( a * c ) ) )
+ *      = V - ( T * U / a ) + ( T * U ) - ( b * S * U / a ) - ( d * U / ( a * c ) )
  *
  * Verification:
  *   Z = Y' * U' + V'
- *     = ( X' * ( C * S ) + ( C * T + D ) ) * U' + V'
- *     = ( ( W * ( A * Q ) + ( A * R + B ) ) * ( C * S ) + ( C * T + D ) ) * U' + V'
- *     = ( ( W * ( A * Q ) + ( A * R + B ) ) * ( C * S ) + ( C * T + D ) ) * ( U / ( A * C ) ) + V'
- *     = ( ( W * A * Q * C * S ) + ( A * R * C * S ) + ( B * C * S ) ) + ( C * T ) + D ) * ( U / ( A * C ) ) + V'
- *     = ( W * Q * S * U ) + ( R * S * U ) + ( B * S * U / A ) + ( T * U / A ) + ( D * U / ( A * C ) ) + V'
- *     = ( W * Q * S * U ) + ( R * S * U ) + ( B * S * U / A ) + ( T * U / A ) + ( D * U / ( A * C ) )
- *         + V - ( T * U / A ) + ( T * U ) - ( B * S * U / A ) - ( D * U / ( A * C ) )
+ *     = ( X' * ( c * S ) + ( c * T + d ) ) * U' + V'
+ *     = ( ( W * ( a * Q ) + ( a * R + b ) ) * ( c * S ) + ( c * T + d ) ) * U' + V'
+ *     = ( ( W * ( a * Q ) + ( a * R + b ) ) * ( c * S ) + ( c * T + d ) ) * ( U / ( a * c ) ) + V'
+ *     = ( ( W * a * Q * c * S ) + ( a * R * c * S ) + ( b * c * S ) ) + ( c * T ) + d ) * ( U / ( a * c ) ) + V'
+ *     = ( W * Q * S * U ) + ( R * S * U ) + ( b * S * U / a ) + ( T * U / a ) + ( d * U / ( a * c ) ) + V'
+ *     = ( W * Q * S * U ) + ( R * S * U ) + ( b * S * U / a ) + ( T * U / a ) + ( d * U / ( a * c ) )
+ *         + V - ( T * U / a ) + ( T * U ) - ( b * S * U / a ) - ( d * U / ( a * c ) )
  *
- *     = ( W * Q * S * U ) + ( R * S * U ) + ( B * S * U / A ) + ( T * U / A ) + ( D * U / ( A * C ) )
- *                         + V + ( T * U ) - ( B * S * U / A ) - ( T * U / A ) - ( D * U / ( A * C ) )
+ *     = ( W * Q * S * U ) + ( R * S * U ) + ( b * S * U / a ) + ( T * U / a ) + ( d * U / ( a * c ) )
+ *                         + V + ( T * U ) - ( b * S * U / a ) - ( T * U / a ) - ( d * U / ( a * c ) )
  *
  *     = ( W * Q * S * U ) + ( R * S * U ) + V + ( T * U )
  *     = ( W * Q + R ) * ( S * U ) + V + ( T * U )
