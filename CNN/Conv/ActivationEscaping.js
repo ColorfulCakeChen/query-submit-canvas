@@ -114,14 +114,42 @@ class ScaleTranslateArraySet {
 
 /**
  * Suppose
- *   - The previous .beforeActivation is X = ( x1, x2, ..., xn ).
- *   - The previous activation escaping is ( scale = A, translate = B )
- *   - The previous .output is ( AX + B )
+ *   - The previous convolution-bias-activation
+ *     - output channel count is q.
+ *     - .beforeActivation is W = ( w1, w2, ..., wq ).
+ *     - activation escaping is ( scale = E, translate = F )
+ *     - .output is ( EW + F )
  *
  *
  * 1.
  *
  * Suppose
+ *   - This pointwise1
+ *     - input channel count is q.
+ *     - filter weights are Q = ( Q1, Q2, ... Qq ).
+ *     - bias weights are R.
+ *     - activation escaping is ( scale = A, translate = B )
+ *     - .beforeActivation is X = ( x1, x2, ..., xs ) = ( EW + F ) * Q + R.
+ *     - .output is ( AX + B )
+ *
+ *   - This depthwise
+ *     - filter size is s.
+ *     - filter weights are S = ( S1, S2, ... Ss ).
+ *     - bias weights are T.
+ *     - activation escaping is ( scale = C, translate = D )
+ *     - .beforeActivation is Y = ( y1, y2, ..., yu ) = ( AX + B ) * S + T.
+ *     - .output is ( CY + D )
+ *
+ *   - This pointwise2
+ *     - input channel count is u.
+ *     - filter weights are U = ( U1, U2, ... Uu ).
+ *     - bias weights are V.
+ *     - activation escaping is ( scale = E, translate = F )
+ *     - .beforeActivation is Z = ( z1, z2, ..., zu ) = ( CY + D ) * U + V.
+ *     - .output is ( EZ + F )
+//!!!
+ *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
+ *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
  *   - This pointwise input channel count is m. (Or, this depthwise filter size is m.)
  *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
  *   - This pointwise (or depthwise) bias weights are V.
