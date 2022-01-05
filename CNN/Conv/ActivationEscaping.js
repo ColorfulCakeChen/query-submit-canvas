@@ -118,6 +118,9 @@ class ScaleTranslateArraySet {
  *   - The previous activation escaping is ( scale = A, translate = B )
  *   - The previous .output is ( Ax + B )
  *
+ *
+ * 1.
+ *
  * Suppose
  *   - This pointwise input channel count is m. (Or, this depthwise filter size is m.)
  *   - This pointwise (or depthwise) filter weights are ( U1, U2, ... Um ).
@@ -132,8 +135,6 @@ class ScaleTranslateArraySet {
  * Suppose
  *   - This pointwise (or depthwise) activation escaping is ( scale = C, translate = D )
  *
- *
- * 1.
  *
  * This pointwise (or depthwise) .output will be:
  *   z = Cy + D
@@ -161,7 +162,7 @@ class ScaleTranslateArraySet {
  *   = Cx + D
  *
  *
- * 2. What if this pointwise (or depthwise) does not have filter weights ( U1, U2, ... Um )?
+ * 2. What if this pointwise (or depthwise) does not have filter weights ( U1, U2, ... Um )? (e.g avg/max pooling)
  *
  *
  *
