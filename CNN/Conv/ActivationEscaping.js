@@ -116,7 +116,7 @@ class ScaleTranslateArraySet {
  * Suppose
  *   - The previous PointDepthPoint (or convolution-bias-activation)
  *     - output channel count is q.
- *     - .output is W = ( w1, w2, ..., wq ).
+ *     - output is W = ( w1, w2, ..., wq ).
  *
  *
  * 1.
@@ -142,6 +142,31 @@ class ScaleTranslateArraySet {
  * Got
  *  Q' = A * Q
  *  R' = A * R + B
+ *
+ *
+ * 2.
+ *
+ * Suppose
+ *   - This depthwise
+ *     - filter size is s.
+ *     - per output channel filter weights are S = ( S1, S2, ..., Ss ) and will be modified to S' = ( S1', S2', ..., Ss' ).
+ *     - per output channel bias weights are T and will be modified to T'.
+ *     - activation function is g()
+ *     - activation escaping is ( scale = C, translate = D )
+ *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = X' * S  + T
+ *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = X' * S' + T' = ( CY + D )
+ *     - g(X') = g( CY + D ) is guaranteed still kept linear although activation function g() is non-linear.
+ *
+ * Find out S' and T' so that Y' = ( CY + D )
+ *   Y' = ( CY + D )
+ *      = C * ( X' * S  + T ) + D
+ *      = C * X' * S + C * T + D
+ *      = X' * ( C * S ) + ( C * T  + D )
+ *      = X' * S' + T'
+ *
+ * Got
+ *  S' = C * S
+ *  R' = C * T + D
  *
 
 //!!! ...unfinished... (2022/01/05)
