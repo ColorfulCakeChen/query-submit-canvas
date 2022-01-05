@@ -112,3 +112,28 @@ class ScaleTranslateArraySet {
 
 }
 
+/**
+ * Suppose
+ *   - The previous .beforeActivation is x.
+ *   - The previous activation escaping is ( scale = A, translate = B )
+ *   - The previous .output is ( Ax + B )
+ *
+ * Suppose
+ *   - This pointwise input channel count is m.
+ *   - This pointwise filter weights are ( U1, U2, ... Um ).
+ *   - This pointwise bias weights are V.
+ *
+ * This pointwise .beforeActivation will be:
+ *   y = ( ( Ax + B ) * U1 ) + ( ( Ax + B ) * U2 ) + ... + ( ( Ax + B ) * Um )
+ *     = ( AU1x + BU1 ) + ( AU2x + BU2 ) + ... + ( AUmx + BUm )
+ *     = ( AU1x + AU2 x + ... + AUmx ) + ( BU1 + BU2 + ... + BUm )
+ *     = ( U1 + U2 + ... + Um ) * Ax + ( U1 + U2 + ... + Um ) * B
+ *     = ( U1 + U2 + ... + Um ) * ( Ax + B )
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
