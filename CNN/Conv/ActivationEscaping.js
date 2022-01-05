@@ -126,9 +126,22 @@ class ScaleTranslateArraySet {
  * This pointwise .beforeActivation will be:
  *   y = ( ( Ax + B ) * U1 ) + ( ( Ax + B ) * U2 ) + ... + ( ( Ax + B ) * Um )
  *     = ( AU1x + BU1 ) + ( AU2x + BU2 ) + ... + ( AUmx + BUm )
- *     = ( AU1x + AU2 x + ... + AUmx ) + ( BU1 + BU2 + ... + BUm )
- *     = ( U1 + U2 + ... + Um ) * Ax + ( U1 + U2 + ... + Um ) * B
- *     = ( U1 + U2 + ... + Um ) * ( Ax + B )
+ *     = ( AU1x + AU2x + ... + AUmx ) + ( BU1 + BU2 + ... + BUm )
+ *     = ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm )
+ *
+ * Suppose
+ *   - This pointwise activation escaping is ( scale = C, translate = D )
+ *
+ * This pointwise .output will be:
+ *   z = Cy + D
+ *     = C * ( Ax * ( U1 + U2 + ... + Um ) + B * ( U1 + U2 + ... + Um ) ) + D
+ *     = C * ( ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm ) ) + D
+ *     = ( ACU1 + ACU2 + ... + ACUm ) * x + ( BCU1 + BCU2 + ... + BCUm + D )
+ *
+ *
+ *
+ *
+ *
  *
  *
  *
