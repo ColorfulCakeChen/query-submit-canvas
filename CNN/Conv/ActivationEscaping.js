@@ -187,6 +187,19 @@ class ScaleTranslateArraySet {
  *   S" = S / A
  *   T" = T - B * S"
  *
+ * Verification:
+ *   Y" = X' * S" + T"
+ *      = ( W * ( A * Q ) + ( A * R + B ) ) * S" + T"
+ *      = ( W * ( A * Q ) + ( A * R + B ) ) * ( S / A ) + ( T - B * S" )
+ *      = ( W * Q * S ) + ( R * S ) + ( B * ( S / A ) ) ) + ( T - B * ( S / A ) )
+ *      = ( W * Q + R ) * S + T
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  *
  *
  * 3.
