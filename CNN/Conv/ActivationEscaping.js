@@ -168,6 +168,26 @@ class ScaleTranslateArraySet {
  *  S' = C * S
  *  R' = C * T + D
  *
+
+//!!! ...unfinished... (2022/01/5)
+
+ * Find out S" and T" so that Y" = X' * S" + T" = ( W * Q + R ) * S + T
+ *   Y" = X' * S" + T"
+ *      = ( W * ( A * Q ) + ( A * R + B ) ) * S" + T"
+ *      = ( ( W * Q * A ) + ( R * A ) + B ) * S" + T"
+ *      = ( ( W * Q + R ) * A ) + B ) * S" + T"
+ *      = ( W * Q + R ) * ( A * S" ) + ( B * S" + T" )
+ *
+ *   Y" = ( W * Q + R ) * S + T
+ *
+ * Got
+ *   S = A * S"
+ *   T = B * S" + T"
+ *
+ *   S" = S / A
+ *   T" = T - B * S"
+ *
+ *
  *
  * 3.
  *
@@ -177,8 +197,6 @@ class ScaleTranslateArraySet {
  *     - per output channel filter weights are U = ( U1, U2, ..., Uu ) and will be modified to U' = ( U1', U2', ..., Uu' ).
  *     - per output channel bias weights are V and will be modified to V'.
  *     - activation function is none.
-//!!!???
- *     - per input channel extra scale-translate is ( scale = E, translate = F )
  *     - per output channel is Z = ( z1 , z2 , ..., zu  ) = Y' * U' + V' = ( ( W * Q + R ) * S + T ) * U + V
  *
  * Find out U' and V':
