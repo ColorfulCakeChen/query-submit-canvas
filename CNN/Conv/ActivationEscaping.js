@@ -137,7 +137,7 @@ class ScaleTranslateArraySet {
  *      = A * ( W * Q + R ) + B
  *      = A * W * Q + A * R + B
  *      = W * ( A * Q ) + ( A * R + B )
- *      = W * Q' + R'
+ *   X' = W * Q' + R'
  *
  * Got
  *  Q' = A * Q
@@ -162,7 +162,7 @@ class ScaleTranslateArraySet {
  *      = C * ( X' * S + T ) + D
  *      = C * X' * S + C * T + D
  *      = X' * ( C * S ) + ( C * T + D )
- *      = X' * S' + T'
+ *   Y' = X' * S' + T'
  *
  * Got
  *  S' = C * S
@@ -200,8 +200,7 @@ class ScaleTranslateArraySet {
  *     = ( ( W * Q * S ) + R * S + T ) * ( U' * A * C ) + ( ( - T * U' * A * C ) + ( T * U' * C ) + ( B * C * S * U' ) + ( D * U' ) + V' ) )
  *     = ( ( W * Q + R ) * S + T ) * ( U' * A * C ) + ( ( T * U' * C ) - ( T * A * U' * C ) + ( B * S * U' * C ) + ( D * U' ) + V' )
  *
- *
- *     = ( ( W * Q + R ) * S + T ) * U + V
+ *   Z = ( ( W * Q + R ) * S + T ) * U + V
  *     = ( W * Q * S + R * S + T ) * U + V
  *     = W * Q * S * U + R * S * U + T * U + V
  *
