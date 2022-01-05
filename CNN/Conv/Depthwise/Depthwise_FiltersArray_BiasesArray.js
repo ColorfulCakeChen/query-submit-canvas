@@ -312,6 +312,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //       .multiply_all_byBounds( filtersValueBounds )
 //       .multiply_all_byN( this.filterSize ); // A depthwise filter has so many weights.
 
+
+//!!! ...unfinished... (2022/01/05)
+// It seems that this activationEscaping_ScaleTranslateArraySet.doWithoutPreviousUndo should be applied to this filters
+// and biases weights. Not previous activationEscaping_ScaleTranslateArraySet.undo should be applied.
+//
+
     let undoScaleTranslateArray = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo;
 
     let pendingUndo = new FloatValue.ScaleTranslateArray( this.outputChannelCount );
