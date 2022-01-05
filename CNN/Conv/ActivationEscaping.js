@@ -119,26 +119,26 @@ class ScaleTranslateArraySet {
  *   - The previous .output is ( Ax + B )
  *
  * Suppose
- *   - This pointwise input channel count is m.
- *   - This pointwise filter weights are ( U1, U2, ... Um ).
- *   - This pointwise bias weights are V.
+ *   - This pointwise input channel count is m. (Or, this depthwise filter size is m.)
+ *   - This pointwise (or depthwise) filter weights are ( U1, U2, ... Um ).
+ *   - This pointwise (or depthwise) bias weights are V.
  *
- * This pointwise .beforeActivation will be:
+ * This pointwise (or depthwise) .beforeActivation will be:
  *   y = ( ( Ax + B ) * U1 ) + ( ( Ax + B ) * U2 ) + ... + ( ( Ax + B ) * Um ) + V
  *     = ( AU1x + BU1 ) + ( AU2x + BU2 ) + ... + ( AUmx + BUm ) + V
  *     = ( AU1x + AU2x + ... + AUmx ) + ( BU1 + BU2 + ... + BUm ) + V
  *     = ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm + V )
  *
  * Suppose
- *   - This pointwise activation escaping is ( scale = C, translate = D )
+ *   - This pointwise (or depthwise) activation escaping is ( scale = C, translate = D )
  *
- * This pointwise .output will be:
+ * This pointwise (or depthwise) .output will be:
  *   z = Cy + D
  *     = C * ( ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm + V ) ) + D
  *     = C * ( AU1 + AU2 + ... + AUm ) * x + ( C * ( BU1 + BU2 + ... + BUm + V ) + D )
  *     = ( ACU1 + ACU2 + ... + ACUm ) * x + ( BCU1 + BCU2 + ... + BCUm + CV + D )
  *
- * How to get ( Cx + D )?
+ * How to get back ( Cx + D ) from z?
  *
  * Let:
  *   - undo.scale = 1 / ( AU1 + AU2 + ... + AUm )
