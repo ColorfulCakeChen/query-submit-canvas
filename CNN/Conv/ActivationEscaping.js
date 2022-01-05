@@ -192,20 +192,32 @@ class ScaleTranslateArraySet {
  *     = ( W * A * Q * C * S * U' + A * R * C * S * U' + B * C * S * U' + C * T * U' + D * U' ) + V'
 
  *     = ( W * Q * S * ( U' * A * C ) ) + R * S * ( U' * A * C ) + T * ( U' * C ) + ( B * C * S * U' + D * U' + V' )
-
-
- *     = ( W * Q ) * ( A * C * S * U' ) + R * ( A * C * S * U' ) + ( B * C * S * U' ) + C * T * U' + D * U' + V'
- *     = ( W * Q + R ) * ( A * C * S * U' ) + ( B * C * S * U' ) + C * T * U' + D * U' + V'
- *     = ( ( W * Q + R ) * ( A * C * S ) + ( B * C * S ) + C * T + D ) * U' + V'
-
- *     = ( ( ( W * Q + R ) * ( A * S ) + ( B * S ) + T ) * C + D ) * U' + V'
- *     = ( ( ( ( W * Q + R ) * A + B ) * S ) + T ) * C + D ) * U' + V'
+ *     = ( W * Q * S * ( U' * A * C ) ) + R * S * ( U' * A * C ) + ( T * ( U' * A * C ) - T * ( U' * A * C ) )
+ *         + T * ( U' * C ) + ( B * C * S * U' + D * U' + V' )
+ *     = ( W * Q * S * ( U' * A * C ) ) + R * S * ( U' * A * C ) + T * ( U' * A * C )
+ *         - T * ( U' * A * C ) + T * ( U' * C ) + ( B * C * S * U' + D * U' + V' )
  *
+ *     = ( ( W * Q * S ) + R * S + T ) * ( U' * A * C ) + ( ( - T * U' * A * C ) + ( T * U' * C ) + ( B * C * S * U' ) + ( D * U' ) + V' ) )
+ *     = ( ( W * Q + R ) * S + T ) * ( U' * A * C ) + ( ( T * U' * C ) - ( T * A * U' * C ) + ( B * S * U' * C ) + ( D * U' ) + V' )
  *
  *
  *     = ( ( W * Q + R ) * S + T ) * U + V
  *     = ( W * Q * S + R * S + T ) * U + V
  *     = W * Q * S * U + R * S * U + T * U + V
+ *
+ * Got
+ *   U = U' * A * C
+ *   V = ( T * U' * C ) - ( T * A * U' * C ) + ( B * S * U' * C ) + ( D * U' ) + V'
+ *     = ( T - ( T * A ) + ( B * S ) ) * ( U' * C ) + ( D * U' ) + V'
+ *     = ( ( T - ( T * A ) + ( B * S ) ) * C ) + D ) * U' ) + V'
+
+ *     = ( - T * A + T + B * S ) * ( U' * C )  + D * U' + V'
+ *     = ( ( - T * A + T + B * S ) * C + D ) * U' + V'
+ *
+ * Got
+ *   U' = ( A * C ) / U
+ *   V' = V - ( ( T - ( T * A ) + ( B * S ) ) * C ) + D ) * U' )
+ *
  *
  *
 
