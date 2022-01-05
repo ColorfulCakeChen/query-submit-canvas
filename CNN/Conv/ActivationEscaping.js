@@ -130,7 +130,8 @@ class ScaleTranslateArraySet {
  *   Y = ( AX + B ) * U + V
  *     = ( ( Ax1 + B ) * U1 ) + ( ( Ax2 + B ) * U2 ) + ... + ( ( Axm + B ) * Um ) + V
  *     = ( AU1x1 + BU1 ) + ( AU2x2 + BU2 ) + ... + ( AUmxm + BUm ) + V
- *     = ( AU1x1 + AU2x2 + ... + AUmxm ) + ( BU1 + BU2 + ... + BUm + V )
+ *     = ( AU1x1 + AU2x2 + ... + AUmxm ) + ( BU1 + BU2 + ... + BUm ) + V
+ *     = A * ( U1x1 + U2x2 + ... + Umxm ) + B * ( U1 + U2 + ... + Um ) + V
  *
  * Suppose
  *   - This pointwise (or depthwise) activation escaping is ( scale = C, translate = D )
@@ -138,25 +139,24 @@ class ScaleTranslateArraySet {
  *
  * This pointwise (or depthwise) .output will be:
  *   Z = CY + D
- *     = C * ( ( AU1x1 + AU2x2 + ... + AUmxm ) + ( BU1 + BU2 + ... + BUm + V ) ) + D
- *     = ( ACU1x1 + ACU2x2 + ... + ACUmxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D )
- *     = AC * ( U1x1 + U2x2 + ... + Umxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D )
+ *     = C * ( A * ( U1x1 + U2x2 + ... + Umxm ) + B * ( U1 + U2 + ... + Um ) + V ) + D
+ *     = AC * ( U1x1 + U2x2 + ... + Umxm ) + C * ( B * ( U1 + U2 + ... + Um ) + V ) + D
  *
  * How to get back ( UX + V ) from Z?
  *   ( UX + V ) = ( U1x1 + U2x2 + ... + Umxm ) + V
  *
  * Let:
  *   - undo.scale = 1 / AC
- *   - undo.translate = V - ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale
+ *   - undo.translate = V - ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale
  *
  * Apply ( undo.scale, undo.translate ) to Z:
  *   ( Z * undo.scale ) + undo.translate
- *   = ( AC * ( U1x1 + U2x2 + ... + Umxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D ) ) * undo.scale + undo.translate
- *   = AC * ( U1x1 + U2x2 + ... + Umxm ) * undo.scale + ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale + undo.translate
- *   = AC * ( U1x1 + U2x2 + ... + Umxm ) / AC + ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale + undo.translate
- *   = ( U1x1 + U2x2 + ... + Umxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale + undo.translate
- *   = ( U1x1 + U2x2 + ... + Umxm ) + ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale + V
- *                                  - ( BCU1 + BCU2 + ... + BCUm + CV + D ) * undo.scale
+ *   = ( AC * ( U1x1 + U2x2 + ... + Umxm ) + C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale + undo.translate
+ *   = AC * ( U1x1 + U2x2 + ... + Umxm ) * undo.scale + ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale + undo.translate
+ *   = AC * ( U1x1 + U2x2 + ... + Umxm ) / AC + ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale + undo.translate
+ *   = ( U1x1 + U2x2 + ... + Umxm ) + ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale + undo.translate
+ *   = ( U1x1 + U2x2 + ... + Umxm ) + ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale + V
+ *                                  - ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale
  *   = ( U1x1 + U2x2 + ... + Umxm ) + V
  *   = ( UX + V )
  *
