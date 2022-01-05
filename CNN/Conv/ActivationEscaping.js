@@ -124,20 +124,22 @@ class ScaleTranslateArraySet {
  * Suppose
  *   - This pointwise1
  *     - input channel count is q.
- *     - per output channel filter weights are Q = ( Q1, Q2, ..., Qq ).
- *     - per output channel bias weights are R.
+ *     - per output channel filter weights are Q = ( Q1, Q2, ..., Qq ) and will be modified as Q' = ( Q1', Q2', ..., Qq' ).
+ *     - per output channel bias weights are R and will be modified as R'.
  *     - activation escaping is ( scale = A, translate = B )
- *     - per channel .beforeActivation is X = ( x1, x2, ..., xq ) = W * Q' + R'.
- *     - per channel .output is ( AX + B )
+ *     - per output channel original is X  = ( x1 , x2 , ..., xq  ) = W * Q  + R
+ *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = W * Q' + R'
  *
- * Find out Q' and R' so that X = A * ( W * Q + R ) + B.
- *   X = A * ( W * Q + R ) + B
- *     = A * W * Q + A * R + B
- *     = W * ( A * Q ) + ( A * R  + B )
- *     = W * Q' + R'
+ * Find out Q' and R' so that X' = ( AX + B )
+ *   X' = ( AX + B )
+ *      = A * ( W * Q + R ) + B
+ *      = A * W * Q + A * R + B
+ *      = W * ( A * Q ) + ( A * R  + B )
+ *      = W * Q' + R'
  *
+ * Got
  *  Q' = A * Q
- *  R' = A * R  + B
+ *  R' = A * R + B
  *
 
 //!!! ...unfinished... (2022/01/05)
