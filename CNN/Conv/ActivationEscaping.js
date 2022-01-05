@@ -132,6 +132,9 @@ class ScaleTranslateArraySet {
  * Suppose
  *   - This pointwise (or depthwise) activation escaping is ( scale = C, translate = D )
  *
+ *
+ * 1.
+ *
  * This pointwise (or depthwise) .output will be:
  *   z = Cy + D
  *     = C * ( ( AU1 + AU2 + ... + AUm ) * x + ( BU1 + BU2 + ... + BUm + V ) ) + D
@@ -156,6 +159,22 @@ class ScaleTranslateArraySet {
  *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + D
  *        - ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale )
  *   = Cx + D
+ *
+ *
+ * 2. What if this pointwise (or depthwise) does not have filter weights ( U1, U2, ... Um )?
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * 3. What if this pointwise (or depthwise) does not have bias weights V?
+ *
+ *
  *
  *
  *
