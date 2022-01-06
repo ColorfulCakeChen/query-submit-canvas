@@ -154,10 +154,44 @@ class ScaleTranslateArraySet {
  *     - per output channel bias weights are T = ( T1, T2, ..., Tu ) and will be modified to T' = ( T1', T2', ..., Tu' ).
  *     - activation function is g()
  *     - activation escaping is ( scale = c, translate = d )
- *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = S  * X'  + T
+ *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = S  * X  + T
  *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = S' * X' + T' = ( c * Y + d )
- *     - g(X') = g( c * Y + D ) is guaranteed still kept linear although activation function g() is non-linear.
+
+//!!! (2022/01/06 Remarked) should consider both .undo and .do
+//  *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = S  * X'  + T
+//  *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = S' * X' + T' = c * Y + d
+
+ *     - g(Y') = g( c * Y + d ) is guaranteed still kept linear although activation function g() is non-linear.
  *
+ * Find out S' and T':
+ *
+ * In one hand:
+ *   Y' = c * Y + d
+ *      = c * ( S * X + T ) + d
+ *      = c * S * X + c * T + d
+ *      = ( c * S ) * X + ( c * T + d )
+ *
+ * On the other hand:
+ *   Y' = S' * X' + T'
+ *      = S' * ( a * X + b ) + T'
+ *
+ *
+ *
+ *
+ *
+ *
+ * Implied
+ *   S' = c * S
+ *   R' = c * T + d
+ *
+ *
+ *
+
+//!!! ...unfinished... (2022/01/06)
+
+
+//!!! ...unfinished... (2022/01/06) Old. should consider both .undo and .do
+
  * Find out S' and T' so that Y' = ( c * Y + d )
  *   Y' = ( c * Y + d )
  *      = c * ( X' * S + T ) + d
@@ -171,7 +205,7 @@ class ScaleTranslateArraySet {
  *  R' = c * T + d
  *
 
-//!!! ...unfinished... (2022/01/5)
+//!!! ...unfinished... (2022/01/05)
 
  * Find out S" and T" so that Y" = S" * X' + T" = S * X + T = S * ( W * Q + R ) + T
  *   Y" = S" * X' + T"
