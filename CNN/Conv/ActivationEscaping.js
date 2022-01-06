@@ -128,16 +128,17 @@ class ScaleTranslateArraySet {
  *     - per output channel bias weights are R = ( R1, R2, ..., Rs ) and will be modified to R' = ( R1', R2', ..., Rs' ).
  *     - activation function is f()
  *     - activation escaping is ( scale = a, translate = b )
- *     - per output channel original is X  = ( x1 , x2 , ..., xq  ) = W * Q  + R
- *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = W * Q' + R' = ( a * X + b )
+ *     - per output channel original is X  = ( x1 , x2 , ..., xq  ) = Q  * W + R
+ *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = Q' * W + R' = ( a * X + b )
  *     - f(X') = f( a * X + b ) is guaranteed still kept linear although activation function f() is non-linear.
  *
- * Find out Q' and R' so that X' = ( a * X + B )
- *   X' = ( a * X + B )
+ * Find out Q' and R' so that X' = ( a * X + b )
+ *   X' = ( a * X + b )
  *      = a * ( W * Q + R ) + b
  *      = a * W * Q + a * R + b
- *      = W * ( a * Q ) + ( a * R + b )
- *   X' = W * Q' + R'
+ *      = ( a * Q ) * W + ( a * R + b )
+ *
+ *   X' = Q' * W + R'
  *
  * Got
  *  Q' = a * Q
@@ -153,17 +154,17 @@ class ScaleTranslateArraySet {
  *     - per output channel bias weights are T = ( T1, T2, ..., Tu ) and will be modified to T' = ( T1', T2', ..., Tu' ).
  *     - activation function is g()
  *     - activation escaping is ( scale = c, translate = d )
- *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = X' * S  + T
- *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = X' * S' + T' = ( c * Y + d )
+ *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = S  * X'  + T
+ *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = S' * X' + T' = ( c * Y + d )
  *     - g(X') = g( c * Y + D ) is guaranteed still kept linear although activation function g() is non-linear.
  *
  * Find out S' and T' so that Y' = ( c * Y + d )
  *   Y' = ( c * Y + d )
  *      = c * ( X' * S + T ) + d
  *      = c * X' * S + c * T + d
- *      = X' * ( c * S ) + ( c * T + d )
+ *      = ( c * S ) * X' + ( c * T + d )
  *
- *   Y' = X' * S' + T'
+ *   Y' = S' * X' + T'
  *
  * Got
  *  S' = c * S
@@ -172,14 +173,14 @@ class ScaleTranslateArraySet {
 
 //!!! ...unfinished... (2022/01/5)
 
- * Find out S" and T" so that Y" = X' * S" + T" = ( W * Q + R ) * S + T
- *   Y" = X' * S" + T"
- *      = ( W * ( a * Q ) + ( a * R + b ) ) * S" + T"
- *      = ( ( W * Q * a ) + ( R * a ) + b ) * S" + T"
- *      = ( ( W * Q + R ) * a ) + b ) * S" + T"
- *      = ( W * Q + R ) * ( a * S" ) + ( b * S" + T" )
+ * Find out S" and T" so that Y" = S" * X' + T" = S * X + T = S * ( W * Q + R ) + T
+ *   Y" = S" * X' + T"
+ *      = S" * ( ( a * Q ) * W + ( a * R + b ) ) + T"
+ *      = S" * ( ( a * Q * W ) + ( a * R ) + b ) + T"
+ *      = S" * ( a * ( W * Q + R ) ) + b ) + T"
+ *      = ( a * S" ) * ( W * Q + R ) + ( b * S" + T" )
  *
- *   Y" = ( W * Q + R ) * S + T
+ *   Y" = S * ( Q * W + R ) + T
  *
  * Impiled
  *   S = a * S"
@@ -190,11 +191,11 @@ class ScaleTranslateArraySet {
  *   T" = T - b * S"
  *
  * Verification:
- *   Y" = X' * S" + T"
- *      = ( W * ( a * Q ) + ( a * R + b ) ) * S" + T"
- *      = ( W * ( a * Q ) + ( a * R + b ) ) * ( S / a ) + ( T - b * S" )
- *      = ( W * Q * S ) + ( R * S ) + ( b * ( S / a ) ) ) + ( T - b * ( S / a ) )
- *      = ( W * Q + R ) * S + T
+ *   Y" = S" * X' + T"
+ *      = S" * ( W * ( a * Q ) + ( a * R + b ) ) + T"
+ *      = ( S / a ) * ( W * ( a * Q ) + ( a * R + b ) ) + ( T - b * S" )
+ *      = ( S * W * Q ) + ( S * R ) + ( b * ( S / a ) ) + T - ( b * ( S / a ) )
+ *      = S * ( W * Q + R ) + T
  *
  *
  *
@@ -212,7 +213,7 @@ class ScaleTranslateArraySet {
  *     - per output channel filter weights are U = ( U1, U2, ..., Uu ) and will be modified to U' = ( U1', U2', ..., Uu' ).
  *     - per output channel bias weights are V = ( V1, V2, ..., Vu ) and will be modified to V' = ( V1', V2', ..., Vu' ).
  *     - activation function is none.
- *     - per output channel is Z = ( z1 , z2 , ..., zu  ) = Y' * U' + V' = ( ( W * Q + R ) * S + T ) * U + V
+ *     - per output channel is Z = ( z1 , z2 , ..., zu  ) = U' * Y' + V' = ( ( W * Q + R ) * S + T ) * U + V
  *
  * Find out U' and V':
  *   Z = Y' * U' + V'
