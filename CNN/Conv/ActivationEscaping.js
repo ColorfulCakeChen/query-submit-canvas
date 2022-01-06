@@ -165,7 +165,7 @@ class ScaleTranslateArraySet {
  *
  * Find out S' and T':
  *
- * In one hand:
+ * On one hand:
  *   Y' = c * Y + d
  *      = c * ( S * X + T ) + d
  *      = c * S * X + c * T + d
@@ -174,16 +174,17 @@ class ScaleTranslateArraySet {
  * On the other hand:
  *   Y' = S' * X' + T'
  *      = S' * ( a * X + b ) + T'
+ *      = ( a * S' ) * X + ( b * S' + T' )
  *
+ * Implied:
+ *   a * S' = c * S
+ *   b * S' + T' = c * T + d
  *
- *
- *
- *
- *
- * Implied
- *   S' = c * S
- *   R' = c * T + d
- *
+ * Got:
+ *   S' = ( c / a ) * S
+ *   T' = c * T + d - b * S'
+ *      = c * T + d - b * ( ( c / a ) * S )
+ *      = c * T + d - ( b * c / a ) * S
  *
  *
 
@@ -202,7 +203,7 @@ class ScaleTranslateArraySet {
  *
  * Got
  *  S' = c * S
- *  R' = c * T + d
+ *  T' = c * T + d
  *
 
 //!!! ...unfinished... (2022/01/05)
