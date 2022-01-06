@@ -122,7 +122,47 @@ class ScaleTranslateArraySet {
    * Return Number.NaN, if it is impossible to do that.
    */
   static calc_scale_by_fromLowerUpper_toLowerUpper( fromLower, fromUpper, toLower, toUpper ) {
-    
+    let srcLower = Math.min( fromLower, fromUpper );
+    let srcUpper = Math.max( fromLower, fromUpper );
+    let dstLower = Math.min( toLower, toUpper );
+    let dstUpper = Math.max( toLower, toUpper );
+
+    let scale;
+
+    // 1. Try lower bound.
+
+    if ( srcLower == 0 ) {
+
+//!!! ...unfinished... (2022/01/06)
+
+    } else { // ( srcLower != 0 )
+
+      if ( dstLower == 0 ) {
+
+      } else { // ( dstLower != 0 )
+
+        scale = dstLower / srcLower;
+      }
+
+    }
+
+    // 1.2 Verification by upper side.
+    let adjustedUpper = srcUpper * scale;
+    if ( adjustedUpper > dstUpper ) {
+
+      // 2. Try upperer bound, since the scale can not fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ].
+
+//!!! ...unfinished... (2022/01/06)
+    }
+
+    // 2.2 Verification by lower side.
+    let adjustedLower = srcLower * scale;
+    if ( adjustedLower < dstLower ) {
+      // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] because all cases are tried and failed.
+      scale = Number.NaN;
+    }
+
+    return scale;
   }
 
 }
