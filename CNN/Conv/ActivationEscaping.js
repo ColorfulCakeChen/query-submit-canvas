@@ -130,7 +130,7 @@ class ScaleTranslateArraySet {
  *     - activation escaping is ( scale = a, translate = b )
  *     - per output channel original is X  = ( x1 , x2 , ..., xq  ) = W * Q  + R
  *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = W * Q' + R' = ( a * X + b )
- *     - f(X') = f( AX + B ) is guaranteed still kept linear although activation function f() is non-linear.
+ *     - f(X') = f( a * X + b ) is guaranteed still kept linear although activation function f() is non-linear.
  *
  * Find out Q' and R' so that X' = ( a * X + B )
  *   X' = ( a * X + B )
@@ -155,13 +155,14 @@ class ScaleTranslateArraySet {
  *     - activation escaping is ( scale = c, translate = d )
  *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = X' * S  + T
  *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = X' * S' + T' = ( c * Y + d )
- *     - g(X') = g( CY + D ) is guaranteed still kept linear although activation function g() is non-linear.
+ *     - g(X') = g( c * Y + D ) is guaranteed still kept linear although activation function g() is non-linear.
  *
  * Find out S' and T' so that Y' = ( c * Y + d )
  *   Y' = ( c * Y + d )
  *      = c * ( X' * S + T ) + d
  *      = c * X' * S + c * T + d
  *      = X' * ( c * S ) + ( c * T + d )
+ *
  *   Y' = X' * S' + T'
  *
  * Got
@@ -180,10 +181,11 @@ class ScaleTranslateArraySet {
  *
  *   Y" = ( W * Q + R ) * S + T
  *
- * Got
+ * Impiled
  *   S = a * S"
  *   T = b * S" + T"
  *
+ * Got
  *   S" = S / a
  *   T" = T - b * S"
  *
