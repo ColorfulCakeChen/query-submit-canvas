@@ -135,7 +135,7 @@ class ScaleTranslateArraySet {
  *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = S' * X' + T' = c * Y + d
  *     - g(Y') = g( c * Y + d ) is guaranteed still kept linear although activation function g() is non-linear.
  *
- * Find out S' and T':
+ * Find out S' and T'.
  *
  * On one hand:
  *   Y' = S' * X' + T'
@@ -174,24 +174,13 @@ class ScaleTranslateArraySet {
 
  *
  *
- * 2. What if this pointwise (or depthwise) does not have filter weights ( U1, U2, ... Um )? (e.g avg/max pooling)
+ * 2. What if this pointwise (or depthwise) does not have filter weights ( S1, S2, ... Ss )? (e.g avg/max pooling)
  *
  *
  *
  *
  *
- *
- *
- *
- *
- *
- * 3. What if this pointwise (or depthwise) does not have bias weights V?
- *
- *
- *
- *
- *
- *
+ * 3. What if this pointwise (or depthwise) does not have bias weights T?
  *
  *
  *
