@@ -170,8 +170,14 @@ class ScaleTranslateArraySet {
  * Problem:
  *   - Every element (not only every channel) needs have itself T' because T' depends on S. This is difficult to be implemented.
  *   - If the activation escaping could have no translate ( scale = c, translate = 0 ), this issue could be reduced.
+ *
  *   - This implies the output range of the activation function should include both negative and positive.
- *   - For example, 
+ *     - So that only scale is necessary to escape the non-linear part of the activation.
+ *
+ *   - For example, sin(), tanh(), erf() are feasible.
+ *     - But relu(), relu6(), sigmoid() are not feasible because their output always non-negative. These functions always need
+ *         bias to escape their non-linear part.
+ *
  *
 
 //!!! ...unfinished... (2022/01/06)
