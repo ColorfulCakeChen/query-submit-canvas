@@ -122,7 +122,7 @@ class ScaleTranslateArraySet {
    * Return Number.NaN, if it is impossible to do that.
    */
   static calc_scale_by_fromLowerUpper_toLowerUpper( fromLower, fromUpper, toLower, toUpper ) {
-    let srcLower = Math.min( fromLower, fromUpper );
+    let srcLower = Math.min( fromLower, fromUpper ); // Confirm ( lower <= upper ).
     let srcUpper = Math.max( fromLower, fromUpper );
     let dstLower = Math.min( toLower, toUpper );
     let dstUpper = Math.max( toLower, toUpper );
@@ -146,20 +146,20 @@ class ScaleTranslateArraySet {
 
     }
 
-    // 1.2 Verification by upper side.
-    let adjustedUpper = srcUpper * scale;
-    if ( adjustedUpper > dstUpper ) {
+    // 1.2 Verification. If scale is zero, it is always failed. Otherwise, check it by upper side.
+    if ( ( scale == 0 ) || ( ( srcUpper * scale ) > dstUpper ) ) {
 
-      // 2. Try upperer bound, since the scale can not fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ].
+      // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by the scale.
 
 //!!! ...unfinished... (2022/01/06)
-    }
 
-    // 2.2 Verification by lower side.
-    let adjustedLower = srcLower * scale;
-    if ( adjustedLower < dstLower ) {
-      // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] because all cases are tried and failed.
-      scale = Number.NaN;
+
+      // 2.2 Verification. If scale is zero, it is always failed. Otherwise, check it by lower side.
+      if ( ( scale == 0 ) || ( ( srcLower * scale ) < dstLower ) ) {
+        // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] because all cases are tried and failed.
+        scale = Number.NaN;
+      }
+
     }
 
     return scale;
