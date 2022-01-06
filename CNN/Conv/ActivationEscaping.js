@@ -110,6 +110,21 @@ class ScaleTranslateArraySet {
     this.undo.set_all_byUndo_ScaleTranslateArray( this.do );
   }
 
+  /**
+   *
+   * @param {number} fromLower  The source bounds [ fromLower, fromUpper ]
+   * @param {number} fromUpper  The source bounds [ fromLower, fromUpper ]
+   * @param {number} toLower    The destination bounds [ toLower, toUpper ]
+   * @param {number} toUpper    The destination bounds [ toLower, toUpper ]
+   *
+   * @return {number}
+   *   Return a scale value which could let source bounds [ fromLower, fromUpper ] completely insides destination bounds [ toLower, toUpper ].
+   * Return Number.NaN, if it is impossible to do that.
+   */
+  static calc_scale_by_fromLowerUpper_toLowerUpper( fromLower, fromUpper, toLower, toUpper ) {
+    
+  }
+
 }
 
 /**
