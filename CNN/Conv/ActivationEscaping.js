@@ -127,6 +127,7 @@ class ScaleTranslateArraySet {
  *
  *   - This pointwise (or depthwise)
  *     - This pointwise input channel count is s. (Or, this depthwise filter size is s.)
+ *     - output channel count is u.
  *     - per output channel filter weights are S = ( S1, S2, ..., Ss ) and will be modified to S' = ( S1', S2', ..., Ss' ).
  *     - per output channel bias weights are T = ( T1, T2, ..., Tu ) and will be modified to T' = ( T1', T2', ..., Tu' ).
  *     - activation function is g()
