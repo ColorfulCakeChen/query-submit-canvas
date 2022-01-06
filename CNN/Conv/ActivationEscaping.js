@@ -132,8 +132,8 @@ class ScaleTranslateArraySet {
  *     - per output channel bias weights are T = ( T1, T2, ..., Tu ) and will be modified to T' = ( T1', T2', ..., Tu' ).
  *     - activation function is g()
  *     - activation escaping is ( scale = c, translate = d )
- *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = S  * X  + T
- *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = S' * X' + T' = c * Y + d
+ *     - per output channel original is Y  = ( y1 , y2 , ..., yu  ) = S  * X  + T
+ *     - per output channel modified is Y' = ( y1', y2', ..., yu' ) = S' * X' + T' = c * Y + d
  *     - g(Y') = g( c * Y + d ) is guaranteed still kept linear although activation function g() is non-linear.
  *
  * Find out S' and T'.
