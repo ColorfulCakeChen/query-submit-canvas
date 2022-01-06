@@ -10,32 +10,27 @@ import * as FloatValue from "../FloatValue.js";
  * For inputDomainLinear,
  *   - RELU6 is linear between[ 0, 6 ].
  *   - SIGMOID is alomost linear between[ -0.125, +0.125 ].
- *   - TANH is almost linear between[ -0.125, +0.125 ].
+ *   - TANH is almost linear between[ -0.005, +0.005 ].
  *   - COS is almost linear between[ -( ( PI / 2 ) + 0.025 ), -( ( PI / 2 ) - 0.025 ) ].
- *   - SIN is almost linear between[ -0.025, +0.025 ].
+ *   - SIN is almost linear between[ -0.005, +0.005 ].
  *   - RELU is linear between[ 0, +Infinity ].
  */
 class ActivationFunction extends Int {
 
   constructor() {
+
     // Note:
     //   - NONE: Beware. It easily results in infinity value because it does not have upper bound.
     //   - RELU: Beware. It easily results in infinity value because it does not have upper bound.
     //   - SOFTPLUS: Avoid. Backend WASM does not support it.
+    //   - ERF: Avoid. Backend WASM does not support it.
     //
-    //   - SIN, TANH, ERF is good if pass-through by only scale (i.e. without translate) is needed. Because the output range of
-    //       them includes both negative and positive near the origin point.
-
-//!!! (2021/12/09 Remarked) Use ActivationFunction.Info
-//     super( 0, 6,
-//       [ "NONE",  "RELU6",  "SIGMOID",  "TANH",  "COS",  "SIN",  "RELU" ], //  "SOFTPLUS" ],
-//       [   null, tf.relu6, tf.sigmoid, tf.tanh, tf.cos, tf.sin, tf.relu ]  // tf.softplus ]
-//     );
-
-//!!! ...unfinished... (2022/01/06) Perhaps, add erf().
+    //   - TANH, SIN, ERF are good if pass-through by only scale (i.e. without translate) is needed. Because the output range of
+    //       them includes both negative and positive near the origin point. (On the other hand, RELU, RELU6 are not good for this
+    //       purpose.)
 
     super( 0, 5,
-      [ "NONE",  "RELU6",  "SIGMOID",  "TANH",  "COS",  "SIN" ], // "RELU" ], //  "SOFTPLUS" ],
+      [ "NONE",  "RELU6",  "TANH",  "SIN",  "COS",  "SIGMOID" ], // "RELU" ], //  "SOFTPLUS" ],
 
       [
         new ActivationFunction.Info( 0, null, null, null ),
@@ -43,17 +38,17 @@ class ActivationFunction extends Int {
         new ActivationFunction.Info( 1, tf.relu6,
           new FloatValue.Bounds( 0, 6 ), new FloatValue.Bounds( 0, 6 ) ),
 
-        new ActivationFunction.Info( 2, tf.sigmoid,
-          new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( 0, 1 ) ),
+        new ActivationFunction.Info( 2, tf.tanh,
+          new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -1, +1 ) ),
 
-        new ActivationFunction.Info( 3, tf.tanh,
-          new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( -1, +1 ) ),
+        new ActivationFunction.Info( 3, tf.sin,
+          new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -1, +1 ) ),
 
         new ActivationFunction.Info( 4, tf.cos,
           new FloatValue.Bounds( -( ( Math.PI / 2 ) + 0.025 ), -( ( Math.PI / 2 ) - 0.025 ) ), new FloatValue.Bounds( -1, +1 ) ),
 
-        new ActivationFunction.Info( 5, tf.sin,
-          new FloatValue.Bounds( -0.025, +0.025 ), new FloatValue.Bounds( -1, +1 ) ),
+        new ActivationFunction.Info( 5, tf.sigmoid,
+          new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( 0, 1 ) ),
 
         // (2021/12/09 Remarked)
         //
@@ -95,7 +90,7 @@ class ActivationFunction extends Int {
  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
  *
  * @member {Function} pfn
- *   The activation function. (e.g. tf.relu6, tf.sigmoid, tf.tanh, tf.cos, tf.sin, tf.relu)
+ *   The activation function. (e.g. tf.relu6, tf.tanh, tf.sin, tf.cos, tf.sigmoid, tf.relu)
  *
  * @member {FloatValue.Bounds} inputDomainLinear
  *   The input value lower and upper bounds of the activation function for keeping the mapping from input to output almost linear. In
