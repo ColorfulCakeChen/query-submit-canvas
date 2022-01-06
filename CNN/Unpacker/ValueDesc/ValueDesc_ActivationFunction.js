@@ -22,12 +22,17 @@ class ActivationFunction extends Int {
     //   - NONE: Beware. It easily results in infinity value because it does not have upper bound.
     //   - RELU: Beware. It easily results in infinity value because it does not have upper bound.
     //   - SOFTPLUS: Avoid. Backend WASM does not support it.
+    //
+    //   - SIN, TANH, ERF is good if pass-through by only scale (i.e. without translate) is needed. Because the output range of
+    //       them includes both negative and positive near the origin point.
 
 //!!! (2021/12/09 Remarked) Use ActivationFunction.Info
 //     super( 0, 6,
 //       [ "NONE",  "RELU6",  "SIGMOID",  "TANH",  "COS",  "SIN",  "RELU" ], //  "SOFTPLUS" ],
 //       [   null, tf.relu6, tf.sigmoid, tf.tanh, tf.cos, tf.sin, tf.relu ]  // tf.softplus ]
 //     );
+
+//!!! ...unfinished... (2022/01/06) Perhaps, add erf().
 
     super( 0, 5,
       [ "NONE",  "RELU6",  "SIGMOID",  "TANH",  "COS",  "SIN" ], // "RELU" ], //  "SOFTPLUS" ],
