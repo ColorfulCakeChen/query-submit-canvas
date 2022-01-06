@@ -137,7 +137,8 @@ class ScaleTranslateArraySet {
     }
 
     // 1.2 Verification. If scale is zero, it is always failed. Otherwise, check it by upper side.
-    if ( ( scale == 0 ) || ( ( srcUpper * scale ) > dstUpper ) ) {
+    let adjustedUpper = srcUpper * scale;
+    if ( ( scale == 0 ) || ( adjustedUpper > dstUpper ) || ( adjustedUpper > dstLower ) ) {
 
       // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by scale according to lower bound.
       if ( ( srcUpper == 0 ) || ( dstUpper == 0 ) ) {
@@ -147,7 +148,8 @@ class ScaleTranslateArraySet {
       }
 
       // 2.2 Verification. If scale is zero, it is always failed. Otherwise, check it by lower side.
-      if ( ( scale == 0 ) || ( ( srcLower * scale ) < dstLower ) ) {
+//!!! ( srcLower * scale )
+      if ( ( scale == 0 ) || (  < dstLower ) ) {
         // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] because all cases are tried and failed.
         scale = Number.NaN;
       }
