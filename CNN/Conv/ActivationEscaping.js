@@ -174,12 +174,12 @@ class ScaleTranslateArraySet {
  *   - However, if the activation escaping could have only scale and withou translate (i.e. translate = 0 ), this issue could be
  *       reduced.
  *
- *   - This implies the output range of the activation function should include both negative and positive.
+ *   - This implies the output range of the activation function should include both negative and positive near the origin point.
  *     - So that only scale is enough to escape their non-linear part of these activation function.
  *
  *   - For example, sin(), tanh(), erf() are feasible.
- *     - But relu(), relu6(), sigmoid() are not feasible because their output always non-negative. These functions always need
- *         bias to escape their non-linear part.
+ *     - But cos(), relu(), relu6(), sigmoid() are not feasible because their output always non-negative near the origin point.
+ *         These functions always need bias (i.e. non-zero translate) to escape their non-linear part.
  *
  *
 
