@@ -213,16 +213,19 @@ class ScaleTranslateArraySet {
  *     - per output channel filter weights are U = ( U1, U2, ..., Uu ) and will be modified to U' = ( U1', U2', ..., Uu' ).
  *     - per output channel bias weights are V = ( V1, V2, ..., Vu ) and will be modified to V' = ( V1', V2', ..., Vu' ).
  *     - activation function is none.
- *     - per output channel is Z = ( z1 , z2 , ..., zu  ) = U' * Y' + V' = ( ( W * Q + R ) * S + T ) * U + V
+ *     - per output channel is Z = ( z1 , z2 , ..., zu  ) = U' * Y' + V' = U * ( S * ( Q * W + R ) + T ) + V
  *
  * Find out U' and V':
- *   Z = Y' * U' + V'
- *     = ( X' * ( c * S ) + ( c * T + d ) ) * U' + V'
- *     = ( ( W * ( a * Q ) + ( a * R + b ) ) * ( c * S ) + ( c * T + d ) ) * U' + V'
+ *   Z = U' * Y' + V'
+ *     = U' * ( ( c * S ) * X' + ( c * T + d ) ) + V'
+ *     = U' * ( ( c * S ) * ( ( a * Q ) * W + ( a * R + b ) ) + ( c * T + d ) ) + V'
  *
- *     = ( ( W * a * Q + a * R + b ) * ( c * S ) + ( c * T + d ) ) * U' + V'
- *     = ( ( W * a * Q * c * S + a * R * c * S + B * c * S ) + ( c * T + d ) ) * U' + V'
- *     = ( W * a * Q * c * S + a * R * c * S + b * c * S + c * T + d ) * U' + V'
+ *     = U' * ( ( c * S ) * ( a * Q * W + a * R + b ) + ( c * T + d ) ) + V'
+ *     = U' * ( ( ( a * Q * W * c * S ) + ( a * R * c * S ) + ( b * c * S ) ) + ( c * T + d ) ) + V'
+ *     = U' * ( ( a * Q * W * c * S ) + ( a * R * c * S ) + ( b * c * S ) + ( c * T + d ) ) + V'
+ *     = U' * ( ( a * Q * W * c * S ) + ( a * R * c * S ) + ( b * c * S ) + ( c * T + d ) ) + V'
+
+!!! ... unfinished... (2022/01/06) too complicated to be implemented. deprecated.
  *     = ( W * a * Q * c * S * U' + a * R * c * S * U' + b * c * S * U' + c * T * U' + d * U' ) + V'
  *
  *     = ( W * Q * S * ( U' * a * c ) ) + R * S * ( U' * a * c ) + T * ( U' * c ) + ( b * c * S * U' + d * U' + V' )
