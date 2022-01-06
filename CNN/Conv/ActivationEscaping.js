@@ -155,7 +155,7 @@ class ScaleTranslateArraySet {
  *     - activation function is g()
  *     - activation escaping is ( scale = c, translate = d )
  *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = S  * X  + T
- *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = S' * X' + T' = ( c * Y + d )
+ *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = S' * X' + T' = c * Y + d
 
 //!!! (2022/01/06 Remarked) should consider both .undo and .do
 //  *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = S  * X'  + T
@@ -166,15 +166,15 @@ class ScaleTranslateArraySet {
  * Find out S' and T':
  *
  * On one hand:
+ *   Y' = S' * X' + T'
+ *      = S' * ( a * X + b ) + T'
+ *      = ( a * S' ) * X + ( b * S' + T' )
+ *
+ * On the other hand:
  *   Y' = c * Y + d
  *      = c * ( S * X + T ) + d
  *      = c * S * X + c * T + d
  *      = ( c * S ) * X + ( c * T + d )
- *
- * On the other hand:
- *   Y' = S' * X' + T'
- *      = S' * ( a * X + b ) + T'
- *      = ( a * S' ) * X + ( b * S' + T' )
  *
  * Implied:
  *   a * S' = c * S
@@ -184,7 +184,17 @@ class ScaleTranslateArraySet {
  *   S' = ( c / a ) * S
  *   T' = c * T + d - b * S'
  *      = c * T + d - b * ( ( c / a ) * S )
- *      = c * T + d - ( b * c / a ) * S
+ *      = ( c * T ) - ( b * ( c / a ) * S ) + d
+ *
+ * Verification:
+ *   Y' = S' * X' + T'
+ *      = ( ( c / a ) * S ) * ( a * X + b ) + ( ( c * T ) - ( b * ( c / a ) * S ) + d )
+ *      = ( c * S * X ) + ( b * ( c / a ) * S ) + ( c * T ) - ( b * ( c / a ) * S ) + d
+ *      = ( c * S * X ) + ( c * T ) + d
+ *      = c * ( S * X + T ) + d
+ *      = c * Y + d
+ *
+ *
  *
  *
 
