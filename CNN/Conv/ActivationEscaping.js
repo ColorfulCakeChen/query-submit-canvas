@@ -113,54 +113,26 @@ class ScaleTranslateArraySet {
 }
 
 /**
- * Suppose
- *   - The previous PointDepthPoint (or convolution-bias-activation)
- *     - output channel count is q.
- *     - output is W = ( w1, w2, ..., wq ).
- *
  *
  * 1.
  *
  * Suppose
- *   - This pointwise1
- *     - input channel count is q.
- *     - per output channel filter weights are Q = ( Q1, Q2, ..., Qq ) and will be modified to Q' = ( Q1', Q2', ..., Qq' ).
- *     - per output channel bias weights are R = ( R1, R2, ..., Rs ) and will be modified to R' = ( R1', R2', ..., Rs' ).
+ *   - The previous convolution-bias-activation (i.e. pointwise or depthwise)
+ *     - output channel count is q.
  *     - activation function is f()
  *     - activation escaping is ( scale = a, translate = b )
- *     - per output channel original is X  = ( x1 , x2 , ..., xq  ) = Q  * W + R
- *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = Q' * W + R' = ( a * X + b )
+ *     - per output channel original is X  = ( x1 , x2 , ..., xq  )
+ *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = a * X + b
  *     - f(X') = f( a * X + b ) is guaranteed still kept linear although activation function f() is non-linear.
  *
- * Find out Q' and R' so that X' = ( a * X + b )
- *   X' = ( a * X + b )
- *      = a * ( W * Q + R ) + b
- *      = a * W * Q + a * R + b
- *      = ( a * Q ) * W + ( a * R + b )
- *
- *   X' = Q' * W + R'
- *
- * Got
- *  Q' = a * Q
- *  R' = a * R + b
- *
- *
- * 2.
- *
- * Suppose
- *   - This depthwise
- *     - filter size is s.
+ *   - This pointwise (or depthwise)
+ *     - This pointwise input channel count is s. (Or, this depthwise filter size is s.)
  *     - per output channel filter weights are S = ( S1, S2, ..., Ss ) and will be modified to S' = ( S1', S2', ..., Ss' ).
  *     - per output channel bias weights are T = ( T1, T2, ..., Tu ) and will be modified to T' = ( T1', T2', ..., Tu' ).
  *     - activation function is g()
  *     - activation escaping is ( scale = c, translate = d )
  *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = S  * X  + T
  *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = S' * X' + T' = c * Y + d
-
-//!!! (2022/01/06 Remarked) should consider both .undo and .do
-//  *     - per output channel original is Y  = ( y1 , y2 , ..., ys  ) = S  * X'  + T
-//  *     - per output channel modified is Y' = ( y1', y2', ..., ys' ) = S' * X' + T' = c * Y + d
-
  *     - g(Y') = g( c * Y + d ) is guaranteed still kept linear although activation function g() is non-linear.
  *
  * Find out S' and T':
@@ -200,229 +172,6 @@ class ScaleTranslateArraySet {
 
 //!!! ...unfinished... (2022/01/06)
 
-
-//!!! ...unfinished... (2022/01/06) Old. should consider both .undo and .do
-
- * Find out S' and T' so that Y' = ( c * Y + d )
- *   Y' = ( c * Y + d )
- *      = c * ( X' * S + T ) + d
- *      = c * X' * S + c * T + d
- *      = ( c * S ) * X' + ( c * T + d )
- *
- *   Y' = S' * X' + T'
- *
- * Got
- *  S' = c * S
- *  T' = c * T + d
- *
-
-//!!! ...unfinished... (2022/01/05)
-
- * Find out S" and T" so that Y" = S" * X' + T" = S * X + T = S * ( W * Q + R ) + T
- *   Y" = S" * X' + T"
- *      = S" * ( ( a * Q ) * W + ( a * R + b ) ) + T"
- *      = S" * ( ( a * Q * W ) + ( a * R ) + b ) + T"
- *      = S" * ( a * ( W * Q + R ) ) + b ) + T"
- *      = ( a * S" ) * ( W * Q + R ) + ( b * S" + T" )
- *
- *   Y" = S * ( Q * W + R ) + T
- *
- * Impiled
- *   S = a * S"
- *   T = b * S" + T"
- *
- * Got
- *   S" = S / a
- *   T" = T - b * S"
- *
- * Verification:
- *   Y" = S" * X' + T"
- *      = S" * ( W * ( a * Q ) + ( a * R + b ) ) + T"
- *      = ( S / a ) * ( W * ( a * Q ) + ( a * R + b ) ) + ( T - b * S" )
- *      = ( S * W * Q ) + ( S * R ) + ( b * ( S / a ) ) + T - ( b * ( S / a ) )
- *      = S * ( W * Q + R ) + T
- *
- *
- *
- *
- *
- *
- *
- *
- *
- * 3.
- *
- * Suppose
- *   - This pointwise2 (always has bias, always has no activation)
- *     - input channel count is u.
- *     - per output channel filter weights are U = ( U1, U2, ..., Uu ) and will be modified to U' = ( U1', U2', ..., Uu' ).
- *     - per output channel bias weights are V = ( V1, V2, ..., Vu ) and will be modified to V' = ( V1', V2', ..., Vu' ).
- *     - activation function is none.
- *     - per output channel is Z = ( z1 , z2 , ..., zu  ) = U' * Y' + V' = U * ( S * ( Q * W + R ) + T ) + V
- *
- * Find out U' and V':
- *   Z = U' * Y' + V'
- *     = U' * ( ( c * S ) * X' + ( c * T + d ) ) + V'
- *     = U' * ( ( c * S ) * ( ( a * Q ) * W + ( a * R + b ) ) + ( c * T + d ) ) + V'
- *
- *     = U' * ( ( c * S ) * ( a * Q * W + a * R + b ) + ( c * T + d ) ) + V'
- *     = U' * ( ( ( a * Q * W * c * S ) + ( a * R * c * S ) + ( b * c * S ) ) + ( c * T + d ) ) + V'
- *     = U' * ( ( a * Q * W * c * S ) + ( a * R * c * S ) + ( b * c * S ) + ( c * T + d ) ) + V'
- *     = U' * ( ( a * Q * W * c * S ) + ( a * R * c * S ) + ( b * c * S ) + ( c * T + d ) ) + V'
-
-!!! ... unfinished... (2022/01/06) too complicated to be implemented. deprecated.
- *     = ( W * a * Q * c * S * U' + a * R * c * S * U' + b * c * S * U' + c * T * U' + d * U' ) + V'
- *
- *     = ( W * Q * S * ( U' * a * c ) ) + R * S * ( U' * a * c ) + T * ( U' * c ) + ( b * c * S * U' + d * U' + V' )
- *     = ( W * Q * S * ( U' * a * c ) ) + R * S * ( U' * a * c ) + ( T * ( U' * a * c ) - T * ( U' * a * c ) )
- *         + T * ( U' * c ) + ( b * c * S * U' + d * U' + V' )
- *     = ( W * Q * S * ( U' * a * c ) ) + R * S * ( U' * a * c ) + T * ( U' * a * c )
- *         - T * ( U' * a * c ) + T * ( U' * c ) + ( b * c * S * U' + d * U' + V' )
- *
- *     = ( ( W * Q * S ) + R * S + T ) * ( U' * a * c ) + ( ( - T * U' * a * c ) + ( T * U' * c ) + ( b * c * S * U' ) + ( d * U' ) + V' ) )
- *     = ( ( W * Q + R ) * S + T ) * ( U' * a * c ) + ( ( T * U' * c ) - ( T * a * U' * c ) + ( b * S * U' * c ) + ( d * U' ) + V' )
- *
- *   Z = ( ( W * Q + R ) * S + T ) * U + V
- *     = ( W * Q * S + R * S + T ) * U + V
- *     = W * Q * S * U + R * S * U + T * U + V
- *
- * Got
- *   U = U' * a * c
- *   V = ( T * U' * c ) - ( T * a * U' * c ) + ( b * S * U' * c ) + ( d * U' ) + V'
- *     = ( T - ( T * a ) + ( b * S ) ) * ( U' * c ) + ( d * U' ) + V'
- *     = ( ( T - ( T * a ) + ( b * S ) ) * c ) + d ) * U' ) + V'
- *
- * Got
- *   U' = U / ( a * c )
- *   V' = V - ( ( T - ( T * a ) + ( b * S ) ) * c ) + d ) * U' )
- *      = V - ( ( T - ( T * a ) + ( b * S ) ) * c ) + d ) * ( U / ( a * c ) ) )
- *      = V - ( ( T * c ) - ( T * A * c ) + ( b * S * c ) + d ) * ( U / ( a * c ) ) )
- *      = V - ( ( T * U / a ) - ( T * U ) + ( b * S * U / a ) + ( d * U / ( a * c ) ) )
- *      = V - ( T * U / a ) + ( T * U ) - ( b * S * U / a ) - ( d * U / ( a * c ) )
- *
- * Verification:
- *   Z = Y' * U' + V'
- *     = ( X' * ( c * S ) + ( c * T + d ) ) * U' + V'
- *     = ( ( W * ( a * Q ) + ( a * R + b ) ) * ( c * S ) + ( c * T + d ) ) * U' + V'
- *     = ( ( W * ( a * Q ) + ( a * R + b ) ) * ( c * S ) + ( c * T + d ) ) * ( U / ( a * c ) ) + V'
- *     = ( ( W * a * Q * c * S ) + ( a * R * c * S ) + ( b * c * S ) ) + ( c * T ) + d ) * ( U / ( a * c ) ) + V'
- *     = ( W * Q * S * U ) + ( R * S * U ) + ( b * S * U / a ) + ( T * U / a ) + ( d * U / ( a * c ) ) + V'
- *     = ( W * Q * S * U ) + ( R * S * U ) + ( b * S * U / a ) + ( T * U / a ) + ( d * U / ( a * c ) )
- *         + V - ( T * U / a ) + ( T * U ) - ( b * S * U / a ) - ( d * U / ( a * c ) )
- *
- *     = ( W * Q * S * U ) + ( R * S * U ) + ( b * S * U / a ) + ( T * U / a ) + ( d * U / ( a * c ) )
- *                         + V + ( T * U ) - ( b * S * U / a ) - ( T * U / a ) - ( d * U / ( a * c ) )
- *
- *     = ( W * Q * S * U ) + ( R * S * U ) + V + ( T * U )
- *     = ( W * Q + R ) * ( S * U ) + V + ( T * U )
- *     = ( W * Q + R ) * ( S * U ) + ( T * U ) + V
- *     = ( ( W * Q + R ) * S + T ) * U ) + V
- *
- *
- *
-
-
-
-
-
-
-
-//!!! ...unfinished... (2022/01/05) Old
-
- * 1.
- *
- * Suppose
- *   - This pointwise1
- *     - input channel count is q.
- *     - per output channel filter weights are Q = ( Q1, Q2, ..., Qq ).
- *     - per output channel bias weights are R.
- *     - activation escaping is ( scale = A, translate = B )
- *     - per channel .beforeActivation is X = ( x1, x2, ..., xq ) = W * Q + R.
- *     - per channel .output is ( AX + B )
- *
- *   - This depthwise
- *     - filter size is s.
- *     - per output channel filter weights are S = ( S1, S2, ..., Ss ).
- *     - per output channel bias weights are T.
- *     - activation escaping is ( scale = C, translate = D )
- *     - per channel .beforeActivation is Y = ( y1, y2, ..., ys ) = ( AX + B ) * S + T.
- *     - per channel .output is ( CY + D )
- *
- *   - This pointwise2 (always has bias, always has no activation)
- *     - input channel count is u.
- *     - per input channel extra scale-translate is ( scale = E, translate = F )
- *     - per output channel filter weights are U = ( U1, U2, ..., Uu ).
- *     - per output channel bias weights are F + V.
- *     - per channel .output is Z = ( z1, z2, ..., zu ) = ( CY + D ) * ( E * U ) + ( F + V ).
- *
- * Find out the extra scale-translate ( E, F ) so that Z = ( ( W * Q + R ) * S + T ) * U + V
- *   Z = ( CY + D ) * ( E * U ) + ( F + V )
- *     = ( C * ( ( AX + B ) * S + T ) + D ) * ( E * U ) + ( F + V )
- *     = ( C * ( ( A * ( W * Q + R ) + B ) * S + T ) + D ) * ( E * U ) + ( F + V )
- *     = 
- *
- *
- *
- *
-
-//!!!
- *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
- *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
- *   - This pointwise input channel count is m. (Or, this depthwise filter size is m.)
- *   - This pointwise (or depthwise) filter weights are U = ( U1, U2, ... Um ).
- *   - This pointwise (or depthwise) bias weights are V.
- *
- * This pointwise (or depthwise) .beforeActivation will be:
- *   Y = ( AX + B ) * U + V
- *     = ( ( Ax1 + B ) * U1 ) + ( ( Ax2 + B ) * U2 ) + ... + ( ( Axm + B ) * Um ) + V
- *     = ( AU1x1 + BU1 ) + ( AU2x2 + BU2 ) + ... + ( AUmxm + BUm ) + V
- *     = ( AU1x1 + AU2x2 + ... + AUmxm ) + ( BU1 + BU2 + ... + BUm ) + V
- *     = A * ( U1x1 + U2x2 + ... + Umxm ) + B * ( U1 + U2 + ... + Um ) + V
- *
- * Suppose
- *   - This pointwise (or depthwise) activation escaping is ( scale = C, translate = D )
- *
- *
- * This pointwise (or depthwise) .output will be:
- *   Z = CY + D
- *     = C * ( A * ( U1x1 + U2x2 + ... + Umxm ) + B * ( U1 + U2 + ... + Um ) + V ) + D
- *     = AC * ( U1x1 + U2x2 + ... + Umxm ) + C * ( B * ( U1 + U2 + ... + Um ) + V ) + D
- *
- * How to get back ( UX + V ) from Z?
- *   ( UX + V ) = ( U1x1 + U2x2 + ... + Umxm ) + V
- *
- * Let:
- *   - undo.scale = 1 / AC
- *   - undo.translate = V - ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale
- *
- * Apply ( undo.scale, undo.translate ) to Z:
- *   ( Z * undo.scale ) + undo.translate
- *   = ( AC * ( U1x1 + U2x2 + ... + Umxm ) + C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale + undo.translate
- *   = AC * ( U1x1 + U2x2 + ... + Umxm ) * undo.scale + ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale + undo.translate
- *   = AC * ( U1x1 + U2x2 + ... + Umxm ) / AC + ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale + undo.translate
- *   = ( U1x1 + U2x2 + ... + Umxm ) + ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale + undo.translate
- *   = ( U1x1 + U2x2 + ... + Umxm ) + ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale + V
- *                                  - ( C * ( B * ( U1 + U2 + ... + Um ) + V ) + D ) * undo.scale
- *   = ( U1x1 + U2x2 + ... + Umxm ) + V
- *   = ( UX + V )
- *
-
-//!!! (2022/01/05 Remarked) Old Wrong!
-//  *   - undo.scale = 1 / ( AU1 + AU2 + ... + AUm )
-//  *   - undo.translate = D - ( C * ( BU1 + BU2 + ... + BUm + V ) / ( AU1 + AU2 + ... + AUm ) ) - ( D / ( AU1 + AU2 + ... + AUm ) )
-//  *                    = D - ( C * ( BU1 + BU2 + ... + BUm + V ) * undo.scale ) - ( D * undo.scale )
-//  *                    = D - ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale
-//  *
-//  * Apply ( undo.scale, undo.translate ) to Z:
-//  *   ( Z * undo.scale ) + undo.translate
-//  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x + ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) ) * undo.scale + undo.translate
-//  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x * undo.scale ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
-//  *   = ( C * ( AU1 + AU2 + ... + AUm ) * x / ( AU1 + AU2 + ... + AUm ) ) + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
-//  *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + undo.translate
-//  *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + ( D - ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale )
-//  *   = Cx + ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale ) + D
-//  *        - ( ( C * ( BU1 + BU2 + ... + BUm + V ) + D ) * undo.scale )
-//  *   = Cx + D
  *
  *
  * 2. What if this pointwise (or depthwise) does not have filter weights ( U1, U2, ... Um )? (e.g avg/max pooling)
