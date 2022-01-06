@@ -9,10 +9,10 @@ import * as FloatValue from "../FloatValue.js";
  *
  * For inputDomainLinear,
  *   - RELU6 is linear between[ 0, 6 ].
- *   - SIGMOID is alomost linear between[ -0.125, +0.125 ].
  *   - TANH is almost linear between[ -0.005, +0.005 ].
- *   - COS is almost linear between[ -( ( PI / 2 ) + 0.025 ), -( ( PI / 2 ) - 0.025 ) ].
  *   - SIN is almost linear between[ -0.005, +0.005 ].
+ *   - COS is almost linear between[ -( ( PI / 2 ) + 0.005 ), -( ( PI / 2 ) - 0.005 ) ].
+ *   - SIGMOID is alomost linear between[ -0.125, +0.125 ].
  *   - RELU is linear between[ 0, +Infinity ].
  */
 class ActivationFunction extends Int {
@@ -45,7 +45,7 @@ class ActivationFunction extends Int {
           new FloatValue.Bounds( -0.005, +0.005 ), new FloatValue.Bounds( -1, +1 ) ),
 
         new ActivationFunction.Info( 4, tf.cos,
-          new FloatValue.Bounds( -( ( Math.PI / 2 ) + 0.025 ), -( ( Math.PI / 2 ) - 0.025 ) ), new FloatValue.Bounds( -1, +1 ) ),
+          new FloatValue.Bounds( -( ( Math.PI / 2 ) + 0.005 ), -( ( Math.PI / 2 ) - 0.005 ) ), new FloatValue.Bounds( -1, +1 ) ),
 
         new ActivationFunction.Info( 5, tf.sigmoid,
           new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( 0, 1 ) ),
