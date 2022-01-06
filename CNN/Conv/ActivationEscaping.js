@@ -182,8 +182,8 @@ class ScaleTranslateArraySet {
  *
  * Got:
  *   S' = ( c / a ) * S
- *   T' = c * T + d - b * S'
- *      = c * T + d - b * ( ( c / a ) * S )
+ *   T' = ( c * T ) - ( b * S' ) + d
+ *      = ( c * T ) - b * ( ( c / a ) * S ) + d
  *      = ( c * T ) - ( b * ( c / a ) * S ) + d
  *
  * Verification:
