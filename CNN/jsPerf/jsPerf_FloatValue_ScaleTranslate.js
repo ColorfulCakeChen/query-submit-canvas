@@ -30,6 +30,7 @@ class Base {
 
 }
 
+
 /**
  * Test ScaleTranslate.
  */
@@ -38,7 +39,7 @@ class Case extends Base {
   constructor() {
     super();
 
-    { // Test setBy_undoScaleTranslate().
+    { // Test ScaleTranslate.setBy_undoScaleTranslate().
       let scale = RandTools.getRandomIntInclusive( -10, +10 );
       if ( 0 == scale ) {
         scale = 0.05;  // Force to non-zero. (Note: undoScaleTranslate does not work for zero scale.)
@@ -61,9 +62,56 @@ class Case extends Base {
 
       this.assert_PropertyProperty_Value( "undoTest", "undoChangedValue", originalValue );
     }
+
+    { // Test ScaleArray.set_one_byUndo_N().
+      let arrayLength = RandTools.getRandomIntInclusive( 1, 5 );
+
+      let aScaleArray = new FloatValue.ScaleArray( arrayLength ); // Set up random scales.
+      {
+        for ( let i = 0; i < arrayLength; ++i ) {
+          let scale = RandTools.getRandomIntInclusive( -10, +10 );
+          if ( 0 == scale ) {
+            scale = 0.05;  // Force to non-zero. (Note: undoScaleTranslate does not work for zero scale.)
+          }
+
+          aScaleArray.set_one_byN( i, scale );
+        }
+      }
+
+      let undoScaleArray = new FloatValue.ScaleArray( arrayLength );
+
+      { // Test .set_all_byUndo_ScaleArray() and .set_one_byUndo_N()
+
+        // Test .set_all_byUndo_ScaleArray()
+        undoScaleArray.set_all_byUndo_ScaleArray( aScaleArray );
+
+        // Test .set_one_byUndo_N()
+        let indexRand = RandTools.getRandomIntInclusive( 0, ( arrayLength - 1 ) );
+        undoScaleArray.set_one_byUndo_N( aScaleArray[ indexRand ], aScaleArray[ indexRand ] );
+
+        // Verify
+        this.undoTest = {
+          undoChangedValue: undefined
+        };
+
+        for ( let i = 0; i < arrayLength; ++i ) {
+
+          if ( Number.isNaN( undoScaleArray.scales[ i ] ) {
+            debugger;
+          }
+
+          let originalValue = RandTools.getRandomIntInclusive( -10, +10 );
+          let changedValue = ( originalValue * aScaleArray.scales[ i ] );
+          this.undoTest.undoChangedValue = ( changedValue * undoScaleArray.scale );
+
+          this.assert_PropertyProperty_Value( "undoTest", "undoChangedValue", originalValue );
+        }
+    }
+
   }
 
 }
+
 
 /**
  * Test ScaleTranslateArray.
@@ -76,6 +124,7 @@ class Cases extends Base {
   }
 
 }
+
 
 function testCorrectness() {
   let casesArray = [
