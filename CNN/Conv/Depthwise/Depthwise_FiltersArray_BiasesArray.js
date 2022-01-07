@@ -389,8 +389,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2022/01/07)
                     this.boundsArraySet.afterBias;
+
+//!!! ...unfinished... (2022/01/07) Only if pass-through, the activationEscaping_ScaleArraySet is necessary.
                     this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
                       outChannel, fromLower, fromUpper, toLower, toUpper );
+
                     this.boundsArraySet.afterActivationEscaping;
                     this.boundsArraySet.afterActivation;
 
