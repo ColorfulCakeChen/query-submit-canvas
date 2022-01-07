@@ -50,7 +50,7 @@ class BoundsArraySet {
     this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
 
     this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet( outputChannelCount );
-    
+
     //this.set_all_byBounds.set_all_byBounds( Weights.Base.ValueBounds );
   }
 
