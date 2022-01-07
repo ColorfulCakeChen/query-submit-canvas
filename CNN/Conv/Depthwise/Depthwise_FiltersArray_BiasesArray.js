@@ -300,8 +300,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_all_byNs(
       previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo );
 
-
-
     // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
     const filtersValueBounds = Weights.Base.ValueBounds;
     const biasesValueBounds = Weights.Base.ValueBounds;
@@ -370,6 +368,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                   //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
+
+//!!! ...unfinished... (2022/01/07)
+                  this.boundsArraySet.afterFilter;
+                  this.boundsArraySet.afterBias;
+                  this.boundsArraySet.afterActivationEscaping;
+                  this.boundsArraySet.afterActivation;
+                  this.boundsArraySet.activationEscaping_ScaleArraySet;
+
+
 
 //!!! (2022/01/04 Remarked) use previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet directly.
 //                let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
