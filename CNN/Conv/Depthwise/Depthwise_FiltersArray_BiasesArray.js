@@ -296,9 +296,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
     this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
 
-//!!! ...unfinished... (2022/01/07)
-    this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_all_byNs(
-      previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo );
+//!!! (2022/01/07 Remarked) moved to loop one by one.
+// //!!! ...unfinished... (2022/01/07)
+//     this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_all_byNs(
+//       previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo );
 
     // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
     const filtersValueBounds = Weights.Base.ValueBounds;
@@ -370,22 +371,28 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
 
 //!!! ...unfinished... (2022/01/07)
-                  this.boundsArraySet.afterFilter;
-                  this.boundsArraySet.afterBias;
-                  this.boundsArraySet.afterActivationEscaping;
-                  this.boundsArraySet.afterActivation;
-                  this.boundsArraySet.activationEscaping_ScaleArraySet;
+                  let undoScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
-
-
-//!!! (2022/01/04 Remarked) use previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet directly.
-//                let extraScale = extraScaleTranslateArray_byChannelIndex.scales[ inChannel ];
-                  let extraScale = undoScaleTranslateArray.scales[ inChannel ];
+                  this.boundsArraySet.afterUndoPreviousActivationEscaping.set_one_byBoundsArray( inChannel, this.boundsArraySet.input, inChannel );
+                  this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_one_byN( inChannel, undoScale );
 
                   for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
+
+//!!! ...unfinished... (2022/01/07)
+                    this.boundsArraySet.afterFilter.set_one_byBoundsArray(
+                      outChannel, this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
+
+                    this.boundsArraySet.afterFilter.multiply_one_byBounds( outChannel, filtersValueBounds );
+
+//!!! ...unfinished... (2022/01/07)
+                    this.boundsArraySet.afterBias;
+                    this.boundsArraySet.afterActivationEscaping;
+                    this.boundsArraySet.afterActivation;
+                    this.boundsArraySet.activationEscaping_ScaleArraySet;
+
 
 //!!! ...unfinished... (2022/01/04) value-bounds?
                     pendingUndo.scales[ outChannel ] = 1; // Since it could be applied, no more pending.
