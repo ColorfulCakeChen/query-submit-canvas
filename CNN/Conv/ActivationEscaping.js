@@ -1,8 +1,182 @@
-export { ScaleTranslateArraySet };
+export { ScaleArraySet };
+
+//!!! (2022/01/07 Remarked) deprecated.
+//export { ScaleTranslateArraySet };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ConvBiasActivation from "./ConvBiasActivation.js";
 
+
+//!!! ...unfinished... (2022/01/07)
+
+/**
+ *
+ * 1.
+ *
+ * Suppose
+ *   - The previous convolution-bias-activation (i.e. pointwise or depthwise)
+ *     - output channel count is q.
+ *     - activation function is f()
+ *     - activation escaping is ( scale = a, translate = b )
+ *     - per output channel original is X  = ( x1 , x2 , ..., xq  )
+ *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = a * X + b
+ *     - f(X') = f( a * X + b ) is guaranteed still kept linear although activation function f() is non-linear.
+ *
+ *   - This pointwise (or depthwise)
+ *     - This pointwise input channel count is s. (Or, this depthwise filter size is s.)
+ *     - output channel count is u.
+ *     - per output channel filter weights are S = ( S1, S2, ..., Ss ) and will be modified to S' = ( S1', S2', ..., Ss' ).
+ *     - per output channel bias weights are T = ( T1, T2, ..., Tu ) and will be modified to T' = ( T1', T2', ..., Tu' ).
+ *     - activation function is g()
+ *     - activation escaping is ( scale = c, translate = d )
+ *     - per output channel original is Y  = ( y1 , y2 , ..., yu  ) = S  * X  + T
+ *     - per output channel modified is Y' = ( y1', y2', ..., yu' ) = S' * X' + T' = c * Y + d
+ *     - g(Y') = g( c * Y + d ) is guaranteed still kept linear although activation function g() is non-linear.
+ *
+ * Find out S' and T'.
+ *
+ * On one hand:
+ *   Y' = S' * X' + T'
+ *      = S' * ( a * X + b ) + T'
+ *      = ( a * S' ) * X + ( b * S' + T' )
+ *
+ * On the other hand:
+ *   Y' = c * Y + d
+ *      = c * ( S * X + T ) + d
+ *      = c * S * X + c * T + d
+ *      = ( c * S ) * X + ( c * T + d )
+ *
+ * Implied:
+ *   a * S' = c * S
+ *   b * S' + T' = c * T + d
+ *
+ * Got:
+ *   S' = ( c / a ) * S
+ *   T' = ( c * T ) - ( b * S' ) + d
+ *      = ( c * T ) - b * ( ( c / a ) * S ) + d
+ *      = ( c * T ) - ( b * ( c / a ) * S ) + d
+ *
+ * Verification:
+ *   Y' = S' * X' + T'
+ *      = ( ( c / a ) * S ) * ( a * X + b ) + ( ( c * T ) - ( b * ( c / a ) * S ) + d )
+ *      = ( c * S * X ) + ( b * ( c / a ) * S ) + ( c * T ) - ( b * ( c / a ) * S ) + d
+ *      = ( c * S * X ) + ( c * T ) + d
+ *      = c * ( S * X + T ) + d
+ *      = c * Y + d
+ *
+ * Problem:
+ *   - Every element (not only every channel) needs have itself T' because T' depends on S.
+ *     - This is difficult to be implemented.
+ *
+ *   - However, if the activation escaping could have only scale and withou translate (i.e. translate = 0 ), this issue could be
+ *       reduced.
+ *
+ *   - This implies the output range of the activation function should include both negative and positive near the origin point.
+ *     - So that only scale is enough to escape their non-linear part of these activation function.
+ *
+ *   - For example, sin(), tanh(), erf() are feasible.
+ *     - But cos(), relu(), relu6(), sigmoid() are not feasible because their output always non-negative near the origin point.
+ *         These functions always need bias (i.e. non-zero translate) to escape their non-linear part.
+ *
+ *
+
+//!!! ...unfinished... (2022/01/06)
+
+ *
+ *
+ * 2. What if this pointwise (or depthwise) does not have filter weights ( S1, S2, ... Ss )? (e.g avg/max pooling)
+ *
+ *
+ *
+ *
+ *
+ * 3. What if this pointwise (or depthwise) does not have bias weights T?
+ *
+ *
+ *
+ *
+ * Several scale-translate for escaping a value bounds from being activated (i.e. being non-linearized) by activation function.
+ *
+ *
+ * @member {FloatValue.ScaleArray} do
+ *   The result of combining this.doWithoutPreviousUndo with previous ActivationEscape.ScaleTranslateSet.undo. It both undo the
+ * previous escaping scale-translate and do itself escaping scale-translate.
+ *
+ * @member {FloatValue.ScaleArray} undo
+ *   If apply this.undo (important: scale first, translate second), it will have the effect of undoing the this.do.
+ */
+class ScaleArraySet {
+
+//!!! ...unfinished... (2022/01/07) should be moved to class ScaleArray.
+  /**
+   *
+   * @param {number} fromLower  The source bounds [ fromLower, fromUpper ]
+   * @param {number} fromUpper  The source bounds [ fromLower, fromUpper ]
+   * @param {number} toLower    The destination bounds [ toLower, toUpper ]
+   * @param {number} toUpper    The destination bounds [ toLower, toUpper ]
+   *
+   * @return {number}
+   *   Return a scale value which could let source bounds [ fromLower, fromUpper ] completely insides destination bounds [ toLower, toUpper ].
+   * Return Number.NaN, if it is impossible to do that.
+   */
+  static calc_scale_by_fromLowerUpper_toLowerUpper( fromLower, fromUpper, toLower, toUpper ) {
+    let srcLower = Math.min( fromLower, fromUpper ); // Confirm ( lower <= upper ).
+    let srcUpper = Math.max( fromLower, fromUpper );
+    let dstLower = Math.min( toLower, toUpper );
+    let dstUpper = Math.max( toLower, toUpper );
+
+    let scale;
+
+    // 1. Try lower bound.
+    //
+    // Note:
+    //  (  0 / x ) = 0
+    //  ( -1 / 0 ) = -Infinity
+    //  ( +1 / 0 ) = +Infinity
+    //  (  0 / 0 ) = NaN
+    //
+    scale = dstLower / srcLower;
+
+//!!! (2022/01/06 Remarked)
+//     if ( ( srcLower == 0 ) || ( dstLower == 0 ) ) {
+//       scale = 0; // Avoid -Infinity, +Infinity, NaN.
+//     } else {
+//       scale = dstLower / srcLower;
+//     }
+
+    // 1.2 Verification.
+    //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
+    //   - If scaled source upper bound is out of destination range, it is also failed.
+    let adjustedUpper = srcUpper * scale;
+    if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedUpper < dstLower ) || ( adjustedUpper > dstUpper ) ) {
+
+      // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by scale according to lower bound.
+      scale = dstUpper / srcUpper;
+
+//!!! (2022/01/06 Remarked)
+//       if ( ( srcUpper == 0 ) || ( dstUpper == 0 ) ) {
+//         scale = 0; // Avoid -Infinity, +Infinity, NaN.
+//       } else {
+//         scale = dstUpper / srcUpper;
+//       }
+
+      // 2.2 Verification. If scale is zero, it is always failed. Otherwise, check it by lower side.
+      //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
+      //   - If scaled source lower bound is out of destination range, it is also failed.
+      let adjustedLower = srcLower * scale;
+      if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedLower < dstLower ) || ( adjustedLower > dstUpper ) ) {
+        // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] only by scale because all cases are tried and failed.
+        scale = Number.NaN;
+      }
+    }
+
+    return scale;
+  }
+
+}
+
+
+//!!! (2022/01/07 Remarked) should be deprecated.
 /**
  * Several scale-translate for escaping a value bounds from being activated (i.e. being non-linearized) by activation function.
  *
@@ -110,157 +284,4 @@ class ScaleTranslateArraySet {
     this.undo.set_all_byUndo_ScaleTranslateArray( this.do );
   }
 
-  /**
-   *
-   * @param {number} fromLower  The source bounds [ fromLower, fromUpper ]
-   * @param {number} fromUpper  The source bounds [ fromLower, fromUpper ]
-   * @param {number} toLower    The destination bounds [ toLower, toUpper ]
-   * @param {number} toUpper    The destination bounds [ toLower, toUpper ]
-   *
-   * @return {number}
-   *   Return a scale value which could let source bounds [ fromLower, fromUpper ] completely insides destination bounds [ toLower, toUpper ].
-   * Return Number.NaN, if it is impossible to do that.
-   */
-  static calc_scale_by_fromLowerUpper_toLowerUpper( fromLower, fromUpper, toLower, toUpper ) {
-    let srcLower = Math.min( fromLower, fromUpper ); // Confirm ( lower <= upper ).
-    let srcUpper = Math.max( fromLower, fromUpper );
-    let dstLower = Math.min( toLower, toUpper );
-    let dstUpper = Math.max( toLower, toUpper );
-
-    let scale;
-
-    // 1. Try lower bound.
-    //
-    // Note:
-    //  (  0 / x ) = 0
-    //  ( -1 / 0 ) = -Infinity
-    //  ( +1 / 0 ) = +Infinity
-    //  (  0 / 0 ) = NaN
-    //
-    scale = dstLower / srcLower;
-
-//!!! (2022/01/06 Remarked)
-//     if ( ( srcLower == 0 ) || ( dstLower == 0 ) ) {
-//       scale = 0; // Avoid -Infinity, +Infinity, NaN.
-//     } else {
-//       scale = dstLower / srcLower;
-//     }
-
-    // 1.2 Verification.
-    //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
-    //   - If scaled source upper bound is out of destination range, it is also failed.
-    let adjustedUpper = srcUpper * scale;
-    if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedUpper < dstLower ) || ( adjustedUpper > dstUpper ) ) {
-
-      // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by scale according to lower bound.
-      scale = dstUpper / srcUpper;
-
-//!!! (2022/01/06 Remarked)
-//       if ( ( srcUpper == 0 ) || ( dstUpper == 0 ) ) {
-//         scale = 0; // Avoid -Infinity, +Infinity, NaN.
-//       } else {
-//         scale = dstUpper / srcUpper;
-//       }
-
-      // 2.2 Verification. If scale is zero, it is always failed. Otherwise, check it by lower side.
-      //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
-      //   - If scaled source lower bound is out of destination range, it is also failed.
-      let adjustedLower = srcLower * scale;
-      if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedLower < dstLower ) || ( adjustedLower > dstUpper ) ) {
-        // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] only by scale because all cases are tried and failed.
-        scale = Number.NaN;
-      }
-    }
-
-    return scale;
-  }
-
 }
-
-/**
- *
- * 1.
- *
- * Suppose
- *   - The previous convolution-bias-activation (i.e. pointwise or depthwise)
- *     - output channel count is q.
- *     - activation function is f()
- *     - activation escaping is ( scale = a, translate = b )
- *     - per output channel original is X  = ( x1 , x2 , ..., xq  )
- *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = a * X + b
- *     - f(X') = f( a * X + b ) is guaranteed still kept linear although activation function f() is non-linear.
- *
- *   - This pointwise (or depthwise)
- *     - This pointwise input channel count is s. (Or, this depthwise filter size is s.)
- *     - output channel count is u.
- *     - per output channel filter weights are S = ( S1, S2, ..., Ss ) and will be modified to S' = ( S1', S2', ..., Ss' ).
- *     - per output channel bias weights are T = ( T1, T2, ..., Tu ) and will be modified to T' = ( T1', T2', ..., Tu' ).
- *     - activation function is g()
- *     - activation escaping is ( scale = c, translate = d )
- *     - per output channel original is Y  = ( y1 , y2 , ..., yu  ) = S  * X  + T
- *     - per output channel modified is Y' = ( y1', y2', ..., yu' ) = S' * X' + T' = c * Y + d
- *     - g(Y') = g( c * Y + d ) is guaranteed still kept linear although activation function g() is non-linear.
- *
- * Find out S' and T'.
- *
- * On one hand:
- *   Y' = S' * X' + T'
- *      = S' * ( a * X + b ) + T'
- *      = ( a * S' ) * X + ( b * S' + T' )
- *
- * On the other hand:
- *   Y' = c * Y + d
- *      = c * ( S * X + T ) + d
- *      = c * S * X + c * T + d
- *      = ( c * S ) * X + ( c * T + d )
- *
- * Implied:
- *   a * S' = c * S
- *   b * S' + T' = c * T + d
- *
- * Got:
- *   S' = ( c / a ) * S
- *   T' = ( c * T ) - ( b * S' ) + d
- *      = ( c * T ) - b * ( ( c / a ) * S ) + d
- *      = ( c * T ) - ( b * ( c / a ) * S ) + d
- *
- * Verification:
- *   Y' = S' * X' + T'
- *      = ( ( c / a ) * S ) * ( a * X + b ) + ( ( c * T ) - ( b * ( c / a ) * S ) + d )
- *      = ( c * S * X ) + ( b * ( c / a ) * S ) + ( c * T ) - ( b * ( c / a ) * S ) + d
- *      = ( c * S * X ) + ( c * T ) + d
- *      = c * ( S * X + T ) + d
- *      = c * Y + d
- *
- * Problem:
- *   - Every element (not only every channel) needs have itself T' because T' depends on S.
- *     - This is difficult to be implemented.
- *
- *   - However, if the activation escaping could have only scale and withou translate (i.e. translate = 0 ), this issue could be
- *       reduced.
- *
- *   - This implies the output range of the activation function should include both negative and positive near the origin point.
- *     - So that only scale is enough to escape their non-linear part of these activation function.
- *
- *   - For example, sin(), tanh(), erf() are feasible.
- *     - But cos(), relu(), relu6(), sigmoid() are not feasible because their output always non-negative near the origin point.
- *         These functions always need bias (i.e. non-zero translate) to escape their non-linear part.
- *
- *
-
-//!!! ...unfinished... (2022/01/06)
-
- *
- *
- * 2. What if this pointwise (or depthwise) does not have filter weights ( S1, S2, ... Ss )? (e.g avg/max pooling)
- *
- *
- *
- *
- *
- * 3. What if this pointwise (or depthwise) does not have bias weights T?
- *
- *
- *
- *
- */
