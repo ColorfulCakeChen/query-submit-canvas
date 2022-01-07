@@ -3,6 +3,7 @@ export { FiltersArray_BiasesArray };
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import * as ConvBiasActivation from "../ConvBiasActivation.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 /**
@@ -127,7 +128,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
-    this.boundsArraySet = new BoundsArraySet( inputChannelCount, this.outputChannelCount );
+    this.boundsArraySet = new ConvBiasActivation.BoundsArraySet( inputChannelCount, this.outputChannelCount );
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nHigherHalfDifferent = nHigherHalfDifferent;
@@ -184,9 +185,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   set_filtersArray_biasesArray_by_extract(
     inputFloat32Array, byteOffsetBegin,
     previous_ConvBiasActivation_BoundsArraySet
-
-//!!! (2022/01/04 Remarked) use previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet directly.
-//  extraScaleTranslateArray_byChannelIndex,
   ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
@@ -202,10 +200,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_BoundsArraySet.output.lowers.length} ).`
     );
 
-    tf.util.assert( ( this.inputChannelCount == extraScaleTranslateArray_byChannelIndex.scales.length ),
+    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales.length ),
       `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_by_extract(): `
-        + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
-        + `length of extra ScaleTranslateArray ( ${extraScaleTranslateArray_byChannelIndex.scales.length} ).`
+        + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
+        + `activationEscaping_ScaleArraySet.undo of previous convolution-bias-activation `
+        + `( ${previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales.length} ).`
     );
 
 
@@ -225,7 +224,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //     //       just at the dilation position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
 //     let effectFilterY_passThrough = this.padHeightTop;
 //     let effectFilterX_passThrough = this.padWidthLeft;
-      
+
+    // Set up HalfPartInfo and filtersShape and biasesShape.
     {
       if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
