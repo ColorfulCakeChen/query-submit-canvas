@@ -78,8 +78,8 @@ import * as ConvBiasActivation from "./ConvBiasActivation.js";
  *   - Every element (not only every channel) needs have itself T' because T' depends on S.
  *     - This is difficult to be implemented.
  *
- *   - However, if the activation escaping could have only scale and withou translate (i.e. translate = 0 ), this issue could be
- *       reduced.
+ *   - However, if the activation escaping could have only scale and without translate (i.e. translate = b = d = 0 ), this issue
+ *       could be reduced.
  *
  *   - This implies the output range of the activation function should include both negative and positive near the origin point.
  *     - So that only scale is enough to escape their non-linear part of these activation function.
@@ -137,13 +137,10 @@ class ScaleArraySet {
     return this;
   }
 
-//!!! ...unfinished... (2022/01/07)
-
-  /** Reset all scale-translate values. Default is ( scale = 1, translate = 0 ) (i.e. no scale and no translate). */
-  reset_by_scale_translate( scale = 1, translate = 0 ) {
-    this.doWithoutPreviousUndo.set_all_by_scale_translate( scale , translate );
-    this.do.set_all_by_scale_translate( scale , translate );
-    this.undo.set_all_by_scale_translate( scale , translate );
+  /** Reset all scale values. Default is ( scale = 1 ) (i.e. no scale). */
+  reset_by_scale( scale = 1 ) {
+    this.do.set_all_byN( scale );
+    this.undo.set_all_byN( scale );
   }
 
 //!!! ...unfinished... (2021/12/26)
