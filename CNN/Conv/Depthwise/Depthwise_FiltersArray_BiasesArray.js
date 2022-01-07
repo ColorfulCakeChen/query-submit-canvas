@@ -561,21 +561,19 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       let inChannelBegin = halfPartInfo.inChannelBegin;
       let inChannelEnd = halfPartInfo.inChannelEnd;
 
-      if ( this.filtersArray ) {
+      let outChannel = inChannelBegin * this.channelMultiplier;
 
-        let outChannel = inChannelBegin * this.channelMultiplier;
+      for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
 
-        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+        let undoScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
-          let undoScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+        this.boundsArraySet.afterUndoPreviousActivationEscaping.set_one_byBoundsArray( inChannel, this.boundsArraySet.input, inChannel );
+        this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_one_byN( inChannel, undoScale );
 
-          this.boundsArraySet.afterUndoPreviousActivationEscaping.set_one_byBoundsArray( inChannel, this.boundsArraySet.input, inChannel );
-          this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_one_byN( inChannel, undoScale );
+        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
-          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-
-            this.boundsArraySet.afterFilter.set_one_byBoundsArray(
-              outChannel, this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
+          this.boundsArraySet.afterFilter.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
+          if ( this.filtersArray ) {
 
             if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
               // Do nothing. The value bounds does not change at all because it is just be past through.
@@ -585,76 +583,30 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                 .multiply_one_byBounds( outChannel, filtersValueBounds )
                 .multiply_one_byN( outChannel, this.filterSize );
             }
+          
+          } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
+            // Do nothing. The value bounds does not change for avg/max pooling.
           }
-        }
-
-      } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
 //!!! ...unfinished... (2022/01/07)
-//!!! ...unfinished... (2022/01/04) value-bounds?
-
-        let outChannel = inChannelBegin * this.channelMultiplier;
-        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-          let extraScale = undoScaleTranslateArray.scales[ inChannel ];
-
-          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-            pendingUndo.scales[ outChannel ] = extraScale; // Since avg/max pooling can not do pre-scale, it is still pending.
-
-            // Because avg/max pooling will not change value bounds, it is still the same as input.
-            this.boundsArraySet.beforeActivation.set_one_byBoundsArray( outChannel, this.boundsArraySet.input, inChannel );
-          }
-        }
-
-      }
-
-
-      if ( this.biasesArray ) {
-//        let biasValue;
-
-//!!! ...unfinished... (2021/12/28) 
-
-        let outChannel = inChannelBegin * this.channelMultiplier;
-        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-          
-//!!! (2022/01/04 Remarked) use previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet directly.
-//        let extraTranslate = extraScaleTranslateArray_byChannelIndex.translates[ inChannel ];
-          let extraTranslate = undoScaleTranslateArray.translates[ inChannel ];
-
-          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-
-            pendingUndo.translates[ outChannel ] = 0; // Since it could be applied, no more pending.
-
-            this.boundsArraySet.beforeActivation
-              .add_one_byN( outChannel, extraTranslate ); // pre(-extra)-translate
+          this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
+          if ( this.biasesArray ) {
 
             if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
-              this.biasesArray[ biasIndex ] = extraTranslate;
+              // Do nothing. The value bounds does not change at all because it is just be past through.
 
-            } else { // Not pass-through half channels.
-//              biasValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) + extraTranslate;
-              this.biasesArray[ biasIndex ] = extraTranslate + sourceWeights[ sourceIndex ];
-
-              this.boundsArraySet.beforeActivation.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by this bias.
-
-              ++sourceIndex;
+            } else { // Non pass-through half channels.
+              this.boundsArraySet.afterBias.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by this bias.
             }
 
-            ++biasIndex;
+          } else { // ( !this.biasesArray ). No biases array to be extracted.
+            // Do nothing. The value bounds does not change since no bias.
           }
+
         }
-
-      } else { // ( !this.biasesArray ). No biases array to be extracted.
-
-        let outChannel = inChannelBegin * this.channelMultiplier;
-        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-          let extraTranslate = undoScaleTranslateArray.translates[ inChannel ];
-          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-            pendingUndo.translates[ outChannel ] = extraTranslate; // Since it could not be applied, still pending.
-          }
-        }
-
 
       }
+
 
 //!!! ...unfinished... (2022/01/07)
             this.boundsArraySet.afterBias;
