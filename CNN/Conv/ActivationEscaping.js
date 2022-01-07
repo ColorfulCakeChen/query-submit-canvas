@@ -6,12 +6,11 @@ export { ScaleArraySet };
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ConvBiasActivation from "./ConvBiasActivation.js";
 
-
-//!!! ...unfinished... (2022/01/07)
-
 /**
+ * Several scale arrays for escaping a value bounds from being activated (i.e. being non-linearized) by activation function.
  *
- * 1.
+ *
+ * 1. Analysis
  *
  * Suppose
  *   - The previous convolution-bias-activation (i.e. pointwise or depthwise)
@@ -36,35 +35,46 @@ import * as ConvBiasActivation from "./ConvBiasActivation.js";
  * Find out S' and T'.
  *
  * On one hand:
+ * <pre>
  *   Y' = S' * X' + T'
  *      = S' * ( a * X + b ) + T'
  *      = ( a * S' ) * X + ( b * S' + T' )
+ * </pre>
  *
  * On the other hand:
+ * <pre>
  *   Y' = c * Y + d
  *      = c * ( S * X + T ) + d
  *      = c * S * X + c * T + d
  *      = ( c * S ) * X + ( c * T + d )
+ * </pre>
  *
  * Implied:
+ * <pre>
  *   a * S' = c * S
  *   b * S' + T' = c * T + d
+ * </pre>
  *
  * Got:
+ * <pre>
  *   S' = ( c / a ) * S
  *   T' = ( c * T ) - ( b * S' ) + d
  *      = ( c * T ) - b * ( ( c / a ) * S ) + d
  *      = ( c * T ) - ( b * ( c / a ) * S ) + d
+ * </pre>
  *
  * Verification:
+ * <pre>
  *   Y' = S' * X' + T'
  *      = ( ( c / a ) * S ) * ( a * X + b ) + ( ( c * T ) - ( b * ( c / a ) * S ) + d )
  *      = ( c * S * X ) + ( b * ( c / a ) * S ) + ( c * T ) - ( b * ( c / a ) * S ) + d
  *      = ( c * S * X ) + ( c * T ) + d
  *      = c * ( S * X + T ) + d
  *      = c * Y + d
+ * </pre>
  *
- * Problem:
+ *
+ * 2. Problem:
  *   - Every element (not only every channel) needs have itself T' because T' depends on S.
  *     - This is difficult to be implemented.
  *
@@ -84,97 +94,89 @@ import * as ConvBiasActivation from "./ConvBiasActivation.js";
 
  *
  *
- * 2. What if this pointwise (or depthwise) does not have filter weights ( S1, S2, ... Ss )? (e.g avg/max pooling)
+ * 3. What if this pointwise (or depthwise) does not have filter weights ( S1, S2, ... Ss )? (e.g avg/max pooling)
  *
  *
  *
+ * 4. What if this pointwise (or depthwise) does not have bias weights T?
  *
- *
- * 3. What if this pointwise (or depthwise) does not have bias weights T?
- *
- *
- *
- *
- * Several scale-translate for escaping a value bounds from being activated (i.e. being non-linearized) by activation function.
  *
  *
  * @member {FloatValue.ScaleArray} do
- *   The result of combining this.doWithoutPreviousUndo with previous ActivationEscape.ScaleTranslateSet.undo. It both undo the
- * previous escaping scale-translate and do itself escaping scale-translate.
+ *   The scale for moving current value bounds into the linear domain of the activation function. That is, for letting
+ * ConvBiasActivation.BoundsArraySet.afterBias_beforeActivationEscaping escape from activation function's non-linear domain
+ * into linear domain (i.e. generate ConvBiasActivation.BoundsArraySet.afterActivationEscaping_beforeActivation).
  *
  * @member {FloatValue.ScaleArray} undo
- *   If apply this.undo (important: scale first, translate second), it will have the effect of undoing the this.do.
+ *   If apply this.undo, it will have the effect of undoing the this.do.
  */
 class ScaleArraySet {
 
-//!!! ...unfinished... (2022/01/07) should be moved to class ScaleArray.
-  /**
-   *
-   * @param {number} fromLower  The source bounds [ fromLower, fromUpper ]
-   * @param {number} fromUpper  The source bounds [ fromLower, fromUpper ]
-   * @param {number} toLower    The destination bounds [ toLower, toUpper ]
-   * @param {number} toUpper    The destination bounds [ toLower, toUpper ]
-   *
-   * @return {number}
-   *   Return a scale value which could let source bounds [ fromLower, fromUpper ] completely insides destination bounds [ toLower, toUpper ].
-   * Return Number.NaN, if it is impossible to do that.
-   */
-  static calc_scale_by_fromLowerUpper_toLowerUpper( fromLower, fromUpper, toLower, toUpper ) {
-    let srcLower = Math.min( fromLower, fromUpper ); // Confirm ( lower <= upper ).
-    let srcUpper = Math.max( fromLower, fromUpper );
-    let dstLower = Math.min( toLower, toUpper );
-    let dstUpper = Math.max( toLower, toUpper );
-
-    let scale;
-
-    // 1. Try lower bound.
-    //
-    // Note:
-    //  ( x / +Infinity ) == +0
-    //  ( x / -Infinity ) == -0
-    //  (  0 / x ) = 0
-    //  ( -1 / 0 ) = -Infinity
-    //  ( +1 / 0 ) = +Infinity
-    //  (  0 / 0 ) = NaN
-    //  ( +-Infinity / +-Infinity ) == NaN
-    //
-    scale = dstLower / srcLower;
-
-//!!! (2022/01/06 Remarked)
-//     if ( ( srcLower == 0 ) || ( dstLower == 0 ) ) {
-//       scale = 0; // Avoid -Infinity, +Infinity, NaN.
-//     } else {
-//       scale = dstLower / srcLower;
-//     }
-
-    // 1.2 Verification.
-    //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
-    //   - If scaled source upper bound is out of destination range, it is also failed.
-    let adjustedUpper = srcUpper * scale;
-    if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedUpper < dstLower ) || ( adjustedUpper > dstUpper ) ) {
-
-      // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by scale according to lower bound.
-      scale = dstUpper / srcUpper;
-
-//!!! (2022/01/06 Remarked)
-//       if ( ( srcUpper == 0 ) || ( dstUpper == 0 ) ) {
-//         scale = 0; // Avoid -Infinity, +Infinity, NaN.
-//       } else {
-//         scale = dstUpper / srcUpper;
-//       }
-
-      // 2.2 Verification. If scale is zero, it is always failed. Otherwise, check it by lower side.
-      //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
-      //   - If scaled source lower bound is out of destination range, it is also failed.
-      let adjustedLower = srcLower * scale;
-      if ( ( scale == 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedLower < dstLower ) || ( adjustedLower > dstUpper ) ) {
-        // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] only by scale because all cases are tried and failed.
-        scale = Number.NaN;
-      }
-    }
-
-    return scale;
+  constructor( arrayLength ) {
+    this.do = new FloatValue.ScaleArray( arrayLength );
+    this.undo = new FloatValue.ScaleArray( arrayLength );
   }
+
+  /**
+   * @return {ScaleArraySet} Return a newly created ScaleArraySet which is a copy of this ScaleArraySet.
+   */
+  clone() {
+    let result = new ScaleArraySet();
+    result.set_byScaleSet( this );
+    return result;
+  }
+
+  /**
+   * @param {ScaleArraySet} aScaleArraySet  The ScaleArraySet to be copied.
+   *
+   * @return {ScaleArraySet} Return this (modified) object.
+   */
+  set_byScaleArraySet( aScaleArraySet ) {
+    this.do.set_all_byScaleArray( aScaleArraySet.do );
+    this.undo.set_all_byScaleArray( aScaleArraySet.undo );
+    return this;
+  }
+
+//!!! ...unfinished... (2022/01/07)
+
+  /** Reset all scale-translate values. Default is ( scale = 1, translate = 0 ) (i.e. no scale and no translate). */
+  reset_by_scale_translate( scale = 1, translate = 0 ) {
+    this.doWithoutPreviousUndo.set_all_by_scale_translate( scale , translate );
+    this.do.set_all_by_scale_translate( scale , translate );
+    this.undo.set_all_by_scale_translate( scale , translate );
+  }
+
+//!!! ...unfinished... (2021/12/26)
+/**
+ * - For depthwise with ( pad == same ), it seems that the activation escaping can not be undone completely, because pad is always 0
+ *   (can not scale-translate). Unless, pad can be non-zero?
+ *
+ *   - Fortunately, this is not a problem for pass-through channels. Because the pass-through filter value is also 0 in the padded
+ *       position, the result is not affected. (But its a big problem for non-pass-through channels.)
+ *
+ *   - Perhaps, force use ( pad == valid ) so that the activation escaping always can be undone completely.
+ *
+ *     - In original ShuffleNetV2, using ( pad == same ) is necessary for concatenating ( depthwise1, input1 ).
+ *
+ *     - In our combined-depthwise1-with-higher-half-pass-through (i.e. ONE_INPUT_HALF_THROUGH_XXX), the ( depthwise1, input1 )
+ *         already combined together. There is no concatenation issue. So using ( pad == valid ) is possible.
+ *
+ *     - However, this is not so good for pass-through channels. Because the pass-through filter value is 0 at the right-bottom
+ *         corner, the image value will be destroyed.
+ *
+ * - If previous convolution does not have activation escaping do (i.e. is a normal convolution without pass-through)，this
+ *     this convolution's .do should be different.
+ *
+ * - Perhaps, there should be value-bounds and activation-escaping scale-translate for every single channel (i.e. lower-array,
+ *     upper-array, scale-array and translate-array). Even if channels are shuffled, they could be still tracked correctly.
+ *
+ * - When extractFilters() and extractBiases(), pre-apply the per channel undoing scale and translate to filter-value, bias-value,
+ *     and their bounds. (The .do and .undo should also affect the value bounds.)
+ *
+ * - When across Block (i.e. at ShuffleNetV2_ByMobileNetV1's head), the higher-half-copy-lower-half channels's value bounds
+ *     does not come from previous corresponding channels. They comes from the lower-half channels which they copied from.
+ *
+ */
 
 }
 
