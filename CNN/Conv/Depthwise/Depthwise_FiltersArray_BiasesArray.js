@@ -541,7 +541,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   set_boundsArraySet_by_halfPartInfoArray( halfPartInfoArray, previous_ConvBiasActivation_BoundsArraySet ) {
 
 
-    // Determine .input
+    // 1. Determine .input
     //
     // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
     this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
@@ -569,13 +569,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
         let undoScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
-        // Determine .afterUndoPreviousActivationEscaping
+        // 2. Determine .afterUndoPreviousActivationEscaping
         this.boundsArraySet.afterUndoPreviousActivationEscaping.set_one_byBoundsArray( inChannel, this.boundsArraySet.input, inChannel );
         this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_one_byN( inChannel, undoScale );
 
         for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
-          // Determine .afterFilter
+          // 3. Determine .afterFilter
           this.boundsArraySet.afterFilter.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
           if ( this.filtersArray ) {
 
@@ -587,13 +587,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                 .multiply_one_byBounds( outChannel, filtersValueBounds )
                 .multiply_one_byN( outChannel, this.filterSize );
             }
-          
+
           } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
             // Do nothing. The value bounds does not change for avg/max pooling.
           }
 
-//!!! ...unfinished... (2022/01/07)
-          // Determine .afterBias
+          // 4. Determine .afterBias
           this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
           if ( this.biasesArray ) {
 
@@ -601,27 +600,45 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
               // Do nothing. The value bounds does not change at all because it is just be past through.
 
             } else { // Non pass-through half channels.
-              this.boundsArraySet.afterBias.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by this bias.
+              this.boundsArraySet.afterBias.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by the bias bounds.
             }
 
           } else { // ( !this.biasesArray ). No biases array to be extracted.
             // Do nothing. The value bounds does not change since no bias.
           }
 
-        }
+          // 5. Determine .activationEscaping_ScaleArraySet
+          {
+            // 5.1 Determine .do
+//!!! ...unfinished... (2022/01/07) Only if pass-through, the activationEscaping_ScaleArraySet is necessary.
+            this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
+            if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
+              this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
+                outChannel, fromLower, fromUpper, toLower, toUpper );
 
-      }
+            } else { // Non pass-through half channels.
+            }
+
+            // 5.2 Determine .undo
+            this.boundsArraySet.activationEscaping_ScaleArraySet.undo.set_all_byUndo_ScaleArray(
+              this.boundsArraySet.activationEscaping_ScaleArraySet.do );
+          }
+
+//!!! ...unfinished... (2022/01/07)
+          // 6. Determine .afterActivationEscaping
+          this.boundsArraySet.afterActivationEscaping;
+
+//!!! ...unfinished... (2022/01/07)
+          // 7. Determine .afterActivation
+          this.boundsArraySet.afterActivation;
+
+        } // outChannelSub, outChannel
+
+      } // inChannel
 
 
 //!!! ...unfinished... (2022/01/07)
-            this.boundsArraySet.afterBias;
 
-//!!! ...unfinished... (2022/01/07) Only if pass-through, the activationEscaping_ScaleArraySet is necessary.
-            this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
-              outChannel, fromLower, fromUpper, toLower, toUpper );
-
-            this.boundsArraySet.afterActivationEscaping;
-            this.boundsArraySet.afterActivation;
 
 
     } // halfPartIndex
