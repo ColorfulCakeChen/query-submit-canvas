@@ -61,6 +61,29 @@ class ScaleArray {
     return this;
   }
 
+  /**
+   * @param {number} thisIndex  The array index of this.scales[].
+   * @param {number} N          Set ( this.scales[ thisIndex ] ) by ( 1 / N ).
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_one_byUndo_N( thisIndex, N ) {
+    this.scales[ thisIndex ] = ( 1 / N );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+    return this;
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.scales[].
+   * @param {number[]} Ns       Set ( this.scales[ thisIndex ] ) by ( 1 / Ns[ aIndex ] ).
+   * @param {number} aIndex     The array index of Ns[].
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_one_byUndo_Ns( thisIndex, Ns, aIndex ) {
+    this.scales[ thisIndex ] = ( 1 / Ns[ aIndex ] );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+    return this;
+  }
+
 
   /**
    * @param {number} N  Set all ( this.scales[] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).
@@ -93,7 +116,28 @@ class ScaleArray {
     return this.set_all_byNs( aScaleArray.scales );
   }
 
-  
+  /**
+   * @param {number[]} Ns  Set all ( this.scales[] ) by ( 1 / Ns[] ).
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_all_byUndo_Ns( Ns ) {
+    for ( let i = 0; i < this.scales.length; ++i ) {
+      this.scales[ i ] = ( 1 / Ns[ i ] );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+    }
+    return this;
+  }
+
+  /**
+   * @param {ScaleArray} aScaleArray  Set all ( this.scales[] ) by ( 1 / aScaleArray.scales[] ).
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_all_byUndo_ScaleArray( aScaleArray ) {
+    return this.set_all_byUndo_Ns( aScaleArray.scales );
+  }
+
+
   /**
    *
    * @param {number} fromLower  The source bounds [ fromLower, fromUpper ]
