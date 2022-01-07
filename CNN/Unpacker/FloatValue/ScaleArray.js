@@ -87,6 +87,17 @@ class ScaleArray {
     return this;
   }
 
+  /**
+   * @param {number} thisIndex        The array index of this.scales[].
+   * @param {ScaleArray} aScaleArray  Set ( this.scales[ thisIndex ] ) by ( 1 / aScaleArray.scales[ aIndex ] ).
+   * @param {number} aIndex           The array index of aScaleArray.scales[].
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_one_byUndo_ScaleArray( thisIndex, aScaleArray, aIndex ) {
+    return this.set_one_byUndo_Ns( thisIndex, aScaleArray.scales, aIndex );
+  }
+
 
   /**
    * @param {number} N  Set all ( this.scales[] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).
