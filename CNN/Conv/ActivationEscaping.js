@@ -281,7 +281,9 @@ class ScaleArraySet {
 //     //
 //     // Note: This does not work for avg/max pooling.
 //     this.doWithoutPreviousUndo.set_all_by_fromBoundsArray_ToBoundsArray(
-//       current_ConvBiasActivation_BoundsArraySet.beforeActivation, current_ConvBiasActivation_BoundsArraySet.output );
+////!!! (2022/01/07 Remarked(
+////       current_ConvBiasActivation_BoundsArraySet.beforeActivation, current_ConvBiasActivation_BoundsArraySet.output );
+//       current_ConvBiasActivation_BoundsArraySet.beforeActivation, current_ConvBiasActivation_BoundsArraySet.inputDomainLinear );
 
 //     // Combine undoing previous activation escaping scale-translate and doing current activation escaping scale-translate.
 //     this.do.set_all_byScaleTranslateArray( previous_ActivationEscaping_ScaleTranslateArraySet.undo );
