@@ -625,8 +625,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2022/01/07) Only if pass-through, the activationEscaping_ScaleArraySet is necessary.
               if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
+
+                // Calculate the scale for escaping bias result from activation function's non-linear domain into linear domain.
+                //
+                // Note: This does not work for avg/max pooling.
                 this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
-                  outChannel, fromLower, fromUpper, toLower, toUpper );
+                  outChannel,
+                  this.boundsArraySet.afterBias.lowers[ outChannel ], this.boundsArraySet.afterBias.uppers[ outChannel ],
+                  theActivationFunctionInfo.inputDomainLinear.lower, theActivationFunctionInfo.inputDomainLinear.upper
+                );
 
 
                 let doScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
