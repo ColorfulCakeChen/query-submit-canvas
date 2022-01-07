@@ -48,7 +48,8 @@ class BoundsArraySet {
     this.afterBias = new FloatValue.BoundsArray( outputChannelCount );
     this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount );
     this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
-    this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet();
+
+    this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet( outputChannelCount );
     
     //this.set_all_byBounds.set_all_byBounds( Weights.Base.ValueBounds );
   }
