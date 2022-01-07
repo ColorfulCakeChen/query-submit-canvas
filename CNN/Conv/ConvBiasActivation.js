@@ -32,6 +32,26 @@ class BoundsArraySet {
     this.input = new FloatValue.BoundsArray( inputChannelCount );
     this.input.set_all_byBounds( Weights.Base.ValueBounds );
 
+
+//!!! ...unfinished... (2022/01/07)
+    this.afterUndoPreviousActivationEscaping_beforeFilter = new FloatValue.BoundsArray( ??? outputChannelCount );
+    this.afterUndoPreviousActivationEscaping_beforeFilter.set_all_byBounds( ??? Weights.Base.ValueBounds );
+
+    this.afterFilter_beforeBias = new FloatValue.BoundsArray( outputChannelCount );
+    this.afterFilter_beforeBias.set_all_byBounds( ??? Weights.Base.ValueBounds );
+
+    this.afterBias_beforeActivationEscaping = new FloatValue.BoundsArray( outputChannelCount );
+    this.afterBias_beforeActivationEscaping.set_all_byBounds( ??? Weights.Base.ValueBounds );
+
+    this.afterActivationEscaping_beforeActivation = new FloatValue.BoundsArray( outputChannelCount );
+    this.afterActivationEscaping_beforeActivation.set_all_byBounds( ??? Weights.Base.ValueBounds );
+
+    this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
+    this.afterActivation.set_all_byBounds( ??? Weights.Base.ValueBounds );
+
+
+
+
     this.beforeActivation = new FloatValue.BoundsArray( outputChannelCount );
     this.beforeActivation.set_all_byBounds( Weights.Base.ValueBounds );
 
