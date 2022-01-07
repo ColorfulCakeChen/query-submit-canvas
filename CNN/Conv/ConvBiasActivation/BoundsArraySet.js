@@ -98,26 +98,27 @@ class BoundsArraySet {
     return this;
   }
 
-//!!! ...unfinished... (2022/01/07)
-
   /**
-   * Determine output value bounds. Set this.output according to this.beforeActivation and the specified nActivationId.
+   * Set this.afterActivation according to this.afterActivationEscaping and the specified nActivationId.
    *
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
-   *     - If ( nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ), this.output will be the same as this.beforeActivation.
-   *     - Otherwise, this.output will be the same as the output range of the activation function.
+   *
+   *     - If ( nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ), this.afterActivation will be the same
+   *         as this.afterActivationEscaping.
+   *
+   *     - Otherwise, this.afterActivation will be the same as the output range of the activation function.
    */
-  set_output_by_beforeActivation_ActivationId( nActivationId ) {
+  set_afterActivation_by_afterActivationEscaping_ActivationId( nActivationId ) {
 
     // If there is no activation function, the output range is determined by input domain, filters, biases.
     if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-      this.output.set_all_byBoundsArray( this.beforeActivation );
+      this.afterActivation.set_all_byBoundsArray( this.afterActivationEscaping );
 
     // Otherwise, the activation function dominates the output range.
     } else {
       let info = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
-      this.output.set_all_byBounds( info.outputRange );
+      this.afterActivation.set_all_byBounds( info.outputRange );
     }
 
   }
