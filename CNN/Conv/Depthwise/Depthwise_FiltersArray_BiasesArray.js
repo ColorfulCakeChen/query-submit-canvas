@@ -609,70 +609,68 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           }
 
           // 6. Determine .afterActivationEscaping
-
-          // 6.1 Determine .activationEscaping_ScaleArraySet
           {
-            // 6.1.1 Determine .do
+            // 6.1 Determine .activationEscaping_ScaleArraySet
+            {
+              // 6.1.1 Determine .do
 
-            if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+              if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
 
-              // Since no activation function, no need to escape. (i.e. scale = 1 for no scale)
-              this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 );
-
-            } else {
-
-              if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
-
-                // Calculate the scale for escaping bias result from activation function's non-linear domain into linear domain.
-                //
-                // Note: This does not work for avg/max pooling.
-                this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper( outChannel,
-                  this.boundsArraySet.afterBias.lowers[ outChannel ], this.boundsArraySet.afterBias.uppers[ outChannel ],
-                  theActivationFunctionInfo.inputDomainLinear.lower, theActivationFunctionInfo.inputDomainLinear.upper
-                );
-
-                let doScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-                tf.util.assert( ( Number.isNaN( doScale ) == false ),
-                  `Depthwise.FiltersArray_BiasesArray.set_boundsArraySet_by_halfPartInfoArray(): `
-                    + `this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ ${outChannel} ] ( ${doScale} ) `
-                    + `should not be NaN. `
-                    + `Please use activation function (e.g. tanh()) which has both negative and positive parts near origin point.`
-                );
-
-              } else { // Non pass-through half channels.
-                // Since non-pass-through, no need to escape. (i.e. scale = 1 for no scale)
+                // Since no activation function, no need to escape. (i.e. scale = 1 for no scale)
                 this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 );
+
+              } else {
+
+                if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
+
+                  // Calculate the scale for escaping bias result from activation function's non-linear domain into linear domain.
+                  //
+                  // Note: This does not work for avg/max pooling.
+                  this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper( outChannel,
+                    this.boundsArraySet.afterBias.lowers[ outChannel ], this.boundsArraySet.afterBias.uppers[ outChannel ],
+                    theActivationFunctionInfo.inputDomainLinear.lower, theActivationFunctionInfo.inputDomainLinear.upper
+                  );
+
+                  let doScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+                  tf.util.assert( ( Number.isNaN( doScale ) == false ),
+                    `Depthwise.FiltersArray_BiasesArray.set_boundsArraySet_by_halfPartInfoArray(): `
+                      + `this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ ${outChannel} ] ( ${doScale} ) `
+                      + `should not be NaN. `
+                      + `Please use activation function (e.g. tanh()) which has both negative and positive parts near origin point.`
+                  );
+
+                } else { // Non pass-through half channels.
+                  // Since non-pass-through, no need to escape. (i.e. scale = 1 for no scale)
+                  this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 );
+                }
               }
+
+              // 6.1.2 Determine .undo (Prepared for the next convolution-bias-activation. Not for this.)
+              this.boundsArraySet.activationEscaping_ScaleArraySet.undo.set_one_byUndo_ScaleArray(
+                outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do, outChannel );
             }
 
-            // 6.1.2 Determine .undo (For next convolution-bias-activation. Not for this.)
-            this.boundsArraySet.activationEscaping_ScaleArraySet.undo.set_one_byUndo_ScaleArray(
-              outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do, outChannel );
+            // 6.2 Determine .afterActivationEscaping
+            this.boundsArraySet.afterActivationEscaping
+              .set_one_byBoundsArray( outChannel, this.boundsArraySet.afterBias, outChannel )
+              .multiply_one_byNs( outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales, outChannel );
           }
 
-//!!! ...unfinished... (2022/01/07)
-          // 6.2 Determine .afterActivationEscaping
-          this.boundsArraySet.afterActivationEscaping
-            .set_one_byBoundsArray( outChannel, this.boundsArraySet.afterBias, outChannel )
-            .multiply_one_byNs( outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales, outChannel );
-
-//!!! ...unfinished... (2022/01/07)
-//               theActivationFunctionInfo.outputRange;
-
           // 7. Determine .afterActivation
-          this.boundsArraySet.afterActivation;
+          {
+            // If no activation function, the output range is determined by .afterActivationEscaping.
+            if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+              this.boundsArraySet.afterActivation.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterActivationEscaping, outChannel )
+
+            // Otherwise, the activation function dominates the output range.
+            } else {
+              this.boundsArraySet.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+            }
+          }
 
         } // outChannelSub, outChannel
-
       } // inChannel
-
-
-//!!! ...unfinished... (2022/01/07)
-
-
-
     } // halfPartIndex
-
 
   }
 
