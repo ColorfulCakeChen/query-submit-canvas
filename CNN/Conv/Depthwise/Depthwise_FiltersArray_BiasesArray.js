@@ -555,6 +555,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     const filtersValueBounds = Weights.Base.ValueBounds;
     const biasesValueBounds = Weights.Base.ValueBounds;
 
+    let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( this.nActivationId );
 
     // ( halfPartIndex == 0 ), lower half channels. (or, all channels)
     // ( halfPartIndex == 1 ), higher half channels.
@@ -610,22 +611,35 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           // 5. Determine .activationEscaping_ScaleArraySet
           {
             // 5.1 Determine .do
+
+            if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+
+              // Since no activation function, no need to escape. (i.e. scale = 1 for no scale)
+              this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 );
+
+            } else {
+
+              theActivationFunctionInfo;
+              theActivationFunctionInfo.inputDomainLinear;
+              theActivationFunctionInfo.outputRange;
+
 //!!! ...unfinished... (2022/01/07) Only if pass-through, the activationEscaping_ScaleArraySet is necessary.
-            if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
-              this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
-                outChannel, fromLower, fromUpper, toLower, toUpper );
+              if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
+                this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
+                  outChannel, fromLower, fromUpper, toLower, toUpper );
 
 
-              let doScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-              tf.util.assert( ( Number.isNaN( doScale ) == false ),
-                `Depthwise.FiltersArray_BiasesArray.set_boundsArraySet_by_halfPartInfoArray(): `
-                  + `this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ ${outChannel} ] ( ${doScale} ) `
-                  + `should not be NaN. `
-                  + `Please use activation function (e.g. tanh()) which has both negative and positive parts near origin point.`
-              );
+                let doScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+                tf.util.assert( ( Number.isNaN( doScale ) == false ),
+                  `Depthwise.FiltersArray_BiasesArray.set_boundsArraySet_by_halfPartInfoArray(): `
+                    + `this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ ${outChannel} ] ( ${doScale} ) `
+                    + `should not be NaN. `
+                    + `Please use activation function (e.g. tanh()) which has both negative and positive parts near origin point.`
+                );
 
-            } else { // Non pass-through half channels.
-              this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 ); // no scale because no need to escape.
+              } else { // Non pass-through half channels.
+                this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 ); // no scale because no need to escape.
+              }
             }
 
             // 5.2 Determine .undo
