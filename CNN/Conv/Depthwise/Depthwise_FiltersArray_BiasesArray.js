@@ -620,8 +620,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             }
 
             // 5.2 Determine .undo
-            this.boundsArraySet.activationEscaping_ScaleArraySet.undo.set_all_byUndo_ScaleArray(
-              this.boundsArraySet.activationEscaping_ScaleArraySet.do );
+            this.boundsArraySet.activationEscaping_ScaleArraySet.undo.set_one_byUndo_ScaleArray(
+              outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do, outChannel );
           }
 
 //!!! ...unfinished... (2022/01/07)
