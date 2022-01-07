@@ -40,6 +40,27 @@ class ScaleArray {
     return this.set_one_byN( thisIndex, Ns[ aIndex ] );
   }
 
+  /**
+   * Set this.scales[ thisIndex ] to a scale value which could let source bounds [ fromLower, fromUpper ] completely insides destination
+   * bounds [ toLower, toUpper ].
+   *
+   * Note: this.scales[ thisIndex ] may become Number.NaN, if it is impossible to let source bounds completely insides destination
+   * bounds.
+   *
+   * @param {number} thisIndex  The array index of this.scales[].
+   * @param {number} fromLower  The source bounds [ fromLower, fromUpper ]
+   * @param {number} fromUpper  The source bounds [ fromLower, fromUpper ]
+   * @param {number} toLower    The destination bounds [ toLower, toUpper ]
+   * @param {number} toUpper    The destination bounds [ toLower, toUpper ]
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_one_by_fromLowerUpper_toLowerUpper( thisIndex, fromLower, fromUpper, toLower, toUpper ) {
+    let aScale = ScaleArray.calc_scale_by_fromLowerUpper_toLowerUpper( fromLower, fromUpper, toLower, toUpper );
+    this.scales[ thisIndex ] = aScale;
+    return this;
+  }
+
 
   /**
    * @param {number} N  Set all ( this.scales[] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).
@@ -73,7 +94,6 @@ class ScaleArray {
   }
 
   
-//!!! ...unfinished... (2022/01/07)
   /**
    *
    * @param {number} fromLower  The source bounds [ fromLower, fromUpper ]
