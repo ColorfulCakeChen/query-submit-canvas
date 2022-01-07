@@ -42,44 +42,24 @@ class BoundsArraySet {
   /**
    */
   constructor( inputChannelCount, outputChannelCount ) {
-
     this.input = new FloatValue.BoundsArray( inputChannelCount );
     this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( inputChannelCount );
     this.afterFilter = new FloatValue.BoundsArray( outputChannelCount );
     this.afterBias = new FloatValue.BoundsArray( outputChannelCount );
     this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount );
     this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
-
-    //this.input.set_all_byBounds( Weights.Base.ValueBounds );
-
     this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet();
+    
+    //this.set_all_byBounds.set_all_byBounds( Weights.Base.ValueBounds );
   }
 
   /**
    * @return {BoundsArraySet} Return a newly created BoundsArraySet which is a copy of this BoundsArraySet.
    */
   clone() {
-    let result = new BoundsArraySet();
+    let result = new BoundsArraySet( this.input.lowers.length, this.output.lowers.length );
     result.set_byBoundsArraySet( this );
     return result;
-  }
-
-  /**
-   * @param {BoundsArraySet} aBoundsArraySet
-   *   The BoundsArraySet to be copied.
-   *
-   * @return {BoundsArraySet}
-   *   Return this (modified) object which is copied from aBoundsArraySet.
-   */
-  set_byBoundsArraySet( aBoundsArraySet ) {
-    this.input                              .set_all_byBoundsArray( aBoundsArraySet.input );
-    this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( aBoundsArraySet.afterUndoPreviousActivationEscaping );
-    this.afterFilter                        .set_all_byBoundsArray( aBoundsArraySet.afterFilter );
-    this.afterBias                          .set_all_byBoundsArray( aBoundsArraySet.afterBias );
-    this.afterActivationEscaping            .set_all_byBoundsArray( aBoundsArraySet.afterActivationEscaping );
-    this.afterActivation                    .set_all_byBoundsArray( aBoundsArraySet.afterActivation );
-    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
-    return this;
   }
 
   /**
@@ -97,6 +77,24 @@ class BoundsArraySet {
     this.afterActivationEscaping.set_all_byBounds( aBounds );
     this.afterActivation.set_all_byBounds( aBounds );
     this.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
+    return this;
+  }
+
+  /**
+   * @param {BoundsArraySet} aBoundsArraySet
+   *   The BoundsArraySet to be copied.
+   *
+   * @return {BoundsArraySet}
+   *   Return this (modified) object which is copied from aBoundsArraySet.
+   */
+  set_all_byBoundsArraySet( aBoundsArraySet ) {
+    this.input                              .set_all_byBoundsArray( aBoundsArraySet.input );
+    this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( aBoundsArraySet.afterUndoPreviousActivationEscaping );
+    this.afterFilter                        .set_all_byBoundsArray( aBoundsArraySet.afterFilter );
+    this.afterBias                          .set_all_byBoundsArray( aBoundsArraySet.afterBias );
+    this.afterActivationEscaping            .set_all_byBoundsArray( aBoundsArraySet.afterActivationEscaping );
+    this.afterActivation                    .set_all_byBoundsArray( aBoundsArraySet.afterActivation );
+    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
     return this;
   }
 
