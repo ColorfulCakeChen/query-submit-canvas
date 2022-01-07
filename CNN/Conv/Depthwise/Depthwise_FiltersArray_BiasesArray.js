@@ -608,9 +608,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             // Do nothing. The value bounds does not change since no bias.
           }
 
-          // 5. Determine .activationEscaping_ScaleArraySet
+          // 6. Determine .afterActivationEscaping
+
+          // 6.1 Determine .activationEscaping_ScaleArraySet
           {
-            // 5.1 Determine .do
+            // 6.1.1 Determine .do
 
             if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
 
@@ -619,22 +621,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
             } else {
 
-              theActivationFunctionInfo;
-              theActivationFunctionInfo.inputDomainLinear;
-              theActivationFunctionInfo.outputRange;
-
-//!!! ...unfinished... (2022/01/07) Only if pass-through, the activationEscaping_ScaleArraySet is necessary.
               if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
 
                 // Calculate the scale for escaping bias result from activation function's non-linear domain into linear domain.
                 //
                 // Note: This does not work for avg/max pooling.
-                this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
-                  outChannel,
+                this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper( outChannel,
                   this.boundsArraySet.afterBias.lowers[ outChannel ], this.boundsArraySet.afterBias.uppers[ outChannel ],
                   theActivationFunctionInfo.inputDomainLinear.lower, theActivationFunctionInfo.inputDomainLinear.upper
                 );
-
 
                 let doScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
                 tf.util.assert( ( Number.isNaN( doScale ) == false ),
@@ -645,20 +640,25 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                 );
 
               } else { // Non pass-through half channels.
-                this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 ); // no scale because no need to escape.
+                // Since non-pass-through, no need to escape. (i.e. scale = 1 for no scale)
+                this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 );
               }
             }
 
-            // 5.2 Determine .undo
+            // 6.1.2 Determine .undo (For next convolution-bias-activation. Not for this.)
             this.boundsArraySet.activationEscaping_ScaleArraySet.undo.set_one_byUndo_ScaleArray(
               outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do, outChannel );
           }
 
 //!!! ...unfinished... (2022/01/07)
-          // 6. Determine .afterActivationEscaping
-          this.boundsArraySet.afterActivationEscaping;
+          // 6.2 Determine .afterActivationEscaping
+          this.boundsArraySet.afterActivationEscaping.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterBias, outChannel );
+          this.boundsArraySet.afterActivationEscaping.multiply_one_byNs(
+            outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales, outChannel );
 
 //!!! ...unfinished... (2022/01/07)
+//               theActivationFunctionInfo.outputRange;
+
           // 7. Determine .afterActivation
           this.boundsArraySet.afterActivation;
 
