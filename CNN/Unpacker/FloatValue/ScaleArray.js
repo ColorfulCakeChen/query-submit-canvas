@@ -13,7 +13,7 @@ class ScaleArray {
   }
 
   /**
-   * @return {ScaleArray} Return a newly created ScaleArray which copies this object.
+   * @return {ScaleArray} Return a newly created ScaleArray which is a copy of this ScaleArray.
    */
   clone() {
     let result = new ScaleArray( this.scales.length );
