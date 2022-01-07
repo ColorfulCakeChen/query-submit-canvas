@@ -260,8 +260,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // Prepare value bounds.
 
     this.boundsArraySet.set_all_by_inChannelPartInfoArray(
-      this.channelMultiplier, this.nActivationId, this.filtersArray, this.biasesArray,
-      inChannelPartInfoArray, previous_ConvBiasActivation_BoundsArraySet );
+      previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
+      this.channelMultiplier, this.nActivationId, this.filtersArray, this.biasesArray
+    );
 
 //!!! ...unfinished... (2022/01/07)
 //    let undoScaleTranslateArray = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo;
