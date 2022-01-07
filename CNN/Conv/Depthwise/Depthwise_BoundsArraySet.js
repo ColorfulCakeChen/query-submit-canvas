@@ -19,8 +19,15 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
   }
 
 
-//!!! ...unfinished... (2022/01/07)
+//!!! ...unfinished... (2022/01/07) What about ( bDepthwise == false )?
+
   /**
+   *
+   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
+   *   The value bounds set of the previous convolution-bias-activation.
+   *
+   * @param {ChannelPartInfo[]} inChannelPartInfoArray
+   *   The input channel range array which describe lower/higher half channels index range.
    *
    * @param {number} channelMultiplier
    *   The channel multiplier of this depthwise operation.
@@ -35,16 +42,11 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    * @param {number[]} biasesArray
    *   The weights of the bias. Its content will not be used. Only be tested against null. If ( biasesArray != null ),
    * there is bias operation. If ( biasesArray == null ), there is no bias operation.
-   *
-   * @param {ChannelPartInfo[]} inChannelPartInfoArray
-   *   The input channel range array which describe lower/higher half channels index range.
-   *
-   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
-   *   The value bounds set of the previous convolution-bias-activation.
    */
   set_all_by_inChannelPartInfoArray(
-    channelMultiplier, nActivationId, filtersArray, biasesArray,
-    inChannelPartInfoArray, previous_ConvBiasActivation_BoundsArraySet ) {
+    previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray, 
+    channelMultiplier, nActivationId, filtersArray, biasesArray
+  ) {
 
     // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
     const filtersValueBounds = Weights.Base.ValueBounds;
@@ -176,9 +178,9 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
 
 //!!! (2022/01/07 Remarked) seems not used. because should be channel by channel.
-
+//
 // //!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-
+//
 //   /**
 //    *
 //    * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
@@ -200,28 +202,28 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 //    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
 //    */
 //    set_by( previous_ConvBiasActivation_BoundsArraySet, bDepthwise, filterHeight, filterWidth, bBias, nActivationId ) {
-
+//
 //     // 0. Default as BoundsArraySet.output of previous convolution-bias-activation.
 //     this.reset_byBounds( previous_ConvBiasActivation_BoundsArraySet.output );
-
+//
 //     // 1. No operation at all.
 //     if ( !bDepthwise )
 //       return;
-
+//
 //     // 2. Before activation function.
 //     {
 //       // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
 //       const filtersValueBounds = Weights.Base.ValueBounds;
 //       const biasesValueBounds = Weights.Base.ValueBounds;
-
+//
 //       // Note: For maximum pooling, the multiply_Bounds is a little bit overestimated (but should be acceptable).
 //       let filterSize = filterHeight * filterWidth;
 //       this.beforeActivation.multiply_all_byBounds( filtersValueBounds ).multiply_all_byN( filterSize );
-
+//
 //       if ( bBias )
 //         this.beforeActivation.add_all_byBounds( biasesValueBounds );
-
-
+//
+//
 // //!!! ...unfinished... (2021/12/26)
 // // The .undo should also be applied to the real filter value and bias value of this convolution-bias (i.e. not just applied here ScaleTranslate).
 // //
@@ -230,17 +232,17 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 //       {
 //         this.beforeActivation.multiply_all_byN(
 //           previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo.scale );
-
+//
 //         if ( this.bBias )
 //           this.beforeActivation.add_all_byN(
 //             previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo.translate );
 //       }
-
+//
 //     }
-
+//
 //     // 3. Output.
 //     this.set_output_by_beforeActivation_ActivationId( nActivationId );
-
+//
 //     // 4. ActivationEscaping.ScaleTranslateArraySet.
 //     this.activationEscaping_ScaleTranslateArraySet.set_by_currentBoundsArraySet_previousActivationEscaping(
 //       this, previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet );
