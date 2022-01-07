@@ -99,6 +99,7 @@ class BoundsArraySet {
     return this;
   }
 
+//!!! ...unfinished... (2022/01/07) seems not used.
   /**
    * Set this.afterActivation according to this.afterActivationEscaping and the specified nActivationId.
    *
