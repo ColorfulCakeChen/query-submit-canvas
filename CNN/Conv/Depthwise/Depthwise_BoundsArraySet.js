@@ -36,7 +36,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    *   The weights of the bias. Its content will not be used. Only be tested against null. If ( biasesArray != null ),
    * there is bias operation. If ( biasesArray == null ), there is no bias operation.
    *
-   * @param {ChannelPartInfo} inChannelPartInfoArray
+   * @param {ChannelPartInfo[]} inChannelPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
    *
    * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
