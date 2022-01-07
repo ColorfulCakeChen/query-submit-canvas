@@ -5,42 +5,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ConvBiasActivation from "../ConvBiasActivation.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
-
-/**
- * Half channels information. Describe channel index range of lower half or higher half
- *
- * @member {boolean} bPassThrough
- *   If true, this is the half channels for pass-through input to output.
- */
-class HalfPartInfo {
-
-  /**
-   * @param {number} effectFilterY_passThrough, effectFilterX_passThrough
-   *   For pass-through filters, there is only one position (inside the effect depthwise filter) with non-zero value. All other
-   * positions of the filters should be zero.
-   *   - Note: Unfortunately, the pass-through feature may not work for ( dilation > 1 ) because the non-zero-filter-value might
-   *       be just at the dilation position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
-   *   - Negative value means this part is not for pass-through.
-   */
-  constructor( inChannelBegin, inChannelEnd, effectFilterY_passThrough = -1, effectFilterX_passThrough = -1 ) {
-    this.inChannelBegin = inChannelBegin;
-    this.inChannelEnd = inChannelEnd;
-    this.effectFilterY_passThrough = effectFilterY_passThrough;
-    this.effectFilterX_passThrough = effectFilterX_passThrough;
-
-    this.bPassThrough = ( ( this.effectFilterY_passThrough >= 0 ) && ( this.effectFilterX_passThrough >= 0 ) );
-  }
-
-  /**
-   * @return {boolean} Return true, if the specified position should be non-zero for pass-through input to output.
-   */
-  isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) {
-    if ( ( effectFilterY == this.effectFilterY_passThrough ) && ( effectFilterX == this.effectFilterX_passThrough ) )
-      return true;
-    return false;
-  }      
-}
-
+import { ChannelPartInfo } from  "./Depthwise_ChannelPartInfo.js";
 
 /**
  * Extract depthwise convolution filters and biases.
@@ -211,7 +176,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
     // Determine shape of the filters, biases, channels.
-    let halfPartInfoArray;
+    let inChannelPartInfoArray;
     let filtersShape_extracted, biasesShape_extracted;
 
 //!!! (2021/12/29 Remarked)
@@ -225,7 +190,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //     let effectFilterY_passThrough = this.padHeightTop;
 //     let effectFilterX_passThrough = this.padWidthLeft;
 
-    // Set up HalfPartInfo and filtersShape and biasesShape.
+    // Set up inChannelPartInfoArray and filtersShape and biasesShape.
     {
       if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
@@ -233,7 +198,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         if ( this.bBias )
           this.biasesShape = biasesShape_extracted = [ this.outputChannelCount ];
 
-        halfPartInfoArray = [ new HalfPartInfo( 0, this.inputChannelCount ) ];
+        inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount ) ];
 
       } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
 
@@ -244,30 +209,30 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         switch ( this.nHigherHalfDifferent ) {
           default:
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-            halfPartInfoArray = [ new HalfPartInfo( 0, this.inputChannelCount ) ];
+            inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount ) ];
             filtersShape_extracted = this.filtersShape;
             biasesShape_extracted =  this.biasesShape;
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
-            halfPartInfoArray = [
-              new HalfPartInfo(                                0, this.inputChannelCount_lowerHalf ),
-              new HalfPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount           ) ];
+            inChannelPartInfoArray = [
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount           ) ];
             filtersShape_extracted = this.filtersShape;
             biasesShape_extracted =  this.biasesShape;
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
-            halfPartInfoArray = [
-              new HalfPartInfo(                                0, this.inputChannelCount_lowerHalf ),
-              new HalfPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
+            inChannelPartInfoArray = [
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
             filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
             biasesShape_extracted =  [ this.inputChannelCount_lowerHalf ];
             break;
         }
 
       } else { // No depthwise (i.e. zero) (so no channel multiplier).
-        halfPartInfoArray = []; // Note: Even if ( this.bBias == true ), the biasesArray will still not be extracted.
+        inChannelPartInfoArray = []; // Note: Even if ( this.bBias == true ), the biasesArray will still not be extracted.
       }
     }
 
@@ -337,12 +302,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //!!! ...unfinished... (2021/12/29)
 
 
-    // ( halfPartIndex == 0 ), lower half channels. (or, all channels)
-    // ( halfPartIndex == 1 ), higher half channels.
-    for ( let halfPartIndex = 0; halfPartIndex < halfPartInfoArray.length; ++halfPartIndex ) {
-      let halfPartInfo = halfPartInfoArray[ halfPartIndex ];
-      let inChannelBegin = halfPartInfo.inChannelBegin;
-      let inChannelEnd = halfPartInfo.inChannelEnd;
+    // ( inChannelPartIndex == 0 ), lower half channels. (or, all channels)
+    // ( inChannelPartIndex == 1 ), higher half channels.
+    for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+      let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+      let inChannelBegin = inChannelPartInfo.beginIndex;
+      let inChannelEnd = inChannelPartInfo.endIndex;
 
       if ( this.filtersArray ) {
 //        let filterValue;
@@ -401,8 +366,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //!!! ...unfinished... (2022/01/04) value-bounds?
                     pendingUndo.scales[ outChannel ] = 1; // Since it could be applied, no more pending.
 
-                    if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
-                      if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
+                    if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+                      if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
                         this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
 
                         perWeightBounds
@@ -476,7 +441,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             this.boundsArraySet.beforeActivation
               .add_one_byN( outChannel, extraTranslate ); // pre(-extra)-translate
 
-            if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
+            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
               this.biasesArray[ biasIndex ] = extraTranslate;
 
             } else { // Not pass-through half channels.
@@ -505,7 +470,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
       }
 
-    } // halfPartIndex
+    } // inChannelPartIndex
 
 
 //!!! ...unfinished... (2022/01/04) What if this depthwise does not have filters and/or biases, the escaping value-bounds?
@@ -533,144 +498,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 // let padInfo = new ( PadInfoCalculator() )( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) ;
 // let filterIndexArray = padInfo.test_findOut_filterIndex_inSequence();
 // console.log( filterIndexArray );
-
-  }
-
-
-//!!! ...unfinished... (2022/01/07)
-  set_boundsArraySet_by_halfPartInfoArray( halfPartInfoArray, previous_ConvBiasActivation_BoundsArraySet ) {
-
-
-    // 1. Determine .input
-    //
-    // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
-    this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
-
-//!!! (2022/01/07 Remarked) moved to loop one by one.
-// //!!! ...unfinished... (2022/01/07)
-//     this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_all_byNs(
-//       previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo );
-
-    // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
-    const filtersValueBounds = Weights.Base.ValueBounds;
-    const biasesValueBounds = Weights.Base.ValueBounds;
-
-    let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( this.nActivationId );
-
-    // ( halfPartIndex == 0 ), lower half channels. (or, all channels)
-    // ( halfPartIndex == 1 ), higher half channels.
-    for ( let halfPartIndex = 0; halfPartIndex < halfPartInfoArray.length; ++halfPartIndex ) {
-      let halfPartInfo = halfPartInfoArray[ halfPartIndex ];
-      let inChannelBegin = halfPartInfo.inChannelBegin;
-      let inChannelEnd = halfPartInfo.inChannelEnd;
-
-      let outChannel = inChannelBegin * this.channelMultiplier;
-
-      for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-
-        let undoScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
-
-        // 2. Determine .afterUndoPreviousActivationEscaping
-        this.boundsArraySet.afterUndoPreviousActivationEscaping.set_one_byBoundsArray( inChannel, this.boundsArraySet.input, inChannel );
-        this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_one_byN( inChannel, undoScale );
-
-        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-
-          // 3. Determine .afterFilter
-          this.boundsArraySet.afterFilter.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
-          if ( this.filtersArray ) {
-
-            if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
-              // Do nothing. The value bounds does not change at all because it is just be past through.
-
-            } else { // Non pass-through half channels.
-              this.boundsArraySet.afterFilter
-                .multiply_one_byBounds( outChannel, filtersValueBounds )
-                .multiply_one_byN( outChannel, this.filterSize );
-            }
-
-          } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
-            // Do nothing. The value bounds does not change for avg/max pooling.
-          }
-
-          // 4. Determine .afterBias
-          this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
-          if ( this.biasesArray ) {
-
-            if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
-              // Do nothing. The value bounds does not change at all because it is just be past through.
-
-            } else { // Non pass-through half channels.
-              this.boundsArraySet.afterBias.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by the bias bounds.
-            }
-
-          } else { // ( !this.biasesArray ). No biases array to be extracted.
-            // Do nothing. The value bounds does not change since no bias.
-          }
-
-          // 6. Determine .afterActivationEscaping
-          {
-            // 6.1 Determine .activationEscaping_ScaleArraySet
-            {
-              // 6.1.1 Determine .do
-
-              if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-
-                // Since no activation function, no need to escape. (i.e. scale = 1 for no scale)
-                this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 );
-
-              } else {
-
-                if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
-
-                  // Calculate the scale for escaping bias result from activation function's non-linear domain into linear domain.
-                  //
-                  // Note: This does not work for avg/max pooling.
-                  this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper( outChannel,
-                    this.boundsArraySet.afterBias.lowers[ outChannel ], this.boundsArraySet.afterBias.uppers[ outChannel ],
-                    theActivationFunctionInfo.inputDomainLinear.lower, theActivationFunctionInfo.inputDomainLinear.upper
-                  );
-
-                  let doScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-                  tf.util.assert( ( Number.isNaN( doScale ) == false ),
-                    `Depthwise.FiltersArray_BiasesArray.set_boundsArraySet_by_halfPartInfoArray(): `
-                      + `this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ ${outChannel} ] ( ${doScale} ) `
-                      + `should not be NaN. `
-                      + `Please use activation function (e.g. tanh()) which has both negative and positive parts near origin point.`
-                  );
-
-                } else { // Non pass-through half channels.
-                  // Since non-pass-through, no need to escape. (i.e. scale = 1 for no scale)
-                  this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 );
-                }
-              }
-
-              // 6.1.2 Determine .undo (Prepared for the next convolution-bias-activation. Not for this.)
-              this.boundsArraySet.activationEscaping_ScaleArraySet.undo.set_one_byUndo_ScaleArray(
-                outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do, outChannel );
-            }
-
-            // 6.2 Determine .afterActivationEscaping
-            this.boundsArraySet.afterActivationEscaping
-              .set_one_byBoundsArray( outChannel, this.boundsArraySet.afterBias, outChannel )
-              .multiply_one_byNs( outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales, outChannel );
-          }
-
-          // 7. Determine .afterActivation
-          {
-            // If no activation function, the output range is determined by .afterActivationEscaping.
-            if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-              this.boundsArraySet.afterActivation.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterActivationEscaping, outChannel )
-
-            // Otherwise, the activation function dominates the output range.
-            } else {
-              this.boundsArraySet.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
-            }
-          }
-
-        } // outChannelSub, outChannel
-      } // inChannel
-    } // halfPartIndex
 
   }
 
