@@ -4,8 +4,9 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ConvBiasActivation from "../ConvBiasActivation.js";
-import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 import { ChannelPartInfo } from  "./Depthwise_ChannelPartInfo.js";
+import { BoundsArraySet } from  "./Depthwise_BoundsArraySet.js";
+import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 /**
  * Extract depthwise convolution filters and biases.
@@ -93,7 +94,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
-    this.boundsArraySet = new ConvBiasActivation.BoundsArraySet( inputChannelCount, this.outputChannelCount );
+    this.boundsArraySet = new BoundsArraySet( inputChannelCount, this.outputChannelCount );
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nHigherHalfDifferent = nHigherHalfDifferent;
@@ -258,41 +259,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     // Prepare value bounds.
 
-    // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
-    this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
+    this.boundsArraySet.set_all_by_inChannelPartInfoArray(
+      this.channelMultiplier, this.nActivationId, this.filtersArray, this.biasesArray,
+      inChannelPartInfoArray, previous_ConvBiasActivation_BoundsArraySet );
 
-//!!! (2022/01/07 Remarked) moved to loop one by one.
-// //!!! ...unfinished... (2022/01/07)
-//     this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_all_byNs(
-//       previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo );
-
-    // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
-    const filtersValueBounds = Weights.Base.ValueBounds;
-    const biasesValueBounds = Weights.Base.ValueBounds;
-
-    this.boundsArraySet.beforeActivation
-      .set_all_byN( 0 );
-
-//!!! ...unfinished... (2022/01/04) input/output channels are different.
-//     this.boundsArraySet.beforeActivation
-//       .set_all_byBoundsArray( this.boundsArraySet.input )
+//!!! ...unfinished... (2022/01/07)
+//    let undoScaleTranslateArray = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo;
 //
-//       // For the weights of this filters.
-//       // Note: For maximum pooling (and for pass-through channels), this is a little bit overestimated (but should be acceptable).
-//       .multiply_all_byBounds( filtersValueBounds )
-//       .multiply_all_byN( this.filterSize ); // A depthwise filter has so many weights.
-
-
-//!!! ...unfinished... (2022/01/05)
-// It seems that this activationEscaping_ScaleTranslateArraySet.doWithoutPreviousUndo should be applied to this filters
-// and biases weights. Not previous activationEscaping_ScaleTranslateArraySet.undo should be applied.
-//
-
-    let undoScaleTranslateArray = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo;
-
-    let pendingUndo = new FloatValue.ScaleTranslateArray( this.outputChannelCount );
-//!!! ...unfinished... (2022/01/04) problem: input/output channels are different.
-//    pendingUndo.set_byScaleTranslateArray( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo );
+//     let pendingUndo = new FloatValue.ScaleTranslateArray( this.outputChannelCount );
+// //!!! ...unfinished... (2022/01/04) problem: input/output channels are different.
+// //    pendingUndo.set_byScaleTranslateArray( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet.undo );
 
 
     let sourceIndex, filterIndex, biasIndex;
