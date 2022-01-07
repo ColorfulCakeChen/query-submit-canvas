@@ -506,7 +506,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       }
 
     } // halfPartIndex
- 
+
 
 //!!! ...unfinished... (2022/01/04) What if this depthwise does not have filters and/or biases, the escaping value-bounds?
 
@@ -533,6 +533,171 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 // let padInfo = new ( PadInfoCalculator() )( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) ;
 // let filterIndexArray = padInfo.test_findOut_filterIndex_inSequence();
 // console.log( filterIndexArray );
+
+  }
+
+
+//!!! ...unfinished... (2022/01/07)
+  set_boundsArraySet_by_halfPartInfoArray( halfPartInfoArray, previous_ConvBiasActivation_BoundsArraySet ) {
+
+
+    // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
+    this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
+
+//!!! (2022/01/07 Remarked) moved to loop one by one.
+// //!!! ...unfinished... (2022/01/07)
+//     this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_all_byNs(
+//       previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo );
+
+    // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
+    const filtersValueBounds = Weights.Base.ValueBounds;
+    const biasesValueBounds = Weights.Base.ValueBounds;
+
+
+    // ( halfPartIndex == 0 ), lower half channels. (or, all channels)
+    // ( halfPartIndex == 1 ), higher half channels.
+    for ( let halfPartIndex = 0; halfPartIndex < halfPartInfoArray.length; ++halfPartIndex ) {
+      let halfPartInfo = halfPartInfoArray[ halfPartIndex ];
+      let inChannelBegin = halfPartInfo.inChannelBegin;
+      let inChannelEnd = halfPartInfo.inChannelEnd;
+
+      if ( this.filtersArray ) {
+//        let filterValue;
+
+        let outChannel = inChannelBegin * this.channelMultiplier;
+
+        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+
+//!!! ...unfinished... (2022/01/07)
+          let undoScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+
+          this.boundsArraySet.afterUndoPreviousActivationEscaping.set_one_byBoundsArray( inChannel, this.boundsArraySet.input, inChannel );
+          this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_one_byN( inChannel, undoScale );
+
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+
+//!!! ...unfinished... (2022/01/07)
+            this.boundsArraySet.afterFilter.set_one_byBoundsArray(
+              outChannel, this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
+
+            this.boundsArraySet.afterFilter.multiply_one_byBounds( outChannel, filtersValueBounds );
+
+//!!! ...unfinished... (2022/01/07)
+            this.boundsArraySet.afterBias;
+
+//!!! ...unfinished... (2022/01/07) Only if pass-through, the activationEscaping_ScaleArraySet is necessary.
+            this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
+              outChannel, fromLower, fromUpper, toLower, toUpper );
+
+            this.boundsArraySet.afterActivationEscaping;
+            this.boundsArraySet.afterActivation;
+
+
+//!!! ...unfinished... (2022/01/04) value-bounds?
+            pendingUndo.scales[ outChannel ] = 1; // Since it could be applied, no more pending.
+
+            if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
+              if ( halfPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
+                this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
+
+                perWeightBounds
+                  .set_byBoundsArray( this.boundsArraySet.input, inChannel )
+                  .multiply_byN( extraScale ); // pre(-extra)-scale.
+
+              } else {
+                this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
+                perWeightBounds.set_byN( 0 );
+              }
+
+//!!! ...unfinished... (2022/01/04) value-bounds?
+
+            } else { // Not pass-through half channels.
+//                      filterValue = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
+              this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
+
+              perWeightBounds
+                .set_byBoundsArray( this.boundsArraySet.input, inChannel )
+                .multiply_byN( extraScale ) // pre(-extra)-scale.
+                .multiply_byN( filtersValueBounds ); // This filters' weight.
+
+              ++sourceIndex;
+            }
+
+            this.boundsArraySet.beforeActivation.add_one_byBounds( outChannel, perWeightBounds );
+
+            ++filterIndex;
+          }
+        }
+
+      } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
+
+//!!! ...unfinished... (2022/01/04) value-bounds?
+
+        let outChannel = inChannelBegin * this.channelMultiplier;
+        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+          let extraScale = undoScaleTranslateArray.scales[ inChannel ];
+
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+            pendingUndo.scales[ outChannel ] = extraScale; // Since avg/max pooling can not do pre-scale, it is still pending.
+
+            // Because avg/max pooling will not change value bounds, it is still the same as input.
+            this.boundsArraySet.beforeActivation.set_one_byBoundsArray( outChannel, this.boundsArraySet.input, inChannel );
+          }
+        }
+
+      }
+
+
+      if ( this.biasesArray ) {
+//        let biasValue;
+
+//!!! ...unfinished... (2021/12/28) 
+
+        let outChannel = inChannelBegin * this.channelMultiplier;
+        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+          
+//!!! (2022/01/04 Remarked) use previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet directly.
+//        let extraTranslate = extraScaleTranslateArray_byChannelIndex.translates[ inChannel ];
+          let extraTranslate = undoScaleTranslateArray.translates[ inChannel ];
+
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+
+            pendingUndo.translates[ outChannel ] = 0; // Since it could be applied, no more pending.
+
+            this.boundsArraySet.beforeActivation
+              .add_one_byN( outChannel, extraTranslate ); // pre(-extra)-translate
+
+            if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
+              this.biasesArray[ biasIndex ] = extraTranslate;
+
+            } else { // Not pass-through half channels.
+//              biasValue = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) + extraTranslate;
+              this.biasesArray[ biasIndex ] = extraTranslate + sourceWeights[ sourceIndex ];
+
+              this.boundsArraySet.beforeActivation.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by this bias.
+
+              ++sourceIndex;
+            }
+
+            ++biasIndex;
+          }
+        }
+
+      } else { // ( !this.biasesArray ). No biases array to be extracted.
+
+        let outChannel = inChannelBegin * this.channelMultiplier;
+        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+          let extraTranslate = undoScaleTranslateArray.translates[ inChannel ];
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+            pendingUndo.translates[ outChannel ] = extraTranslate; // Since it could not be applied, still pending.
+          }
+        }
+
+
+      }
+
+    } // halfPartIndex
+
 
   }
 
