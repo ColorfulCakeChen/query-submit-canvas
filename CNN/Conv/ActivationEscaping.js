@@ -130,10 +130,13 @@ class ScaleArraySet {
     // 1. Try lower bound.
     //
     // Note:
+    //  ( x / +Infinity ) == +0
+    //  ( x / -Infinity ) == -0
     //  (  0 / x ) = 0
     //  ( -1 / 0 ) = -Infinity
     //  ( +1 / 0 ) = +Infinity
     //  (  0 / 0 ) = NaN
+    //  ( +-Infinity / +-Infinity ) == NaN
     //
     scale = dstLower / srcLower;
 
