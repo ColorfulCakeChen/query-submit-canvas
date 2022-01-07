@@ -541,6 +541,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   set_boundsArraySet_by_halfPartInfoArray( halfPartInfoArray, previous_ConvBiasActivation_BoundsArraySet ) {
 
 
+    // Determine .input
+    //
     // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
     this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
 
@@ -567,11 +569,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
         let undoScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
+        // Determine .afterUndoPreviousActivationEscaping
         this.boundsArraySet.afterUndoPreviousActivationEscaping.set_one_byBoundsArray( inChannel, this.boundsArraySet.input, inChannel );
         this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_one_byN( inChannel, undoScale );
 
         for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
+          // Determine .afterFilter
           this.boundsArraySet.afterFilter.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel );
           if ( this.filtersArray ) {
 
@@ -589,6 +593,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           }
 
 //!!! ...unfinished... (2022/01/07)
+          // Determine .afterBias
           this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
           if ( this.biasesArray ) {
 
