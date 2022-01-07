@@ -611,12 +611,21 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           {
             // 5.1 Determine .do
 //!!! ...unfinished... (2022/01/07) Only if pass-through, the activationEscaping_ScaleArraySet is necessary.
-            this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
             if ( halfPartInfo.bPassThrough ) { // For pass-through half channels.
               this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
                 outChannel, fromLower, fromUpper, toLower, toUpper );
 
+
+              let doScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+              tf.util.assert( ( Number.isNaN( doScale ) == false ),
+                `Depthwise.FiltersArray_BiasesArray.set_boundsArraySet_by_halfPartInfoArray(): `
+                  + `this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ ${outChannel} ] ( ${doScale} ) `
+                  + `should not be NaN. `
+                  + `Please use activation function (e.g. tanh()) which has both negative and positive parts near origin point.`
+              );
+
             } else { // Non pass-through half channels.
+              this.boundsArraySet.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 ); // no scale because no need to escape.
             }
 
             // 5.2 Determine .undo
