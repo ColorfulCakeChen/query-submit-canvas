@@ -2,66 +2,62 @@ export { BoundsArraySet };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
-import * as Weights from "../Unpacker/Weights.js";
+//import * as Weights from "../Unpacker/Weights.js";
 import * as ActivationEscaping from "./ActivationEscaping.js";
-
-//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
 
 /**
  * Several element value bounds for convolution-bias-activation operations.
  *
  *
  * @member {FloatValue.BoundsArray} input
- *   The bounds of the input element value. Or say, the domain of the convolution-bias-activation.
+ *   The (per channel) bounds of the input element value. Or say, the domain of the convolution-bias-activation.
  *
- * @member {FloatValue.BoundsArray} beforeActivation
- *   The bounds of the element value after convolution and bias operation (but before activation).
+ * @member {FloatValue.BoundsArray} afterUndoPreviousActivationEscaping
+ *   The (per channel) bounds of the element value after applying the previousConvBiasActivation.BoundsArraySet.ActivationEscaping.undo
+ * to this.input. (i.e. beforeFilter)
+ *
+ * @member {FloatValue.BoundsArray} afterFilter
+ *   The (per channel) bounds of the element value after applying the convolution filters to this.afterUndoPreviousActivationEscaping.
+ * (i.e. beforeBias)
+ *
+ * @member {FloatValue.BoundsArray} afterBias
+ *   The (per channel) bounds of the element value after applying the convolution biases to this.afterFilter. (i.e. beforeActivationEscaping)
+ *
+ * @member {FloatValue.BoundsArray} afterActivationEscaping
+ *   The (per channel) bounds of the element value after applying this.activationEscaping_ScaleArraySet.do to this.afterBias. (i.e. beforeActivation)
+ *
+ * @member {FloatValue.BoundsArray} afterActivation
+ *   The (per channel) bounds of the element value after applying activation function to this.afterActivationEscaping.
  *
  * @member {FloatValue.BoundsArray} output
- *   The bounds of the output element value. Or say, the range of the convolution-bias-activation.
+ *   The (per channel) bounds of the output element value. Or say, the range of the convolution-bias-activation. It is just
+ * the this.afterActivation.
  *
- * @member {ActivationEscaping.ScaleTranslateArraySet} activationEscaping_ScaleTranslateArraySet
- *   The scale-translate for moving beforeActivation bounds into the linear domain of the activation function. That is, for
- * letting beforeActivation escape from activation function's non-linear domain.
+ * @member {ActivationEscaping.ScaleArraySet} activationEscaping_ScaleArraySet
+ *   The scales for moving this.afterBias bounds into the linear domain of the activation function. That is, for
+ * letting this.afterBias escape from activation function's non-linear domain. And the .undo for undoing the scales.
  */
 class BoundsArraySet {
 
   /**
    */
   constructor( inputChannelCount, outputChannelCount ) {
+
     this.input = new FloatValue.BoundsArray( inputChannelCount );
-    this.input.set_all_byBounds( Weights.Base.ValueBounds );
-
-
-//!!! ...unfinished... (2022/01/07)
-    this.afterUndoPreviousActivationEscaping_beforeFilter = new FloatValue.BoundsArray( ??? outputChannelCount );
-    this.afterUndoPreviousActivationEscaping_beforeFilter.set_all_byBounds( ??? Weights.Base.ValueBounds );
-
-    this.afterFilter_beforeBias = new FloatValue.BoundsArray( outputChannelCount );
-    this.afterFilter_beforeBias.set_all_byBounds( ??? Weights.Base.ValueBounds );
-
-    this.afterBias_beforeActivationEscaping = new FloatValue.BoundsArray( outputChannelCount );
-    this.afterBias_beforeActivationEscaping.set_all_byBounds( ??? Weights.Base.ValueBounds );
-
-    this.afterActivationEscaping_beforeActivation = new FloatValue.BoundsArray( outputChannelCount );
-    this.afterActivationEscaping_beforeActivation.set_all_byBounds( ??? Weights.Base.ValueBounds );
-
+    this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( inputChannelCount );
+    this.afterFilter = new FloatValue.BoundsArray( outputChannelCount );
+    this.afterBias = new FloatValue.BoundsArray( outputChannelCount );
+    this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount );
     this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
-    this.afterActivation.set_all_byBounds( ??? Weights.Base.ValueBounds );
 
+    //this.input.set_all_byBounds( Weights.Base.ValueBounds );
 
-
-
-    this.beforeActivation = new FloatValue.BoundsArray( outputChannelCount );
-    this.beforeActivation.set_all_byBounds( Weights.Base.ValueBounds );
-
-    this.output = new FloatValue.BoundsArray( outputChannelCount );
-    this.output.set_all_byBounds( Weights.Base.ValueBounds );
-
-//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-    this.activationEscaping_ScaleTranslateArraySet = new ActivationEscaping.ScaleTranslateArraySet();
+    this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet();
   }
 
+  /**
+   * @return {BoundsArraySet} Return a newly created BoundsArraySet which is a copy of this BoundsArraySet.
+   */
   clone() {
     let result = new BoundsArraySet();
     result.set_byBoundsArraySet( this );
@@ -76,16 +72,17 @@ class BoundsArraySet {
    *   Return this (modified) object which is copied from aBoundsArraySet.
    */
   set_byBoundsArraySet( aBoundsArraySet ) {
-    this.input.set_all_byBoundsArray( aBoundsArraySet.input );
-    this.beforeActivation.set_all_byBoundsArray( aBoundsArraySet.beforeActivation );
-    this.output.set_all_byBoundsArray( aBoundsArraySet.output );
-
-//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-    this.activationEscaping_ScaleTranslateArraySet.set_byScaleTranslateArraySet( aBoundsArraySet.activationEscaping_ScaleTranslateArraySet );
+    this.input                              .set_all_byBoundsArray( aBoundsArraySet.input );
+    this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( aBoundsArraySet.afterUndoPreviousActivationEscaping );
+    this.afterFilter                        .set_all_byBoundsArray( aBoundsArraySet.afterFilter );
+    this.afterBias                          .set_all_byBoundsArray( aBoundsArraySet.afterBias );
+    this.afterActivationEscaping            .set_all_byBoundsArray( aBoundsArraySet.afterActivationEscaping );
+    this.afterActivation                    .set_all_byBoundsArray( aBoundsArraySet.afterActivation );
+    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
     return this;
   }
 
-//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
+//!!! ...unfinished... (2022/01/07)
 
   /**
    * @param {FloatValue.Bounds} aBounds
@@ -125,6 +122,10 @@ class BoundsArraySet {
       this.output.set_all_byBounds( info.outputRange );
     }
 
+  }
+
+  get output() {
+    return this.afterActivation;
   }
 
 }
