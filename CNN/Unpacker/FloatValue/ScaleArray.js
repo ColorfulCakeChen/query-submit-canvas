@@ -12,6 +12,9 @@ class ScaleArray {
     this.scales = new Array( length );
   }
 
+  /**
+   * @return {ScaleArray} Return a newly created ScaleArray which copies this object.
+   */
   clone() {
     let result = new ScaleArray( this.scales.length );
     result.set_all_byScaleArray( this );
