@@ -652,9 +652,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2022/01/07)
           // 6.2 Determine .afterActivationEscaping
-          this.boundsArraySet.afterActivationEscaping.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterBias, outChannel );
-          this.boundsArraySet.afterActivationEscaping.multiply_one_byNs(
-            outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales, outChannel );
+          this.boundsArraySet.afterActivationEscaping
+            .set_one_byBoundsArray( outChannel, this.boundsArraySet.afterBias, outChannel )
+            .multiply_one_byNs( outChannel, this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales, outChannel );
 
 //!!! ...unfinished... (2022/01/07)
 //               theActivationFunctionInfo.outputRange;
