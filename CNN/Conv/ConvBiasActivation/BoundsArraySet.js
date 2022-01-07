@@ -1,9 +1,9 @@
 export { BoundsArraySet };
 
-import * as FloatValue from "../Unpacker/FloatValue.js";
-import * as ValueDesc from "../Unpacker/ValueDesc.js";
-//import * as Weights from "../Unpacker/Weights.js";
-import * as ActivationEscaping from "./ActivationEscaping.js";
+import * as FloatValue from "../../Unpacker/FloatValue.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+//import * as Weights from "../../Unpacker/Weights.js";
+import * as ActivationEscaping from "../ActivationEscaping.js";
 
 /**
  * Several element value bounds for convolution-bias-activation operations.
@@ -82,25 +82,25 @@ class BoundsArraySet {
     return this;
   }
 
-//!!! ...unfinished... (2022/01/07)
-
   /**
    * @param {FloatValue.Bounds} aBounds
-   *   Set this.input, this.beforeActivation, this.output all the same as the specified aBounds. Set the
-   * this.activationEscaping_ScaleTranslateArraySet to default ( 1, 0 );
+   *   Set all BoundsArray to the same as the specified aBounds. Set the this.activationEscaping_ScaleArraySet to default ( 1 );
    *
    * @return {BoundsArraySet}
-   *   Return this (modified) object which is copied from aBoundsArraySet.
+   *   Return this (modified) object.
    */
-  reset_byBounds( aBounds ) {
+  set_all_byBounds( aBounds ) {
     this.input.set_all_byBounds( aBounds );
-    this.beforeActivation.set_all_byBounds( aBounds );
-    this.output.set_all_byBounds( aBounds );
-
-//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
-    this.activationEscaping_ScaleTranslateArraySet.reset_by_scale_translate( 1, 0 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
+    this.afterUndoPreviousActivationEscaping.set_all_byBounds( aBounds );
+    this.afterFilter.set_all_byBounds( aBounds );
+    this.afterBias.set_all_byBounds( aBounds );
+    this.afterActivationEscaping.set_all_byBounds( aBounds );
+    this.afterActivation.set_all_byBounds( aBounds );
+    this.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
     return this;
   }
+
+//!!! ...unfinished... (2022/01/07)
 
   /**
    * Determine output value bounds. Set this.output according to this.beforeActivation and the specified nActivationId.
