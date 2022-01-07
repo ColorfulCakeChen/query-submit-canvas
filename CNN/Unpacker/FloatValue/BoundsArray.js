@@ -21,7 +21,7 @@ class BoundsArray {
   }
 
   /**
-   * @return {Bounds}
+   * @return {BoundsArray}
    *   Return newly created object which is a copy of this BoundsArray.
    */
   clone() {
