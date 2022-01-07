@@ -3,7 +3,7 @@ export { ScaleArraySet };
 //!!! (2022/01/07 Remarked) deprecated.
 //export { ScaleTranslateArraySet };
 
-import * as FloatValue from "../Unpacker/FloatValue.js";
+import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ConvBiasActivation from "./ConvBiasActivation.js";
 
 /**
