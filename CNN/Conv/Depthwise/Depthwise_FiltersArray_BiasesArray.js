@@ -296,6 +296,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
     this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
 
+//!!! ...unfinished... (2022/01/07)
+    this.boundsArraySet.afterUndoPreviousActivationEscaping.multiply_all_byNs(
+      previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo );
+
+
+
     // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
     const filtersValueBounds = Weights.Base.ValueBounds;
     const biasesValueBounds = Weights.Base.ValueBounds;
@@ -494,6 +500,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 //!!! ...unfinished... (2022/01/04) How to combine pendingUndo and newUndo?
 
+
+//!!! ...unfinished... (2022/01/07)
+    this.boundsArraySet.set_afterActivation_by_afterActivationEscaping_ActivationId( this.nActivationId );
 
     
 // let inputHeight = 10;
