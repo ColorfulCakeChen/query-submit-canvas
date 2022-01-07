@@ -127,20 +127,25 @@ class ScaleArraySet {
   }
 
   /**
+   * @param {number} N  Set all scales[] by ( N ). Default are ( N = 1 ) (i.e. no scale).
+   *
+   * @return {ScaleArraySet} Return this (modified) object.
+   */
+  set_all_byN( N = 1 ) {
+    this.do.set_all_byN( N );
+    this.undo.set_all_byN( N );
+    return this;
+  }
+
+  /**
    * @param {ScaleArraySet} aScaleArraySet  The ScaleArraySet to be copied.
    *
    * @return {ScaleArraySet} Return this (modified) object.
    */
-  set_byScaleArraySet( aScaleArraySet ) {
+  set_all_byScaleArraySet( aScaleArraySet ) {
     this.do.set_all_byScaleArray( aScaleArraySet.do );
     this.undo.set_all_byScaleArray( aScaleArraySet.undo );
     return this;
-  }
-
-  /** Reset all scale values. Default is ( scale = 1 ) (i.e. no scale). */
-  reset_by_scale( scale = 1 ) {
-    this.do.set_all_byN( scale );
-    this.undo.set_all_byN( scale );
   }
 
 //!!! ...unfinished... (2021/12/26)
