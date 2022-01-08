@@ -199,9 +199,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     );
   }
 
-
-//!!! ...unfinished... (2022/01/08)
-
   /**
    * Extract pointwise filters and biases.
    *
@@ -232,7 +229,19 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     // Q2: Why is not the sourceWeights kept in this?
     // A2: So that inputFloat32Array could be released.
 
-//!!! ...unfinished... (2022/01/08)
+
+    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.output.lowers.length ),
+      `Pointwise.FiltersArray_BiasesArray.init(): `
+        + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
+        + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_BoundsArraySet.output.lowers.length} ).`
+    );
+
+    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales.length ),
+      `Pointwise.FiltersArray_BiasesArray.init(): `
+        + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
+        + `activationEscaping_ScaleArraySet.undo of previous convolution-bias-activation `
+        + `( ${previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales.length} ).`
+    );
 
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
@@ -240,10 +249,91 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     // Determine shape of the filters, biases, channels.
     let inChannelPartInfoArray;
     let filtersShape_extracted, biasesShape_extracted;
-      
+
+    // Set up inChannelPartInfoArray and filtersShape and biasesShape.
+    {
 
 //!!! ...unfinished... (2022/01/08)
 
+      switch ( this.nHigherHalfDifferent ) {
+        // 3.0 Normal pointwise convolution and bias.
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+          bExtractOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
+          break;
+
+        // 3.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
+          bExtractOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
+          break;
+
+        // 3.2 bHigherHalfCopyLowerHalf
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
+          bExtractOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
+          break;
+
+        // 3.3 bHigherHalfPointwise22
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22: // (3)
+          bExtractOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
+          break;
+
+        // 3.4
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
+          if ( this.outputChannelCount > 0 ) { // 3.4.1.1 bHigherHalfPassThrough
+            bExtractOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
+
+          } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
+            bExtractOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
+          }
+
+          // 3.4.1.2 bHigherHalfPassThroughShuffle
+          // 3.4.2.2 bAllPassThroughShuffle
+          if ( bExtractOk ) {
+            if ( this.channelShuffler_outputGroupCount > 0 ) {
+              Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
+            }
+          }
+          break;
+
+        default:
+          tf.util.assert( ( false ),
+            `Pointwise.FiltersArray_BiasesArray.init(): `
+              + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
+          );
+          break;
+      }
+
+    }
+
+//!!! ...unfinished... (2022/01/08)
+
+
+    // Prepare result filters and biases array.
+    if ( this.filtersShape )
+      this.filtersArray = new Array( tf.util.sizeFromShape( this.filtersShape ) );
+    if ( this.biasesShape )
+      this.biasesArray = new Array( tf.util.sizeFromShape( this.biasesShape ) );
+
+    // Calculate weights count of filters and biases to be extracted.
+    let weightsCount_extracted = 0;
+    if ( filtersShape_extracted )
+      weightsCount_extracted += tf.util.sizeFromShape( filtersShape_extracted );
+    if ( biasesShape_extracted )
+      weightsCount_extracted += tf.util.sizeFromShape( biasesShape_extracted );
+
+    // Prepare source weights to be extracted.
+    let sourceWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, weightsCount_extracted );
+    if ( !sourceWeights.extract() )
+      return false;  // e.g. input array does not have enough data.
+    this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
+    this.tensorWeightCountExtracted = weightsCount_extracted;
+
+    // Prepare value bounds.
+
+//!!! ...unfinished... (2022/01/08)
+//     this.boundsArraySet.set_all_by_inChannelPartInfoArray(
+//       previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
+//       this.channelMultiplier, this.nActivationId, this.filtersArray, this.biasesArray
+//     );
 
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex, filterIndex, biasIndex;
