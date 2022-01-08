@@ -426,6 +426,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
 
+              ( ( inChannel - inChannelPartInfo.beginIndex ) == outChannelSub )
               if ( ( inChannel >= inChannelPartInfo.beginIndex ) && ( inChannel < inChannelPartInfo.endIndex ) ) {
 
 //!!! ...unfinished... (2022/01/08)
