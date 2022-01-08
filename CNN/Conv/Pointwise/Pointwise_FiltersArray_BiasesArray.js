@@ -417,7 +417,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         OutChannelPartIndexLoop:
         for ( let outChannelPartIndex = 0; outChannelPartIndex < outChannelPartInfoArray.length; ++outChannelPartIndex ) {
           let outChannelPartInfo = outChannelPartInfoArray[ outChannelPartIndex ];
-          let inChannelIndexDistance = inChannel - outChannelPartInfo.inputChannelIndexStart;
+          let inChannelIndexDistance = inChannel - outChannelPartInfo.inputChannelIndexStart; // Only meaningful if ( inputChannelIndexStart >= 0 ).
 
           for ( let outChannelSub = 0; outChannelSub < outChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
             if ( outChannel >= this.outputChannelCount )
@@ -433,6 +433,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                 this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
               }
 
+//!!! ...unfinished... (2022/01/08) Extract too many filter weights. 
             } else { // Non-pass-through half channels.
               this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
