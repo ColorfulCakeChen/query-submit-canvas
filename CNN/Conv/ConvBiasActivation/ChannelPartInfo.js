@@ -3,11 +3,11 @@ export { ChannelPartInfo };
 /**
  * Half channels information. Describe channel index range of lower half or higher half.
  *
- * @member {number} beginIndex
- *   The beginning channel index of this half channels.
+ * @member {number} inChannelBegin
+ *   The beginning channel index of this half input channels.
  *
- * @member {number} endIndex
- *   The ending channel index of this half channels.
+ * @member {number} inChannelEnd
+ *   The ending channel index of this half input channels.
  *
  */
 class ChannelPartInfo {
@@ -15,9 +15,9 @@ class ChannelPartInfo {
   /**
    *
    */
-  constructor( beginIndex, endIndex ) {
-    this.beginIndex = beginIndex;
-    this.endIndex = endIndex;
+  constructor( inChannelBegin, inChannelEnd ) {
+    this.inChannelBegin = inChannelBegin;
+    this.inChannelEnd = inChannelEnd;
   }
 
 }
