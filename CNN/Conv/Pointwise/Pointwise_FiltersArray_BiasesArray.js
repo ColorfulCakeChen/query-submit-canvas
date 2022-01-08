@@ -165,7 +165,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         && ( outputChannelCount_lowerHalf > 0 );
 
     tf.util.assert( ( inputChannelCount > 0 ),
-      `Pointwise.Base.constructor(): `
+      `Pointwise.FiltersArray_BiasesArray.constructor(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) must be positive integer.`
     );
 
@@ -246,6 +246,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
+    if ( this.outputChannelCount <= 0 )
+      return true; // Nothing needs to be extracted.
+
     // Determine shape of the filters, biases, channels.
     let inChannelPartInfoArray;
     let filtersShape_extracted, biasesShape_extracted;
@@ -270,13 +273,36 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         // 3.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
 
-//!!! ...unfinished... (2022/01/08)
+//!!! ...unfinished... (2022/01/08) ???
+
+          inChannelPartInfoArray = [
+            new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
+            new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
+
+//!!! ...unfinished... (2022/01/08) ???
+
+          filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
+          biasesShape_extracted =  [ this.inputChannelCount_lowerHalf ];
 
           bExtractOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
           break;
 
         // 3.2 bHigherHalfCopyLowerHalf
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
+
+//!!! ...unfinished... (2022/01/08) ???
+          this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+          this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+          inChannelPartInfoArray = [
+            new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf ),
+            new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,  ) ];
+
+//!!! ...unfinished... (2022/01/08) ???
+
+          filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
+          biasesShape_extracted =  [ this.inputChannelCount_lowerHalf ];
+
           bExtractOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
           break;
 
