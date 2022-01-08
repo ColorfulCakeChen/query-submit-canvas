@@ -246,8 +246,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
 
     // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex, filterIndex, biasIndex, outChannel;
-    sourceIndex = filterIndex = biasIndex = outChannel = 0;
+    let sourceIndex, filterIndex, biasIndex;
+    sourceIndex = filterIndex = biasIndex = 0;
 
     // ( inChannelPartIndex == 0 ), lower half channels. (or, all channels)
     // ( inChannelPartIndex == 1 ), higher half channels.
@@ -256,26 +256,58 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       let inChannelBegin = inChannelPartInfo.beginIndex;
       let inChannelEnd = inChannelPartInfo.endIndex;
 
-      for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+      { // this.filtersArray
+
+        let outChannel = 0;
+        for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
 //!!! ...unfinished... (2022/01/08)
 
-        let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+          let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
-        for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outChannelCount; ++outChannelSub, ++outChannel ) {
+          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outChannelCount; ++outChannelSub, ++outChannel ) {
 
-          if ( inChannelPartInfo.isPassThrough_byInputChannelIndex( inChannel ) ) { // For pass-through half channels.
+            if ( inChannelPartInfo.isPassThrough_byInputChannelIndex( inChannel ) ) { // For pass-through half channels.
+
+  //!!! ...unfinished... (2022/01/08)
+
+            } else { // Non-pass-through half channels.
+
+  //!!! ...unfinished... (2022/01/08)
+
+            }
+
+          } // outChannelSub
+        } // inChannel
+      }
+
+      if ( this.biasesArray ) {
 
 //!!! ...unfinished... (2022/01/08)
 
-          } else { // Non-pass-through half channels.
+        let outChannel = 0;
+        for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outChannelCount; ++outChannelSub, ++outChannel ) {
 
-//!!! ...unfinished... (2022/01/08)
+            let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+            let extraScale = doEscapingScale; // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
+            if ( inChannelPartInfo.isPassThrough_byInputChannelIndex( inChannel ) ) { // For pass-through half channels.
+              this.biasesArray[ biasIndex ] = 0;
+
+            } else { // Non-pass-through half channels.
+              this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ] * extraScale;
+
+              ++sourceIndex;
+            }
+
+            ++biasIndex;
           }
+        }
 
-        } // outChannelSub
-      } // inChannel
+      } else { // ( !this.biasesArray ). No biases array to be extracted.
+        // Do nothing.
+      }
 
     } // inChannelPartIndex
 
