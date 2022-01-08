@@ -10,6 +10,9 @@ export { OutputChannelPartInfo };
  *   If non-negative (i.e. zero or positive), this is a pass-through part and it is the input channel index (included) to start to be
  * past-through from input to output. If negative, this is a non-pass-through part (i.e. using filters and biases extracted from weights
  * array).
+ *
+ * @member {boolean} bPassThrough
+ *   If ( this.inputChannelIndexStart >= 0 ), this will be true which means this is a pass-through part.
  */
 class OutputChannelPartInfo {
 
@@ -18,16 +21,7 @@ class OutputChannelPartInfo {
   constructor( outputChannelCount, inputChannelIndexStart = -1 ) {
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
-  }
-
-  /**
-   * @return {boolean}
-   *   If ( this.inputChannelIndexStart >= 0 ), return true which means this is a pass-through part.
-   */
-  isPassThrough() {
-    if ( this.inputChannelIndexStart >= 0 )
-      return true;
-    return false;
+    this.bPassThrough = ( this.inputChannelIndexStart >= 0 );
   }
 
 }
