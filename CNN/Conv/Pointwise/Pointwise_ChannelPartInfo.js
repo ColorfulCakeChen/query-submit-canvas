@@ -1,45 +1,36 @@
-export { ChannelPartInfo };
+export { OutputChannelPartInfo };
 
-import * as ConvBiasActivation from "../ConvBiasActivation.js";
+//import * as ConvBiasActivation from "../ConvBiasActivation.js";
 
 /**
  * Half channels information. Describe channel index range of lower half or higher half.
  *
-
-//!!! (2022/01/08 Remarked) Wrong!
-//  *   - When input channel index is between [ this.beginIndex, this.endIndex ], the input channel will be used as normal (i.e. multiplied by
-//  *       filters and biases weights extracted from source weights).
-//  *
-//  *   - When input channel index is outside [ this.beginIndex, this.endIndex ], the input channel will be past-through (i.e. multiplied by
-//  *       filters 1 and biases 0).
-
+ * @member {number} outputChannelCount
+ *   The channel count of output.
  *
- *
- * @member {number} outChannelCount
- *   The output channel count which uses [ this.beginIndex, this.endIndex ] as input channel index range.
- *
- * @member {boolean} bPassThrough
- *   If true, the output channel will pass-through input to output. 
+ * @member {number} inputChannelIndexStart
+ *   If non-negative (i.e. zero or positive), this is a pass-through part and it is the input channel index (included) to start to be
+ * past-through from input to output. If negative, this is a non-pass-through part (i.e. using filters and biases extracted from weights
+ * array).
  */
-class ChannelPartInfo extends ConvBiasActivation.ChannelPartInfo {
+class OutputChannelPartInfo {
 
   /**
    */
-  constructor( beginIndex, endIndex, outChannelCount, bPassThrough ) {
-    super( beginIndex, endIndex );
-    this.outChannelCount = outChannelCount;
-    this.bPassThrough = bPassThrough;
+  constructor( outputChannelCount, inputChannelIndexStart ) {
+    this.outputChannelCount = outputChannelCount;
+    this.inputChannelIndexStart = inputChannelIndexStart;
   }
 
-//!!! (2022/01/08 Remarked) Wrong!
-//   /**
-//    * @return {boolean}
-//    *   Return true, if the specified input channel index is out of this [ beginIndex, endIndex ] range.
-//    */
-//   isPassThrough_byInputChannelIndex( inChannelIndex ) {
-//     if ( ( inChannelIndex < this.beginIndex ) || ( inChannelIndex > this.endIndex ) )
-//       return true;
-//     return false;
-//   }      
+  /**
+   * @return {boolean}
+   *   If ( this.inputChannelIndexStart >= 0 ), return true which means this is a pass-through part.
+   */
+  isPassThrough() {
+    if ( this.inputChannelIndexStart >= 0 )
+      return true;
+    return false;
+  }
+
 }
 
