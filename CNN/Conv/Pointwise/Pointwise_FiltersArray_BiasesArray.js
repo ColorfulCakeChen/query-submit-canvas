@@ -253,16 +253,25 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     // Set up inChannelPartInfoArray and filtersShape and biasesShape.
     {
 
+      this.filtersShape =  [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
+      if ( this.bBias )
+        this.biasesShape = [ this.outputChannelCount ];
+
 //!!! ...unfinished... (2022/01/08)
 
       switch ( this.nHigherHalfDifferent ) {
         // 3.0 Normal pointwise convolution and bias.
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-          bExtractOk = Base.extractAs_NormalPointwise.call( this, inputFloat32Array );
+          inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount ) ];
+          filtersShape_extracted = this.filtersShape;
+          biasesShape_extracted =  this.biasesShape;
           break;
 
         // 3.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
+
+//!!! ...unfinished... (2022/01/08)
+
           bExtractOk = Base.extractAs_HigherHalfCopyLowerHalf_LowerHalfPassThrough.call( this, inputFloat32Array );
           break;
 
