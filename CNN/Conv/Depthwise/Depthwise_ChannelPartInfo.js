@@ -19,8 +19,8 @@ class ChannelPartInfo extends ConvBiasActivation.ChannelPartInfo {
 
   /**
    */
-  constructor( inChannelBegin, endIndex, effectFilterY_passThrough = -1, effectFilterX_passThrough = -1 ) {
-    super( inChannelBegin, endIndex );
+  constructor( inChannelBegin, inChannelEnd, effectFilterY_passThrough = -1, effectFilterX_passThrough = -1 ) {
+    super( inChannelBegin, inChannelEnd );
     this.effectFilterY_passThrough = effectFilterY_passThrough;
     this.effectFilterX_passThrough = effectFilterX_passThrough;
 
