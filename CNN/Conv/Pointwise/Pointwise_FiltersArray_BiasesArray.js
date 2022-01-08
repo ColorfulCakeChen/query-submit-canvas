@@ -417,7 +417,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         InChannelPartIndexLoop:
         for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-          let inChannelIndexDistance = inChannel - inChannelPartInfo.inChannelBegin;
+          let inChannelToBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
             if ( outChannel >= this.outputChannelCount )
@@ -426,23 +426,26 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
             let extraScale = undoPreviousEscapingScale * doEscapingScale;
 
-            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-              if ( inChannelIndexDistance == outChannelSub ) {
-                this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
-              } else {
-                this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
-              }
-
-            } else { // Non-pass-through half channels.
-
 //!!! ...unfinished... (2022/01/08) Extract too many filter weights. Need restrict iChannel range.
-              if ( ??? )
+            if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
+                
+              if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+                if ( inChannelToBegin == outChannelSub ) {
+                  this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
+                } else {
+                  this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
+                }
+
+              } else { // Non-pass-through half channels.
+
+  //!!! ...unfinished... (2022/01/08) Extract too many filter weights. Need restrict iChannel range.
                 this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
-              } else {
-                this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
+
+                ++sourceIndex;
               }
 
-              ++sourceIndex;
+            } else {
+              this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
             }
 
             ++filterIndex;
