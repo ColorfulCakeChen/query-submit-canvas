@@ -20,12 +20,8 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
-
-//!!! ...unfinished... (2021/12/29)
-
- *
  * @member {BoundsArraySet} boundsArraySet
- *   The element value bounds (per channel) for this depthwise convolution-bias-activation.
+ *   The element value bounds (per channel) of input, beforeActivation, and output for this depthwise convolution.
  *
  * @member {number} inputHeight
  *   The height of input image. When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
@@ -42,7 +38,9 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  * @member {ValueDesc.Depthwise_HigherHalfDifferent} nHigherHalfDifferent
  *   - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal depthwise convolution.
  *
+
 //!!! ...unfinished... (2021/11/12) What if channel multiplier is 0? is 2?
+
  *   - If true:
  *
  *     - Can not be used when:
@@ -62,9 +60,10 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *         the filters for the input channels between ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will just pass
  *         through the input to output.
  *
-
-//!!! ...unfinished... (2021/12/29)
-
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
+ *
  * @member {number} tensorWeightCountExtracted
  *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
  * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
@@ -355,6 +354,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       }
 
     } // inChannelPartIndex
+
+    {
+      this.tensorWeightCountTotal = 0;
+
+      if ( this.filtersShape )
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersShape );
+
+      if ( this.biasesShape )
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesShape );
+    }
 
     return true;
   }
