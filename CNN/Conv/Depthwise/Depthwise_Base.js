@@ -8,65 +8,10 @@ import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 import { PassThrough } from "./Depthwise_PassThrough.js";
 import { BoundsArraySet } from "./Depthwise_BoundsArraySet.js";
+import { FiltersArray_BiasesArray } from "./Depthwise_FiltersArray_BiasesArray.js";
 
 /**
  * Handle depthwise convolution, bias and activation.
- *
- * @member {number} byteOffsetBegin
- *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init(). This is relative to the
- * inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
- *
- * @member {number} byteOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
- *
- * @member {BoundsArraySet} boundsArraySet
- *   The element value bounds (per channel) of input, beforeActivation, and output for this depthwise convolution.
- *
- * @member {number} inputHeight
- *   The height of input image. When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
- * it will be used to create the higher-half-pass-through depthwise filters.
- *
- * @member {number} inputWidth
- *   The width of input image. When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
- * it will be used to create the higher-half-pass-through depthwise filters.
- *
- * @member {number} inputChannelCount_lowerHalf
- *   The lower half channel count of input image. When ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
- * it will be used and must be a positive integer.
- *
- * @member {ValueDesc.Depthwise_HigherHalfDifferent} nHigherHalfDifferent
- *   - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal depthwise convolution.
- *
-
-//!!! ...unfinished... (2021/11/12) What if channel multiplier is 0? is 2?
-
- *   - If true:
- *
- *     - Can not be used when:
- *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
- *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier )
- *
- *     - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2 ),
- *         (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head),
- *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are depthwise1, between
- *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are depthwise2. These two filters (and biases) will be
- *         extracted in sequence, but they will be combined into one larger filters (and biases). This makes these filters' weights
- *         are arranged the same as ShuffleNetV2's head. So that the same filters weights could be used in these two architectures
- *         for comparing performance and correctness.
- *
- *     - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
- *         (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
- *         the filters for the input channels between ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will just pass
- *         through the input to output.
- *
- * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
- *
- * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
  *
  * @member {boolean} bExisted
  *   If true, this depthwise operation exists. The same as this.bDepthwise.
@@ -99,8 +44,10 @@ import { BoundsArraySet } from "./Depthwise_BoundsArraySet.js";
  * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
  * Base.return_input_directly(), Base.keep_input_return_copy(), Operation_and_destroy_or_keep(), OperationBias_and_destroy_or_keep(),
  * OperationActivation_and_destroy_or_keep(), OperationBiasActivation_and_destroy_or_keep() according to the parameters.
+ *
+ * @see FiltersArray_BiasesArray
  */
-class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Activation.Base ) ) {
+class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Activation.Base ) ) {
 
   /**
    */
@@ -109,34 +56,11 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
     bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
 
-    super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    super(
+      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias, nActivationId,
+      nHigherHalfDifferent, inputChannelCount_lowerHalf );
 
-    this.boundsArraySet = new BoundsArraySet();
-    this.bBias = bBias;
-    this.nActivationId = nActivationId;
-    this.nHigherHalfDifferent = nHigherHalfDifferent;
-    this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
-
-    // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
-    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
-        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
-
-      if ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) {
-        let msg = `Depthwise.constructor(): `
-          + `nHigherHalfDifferent ( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getStringOf( nHigherHalfDifferent )} ) `
-          + `should be ( NONE ) when `
-          + `AvgMax_Or_ChannelMultiplier is ( ${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( AvgMax_Or_ChannelMultiplier )} )`
-          ;
-
-        throw msg;
-      }
-    }
-
-    tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
-      `Depthwise.Base.constructor(): `
-        + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
-        + `inputChannelCount ( ${this.inputChannelCount} ).`
-    );
   }
 
   /**
@@ -312,43 +236,9 @@ class Base extends PadInfoCalculator( TwoTensors.filtersTensor4d_biasesTensor3d(
     }
   }
 
-  get tensorWeightCountTotal() {
-    let result = 0;
-    if ( this.filtersTensor4d )
-      result += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-    if ( this.biasesTensor3d )
-      result += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-    return result;
-  }
-
   get bExisted() {
     return this.bDepthwise;
   }
-
-//!!! (2021/12/24 Remarked) Moved to parent class.
-//   /**
-//    * @return {boolean}
-//    *   If the ( height, width ) of this depthwise operation output is the same as its input, return true.
-//    */
-//   is_Output_Same_HeightWidth_As_Input() {
-//
-//     // If this depthwise operation does not existed, the output will have the same ( height, width ) as input.
-//     // In fact, they are the same one in this case.
-//     if ( !this.bDepthwise )
-//       return true;
-//
-//     if ( this.strides != 1 )
-//       return false; // If strides is not 1, it is impossible to output same ( height, width ) as input.
-//
-//     if ( this.pad == "same" )
-//       return true; // If ( strides is 1 ) and ( pad is "same" ), the output will have the same ( height, width ) as input.
-//
-//     // Or, although ( strides is 1 ) and ( pad is "valid" ) but ( filter size is 1x1 ), the output will have the same ( height, width ) as input.
-//     if ( ( this.pad == "valid" ) && ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) )
-//       return true;
-//
-//     return false;
-//   }
 
   /** Determine this.bDepthwiseXxx and this.pfnXxx data members.
    *
