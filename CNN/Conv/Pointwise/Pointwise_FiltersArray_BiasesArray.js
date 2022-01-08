@@ -406,44 +406,50 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     let sourceIndex, filterIndex, biasIndex;
     sourceIndex = filterIndex = biasIndex = 0;
 
-    // ( inChannelPartIndex == 0 ), lower half channels. (or, all channels)
-    // ( inChannelPartIndex == 1 ), higher half channels.
-    for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-      let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-      let inChannelBegin = inChannelPartInfo.beginIndex;
-      let inChannelEnd = inChannelPartInfo.endIndex;
+    { // this.filtersArray
 
-      { // this.filtersArray
-
-        let outChannel = 0;
-        for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+      for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
 //!!! ...unfinished... (2022/01/08)
 
-          let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+        let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+
+        let outChannel = 0;
+
+        // ( inChannelPartIndex == 0 ), lower half channels. (or, all channels)
+        // ( inChannelPartIndex == 1 ), higher half channels.
+        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+          let inChannelBegin = inChannelPartInfo.beginIndex;
+          let inChannelEnd = inChannelPartInfo.endIndex;
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outChannelCount; ++outChannelSub, ++outChannel ) {
+            let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+            let extraScale = undoPreviousEscapingScale * doEscapingScale;
 
             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
 
-  //!!! ...unfinished... (2022/01/08)
+//!!! ...unfinished... (2022/01/08)
 
             } else { // Non-pass-through half channels.
 
-  //!!! ...unfinished... (2022/01/08)
-
+//!!! ...unfinished... (2022/01/08)
             }
 
           } // outChannelSub
-        } // inChannel
-      }
+        } // inChannelPartIndex
+      } // inChannel
 
       if ( this.biasesArray ) {
 
 //!!! ...unfinished... (2022/01/08)
 
         let outChannel = 0;
-        for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+//           let inChannelBegin = inChannelPartInfo.beginIndex;
+//           let inChannelEnd = inChannelPartInfo.endIndex;
+
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outChannelCount; ++outChannelSub, ++outChannel ) {
 
             let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
