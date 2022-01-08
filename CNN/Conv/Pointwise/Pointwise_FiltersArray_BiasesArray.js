@@ -11,8 +11,194 @@ import { BoundsArraySet } from  "./Pointwise_BoundsArraySet.js";
  * Extract pointwise convolution filters and biases.
  *
  *
+ * @member {number} byteOffsetBegin
+ *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init(). This is relative to the
+ * inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
+ *
+ * @member {number} byteOffsetEnd
+ *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
+ * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
+ *
+ * @member {BoundsArraySet} boundsArraySet
+ *   The element value bounds (per channel) of input, beforeActivation, and output for this pointwise convolution.
+ *
+ * @member {number} outputChannelCount
+ *   The output channel count of this pointwise convolutiuon.
+ *     - Usually, if ( outputChannelCount == 0 ), it means no operation at all (i.e. bPointwise == bExisted == false ).
+ *     - However, if ( outputChannelCount == 0 ) but ( channelShuffler_outputGroupCount > 0 ), this pointwise will exist
+ *         (i.e. bPointwise == bExisted == true ) and always will not have biases (no matter how bBias is). It is
+ *         all-pass-through-and-channel-shuffling mode.
+ *
+ * @member {number} outputChannelCount_Real
+ *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
+ * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
+ *
+ * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
+ *   - 0. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal poitwise convolution.
+ *
+ *     - 0.1 If ( outputChannelCount > 0 ), normal poitwise convolution.
+ *
+ *     - 0.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
+ *
+ *   - 1. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH ):
+ *
+ *     - 1.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough),
+ *         (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head),
+ *         the filters for the output channels between 0 and ( outputChannelCount_lowerHalf - 1 ) will just pass
+ *         through the input to output. The filters for the output channels between ( outputChannelCount_lowerHalf )
+ *         and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
+ *         In this case, it will always have no biases (no matter how bBias is).
+ *
+ *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
+ *
+ *   - 2. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ):
+ *
+ *     - 2.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf),
+ *         (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head),
+ *         the filters for the output channels between ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just copy
+ *         the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
+ *
+ *     - 2.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
+ *
+ *   - 3. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22 ):
+ *          
+ *     - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22),
+ *         (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head),
+ *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between
+ *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases)
+ *         will be extracted in sequence, but they will be combined into one larger filters (and biases). This makes these
+ *         filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that
+ *         the same filters weights could be used in these two architectures for comparing performance and correctness.
+ *
+ *     - 3.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
+ *
+ *  - 4. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
+ *      (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *
+ *    - 4.1 If ( outputChannelCount > 0 ), the filters for the output channels between ( outputChannelCount_lowerHalf )
+ *        and ( outputChannelCount - 1 ) will just pass through the input to output.
+ *
+ *      - 4.1.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfPassThrough).
+ *          (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *
+ *      - 4.1.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfPassThroughShuffle).
+ *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *          The output channels will be arranged just like applying channel shuffler on them.
+ *
+ *    - 4.2 If ( outputChannelCount <= 0 ), the filters will just pass through all input channels to output. In this case,
+ *        the ( bPointwise == bExisted == true ) (not false), although the specified outputChannelCount is zero. And, it
+ *        will always have no biases (no matter how bBias is).
+ *
+ *      - 4.2.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bAllPassThrough; no pointwise and no channel shuffler).
+ *          (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *
+ *      - 4.2.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bAllPassThroughShuffle).
+ *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
+ *          The output channels will be arranged just like applying channel shuffler on them.
+ *
+ * @member {boolean} bHigherHalfDifferent
+ *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
+ * or ( outputChannelCount <= 0 ) or ( inputChannelCount_lowerHalf <= 0 ) or ( outputChannelCount_lowerHalf <= 0 ).
+ *
+ * @member {number} inputChannelCount_lowerHalf
+ *   The lower half input channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
+ *
+ * @member {number} outputChannelCount_lowerHalf
+ *   The lower half output channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
+ *
+ * @member {number} channelShuffler_outputGroupCount
+ *   The output group count of the channel shuffler. Usually, it is used when
+ * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
+ *
+ * @member {number} tensorWeightCountTotal
+ *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
+ * weights, if they are used in tensors.
+ *
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
+
+//!!! ...unfinished... (2022/01/08)
+
+ * @member {number} tensorWeightCountExtracted
+ *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
+ * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
+ *
+ * @member {number[]} filtersShape
+ *   The shape of the pointwise convolution filters array.
+ *
+ * @member {number[]} biasesShape
+ *   The shape of the pointwise convolution biases array.
+ *
+ * @member {number[]} filtersArray
+ *   The pointwise convolution filters array.
+ *
+ * @member {number[]} biasesArray
+ *   The pointwise convolution biases array.
+ *
  */
 let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
+
+
+  /**
+   */
+  constructor(
+    inputChannelCount, outputChannelCount, bBias, nActivationId,
+    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
+
+    super();
+    this.boundsArraySet = new BoundsArraySet();
+    this.inputChannelCount = inputChannelCount;
+    this.outputChannelCount = outputChannelCount;
+    this.bBias = bBias;
+    this.nActivationId = nActivationId;
+
+    this.nHigherHalfDifferent = nHigherHalfDifferent;
+    this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
+    this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
+    this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
+
+    this.bHigherHalfDifferent
+      =    ( nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
+        && ( outputChannelCount > 0 )
+        && ( inputChannelCount_lowerHalf > 0 )
+        && ( outputChannelCount_lowerHalf > 0 );
+
+    tf.util.assert( ( inputChannelCount > 0 ),
+      `Pointwise.Base.constructor(): `
+        + `inputChannelCount ( ${this.inputChannelCount} ) must be positive integer.`
+    );
+
+    tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
+      `Pointwise.Base.constructor(): `
+        + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
+        + `inputChannelCount ( ${this.inputChannelCount} ).`
+    );
+
+    if ( this.outputChannelCount > 0 ) {
+      tf.util.assert( ( this.outputChannelCount_lowerHalf <= outputChannelCount ),
+        `Pointwise.Base.constructor(): `
+          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
+          + `outputChannelCount ( ${this.outputChannelCount} ).`
+      );
+
+    } else { // ( this.outputChannelCount <= 0 ), the outputChannelCount_Real will be inputChannelCount.
+      tf.util.assert( ( this.outputChannelCount_lowerHalf <= inputChannelCount ),
+        `Pointwise.Base.constructor(): `
+          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
+          + `inputChannelCount ( ${this.inputChannelCount} ) when `
+          + `outputChannelCount ( ${this.outputChannelCount} ) is zero or negative.`
+      );
+    }
+
+    tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ) == ( this.outputChannelCount_lowerHalf > 0 ),
+      `Pointwise.Base.constructor(): `
+        + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) and `
+        + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) `
+        + `should be both positive or both not.`
+    );
+  }
 
 
 //!!! ...unfinished... (2022/01/08)
@@ -38,18 +224,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
    *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    *
-//!!! (2022/01/04 Remarked) use previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleTranslateArraySet directly.
-//
-//    * @param {FloatValue.ScaleTranslateArray} extraScaleTranslateArray_byChannelIndex
-//    *   The extra scale-translate of every channel. They will be pre-applied to the filter value, bias value and convolution-bias-activation
-//    * value bounds set of this depthwise convolution. They are indexed by input channel index.
-   *
    * @return {boolean} Return true, if succeeded.
    */
-  set_filtersArray_biasesArray_by_extracting(
-    inputFloat32Array, byteOffsetBegin,
-    previous_ConvBiasActivation_BoundsArraySet
-  ) {
+  init( inputFloat32Array, byteOffsetBegin, previous_ConvBiasActivation_BoundsArraySet ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -104,6 +281,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     } // inChannelPartIndex
 
+    return true;
   }
 
 }
