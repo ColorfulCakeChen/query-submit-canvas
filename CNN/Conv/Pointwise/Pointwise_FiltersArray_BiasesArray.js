@@ -4,7 +4,7 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ConvBiasActivation from "../ConvBiasActivation.js";
-import { ChannelPartInfo } from  "./Pointwise_ChannelPartInfo.js";
+import { OutputChannelPartInfo } from  "./Pointwise_OutputChannelPartInfo.js";
 import { BoundsArraySet } from  "./Pointwise_BoundsArraySet.js";
 
 /**
@@ -250,10 +250,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       return true; // Nothing needs to be extracted.
 
     // Determine shape of the filters, biases, channels.
-    let inChannelPartInfoArray;
+    let outChannelPartInfoArray;
     let filtersShape_extracted, biasesShape_extracted;
 
-    // Set up inChannelPartInfoArray and filtersShape and biasesShape.
+    // Set up outChannelPartInfoArray and filtersShape and biasesShape.
     {
 //!!! ...unfinished... (2022/01/08)
 //       this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
@@ -269,7 +269,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.outputChannelCount_Real = this.outputChannelCount;
           this.inputChannelCount_toBeExtracted = this.inputChannelCount; // Extract all weights as specified input/output channels.
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-          inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ];
+//!!! (2022/01/08 Remarked)
+//          outChannelPartInfoArray = [ new OutputChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ];
+          outChannelPartInfoArray = [ new OutputChannelPartInfo( this.inputChannelCount ) ];
           filtersShape_extracted = this.filtersShape;
           biasesShape_extracted =  this.biasesShape;
           break;
@@ -279,9 +281,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
 //!!! ...unfinished... (2022/01/08) ???
 
-          inChannelPartInfoArray = [
-            new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
-            new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
+          outChannelPartInfoArray = [
+            new OutputChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
+            new OutputChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
 
 //!!! ...unfinished... (2022/01/08) ???
 
@@ -303,9 +305,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
 //!!! ...unfinished... (2022/01/08) ???
-          inChannelPartInfoArray = [
-            new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
-            new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ];
+          outChannelPartInfoArray = [
+            new OutputChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
+            new OutputChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ];
 
           filtersShape_extracted = [ 1, 1, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf  ];
           biasesShape_extracted =  [ this.outputChannelCount_lowerHalf ];
@@ -397,8 +399,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     // Prepare value bounds.
 
 //!!! ...unfinished... (2022/01/08)
-//     this.boundsArraySet.set_all_by_inChannelPartInfoArray(
-//       previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
+//     this.boundsArraySet.set_all_by_outChannelPartInfoArray(
+//       previous_ConvBiasActivation_BoundsArraySet, outChannelPartInfoArray,
 //       this.channelMultiplier, this.nActivationId, this.filtersArray, this.biasesArray
 //     );
 
@@ -415,26 +417,25 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
         let outChannel = 0;
-        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-          let inChannelBegin = inChannelPartInfo.beginIndex;
-          let inChannelEnd = inChannelPartInfo.endIndex;
 
-          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outChannelCount; ++outChannelSub, ++outChannel ) {
+        OutChannelPartIndexLoop:
+        for ( let outChannelPartIndex = 0; outChannelPartIndex < outChannelPartInfoArray.length; ++outChannelPartIndex ) {
+          let outChannelPartInfo = outChannelPartInfoArray[ outChannelPartIndex ];
+          let inChannelIndexDistance = inChannel - outChannelPartInfo.inputChannelIndexStart;
+
+          for ( let outChannelSub = 0; outChannelSub < outChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+            if ( outChannel >= this.outputChannelCount )
+              break OutChannelPartIndexLoop; // Never exceeds the total output channel count.
+
             let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
             let extraScale = undoPreviousEscapingScale * doEscapingScale;
 
-            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+            if ( outChannelPartInfo.bPassThrough ) { // For pass-through half channels.
 
-              ( ( inChannel - inChannelPartInfo.beginIndex ) == outChannelSub )
-              if ( ( inChannel >= inChannelPartInfo.beginIndex ) && ( inChannel < inChannelPartInfo.endIndex ) ) {
-
-//!!! ...unfinished... (2022/01/08)
-
+              if ( inChannelIndexDistance == outChannelSub ) {
+                this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
               } else {
-
-//!!! ...unfinished... (2022/01/08)
-
+                this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
               }
 
             } else { // Non-pass-through half channels.
@@ -446,7 +447,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             ++filterIndex;
 
           } // outChannelSub
-        } // inChannelPartIndex
+        } // outChannelPartIndex
       } // inChannel
 
       if ( this.biasesArray ) {
@@ -454,16 +455,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //!!! ...unfinished... (2022/01/08)
 
         let outChannel = 0;
-        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-//           let inChannelBegin = inChannelPartInfo.beginIndex;
-//           let inChannelEnd = inChannelPartInfo.endIndex;
+        for ( let outChannelPartIndex = 0; outChannelPartIndex < outChannelPartInfoArray.length; ++outChannelPartIndex ) {
+          let outChannelPartInfo = outChannelPartInfoArray[ outChannelPartIndex ];
 
-          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outChannelCount; ++outChannelSub, ++outChannel ) {
+          for ( let outChannelSub = 0; outChannelSub < outChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+            if ( outChannel >= this.outputChannelCount )
+              break OutChannelPartIndexLoop; // Never exceeds the total output channel count.
+
             let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
             let extraScale = doEscapingScale; // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
-            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+            if ( outChannelPartInfo.bPassThrough ) { // For pass-through half channels.
               this.biasesArray[ biasIndex ] = 0;
 
             } else { // Non-pass-through half channels.
@@ -480,7 +482,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         // Do nothing.
       }
 
-    } // inChannelPartIndex
+    } // outChannelPartIndex
 
 
     {
