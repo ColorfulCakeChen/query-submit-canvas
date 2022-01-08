@@ -6,8 +6,9 @@ import * as Weights from "../../Unpacker/Weights.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
-import { PassThrough, AllZeros } from "./Pointwise_PassThrough.js";
-import { BoundsArraySet } from "./Pointwise_BoundsArraySet.js";
+//import { PassThrough, AllZeros } from "./Pointwise_PassThrough.js";
+//import { BoundsArraySet } from "./Pointwise_BoundsArraySet.js";
+import { FiltersArray_BiasesArray } from "./Pointwise_FiltersArray_BiasesArray.js";
 
 /**
  * Handle pointwise convolution (1x1 conv2d), bias and activation.
@@ -140,8 +141,10 @@ import { BoundsArraySet } from "./Pointwise_BoundsArraySet.js";
  * All intermediate tensors will be disposed. The inputTensors may or may not be disposed. In fact, this method calls one of
  * Base.return_input_directly(), Base.keep_input_return_copy(), Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(),
  * ConvActivation_and_destroy_or_keep(), ConvBiasActivation_and_destroy_or_keep() according to the parameters.
+ *
+ * @see FiltersArray_BiasesArray
  */
-class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Activation.Base ) {
+class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Activation.Base ) ) {
 
   /**
    */
@@ -149,57 +152,10 @@ class Base extends TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone_Acti
     inputChannelCount, outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
-    super();
-    this.boundsArraySet = new BoundsArraySet();
-    this.inputChannelCount = inputChannelCount;
-    this.outputChannelCount = outputChannelCount;
-    this.bBias = bBias;
-    this.nActivationId = nActivationId;
+    super(
+      inputChannelCount, outputChannelCount, bBias, nActivationId,
+      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
 
-    this.nHigherHalfDifferent = nHigherHalfDifferent;
-    this.inputChannelCount_lowerHalf = inputChannelCount_lowerHalf;
-    this.outputChannelCount_lowerHalf = outputChannelCount_lowerHalf;
-    this.channelShuffler_outputGroupCount = channelShuffler_outputGroupCount;
-
-    this.bHigherHalfDifferent
-      =    ( nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
-        && ( outputChannelCount > 0 )
-        && ( inputChannelCount_lowerHalf > 0 )
-        && ( outputChannelCount_lowerHalf > 0 );
-
-    tf.util.assert( ( inputChannelCount > 0 ),
-      `Pointwise.Base.constructor(): `
-        + `inputChannelCount ( ${this.inputChannelCount} ) must be positive integer.`
-    );
-
-    tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
-      `Pointwise.Base.constructor(): `
-        + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
-        + `inputChannelCount ( ${this.inputChannelCount} ).`
-    );
-
-    if ( this.outputChannelCount > 0 ) {
-      tf.util.assert( ( this.outputChannelCount_lowerHalf <= outputChannelCount ),
-        `Pointwise.Base.constructor(): `
-          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
-          + `outputChannelCount ( ${this.outputChannelCount} ).`
-      );
-
-    } else { // ( this.outputChannelCount <= 0 ), the outputChannelCount_Real will be inputChannelCount.
-      tf.util.assert( ( this.outputChannelCount_lowerHalf <= inputChannelCount ),
-        `Pointwise.Base.constructor(): `
-          + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
-          + `inputChannelCount ( ${this.inputChannelCount} ) when `
-          + `outputChannelCount ( ${this.outputChannelCount} ) is zero or negative.`
-      );
-    }
-
-    tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ) == ( this.outputChannelCount_lowerHalf > 0 ),
-      `Pointwise.Base.constructor(): `
-        + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) and `
-        + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) `
-        + `should be both positive or both not.`
-    );
   }
 
   /**
