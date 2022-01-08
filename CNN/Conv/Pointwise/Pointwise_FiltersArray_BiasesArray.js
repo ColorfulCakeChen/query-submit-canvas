@@ -321,10 +321,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         // 3.4
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
 
-//!!! ...unfinished... (2022/01/08)
-
           if ( this.outputChannelCount > 0 ) { // 3.4.1.1 bHigherHalfPassThrough
-            this.bHigherHalfPassThrough = true;
             this.outputChannelCount_Real = this.outputChannelCount;
             this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
@@ -335,7 +332,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ];
 
           } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
-            this.bAllPassThrough = true;
+            this.bAllPassThrough = true; // Marked for this special case.
             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
             this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
             inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, true ) ];
