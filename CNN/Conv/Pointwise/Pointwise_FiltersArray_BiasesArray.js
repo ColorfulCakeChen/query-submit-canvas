@@ -269,7 +269,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.outputChannelCount_Real = this.outputChannelCount;
           this.inputChannelCount_toBeExtracted = this.inputChannelCount; // Extract all weights as specified input/output channels.
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-          inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount ) ];
+          inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ];
           filtersShape_extracted = this.filtersShape;
           biasesShape_extracted =  this.biasesShape;
           break;
@@ -304,10 +304,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
 //!!! ...unfinished... (2022/01/08) ???
           inChannelPartInfoArray = [
-            new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf ),
-            new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf ) ];
-
-//!!! ...unfinished... (2022/01/08) ???
+            new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
+            new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ];
 
           filtersShape_extracted = [ 1, 1, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf  ];
           biasesShape_extracted =  [ this.outputChannelCount_lowerHalf ];
@@ -317,6 +315,25 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
         // 3.3 bHigherHalfPointwise22
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22: // (3)
+
+          this.outputChannelCount_Real = this.outputChannelCount;
+
+          // Extract all weights as specified input/output channels (just like a normal pointwise convolution, but with a different arrangement).
+          this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+          this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
+          this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+          this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+//!!! ...unfinished... (2022/01/08) Perhaps, treated as normal pointwise.
+          // The channel count can not be halved (e.g. ( inputChannelCount == 1 ) or ( outputChannelCount == 1 ) ).
+          tf.util.assert( ( ( 0 != this.inputChannelCount_higherHalf ) && ( 0 != this.outputChannelCount_higherHalf ) ),
+            `Pointwise.FiltersArray_BiasesArray.init(): `
+              + `When nHigherHalfDifferent ( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )} ) `
+              + `inputChannelCount_higherHalf ( ${this.inputChannelCount_higherHalf} ) and `
+              + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) `
+              + `can not be zero.`
+          );
 
 //!!! ...unfinished... (2022/01/08)
 
@@ -407,7 +424,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outChannelCount; ++outChannelSub, ++outChannel ) {
 
-            if ( inChannelPartInfo.isPassThrough_byInputChannelIndex( inChannel ) ) { // For pass-through half channels.
+            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
 
   //!!! ...unfinished... (2022/01/08)
 
@@ -432,7 +449,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
             let extraScale = doEscapingScale; // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
-            if ( inChannelPartInfo.isPassThrough_byInputChannelIndex( inChannel ) ) { // For pass-through half channels.
+            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
               this.biasesArray[ biasIndex ] = 0;
 
             } else { // Non-pass-through half channels.
