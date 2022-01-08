@@ -338,10 +338,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             this.bAllPassThrough = true;
             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
             this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
-
-//!!! ...unfinished... (2022/01/08)
-            bExtractOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
+            inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, true ) ];
           }
+
+//!!! ...unfinished... (2022/01/08) how to shuffle?
 
           // 3.4.1.2 bHigherHalfPassThroughShuffle
           // 3.4.2.2 bAllPassThroughShuffle
