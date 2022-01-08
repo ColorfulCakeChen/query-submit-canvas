@@ -25,7 +25,7 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
  *
  * @member {BoundsArraySet} boundsArraySet
- *   The element value bounds (per channel) of input, beforeActivation, and output for this depthwise convolution.
+ *   The element value bounds (per channel) for this depthwise convolution-bias-activation.
  *
  * @member {number} inputHeight
  *   The height of input image. When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
