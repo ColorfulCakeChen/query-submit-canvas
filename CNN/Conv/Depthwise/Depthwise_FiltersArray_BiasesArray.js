@@ -306,8 +306,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // ( inChannelPartIndex == 1 ), higher half channels.
     for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
       let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-      let inChannelBegin = inChannelPartInfo.beginIndex;
-      let inChannelEnd = inChannelPartInfo.endIndex;
+      let inChannelBegin = inChannelPartInfo.inChannelBegin;
+      let inChannelEnd = inChannelPartInfo.inChannelEnd;
 
       if ( this.filtersArray ) {
 
