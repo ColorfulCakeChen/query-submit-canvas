@@ -1,7 +1,5 @@
 export { OutputChannelPartInfo };
 
-//import * as ConvBiasActivation from "../ConvBiasActivation.js";
-
 /**
  * Half channels information. Describe channel index range of lower half or higher half.
  *
@@ -17,7 +15,7 @@ class OutputChannelPartInfo {
 
   /**
    */
-  constructor( outputChannelCount, inputChannelIndexStart ) {
+  constructor( outputChannelCount, inputChannelIndexStart = -1 ) {
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
   }
