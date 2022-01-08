@@ -281,6 +281,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       this.pfnOperation = Base.Conv_and_destroy; // will dispose inputTensor.
 
     } else { // No depthwise (e.g. zero or negative number) (so no channel multiplier).
+      this.bDepthwise = false;
     }
 
     // 2.
