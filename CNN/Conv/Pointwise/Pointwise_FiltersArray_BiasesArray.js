@@ -411,11 +411,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     { // this.filtersArray
 
       for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-
-//!!! ...unfinished... (2022/01/08)
-
         let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
-
         let outChannel = 0;
 
         OutChannelPartIndexLoop:
@@ -431,7 +427,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             let extraScale = undoPreviousEscapingScale * doEscapingScale;
 
             if ( outChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-
               if ( inChannelIndexDistance == outChannelSub ) {
                 this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
               } else {
@@ -451,10 +446,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       } // inChannel
 
       if ( this.biasesArray ) {
-
-//!!! ...unfinished... (2022/01/08)
-
         let outChannel = 0;
+
+        OutChannelPartIndexLoop:
         for ( let outChannelPartIndex = 0; outChannelPartIndex < outChannelPartInfoArray.length; ++outChannelPartIndex ) {
           let outChannelPartInfo = outChannelPartInfoArray[ outChannelPartIndex ];
 
