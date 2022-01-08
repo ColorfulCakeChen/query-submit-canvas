@@ -310,7 +310,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                         this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
                       }
 
-                    } else { // Not pass-through half channels.
+                    } else { // Non-pass-through half channels.
                       //this.filtersArray[ filterIndex ] = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
@@ -350,7 +350,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
               this.biasesArray[ biasIndex ] = 0;
 
-            } else { // Not pass-through half channels.
+            } else { // Non-pass-through half channels.
               //this.biasesArray[ biasIndex ] = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
               this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
