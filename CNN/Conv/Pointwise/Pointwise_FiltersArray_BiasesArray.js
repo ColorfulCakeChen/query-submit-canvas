@@ -329,7 +329,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           // The channel count can not be halved (e.g. ( inputChannelCount == 1 ) or ( outputChannelCount == 1 ) ).
           tf.util.assert( ( ( 0 != this.inputChannelCount_higherHalf ) && ( 0 != this.outputChannelCount_higherHalf ) ),
             `Pointwise.FiltersArray_BiasesArray.init(): `
-              + `When nHigherHalfDifferent ( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )} ) `
+              + `When nHigherHalfDifferent ( ${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )} ) `
               + `inputChannelCount_higherHalf ( ${this.inputChannelCount_higherHalf} ) and `
               + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) `
               + `can not be zero.`
