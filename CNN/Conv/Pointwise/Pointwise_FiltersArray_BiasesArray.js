@@ -140,7 +140,6 @@ import { BoundsArraySet } from  "./Pointwise_BoundsArraySet.js";
  */
 let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
-
   /**
    */
   constructor(
@@ -171,21 +170,21 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     );
 
     tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
-      `Pointwise.Base.constructor(): `
+      `Pointwise.FiltersArray_BiasesArray.constructor(): `
         + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
         + `inputChannelCount ( ${this.inputChannelCount} ).`
     );
 
     if ( this.outputChannelCount > 0 ) {
       tf.util.assert( ( this.outputChannelCount_lowerHalf <= outputChannelCount ),
-        `Pointwise.Base.constructor(): `
+        `Pointwise.FiltersArray_BiasesArray.constructor(): `
           + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
           + `outputChannelCount ( ${this.outputChannelCount} ).`
       );
 
     } else { // ( this.outputChannelCount <= 0 ), the outputChannelCount_Real will be inputChannelCount.
       tf.util.assert( ( this.outputChannelCount_lowerHalf <= inputChannelCount ),
-        `Pointwise.Base.constructor(): `
+        `Pointwise.FiltersArray_BiasesArray.constructor(): `
           + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) can not be larger than `
           + `inputChannelCount ( ${this.inputChannelCount} ) when `
           + `outputChannelCount ( ${this.outputChannelCount} ) is zero or negative.`
@@ -193,7 +192,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     }
 
     tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ) == ( this.outputChannelCount_lowerHalf > 0 ),
-      `Pointwise.Base.constructor(): `
+      `Pointwise.FiltersArray_BiasesArray.constructor(): `
         + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) and `
         + `outputChannelCount_lowerHalf ( ${this.outputChannelCount_lowerHalf} ) `
         + `should be both positive or both not.`
@@ -204,16 +203,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //!!! ...unfinished... (2022/01/08)
 
   /**
-   * Extract depthwise filters and biases.
+   * Extract pointwise filters and biases.
    *
    * The following properties will be modified:
    *   - this.byteOffsetBegin
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
    *   - this.boundsArraySet
-   *   - this.poolWindowShape ( if ( this.AvgMax_Or_ChannelMultiplier < 0 ) )
-   *   - this.filtersShape    ( if ( this.AvgMax_Or_ChannelMultiplier > 0 ) )
-   *   - this.filtersArray    ( if ( this.AvgMax_Or_ChannelMultiplier > 0 ) )
+   *   - this.filtersShape
+   *   - this.filtersArray
    *   - this.biasesShape     ( if ( this.bBias == true ) )
    *   - this.biasesArray     ( if ( this.bBias == true ) )
    *
@@ -280,6 +278,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       } // inChannel
 
     } // inChannelPartIndex
+
+
+    {
+      this.tensorWeightCountTotal = 0;
+
+      if ( this.filtersShape )
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersShape );
+
+      if ( this.biasesShape )
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesShape );
+    }
 
     return true;
   }
