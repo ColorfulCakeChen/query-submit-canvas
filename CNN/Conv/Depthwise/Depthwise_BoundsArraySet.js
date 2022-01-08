@@ -26,7 +26,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
    *   The value bounds set of the previous convolution-bias-activation.
    *
-   * @param {ChannelPartInfo[]} inChannelPartInfoArray
+   * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
    *
    * @param {number} channelMultiplier
