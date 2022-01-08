@@ -255,16 +255,20 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     // Set up inChannelPartInfoArray and filtersShape and biasesShape.
     {
+//!!! ...unfinished... (2022/01/08)
+//       this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+//       this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
       this.filtersShape =  [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
       if ( this.bBias )
         this.biasesShape = [ this.outputChannelCount ];
 
-//!!! ...unfinished... (2022/01/08)
-
       switch ( this.nHigherHalfDifferent ) {
         // 3.0 Normal pointwise convolution and bias.
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+          this.outputChannelCount_Real = this.outputChannelCount;
+          this.inputChannelCount_toBeExtracted = this.inputChannelCount; // Extract all weights as specified input/output channels.
+          this.outputChannelCount_toBeExtracted = this.outputChannelCount;
           inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount ) ];
           filtersShape_extracted = this.filtersShape;
           biasesShape_extracted =  this.biasesShape;
@@ -290,29 +294,40 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         // 3.2 bHigherHalfCopyLowerHalf
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
 
-//!!! ...unfinished... (2022/01/08) ???
+          this.outputChannelCount_Real = this.outputChannelCount;
+
+          this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
+          this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
+
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
+//!!! ...unfinished... (2022/01/08) ???
           inChannelPartInfoArray = [
-            new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf ),
-            new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,  ) ];
+            new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf ),
+            new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf ) ];
 
 //!!! ...unfinished... (2022/01/08) ???
 
-          filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
-          biasesShape_extracted =  [ this.inputChannelCount_lowerHalf ];
+          filtersShape_extracted = [ 1, 1, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf  ];
+          biasesShape_extracted =  [ this.outputChannelCount_lowerHalf ];
 
           bExtractOk = Base.extractAs_HigherHalfCopyLowerHalf.call( this, inputFloat32Array );
           break;
 
         // 3.3 bHigherHalfPointwise22
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22: // (3)
+
+//!!! ...unfinished... (2022/01/08)
+
           bExtractOk = Base.extractAs_HigherHalfPointwise22.call( this, inputFloat32Array );
           break;
 
         // 3.4
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
+
+//!!! ...unfinished... (2022/01/08)
+
           if ( this.outputChannelCount > 0 ) { // 3.4.1.1 bHigherHalfPassThrough
             bExtractOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
 
