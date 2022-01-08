@@ -275,7 +275,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                 //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
 
                 let outChannel = inChannelBegin * this.channelMultiplier;
-
                 for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
 
                   // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
