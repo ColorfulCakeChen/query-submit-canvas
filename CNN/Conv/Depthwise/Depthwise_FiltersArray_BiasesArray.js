@@ -239,7 +239,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
             tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ),
-              `Depthwise.Base.extractAs_HigherHalfPassThrough(): `
+              `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfPassThrough(): `
                 + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
             );
 
@@ -256,7 +256,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
             filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
-            biasesShape_extracted =  [ this.inputChannelCount_lowerHalf ];
+            biasesShape_extracted =  [ this.outputChannelCount_lowerHalf ];
             break;
 
           default:
