@@ -154,13 +154,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
     tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.output.lowers.length ),
-      `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_by_extract(): `
+      `Depthwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
         + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_BoundsArraySet.output.lowers.length} ).`
     );
 
     tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales.length ),
-      `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_by_extract(): `
+      `Depthwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
         + `activationEscaping_ScaleArraySet.undo of previous convolution-bias-activation `
         + `( ${previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales.length} ).`
@@ -190,7 +190,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           this.biasesShape = [ this.outputChannelCount ];
 
         switch ( this.nHigherHalfDifferent ) {
-          default:
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
             inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount ) ];
             filtersShape_extracted = this.filtersShape;
@@ -211,6 +210,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
             filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
             biasesShape_extracted =  [ this.inputChannelCount_lowerHalf ];
+            break;
+
+          default:
+            tf.util.assert( ( false ),
+              `Depthwise.FiltersArray_BiasesArray.init(): `
+                + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
+            );
             break;
         }
 
