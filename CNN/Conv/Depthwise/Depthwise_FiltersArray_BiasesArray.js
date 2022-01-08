@@ -356,6 +356,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     } // inChannelPartIndex
 
+    return true;
   }
 
 }
