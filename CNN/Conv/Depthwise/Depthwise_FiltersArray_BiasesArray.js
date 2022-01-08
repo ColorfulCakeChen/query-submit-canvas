@@ -169,6 +169,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
+    if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
+      return true; // Nothing needs to be extracted.
+
     // Determine shape of the filters, biases, channels.
     let inChannelPartInfoArray;
     let filtersShape_extracted, biasesShape_extracted;
