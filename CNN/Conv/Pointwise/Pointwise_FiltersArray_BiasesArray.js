@@ -437,15 +437,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                 }
 
               } else { // Non-pass-through half channels.
-
-  //!!! ...unfinished... (2022/01/08) Extract too many filter weights. Need restrict iChannel range.
                 this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
                 ++sourceIndex;
               }
 
             } else {
-              this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
+              this.filtersArray[ filterIndex ] = 0; // All input channels which is not in range use zero filter to ignore the inputs.
             }
 
             ++filterIndex;
