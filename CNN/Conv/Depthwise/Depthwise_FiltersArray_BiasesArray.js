@@ -180,6 +180,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     {
       if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
+        this.outputChannelCount = this.inputChannelCount; // No channel multiplier.
+
+        // In normal depthwise avg/max pooling, use specified specified channel count as extracted channel count.
+        // Although they are not used to extract avg/max filters, they will be used for extracting bias.
+        this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+        this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
         this.poolWindowShape = [ this.filterHeight, this.filterWidth ]; // avg/max pooling do not have this.filtersShape to be extracted.
         if ( this.bBias )
           this.biasesShape = biasesShape_extracted = [ this.outputChannelCount ];
@@ -194,12 +201,32 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
         switch ( this.nHigherHalfDifferent ) {
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
+            this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+            this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+            this.outputChannelCount_toBeExtracted = this.outputChannelCount;
             inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount ) ];
             filtersShape_extracted = this.filtersShape;
             biasesShape_extracted =  this.biasesShape;
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
+
+            this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+
+            tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ),
+              `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfDepthwise2(): `
+                + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
+            );
+
+            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+
+            this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
+            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+            // Extract filters and biases for the specified channel count, but in different sequence.
+            this.inputChannelCount_toBeExtracted = this.inputChannelCount;
+            this.outputChannelCount_toBeExtracted = this.outputChannelCount;
+
             inChannelPartInfoArray = [
               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount           ) ];
@@ -208,6 +235,23 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
+
+            this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
+
+            tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ),
+              `Depthwise.Base.extractAs_HigherHalfPassThrough(): `
+                + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
+            );
+
+            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+
+            this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.AvgMax_Or_ChannelMultiplier;
+            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+            // Just extract filters and biases for half of the specified channel count.
+            this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
+            this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
+
             inChannelPartInfoArray = [
               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
