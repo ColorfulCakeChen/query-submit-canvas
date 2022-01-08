@@ -324,9 +324,22 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //!!! ...unfinished... (2022/01/08)
 
           if ( this.outputChannelCount > 0 ) { // 3.4.1.1 bHigherHalfPassThrough
-            bExtractOk = Base.extractAs_HigherHalfPassThrough.call( this, inputFloat32Array );
+            this.bHigherHalfPassThrough = true;
+            this.outputChannelCount_Real = this.outputChannelCount;
+            this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
+            this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
+            this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+            this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+            inChannelPartInfoArray = [
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ];
 
           } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
+            this.bAllPassThrough = true;
+            this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
+            this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
+
+//!!! ...unfinished... (2022/01/08)
             bExtractOk = Base.extractAs_AllPassThrough.call( this, inputFloat32Array );
           }
 
@@ -404,7 +417,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
             let extraScale = undoPreviousEscapingScale * doEscapingScale;
 
-//!!! ...unfinished... (2022/01/08) Extract too many filter weights. Need restrict iChannel range.
             if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
                 
               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
