@@ -13,112 +13,6 @@ import { FiltersArray_BiasesArray } from "./Pointwise_FiltersArray_BiasesArray.j
 /**
  * Handle pointwise convolution (1x1 conv2d), bias and activation.
  *
- * @member {number} byteOffsetBegin
- *   The position which is started (inclusive) to extract from inputFloat32Array.buffer by init(). This is relative to the
- * inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
- *
- * @member {number} byteOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
- *
- * @member {BoundsArraySet} boundsArraySet
- *   The element value bounds (per channel) of input, beforeActivation, and output for this pointwise convolution.
- *
- * @member {number} outputChannelCount
- *   The output channel count of this pointwise convolutiuon.
- *     - Usually, if ( outputChannelCount == 0 ), it means no operation at all (i.e. bPointwise == bExisted == false ).
- *     - However, if ( outputChannelCount == 0 ) but ( channelShuffler_outputGroupCount > 0 ), this pointwise will exist
- *         (i.e. bPointwise == bExisted == true ) and always will not have biases (no matter how bBias is). It is
- *         all-pass-through-and-channel-shuffling mode.
- *
- * @member {number} outputChannelCount_Real
- *   Usually, the same as outputChannelCount. But when ( this.bAllPassThrough == true ) or ( this.bAllPassThroughShuffle == true ),
- * outputChannelCount_Real will be the same as inputChannelCount (in this case, the outputChannelCount is zero).
- *
- * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
- *   - 0. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal poitwise convolution.
- *
- *     - 0.1 If ( outputChannelCount > 0 ), normal poitwise convolution.
- *
- *     - 0.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
- *
- *   - 1. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH ):
- *
- *     - 1.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough),
- *         (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head),
- *         the filters for the output channels between 0 and ( outputChannelCount_lowerHalf - 1 ) will just pass
- *         through the input to output. The filters for the output channels between ( outputChannelCount_lowerHalf )
- *         and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
- *         In this case, it will always have no biases (no matter how bBias is).
- *
- *     - 1.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
- *
- *   - 2. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ):
- *
- *     - 2.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfCopyLowerHalf),
- *         (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head),
- *         the filters for the output channels between ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just copy
- *         the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
- *
- *     - 2.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
- *
- *   - 3. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22 ):
- *          
- *     - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22),
- *         (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head),
- *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between
- *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases)
- *         will be extracted in sequence, but they will be combined into one larger filters (and biases). This makes these
- *         filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that
- *         the same filters weights could be used in these two architectures for comparing performance and correctness.
- *
- *     - 3.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
- *
- *  - 4. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
- *      (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
- *
- *    - 4.1 If ( outputChannelCount > 0 ), the filters for the output channels between ( outputChannelCount_lowerHalf )
- *        and ( outputChannelCount - 1 ) will just pass through the input to output.
- *
- *      - 4.1.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfPassThrough).
- *          (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
- *
- *      - 4.1.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfPassThroughShuffle).
- *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
- *          The output channels will be arranged just like applying channel shuffler on them.
- *
- *    - 4.2 If ( outputChannelCount <= 0 ), the filters will just pass through all input channels to output. In this case,
- *        the ( bPointwise == bExisted == true ) (not false), although the specified outputChannelCount is zero. And, it
- *        will always have no biases (no matter how bBias is).
- *
- *      - 4.2.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bAllPassThrough; no pointwise and no channel shuffler).
- *          (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail)
- *
- *      - 4.2.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bAllPassThroughShuffle).
- *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
- *          The output channels will be arranged just like applying channel shuffler on them.
- *
- * @member {boolean} bHigherHalfDifferent
- *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
- * or ( outputChannelCount <= 0 ) or ( inputChannelCount_lowerHalf <= 0 ) or ( outputChannelCount_lowerHalf <= 0 ).
- *
- * @member {number} inputChannelCount_lowerHalf
- *   The lower half input channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
- *
- * @member {number} outputChannelCount_lowerHalf
- *   The lower half output channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
- *
- * @member {number} channelShuffler_outputGroupCount
- *   The output group count of the channel shuffler. Usually, it is used when
- * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
- *
- * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
- *
- * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
  *
  * @member {boolean} bExisted
  *   If true, this pointwise convolution exists. The same as this.bPointwise.
@@ -157,6 +51,8 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
       nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
 
   }
+
+//!!! ...unfinished... (2022/01/08) Use supet.init()
 
   /**
    * @param {Float32Array} inputFloat32Array
@@ -295,15 +191,6 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
         this.pfnConvBiasActivation = this.pfnConv = Base.return_input_directly;
       }
     }
-  }
-
-  get tensorWeightCountTotal() {
-    let result = 0;
-    if ( this.filtersTensor4d )
-      result += tf.util.sizeFromShape( this.filtersTensor4d.shape );
-    if ( this.biasesTensor3d )
-      result += tf.util.sizeFromShape( this.biasesTensor3d.shape );
-    return result;
   }
 
   get bExisted() {
