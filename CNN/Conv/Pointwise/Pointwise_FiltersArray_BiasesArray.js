@@ -415,9 +415,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
         let outChannel = 0;
-
-        // ( inChannelPartIndex == 0 ), lower half channels. (or, all channels)
-        // ( inChannelPartIndex == 1 ), higher half channels.
         for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
           let inChannelBegin = inChannelPartInfo.beginIndex;
@@ -429,12 +426,23 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
 
+              if ( ( inChannel >= inChannelPartInfo.beginIndex ) && ( inChannel < inChannelPartInfo.endIndex ) ) {
+
 //!!! ...unfinished... (2022/01/08)
+
+              } else {
+
+//!!! ...unfinished... (2022/01/08)
+
+              }
 
             } else { // Non-pass-through half channels.
+              this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
-//!!! ...unfinished... (2022/01/08)
+              ++sourceIndex;
             }
+
+            ++filterIndex;
 
           } // outChannelSub
         } // inChannelPartIndex
@@ -451,7 +459,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //           let inChannelEnd = inChannelPartInfo.endIndex;
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outChannelCount; ++outChannelSub, ++outChannel ) {
-
             let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
             let extraScale = doEscapingScale; // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
