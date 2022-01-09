@@ -246,8 +246,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
-    if ( this.outputChannelCount <= 0 )
-      return true; // Nothing needs to be extracted.
+//!!! ...unfinished... (2022/01/09)
+// Even if ( this.outputChannelCount <= 0 ),
+// this function should work correctly and BoundsArraySet should result in pass-through input to output.
+
+//!!! (2022/01/09 Remarked) Wrong!
+//     if ( this.outputChannelCount <= 0 )
+//       return true; // Nothing needs to be extracted.
 
     // Determine shape of the filters, biases, channels.
     let inChannelPartInfoArray;
