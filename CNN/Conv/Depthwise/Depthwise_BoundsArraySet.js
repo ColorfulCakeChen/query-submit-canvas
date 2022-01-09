@@ -138,10 +138,10 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
                     theActivationFunctionInfo.inputDomainLinear.lower, theActivationFunctionInfo.inputDomainLinear.upper
                   );
 
-                  let doScale = this.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-                  tf.util.assert( ( Number.isNaN( doScale ) == false ),
+                  let doEscapingScale = this.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+                  tf.util.assert( ( Number.isNaN( doEscapingScale ) == false ),
                     `Depthwise.FiltersArray_BiasesArray.set_boundsArraySet_by_inChannelPartInfoArray(): `
-                      + `this.activationEscaping_ScaleArraySet.do.scales[ ${outChannel} ] ( ${doScale} ) `
+                      + `this.activationEscaping_ScaleArraySet.do.scales[ ${outChannel} ] ( ${doEscapingScale} ) `
                       + `should not be NaN. `
                       + `Please use activation function (e.g. tanh()) which has both negative and positive parts near origin point.`
                   );
