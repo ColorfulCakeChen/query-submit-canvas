@@ -74,33 +74,26 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
           let inChannelToBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
-//!!! ...unfinished... (2022/01/09) Where to initialize this.afterFilter?
-          // 3. Determine .afterFilter
-//          this.afterFilter.set_one_byBoundsArray( outChannel, this.afterUndoPreviousActivationEscaping, inChannel );
-
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
             if ( outChannel >= this.outputChannelCount )
               break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-//!!! ...unfinished... (2022/01/09)
             if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
 
               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                 // Do nothing. The value bounds does not change at all because it is just be past through.
 
                 if ( inChannelToBegin == outChannelSub ) {
-                  this.afterFilter.set_one_by ???; // The only one position with non-zero value.
-//!!! ...unfinished... (2022/01/09) should set to the same as .afterUndoPreviousActivationEscaping? since pass through?
+
+                  // The only one filter position (in the pass-through part) has non-zero value.
+                  this.afterFilter.add_one_byBoundsArray( outChannel, this.afterUndoPreviousActivationEscaping, inChannel );
+
                 } else {
-//!!! ...unfinished... (2022/01/09)
+                  // Do nothing. All other filter positions (in the pass-through part) are zero.
                 }
 
-
               } else { // Non-pass-through half channels.
-
-//!!! ...unfinished... (2022/01/09) ???
-                tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel );
-                tBounds.multiply_byBounds( filtersValueBounds );
+                tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel ).multiply_byBounds( filtersValueBounds );
                 this.afterFilter.add_one_byBounds( outChannel, tBounds )
 
               }
@@ -108,6 +101,8 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
             } else {
               // Do nothing. The value bounds does not change for all input channels which is not in range (since these inputs are ignored).
             }
+
+//!!! ...unfinished... (2022/01/09)
 
           }
         }
