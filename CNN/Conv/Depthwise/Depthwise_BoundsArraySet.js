@@ -75,11 +75,11 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
       for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
 
-        let undoScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+        let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
         // 2. Determine .afterUndoPreviousActivationEscaping
         this.afterUndoPreviousActivationEscaping.set_one_byBoundsArray( inChannel, this.input, inChannel );
-        this.afterUndoPreviousActivationEscaping.multiply_one_byN( inChannel, undoScale );
+        this.afterUndoPreviousActivationEscaping.multiply_one_byN( inChannel, undoPreviousEscapingScale );
 
         for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub, ++outChannel ) {
 
