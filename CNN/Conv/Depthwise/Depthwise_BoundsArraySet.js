@@ -40,17 +40,16 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this depthwise convolution.
    *
-   * @param {number[]} filtersArray
-   *   The weights of the depthwise convolution. Its content will not be used. Only be tested against null. If ( filtersArray != null ),
-   * this is a depthwise convolution. If ( filtersArray == null ), this is an avg/max pooling (i.e. no filters weights).
+   * @param {boolean} bFilter
+   *   Whether this depthwise convolution has bias operation. If ( bFilter == true ), this is a depthwise convolution.
+   * If ( bFilter == false ), this is an avg/max pooling (i.e. no filters weights).
    *
-   * @param {number[]} biasesArray
-   *   The weights of the bias. Its content will not be used. Only be tested against null. If ( biasesArray != null ), there is
-   * bias operation. If ( biasesArray == null ), there is no bias operation.
+   * @param {boolean} bBias
+   *   Whether this depthwise convolution has bias operation.
    */
   set_all_by_inChannelPartInfoArray(
     previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray, 
-    channelMultiplier, nActivationId, filtersArray, biasesArray
+    channelMultiplier, nActivationId, bFilter, bBias
   ) {
 
     // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
@@ -88,7 +87,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
           // 3. Determine .afterFilter
           this.afterFilter.set_one_byBoundsArray( outChannel, this.afterUndoPreviousActivationEscaping, inChannel );
-          if ( filtersArray ) {
+          if ( bFilter ) {
 
             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
               // Do nothing. The value bounds does not change at all because it is just be past through.
@@ -99,13 +98,13 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
                 .multiply_one_byN( outChannel, this.filterSize );
             }
 
-          } else { // ( !filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
+          } else { // ( !bFilter ). No filters array to be extracted. (i.e. avg/max pooling)
             // Do nothing. The value bounds does not change for avg/max pooling.
           }
 
           // 4. Determine .afterBias
           this.afterBias.set_one_byBoundsArray( outChannel, this.afterFilter, outChannel );
-          if ( biasesArray ) {
+          if ( bBias ) {
 
             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
               // Do nothing. The value bounds does not change at all because it is just be past through.
@@ -114,7 +113,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
               this.afterBias.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by the bias bounds.
             }
 
-          } else { // ( !biasesArray ). No biases array to be extracted.
+          } else { // ( !bBias ). No biases array to be extracted.
             // Do nothing. The value bounds does not change since no bias.
           }
 
