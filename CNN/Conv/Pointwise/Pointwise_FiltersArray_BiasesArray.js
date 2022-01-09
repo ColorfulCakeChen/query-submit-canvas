@@ -402,16 +402,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     this.tensorWeightCountExtracted = weightsCount_extracted;
 
     // Prepare value bounds.
-
-//!!! ...unfinished... (2022/01/08)
-//     this.boundsArraySet.set_all_by_inChannelPartInfoArray(
-//       previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
-//       this.channelMultiplier, this.nActivationId, this.filtersArray, this.biasesArray
-//     );
+    this.boundsArraySet.set_all_by_inChannelPartInfoArray(
+      previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
+      this.nActivationId, this.bBias
+    );
 
     // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex, filterIndex, biasIndex;
-    sourceIndex = filterIndex = biasIndex = 0;
+    let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
 
     { // this.filtersArray
 
