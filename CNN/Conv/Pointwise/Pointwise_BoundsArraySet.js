@@ -32,24 +32,22 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    *   The input channel range array which describe lower/higher half channels index range.
    *
    * @param {number} nActivationId
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this depthwise convolution.
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this pointwise convolution.
    *
-   * @param {number[]} filtersArray
-   *   The weights of the pointwise convolution. Its content will be used. It can not be null.
-   *
-   * @param {number[]} biasesArray
-   *   The weights of the bias. Its content will not be used. Only be tested against null. If ( biasesArray != null ),
-   * there is bias operation. If ( biasesArray == null ), there is no bias operation.
+   * @param {boolean} bBias
+   *   Whether this pointwise convolution has bias operation.
    */
   set_all_by_inChannelPartInfoArray(
     previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray, 
-    nActivationId, filtersArray, biasesArray
+    nActivationId, bBias
   ) {
 
-//!!! (2022/01/09 Remarked) Since we know what the filter and bias value is, the real value (i.e. not the supposed bounds range) could be used directly.
-//     // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
-//     const filtersValueBounds = Weights.Base.ValueBounds;
-//     const biasesValueBounds = Weights.Base.ValueBounds;
+    // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
+    //
+    // Q: Why not use the real filter and bias value (i.e. not the supposed bounds range) directly.
+    // A: Their values are unknown when determine value bounds. Even if they are known, their values are pre-scaled (i.e. altered; not original) value.
+    const filtersValueBounds = Weights.Base.ValueBounds;
+    const biasesValueBounds = Weights.Base.ValueBounds;
 
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
 
@@ -59,7 +57,6 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
 //!!! ...unfinished... (2022/01/09)
     { // filtersArray
-      let filterIndex = 0;
       let tBounds = new FloatValue.Bounds( 0, 0 );
 
       this.afterFilter.set_all_byN( 0 ); // Initialize .afterFilter for accumulating every output channel by every input channel.
@@ -96,13 +93,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
                 }
 
               } else { // Non-pass-through half channels. (i.e. input multiply filter weight.)
-//!!! (2022/01/09 Remarked) Since we know what the filter and bias value is, the real value (i.e. not the supposed bounds range) could be used directly.
-//                tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel ).multiply_byBounds( filtersValueBounds );
-
-                tBounds
-                  .set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel )
-                  .multiply_byN( filtersArray[ filterIndex ] );
-                
+                tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel ).multiply_byBounds( filtersValueBounds );
                 this.afterFilter.add_one_byBounds( outChannel, tBounds )
               }
 
@@ -119,7 +110,8 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     } // filtersArray
 
     // 4. Determine .afterBias
-    if ( biasesArray ) {
+    this.afterBias.set_all_byBoundsArray( this.afterFilter );
+    if ( bBias ) {
       let outChannel = 0;
 
       InChannelPartIndexLoop:
@@ -130,18 +122,22 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
           if ( outChannel >= this.outputChannelCount )
             break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-//!!! ...unfinished... (2022/01/09)
+          if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+            // Do nothing. The value bounds does not change at all because it is just be past through.
+
+          } else { // Non-pass-through half channels.
+            this.afterBias.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by the bias bounds.
+          }
 
         } // outChannelSub, outChannel
-
       } // inChannelPartIndex
 
-    } else { // ( !biasesArray )
-      
+    } else { // ( !bBias )
+      // Do nothing. The value bounds does not change since no bias.
+    }
+
 //!!! ...unfinished... (2022/01/09)
 
-
-    }
         
   }
 
