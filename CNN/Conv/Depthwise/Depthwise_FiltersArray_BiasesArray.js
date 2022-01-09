@@ -304,8 +304,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     );
 
     // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex, filterIndex, biasIndex;
-    sourceIndex = filterIndex = biasIndex = 0;
+    let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
 
     // ( inChannelPartIndex == 0 ), lower half channels. (or, all channels)
     // ( inChannelPartIndex == 1 ), higher half channels.
