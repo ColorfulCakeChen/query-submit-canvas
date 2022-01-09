@@ -85,6 +85,12 @@ import { BoundsArraySet } from  "./Pointwise_BoundsArraySet.js";
  *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *          The output channels will be arranged just like applying channel shuffler on them.
  *
+
+//!!! ...unfinished... (2022/01/09)
+// In fact, AllPassThrough could be achieved without using special ( outputChannelCount <= 0 ).
+// Just using ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 )
+// is enough to do AllPassThrough.
+
  *    - 4.2 If ( outputChannelCount <= 0 ), the filters will just pass through all input channels to output. In this case,
  *        the ( bPointwise == bExisted == true ) (not false), although the specified outputChannelCount is zero. And, it
  *        will always have no biases (no matter how bBias is).
@@ -337,6 +343,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ];
 
           } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
+
+//!!! ...unfinished... (2022/01/09)
+// In fact, AllPassThrough could be achieved without using special ( outputChannelCount <= 0 ).
+// Just using ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 )
+// is enough to do AllPassThrough.
+
             this.bAllPassThrough = true; // Marked for this special case.
             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
             this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
