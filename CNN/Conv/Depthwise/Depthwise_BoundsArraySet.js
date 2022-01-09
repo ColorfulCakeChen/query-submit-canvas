@@ -165,6 +165,10 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
               .multiply_one_byNs( outChannel, this.activationEscaping_ScaleArraySet.do.scales, outChannel );
           }
 
+//!!! ...unfinished... (2022/01/10)
+// Add ActivationFunction.Info.outputRangeLinear (the output range for linearDomainLinear).
+// When calculating ActivationEscaping bounds array of pass-through part, use it instead of normal info.range.
+
           // 7. Determine .afterActivation
           {
             // If no activation function, the output range is determined by .afterActivationEscaping.
