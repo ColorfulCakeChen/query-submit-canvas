@@ -452,7 +452,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             ++filterIndex;
 
-          } // outChannelSub
+          } // outChannelSub, outChannel
         } // inChannelPartIndex
       } // inChannel
     } // this.filtersArray
