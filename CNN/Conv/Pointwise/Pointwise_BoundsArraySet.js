@@ -52,7 +52,57 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     // 1. Determine .input
     this.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
 
+
 //!!! ...unfinished... (2022/01/09)
+    {
+      let tBounds = new FloatValue.Bounds( 0, 0 );
+
+      for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+        let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+        
+        // 2. Determine .afterUndoPreviousActivationEscaping
+        this.afterUndoPreviousActivationEscaping.set_one_byBoundsArray( inChannel, this.input, inChannel );
+        this.afterUndoPreviousActivationEscaping.multiply_one_byN( inChannel, undoPreviousEscapingScale );
+
+        let outChannel = 0;
+
+        InChannelPartIndexLoop:
+        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+          let inChannelToBegin = inChannel - inChannelPartInfo.inChannelBegin;
+
+//!!! ...unfinished... (2022/01/09) Where to initialize this.afterFilter?
+          // 3. Determine .afterFilter
+//          this.afterFilter.set_one_byBoundsArray( outChannel, this.afterUndoPreviousActivationEscaping, inChannel );
+          tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel );
+
+          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+            if ( outChannel >= this.outputChannelCount )
+              break InChannelPartIndexLoop; // Never exceeds the total output channel count.
+
+//!!! ...unfinished... (2022/01/09)
+            if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
+                
+              if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+                // Do nothing. The value bounds does not change at all because it is just be past through.
+
+              } else { // Non-pass-through half channels.
+
+//!!! ...unfinished... (2022/01/09)
+                tBounds.multiply_byBounds( filtersValueBounds );
+                this.afterFilter
+                  .??? add_one_byBounds( outChannel, tBounds )
+
+              }
+
+            } else {
+              // Do nothing. The value bounds does not change for all input channels which is not in range (since these inputs are ignored).
+            }
+
+          }
+        }
+      }
+
   }
 
 
