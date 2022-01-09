@@ -57,8 +57,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     {
       let tBounds = new FloatValue.Bounds( 0, 0 );
 
-//!!! ...unfinished... (2022/01/09)
-      this.afterFilter.set_all_byN( 0 ); // Initialize .afterFilter
+      this.afterFilter.set_all_byN( 0 ); // Initialize .afterFilter for accumulating every output channel by every input channel.
 
       for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
         let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
@@ -81,25 +80,24 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
             if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
 
               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                // Do nothing. The value bounds does not change at all because it is just be past through.
 
                 if ( inChannelToBegin == outChannelSub ) {
 
-                  // The only one filter position (in the pass-through part) has non-zero value.
+                  // The only one filter position (in the pass-through part) has non-zero value. (i.e. input multiply 1.)
                   this.afterFilter.add_one_byBoundsArray( outChannel, this.afterUndoPreviousActivationEscaping, inChannel );
 
                 } else {
-                  // Do nothing. All other filter positions (in the pass-through part) are zero.
+                  // Do nothing. All other filter positions (in the pass-through part) are zero. (i.e. input multiply 0.)
                 }
 
-              } else { // Non-pass-through half channels.
+              } else { // Non-pass-through half channels. (i.e. input multiply filter weight.)
                 tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel ).multiply_byBounds( filtersValueBounds );
                 this.afterFilter.add_one_byBounds( outChannel, tBounds )
-
               }
 
             } else {
               // Do nothing. The value bounds does not change for all input channels which is not in range (since these inputs are ignored).
+              // (i.e. input multiply 0.)
             }
 
 //!!! ...unfinished... (2022/01/09)
