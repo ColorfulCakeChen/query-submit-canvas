@@ -54,7 +54,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
 
 //!!! ...unfinished... (2022/01/09)
-    {
+    { // filtersArray
       let tBounds = new FloatValue.Bounds( 0, 0 );
 
       this.afterFilter.set_all_byN( 0 ); // Initialize .afterFilter for accumulating every output channel by every input channel.
@@ -100,12 +100,29 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
               // (i.e. input multiply 0.)
             }
 
+          } // outChannelSub, outChannel
+        } // inChannelPartIndex
+      } // inChannel
+    } // filtersArray
+
+    if ( biasesArray ) {
+      let outChannel = 0;
+
+      InChannelPartIndexLoop:
+      for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+        let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+
+        for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+          if ( outChannel >= this.outputChannelCount )
+            break InChannelPartIndexLoop; // Never exceeds the total output channel count.
+
 //!!! ...unfinished... (2022/01/09)
 
-          }
-        }
-      }
+        } // outChannelSub, outChannel
 
+      } // inChannelPartIndex
+    } // biasesArray
+        
   }
 
 
