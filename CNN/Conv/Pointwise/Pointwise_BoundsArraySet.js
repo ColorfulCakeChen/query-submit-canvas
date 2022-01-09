@@ -84,11 +84,17 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
 //!!! ...unfinished... (2022/01/09)
             if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
-                
+
               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                 // Do nothing. The value bounds does not change at all because it is just be past through.
 
+                if ( inChannelToBegin == outChannelSub ) {
+                  this.afterFilter.set_one_by ???; // The only one position with non-zero value.
 //!!! ...unfinished... (2022/01/09) should set to the same as .afterUndoPreviousActivationEscaping? since pass through?
+                } else {
+//!!! ...unfinished... (2022/01/09)
+                }
+
 
               } else { // Non-pass-through half channels.
 
