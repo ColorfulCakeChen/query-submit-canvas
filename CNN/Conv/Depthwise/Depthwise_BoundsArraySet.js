@@ -115,7 +115,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
               
 //!!! (2022/01/09 Remarked) Since we know what the filter and bias value is, the real value (i.e. not the supposed bounds range) could be used directly.
 //              this.afterBias.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by the bias bounds.
-              this.afterBias.add_one_byBounds( outChannel, biasesArray[ outChannel ] ); // Shift the value bounds by the real bias value.
+              this.afterBias.add_one_byN( outChannel, biasesArray[ outChannel ] ); // Shift the value bounds by the real bias value.
             }
 
           } else { // ( !biasesArray ). No biases array to be extracted.
