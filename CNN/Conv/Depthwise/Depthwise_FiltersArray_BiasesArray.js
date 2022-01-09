@@ -300,7 +300,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // Prepare value bounds.
     this.boundsArraySet.set_all_by_inChannelPartInfoArray(
       previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
-      this.channelMultiplier, this.nActivationId, this.filtersArray, this.biasesArray
+      this.channelMultiplier, this.nActivationId, ( this.filtersArray != null ), this.bBias
     );
 
     // Extracting weights of filters and biases. (Including extra scale.)
