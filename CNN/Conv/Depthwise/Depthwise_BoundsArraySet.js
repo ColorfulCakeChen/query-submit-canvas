@@ -53,12 +53,12 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     channelMultiplier, nActivationId, filtersArray, biasesArray
   ) {
 
-     // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
-     //
-     // Q: Why not use the real filter and bias value (i.e. not the supposed bounds range) directly.
-     // A: Their values are unknown when determine value bounds. Even if they are known, their values are pre-scaled (i.e. altered; not original) value.
-     const filtersValueBounds = Weights.Base.ValueBounds;
-     const biasesValueBounds = Weights.Base.ValueBounds;
+    // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
+    //
+    // Q: Why not use the real filter and bias value (i.e. not the supposed bounds range) directly.
+    // A: Their values are unknown when determine value bounds. Even if they are known, their values are pre-scaled (i.e. altered; not original) value.
+    const filtersValueBounds = Weights.Base.ValueBounds;
+    const biasesValueBounds = Weights.Base.ValueBounds;
 
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
 
