@@ -77,7 +77,6 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 //!!! ...unfinished... (2022/01/09) Where to initialize this.afterFilter?
           // 3. Determine .afterFilter
 //          this.afterFilter.set_one_byBoundsArray( outChannel, this.afterUndoPreviousActivationEscaping, inChannel );
-          tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel );
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
             if ( outChannel >= this.outputChannelCount )
@@ -91,10 +90,10 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
               } else { // Non-pass-through half channels.
 
-//!!! ...unfinished... (2022/01/09)
+//!!! ...unfinished... (2022/01/09) ???
+                tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel );
                 tBounds.multiply_byBounds( filtersValueBounds );
-                this.afterFilter
-                  .??? add_one_byBounds( outChannel, tBounds )
+                this.afterFilter.add_one_byBounds( outChannel, tBounds )
 
               }
 
