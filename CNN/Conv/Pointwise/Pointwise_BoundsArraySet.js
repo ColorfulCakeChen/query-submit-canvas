@@ -34,18 +34,22 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this depthwise convolution.
    *
+   * @param {number[]} filtersArray
+   *   The weights of the pointwise convolution. Its content will be used. It can not be null.
+   *
    * @param {number[]} biasesArray
    *   The weights of the bias. Its content will not be used. Only be tested against null. If ( biasesArray != null ),
    * there is bias operation. If ( biasesArray == null ), there is no bias operation.
    */
   set_all_by_inChannelPartInfoArray(
     previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray, 
-    nActivationId, biasesArray
+    nActivationId, filtersArray, biasesArray
   ) {
 
-    // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
-    const filtersValueBounds = Weights.Base.ValueBounds;
-    const biasesValueBounds = Weights.Base.ValueBounds;
+//!!! (2022/01/09 Remarked) Since we know what the filter and bias value is, the real value (i.e. not the supposed bounds range) could be used directly.
+//     // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
+//     const filtersValueBounds = Weights.Base.ValueBounds;
+//     const biasesValueBounds = Weights.Base.ValueBounds;
 
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
 
@@ -55,6 +59,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
 //!!! ...unfinished... (2022/01/09)
     { // filtersArray
+      let filterIndex = 0;
       let tBounds = new FloatValue.Bounds( 0, 0 );
 
       this.afterFilter.set_all_byN( 0 ); // Initialize .afterFilter for accumulating every output channel by every input channel.
@@ -91,7 +96,13 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
                 }
 
               } else { // Non-pass-through half channels. (i.e. input multiply filter weight.)
-                tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel ).multiply_byBounds( filtersValueBounds );
+//!!! (2022/01/09 Remarked) Since we know what the filter and bias value is, the real value (i.e. not the supposed bounds range) could be used directly.
+//                tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel ).multiply_byBounds( filtersValueBounds );
+
+                tBounds
+                  .set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel )
+                  .multiply_byN( filtersArray[ filterIndex ] );
+                
                 this.afterFilter.add_one_byBounds( outChannel, tBounds )
               }
 
@@ -100,11 +111,14 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
               // (i.e. input multiply 0.)
             }
 
+            ++filterIndex;
+
           } // outChannelSub, outChannel
         } // inChannelPartIndex
       } // inChannel
     } // filtersArray
 
+    // 4. Determine .afterBias
     if ( biasesArray ) {
       let outChannel = 0;
 
@@ -121,7 +135,13 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
         } // outChannelSub, outChannel
 
       } // inChannelPartIndex
-    } // biasesArray
+
+    } else { // ( !biasesArray )
+      
+//!!! ...unfinished... (2022/01/09)
+
+
+    }
         
   }
 
