@@ -57,6 +57,9 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     {
       let tBounds = new FloatValue.Bounds( 0, 0 );
 
+//!!! ...unfinished... (2022/01/09)
+      this.afterFilter.set_all_byN( 0 ); // Initialize .afterFilter
+
       for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
         let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
         
