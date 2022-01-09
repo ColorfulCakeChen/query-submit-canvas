@@ -17,7 +17,11 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     super( inputChannelCount, outputChannelCount );
   }
 
-//!!! ...unfinished... (2021/12/27) should become BoundsArray_byChannelIndex.
+
+//!!! ...unfinished... (2022/01/09)
+// Even if ( this.outputChannelCount <= 0 ),
+// this function should work correctly and BoundsArraySet should result in pass-through input to output.
+
 
   /**
    *
