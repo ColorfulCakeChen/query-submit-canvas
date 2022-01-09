@@ -350,9 +350,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
                     if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
-                        this.filtersArray[ filterIndex ] = extraScale; // The only one position with non-zero value.
+                        this.filtersArray[ filterIndex ] = extraScale; // The only one filter position (in the pass-through part) has non-zero value.
                       } else {
-                        this.filtersArray[ filterIndex ] = 0; // All other positions of the filter are zero.
+                        this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
                       }
 
                     } else { // Non-pass-through half channels.
