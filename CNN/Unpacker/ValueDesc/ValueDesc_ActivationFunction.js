@@ -32,6 +32,10 @@ class ActivationFunction extends Int {
     super( 0, 5,
       [ "NONE",  "RELU6",  "TANH",  "SIN",  "COS",  "SIGMOID" ], // "RELU" ], //  "SOFTPLUS" ],
 
+//!!! ...unfinished... (2022/01/10)
+// Add ActivationFunction.Info.linearRange (the output range for linearDomain).
+// When calculating ActivationEscaping bounds array of pass-through part, use it instead of normal info.range.
+
       [
         new ActivationFunction.Info( 0, null, null, null ),
 
@@ -83,6 +87,10 @@ class ActivationFunction extends Int {
   }
 
 }
+
+//!!! ...unfinished... (2022/01/10)
+// Add ActivationFunction.Info.linearRange (the output range for linearDomain).
+// When calculating ActivationEscaping bounds array of pass-through part, use it instead of normal info.range.
 
 /**
  *
