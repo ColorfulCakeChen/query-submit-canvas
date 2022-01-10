@@ -197,12 +197,31 @@ class Base {
 }
 
 //!!! ...unfinished... (2022/01/10)
-// When ( x < 0.0000001 ), the tf.tanh( x ) will be 0.
-// That is, the precision of tf.tanh() may be 0.0000001 (= 1e-7 ).
-//
-// For this reason, the Weights.Base.ValueBounds may be more less than [ -( 2 ** 24 ), +( 2 ** 24 ) ].
-// Perhaps, [ -1, +1 ] is better.?
-//
+/*
+ * When ( x < 0.0000001 ), the tf.tanh( x ) will be 0.
+ * That is, the precision of tf.tanh() may be 0.0000001 (= 1e-7 ).
+ *
+ * Consider the ActivationEscaping inputDomainLinear of tanh() is [ -0.005, +0.005 ] simultaneously. The value bounds of result
+ * after filter-bias (no matter pointwise or depthwise) should be compatible with [ -0.005, +0.005 ] with precision 0.0000001 (= 1e-7 ).
+ *
+ * For example,
+ *   - [ -0.005, +0.005 ] with precision 0.0000001 (= 1e-7 ).
+ *   - [ -0.5, +0.5 ] with precision 0.00001 (= 1e-5 ).
+ *   - [ -5, +5 ] with precision 0.0001 (= 1e-4 ).
+ *   - [ -50, +50 ] with precision 0.001 (= 1e-3 ).
+ *   - [ -500, +500 ] with precision 0.01 (= 1e-2 ).
+ *   - [ -5000, +5000 ] with precision 0.1 (= 1e-1 ).
+ *   - [ -50000, +50000 ] with precision 1 (= 1e+0 ).
+ *   - [ -5e+4, +5e+4 ] with precision 1 (= 1e+0 ).
+ *
+ *
+ *
+ *
+ *
+ * For this reason, the Weights.Base.ValueBounds may be more less than [ -( 2 ** 24 ), +( 2 ** 24 ) ].
+ * Perhaps, [ -1, +1 ] is better.?
+ *
+ */
 
 /**
  * This is mainly for ensuring PointDepthPoint's output is legal float32:
