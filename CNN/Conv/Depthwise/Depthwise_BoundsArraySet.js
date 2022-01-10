@@ -165,10 +165,6 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
               .multiply_one_byNs( outChannel, this.activationEscaping_ScaleArraySet.do.scales, outChannel );
           }
 
-//!!! ...unfinished... (2022/01/10)
-// Add ActivationFunction.Info.outputRangeLinear (the output range for linearDomainLinear).
-// When calculating ActivationEscaping bounds array of pass-through part, use it instead of normal info.range.
-
           // 7. Determine .afterActivation
           {
             // If no activation function, the output range is determined by .afterActivationEscaping.
@@ -177,9 +173,28 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
             // Otherwise, the activation function dominates the output range.
             } else {
-              this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+              if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels, it is the output range for linearDomainLinear.
+                this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+
+              } else { // Non pass-through half channels, it is the output range for the whole input domain.
+                this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+              }
             }
           }
+
+//!!! (2022/01/10 Remarked) Old Codes
+// Add ActivationFunction.Info.outputRangeLinear (the output range for linearDomainLinear).
+// When calculating ActivationEscaping bounds array of pass-through part, use it instead of normal info.range.
+//           {
+//             // If no activation function, the output range is determined by .afterActivationEscaping.
+//             if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+//               this.afterActivation.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel )
+//
+//             // Otherwise, the activation function dominates the output range.
+//             } else {
+//               this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+//             }
+//           }
 
         } // outChannelSub, outChannel
       } // inChannel
