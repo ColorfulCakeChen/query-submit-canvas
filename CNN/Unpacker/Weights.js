@@ -196,6 +196,14 @@ class Base {
 
 }
 
+//!!! ...unfinished... (2022/01/10)
+// When ( x < 0.0000001 ), the tf.tanh( x ) will be 0.
+// That is, the precision of tf.tanh() may be 0.0000001 (= 1e-7 ).
+//
+// For this reason, the Weights.Base.ValueBounds may be more less than [ -( 2 ** 24 ), +( 2 ** 24 ) ].
+// Perhaps, [ -1, +1 ] is better.?
+//
+
 /**
  * This is mainly for ensuring PointDepthPoint's output is legal float32:
  *   - PointDepthPoint is composed of 3 convolutions: pointwise1-depthwise-pointwise2.
