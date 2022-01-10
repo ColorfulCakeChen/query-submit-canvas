@@ -42,6 +42,21 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     nActivationId, bBias
   ) {
 
+//!!! ...unfinished... (2022/01/10)
+// It should be better to use real filter and bias to calculate per channel value bounds. This is especially important for ActivationEscaping.
+// Because activation function inputDomainLinear is not wide, using looser value bounds estimation has higher possibility to lost information.
+//
+// Perhaps, using two-passes in Pointwise.FiltersArray_BiasesArray.init():
+//
+//   - In the 1st pass, extracting real filter and bias value. At the same time, calculating .afterFilter and .afterBias
+//       by these extracted value combined with undoPreviousEscapingScale
+//       (i.e. previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). Find out
+//       .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
+//
+//   - In the 2nd pass, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
+//       to filter and bias value (and also .afterFilter and .afterBias).
+//
+
     // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
     //
     // Q: Why not use the real filter and bias value (i.e. not the supposed bounds range) directly.
