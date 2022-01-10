@@ -117,11 +117,14 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
             // Do nothing. The value bounds does not change since no bias.
           }
 
-          // 6. Determine .afterActivationEscaping
+//!!! ...unfinished... (2022/01/10)
+// Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation, should be moved to parent class.
+// They should be shared with pointwise and depthwise BoundsArraySet.
+
           {
-            // 6.1 Determine .activationEscaping_ScaleArraySet
+            // 5. Determine .activationEscaping_ScaleArraySet
             {
-              // 6.1.1 Determine .do
+              // 5.1 Determine .do
 
               if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
 
@@ -154,12 +157,12 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
                 }
               }
 
-              // 6.1.2 Determine .undo (Prepared for the next convolution-bias-activation. Not for this.)
+              // 5.2 Determine .undo (Prepared for the next convolution-bias-activation. Not for this.)
               this.activationEscaping_ScaleArraySet.undo.set_one_byUndo_ScaleArray(
                 outChannel, this.activationEscaping_ScaleArraySet.do, outChannel );
             }
 
-            // 6.2 Determine .afterActivationEscaping
+            // 6. Determine .afterActivationEscaping
             this.afterActivationEscaping
               .set_one_byBoundsArray( outChannel, this.afterBias, outChannel )
               .multiply_one_byNs( outChannel, this.activationEscaping_ScaleArraySet.do.scales, outChannel );
