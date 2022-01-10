@@ -213,6 +213,8 @@ class Base {
  *   - [ -5000, +5000 ] with precision 0.1 (= 1e-1 ).
  *   - [ -50000, +50000 ] with precision 1 (= 1e+0 ).
  *   - [ -5e+4, +5e+4 ] with precision 1 (= 1e+0 ).
+ *   - [ 0, +100000 ] with precision 1 (= 1e+0 ).
+ *   - [ 0, +1e+5 ] with precision 1 (= 1e+0 ).
  *
  *
  *
