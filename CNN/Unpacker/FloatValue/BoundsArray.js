@@ -180,27 +180,14 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   clamp_one_byLowerUpper( thisIndex, aLower, aUpper ) {
-
-//!!! ...unfinished... (2022/01/11) What if two bounds does not intersect?
-
     let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
     let anotherUpper = Math.max( aLower, aUpper );
 
-    // Clamp this by another.
-
-    // For handling two bounds do not intersect totally, both thisLower and thisUpper needs be clamped by both aLower and aUpper.
-    let lower_clampedByAnotherLower = Math.max( this.lowers[ thisIndex ], anotherLower );
-    let upper_clampedByAnotherLower = Math.max( this.uppers[ thisIndex ], anotherLower );
-
-    let lower_clampedByAnotherUpper = Math.min( lower_clampedByAnotherLower, anotherUpper );
-    let upper_clampedByAnotherUpper = Math.min( upper_clampedByAnotherLower, anotherUpper );
-
-    this.lowers[ thisIndex ] = Math.max( thisLower, anotherLower ); // Clamp this by another.
-    this.uppers[ thisIndex ] = Math.min( thisUpper, anotherUpper );
-    
-    this.lowers[ thisIndex ] = Math.min( lower_clampedByAnotherUpper,  ); // Confirm ( lower <= upper )
-    this.uppers[ thisIndex ] = Math.max( lower_clampedByAnotherUpper, upper_clampedByAnotherUpper );
-
+    // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
+    let lower_clamped = Math.min( Math.max( anotherLower, this.lowers[ thisIndex ] ), anotherUpper );
+    let upper_clamped = Math.min( Math.max( anotherLower, this.uppers[ thisIndex ] ), anotherUpper );
+    this.lowers[ thisIndex ] = Math.min( lower_clamped, upper_clamped ); // Confirm ( lower <= upper )
+    this.uppers[ thisIndex ] = Math.max( lower_clamped, upper_clamped );
     return this;
   }
 
@@ -247,16 +234,15 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   clamp_all_byLowerUpper( aLower, aUpper ) {
-
-//!!! ...unfinished... (2022/01/11) What if two bounds does not intersect?
-
     let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
     let anotherUpper = Math.max( aLower, aUpper );
+
+    // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
     for ( let i = 0; i < this.lowers.length; ++i ) {
-      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm ( lower <= upper )
-      let thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
-      this.lowers[ i ] = Math.max( thisLower, anotherLower ); // Clamp this by another.
-      this.uppers[ i ] = Math.min( thisUpper, anotherUpper );
+      let lower_clamped = Math.min( Math.max( anotherLower, this.lowers[ i ] ), anotherUpper );
+      let upper_clamped = Math.min( Math.max( anotherLower, this.uppers[ i ] ), anotherUpper );
+      this.lowers[ i ] = Math.min( lower_clamped, upper_clamped ); // Confirm ( lower <= upper )
+      this.uppers[ i ] = Math.max( lower_clamped, upper_clamped );
     }
     return this;
   }
