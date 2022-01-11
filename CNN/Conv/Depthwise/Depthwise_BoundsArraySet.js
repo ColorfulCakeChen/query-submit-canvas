@@ -192,6 +192,10 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 //             if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
 //               this.afterActivation.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel )
 //
+////!!! ...unfinished... (2022/01/11)
+//// Consider the implementation of .activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(),
+//// it is not so good no matter using set_one_byXxx() or clamp_one_byXxx() of this.afterActivation.
+//
 //             // Otherwise, the activation function dominates the output range.
 //             } else {
 //               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels, it is clamped by the output range for linearDomainLinear.
