@@ -401,35 +401,81 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
     this.tensorWeightCountExtracted = weightsCount_extracted;
 
-    // Prepare value bounds.
+    // filters and bias: weights and  value bounds.
     //
     // It should be better to calculate per channel value bounds by real filter and bias value (i.e. not by an estimated value bounds).
     // This is especially important for ActivationEscaping. Because inputDomainLinear of activation function is not wide, using looser
     // value bounds estimation has higher possibility to lost information.
     //
-    // Two-passes processing is used:
+    // Two-rounds processing is used:
     //
-    //   - In the 1st pass, extracting filter and bias value from sourceWeights[]. At the same time, calculating .afterFilter and
+    //   - In the 1st round, extracting filter and bias value from sourceWeights[]. At the same time, calculating .afterFilter and
     //       .afterBias by these extracted values combined with undoPreviousEscapingScale
     //       (i.e. previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). And then,
     //       Find out .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
     //
-    //   - In the 2nd pass, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
+    //   - In the 2nd round, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
     //       to filter and bias value (and also .afterFilter and .afterBias).
     //
-    let tBounds = new FloatValue.Bounds( 0, 0 );
     {
-      // 1. Determine .input
-      this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
+      // Round 0
+      {
+        // Determine .input
+        this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
 
-      // 2. Determine .afterUndoPreviousActivationEscaping
-      this.boundsArraySet.afterUndoPreviousActivationEscaping
-        .set_all_byBoundsArray( this.boundsArraySet.input )
-        .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
+        // Determine .afterUndoPreviousActivationEscaping
+        this.boundsArraySet.afterUndoPreviousActivationEscaping
+          .set_all_byBoundsArray( this.boundsArraySet.input )
+          .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
 
-      // 3.1 Init .afterFilter
-      this.boundsArraySet.afterFilter.set_all_byN( 0 );
+        // Init .afterFilter
+        this.boundsArraySet.afterFilter.set_all_byN( 0 );
+      }
+
+      // Round 1
+      {
+        this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
+          sourceWeights, previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray );
+
+        // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
+        this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( inChannelPartInfoArray );
+        this.boundsArraySet.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+      }
+
+      // Round 2
+      this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
     }
+
+    {
+      this.tensorWeightCountTotal = 0;
+
+      if ( this.filtersShape )
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersShape );
+
+      if ( this.biasesShape )
+        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesShape );
+    }
+
+    return true;
+  }
+
+  /**
+   * Extract this.filtersArray and this.biasesArray from sourceWeights and apply this.boundsArraySet.activationEscaping_ScaleArraySet.undo.scales[].
+   * Also set the .afterFilter and .afterBias.
+   *
+   * @param {Float32Array} sourceWeights
+   *   A Float32Array whose values will be interpreted as weights.
+   *
+   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
+   *   The previous convolution-bias-activation value bounds set of this pointwise convolution.
+   *
+   * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
+   *   The input channel range array which describe lower/higher half channels index range.
+   */
+  set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
+    sourceWeights, previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray ) {
+
+    let tBounds = new FloatValue.Bounds( 0, 0 );
 
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
@@ -515,27 +561,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     } else { // ( !this.biasesArray ). No biases array to be extracted.
       // Do nothing.
     }
-
-
-    // 5. Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
-    this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( inChannelPartInfoArray );
-    this.boundsArraySet.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
-
-    this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
-
-    {
-      this.tensorWeightCountTotal = 0;
-
-      if ( this.filtersShape )
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.filtersShape );
-
-      if ( this.biasesShape )
-        this.tensorWeightCountTotal += tf.util.sizeFromShape( this.biasesShape );
-    }
-
-    return true;
   }
-
 
   /**
    * Apply this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[] to this.filtersArray and this.biasesArray.
