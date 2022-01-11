@@ -113,14 +113,14 @@ class Bounds {
    *   Return this (modified) object which is [ max( this.lower, aLower ), min( this.upper, aUpper ) ].
    */
   clamp_byLowerUpper( aLower, aUpper ) {
+    let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
+    let anotherUpper = Math.max( aLower, aUpper );
 
-//!!! ...unfinished... (2022/01/11) What if two bounds does not intersect?
-
-    // Confirm ( lower <= upper ) and ( aLower <= aUpper ).
-    let lower_clamped = Math.max( Math.min( this.lower, this.upper ), Math.min( aLower, aUpper ) );
-    let upper_clamped = Math.min( Math.max( this.lower, this.upper ), Math.max( aLower, aUpper ) );
-    this.lower = lower_clamped;
-    this.upper = upper_clamped;
+    // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
+    let lower_clamped = Math.min( Math.max( anotherLower, this.lower ), anotherUpper );
+    let upper_clamped = Math.min( Math.max( anotherLower, this.upper ), anotherUpper );
+    this.lower = Math.min( lower_clamped, upper_clamped ); // Confirm ( lower <= upper )
+    this.upper = Math.max( lower_clamped, upper_clamped );
     return this;
   }
 
