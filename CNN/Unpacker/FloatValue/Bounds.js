@@ -230,6 +230,7 @@ class Bounds {
     return this.add_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
+
   /**
    * @param {number} N
    *   The multiplier of this.lower and this.upper.
@@ -322,6 +323,7 @@ class Bounds {
   multiply_byBounds_multiply_byN( aBounds, N ) {
     return this.multiply_byBounds( aBounds ).multiply_byN( N );
   }
+
 
   /**
    * @param {ScaleTranslate} aScaleTranslate
