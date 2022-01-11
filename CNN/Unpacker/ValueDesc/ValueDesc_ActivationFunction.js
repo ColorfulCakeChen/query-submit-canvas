@@ -26,10 +26,11 @@ import * as FloatValue from "../FloatValue.js";
 
 //!!! ...unfinished... (2022/01/11)
 // What about:
-//   - tf.clipByValue( -3, +3 )?
+//   - tf.clipByValue( -1, +1 )?
 //   - tf.clipByValue( -2, +2 )?
+//   - tf.clipByValue( -3, +3 )?
 //   - tf.clipByValue( -64, +64 )?
-//   - tf.clipByValue( -128, +127 )?
+//   - tf.clipByValue( -128, +128 )?
 
  *   - TANH, SIN, ERF are good if pass-through by only scale (i.e. without translate) is needed. Because the output range of
  *       them includes both negative value and positive value near the origin point. (On the other hand, RELU, RELU6 are not
