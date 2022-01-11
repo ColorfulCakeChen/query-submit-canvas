@@ -427,15 +427,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     let tBounds = new FloatValue.Bounds( 0, 0 );
     {
       // 1. Determine .input
-      this.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
+      this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
 
       // 2. Determine .afterUndoPreviousActivationEscaping
-      this.afterUndoPreviousActivationEscaping
-        .set_all_byBoundsArray( this.input )
+      this.boundsArraySet.afterUndoPreviousActivationEscaping
+        .set_all_byBoundsArray( this.boundsArraySet.input )
         .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
 
       // 3.1 Init .afterFilter
-      this.afterFilter.set_all_byN( 0 );
+      this.boundsArraySet.afterFilter.set_all_byN( 0 );
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
@@ -486,6 +486,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       } // inChannel
     } // this.filtersArray
 
+
+    // 4.1 Init .afterBias
+    this.boundsArraySet.afterBias.set_all_byBoundsArray( this.boundsArraySet.afterFilter );
     if ( this.biasesArray ) {
       let outChannel = 0;
 
@@ -506,6 +509,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           } else { // Non-pass-through half channels.
             this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ] * extraScale;
 
+            // 4.2 Determine .afterBias
+            this.boundsArraySet.afterBias.add_one_byBounds( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
+
             ++sourceIndex;
           }
 
@@ -519,6 +525,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     }
 
 
+    this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
+
+    // 5. Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
+    this.boundsArraySet.set_all_bPassThrough( inChannelPartInfoArray );
+    this.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_nActivationId( this.nActivationId );
+
     {
       this.tensorWeightCountTotal = 0;
 
@@ -530,6 +542,20 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     }
 
     return true;
+  }
+
+
+  /**
+   * Apply this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[] to this.filtersArray and this.biasesArray.
+   *
+   * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
+   *   The input channel range array which describe lower/higher half channels index range.
+   */
+  apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ) {
+    let filterIndex = 0, biasIndex = 0;
+
+//!!! ...unfinished... (2022/01/11)
+
   }
 
 }
