@@ -169,6 +169,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
+//!!! ...unfinished... (2022/01/11) What about ( bDepthwise == false )?
+
 //!!! ...unfinished... (2022/01/09)
 // Even if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ),
 // this function should work correctly and BoundsArraySet should result in pass-through input to output.
