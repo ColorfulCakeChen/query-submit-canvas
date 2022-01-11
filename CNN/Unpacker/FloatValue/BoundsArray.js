@@ -180,6 +180,9 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   clamp_one_byLowerUpper( thisIndex, aLower, aUpper ) {
+
+//!!! ...unfinished... (2022/01/11) What if two bounds does not intersect?
+
     let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
     let anotherUpper = Math.max( aLower, aUpper );
     let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm ( lower <= upper )
@@ -232,6 +235,9 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   clamp_all_byLowerUpper( aLower, aUpper ) {
+
+//!!! ...unfinished... (2022/01/11) What if two bounds does not intersect?
+
     let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
     let anotherUpper = Math.max( aLower, aUpper );
     for ( let i = 0; i < this.lowers.length; ++i ) {
