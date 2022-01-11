@@ -414,15 +414,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
-            let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-            let extraScale = doEscapingScale; // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
+            // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
               this.biasesArray[ biasIndex ] = 0;
 
             } else { // Non-pass-through half channels.
-              //this.biasesArray[ biasIndex ] = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
-              this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ] * extraScale;
+              //this.biasesArray[ biasIndex ] = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] );
+              this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ];
 
               ++sourceIndex;
             }
@@ -439,9 +438,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
     this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
-    this.BoundsArraySet_setup_bPassThrough( inChannelPartInfoArray );
 
     // 5. Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
+    this.BoundsArraySet_setup_bPassThrough( inChannelPartInfoArray );
     this.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_nActivationId( this.nActivationId );
 
     {
