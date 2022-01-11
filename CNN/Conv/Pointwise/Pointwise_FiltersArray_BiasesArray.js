@@ -401,7 +401,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
     this.tensorWeightCountExtracted = weightsCount_extracted;
 
-    // filters and bias: weights and  value bounds.
+    // filters and bias: weights and value bounds.
     //
     // It should be better to calculate per channel value bounds by real filter and bias value (i.e. not by an estimated value bounds).
     // This is especially important for ActivationEscaping. Because inputDomainLinear of activation function is not wide, using looser
