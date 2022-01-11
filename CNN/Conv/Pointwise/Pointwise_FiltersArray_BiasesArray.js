@@ -515,7 +515,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
               this.filtersArray[ filterIndex ] = 0; // All input channels which is not in range use zero filter to ignore the inputs.
             }
 
-            // 3.2 Determine .afterFilter
+            // Determine .afterFilter
             tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel ).multiply_byN( this.filtersArray[ filterIndex ] );
             this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
@@ -526,9 +526,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       } // inChannel
     } // this.filtersArray
 
+    // Init .afterBias
+    {
+      this.boundsArraySet.afterBias.set_all_byBoundsArray( this.boundsArraySet.afterFilter );
+    }
 
-    // 4.1 Init .afterBias
-    this.boundsArraySet.afterBias.set_all_byBoundsArray( this.boundsArraySet.afterFilter );
     if ( this.biasesArray ) {
       let outChannel = 0;
 
@@ -548,7 +550,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           } else { // Non-pass-through half channels.
             this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ];
 
-            // 4.2 Determine .afterBias
+            // Determine .afterBias
             this.boundsArraySet.afterBias.add_one_byBounds( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
 
             ++sourceIndex;
