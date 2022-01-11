@@ -332,7 +332,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         .set_all_byBoundsArray( this.input )
         .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
 
-      // 3. Init .afterFilter
+      // 3.1 Init .afterFilter
       this.afterFilter.set_all_byN( 0 );
     }
 
@@ -380,10 +380,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
                         this.filtersArray[ filterIndex ] = undoPreviousEscapingScale; // The only one filter position (in the pass-through part) has non-zero value.
-//!!!
-              this.afterFilter
-                .multiply_one_byBounds( outChannel, filtersValueBounds )
-                .multiply_one_byN( outChannel, this.filterSize );
 
                       } else {
                         this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
@@ -393,15 +389,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                       //this.filtersArray[ filterIndex ] = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] );
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * undoPreviousEscapingScale;
 
-//!!!
-                      tBounds
-                        .set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel )
-                        .multiply_byN( this.filtersArray[ filterIndex ] );
-
-                      this.afterFilter.add_one_byBounds( outChannel, tBounds );
-
                       ++sourceIndex;
                     }
+
+                    // 3.2 Determine .afterFilter
+                    tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel ).multiply_byN( this.filtersArray[ filterIndex ] );
+                    this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
                     ++filterIndex;
                   }
@@ -424,6 +417,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         }
       }
 
+      // 4.1 Init .afterBias
+      this.afterBias.set_all_byBoundsArray( this.afterFilter );
       if ( this.biasesArray ) {
 
         let outChannel = inChannelBegin * this.channelMultiplier;
@@ -438,6 +433,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             } else { // Non-pass-through half channels.
               //this.biasesArray[ biasIndex ] = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] );
               this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ];
+
+              // 4.2 Determine .afterBias
+              this.boundsArraySet.afterBias.add_one_byBounds( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
 
               ++sourceIndex;
             }
@@ -456,7 +454,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
 
     // 5. Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
-    this.BoundsArraySet_setup_bPassThrough( inChannelPartInfoArray );
+    this.boundsArraySet.set_all_bPassThrough( inChannelPartInfoArray );
     this.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_nActivationId( this.nActivationId );
 
     {
@@ -470,32 +468,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     }
 
     return true;
-  }
-
-  /**
-   * Set this.boundsArraySet.bPassThrough[] according to inChannelPartInfoArray.
-   *
-   * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
-   *   The input channel range array which describe lower/higher half channels index range.
-   */
-  BoundsArraySet_setup_bPassThrough( inChannelPartInfoArray ) {
-    for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-      let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-      let inChannelBegin = inChannelPartInfo.beginIndex;
-      let inChannelEnd = inChannelPartInfo.endIndex;
-
-      let outChannel = inChannelBegin * this.channelMultiplier;
-      for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-          if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-            this.bPassThrough[ outChannel ] = true;
-
-          } else { // Non pass-through half channels.
-            this.bPassThrough[ outChannel ] = false;
-          }
-        }
-      }
-    }
   }
 
   /**
