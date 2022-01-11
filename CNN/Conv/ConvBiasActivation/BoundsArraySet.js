@@ -37,6 +37,9 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
  * @member {ActivationEscaping.ScaleArraySet} activationEscaping_ScaleArraySet
  *   The scales for moving this.afterBias bounds into the linear domain of the activation function. That is, for
  * letting this.afterBias escape from activation function's non-linear domain. And the .undo for undoing the scales.
+ *
+ * @member {boolean[]} bPassThrough
+ *   If true for a output channel, the output channel should be arranged to pass-through from input to output.
  */
 class BoundsArraySet {
 
@@ -51,6 +54,7 @@ class BoundsArraySet {
     this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
 
     this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet( outputChannelCount );
+    this.bPassThrough = new Array( outputChannelCount );
 
     //this.set_all_byBounds.set_all_byBounds( Weights.Base.ValueBounds );
   }
@@ -79,6 +83,7 @@ class BoundsArraySet {
     this.afterActivationEscaping.set_all_byBounds( aBounds );
     this.afterActivation.set_all_byBounds( aBounds );
     this.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
+    this.bPassThrough[ i ].fill( false ); // Assume all are not pass-through.
     return this;
   }
 
@@ -97,15 +102,21 @@ class BoundsArraySet {
     this.afterActivationEscaping            .set_all_byBoundsArray( aBoundsArraySet.afterActivationEscaping );
     this.afterActivation                    .set_all_byBoundsArray( aBoundsArraySet.afterActivation );
     this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
+
+    for ( let i = 0; i < this.bPassThrough.length; ++i ) {
+      this.bPassThrough[ i ] = aBoundsArraySet.bPassThrough[ i ];
+    }
+
     return this;
   }
 
 //!!! ...unfinished... (2022/01/11)
   /**
-   * Determine .activationEscaping_ScaleArraySet and .afterActivationEscaping and .afterActivation, by .afterBias and nActivationId.
+   * Determine .activationEscaping_ScaleArraySet and .afterActivationEscaping and .afterActivation, by .afterBias and .bPassThrough and nActivationId.
    *
    * The following properties will be used:
    *   - this.afterBias
+   *   - this.bPassThrough
    *
    * The following properties will be modified:
    *   - this.activationEscaping_ScaleArraySet
