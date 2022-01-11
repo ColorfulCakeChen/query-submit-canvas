@@ -34,10 +34,10 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
       for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
         for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
           if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-            this.boundsArraySet.bPassThrough[ outChannel ] = true;
+            this.bPassThrough[ outChannel ] = true;
 
           } else { // Non pass-through half channels.
-            this.boundsArraySet.bPassThrough[ outChannel ] = false;
+            this.bPassThrough[ outChannel ] = false;
           }
         }
       }
