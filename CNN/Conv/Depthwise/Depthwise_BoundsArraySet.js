@@ -185,6 +185,8 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
           // 7. Determine .afterActivation
           {
+//!!! ...unfinished... (2022/01/11) should use .clamp_byXxx(), not set_byXxx()
+
             // If no activation function, the output range is determined by .afterActivationEscaping.
             if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
               this.afterActivation.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel )
