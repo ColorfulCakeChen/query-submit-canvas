@@ -8,6 +8,9 @@ import * as FloatValue from "../Unpacker/FloatValue.js";
  *
  */
 class Case {
+
+//!!! ...unfinished... (2022/01/11) need test .clamp_byXxx()
+
   constructor( aLowerUpper, bLowerUpper, N, addedArray, multipledArray, aMultipledNArray ) {
     this.N = N;
     this.addedArray = addedArray;
@@ -110,6 +113,8 @@ class Cases {
     this.addedArrayArray = new Array( aCaseArray.length );       // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
     this.multipledArrayArray = new Array( aCaseArray.length );   // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
     this.aMultipledNArrayArray = new Array( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+
+//!!! ...unfinished... (2022/01/11) need test .clamp_byXxx()
 
     for ( let i = 0; i < aCaseArray.length; ++i ) {
       let oneCase = aCaseArray[ i ];
