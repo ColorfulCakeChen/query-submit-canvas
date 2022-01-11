@@ -15,20 +15,29 @@ import * as FloatValue from "../FloatValue.js";
  *   - SIGMOID ( [ -0.125, +0.125 ] ) = [ +0.468, +0.532 ]
  *   - RELU ( 0, +Infinity ) = [ 0, +Infinity ]
  *   - SOFTPLUS ( +5, +Infinity ) = [ +5, +Infinity ]
+ *
+ *
+ * Note:
+ *   - NONE: Beware. It easily results in infinity value because it does not have upper bound.
+ *   - RELU: Beware. It easily results in infinity value because it does not have upper bound.
+ *   - SOFTPLUS: Avoid. Backend WASM does not support it.
+ *   - ERF: Avoid. Backend WASM does not support it.
+ *
+
+//!!! ...unfinished... (2022/01/11)
+// What about:
+//   - tf.clipByValue( -3, +3 )?
+//   - tf.clipByValue( -2, +2 )?
+//   - tf.clipByValue( -64, +64 )?
+
+ *   - TANH, SIN, ERF are good if pass-through by only scale (i.e. without translate) is needed. Because the output range of
+ *       them includes both negative value and positive value near the origin point. (On the other hand, RELU, RELU6 are not
+ *       good for this purpose.)
+ *
  */
 class ActivationFunction extends Int {
 
   constructor() {
-
-    // Note:
-    //   - NONE: Beware. It easily results in infinity value because it does not have upper bound.
-    //   - RELU: Beware. It easily results in infinity value because it does not have upper bound.
-    //   - SOFTPLUS: Avoid. Backend WASM does not support it.
-    //   - ERF: Avoid. Backend WASM does not support it.
-    //
-    //   - TANH, SIN, ERF are good if pass-through by only scale (i.e. without translate) is needed. Because the output range of
-    //       them includes both negative and positive near the origin point. (On the other hand, RELU, RELU6 are not good for this
-    //       purpose.)
 
     super( 0, 5,
       [ "NONE",  "RELU6",  "TANH",  "SIN",  "COS",  "SIGMOID" ], // "RELU" ], //  "SOFTPLUS" ],
@@ -54,6 +63,9 @@ class ActivationFunction extends Int {
 
         new ActivationFunction.Info( 5, tf.sigmoid, new FloatValue.Bounds( 0, 1 )
           new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( +0.468, +0.532 ) ),
+
+//!!! ...unfinished... (2022/01/11) Not yet true.
+// The BoundsArraySet.afterActivation is calculate by .clamp_byXxx() (not by set_byXxx()). So the Infinity is not a problem.
 
         // (2021/12/09 Remarked)
         //
