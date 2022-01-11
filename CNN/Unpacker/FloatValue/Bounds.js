@@ -131,6 +131,27 @@ class Bounds {
     return this.clamp_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
+  /**
+   * @param {number[]} aLowers  Clamp this.lower by aLowers[ aIndex ].
+   * @param {number[]} aUppers  Clamp this.upper by aUppers[ aIndex ] ).
+   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  clamp_byLowersUppers( aLowers, aUppers, aIndex ) {
+    return this.clamp_byLowerUpper( aLowers[ aIndex ], aUppers[ aIndex ] );
+  }
+
+  /**
+   * @param {BoundsArray} aBoundsArray  Clamp ( this.lower, this.upper ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
+   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {Bounds} Return this (modified) object.
+   */
+  clamp_byBoundsArray( aBoundsArray, aIndex ) {
+    return this.clamp_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+  }
+
 
   /**
    * @param {number} N
@@ -179,7 +200,7 @@ class Bounds {
   }
 
   /**
-   * @param {numberp[} Ns    Add ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
+   * @param {number[]} Ns    Add ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
    * @param {number} aIndex  The array index of aLowers[] and aUppers[].
    *
    * @return {Bounds} Return this (modified) object.
@@ -189,8 +210,8 @@ class Bounds {
   }
 
   /**
-   * @param {numberp[} aLowers  Add ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
-   * @param {numberp[} aUppers  Add ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   * @param {number[]} aLowers  Add ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   * @param {number[]} aUppers  Add ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
    * @param {number} aIndex     The array index of aLowers[] and aUppers[].
    *
    * @return {Bounds} Return this (modified) object.
