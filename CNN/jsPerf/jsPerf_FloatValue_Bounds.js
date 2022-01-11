@@ -11,8 +11,9 @@ class Case {
 
 //!!! ...unfinished... (2022/01/11) need test .clamp_byXxx()
 
-  constructor( aLowerUpper, bLowerUpper, N, addedArray, multipledArray, aMultipledNArray ) {
+  constructor( aLowerUpper, bLowerUpper, N, clampedArray, addedArray, multipledArray, aMultipledNArray ) {
     this.N = N;
+    this.clampedArray = clampedArray;
     this.addedArray = addedArray;
     this.multipledArray = multipledArray;
     this.aMultipledNArray = aMultipledNArray;
@@ -20,10 +21,12 @@ class Case {
     this.aBounds = new FloatValue.Bounds( aLowerUpper[ 0 ], aLowerUpper[ 1 ] );
     this.bBounds = new FloatValue.Bounds( bLowerUpper[ 0 ], bLowerUpper[ 1 ] );
 
+    this.clampedBounds = this.aBounds.clone().clamp_byBounds( this.bBounds );
     this.addedBounds = this.aBounds.clone().add_byBounds( this.bBounds );
     this.multipledBounds = this.aBounds.clone().multiply_byBounds( this.bBounds );
     this.aMultipledNBounds = this.aBounds.clone().multiply_byN( N );
 
+    this.assert_Bounds_byArray( "clampedBounds", clampedArray );
     this.assert_Bounds_byArray( "addedBounds", addedArray );
     this.assert_Bounds_byArray( "multipledBounds", multipledArray );
     this.assert_Bounds_byArray( "aMultipledNBounds", aMultipledNArray );
@@ -449,31 +452,31 @@ function testCorrectness() {
 
   let casesArray = [
     new Cases( [
-      new Case( [  1,  2 ], [  3,  4 ],  5, [  4,  6 ], [  3,  8 ], [   5,  10 ] ),
-      new Case( [ -1,  2 ], [  3,  4 ],  5, [  2,  6 ], [ -4,  8 ], [  -5,  10 ] ),
-      new Case( [  1, -2 ], [  3,  4 ],  5, [  1,  5 ], [ -8,  4 ], [ -10,   5 ] ),
-      new Case( [ -1, -2 ], [  3,  4 ],  5, [  1,  3 ], [ -8, -3 ], [ -10,  -5 ] ),
+      new Case( [  1,  2 ], [  3,  4 ],  5, [  3,  3 ], [  4,  6 ], [  3,  8 ], [   5,  10 ] ),
+      new Case( [ -1,  2 ], [  3,  4 ],  5, [  3,  3 ], [  2,  6 ], [ -4,  8 ], [  -5,  10 ] ),
+      new Case( [  1, -2 ], [  3,  4 ],  5, [  3,  3 ], [  1,  5 ], [ -8,  4 ], [ -10,   5 ] ),
+      new Case( [ -1, -2 ], [  3,  4 ],  5, [  3,  3 ], [  1,  3 ], [ -8, -3 ], [ -10,  -5 ] ),
     ] ),
 
     new Cases( [
-      new Case( [  1,  2 ], [ -3,  4 ], -5, [ -2,  6 ], [ -6,  8 ], [ -10,  -5 ] ),
-      new Case( [ -1,  2 ], [ -3,  4 ], -5, [ -4,  6 ], [ -6,  8 ], [ -10,   5 ] ),
-      new Case( [  1, -2 ], [ -3,  4 ], -5, [ -5,  5 ], [ -8,  6 ], [  -5,  10 ] ),
-      new Case( [ -1, -2 ], [ -3,  4 ], -5, [ -5,  3 ], [ -8,  6 ], [   5,  10 ] ),
+      new Case( [  1,  2 ], [ -3,  4 ], -5, [  1,  2 ], [ -2,  6 ], [ -6,  8 ], [ -10,  -5 ] ),
+      new Case( [ -1,  2 ], [ -3,  4 ], -5, [ -1,  2 ], [ -4,  6 ], [ -6,  8 ], [ -10,   5 ] ),
+      new Case( [  1, -2 ], [ -3,  4 ], -5, [ -2,  1 ], [ -5,  5 ], [ -8,  6 ], [  -5,  10 ] ),
+      new Case( [ -1, -2 ], [ -3,  4 ], -5, [ -1, -2 ], [ -5,  3 ], [ -8,  6 ], [   5,  10 ] ),
     ] ),
 
     new Cases( [
-      new Case( [  1,  2 ], [  3, -4 ],  5, [ -3,  5 ], [ -8,  6 ], [   5,  10 ] ),
-      new Case( [ -1,  2 ], [  3, -4 ],  5, [ -5,  5 ], [ -8,  6 ], [  -5,  10 ] ),
-      new Case( [  1, -2 ], [  3, -4 ],  5, [ -6,  4 ], [ -6,  8 ], [ -10,   5 ] ),
-      new Case( [ -1, -2 ], [  3, -4 ],  5, [ -6,  2 ], [ -6,  8 ], [ -10,  -5 ] ),
+      new Case( [  1,  2 ], [  3, -4 ],  5, [  1,  2 ], [ -3,  5 ], [ -8,  6 ], [   5,  10 ] ),
+      new Case( [ -1,  2 ], [  3, -4 ],  5, [ -1,  2 ], [ -5,  5 ], [ -8,  6 ], [  -5,  10 ] ),
+      new Case( [  1, -2 ], [  3, -4 ],  5, [ -2,  1 ], [ -6,  4 ], [ -6,  8 ], [ -10,   5 ] ),
+      new Case( [ -1, -2 ], [  3, -4 ],  5, [ -1, -2 ], [ -6,  2 ], [ -6,  8 ], [ -10,  -5 ] ),
     ] ),
 
     new Cases( [
-      new Case( [  1,  2 ], [ -3, -4 ], -5, [ -3, -1 ], [ -8, -3 ], [ -10,  -5 ] ),
-      new Case( [ -1,  2 ], [ -3, -4 ], -5, [ -5, -1 ], [ -8,  4 ], [ -10,   5 ] ),
-      new Case( [  1, -2 ], [ -3, -4 ], -5, [ -6, -2 ], [ -4,  8 ], [  -5,  10 ] ),
-      new Case( [ -1, -2 ], [ -3, -4 ], -5, [ -6, -4 ], [  3,  8 ], [   5,  10 ] ),
+      new Case( [  1,  2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -3, -1 ], [ -8, -3 ], [ -10,  -5 ] ),
+      new Case( [ -1,  2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -5, -1 ], [ -8,  4 ], [ -10,   5 ] ),
+      new Case( [  1, -2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -6, -2 ], [ -4,  8 ], [  -5,  10 ] ),
+      new Case( [ -1, -2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -6, -4 ], [  3,  8 ], [   5,  10 ] ),
     ] ),
   ];
 
