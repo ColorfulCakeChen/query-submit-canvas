@@ -403,7 +403,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     // Prepare value bounds.
     //
-    // It should be better to calculate per channel value bounds by real filter and bias value (i.e. not an estimated balue bounds).
+    // It should be better to calculate per channel value bounds by real filter and bias value (i.e. not by an estimated value bounds).
     // This is especially important for ActivationEscaping. Because inputDomainLinear of activation function is not wide, using looser
     // value bounds estimation has higher possibility to lost information.
     //
