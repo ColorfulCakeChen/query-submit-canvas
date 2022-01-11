@@ -110,7 +110,6 @@ class BoundsArraySet {
     return this;
   }
 
-//!!! ...unfinished... (2022/01/11)
   /**
    * Determine .activationEscaping_ScaleArraySet and .afterActivationEscaping and .afterActivation, by .afterBias and .bPassThrough and nActivationId.
    *
@@ -187,20 +186,18 @@ class BoundsArraySet {
       if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
         this.afterActivation.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel )
 
-//!!! ...unfinished... (2022/01/11)
-
       // Otherwise, the activation function dominates the output range.
       //
       // Note: Consider the implementation of ScaleArray.set_one_by_fromLowerUpper_toLowerUpper(), they are all not so good
       //       no matter using set_one_byXxx() or clamp_one_byXxx() of this.afterActivation.
       } else {
         if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels, it is clamped by the output range for linearDomainLinear.
-          //this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
-          this.afterActivation.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+          this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+          //this.afterActivation.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
 
         } else { // Non pass-through half channels, it is clamped by the output range for the whole input domain.
-          //this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
-          this.afterActivation.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+          this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+          //this.afterActivation.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
         }
       }
     }
