@@ -184,13 +184,6 @@ class ScaleArray {
     //
     scale = dstLower / srcLower;
 
-//!!! (2022/01/06 Remarked)
-//     if ( ( srcLower == 0 ) || ( dstLower == 0 ) ) {
-//       scale = 0; // Avoid -Infinity, +Infinity, NaN.
-//     } else {
-//       scale = dstLower / srcLower;
-//     }
-
     // 1.2 Verification.
     //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
     //   - If scaled source upper bound is out of destination range, it is also failed.
@@ -199,13 +192,6 @@ class ScaleArray {
 
       // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by scale according to lower bound.
       scale = dstUpper / srcUpper;
-
-//!!! (2022/01/06 Remarked)
-//       if ( ( srcUpper == 0 ) || ( dstUpper == 0 ) ) {
-//         scale = 0; // Avoid -Infinity, +Infinity, NaN.
-//       } else {
-//         scale = dstUpper / srcUpper;
-//       }
 
       // 2.2 Verification. If scale is zero, it is always failed. Otherwise, check it by lower side.
       //   - If scale is zero or -Infinity or +Infinity or NaN, it is always failed.
