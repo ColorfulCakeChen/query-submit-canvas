@@ -182,11 +182,12 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   clamp_one_byLowerUpper( thisIndex, aLower, aUpper ) {
-!!!
-    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm the lower and upper. And then, add corresponds.
+    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm ( lower <= upper )
     let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
-    this.lowers[ thisIndex ] = thisLower + Math.min( aLower, aUpper );
-    this.uppers[ thisIndex ] = thisUpper + Math.max( aLower, aUpper );
+    let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
+    let anotherUpper = Math.max( aLower, aUpper );
+    let lower_clamped = Math.max( thisLower, anotherLower ); // Clamp this by another.
+    let upper_clamped = Math.min( thisUpper, anotherUpper );
     return this;
   }
 
