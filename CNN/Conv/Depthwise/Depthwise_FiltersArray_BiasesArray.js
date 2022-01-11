@@ -377,6 +377,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
     sourceWeights, previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray ) {
 
+    let tBounds = new FloatValue.Bounds( 0, 0 );
+
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
 
