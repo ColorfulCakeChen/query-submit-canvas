@@ -401,11 +401,42 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
     this.tensorWeightCountExtracted = weightsCount_extracted;
 
+//!!! (2022/01/11 Remarked) Use real filter and bias value instead of value bounds by two-pass processing.
+//     // Prepare value bounds.
+//     this.boundsArraySet.set_all_by_inChannelPartInfoArray(
+//       previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
+//       this.nActivationId, this.bBias
+//     );
+
+//!!! ...unfinished... (2022/01/11)
     // Prepare value bounds.
-    this.boundsArraySet.set_all_by_inChannelPartInfoArray(
-      previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
-      this.nActivationId, this.bBias
-    );
+    //
+    // It should be better to use real filter and bias to calculate per channel value bounds. This is especially important for ActivationEscaping.
+    // Because activation function inputDomainLinear is not wide, using looser value bounds estimation has higher possibility to lost information.
+    //
+    // Perhaps, using two-passes in Pointwise.FiltersArray_BiasesArray.init():
+    //
+    //   - In the 1st pass, extracting real filter and bias value. At the same time, calculating .afterFilter and .afterBias
+    //       by these extracted value combined with undoPreviousEscapingScale
+    //       (i.e. previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). Find out
+    //       .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
+    //
+    //   - In the 2nd pass, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
+    //       to filter and bias value (and also .afterFilter and .afterBias).
+    //
+    let tBounds = new FloatValue.Bounds( 0, 0 );
+    {
+      // 1. Determine .input
+      this.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
+
+      // 2. Determine .afterUndoPreviousActivationEscaping
+      this.afterUndoPreviousActivationEscaping
+        .set_all_byBoundsArray( this.input )
+        .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
+
+      // 3.1 Init .afterFilter
+      this.afterFilter.set_all_byN( 0 );
+    }
 
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
@@ -425,20 +456,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             if ( outChannel >= this.outputChannelCount )
               break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-            let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-            let extraScale = undoPreviousEscapingScale * doEscapingScale;
-
             if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
                 
               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                if ( inChannelToBegin == outChannelSub ) {
-                  this.filtersArray[ filterIndex ] = extraScale; // The only one filter position (in the pass-through part) has non-zero value.
+                if ( inChannelToBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
+                  this.filtersArray[ filterIndex ] = undoPreviousEscapingScale;
                 } else {
                   this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
                 }
 
               } else { // Non-pass-through half channels.
-                this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
+                this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * undoPreviousEscapingScale;
 
                 ++sourceIndex;
               }
@@ -446,6 +474,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             } else {
               this.filtersArray[ filterIndex ] = 0; // All input channels which is not in range use zero filter to ignore the inputs.
             }
+
+            // 3.2 Determine .afterFilter
+            tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel ).multiply_byN( this.filtersArray[ filterIndex ] );
+            this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
             ++filterIndex;
 
