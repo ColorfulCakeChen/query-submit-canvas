@@ -401,25 +401,18 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
     this.tensorWeightCountExtracted = weightsCount_extracted;
 
-//!!! (2022/01/11 Remarked) Use real filter and bias value instead of value bounds by two-pass processing.
-//     // Prepare value bounds.
-//     this.boundsArraySet.set_all_by_inChannelPartInfoArray(
-//       previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
-//       this.nActivationId, this.bBias
-//     );
-
-//!!! ...unfinished... (2022/01/11)
     // Prepare value bounds.
     //
-    // It should be better to use real filter and bias to calculate per channel value bounds. This is especially important for ActivationEscaping.
-    // Because activation function inputDomainLinear is not wide, using looser value bounds estimation has higher possibility to lost information.
+    // It should be better to calculate per channel value bounds by real filter and bias value (i.e. not an estimated balue bounds).
+    // This is especially important for ActivationEscaping. Because inputDomainLinear of activation function is not wide, using looser
+    // value bounds estimation has higher possibility to lost information.
     //
-    // Perhaps, using two-passes in Pointwise.FiltersArray_BiasesArray.init():
+    // Two-passes processing is used:
     //
-    //   - In the 1st pass, extracting real filter and bias value. At the same time, calculating .afterFilter and .afterBias
-    //       by these extracted value combined with undoPreviousEscapingScale
-    //       (i.e. previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). Find out
-    //       .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
+    //   - In the 1st pass, extracting filter and bias value from sourceWeights[]. At the same time, calculating .afterFilter and
+    //       .afterBias by these extracted values combined with undoPreviousEscapingScale
+    //       (i.e. previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). And then,
+    //       Find out .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
     //
     //   - In the 2nd pass, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
     //       to filter and bias value (and also .afterFilter and .afterBias).
@@ -568,7 +561,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
               break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
             let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-            this.filtersArray[ filterIndex ] *= doEscapingScale;
+            this.filtersArray[ filterIndex ] *= doEscapingScale; // filter wieghts scaled.
+
+            this.boundsArraySet.afterFilter.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after filter also scaled.
 
             ++filterIndex;
 
@@ -589,7 +584,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
           let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-          this.biasesArray[ biasIndex ] *= doEscapingScale;
+          this.biasesArray[ biasIndex ] *= doEscapingScale; // bias wieghts scaled.
+
+          this.boundsArraySet.afterBias.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after bias also scaled.
 
           ++biasIndex;
 
