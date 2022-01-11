@@ -373,25 +373,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-//!!! (2022/01/11 Remarked) Postpone to doEscapingScale latter.
-//                     let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-//                     let extraScale = undoPreviousEscapingScale * doEscapingScale;
-
                     if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
-//!!! (2022/01/11 Remarked) Postpone to doEscapingScale latter.
-//                        this.filtersArray[ filterIndex ] = extraScale; // The only one filter position (in the pass-through part) has non-zero value.
-                        this.filtersArray[ filterIndex ] = 1; // The only one filter position (in the pass-through part) has non-zero value.
+                        this.filtersArray[ filterIndex ] = undoPreviousEscapingScale; // The only one filter position (in the pass-through part) has non-zero value.
                       } else {
                         this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
                       }
 
                     } else { // Non-pass-through half channels.
-//!!! (2022/01/11 Remarked) Postpone to doEscapingScale latter.
-//                       //this.filtersArray[ filterIndex ] = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
-//                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
                       //this.filtersArray[ filterIndex ] = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] );
-                      this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
+                      this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * undoPreviousEscapingScale;
 
                       ++sourceIndex;
                     }
