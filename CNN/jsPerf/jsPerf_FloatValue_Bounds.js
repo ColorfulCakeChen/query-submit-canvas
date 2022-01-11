@@ -9,8 +9,6 @@ import * as FloatValue from "../Unpacker/FloatValue.js";
  */
 class Case {
 
-//!!! ...unfinished... (2022/01/11) need test .clamp_byXxx()
-
   constructor( aLowerUpper, bLowerUpper, N, clampedArray, addedArray, multipledArray, aMultipledNArray ) {
     this.N = N;
     this.clampedArray = clampedArray;
@@ -113,11 +111,10 @@ class Cases {
     this.bLowersUppers = new Array( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
     this.Ns = new Array( aCaseArray.length );
     this.NsNs = new Array( aCaseArray.length );          // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
+    this.clampedArrayArray = new Array( aCaseArray.length );     // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
     this.addedArrayArray = new Array( aCaseArray.length );       // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
     this.multipledArrayArray = new Array( aCaseArray.length );   // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
     this.aMultipledNArrayArray = new Array( aCaseArray.length ); // [ [ lowers0, uppers0 ], [ lowers1, uppers1 ], ... ]
-
-//!!! ...unfinished... (2022/01/11) need test .clamp_byXxx()
 
     for ( let i = 0; i < aCaseArray.length; ++i ) {
       let oneCase = aCaseArray[ i ];
@@ -133,6 +130,7 @@ class Cases {
       this.Ns[ i ] = oneCase.N;
       this.NsNs[ i ] = [ oneCase.N, oneCase.N ];
 
+      this.clampedArrayArray[ i ] = oneCase.clampedArray;
       this.addedArrayArray[ i ] = oneCase.addedArray;
       this.multipledArrayArray[ i ] = oneCase.multipledArray;
       this.aMultipledNArrayArray[ i ] = oneCase.aMultipledNArray;
@@ -229,6 +227,50 @@ class Cases {
           tBounds.set_byLowersUppers( this.bLowers, this.bUppers, i );
           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
         }
+      }
+    }
+
+    // Clamp
+    {
+      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
+
+      this.aBoundsArray.clamp_one_byLowerUpper( 1, this.bLowers[ 1 ], this.bUppers[ 1 ] );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray", 1, this.clampedArrayArray[ 1 ] );
+
+      this.aBoundsArray.clamp_one_byBounds( 2, aCaseArray[ 2 ].bBounds );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray", 2, this.clampedArrayArray[ 2 ] );
+
+      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
+
+      this.aBoundsArray.clamp_one_byLowersUppers( 0, this.bLowers, this.bUppers, 0 );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray", 0, this.clampedArrayArray[ 0 ] );
+
+      this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
+      this.aBoundsArray.clamp_one_byBoundsArray( 1, this.bBoundsArray, 1 );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray", 1, this.clampedArrayArray[ 1 ] );
+
+      { // Test clamp_all_byLowerUpper() and clamp_all_byBounds().
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .clamp_all_byLowerUpper( oneRandCase.bBounds.lower, oneRandCase.bBounds.upper );
+
+        this.bBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).clamp_all_byBounds( oneRandCase.bBounds );
+
+        for ( let i = 0; i < aCaseArray.length; ++i ) {
+          tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i ).clamp_byBounds( oneRandCase.bBounds );
+          this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
+          this.assert_BoundsArray_one_byBounds( "bBoundsArray", i, tBounds );
+        }
+      }
+
+      { // Test clamp_all_byLowersUppers().
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).clamp_all_byLowersUppers( this.bLowers, this.bUppers );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.clampedArrayArray );
+      }
+
+      { // Test add_all_byBoundsArray().
+        this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).clamp_all_byBoundsArray( this.bBoundsArray );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.clampedArrayArray );
       }
     }
 
