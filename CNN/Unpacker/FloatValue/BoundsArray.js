@@ -185,10 +185,22 @@ class BoundsArray {
 
     let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
     let anotherUpper = Math.max( aLower, aUpper );
-    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm ( lower <= upper )
-    let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
+
+    // Clamp this by another.
+
+    // For handling two bounds do not intersect totally, both thisLower and thisUpper needs be clamped by both aLower and aUpper.
+    let lower_clampedByAnotherLower = Math.max( this.lowers[ thisIndex ], anotherLower );
+    let upper_clampedByAnotherLower = Math.max( this.uppers[ thisIndex ], anotherLower );
+
+    let lower_clampedByAnotherUpper = Math.min( lower_clampedByAnotherLower, anotherUpper );
+    let upper_clampedByAnotherUpper = Math.min( upper_clampedByAnotherLower, anotherUpper );
+
     this.lowers[ thisIndex ] = Math.max( thisLower, anotherLower ); // Clamp this by another.
     this.uppers[ thisIndex ] = Math.min( thisUpper, anotherUpper );
+    
+    this.lowers[ thisIndex ] = Math.min( lower_clampedByAnotherUpper,  ); // Confirm ( lower <= upper )
+    this.uppers[ thisIndex ] = Math.max( lower_clampedByAnotherUpper, upper_clampedByAnotherUpper );
+
     return this;
   }
 
