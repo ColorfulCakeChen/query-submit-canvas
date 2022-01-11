@@ -439,7 +439,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
         // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( inChannelPartInfoArray );
-        this.boundsArraySet.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+        this.boundsArraySet.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId(
+          this.nActivationId );
       }
 
       // Round 2
