@@ -188,16 +188,18 @@ class BoundsArraySet {
 
       // Otherwise, the activation function dominates the output range.
       //
-      // Note: Consider the implementation of ScaleArray.set_one_by_fromLowerUpper_toLowerUpper(), they are all not so good
-      //       no matter using set_one_byXxx() or clamp_one_byXxx() of this.afterActivation.
+      // Note: Consider the implementation of ScaleArray.set_one_by_fromLowerUpper_toLowerUpper(), they are all not so good no
+      //       matter using set_one_byXxx() or clamp_one_byXxx() of this.afterActivation. However, when using clamp_one_byXxx(),
+      //       even if the activation function output range has Infinity (e.g. RELU is [ 0, +Infinity ]), the result bounds
+      //       is more feasible (at least, will not become another bounds with Infinity).
       } else {
         if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels, it is clamped by the output range for linearDomainLinear.
-          this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
-          //this.afterActivation.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+          //this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+          this.afterActivation.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
 
         } else { // Non pass-through half channels, it is clamped by the output range for the whole input domain.
-          this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
-          //this.afterActivation.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+          //this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+          this.afterActivation.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
         }
       }
     }
