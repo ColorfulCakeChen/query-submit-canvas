@@ -500,14 +500,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           if ( outChannel >= this.outputChannelCount )
             break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-          let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-          let extraScale = doEscapingScale; // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
+          // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
           if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
             this.biasesArray[ biasIndex ] = 0;
 
           } else { // Non-pass-through half channels.
-            this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ] * extraScale;
+            this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ];
 
             // 4.2 Determine .afterBias
             this.boundsArraySet.afterBias.add_one_byBounds( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
@@ -554,8 +553,52 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
   apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ) {
     let filterIndex = 0, biasIndex = 0;
 
-//!!! ...unfinished... (2022/01/11)
+    { // this.filtersArray
 
+      for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+        let outChannel = 0;
+
+        InChannelPartIndexLoop:
+        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+          let inChannelToBegin = inChannel - inChannelPartInfo.inChannelBegin;
+
+          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+            if ( outChannel >= this.outputChannelCount )
+              break InChannelPartIndexLoop; // Never exceeds the total output channel count.
+
+            let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+            this.filtersArray[ filterIndex ] *= doEscapingScale;
+
+            ++filterIndex;
+
+          } // outChannelSub, outChannel
+        } // inChannelPartIndex
+      } // inChannel
+    } // this.filtersArray
+
+    if ( this.biasesArray ) {
+      let outChannel = 0;
+
+      InChannelPartIndexLoop:
+      for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+        let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+
+        for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+          if ( outChannel >= this.outputChannelCount )
+            break InChannelPartIndexLoop; // Never exceeds the total output channel count.
+
+          let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+          this.biasesArray[ biasIndex ] *= doEscapingScale;
+
+          ++biasIndex;
+
+        } // outChannelSub, outChannel
+      } // inChannelPartIndex
+
+    } else { // ( !this.biasesArray ). No biases array to be extracted.
+      // Do nothing.
+    }
   }
 
 }
