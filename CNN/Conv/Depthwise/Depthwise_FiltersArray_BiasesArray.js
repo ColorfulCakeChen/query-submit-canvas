@@ -481,7 +481,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   }
 
   /**
-   *  Apply this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[] to this.filtersArray and this.biasesArray.
+   * Apply this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[] to this.filtersArray and this.biasesArray.
    *
    * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
