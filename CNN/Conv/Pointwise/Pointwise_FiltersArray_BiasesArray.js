@@ -525,11 +525,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     }
 
 
-    this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
-
     // 5. Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
     this.boundsArraySet.set_all_bPassThrough( inChannelPartInfoArray );
-    this.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_nActivationId( this.nActivationId );
+    this.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+
+    this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
 
     {
       this.tensorWeightCountTotal = 0;
