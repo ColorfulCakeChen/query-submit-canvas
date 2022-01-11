@@ -113,6 +113,9 @@ class Bounds {
    *   Return this (modified) object which is [ max( this.lower, aLower ), min( this.upper, aUpper ) ].
    */
   clamp_byLowerUpper( aLower, aUpper ) {
+
+//!!! ...unfinished... (2022/01/11) What if two bounds does not intersect?
+
     // Confirm ( lower <= upper ) and ( aLower <= aUpper ).
     let lower_clamped = Math.max( Math.min( this.lower, this.upper ), Math.min( aLower, aUpper ) );
     let upper_clamped = Math.min( Math.max( this.lower, this.upper ), Math.max( aLower, aUpper ) );
