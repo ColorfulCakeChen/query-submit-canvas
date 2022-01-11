@@ -25,28 +25,24 @@ import * as FloatValue from "../FloatValue.js";
  *
 
 //!!! ...unfinished... (2022/01/11)
-// What about:
+// What about: (tf.clipByValue() is also supported by WASM)
 //   - tf.clipByValue( -1, +1 )?
 //   - tf.clipByValue( -2, +2 )?
 //   - tf.clipByValue( -3, +3 )?
 //   - tf.clipByValue( -64, +64 )?
 //   - tf.clipByValue( -128, +128 )?
 
- *   - TANH, SIN, ERF are good if pass-through by only scale (i.e. without translate) is needed. Because the output range of
- *       them includes both negative value and positive value near the origin point. (On the other hand, RELU, RELU6 are not
- *       good for this purpose.)
+ *   - CLIP_BY_VALUE, TANH, SIN, ERF are good if pass-through by only scale (i.e. without translate) is needed. Because the output
+ *       range of them includes both negative value and positive value near the origin point. (On the other hand, RELU, RELU6 are
+ *       not good for this purpose.)
  *
  */
 class ActivationFunction extends Int {
 
   constructor() {
 
-    super( 0, 5,
-      [ "NONE",  "RELU6",  "TANH",  "SIN",  "COS",  "SIGMOID" ], // "RELU" ], //  "SOFTPLUS" ],
-
-//!!! ...unfinished... (2022/01/10)
-// Add ActivationFunction.Info.outputRangeLinear (the output range for linearDomainLinear).
-// When calculating ActivationEscaping bounds array of pass-through part, use it instead of normal info.range.
+    super( 0, 6,
+      [ "NONE",  "RELU6",  "TANH",  "SIN",  "COS",  "SIGMOID", "RELU" ], //  "SOFTPLUS" ],
 
       [
         new ActivationFunction.Info( 0, null, null, null, null ),
@@ -66,17 +62,16 @@ class ActivationFunction extends Int {
         new ActivationFunction.Info( 5, tf.sigmoid, new FloatValue.Bounds( 0, 1 )
           new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( +0.468, +0.532 ) ),
 
-//!!! ...unfinished... (2022/01/11) Not yet true.
-// The BoundsArraySet.afterActivation is calculate by .clamp_byXxx() (not by set_byXxx()). So the Infinity is not a problem.
-
-        // (2021/12/09 Remarked)
-        //
+        // (2021/12/09)
         // The input linear domain and output range of RELU are [ 0, +Infinity ]. However, it is not so friendly to interact with Infinity
         // because the results may be Infinity or even NaN. This is more obvious for scale-translate into linear domain in PointDepthPoint.
         // So, the RELU is excluded from the activation function list.
         //
-        //new ActivationFunction.Info( 6, tf.relu, new FloatValue.Bounds( 0, +Infinity ),
-        //  new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ) ),
+        // (2022/01/11)
+        // However, if the BoundsArraySet.afterActivation is calculate by .clamp_byXxx() (not by set_byXxx()), the Infinity bounds is
+        // not a problem.
+        new ActivationFunction.Info( 6, tf.relu, new FloatValue.Bounds( 0, +Infinity ),
+         new FloatValue.Bounds( 0, +Infinity ), new FloatValue.Bounds( 0, +Infinity ) ),
 
         //new ActivationFunction.Info( 7, tf.softplus, new FloatValue.Bounds( 0, +Infinity ),
         //  new FloatValue.Bounds( +5, +Infinity ), new FloatValue.Bounds( +5, +Infinity ) ),
