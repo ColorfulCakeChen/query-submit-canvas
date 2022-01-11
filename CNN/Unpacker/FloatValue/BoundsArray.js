@@ -172,6 +172,112 @@ class BoundsArray {
   }
 
 
+//!!!
+  
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} aLower     Clamp this.lowers[ thisIndex ] by aLower.
+   * @param {number} aUpper     Clamp this.uppers[ thisIndex ] by aUpper.
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  clamp_one_byLowerUpper( thisIndex, aLower, aUpper ) {
+!!!
+    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm the lower and upper. And then, add corresponds.
+    let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
+    this.lowers[ thisIndex ] = thisLower + Math.min( aLower, aUpper );
+    this.uppers[ thisIndex ] = thisUpper + Math.max( aLower, aUpper );
+    return this;
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {Bounds} aBounds    Clamp ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBounds.lower, aBounds.upper ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  clamp_one_byBounds( thisIndex, aBounds ) {
+    return this.clamp_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number[]} aLowers  Clamp this.lowers[ thisIndex ] by aLowers[ aIndex ].
+   * @param {number[]} aUppers  Clamp this.uppers[ thisIndex ] by aUppers[ aIndex ].
+   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  clamp_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
+    return this.clamp_one_byLowerUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+  }
+
+  /**
+   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   *
+   * @param {BoundsArray} aBoundsArray
+   *   Clamp ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
+   *
+   * @param {number} aIndex     The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  clamp_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
+    return this.clamp_one_byLowerUpper( thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+  }
+
+  /**
+   * @param {number} aLower  Clamp all this.lowers[] by aLower.
+   * @param {number} aUpper  Clamp all this.uppers[] by aUpper.
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  clamp_all_byLowerUpper( aLower, aUpper ) {
+!!!
+    let extraLower = Math.min( aLower, aUpper ); // Confirm the lower and upper.
+    let extraUpper = Math.max( aLower, aUpper );
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm the lower and upper. And then, add corresponds.
+      let thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
+      this.lowers[ i ] = thisLower + extraLower;
+      this.uppers[ i ] = thisUpper + extraUpper;
+    }
+    return this;
+  }
+
+  /**
+   * @param {Bounds} aBounds  Clamp all ( this.lowers[], this.uppers[] ) by ( aBounds.lower, aBounds.upper ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  clamp_all_byBounds( aBounds ) {
+    return this.clamp_all_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+  /**
+   * @param {number[]} aLowers  Clamp all ( this.lowers[], this.uppers[] ) by ( aLowers[], aUppers[] ).
+   * @param {number[]} aUppers  Clamp all ( this.lowers[], this.uppers[] ) by ( aLowers[], aUppers[] ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  clamp_all_byLowersUppers( aLowers, aUppers ) {
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      this.clamp_one_byLowerUpper( i, aLowers[ i ], aUppers[ i ] );
+    }
+    return this;
+  }
+
+  /**
+   * @param {BoundsArray} aBoundsArray  Clamp all ( this.lowers[], this.uppers[] ) by ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  clamp_all_byBoundsArray( aBoundsArray ) {
+    return this.clamp_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
+  }
+
+
+//!!!
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} N          Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
