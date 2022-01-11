@@ -297,11 +297,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     this.byteOffsetEnd = sourceWeights.defaultByteOffsetEnd;
     this.tensorWeightCountExtracted = weightsCount_extracted;
 
-    // Prepare value bounds.
-    this.boundsArraySet.set_all_by_inChannelPartInfoArray(
-      previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
-      this.channelMultiplier, this.nActivationId, ( this.filtersArray != null ), this.bBias
-    );
+//!!! (2022/01/11 Remarked) Use real filter and bias value instead of value bounds by two-pass processing.
+//     // Prepare value bounds.
+//     this.boundsArraySet.set_all_by_inChannelPartInfoArray(
+//       previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray,
+//       this.channelMultiplier, this.nActivationId, ( this.filtersArray != null ), this.bBias
+//     );
 
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
@@ -411,6 +412,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     } // inChannelPartIndex
 
+    // Apply doEscapingScale.
+    this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray );
+
     {
       this.tensorWeightCountTotal = 0;
 
@@ -422,6 +426,72 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     }
 
     return true;
+  }
+
+  /**
+   *  Apply this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[] to this.filtersArray and this.biasesArray.
+   *
+   * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
+   *   The input channel range array which describe lower/higher half channels index range.
+   */
+  apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ) {
+
+    let filterIndex = 0, biasIndex = 0;
+
+    for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+      let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+      let inChannelBegin = inChannelPartInfo.inChannelBegin;
+      let inChannelEnd = inChannelPartInfo.inChannelEnd;
+
+      if ( this.filtersArray ) {
+
+        for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+          for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+
+            for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+              for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+
+                // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                  continue;
+
+                let outChannel = inChannelBegin * this.channelMultiplier;
+                for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+                  for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+
+                    let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+                    this.filtersArray[ filterIndex ] *= doEscapingScale;
+
+                    ++filterIndex;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+      } else { // ( !this.filtersArray ).
+        // Do nothing. No filters array to be doEscapingScale. (i.e. avg/max pooling)
+      }
+
+      if ( this.biasesArray ) {
+
+        let outChannel = inChannelBegin * this.channelMultiplier;
+        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+
+            let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+            this.biasesArray[ biasIndex ] *= doEscapingScale;
+
+            ++biasIndex;
+          }
+        }
+
+      } else { // ( !this.biasesArray ).
+        // Do nothing. No biases array to be doEscapingScale.
+      }
+
+    } // inChannelPartIndex
   }
 
 }
