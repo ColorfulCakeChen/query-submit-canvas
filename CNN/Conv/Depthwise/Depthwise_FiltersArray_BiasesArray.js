@@ -331,7 +331,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
       // 2. Determine .afterUndoPreviousActivationEscaping
       this.boundsArraySet.afterUndoPreviousActivationEscaping
-        .set_all_byBoundsArray( this.input )
+        .set_all_byBoundsArray( this.boundsArraySet.input )
         .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
 
       // 3.1 Init .afterFilter
