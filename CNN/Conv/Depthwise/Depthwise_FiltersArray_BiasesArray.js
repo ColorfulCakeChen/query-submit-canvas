@@ -420,7 +420,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       }
 
       // 4.1 Init .afterBias
-      this.boundsArraySet.afterBias.set_all_byBoundsArray( this.boundsArraySet.afterFilter );
+      {
+        let outChannel = inChannelBegin * this.channelMultiplier;
+        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+            this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
+          }
+        }
+      }
+
       if ( this.biasesArray ) {
 
         let outChannel = inChannelBegin * this.channelMultiplier;
