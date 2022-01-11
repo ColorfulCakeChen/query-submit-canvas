@@ -101,37 +101,69 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
         for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub, ++outChannel ) {
 
-          // 3. Determine .afterFilter
-          this.afterFilter.set_one_byBoundsArray( outChannel, this.afterUndoPreviousActivationEscaping, inChannel );
-          if ( bFilter ) {
+          if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+            this.bPassThrough[ outChannel ] = true;
 
-            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-              // Do nothing. The value bounds does not change at all because it is just be past through.
+            // Do nothing. The value bounds does not change at all because it is just be past through.
 
-            } else { // Non pass-through half channels.
+          } else { // Non pass-through half channels.
+            this.bPassThrough[ outChannel ] = false;
+
+            // 3. Determine .afterFilter
+            this.afterFilter.set_one_byBoundsArray( outChannel, this.afterUndoPreviousActivationEscaping, inChannel );
+            if ( bFilter ) {
               this.afterFilter
                 .multiply_one_byBounds( outChannel, filtersValueBounds )
                 .multiply_one_byN( outChannel, this.filterSize );
+
+            } else { // ( !bFilter ). No filters array to be extracted. (i.e. avg/max pooling)
+              // Do nothing. The value bounds does not change for avg/max pooling.
             }
 
-          } else { // ( !bFilter ). No filters array to be extracted. (i.e. avg/max pooling)
-            // Do nothing. The value bounds does not change for avg/max pooling.
-          }
+            // 4. Determine .afterBias
+            this.afterBias.set_one_byBoundsArray( outChannel, this.afterFilter, outChannel );
+            if ( bBias ) {
+                this.afterBias.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by the bias bounds.
 
-          // 4. Determine .afterBias
-          this.afterBias.set_one_byBoundsArray( outChannel, this.afterFilter, outChannel );
-          if ( bBias ) {
-
-            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-              // Do nothing. The value bounds does not change at all because it is just be past through.
-
-            } else { // Non pass-through half channels.
-              this.afterBias.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by the bias bounds.
+            } else { // ( !bBias ). No biases array to be extracted.
+              // Do nothing. The value bounds does not change since no bias.
             }
-
-          } else { // ( !bBias ). No biases array to be extracted.
-            // Do nothing. The value bounds does not change since no bias.
           }
+
+
+//!!! (2022/01/11 Remarked) Check bPassThrough first.
+//           // 3. Determine .afterFilter
+//           this.afterFilter.set_one_byBoundsArray( outChannel, this.afterUndoPreviousActivationEscaping, inChannel );
+//           if ( bFilter ) {
+//
+//             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+//               // Do nothing. The value bounds does not change at all because it is just be past through.
+//               this.bPassThrough[ outChannel ] = true;
+//
+//             } else { // Non pass-through half channels.
+//               this.afterFilter
+//                 .multiply_one_byBounds( outChannel, filtersValueBounds )
+//                 .multiply_one_byN( outChannel, this.filterSize );
+//             }
+//
+//           } else { // ( !bFilter ). No filters array to be extracted. (i.e. avg/max pooling)
+//             // Do nothing. The value bounds does not change for avg/max pooling.
+//           }
+//
+//           // 4. Determine .afterBias
+//           this.afterBias.set_one_byBoundsArray( outChannel, this.afterFilter, outChannel );
+//           if ( bBias ) {
+//
+//             if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+//               // Do nothing. The value bounds does not change at all because it is just be past through.
+//
+//             } else { // Non pass-through half channels.
+//               this.afterBias.add_one_byBounds( outChannel, biasesValueBounds ); // Shift the value bounds by the bias bounds.
+//             }
+//
+//           } else { // ( !bBias ). No biases array to be extracted.
+//             // Do nothing. The value bounds does not change since no bias.
+//           }
 
 //!!! (2022/01/11 Remarked) Moved to parent class. 
 //
