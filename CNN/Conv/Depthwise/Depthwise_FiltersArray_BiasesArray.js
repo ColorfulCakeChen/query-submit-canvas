@@ -320,6 +320,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     //   - In the 2nd pass, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
     //       to filter and bias value (and also .afterFilter and .afterBias).
     //
+    let tBounds = new FloatValue.Bounds( 0, 0 );
     {
       // 1. Determine .input
       //
@@ -330,6 +331,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       this.afterUndoPreviousActivationEscaping
         .set_all_byBoundsArray( this.input )
         .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
+
+      // 3. Init .afterFilter
+      this.afterFilter.set_all_byN( 0 );
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
@@ -376,6 +380,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
                         this.filtersArray[ filterIndex ] = undoPreviousEscapingScale; // The only one filter position (in the pass-through part) has non-zero value.
+//!!!
+              this.afterFilter
+                .multiply_one_byBounds( outChannel, filtersValueBounds )
+                .multiply_one_byN( outChannel, this.filterSize );
+
                       } else {
                         this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
                       }
@@ -383,6 +392,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     } else { // Non-pass-through half channels.
                       //this.filtersArray[ filterIndex ] = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] );
                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * undoPreviousEscapingScale;
+
+//!!!
+                      tBounds
+                        .set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel )
+                        .multiply_byN( this.filtersArray[ filterIndex ] );
+
+                      this.afterFilter.add_one_byBounds( outChannel, tBounds );
 
                       ++sourceIndex;
                     }
