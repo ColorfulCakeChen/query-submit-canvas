@@ -104,6 +104,34 @@ class Bounds {
     return this.set_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
+
+  /**
+   * @param {number} aLower   Clamp this.lower by aLower.
+   * @param {number} aUpper   Clamp this.upper by aUpper.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object which is [ max( this.lower, aLower ), min( this.upper, aUpper ) ].
+   */
+  clamp_byLowerUpper( aLower, aUpper ) {
+    // Confirm ( lower <= upper ) and ( aLower <= aUpper ).
+    let lower_clamped = Math.max( Math.min( this.lower, this.upper ), Math.min( aLower, aUpper ) );
+    let upper_clamped = Math.min( Math.max( this.lower, this.upper ), Math.max( aLower, aUpper ) );
+    this.lower = lower_clamped;
+    this.upper = upper_clamped;
+    return this;
+  }
+
+  /**
+   * @param {Bounds} aBounds   Clamp [ this.lower, this.upper ] by [ aBounds.lower, aBounds.upper ].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object which is [ max( this.lower, aBounds.lower ), min( this.upper, aBounds.upper ) ].
+   */
+  clamp_byBounds( aBounds ) {
+    return this.clamp_byLowerUpper( aBounds.lower, aBounds.upper );
+  }
+
+
   /**
    * @param {number} N
    *   Add this Bounds.lower by N, and also add this Bounds.upper by N.
