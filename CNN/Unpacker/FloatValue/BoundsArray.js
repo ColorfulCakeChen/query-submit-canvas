@@ -172,8 +172,6 @@ class BoundsArray {
   }
 
 
-//!!!
-  
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} aLower     Clamp this.lowers[ thisIndex ] by aLower.
@@ -182,12 +180,12 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   clamp_one_byLowerUpper( thisIndex, aLower, aUpper ) {
-    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm ( lower <= upper )
-    let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
     let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
     let anotherUpper = Math.max( aLower, aUpper );
-    let lower_clamped = Math.max( thisLower, anotherLower ); // Clamp this by another.
-    let upper_clamped = Math.min( thisUpper, anotherUpper );
+    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm ( lower <= upper )
+    let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
+    this.lowers[ thisIndex ] = Math.max( thisLower, anotherLower ); // Clamp this by another.
+    this.uppers[ thisIndex ] = Math.min( thisUpper, anotherUpper );
     return this;
   }
 
@@ -234,14 +232,13 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   clamp_all_byLowerUpper( aLower, aUpper ) {
-!!!
-    let extraLower = Math.min( aLower, aUpper ); // Confirm the lower and upper.
-    let extraUpper = Math.max( aLower, aUpper );
+    let anotherLower = Math.min( aLower, aUpper ); // Confirm ( anotherLower <= anotherUpper )
+    let anotherUpper = Math.max( aLower, aUpper );
     for ( let i = 0; i < this.lowers.length; ++i ) {
-      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm the lower and upper. And then, add corresponds.
+      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm ( lower <= upper )
       let thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
-      this.lowers[ i ] = thisLower + extraLower;
-      this.uppers[ i ] = thisUpper + extraUpper;
+      this.lowers[ i ] = Math.max( thisLower, anotherLower ); // Clamp this by another.
+      this.uppers[ i ] = Math.min( thisUpper, anotherUpper );
     }
     return this;
   }
@@ -278,7 +275,6 @@ class BoundsArray {
   }
 
 
-//!!!
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} N          Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
@@ -287,7 +283,7 @@ class BoundsArray {
    *   Return this (modified) object which is the same as this.add_one_byLowerUpper( N, N ).
    */
   add_one_byN( thisIndex, N ) {
-    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm the lower and upper. And then, add corresponds.
+    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm ( thisLower <= thisUupper ). And then, add corresponds.
     let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
     this.lowers[ thisIndex ] = thisLower + N;
     this.uppers[ thisIndex ] = thisUpper + N;
@@ -302,7 +298,7 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   add_one_byLowerUpper( thisIndex, aLower, aUpper ) {
-    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm the lower and upper. And then, add corresponds.
+    let thisLower = Math.min( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ); // Confirm ( thisLower <= thisUupper ). And then, add corresponds.
     let thisUpper = Math.max( this.lowers[ thisIndex ], this.uppers[ thisIndex ] );
     this.lowers[ thisIndex ] = thisLower + Math.min( aLower, aUpper );
     this.uppers[ thisIndex ] = thisUpper + Math.max( aLower, aUpper );
@@ -375,13 +371,13 @@ class BoundsArray {
    * @return {BoundsArray} Return this (modified) object.
    */
   add_all_byLowerUpper( aLower, aUpper ) {
-    let extraLower = Math.min( aLower, aUpper ); // Confirm the lower and upper.
-    let extraUpper = Math.max( aLower, aUpper );
+    let anotherLower = Math.min( aLower, aUpper ); // Confirm the ( anotherLower <= anotherUpper ).
+    let anotherUpper = Math.max( aLower, aUpper );
     for ( let i = 0; i < this.lowers.length; ++i ) {
-      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm the lower and upper. And then, add corresponds.
+      let thisLower = Math.min( this.lowers[ i ], this.uppers[ i ] ); // Confirm ( thisLower <= thisUupper ). And then, add corresponds.
       let thisUpper = Math.max( this.lowers[ i ], this.uppers[ i ] );
-      this.lowers[ i ] = thisLower + extraLower;
-      this.uppers[ i ] = thisUpper + extraUpper;
+      this.lowers[ i ] = thisLower + anotherLower;
+      this.uppers[ i ] = thisUpper + anotherUpper;
     }
     return this;
   }
