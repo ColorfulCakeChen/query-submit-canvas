@@ -304,6 +304,34 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //       this.channelMultiplier, this.nActivationId, ( this.filtersArray != null ), this.bBias
 //     );
 
+//!!! ...unfinished... (2022/01/10)
+    // Prepare value bounds.
+    //
+    // It should be better to use real filter and bias to calculate per channel value bounds. This is especially important for ActivationEscaping.
+    // Because activation function inputDomainLinear is not wide, using looser value bounds estimation has higher possibility to lost information.
+    //
+    // Perhaps, using two-passes in Depthwise.FiltersArray_BiasesArray.init():
+    //
+    //   - In the 1st pass, extracting real filter and bias value. At the same time, calculating .afterFilter and .afterBias
+    //       by these extracted value combined with undoPreviousEscapingScale
+    //       (i.e. previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). Find out
+    //       .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
+    //
+    //   - In the 2nd pass, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
+    //       to filter and bias value (and also .afterFilter and .afterBias).
+    //
+    {
+      // 1. Determine .input
+      //
+      // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
+      this.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
+
+      // 2. Determine .afterUndoPreviousActivationEscaping
+      this.afterUndoPreviousActivationEscaping
+        .set_all_byBoundsArray( this.input )
+        .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
+    }
+
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
 
@@ -345,19 +373,25 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
                     //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
-                    let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-                    let extraScale = undoPreviousEscapingScale * doEscapingScale;
+//!!! (2022/01/11 Remarked) Postpone to doEscapingScale latter.
+//                     let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+//                     let extraScale = undoPreviousEscapingScale * doEscapingScale;
 
                     if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
-                        this.filtersArray[ filterIndex ] = extraScale; // The only one filter position (in the pass-through part) has non-zero value.
+//!!! (2022/01/11 Remarked) Postpone to doEscapingScale latter.
+//                        this.filtersArray[ filterIndex ] = extraScale; // The only one filter position (in the pass-through part) has non-zero value.
+                        this.filtersArray[ filterIndex ] = 1; // The only one filter position (in the pass-through part) has non-zero value.
                       } else {
                         this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
                       }
 
                     } else { // Non-pass-through half channels.
-                      //this.filtersArray[ filterIndex ] = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
-                      this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
+//!!! (2022/01/11 Remarked) Postpone to doEscapingScale latter.
+//                       //this.filtersArray[ filterIndex ] = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] ) * extraScale;
+//                       this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * extraScale;
+                      //this.filtersArray[ filterIndex ] = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceWeights[ sourceIndex ] );
+                      this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ];
 
                       ++sourceIndex;
                     }
@@ -412,8 +446,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     } // inChannelPartIndex
 
-    // Apply doEscapingScale.
-    this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray );
+
+    this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
+    this.BoundsArraySet_setup_bPassThrough( inChannelPartInfoArray );
+
+    // 5. Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
+    this.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_nActivationId( this.nActivationId );
 
     {
       this.tensorWeightCountTotal = 0;
@@ -429,13 +467,38 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   }
 
   /**
+   * Set this.boundsArraySet.bPassThrough[] according to inChannelPartInfoArray.
+   *
+   * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
+   *   The input channel range array which describe lower/higher half channels index range.
+   */
+  BoundsArraySet_setup_bPassThrough( inChannelPartInfoArray ) {
+    for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+      let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+      let inChannelBegin = inChannelPartInfo.beginIndex;
+      let inChannelEnd = inChannelPartInfo.endIndex;
+
+      let outChannel = inChannelBegin * this.channelMultiplier;
+      for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+          if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+            this.bPassThrough[ outChannel ] = true;
+
+          } else { // Non pass-through half channels.
+            this.bPassThrough[ outChannel ] = false;
+          }
+        }
+      }
+    }
+  }
+
+  /**
    *  Apply this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[] to this.filtersArray and this.biasesArray.
    *
    * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
    */
   apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ) {
-
     let filterIndex = 0, biasIndex = 0;
 
     for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
