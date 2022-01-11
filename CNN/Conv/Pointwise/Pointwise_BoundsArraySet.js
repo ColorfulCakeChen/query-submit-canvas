@@ -24,7 +24,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
    */
-  set_all_bPassThrough( inChannelPartInfoArray ) {
+  set_all_bPassThrough_byChannelPartInfoArray( inChannelPartInfoArray ) {
 
     let outChannel = 0;
 
