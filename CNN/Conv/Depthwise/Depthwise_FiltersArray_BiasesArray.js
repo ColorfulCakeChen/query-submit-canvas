@@ -327,15 +327,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       // 1. Determine .input
       //
       // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
-      this.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
+      this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
 
       // 2. Determine .afterUndoPreviousActivationEscaping
-      this.afterUndoPreviousActivationEscaping
+      this.boundsArraySet.afterUndoPreviousActivationEscaping
         .set_all_byBoundsArray( this.input )
         .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
 
       // 3.1 Init .afterFilter
-      this.afterFilter.set_all_byN( 0 );
+      this.boundsArraySet.afterFilter.set_all_byN( 0 );
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
@@ -420,7 +420,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       }
 
       // 4.1 Init .afterBias
-      this.afterBias.set_all_byBoundsArray( this.afterFilter );
+      this.boundsArraySet.afterBias.set_all_byBoundsArray( this.boundsArraySet.afterFilter );
       if ( this.biasesArray ) {
 
         let outChannel = inChannelBegin * this.channelMultiplier;
