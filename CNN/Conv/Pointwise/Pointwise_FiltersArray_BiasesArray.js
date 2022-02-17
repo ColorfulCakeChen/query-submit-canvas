@@ -624,4 +624,22 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     }
   }
 
+  /**
+   * Shuffle (.filtersArray, .biasesArray, .boundsArraySet).
+   *   - Only ( outputGroupCount == 2 ) is supported.
+   *   - The output channel count must be even (i.e. divisible by 2).
+   *
+   *
+   */
+  shuffle_outputGroupCountTwo() {
+
+//!!! ...unfinished... (2022/02/17)
+
+    this.filtersArray
+    this.biasesArray
+
+    this.boundsArraySet.swap_two_output();
+
+  }
+
 }
