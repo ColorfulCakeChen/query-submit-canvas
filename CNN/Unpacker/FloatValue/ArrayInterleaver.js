@@ -41,8 +41,6 @@ class ArrayInterleaver {
     // Interleave the elements order.
     let elementCountHalf = Math.floor( elementCount / 2 );
     for ( let i = 0, toIndex = indexBegin; i < elementCountHalf; ++i, toIndex += 2 ) {
-//       arrayIn[ indexBegin + ( 2 * i )     ] = arrayTemp[ i ];
-//       arrayIn[ indexBegin + ( 2 * i ) + 1 ] = arrayTemp[ i + elementCountHalf ];
       arrayIn[ toIndex     ] = arrayTemp[ i ];
       arrayIn[ toIndex + 1 ] = arrayTemp[ i + elementCountHalf ];
     }
