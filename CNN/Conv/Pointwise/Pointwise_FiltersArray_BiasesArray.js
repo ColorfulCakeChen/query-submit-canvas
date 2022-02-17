@@ -351,16 +351,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
             inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_Real, true ) ];
           }
-
-//!!! ...unfinished... (2022/02/17) should be shuffled after extracting done. 
-
-          // 3.4.1.2 bHigherHalfPassThroughShuffle
-          // 3.4.2.2 bAllPassThroughShuffle
-          if ( bExtractOk ) {
-            if ( this.channelShuffler_outputGroupCount > 0 ) {
-              this.output_interleave_asGrouptTwo(); // Pre-shuffle channels by shuffling the filters and biases.
-            }
-          }
           break;
 
         default:
@@ -442,6 +432,22 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
       // Round 2
       this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
+    }
+
+    // Shuffle channels.
+    {
+      switch ( this.nHigherHalfDifferent ) {
+
+        // 3.4
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
+
+          // 3.4.1.2 bHigherHalfPassThroughShuffle
+          // 3.4.2.2 bAllPassThroughShuffle
+          if ( this.channelShuffler_outputGroupCount > 0 ) {
+            this.output_interleave_asGrouptTwo(); // Pre-shuffle channels by shuffling the filters and biases.
+          }
+          break;
+      }
     }
 
     {
