@@ -239,19 +239,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
-//!!! ...unfinished... (2022/01/09)
-// Even if ( this.outputChannelCount <= 0 ),
-// this function should work correctly and BoundsArraySet should result in pass-through input to output.
-
-//!!! (2022/01/09 Remarked) Wrong!
-//     if ( this.outputChannelCount <= 0 )
-//       return true; // Nothing needs to be extracted.
-
     // Determine shape of the filters, biases, channels.
     let inChannelPartInfoArray;
     let filtersShape_extracted, biasesShape_extracted;
 
     // Set up inChannelPartInfoArray and filtersShape and biasesShape.
+    //
+    // Note: Even if ( this.outputChannelCount <= 0 ), this function should work correctly as pass-through input to output.
+    // In fact, this condition is used for all-pass-through-shuffle.
     {
       this.filtersShape =  [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
       if ( this.bBias )
