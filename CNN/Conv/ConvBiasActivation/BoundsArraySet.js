@@ -133,9 +133,9 @@ class BoundsArraySet {
 
     for ( let outChannel = 0; outChannel < this.afterBias.lowers.length; ++outChannel ) {
 
-      // 5. Determine .activationEscaping_ScaleArraySet
+      // 1. Determine .activationEscaping_ScaleArraySet
       {
-        // 5.1 Determine .do
+        // 1.1 Determine .do
 
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
 
@@ -169,18 +169,18 @@ class BoundsArraySet {
           }
         }
 
-        // 5.2 Determine .undo (Prepared for the next convolution-bias-activation. Not for this.)
+        // 1.2 Determine .undo (Prepared for the next convolution-bias-activation. Not for this.)
         this.activationEscaping_ScaleArraySet.undo.set_one_byUndo_ScaleArray(
           outChannel, this.activationEscaping_ScaleArraySet.do, outChannel );
       }
 
-      // 6. Determine .afterActivationEscaping
+      // 2. Determine .afterActivationEscaping
       this.afterActivationEscaping
         .set_one_byBoundsArray( outChannel, this.afterBias, outChannel )
         .multiply_one_byNs( outChannel, this.activationEscaping_ScaleArraySet.do.scales, outChannel );
     }
 
-    // 7. Determine .afterActivation
+    // 3. Determine .afterActivation
     {
       // If no activation function, the output range is determined by .afterActivationEscaping.
       if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
