@@ -127,9 +127,6 @@ import { BoundsArraySet } from  "./Pointwise_BoundsArraySet.js";
 
 //!!! ...unfinished... (2022/01/08)
 
- * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputFloat32Array and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputFloat32Array.
  *
  * @member {number[]} filtersShape
  *   The shape of the pointwise convolution filters array.
