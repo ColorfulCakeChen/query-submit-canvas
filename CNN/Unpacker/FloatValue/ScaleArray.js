@@ -22,6 +22,19 @@ class ScaleArray {
   }
 
   /**
+   * Swap two scales by indexes.
+   *
+   * @param {number} index1  The 1st array index whose scale will be swapped.
+   * @param {number} index2  The 2nd array index whose scale will be swapped.
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  swap_two( index1, index2 ) {
+    let scale1 = this.scales[ index1 ]; this.scales[ index1 ] = this.scales[ index2 ]; this.scales[ index2 ] = scale1;
+    return this;
+  }
+
+  /**
    * @param {number} thisIndex  The array index of this.scales[].
    * @param {number} N          Set ( this.scales[ thisIndex ] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).
    *
