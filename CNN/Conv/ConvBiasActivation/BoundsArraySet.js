@@ -208,25 +208,24 @@ class BoundsArraySet {
   }
 
   /**
-   * Swap output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation, .activationEscaping_ScaleArraySet,
-   * .bPassThrough).
+   * Rearrange output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation,
+   * .activationEscaping_ScaleArraySet, .bPassThrough) by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
    *
-   * @param {number} outChannel1  The 1st output channel index whose information will be swapped.
-   * @param {number} outChannel2  The 2nd output channel index whose information will be swapped.
+   * @param {Array} arrayTemp
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance.
+   *
+   * @return {BoundsArraySet}
+   *   Return this (modified) object.
    */
-  swap_two_output( outChannel1, outChannel2 ) {
-    this.afterFilter.swap_two( outChannel1, outChannel2 );
-    this.afterBias.swap_two( outChannel1, outChannel2 );
-    this.afterActivationEscaping.swap_two( outChannel1, outChannel2 );
-    this.afterActivation.swap_two( outChannel1, outChannel2 );
-
-    this.activationEscaping_ScaleArraySet.swap_two( outChannel1, outChannel2 );
-
-    {
-      let bPassThrough1 = this.bPassThrough[ outChannel1 ];
-      this.bPassThrough[ outChannel1 ] = this.bPassThrough[ outChannel2 ];
-      this.bPassThrough[ outChannel2 ] = bPassThrough1;
-    }
+  interleave_asGrouptTwo( arrayTemp ) {
+    this.afterFilter.interleave_asGrouptTwo( arrayTemp );
+    this.afterBias.interleave_asGrouptTwo( arrayTemp );
+    this.afterActivationEscaping.interleave_asGrouptTwo( arrayTemp );
+    this.afterActivation.interleave_asGrouptTwo( arrayTemp );
+    this.activationEscaping_ScaleArraySet.interleave_asGrouptTwo( arrayTemp );
+    FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.bPassThrough, 0, this.bPassThrough.length, arrayTemp );
+    return this;
   }
 
   get output() {
