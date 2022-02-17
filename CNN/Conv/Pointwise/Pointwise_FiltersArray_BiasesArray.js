@@ -373,8 +373,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     {
       // Round 0
       {
-//!!! ...unfinished... (2022/02/17) What if ( outputChannelCount <= 0 )?
-    this.boundsArraySet = new BoundsArraySet( inputChannelCount, outputChannelCount );
+        this.boundsArraySet = new BoundsArraySet( this.inputChannelCount, this.outputChannelCount_Real );
         
         // Determine .input
         this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
