@@ -325,7 +325,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           break;
       }
 
-      this.filtersShape =  [ 1, 1, this.inputChannelCount, this.outputChannelCount_Real ];
+      this.filtersShape = [ 1, 1, this.inputChannelCount, this.outputChannelCount_Real ];
       filtersShape_extracted = [ 1, 1, this.inputChannelCount_toBeExtracted, this.outputChannelCount_toBeExtracted  ];
 
       if ( this.bBias ) {
