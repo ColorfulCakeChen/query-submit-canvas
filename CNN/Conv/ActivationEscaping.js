@@ -1,7 +1,6 @@
 export { ScaleArraySet };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
-//import * as ConvBiasActivation from "./ConvBiasActivation.js";
 
 /**
  * Several scale arrays for escaping a value bounds from being activated (i.e. being non-linearized) by activation function.
@@ -142,6 +141,20 @@ class ScaleArraySet {
   set_all_byScaleArraySet( aScaleArraySet ) {
     this.do.set_all_byScaleArray( aScaleArraySet.do );
     this.undo.set_all_byScaleArray( aScaleArraySet.undo );
+    return this;
+  }
+
+  /**
+   * Swap two information.
+   *
+   * @param {number} index1  The 1st array index whose information will be swapped.
+   * @param {number} index2  The 2nd array index whose information will be swapped.
+   *
+   * @return {ScaleArraySet} Return this (modified) object.
+   */
+  swap_two( index1, index2 ) {
+    this.do.swap_two( index1, index2 );
+    this.undo.swap_two( index1, index2 );
     return this;
   }
 
