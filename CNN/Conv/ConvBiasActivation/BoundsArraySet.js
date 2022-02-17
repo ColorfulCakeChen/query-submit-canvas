@@ -83,7 +83,7 @@ class BoundsArraySet {
     this.afterActivationEscaping.set_all_byBounds( aBounds );
     this.afterActivation.set_all_byBounds( aBounds );
     this.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
-    this.bPassThrough[ i ].fill( false ); // Assume all are not pass-through.
+    this.bPassThrough.fill( false ); // Assume all are not pass-through.
     return this;
   }
 
