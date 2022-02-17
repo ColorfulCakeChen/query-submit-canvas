@@ -352,13 +352,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_Real, true ) ];
           }
 
-//!!! ...unfinished... (2022/01/08) how to shuffle? this.output_interleave_asGrouptTwo()
+//!!! ...unfinished... (2022/02/17) should be shuffled after extracting done. 
 
           // 3.4.1.2 bHigherHalfPassThroughShuffle
           // 3.4.2.2 bAllPassThroughShuffle
           if ( bExtractOk ) {
             if ( this.channelShuffler_outputGroupCount > 0 ) {
-              Base.shuffle_filters_biases.call( this ); // Pre-shuffle channels by shuffling the filters and biases.
+              this.output_interleave_asGrouptTwo(); // Pre-shuffle channels by shuffling the filters and biases.
             }
           }
           break;
