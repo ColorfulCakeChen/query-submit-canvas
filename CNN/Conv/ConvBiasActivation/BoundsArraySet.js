@@ -218,7 +218,7 @@ class BoundsArraySet {
    * @return {BoundsArraySet}
    *   Return this (modified) object.
    */
-  interleave_asGrouptTwo( arrayTemp ) {
+  output_interleave_asGrouptTwo( arrayTemp ) {
     this.afterFilter.interleave_asGrouptTwo( arrayTemp );
     this.afterBias.interleave_asGrouptTwo( arrayTemp );
     this.afterActivationEscaping.interleave_asGrouptTwo( arrayTemp );
