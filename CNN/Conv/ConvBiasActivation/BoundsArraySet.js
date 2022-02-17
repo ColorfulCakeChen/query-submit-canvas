@@ -156,7 +156,7 @@ class BoundsArraySet {
 
             let doEscapingScale = this.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
             tf.util.assert( ( Number.isNaN( doEscapingScale ) == false ),
-              `ConvBiasActivation.BoundsArraySet. `
+              `ConvBiasActivation.BoundsArraySet.`
                 + `set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId(): `
                 + `this.activationEscaping_ScaleArraySet.do.scales[ ${outChannel} ] ( ${doEscapingScale} ) `
                 + `should not be NaN. `
