@@ -207,6 +207,28 @@ class BoundsArraySet {
     return this;
   }
 
+  /**
+   * Swap output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation, .activationEscaping_ScaleArraySet,
+   * .bPassThrough).
+   *
+   * @param {number} outChannel1  The 1st output channel index whose information will be swapped.
+   * @param {number} outChannel2  The 2nd output channel index whose information will be swapped.
+   */
+  swap_two_output( outChannel1, outChannel2 ) {
+    this.afterFilter.swap_two( outChannel1, outChannel2 );
+    this.afterBias.swap_two( outChannel1, outChannel2 );
+    this.afterActivationEscaping.swap_two( outChannel1, outChannel2 );
+    this.afterActivation.swap_two( outChannel1, outChannel2 );
+
+    this.activationEscaping_ScaleArraySet.swap_two( outChannel1, outChannel2 );
+
+    {
+      let bPassThrough1 = this.bPassThrough[ outChannel1 ];
+      this.bPassThrough[ outChannel1 ] = this.bPassThrough[ outChannel2 ];
+      this.bPassThrough[ outChannel2 ] = bPassThrough1;
+    }
+  }
+
   get output() {
     return this.afterActivation;
   }
