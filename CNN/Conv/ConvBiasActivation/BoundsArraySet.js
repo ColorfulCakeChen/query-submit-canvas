@@ -207,33 +207,6 @@ class BoundsArraySet {
     return this;
   }
 
-
-//!!! (2022/01/07 Remarked) seems not used. because needs channel by channel
-//   /**
-//    * Set this.afterActivation according to this.afterActivationEscaping and the specified nActivationId.
-//    *
-//    * @param {number} nActivationId
-//    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the bias operation.
-//    *
-//    *     - If ( nActivationId == ValueDesc.ActivationFunction.Singletion.Ids.NONE ), this.afterActivation will be the same
-//    *         as this.afterActivationEscaping.
-//    *
-//    *     - Otherwise, this.afterActivation will be the same as the output range of the activation function.
-//    */
-//   set_afterActivation_by_afterActivationEscaping_ActivationId( nActivationId ) {
-//
-//     // If there is no activation function, the output range is determined by input domain, filters, biases.
-//     if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-//       this.afterActivation.set_all_byBoundsArray( this.afterActivationEscaping );
-//
-//     // Otherwise, the activation function dominates the output range.
-//     } else {
-//       let info = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
-//       this.afterActivation.set_all_byBounds( info.outputRange );
-//     }
-//
-//   }
-
   get output() {
     return this.afterActivation;
   }
