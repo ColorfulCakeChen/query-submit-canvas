@@ -31,6 +31,20 @@ class BoundsArray {
   }
 
   /**
+   * Swap two bounds by indexes.
+   *
+   * @param {number} index1  The 1st array index whose bounds will be swapped.
+   * @param {number} index2  The 2nd array index whose bounds will be swapped.
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  swap_two( index1, index2 ) {
+    let lower1 = this.lowers[ index1 ]; this.lowers[ index1 ] = this.lowers[ index2 ]; this.lowers[ index2 ] = lower1;
+    let upper1 = this.uppers[ index1 ]; this.uppers[ index1 ] = this.uppers[ index2 ]; this.uppers[ index2 ] = upper1;
+    return this;
+  }
+
+  /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} N          Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
    *
