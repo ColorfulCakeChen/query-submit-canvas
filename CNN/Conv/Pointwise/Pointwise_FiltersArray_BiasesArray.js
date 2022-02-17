@@ -625,20 +625,36 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
   }
 
   /**
-   * Shuffle (.filtersArray, .biasesArray, .boundsArraySet).
+   * Shuffle (.filtersArray, .biasesArray, .boundsArraySet) by interleaving.
    *   - Only ( outputGroupCount == 2 ) is supported.
    *   - The output channel count must be even (i.e. divisible by 2).
    *
    *
    */
-  shuffle_outputGroupCountTwo() {
+  interleave_asGrouptTwo() {
+
+    tf.util.assert( ( this.channelShuffler_outputGroupCount == 2 ),
+      `Pointwise.FiltersArray_BiasesArray.interleave_byGrouptTwo(): `
+        + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) only 2 is supported.`
+    );
+
+    tf.util.assert( ( ( this.outputChannelCount % 2 ) == 0 ),
+      `Pointwise.FiltersArray_BiasesArray.interleave_byGrouptTwo(): `
+        + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
+    );
+
+
+    let arrayTemp = new Array();
 
 //!!! ...unfinished... (2022/02/17)
 
     this.filtersArray
     this.biasesArray
 
-    this.boundsArraySet.swap_two_output();
+    FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.filtersArray, 0?, this.filtersArray.length?, arrayTemp );
+    FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.biasesArray, 0?, this.biasesArray.length?, arrayTemp );
+
+    this.boundsArraySet.interleave_asGrouptTwo( arrayTemp );
 
   }
 
