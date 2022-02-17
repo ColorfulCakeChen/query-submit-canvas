@@ -140,7 +140,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
     super();
-    this.boundsArraySet = new BoundsArraySet();
+//!!! ...unfinished... (2022/02/17) What if ( outputChannelCount <= 0 )?
+    this.boundsArraySet = new BoundsArraySet( inputChannelCount, outputChannelCount );
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
