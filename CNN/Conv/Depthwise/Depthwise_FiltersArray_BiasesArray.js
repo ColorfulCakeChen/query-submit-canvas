@@ -93,7 +93,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
-    this.boundsArraySet = new BoundsArraySet( inputChannelCount, this.outputChannelCount );
     this.bBias = bBias;
     this.nActivationId = nActivationId;
     this.nHigherHalfDifferent = nHigherHalfDifferent;
@@ -187,8 +186,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     {
       if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
 
-        this.outputChannelCount = this.inputChannelCount; // No channel multiplier.
-
         // In normal depthwise avg/max pooling, use specified specified channel count as extracted channel count.
         // Although they are not used to extract avg/max filters, they will be used for extracting bias.
         this.inputChannelCount_toBeExtracted = this.inputChannelCount;
@@ -202,23 +199,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
       } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
 
-        this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
-        if ( this.bBias )
-          this.biasesShape = [ this.outputChannelCount ];
-
         switch ( this.nHigherHalfDifferent ) {
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
-            this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount;
             inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount ) ];
-            filtersShape_extracted = this.filtersShape;
-            biasesShape_extracted =  this.biasesShape;
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
-
-            this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
             tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ),
               `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfDepthwise2(): `
@@ -237,13 +225,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             inChannelPartInfoArray = [
               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount           ) ];
-            filtersShape_extracted = this.filtersShape;
-            biasesShape_extracted =  this.biasesShape;
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
-
-            this.outputChannelCount = this.inputChannelCount * this.AvgMax_Or_ChannelMultiplier;
 
             tf.util.assert( ( this.inputChannelCount_lowerHalf > 0 ),
               `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfPassThrough(): `
@@ -262,8 +246,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             inChannelPartInfoArray = [
               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
-            filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_lowerHalf, this.channelMultiplier ];
-            biasesShape_extracted =  [ this.outputChannelCount_lowerHalf ];
             break;
 
           default:
@@ -272,6 +254,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                 + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
             );
             break;
+        }
+
+        this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
+        filtersShape_extracted = [ this.filterHeight, this.filterWidth, this.inputChannelCount_toBeExtracted, this.channelMultiplier ];
+
+        if ( this.bBias ) {
+          this.biasesShape = [ this.outputChannelCount ];
+          biasesShape_extracted = [ this.outputChannelCount_toBeExtracted ];
         }
 
       } else { // No depthwise (i.e. zero) (so no channel multiplier).
@@ -318,6 +308,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     {
       // Round 0
       {
+        this.boundsArraySet = new BoundsArraySet( this.inputChannelCount, this.outputChannelCount );
+
         // Determine .input
         //
         // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
