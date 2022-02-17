@@ -291,17 +291,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
-
-          //!!! (2022/01/08 Remarked) Perhaps, treated as normal pointwise.
-          //// The channel count can not be halved (e.g. ( inputChannelCount == 1 ) or ( outputChannelCount == 1 ) ).
-          //tf.util.assert( ( ( 0 != this.inputChannelCount_higherHalf ) && ( 0 != this.outputChannelCount_higherHalf ) ),
-          //  `Pointwise.FiltersArray_BiasesArray.init(): `
-          //    + `When nHigherHalfDifferent ( ${ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getStringOf( this.nHigherHalfDifferent )} ) `
-          //    + `inputChannelCount_higherHalf ( ${this.inputChannelCount_higherHalf} ) and `
-          //    + `outputChannelCount_higherHalf ( ${this.outputChannelCount_higherHalf} ) `
-          //    + `can not be zero.`
-          //);
-
           inChannelPartInfoArray = [
             new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
             new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ) ];
@@ -325,7 +314,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             // the bAllPassThrough will be false.
 
           } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
-
             this.bAllPassThrough = true; // Marked for this special case.
             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
             this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
