@@ -236,6 +236,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         + `( ${previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales.length} ).`
     );
 
+    //
+    // Note: Even if ( this.outputChannelCount <= 0 ), this function should work correctly as pass-through input to output.
+    // In fact, this condition is used for all-pass-through-shuffle.
+    //
 
     this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
 
@@ -244,9 +248,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     let filtersShape_extracted, biasesShape_extracted;
 
     // Set up inChannelPartInfoArray and filtersShape and biasesShape.
-    //
-    // Note: Even if ( this.outputChannelCount <= 0 ), this function should work correctly as pass-through input to output.
-    // In fact, this condition is used for all-pass-through-shuffle.
     {
       this.filtersShape =  [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
       if ( this.bBias )
