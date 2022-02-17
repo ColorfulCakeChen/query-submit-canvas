@@ -1,8 +1,8 @@
 export { BoundsArray };
 
 import { Bounds } from "./Bounds.js";
-//import { ScaleTranslate } from "./ScaleTranslate.js";
 import { ScaleTranslateArray } from "./ScaleTranslateArray.js";
+import { ArrayInterleaver } from "./ArrayInterleaver.js";
 
 /**
  * Describe the [ lower, upper ] bounds of an array of floating-point values.
@@ -28,20 +28,6 @@ class BoundsArray {
     let result = new BoundsArray( this.lowers.length );
     result.set_all_byBoundsArray( this );
     return result;
-  }
-
-  /**
-   * Swap two bounds by indexes.
-   *
-   * @param {number} index1  The 1st array index whose bounds will be swapped.
-   * @param {number} index2  The 2nd array index whose bounds will be swapped.
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  swap_two( index1, index2 ) {
-    let lower1 = this.lowers[ index1 ]; this.lowers[ index1 ] = this.lowers[ index2 ]; this.lowers[ index2 ] = lower1;
-    let upper1 = this.uppers[ index1 ]; this.uppers[ index1 ] = this.uppers[ index2 ]; this.uppers[ index2 ] = upper1;
-    return this;
   }
 
   /**
@@ -626,6 +612,21 @@ class BoundsArray {
     if ( Number.isNaN( value ) )
       value = 0; // If NaN, view it as 0.
     return Math.max( this.lowers[ thisIndex ], Math.min( value, this.uppers[ thisIndex ] ) );
+  }
+
+  /**
+   * Rearrange bounds by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
+   *
+   * @param {Array} arrayTemp
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance.
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  interleave_asGrouptTwo( arrayTemp ) {
+    ArrayInterleaver.interleave_asGrouptTwo( this.lowers, 0, this.lowers.length, arrayTemp );
+    ArrayInterleaver.interleave_asGrouptTwo( this.uppers, 0, this.uppers.length, arrayTemp );
+    return this;
   }
 
 }
