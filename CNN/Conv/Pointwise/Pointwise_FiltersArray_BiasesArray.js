@@ -330,7 +330,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
       if ( this.bBias ) {
         this.biasesShape = [ this.outputChannelCount_Real ];
-        biasesShape_extracted =  [ this.outputChannelCount_toBeExtracted ];
+        biasesShape_extracted = [ this.outputChannelCount_toBeExtracted ];
       }
     }
 
