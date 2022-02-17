@@ -337,7 +337,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
       // Round 2
       this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
-      this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
     }
 
     {
