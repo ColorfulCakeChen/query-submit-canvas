@@ -145,16 +145,17 @@ class ScaleArraySet {
   }
 
   /**
-   * Swap two information.
+   * Rearrange elements by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
    *
-   * @param {number} index1  The 1st array index whose information will be swapped.
-   * @param {number} index2  The 2nd array index whose information will be swapped.
+   * @param {Array} arrayTemp
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance.
    *
    * @return {ScaleArraySet} Return this (modified) object.
    */
-  swap_two( index1, index2 ) {
-    this.do.swap_two( index1, index2 );
-    this.undo.swap_two( index1, index2 );
+  interleave_asGrouptTwo( arrayTemp ) {
+    this.do.interleave_asGrouptTwo( arrayTemp );
+    this.undo.interleave_asGrouptTwo( arrayTemp );
     return this;
   }
 
