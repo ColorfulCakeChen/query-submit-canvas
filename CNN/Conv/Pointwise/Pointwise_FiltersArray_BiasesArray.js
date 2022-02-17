@@ -140,8 +140,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount ) {
 
     super();
-//!!! ...unfinished... (2022/02/17) What if ( outputChannelCount <= 0 )?
-    this.boundsArraySet = new BoundsArraySet( inputChannelCount, outputChannelCount );
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
@@ -250,10 +248,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     // Set up inChannelPartInfoArray and filtersShape and biasesShape.
     {
-      this.filtersShape =  [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
-      if ( this.bBias )
-        this.biasesShape = [ this.outputChannelCount ];
-
       switch ( this.nHigherHalfDifferent ) {
         // 3.0 Normal pointwise convolution and bias.
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
@@ -331,8 +325,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           break;
       }
 
+      this.filtersShape =  [ 1, 1, this.inputChannelCount, this.outputChannelCount_Real ];
       filtersShape_extracted = [ 1, 1, this.inputChannelCount_toBeExtracted, this.outputChannelCount_toBeExtracted  ];
-      biasesShape_extracted =  [ this.outputChannelCount_toBeExtracted ];
+
+      if ( this.bBias ) {
+        this.biasesShape = [ this.outputChannelCount_Real ];
+        biasesShape_extracted =  [ this.outputChannelCount_toBeExtracted ];
+      }
     }
 
     // Prepare result filters and biases array.
@@ -374,6 +373,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     {
       // Round 0
       {
+//!!! ...unfinished... (2022/02/17) What if ( outputChannelCount <= 0 )?
+    this.boundsArraySet = new BoundsArraySet( inputChannelCount, outputChannelCount );
+        
         // Determine .input
         this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
 
