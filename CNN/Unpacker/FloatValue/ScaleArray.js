@@ -24,20 +24,6 @@ class ScaleArray {
   }
 
   /**
-   * Rearrange scales by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
-   *
-   * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
-   * and improve performance.
-   *
-   * @return {ScaleArray} Return this (modified) object.
-   */
-  interleave_asGrouptTwo( arrayTemp ) {
-    ArrayInterleaver.interleave_asGrouptTwo( this.scales, 0, this.scales.length, arrayTemp );
-    return this;
-  }
-
-  /**
    * @param {number} thisIndex  The array index of this.scales[].
    * @param {number} N          Set ( this.scales[ thisIndex ] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).
    *
@@ -165,6 +151,21 @@ class ScaleArray {
    */
   set_all_byUndo_ScaleArray( aScaleArray ) {
     return this.set_all_byUndo_Ns( aScaleArray.scales );
+  }
+
+
+  /**
+   * Rearrange scales by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
+   *
+   * @param {Array} arrayTemp
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance.
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  interleave_asGrouptTwo( arrayTemp ) {
+    ArrayInterleaver.interleave_asGrouptTwo( this.scales, 0, this.scales.length, arrayTemp );
+    return this;
   }
 
 
