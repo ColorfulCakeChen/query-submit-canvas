@@ -85,12 +85,6 @@ import { BoundsArraySet } from  "./Pointwise_BoundsArraySet.js";
  *          (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
  *          The output channels will be arranged just like applying channel shuffler on them.
  *
-
-//!!! ...unfinished... (2022/01/09)
-// In fact, AllPassThrough could be achieved without using special ( outputChannelCount <= 0 ).
-// Just using ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 )
-// is enough to do AllPassThrough.
-
  *    - 4.2 If ( outputChannelCount <= 0 ), the filters will just pass through all input channels to output. In this case,
  *        the ( bPointwise == bExisted == true ) (not false), although the specified outputChannelCount is zero. And, it
  *        will always have no biases (no matter how bBias is).
@@ -259,10 +253,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     // Set up inChannelPartInfoArray and filtersShape and biasesShape.
     {
-//!!! ...unfinished... (2022/01/08)
-//       this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-//       this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
-
       this.filtersShape =  [ 1, 1, this.inputChannelCount, this.outputChannelCount ];
       if ( this.bBias )
         this.biasesShape = [ this.outputChannelCount ];
@@ -335,12 +325,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ];
 
-          } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
+            // Note: If ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 ),
+            // the result should be the same as AllPassThrough without using special ( outputChannelCount <= 0 ). In that case, however,
+            // the bAllPassThrough will be false.
 
-//!!! ...unfinished... (2022/01/09)
-// In fact, AllPassThrough could be achieved without using special ( outputChannelCount <= 0 ).
-// Just using ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 )
-// is enough to do AllPassThrough.
+          } else { // ( outputChannelCount <= 0 ), // 3.4.2.1 bAllPassThrough
 
             this.bAllPassThrough = true; // Marked for this special case.
             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
@@ -360,9 +349,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       filtersShape_extracted = [ 1, 1, this.inputChannelCount_toBeExtracted, this.outputChannelCount_toBeExtracted  ];
       biasesShape_extracted =  [ this.outputChannelCount_toBeExtracted ];
     }
-
-//!!! ...unfinished... (2022/01/08)
-
 
     // Prepare result filters and biases array.
     if ( this.filtersShape )
