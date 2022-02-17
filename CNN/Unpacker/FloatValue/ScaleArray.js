@@ -1,5 +1,7 @@
 export { ScaleArray };
 
+import { ArrayInterleaver } from "./ArrayInterleaver.js";
+
 /**
  * Describe an array of scale (i.e. multiplier) values.
  *
@@ -22,15 +24,16 @@ class ScaleArray {
   }
 
   /**
-   * Swap two scales by indexes.
+   * Rearrange scales by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
    *
-   * @param {number} index1  The 1st array index whose scale will be swapped.
-   * @param {number} index2  The 2nd array index whose scale will be swapped.
+   * @param {Array} arrayTemp
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance.
    *
    * @return {ScaleArray} Return this (modified) object.
    */
-  swap_two( index1, index2 ) {
-    let scale1 = this.scales[ index1 ]; this.scales[ index1 ] = this.scales[ index2 ]; this.scales[ index2 ] = scale1;
+  interleave_asGrouptTwo( arrayTemp ) {
+    ArrayInterleaver.interleave_asGrouptTwo( this.scales, 0, this.scales.length, arrayTemp );
     return this;
   }
 
