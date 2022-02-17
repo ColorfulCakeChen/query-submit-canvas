@@ -352,7 +352,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_Real, true ) ];
           }
 
-//!!! ...unfinished... (2022/01/08) how to shuffle?
+//!!! ...unfinished... (2022/01/08) how to shuffle? this.output_interleave_asGrouptTwo()
 
           // 3.4.1.2 bHigherHalfPassThroughShuffle
           // 3.4.2.2 bAllPassThroughShuffle
@@ -631,7 +631,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    *
    *
    */
-  interleave_asGrouptTwo() {
+  output_interleave_asGrouptTwo() {
 
     tf.util.assert( ( this.channelShuffler_outputGroupCount == 2 ),
       `Pointwise.FiltersArray_BiasesArray.interleave_byGrouptTwo(): `
@@ -643,19 +643,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
     );
 
+    let arrayTemp = new Array( this.outputChannelCount );
 
-    let arrayTemp = new Array();
+    for ( let indexBegin = 0; i < this.inputChannelCount; indexBegin += this.outputChannelCount ) { // Shuffle filters.
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.filtersArray, indexBegin, this.outputChannelCount, arrayTemp );
+    }
 
-//!!! ...unfinished... (2022/02/17)
+    FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.biasesArray, 0, this.biasesArray.length, arrayTemp ); // Shuffle biases.
 
-    this.filtersArray
-    this.biasesArray
-
-    FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.filtersArray, 0?, this.filtersArray.length?, arrayTemp );
-    FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.biasesArray, 0?, this.biasesArray.length?, arrayTemp );
-
-    this.boundsArraySet.interleave_asGrouptTwo( arrayTemp );
-
+    this.boundsArraySet.output_interleave_asGrouptTwo( arrayTemp ); // Shuffle bounds array set of output.
   }
 
 }
