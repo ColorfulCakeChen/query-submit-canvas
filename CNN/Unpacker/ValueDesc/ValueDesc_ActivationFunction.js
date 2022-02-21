@@ -63,7 +63,7 @@ class ActivationFunction extends Int {
         new ActivationFunction.Info( 5, tf.cos, new FloatValue.Bounds( -1, +1 ),
           new FloatValue.Bounds( -( ( Math.PI / 2 ) + 0.005 ), -( ( Math.PI / 2 ) - 0.005 ) ), new FloatValue.Bounds( -0.005, +0.005 ) ),
 
-        new ActivationFunction.Info( 6, tf.sigmoid, new FloatValue.Bounds( 0, 1 )
+        new ActivationFunction.Info( 6, tf.sigmoid, new FloatValue.Bounds( 0, 1 ),
           new FloatValue.Bounds( -0.125, +0.125 ), new FloatValue.Bounds( +0.468, +0.532 ) ),
 
         // (2021/12/09)
