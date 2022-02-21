@@ -488,7 +488,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             }
 
             // Determine .afterFilter
-            tBounds.set_byBoundsArray( this.afterUndoPreviousActivationEscaping, inChannel ).multiply_byN( this.filtersArray[ filterIndex ] );
+            tBounds
+              .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+              .multiply_byN( this.filtersArray[ filterIndex ] );
+
             this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
             ++filterIndex;
