@@ -61,9 +61,6 @@ class Base extends ReturnOrClone.Base {
 
     try {
       let t = tf.tensor( tensorWeights.weights, tensorShape );
-//!!! (2021/12/27 Remarked)
-//      let elementCount = tf.util.sizeFromShape( t.shape );
-//      this.tensorWeightCountExtracted += elementCount;
       this.tensorWeightCountExtracted += tensorWeights.weightCount; // (i.e. elementCount)
       return t;
 
@@ -72,6 +69,46 @@ class Base extends ReturnOrClone.Base {
       return null;
     }
   }
+
+// (2022/02/21) Replaced by Pointwise_FiltersArray_BiasesArray.js
+//
+//   /**
+//    * Extract pointwise convolution filters from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
+//    *   - this.byteOffsetEnd
+//    *   - this.tensorWeightCountExtracted
+//    *
+//    * @param {Base} this                       The Base object to be modified.
+//    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+//    * @param {number} inputChannelCount        The input channel count of the pointwise convolution filters.
+//    * @param {number} outputChannelCount       The output channel count of the pointwise convolution filters.
+//    *
+//    * @return {tf.tensor4d}                    The extracted depthwise filters. Return null, if failed.
+//    */
+//   static extractFilters_Pointwise( inputFloat32Array, inputChannelCount, outputChannelCount ) {
+//     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
+//     return Base.extractTensor.call( this, inputFloat32Array, filtersShape );
+//   }
+
+// (2022/02/21) Replaced by Depthwise_FiltersArray_BiasesArray.js
+//
+//   /**
+//    * Extract depthwise convolution filters from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
+//    *   - this.byteOffsetEnd
+//    *   - this.tensorWeightCountExtracted
+//    *
+//    * @param {Base} this                       The Base object to be modified.
+//    * @param {Float32Array} inputFloat32Array  A Float32Array whose values will be interpreted as weights.
+//    * @param {number} filterHeight             The height of the depthwise convolution filters.
+//    * @param {number} filterWidth              The width of the depthwise convolution filters.
+//    * @param {number} inputChannelCount        The input channel count of the depthwise convolution filters.
+//    * @param {number} channelMultiplier        The channel multiplier of the depthwise convolution filters.
+//    *
+//    * @return {tf.tensor4d}                    The extracted depthwise filters. Return null, if failed.
+//    */
+//   static extractFilters_Depthwise( inputFloat32Array, filterHeight, filterWidth, inputChannelCount, channelMultiplier ) {
+//     let filtersShape = [ filterHeight, filterWidth, inputChannelCount, channelMultiplier ];
+//     return Base.extractTensor.call( this, inputFloat32Array, filtersShape );
+//   }
 
   /**
    * Extract biases from inputFloat32Array (at this.byteOffsetEnd). The following data members will be modified:
