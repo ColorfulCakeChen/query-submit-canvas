@@ -87,7 +87,7 @@ class Case extends Base {
 
         // Test .set_one_byUndo_N()
         let indexRand = RandTools.getRandomIntInclusive( 0, ( arrayLength - 1 ) );
-        undoScaleArray.set_one_byUndo_N( indexRand, aScaleArray[ indexRand ], aScaleArray[ indexRand ] );
+        undoScaleArray.set_one_byUndo_N( indexRand, aScaleArray.scales[ indexRand ] );
 
         // Verify
         this.undoTest = {
