@@ -9,15 +9,18 @@ import * as FloatValue from "../Unpacker/FloatValue.js";
  */
 class Case {
 
-  constructor( aLowerUpper, bLowerUpper, N, clampedArray, addedArray, multipledArray, aMultipledNArray ) {
+  /**
+   * @param {number} caseId  The id of this test case.
+   */
+  constructor( caseId, aLowerUpper, bLowerUpper, N, clampedArray, addedArray, multipledArray, aMultipledNArray ) {
+    this.caseId = caseId;
+    this.aBounds = new FloatValue.Bounds( aLowerUpper[ 0 ], aLowerUpper[ 1 ] );
+    this.bBounds = new FloatValue.Bounds( bLowerUpper[ 0 ], bLowerUpper[ 1 ] );
     this.N = N;
     this.clampedArray = clampedArray;
     this.addedArray = addedArray;
     this.multipledArray = multipledArray;
     this.aMultipledNArray = aMultipledNArray;
-
-    this.aBounds = new FloatValue.Bounds( aLowerUpper[ 0 ], aLowerUpper[ 1 ] );
-    this.bBounds = new FloatValue.Bounds( bLowerUpper[ 0 ], bLowerUpper[ 1 ] );
 
     this.clampedBounds = this.aBounds.clone().clamp_byBounds( this.bBounds );
     this.addedBounds = this.aBounds.clone().add_byBounds( this.bBounds );
@@ -81,7 +84,8 @@ class Case {
   assert_lower_or_upper( strBoundsTestName, lower_or_upper_name, rhsArrayValue ) {
     let thisValue = this[ strBoundsTestName ][ lower_or_upper_name ];
     tf.util.assert( thisValue == rhsArrayValue, `jsPerf_FloatValue_Bounds.testCorrectness(): `
-      + `Case.${strBoundsTestName}.${lower_or_upper_name} ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
+      + `Case( caseId = ${this.caseId} ).${strBoundsTestName}.${lower_or_upper_name} `
+      + `( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
 }
 
@@ -91,9 +95,11 @@ class Case {
  */
 class Cases {
   /**
+   * @param {number} casesId     The id of this test cases.
    * @param {Case[]} aCaseArray  Multiple Case objects.
    */
-  constructor( aCaseArray ) {
+  constructor( casesId, aCaseArray ) {
+    this.casesId = casesId;
     this.aCaseArray = aCaseArray;
 
     this.tAssertNumberArray = [ 0, 0 ]; // For reducing momory allocation.
@@ -485,7 +491,8 @@ class Cases {
   assert_lowers_or_uppers( strBoundsArrayTestName, lowers_or_uppers_name, lhsArrayIndex, rhsArrayValue ) {
     let thisValue = this[ strBoundsArrayTestName ][ lowers_or_uppers_name ][ lhsArrayIndex ];
     tf.util.assert( thisValue == rhsArrayValue, `jsPerf_FloatValue_Bounds.testCorrectness(): `
-      + `Cases.${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] ( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
+      + `Cases( casesId = ${this.casesId} ).${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] `
+      + `( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
 
 }
@@ -493,32 +500,32 @@ class Cases {
 function testCorrectness() {
 
   let casesArray = [
-    new Cases( [
-      new Case( [  1,  2 ], [  3,  4 ],  5, [  3,  3 ], [  4,  6 ], [  3,  8 ], [   5,  10 ] ),
-      new Case( [ -1,  2 ], [  3,  4 ],  5, [  3,  3 ], [  2,  6 ], [ -4,  8 ], [  -5,  10 ] ),
-      new Case( [  1, -2 ], [  3,  4 ],  5, [  3,  3 ], [  1,  5 ], [ -8,  4 ], [ -10,   5 ] ),
-      new Case( [ -1, -2 ], [  3,  4 ],  5, [  3,  3 ], [  1,  3 ], [ -8, -3 ], [ -10,  -5 ] ),
+    new Cases( 0, [
+      new Case( 00, [  1,  2 ], [  3,  4 ],  5, [  3,  3 ], [  4,  6 ], [  3,  8 ], [   5,  10 ] ),
+      new Case( 01, [ -1,  2 ], [  3,  4 ],  5, [  3,  3 ], [  2,  6 ], [ -4,  8 ], [  -5,  10 ] ),
+      new Case( 02, [  1, -2 ], [  3,  4 ],  5, [  3,  3 ], [  1,  5 ], [ -8,  4 ], [ -10,   5 ] ),
+      new Case( 03, [ -1, -2 ], [  3,  4 ],  5, [  3,  3 ], [  1,  3 ], [ -8, -3 ], [ -10,  -5 ] ),
     ] ),
 
-    new Cases( [
-      new Case( [  1,  2 ], [ -3,  4 ], -5, [  1,  2 ], [ -2,  6 ], [ -6,  8 ], [ -10,  -5 ] ),
-      new Case( [ -1,  2 ], [ -3,  4 ], -5, [ -1,  2 ], [ -4,  6 ], [ -6,  8 ], [ -10,   5 ] ),
-      new Case( [  1, -2 ], [ -3,  4 ], -5, [ -2,  1 ], [ -5,  5 ], [ -8,  6 ], [  -5,  10 ] ),
-      new Case( [ -1, -2 ], [ -3,  4 ], -5, [ -1, -2 ], [ -5,  3 ], [ -8,  6 ], [   5,  10 ] ),
+    new Cases( 1, [
+      new Case( 10, [  1,  2 ], [ -3,  4 ], -5, [  1,  2 ], [ -2,  6 ], [ -6,  8 ], [ -10,  -5 ] ),
+      new Case( 11, [ -1,  2 ], [ -3,  4 ], -5, [ -1,  2 ], [ -4,  6 ], [ -6,  8 ], [ -10,   5 ] ),
+      new Case( 12, [  1, -2 ], [ -3,  4 ], -5, [ -2,  1 ], [ -5,  5 ], [ -8,  6 ], [  -5,  10 ] ),
+      new Case( 13, [ -1, -2 ], [ -3,  4 ], -5, [ -1, -2 ], [ -5,  3 ], [ -8,  6 ], [   5,  10 ] ),
     ] ),
 
-    new Cases( [
-      new Case( [  1,  2 ], [  3, -4 ],  5, [  1,  2 ], [ -3,  5 ], [ -8,  6 ], [   5,  10 ] ),
-      new Case( [ -1,  2 ], [  3, -4 ],  5, [ -1,  2 ], [ -5,  5 ], [ -8,  6 ], [  -5,  10 ] ),
-      new Case( [  1, -2 ], [  3, -4 ],  5, [ -2,  1 ], [ -6,  4 ], [ -6,  8 ], [ -10,   5 ] ),
-      new Case( [ -1, -2 ], [  3, -4 ],  5, [ -1, -2 ], [ -6,  2 ], [ -6,  8 ], [ -10,  -5 ] ),
+    new Cases( 2, [
+      new Case( 20, [  1,  2 ], [  3, -4 ],  5, [  1,  2 ], [ -3,  5 ], [ -8,  6 ], [   5,  10 ] ),
+      new Case( 21, [ -1,  2 ], [  3, -4 ],  5, [ -1,  2 ], [ -5,  5 ], [ -8,  6 ], [  -5,  10 ] ),
+      new Case( 22, [  1, -2 ], [  3, -4 ],  5, [ -2,  1 ], [ -6,  4 ], [ -6,  8 ], [ -10,   5 ] ),
+      new Case( 23, [ -1, -2 ], [  3, -4 ],  5, [ -1, -2 ], [ -6,  2 ], [ -6,  8 ], [ -10,  -5 ] ),
     ] ),
 
-    new Cases( [
-      new Case( [  1,  2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -3, -1 ], [ -8, -3 ], [ -10,  -5 ] ),
-      new Case( [ -1,  2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -5, -1 ], [ -8,  4 ], [ -10,   5 ] ),
-      new Case( [  1, -2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -6, -2 ], [ -4,  8 ], [  -5,  10 ] ),
-      new Case( [ -1, -2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -6, -4 ], [  3,  8 ], [   5,  10 ] ),
+    new Cases( 3, [
+      new Case( 30, [  1,  2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -3, -1 ], [ -8, -3 ], [ -10,  -5 ] ),
+      new Case( 31, [ -1,  2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -5, -1 ], [ -8,  4 ], [ -10,   5 ] ),
+      new Case( 32, [  1, -2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -6, -2 ], [ -4,  8 ], [  -5,  10 ] ),
+      new Case( 33, [ -1, -2 ], [ -3, -4 ], -5, [ -3, -3 ], [ -6, -4 ], [  3,  8 ], [   5,  10 ] ),
     ] ),
   ];
 
