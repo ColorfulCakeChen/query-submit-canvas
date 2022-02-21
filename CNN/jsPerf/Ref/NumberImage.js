@@ -20,12 +20,17 @@ import * as Depthwise from "../../Conv/Depthwise.js";
  */
 class Base {
 
-  constructor( height, width, depth, dataArray, boundsArraySet = new ConvBiasActivation.BoundsArraySet( depth, depth ) ) {
+  constructor( height, width, depth, dataArray, boundsArraySet ) {
     this.height = height;
     this.width = width;
     this.depth = depth;
     this.dataArray = dataArray;
     this.boundsArraySet = boundsArraySet;
+
+    if ( !this.boundsArraySet ) { // A default bounds for an image.
+      this.boundsArraySet = new ConvBiasActivation.BoundsArraySet( depth, depth );
+      this.boundsArraySet.set_all_byBounds( Weights.Base.ValueBounds ); // Assume all images are inside the default value bounds.
+    }
   }
 
   clone() {
