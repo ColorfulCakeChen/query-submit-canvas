@@ -1,3 +1,5 @@
+// (2022/02/21) Deprecated by Depthwise_FiltersArray_BiasesArray.js
+
 export { PassThrough_FiltersArray_BiasesArray, PassThrough };
 
 import * as TwoTensors from "../../util/TwoTensors.js";
