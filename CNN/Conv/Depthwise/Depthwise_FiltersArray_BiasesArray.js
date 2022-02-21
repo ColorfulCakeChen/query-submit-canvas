@@ -127,6 +127,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    *   - this.byteOffsetBegin
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
    *   - this.boundsArraySet
    *   - this.poolWindowShape ( if ( this.AvgMax_Or_ChannelMultiplier < 0 ) )
    *   - this.filtersShape    ( if ( this.AvgMax_Or_ChannelMultiplier > 0 ) )
