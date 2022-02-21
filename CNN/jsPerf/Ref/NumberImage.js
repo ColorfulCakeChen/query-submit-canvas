@@ -15,21 +15,23 @@ import * as Depthwise from "../../Conv/Depthwise.js";
  * @member {number}   depth     Image channel count
  * @member {number[]|Float32Array} dataArray Image data
  *
- * @member {ConvBiasActivation.ValueBoundsSet} valueBoundsSet
+ * @member {ConvBiasActivation.BoundsArraySet} boundsArraySet
  *   The element value bounds set of the pointwise or depthwise convolution.
  */
 class Base {
 
-  constructor( height, width, depth, dataArray, valueBoundsSet = new ConvBiasActivation.ValueBoundsSet() ) {
+  constructor( height, width, depth, dataArray,
+    boundsArraySet = new ConvBiasActivation.BoundsArraySet( inputChannelCount???, outputChannelCount??? ) ) {
+
     this.height = height;
     this.width = width;
     this.depth = depth;
     this.dataArray = dataArray;
-    this.valueBoundsSet = valueBoundsSet;
+    this.boundsArraySet = boundsArraySet;
   }
 
   clone() {
-    let result = new Base( this.height, this.width, this.depth, new Float32Array( this.dataArray ), this.valueBoundsSet.clone() );
+    let result = new Base( this.height, this.width, this.depth, new Float32Array( this.dataArray ), this.boundsArraySet.clone() );
     return result;
   }
 
@@ -57,16 +59,19 @@ class Base {
 
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
     let imageOut = new Base(
-      imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ), new Pointwise.ValueBoundsSet() );
+      imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
+      new Pointwise.BoundsArraySet( inputChannelCount???, outputChannelCount??? ) );
+
+//!!! ...unfinished... (2022/02/21)
 
     // Determine element value bounds.
     {
-      imageOut.valueBoundsSet.reset_byBounds( imageIn.valueBoundsSet.output );
+      imageOut.boundsArraySet.reset_byBounds( imageIn.boundsArraySet.output );
 
       // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
       const filtersValueBounds = Weights.Base.ValueBounds;
 
-      imageOut.valueBoundsSet.beforeActivation.multiply_all_byBounds( filtersValueBounds )
+      imageOut.boundsArraySet.beforeActivation.multiply_all_byBounds( filtersValueBounds )
         .multiply_all_byN( imageIn.depth ); // Every pointwise output channel is composed of all input channel.
     }
 
@@ -97,7 +102,7 @@ class Base {
     imageOut.modifyByBias( bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
     // Activation
-    imageOut.modifyByActivation( pointwiseActivationId, imageIn.valueBoundsSet, parametersDesc );
+    imageOut.modifyByActivation( pointwiseActivationId, imageIn.boundsArraySet, parametersDesc );
 
     return imageOut;
   }
@@ -144,18 +149,20 @@ class Base {
     }
 
     let imageOut = new Base(
-      outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ), new Depthwise.ValueBoundsSet() );
+      outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ),
+      new Depthwise.BoundsArraySet( inputChannelCount???, outputChannelCount??? ) );
 
+//!!! ...unfinished... (2022/02/21)
     // Determine element value bounds.
     {
-      imageOut.valueBoundsSet.reset_byBounds( imageIn.valueBoundsSet.output );
+      imageOut.boundsArraySet.reset_byBounds( imageIn.boundsArraySet.output );
 
       // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
       const filtersValueBounds = Weights.Base.ValueBounds;
 
       // Note: For maximum pooling, the multiply_Bounds is a little bit overestimated (but should be acceptable).
       let filterSize = depthwiseFilterHeight * depthwiseFilterWidth;
-      imageOut.valueBoundsSet.beforeActivation.multiply_all_byBounds( filtersValueBounds )
+      imageOut.boundsArraySet.beforeActivation.multiply_all_byBounds( filtersValueBounds )
         .multiply_all_byN( filterSize ); // Every depthwise output pixel is composed of all of a filter.
     }
 
@@ -251,7 +258,7 @@ class Base {
     imageOut.modifyByBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
     // Activation
-    imageOut.modifyByActivation( depthwiseActivationId, imageIn.valueBoundsSet, parametersDesc );
+    imageOut.modifyByActivation( depthwiseActivationId, imageIn.boundsArraySet, parametersDesc );
 
     return imageOut;
   }
@@ -294,10 +301,11 @@ class Base {
       }
     }
 
+//!!! ...unfinished... (2022/02/21)
     {
       // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
       const biasesValueBounds = Weights.Base.ValueBounds;
-      imageIn.valueBoundsSet.beforeActivation.add_byBounds( biasesValueBounds );
+      imageIn.boundsArraySet.beforeActivation.add_byBounds( biasesValueBounds );
     }
 
     return imageIn;
@@ -307,7 +315,7 @@ class Base {
    * @param {NumberImage.Base} this      The source image to be processed.
    * @param {string}   nActivationId     The name string of this activation function.
    *
-   * @param {ConvBiasActivation.ValueBoundsSet} previous_ConvBiasActivation_ValueBoundsSet
+   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
    *   The element value bounds set of previous pointwise/depthwise convolution.
    *
    * @param {string}   parametersDesc A string for debug message of this point-depth-point.
@@ -317,16 +325,17 @@ class Base {
    * just the original this.dataArray directly (when no activation function). Or, it may be a new Float32Array (when having activation
    * function).
    */
-  modifyByActivation( nActivationId, previous_ConvBiasActivation_ValueBoundsSet, parametersDesc ) {
+  modifyByActivation( nActivationId, previous_ConvBiasActivation_BoundsArraySet, parametersDesc ) {
 
     let imageIn = this;
 
+//!!! ...unfinished... (2022/02/21)
     // Determine the element value bounds.
     {
-      imageIn.valueBoundsSet.set_output_by_beforeActivation_ActivationId( nActivationId );
+      imageIn.boundsArraySet.set_output_by_beforeActivation_ActivationId( nActivationId );
 
-      imageIn.valueBoundsSet.activationEscaping_ScaleTranslateSet.set_by_currentValueBoundsSet_previousActivationEscaping(
-        imageIn.valueBoundsSet, previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet );
+      imageIn.boundsArraySet.activationEscaping_ScaleTranslateSet.set_by_currentValueBoundsSet_previousActivationEscaping(
+        imageIn.boundsArraySet, previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet );
     }
 
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
@@ -394,16 +403,17 @@ class Base {
       resultArray
     );
 
+//!!! ...unfinished... (2022/02/21)
     {
-      imageOutNew.valueBoundsSet.input.set_byBoundsArray( this.valueBoundsSet.output );
+      imageOutNew.boundsArraySet.input.set_byBoundsArray( this.boundsArraySet.output );
 
-      imageOutNew.valueBoundsSet.output.set_byBoundsArray( this.valueBoundsSet.output );
-      imageOutNew.valueBoundsSet.output.add_byBoundsArray( another.valueBoundsSet.output );
+      imageOutNew.boundsArraySet.output.set_byBoundsArray( this.boundsArraySet.output );
+      imageOutNew.boundsArraySet.output.add_byBoundsArray( another.boundsArraySet.output );
 
       // Keep .beforeActivation the same as .output.
-      imageOutNew.valueBoundsSet.beforeActivation.set_byBoundsArray( imageOutNew.valueBoundsSet.output );
+      imageOutNew.boundsArraySet.beforeActivation.set_byBoundsArray( imageOutNew.boundsArraySet.output );
 
-      //imageOutNew.valueBoundsSet.activationEscaping_ScaleTranslateSet; // Keeps as default ( 1, 0 ).
+      //imageOutNew.boundsArraySet.activationEscaping_ScaleTranslateSet; // Keeps as default ( 1, 0 ).
     }
 
     return imageOutNew;
