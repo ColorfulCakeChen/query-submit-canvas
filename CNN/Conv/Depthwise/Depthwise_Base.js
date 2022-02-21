@@ -5,9 +5,9 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
-import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
-import { PassThrough } from "./Depthwise_PassThrough.js";
-import { BoundsArraySet } from "./Depthwise_BoundsArraySet.js";
+//import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
+//import { PassThrough } from "./Depthwise_PassThrough.js";
+//import { BoundsArraySet } from "./Depthwise_BoundsArraySet.js";
 import { FiltersArray_BiasesArray } from "./Depthwise_FiltersArray_BiasesArray.js";
 
 /**
@@ -82,28 +82,23 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
     this.disposeTensors();
 
-    this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
-
-//!!! (2021/12/27 Remarked) Parent class has done this.
-//     switch ( this.stridesPad ) {
-//       case 0:  this.strides = 1; this.pad = "valid"; break;
-//       default:
-//       case 1:  this.strides = 1; this.pad = "same";  break;
-//       case 2:  this.strides = 2; this.pad = "same";  break;
-//     }
-
     // 1.
 
     // 1.1 Determine operation functions.
     Base.Setup_bDepthwise_pfn.call( this );
 
-    // 1.2 Determine output value bounds (and activation escaping scale-translate).
-    this.boundsArraySet.set_by( previous_ConvBiasActivation_BoundsArraySet,
-      this.bDepthwise, this.filterHeight, this.filterWidth, this.bBias, this.nActivationId );
+//!!! (2022/02/21 Remarked) integrated into super class .init()
+//     // 1.2 Determine output value bounds (and activation escaping scale-translate).
+//     this.boundsArraySet.set_by( previous_ConvBiasActivation_BoundsArraySet,
+//       this.bDepthwise, this.filterHeight, this.filterWidth, this.bBias, this.nActivationId );
 
     let bExtractOk;
     if ( !this.bDepthwise ) {
       bExtractOk = true; // 2. no operation at all. No depthwise (e.g. zero or negative number) (so no channel multiplier, too).
+
+      this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
+      this.tensorWeightCountExtracted = this.tensorWeightCountTotal = 0;
+      this.boundsArraySet = previous_ConvBiasActivation_BoundsArraySet; // Bypass previous to next.
 
     } else {
 
