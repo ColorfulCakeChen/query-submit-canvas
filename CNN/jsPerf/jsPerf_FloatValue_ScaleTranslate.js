@@ -96,7 +96,7 @@ class Case extends Base {
 
         for ( let i = 0; i < arrayLength; ++i ) {
 
-          if ( Number.isNaN( undoScaleArray.scales[ i ] ) {
+          if ( Number.isNaN( undoScaleArray.scales[ i ] ) ) {
             debugger;
           }
 
