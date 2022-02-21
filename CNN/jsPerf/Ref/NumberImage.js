@@ -20,9 +20,7 @@ import * as Depthwise from "../../Conv/Depthwise.js";
  */
 class Base {
 
-  constructor( height, width, depth, dataArray,
-    boundsArraySet = new ConvBiasActivation.BoundsArraySet( inputChannelCount???, outputChannelCount??? ) ) {
-
+  constructor( height, width, depth, dataArray, boundsArraySet = new ConvBiasActivation.BoundsArraySet( depth, depth ) ) {
     this.height = height;
     this.width = width;
     this.depth = depth;
