@@ -198,6 +198,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    *   - this.byteOffsetBegin
    *   - this.byteOffsetEnd
    *   - this.tensorWeightCountExtracted
+   *   - this.tensorWeightCountTotal
    *   - this.boundsArraySet
    *   - this.filtersShape
    *   - this.filtersArray
