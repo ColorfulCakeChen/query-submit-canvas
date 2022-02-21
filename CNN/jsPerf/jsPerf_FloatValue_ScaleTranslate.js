@@ -87,7 +87,7 @@ class Case extends Base {
 
         // Test .set_one_byUndo_N()
         let indexRand = RandTools.getRandomIntInclusive( 0, ( arrayLength - 1 ) );
-        undoScaleArray.set_one_byUndo_N( aScaleArray[ indexRand ], aScaleArray[ indexRand ] );
+        undoScaleArray.set_one_byUndo_N( indexRand, aScaleArray[ indexRand ], aScaleArray[ indexRand ] );
 
         // Verify
         this.undoTest = {
@@ -102,7 +102,7 @@ class Case extends Base {
 
           let originalValue = RandTools.getRandomIntInclusive( -10, +10 );
           let changedValue = ( originalValue * aScaleArray.scales[ i ] );
-          this.undoTest.undoChangedValue = ( changedValue * undoScaleArray.scale );
+          this.undoTest.undoChangedValue = ( changedValue * undoScaleArray.scales[ i ] );
 
           this.assert_PropertyProperty_Value( "undoTest", "undoChangedValue", originalValue );
         }
