@@ -151,17 +151,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
   disposeTensors() {
     super.disposeTensors(); // Release filtersTensor4d and biasesTensor3d.
 
-    this.tensorWeightCountExtracted = 0;
     this.pfnOperationBiasActivation = this.pfnOperation = this.pfnActivation = null;
-
-    // (2021/10/27 Remarked) If these properties does not exist, assigning value (even undefined) to them will create them. This is un-wanted.
-    //this.outputChannelCount = this.strides = this.pad
-    //  = this.inputChannelCount_lowerHalf = this.outputChannelCount_lowerHalf
-    //  = this.inputChannelCount_higherHalf = this.outputChannelCount_higherHalf
-    //  = this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted
-    //  = this.imageInHeight = this.imageInWidth = this.imageInDepth
-    //  = this.poolWindowShape = this.filterHeight = this.filterWidth
-    //  = undefined;
 
     // If these properties does not exist, assigning value (even undefined) to them will create them. Avoid it.
     {
