@@ -106,6 +106,7 @@ class Case extends Base {
 
           this.assert_PropertyProperty_Value( "undoTest", "undoChangedValue", originalValue );
         }
+      }
     }
 
   }
