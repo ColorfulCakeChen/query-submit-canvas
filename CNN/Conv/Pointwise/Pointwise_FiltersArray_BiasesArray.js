@@ -627,7 +627,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.filtersArray, indexBegin, this.outputChannelCount, arrayTemp );
     }
 
-    FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.biasesArray, 0, this.biasesArray.length, arrayTemp ); // Shuffle biases.
+    if ( this.biasesArray )
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.biasesArray, 0, this.biasesArray.length, arrayTemp ); // Shuffle biases.
 
     this.boundsArraySet.output_interleave_asGrouptTwo( arrayTemp ); // Shuffle bounds array set of output.
   }
