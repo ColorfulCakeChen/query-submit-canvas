@@ -433,10 +433,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
   }
 
   /**
-   * Extract this.filtersArray and this.biasesArray from sourceWeights and apply this.boundsArraySet.activationEscaping_ScaleArraySet.undo.scales[].
-   * Also set the .afterFilter and .afterBias.
+   * Extract this.filtersArray and this.biasesArray from sourceFloat32Array and
+   * apply this.boundsArraySet.activationEscaping_ScaleArraySet.undo.scales[]. Also set the .afterFilter and .afterBias.
    *
-   * @param {Float32Array} sourceWeights
+   * @param {Float32Array} sourceFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
@@ -446,7 +446,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    *   The input channel range array which describe lower/higher half channels index range.
    */
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-    sourceWeights, previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray ) {
+    sourceFloat32Array, previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray ) {
 
     let tBounds = new FloatValue.Bounds( 0, 0 );
 
@@ -478,7 +478,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                 }
 
               } else { // Non-pass-through half channels.
-                this.filtersArray[ filterIndex ] = sourceWeights[ sourceIndex ] * undoPreviousEscapingScale;
+                this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
 
                 ++sourceIndex;
               }
@@ -523,7 +523,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             this.biasesArray[ biasIndex ] = 0;
 
           } else { // Non-pass-through half channels.
-            this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ];
+            this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
 
             // Determine .afterBias
             this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
