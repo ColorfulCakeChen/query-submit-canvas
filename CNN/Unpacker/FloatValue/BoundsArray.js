@@ -12,12 +12,24 @@ import { ArrayInterleaver } from "./ArrayInterleaver.js";
  *
  * @member {number[]} uppers
  *   The upper bound array of the range.
+ *
+ * @member {number} length
+ *   The length of this bound array. Setting it will change the length.
  */
 class BoundsArray {
 
   constructor( length ) {
     this.lowers = new Array( length );
     this.uppers = new Array( length );
+  }
+
+  get length() {
+    return this.lowers.length;
+  }
+
+  set length( newLength ) {
+    this.lowers.length = newLength;
+    this.uppers.length = newLength;
   }
 
   /**
