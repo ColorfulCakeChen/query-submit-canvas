@@ -155,11 +155,18 @@ class Base extends TestParams.Base {
 //     }
 
 //!!! ...untested... (2021/12/24)
-    // For ONE_INPUT_HALF_THROUGH (-5), the input and output channel count must be the same. Otherwise, the concat2-split-shuffle
-    // could not operate properly.
+    // For ONE_INPUT_HALF_THROUGH (-5).
     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+      
+      // The input and output channel count must be the same. Otherwise, the concat2-split-shuffle could not operate properly.
       if ( this.out.channelCount0_pointwise1Before != this.out.pointwise21ChannelCount )
         return false;
+
+      // The depthwise must not change the image's ( height, width ). Otherwise, the concat2-split-shuffle could not operate properly.
+      if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+        if ( this.out.depthwiseStridesPad != 1 )
+          return false; // Since ( strides != 1 ) or ( pad != "same" ), the image's ( height, width ) will be changed. Not workable. Skip it.
+      }
     }
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
