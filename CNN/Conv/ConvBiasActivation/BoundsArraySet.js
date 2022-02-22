@@ -110,6 +110,17 @@ class BoundsArraySet {
   }
 
   /**
+   * @param {BoundsArray} aBoundsArray
+   *   The BoundsArray to be copied. It will be copied to all BoundsArray in this object.
+   *
+   * @return {BoundsArraySet}
+   *   Return this (modified) object.
+   */
+  set_all_byBoundsArray( aBoundsArray ) {
+    return this.set_all_byBoundsArray_input_output( aBoundsArray, aBoundsArray );
+  }
+
+  /**
    * @param {BoundsArraySet} aBoundsArraySet
    *   The BoundsArraySet to be copied.
    *
