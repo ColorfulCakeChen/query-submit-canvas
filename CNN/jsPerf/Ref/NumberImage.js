@@ -185,7 +185,9 @@ class Base {
       } else { // For normal depthwise convolution, value bounds should be calculated by accumulation.
         imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
 
-        // If true, the .boundsArraySet.afterFilter for filter[ y ][ x ] is calculated.
+//!!! ...unfinished... (2022/02/22) where the outChannel?
+!!!
+        // If true, the .boundsArraySet.afterFilter for filter[ y ][ x ][ outChannel ] is calculated.
         filter_bBoundsCalculatedArrayArray = new Array( depthwiseFilterHeight );
         for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
           filter_bBoundsCalculatedArrayArray[ filterY ] = new Array( depthwiseFilterWidth );
