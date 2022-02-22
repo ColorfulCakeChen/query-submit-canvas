@@ -168,20 +168,31 @@ class Base {
 
     let imageOut = new Base(
       outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ),
-      new Depthwise.BoundsArraySet( inputChannelCount???, outputChannelCount??? ) );
+      new Depthwise.BoundsArraySet( imageIn.depth, outputChannelCount ) );
 
-//!!! ...unfinished... (2022/02/21)
-    // Determine element value bounds.
+    // Prepare value bounds of every output channels (i.e. .afterFilter).
+    let filter_bBoundsCalculatedArrayArray, tBounds;
     {
-      imageOut.boundsArraySet.reset_byBounds( imageIn.boundsArraySet.output );
+      imageOut.boundsArraySet.input.set_all_byBoundsArray( imageIn.boundsArraySet.output );
 
-      // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
-      const filtersValueBounds = Weights.Base.ValueBounds;
+      // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
+      imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input );
 
-      // Note: For maximum pooling, the multiply_Bounds is a little bit overestimated (but should be acceptable).
-      let filterSize = depthwiseFilterHeight * depthwiseFilterWidth;
-      imageOut.boundsArraySet.beforeActivation.multiply_all_byBounds( filtersValueBounds )
-        .multiply_all_byN( filterSize ); // Every depthwise output pixel is composed of all of a filter.
+      if ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ) { // For avg/max pooling, the value bounds will not change.
+        imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
+
+      } else { // For normal depthwise convolution, value bounds should be calculated by accumulation.
+        imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
+
+        // If true, the .boundsArraySet.afterFilter for filter[ y ][ x ] is calculated.
+        filter_bBoundsCalculatedArrayArray = new Array( depthwiseFilterHeight );
+        for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
+          filter_bBoundsCalculatedArrayArray[ filterY ] = new Array( depthwiseFilterWidth );
+          filter_bBoundsCalculatedArrayArray[ filterY ].fill( false );
+        }
+
+        tBounds = new FloatValue.Bounds( 0, 0 );
+      }
     }
 
     // Max pooling
@@ -199,9 +210,11 @@ class Base {
         let inXBase = imageInBeginX + ( outX * stridesWidth );
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-          let outIndexBaseSubC = outIndexBaseC + ( inChannel * channelMultiplier );
+          let outChannelBase = inChannel * channelMultiplier;
+          let outIndexBaseSubC = outIndexBaseC + outChannelBase;
 
           for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
+            let outChannel = outChannelBase + outChannelSub;
             let outIndex = outIndexBaseSubC + outChannelSub;
 
             // For Avg pooling, the divisor is effect filter size which includes dilation but excludes input image outside.
@@ -241,9 +254,13 @@ class Base {
                     let inIndexBaseC = ( ( inIndexBaseX + inX ) * imageIn.depth );
                     let inIndex = inIndexBaseC + inChannel;
                     let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * outputChannelCount );
-                    let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * channelMultiplier );
 
-                    let filterIndex = filterIndexBaseSubC + outChannelSub;
+//!!! (2022/02/22 Remarked) Use outChannel directly.
+//                     let filterIndexBaseSubC = filterIndexBaseC + outChannelBase;
+//
+//                     let filterIndex = filterIndexBaseSubC + outChannelSub;
+
+                    let filterIndex = filterIndexBaseC + outChannel;
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
@@ -256,6 +273,17 @@ class Base {
 
                       default: // Convolution
                         imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * depthwiseFiltersArray[ filterIndex ];
+                        
+                        // Calculate value bounds of every output channels (i.e. .afterFilter).
+                        if ( !filter_bBoundsCalculatedArrayArray[ filterY ][ filterX ] ) {
+                          tBounds
+                            .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                            .multiply_byN( depthwiseFiltersArray[ filterIndex ] );
+
+                          imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+
+                          filter_bBoundsCalculatedArrayArray[ filterY ][ filterX ] = true;
+                        }
                         break;
                     }
                   }
