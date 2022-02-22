@@ -88,6 +88,28 @@ class BoundsArraySet {
   }
 
   /**
+   * @param {BoundsArray} inputBoundsArray
+   *   The BoundsArray to be copied to .input and .afterUndoPreviousActivationEscaping.
+   *
+   * @param {BoundsArray} outputBoundsArray
+   *   The BoundsArray to be copied to .afterFilter, .afterBias, .afterActivationEscaping, .afterActivation.
+   *
+   * @return {BoundsArraySet}
+   *   Return this (modified) object.
+   */
+  set_all_byBoundsArray_input_output( inputBoundsArray, outputBoundsArray ) {
+    this.input                              .set_all_byBoundsArray( inputBoundsArray );
+    this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( inputBoundsArray );
+    this.afterFilter                        .set_all_byBoundsArray( outputBoundsArray );
+    this.afterBias                          .set_all_byBoundsArray( outputBoundsArray );
+    this.afterActivationEscaping            .set_all_byBoundsArray( outputBoundsArray );
+    this.afterActivation                    .set_all_byBoundsArray( outputBoundsArray );
+    this.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
+    this.bPassThrough.fill( false ); // Assume all are not pass-through.
+    return this;
+  }
+
+  /**
    * @param {BoundsArraySet} aBoundsArraySet
    *   The BoundsArraySet to be copied.
    *
