@@ -21,11 +21,22 @@ import * as FloatValue from "./FloatValue.js";
  * defaultInput.buffer, not to defaultInput.byteOffset).
  *
  * @member {(number[]|number|null)} shape
- *   The weights shape (element count for every dimension). The shape could be an array, and the shape.length represents
- * dimension. The shape could also be a scalar (0-dimension shape), i.e. ( shape.length == 0 ) is legal and means
- * extracting so many elements from defaultInput or privilegeInput. If shape is too large (exceeds the defaultInput
- * (or, privilegeInput if not null) bounding) or shape is NaN, the initialization will fail (i.e. ( isValid() == false ) ).
- * The shape could be null, and means extracting zero element (i.e. extracting nothing) from defaultInput or privilegeInput.
+ *   The weights shape (element count for every dimension).
+ *
+ *     - It could be an array, and the shape.length represents dimension.
+ *
+ *       - If it is a non-empty array (i.e. ( shape.length > 0 )), it means tf.util.sizeFromShape( this.shape ) elements will be extracted
+ *           from defaultInput or privilegeInput.
+ *
+ *       - If it is an empty array (i.e. []) (i.e. ( shape.length == 0 )), it means only one element will be extracted from defaultInput
+ *           or privilegeInput.
+ *
+ *     - It could also be a scalar number, it means extracting so many elements from defaultInput or privilegeInput.
+ *
+ *     - It could be null, it means extracting zero element (i.e. extracting nothing) from defaultInput or privilegeInput.
+ *
+ *     - If too many elements need to be extracted (exceeds the defaultInput (or, privilegeInput if not null) bounding) or shape is NaN or
+ *         shape is negative, the initialization will fail (i.e. ( isValid() == false ) ).
  *
  * @member {Float32Array} privilegeInput
  *   The privilege input Float32Array. If not null, its content will be interpret as weights and
@@ -70,7 +81,27 @@ class Base {
     this.weights = null;   // So that ( isValid() == false ) if re-extraction failed.
 
     //let weightCount = ( this.shape ) ? this.shape.reduce( ( accumulator, currentValue ) => accumulator * currentValue ) : 0;
-    let weightCount = ( this.shape ) ? tf.util.sizeFromShape( this.shape ) : 0; // It can handle ( 0 == shape.length ) (i.e. scalar).
+//!!! (2022/02/22 Remarked)
+//    let weightCount = ( this.shape ) ? tf.util.sizeFromShape( this.shape ) : 0; // It can handle ( 0 == shape.length ) (i.e. scalar).
+
+    let weightCount;
+    {
+      if ( this.shape ) {
+        if ( Array.isArray( this.shape ) )
+          weightCount = tf.util.sizeFromShape( this.shape );
+        else
+          weightCount = this.shape;
+      } else {
+        weightCount = 0;
+      }
+
+      if ( Number.isNaN( weightCount ) )
+        return false;  // Failed, if NaN.
+
+      if ( weightCount < 0 )
+        return false;  // Failed, if negative.
+    }
+
     let weightByteCount = weightCount * Float32Array.BYTES_PER_ELEMENT;
 
     let input, byteOffsetBegin;
