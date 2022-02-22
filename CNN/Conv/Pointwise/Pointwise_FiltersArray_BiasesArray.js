@@ -623,7 +623,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     let arrayTemp = new Array( this.outputChannelCount );
 
-    for ( let indexBegin = 0; i < this.inputChannelCount; indexBegin += this.outputChannelCount ) { // Shuffle filters.
+    for ( let indexBegin = 0; indexBegin < this.inputChannelCount; indexBegin += this.outputChannelCount ) { // Shuffle filters.
       FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.filtersArray, indexBegin, this.outputChannelCount, arrayTemp );
     }
 
