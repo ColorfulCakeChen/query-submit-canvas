@@ -283,8 +283,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     if ( biasesShape_extracted )
       weightsCount_extracted += tf.util.sizeFromShape( biasesShape_extracted );
 
-//!!! ...unfinished... (2022/02/22) The 3rd parameter of Weights.Base() should be a shape (number[]) not a number (weightsCount_extracted).
-
     // Prepare source weights to be extracted.
     let sourceWeights = new Weights.Base( inputFloat32Array, this.byteOffsetEnd, weightsCount_extracted );
     if ( !sourceWeights.extract() )
