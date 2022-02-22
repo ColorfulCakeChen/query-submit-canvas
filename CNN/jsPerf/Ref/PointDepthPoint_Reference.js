@@ -685,18 +685,18 @@ class Base {
       pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount, "Pointwise1", this.paramsOutDescription );
 
 //!!! ...unfinished... (2022/02/22 Remarked) Because PointDepthPoint should restore them all at the pointwise2.
-// //!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
-//
-//       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-//         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
-//           pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-//           "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
-//
-//       } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
-//           pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-//           "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
-//       }
+//!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
+
+      if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
+          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
+          "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
+
+      } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+        imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
+          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
+          "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
+      }
 
     } else {
       pointwise1Result = imageIn0;
@@ -723,15 +723,15 @@ class Base {
       depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
 
 //!!! ...unfinished... (2022/02/22 Remarked) Because PointDepthPoint should restore them all at the pointwise2.
-// //!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
-//
-//       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
-//       // be different from pointwise21Result and can not be concatenated together.
-//       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//         imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
-//           depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of depthwise1.
-//           "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
-//       }
+//!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
+
+      // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
+      // be different from pointwise21Result and can not be concatenated together.
+      if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+        imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
+          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of depthwise1.
+          "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
+      }
 
     } else {
       depthwise1Result = pointwise1Result;
@@ -800,13 +800,13 @@ class Base {
         pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
 
 //!!! ...unfinished... (2022/02/22 Remarked) Because PointDepthPoint should restore them all at the pointwise2.
-// //!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
-//
-//         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//           imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (which is past-through by depthwise1).
-//             pointwise21Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,    // scale-translate for escaping activation of pointwise21.
-//             "Pointwise21_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
-//         }
+//!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
+
+        if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+          imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (which is past-through by depthwise1).
+            pointwise21Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,    // scale-translate for escaping activation of pointwise21.
+            "Pointwise21_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
+        }
 
       } else {
         pointwise21Result = concat1Result;
