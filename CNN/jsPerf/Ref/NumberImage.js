@@ -65,19 +65,6 @@ class Base {
       imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
       new Pointwise.BoundsArraySet( imageIn.depth, pointwiseChannelCount ) );
 
-//!!! ...unfinished... (2022/02/21)
-
-    // Determine element value bounds.
-    {
-      imageOut.boundsArraySet.reset_byBounds( imageIn.boundsArraySet.output );
-
-      // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
-      const filtersValueBounds = Weights.Base.ValueBounds;
-
-      imageOut.boundsArraySet.beforeActivation.multiply_all_byBounds( filtersValueBounds )
-        .multiply_all_byN( imageIn.depth ); // Every pointwise output channel is composed of all input channel.
-    }
-
     // Pointwise Convolution
     for ( let y = 0; y < imageIn.height; ++y ) {
       let indexBaseX = ( y * imageIn.width );
@@ -89,14 +76,42 @@ class Base {
 
         for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
           let inIndex = inIndexBaseC + inChannel;
+          let filterIndexBase = ( inChannel * pointwiseChannelCount );
 
           for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
             let outIndex = outIndexBaseC + outChannel;
-            let filterIndexBase = ( inChannel * pointwiseChannelCount );
             let filterIndex = filterIndexBase + outChannel;
 
             imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
           }
+        }
+      }
+    }
+
+    {
+      // Prepare value bounds of every output channels (i.e. .afterFilter).
+      {
+        imageOut.boundsArraySet.input.set_all_byBoundsArray( imageIn.boundsArraySet.output );
+
+        // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
+        imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input );
+
+        imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
+      }
+
+      // Calculate value bounds of every output channels (i.e. .afterFilter).
+      let tBounds = new FloatValue.Bounds( 0, 0 );
+      for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+        let filterIndexBase = ( inChannel * pointwiseChannelCount );
+
+        for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
+          let filterIndex = filterIndexBase + outChannel;
+
+          tBounds
+            .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+            .multiply_byN( pointwiseFiltersArray[ filterIndex ] );
+
+          imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
         }
       }
     }
