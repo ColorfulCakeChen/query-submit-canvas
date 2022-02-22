@@ -182,7 +182,7 @@ class BoundsArraySet {
       // 3. Determine .afterActivation
       {
         // If no activation function, the output range is determined by .afterActivationEscaping.
-        if ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+        if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           this.afterActivation.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel )
 
         // Otherwise, the activation function dominates the output range.
