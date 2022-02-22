@@ -724,7 +724,7 @@ class Base extends ReturnOrClone.Base {
     // Because pointwise21 always exists, it has the default final output value bounds of this PointDepthPoint.
     {
       let inputBoundsArray = previousBoundsArraySet.output; // As previous output of this PointDepthPoint.
-      let outputBoundsArray = this.pointwise21.boundsArraySet.output ); // As pointwise21.output.
+      let outputBoundsArray = this.pointwise21.boundsArraySet.output; // As pointwise21.output.
 
       this.boundsArraySet = new ConvBiasActivation.BoundsArraySet( inputBoundsArray.length, outputBoundsArray.length );
       this.boundsArraySet.set_all_byBoundsArray_input_output( inputBoundsArray, outputBoundsArray );
@@ -776,10 +776,8 @@ class Base extends ReturnOrClone.Base {
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
-//!!! ...unfinished... (2022/02/22)
     if ( this.bShouldAddInputToOutput ) { // If add-input-to-output will be done indeed, it affects the output value bounds.
-      this.valueBoundsSet.beforeActivation.add_Bounds( previousValueBoundsSet.output ); // Keep .beforeActivation the same as .output.
-      this.valueBoundsSet.output.add_Bounds( previousValueBoundsSet.output );
+      this.boundsArraySet.output.add_all_byBoundsArray( this.boundsArraySet.input );
     }
 
     // 6.2
