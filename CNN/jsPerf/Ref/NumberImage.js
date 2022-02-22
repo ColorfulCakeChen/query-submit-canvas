@@ -172,7 +172,7 @@ class Base {
       new Depthwise.BoundsArraySet( imageIn.depth, outputChannelCount ) );
 
     // Prepare value bounds of every output channels (i.e. .afterFilter).
-    let filter_bBoundsCalculatedArrayArray, tBounds;
+    let filtersArray_bBoundsCalculated, tBounds;
     {
       imageOut.boundsArraySet.input.set_all_byBoundsArray( imageIn.boundsArraySet.output );
 
@@ -185,14 +185,9 @@ class Base {
       } else { // For normal depthwise convolution, value bounds should be calculated by accumulation.
         imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
 
-//!!! ...unfinished... (2022/02/22) where the outChannel?
-!!!
-        // If true, the .boundsArraySet.afterFilter for filter[ y ][ x ][ outChannel ] is calculated.
-        filter_bBoundsCalculatedArrayArray = new Array( depthwiseFilterHeight );
-        for ( let filterY = 0; filterY < depthwiseFilterHeight; ++filterY ) {
-          filter_bBoundsCalculatedArrayArray[ filterY ] = new Array( depthwiseFilterWidth );
-          filter_bBoundsCalculatedArrayArray[ filterY ].fill( false );
-        }
+        // If true, the .boundsArraySet.afterFilter for the filter position is calculated.
+        filtersArray_bBoundsCalculated = new Array( depthwiseFiltersArray.length );
+        filtersArray_bBoundsCalculated.fill( false );
 
         tBounds = new FloatValue.Bounds( 0, 0 );
       }
@@ -278,14 +273,14 @@ class Base {
                         imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * depthwiseFiltersArray[ filterIndex ];
                         
                         // Calculate value bounds of every output channels (i.e. .afterFilter).
-                        if ( !filter_bBoundsCalculatedArrayArray[ filterY ][ filterX ] ) {
+                        if ( !filtersArray_bBoundsCalculated[ filterIndex ] ) {
                           tBounds
                             .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                             .multiply_byN( depthwiseFiltersArray[ filterIndex ] );
 
                           imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
-                          filter_bBoundsCalculatedArrayArray[ filterY ][ filterX ] = true;
+                          filtersArray_bBoundsCalculated[ filterIndex ] = true;
                         }
                         break;
                     }
