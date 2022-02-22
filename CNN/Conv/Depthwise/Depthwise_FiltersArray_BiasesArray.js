@@ -444,6 +444,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
       } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
+        // For avg/max pooling, the value bounds does not change.
+        this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
+
         // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
           let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
