@@ -277,7 +277,6 @@ class Base {
    *   Return this which may or may not be added bias (according to bBias).
    */
   modifyByBias( bBias, biasesArray, biasName, parametersDesc ) {
-
     let imageIn = this;
 
     imageIn.boundsArraySet.afterBias.set_all_byBoundsArray( imageIn.boundsArraySet.afterFilter );
@@ -328,23 +327,16 @@ class Base {
    * function).
    */
   modifyByActivation( nActivationId, previous_ConvBiasActivation_BoundsArraySet, parametersDesc ) {
-
     let imageIn = this;
-
-    imageIn.boundsArraySet.afterActivation.set_all_byBoundsArray( imageIn.boundsArraySet.afterBias );
-
-//!!! ...unfinished... (2022/02/21)
-    // Determine the element value bounds.
-    {
-      imageIn.boundsArraySet.set_output_by_beforeActivation_ActivationId( nActivationId );
-
-      imageIn.boundsArraySet.activationEscaping_ScaleTranslateSet.set_by_currentValueBoundsSet_previousActivationEscaping(
-        imageIn.boundsArraySet, previous_ConvBiasActivation_ValueBoundsSet.activationEscaping_ScaleTranslateSet );
-    }
 
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
     if ( !theActivationFunctionInfo )
       return imageIn;
+
+    // Calculate value bounds of every output channels (i.e. .afterActivation) by clamping as the activation function's output range.
+    //
+    // Note: Because NumberImage never do pass-through, there is always no activation-escaping (i.e. scale = 1 for no scale).
+    imageIn.boundsArraySet.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( nActivationId );
 
     let pfnActivation = theActivationFunctionInfo.pfn;
     if ( !pfnActivation )
