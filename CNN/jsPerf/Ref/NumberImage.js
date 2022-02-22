@@ -280,6 +280,7 @@ class Base {
 
     let imageIn = this;
 
+    imageIn.boundsArraySet.afterBias.set_all_byBoundsArray( imageIn.boundsArraySet.afterFilter );
     if ( !bBias )
       return imageIn;
 
@@ -304,7 +305,8 @@ class Base {
       }
     }
 
-    for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) { // Calculate value bounds of every output channels by shifting as the bias.
+    // Calculate value bounds of every output channels (i.e. .afterBias) by shifting as the bias.
+    for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
       imageIn.boundsArraySet.afterBias.add_one_byN( inChannel, biasesArray[ inChannel ] );
     }
 
@@ -328,6 +330,8 @@ class Base {
   modifyByActivation( nActivationId, previous_ConvBiasActivation_BoundsArraySet, parametersDesc ) {
 
     let imageIn = this;
+
+    imageIn.boundsArraySet.afterActivation.set_all_byBoundsArray( imageIn.boundsArraySet.afterBias );
 
 //!!! ...unfinished... (2022/02/21)
     // Determine the element value bounds.
