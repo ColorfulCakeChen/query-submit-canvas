@@ -162,6 +162,9 @@ class Base extends TestParams.Base {
       if ( this.out.channelCount0_pointwise1Before != this.out.pointwise21ChannelCount )
         return false;
 
+
+//!!! ...unfinished... (2022/02/22) TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail) should also has same problem.
+
       // The depthwise must not change the image's ( height, width ). Otherwise, the concat2-split-shuffle could not operate properly.
       if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
         if ( this.out.depthwiseStridesPad != 1 )
