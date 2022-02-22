@@ -391,7 +391,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       // Round 1
       {
         this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-          sourceWeights, previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray );
+          sourceWeights.weights, previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray );
 
         // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( inChannelPartInfoArray );
