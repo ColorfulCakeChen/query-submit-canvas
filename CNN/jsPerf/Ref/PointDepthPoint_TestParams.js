@@ -154,7 +154,7 @@ class Base extends TestParams.Base {
 //         return false;
 //     }
 
-//!!! ...untested... (2021/12/24)
+
     // For ONE_INPUT_HALF_THROUGH (-5).
     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
       
@@ -163,13 +163,15 @@ class Base extends TestParams.Base {
         return false;
 
 
-//!!! ...unfinished... (2022/02/22) TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail) should also has same problem.
+//!!! (2022/02/22 Remarked) PointDepthPoint_Reference.calcResult() should call use_XXX_PassThrough()
+// //!!! ...unfinished... (2022/02/22) TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail) should also has same problem.
+//
+//       // The depthwise must not change the image's ( height, width ). Otherwise, the concat2-split-shuffle could not operate properly.
+//       if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+//         if ( this.out.depthwiseStridesPad != 1 )
+//           return false; // Since ( strides != 1 ) or ( pad != "same" ), the image's ( height, width ) will be changed. Not workable. Skip it.
+//       }
 
-      // The depthwise must not change the image's ( height, width ). Otherwise, the concat2-split-shuffle could not operate properly.
-      if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-        if ( this.out.depthwiseStridesPad != 1 )
-          return false; // Since ( strides != 1 ) or ( pad != "same" ), the image's ( height, width ) will be changed. Not workable. Skip it.
-      }
     }
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
@@ -189,13 +191,6 @@ class Base extends TestParams.Base {
     //
     // Note: When pad is "same", this restriction does not exist.
     if ( 0 == this.out.depthwiseStridesPad ) {
-
-// //!!! (2021/12/24 Remarked) Compare separately.
-//       let depthwiseFilterMaxSize = Math.min( testParams.out.inputHeight0, testParams.out.inputWidth0 );
-//
-//       if (   ( this.out.depthwiseFilterHeight > depthwiseFilterMaxSize )
-//           || ( this.out.depthwiseFilterWidth > depthwiseFilterMaxSize ) )
-//         return false;
 
       if (   ( this.out.depthwiseFilterHeight > this.out.inputHeight0 )
           || ( this.out.depthwiseFilterWidth  > this.out.inputWidth0  ) )
@@ -226,30 +221,12 @@ class Base extends TestParams.Base {
   /**
    * Responsible for generating testing paramters combinations.
    *
-
-//!!! (2021/12/24 Remarked) Moved into PointDepthPoint_Reference.
-//    * @param {number} inputImageHeight
-//    *   The height of the input image.
-//    *
-//    * @param {number} inputImageWidth
-//    *   The width of the input image.
-
    *
    * @yield {Base}
    *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
    */
   * ParamsGenerator() {
 
-//!!! (2021/12/24 Remarked) Moved into PointDepthPoint_Reference.
-//   * ParamsGenerator( inputImageHeight, inputImageWidth ) {
-//     this.inputImageHeight = inputImageHeight;
-//     this.inputImageWidth = inputImageWidth;
-//
-// //!!! ...unfinished... (2021/07/27) When pad is "same", it should test more filter size.
-//     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
-//     //
-//     // Note: When pad is "same", this restriction does not exist.
-//     let depthwiseFilterMaxSize = Math.min( this.inputImageHeight, this.inputImageWidth );
     let depthwiseFilterMaxSize = 5;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
@@ -359,34 +336,33 @@ class Base extends TestParams.Base {
     return result;
   }
 
-//!!! ...unfinished... (2022/02/22 Remarked) Because PointDepthPoint should restore them all at the pointwise2.
-//   /**
-//    * @param {NumberImage.Base} inputImage   The source image to be processed.
-//    * @param {FloatValue.ScaleTranslate} aScaleTranslate  The scale and translate used in the pass-through pointwise1 convolution.
-//    * @param {string} pointwiseName          A string for debug message of the pointwise1 convolution.
-//    * @param {string} parametersDesc         A string for debug message of the point-depth-point.
-//    *
-//    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
-//    */
-//   use_pointwise1_PassThrough( inputImage, aScaleTranslate, pointwiseName, parametersDesc ) {
-//
+  /**
+   * @param {NumberImage.Base} inputImage   The source image to be processed.
+   * @param {FloatValue.ScaleTranslate} aScaleTranslate  The scale and translate used in the pass-through pointwise1 convolution.
+   * @param {string} pointwiseName          A string for debug message of the pointwise1 convolution.
+   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
+   */
+  use_pointwise1_PassThrough( inputImage, aScaleTranslate, pointwiseName, parametersDesc ) {
+
+//!!! ...unfinished... (2022/02/22 Remarked) Use Pointwise.PassThrough_FiltersArray_BiasesArray instead.
 //     let pointwisePassThrough = new ( Pointwise.FiltersArray_BiasesArray() )(
 //       inputImage.depth, inputImage.depth, 0, this.out.bPointwise1Bias, aScaleTranslate.scale, aScaleTranslate.translate );
-//
+/
 //     let result = inputImage.cloneBy_pointwise( inputImage.depth,
 //       pointwisePassThrough.filtersArray, this.out.bPointwise1Bias,
 //       pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId, pointwiseName, parametersDesc );
 //     return result;
-//
-// //!!! ...unfinished... (2022/02/22 Remarked) Use Pointwise.FiltersArray_BiasesArray instead.
-// //     let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
-// //       inputImage.depth, inputImage.depth, 0, this.out.bPointwise1Bias, aScaleTranslate.scale, aScaleTranslate.translate );
-// //
-// //     let result = inputImage.cloneBy_pointwise( inputImage.depth,
-// //       pointwisePassThrough.filtersArray, this.out.bPointwise1Bias,
-// //       pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId, pointwiseName, parametersDesc );
-// //     return result;
-//   }
+
+    let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
+      inputImage.depth, inputImage.depth, 0, this.out.bPointwise1Bias, aScaleTranslate.scale, aScaleTranslate.translate );
+
+    let result = inputImage.cloneBy_pointwise( inputImage.depth,
+      pointwisePassThrough.filtersArray, this.out.bPointwise1Bias,
+      pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId, pointwiseName, parametersDesc );
+    return result;
+  }
 
   /**
    * @param {NumberImage.Base} inputImage   The source image to be processed.
@@ -403,27 +379,26 @@ class Base extends TestParams.Base {
     return result;
   }
 
-//!!! ...unfinished... (2022/02/22 Remarked) Because PointDepthPoint should restore them all at the pointwise2.
-//   /**
-//    * @param {NumberImage.Base} inputImage   The source image to be processed.
-//    * @param {FloatValue.ScaleTranslate} aScaleTranslate  The scale and translate used in the pass-through depthwise1 convolution.
-//    * @param {string} depthwiseName          A string for debug message of the depthwise1 convolution.
-//    * @param {string} parametersDesc         A string for debug message of the point-depth-point.
-//    *
-//    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
-//    */
-//   use_depthwise1_PassThrough( inputImage, aScaleTranslate, depthwiseName, parametersDesc ) {
-//     let depthwisePassThrough = new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )( inputImage.height, inputImage.width, inputImage.depth,
-//       this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-//       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-//       this.out.bDepthwiseBias, aScaleTranslate.scale, aScaleTranslate.translate );
-//
-//     let result = inputImage.cloneBy_depthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-//       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-//       depthwisePassThrough.filtersArray, this.out.bDepthwiseBias,
-//       depthwisePassThrough.biasesArray, this.out.depthwiseActivationId, depthwiseName, parametersDesc );
-//     return result;
-//   }
+  /**
+   * @param {NumberImage.Base} inputImage   The source image to be processed.
+   * @param {FloatValue.ScaleTranslate} aScaleTranslate  The scale and translate used in the pass-through depthwise1 convolution.
+   * @param {string} depthwiseName          A string for debug message of the depthwise1 convolution.
+   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
+   */
+  use_depthwise1_PassThrough( inputImage, aScaleTranslate, depthwiseName, parametersDesc ) {
+    let depthwisePassThrough = new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )( inputImage.height, inputImage.width, inputImage.depth,
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+      this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+      this.out.bDepthwiseBias, aScaleTranslate.scale, aScaleTranslate.translate );
+
+    let result = inputImage.cloneBy_depthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+      this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
+      depthwisePassThrough.filtersArray, this.out.bDepthwiseBias,
+      depthwisePassThrough.biasesArray, this.out.depthwiseActivationId, depthwiseName, parametersDesc );
+    return result;
+  }
 
   /**
    * @param {NumberImage.Base} inputImage   The source image to be processed.
@@ -455,24 +430,23 @@ class Base extends TestParams.Base {
     return result;
   }
 
-//!!! ...unfinished... (2022/02/22 Remarked) Because PointDepthPoint should restore them all at the pointwise2.
-//   /**
-//    * @param {NumberImage.Base} inputImage   The source image to be processed.
-//    * @param {FloatValue.ScaleTranslate} aScaleTranslate  The scale and translate used in the pass-through pointwise21 convolution.
-//    * @param {string} pointwiseName          A string for debug message of the pointwise1 convolution.
-//    * @param {string} parametersDesc         A string for debug message of the point-depth-point.
-//    *
-//    * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
-//    */
-//   use_pointwise21_PassThrough( inputImage, aScaleTranslate, pointwiseName, parametersDesc ) {
-//     let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
-//       inputImage.depth, inputImage.depth, 0, this.out.bPointwise21Bias, aScaleTranslate.scale, aScaleTranslate.translate );
-//
-//     let result = inputImage.cloneBy_pointwise( inputImage.depth,
-//       pointwisePassThrough.filtersArray, this.out.bPointwise21Bias,
-//       pointwisePassThrough.biasesArray, this.out.pointwise21ActivationId, pointwiseName, parametersDesc );
-//     return result;
-//   }
+  /**
+   * @param {NumberImage.Base} inputImage   The source image to be processed.
+   * @param {FloatValue.ScaleTranslate} aScaleTranslate  The scale and translate used in the pass-through pointwise21 convolution.
+   * @param {string} pointwiseName          A string for debug message of the pointwise1 convolution.
+   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
+   */
+  use_pointwise21_PassThrough( inputImage, aScaleTranslate, pointwiseName, parametersDesc ) {
+    let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
+      inputImage.depth, inputImage.depth, 0, this.out.bPointwise21Bias, aScaleTranslate.scale, aScaleTranslate.translate );
+
+    let result = inputImage.cloneBy_pointwise( inputImage.depth,
+      pointwisePassThrough.filtersArray, this.out.bPointwise21Bias,
+      pointwisePassThrough.biasesArray, this.out.pointwise21ActivationId, pointwiseName, parametersDesc );
+    return result;
+  }
 
   /**
    * @param {NumberImage.Base} inputImage    The source image to be processed.
@@ -614,8 +588,6 @@ class Base extends TestParams.Base {
       result.outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
       let filtersWeightsRandomOffset = { min: -100, max: +100 };
-//!!! (2021/12/10 Remarked)
-//      let depthwiseFilterWidth = depthwiseFilterHeight;
       let filtersWeightsCount = result.outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
       let filtersArray = Base.generate_numberArray( filtersWeightsCount, filtersWeightsRandomOffset.min, filtersWeightsRandomOffset.max );
       result.numberArrayArray[ 0 ] = filtersArray; // Note: if AVG or MAX pooling, depthwise.numberArrayArray[ 0 ] will be undefined.
