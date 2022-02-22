@@ -365,10 +365,6 @@ class Base {
 
     // If the output dimensions ( height, width, depth ) is not the same as input, it is impossible to add-input-to-output.
     {
-//!!! (2021/12/17 Remarked) Alreaddy the following assertion.
-//       if ( ( another.height != this.height ) || ( another.width != this.width ) || ( another.depth != this.depth ) )
-//         return ???imageOut;
-
       tf.util.assert( ( another.height == this.height ),
         `${addInputToOutputName}: another.height ( ${another.height} ) `
           + `should match this.height ( ${this.height} ). (${parametersDesc})`);
@@ -382,9 +378,6 @@ class Base {
           + `should match this.depth ( ${this.depth} ). (${parametersDesc})`);
     }
 
-//!!! (2021/12/17 Remarked) Using for-loop is faster.
-//    let resultArray = another.dataArray.map( ( value, i ) => ( this.dataArray[ i ] + value ) );
-
     let resultArray = new Float32Array( this.dataArray.length );
     for ( let i = 0; i < this.dataArray.length; ++i ) {
       resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
@@ -396,20 +389,17 @@ class Base {
       this.height,
       this.width,
       this.depth,
-      resultArray
+      resultArray,
+      new ConvBiasActivation.BoundsArraySet( this.depth, this.depth )
     );
 
-//!!! ...unfinished... (2022/02/21)
+    // Calculate value bounds of every output channels (i.e. .afterActivation; .output).
     {
-      imageOutNew.boundsArraySet.input.set_byBoundsArray( this.boundsArraySet.output );
+      imageOutNew.boundsArraySet.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1. (i.e. no scale)
 
-      imageOutNew.boundsArraySet.output.set_byBoundsArray( this.boundsArraySet.output );
-      imageOutNew.boundsArraySet.output.add_byBoundsArray( another.boundsArraySet.output );
-
-      // Keep .beforeActivation the same as .output.
-      imageOutNew.boundsArraySet.beforeActivation.set_byBoundsArray( imageOutNew.boundsArraySet.output );
-
-      //imageOutNew.boundsArraySet.activationEscaping_ScaleTranslateSet; // Keeps as default ( 1, 0 ).
+      imageOutNew.boundsArraySet.afterActivation
+        .set_all_byBoundsArray( this.boundsArraySet.afterActivation )
+        .add_all_byBoundsArray( another.boundsArraySet.afterActivation );
     }
 
     return imageOutNew;
