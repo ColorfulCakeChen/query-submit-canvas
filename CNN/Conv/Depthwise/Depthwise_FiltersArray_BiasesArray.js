@@ -354,8 +354,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   }
 
   /**
-   * Extract this.filtersArray and this.biasesArray from sourceWeights and apply this.boundsArraySet.activationEscaping_ScaleArraySet.undo.scales[].
-   * Also set the .afterFilter and .afterBias.
+   * Extract this.filtersArray and this.biasesArray from sourceFloat32Array and
+   * apply this.boundsArraySet.activationEscaping_ScaleArraySet.undo.scales[]. Also set the .afterFilter and .afterBias.
    *
    * @param {Float32Array} sourceFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
