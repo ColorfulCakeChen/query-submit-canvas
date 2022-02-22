@@ -153,17 +153,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // A2: So that inputFloat32Array could be released.
 
 
-    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.output.lowers.length ),
+    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.output.length ),
       `Depthwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
-        + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_BoundsArraySet.output.lowers.length} ).`
+        + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_BoundsArraySet.output.length} ).`
     );
 
-    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales.length ),
+    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.length ),
       `Depthwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
         + `activationEscaping_ScaleArraySet.undo of previous convolution-bias-activation `
-        + `( ${previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales.length} ).`
+        + `( ${previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.length} ).`
     );
 
 
