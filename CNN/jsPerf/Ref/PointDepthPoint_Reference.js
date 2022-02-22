@@ -261,7 +261,7 @@ class Base {
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
 
       let pointDepthPoint = Base.pointDepthPoint_create( testParams,
-        imageInArraySelected[ 0 ].valueBoundsSet, // Problem: What about imageInArraySelected[ 1 ].valueBoundsSet?
+        imageInArraySelected[ 0 ].boundsArraySet, // Problem: What about imageInArraySelected[ 1 ].boundsArraySet?
         channelShuffler_ConcatPointwiseConv );
 
       let parametersDescription = pointDepthPoint.parametersDescription;
@@ -319,7 +319,7 @@ class Base {
         Base.AssertTwoEqualValues( "outputTensorCount", pointDepthPoint.outputTensorCount, outputTensorCount, strNote );
       }
 
-//!!! ...unfinished... (2021/12/16) assert comparing ValueBoundsSet?
+//!!! ...unfinished... (2021/12/16) assert comparing BoundsArraySet?
 //       {
 //         imageOutReferenceArray;
 //       }
@@ -381,12 +381,12 @@ class Base {
    * @param {PointDepthPoint_TestParams.Base} testParams
    *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
    *
-   * @param {ConvBiasActivation.ValueBoundsSet} previousValueBoundsSet
+   * @param {ConvBiasActivation.BoundsArraySet} previousBoundsArraySet
    *   The previous PointDepthPoint's output convolution-bias-activation value bounds set.
    *   
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
-  static pointDepthPoint_create( testParams, previousValueBoundsSet, channelShuffler_ConcatPointwiseConv ) {
+  static pointDepthPoint_create( testParams, previousBoundsArraySet, channelShuffler_ConcatPointwiseConv ) {
 
     let pointDepthPoint = new PointDepthPoint.Base();
 
@@ -404,7 +404,7 @@ class Base {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = pointDepthPoint.init( progress, extractedParams, previousValueBoundsSet, channelShuffler_ConcatPointwiseConv );
+    let bInitOk = pointDepthPoint.init( progress, extractedParams, previousBoundsArraySet, channelShuffler_ConcatPointwiseConv );
 
     let flags = {};
     PointDepthPoint.Params.setFlags_by.call( flags,
@@ -960,10 +960,10 @@ class Base {
 
     let imageOutArray = [
       new NumberImage.Base(
-        imageIn.height, imageIn.width, imageOutDepth_lowerHalf, new Float32Array( imageOutLength_lowerHalf ), imageIn.valueBoundSet ),
+        imageIn.height, imageIn.width, imageOutDepth_lowerHalf, new Float32Array( imageOutLength_lowerHalf ), imageIn.boundsArraySet ),
 
       new NumberImage.Base(
-        imageIn.height, imageIn.width, imageOutDepth_higherHalf, new Float32Array( imageOutLength_higherHalf ), imageIn.valueBoundSet )
+        imageIn.height, imageIn.width, imageOutDepth_higherHalf, new Float32Array( imageOutLength_higherHalf ), imageIn.boundsArraySet )
     ];
 
     let imageOut0 = imageOutArray[ 0 ];
@@ -1050,7 +1050,7 @@ class Base {
     let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
     let imageOut = new NumberImage.Base(
       imageIn1.height, imageIn1.width, ( imageIn1.depth + imageIn2.depth ), new Float32Array( imageOutLength ),
-      imageIn1.valueBoundsSet // Problem: What about imageIn2.valueBoundsSet?
+      imageIn1.boundsArraySet // Problem: What about imageIn2.boundsArraySet?
     );
 
     // Concatenate along the image depth.
@@ -1171,13 +1171,13 @@ class Base {
     // Converty output tensors to images.
     for ( let i = 0; i < imageOutArray.length; ++i ) {
       let t = tensorOutArray[ i ];
-      
+
       imageOutArray[ i ] = new NumberImage.Base(
         t.shape[ 0 ],
         t.shape[ 1 ],
         t.shape[ 2 ],
         t.dataSync(),
-        imageInArray[ 0 ].valueBoundsSet // Problem: What about imageInArray[ 1 ].valueBoundsSet?
+        imageInArray[ 0 ].boundsArraySet // Problem: What about imageInArray[ 1 ].boundsArraySet?
       );
     }
 
