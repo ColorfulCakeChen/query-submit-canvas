@@ -526,7 +526,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             this.biasesArray[ biasIndex ] = sourceWeights[ sourceIndex ];
 
             // Determine .afterBias
-            this.boundsArraySet.afterBias.add_one_byBounds( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
+            this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
 
             ++sourceIndex;
           }
