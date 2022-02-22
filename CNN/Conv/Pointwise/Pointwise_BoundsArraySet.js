@@ -31,7 +31,6 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     InChannelPartIndexLoop:
     for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
       let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-      let inChannelToBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
       for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
         if ( outChannel >= this.outputChannelCount )
