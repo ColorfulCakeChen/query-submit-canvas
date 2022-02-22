@@ -7,11 +7,22 @@ import { ArrayInterleaver } from "./ArrayInterleaver.js";
  *
  * @member {number[]} scales
  *   The scale (i.e. multiplier) values.
+ *
+ * @member {number} length
+ *   The length of this scale array. Setting it will change the length.
  */
 class ScaleArray {
 
   constructor( length ) {
     this.scales = new Array( length );
+  }
+
+  get length() {
+    return this.scales.length;
+  }
+
+  set length( newLength ) {
+    this.scales.length = newLength;
   }
 
   /**
