@@ -63,7 +63,7 @@ class BoundsArraySet {
    * @return {BoundsArraySet} Return a newly created BoundsArraySet which is a copy of this BoundsArraySet.
    */
   clone() {
-    let result = new BoundsArraySet( this.input.lowers.length, this.output.lowers.length );
+    let result = new BoundsArraySet( this.input.length, this.output.length );
     result.set_byBoundsArraySet( this );
     return result;
   }
@@ -164,7 +164,7 @@ class BoundsArraySet {
   set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
 
-    for ( let outChannel = 0; outChannel < this.afterBias.lowers.length; ++outChannel ) {
+    for ( let outChannel = 0; outChannel < this.afterBias.length; ++outChannel ) {
 
       // 1. Determine .activationEscaping_ScaleArraySet
       {
