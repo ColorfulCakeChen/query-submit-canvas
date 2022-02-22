@@ -27,7 +27,7 @@ class Base {
     this.dataArray = dataArray;
     this.boundsArraySet = boundsArraySet;
 
-    if ( !this.boundsArraySet ) { // A default bounds for an image.
+    if ( !this.boundsArraySet ) { // Default bounds for an image.
       this.boundsArraySet = new ConvBiasActivation.BoundsArraySet( depth, depth );
       this.boundsArraySet.set_all_byBounds( Weights.Base.ValueBounds ); // Assume all images are inside the default value bounds.
     }
@@ -63,7 +63,7 @@ class Base {
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
     let imageOut = new Base(
       imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
-      new Pointwise.BoundsArraySet( inputChannelCount???, outputChannelCount??? ) );
+      new Pointwise.BoundsArraySet( imageIn.depth, pointwiseChannelCount ) );
 
 //!!! ...unfinished... (2022/02/21)
 
@@ -304,11 +304,8 @@ class Base {
       }
     }
 
-//!!! ...unfinished... (2022/02/21)
-    {
-      // Because they are extracted from Weights which should have been regulated by Weights.Base.ValueBounds.Float32Array_RestrictedClone().
-      const biasesValueBounds = Weights.Base.ValueBounds;
-      imageIn.boundsArraySet.beforeActivation.add_byBounds( biasesValueBounds );
+    for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) { // Calculate value bounds of every output channels by shifting as the bias.
+      imageIn.boundsArraySet.afterBias.add_one_byN( inChannel, biasesArray[ inChannel ] );
     }
 
     return imageIn;
