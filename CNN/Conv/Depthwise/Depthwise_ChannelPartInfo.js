@@ -1,6 +1,7 @@
 export { ChannelPartInfo };
 
-import * as ConvBiasActivation from "../ConvBiasActivation.js";
+//!!! (2022/02/23 Remarked) Use inputChannelCount instead of inChannelBegin and inChannelEnd.
+//import * as ConvBiasActivation from "../ConvBiasActivation.js";
 
 /**
  * Half channels information. Describe channel index range of lower half or higher half.
