@@ -204,7 +204,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-            inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount ) ];
+//!!! (2022/02/23 Remarked) Use inputChannelCount instead of inChannelBegin and inChannelEnd.
+//            inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount ) ];
+            inChannelPartInfoArray = [ new ChannelPartInfo( this.inputChannelCount ) ];
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
@@ -224,8 +226,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
             inChannelPartInfoArray = [
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount           ) ];
+//!!! (2022/02/23 Remarked) Use inputChannelCount instead of inChannelBegin and inChannelEnd.
+//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
+//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount           ) ];
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf  ),
+              new ChannelPartInfo( this.inputChannelCount_higherHalf ) ];
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
@@ -245,8 +250,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
 
             inChannelPartInfoArray = [
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
+//!!! (2022/02/23 Remarked) Use inputChannelCount instead of inChannelBegin and inChannelEnd.
+//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
+//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf ),
+              new ChannelPartInfo( this.inputChannelCount_higherHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
             break;
 
           default:
@@ -387,15 +395,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
               if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                 continue;
 
+              let inChannel = 0;
+              let outChannel = 0;
+
               InChannelPartIndexLoop:
               for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
                 let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-                let inChannelBegin = inChannelPartInfo.inChannelBegin;
-                let inChannelEnd = inChannelPartInfo.inChannelEnd;
 
-                let outChannel = inChannelBegin * this.channelMultiplier;
-                for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-//!!!
+                for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
                   if ( inChannel >= this.inputChannelCount )
                     break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
@@ -428,8 +435,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     ++filterIndex;
 
                   } // outChannelSub, outChannel
-                } // inChannel
+                } // inChannelSub, inChannel
               } // inChannelPartIndex
+
+              tf.util.assert( ( inChannel == this.inputChannelCount ),
+                `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+                  + `inChannelPartInfoArray[] total input channel counts ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+
             } // dilationFilterX
           } // filterX
         } // dilationFilterY
@@ -440,43 +452,50 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       // For avg/max pooling, the value bounds does not change.
       this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
 
+      let inChannel = 0;
+
+      InChannelPartIndexLoop:
       for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
         let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-        let inChannelBegin = inChannelPartInfo.inChannelBegin;
-        let inChannelEnd = inChannelPartInfo.inChannelEnd;
 
-        // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
-        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+        for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+          if ( inChannel >= this.inputChannelCount )
+            break InChannelPartIndexLoop; // Never exceeds the total input channel count.
+
           let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
+          // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
           tf.util.assert( ( undoPreviousEscapingScale == 1 ),
-            `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_by_extract(): `
+            `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
               + `undoPreviousEscapingScale[ ${inChannel} ] ( ${undoPreviousEscapingScale} ) must be 1 for avg/max pooling.`
           );
         } // inChannel
       } // inChannelPartIndex
+
+      tf.util.assert( ( inChannel == this.inputChannelCount ),
+        `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+          + `inChannelPartInfoArray[] total input channel counts ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
     }
 
     // Init .afterBias
     {
-      let outChannel = inChannelBegin * this.channelMultiplier;
-      for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-          this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
-        }
-      }
+      this.boundsArraySet.afterBias.set_all_byBoundsArray( this.boundsArraySet.afterFilter );
     }
 
     if ( this.biasesArray ) {
       let biasIndex = 0;
 
+      let inChannel = 0;
+      let outChannel = 0;
+
+      InChannelPartIndexLoop:
       for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
         let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-        let inChannelBegin = inChannelPartInfo.inChannelBegin;
-        let inChannelEnd = inChannelPartInfo.inChannelEnd;
 
-        let outChannel = inChannelBegin * this.channelMultiplier;
-        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+        for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+          if ( inChannel >= this.inputChannelCount )
+            break InChannelPartIndexLoop; // Never exceeds the total input channel count.
+
           for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
             // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
@@ -499,6 +518,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           } // outChannelSub, outChannel
         } // inChannel
       } // inChannelPartIndex
+
+      tf.util.assert( ( inChannel == this.inputChannelCount ),
+        `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+          + `inChannelPartInfoArray[] total input channel counts ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+
 
     } else { // ( !this.biasesArray ). No biases array to be extracted.
       // Do nothing.
