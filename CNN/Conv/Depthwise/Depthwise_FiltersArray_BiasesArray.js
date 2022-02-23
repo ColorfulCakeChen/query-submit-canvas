@@ -254,7 +254,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
 //               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
               new ChannelPartInfo( this.inputChannelCount_lowerHalf ),
-              new ChannelPartInfo( this.inputChannelCount_higherHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
+              new ChannelPartInfo( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft ) ];
             break;
 
           default:
