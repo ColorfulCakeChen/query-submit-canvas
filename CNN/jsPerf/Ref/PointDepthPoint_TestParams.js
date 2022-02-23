@@ -658,6 +658,12 @@ class Base extends TestParams.Base {
       }
 
       this.doubleParamValue( PointDepthPoint.Params.pointwise21ChannelCount );
+
+    } else if ( ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+              ) {
+
+//!!! ...unfinished... (2022/02/23)
+
     }
 
     // Pointwise1
