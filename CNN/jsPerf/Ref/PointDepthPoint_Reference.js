@@ -836,7 +836,9 @@ class Base {
       // If output1 is requested, it comes from pointwise22 directly. The pointwise22 will have the same output channel count as pointwise21.
       let pointwise22ChannelCount;
 
-      if ( testParams.out.bOutput1Requested ) {
+      if (   ( testParams.out.bOutput1Requested )
+          || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+         ) {    
         pointwise22ChannelCount = pointwise21ChannelCount;
       } else {
         pointwise22ChannelCount = 0;
