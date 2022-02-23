@@ -1,17 +1,14 @@
-// (2022/02/21) Deprecated by Pointwise_FiltersArray_BiasesArray.js
-
 export { PassThrough_FiltersArray_BiasesArray, PassThrough, AllZeros };
 
 import * as TwoTensors from "../../util/TwoTensors.js";
-
-
-//!!! ...unfinished... (2021/12/07)
-// Problem: Although depthwise (and pointwise) convolution could be past-through, the activation function will destroy the past-through result.
 
 /**
  * A pointwise convolution and bias which just pass the input to output.
  *
  * It is usually used in the inferenced higher half channels of the output channel (for achieving ShuffleNetV2_ByMopbileNetV1).
+ *
+ * Note: Although depthwise (and pointwise) convolution could be past-through, the activation function will destroy the past-through
+ * result. Using Pointwise_FiltersArray_BiasesArray may be better to handle this issue.
  *
  *
  * @member {number} inputChannelCount
@@ -71,15 +68,6 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Ba
     if ( outputChannelCount <= 0 )
       throw `Pointwise.PassThrough.constructor(): outputChannelCount ( ${outputChannelCount} ) must be positive integer.`;
 
-    //!!! (2021/11/23 Remarked) Instead by restricting their value range.
-    //
-    //if ( inputChannelIndexStart < 0 )
-    //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) can not be negative.`;
-    //
-    //if ( inputChannelIndexStart >= inputChannelCount )
-    //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) `
-    //   + ` must be less than inputChannelCount ( ${inputChannelCount} ).`;
-
     // Restrict beginIndex between [ 0, inputChannelCount ).
     let beginIndexMax = ( inputChannelCount - 1 );
     let beginIndex = Math.max( 0, Math.min( inputChannelIndexStart, beginIndexMax ) );
@@ -138,141 +126,6 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filte
     this.bInitOk = true;
   }
 
-//!!! (2021/12/17 Remarked) Old Codes.  
-//   /**
-//    */
-//   constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
-//     super();
-//     this.inputChannelCount = inputChannelCount;
-//     this.outputChannelCount = outputChannelCount;
-//     this.inputChannelIndexStart = inputChannelIndexStart;
-//     this.bBias = bBias;
-//     this.filterValue = filterValue;
-//     this.biasValue = biasValue;
-//
-//     if ( inputChannelCount <= 0 )
-//       throw `Pointwise.PassThrough.constructor(): inputChannelCount ( ${inputChannelCount} ) must be positive integer.`;
-//
-//     if ( outputChannelCount <= 0 )
-//       throw `Pointwise.PassThrough.constructor(): outputChannelCount ( ${outputChannelCount} ) must be positive integer.`;
-//
-//     //!!! (2021/11/23 Remarked) Instead by restricting their value range.
-//     //
-//     //if ( inputChannelIndexStart < 0 )
-//     //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) can not be negative.`;
-//     //
-//     //if ( inputChannelIndexStart >= inputChannelCount )
-//     //  throw `Pointwise.PassThrough.constructor(): inputChannelIndexStart ( ${inputChannelIndexStart} ) `
-//     //   + ` must be less than inputChannelCount ( ${inputChannelCount} ).`;
-//
-//     let filtersShape = [ 1, 1, inputChannelCount, outputChannelCount ];
-//     let biasesShape =  [ 1, 1, outputChannelCount ];
-//
-//     // Restrict beginIndex between [ 0, inputChannelCount ).
-//     let beginIndexMax = ( inputChannelCount - 1 );
-//     let beginIndex = Math.max( 0, Math.min( inputChannelIndexStart, beginIndexMax ) );
-//
-//     // Restrict endIndex between [ 0, inputChannelIndexStart + outputChannelCount ].
-//     //
-//     // Note: endIndexMax and endIndex need not be minus one, because they are not inclusive.
-//     let endIndexMax = inputChannelCount;
-//     let endIndex = Math.max( 0, Math.min( inputChannelIndexStart + outputChannelCount, endIndexMax ) );
-//
-//     let extractedCount = endIndex - beginIndex; // So many channels will be past-through from input to output.
-//     let zerosCount = outputChannelCount - extractedCount; // The output channels which no extracted values could be used will be filled by zeros.
-//
-//     if ( inputChannelCount <= 1 ) { // Because tf.oneHot() can not accept ( depth == 1 ), handle it separately.
-//       let oneZerosArray = ( new Array( outputChannelCount ) ).fill( 0 );
-// //!!! (2021/12/07 Remarked)
-// //      oneZerosArray[ 0 ] = 1; // Only the first element is one.
-//       oneZerosArray[ 0 ] = filterValue; // Only the first element is non-zero.
-//       this.filtersTensor4d = tf.tensor4d( oneZerosArray, filtersShape );
-//
-//     } else {
-//
-//       { // These tensors represents input channel indexes.
-//
-//         let oneHotTransposedTensor2d;
-//         {
-//           let oneHotExpandedTensor2d;
-//           {
-//             let oneHotScaledTensor2d;
-//             {
-//               let oneHotFloat32Tensor2d;
-//               {
-//                 let oneHotInt32Tensor2d;
-//                 {
-//                   let int32Tensor1d = tf.range( beginIndex, endIndex, 1, "int32" ); // tf.oneHot() accepts int32. (int32Tensor1d)
-//
-//                   try {
-//                     oneHotInt32Tensor2d = int32Tensor1d.oneHot( inputChannelCount );  // tf.oneHot() generates int32. (oneHotInt32Tensor2d)
-//                   } finally {
-//                     int32Tensor1d.dispose();
-//                   }
-//                 }
-//
-//                 try {
-//                   oneHotFloat32Tensor2d = oneHotInt32Tensor2d.cast( "float32" );    // tf.conv2d() accepts float32. (oneHotFloat32Tensor2d)
-//                 } finally {
-//                   oneHotInt32Tensor2d.dispose();
-//                 }
-//               }
-//
-//               let scaleFactor;
-//               try {
-//                 scaleFactor = tf.scalar( filterValue );
-//                 oneHotScaledTensor2d = oneHotFloat32Tensor2d.mul( scaleFactor );    // Not just one-hot, but non-zero-hot.
-//               } finally {
-//                 oneHotFloat32Tensor2d.dispose();
-//                 scaleFactor.dispose();
-//               }
-//             }
-//
-//             if ( zerosCount <= 0 ) { // No need to append zeros.
-//               oneHotExpandedTensor2d = oneHotScaledTensor2d;
-//               oneHotScaledTensor2d = null; // So that it will not be disposed now.
-//
-//             } else { // ( zerosCount > 0 ) Uses zeros for the last several channels.
-//
-//               try {
-//                 let zerosFloat32Tensor2d = tf.zeros( [ zerosCount, inputChannelCount ] );
-//                 try {
-//                   oneHotExpandedTensor2d = tf.concat( oneHotScaledTensor2d, zerosFloat32Tensor2d );
-//                 } finally {
-//                   zerosFloat32Tensor2d.dispose();
-//                 }
-//               } finally {
-//                 oneHotScaledTensor2d.dispose();
-//               }
-//             }
-//           }
-//
-//           try {
-//             oneHotTransposedTensor2d = oneHotExpandedTensor2d.transpose(); // looks like tf.conv2d()'s filter.
-//           } finally {
-//             oneHotExpandedTensor2d.dispose();
-//           }
-//         }
-//
-//         // tf.conv2d()'s filter is tensor4d. (oneHotFloat32Tensor4d)
-//         try {
-//           this.filtersTensor4d = oneHotTransposedTensor2d.reshape( filtersShape );
-//         } finally {
-//           oneHotTransposedTensor2d.dispose();
-//         }
-//       }
-//     }
-//
-//     // Generate bias for just adding zero. (i.e. equals no bias).
-//     if ( this.bBias ) {
-// //!!! (2021/12/07 Remarked)
-// //      this.biasesTensor3d = tf.zero( biasesShape );
-//       this.biasesTensor3d = tf.fill( biasesShape, biasValue );
-//     }
-//
-//     this.bInitOk = true;
-//   }
-
 }
 
 
@@ -281,6 +134,8 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filte
  *
  * @member {boolean} bInitOk
  *   If true, this object initialized (i.e. constructor()) successfully.
+ *
+ * @see TwoTensors.filtersTensor4d_biasesTensor3d
  */
 class AllZeros extends TwoTensors.filtersTensor4d_biasesTensor3d() {
 
