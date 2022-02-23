@@ -684,23 +684,16 @@ class Base {
     if ( pointwise1ChannelCount > 0 ) {
       pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount, "Pointwise1", this.paramsOutDescription );
 
-//!!! ...unfinished... (2022/02/22 Remarked) Because PointDepthPoint should restore them all at the pointwise2.
-//!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
+//!!! ...unfinished... (2022/02/23)
 
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
-
-//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
-//          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-
+          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise22 (with same structure of depthwise1 and pointwise21).
           "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
 
       } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
-
-//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
-//          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
-
+          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise22 (with same structure of depthwise1 and pointwise21).
           "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
@@ -716,6 +709,8 @@ class Base {
           + `(${testParams.out.channelCount1_pointwise1Before}). `
           + `${this.paramsOutDescription}` );
 
+//!!! ...unfinished... (2022/02/23)
+
         imageIn1 = imageIn0; // Not input1 but input0.
       }
     }
@@ -728,8 +723,7 @@ class Base {
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
 
-//!!! ...unfinished... (2022/02/22 Remarked) Because PointDepthPoint should restore them all at the pointwise2.
-//!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
+//!!! ...unfinished... (2022/02/23)
 
       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
       // be different from pointwise21Result and can not be concatenated together.
