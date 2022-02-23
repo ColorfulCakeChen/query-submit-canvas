@@ -689,12 +689,18 @@ class Base {
 
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
-          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
+
+//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
+//          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
+
           "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", this.paramsOutDescription );
 
       } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
-          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
+
+//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
+//          pointwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of pointwise1.
+
           "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
@@ -729,7 +735,10 @@ class Base {
       // be different from pointwise21Result and can not be concatenated together.
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
-          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of depthwise1.
+
+//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
+//          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of depthwise1.
+
           "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
@@ -804,7 +813,10 @@ class Base {
 
         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
           imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (which is past-through by depthwise1).
-            pointwise21Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,    // scale-translate for escaping activation of pointwise21.
+
+//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
+//            pointwise21Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,    // scale-translate for escaping activation of pointwise21.
+
             "Pointwise21_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
         }
 
@@ -938,19 +950,6 @@ class Base {
     if ( null == imageIn )
       return [ null, null ];
 
-//!!! (2021/11/23 Remarked) If not divided by 2, let lower half have one more.
-//     tf.util.assert( ( ( imageIn.depth % 2 ) == 0 ),
-//       `${splitName} shape imageIn.depth (${imageIn.depth}) `
-//         + `should be dividable by 2 ( ( ${imageIn.depth} % 2 ) should be zero ). (${parametersDesc})`);
-
-//!!! (2021/11/23 Remarked) If not divided by 2, let lower half have one more.
-//     let imageOutDepth = imageIn.depth / 2;
-//     let imageOutLength = ( imageIn.height * imageIn.width * imageOutDepth );
-//     let imageOutArray = [
-//       { height: imageIn.height, width: imageIn.width, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) },
-//       { height: imageIn.height, width: imageIn.width, depth: imageOutDepth, dataArray: new Float32Array( imageOutLength ) }
-//     ];
-
     // If not divided by 2, let lower half have one more.
     let imageOutDepth_lowerHalf = Math.ceil( imageIn.depth / 2 );
     let imageOutDepth_higherHalf = imageIn.depth - imageOutDepth_lowerHalf;
@@ -979,19 +978,6 @@ class Base {
         let inIndexBaseC  = ( indexBaseC * imageIn.depth );
 
         let inChannel = 0;
-
-//!!! (2021/11/23 Remarked) If not divided by 2, let lower half have one more.
-//         let outIndexBaseC = ( indexBaseC * imageOutDepth );
-//
-//         for ( let imageOutIndex = 0; imageOutIndex < imageOutArray.length; ++imageOutIndex ) {
-//           let imageOut = imageOutArray[ imageOutIndex ];
-//
-//           for ( let outChannel = 0; outChannel < imageOutDepth; ++outChannel, ++inChannel ) {
-//             let inIndex = inIndexBaseC + inChannel;
-//             let outIndex = outIndexBaseC + outChannel;
-//             imageOut.dataArray[ outIndex ] = imageIn.dataArray[ inIndex ];
-//           }
-//         }
 
         let outIndexBaseC_lowerHalf = ( indexBaseC * imageOutDepth_lowerHalf );
         let outIndexBaseC_higherHalf = ( indexBaseC * imageOutDepth_higherHalf );
