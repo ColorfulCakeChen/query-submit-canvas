@@ -959,10 +959,12 @@ class Base {
 
     let imageOutArray = [
       new NumberImage.Base(
-        imageIn.height, imageIn.width, imageOutDepth_lowerHalf, new Float32Array( imageOutLength_lowerHalf ), imageIn.boundsArraySet ),
+        imageIn.height, imageIn.width, imageOutDepth_lowerHalf, new Float32Array( imageOutLength_lowerHalf ),
+        new ConvBiasActivation.BoundsArraySet( imageIn.depth, imageOutDepth_lowerHalf ) ),
 
       new NumberImage.Base(
-        imageIn.height, imageIn.width, imageOutDepth_higherHalf, new Float32Array( imageOutLength_higherHalf ), imageIn.boundsArraySet )
+        imageIn.height, imageIn.width, imageOutDepth_higherHalf, new Float32Array( imageOutLength_higherHalf ),
+        new ConvBiasActivation.BoundsArraySet( imageIn.depth, imageOutDepth_higherHalf ) )
     ];
 
     let imageOut0 = imageOutArray[ 0 ];
@@ -995,6 +997,22 @@ class Base {
         }
 
       }
+    }
+
+    // Split value bounds array.
+    {
+      let inChannel = 0;
+
+      for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
+        imageOut0.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn.boundsArraySet.output, inChannel );
+      }
+
+      for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
+        imageOut1.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn.boundsArraySet.output, inChannel );
+      }
+
+      imageOut0.boundsArraySet.set_all_byBoundsArray_input_output( imageIn.boundsArraySet.output, imageOut0.boundsArraySet.output );
+      imageOut1.boundsArraySet.set_all_byBoundsArray_input_output( imageIn.boundsArraySet.output, imageOut1.boundsArraySet.output );
     }
 
     return imageOutArray;
@@ -1034,9 +1052,12 @@ class Base {
         + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})`);
 
     let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
+    let imageOutDepth = imageIn1.depth + imageIn2.depth;
     let imageOut = new NumberImage.Base(
-      imageIn1.height, imageIn1.width, ( imageIn1.depth + imageIn2.depth ), new Float32Array( imageOutLength ),
-      imageIn1.boundsArraySet // Problem: What about imageIn2.boundsArraySet?
+      imageIn1.height, imageIn1.width, imageOutDepth, new Float32Array( imageOutLength ),
+//!!! (2022/02/23 Remarked)
+//      imageIn1.boundsArraySet // Problem: What about imageIn2.boundsArraySet?
+      new ConvBiasActivation.BoundsArraySet( imageOutDepth, imageOutDepth )
     );
 
     // Concatenate along the image depth.
@@ -1064,6 +1085,21 @@ class Base {
         }
 
       }
+    }
+
+    // Concat value bounds array.
+    {
+      let outChannel = 0;
+
+      for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
+        imageOut.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn1.boundsArraySet.output, in1Channel );
+      }
+
+      for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
+        imageOut.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn2.boundsArraySet.output, in2Channel );
+      }
+
+      imageOut.boundsArraySet.set_all_byBoundsArray_input_output( imageOut.boundsArraySet.output, imageOut.boundsArraySet.output );
     }
 
     return imageOut;
@@ -1157,16 +1193,19 @@ class Base {
     // Converty output tensors to images.
     for ( let i = 0; i < imageOutArray.length; ++i ) {
       let t = tensorOutArray[ i ];
+      let imageHeight = t.shape[ 0 ];
+      let imageWidth = t.shape[ 1 ];
+      let imageDepth = t.shape[ 2 ];
 
-      imageOutArray[ i ] = new NumberImage.Base(
-        t.shape[ 0 ],
-        t.shape[ 1 ],
-        t.shape[ 2 ],
-        t.dataSync(),
-        imageInArray[ 0 ].boundsArraySet // Problem: What about imageInArray[ 1 ].boundsArraySet?
+      imageOutArray[ i ] = new NumberImage.Base( imageHeight, imageWidth, imageDepth, t.dataSync(),
+        new ConvBiasActivation.BoundsArraySet( imageDepth, imageDepth )
       );
-    }
 
+      //!!! ...unfinished... (2022/02/23) 
+      // Because do not know how to shuffle the channel value bounds array, set to a default value instead.
+      imageOutArray[ i ].boundsArraySet.set_all_byBounds( Weights.Base.ValueBounds );
+    }
+         
     // Release temporary tensors.
     tf.dispose( tensorInArray );
     tf.dispose( tensorOutArray );
