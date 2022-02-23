@@ -808,15 +808,9 @@ class Base {
       if ( pointwise21ChannelCount > 0 ) {
         pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
 
-//!!! ...unfinished... (2022/02/22 Remarked) Because PointDepthPoint should restore them all at the pointwise2.
-//!!! ...unfinished... (2021/12/24) should be remarked, because PointDepthPoint should restore them all at the pointwise2.
-
         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
           imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (which is past-through by depthwise1).
-
-//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
-//            pointwise21Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,    // scale-translate for escaping activation of pointwise21.
-
+            pointwise21ChannelCount, // So that it could be concatenated with pointwise21Result.
             "Pointwise21_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
         }
 
