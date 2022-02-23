@@ -354,7 +354,7 @@ class Base extends TestParams.Base {
 //!!! ...unfinished... (2022/02/22 Remarked) Use Pointwise.PassThrough_FiltersArray_BiasesArray instead.
 //     let pointwisePassThrough = new ( Pointwise.FiltersArray_BiasesArray() )(
 //       inputImage.depth, inputImage.depth, 0, this.out.bPointwise1Bias, aScaleTranslate.scale, aScaleTranslate.translate );
-/
+//
 //     let result = inputImage.cloneBy_pointwise( inputImage.depth,
 //       pointwisePassThrough.filtersArray, this.out.bPointwise1Bias,
 //       pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId, pointwiseName, parametersDesc );
