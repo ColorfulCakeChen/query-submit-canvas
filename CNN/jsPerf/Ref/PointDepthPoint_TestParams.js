@@ -453,23 +453,15 @@ class Base extends TestParams.Base {
 
   /**
    * @param {NumberImage.Base} inputImage   The source image to be processed.
-
-//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
-//   * @param {FloatValue.ScaleTranslate} aScaleTranslate  The scale and translate used in the pass-through pointwise21 convolution.
-
+   * @param {number} outputChannelCount     The output channel count of this pointwise21 pass-through convolution.
    * @param {string} pointwiseName          A string for debug message of the pointwise1 convolution.
    * @param {string} parametersDesc         A string for debug message of the point-depth-point.
    *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise21 pass-through convolution and bias.
    */
-//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
-//   use_pointwise21_PassThrough( inputImage, aScaleTranslate, pointwiseName, parametersDesc ) {
-//     let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
-//       inputImage.depth, inputImage.depth, 0, this.out.bPointwise21Bias, aScaleTranslate.scale, aScaleTranslate.translate );
-
-  use_pointwise21_PassThrough( inputImage, pointwiseName, parametersDesc ) {
+  use_pointwise21_PassThrough( inputImage, outputChannelCount, pointwiseName, parametersDesc ) {
     let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
-      inputImage.depth, inputImage.depth, 0, this.out.bPointwise21Bias, 1, 0 );
+      inputImage.depth, outputChannelCount, 0, this.out.bPointwise21Bias, 1, 0 );
 
     let result = inputImage.cloneBy_pointwise( inputImage.depth,
       pointwisePassThrough.filtersArray, this.out.bPointwise21Bias,
