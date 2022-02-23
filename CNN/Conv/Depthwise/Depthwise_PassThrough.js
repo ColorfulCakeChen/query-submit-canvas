@@ -58,7 +58,7 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Pa
     this.filterValue = filterValue;
     this.biasValue = biasValue;
 
-    this.filtersShape = [ this.filterHeight, this.filterWidth, this.imageInDepth, this.channelMultiplier ];
+    this.filtersShape = [ this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier ];
     this.filtersArray = this.generate_PassThrough_FiltersArray( filterValue );
 
     if ( this.bBias ) {
