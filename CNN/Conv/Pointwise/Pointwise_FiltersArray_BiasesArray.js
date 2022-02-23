@@ -499,6 +499,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
           } // outChannelSub, outChannel
         } // inChannelPartIndex
+
+        tf.util.assert( ( outChannel == this.outputChannelCount ),
+          `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+            + `inChannelPartInfoArray[] total output channel count ( ${outChannel} ) should be ( ${this.outputChannelCount} ).` );
+
       } // inChannel
     } // this.filtersArray
 
@@ -537,6 +542,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
         } // outChannelSub, outChannel
       } // inChannelPartIndex
+
+      tf.util.assert( ( outChannel == this.outputChannelCount ),
+        `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+          + `inChannelPartInfoArray[] total output channel counts ( ${outChannel} ) should be ( ${this.outputChannelCount} ).` );
 
     } else { // ( !this.biasesArray ). No biases array to be extracted.
       // Do nothing.
