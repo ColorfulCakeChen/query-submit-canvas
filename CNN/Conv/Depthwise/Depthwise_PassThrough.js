@@ -1,5 +1,3 @@
-// (2022/02/21) Deprecated by Depthwise_FiltersArray_BiasesArray.js
-
 export { PassThrough_FiltersArray_BiasesArray, PassThrough };
 
 import * as TwoTensors from "../../util/TwoTensors.js";
@@ -13,6 +11,9 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  * A depthwise convolution and bias which just pass the input to output.
  *
  * It is usually used in passing the higher half channels of the input to output (for achieving ShuffleNetV2_ByMopbileNetV1's body/tail).
+ *
+ * Note: Although depthwise (and pointwise) convolution could be past-through, the activation function will destroy the past-through
+ * result. Using Pointwise_FiltersArray_BiasesArray may be better to handle this issue.
  *
  *
  * @member {number} filterValue
