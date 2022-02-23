@@ -372,32 +372,27 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     let tBounds = new FloatValue.Bounds( 0, 0 );
 
     // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
+    let sourceIndex = 0;
 
-    // ( inChannelPartIndex == 0 ), lower half channels. (or, all channels)
-    // ( inChannelPartIndex == 1 ), higher half channels.
-    for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-      let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-      let inChannelBegin = inChannelPartInfo.inChannelBegin;
-      let inChannelEnd = inChannelPartInfo.inChannelEnd;
+    if ( this.filtersArray ) {
+      let filterIndex = 0;
 
-      if ( this.filtersArray ) {
+      for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+        for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
 
-        for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-          for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+          for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+            for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
 
-            // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-            //let filterIndexBaseX = ( filterY * this.filterWidth );
+              // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+              if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                continue;
 
-            for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-              for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
-
-                // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
-                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-                  continue;
-
-                // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-                //let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * this.outputChannelCount );
+              // ( inChannelPartIndex == 0 ), lower half channels. (or, all channels)
+              // ( inChannelPartIndex == 1 ), higher half channels.
+              for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+                let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+                let inChannelBegin = inChannelPartInfo.inChannelBegin;
+                let inChannelEnd = inChannelPartInfo.inChannelEnd;
 
                 let outChannel = inChannelBegin * this.channelMultiplier;
                 for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
@@ -435,17 +430,24 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
                     ++filterIndex;
-                  }
-                }
-              }
-            }
-          }
-        }
 
-      } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
+                  } // outChannelSub, outChannel
+                } // inChannel
+              } // inChannelPartIndex
+            } // dilationFilterX
+          } // filterX
+        } // dilationFilterY
+      } // filterY
 
-        // For avg/max pooling, the value bounds does not change.
-        this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
+    } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
+
+      // For avg/max pooling, the value bounds does not change.
+      this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
+
+      for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+        let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+        let inChannelBegin = inChannelPartInfo.inChannelBegin;
+        let inChannelEnd = inChannelPartInfo.inChannelEnd;
 
         // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
@@ -455,20 +457,27 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_by_extract(): `
               + `undoPreviousEscapingScale[ ${inChannel} ] ( ${undoPreviousEscapingScale} ) must be 1 for avg/max pooling.`
           );
+        } // inChannel
+      } // inChannelPartIndex
+    }
+
+    // Init .afterBias
+    {
+      let outChannel = inChannelBegin * this.channelMultiplier;
+      for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+          this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
         }
       }
+    }
 
-      // Init .afterBias
-      {
-        let outChannel = inChannelBegin * this.channelMultiplier;
-        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-            this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
-          }
-        }
-      }
+    if ( this.biasesArray ) {
+      let biasIndex = 0;
 
-      if ( this.biasesArray ) {
+      for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+        let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+        let inChannelBegin = inChannelPartInfo.inChannelBegin;
+        let inChannelEnd = inChannelPartInfo.inChannelEnd;
 
         let outChannel = inChannelBegin * this.channelMultiplier;
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
@@ -490,14 +499,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             }
 
             ++biasIndex;
-          }
-        }
 
-      } else { // ( !this.biasesArray ). No biases array to be extracted.
-        // Do nothing.
-      }
+          } // outChannelSub, outChannel
+        } // inChannel
+      } // inChannelPartIndex
 
-    } // inChannelPartIndex
+    } else { // ( !this.biasesArray ). No biases array to be extracted.
+      // Do nothing.
+    }
 
   }
 
@@ -508,24 +517,24 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    *   The input channel range array which describe lower/higher half channels index range.
    */
   apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ) {
-    let filterIndex = 0, biasIndex = 0;
 
-    for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-      let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-      let inChannelBegin = inChannelPartInfo.inChannelBegin;
-      let inChannelEnd = inChannelPartInfo.inChannelEnd;
+    if ( this.filtersArray ) {
+      let filterIndex = 0;
 
-      if ( this.filtersArray ) {
+      for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+        for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
 
-        for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-          for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+          for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+            for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
 
-            for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-              for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+              // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+              if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                continue;
 
-                // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
-                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-                  continue;
+              for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+                let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+                let inChannelBegin = inChannelPartInfo.inChannelBegin;
+                let inChannelEnd = inChannelPartInfo.inChannelEnd;
 
                 let outChannel = inChannelBegin * this.channelMultiplier;
                 for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
@@ -537,18 +546,26 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     this.boundsArraySet.afterFilter.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after filter also scaled.
 
                     ++filterIndex;
-                  }
-                }
-              }
-            }
-          }
-        }
 
-      } else { // ( !this.filtersArray ).
-        // Do nothing. No filters array to be doEscapingScale. (i.e. avg/max pooling)
-      }
+                  } // outChannelSub, outChannel
+                } // inChannel
+              } // inChannelPartIndex
+            } // dilationFilterX
+          } // filterX
+        } // dilationFilterY
+      } // filterY
 
-      if ( this.biasesArray ) {
+    } else { // ( !this.filtersArray ).
+      // Do nothing. No filters array to be doEscapingScale. (i.e. avg/max pooling)
+    }
+
+    if ( this.biasesArray ) {
+      let biasIndex = 0;
+
+      for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+        let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+        let inChannelBegin = inChannelPartInfo.inChannelBegin;
+        let inChannelEnd = inChannelPartInfo.inChannelEnd;
 
         let outChannel = inChannelBegin * this.channelMultiplier;
         for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
@@ -560,14 +577,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             this.boundsArraySet.afterBias.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after bias also scaled.
 
             ++biasIndex;
-          }
-        }
 
-      } else { // ( !this.biasesArray ).
-        // Do nothing. No biases array to be doEscapingScale.
-      }
+          } // outChannelSub, outChannel
+        } // inChannel
+      } // inChannelPartIndex
 
-    } // inChannelPartIndex
+    } else { // ( !this.biasesArray ).
+      // Do nothing. No biases array to be doEscapingScale.
+    }
   }
 
 }
