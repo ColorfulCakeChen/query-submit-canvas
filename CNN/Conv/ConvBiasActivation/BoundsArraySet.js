@@ -69,6 +69,20 @@ class BoundsArraySet {
   }
 
   /**
+   * Set:
+   *   - this.activationEscaping_ScaleArraySet to scale 1 (i.e. all are no scale).
+   *   - this.bPassThrough[] to false (i.e. all are not pass-through).
+   *
+   * @return {BoundsArraySet}
+   *   Return this (modified) object.
+   */
+  set_all_activationEscaping_bPassThrough_none() {
+    this.activationEscaping_ScaleArraySet.set_all_byN( 1 );
+    this.bPassThrough.fill( false );
+    return this;
+  }
+  
+  /**
    * @param {FloatValue.Bounds} aBounds
    *   Set all BoundsArray to the same as the specified aBounds. Set the this.activationEscaping_ScaleArraySet to default ( 1 );
    *
@@ -82,8 +96,7 @@ class BoundsArraySet {
     this.afterBias.set_all_byBounds( aBounds );
     this.afterActivationEscaping.set_all_byBounds( aBounds );
     this.afterActivation.set_all_byBounds( aBounds );
-    this.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
-    this.bPassThrough.fill( false ); // Assume all are not pass-through.
+    this.set_all_activationEscaping_bPassThrough_none();
     return this;
   }
 
@@ -104,8 +117,7 @@ class BoundsArraySet {
     this.afterBias                          .set_all_byBoundsArray( outputBoundsArray );
     this.afterActivationEscaping            .set_all_byBoundsArray( outputBoundsArray );
     this.afterActivation                    .set_all_byBoundsArray( outputBoundsArray );
-    this.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1 and translate 0. (i.e. no scale and no translate.)
-    this.bPassThrough.fill( false ); // Assume all are not pass-through.
+    this.set_all_activationEscaping_bPassThrough_none();
     return this;
   }
 
