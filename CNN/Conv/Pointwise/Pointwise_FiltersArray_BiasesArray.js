@@ -453,6 +453,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0;
 
+//!!! ...unfinished... (2022/02/23)
+// For HIGHER_HALF_POINTWISE22 (3), extraction order should be filter1-bias1-filter2-bias2.
+// inChannelPartInfoArray seems not able to do that order
+//
+
     { // this.filtersArray
       let filterIndex = 0;
 
