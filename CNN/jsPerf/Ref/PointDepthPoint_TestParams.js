@@ -658,12 +658,6 @@ class Base extends TestParams.Base {
       }
 
       this.doubleParamValue( PointDepthPoint.Params.pointwise21ChannelCount );
-
-    } else if ( ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-              ) {
-
-//!!! ...unfinished... (2022/02/23)
-
     }
 
     // Pointwise1
@@ -732,10 +726,13 @@ class Base extends TestParams.Base {
          ) {
         pointwise22ChannelCount = 0;
 
-      } else { // Otherwise, pointwise22 is output1 directly.
-        if ( paramsAll.bOutput1Requested ) { // If output1 is requested, pointwise22's output channel count is the same as pointwise21's.
-          pointwise22ChannelCount = pointwise21ChannelCount_original;
-        }
+      // Otherwise, either pointwise22 (i.e. output1) is requested obviously, or in ShuffleNetV2_ByMobileNetV1's head (which always has pointwise22).
+      } else if (   ( paramsAll.bOutput1Requested )
+                 || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+                ) {
+
+        // When output1 is requested, pointwise22's output channel count is the same as pointwise21's.
+        pointwise22ChannelCount = pointwise21ChannelCount_original;
       }
 
       let bPointwise22Bias = paramsAll.bPointwise21Bias; // pointwise22's bias flag should always be the same as pointwise21's.
