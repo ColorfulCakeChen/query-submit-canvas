@@ -451,9 +451,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     let tBounds = new FloatValue.Bounds( 0, 0 );
 
     // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
+    let sourceIndex = 0;
 
     { // this.filtersArray
+      let filterIndex = 0;
 
       for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
         let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
@@ -507,6 +508,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     }
 
     if ( this.biasesArray ) {
+      let biasIndex = 0;
       let outChannel = 0;
 
       InChannelPartIndexLoop:
@@ -548,9 +550,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    *   The input channel range array which describe lower/higher half channels index range.
    */
   apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ) {
-    let filterIndex = 0, biasIndex = 0;
 
     { // this.filtersArray
+      let filterIndex = 0;
 
       for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
         let outChannel = 0;
@@ -577,6 +579,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     } // this.filtersArray
 
     if ( this.biasesArray ) {
+      let biasIndex = 0;
       let outChannel = 0;
 
       InChannelPartIndexLoop:
