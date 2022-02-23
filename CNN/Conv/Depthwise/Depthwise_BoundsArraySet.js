@@ -25,23 +25,30 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    *   The input channel range array which describe lower/higher half channels index range.
    */
   set_bPassThrough_all_byChannelPartInfoArray( inChannelPartInfoArray ) {
+    let inChannel = 0;
+    let outChannel = 0;
+
+    InChannelPartIndexLoop:
     for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
       let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-      let inChannelBegin = inChannelPartInfo.beginIndex;
-      let inChannelEnd = inChannelPartInfo.endIndex;
 
-      let outChannel = inChannelBegin * this.channelMultiplier;
-      for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
+      for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+        if ( inChannel >= this.inputChannelCount )
+          break InChannelPartIndexLoop; // Never exceeds the total input channel count.
+
         for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+
           if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
             this.bPassThrough[ outChannel ] = true;
 
           } else { // Non pass-through half channels.
             this.bPassThrough[ outChannel ] = false;
           }
-        }
-      }
-    }
+
+        } // outChannelSub, outChannel
+      } // inChannelSub, inChannel
+    } // inChannelPartIndex
+
   }
 
 
