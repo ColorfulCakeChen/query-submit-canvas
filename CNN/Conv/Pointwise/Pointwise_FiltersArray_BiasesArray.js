@@ -457,6 +457,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 // For HIGHER_HALF_POINTWISE22 (3), extraction order should be filter1-bias1-filter2-bias2.
 // inChannelPartInfoArray seems not able to do that order
 //
+// Perhaps, become inChannelPartInfoArrayArray (2D array) and describe the outer-loop inChannel limit (instead of this.inputChannelCount).
+//
 
     { // this.filtersArray
       let filterIndex = 0;
