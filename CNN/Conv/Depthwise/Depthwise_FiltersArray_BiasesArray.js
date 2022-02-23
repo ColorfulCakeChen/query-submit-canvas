@@ -452,29 +452,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       // For avg/max pooling, the value bounds does not change.
       this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
 
-      let inChannel = 0;
+      for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+        let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
-      InChannelPartIndexLoop:
-      for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-        let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+        // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
+        tf.util.assert( ( undoPreviousEscapingScale == 1 ),
+          `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+            + `undoPreviousEscapingScale[ ${inChannel} ] ( ${undoPreviousEscapingScale} ) must be 1 for avg/max pooling.` );
 
-        for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-          if ( inChannel >= this.inputChannelCount )
-            break InChannelPartIndexLoop; // Never exceeds the total input channel count.
-
-          let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
-
-          // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
-          tf.util.assert( ( undoPreviousEscapingScale == 1 ),
-            `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-              + `undoPreviousEscapingScale[ ${inChannel} ] ( ${undoPreviousEscapingScale} ) must be 1 for avg/max pooling.`
-          );
-        } // inChannel
-      } // inChannelPartIndex
-
-      tf.util.assert( ( inChannel == this.inputChannelCount ),
-        `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-          + `inChannelPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+      } // inChannel
     }
 
     // Init .afterBias
