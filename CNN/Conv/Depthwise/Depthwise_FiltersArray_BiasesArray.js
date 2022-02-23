@@ -387,8 +387,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
               if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                 continue;
 
-              // ( inChannelPartIndex == 0 ), lower half channels. (or, all channels)
-              // ( inChannelPartIndex == 1 ), higher half channels.
+              InChannelPartIndexLoop:
               for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
                 let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
                 let inChannelBegin = inChannelPartInfo.inChannelBegin;
@@ -396,16 +395,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
                 let outChannel = inChannelBegin * this.channelMultiplier;
                 for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-
-                  // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-                  //let filterIndexBaseSubC = filterIndexBaseC + ( inChannel * this.channelMultiplier );
+//!!!
+                  if ( inChannel >= this.inputChannelCount )
+                    break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
                   let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
                   for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-
-                    // (2021/12/27 Remarked) Because loop order arrangement, increasing filterIndex one-by-one is enough (without multiplication).
-                    //let filterIndex = filterIndexBaseSubC + outChannelSub;
 
                     if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                       if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
@@ -531,25 +527,19 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
               if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                 continue;
 
-              for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-                let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-                let inChannelBegin = inChannelPartInfo.inChannelBegin;
-                let inChannelEnd = inChannelPartInfo.inChannelEnd;
+              let outChannel = 0;
+              for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+                for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
-                let outChannel = inChannelBegin * this.channelMultiplier;
-                for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-                  for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+                  let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+                  this.filtersArray[ filterIndex ] *= doEscapingScale; // filter wieghts scaled.
 
-                    let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-                    this.filtersArray[ filterIndex ] *= doEscapingScale; // filter wieghts scaled.
+                  this.boundsArraySet.afterFilter.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after filter also scaled.
 
-                    this.boundsArraySet.afterFilter.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after filter also scaled.
+                  ++filterIndex;
 
-                    ++filterIndex;
-
-                  } // outChannelSub, outChannel
-                } // inChannel
-              } // inChannelPartIndex
+                } // outChannelSub, outChannel
+              } // inChannel
             } // dilationFilterX
           } // filterX
         } // dilationFilterY
@@ -562,25 +552,19 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     if ( this.biasesArray ) {
       let biasIndex = 0;
 
-      for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-        let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-        let inChannelBegin = inChannelPartInfo.inChannelBegin;
-        let inChannelEnd = inChannelPartInfo.inChannelEnd;
+      let outChannel = 0;
+      for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
-        let outChannel = inChannelBegin * this.channelMultiplier;
-        for ( let inChannel = inChannelBegin; inChannel < inChannelEnd; ++inChannel ) {
-          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+          let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+          this.biasesArray[ biasIndex ] *= doEscapingScale; // bias wieghts scaled.
 
-            let doEscapingScale = this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
-            this.biasesArray[ biasIndex ] *= doEscapingScale; // bias wieghts scaled.
+          this.boundsArraySet.afterBias.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after bias also scaled.
 
-            this.boundsArraySet.afterBias.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after bias also scaled.
+          ++biasIndex;
 
-            ++biasIndex;
-
-          } // outChannelSub, outChannel
-        } // inChannel
-      } // inChannelPartIndex
+        } // outChannelSub, outChannel
+      } // inChannel
 
     } else { // ( !this.biasesArray ).
       // Do nothing. No biases array to be doEscapingScale.
