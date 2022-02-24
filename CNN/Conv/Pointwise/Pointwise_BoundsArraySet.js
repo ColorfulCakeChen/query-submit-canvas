@@ -59,7 +59,7 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                 this.bPassThrough[ outChannel ] = true;
 
-              } else { // Non-pass-through half channels. (i.e. input multiply filter weight.)
+              } else { // Non-pass-through half channels.
                 this.bPassThrough[ outChannel ] = false;
               }
 
