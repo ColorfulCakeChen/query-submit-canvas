@@ -345,7 +345,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       }
 
       // Round 2
-      this.apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ); // Apply doEscapingScale.
+      this.apply_doEscapingScale_to_filtersArray_biasesArray(); // Apply doEscapingScale.
     }
 
     {
@@ -517,11 +517,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
   /**
    * Apply this.boundsArraySet.activationEscaping_ScaleArraySet.do.scales[] to this.filtersArray and this.biasesArray.
-   *
-   * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
-   *   The input channel range array which describe lower/higher half channels index range.
    */
-  apply_doEscapingScale_to_filtersArray_biasesArray( inChannelPartInfoArray ) {
+  apply_doEscapingScale_to_filtersArray_biasesArray() {
 
     if ( this.filtersArray ) {
       let filterIndex = 0;
