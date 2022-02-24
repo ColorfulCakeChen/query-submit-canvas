@@ -79,14 +79,14 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     } // aFiltersBiasesPartIndex
 
     //!!! (2022/02/24 Remarked) No need process input channel.
-    //tf.util.assert( ( inChannel == this.inputChannelCount ),
+    //tf.util.assert( ( inChannel == this.input.length ),
     //  `Pointwise.BoundsArraySet.set_bPassThrough_all_byChannelPartInfoArray(): `
-    //    + `aFiltersBiasesPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+    //    + `aFiltersBiasesPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.input.length} ).` );
 
-    tf.util.assert( ( outChannelEnd == this.outputChannelCount ),
+    tf.util.assert( ( outChannelEnd == this.output.length ),
       `Pointwise.BoundsArraySet.set_bPassThrough_all_byChannelPartInfoArray(): `
         + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
-        + `should be ( ${this.outputChannelCount} ).` );
+        + `should be ( ${this.output.length} ).` );
   }
 
 }
