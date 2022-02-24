@@ -25,29 +25,39 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    *   The input channel range array which describe lower/higher half channels index range.
    */
   set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
+    let inChannel = 0;
 
-    let outChannel = 0;
+    FiltersBiasesPartIndexLoop:
+    for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
+      let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
+      let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
+
+      for ( let inChannelSub = 0; inChannelSub < aFiltersBiasesPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+        if ( inChannel >= this.inputChannelCount )
+          break FiltersBiasesPartIndexLoop; // Never exceeds the total input channel count.
 
 //!!! ...unfinished... (2022/02/24) aFiltersBiasesPartInfoArray
 
-    InChannelPartIndexLoop:
-    for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-      let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+      let outChannel = 0;
 
-      for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
-        if ( outChannel >= this.outputChannelCount )
-          break InChannelPartIndexLoop; // Never exceeds the total output channel count.
+      InChannelPartIndexLoop:
+      for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+        let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
-        if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-          this.bPassThrough[ outChannel ] = true;
+        for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+          if ( outChannel >= this.outputChannelCount )
+            break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-        } else { // Non-pass-through half channels. (i.e. input multiply filter weight.)
-          this.bPassThrough[ outChannel ] = false;
-        }
+          if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+            this.bPassThrough[ outChannel ] = true;
 
-      } // outChannelSub, outChannel
-    } // inChannelPartIndex
+          } else { // Non-pass-through half channels. (i.e. input multiply filter weight.)
+            this.bPassThrough[ outChannel ] = false;
+          }
 
+        } // outChannelSub, outChannel
+      } // inChannelPartIndex
+    } // aFiltersBiasesPartIndex
   }
 
 
