@@ -799,7 +799,7 @@ class Base {
 
     // 4.1 Pointwise21
     let imageIn1_beforePointwise21 = imageIn1;
-    let pointwise21Result, pointwise21Result_beforeConcatWith_pointwise212Result;
+    let pointwise21Result, pointwise21Result_beforeConcatWith_pointwise212;
     {
       if ( pointwise21ChannelCount > 0 ) {
         pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
@@ -813,12 +813,9 @@ class Base {
         } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
           let pointwise212Result = testParams.use_pointwise212( concat1Result, pointwise21ChannelCount, "Pointwise212", this.paramsOutDescription );
 
-          pointwise21Result_beforeConcatWith_pointwise212Result = pointwise21Result;
+          pointwise21Result_beforeConcatWith_pointwise212 = pointwise21Result;
           pointwise21Result = NumberImage.calcConcatAlongAxisId2( pointwise21Result, pointwise212Result,
             "Concat_pointwise21_pointwise212 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
-
-//!!! ...unfinished... (2022/02/24) pointwise212 and pointwise222.
-
         }
 
       } else {
@@ -849,9 +846,7 @@ class Base {
       // If output1 is requested, it comes from pointwise22 directly. The pointwise22 will have the same output channel count as pointwise21.
       let pointwise22ChannelCount;
 
-      if (   ( testParams.out.bOutput1Requested )
-          || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-         ) {    
+      if ( testParams.out.bOutput1Requested ) {    
         pointwise22ChannelCount = pointwise21ChannelCount;
       } else {
         pointwise22ChannelCount = 0;
@@ -860,9 +855,18 @@ class Base {
       let bPointwise22Bias = testParams.out.bPointwise21Bias; // pointwise22's bias flag is the same as pointwise21.
       let pointwise22ActivationId = testParams.out.pointwise21ActivationId; // pointwise22's activation function is the same as pointwise21.
 
-      let pointwise22Result;
+      let pointwise22Result, pointwise22Result_beforeConcatWith_pointwise222;
       if ( pointwise22ChannelCount > 0 ) {
         pointwise22Result = testParams.use_pointwise22( concat1Result, pointwise22ChannelCount, "Pointwise22", this.paramsOutDescription );
+
+        // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+          let pointwise222Result = testParams.use_pointwise222( concat1Result, pointwise22ChannelCount, "Pointwise222", this.paramsOutDescription );
+
+          pointwise22Result_beforeConcatWith_pointwise222 = pointwise22Result;
+          pointwise22Result = NumberImage.calcConcatAlongAxisId2( pointwise22Result, pointwise222Result,
+            "Concat_pointwise22_pointwise222 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
+        }
 
         // Residual Connection.
         //
