@@ -687,7 +687,7 @@ class Base extends TestParams.Base {
     //
     // The reason is that PointDepthPoint will only extract filters weights of half the above parameters in this case.
     //
-    else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
       this.doubleParamValue( PointDepthPoint.Params.channelCount0_pointwise1Before );
 
       if ( pointwise1ChannelCount_original == 0 ) {
