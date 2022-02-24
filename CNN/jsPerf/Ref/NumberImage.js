@@ -446,5 +446,171 @@ class Base {
     return imageOutNew;
   }
 
+  /**
+   * @param {NumberImage.Base} imageIn   The source image to be processed.
+   * @param {string}   splitName         A string for debug message of this splitting.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {NumberImage.Base[]}
+   *   Return splitted images [ imageOut1, imageOut2 ] along the axis id 2. If imageIn is null, return [ null, null ].
+   */
+  static calcSplitAlongAxisId2( imageIn, splitName, parametersDesc ) {
+
+    if ( null == imageIn )
+      return [ null, null ];
+
+    // If not divided by 2, let lower half have one more.
+    let imageOutDepth_lowerHalf = Math.ceil( imageIn.depth / 2 );
+    let imageOutDepth_higherHalf = imageIn.depth - imageOutDepth_lowerHalf;
+
+    let imageOutLength_lowerHalf = ( imageIn.height * imageIn.width * imageOutDepth_lowerHalf );
+    let imageOutLength_higherHalf = ( imageIn.height * imageIn.width * imageOutDepth_higherHalf );
+
+    let imageOutArray = [
+      new Base(
+        imageIn.height, imageIn.width, imageOutDepth_lowerHalf, new Float32Array( imageOutLength_lowerHalf ),
+        new ConvBiasActivation.BoundsArraySet( imageIn.depth, imageOutDepth_lowerHalf ) ),
+
+      new Base(
+        imageIn.height, imageIn.width, imageOutDepth_higherHalf, new Float32Array( imageOutLength_higherHalf ),
+        new ConvBiasActivation.BoundsArraySet( imageIn.depth, imageOutDepth_higherHalf ) )
+    ];
+
+    let imageOut0 = imageOutArray[ 0 ];
+    let imageOut1 = imageOutArray[ 1 ];
+
+    // Split along the image depth.
+    for ( let y = 0; y < imageIn.height; ++y ) {
+      let indexBaseX = ( y * imageIn.width );
+
+      for ( let x = 0; x < imageIn.width; ++x ) {
+        let indexBaseC = ( indexBaseX + x );
+
+        let inIndexBaseC  = ( indexBaseC * imageIn.depth );
+
+        let inChannel = 0;
+
+        let outIndexBaseC_lowerHalf = ( indexBaseC * imageOutDepth_lowerHalf );
+        let outIndexBaseC_higherHalf = ( indexBaseC * imageOutDepth_higherHalf );
+
+        for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
+          let inIndex = inIndexBaseC + inChannel;
+          let outIndex_lowerHalf = outIndexBaseC_lowerHalf + outChannel;
+          imageOut0.dataArray[ outIndex_lowerHalf ] = imageIn.dataArray[ inIndex ];
+        }
+
+        for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
+          let inIndex = inIndexBaseC + inChannel;
+          let outIndex_higherHalf = outIndexBaseC_higherHalf + outChannel;
+          imageOut1.dataArray[ outIndex_higherHalf ] = imageIn.dataArray[ inIndex ];
+        }
+
+      }
+    }
+
+    // Split value bounds array.
+    {
+      let inChannel = 0;
+
+      for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
+        imageOut0.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn.boundsArraySet.output, inChannel );
+      }
+
+      for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
+        imageOut1.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn.boundsArraySet.output, inChannel );
+      }
+
+      imageOut0.boundsArraySet.set_all_byBoundsArray_input_output( imageIn.boundsArraySet.output, imageOut0.boundsArraySet.output );
+      imageOut1.boundsArraySet.set_all_byBoundsArray_input_output( imageIn.boundsArraySet.output, imageOut1.boundsArraySet.output );
+    }
+
+    return imageOutArray;
+  }
+
+
+  /**
+   * @param {NumberImage.Base} imageIn1   The source image1 to be processed.
+   * @param {NumberImage.Base} imageIn2   The source image2 to be processed.
+   * @param {string}   concatName        A string for debug message of this concatenation.
+   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2. If imageIn2 is null, return imageIn1.
+   * If both imageIn1 and imageIn2 is null, return null.
+   */
+  static calcConcatAlongAxisId2( imageIn1, imageIn2, concatName, parametersDesc ) {
+
+    if ( null == imageIn1 ) {
+      if ( null == imageIn2 )
+        return null; // Both input is null. Return null.
+      else
+        return imageIn2; // Only input1 is null. Return input2.
+    } else {
+      if ( null == imageIn2 )
+        return imageIn1; // Only input2 is null. Return input1.
+      else
+        ; // Both input is not null. Do concatenate them in the following.
+    }
+
+    tf.util.assert( ( imageIn1.height == imageIn2.height ),
+      `${concatName} shape imageIn1.height (${imageIn1.height}) `
+        + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})`);
+
+    tf.util.assert( ( imageIn1.width == imageIn2.width ),
+      `${concatName} shape imageIn1.width (${imageIn1.width}) `
+        + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})`);
+
+    let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
+    let imageOutDepth = imageIn1.depth + imageIn2.depth;
+    let imageOut = new Base(
+      imageIn1.height, imageIn1.width, imageOutDepth, new Float32Array( imageOutLength ),
+      new ConvBiasActivation.BoundsArraySet( imageOutDepth, imageOutDepth )
+    );
+
+    // Concatenate along the image depth.
+    for ( let y = 0; y < imageIn1.height; ++y ) {
+      let indexBaseX = ( y * imageIn1.width );
+
+      for ( let x = 0; x < imageIn1.width; ++x ) {
+        let indexBaseC = ( indexBaseX + x );
+        let outIndexBaseC = ( indexBaseC * imageOut.depth );
+
+        let outChannel = 0;
+
+        let in1IndexBaseC  = ( indexBaseC * imageIn1.depth );
+        for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
+          let in1Index = in1IndexBaseC + in1Channel;
+          let outIndex = outIndexBaseC + outChannel;
+          imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
+        }
+
+        let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
+        for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
+          let in2Index = in2IndexBaseC + in2Channel;
+          let outIndex = outIndexBaseC + outChannel;
+          imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
+        }
+
+      }
+    }
+
+    // Concat value bounds array.
+    {
+      let outChannel = 0;
+
+      for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
+        imageOut.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn1.boundsArraySet.output, in1Channel );
+      }
+
+      for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
+        imageOut.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn2.boundsArraySet.output, in2Channel );
+      }
+
+      imageOut.boundsArraySet.set_all_byBoundsArray_input_output( imageOut.boundsArraySet.output, imageOut.boundsArraySet.output );
+    }
+
+    return imageOut;
+  }
+
 }
  
