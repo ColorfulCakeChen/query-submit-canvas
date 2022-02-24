@@ -592,6 +592,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       }
 
     } // aFiltersBiasesPartIndex
+
+    tf.util.assert( ( inChannel == this.inputChannelCount ),
+      `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+        + `aFiltersBiasesPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
   }
 
   /**
