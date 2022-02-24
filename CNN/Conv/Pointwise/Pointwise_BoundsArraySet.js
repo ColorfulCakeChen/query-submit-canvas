@@ -4,7 +4,7 @@ import * as ConvBiasActivation from "../ConvBiasActivation.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import { ChannelPartInfo } from  "./Pointwise_ChannelPartInfo.js";
+import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPartInfo.js";
 
 /**
  * The element value bounds for pointwise convolution-bias-activation.
@@ -21,12 +21,14 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
   /**
    * Set this.bPassThrough[] according to inChannelPartInfoArray.
    *
-   * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
+   * @param {Pointwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
    */
-  set_bPassThrough_all_byChannelPartInfoArray( inChannelPartInfoArray ) {
+  set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
 
     let outChannel = 0;
+
+//!!! ...unfinished... (2022/02/24) aFiltersBiasesPartInfoArray
 
     InChannelPartIndexLoop:
     for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
