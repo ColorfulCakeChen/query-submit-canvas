@@ -51,4 +51,11 @@ class FiltersBiasesPartInfo {
     this.aChannelPartInfoArray = aChannelPartInfoArray;
   }
 
+//!!! ...unfifnished... (2022/02/24)
+//   /**
+//    * @return {number}
+//    *   Total output channel count of this.aChannelPartInfoArray.
+//    */
+//   get outputChannelCountTotal() {
+//   }
 }
