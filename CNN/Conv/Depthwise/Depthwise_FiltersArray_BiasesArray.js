@@ -419,18 +419,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                       }
 
                     } else { // Non-pass-through half channels.
-                      //this.filtersArray[ filterIndex ] = Weights.Base.ValueBounds.clamped_or_zeroIfNaN( sourceFloat32Array[ sourceIndex ] );
                       this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
-
                       ++sourceIndex;
+
+                      // Determine .afterFilter
+                      tBounds
+                        .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                        .multiply_byN( this.filtersArray[ filterIndex ] );
+
+                      this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
                     }
-
-                    // Determine .afterFilter
-                    tBounds
-                      .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-                      .multiply_byN( this.filtersArray[ filterIndex ] );
-
-                    this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
                     ++filterIndex;
 
@@ -490,13 +488,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
               this.biasesArray[ biasIndex ] = 0;
 
             } else { // Non-pass-through half channels.
-              //this.biasesArray[ biasIndex ] = Weights.Base.ValueBounds.valueClamped_or_zeroIfNaN( sourceFloat32Array[ sourceIndex ] );
               this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
+              ++sourceIndex;
 
               // Determine .afterBias
               this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
-
-              ++sourceIndex;
             }
 
             ++biasIndex;
