@@ -520,6 +520,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                     ++sourceIndex;
                   }
 
+                  // Determine .afterFilter
+                  tBounds
+                    .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                    .multiply_byN( this.filtersArray[ filterIndex ] );
+
+                  this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+
                 } else {
                   this.filtersArray[ filterIndex ] = 0; // All input channels which is not in range use zero filter to ignore the inputs.
                 }
@@ -527,13 +534,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
               } else {
                 this.filtersArray[ filterIndex ] = 0; // All output channels which is not in range use zero filter to ignore the inputs.
               }
-
-              // Determine .afterFilter
-              tBounds
-                .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-                .multiply_byN( this.filtersArray[ filterIndex ] );
-
-              this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
               ++filterIndex;
 
@@ -568,11 +568,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
               } else { // Non-pass-through half channels.
                 this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
+                ++sourceIndex;
 
                 // Determine .afterBias
                 this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
-
-                ++sourceIndex;
               }
 
             } else {
