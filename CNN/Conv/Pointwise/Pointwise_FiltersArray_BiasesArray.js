@@ -571,17 +571,23 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
-            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-              this.biasesArray[ biasIndex ] = 0;
+            if ( outChannel >= outChannelBegin ) {
 
-            } else { // Non-pass-through half channels.
-              this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
+              if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+                this.biasesArray[ biasIndex ] = 0;
 
-              // Determine .afterBias
-              this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
+              } else { // Non-pass-through half channels.
+                this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
 
-              ++sourceIndex;
+                ++sourceIndex;
+              }
+
+            } else {
+              this.biasesArray[ biasIndex ] = 0; // All output channels which is not in range use zero bias.
             }
+
+            // Determine .afterBias
+            this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
 
             ++biasIndex;
 
