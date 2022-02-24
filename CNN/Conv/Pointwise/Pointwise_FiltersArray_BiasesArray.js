@@ -539,51 +539,59 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         } // inChannelSub, inChannel
       } // this.filtersArray
 
+      // Init .afterBias
+      {
+        let outChannel = 0;
 
-//!!! ...unfinished... (2022/02/24) aFiltersBiasesPartInfoArray
+        InChannelPartIndexLoop:
+        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
-    // Init .afterBias
-    {
-      this.boundsArraySet.afterBias.set_all_byBoundsArray( this.boundsArraySet.afterFilter );
-    }
+          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+            if ( outChannel >= this.outputChannelCount )
+              break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-    if ( this.biasesArray ) {
-      let outChannel = 0;
+            this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
 
-      InChannelPartIndexLoop:
-      for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-        let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+          } // outChannelSub, outChannel
+        } // inChannelPartIndex
+      }
 
-        for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
-          if ( outChannel >= this.outputChannelCount )
-            break InChannelPartIndexLoop; // Never exceeds the total output channel count.
+      if ( this.biasesArray ) {
+        let outChannel = 0;
 
-          // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
+        InChannelPartIndexLoop:
+        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
-          if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-            this.biasesArray[ biasIndex ] = 0;
+          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+            if ( outChannel >= this.outputChannelCount )
+              break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-          } else { // Non-pass-through half channels.
-            this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
+            // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
-            // Determine .afterBias
-            this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
+            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+              this.biasesArray[ biasIndex ] = 0;
 
-            ++sourceIndex;
-          }
+            } else { // Non-pass-through half channels.
+              this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
 
-          ++biasIndex;
+              // Determine .afterBias
+              this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
 
-        } // outChannelSub, outChannel
-      } // inChannelPartIndex
+              ++sourceIndex;
+            }
 
-      tf.util.assert( ( outChannel == this.outputChannelCount ),
-        `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-          + `inChannelPartInfoArray[] total output channel counts ( ${outChannel} ) should be ( ${this.outputChannelCount} ).` );
+            ++biasIndex;
 
-    } else { // ( !this.biasesArray ). No biases array to be extracted.
-      // Do nothing.
-    }
+          } // outChannelSub, outChannel
+        } // inChannelPartIndex
+
+      } else { // ( !this.biasesArray ). No biases array to be extracted.
+        // Do nothing.
+      }
+
+    } // aFiltersBiasesPartIndex
   }
 
   /**
