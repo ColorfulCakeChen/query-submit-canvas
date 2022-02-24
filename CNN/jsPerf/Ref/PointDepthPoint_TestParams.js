@@ -433,6 +433,24 @@ class Base extends TestParams.Base {
   }
 
   /**
+   * Pointwise212 uses the same channel count, bias flag and activation function as Pointwise21 (i.e. pointwise21ChannelCount, bPointwise21Bias
+   * and pointwise21ActivationId), but uses different filters and biases weights (i.e. pointwise212Filters and pointwise212Biases)
+   *
+   * @param {NumberImage.Base} inputImage    The source image to be processed.
+   * @param {number} pointwise21ChannelCount The output channel count of the pointwise212 convolution.
+   * @param {string} pointwiseName           A string for debug message of the pointwise212 convolution.
+   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise212 convolution, bias and activation.
+   */
+  use_pointwise212( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
+    let result = inputImage.cloneBy_pointwise( pointwise21ChannelCount,
+      this.in.paramsNumberArrayObject.pointwise212Filters, this.out.bPointwise21Bias,
+      this.in.paramsNumberArrayObject.pointwise212Biases, this.out.pointwise21ActivationId, pointwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
    * @param {NumberImage.Base} inputImage    The source image to be processed.
    * @param {number} pointwise21ChannelCount The output channel count of this pointwise21 pass-through convolution.
    * @param {string} pointwiseName           A string for debug message of the pointwise1 convolution.
@@ -462,6 +480,24 @@ class Base extends TestParams.Base {
     let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
       this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise22Bias,
       this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise22ActivationId, pointwiseName, parametersDesc );
+    return result;
+  }
+
+  /**
+   * Pointwise222 uses the same channel count, bias flag and activation function as Pointwise22 (i.e. pointwise22ChannelCount, bPointwise22Bias
+   * and pointwise22ActivationId), but uses different filters and biases weights (i.e. pointwise222Filters and pointwise222Biases)
+   *
+   * @param {NumberImage.Base} inputImage    The source image to be processed.
+   * @param {number} pointwise22ChannelCount The output channel count of the pointwise222 convolution.
+   * @param {string} pointwiseName           A string for debug message of the pointwise222 convolution.
+   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise222 convolution, bias and activation.
+   */
+  use_pointwise222( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
+    let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
+      this.in.paramsNumberArrayObject.pointwise222Filters, this.out.bPointwise22Bias,
+      this.in.paramsNumberArrayObject.pointwise222Biases, this.out.pointwise22ActivationId, pointwiseName, parametersDesc );
     return result;
   }
 
