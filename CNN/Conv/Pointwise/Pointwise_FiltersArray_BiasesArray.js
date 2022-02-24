@@ -477,6 +477,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
 //!!! ...unfinished... (2022/02/24) aFiltersBiasesPartInfoArray
     let inChannel = 0;
+    let outChannelBegin = 0; // Increased after every FiltersBiasesPart.
+    let outChannelEnd = 0;   // Non-inclusive. (i.e. [ outChannelBegin, outChannelEnd ) is current output channel for extracting weights.
 
     FiltersBiasesPartIndexLoop:
     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
@@ -491,6 +493,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
           let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
           let outChannel = 0;
+          outChannelEnd = outChannelBegin;
 
           InChannelPartIndexLoop:
           for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
@@ -501,23 +504,30 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
               if ( outChannel >= this.outputChannelCount )
                 break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-              if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
+              if ( outChannel >= outChannelBegin ) {
+                ++outChannelEnd;
 
-                if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                  if ( inChannelToBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
-                    this.filtersArray[ filterIndex ] = undoPreviousEscapingScale;
-                  } else {
-                    this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
+                if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
+
+                  if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+                    if ( inChannelToBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
+                      this.filtersArray[ filterIndex ] = undoPreviousEscapingScale;
+                    } else {
+                      this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
+                    }
+
+                  } else { // Non-pass-through half channels.
+                    this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
+
+                    ++sourceIndex;
                   }
 
-                } else { // Non-pass-through half channels.
-                  this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
-
-                  ++sourceIndex;
+                } else {
+                  this.filtersArray[ filterIndex ] = 0; // All input channels which is not in range use zero filter to ignore the inputs.
                 }
 
               } else {
-                this.filtersArray[ filterIndex ] = 0; // All input channels which is not in range use zero filter to ignore the inputs.
+                this.filtersArray[ filterIndex ] = 0; // All output channels which is not in range use zero filter to ignore the inputs.
               }
 
               // Determine .afterFilter
