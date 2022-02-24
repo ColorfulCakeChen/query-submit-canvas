@@ -653,7 +653,7 @@ class Base {
     //
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
-      let imageInArray_Fake = Base.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
+      let imageInArray_Fake = NumberImage.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
 
@@ -729,10 +729,6 @@ class Base {
       // be different from pointwise21Result and can not be concatenated together.
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_depthwise1_PassThrough( imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
-
-//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
-//          depthwise1Result.valueBoundsSet.activationEscaping_ScaleTranslateSet.do,   // scale-translate for escaping activation of depthwise1.
-
           "Depthwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
@@ -794,8 +790,6 @@ class Base {
         bAddInputToOutputRequested = true;
       }
     }
-
-//!!! ...unfinished... (2022/02/24) pointwise212 and pointwise222.
 
     // 4.1 Pointwise21
     let imageIn1_beforePointwise21 = imageIn1;
