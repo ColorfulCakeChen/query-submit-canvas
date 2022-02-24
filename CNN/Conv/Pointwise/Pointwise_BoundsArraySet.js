@@ -25,7 +25,9 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    *   The input channel range array which describe lower/higher half channels index range.
    */
   set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
-    let inChannel = 0;
+    //!!! (2022/02/24 Remarked) No need process input channel.
+    //let inChannel = 0;
+
     let outChannelBegin = 0;
     let outChannelEnd = 0;   // Non-inclusive. (i.e. [ outChannelBegin, outChannelEnd ) is current output channel for extracting weights.
 
@@ -34,12 +36,12 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
       let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
 
-      for ( let inChannelSub = 0; inChannelSub < aFiltersBiasesPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-        if ( inChannel >= this.inputChannelCount )
-          break FiltersBiasesPartIndexLoop; // Never exceeds the total input channel count.
+      //!!! (2022/02/24 Remarked) No need process input channel.
+      //for ( let inChannelSub = 0; inChannelSub < aFiltersBiasesPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+      //  if ( inChannel >= this.inputChannelCount )
+      //    break FiltersBiasesPartIndexLoop; // Never exceeds the total input channel count.
 
-//!!! ...unfinished... (2022/02/24) aFiltersBiasesPartInfoArray
-
+      {
         let outChannel = 0;
         outChannelEnd = outChannelBegin;
 
@@ -67,17 +69,25 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
           } // outChannelSub, outChannel
         } // inChannelPartIndex
-      } // inChannelSub, inChannel
+      }
+
+      //!!! (2022/02/24 Remarked) No need process input channel.
+      //} // inChannelSub, inChannel
 
       outChannelBegin = outChannelEnd; // Advanced after every FiltersBiasesPart.
 
     } // aFiltersBiasesPartIndex
+
+    //!!! (2022/02/24 Remarked) No need process input channel.
+    //tf.util.assert( ( inChannel == this.inputChannelCount ),
+    //  `Pointwise.BoundsArraySet.set_bPassThrough_all_byChannelPartInfoArray(): `
+    //    + `aFiltersBiasesPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+
+    tf.util.assert( ( outChannelEnd == this.outputChannelCount ),
+      `Pointwise.BoundsArraySet.set_bPassThrough_all_byChannelPartInfoArray(): `
+        + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
+        + `should be ( ${this.outputChannelCount} ).` );
   }
-
-
-//!!! ...unfinished... (2022/01/09)
-// Even if ( this.outputChannelCount <= 0 ),
-// this function should work correctly and BoundsArraySet should result in pass-through input to output.
 
 }
 
