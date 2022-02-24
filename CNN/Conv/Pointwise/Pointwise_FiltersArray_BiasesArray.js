@@ -477,7 +477,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
 //!!! ...unfinished... (2022/02/24) aFiltersBiasesPartInfoArray
     let inChannel = 0;
-    let outChannelBegin = 0; // Increased after every FiltersBiasesPart.
+    let outChannelBegin = 0;
     let outChannelEnd = 0;   // Non-inclusive. (i.e. [ outChannelBegin, outChannelEnd ) is current output channel for extracting weights.
 
     FiltersBiasesPartIndexLoop:
@@ -586,6 +586,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       } else { // ( !this.biasesArray ). No biases array to be extracted.
         // Do nothing.
       }
+
+      outChannelBegin = outChannelEnd; // Advanced after every FiltersBiasesPart.
 
     } // aFiltersBiasesPartIndex
 
