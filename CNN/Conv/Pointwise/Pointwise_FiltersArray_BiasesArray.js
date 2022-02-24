@@ -508,7 +508,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                 ++outChannelEnd;
 
                 if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
-
                   if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                     if ( inChannelToBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
                       this.filtersArray[ filterIndex ] = undoPreviousEscapingScale;
@@ -518,7 +517,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
                   } else { // Non-pass-through half channels.
                     this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
-
                     ++sourceIndex;
                   }
 
@@ -541,11 +539,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             } // outChannelSub, outChannel
           } // inChannelPartIndex
-
-          tf.util.assert( ( outChannel == this.outputChannelCount ),
-            `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-              + `inChannelPartInfoArray[] total output channel count ( ${outChannel} ) should be ( ${this.outputChannelCount} ).` );
-
         } // inChannelSub, inChannel
       } // this.filtersArray
 
@@ -563,8 +556,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
-//!!! ...unfinished... (2022/02/24) outChannelBegin, outChannelEnd
-
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
             if ( outChannel >= this.outputChannelCount )
               break InChannelPartIndexLoop; // Never exceeds the total output channel count.
@@ -572,18 +563,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
             if ( outChannel >= outChannelBegin ) {
-
               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                 this.biasesArray[ biasIndex ] = 0;
 
               } else { // Non-pass-through half channels.
                 this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
-
                 ++sourceIndex;
               }
 
             } else {
-              this.biasesArray[ biasIndex ] = 0; // All output channels which is not in range use zero bias.
+              // Do nothing. All output channels which is not in range fills bias in another run.
             }
 
             // Determine .afterBias
@@ -603,6 +592,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     tf.util.assert( ( inChannel == this.inputChannelCount ),
       `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
         + `aFiltersBiasesPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+
+    tf.util.assert( ( outChannelEnd == this.outputChannelCount ),
+      `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+        + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
+        + `should be ( ${this.outputChannelCount} ).` );
   }
 
   /**
