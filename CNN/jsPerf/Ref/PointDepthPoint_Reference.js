@@ -795,6 +795,8 @@ class Base {
       }
     }
 
+//!!! ...unfinished... (2022/02/24) pointwise212 and pointwise222.
+
     // 4.1 Pointwise21
     let imageIn1_beforePointwise21 = imageIn1;
     let pointwise21Result;
