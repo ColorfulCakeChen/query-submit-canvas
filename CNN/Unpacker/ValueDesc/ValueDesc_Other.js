@@ -51,7 +51,7 @@ channelCount1_pointwise1Before.Singleton = new channelCount1_pointwise1Before;
  *   - 0: NONE
  *   - 1: HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH
  *   - 2: HIGHER_HALF_COPY_LOWER_HALF
- *   - 3: HIGHER_HALF_POINTWISE22
+ *   - 3: HIGHER_HALF_ANOTHER_POINTWISE
  *   - 4: HIGHER_HALF_PASS_THROUGH
  */
 class Pointwise_HigherHalfDifferent extends Int {
@@ -61,7 +61,7 @@ class Pointwise_HigherHalfDifferent extends Int {
       "NONE",                                                 // (0) (for normal poitwise convolution. no higher half different.)
       "HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH", // (1) (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
       "HIGHER_HALF_COPY_LOWER_HALF",                          // (2) (for pointwise1 of ShuffleNetV2_ByMopbileNetV1's head)
-      "HIGHER_HALF_POINTWISE22",                              // (3) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
+      "HIGHER_HALF_ANOTHER_POINTWISE",                        // (3) (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head)
       "HIGHER_HALF_PASS_THROUGH",                             // (4) (for pointwise1/pointwise2 of ShuffleNetV2_ByMopbileNetV1's body/tail)
     ] );
   }
