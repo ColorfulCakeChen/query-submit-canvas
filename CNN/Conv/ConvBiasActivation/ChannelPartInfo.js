@@ -1,3 +1,5 @@
+// (2022/02/24) Deprecated.
+
 export { ChannelPartInfo };
 
 /**
