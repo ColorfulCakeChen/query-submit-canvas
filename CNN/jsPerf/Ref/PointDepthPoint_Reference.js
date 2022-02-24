@@ -772,7 +772,7 @@ class Base {
     if ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS() ) {
 
       // Concatenate depthwise1's result and input1. (i.e. concat1)
-      concat1Result = Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
+      concat1Result = NumberImage.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
         "Concat1_depthwise1_input1 (TWO_INPUTS)", this.paramsOutDescription );
 
     // ONE_INPUT_TWO_DEPTHWISE                  (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
@@ -799,7 +799,7 @@ class Base {
 
     // 4.1 Pointwise21
     let imageIn1_beforePointwise21 = imageIn1;
-    let pointwise21Result;
+    let pointwise21Result, pointwise21Result_beforeConcatWith_pointwise212Result;
     {
       if ( pointwise21ChannelCount > 0 ) {
         pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
@@ -808,6 +808,17 @@ class Base {
           imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (which is past-through by depthwise1).
             pointwise21ChannelCount, // So that it could be concatenated with pointwise21Result.
             "Pointwise21_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
+
+        // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+          let pointwise212Result = testParams.use_pointwise212( concat1Result, pointwise21ChannelCount, "Pointwise212", this.paramsOutDescription );
+
+          pointwise21Result_beforeConcatWith_pointwise212Result = pointwise21Result;
+          pointwise21Result = NumberImage.calcConcatAlongAxisId2( pointwise21Result, pointwise212Result,
+            "Concat_pointwise21_pointwise212 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
+
+//!!! ...unfinished... (2022/02/24) pointwise212 and pointwise222.
+
         }
 
       } else {
