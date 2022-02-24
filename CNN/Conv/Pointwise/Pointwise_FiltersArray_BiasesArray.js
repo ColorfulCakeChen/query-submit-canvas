@@ -551,20 +551,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
       // Init .afterBias
       {
-        let outChannel = 0;
-
-        InChannelPartIndexLoop:
-        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-
-          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
-            if ( outChannel >= this.outputChannelCount )
-              break InChannelPartIndexLoop; // Never exceeds the total output channel count.
-
-            this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
-
-          } // outChannelSub, outChannel
-        } // inChannelPartIndex
+        for ( let outChannel = outChannelBegin; outChannel < outChannelEnd; ++outChannel ) {
+          this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
+        } // outChannel
       }
 
       if ( this.biasesArray ) {
@@ -573,6 +562,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         InChannelPartIndexLoop:
         for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+
+//!!! ...unfinished... (2022/02/24) outChannelBegin, outChannelEnd
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
             if ( outChannel >= this.outputChannelCount )
