@@ -60,14 +60,14 @@ import { BoundsArraySet } from  "./Pointwise_BoundsArraySet.js";
  *
  *     - 2.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
  *
- *   - 3. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22 ):
+ *   - 3. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE ):
  *          
- *     - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfPointwise22),
+ *     - 3.1 If ( outputChannelCount > 0 ), (i.e. bHigherHalfAnotherPointwise),
  *         (for pointwise2 of ShuffleNetV2_ByMopbileNetV1's head),
  *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between
- *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are pointwise22. These two filters (and biases)
+ *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are pointwise212. These two filters (and biases)
  *         will be extracted in sequence, but they will be combined into one larger filters (and biases). This makes these
- *         filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that
+ *         filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByAnotherPointwise's head. So that
  *         the same filters weights could be used in these two architectures for comparing performance and correctness.
  *
  *     - 3.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
@@ -281,8 +281,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ];
           break;
 
-        // 3.3 bHigherHalfPointwise22
-        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22: // (3)
+        // 3.3 bHigherHalfAnotherPointwise
+        case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
           this.outputChannelCount_Real = this.outputChannelCount;
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;   // Extract all weights as specified input/output channels.
           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
@@ -454,7 +454,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     let sourceIndex = 0;
 
 //!!! ...unfinished... (2022/02/23)
-// For HIGHER_HALF_POINTWISE22 (3), extraction order should be filter1-bias1-filter2-bias2.
+// For HIGHER_HALF_ANOTHER_POINTWISE (3), extraction order should be filter1-bias1-filter2-bias2.
 // inChannelPartInfoArray seems not able to do that order
 //
 // Perhaps, become inChannelPartInfoArrayArray (2D array) and describe the outer-loop inChannel limit (instead of this.inputChannelCount).
