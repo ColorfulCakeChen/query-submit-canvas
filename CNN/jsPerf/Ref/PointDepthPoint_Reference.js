@@ -653,7 +653,7 @@ class Base {
     //
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
-      let imageInArray_Fake = NumberImage.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
+      let imageInArray_Fake = NumberImage.Base.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
 
@@ -768,7 +768,7 @@ class Base {
     if ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS() ) {
 
       // Concatenate depthwise1's result and input1. (i.e. concat1)
-      concat1Result = NumberImage.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
+      concat1Result = NumberImage.Base.calcConcatAlongAxisId2( depthwise1Result, imageIn1,
         "Concat1_depthwise1_input1 (TWO_INPUTS)", this.paramsOutDescription );
 
     // ONE_INPUT_TWO_DEPTHWISE                  (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
@@ -808,7 +808,7 @@ class Base {
           let pointwise212Result = testParams.use_pointwise212( concat1Result, pointwise21ChannelCount, "Pointwise212", this.paramsOutDescription );
 
           pointwise21Result_beforeConcatWith_pointwise212 = pointwise21Result;
-          pointwise21Result = NumberImage.calcConcatAlongAxisId2( pointwise21Result, pointwise212Result,
+          pointwise21Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise21Result, pointwise212Result,
             "Concat_pointwise21_pointwise212 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
         }
 
@@ -858,7 +858,7 @@ class Base {
           let pointwise222Result = testParams.use_pointwise222( concat1Result, pointwise22ChannelCount, "Pointwise222", this.paramsOutDescription );
 
           pointwise22Result_beforeConcatWith_pointwise222 = pointwise22Result;
-          pointwise22Result = NumberImage.calcConcatAlongAxisId2( pointwise22Result, pointwise222Result,
+          pointwise22Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise22Result, pointwise222Result,
             "Concat_pointwise22_pointwise222 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
         }
 
@@ -907,7 +907,7 @@ class Base {
 
       // 5.2 Concat2 only.
       } else { // ( bOutput1Requested == false )
-        imageOutArray[ 0 ] = NumberImage.calcConcatAlongAxisId2(
+        imageOutArray[ 0 ] = NumberImage.Base.calcConcatAlongAxisId2(
           imageConcat2InArray[ 0 ], imageConcat2InArray[ 1 ], "Concat2_pointwise21_input1", this.paramsOutDescription );
       }
 
@@ -926,7 +926,7 @@ class Base {
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
        ) {
 
-      let concatResult = NumberImage.calcConcatAlongAxisId2(
+      let concatResult = NumberImage.Base.calcConcatAlongAxisId2(
         imageOutArray[ 0 ], imageOutArray[ 1 ],
         "Concat_imageOutArray_0_1_to_imageOutArray_0 (ONE_INPUT_HALF_THROUGH or ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1)",
         this.paramsOutDescription );
