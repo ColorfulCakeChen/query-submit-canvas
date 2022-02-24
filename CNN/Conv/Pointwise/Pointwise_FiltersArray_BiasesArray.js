@@ -296,9 +296,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount,
+            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf,
               [ new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ) ] ),
-            new FiltersBiasesPartInfo( this.inputChannelCount,
+            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf,
               [ new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ) ] )
           ];
           break;
