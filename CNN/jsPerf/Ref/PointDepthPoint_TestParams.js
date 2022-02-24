@@ -654,11 +654,11 @@ class Base extends TestParams.Base {
     let paramsAll = this.out;
     let io_paramsNumberArrayObject = this.in.paramsNumberArrayObject;
 
-    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
+    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use similar calculation logic:
     //    ONE_INPUT_HALF_THROUGH                   // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
     //    TWO_INPUTS_CONCAT_POINTWISE21_INPUT1     // (-3) (ShuffleNetV2's body/tail)
     //
-    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use same calculation logic:
+    // The following two (ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.Xxx) use similar calculation logic:
     //    ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     //    ONE_INPUT_TWO_DEPTHWISE                  // (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
 
@@ -666,6 +666,17 @@ class Base extends TestParams.Base {
     let channelCount0_pointwise1Before_original = paramsAll.channelCount0_pointwise1Before;
     let pointwise1ChannelCount_original = paramsAll.pointwise1ChannelCount;
     let pointwise21ChannelCount_original = paramsAll.pointwise21ChannelCount;
+
+    // In ShuffleNetV2_ByMobileNetV1's head:
+    //   - pointwise21ChannelCount.
+    //     - Double it in paramsAll and io_paramsNumberArrayObject (if existed).
+    //   - Use original the above parameters twice to generate filters and biases weights.
+    //     - pointwise21 and pointwise212
+    //
+    // The reason is that PointDepthPoint will only extract filters and biases weights of the above parameters twice in this case.
+    //
+    if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+      this.doubleParamValue( PointDepthPoint.Params.pointwise21ChannelCount );
 
     // In ShuffleNetV2_ByMobileNetV1's body/tail:
     //   - channelCount0_pointwise1Before, pointwise21ChannelCount.
@@ -676,8 +687,7 @@ class Base extends TestParams.Base {
     //
     // The reason is that PointDepthPoint will only extract filters weights of half the above parameters in this case.
     //
-    if ( ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-       ) {
+    else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
       this.doubleParamValue( PointDepthPoint.Params.channelCount0_pointwise1Before );
 
       if ( pointwise1ChannelCount_original == 0 ) {
@@ -746,16 +756,21 @@ class Base extends TestParams.Base {
     }
 
     // Pointwise21
-    
-//!!! ...unfinished... (2022/02/24) pointwise212
-//       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-//          ) {
+    {    
+      let pointwise21 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+        pointwise21ChannelCount_original, paramsAll.bPointwise21Bias );
 
-    let pointwise21 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
-      pointwise21ChannelCount_original, paramsAll.bPointwise21Bias );
+      io_paramsNumberArrayObject.pointwise21Filters = pointwise21.numberArrayArray[ 0 ];
+      io_paramsNumberArrayObject.pointwise21Biases =  pointwise21.numberArrayArray[ 1 ];
 
-    io_paramsNumberArrayObject.pointwise21Filters = pointwise21.numberArrayArray[ 0 ];
-    io_paramsNumberArrayObject.pointwise21Biases =  pointwise21.numberArrayArray[ 1 ];
+      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        let pointwise212 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+          pointwise21ChannelCount_original, paramsAll.bPointwise21Bias );
+
+        io_paramsNumberArrayObject.pointwise212Filters = pointwise212.numberArrayArray[ 0 ];
+        io_paramsNumberArrayObject.pointwise212Biases =  pointwise212.numberArrayArray[ 1 ];
+      }
+    }
 
     // Pointwise22
     {
@@ -773,10 +788,6 @@ class Base extends TestParams.Base {
         pointwise22ChannelCount = pointwise21ChannelCount_original;
       }
 
-//!!! ...unfinished... (2022/02/24) pointwise222
-//       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-//          ) {
-
       let bPointwise22Bias = paramsAll.bPointwise21Bias; // pointwise22's bias flag should always be the same as pointwise21's.
 
       let pointwise22 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
@@ -784,6 +795,15 @@ class Base extends TestParams.Base {
 
       io_paramsNumberArrayObject.pointwise22Filters = pointwise22.numberArrayArray[ 0 ];
       io_paramsNumberArrayObject.pointwise22Biases =  pointwise22.numberArrayArray[ 1 ];
+      
+      if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        let pointwise222 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
+          pointwise22ChannelCount, bPointwise22Bias );
+
+        io_paramsNumberArrayObject.pointwise222Filters = pointwise222.numberArrayArray[ 0 ];
+        io_paramsNumberArrayObject.pointwise222Biases =  pointwise222.numberArrayArray[ 1 ];
+      }
+
     }
   }
 
