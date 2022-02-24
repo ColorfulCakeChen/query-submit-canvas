@@ -67,7 +67,7 @@ import { BoundsArraySet } from  "./Pointwise_BoundsArraySet.js";
  *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between
  *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are pointwise212. These two filters (and biases)
  *         will be extracted in sequence, but they will be combined into one larger filters (and biases). This makes these
- *         filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByAnotherPointwise's head. So that
+ *         filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that
  *         the same filters weights could be used in these two architectures for comparing performance and correctness.
  *
  *     - 3.2 If ( outputChannelCount <= 0 ), no poitwise convolution, no bias, no channel shuffler. ( bPointwise == bExisted == false ).
