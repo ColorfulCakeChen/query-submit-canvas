@@ -777,7 +777,7 @@ class Base {
                || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) ) { // (-4)
 
       // Concatenate depthwise1's result and depthwise2's result.
-      concat1Result = Base.calcConcatAlongAxisId2(
+      concat1Result = NumberImage.Base.calcConcatAlongAxisId2(
         depthwise1Result, depthwise2Result,
         "Concat1_depthwise1_depthwise2 (ONE_INPUT_TWO_DEPTHWISE or ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1)",
         this.paramsOutDescription );
