@@ -645,15 +645,24 @@ class Base {
 
     let pointwise1ChannelCount, pointwise21ChannelCount;
 
+    // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+    //
+    // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() double pointwise21ChannelCount. So, halve them here.
+    //
+    if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+      pointwise21ChannelCount = Math.ceil( testParams.out.pointwise21ChannelCount / 2 );
+
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
     //
     // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() double channelCount0_pointwise1Before,
     // pointwise21ChannelCount. So, halve them here.
     //
-    if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
-      let imageInArray_Fake = NumberImage.Base.calcSplitAlongAxisId2( imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
+      let imageInArray_Fake = NumberImage.Base.calcSplitAlongAxisId2(
+        imageInArray[ 0 ], "Split_imageIn_to_imageInArray_0_1", this.paramsOutDescription );
+
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
 
@@ -684,8 +693,6 @@ class Base {
     if ( pointwise1ChannelCount > 0 ) {
       pointwise1Result = testParams.use_pointwise1( imageIn0, pointwise1ChannelCount, "Pointwise1", this.paramsOutDescription );
 
-//!!! ...unfinished... (2022/02/23)
-
       if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn0_beforePointwise1, // copy input0 (not input1).
           pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise22 (with same structure of depthwise1 and pointwise21).
@@ -709,8 +716,6 @@ class Base {
           + `(${testParams.out.channelCount1_pointwise1Before}). `
           + `${this.paramsOutDescription}` );
 
-//!!! ...unfinished... (2022/02/23)
-
         imageIn1 = imageIn0; // Not input1 but input0.
       }
     }
@@ -722,8 +727,6 @@ class Base {
     let depthwise1Result;
     if ( 0 != testParams.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       depthwise1Result = testParams.use_depthwise1( pointwise1Result, "Depthwise1", this.paramsOutDescription );
-
-//!!! ...unfinished... (2022/02/23)
 
       // When ONE_INPUT_HALF_THROUGH (-5), imageIn1 should be shrinked by depthwise1. Otherwise, its size may
       // be different from pointwise21Result and can not be concatenated together.
@@ -798,18 +801,18 @@ class Base {
       if ( pointwise21ChannelCount > 0 ) {
         pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
 
-        if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-          imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (which is past-through by depthwise1).
-            pointwise21ChannelCount, // So that it could be concatenated with pointwise21Result.
-            "Pointwise21_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
-
         // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+        if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
           let pointwise212Result = testParams.use_pointwise212( concat1Result, pointwise21ChannelCount, "Pointwise212", this.paramsOutDescription );
 
           pointwise21Result_beforeConcatWith_pointwise212 = pointwise21Result;
           pointwise21Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise21Result, pointwise212Result,
             "Concat_pointwise21_pointwise212 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
+
+        } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+          imageIn1 = testParams.use_pointwise21_PassThrough( imageIn1_beforePointwise21, // pass-through input1 (which is past-through by depthwise1).
+            pointwise21ChannelCount, // So that it could be concatenated with pointwise21Result.
+            "Pointwise21_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
         }
 
       } else {
