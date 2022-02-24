@@ -32,7 +32,7 @@ import { Params } from "./PointDepthPoint_Params.js";
  * exists, it could have or have no bias and activation function.
  *
  *
- * There are six main combinations:
+ * There are seven main combinations:
  *
  *   - When ( channelCount1_pointwise1Before == -3 ) and ( bOutput1Requested == true ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: TWO_OUTPUT:
  * (ShuffleNetV2's body)
@@ -68,10 +68,16 @@ import { Params } from "./PointDepthPoint_Params.js";
  *
  *
  *   - When
- *     - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
- *       (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) )
  *     - ( channelCount1_pointwise1Before == -4 ): ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: (ShuffleNetV2_ByMobileNetV1's head)
  *     - ( channelCount1_pointwise1Before == -5 ): ONE_INPUT_HALF_THROUGH: (ShuffleNetV2_ByMobileNetV1's body/tail)
+ * <pre>
+ * input0 - pointwise1 - depthwise1 ---------------- pointwise21 (include pointwise211 and pointwise212)
+ * </pre>
+ *
+ *
+ *   - When
+ *     - ( channelCount1_pointwise1Before == 0 ): ONE_INPUT:
+ *       (MobileNetV1 or MobileNetV2's head or simplified ShuffleNetV2(_ByPointwise22)'s head with ( pointwise1ChannelCount == 0 ) )
  * <pre>
  * input0 - pointwise1 - depthwise1 ---------------- pointwise21
  *                                                 \ pointwise22
@@ -615,12 +621,12 @@ class Base extends ReturnOrClone.Base {
       // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise21ChannelCount is always positive.
       outputChannelCount_lowerHalf_pointwise2 = Math.ceil( this.pointwise21ChannelCount / 2 );
 
-      // For bHigherHalfPointwise22 (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThrough (i.e. ( pointwise21ChannelCount == 0 ) ).
+      // For bHigherHalfAnotherPointwise (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThrough (i.e. ( pointwise21ChannelCount == 0 ) ).
       //
       // (i.e. ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) )
       // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
       if ( this.bHigherHalfDepthwise2 == true ) {
-        nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_POINTWISE22;
+        nHigherHalfDifferent_pointwise2 = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
 
       // For bHigherHalfPassThroughShuffle (i.e. ( pointwise21ChannelCount > 0 ) ) or bAllPassThroughShuffle (i.e. ( pointwise21ChannelCount == 0 ) ).
       //
@@ -981,8 +987,6 @@ class Base extends ReturnOrClone.Base {
       = this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 = this.bShould_addInput0ToPointwise22
       = this.bConcat2ShuffleSplitRequested
       = this.outputTensorCount
-//!!! (2022/02/22 Remarked) boundsArraySet is array.
-//      = this.outputValueBounds
       = undefined;
 
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
@@ -1465,10 +1469,6 @@ class Base extends ReturnOrClone.Base {
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
       + `outputTensorCount=${this.outputTensorCount}, `
-
-//!!! (2022/02/22 Remarked) boundsArraySet is array.
-//       + `inputValueBounds=[ ${this.valueBoundsSet.input.lower}, ${this.valueBoundsSet.input.upper} ], `
-//       + `outputValueBounds=[ ${this.valueBoundsSet.output.lower}, ${this.valueBoundsSet.output.upper} ], `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}`
     ;
