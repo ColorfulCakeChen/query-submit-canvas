@@ -745,19 +745,22 @@ class Base extends TestParams.Base {
     let pointwise2_inputChannelCount = depthwise1.outputChannelCount;
     {
       if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
-//!!! (2022/04/01 Remarked)
+
+//!!! (2022/04/01 Remarked) sure?
 // No need to combine depthwise1 and depthwise2 for pointwise21 because there will be pointwise212 to handle
 // depthwise1 and depthwise2 separately.
-//          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+
+          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
          ) {
 
         pointwise2_inputChannelCount += depthwise2.outputChannelCount; // Add the channel count of the branch of the first input image.
 
-//!!! ...unfinished...  (2022/04/01) sure?
-      // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-      } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
-        // No need to combine depthwise1 and depthwise2 for pointwise21 because there will be pointwise212 to handle
-        // depthwise1 and depthwise2 separately.
+//!!! (2022/04/01 Added and Remarked)
+// //!!! ...unfinished...  (2022/04/01) sure?
+//       // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+//       } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+//         // No need to combine depthwise1 and depthwise2 for pointwise21 because there will be pointwise212 to handle
+//         // depthwise1 and depthwise2 separately.
 
       // (> 0) Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX  (simplified ShuffleNetV2's tail)
       } else if ( paramsAll.channelCount1_pointwise1Before > 0 ) {
