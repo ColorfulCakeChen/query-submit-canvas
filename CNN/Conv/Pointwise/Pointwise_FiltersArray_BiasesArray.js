@@ -514,6 +514,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
             let inChannelToPartBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
+//!!! (2022/04/01 Remarked) Moved to "Init .afterBias".
+//            outChannelEnd = Math.min( outChannelEnd + inChannelPartInfo.outputChannelCount, this.outputChannelCount );
+
             for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
               if ( outChannel >= this.outputChannelCount )
                 break InChannelPartIndexLoop; // Never exceeds the total output channel count.
