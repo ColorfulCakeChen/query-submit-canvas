@@ -578,8 +578,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             if ( outChannel >= this.outputChannelCount )
               break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-            this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
             ++outChannelEnd;
+
+//!!! ...unfinished... (2022/04/01) It is a waste for less than outChannelBegin.
+
+            if ( outChannel >= outChannelBegin ) {
+              this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
+            }
 
           } // outChannelSub, outChannel
         } // inChannelPartIndex
