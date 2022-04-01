@@ -299,15 +299,19 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
 //!!! (2022/04/01 Remarked) Whole input channels are used, but higher half is past-through.
 //            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf, [
-            new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but higher half is past-through.
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,  this.outputChannelCount_lowerHalf, false ),
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,                                            0,  true ) ] ),
+            new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but higher half is ignored.
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,  this.outputChannelCount_lowerHalf, false )
+//!!! (2022/04/01 Remarked) Whole input channels are used, but higher half is ignored.
+//              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,                                            0,  true )
+            ] ),
 
 //!!! (2022/04/01 Remarked) Whole input channels are used, but lower half is past-through.
 //            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
-            new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but lower half is past-through.
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,                                  0,  true ),
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ) ] )
+            new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but lower half is ignored.
+//!!! (2022/04/01 Remarked) Whole input channels are used, but lower half is ignored.
+//              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,                                  0,  true ),
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false )
+            ] )
           ];
           break;
 
