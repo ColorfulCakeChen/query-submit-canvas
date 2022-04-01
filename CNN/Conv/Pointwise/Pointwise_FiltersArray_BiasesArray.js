@@ -485,13 +485,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
           let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
           let outChannel = 0;
+          outChannelEnd = outChannelBegin;
 
           InChannelPartIndexLoop:
           for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
             let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
             let inChannelToPartBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
-            for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+            for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel, ++outChannelEnd ) {
               if ( outChannel >= this.outputChannelCount )
                 break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
@@ -529,9 +530,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             } // outChannelSub, outChannel
           } // inChannelPartIndex
-
-          outChannelEnd = outChannel;
-
         } // inChannelSub, inChannel
       } // this.filtersArray
 
