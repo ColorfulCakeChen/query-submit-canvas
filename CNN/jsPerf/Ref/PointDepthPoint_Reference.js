@@ -652,6 +652,9 @@ class Base {
     if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
       pointwise21ChannelCount = Math.ceil( testParams.out.pointwise21ChannelCount / 2 );
 
+      imageIn0 = imageInArray[ 0 ];
+      imageIn1 = imageInArray[ 1 ];
+
     // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we use the logic of
     // TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) to handle ONE_INPUT_HALF_THROUGH (-5).
     //
