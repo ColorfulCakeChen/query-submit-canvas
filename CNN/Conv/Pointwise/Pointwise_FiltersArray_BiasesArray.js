@@ -256,8 +256,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_toBeExtracted = this.inputChannelCount; // Extract all weights as specified input/output channels.
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount,
-              [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ] )
+            new FiltersBiasesPartInfo( this.inputChannelCount, [
+              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ] )
           ];
           break;
 
@@ -268,9 +268,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           //this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf; // Not used in this case.
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount,
-              [ new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
-                new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
+            new FiltersBiasesPartInfo( this.inputChannelCount, [
+              new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
+              new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
           ];
           break;
 
@@ -282,9 +282,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount,
-              [ new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
-                new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
+            new FiltersBiasesPartInfo( this.inputChannelCount, [
+              new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
+              new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
           ];
           break;
 
@@ -296,10 +296,18 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf,
-              [ new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ) ] ),
-            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf,
-              [ new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ) ] )
+            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf, [
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,  this.outputChannelCount_lowerHalf, false ),
+
+//!!! ...unfinished... (2022/04/01)
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,                                            0,  true ) ] ),
+
+            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
+
+//!!! ...unfinished... (2022/04/01)
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,                                  0,  true ),
+
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ) ] )
           ];
           break;
 
