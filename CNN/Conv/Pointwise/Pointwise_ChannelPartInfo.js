@@ -1,4 +1,4 @@
-export { ChannelPartInfo, FiltersBiasesPartInfo };
+export { ChannelPartInfo, ChannelPart, FiltersBiasesPartInfo };
 
 /**
  * Half channels information. Describe channel index range of lower half or higher half.
@@ -30,6 +30,21 @@ class ChannelPartInfo {
 
 }
 
+
+/**
+ * The value of generator FiltersBiasesPartInfo.ChannelPartGenerator( this.outputChannelCount, inChannel ).next().
+ */
+class ChannelPart {
+
+//   ChannelPart.info (i.e. ChannelPartInfo)
+//   ChannelPart.outChannelSub
+//   ChannelPart.outChannel
+//   ChannelPart.outChannelEnd
+//   ChannelPart.inChannelToBegin
+
+}
+
+
 /**
  * Describe a range for a (pointwise) filters and a biases.
  *
@@ -49,6 +64,23 @@ class FiltersBiasesPartInfo {
   constructor( inputChannelCount, aChannelPartInfoArray ) {
     this.inputChannelCount = inputChannelCount;
     this.aChannelPartInfoArray = aChannelPartInfoArray;
+  }
+
+  /**
+   *
+   * @param {number} outputChannelCount
+   *   The total output channel count which is used as the upper bounds of yielded ChannelPart.outChannel.
+   *
+   * @param {number} inChannel
+   *   The current input channel index which is used to calculate ChannelPart.inChannelToBegin.
+   *
+   * @return {Generator}
+   *   Return a generator whose .next().value will be a ChannelPart object.
+   */
+  * ChannelPartGenerator( outputChannelCount, inChannel ) {
+
+//!!! ...unfifnished... (2022/04/01)
+
   }
 
 //!!! ...unfifnished... (2022/02/24)
