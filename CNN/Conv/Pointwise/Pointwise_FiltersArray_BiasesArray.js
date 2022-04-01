@@ -296,17 +296,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf, [
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,  this.outputChannelCount_lowerHalf, false ),
 
-//!!! ...unfinished... (2022/04/01)
+//!!! (2022/04/01 Remarked) Whole input channels are used, but higher half is past-through.
+//            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf, [
+            new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but higher half is past-through.
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,  this.outputChannelCount_lowerHalf, false ),
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,                                            0,  true ) ] ),
 
-            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
-
-//!!! ...unfinished... (2022/04/01)
+//!!! (2022/04/01 Remarked) Whole input channels are used, but lower half is past-through.
+//            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
+            new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but lower half is past-through.
               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,                                  0,  true ),
-
               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ) ] )
           ];
           break;
