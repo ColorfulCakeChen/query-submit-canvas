@@ -780,6 +780,8 @@ class Base {
     // ONE_INPUT_TWO_DEPTHWISE                  (-2) (ShuffleNetV2's head (or ShuffleNetV2_ByPointwise22's head) (simplified))
     // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) (ShuffleNetV2_ByMobileNetV1's head)
     } else if (   ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2)
+               
+//!!! ...unfinished... (2022/04/01) Perhaps, no need to concat for (-4). There will be pointwise212 to handle depthwise2.
                || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) ) { // (-4)
 
       // Concatenate depthwise1's result and depthwise2's result.
@@ -802,10 +804,16 @@ class Base {
     let pointwise21Result, pointwise21Result_beforeConcatWith_pointwise212;
     {
       if ( pointwise21ChannelCount > 0 ) {
+
+//!!! ...unfinished... (2022/04/01) Perhaps, when (-4), should use depthwise2 instead of concat1Result.
+
         pointwise21Result = testParams.use_pointwise21( concat1Result, pointwise21ChannelCount, "Pointwise21", this.paramsOutDescription );
 
         // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+          
+//!!! ...unfinished... (2022/04/01) Perhaps, should use depthwise2 instead of concat1Result.
+
           let pointwise212Result = testParams.use_pointwise212( concat1Result, pointwise21ChannelCount, "Pointwise212", this.paramsOutDescription );
 
           pointwise21Result_beforeConcatWith_pointwise212 = pointwise21Result;
