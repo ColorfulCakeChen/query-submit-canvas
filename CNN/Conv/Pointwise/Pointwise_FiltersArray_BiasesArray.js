@@ -485,7 +485,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
           let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
           let outChannel = 0;
-          outChannelEnd = outChannelBegin;
 
 //!!! ...unfinished... (2022/04/01)
 // InChannelPartIndexLoop should become a generator
@@ -501,14 +500,19 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //   ChannelPart.outChannelSub
 //   ChannelPart.outChannel
 //   ChannelPart.outChannelEnd
-//   ChannelPart.inChannelToBegin
+//   ChannelPart.inChannelToPartBegin
 //
 //
+
+
+
+//!!! (2022/04/01 Remarked) Moved to "Init .afterBias".
+//          outChannelEnd = outChannelBegin;
 
           InChannelPartIndexLoop:
           for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
             let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-            let inChannelToBegin = inChannel - inChannelPartInfo.inChannelBegin;
+            let inChannelToPartBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
             for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
               if ( outChannel >= this.outputChannelCount )
@@ -522,9 +526,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //!!! (2022/04/01 Remarked) Moved to outside "if".
 //                ++outChannelEnd;
 
-                if ( ( inChannelToBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
+                if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
                   if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                    if ( inChannelToBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
+                    if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
                       this.filtersArray[ filterIndex ] = undoPreviousEscapingScale;
                     } else {
                       this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
@@ -565,14 +569,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //         for ( let outChannel = outChannelBegin; outChannel < outChannelEnd; ++outChannel ) {
 //           this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
 //         } // outChannel
-   
+
         let outChannel = 0;
         outChannelEnd = outChannelBegin;
 
         InChannelPartIndexLoop:
         for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-//          let inChannelToBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
             if ( outChannel >= this.outputChannelCount )
@@ -580,10 +583,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             ++outChannelEnd;
 
-//!!! ...unfinished... (2022/04/01) It is a waste for less than outChannelBegin.
-
             if ( outChannel >= outChannelBegin ) {
               this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
+
+            } else {
+              // Do nothing. All output channels which is not in range fills bias in another run.
+
+//!!! ...unfinished... (2022/04/01) It is a waste for less than outChannelBegin.
+
             }
 
           } // outChannelSub, outChannel
