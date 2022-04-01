@@ -40,7 +40,38 @@ class ChannelPart {
 //   ChannelPart.outChannelSub
 //   ChannelPart.outChannel
 //   ChannelPart.outChannelEnd
-//   ChannelPart.inChannelToBegin
+//   ChannelPart.inChannelToPartBegin
+
+//!!! ...unfifnished... (2022/04/01)
+
+  /**
+   *
+   */
+  isInChannelInRange() {
+  }
+
+//!!! ...unfifnished... (2022/04/01)
+
+  /**
+   *
+   */
+  isPassThrough() {
+  }
+
+//!!! ...unfifnished... (2022/04/01)
+
+  /**
+   *
+   */
+  isInChannelInRange() {
+  }
+
+  
+              if ( outChannel >= outChannelBegin ) {
+
+                if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
+                  if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+                    if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
 
 }
 
@@ -68,19 +99,26 @@ class FiltersBiasesPartInfo {
 
   /**
    *
+   * @param {number} outChannelBegin
+   *   The output channel index of the ChannelPart's beginning.
+   *
    * @param {number} outputChannelCount
    *   The total output channel count which is used as the upper bounds of yielded ChannelPart.outChannel.
    *
    * @param {number} inChannel
-   *   The current input channel index which is used to calculate ChannelPart.inChannelToBegin.
+   *   The current input channel index which is used to calculate ChannelPart.inChannelToPartBegin.
    *
    * @return {Generator}
    *   Return a generator whose .next().value will be a ChannelPart object.
    */
-  * ChannelPartGenerator( outputChannelCount, inChannel ) {
+  * ChannelPartGenerator( outChannelBegin, outputChannelCount, inChannel ) {
 
 //!!! ...unfifnished... (2022/04/01)
 
+  }
+
+//!!! ...unfifnished... (2022/04/01)
+  * FiltersBiasesPartGenerator() {
   }
 
 //!!! ...unfifnished... (2022/02/24)
