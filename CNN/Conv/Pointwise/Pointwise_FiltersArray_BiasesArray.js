@@ -487,6 +487,24 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           let outChannel = 0;
           outChannelEnd = outChannelBegin;
 
+//!!! ...unfinished... (2022/04/01)
+// InChannelPartIndexLoop should become a generator
+//
+// FiltersBiasesPartInfo.ChannelPartGenerator( this.outputChannelCount ).
+//   ChannelPart.info (i.e. ChannelPartInfo)
+//   ChannelPart.outChannelSub
+//   ChannelPart.outChannel
+//   ChannelPart.outChannelEnd
+//
+// FiltersBiasesPartInfo.ChannelPartGenerator( this.outputChannelCount, inChannel )
+//   ChannelPart.info (i.e. ChannelPartInfo)
+//   ChannelPart.outChannelSub
+//   ChannelPart.outChannel
+//   ChannelPart.outChannelEnd
+//   ChannelPart.inChannelToBegin
+//
+//
+
           InChannelPartIndexLoop:
           for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
             let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
@@ -554,7 +572,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         InChannelPartIndexLoop:
         for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-          let inChannelToBegin = inChannel - inChannelPartInfo.inChannelBegin;
+//          let inChannelToBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
             if ( outChannel >= this.outputChannelCount )
