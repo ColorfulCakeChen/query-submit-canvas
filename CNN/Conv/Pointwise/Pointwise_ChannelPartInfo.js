@@ -47,6 +47,14 @@ class ChannelPart {
   /**
    *
    */
+  isOutChannelInRange() {
+  }
+
+//!!! ...unfifnished... (2022/04/01)
+
+  /**
+   *
+   */
   isInChannelInRange() {
   }
 
@@ -114,6 +122,10 @@ class FiltersBiasesPartInfo {
   * ChannelPartGenerator( outChannelBegin, outputChannelCount, inChannel ) {
 
 //!!! ...unfifnished... (2022/04/01)
+
+
+//!!! ...unfifnished... (2022/04/01)
+//            outChannelEnd = Math.min( outChannelEnd + inChannelPartInfo.outputChannelCount, this.outputChannelCount );
 
   }
 
