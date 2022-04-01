@@ -486,48 +486,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
           let outChannel = 0;
 
-//!!! ...unfinished... (2022/04/01)
-// InChannelPartIndexLoop should become a generator
-//
-// FiltersBiasesPartInfo.ChannelPartGenerator( this.outputChannelCount ).
-//   ChannelPart.info (i.e. ChannelPartInfo)
-//   ChannelPart.outChannelSub
-//   ChannelPart.outChannel
-//   ChannelPart.outChannelEnd
-//
-// FiltersBiasesPartInfo.ChannelPartGenerator( this.outputChannelCount, inChannel )
-//   ChannelPart.info (i.e. ChannelPartInfo)
-//   ChannelPart.outChannelSub
-//   ChannelPart.outChannel
-//   ChannelPart.outChannelEnd
-//   ChannelPart.inChannelToPartBegin
-//
-//
-
-
-
-//!!! (2022/04/01 Remarked) Moved to "Init .afterBias".
-//          outChannelEnd = outChannelBegin;
-
           InChannelPartIndexLoop:
           for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
             let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
             let inChannelToPartBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
-//!!! (2022/04/01 Remarked) Moved to "Init .afterBias".
-//            outChannelEnd = Math.min( outChannelEnd + inChannelPartInfo.outputChannelCount, this.outputChannelCount );
-
             for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
               if ( outChannel >= this.outputChannelCount )
                 break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-//!!! (2022/04/01 Remarked) Moved to "Init .afterBias".
-//              ++outChannelEnd;
-
               if ( outChannel >= outChannelBegin ) {
-
-//!!! (2022/04/01 Remarked) Moved to outside "if".
-//                ++outChannelEnd;
 
                 if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
                   if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
@@ -561,43 +529,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             } // outChannelSub, outChannel
           } // inChannelPartIndex
+
+          outChannelEnd = outChannel;
+
         } // inChannelSub, inChannel
       } // this.filtersArray
 
       // Init .afterBias
-      //
-      // And calculate (accumulate) outChannelEnd simultaneously.
       {
-//!!! (2022/04/01 Remarked) Use InChannelPartIndexLoop and accumulate outChannelEnd simultaneously.
-//         for ( let outChannel = outChannelBegin; outChannel < outChannelEnd; ++outChannel ) {
-//           this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
-//         } // outChannel
-
-        let outChannel = 0;
-        outChannelEnd = outChannelBegin;
-
-        InChannelPartIndexLoop:
-        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-
-          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
-            if ( outChannel >= this.outputChannelCount )
-              break InChannelPartIndexLoop; // Never exceeds the total output channel count.
-
-            ++outChannelEnd;
-
-            if ( outChannel >= outChannelBegin ) {
-              this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
-
-            } else {
-              // Do nothing. All output channels which is not in range fills bias in another run.
-
-//!!! ...unfinished... (2022/04/01) It is a waste for less than outChannelBegin.
-
-            }
-
-          } // outChannelSub, outChannel
-        } // inChannelPartIndex
+        for ( let outChannel = outChannelBegin; outChannel < outChannelEnd; ++outChannel ) {
+          this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
+        } // outChannel
       }
 
       if ( this.biasesArray ) {
