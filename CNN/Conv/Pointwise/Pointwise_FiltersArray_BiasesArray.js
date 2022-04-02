@@ -534,7 +534,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                   } else { // Non-pass-through half channels.
                     this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
                     ++sourceIndex;
-                    ++outChannelEnd;
+                    ++outChannelEnd; // Track which output channel's (filter) weight has been extracted.
                   }
 
                   // Determine .afterFilter
