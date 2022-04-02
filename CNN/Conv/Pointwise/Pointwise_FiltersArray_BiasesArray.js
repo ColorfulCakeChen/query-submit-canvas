@@ -298,9 +298,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
           aFiltersBiasesPartInfoArray = [
             new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf,  [
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount, false ) ] ),
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf,  true ),
+            ] ),
             new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount, false ) ] )
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_lowerHalf,   true ),
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ),
+            ] )
           ];
 
 //!!! (2022/04/02 Remarked) Whole output channels should be used.
