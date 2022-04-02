@@ -551,6 +551,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             } // outChannelSub, outChannel
           } // inChannelPartIndex
+
+          tf.util.assert( ( outChannel == this.outputChannelCount_Real ),
+            `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+              + `inChannelPartInfoArray[] total output channel count ( ${outChannel} ) should be ( ${this.outputChannelCount_Real} ).` );
+
         } // inChannelSub, inChannel
       } // this.filtersArray
 
