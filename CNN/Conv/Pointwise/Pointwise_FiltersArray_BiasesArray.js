@@ -499,6 +499,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           let outChannel = 0;
           outChannelEnd = outChannelBegin;
 
+//!!! ...unfinished... (2022/04/02) outChannelEnd seems same as outChannel? (This is wrong?)
+
           InChannelPartIndexLoop:
           for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
             let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
