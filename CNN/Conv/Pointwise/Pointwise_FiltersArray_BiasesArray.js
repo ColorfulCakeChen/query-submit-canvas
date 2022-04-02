@@ -513,7 +513,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
             let inChannelToPartBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
-            for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel, ++outChannelEnd ) {
+            for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
               if ( outChannel >= this.outputChannelCount )
                 break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
@@ -530,6 +530,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                   } else { // Non-pass-through half channels.
                     this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
                     ++sourceIndex;
+                    ++outChannelEnd;
                   }
 
                   // Determine .afterFilter
