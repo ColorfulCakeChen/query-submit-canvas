@@ -295,24 +295,33 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
           aFiltersBiasesPartInfoArray = [
-
-//!!! (2022/04/01 Remarked) Whole input channels are used, but higher half is past-through.
-//            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf, [
-            new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but higher half is ignored.
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,  this.outputChannelCount_lowerHalf, false )
-//!!! (2022/04/01 Remarked) Whole input channels are used, but higher half is ignored.
-//              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,                                            0,  true )
-            ] ),
-
-//!!! (2022/04/01 Remarked) Whole input channels are used, but lower half is past-through.
-//            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
-            new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but lower half is ignored.
-//!!! (2022/04/01 Remarked) Whole input channels are used, but lower half is ignored.
-//              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,                                  0,  true ),
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false )
-            ] )
+            new FiltersBiasesPartInfo( this.inputChannelCount, [
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,  this.outputChannelCount, false ) ] ),
+            new FiltersBiasesPartInfo( this.inputChannelCount, [
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,            this.outputChannelCount, false ) ] )
           ];
+
+//!!! (2022/04/02 Remarked) Whole output channels should be used.
+//           aFiltersBiasesPartInfoArray = [
+//
+// //!!! (2022/04/01 Remarked) Whole input channels are used, but higher half is past-through.
+// //            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf, [
+//             new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but higher half is ignored.
+//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,  this.outputChannelCount_lowerHalf, false )
+// //!!! (2022/04/01 Remarked) Whole input channels are used, but higher half is ignored.
+// //              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,                                            0,  true )
+//             ] ),
+//
+// //!!! (2022/04/01 Remarked) Whole input channels are used, but lower half is past-through.
+// //            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
+//             new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but lower half is ignored.
+// //!!! (2022/04/01 Remarked) Whole input channels are used, but lower half is ignored.
+// //              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,                                  0,  true ),
+//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false )
+//             ] )
+//           ];
           break;
 
         // 3.4
