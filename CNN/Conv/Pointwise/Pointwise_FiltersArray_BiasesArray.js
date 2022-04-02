@@ -297,10 +297,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount, [
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,  this.outputChannelCount, false ) ] ),
-            new FiltersBiasesPartInfo( this.inputChannelCount, [
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,            this.outputChannelCount, false ) ] )
+            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf,  [
+              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount, false ) ] ),
+            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
+              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount, false ) ] )
           ];
 
 //!!! (2022/04/02 Remarked) Whole output channels should be used.
