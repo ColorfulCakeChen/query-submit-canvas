@@ -293,6 +293,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.outputChannelCount_Real = this.outputChannelCount;
 
 //!!! ...unfinished... (2022/04/03) seems wrong!
+//           this.inputChannelCount_toBeExtracted = this.inputChannelCount;   // Extract all weights as specified input/output channels.
+//           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;   // Extract all weights as specified input/output channels.
           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
 
@@ -373,6 +375,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       filtersShape_extracted = [ 1, 1, this.inputChannelCount_toBeExtracted, this.outputChannelCount_toBeExtracted  ];
 
       if ( this.bBias ) {
+        
+//!!! ...unfinished... (2022/04/03)
+// For ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE (3),
+// is this still right?
+
         this.biasesShape = [ this.outputChannelCount_Real ];
         biasesShape_extracted = [ this.outputChannelCount_toBeExtracted ];
       }
