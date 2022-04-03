@@ -28,8 +28,9 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
     //!!! (2022/02/24 Remarked) No need process input channel.
     //let inChannel = 0;
 
-    let outChannelBegin = 0;
-    let outChannelEnd = 0;   // Non-inclusive. (i.e. [ outChannelBegin, outChannelEnd ) is current output channel for extracting weights.
+//!!! (2022/04/03 Remarked) Deprecate outChannelBegin and outChannelEnd. bPassThrough should be enough.
+//     let outChannelBegin = 0;
+//     let outChannelEnd = 0;   // Non-inclusive. (i.e. [ outChannelBegin, outChannelEnd ) is current output channel for extracting weights.
 
     FiltersBiasesPartIndexLoop:
     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
