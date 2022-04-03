@@ -328,9 +328,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         this.boundsArraySet.afterUndoPreviousActivationEscaping
           .set_all_byBoundsArray( this.boundsArraySet.input )
           .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
-
-        // Init .afterFilter
-        this.boundsArraySet.afterFilter.set_all_byN( 0 );
       }
       
       // Round 1
@@ -378,6 +375,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     sourceFloat32Array, previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray ) {
 
     let tBounds = new FloatValue.Bounds( 0, 0 );
+
+    // Init .afterFilter
+    this.boundsArraySet.afterFilter.set_all_byN( 0 );
 
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0;
