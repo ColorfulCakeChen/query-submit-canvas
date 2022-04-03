@@ -300,6 +300,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (So that biasesShape_extracted will be correct.)
+
+//!!! ...unfinished... (2022/04/03) should assert if can not be divisible.
+
           this.inputChannelCount_toBeExtracted
             = (   ( this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf )
                 + ( this.inputChannelCount_higherHalf * this.outputChannelCount_higherHalf ) )
