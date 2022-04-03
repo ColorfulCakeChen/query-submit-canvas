@@ -502,10 +502,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     let inChannel = 0;
 
-//!!! (2022/04/03 Remarked) Deprecate outChannelBegin and outChannelEnd. bPassThrough should be enough.
-//     let outChannelBegin = 0;
-//     let outChannelEnd = 0;   // Non-inclusive. (i.e. [ outChannelBegin, outChannelEnd ) is current output channel for extracting weights.
-
     FiltersBiasesPartIndexLoop:
     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
@@ -520,9 +516,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
           let outChannel = 0;
 
-//!!! (2022/04/03 Remarked) Deprecate outChannelBegin and outChannelEnd. bPassThrough should be enough.
-//          outChannelEnd = outChannelBegin;
-
           InChannelPartIndexLoop:
           for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
             let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
@@ -532,38 +525,29 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
               if ( outChannel >= this.outputChannelCount )
                 break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
-//!!! (2022/04/03 Remarked) Deprecate outChannelBegin and outChannelEnd. bPassThrough should be enough.
-//              if ( outChannel >= outChannelBegin ) {
-
-                if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
-                  if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                    if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
-                      this.filtersArray[ filterIndex ] = undoPreviousEscapingScale;
-                    } else {
-                      this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
-                    }
-
-                  } else { // Non-pass-through half channels.
-                    this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
-                    ++sourceIndex;
-                    ++outChannelEnd; // Track which output channel's (filter) weight has been extracted.
+              if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
+                if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+                  if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
+                    this.filtersArray[ filterIndex ] = undoPreviousEscapingScale;
+                  } else {
+                    this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
                   }
 
-                  // Determine .afterFilter
-                  tBounds
-                    .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-                    .multiply_byN( this.filtersArray[ filterIndex ] );
-
-                  this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
-
-                } else {
-                  this.filtersArray[ filterIndex ] = 0; // All input channels which is not in range use zero filter to ignore the inputs.
+                } else { // Non-pass-through half channels.
+                  this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
+                  ++sourceIndex;
                 }
 
-//!!! (2022/04/03 Remarked) Deprecate outChannelBegin and outChannelEnd. bPassThrough should be enough.
-//               } else {
-//                 this.filtersArray[ filterIndex ] = 0; // All output channels which is not in range use zero filter to ignore the inputs.
-//               }
+                // Determine .afterFilter
+                tBounds
+                  .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                  .multiply_byN( this.filtersArray[ filterIndex ] );
+
+                this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+
+              } else {
+                this.filtersArray[ filterIndex ] = 0; // All input channels which is not in range use zero filter to ignore the inputs.
+              }
 
               ++filterIndex;
 
@@ -577,13 +561,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         } // inChannelSub, inChannel
       } // this.filtersArray
 
-//!!! (2022/04/03 Remarked) Moved to outside before FiltersBiasesPartIndexLoop.
-//       // Init .afterBias
-//       {
-//         for ( let outChannel = outChannelBegin; outChannel < outChannelEnd; ++outChannel ) {
-//           this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
-//         } // outChannel
-//       }
 
       if ( this.biasesArray ) {
         let outChannel = 0;
@@ -598,27 +575,18 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
             // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
-//!!! (2022/04/03 Remarked) Deprecate outChannelBegin and outChannelEnd. bPassThrough should be enough.
-//            if ( outChannel >= outChannelBegin ) {
-              if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+              // Do nothing because pass-through needs no bias.
 
-//!!! ...unfinished... (2022/04/03) Use add instead assign.
-                this.biasesArray[ biasIndex ] = 0;
+            } else { // Non-pass-through half channels.
+              let biasValue = sourceFloat32Array[ sourceIndex ];
 
-              } else { // Non-pass-through half channels.
+              this.biasesArray[ biasIndex ] += biasValue; // Note: Use adding instead assignment.
+              ++sourceIndex;
 
-//!!! ...unfinished... (2022/04/03) Use add instead assign.
-                this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
-                ++sourceIndex;
-
-                // Determine .afterBias
-                this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
-              }
-
-//!!! (2022/04/03 Remarked) Deprecate outChannelBegin and outChannelEnd. bPassThrough should be enough.
-//             } else {
-//               // Do nothing. All output channels which is not in range fills bias in another run.
-//             }
+              // Determine .afterBias
+              this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue ); // Shift the value bounds by the bias.
+            }
 
             ++biasIndex;
 
@@ -629,23 +597,18 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         // Do nothing.
       }
 
-//!!! (2022/04/03 Remarked) Deprecate outChannelBegin and outChannelEnd. bPassThrough should be enough.
-//      outChannelBegin = outChannelEnd; // Advanced after every FiltersBiasesPart.
-
     } // aFiltersBiasesPartIndex
 
-//!!! ...unfinished... (2022/04/03) Add .afterFilter to .afterBias
-//          this.boundsArraySet.afterBias.set_one_byBoundsArray( outChannel, this.boundsArraySet.afterFilter, outChannel );
+    // Combine .afterFilter to .afterBias.
+    //
+    // Q: Why not combine when initializing .afterBias ?
+    // A: Because .afterFilter is unknown before FiltersBiasesPartInfoArray has been visited totally.
+    //
+    this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
     tf.util.assert( ( inChannel == this.inputChannelCount ),
       `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
         + `aFiltersBiasesPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
-
-//!!! (2022/04/03 Remarked) Deprecate outChannelBegin and outChannelEnd. bPassThrough should be enough.
-//     tf.util.assert( ( outChannelEnd == this.outputChannelCount ),
-//       `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-//         + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
-//         + `should be ( ${this.outputChannelCount} ).` );
   }
 
   /**
