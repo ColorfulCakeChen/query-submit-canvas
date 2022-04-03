@@ -291,8 +291,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         // 3.3 bHigherHalfAnotherPointwise
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
           this.outputChannelCount_Real = this.outputChannelCount;
+
+//!!! ...unfinished... (2022/04/03) seems wrong!
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;   // Extract all weights as specified input/output channels.
           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
+
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
