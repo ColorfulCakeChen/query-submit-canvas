@@ -295,11 +295,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //!!! ...unfinished... (2022/04/03) seems wrong!
 //           this.inputChannelCount_toBeExtracted = this.inputChannelCount;   // Extract all weights as specified input/output channels.
 //           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
-          this.inputChannelCount_toBeExtracted = this.inputChannelCount;   // Extract all weights as specified input/output channels.
-          this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
 
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+
+          this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (So that biasesShape_extracted will be correct.)
+          this.inputChannelCount_toBeExtracted
+            = (   ( this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf )
+                + ( this.inputChannelCount_higherHalf * this.outputChannelCount_higherHalf ) )
+              / this.outputChannelCount; // (So that this.outputChannelCount_toBeExtracted will be correct.)
 
           aFiltersBiasesPartInfoArray = [
             new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf,  [
