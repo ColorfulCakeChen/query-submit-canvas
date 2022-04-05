@@ -1,4 +1,4 @@
-export { ChannelPartInfo } from "./Depthwise/Depthwise_ChannelPartInfo.js";
+export { ChannelPartInfo, FiltersBiasesPartInfo } from "./Depthwise/Depthwise_ChannelPartInfo.js";
 export { BoundsArraySet } from "./Depthwise/Depthwise_BoundsArraySet.js";
 export { PadInfoCalculator } from "./Depthwise/Depthwise_PadInfoCalculator.js";
 export { FiltersArray_BiasesArray } from "./Depthwise/Depthwise_FiltersArray_BiasesArray.js";
