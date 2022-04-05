@@ -541,9 +541,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
       { // this.filtersArray
 
-        for ( let inChannelSub = 0; inChannelSub < aFiltersBiasesPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-          if ( inChannel >= this.inputChannelCount )
-            break FiltersBiasesPartIndexLoop; // Never exceeds the total input channel count.
+//!!! (2022/04/05 Remarked) Always run through all input channels.
+//        for ( let inChannelSub = 0; inChannelSub < aFiltersBiasesPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+//           if ( inChannel >= this.inputChannelCount )
+//             break FiltersBiasesPartIndexLoop; // Never exceeds the total input channel count.
+
+        for ( let inChannelSub = 0; inChannelSub < this.inputChannelCount; ++inChannelSub, ++inChannel ) {
 
           let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
           let outChannel = 0;
