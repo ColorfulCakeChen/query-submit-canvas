@@ -26,34 +26,41 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    */
   set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
     
-//!!! ...unfinished... (2022/04/05)
-//     let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
-//
-//     FiltersBiasesPartIndexLoop:
-//     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
-//       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
-//       let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
-//
-//       outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
+    let inChannelBegin = 0, inChannelEnd = 0,   // [ inChannelBegin, inChannelEnd ) are input channels of the current FiltersBiasesPart.
+        outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
 
+    FiltersBiasesPartIndexLoop:
+    for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
+      let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
+      let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
 
-    let inChannel = 0;
-    let outChannel = 0;
+      inChannelBegin = inChannelEnd;
+      outChannelBegin = outChannelEnd;
 
-    InChannelPartIndexLoop:
-    for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-      let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+      {
+        let inChannel = inChannelBegin;
+        let outChannel = outChannelBegin;
 
-      for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-        if ( inChannel >= this.inputChannelCount )
-          break InChannelPartIndexLoop; // Never exceeds the total input channel count.
+        InChannelPartIndexLoop:
+        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
-        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-          this.bPassThrough[ outChannel ] = inChannelPartInfo.bPassThrough;
+          for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+            if ( inChannel >= this.inputChannelCount )
+              break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
-        } // outChannelSub, outChannel
-      } // inChannelSub, inChannel
-    } // inChannelPartIndex
+            for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+              this.bPassThrough[ outChannel ] = inChannelPartInfo.bPassThrough;
+
+            } // outChannelSub, outChannel
+          } // inChannelSub, inChannel
+        } // inChannelPartIndex
+
+        inChannelEnd = inChannel;
+        outChannelEnd = outChannel;
+      }
+
+    } // aFiltersBiasesPartIndex
 
   }
 
