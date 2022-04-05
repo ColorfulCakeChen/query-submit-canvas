@@ -105,11 +105,12 @@ class FiltersBiasesPartInfo {
    *
    */
 //!!! (2022/04/05 Remarked) needs not inputChannelCount, but needs filterIndex beginbing value.
-//   constructor( inputChannelCount, aChannelPartInfoArray ) {
-//     this.inputChannelCount = inputChannelCount;
+  constructor( inputChannelCount, aChannelPartInfoArray ) {
+    this.inputChannelCount = inputChannelCount;
 
 //!!! ...unfinished... (2022/04/05)
-  constructor( aChannelPartInfoArray ) {
+//  constructor( aChannelPartInfoArray ) {
+
     this.aChannelPartInfoArray = aChannelPartInfoArray;
   }
 
