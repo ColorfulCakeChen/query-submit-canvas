@@ -475,7 +475,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
       } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
-//!!! ...unfinished... (2022/04/05)
         // For avg/max pooling, the value bounds does not change.
         this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
 
@@ -492,8 +491,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
 
       if ( this.biasesArray ) {
-
-//!!! ...unfinished... (2022/04/05)
         let inChannel = inChannelBegin;
         let outChannel = outChannelBegin;
 
@@ -510,14 +507,16 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
               // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
 
               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                this.biasesArray[ biasIndex ] = 0;
+                // Do nothing because pass-through needs no bias.
 
               } else { // Non-pass-through half channels.
-                this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
+                let biasValue = sourceFloat32Array[ sourceIndex ];
+
+                this.biasesArray[ biasIndex ] += biasValue; // Note: Use adding instead of assignment.
                 ++sourceIndex;
 
                 // Determine .afterBias
-                this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
+                this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue ); // Shift the value bounds by the bias.
               }
 
               ++biasIndex;
@@ -525,10 +524,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             } // outChannelSub, outChannel
           } // inChannel
         } // inChannelPartIndex
-
-        tf.util.assert( ( inChannel == this.inputChannelCount ),
-          `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-            + `inChannelPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
 
       } else { // ( !this.biasesArray ). No biases array to be extracted.
         // Do nothing.
