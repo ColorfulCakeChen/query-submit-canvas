@@ -532,8 +532,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     let inChannel = 0;
 
 //!!! ...unfinished... (2022/04/05)
-    let outChannelBegin = 0;
-    let outChannelEnd = 0; // The [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
+    let outChannelBegin = 0; // The [ outChannelBegin, outChannel ) are output channels of the current FiltersBiasesPart.
 
     FiltersBiasesPartIndexLoop:
     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
@@ -543,6 +542,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //!!! ...unfinished... (2022/04/05)
 // filterIndex needs setup a beginning value for 1st inChannel (especially for HIGHER_HALF_ANOTHER_POINTWISE (3)).
 // seems be the outChannel of all the previous FiltersBiasesPartInfo
+      filterIndex = outChannelBegin;
 
       { // this.filtersArray
 
