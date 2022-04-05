@@ -539,8 +539,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
       let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
 
-      outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
-      filterIndex = outChannelBegin;
+      filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
       { // this.filtersArray
 
