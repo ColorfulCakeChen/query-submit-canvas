@@ -389,6 +389,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 // Perhaps, source weights [ -99, 40, -2, -83 ] (two filters [ -99, 40 ] and [ -2, -83 ] with shape = [ 1, 2, 1, 1 ])
 // might be filled as [ -99, -2, 40, -83 ] (filtersTensor4d.shape = [ 1, 2, 2, 1 ]).
 //
+// Especially for HIGHER_HALF_DEPTHWISE2 (1).
+//
 // may need a leap for filterIndex.
 //
 
