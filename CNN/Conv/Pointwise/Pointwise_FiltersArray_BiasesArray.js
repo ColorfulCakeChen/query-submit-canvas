@@ -532,7 +532,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     let inChannel = 0;
 
 //!!! ...unfinished... (2022/04/05)
-    let outChannelBegin = 0; // The [ outChannelBegin, outChannel ) are output channels of the current FiltersBiasesPart.
+    let outChannelBegin = 0;
+    let outChannelEnd = 0; // The [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
 
     FiltersBiasesPartIndexLoop:
     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
@@ -607,8 +608,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
 //!!! ...unfinished... (2022/04/05)
 // Perhaps, filterIndex needs add a leap to next inChannel (especially for HIGHER_HALF_ANOTHER_POINTWISE (3)).
-          let leap = this.outputChannelCount_Real - outChannel; // For jumping filterIndex to the next inChannel.
-          filterIndex += leap;
+          filterIndex
+            += ( this.outputChannelCount_Real - outChannel ) // Jumping to the next inChannel begin.
+               + outChannelBegin; // Jumping to the outChannel of the next inChannel.
 
         } // inChannelSub, inChannel
 
