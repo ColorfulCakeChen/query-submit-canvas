@@ -385,8 +385,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     if ( this.filtersArray ) {
       let filterIndex = 0;
 
-//!!! ...unfinished... (2022/04/05) The filter weights filling order seems wrong!
-// Perhaps, source weights [ -99, 40, -2, -83 ] should be filled as [ -99, -2, 40, -83 ] (filtersTensor4d.shape = [ 1, 2, 2, 1 ]).
+//!!! ...unfinished... (2022/04/05) The filter weights filling order might be wrong!
+// Perhaps, source weights [ -99, 40, -2, -83 ] might be filled as [ -99, -2, 40, -83 ] (filtersTensor4d.shape = [ 1, 2, 2, 1 ]).
 
       for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
         for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
