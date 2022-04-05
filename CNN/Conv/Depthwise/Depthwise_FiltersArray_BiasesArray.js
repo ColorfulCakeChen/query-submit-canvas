@@ -410,6 +410,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
 
       if ( this.filtersArray ) {
+        inChannelBegin = inChannelEnd;                 // Begin from the ending of the previous FiltersBiasesPart.
         filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
         for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
