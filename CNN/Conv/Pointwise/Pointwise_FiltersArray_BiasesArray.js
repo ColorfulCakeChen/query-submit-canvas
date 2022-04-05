@@ -538,6 +538,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
 //!!! ...unfinished... (2022/04/05)
 // filterIndex needs setup a beginning value for 1st inChannel (especially for HIGHER_HALF_ANOTHER_POINTWISE (3)).
+// seems be the outChannel of all the previous FiltersBiasesPartInfo
 
       { // this.filtersArray
 
