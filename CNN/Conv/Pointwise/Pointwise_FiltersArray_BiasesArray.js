@@ -531,6 +531,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     let inChannel = 0;
 
+//!!! ...unfinished... (2022/04/05)
+    let outChannelBegin = 0;
+    let outChannelEnd = 0; // The [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
+
     FiltersBiasesPartIndexLoop:
     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
@@ -550,7 +554,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         for ( let inChannelSub = 0; inChannelSub < this.inputChannelCount; ++inChannelSub, ++inChannel ) {
 
           let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
-          let outChannel = 0;
+
+//!!! (2022/04/05 Remarked)
+//          let outChannel = 0;
+          let outChannel = outChannelBegin;
 
           InChannelPartIndexLoop:
           for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
@@ -595,12 +602,18 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //             `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
 //               + `inChannelPartInfoArray[] total output channel count ( ${outChannel} ) should be ( ${this.outputChannelCount_Real} ).` );
 
+
+          outChannelEnd = outChannel; // Record the ending output channel index of the current FiltersBiasesPart.
+
 //!!! ...unfinished... (2022/04/05)
 // Perhaps, filterIndex needs add a leap to next inChannel (especially for HIGHER_HALF_ANOTHER_POINTWISE (3)).
           let leap = this.outputChannelCount_Real - outChannel; // For jumping filterIndex to the next inChannel.
           filterIndex += leap;
 
         } // inChannelSub, inChannel
+
+        outChannelBegin = outChannelEnd; // For the next FiltersBiasesPart.
+
       } // this.filtersArray
 
 
