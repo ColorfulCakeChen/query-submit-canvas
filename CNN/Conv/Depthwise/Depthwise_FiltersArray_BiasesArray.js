@@ -386,7 +386,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex = 0;
+    let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
 
 //!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
     let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
@@ -396,14 +396,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
       let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
 
-//!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
-
       if ( this.filtersArray ) {
-        let filterIndex = 0;
+//!!! (2022/04/05 Remarked)
+//        let filterIndex = 0;
+
+        filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
 //!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
-//      filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
-
   //!!! ...unfinished... (2022/04/05) The filter weights filling order might be wrong!
   // Perhaps, source weights [ -99, 40, -2, -83 ] (two filters [ -99, 40 ] and [ -2, -83 ] with shape = [ 1, 2, 1, 1 ])
   // might be filled as [ -99, -2, 40, -83 ] (filtersTensor4d.shape = [ 1, 2, 2, 1 ]).
@@ -424,7 +423,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   continue;
 
                 let inChannel = 0;
-                let outChannel = 0;
+//!!! (2022/04/05 Remarked)
+//                let outChannel = 0;
+                let outChannel = outChannelBegin;
 
                 InChannelPartIndexLoop:
                 for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
@@ -495,10 +496,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       }
 
       if ( this.biasesArray ) {
-        let biasIndex = 0;
+//!!! (2022/04/05 Remarked)
+//        let biasIndex = 0;
 
         let inChannel = 0;
-        let outChannel = 0;
+//!!! (2022/04/05 Remarked)
+//        let outChannel = 0;
+        let outChannel = outChannelBegin;
 
         InChannelPartIndexLoop:
         for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
