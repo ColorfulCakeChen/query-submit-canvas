@@ -256,7 +256,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_toBeExtracted = this.inputChannelCount; // Extract all weights as specified input/output channels.
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount, [
+//!!! (2022/04/05 Remarked) Always run through all input channels.
+//            new FiltersBiasesPartInfo( this.inputChannelCount, [
+            new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ] )
           ];
           break;
@@ -268,7 +270,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           //this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf; // Not used in this case.
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount, [
+//!!! (2022/04/05 Remarked) Always run through all input channels.
+//            new FiltersBiasesPartInfo( this.inputChannelCount, [
+            new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
           ];
@@ -282,7 +286,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount, [
+//!!! (2022/04/05 Remarked) Always run through all input channels.
+//            new FiltersBiasesPartInfo( this.inputChannelCount, [
+            new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
           ];
@@ -319,14 +325,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //             ] )
 //           ];
 
-//!!! ...unfinished... (2022/04/05) It seems not possible!
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount, [
+            new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,  false ),
 //!!! (2022/04/05 Remarked)
 //              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf,  true ),
             ] ),
-            new FiltersBiasesPartInfo( this.inputChannelCount, [
+            new FiltersBiasesPartInfo( [
 //!!! (2022/04/05 Remarked)
 //              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,   true ),
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf, false ),
@@ -364,9 +369,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
             this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
             aFiltersBiasesPartInfoArray = [
-              new FiltersBiasesPartInfo( this.inputChannelCount,
-                [ new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
-                  new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ] )
+//!!! (2022/04/05 Remarked) Always run through all input channels.
+//              new FiltersBiasesPartInfo( this.inputChannelCount,
+              new FiltersBiasesPartInfo( [
+                new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
+                new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ] )
             ];
 
             // Note: If ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 ),
@@ -378,8 +385,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
             this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
             aFiltersBiasesPartInfoArray = [
-              new FiltersBiasesPartInfo( this.inputChannelCount,
-                [ new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_Real, true ) ] )
+//!!! (2022/04/05 Remarked) Always run through all input channels.
+//              new FiltersBiasesPartInfo( this.inputChannelCount,
+              new FiltersBiasesPartInfo( [
+                new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_Real, true ) ] )
             ];
           }
           break;
@@ -531,7 +540,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
 
-    let inChannel = 0;
+//!!! (2022/04/05 Remarked) Always run through all input channels.
+//    let inChannel = 0;
     let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
 
     FiltersBiasesPartIndexLoop:
@@ -543,9 +553,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
       { // this.filtersArray
 
-       for ( let inChannelSub = 0; inChannelSub < aFiltersBiasesPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-          if ( inChannel >= this.inputChannelCount )
-            break FiltersBiasesPartIndexLoop; // Never exceeds the total input channel count.
+//!!! (2022/04/05 Remarked) Always run through all input channels.
+//        for ( let inChannelSub = 0; inChannelSub < aFiltersBiasesPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+//           if ( inChannel >= this.inputChannelCount )
+//             break FiltersBiasesPartIndexLoop; // Never exceeds the total input channel count.
+
+       for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
           let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
           let outChannel = outChannelBegin;
