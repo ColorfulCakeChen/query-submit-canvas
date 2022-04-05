@@ -464,16 +464,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   } // inChannelSub, inChannel
                 } // inChannelPartIndex
 
-
-//!!! ...unfinished... (2022/04/05)
                 inChannelEnd = inChannel;   // Record the ending input channel index of the current FiltersBiasesPart.
                 outChannelEnd = outChannel; // Record the ending output channel index of the current FiltersBiasesPart.
-                filterIndex += ( this.outputChannelCount_Real - outChannel ) + outChannelBegin; // Jump to the outChannelBegin of the next inChannel.
-
-
-                tf.util.assert( ( inChannel == this.inputChannelCount ),
-                  `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-                    + `inChannelPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+                filterIndex += ( this.outputChannelCount - outChannel ) + outChannelBegin; // Jump to the outChannelBegin of the next inChannel.
 
               } // dilationFilterX
             } // filterX
@@ -541,7 +534,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         // Do nothing.
       }
 
-
     } // aFiltersBiasesPartIndex
 
     // Combine .afterFilter to .afterBias.
@@ -551,6 +543,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     //
     this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
+    tf.util.assert( ( inChannelEnd == this.inputChannelCount ),
+      `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+        + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total input channel count ( ${inChannelEnd} ) `
+        +`should be ( ${this.inputChannelCount} ).` );
   }
 
   /**
