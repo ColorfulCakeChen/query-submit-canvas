@@ -643,7 +643,8 @@ class Base {
 
     // 0.
 
-    let pointwise1ChannelCount, pointwise21ChannelCount;
+    let pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;;
+    let pointwise21ChannelCount;
 
     // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     //
@@ -669,7 +670,6 @@ class Base {
       imageIn0 = imageInArray_Fake[ 0 ];
       imageIn1 = imageInArray_Fake[ 1 ];
 
-      pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
       if ( pointwise1ChannelCount <= 0 ) {
         // When no pointwise1, just keep it all-pass-through.
 
@@ -685,7 +685,6 @@ class Base {
     } else {
       imageIn0 = imageInArray[ 0 ];
       imageIn1 = imageInArray[ 1 ];
-      pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
       pointwise21ChannelCount = testParams.out.pointwise21ChannelCount;
     }
 
