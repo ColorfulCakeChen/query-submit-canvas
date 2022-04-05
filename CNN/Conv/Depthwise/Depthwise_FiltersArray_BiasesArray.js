@@ -400,7 +400,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
 
-//!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
     let inChannelBegin = 0, inChannelEnd = 0,   // [ inChannelBegin, inChannelEnd ) are input channels of the current FiltersBiasesPart.
         outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
 
