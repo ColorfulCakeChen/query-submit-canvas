@@ -26,13 +26,17 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
    */
   set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
 
+    let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
+
     FiltersBiasesPartIndexLoop:
     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
       let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
 
+      outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
+
       {
-        let outChannel = 0;
+        let outChannel = outChannelBegin;
 
         InChannelPartIndexLoop:
         for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
@@ -46,6 +50,8 @@ class BoundsArraySet extends ConvBiasActivation.BoundsArraySet {
 
           } // outChannelSub, outChannel
         } // inChannelPartIndex
+
+        outChannelEnd = outChannel; // Record the ending output channel index of the current FiltersBiasesPart.
       }
 
     } // aFiltersBiasesPartIndex
