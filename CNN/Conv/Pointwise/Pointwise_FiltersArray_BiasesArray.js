@@ -538,10 +538,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
 
       outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
-
-//!!! ...unfinished... (2022/04/05)
-// filterIndex needs setup a beginning value for 1st inChannel (especially for HIGHER_HALF_ANOTHER_POINTWISE (3)).
-// seems be the outChannel of all the previous FiltersBiasesPartInfo
       filterIndex = outChannelBegin;
 
       { // this.filtersArray
@@ -591,19 +587,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             } // outChannelSub, outChannel
           } // inChannelPartIndex
 
-//!!! (2022/04/05 Remarked) It is possible different (especially for HIGHER_HALF_ANOTHER_POINTWISE (3)).
-//           tf.util.assert( ( outChannel == this.outputChannelCount_Real ),
-//             `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-//               + `inChannelPartInfoArray[] total output channel count ( ${outChannel} ) should be ( ${this.outputChannelCount_Real} ).` );
-
-
           outChannelEnd = outChannel; // Record the ending output channel index of the current FiltersBiasesPart.
-
-//!!! ...unfinished... (2022/04/05)
-// Perhaps, filterIndex needs add a leap to next inChannel (especially for HIGHER_HALF_ANOTHER_POINTWISE (3)).
-          filterIndex
-            += ( this.outputChannelCount_Real - outChannel ) // Jumping to the next inChannel begin.
-               + outChannelBegin; // Jumping to the outChannel of the next inChannel.
+          filterIndex += ( this.outputChannelCount_Real - outChannel ) + outChannelBegin; // Jump to the outChannelBegin of the next inChannel.
 
         } // inChannelSub, inChannel
 
@@ -657,6 +642,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     tf.util.assert( ( inChannel == this.inputChannelCount ),
       `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
         + `aFiltersBiasesPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+
+    tf.util.assert( ( outChannelEnd == this.outputChannelCount_Real ),
+      `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+        + `inChannelPartInfoArray[] total output channel count ( ${outChannelEnd} ) should be ( ${this.outputChannelCount_Real} ).` );
   }
 
   /**
