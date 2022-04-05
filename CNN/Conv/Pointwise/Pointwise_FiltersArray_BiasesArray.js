@@ -653,9 +653,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     //
     this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
-    tf.util.assert( ( inChannel == this.inputChannelCount ),
-      `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-        + `aFiltersBiasesPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+//!!! (2022/04/05 Remarked) Always run through all input channels.
+//     tf.util.assert( ( inChannel == this.inputChannelCount ),
+//       `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+//         + `aFiltersBiasesPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
 
     tf.util.assert( ( outChannelEnd == this.outputChannelCount_Real ),
       `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
