@@ -4,7 +4,7 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ConvBiasActivation from "../ConvBiasActivation.js";
-import { ChannelPartInfo } from  "./Depthwise_ChannelPartInfo.js";
+import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Depthwise_ChannelPartInfo.js";
 import { BoundsArraySet } from  "./Depthwise_BoundsArraySet.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
@@ -180,7 +180,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 //       return true; // Nothing needs to be extracted.
 
     // Determine shape of the filters, biases, channels.
-    let inChannelPartInfoArray;
+    let aFiltersBiasesPartInfoArray;
     let filtersShape_extracted, biasesShape_extracted;
 
     // Set up inChannelPartInfoArray and filtersShape and biasesShape.
@@ -204,9 +204,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount;
-//!!! (2022/02/23 Remarked) Use inputChannelCount instead of inChannelBegin and inChannelEnd.
-//            inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount ) ];
-            inChannelPartInfoArray = [ new ChannelPartInfo( this.inputChannelCount ) ];
+            aFiltersBiasesPartInfoArray = [
+              new FiltersBiasesPartInfo( [
+                new ChannelPartInfo( this.inputChannelCount ) ] )
+            ];
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
@@ -225,12 +226,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             this.inputChannelCount_toBeExtracted = this.inputChannelCount;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-            inChannelPartInfoArray = [
-//!!! (2022/02/23 Remarked) Use inputChannelCount instead of inChannelBegin and inChannelEnd.
-//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
-//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount           ) ];
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf  ),
-              new ChannelPartInfo( this.inputChannelCount_higherHalf ) ];
+            aFiltersBiasesPartInfoArray = [
+              new FiltersBiasesPartInfo( [
+                new ChannelPartInfo( this.inputChannelCount_lowerHalf  ),
+                new ChannelPartInfo( this.inputChannelCount_higherHalf ) ] )
+            ];
             break;
 
           case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
@@ -249,12 +249,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
             this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
             this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
 
-            inChannelPartInfoArray = [
-//!!! (2022/02/23 Remarked) Use inputChannelCount instead of inChannelBegin and inChannelEnd.
-//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf ),
-//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount, this.padHeightTop, this.padWidthLeft ) ];
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf ),
-              new ChannelPartInfo( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft ) ];
+            aFiltersBiasesPartInfoArray = [
+              new FiltersBiasesPartInfo( [
+                new ChannelPartInfo( this.inputChannelCount_lowerHalf ),
+                new ChannelPartInfo( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft ) ] )
+            ];
             break;
 
           default:
@@ -329,14 +328,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
           .set_all_byBoundsArray( this.boundsArraySet.input )
           .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
       }
-      
+
       // Round 1
       {
         this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-          sourceWeights.weights, previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray );
+          sourceWeights.weights, previous_ConvBiasActivation_BoundsArraySet, aFiltersBiasesPartInfoArray );
 
         // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
-        this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( inChannelPartInfoArray );
+        this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
         this.boundsArraySet.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId(
           this.nActivationId );
       }
@@ -368,11 +367,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
    *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    *
-   * @param {Depthwise.ChannelPartInfo[]} inChannelPartInfoArray
+   * @param {Depthwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
    */
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-    sourceFloat32Array, previous_ConvBiasActivation_BoundsArraySet, inChannelPartInfoArray ) {
+    sourceFloat32Array, previous_ConvBiasActivation_BoundsArraySet, aFiltersBiasesPartInfoArray ) {
 
     let tBounds = new FloatValue.Bounds( 0, 0 );
 
@@ -384,6 +383,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     if ( this.filtersArray ) {
       let filterIndex = 0;
+
+//!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
 
 //!!! ...unfinished... (2022/04/05) The filter weights filling order might be wrong!
 // Perhaps, source weights [ -99, 40, -2, -83 ] (two filters [ -99, 40 ] and [ -2, -83 ] with shape = [ 1, 2, 1, 1 ])
