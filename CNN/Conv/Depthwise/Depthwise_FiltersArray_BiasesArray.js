@@ -375,149 +375,177 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
     let tBounds = new FloatValue.Bounds( 0, 0 );
 
-    // Init .afterFilter
-    this.boundsArraySet.afterFilter.set_all_byN( 0 );
+    // Init
+    {
+      this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
+      this.boundsArraySet.afterBias.set_all_byN( 0 );   // Init .afterBias
+
+      if ( this.biasesArray ) {
+        this.biasesArray.fill( 0 );
+      }
+    }
 
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0;
 
-    if ( this.filtersArray ) {
-      let filterIndex = 0;
+//!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
+    let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
+
+    FiltersBiasesPartIndexLoop:
+    for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
+      let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
+      let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
 
 //!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
 
-//!!! ...unfinished... (2022/04/05) The filter weights filling order might be wrong!
-// Perhaps, source weights [ -99, 40, -2, -83 ] (two filters [ -99, 40 ] and [ -2, -83 ] with shape = [ 1, 2, 1, 1 ])
-// might be filled as [ -99, -2, 40, -83 ] (filtersTensor4d.shape = [ 1, 2, 2, 1 ]).
-//
-// Especially for HIGHER_HALF_DEPTHWISE2 (1).
-//
-// may need a leap for filterIndex.
-//
+      if ( this.filtersArray ) {
+        let filterIndex = 0;
 
-      for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-        for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+//!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
+//      filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
-          for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-            for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+  //!!! ...unfinished... (2022/04/05) The filter weights filling order might be wrong!
+  // Perhaps, source weights [ -99, 40, -2, -83 ] (two filters [ -99, 40 ] and [ -2, -83 ] with shape = [ 1, 2, 1, 1 ])
+  // might be filled as [ -99, -2, 40, -83 ] (filtersTensor4d.shape = [ 1, 2, 2, 1 ]).
+  //
+  // Especially for HIGHER_HALF_DEPTHWISE2 (1).
+  //
+  // may need a leap for filterIndex.
+  //
 
-              // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
-              if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
-                continue;
+        for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
+          for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
 
-              let inChannel = 0;
-              let outChannel = 0;
+            for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
+              for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
 
-              InChannelPartIndexLoop:
-              for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-                let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+                // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+                if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
+                  continue;
 
-                for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-                  if ( inChannel >= this.inputChannelCount )
-                    break InChannelPartIndexLoop; // Never exceeds the total input channel count.
+                let inChannel = 0;
+                let outChannel = 0;
 
-                  let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+                InChannelPartIndexLoop:
+                for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+                  let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
-                  for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+                  for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+                    if ( inChannel >= this.inputChannelCount )
+                      break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
-                    if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                      if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
-                        this.filtersArray[ filterIndex ] = undoPreviousEscapingScale; // The only one filter position (in the pass-through part) has non-zero value.
+                    let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
-                      } else {
-                        this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
+                    for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+
+                      if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+                        if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
+                          this.filtersArray[ filterIndex ] = undoPreviousEscapingScale; // The only one filter position (in the pass-through part) has non-zero value.
+
+                        } else {
+                          this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
+                        }
+
+                      } else { // Non-pass-through half channels.
+                        this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
+                        ++sourceIndex;
+
+                        // Determine .afterFilter
+                        tBounds
+                          .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                          .multiply_byN( this.filtersArray[ filterIndex ] );
+
+                        this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
                       }
 
-                    } else { // Non-pass-through half channels.
-                      this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
-                      ++sourceIndex;
+                      ++filterIndex;
 
-                      // Determine .afterFilter
-                      tBounds
-                        .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-                        .multiply_byN( this.filtersArray[ filterIndex ] );
+                    } // outChannelSub, outChannel
+                  } // inChannelSub, inChannel
+                } // inChannelPartIndex
 
-                      this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
-                    }
+                tf.util.assert( ( inChannel == this.inputChannelCount ),
+                  `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+                    + `inChannelPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
 
-                    ++filterIndex;
+              } // dilationFilterX
+            } // filterX
+          } // dilationFilterY
+        } // filterY
 
-                  } // outChannelSub, outChannel
-                } // inChannelSub, inChannel
-              } // inChannelPartIndex
+      } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
-              tf.util.assert( ( inChannel == this.inputChannelCount ),
-                `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-                  + `inChannelPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+        // For avg/max pooling, the value bounds does not change.
+        this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
 
-            } // dilationFilterX
-          } // filterX
-        } // dilationFilterY
-      } // filterY
+        for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+          let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
-    } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
+          // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
+          tf.util.assert( ( undoPreviousEscapingScale == 1 ),
+            `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+              + `undoPreviousEscapingScale[ ${inChannel} ] ( ${undoPreviousEscapingScale} ) must be 1 for avg/max pooling.` );
 
-      // For avg/max pooling, the value bounds does not change.
-      this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
-
-      for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-        let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
-
-        // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
-        tf.util.assert( ( undoPreviousEscapingScale == 1 ),
-          `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-            + `undoPreviousEscapingScale[ ${inChannel} ] ( ${undoPreviousEscapingScale} ) must be 1 for avg/max pooling.` );
-
-      } // inChannel
-    }
-
-    // Init .afterBias
-    {
-      this.boundsArraySet.afterBias.set_all_byBoundsArray( this.boundsArraySet.afterFilter );
-    }
-
-    if ( this.biasesArray ) {
-      let biasIndex = 0;
-
-      let inChannel = 0;
-      let outChannel = 0;
-
-      InChannelPartIndexLoop:
-      for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-        let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-
-        for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-          if ( inChannel >= this.inputChannelCount )
-            break InChannelPartIndexLoop; // Never exceeds the total input channel count.
-
-          for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
-
-            // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
-
-            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-              this.biasesArray[ biasIndex ] = 0;
-
-            } else { // Non-pass-through half channels.
-              this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
-              ++sourceIndex;
-
-              // Determine .afterBias
-              this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
-            }
-
-            ++biasIndex;
-
-          } // outChannelSub, outChannel
         } // inChannel
-      } // inChannelPartIndex
+      }
 
-      tf.util.assert( ( inChannel == this.inputChannelCount ),
-        `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-          + `inChannelPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+      // Init .afterBias
+      {
+        this.boundsArraySet.afterBias.set_all_byBoundsArray( this.boundsArraySet.afterFilter );
+      }
 
-    } else { // ( !this.biasesArray ). No biases array to be extracted.
-      // Do nothing.
-    }
+      if ( this.biasesArray ) {
+        let biasIndex = 0;
+
+        let inChannel = 0;
+        let outChannel = 0;
+
+        InChannelPartIndexLoop:
+        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+
+          for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+            if ( inChannel >= this.inputChannelCount )
+              break InChannelPartIndexLoop; // Never exceeds the total input channel count.
+
+            for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+
+              // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
+
+              if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+                this.biasesArray[ biasIndex ] = 0;
+
+              } else { // Non-pass-through half channels.
+                this.biasesArray[ biasIndex ] = sourceFloat32Array[ sourceIndex ];
+                ++sourceIndex;
+
+                // Determine .afterBias
+                this.boundsArraySet.afterBias.add_one_byN( outChannel, this.biasesArray[ biasIndex ] ); // Shift the value bounds by the bias.
+              }
+
+              ++biasIndex;
+
+            } // outChannelSub, outChannel
+          } // inChannel
+        } // inChannelPartIndex
+
+        tf.util.assert( ( inChannel == this.inputChannelCount ),
+          `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+            + `inChannelPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
+
+      } else { // ( !this.biasesArray ). No biases array to be extracted.
+        // Do nothing.
+      }
+
+
+    } // aFiltersBiasesPartIndex
+
+    // Combine .afterFilter to .afterBias.
+    //
+    // Q: Why not combine when initializing .afterBias ?
+    // A: Because .afterFilter is unknown before FiltersBiasesPartInfoArray has been visited totally.
+    //
+    this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
   }
 
