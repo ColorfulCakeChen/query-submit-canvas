@@ -323,10 +323,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           aFiltersBiasesPartInfoArray = [
             new FiltersBiasesPartInfo( this.inputChannelCount, [
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,  false ),
-              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf,  true ),
+//!!! (2022/04/05 Remarked)
+//              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf,  true ),
             ] ),
             new FiltersBiasesPartInfo( this.inputChannelCount, [
-              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,   true ),
+//!!! (2022/04/05 Remarked)
+//              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,   true ),
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf, false ),
             ] )
           ];
@@ -645,7 +647,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
     tf.util.assert( ( outChannelEnd == this.outputChannelCount_Real ),
       `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-        + `inChannelPartInfoArray[] total output channel count ( ${outChannelEnd} ) should be ( ${this.outputChannelCount_Real} ).` );
+        + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
+        + `should be ( ${this.outputChannelCount_Real} ).` );
   }
 
   /**
