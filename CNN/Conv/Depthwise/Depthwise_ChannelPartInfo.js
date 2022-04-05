@@ -1,7 +1,4 @@
-export { ChannelPartInfo };
-
-//!!! (2022/02/23 Remarked) Use inputChannelCount instead of inChannelBegin and inChannelEnd.
-//import * as ConvBiasActivation from "../ConvBiasActivation.js";
+export { ChannelPartInfo, FiltersBiasesPartInfo };
 
 /**
  * Half channels information. Describe channel index range of lower half or higher half.
@@ -20,15 +17,10 @@ export { ChannelPartInfo };
  * @member {boolean} bPassThrough
  *   If true, this is the half channels for pass-through input to output.
  */
-//!!! (2022/02/23 Remarked) Use inputChannelCount instead of inChannelBegin and inChannelEnd.
-//class ChannelPartInfo extends ConvBiasActivation.ChannelPartInfo {
 class ChannelPartInfo {
 
   /**
    */
-//!!! (2022/02/23 Remarked) Use inputChannelCount instead of inChannelBegin and inChannelEnd.
-//   constructor( inChannelBegin, inChannelEnd, effectFilterY_passThrough = -1, effectFilterX_passThrough = -1 ) {
-//     super( inChannelBegin, inChannelEnd );
   constructor( inputChannelCount, effectFilterY_passThrough = -1, effectFilterX_passThrough = -1 ) {
     this.inputChannelCount = inputChannelCount;
     this.effectFilterY_passThrough = effectFilterY_passThrough;
@@ -47,3 +39,23 @@ class ChannelPartInfo {
   }      
 }
 
+
+
+/**
+ * Describe a range for a (depthwise) filters and a biases.
+ *
+ *
+ * @member {ChannelPartInfo[]} aChannelPartInfoArray
+ *   Every input-output relationship of this parts.
+ *
+ */
+class FiltersBiasesPartInfo {
+
+  /**
+   *
+   */
+  constructor( aChannelPartInfoArray ) {
+    this.aChannelPartInfoArray = aChannelPartInfoArray;
+  }
+
+}
