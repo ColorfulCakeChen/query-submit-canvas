@@ -586,9 +586,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             } // outChannelSub, outChannel
           } // inChannelPartIndex
 
-          tf.util.assert( ( outChannel == this.outputChannelCount_Real ),
-            `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-              + `inChannelPartInfoArray[] total output channel count ( ${outChannel} ) should be ( ${this.outputChannelCount_Real} ).` );
+//!!! (2022/04/05 Remarked) It is possible different (especially for HIGHER_HALF_ANOTHER_POINTWISE (3)).
+//           tf.util.assert( ( outChannel == this.outputChannelCount_Real ),
+//             `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+//               + `inChannelPartInfoArray[] total output channel count ( ${outChannel} ) should be ( ${this.outputChannelCount_Real} ).` );
 
 //!!! ...unfinished... (2022/04/05)
 // Perhaps, filterIndex needs add a leap to next inChannel (especially for HIGHER_HALF_ANOTHER_POINTWISE (3)).
