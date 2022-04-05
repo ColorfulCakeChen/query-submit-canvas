@@ -104,8 +104,11 @@ class FiltersBiasesPartInfo {
   /**
    *
    */
-  constructor( inputChannelCount, aChannelPartInfoArray ) {
-    this.inputChannelCount = inputChannelCount;
+//!!! (2022/04/05 Remarked) Always run through all input channels.
+//   constructor( inputChannelCount, aChannelPartInfoArray ) {
+//     this.inputChannelCount = inputChannelCount;
+
+  constructor( aChannelPartInfoArray ) {
     this.aChannelPartInfoArray = aChannelPartInfoArray;
   }
 
