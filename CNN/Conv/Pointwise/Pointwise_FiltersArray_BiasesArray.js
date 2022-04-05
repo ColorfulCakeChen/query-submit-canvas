@@ -292,30 +292,39 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
           this.outputChannelCount_Real = this.outputChannelCount;
 
-//!!! ...unfinished... (2022/04/03) seems wrong!
-//           this.inputChannelCount_toBeExtracted = this.inputChannelCount;   // Extract all weights as specified input/output channels.
-//           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
+          this.inputChannelCount_toBeExtracted = this.inputChannelCount;   // Extract all weights as specified input/output channels.
+          this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (like a normal pointwise convolution, but with a different arrangement.)
 
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
-          this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (So that biasesShape_extracted will be correct.)
-
-//!!! ...unfinished... (2022/04/03) should assert if can not be divisible.
-
-          this.inputChannelCount_toBeExtracted
-            = (   ( this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf )
-                + ( this.inputChannelCount_higherHalf * this.outputChannelCount_higherHalf ) )
-              / this.outputChannelCount; // (So that this.outputChannelCount_toBeExtracted will be correct.)
+//!!! ...unfinished... (2022/04/05) We need two pointiwse without pass-through.
+//           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (So that biasesShape_extracted will be correct.)
+//
+// //!!! ...unfinished... (2022/04/03) should assert if can not be divisible.
+//
+//           this.inputChannelCount_toBeExtracted
+//             = (   ( this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf )
+//                 + ( this.inputChannelCount_higherHalf * this.outputChannelCount_higherHalf ) )
+//               / this.outputChannelCount; // (So that this.outputChannelCount_toBeExtracted will be correct.)
+//
+//           aFiltersBiasesPartInfoArray = [
+//             new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf,  [
+//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
+//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf,  true ),
+//             ] ),
+//             new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
+//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_lowerHalf,   true ),
+//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ),
+//             ] )
+//           ];
 
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf,  [
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
-              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf,  true ),
+            new FiltersBiasesPartInfo( this.inputChannelCount,  [
+              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,  false ),
             ] ),
-            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_lowerHalf,   true ),
-              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ),
+            new FiltersBiasesPartInfo( this.inputChannelCount, [
+              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf, false ),
             ] )
           ];
 
