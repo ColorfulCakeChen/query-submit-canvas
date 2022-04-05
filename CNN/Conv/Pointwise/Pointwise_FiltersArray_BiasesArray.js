@@ -530,7 +530,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
 
     let inChannel = 0;
-
     let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
 
     FiltersBiasesPartIndexLoop:
@@ -612,7 +611,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
 
       if ( this.biasesArray ) {
-        let outChannel = 0;
+        let outChannel = outChannelBegin;
 
         InChannelPartIndexLoop:
         for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
