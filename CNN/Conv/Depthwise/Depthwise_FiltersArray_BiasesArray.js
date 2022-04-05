@@ -228,7 +228,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
             aFiltersBiasesPartInfoArray = [
               new FiltersBiasesPartInfo( [
-                new ChannelPartInfo( this.inputChannelCount_lowerHalf  ),
+                new ChannelPartInfo( this.inputChannelCount_lowerHalf  ) ] ),
+              new FiltersBiasesPartInfo( [
                 new ChannelPartInfo( this.inputChannelCount_higherHalf ) ] )
             ];
             break;
@@ -385,23 +386,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       }
     }
 
-    // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
-
-//!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
-    let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
-
-    FiltersBiasesPartIndexLoop:
-    for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
-      let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
-      let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
-
-      if ( this.filtersArray ) {
-//!!! (2022/04/05 Remarked)
-//        let filterIndex = 0;
-
-        filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
-
 //!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
   //!!! ...unfinished... (2022/04/05) The filter weights filling order might be wrong!
   // Perhaps, source weights [ -99, 40, -2, -83 ] (two filters [ -99, 40 ] and [ -2, -83 ] with shape = [ 1, 2, 1, 1 ])
@@ -411,6 +395,22 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
   //
   // may need a leap for filterIndex.
   //
+
+
+    // Extracting weights of filters and biases. (Including extra scale.)
+    let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
+
+//!!! ...unfinished... (2022/04/05) aFiltersBiasesPartInfoArray
+    let inChannelBegin = 0, inChannelEnd = 0,   // [ inChannelBegin, inChannelEnd ) are input channels of the current FiltersBiasesPart.
+        outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
+
+    FiltersBiasesPartIndexLoop:
+    for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
+      let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
+      let inChannelPartInfoArray = aFiltersBiasesPartInfo.aChannelPartInfoArray;
+
+      if ( this.filtersArray ) {
+        filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
         for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
           for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
@@ -422,9 +422,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                 if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                   continue;
 
-                let inChannel = 0;
-//!!! (2022/04/05 Remarked)
-//                let outChannel = 0;
+                let inChannel = inChannelBegin;
                 let outChannel = outChannelBegin;
 
                 InChannelPartIndexLoop:
@@ -465,6 +463,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   } // inChannelSub, inChannel
                 } // inChannelPartIndex
 
+
+//!!! ...unfinished... (2022/04/05)
+                inChannelEnd = inChannel;   // Record the ending input channel index of the current FiltersBiasesPart.
+                outChannelEnd = outChannel; // Record the ending output channel index of the current FiltersBiasesPart.
+                filterIndex += ( this.outputChannelCount_Real - outChannel ) + outChannelBegin; // Jump to the outChannelBegin of the next inChannel.
+
+
                 tf.util.assert( ( inChannel == this.inputChannelCount ),
                   `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
                     + `inChannelPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
@@ -476,6 +481,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
       } else { // ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
 
+//!!! ...unfinished... (2022/04/05)
         // For avg/max pooling, the value bounds does not change.
         this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
 
@@ -490,18 +496,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         } // inChannel
       }
 
-      // Init .afterBias
-      {
-        this.boundsArraySet.afterBias.set_all_byBoundsArray( this.boundsArraySet.afterFilter );
-      }
 
       if ( this.biasesArray ) {
-//!!! (2022/04/05 Remarked)
-//        let biasIndex = 0;
 
-        let inChannel = 0;
-//!!! (2022/04/05 Remarked)
-//        let outChannel = 0;
+//!!! ...unfinished... (2022/04/05)
+        let inChannel = inChannelBegin;
         let outChannel = outChannelBegin;
 
         InChannelPartIndexLoop:
