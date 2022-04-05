@@ -298,7 +298,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
-//!!! ...unfinished... (2022/04/05) We need two pointiwse without pass-through.
+//!!! ...unfinished... (2022/04/05) Need whole input channels for both two pointiwse.
 //           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (So that biasesShape_extracted will be correct.)
 //
 // //!!! ...unfinished... (2022/04/03) should assert if can not be divisible.
@@ -319,11 +319,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 //             ] )
 //           ];
 
+//!!! ...unfinished... (2022/04/05) It seems not possible!
           aFiltersBiasesPartInfoArray = [
-            new FiltersBiasesPartInfo( this.inputChannelCount,  [
+            new FiltersBiasesPartInfo( this.inputChannelCount, [
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,  false ),
+              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf,  true ),
             ] ),
             new FiltersBiasesPartInfo( this.inputChannelCount, [
+              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,   true ),
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf, false ),
             ] )
           ];
@@ -583,6 +586,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           tf.util.assert( ( outChannel == this.outputChannelCount_Real ),
             `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
               + `inChannelPartInfoArray[] total output channel count ( ${outChannel} ) should be ( ${this.outputChannelCount_Real} ).` );
+
+//!!! ...unfinished... (2022/04/05)
+// Perhaps, filterIndex needs add a leap to next inChannel (especially for HIGHER_HALF_ANOTHER_POINTWISE (3)).
 
         } // inChannelSub, inChannel
       } // this.filtersArray
