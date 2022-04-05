@@ -628,7 +628,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             } else { // Non-pass-through half channels.
               let biasValue = sourceFloat32Array[ sourceIndex ];
 
-              this.biasesArray[ biasIndex ] += biasValue; // Note: Use adding instead assignment.
+              this.biasesArray[ biasIndex ] += biasValue; // Note: Use adding instead of assignment.
               ++sourceIndex;
 
               // Determine .afterBias
