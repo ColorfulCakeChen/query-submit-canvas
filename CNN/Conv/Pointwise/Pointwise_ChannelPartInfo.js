@@ -92,9 +92,6 @@ class ChannelPartInfo {
  * Describe a range for a (pointwise) filters and a biases.
  *
  *
- * @member {number} inputChannelCount
- *   The input channel count of this parts.
- *
  * @member {ChannelPartInfo[]} aChannelPartInfoArray
  *   Every input-output relationship of this parts.
  *
@@ -104,10 +101,6 @@ class FiltersBiasesPartInfo {
   /**
    *
    */
-//!!! (2022/04/05 Remarked) Always run through all input channels.
-//   constructor( inputChannelCount, aChannelPartInfoArray ) {
-//     this.inputChannelCount = inputChannelCount;
-
   constructor( aChannelPartInfoArray ) {
     this.aChannelPartInfoArray = aChannelPartInfoArray;
   }
