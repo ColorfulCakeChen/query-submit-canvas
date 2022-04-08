@@ -1,9 +1,5 @@
 export { ParamDescConfig, Base };
 
-//import * as ParamDesc from "../../Unpacker/ParamDesc.js";
-//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-//import * as ValueRange from "../../Unpacker/ValueRange.js";
-
 
 /**
  * Describe which parameter and how many combination for the parameter.
@@ -58,7 +54,11 @@ class ParamValueChangeRecord {
  *   List all the parameters to be used in permutation combination.
  *
  * @member {number} id
- *   The numeric identifier of this testing parameter combination.
+ *   The numeric identifier of this testing parameter combination. No matter onYield_isLegal() is true or false, every combination
+ * has its own id. The first id is 0 (not 1).
+ *
+ * @member {number} yieldCount
+ *   How many legal (i.e. ( onYield_isLegal() == true ) ) TestParams are yielded.
  *
  * @member {object} in
  *   The "in" sub-object's data members represent every parameters of some (e.g. PointDepthPoint) Params's constructor. Besides,
@@ -83,6 +83,7 @@ class Base {
    */
   constructor( id = -1 ) {
     this.id = id;
+    this.yieldCount = 0;
     this.in = { paramsNumberArrayObject: {} };
     this.out = {};
     this.modifyParamValueHistory = [];
@@ -232,6 +233,8 @@ class Base {
 
     if ( currentParamDescConfigIndex >= this.config.paramDescConfigArray.length ) {
       // All parameters are used to be composed as one kind of combination.
+
+      ++this.yieldCount;
 
       let bLegalToYield = this.onYield_isLegal();
       if ( bLegalToYield ) {
