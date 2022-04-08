@@ -133,9 +133,23 @@ class Base extends TestParams.Base {
    */
   onYield_isLegal() {
 
-    // For ONE_INPUT_HALF_THROUGH (-5).
-    if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-      
+    // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+    if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_THROUGH_EXCEPT_DEPTHWISE1() ) {
+
+//!!! ...unfinished... (2022/04/08) ...untested
+      if ( this.out.pointwise1ChannelCount > 0 ) {
+
+        // depthwise2 (processing input0) must have the same input channel count as depthwise1 (processing pointwise1 result).
+        // So that the results of depthwise1 and depthwise2 both have the same output channel count.
+        if ( this.out.channelCount0_pointwise1Before != this.out.pointwise1ChannelCount == 0 )
+          return false;
+
+      // For ( pointwise1ChannelCount > 0 ), pointwise1 result is just the input0 itself (i.e. always the same).
+      }
+
+    // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
+    } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) {
+
       // The input and output channel count must be the same. Otherwise, the concat2-split-shuffle could not operate properly.
       if ( this.out.channelCount0_pointwise1Before != this.out.pointwise21ChannelCount )
         return false;
