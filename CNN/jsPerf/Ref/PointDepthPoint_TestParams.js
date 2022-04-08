@@ -134,7 +134,7 @@ class Base extends TestParams.Base {
   onYield_isLegal() {
 
     // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-    if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_THROUGH_EXCEPT_DEPTHWISE1() ) {
+    if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
 
 //!!! ...unfinished... (2022/04/08) ...untested
       if ( this.out.pointwise1ChannelCount > 0 ) {
