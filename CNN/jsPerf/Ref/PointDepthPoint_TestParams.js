@@ -198,7 +198,7 @@ class Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
-      pointwiseChannelCount: [ 0, 0 + 3 - 1 ],
+      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
       pointwise21ChannelCount: [ 1, 1 + 3 - 1 ],
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
@@ -280,7 +280,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.valueOutMinMax.Bias ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwiseChannelCount ),
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
     ];
