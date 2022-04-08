@@ -371,24 +371,12 @@ class Base extends TestParams.Base {
 
   /**
    * @param {NumberImage.Base} inputImage   The source image to be processed.
-
-//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
-//   * @param {FloatValue.ScaleTranslate} aScaleTranslate  The scale and translate used in the pass-through depthwise1 convolution.
-
    * @param {string} depthwiseName          A string for debug message of the depthwise1 convolution.
    * @param {string} parametersDesc         A string for debug message of the point-depth-point.
    *
    * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
    */
-//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
-//  use_depthwise1_PassThrough( inputImage, aScaleTranslate, depthwiseName, parametersDesc ) {
   use_depthwise1_PassThrough( inputImage, depthwiseName, parametersDesc ) {
-
-//!!! ...unfinished... (2022/02/23 Remarked) NumberImage never bPassThrough, so no need use activationEscaping scale.
-//     let depthwisePassThrough = new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )( inputImage.height, inputImage.width, inputImage.depth,
-//       this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-//       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
-//       this.out.bDepthwiseBias, aScaleTranslate.scale, aScaleTranslate.translate );
 
     let depthwisePassThrough = new ( Depthwise.PassThrough_FiltersArray_BiasesArray() )( inputImage.height, inputImage.width, inputImage.depth,
       this.out.depthwise_AvgMax_Or_ChannelMultiplier,
@@ -728,6 +716,10 @@ class Base extends TestParams.Base {
       if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
           || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
          ) {
+
+//!!! ...unfinished... (2022/04/08) if (-4), should not use channelCount0_pointwise1Before as input1ChannelCount.
+// should use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise21.
+
         depthwise2 = Base.generate_depthwise_filters_biases( paramsAll.channelCount0_pointwise1Before, // Use input0.
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
           paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
