@@ -762,6 +762,9 @@ class Base {
         depthwise2Result = testParams.use_depthwise2( imageIn1, "Depthwise2_for_input1", this.paramsOutDescription );
 
       } else {
+
+//!!! ...unfinished... (2022/04/08) needs let depthwise2Result has the same output channel count as pointwise1Result.
+
         depthwise2Result = imageIn0; // Since depthwise2 is just no-op, its result is just the same as its input (i.e. input0 (not input1)).
       }
     }
