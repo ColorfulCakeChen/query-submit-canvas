@@ -133,45 +133,12 @@ class Base extends TestParams.Base {
    */
   onYield_isLegal() {
 
-//!!! (2021/12/24 Remarked)
-// PointDepthPoint_TestParams.Base.generate_Filters_Biases() will double them in this case. 
-//
-//     // For ONE_INPUT_HALF_THROUGH (-5), the input channel count must be even (i.e. divisable by 2).
-//     //
-//     // The reason is that the calcResult() will splitted it into two input images. If it is not even, the splitting may still work but
-//     // the concat-shuffle-split can not work.
-//     //
-//     // Note: PointDepthPoint_TestParams.Base.generate_Filters_Biases() should already double them in this case. 
-//     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-//
-//       if ( ( this.out.channelCount0_pointwise1Before % 2 ) != 0 )
-//         return false;
-//
-// //!!! (2021/12/24 Remarked) seems should check pointwise21ChannelCount (not pointwise1ChannelCount).
-// //       if ( ( this.out.pointwise1ChannelCount % 2 ) != 0 )
-// //         return false;
-//       if ( ( this.out.pointwise21ChannelCount % 2 ) != 0 )
-//         return false;
-//     }
-
-
     // For ONE_INPUT_HALF_THROUGH (-5).
     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
       
       // The input and output channel count must be the same. Otherwise, the concat2-split-shuffle could not operate properly.
       if ( this.out.channelCount0_pointwise1Before != this.out.pointwise21ChannelCount )
         return false;
-
-
-//!!! (2022/02/22 Remarked) PointDepthPoint_Reference.calcResult() should call use_XXX_PassThrough()
-// //!!! ...unfinished... (2022/02/22) TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail) should also has same problem.
-//
-//       // The depthwise must not change the image's ( height, width ). Otherwise, the concat2-split-shuffle could not operate properly.
-//       if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-//         if ( this.out.depthwiseStridesPad != 1 )
-//           return false; // Since ( strides != 1 ) or ( pad != "same" ), the image's ( height, width ) will be changed. Not workable. Skip it.
-//       }
-
     }
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
@@ -180,8 +147,8 @@ class Base extends TestParams.Base {
       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
 
         switch ( this.out.channelCount1_pointwise1Before ) { // bHigherHalfDifferent
-          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4)
-          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5)
+          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+          case ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH: // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
             return false;
             break;
         }
@@ -717,10 +684,21 @@ class Base extends TestParams.Base {
           || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
          ) {
 
-//!!! ...unfinished... (2022/04/08) if (-4), should not use channelCount0_pointwise1Before as input1ChannelCount.
-// should use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise21.
+        let depthwise2_inputChannelCount;
 
-        depthwise2 = Base.generate_depthwise_filters_biases( paramsAll.channelCount0_pointwise1Before, // Use input0.
+        if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) { // (-2) (ShuffleNetV2's head (simplified))
+          depthwise2_inputChannelCount = paramsAll.channelCount0_pointwise1Before; // Use input0.
+
+//!!! ...unfinished... (2022/04/08) untested...
+        // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+        //
+        // Use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise21.
+        //
+        } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+          depthwise2_inputChannelCount = pointwise1.outputChannelCount;
+        }
+
+        depthwise2 = Base.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
           paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight, paramsAll.depthwiseFilterWidth,
           paramsAll.depthwiseStridesPad, paramsAll.bDepthwiseBias );
 
@@ -737,23 +715,9 @@ class Base extends TestParams.Base {
     let pointwise2_inputChannelCount = depthwise1.outputChannelCount;
     {
       if (   ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
-
-//!!! (2022/04/05 Remarked) It still needs to concat for (-4). Otherwise, there is no channel-shuffling.
-////!!! (2022/04/01 Remarked) sure?
-//// No need to combine depthwise1 and depthwise2 for pointwise21 because there will be pointwise212 to handle
-//// depthwise1 and depthwise2 separately.
           || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
          ) {
-
         pointwise2_inputChannelCount += depthwise2.outputChannelCount; // Add the channel count of the branch of the first input image.
-
-//!!! (2022/04/05 Remarked) It still needs to concat for (-4). Otherwise, there is no channel-shuffling.
-// //!!! (2022/04/01 Added and Remarked)
-// // //!!! ...unfinished...  (2022/04/01) sure?
-//       // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-//       } else if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
-//         // No need to combine depthwise1 and depthwise2 for pointwise21 because there will be pointwise212 to handle
-//         // depthwise1 and depthwise2 separately.
 
       // (> 0) Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX  (simplified ShuffleNetV2's tail)
       } else if ( paramsAll.channelCount1_pointwise1Before > 0 ) {
