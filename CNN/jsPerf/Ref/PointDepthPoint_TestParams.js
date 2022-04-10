@@ -735,6 +735,7 @@ class Base extends TestParams.Base {
       // (> 0) Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX  (simplified ShuffleNetV2's tail)
       } else if ( paramsAll.channelCount1_pointwise1Before > 0 ) {
 
+//!!! ...unfinished... (2022/04/10) Really? Sure?
 //!!! ...unfinished... (2022/04/10)
 // Perhaps, when:
 //   ( this.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() ) // (-3) (ShuffleNetV2's body/tail)
