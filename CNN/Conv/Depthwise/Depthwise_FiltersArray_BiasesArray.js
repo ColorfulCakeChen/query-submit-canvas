@@ -480,13 +480,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         // For avg/max pooling, the value bounds does not change.
         this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
 
-        for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-          let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+        for ( ; inChannelEnd < this.inputChannelCount; ++inChannelEnd ) {
+          let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannelEnd ];
 
           // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
           tf.util.assert( ( undoPreviousEscapingScale == 1 ),
             `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-              + `undoPreviousEscapingScale[ ${inChannel} ] ( ${undoPreviousEscapingScale} ) must be 1 for avg/max pooling.` );
+              + `undoPreviousEscapingScale[ ${inChannelEnd} ] ( ${undoPreviousEscapingScale} ) must be 1 for avg/max pooling.` );
 
         } // inChannel
       }
