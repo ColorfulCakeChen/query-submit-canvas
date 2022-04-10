@@ -196,7 +196,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         if ( this.bBias )
           this.biasesShape = biasesShape_extracted = [ this.outputChannelCount ];
 
-        inChannelPartInfoArray = [ new ChannelPartInfo( 0, this.inputChannelCount ) ];
+        aFiltersBiasesPartInfoArray = [
+          new FiltersBiasesPartInfo( [
+            new ChannelPartInfo( 0, this.inputChannelCount ) ] )
+        ];
 
       } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
 
