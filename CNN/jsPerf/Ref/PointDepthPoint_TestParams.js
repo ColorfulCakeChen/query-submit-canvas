@@ -141,7 +141,7 @@ class Base extends TestParams.Base {
 
         // depthwise2 (processing input0) must have the same input channel count as depthwise1 (processing pointwise1 result).
         // So that the results of depthwise1 and depthwise2 both have the same output channel count.
-        if ( this.out.channelCount0_pointwise1Before != this.out.pointwise1ChannelCount == 0 )
+        if ( this.out.channelCount0_pointwise1Before != this.out.pointwise1ChannelCount )
           return false;
 
       // For ( pointwise1ChannelCount > 0 ), pointwise1 result is just the input0 itself (i.e. always the same).
