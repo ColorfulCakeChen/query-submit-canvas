@@ -136,7 +136,6 @@ class Base extends TestParams.Base {
     // (-4) (ShuffleNetV2_ByMobileNetV1's head)
     if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
 
-//!!! ...unfinished... (2022/04/08) ...untested
       if ( this.out.pointwise1ChannelCount > 0 ) {
 
         // depthwise2 (processing input0) must have the same input channel count as depthwise1 (processing pointwise1 result).
@@ -703,7 +702,6 @@ class Base extends TestParams.Base {
         if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) { // (-2) (ShuffleNetV2's head (simplified))
           depthwise2_inputChannelCount = paramsAll.channelCount0_pointwise1Before; // Use input0.
 
-//!!! ...unfinished... (2022/04/08) untested...
         // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         //
         // Use pointwise1.outputChannelCount as input1ChannelCount so that it has the same structure of depthwise1 and pointwise21.
