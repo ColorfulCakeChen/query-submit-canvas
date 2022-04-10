@@ -234,12 +234,12 @@ class Base {
     if ( currentParamDescConfigIndex >= this.config.paramDescConfigArray.length ) {
       // All parameters are used to be composed as one kind of combination.
 
-      ++this.yieldCount;
+      ++this.id; // Every combination has unique id no matter whether is legal to be yielded.
 
       let bLegalToYield = this.onYield_isLegal();
       if ( bLegalToYield ) {
 
-        ++this.id;  // Complete one kind of combination.
+        ++this.yieldCount;  // Complete one kind of combination.
 
         this.onYield_before();
         yield this;
