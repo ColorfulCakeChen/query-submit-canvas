@@ -66,7 +66,7 @@ class InputsOutputs {
 
       tf.util.assert( ( ( outputChannelCount0 <= 0 ) && ( outputChannelCount1 <= 0 ) ),
         `BoundsArraySet.InputsOutputs.constructor(): `
-          + `output0 must exist ( outputChannelCount0 ( ${outputChannelCount0} ) must > 0 ).`
+          + `output0 must exist (i.e. outputChannelCount0 ( ${outputChannelCount0} ) must > 0 ).`
       );
     }
   }
