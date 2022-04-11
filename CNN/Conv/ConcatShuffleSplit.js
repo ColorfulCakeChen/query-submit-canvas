@@ -157,19 +157,33 @@ class Base {
       );
 
       // Concatenated value bounds array.
-      let concatLength
-        = this.previous_ConvBiasActivation_BoundsArraySet0.output.length + this.previous_ConvBiasActivation_BoundsArraySet1.output.length;
+      let concatBoundsArray;
+      {
+        let concatLength
+          = this.previous_ConvBiasActivation_BoundsArraySet0.output.length + this.previous_ConvBiasActivation_BoundsArraySet1.output.length;
 
-      let concatBoundsArray = new FloatValue.BoundsArray( concatLength );
-      concatBoundsArray.set_all_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 );
+        concatBoundsArray = new FloatValue.BoundsArray( concatLength );
+
+        concatBoundsArray.set_all_byBoundsArray_concat_input0_input1(
+          this.previous_ConvBiasActivation_BoundsArraySet0.output, this.previous_ConvBiasActivation_BoundsArraySet1.output );
+      }
+
+      // Shuffled value bounds array.
+      let shuffledBoundsArray;
+      {
 
 //!!! ...unfinished... (2022/04/11)
-      // Split value bounds array.
-      let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
-      let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
-      imageIn.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
+        // Split value bounds array.
+        let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
+        let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
+        shuffledBoundsArray.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
+      }
 
-      this.boundsArraySetArray = [ ??, ?? ];
+//!!! ...unfinished... (2022/04/11)
+      this.boundsArraySetArray = [
+        new ConvBiasActivation.BoundsArraySet( ??, ?? ),
+        new ConvBiasActivation.BoundsArraySet( ??, ?? ),
+      ];
 
     } else { // Only concatenation is needed.
       this.boundsArraySetArray = [
