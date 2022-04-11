@@ -589,6 +589,8 @@ class Base extends ReturnOrClone.Base {
       this.channelCount_concat1After_pointwise2Before
         = this.channelCount_depthwise1After_concat1Before + this.channelCount_depthwise2After_concat1Before;
 
+//!!! ...unfinished... (2022/04/11) What about the result BoundsArraySet of concat operation.
+
       this.concat1 = new ConcatAlongAxisId2.Base( false, false );
 
       TensorOpCounters.concat1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_concat1",
@@ -655,6 +657,9 @@ class Base extends ReturnOrClone.Base {
       channelShuffler_outputGroupCount_pointwise2
     );
 
+//!!! ...unfinished... (2022/04/11) The previous BoundsArraySet should not this.depthwise1.boundsArraySet.
+// It should consider concat operation.
+
     if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd, this.depthwise1.boundsArraySet ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise21.byteOffsetEnd;
@@ -678,6 +683,9 @@ class Base extends ReturnOrClone.Base {
         inputChannelCount_lowerHalf_pointwise2, outputChannelCount_lowerHalf_pointwise2,
         channelShuffler_outputGroupCount_pointwise2
       );
+
+//!!! ...unfinished... (2022/04/11) The previous BoundsArraySet should not this.depthwise1.boundsArraySet.
+// It should consider concat operation.
 
       // Note: Strictly speaking, sometimes pointwise22 is dependent on depthwise2. But it does not matter for BoundsArraySet
       // because depthwise1 and depthwise2 should have the same output value bounds.
@@ -849,6 +857,8 @@ class Base extends ReturnOrClone.Base {
           );
           break;
       }
+
+//!!! ...unfinished... (2022/04/11) What about the result BoundsArraySet of concat operation.
 
       this.concat2ShuffleSplit = new ConcatShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
 
