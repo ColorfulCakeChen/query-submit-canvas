@@ -143,31 +143,15 @@ class BoundsArraySet {
    *   Return a newly created object.
    */
   static create_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 ) {
-
-    tf.util.assert( ( inputBoundsArray0.length == inputBoundsArray1.length ),
-      `ConvBiasActivation.BoundsArraySet.create_byBoundsArray_concat_input0_input1(): `
-        + `inputBoundsArray0.length ( ${inputBoundsArray0.length} ) should be the same as `
-        + `inputBoundsArray1.length ( ${inputBoundsArray1.length} ).`
-    );
-
     let rLength = inputBoundsArray0.length + inputBoundsArray1.length;
-
     let rBoundsArraySet = new BoundsArraySet( rLength, rLength );
 
     // Concat value bounds array.
-    let inChannel = 0;
+    rBoundsArraySet.input.set_all_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 );
 
-    for ( let inChannel0 = 0; inChannel0 < inputBoundsArray0.length; ++inChannel0, ++inChannel ) {
-      rBoundsArraySet.input.set_one_byBoundsArray( inChannel, inputBoundsArray0, inChannel0 );
-    }
-
-    for ( let inChannel1 = 0; inChannel1 < inputBoundsArray1.length; ++inChannel1, ++inChannel ) {
-      rBoundsArraySet.input.set_one_byBoundsArray( inChannel, inputBoundsArray1, inChannel1 );
-    }
-
+    // Spread to all value bounds array.
     return rBoundsArraySet.set_all_byBoundsArray_input_output( rBoundsArraySet.input, rBoundsArraySet.input );
   }
-
 
   /**
    * @param {BoundsArraySet} aBoundsArraySet
