@@ -100,12 +100,6 @@ class Asserter_Equal {
         + `( ${lhsNumberArray[ this.elementIndex ]} ) should be ( ${rhsNumberArray[ this.elementIndex ]} ) `
         + `( ${lhsNumberArray} ) should be ( ${rhsNumberArray} ). `
         + `${postfixMsg}` );
-
-//!!! (2021/08/10 Remarked) Old Codes.
-//         `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
-//           +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
-//           + `${parametersDescription}` );
-
   }
 
   /**
@@ -164,35 +158,6 @@ class Asserter_Equal {
     }
 
     this.assert_NumberArray_NumberArray( tensorDataArray, rhsNumberArray, prefixMsg, tensorName, rhsNumberArrayName, postfixMsg );
-
-//!!! (2021/12/31 Remarked) use assert_NumberArray_NumberArray() instead.
-//     // Check both null or non-null.
-//     tf.util.assert( ( tensorDataArray == null ) == ( numberArray == null ),
-//       `${prefixMsg} ${tensorName} ( ${tensorDataArray} ) and ${numberArrayName} ( ${numberArray} ) should be both null or non-null. ${postfixMsg}` );
-//
-//     if ( !tensorDataArray )
-//       return; // Since null, no element need to be compared futher.
-//
-//     // Check both length.
-//     tf.util.assert( tensorDataArray.length == numberArray.length,
-//     `${prefixMsg} ${tensorName} length ( ${tensorDataArray.length} ) should be ( ${numberArray.length} ). ${postfixMsg}` );
-//
-//     this.numberArray = numberArray; // For ElementComparator() to access.
-//
-//     // Check both elements.
-//     //
-//     // Note: Array.every() seems faster than for-loop.
-//     tf.util.assert( tensorDataArray.every( this.comparator ),
-//       `${prefixMsg} ${tensorName}[ ${this.elementIndex} ] `
-//         + `( ${tensorDataArray[ this.elementIndex ]} ) should be ( ${numberArray[ this.elementIndex ]} ) `
-//         + `( ${tensorDataArray} ) should be ( ${numberArray} ). `
-//         + `${postfixMsg}` );
-//
-// //!!! (2021/08/10 Remarked) Old Codes.
-// //         `PointDepthPoint output${i}[ ${elementIndex} ] ( ${outputArray[ elementIndex ]} ) should be ( ${outputArrayRef[ elementIndex ]} ) `
-// //           +`( ${outputArray} ) should be ( ${outputArrayRef} ). `
-// //           + `${parametersDescription}` );
-
   }
 
   /**
