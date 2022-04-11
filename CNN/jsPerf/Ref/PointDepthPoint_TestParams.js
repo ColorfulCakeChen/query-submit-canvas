@@ -758,6 +758,10 @@ class Base extends TestParams.Base {
         let pointwise212 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise21ChannelCount_original, paramsAll.bPointwise21Bias );
 
+//!!! ...unfinished... (2022/04/11) Problem:
+// .pointwise212Filters and .pointwise212Biases will not be cleared by TestParams.permuteParamRecursively()
+// because they are not listed in paramDescConfigArray[].
+
         io_paramsNumberArrayObject.pointwise212Filters = pointwise212.numberArrayArray[ 0 ];
         io_paramsNumberArrayObject.pointwise212Biases =  pointwise212.numberArrayArray[ 1 ];
       }
@@ -790,6 +794,10 @@ class Base extends TestParams.Base {
       if ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) { // (-4) (ShuffleNetV2_ByMobileNetV1's head)
         let pointwise222 = Base.generate_pointwise_filters_biases( pointwise2_inputChannelCount,
           pointwise22ChannelCount, bPointwise22Bias );
+
+//!!! ...unfinished... (2022/04/11) Problem:
+// .pointwise212Filters and .pointwise212Biases will not be cleared by TestParams.permuteParamRecursively()
+// because they are not listed in paramDescConfigArray[].
 
         io_paramsNumberArrayObject.pointwise222Filters = pointwise222.numberArrayArray[ 0 ];
         io_paramsNumberArrayObject.pointwise222Biases =  pointwise222.numberArrayArray[ 1 ];
