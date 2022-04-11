@@ -263,9 +263,10 @@ class Base {
       this.out[ paramDesc.paramName ] = pair.valueOutput;
 
       // Randomly place the parameter directly or in weights array.
-//!!! (2021/07/19 Temp Remarked)
+
+      //!!! (2021/07/19 Temp Used) For testing without randomly.
+      //let dice = 0;
       let dice = Math.random();
-//      let dice = 0;
       if ( dice < 0.5 ) {
         // Try parameter value assigned directly (i.e. by specifying).      
         this.in[ paramDesc.paramName ] = pair.valueInput;
@@ -276,8 +277,6 @@ class Base {
         this.in[ paramDesc.paramName ] = null;
         this.in.paramsNumberArrayObject[ paramDesc.paramName ] = [ pair.valueInput ];
         yield *Base.permuteParamRecursively.call( this, nextParamDescConfigIndex );
-
-//!!! ...unfinished... (2022/04/11) What if more parameters needs to be cleared? How to specify them?
 
         this.in.paramsNumberArrayObject[ paramDesc.paramName ] = undefined; // So that it could be re-tried as by-specifying when backtracking.
       }
