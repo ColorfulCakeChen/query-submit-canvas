@@ -453,9 +453,19 @@ class Base {
     if ( null == imageIn )
       return [ null, null ];
 
+//!!! (2022/04/11 Remarked) Use BoundsArray.split_to_lowerHalf_higherHalf() instead.
+//     // If not divided by 2, let lower half have one more.
+//     let imageOutDepth_lowerHalf = Math.ceil( imageIn.depth / 2 );
+//     let imageOutDepth_higherHalf = imageIn.depth - imageOutDepth_lowerHalf;
+
+    // Split value bounds array.
+    let boundsArray_lowerHalf = new ConvBiasActivation.BoundsArraySet( 0 );
+    let boundsArray_higherHalf = new ConvBiasActivation.BoundsArraySet( 0 );
+    imageIn.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
+
     // If not divided by 2, let lower half have one more.
-    let imageOutDepth_lowerHalf = Math.ceil( imageIn.depth / 2 );
-    let imageOutDepth_higherHalf = imageIn.depth - imageOutDepth_lowerHalf;
+    let imageOutDepth_lowerHalf = boundsArray_lowerHalf.length;
+    let imageOutDepth_higherHalf = boundsArray_higherHalf.length;
 
     let imageOutLength_lowerHalf = ( imageIn.height * imageIn.width * imageOutDepth_lowerHalf );
     let imageOutLength_higherHalf = ( imageIn.height * imageIn.width * imageOutDepth_higherHalf );
@@ -502,21 +512,26 @@ class Base {
       }
     }
 
-    // Split value bounds array.
-    {
-      let inChannel = 0;
+    // Setup value bounds array.
+    imageOut0.boundsArraySet.set_all_byBoundsArray_input_output( boundsArray_lowerHalf, boundsArray_lowerHalf );
+    imageOut1.boundsArraySet.set_all_byBoundsArray_input_output( boundsArray_higherHalf, boundsArray_higherHalf );
 
-      for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
-        imageOut0.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn.boundsArraySet.output, inChannel );
-      }
-
-      for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
-        imageOut1.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn.boundsArraySet.output, inChannel );
-      }
-
-      imageOut0.boundsArraySet.set_all_byBoundsArray_input_output( imageIn.boundsArraySet.output, imageOut0.boundsArraySet.output );
-      imageOut1.boundsArraySet.set_all_byBoundsArray_input_output( imageIn.boundsArraySet.output, imageOut1.boundsArraySet.output );
-    }
+//!!! (2022/04/11 Remarked) Use BoundsArray.split_to_lowerHalf_higherHalf() instead.
+//     // Split value bounds array.
+//     {
+//       let inChannel = 0;
+//
+//       for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
+//         imageOut0.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn.boundsArraySet.output, inChannel );
+//       }
+//
+//       for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
+//         imageOut1.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn.boundsArraySet.output, inChannel );
+//       }
+//
+//       imageOut0.boundsArraySet.set_all_byBoundsArray_input_output( imageIn.boundsArraySet.output, imageOut0.boundsArraySet.output );
+//       imageOut1.boundsArraySet.set_all_byBoundsArray_input_output( imageIn.boundsArraySet.output, imageOut1.boundsArraySet.output );
+//    }
 
     return imageOutArray;
   }
