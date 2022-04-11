@@ -904,6 +904,10 @@ class Base {
           // Note: When ONE_INPUT_HALF_THROUGH (-5), although ( bOutput1Requested == false ), it still needs shuffle.
           || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
 
+//!!! ...unfinished... (2022/04/11)
+// Perhaps, TWO_INPUTS_CONCAT_POINTWISE21_INPUT1",     // (-3) ShuffleNetV2's body/tail
+// should ConcatShuffleSplit because it also output 2 (not 1) tensors.
+
          ) {
 
         let channelShuffler_concatenatedShape = channelShuffler.concatenatedShape;
