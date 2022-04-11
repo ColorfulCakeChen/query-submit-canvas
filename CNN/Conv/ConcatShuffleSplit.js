@@ -2,7 +2,7 @@ export { Base };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ConvBiasActivation from "./ConvBiasActivation.js";
-//import * as ChannelShuffler from "./ChannelShuffler.js";
+import * as ChannelShuffler from "./ChannelShuffler.js";
 
 /**
  * Concatenate two tensor3d along depth (i.e. axis id 2) and then channel shuffling and splitting.
@@ -63,18 +63,7 @@ class Base {
     this.previous_ConvBiasActivation_BoundsArraySet0 = previous_ConvBiasActivation_BoundsArraySet0;
     this.previous_ConvBiasActivation_BoundsArraySet1 = previous_ConvBiasActivation_BoundsArraySet1;
     this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
-
-//!!! ...unfinished... (2022/04/11)
-//     this.boundsArraySet = ??? BoundsArraySet.create_byBoundsArray_concat_input0_input1(
-//       previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 );
-//
-//
-//     // Split value bounds array.
-//     let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
-//     let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
-//     imageIn.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
-//
-//        BoundsArraySet.output_interleave_asGrouptTwo()
+    Base.setup_BoundsArraySet.call( this );
   }
 
   /**
@@ -127,6 +116,12 @@ class Base {
   /** Set this.pfnShuffleSplit according to this.bShuffleSplit, this.channelShuffler. */
   static adjust_pfnShuffleSplit() {
     if ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ) {
+
+      tf.util.assert( ( this.channelShuffler instanceof ChannelShuffler.ConcatPointwiseConv ),
+        `ConcatShuffleSplit.Base.setup_BoundsArraySet(): `
+          + `channelShuffler must be an instance of class ChannelShuffler.ConcatPointwiseConv.`
+      );
+
       this.pfnShuffleSplit = Base.ShuffleSplit_do; // Want and could do channel shuffling and splitting.
     } else {
       this.pfnShuffleSplit = Base.ShuffleSplit_return_input_directly;
@@ -148,6 +143,37 @@ class Base {
         this.pfnConcatShuffleSplit = Base.ConcatShuffleSplit_and_destroy0_destroy1;
       }
     }
+  }
+
+  /** Create this.boundsArraySet. */
+  static setup_BoundsArraySet() {
+
+    // Concatenated value bounds array.
+    this.boundsArraySet = ConvBiasActivation.BoundsArraySet.create_byBoundsArray_concat_input0_input1(
+      this.previous_ConvBiasActivation_BoundsArraySet0, this..previous_ConvBiasActivation_BoundsArraySet1 );
+
+    if ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ) { // Want and could do channel shuffling and splitting.
+
+      tf.util.assert( ( this.channelShuffler.outputGroupCount == 2 ),
+        `ConcatShuffleSplit.Base.setup_BoundsArraySet(): `
+          + `channelShuffler.outputGroupCount ( ${this.channelShuffler.outputGroupCount} ) must be 2 `
+          + `( other outputGroupCount does not supperted ).`
+      );
+
+    }
+
+
+//!!! ...unfinished... (2022/04/11)
+//     this.boundsArraySet = ??? BoundsArraySet.create_byBoundsArray_concat_input0_input1(
+//       previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 );
+//
+//
+//     // Split value bounds array.
+//     let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
+//     let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
+//     imageIn.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
+//
+//        BoundsArraySet.output_interleave_asGrouptTwo()
   }
 
   /**
