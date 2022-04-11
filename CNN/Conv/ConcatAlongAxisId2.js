@@ -1,5 +1,7 @@
 export { Base };
 
+import * as ConvBiasActivation from "./ConvBiasActivation.js";
+
 /**
  * Concatenate two tensor3d ( height x width x channel ) always along the last axis (i.e. axisId = 2, along the channel axis). It could
  * destroy one or two of the input tensors.
@@ -10,6 +12,15 @@ export { Base };
  * @member {boolean} bKeepInputTensor1
  *   If false, the second input tensor will be disposed after concatenating. If true, the second input tensor will be kept after concatenating.
  *
+ * @member {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet0
+ *   The previous convolution-bias-activation value bounds set of this concatenation operation's input0.
+ *
+ * @member {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet1
+ *   The previous convolution-bias-activation value bounds set of this concatenation operation's input1.
+ *
+ * @member {BoundsArraySet} boundsArraySet
+ *   The element value bounds (per channel) of this concatenation operation.
+ * 
  * @member {function} pfnConcat
  *   This is a method. It has one parameter inputTensorsArray and return a outputTensor. The inputTensorsArray (tf.tensor3d[])
  * represents all the images ( height x width x channel ) which will be concatenated. They should have the same ( height x width )
@@ -21,10 +32,16 @@ export { Base };
  */
 class Base {
 
-  constructor( bKeepInputTensor0, bKeepInputTensor1 ) {
+  constructor(
+    bKeepInputTensor0, bKeepInputTensor1, previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
+    this.previous_ConvBiasActivation_BoundsArraySet0 = previous_ConvBiasActivation_BoundsArraySet0;
+    this.previous_ConvBiasActivation_BoundsArraySet1 = previous_ConvBiasActivation_BoundsArraySet1;
     Base.adjust_pfnConcat.call( this );
+
+    this.boundsArraySet = BoundsArraySet.create_byBoundsArray_concat_input0_input1(
+      previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 );
   }
 
   /**
