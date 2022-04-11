@@ -7,33 +7,39 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
 import { InputsOutputs } from "./InputsOutputs.js";
 
 /**
- * Element value bounds for every operation's result of a convolution-bias-activation. The main purpose is to find out the
+ * Element value bounds (per channel) for every operation's result of a convolution-bias-activation. The main purpose is to find out the
  * activationEscaping_ScaleArraySet so that it can be used to let channel escape from activation function's non-linear effect.
  *
  *
- * @member {FloatValue.BoundsArray} input
- *   The (per channel) bounds of the input element value. Or say, the domain of the convolution-bias-activation.
+
+//!!! (2022/04/11 Remarked)
+//  * @member {FloatValue.BoundsArray} input
+//  *   The (per channel) bounds of the input element value. Or say, the domain of the convolution-bias-activation.
+
  *
  * @member {FloatValue.BoundsArray} afterUndoPreviousActivationEscaping
- *   The (per channel) bounds of the element value after applying the previousConvBiasActivation.BoundsArraySet.ActivationEscaping.undo
- * to this.input. (i.e. beforeFilter)
+ *   The element value bounds (per channel) after applying the previousConvBiasActivation.BoundsArraySet.ActivationEscaping.undo
+ * to this.input0. (i.e. beforeFilter)
  *
  * @member {FloatValue.BoundsArray} afterFilter
- *   The (per channel) bounds of the element value after applying the convolution filters to this.afterUndoPreviousActivationEscaping.
+ *   The element value bounds (per channel) after applying the convolution filters to this.afterUndoPreviousActivationEscaping.
  * (i.e. beforeBias)
  *
  * @member {FloatValue.BoundsArray} afterBias
- *   The (per channel) bounds of the element value after applying the convolution biases to this.afterFilter. (i.e. beforeActivationEscaping)
+ *   The element value bounds (per channel) after applying the convolution biases to this.afterFilter. (i.e. beforeActivationEscaping)
  *
  * @member {FloatValue.BoundsArray} afterActivationEscaping
- *   The (per channel) bounds of the element value after applying this.activationEscaping_ScaleArraySet.do to this.afterBias. (i.e. beforeActivation)
+ *   The element value bounds (per channel) after applying this.activationEscaping_ScaleArraySet.do to this.afterBias. (i.e. beforeActivation)
  *
  * @member {FloatValue.BoundsArray} afterActivation
- *   The (per channel) bounds of the element value after applying activation function to this.afterActivationEscaping. It is just
- * the this.output.
+ *   The element value bounds (per channel) after applying activation function to this.afterActivationEscaping. It is just
+ * the this.output0.
  *
- * @member {FloatValue.BoundsArray} output
- *   The (per channel) bounds of the output element value. Or say, the range of the convolution-bias-activation.
+
+//!!! (2022/04/11 Remarked)
+//  * @member {FloatValue.BoundsArray} output
+//  *   The (per channel) bounds of the output element value. Or say, the range of the convolution-bias-activation.
+
  *
  * @member {ActivationEscaping.ScaleArraySet} activationEscaping_ScaleArraySet
  *   The scales for moving this.afterBias bounds into the linear domain of the activation function. That is, for
