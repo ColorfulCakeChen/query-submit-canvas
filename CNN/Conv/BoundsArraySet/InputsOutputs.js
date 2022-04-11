@@ -8,28 +8,42 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * Element value bounds (per channel) for inputs and outputs of an operation. *
  *
  * @member {FloatValue.BoundsArray[]} inputs
- *   The element value bounds (per channel) of all inputs. Or say, the domain of the operation.
+ *   The element value bounds (per channel) of all inputs (i.e. the domain of the operation). This array (which is past into
+ * constructor) will be kept (not cloned) directly. So caller should not modify them.
  *
  * @member {number} inputTensorCount
- *   How many input tensors (i.e. this.inputs.length). Default is 1.
+ *   How many input tensors (i.e. this.inputs.length).
  *
  * @member {FloatValue.BoundsArray} input0
- *   The element value bounds (per channel) of 1st input. It is just the this.outputs[ 0 ].
+ *   The element value bounds (per channel) of 1st input (i.e. this.inputs[ 0 ]).
  *
  * @member {FloatValue.BoundsArray} input1
- *   The element value bounds (per channel) of 2nd input. It is just the this.outputs[ 1 ].
+ *   The element value bounds (per channel) of 2nd input (i.e. this.inputs[ 1 ]).
+ *
+ * @member {number} inputChannelCount0
+ *   The channel count of 1st input (i.e. this.input0.length).
+ *
+ * @member {number} inputChannelCount1
+ *   The channel count of 2nd input (i.e. this.input1.length).
  *
  * @member {FloatValue.BoundsArray[]} outputs
- *   The element value bounds (per channel) of all outputs. Or say, the range of the operation.
+ *   The element value bounds (per channel) of all outputs (i.e. the range of the operation). The array is created by constructor
+ * according to outputChannelCount0 and outputChannelCount1. 
  *
  * @member {number} outputTensorCount
  *   How many output tensors (i.e. this.outputs.length). Default is 1.
  *
  * @member {FloatValue.BoundsArray} output0
- *   The element value bounds (per channel) of 1st output. It is just the this.outputs[ 0 ].
+ *   The element value bounds (per channel) of 1st output (i.e. this.outputs[ 0 ]).
  *
  * @member {FloatValue.BoundsArray} output1
- *   The element value bounds (per channel) of 2nd output. It is just the this.outputs[ 1 ].
+ *   The element value bounds (per channel) of 2nd output (i.e. this.outputs[ 1 ]).
+ *
+ * @member {number} outputChannelCount0
+ *   The channel count of 1st output (i.e. this.output0.length).
+ *
+ * @member {number} outputChannelCount1
+ *   The channel count of 2nd output (i.e. this.output1.length).
  */
 class ConvBiasActivation {
 
@@ -38,7 +52,7 @@ class ConvBiasActivation {
 
 //!!! ...unfinished... (2022/04/11)
 // Perhaps, inputChannelCount0, inputChannelCount1, outputChannelCount0, outputChannelCount1
-  constructor( inputChannelCount, outputChannelCount, inputTensorCount = 1, outputTensorCount = 1 ) {
+  constructor( inputs, outputChannelCount0, outputChannelCount1 ) {
     this.input = new FloatValue.BoundsArray( inputChannelCount );
     this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( inputChannelCount );
     this.afterFilter = new FloatValue.BoundsArray( outputChannelCount );
