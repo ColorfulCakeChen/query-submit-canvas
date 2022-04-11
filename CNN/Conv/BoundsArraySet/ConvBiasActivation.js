@@ -4,6 +4,7 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
+import { InputsOutputs } from "./InputsOutputs.js";
 
 /**
  * Element value bounds for every operation's result of a convolution-bias-activation. The main purpose is to find out the
@@ -41,7 +42,7 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
  * @member {boolean[]} bPassThrough
  *   If true for a output channel, the output channel should be arranged to pass-through from input to output.
  */
-class ConvBiasActivation {
+class ConvBiasActivation extends InputsOutputs {
 
   /**
    */
