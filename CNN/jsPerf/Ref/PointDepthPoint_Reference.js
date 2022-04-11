@@ -899,15 +899,10 @@ class Base {
 
       // 5.1 Concat2, shuffle, split.
 
-      if (   ( testParams.out.bOutput1Requested == true )
+      if (   ( testParams.out.bOutput1Requested == true ) // (ShuffleNetV2's body)
 
           // Note: When ONE_INPUT_HALF_THROUGH (-5), although ( bOutput1Requested == false ), it still needs shuffle.
           || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
-
-//!!! ...unfinished... (2022/04/11)
-// Perhaps, TWO_INPUTS_CONCAT_POINTWISE21_INPUT1",     // (-3) ShuffleNetV2's body/tail
-// should ConcatShuffleSplit because it also output 2 (not 1) tensors.
-
          ) {
 
         let channelShuffler_concatenatedShape = channelShuffler.concatenatedShape;
@@ -916,7 +911,7 @@ class Base {
           imageConcat2InArray, imageOutArray, "Concat2_pointwise21_input1_ShuffleSplit", this.paramsOutDescription );
 
       // 5.2 Concat2 only.
-      } else { // ( bOutput1Requested == false )
+      } else { // ( bOutput1Requested == false ), (ShuffleNetV2's tail)
         imageOutArray[ 0 ] = NumberImage.Base.calcConcatAlongAxisId2(
           imageConcat2InArray[ 0 ], imageConcat2InArray[ 1 ], "Concat2_pointwise21_input1", this.paramsOutDescription );
       }
