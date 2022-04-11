@@ -627,6 +627,66 @@ class BoundsArray {
   }
 
   /**
+   * @param {BoundsArray} lowerHalfBoundsArray
+   *   The BoundsArray of the 1st output.
+   *
+   * @param {BoundsArray} higherHalfBoundsArray
+   *   The BoundsArray of the 2nd output.
+   *
+   * @return {BoundsArray}
+   *   Return this (unmodified) object.
+   */
+  split_to_lowerHalf_higherHalf( lowerHalfBoundsArray, higherHalfBoundsArray ) {
+
+    // If not divided by 2, let lower half have one more.
+    let length_lowerHalf = Math.ceil( this.length / 2 );
+    let length_higherHalf = this.length - length_lowerHalf;
+
+    lowerHalfBoundsArray.length = length_lowerHalf;
+    higherHalfBoundsArray.length = length_higherHalf;
+
+    // Split value bounds array.
+    let inChannel = 0;
+
+    for ( let outChannel = 0; outChannel < length_lowerHalf; ++outChannel, ++inChannel ) {
+      lowerHalfBoundsArray.set_one_byBoundsArray( outChannel, this, inChannel );
+    }
+
+    for ( let outChannel = 0; outChannel < length_higherHalf; ++outChannel, ++inChannel ) {
+      higherHalfBoundsArray.set_one_byBoundsArray( outChannel, this, inChannel );
+    }
+
+    return this;
+  }
+
+    tf.util.assert( ( inputBoundsArray0.length == inputBoundsArray1.length ),
+      `ConvBiasActivation.BoundsArraySet.create_byBoundsArray_concat_input0_input1(): `
+        + `inputBoundsArray0.length ( ${inputBoundsArray0.length} ) should be the same as `
+        + `inputBoundsArray1.length ( ${inputBoundsArray1.length} ).`
+    );
+
+    let rLength = inputBoundsArray0.length + inputBoundsArray1.length;
+
+    let rBoundsArraySet = new BoundsArraySet( rLength, rLength );
+
+    // Concat value bounds array.
+    let inChannel = 0;
+
+    for ( let inChannel0 = 0; inChannel0 < inputBoundsArray0.length; ++inChannel0, ++inChannel ) {
+      rBoundsArraySet.input.set_one_byBoundsArray( inChannel, inputBoundsArray0, inChannel0 );
+    }
+
+    for ( let inChannel1 = 0; inChannel1 < inputBoundsArray1.length; ++inChannel1, ++inChannel ) {
+      rBoundsArraySet.input.set_one_byBoundsArray( inChannel, inputBoundsArray1, inChannel1 );
+    }
+
+    return rBoundsArraySet.set_all_byBoundsArray_input_output( rBoundsArraySet.input, rBoundsArraySet.input );
+  }
+
+
+
+  
+  /**
    * Rearrange bounds by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
