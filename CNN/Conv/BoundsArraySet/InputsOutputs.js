@@ -53,6 +53,7 @@ class InputsOutputs {
   constructor( inputs, outputChannelCount0, outputChannelCount1 ) {
     this.inputs = inputs;
 
+    // Determine outputs array.
     if ( outputChannelCount0 > 0 ) {
       if ( outputChannelCount1 > 0 ) { // Two outputs.
         this.outputs = [ new FloatValue.BoundsArray( outputChannelCount0 ), new FloatValue.BoundsArray( outputChannelCount1 ) ];
@@ -70,15 +71,20 @@ class InputsOutputs {
     }
   }
 
-//!!! ...unfinished... (2022/04/11)
   /**
-   * @return {BoundsArraySet} Return a newly created BoundsArraySet which is a copy of this BoundsArraySet.
+   * @return {BoundsArraySet.InputsOutputs}
+   *   Return a newly created BoundsArraySet.InputsOutputs which is a copy of this BoundsArraySet.InputsOutputs. The this.inputs
+   * will just past to new InputsOutputs (i.e. NOT copied). The this.outputs will be copied.
    */
   clone() {
-    let result = new InputsOutputs( this.input.length, this.output.length );
+    let result = new InputsOutputs( this.inputs, this.outputChannelCount0, this.outputChannelCount1 );
+
+//!!! ...unfinished... (2022/04/11)
     result.set_byBoundsArraySet( this );
     return result;
   }
+
+//!!! ...unfinished... (2022/04/11)
 
   /**
    * @param {FloatValue.Bounds} aBounds
