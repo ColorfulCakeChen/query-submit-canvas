@@ -1,8 +1,6 @@
 export { InputsOutputs };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
-import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-//import * as Weights from "../../Unpacker/Weights.js";
 
 /**
  * Element value bounds (per channel) for inputs and outputs of an operation.
@@ -78,15 +76,13 @@ class InputsOutputs {
    */
   clone() {
     let result = new InputsOutputs( this.inputs, this.outputChannelCount0, this.outputChannelCount1 );
-
-//!!! ...unfinished... (2022/04/11)
-    result.set_byBoundsArraySet( this );
+    result.set_outputs_all_byBoundsArraySet( this );
     return result;
   }
 
   /**
    * @param {FloatValue.Bounds} aBounds
-   *   Set all this.outputs[] to the same as the specified aBounds.
+   *   Set all .outputs[] to the same as the specified aBounds.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -113,6 +109,20 @@ class InputsOutputs {
   }
 
   /**
+   * @param {BoundsArraySet.InputsOutputs} aBoundsArraySet
+   *   The BoundsArraySet to be copied. Precondition: ( this.outputs.length == aBoundsArraySet.outputs.length ).
+   *
+   * @return {InputsOutputs}
+   *   Return this (modified) object which is copied from aBoundsArraySet.
+   */
+  set_outputs_all_byBoundsArraySet( aBoundsArraySet ) {
+    for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
+      this.outputs[ outTensorIndex ].set_outputs_all_byBoundsArray( this.outputs[ outTensorIndex ] );
+    }
+    return this;
+  }
+
+  /**
    * Set .outputs[] by .input[ 0 ].
    *
    * @return {InputsOutputs}
@@ -126,7 +136,7 @@ class InputsOutputs {
   }
 
   /**
-   * Set .outputs[] by concatenate .input[ 0 ] and .input[ 1 ].
+   * Set .outputs[] by concatenating .input[ 0 ] and .input[ 1 ].
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -141,36 +151,21 @@ class InputsOutputs {
     return this;
   }
 
-//!!! ...unfinished... (2022/04/11)
-
   /**
-   * @param {BoundsArraySet.InputsOutputs} aBoundsArraySet
-   *   The BoundsArraySet to be copied. Precondition: ( this.outputs.length == aBoundsArraySet.outputs.length ).
+   * Set .outputs[ 0 ] and .outputs[ 1 ] by splitting .input[ 0 ]. If .outputs[ 1 ] does not exist, it will be created. The length
+   * of both .outputs[ 0 ] and .outputs[ 1 ] will be modified.
    *
    * @return {InputsOutputs}
-   *   Return this (modified) object which is copied from aBoundsArraySet.
+   *   Return this (modified) object.
    */
-  set_outputs_all_byBoundsArraySet( aBoundsArraySet ) {
-    for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
-      this.outputs[ outTensorIndex ].set_outputs_all_byBoundsArray( this.outputs[ outTensorIndex ] );
-    }
+  set_outputs_all_byBoundsArray_split_input0() {
 
-    this.set_outputs_all_byBoundsArray( aBoundsArraySet.outputs );
+    if ( !this.outputs[ 1 ] )
+      this.outputs[ 1 ] = new FloatValue.BoundsArray( 0 );
 
-    this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( aBoundsArraySet.afterUndoPreviousActivationEscaping );
-    this.afterFilter                        .set_all_byBoundsArray( aBoundsArraySet.afterFilter );
-    this.afterBias                          .set_all_byBoundsArray( aBoundsArraySet.afterBias );
-    this.afterActivationEscaping            .set_all_byBoundsArray( aBoundsArraySet.afterActivationEscaping );
-    this.afterActivation                    .set_all_byBoundsArray( aBoundsArraySet.afterActivation );
-    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
-
-    for ( let i = 0; i < this.bPassThrough.length; ++i ) {
-      this.bPassThrough[ i ] = aBoundsArraySet.bPassThrough[ i ];
-    }
-
+    this.inputs[ 0 ].split_to_lowerHalf_higherHalf( this.outputs[ 0 ], this.outputs[ 1 ] );
     return this;
   }
-
 
   get inputTensorCount() { return this.inputs.length; }
 
