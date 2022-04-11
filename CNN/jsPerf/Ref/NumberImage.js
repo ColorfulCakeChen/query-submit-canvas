@@ -558,7 +558,10 @@ class Base {
     let imageOutDepth = imageIn1.depth + imageIn2.depth;
     let imageOut = new Base(
       imageIn1.height, imageIn1.width, imageOutDepth, new Float32Array( imageOutLength ),
-      new ConvBiasActivation.BoundsArraySet( imageOutDepth, imageOutDepth )
+
+//!!! (2022/04/11 Remarked) Use BoundsArraySet.create_byBoundsArray_concat_input0_input1() instead.
+//      new ConvBiasActivation.BoundsArraySet( imageOutDepth, imageOutDepth )
+      BoundsArraySet.create_byBoundsArray_concat_input0_input1( imageIn1.boundsArraySet, imageIn2.boundsArraySet )
     );
 
     // Concatenate along the image depth.
@@ -588,20 +591,21 @@ class Base {
       }
     }
 
-    // Concat value bounds array.
-    {
-      let outChannel = 0;
-
-      for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
-        imageOut.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn1.boundsArraySet.output, in1Channel );
-      }
-
-      for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
-        imageOut.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn2.boundsArraySet.output, in2Channel );
-      }
-
-      imageOut.boundsArraySet.set_all_byBoundsArray_input_output( imageOut.boundsArraySet.output, imageOut.boundsArraySet.output );
-    }
+//!!! (2022/04/11 Remarked) Use BoundsArraySet.create_byBoundsArray_concat_input0_input1() instead.
+//     // Concat value bounds array.
+//     {
+//       let outChannel = 0;
+//
+//       for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
+//         imageOut.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn1.boundsArraySet.output, in1Channel );
+//       }
+//
+//       for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
+//         imageOut.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn2.boundsArraySet.output, in2Channel );
+//       }
+//
+//       imageOut.boundsArraySet.set_all_byBoundsArray_input_output( imageOut.boundsArraySet.output, imageOut.boundsArraySet.output );
+//     }
 
     return imageOut;
   }
