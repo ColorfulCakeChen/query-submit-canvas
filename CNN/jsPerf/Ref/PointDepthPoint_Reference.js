@@ -1048,7 +1048,7 @@ class Base {
     tf.dispose( tensorInArray );
     tf.dispose( tensorOutArray );
 
-//!!! (2021/09/03 Remarked) The indexes is no so simple.
+//!!! (2021/09/03 Remarked) The indexes is not so simple.
 //     let imageCount = 2; // No matter input or input, both are two images.
 //     let imageHeight = imageInArray[ 0 ].height;
 //     let imageWidth = imageInArray[ 0 ].width;
