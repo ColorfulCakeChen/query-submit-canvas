@@ -31,6 +31,15 @@ export { Base };
  * @member {boolean} bKeepInputTensor1
  *   If false, the second input tensor will be disposed after concatenating. If true, the second input tensor will be kept after concatenating.
  *
+ * @member {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet0
+ *   The previous convolution-bias-activation value bounds set of this ConcatShuffleSplit operation's input0.
+ *
+ * @member {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet1
+ *   The previous convolution-bias-activation value bounds set of this ConcatShuffleSplit operation's input1.
+ *
+ * @member {BoundsArraySet} boundsArraySet
+ *   The element value bounds (per channel) of this ConcatShuffleSplit operation.
+ * 
  * @member {function} pfnConcatShuffleSplit
  *   This is a method. It has two parameters inputTensors[] and outputTensors[]. The inputTensors[] (tf.tensor3d[]) represents
  * all the images ( height x width x channel ) which will be concatenated, shuffle, split. They should have the same ( height x width )
@@ -44,9 +53,18 @@ class Base {
   /**
    *
    */
-  constructor( channelShuffler, bShuffleSplit = true, bKeepInputTensor0, bKeepInputTensor1 ) {
+  constructor(
+    channelShuffler, bShuffleSplit = true, bKeepInputTensor0, bKeepInputTensor1,
+    previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 ) {
+
     this.channelShuffler = channelShuffler;
+    this.previous_ConvBiasActivation_BoundsArraySet0 = previous_ConvBiasActivation_BoundsArraySet0;
+    this.previous_ConvBiasActivation_BoundsArraySet1 = previous_ConvBiasActivation_BoundsArraySet1;
     this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
+
+//!!! ...unfinished... (2022/04/11)
+//     this.boundsArraySet = ??? BoundsArraySet.create_byBoundsArray_concat_input0_input1(
+//       previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 );
   }
 
   /**
