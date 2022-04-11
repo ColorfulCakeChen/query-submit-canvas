@@ -39,8 +39,8 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
  * @member {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet1
  *   The previous convolution-bias-activation value bounds set of this ConcatShuffleSplit operation's input1.
  *
- * @member {BoundsArraySet} boundsArraySet
- *   The element value bounds (per channel) of this ConcatShuffleSplit operation.
+ * @member {BoundsArraySet[]} boundsArraySetArray
+ *   The element value bounds (per channel) of this ConcatShuffleSplit operation. There will be one or two BoundsArraySet in this array.
  * 
  * @member {function} pfnConcatShuffleSplit
  *   This is a method. It has two parameters inputTensors[] and outputTensors[]. The inputTensors[] (tf.tensor3d[]) represents
@@ -63,7 +63,7 @@ class Base {
     this.previous_ConvBiasActivation_BoundsArraySet0 = previous_ConvBiasActivation_BoundsArraySet0;
     this.previous_ConvBiasActivation_BoundsArraySet1 = previous_ConvBiasActivation_BoundsArraySet1;
     this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
-    Base.setup_BoundsArraySet.call( this );
+    Base.setup_BoundsArraySetArray.call( this );
   }
 
   /**
@@ -145,12 +145,8 @@ class Base {
     }
   }
 
-  /** Create this.boundsArraySet. */
-  static setup_BoundsArraySet() {
-
-    // Concatenated value bounds array.
-    this.boundsArraySet = ConvBiasActivation.BoundsArraySet.create_byBoundsArray_concat_input0_input1(
-      this.previous_ConvBiasActivation_BoundsArraySet0, this..previous_ConvBiasActivation_BoundsArraySet1 );
+  /** Create this.boundsArraySetArray[]. */
+  static setup_BoundsArraySetArray() {
 
     if ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ) { // Want and could do channel shuffling and splitting.
 
@@ -160,10 +156,29 @@ class Base {
           + `( other outputGroupCount does not supperted ).`
       );
 
+      // Concatenated value bounds array.
+      let concatLength
+        = this.previous_ConvBiasActivation_BoundsArraySet0.output.length + this.previous_ConvBiasActivation_BoundsArraySet1.output.length;
+
+      let concatBoundsArray = new FloatValue.BoundsArray( concatLength );
+      concatBoundsArray.set_all_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 );
+
+//!!! ...unfinished... (2022/04/11)
+      // Split value bounds array.
+      let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
+      let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
+      imageIn.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
+
+      this.boundsArraySetArray = [ ??, ?? ];
+
+    } else { // Only concatenation is needed.
+      this.boundsArraySetArray = [
+        ConvBiasActivation.BoundsArraySet.create_byBoundsArray_concat_input0_input1(
+          this.previous_ConvBiasActivation_BoundsArraySet0, this.previous_ConvBiasActivation_BoundsArraySet1 )
+      ];
     }
 
 
-//!!! ...unfinished... (2022/04/11)
 //     this.boundsArraySet = ??? BoundsArraySet.create_byBoundsArray_concat_input0_input1(
 //       previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 );
 //
@@ -175,6 +190,7 @@ class Base {
 //
 //        BoundsArraySet.output_interleave_asGrouptTwo()
   }
+
 
   /**
    *
