@@ -40,7 +40,7 @@ class Base {
     this.previous_ConvBiasActivation_BoundsArraySet1 = previous_ConvBiasActivation_BoundsArraySet1;
     Base.adjust_pfnConcat.call( this );
 
-    this.boundsArraySet = BoundsArraySet.create_byBoundsArray_concat_input0_input1(
+    this.boundsArraySet = ConvBiasActivation.BoundsArraySet.create_byBoundsArray_concat_input0_input1(
       previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 );
   }
 
