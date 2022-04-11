@@ -876,6 +876,13 @@ class Base extends ReturnOrClone.Base {
       TensorOpCounters.concat2ShuffleSplit = TensorOpCounters.addInput0ToPointwise21;
     }
 
+//!!! ...unfinished... (2022/04/11)
+// For PointDepthPoint.Base, use BoundsArraySet.inputs_outputs instead of BoundsArraySet.ConvBiasActivation.
+
+//!!! ...unfinished... (2022/04/11)
+// For reduce memory footprint, release all BoundsArraySet of pointwise1, depthwise1, depthwise2, pointwise21, pointwise22, concat1, concat2ShuffleSplit,
+// addInput0ToPointwise21, addInput0ToPointwise22.
+
     ++progressToAdvance.value;
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
 
