@@ -304,8 +304,6 @@ class ConvBiasActivation extends InputsOutputs {
     return this;
   }
 
-//!!! ...unfinished... (2022/04/11)
-
   /**
    * Rearrange output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation,
    * .activationEscaping_ScaleArraySet, .bPassThrough) by interleaving as ( groupCount == 2 ). This element count must be even
