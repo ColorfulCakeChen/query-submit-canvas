@@ -319,7 +319,7 @@ class Base {
         Base.AssertTwoEqualValues( "outputTensorCount", pointDepthPoint.outputTensorCount, outputTensorCount, strNote );
       }
 
-//!!! ...unfinished... (2021/12/16) assert comparing BoundsArraySet?
+//!!! ...unfinished... (2021/12/16) should assert comparing BoundsArraySet.
 //       {
 //         imageOutReferenceArray;
 //       }
