@@ -50,7 +50,7 @@ class InputsOutputs {
 
   /**
    */
-  constructor( inputs, outputChannelCount0 = 1, outputChannelCount1 = 0 ) {
+  constructor( inputs, outputChannelCount0, outputChannelCount1 ) {
     this.inputs = inputs;
 
     // Determine outputs array.
