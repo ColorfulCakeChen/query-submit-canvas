@@ -136,14 +136,13 @@ class InputsOutputs {
   }
 
   /**
-   * Set .outputs[] by concatenating .input[ 0 ] and .input[ 1 ].
+   * Set .outputs[] by concatenating .input[ 0 ] and .input[ 1 ]. The length of .outputs[] will be modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
   set_outputs_all_byBoundsArray_concat_input0_input1() {
     let rLength = this.inputs[ 0 ].length + this.inputs[ 1 ].length;
-
     for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
       this.outputs[ outTensorIndex ].length = rLength;
       this.outputs[ outTensorIndex ].set_all_byBoundsArray_concat_input0_input1( this.inputs[ 0 ], this.inputs[ 1 ] );
