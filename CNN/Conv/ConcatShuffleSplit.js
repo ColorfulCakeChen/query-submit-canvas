@@ -65,6 +65,13 @@ class Base {
 //!!! ...unfinished... (2022/04/11)
 //     this.boundsArraySet = ??? BoundsArraySet.create_byBoundsArray_concat_input0_input1(
 //       previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 );
+//
+//
+//     // Split value bounds array.
+//     let boundsArray_lowerHalf = new ConvBiasActivation.BoundsArraySet( 0 );
+//     let boundsArray_higherHalf = new ConvBiasActivation.BoundsArraySet( 0 );
+//     imageIn.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
+
   }
 
   /**
