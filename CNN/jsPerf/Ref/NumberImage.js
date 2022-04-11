@@ -459,8 +459,8 @@ class Base {
 //     let imageOutDepth_higherHalf = imageIn.depth - imageOutDepth_lowerHalf;
 
     // Split value bounds array.
-    let boundsArray_lowerHalf = new ConvBiasActivation.BoundsArraySet( 0 );
-    let boundsArray_higherHalf = new ConvBiasActivation.BoundsArraySet( 0 );
+    let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
+    let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
     imageIn.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
 
     // If not divided by 2, let lower half have one more.
