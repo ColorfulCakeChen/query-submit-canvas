@@ -47,18 +47,27 @@ import { InputsOutputs } from "./InputsOutputs.js";
  *
  * @member {boolean[]} bPassThrough
  *   If true for a output channel, the output channel should be arranged to pass-through from input to output.
+ *
+ * @see InputsOutputs
  */
 class ConvBiasActivation extends InputsOutputs {
 
   /**
    */
-  constructor( inputChannelCount, outputChannelCount ) {
-    this.input = new FloatValue.BoundsArray( inputChannelCount );
-    this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( inputChannelCount );
-    this.afterFilter = new FloatValue.BoundsArray( outputChannelCount );
-    this.afterBias = new FloatValue.BoundsArray( outputChannelCount );
-    this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount );
-    this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
+//!!! (2022/04/11 Remarked)
+//   constructor( inputChannelCount, outputChannelCount ) {
+//     this.input = new FloatValue.BoundsArray( inputChannelCount );
+    
+  constructor( inputs, outputChannelCount0, outputChannelCount1 ) {
+    super( inputs, outputChannelCount0, outputChannelCount1 ); 
+
+    this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( inputs[ 0 ] );
+    this.afterFilter = new FloatValue.BoundsArray( outputChannelCount0 );
+    this.afterBias = new FloatValue.BoundsArray( outputChannelCount0 );
+    this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount0 );
+
+//!!! (2022/04/11 Remarked)
+//    this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
 
     this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet( outputChannelCount );
     this.bPassThrough = new Array( outputChannelCount );
@@ -67,10 +76,14 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /**
-   * @return {BoundsArraySet} Return a newly created BoundsArraySet which is a copy of this BoundsArraySet.
+   * @return {ConvBiasActivation}
+   *   Return a newly created ConvBiasActivation which is a copy of this ConvBiasActivation. The this.inputs will just past
+   * to new InputsOutputs (i.e. NOT copied). But the this.outputs will be copied.
    */
   clone() {
-    let result = new BoundsArraySet( this.input.length, this.output.length );
+    let result = new ConvBiasActivation( this.inputs, this.outputChannelCount0, this.outputChannelCount1 );
+
+//!!! ...unfinished... (2022/04/11)
     result.set_byBoundsArraySet( this );
     return result;
   }
@@ -303,7 +316,7 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   get afterActivation() {
-    return this.output;
+    return this.output0;
   }
 
 }
