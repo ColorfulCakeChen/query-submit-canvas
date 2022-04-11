@@ -1,5 +1,7 @@
 export { Base };
 
+import * as FloatValue from "../Unpacker/FloatValue.js";
+import * as ConvBiasActivation from "./ConvBiasActivation.js";
 //import * as ChannelShuffler from "./ChannelShuffler.js";
 
 /**
@@ -68,10 +70,11 @@ class Base {
 //
 //
 //     // Split value bounds array.
-//     let boundsArray_lowerHalf = new ConvBiasActivation.BoundsArraySet( 0 );
-//     let boundsArray_higherHalf = new ConvBiasActivation.BoundsArraySet( 0 );
+//     let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
+//     let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
 //     imageIn.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
-
+//
+//        BoundsArraySet.output_interleave_asGrouptTwo()
   }
 
   /**
