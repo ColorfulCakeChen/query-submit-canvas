@@ -11,7 +11,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  *   The element value bounds (per channel) of all inputs (i.e. the domain of the operation). This array (which is past into
  * constructor) will be kept (not cloned) directly. So caller should not modify them.
  *
- * @member {number} inputTensorCount
+ * @member {number} inputsTensorCount
  *   How many input tensors (i.e. this.inputs.length).
  *
  * @member {FloatValue.BoundsArray} input0
@@ -30,8 +30,8 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  *   The element value bounds (per channel) of all outputs (i.e. the range of the operation). The array is created by constructor
  * according to outputChannelCount0 and outputChannelCount1. 
  *
- * @member {number} outputTensorCount
- *   How many output tensors (i.e. this.outputs.length). Default is 1.
+ * @member {number} outputsTensorCount
+ *   How many output tensors (i.e. this.outputs.length).
  *
  * @member {FloatValue.BoundsArray} output0
  *   The element value bounds (per channel) of 1st output (i.e. this.outputs[ 0 ]).
@@ -53,6 +53,8 @@ class ConvBiasActivation {
 //!!! ...unfinished... (2022/04/11)
 // Perhaps, inputChannelCount0, inputChannelCount1, outputChannelCount0, outputChannelCount1
   constructor( inputs, outputChannelCount0, outputChannelCount1 ) {
+
+
     this.input = new FloatValue.BoundsArray( inputChannelCount );
     this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( inputChannelCount );
     this.afterFilter = new FloatValue.BoundsArray( outputChannelCount );
@@ -280,35 +282,23 @@ class ConvBiasActivation {
     return this;
   }
 
-  /**
-   * Rearrange output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation,
-   * .activationEscaping_ScaleArraySet, .bPassThrough) by interleaving as ( groupCount == 2 ). This element count must be even
-   * (i.e. divisible by 2).
-   *
-   * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
-   * and improve performance.
-   *
-   * @return {BoundsArraySet}
-   *   Return this (modified) object.
-   */
-  output_interleave_asGrouptTwo( arrayTemp ) {
-    this.afterFilter.interleave_asGrouptTwo( arrayTemp );
-    this.afterBias.interleave_asGrouptTwo( arrayTemp );
-    this.afterActivationEscaping.interleave_asGrouptTwo( arrayTemp );
-    this.afterActivation.interleave_asGrouptTwo( arrayTemp );
-    this.activationEscaping_ScaleArraySet.interleave_asGrouptTwo( arrayTemp );
-    FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.bPassThrough, 0, this.bPassThrough.length, arrayTemp );
-    return this;
-  }
 
-  get intput0() {
-    return this.inputs[ 0 ];
-  }
+  get inputsTensorCount() { return this.inputs.length; }
 
-  get output0() {
-    return this.outputs[ 0 ];
-  }
+  get input0() { return this.inputs[ 0 ]; }
+  get input1() { return this.inputs[ 1 ]; }
+
+  get inputChannelCount0() { return this.input0.length; }
+  get inputChannelCount1() { return this.input1.length; }
+
+
+  get outputsTensorCount() { return this.outputs.length; }
+
+  get output0() { return this.outputs[ 0 ]; }
+  get output1() { return this.outputs[ 1 ]; }
+
+  get outputChannelCount0() { return this.output0.length; }
+  get outputChannelCount1() { return this.output1.length; }
 
 }
 
