@@ -252,12 +252,6 @@ class Base {
                     let inIndexBaseC = ( ( inIndexBaseX + inX ) * imageIn.depth );
                     let inIndex = inIndexBaseC + inChannel;
                     let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * outputChannelCount );
-
-//!!! (2022/02/22 Remarked) Use outChannel directly.
-//                     let filterIndexBaseSubC = filterIndexBaseC + outChannelBase;
-//
-//                     let filterIndex = filterIndexBaseSubC + outChannelSub;
-
                     let filterIndex = filterIndexBaseC + outChannel;
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
