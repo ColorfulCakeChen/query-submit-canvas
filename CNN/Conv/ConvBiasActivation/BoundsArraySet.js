@@ -81,7 +81,7 @@ class BoundsArraySet {
     this.bPassThrough.fill( false );
     return this;
   }
-  
+
   /**
    * @param {FloatValue.Bounds} aBounds
    *   Set all BoundsArray to the same as the specified aBounds. Set the this.activationEscaping_ScaleArraySet to default ( 1 );
@@ -131,6 +131,43 @@ class BoundsArraySet {
   set_all_byBoundsArray( aBoundsArray ) {
     return this.set_all_byBoundsArray_input_output( aBoundsArray, aBoundsArray );
   }
+
+  /**
+   * @param {BoundsArray} inputBoundsArray0
+   *   The BoundsArray of the 1st input.
+   *
+   * @param {BoundsArray} inputBoundsArray1
+   *   The BoundsArray of the 2nd input.
+   *
+   * @return {BoundsArraySet}
+   *   Return a newly created object.
+   */
+  static create_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 ) {
+
+    tf.util.assert( ( inputBoundsArray0.length == inputBoundsArray1.length ),
+      `ConvBiasActivation.BoundsArraySet.create_byBoundsArray_concat_input0_input1(): `
+        + `inputBoundsArray0.length ( ${inputBoundsArray0.length} ) should be the same as `
+        + `inputBoundsArray1.length ( ${inputBoundsArray1.length} ).`
+    );
+
+    let rLength = inputBoundsArray0.length + inputBoundsArray1.length;
+
+    let rBoundsArraySet = new BoundsArraySet( rLength, rLength );
+
+    // Concat value bounds array.
+    let inChannel = 0;
+
+    for ( let inChannel0 = 0; inChannel0 < inputBoundsArray0.length; ++inChannel0, ++inChannel ) {
+      rBoundsArraySet.input.set_one_byBoundsArray( inChannel, inputBoundsArray0, inChannel0 );
+    }
+
+    for ( let inChannel1 = 0; inChannel1 < inputBoundsArray1.length; ++inChannel1, ++inChannel ) {
+      rBoundsArraySet.input.set_one_byBoundsArray( inChannel, inputBoundsArray1, inChannel1 );
+    }
+
+    return rBoundsArraySet.set_all_byBoundsArray_input_output( rBoundsArraySet.input, rBoundsArraySet.input );
+  }
+
 
   /**
    * @param {BoundsArraySet} aBoundsArraySet
@@ -254,7 +291,8 @@ class BoundsArraySet {
 
   /**
    * Rearrange output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation,
-   * .activationEscaping_ScaleArraySet, .bPassThrough) by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
+   * .activationEscaping_ScaleArraySet, .bPassThrough) by interleaving as ( groupCount == 2 ). This element count must be even
+   * (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
    *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
