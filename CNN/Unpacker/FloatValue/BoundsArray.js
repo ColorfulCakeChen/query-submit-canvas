@@ -183,6 +183,31 @@ class BoundsArray {
     return this.set_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
   }
 
+  /**
+   * @param {BoundsArray} inputBoundsArray0
+   *   The BoundsArray of the 1st input.
+   *
+   * @param {BoundsArray} inputBoundsArray1
+   *   The BoundsArray of the 2nd input.
+   *
+   * @return {BoundsArraySet}
+   *   Return a newly created object.
+   */
+  set_all_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 ) {
+
+    // Concat value bounds array.
+    let inChannel = 0;
+
+    for ( let inChannel0 = 0; inChannel0 < inputBoundsArray0.length; ++inChannel0, ++inChannel ) {
+      this.set_one_byBoundsArray( inChannel, inputBoundsArray0, inChannel0 );
+    }
+
+    for ( let inChannel1 = 0; inChannel1 < inputBoundsArray1.length; ++inChannel1, ++inChannel ) {
+      this.set_one_byBoundsArray( inChannel, inputBoundsArray1, inChannel1 );
+    }
+
+    return this;
+  }
 
   /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
@@ -628,10 +653,10 @@ class BoundsArray {
 
   /**
    * @param {BoundsArray} lowerHalfBoundsArray
-   *   The BoundsArray of the 1st output.
+   *   The BoundsArray of the 1st output. Its .length will be modified.
    *
    * @param {BoundsArray} higherHalfBoundsArray
-   *   The BoundsArray of the 2nd output.
+   *   The BoundsArray of the 2nd output. Its .length will be modified.
    *
    * @return {BoundsArray}
    *   Return this (unmodified) object.
@@ -658,33 +683,6 @@ class BoundsArray {
 
     return this;
   }
-
-    tf.util.assert( ( inputBoundsArray0.length == inputBoundsArray1.length ),
-      `ConvBiasActivation.BoundsArraySet.create_byBoundsArray_concat_input0_input1(): `
-        + `inputBoundsArray0.length ( ${inputBoundsArray0.length} ) should be the same as `
-        + `inputBoundsArray1.length ( ${inputBoundsArray1.length} ).`
-    );
-
-    let rLength = inputBoundsArray0.length + inputBoundsArray1.length;
-
-    let rBoundsArraySet = new BoundsArraySet( rLength, rLength );
-
-    // Concat value bounds array.
-    let inChannel = 0;
-
-    for ( let inChannel0 = 0; inChannel0 < inputBoundsArray0.length; ++inChannel0, ++inChannel ) {
-      rBoundsArraySet.input.set_one_byBoundsArray( inChannel, inputBoundsArray0, inChannel0 );
-    }
-
-    for ( let inChannel1 = 0; inChannel1 < inputBoundsArray1.length; ++inChannel1, ++inChannel ) {
-      rBoundsArraySet.input.set_one_byBoundsArray( inChannel, inputBoundsArray1, inChannel1 );
-    }
-
-    return rBoundsArraySet.set_all_byBoundsArray_input_output( rBoundsArraySet.input, rBoundsArraySet.input );
-  }
-
-
-
   
   /**
    * Rearrange bounds by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
