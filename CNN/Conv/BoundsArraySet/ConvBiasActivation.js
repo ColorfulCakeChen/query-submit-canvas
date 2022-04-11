@@ -28,11 +28,11 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
  *   The (per channel) bounds of the element value after applying this.activationEscaping_ScaleArraySet.do to this.afterBias. (i.e. beforeActivation)
  *
  * @member {FloatValue.BoundsArray} afterActivation
- *   The (per channel) bounds of the element value after applying activation function to this.afterActivationEscaping.
+ *   The (per channel) bounds of the element value after applying activation function to this.afterActivationEscaping. It is just
+ * the this.output.
  *
  * @member {FloatValue.BoundsArray} output
- *   The (per channel) bounds of the output element value. Or say, the range of the convolution-bias-activation. It is just
- * the this.afterActivation.
+ *   The (per channel) bounds of the output element value. Or say, the range of the convolution-bias-activation.
  *
  * @member {ActivationEscaping.ScaleArraySet} activationEscaping_ScaleArraySet
  *   The scales for moving this.afterBias bounds into the linear domain of the activation function. That is, for
@@ -295,8 +295,8 @@ class ConvBiasActivation {
     return this;
   }
 
-  get output() {
-    return this.afterActivation;
+  get afterActivation() {
+    return this.output;
   }
 
 }
