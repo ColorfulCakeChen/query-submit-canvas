@@ -117,7 +117,7 @@ class InputsOutputs {
    */
   set_outputs_all_byBoundsArraySet( aBoundsArraySet ) {
     for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
-      this.outputs[ outTensorIndex ].set_outputs_all_byBoundsArray( this.outputs[ outTensorIndex ] );
+      this.outputs[ outTensorIndex ].set_outputs_all_byBoundsArray( aBoundsArraySet.outputs[ outTensorIndex ] );
     }
     return this;
   }
