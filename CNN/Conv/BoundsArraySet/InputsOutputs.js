@@ -5,13 +5,14 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as Weights from "../../Unpacker/Weights.js";
 
 /**
- * Element value bounds (per channel) for inputs and outputs of an operation. *
+ * Element value bounds (per channel) for inputs and outputs of an operation.
+ *
  *
  * @member {FloatValue.BoundsArray[]} inputs
  *   The element value bounds (per channel) of all inputs (i.e. the domain of the operation). This array (which is past into
  * constructor) will be kept (not cloned) directly. So caller should not modify them.
  *
- * @member {number} inputsTensorCount
+ * @member {number} inputTensorCount
  *   How many input tensors (i.e. this.inputs.length).
  *
  * @member {FloatValue.BoundsArray} input0
@@ -30,7 +31,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  *   The element value bounds (per channel) of all outputs (i.e. the range of the operation). The array is created by constructor
  * according to outputChannelCount0 and outputChannelCount1. 
  *
- * @member {number} outputsTensorCount
+ * @member {number} outputTensorCount
  *   How many output tensors (i.e. this.outputs.length).
  *
  * @member {FloatValue.BoundsArray} output0
@@ -45,50 +46,38 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} outputChannelCount1
  *   The channel count of 2nd output (i.e. this.output1.length).
  */
-class ConvBiasActivation {
+class InputsOutputs {
 
   /**
    */
-
-//!!! ...unfinished... (2022/04/11)
-// Perhaps, inputChannelCount0, inputChannelCount1, outputChannelCount0, outputChannelCount1
   constructor( inputs, outputChannelCount0, outputChannelCount1 ) {
+    this.inputs = inputs;
 
+    if ( outputChannelCount0 > 0 ) {
+      if ( outputChannelCount1 > 0 ) { // Two outputs.
+        this.outputs = [ new FloatValue.BoundsArray( outputChannelCount0 ), new FloatValue.BoundsArray( outputChannelCount1 ) ];
 
-    this.input = new FloatValue.BoundsArray( inputChannelCount );
-    this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( inputChannelCount );
-    this.afterFilter = new FloatValue.BoundsArray( outputChannelCount );
-    this.afterBias = new FloatValue.BoundsArray( outputChannelCount );
-    this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount );
-    this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
+      } else { // ( outputChannelCount1 <= 0 ), One output.
+        this.outputs = [ new FloatValue.BoundsArray( outputChannelCount0 ) ];
+      }
 
-    this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet( outputChannelCount );
-    this.bPassThrough = new Array( outputChannelCount );
+    } else { // ( outputChannelCount0 <= 0 ), Illegal.
 
-    //this.set_all_byBounds.set_all_byBounds( Weights.Base.ValueBounds );
+      tf.util.assert( ( ( outputChannelCount0 <= 0 ) && ( outputChannelCount1 <= 0 ) ),
+        `BoundsArraySet.InputsOutputs.constructor(): `
+          + `output0 must exist ( outputChannelCount0 ( ${outputChannelCount0} ) must > 0 ).`
+      );
+    }
   }
 
+//!!! ...unfinished... (2022/04/11)
   /**
    * @return {BoundsArraySet} Return a newly created BoundsArraySet which is a copy of this BoundsArraySet.
    */
   clone() {
-    let result = new BoundsArraySet( this.input.length, this.output.length );
+    let result = new InputsOutputs( this.input.length, this.output.length );
     result.set_byBoundsArraySet( this );
     return result;
-  }
-
-  /**
-   * Set:
-   *   - this.activationEscaping_ScaleArraySet to scale 1 (i.e. all are no scale).
-   *   - this.bPassThrough[] to false (i.e. all are not pass-through).
-   *
-   * @return {BoundsArraySet}
-   *   Return this (modified) object.
-   */
-  set_all_activationEscaping_bPassThrough_none() {
-    this.activationEscaping_ScaleArraySet.set_all_byN( 1 );
-    this.bPassThrough.fill( false );
-    return this;
   }
 
   /**
@@ -121,12 +110,7 @@ class ConvBiasActivation {
    */
   set_all_byBoundsArray_input_output( inputBoundsArray, outputBoundsArray ) {
     this.input                              .set_all_byBoundsArray( inputBoundsArray );
-    this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( inputBoundsArray );
-    this.afterFilter                        .set_all_byBoundsArray( outputBoundsArray );
-    this.afterBias                          .set_all_byBoundsArray( outputBoundsArray );
-    this.afterActivationEscaping            .set_all_byBoundsArray( outputBoundsArray );
-    this.afterActivation                    .set_all_byBoundsArray( outputBoundsArray );
-    this.set_all_activationEscaping_bPassThrough_none();
+    this.output                    .set_all_byBoundsArray( outputBoundsArray );
     return this;
   }
 
@@ -153,7 +137,7 @@ class ConvBiasActivation {
    */
   static create_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 ) {
     let rLength = inputBoundsArray0.length + inputBoundsArray1.length;
-    let rBoundsArraySet = new BoundsArraySet( rLength, rLength );
+    let rBoundsArraySet = new InputsOutputs( rLength, rLength );
 
     // Concat value bounds array.
     rBoundsArraySet.input.set_all_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 );
@@ -163,7 +147,7 @@ class ConvBiasActivation {
   }
 
   /**
-   * @param {BoundsArraySet} aBoundsArraySet
+   * @param {BoundsArraySet.InputsOutputs} aBoundsArraySet
    *   The BoundsArraySet to be copied.
    *
    * @return {BoundsArraySet}
@@ -283,7 +267,7 @@ class ConvBiasActivation {
   }
 
 
-  get inputsTensorCount() { return this.inputs.length; }
+  get inputTensorCount() { return this.inputs.length; }
 
   get input0() { return this.inputs[ 0 ]; }
   get input1() { return this.inputs[ 1 ]; }
@@ -292,7 +276,7 @@ class ConvBiasActivation {
   get inputChannelCount1() { return this.input1.length; }
 
 
-  get outputsTensorCount() { return this.outputs.length; }
+  get outputTensorCount() { return this.outputs.length; }
 
   get output0() { return this.outputs[ 0 ]; }
   get output1() { return this.outputs[ 1 ]; }
