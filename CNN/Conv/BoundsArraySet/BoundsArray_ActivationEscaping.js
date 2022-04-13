@@ -102,6 +102,20 @@ class BoundsArray_ActivationEscaping {
   }
 
   /**
+   * The this.length will be modified.
+   *
+   * @param {BoundsArray_ActivationEscaping} inputBoundsArray_ActivationEscaping0  The BoundsArray_ActivationEscaping of the 1st input.
+   * @param {BoundsArray_ActivationEscaping} inputBoundsArray_ActivationEscaping1  The BoundsArray_ActivationEscaping of the 2nd input.
+   *
+   * @return {BoundsArray_ActivationEscaping} Return this (modified) object.
+   */
+  set_all_byBoundsArray_ActivationEscaping_concat_input0_input1( inputBoundsArray_ActivationEscaping0, inputBoundsArray_ActivationEscaping1 ) {
+    this.do.set_all_byScaleArray_concat_input0_input1( inputBoundsArray_ActivationEscaping0.do, inputBoundsArray_ActivationEscaping1.do );
+    this.undo.set_all_byScaleArray_concat_input0_input1( inputBoundsArray_ActivationEscaping0.undo, inputBoundsArray_ActivationEscaping1.undo );
+    return this;
+  }
+
+  /**
    * Rearrange this.outputs[] channel information by interleaving as ( groupCount == 2 ). This channel count must be even
    * (i.e. divisible by 2).
    *
@@ -115,6 +129,21 @@ class BoundsArray_ActivationEscaping {
   set_all_byInterleave_asGrouptTwo( arrayTemp ) {
     this.boundsArray.interleave_asGrouptTwo( arrayTemp );
     this.activationEscaping_ScaleArraySet.interleave_asGrouptTwo( arrayTemp );
+    return this;
+  }
+
+  /**
+   * @param {BoundsArray_ActivationEscaping} lowerHalfBoundsArray_ActivationEscaping
+   *   The BoundsArray_ActivationEscaping of the 1st output. Its .length will be modified.
+   *
+   * @param {BoundsArray_ActivationEscaping} higherHalfBoundsArray_ActivationEscaping
+   *   The BoundsArray_ActivationEscaping of the 2nd output. Its .length will be modified.
+   *
+   * @return {ScaleArraySet} Return this (unmodified) object.
+   */
+  split_to_lowerHalf_higherHalf( lowerHalfBoundsArray_ActivationEscaping, higherHalfBoundsArray_ActivationEscaping ) {
+    this.do.split_to_lowerHalf_higherHalf( lowerHalfBoundsArray_ActivationEscaping.do, higherHalfBoundsArray_ActivationEscaping.do );
+    this.undo.split_to_lowerHalf_higherHalf( lowerHalfBoundsArray_ActivationEscaping.undo, higherHalfBoundsArray_ActivationEscaping.undo );
     return this;
   }
 
