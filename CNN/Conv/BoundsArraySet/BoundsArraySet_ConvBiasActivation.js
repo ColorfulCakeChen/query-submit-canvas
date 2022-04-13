@@ -3,7 +3,6 @@ export { ConvBiasActivation };
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as Weights from "../../Unpacker/Weights.js";
-import * as ActivationEscaping from "../ActivationEscaping.js";
 import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
 
 /**
@@ -41,10 +40,6 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
 //  *   The (per channel) bounds of the output element value. Or say, the range of the convolution-bias-activation.
 
  *
- * @member {ActivationEscaping.ScaleArraySet} activationEscaping_ScaleArraySet
- *   The scales for moving this.afterBias bounds into the linear domain of the activation function. That is, for
- * letting this.afterBias escape from activation function's non-linear domain. And the .undo for undoing the scales.
- *
  * @member {boolean[]} bPassThrough
  *   If true for a output channel, the output channel should be arranged to pass-through from input to output.
  *
@@ -69,7 +64,6 @@ class ConvBiasActivation extends InputsOutputs {
 //!!! (2022/04/11 Remarked)
 //    this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
 
-    this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet( outputChannelCount );
     this.bPassThrough = new Array( outputChannelCount );
 
     //this.set_all_byBounds.set_all_byBounds( Weights.Base.ValueBounds );
@@ -88,6 +82,18 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * Set:
+   *   - this.bPassThrough[] to false (i.e. all are not pass-through).
+   *
+   * @return {ConvBiasActivation}
+   *   Return this (modified) object.
+   */
+  set_bPassThrough_all_none() {
+    this.bPassThrough.fill( false );
+    return this;
+  }
+
+  /**
+   * Set:
    *   - this.activationEscaping_ScaleArraySet to scale 1 (i.e. all are no scale).
    *   - this.bPassThrough[] to false (i.e. all are not pass-through).
    *
@@ -95,8 +101,8 @@ class ConvBiasActivation extends InputsOutputs {
    *   Return this (modified) object.
    */
   set_activationEscaping_bPassThrough_all_none() {
-    this.activationEscaping_ScaleArraySet.set_all_byN( 1 );
-    this.bPassThrough.fill( false );
+    super.set_activationEscaping_all_none();
+    this.set_bPassThrough_all_none( false );
     return this;
   }
 
@@ -109,13 +115,12 @@ class ConvBiasActivation extends InputsOutputs {
    *   Return this (modified) object.
    */
   set_outputs_all_byBounds( aBounds ) {
-    super.set_outputs_all_byBounds( aBounds );
     this.afterUndoPreviousActivationEscaping.set_all_byBounds( aBounds );
     this.afterFilter.set_all_byBounds( aBounds );
     this.afterBias.set_all_byBounds( aBounds );
     this.afterActivationEscaping.set_all_byBounds( aBounds );
-    this.afterActivation.set_all_byBounds( aBounds );
-    this.set_activationEscaping_bPassThrough_all_none();
+    super.set_outputs_all_byBounds( aBounds ); // i.e. this.afterActivation, this.activationEscaping_ScaleArraySet
+    this.set_bPassThrough_all_none();
     return this;
   }
 
@@ -137,8 +142,8 @@ class ConvBiasActivation extends InputsOutputs {
 //     this.afterFilter                        .set_all_byBoundsArray( outputBoundsArray );
 //     this.afterBias                          .set_all_byBoundsArray( outputBoundsArray );
 //     this.afterActivationEscaping            .set_all_byBoundsArray( outputBoundsArray );
-//     this.afterActivation                    .set_all_byBoundsArray( outputBoundsArray );
-//     this.set_activationEscaping_bPassThrough_all_none();
+//     //this.afterActivation                    .set_all_byBoundsArray( outputBoundsArray );
+//     ??this.set_activationEscaping_bPassThrough_all_none();
 //     return this;
 //   }
 
