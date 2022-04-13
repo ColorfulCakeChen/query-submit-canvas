@@ -130,7 +130,8 @@ class InputsOutputs {
 
   /**
    * @param {BoundsArray} outputBoundsArray
-   *   The BoundsArray to be copied to .output0 (and .output1).
+   *   The BoundsArray to be copied to .output0 (and .output1). Set their this.activationEscaping_ScaleArraySet
+   * to default ( 1 ). The .input0 (and .input1) are not modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -138,6 +139,20 @@ class InputsOutputs {
   set_outputs_all_byBoundsArray( outputBoundsArray ) {
     this.output0.set_all_byBoundsArray( outputBoundsArray );
     this.output1?.set_all_byBoundsArray( outputBoundsArray );
+    return this;
+  }
+
+  /**
+   * @param {BoundsArray_ActivationEscaping} outputBoundsArray_ActivationEscaping
+   *   The BoundsArray_ActivationEscaping to be copied to .output0 (and .output1). The .activationEscaping_ScaleArraySet are also
+   * copied. The .input0 (and .input1) are not modified.
+   *
+   * @return {InputsOutputs}
+   *   Return this (modified) object.
+   */
+  set_outputs_all_byBoundsArray_ActivationEscaping( outputBoundsArray_ActivationEscaping ) {
+    this.output0.set_all_byBoundsArray_ActivationEscaping( outputBoundsArray_ActivationEscaping );
+    this.output1?.set_all_byBoundsArray_ActivationEscaping( outputBoundsArray_ActivationEscaping );
     return this;
   }
 
@@ -150,8 +165,8 @@ class InputsOutputs {
    *   Return this (modified) object which is copied from aBoundsArraySet.
    */
   set_outputs_all_byBoundsArraySet( aBoundsArraySet ) {
-    this.output0.set_outputs_all_byBoundsArray( aBoundsArraySet.output0 );
-    this.output1?.set_outputs_all_byBoundsArray( aBoundsArraySet.output1 );
+    this.output0.set_all_byBoundsArray_ActivationEscaping( aBoundsArraySet.output0 );
+    this.output1?.set_all_byBoundsArray_ActivationEscaping( aBoundsArraySet.output1 );
     return this;
   }
 
@@ -164,13 +179,8 @@ class InputsOutputs {
    *   Return this (modified) object.
    */
   set_outputs_all_byBoundsArray_input0() {
-    for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
-      this.outputs[ outTensorIndex ].set_all_byBoundsArray( this.input[ 0 ] );
-    }
-
-//!!! ...unfinished... (2022/04/13)
-    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
-
+    this.output0.set_all_byBoundsArray( this.input0.boundsArray );
+    this.output1?.set_all_byBoundsArray( this.input0.boundsArray ); // Note: also use this.input0 (not this.input1).
     return this;
   }
 
