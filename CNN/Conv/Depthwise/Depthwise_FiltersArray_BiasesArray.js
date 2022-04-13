@@ -3,9 +3,8 @@ export { FiltersArray_BiasesArray };
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import * as ConvBiasActivation from "../ConvBiasActivation.js";
+import * as BoundsArraySet from "../BoundsArraySet.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Depthwise_ChannelPartInfo.js";
-import { BoundsArraySet } from  "./Depthwise_BoundsArraySet.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 
 /**
@@ -20,7 +19,7 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
- * @member {BoundsArraySet} boundsArraySet
+ * @member {BoundsArraySet.Depthwise} boundsArraySet
  *   The element value bounds (per channel) of input, beforeActivation, and output for this depthwise convolution.
  *
  * @member {number} inputHeight
@@ -139,12 +138,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
+   * @param {BoundsArraySet.ConvBiasActivation} previous_BoundsArraySet_ConvBiasActivation
    *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, previous_ConvBiasActivation_BoundsArraySet ) {
+  init( inputFloat32Array, byteOffsetBegin, previous_BoundsArraySet_ConvBiasActivation ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -153,17 +152,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // A2: So that inputFloat32Array could be released.
 
 
-    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.output.length ),
+    tf.util.assert( ( this.inputChannelCount == previous_BoundsArraySet_ConvBiasActivation.output.length ),
       `Depthwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
-        + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_BoundsArraySet.output.length} ).`
+        + `outputChannelCount of previous convolution-bias-activation ( ${previous_BoundsArraySet_ConvBiasActivation.output.length} ).`
     );
 
-    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.length ),
+    tf.util.assert( ( this.inputChannelCount == previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.length ),
       `Depthwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
         + `activationEscaping_ScaleArraySet.undo of previous convolution-bias-activation `
-        + `( ${previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.length} ).`
+        + `( ${previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.length} ).`
     );
 
 
@@ -311,7 +310,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     //
     //   - In the 1st round, extracting filter and bias value from sourceWeights[]. At the same time, calculating .afterFilter and
     //       .afterBias by these extracted values combined with undoPreviousEscapingScale
-    //       (i.e. previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). And then,
+    //       (i.e. previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). And then,
     //       Find out .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
     //
     //   - In the 2nd round, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
@@ -320,23 +319,23 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     {
       // Round 0
       {
-        this.boundsArraySet = new BoundsArraySet( this.inputChannelCount, this.outputChannelCount );
+        this.boundsArraySet = new BoundsArraySet.Depthwise( previous_BoundsArraySet_ConvBiasActivation.outputs, this.outputChannelCount );
 
         // Determine .input
         //
         // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
-        this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
+        this.boundsArraySet.input.set_all_byBoundsArray( previous_BoundsArraySet_ConvBiasActivation.output0 );
 
         // Determine .afterUndoPreviousActivationEscaping
         this.boundsArraySet.afterUndoPreviousActivationEscaping
           .set_all_byBoundsArray( this.boundsArraySet.input )
-          .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
+          .multiply_all_byNs( previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales );
       }
 
       // Round 1
       {
         this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-          sourceWeights.weights, previous_ConvBiasActivation_BoundsArraySet, aFiltersBiasesPartInfoArray );
+          sourceWeights.weights, previous_BoundsArraySet_ConvBiasActivation, aFiltersBiasesPartInfoArray );
 
         // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
@@ -368,14 +367,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
    * @param {Float32Array} sourceFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
+   * @param {BoundsArraySet.ConvBiasActivation} previous_BoundsArraySet_ConvBiasActivation
    *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    *
    * @param {Depthwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
    */
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-    sourceFloat32Array, previous_ConvBiasActivation_BoundsArraySet, aFiltersBiasesPartInfoArray ) {
+    sourceFloat32Array, previous_BoundsArraySet_ConvBiasActivation, aFiltersBiasesPartInfoArray ) {
 
     let tBounds = new FloatValue.Bounds( 0, 0 );
 
@@ -436,7 +435,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                     if ( inChannel >= this.inputChannelCount )
                       break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
-                    let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+                    let undoPreviousEscapingScale = previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
 
                     for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
 
@@ -481,7 +480,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
         this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
 
         for ( ; inChannelEnd < this.inputChannelCount; ++inChannelEnd ) {
-          let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannelEnd ];
+          let undoPreviousEscapingScale = previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales[ inChannelEnd ];
 
           // Confirm no need to undo previous activaction-escaping, because avg/max pooling can not that.
           tf.util.assert( ( undoPreviousEscapingScale == 1 ),
