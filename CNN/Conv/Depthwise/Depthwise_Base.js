@@ -5,6 +5,7 @@ export { Base };
 // import * as Weights from "../../Unpacker/Weights.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ReturnOrClone_Activation from "../ReturnOrClone_Activation.js";
+import * as BoundsArraySet from "../BoundsArraySet.js";
 import { FiltersArray_BiasesArray } from "./Depthwise_FiltersArray_BiasesArray.js";
 
 /**
@@ -64,12 +65,13 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {BoundsArraySet.InputsOutputs} previousBoundsArraySet
-   *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
+   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
+   * set of this depthwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, previousBoundsArraySet ) {
+  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -84,22 +86,19 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     // 1.1 Determine operation functions.
     Base.Setup_bDepthwise_pfn.call( this );
 
-//!!! (2022/02/21 Remarked) integrated into super class .init()
-//     // 1.2 Determine output value bounds (and activation escaping scale-translate).
-//     this.boundsArraySet.set_by( previousBoundsArraySet,
-//       this.bDepthwise, this.filterHeight, this.filterWidth, this.bBias, this.nActivationId );
-
     let bExtractOk;
     if ( !this.bDepthwise ) {
       bExtractOk = true; // 2. no operation at all. No depthwise (e.g. zero or negative number) (so no channel multiplier, too).
 
       this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
       this.tensorWeightCountExtracted = this.tensorWeightCountTotal = 0;
-      this.boundsArraySet = previousBoundsArraySet; // Bypass previous to next.
+
+      this.boundsArraySet = new BoundsArraySet.Depthwise( inputScaleBoundsArray, inputScaleBoundsArray.channelCount );
+      this.boundsArraySet.output0.set_all_byScaleBoundsArray( inputScaleBoundsArray ); // Bypass previous to next.
 
     } else {
 
-      bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, previousBoundsArraySet );
+      bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray );
       if ( bExtractOk ) {
         try {
           if ( this.filtersShape && this.filtersArray ) {
