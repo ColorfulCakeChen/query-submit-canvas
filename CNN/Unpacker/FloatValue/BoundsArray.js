@@ -657,14 +657,10 @@ class BoundsArray {
   }
 
   /**
-   * @param {BoundsArray} lowerHalfBoundsArray
-   *   The BoundsArray of the 1st output. Its .length will be modified.
+   * @param {BoundsArray} lowerHalfBoundsArray   The BoundsArray of the 1st output. Its .length will be modified.
+   * @param {BoundsArray} higherHalfBoundsArray  The BoundsArray of the 2nd output. Its .length will be modified.
    *
-   * @param {BoundsArray} higherHalfBoundsArray
-   *   The BoundsArray of the 2nd output. Its .length will be modified.
-   *
-   * @return {BoundsArray}
-   *   Return this (unmodified) object.
+   * @return {BoundsArray} Return this (unmodified) object.
    */
   split_to_lowerHalf_higherHalf( lowerHalfBoundsArray, higherHalfBoundsArray ) {
 
@@ -688,7 +684,7 @@ class BoundsArray {
 
     return this;
   }
-  
+
   /**
    * Rearrange bounds by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
    *
