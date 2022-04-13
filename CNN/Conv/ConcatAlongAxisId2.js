@@ -40,14 +40,7 @@ class Base {
     this.bKeepInputTensor1 = bKeepInputTensor1;
 
     Base.adjust_pfnConcat.call( this );
-
-    {
-      this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
-        1 // Arbitrarily set a legal (but temporary) outputChannelCount0. It will be adjusted later.
-      );
-
-      this.boundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
-    }
+    Base.setup_BoundsArraySetArray.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
   }
 
   /**
@@ -90,6 +83,16 @@ class Base {
         this.pfnConcat = Base.Concat_and_destroy0_destroy1;
       }
     }
+  }
+
+  /** Create this.boundsArraySet. */
+  static setup_BoundsArraySet( inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
+
+    this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
+      1 // Arbitrarily set a legal (but temporary) outputChannelCount0. It will be adjusted later.
+    );
+
+    this.boundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
   }
 
   /** Concatenate along axis id 2. (Both the inputTensorsArray[ 0 ] and inputTensorsArray[ 1 ] will not be disposed. */
