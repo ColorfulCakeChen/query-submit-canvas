@@ -69,6 +69,21 @@ class ConvBiasActivation extends InputsOutputs {
     //this.set_all_byBounds.set_all_byBounds( Weights.Base.ValueBounds );
   }
 
+
+//!!! ...unfinished... (2022/04/13)
+//   get length() {
+//     super.Xxx();
+//     return this.boundsArray.length;
+//   }
+//
+//
+//   set length( newLength ) {
+//     super.length = newLength;
+//     this.boundsArray.length = newLength;
+//     this.activationEscaping_ScaleArraySet.length = newLength;
+//   }
+
+
   /**
    * @return {ConvBiasActivation}
    *   Return a newly created ConvBiasActivation which is a copy of this ConvBiasActivation. The this.inputs will just past
