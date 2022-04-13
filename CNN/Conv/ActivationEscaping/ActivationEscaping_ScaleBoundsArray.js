@@ -99,8 +99,10 @@ class ScaleBoundsArray {
   }
 
   /**
+   * Precondition: ( this.outputs.length == aBoundsArraySet.outputs.length ).
+   *
    * @param {ScaleBoundsArray} aScaleBoundsArray
-   *   The ScaleBoundsArray to be copied. Precondition: ( this.outputs.length == aBoundsArraySet.outputs.length ).
+   *   The ScaleBoundsArray to be copied (including .boundsArray and (activationEscaping) .scaleArraySet).
    *
    * @return {ScaleBoundsArray}
    *   Return this (modified) object which is copied from aScaleBoundsArray.
@@ -120,8 +122,8 @@ class ScaleBoundsArray {
    * @return {ScaleBoundsArray} Return this (modified) object.
    */
   set_all_byScaleBoundsArray_concat_input0_input1( inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
-    this.do.set_all_byScaleArray_concat_input0_input1( inputScaleBoundsArray0.do, inputScaleBoundsArray1.do );
-    this.undo.set_all_byScaleArray_concat_input0_input1( inputScaleBoundsArray0.undo, inputScaleBoundsArray1.undo );
+    this.boundsArray.set_all_byBoundsArray_concat_input0_input1( inputScaleBoundsArray0.boundsArray, inputScaleBoundsArray1.boundsArray );
+    this.scaleArraySet.set_all_byScaleArray_concat_input0_input1( inputScaleBoundsArray0.scaleArraySet, inputScaleBoundsArray1.scaleArraySet );
     return this;
   }
 
@@ -153,12 +155,7 @@ class ScaleBoundsArray {
    */
   split_to_lowerHalf_higherHalf( lowerHalfScaleBoundsArray, higherHalfScaleBoundsArray ) {
     this.boundsArray.split_to_lowerHalf_higherHalf( lowerHalfScaleBoundsArray.boundsArray, higherHalfScaleBoundsArray.boundsArray );
-
-    this.scaleArraySet.do.split_to_lowerHalf_higherHalf(
-      lowerHalfScaleBoundsArray.scaleArraySet.do, higherHalfScaleBoundsArray.scaleArraySet.do );
-
-    this.scaleArraySet.undo.split_to_lowerHalf_higherHalf(
-      lowerHalfScaleBoundsArray.scaleArraySet.undo, higherHalfScaleBoundsArray.scaleArraySet.undo );
+    this.scaleArraySet.split_to_lowerHalf_higherHalf( lowerHalfScaleBoundsArray.scaleArraySet, higherHalfScaleBoundsArray.scaleArraySet );
     return this;
   }
 
