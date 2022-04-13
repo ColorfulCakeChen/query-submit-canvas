@@ -4,7 +4,7 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
-import { InputsOutputs } from "./InputsOutputs.js";
+import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
 
 /**
  * Element value bounds (per channel) for every operation's result of a convolution-bias-activation. The main purpose is to find out the
