@@ -306,21 +306,21 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * Rearrange output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation,
-   * .activationEscaping_ScaleArraySet, .bPassThrough) by interleaving as ( groupCount == 2 ). This element count must be even
+   * .activationEscaping_ScaleArraySet, .bPassThrough) by interleaving as ( groupCount == 2 ). The channel count must be even
    * (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
    *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
    * and improve performance.
    *
-   * @return {BoundsArraySet}
+   * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  output_interleave_asGrouptTwo( arrayTemp ) {
+  set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ) {
     this.afterFilter.interleave_asGrouptTwo( arrayTemp );
     this.afterBias.interleave_asGrouptTwo( arrayTemp );
     this.afterActivationEscaping.interleave_asGrouptTwo( arrayTemp );
-    this.afterActivation.interleave_asGrouptTwo( arrayTemp );
+    super.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ); // i.e. this.afterActivation
     this.activationEscaping_ScaleArraySet.interleave_asGrouptTwo( arrayTemp );
     FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.bPassThrough, 0, this.bPassThrough.length, arrayTemp );
     return this;
