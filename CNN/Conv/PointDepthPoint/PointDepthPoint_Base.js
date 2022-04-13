@@ -253,7 +253,7 @@ import { Params } from "./PointDepthPoint_Params.js";
  *
  *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
  *
- * @member {BoundsArraySet.ConvBiasActivation} boundsArraySet
+ * @member {BoundsArraySet.InputsOutputs} boundsArraySet
  *   The element value bounds of this PointDepthPoint's input/output.
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
@@ -305,11 +305,11 @@ class Base extends ReturnOrClone.Base {
    *   A Params object. The params.extract() will be called to extract parameters.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input. Usually, it is The .output0 of the previous PointDepthPoint value bounds
+   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous PointDepthPoint value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
-   *   The element value bounds (per channel) of input. Usually, it is The .output1 of the previous PointDepthPoint value bounds
+   *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous PointDepthPoint value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
 
