@@ -162,7 +162,8 @@ class InputsOutputs {
    * && ( this.output1.channelCount == aBoundsArraySet.output1.channelCount ).
    *
    * @return {InputsOutputs}
-   *   Return this (modified) object which is copied from aBoundsArraySet.
+   *   Return this (modified) object which is copied from aBoundsArraySet. The .input0 (, .input1) will just past
+   * to new InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied (including ActivationEscaping).
    */
   set_outputs_all_byBoundsArraySet( aBoundsArraySet ) {
     this.output0.set_all_byBoundsArray_ActivationEscaping( aBoundsArraySet.output0 );
@@ -170,15 +171,14 @@ class InputsOutputs {
     return this;
   }
 
-//!!! ...unfinished... (2022/04/13)
-
   /**
-   * Set .outputs[] by .input[ 0 ].
+   * Set .output0 (and .output1) by .input0. But their this.activationEscaping_ScaleArraySet are set to default ( 1 ) (i.e. NOT copied
+   * from .input0).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
-  set_outputs_all_byBoundsArray_input0() {
+  set_outputs_all_by_input0() {
     this.output0.set_all_byBoundsArray( this.input0.boundsArray );
     this.output1?.set_all_byBoundsArray( this.input0.boundsArray ); // Note: also use this.input0 (not this.input1).
     return this;
@@ -190,11 +190,13 @@ class InputsOutputs {
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
-  set_outputs_all_byBoundsArray_concat_input0_input1() {
-    let rLength = this.inputs[ 0 ].length + this.inputs[ 1 ].length;
-    for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
-      this.outputs[ outTensorIndex ].length = rLength;
-      this.outputs[ outTensorIndex ].set_all_byBoundsArray_concat_input0_input1( this.inputs[ 0 ], this.inputs[ 1 ] );
+  set_outputs_all_by_concat_input0_input1() {
+
+//!!! ...unfinished... (2022/04/13)
+
+    let totalChannelCount = this.inputChannelCount0 + this.inputChannelCount1;
+    this.output0.channelCount = totalChannelCount;
+    this.output0.set_all_byBoundsArray_concat_input0_input1( this.inputs[ 0 ], this.inputs[ 1 ] );
     }
 
 //!!! ...unfinished... (2022/04/13)
@@ -202,6 +204,8 @@ class InputsOutputs {
 
     return this;
   }
+
+//!!! ...unfinished... (2022/04/13)
 
   /**
    * Set .outputs[ 0 ] and .outputs[ 1 ] by splitting .input[ 0 ]. If .outputs[ 1 ] does not exist, it will be created. The length
@@ -258,8 +262,8 @@ class InputsOutputs {
         return 0;
   }
 
-  get inputChannelCount0() { return this.input0.channelCount; }
-  get inputChannelCount1() { return this.input1?.channelCount ?? 0; }
+  get inputChannelCount0() { return this.input0.length; }
+  get inputChannelCount1() { return this.input1?.length ?? 0; }
 
 
   get outputTensorCount() {
@@ -275,8 +279,8 @@ class InputsOutputs {
         return 0;
   }
 
-  get outputChannelCount0() { return this.output0.channelCount; }
-  get outputChannelCount1() { return this.output1?.channelCount ?? 0; }
+  get outputChannelCount0() { return this.output0.length; }
+  get outputChannelCount1() { return this.output1?.length ?? 0; }
 
 }
 
