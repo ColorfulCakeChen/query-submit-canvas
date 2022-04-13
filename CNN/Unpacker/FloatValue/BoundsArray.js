@@ -184,6 +184,8 @@ class BoundsArray {
   }
 
   /**
+   * The this.length will be modified.
+   *
    * @param {BoundsArray} inputBoundsArray0
    *   The BoundsArray of the 1st input.
    *
@@ -195,15 +197,22 @@ class BoundsArray {
    */
   set_all_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 ) {
 
+    let totalLength = ( inputBoundsArray0?.length ?? 0 ) + ( inputBoundsArray1?.length ?? 0 );
+    this.length = totalLength;
+
     // Concat value bounds array.
     let inChannel = 0;
 
-    for ( let inChannel0 = 0; inChannel0 < inputBoundsArray0.length; ++inChannel0, ++inChannel ) {
-      this.set_one_byBoundsArray( inChannel, inputBoundsArray0, inChannel0 );
+    if ( inputBoundsArray0 ) {
+      for ( let inChannel0 = 0; inChannel0 < inputBoundsArray0.length; ++inChannel0, ++inChannel ) {
+        this.set_one_byBoundsArray( inChannel, inputBoundsArray0, inChannel0 );
+      }
     }
 
-    for ( let inChannel1 = 0; inChannel1 < inputBoundsArray1.length; ++inChannel1, ++inChannel ) {
-      this.set_one_byBoundsArray( inChannel, inputBoundsArray1, inChannel1 );
+    if ( inputBoundsArray1 ) {
+      for ( let inChannel1 = 0; inChannel1 < inputBoundsArray1.length; ++inChannel1, ++inChannel ) {
+        this.set_one_byBoundsArray( inChannel, inputBoundsArray1, inChannel1 );
+      }
     }
 
     return this;
