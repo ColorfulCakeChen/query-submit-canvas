@@ -168,18 +168,6 @@ class ScaleArraySet {
   }
 
   /**
-   * @param {ScaleArraySet} lowerHalfScaleArraySet   The ScaleArraySet of the 1st output. Its .length will be modified.
-   * @param {ScaleArraySet} higherHalfScaleArraySet  The ScaleArraySet of the 2nd output. Its .length will be modified.
-   *
-   * @return {ScaleArraySet} Return this (unmodified) object.
-   */
-  split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet, higherHalfScaleArraySet ) {
-    this.do.split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet.do, higherHalfScaleArraySet.do );
-    this.undo.split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet.undo, higherHalfScaleArraySet.undo );
-    return this;
-  }
-
-  /**
    * Rearrange elements by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
@@ -188,9 +176,21 @@ class ScaleArraySet {
    *
    * @return {ScaleArraySet} Return this (modified) object.
    */
-  interleave_asGrouptTwo( arrayTemp ) {
+  set_all_byInterleave_asGrouptTwo( arrayTemp ) {
     this.do.interleave_asGrouptTwo( arrayTemp );
     this.undo.interleave_asGrouptTwo( arrayTemp );
+    return this;
+  }
+
+  /**
+   * @param {ScaleArraySet} lowerHalfScaleArraySet   The ScaleArraySet of the 1st output. Its .length will be modified.
+   * @param {ScaleArraySet} higherHalfScaleArraySet  The ScaleArraySet of the 2nd output. Its .length will be modified.
+   *
+   * @return {ScaleArraySet} Return this (unmodified) object.
+   */
+  split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet, higherHalfScaleArraySet ) {
+    this.do.split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet.do, higherHalfScaleArraySet.do );
+    this.undo.split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet.undo, higherHalfScaleArraySet.undo );
     return this;
   }
 
