@@ -224,7 +224,7 @@ class ConvBiasActivation extends InputsOutputs {
    *
    * The following properties will be modified:
    *   - this.afterActivationEscaping
-   *   - this.afterActivation (including (activationEscaping) .scaleArraySet)
+   *   - this.afterActivation (i.e. output0, including (activationEscaping) .scaleArraySet)
    *
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this depthwise convolution.
@@ -283,11 +283,11 @@ class ConvBiasActivation extends InputsOutputs {
         .set_one_byBoundsArray( outChannel, this.afterBias, outChannel )
         .multiply_one_byNs( outChannel, this.output0.scaleArraySet.do.scales, outChannel );
 
-      // 3. Determine .afterActivation
+      // 3. Determine .afterActivation (i.e. .output0)
       {
         // If no activation function, the output range is determined by .afterActivationEscaping.
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-          this.afterActivation.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel )
+          this.output0.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel )
 
         // Otherwise, the activation function dominates the output range.
         //
@@ -297,12 +297,12 @@ class ConvBiasActivation extends InputsOutputs {
         //       is more feasible (at least, will not become another bounds with Infinity).
         } else {
           if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels, it is clamped by the output range for linearDomainLinear.
-            //this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
-            this.afterActivation.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+            //this.output0.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+            this.output0.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
 
           } else { // Non pass-through half channels, it is clamped by the output range for the whole input domain.
-            //this.afterActivation.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
-            this.afterActivation.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+            //this.output0.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+            this.output0.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
           }
         }
       }
