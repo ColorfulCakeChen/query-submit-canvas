@@ -48,15 +48,21 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
 class ConvBiasActivation extends InputsOutputs {
 
   /**
+   * Difference from (parent class) InputsOutputs:
+   *   - Only input0 (always no input1), because convolution (no matter pointwise or depthwise) could handle one input tensor.
+   *   - Only output0 (always no output1), because convolution (no matter pointwise or depthwise) always generate one output tensor.
+   *
+   *
    */
 //!!! (2022/04/11 Remarked)
 //   constructor( inputChannelCount, outputChannelCount ) {
 //     this.input = new FloatValue.BoundsArray( inputChannelCount );
-    
-  constructor( inputs, outputChannelCount0, outputChannelCount1 ) {
-    super( inputs, outputChannelCount0, outputChannelCount1 ); 
+ 
+  constructor( input0, outputChannelCount0 ) {
+    super( input0, undefined, outputChannelCount0, undefined ); 
 
-    this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( inputs[ 0 ] );
+    this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( input0.length ); // channel count same as input0.
+
     this.afterFilter = new FloatValue.BoundsArray( outputChannelCount0 );
     this.afterBias = new FloatValue.BoundsArray( outputChannelCount0 );
     this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount0 );
@@ -69,28 +75,13 @@ class ConvBiasActivation extends InputsOutputs {
     //this.set_all_byBounds.set_all_byBounds( Weights.Base.ValueBounds );
   }
 
-
-//!!! ...unfinished... (2022/04/13)
-//   get length() {
-//     super.Xxx();
-//     return this.boundsArray.length;
-//   }
-//
-//
-//   set length( newLength ) {
-//     super.length = newLength;
-//     this.boundsArray.length = newLength;
-//     this.activationEscaping_ScaleArraySet.length = newLength;
-//   }
-
-
   /**
    * @return {ConvBiasActivation}
    *   Return a newly created ConvBiasActivation which is a copy of this ConvBiasActivation. The this.inputs will just past
    * to new ConvBiasActivation (i.e. NOT copied). But the other data members will be copied.
    */
   clone() {
-    let result = new ConvBiasActivation( this.inputs, this.outputChannelCount0, this.outputChannelCount1 );
+    let result = new ConvBiasActivation( this.input0, this.outputChannelCount0 );
     result.set_all_byBoundsArraySet( this );
     return result;
   }
@@ -117,20 +108,20 @@ class ConvBiasActivation extends InputsOutputs {
    */
   set_activationEscaping_bPassThrough_all_none() {
     super.set_activationEscaping_all_none();
-    this.set_bPassThrough_all_none( false );
+    this.set_bPassThrough_all_none();
     return this;
   }
 
   /**
    * @param {FloatValue.Bounds} aBounds
-   *   Set all outputs related BoundsArray to the same as the specified aBounds. Set the this.activationEscaping_ScaleArraySet
-   * to default ( 1 ). The .inputs[] are not modified.
+   *   Set all outputs related BoundsArray (.afterFilter, .afterBias, .afterActivationEscaping, .output (i.e. .afterActivation),
+   * .bPassThrough) to the same as the specified aBounds. Set the this.activationEscaping_ScaleArraySet
+   * to default ( 1 ). The .input0 are not modified.
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
   set_outputs_all_byBounds( aBounds ) {
-    this.afterUndoPreviousActivationEscaping.set_all_byBounds( aBounds );
     this.afterFilter.set_all_byBounds( aBounds );
     this.afterBias.set_all_byBounds( aBounds );
     this.afterActivationEscaping.set_all_byBounds( aBounds );
@@ -206,19 +197,24 @@ class ConvBiasActivation extends InputsOutputs {
    *   Return this (modified) object which is copied from aBoundsArraySet.
    */
   set_all_byBoundsArraySet( aBoundsArraySet ) {
-    this.inputs = aBoundsArraySet.inputs; // Non-copy.
+
+    // inputs. Non-copy. Just reference to the same inputs.
+    {
+      this.input0 = aBoundsArraySet.input0;
+
+      if ( aBoundsArraySet.input1 )
+        this.input1 = aBoundsArraySet.input1;
+      else
+        delete this.input1;
+    }
 
     this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( aBoundsArraySet.afterUndoPreviousActivationEscaping );
     this.afterFilter                        .set_all_byBoundsArray( aBoundsArraySet.afterFilter );
     this.afterBias                          .set_all_byBoundsArray( aBoundsArraySet.afterBias );
     this.afterActivationEscaping            .set_all_byBoundsArray( aBoundsArraySet.afterActivationEscaping );
 
-//!!! (2022/04/11 Remarked) Use super.set_outputs_all_byBoundsArraySet() instead.
-//  this.afterActivation                    .set_all_byBoundsArray( aBoundsArraySet.afterActivation );
-    super.set_outputs_all_byBoundsArraySet( aBoundsArraySet );
+    super.set_outputs_all_byBoundsArraySet( aBoundsArraySet ); // .afterActivation (i.e. .output0 (and .output1))
    
-    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
-
     for ( let i = 0; i < this.bPassThrough.length; ++i ) {
       this.bPassThrough[ i ] = aBoundsArraySet.bPassThrough[ i ];
     }
@@ -226,6 +222,7 @@ class ConvBiasActivation extends InputsOutputs {
     return this;
   }
 
+//!!! ...unfinished... (2022/04/13)
   /**
    * Determine .activationEscaping_ScaleArraySet and .afterActivationEscaping and .afterActivation, by .afterBias and .bPassThrough
    * and nActivationId.
