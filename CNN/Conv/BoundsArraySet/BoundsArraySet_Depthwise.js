@@ -1,16 +1,16 @@
-export { BoundsArraySet };
+export { Depthwise };
 
-import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Depthwise_ChannelPartInfo.js";
+import { ConvBiasActivation } from "./BoundsArraySet_ConvBiasActivation.js";
+import { ChannelPartInfo, FiltersBiasesPartInfo } from  "../Depthwise/Depthwise_ChannelPartInfo.js";
 
 /**
  * The element value bounds set for depthwise convolution-bias-activation.
  *
  */
-class BoundsArraySet extends BoundsArraySet.ConvBiasActivation {
+class Depthwise extends ConvBiasActivation {
 
   /**
    */
