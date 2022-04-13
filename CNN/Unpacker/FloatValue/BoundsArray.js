@@ -186,14 +186,10 @@ class BoundsArray {
   /**
    * The this.length will be modified.
    *
-   * @param {BoundsArray} inputBoundsArray0
-   *   The BoundsArray of the 1st input.
+   * @param {BoundsArray} inputBoundsArray0  The BoundsArray of the 1st input.
+   * @param {BoundsArray} inputBoundsArray1  The BoundsArray of the 2nd input.
    *
-   * @param {BoundsArray} inputBoundsArray1
-   *   The BoundsArray of the 2nd input.
-   *
-   * @return {BoundsArraySet}
-   *   Return a newly created object.
+   * @return {BoundsArray} Return this (modified) object.
    */
   set_all_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 ) {
 
