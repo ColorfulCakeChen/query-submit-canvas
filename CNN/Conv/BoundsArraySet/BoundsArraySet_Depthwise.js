@@ -9,6 +9,7 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "../Depthwise/Depthwise_
 /**
  * The element value bounds set for depthwise convolution-bias-activation.
  *
+ * Only input0 is used. The input1 always undefined.
  * Only outputChannelCount0 is used. The outputChannelCount1 always undefined.
  *
  * @see ConvBiasActivation
@@ -17,8 +18,8 @@ class Depthwise extends ConvBiasActivation {
 
   /**
    */
-  constructor( inputs, outputChannelCount0 ) {
-    super( inputs, outputChannelCount0 );
+  constructor( input0, outputChannelCount0 ) {
+    super( input0, outputChannelCount0 );
   }
 
   /**
