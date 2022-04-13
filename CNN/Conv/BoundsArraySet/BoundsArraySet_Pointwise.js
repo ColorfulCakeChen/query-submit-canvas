@@ -1,16 +1,16 @@
-export { BoundsArraySet };
+export { Pointwise };
 
-import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPartInfo.js";
+import { ConvBiasActivation } from "./BoundsArraySet_ConvBiasActivation.js";
+import { ChannelPartInfo, FiltersBiasesPartInfo } from  "../Pointwise/Pointwise_ChannelPartInfo.js";
 
 /**
  * The element value bounds for pointwise convolution-bias-activation.
  *
  */
-class BoundsArraySet extends BoundsArraySet.ConvBiasActivation {
+class Pointwise extends ConvBiasActivation {
 
   /**
    */
