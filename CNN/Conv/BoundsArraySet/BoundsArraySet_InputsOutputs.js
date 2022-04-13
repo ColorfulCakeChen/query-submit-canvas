@@ -1,9 +1,14 @@
 export { InputsOutputs };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
+import * as ActivationEscaping from "../ActivationEscaping.js";
 
 /**
  * Element value bounds (per channel) for inputs and outputs of an operation.
+ *
+ * The main purpose is to find out the activationEscaping_ScaleArraySet so that it can be used to let channel escape from
+ * activation function's non-linear effect.
+ *
  *
  *
  * @member {FloatValue.BoundsArray[]} inputs
@@ -43,6 +48,11 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  *
  * @member {number} outputChannelCount1
  *   The channel count of 2nd output (i.e. this.output1.length).
+ *
+ * @member {ActivationEscaping.ScaleArraySet} activationEscaping_ScaleArraySet
+ *   The scales for moving this.afterBias bounds into the linear domain of the activation function. That is, for
+ * letting this.afterBias escape from activation function's non-linear domain. And the .undo for undoing the scales.
+ * Only output0 has this information.
  */
 class InputsOutputs {
 
@@ -67,6 +77,8 @@ class InputsOutputs {
           + `output0 must exist (i.e. outputChannelCount0 ( ${outputChannelCount0} ) must > 0 ).`
       );
     }
+
+    this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet( outputChannelCount0 );
   }
 
   /**
@@ -81,8 +93,21 @@ class InputsOutputs {
   }
 
   /**
+   * Set:
+   *   - this.activationEscaping_ScaleArraySet to scale 1 (i.e. all are no scale).
+   *
+   * @return {InputsOutputs}
+   *   Return this (modified) object.
+   */
+  set_activationEscaping_all_none() {
+    this.activationEscaping_ScaleArraySet.set_all_byN( 1 );
+    return this;
+  }
+
+  /**
    * @param {FloatValue.Bounds} aBounds
-   *   Set all .outputs[] to the same as the specified aBounds.
+   *   Set all .outputs[] to the same as the specified aBounds. Set the this.activationEscaping_ScaleArraySet
+   * to default ( 1 ). The .inputs[] are not modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -91,6 +116,7 @@ class InputsOutputs {
     for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
       this.outputs[ outTensorIndex ].set_all_byBounds( aBounds );
     }
+    super.set_activationEscaping_all_none();
     return this;
   }
 
@@ -105,6 +131,10 @@ class InputsOutputs {
     for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
       this.outputs[ outTensorIndex ].set_all_byBoundsArray( outputBoundsArray );
     }
+
+//!!! ...unfinished... (2022/04/13)
+    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
+
     return this;
   }
 
@@ -119,6 +149,10 @@ class InputsOutputs {
     for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
       this.outputs[ outTensorIndex ].set_outputs_all_byBoundsArray( aBoundsArraySet.outputs[ outTensorIndex ] );
     }
+
+//!!! ...unfinished... (2022/04/13)
+    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
+
     return this;
   }
 
@@ -132,6 +166,10 @@ class InputsOutputs {
     for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
       this.outputs[ outTensorIndex ].set_all_byBoundsArray( this.input[ 0 ] );
     }
+
+//!!! ...unfinished... (2022/04/13)
+    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
+
     return this;
   }
 
@@ -147,6 +185,10 @@ class InputsOutputs {
       this.outputs[ outTensorIndex ].length = rLength;
       this.outputs[ outTensorIndex ].set_all_byBoundsArray_concat_input0_input1( this.inputs[ 0 ], this.inputs[ 1 ] );
     }
+
+//!!! ...unfinished... (2022/04/13)
+    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
+
     return this;
   }
 
@@ -163,6 +205,10 @@ class InputsOutputs {
       this.outputs[ 1 ] = new FloatValue.BoundsArray( 0 );
 
     this.inputs[ 0 ].split_to_lowerHalf_higherHalf( this.outputs[ 0 ], this.outputs[ 1 ] );
+
+//!!! ...unfinished... (2022/04/13)
+    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
+
     return this;
   }
 
@@ -181,6 +227,10 @@ class InputsOutputs {
     for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
       this.outputs[ outTensorIndex ].interleave_asGrouptTwo( arrayTemp );
     }
+
+//!!! ...unfinished... (2022/04/13)
+    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
+
     return this;
   }
 
