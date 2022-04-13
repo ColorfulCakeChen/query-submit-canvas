@@ -1,6 +1,6 @@
 export { ScaleArraySet };
 
-import * as FloatValue from "../Unpacker/FloatValue.js";
+import * as FloatValue from "../../Unpacker/FloatValue.js";
 
 /**
  * Several scale arrays for escaping a value bounds from being activated (i.e. being non-linearized) by activation function.
