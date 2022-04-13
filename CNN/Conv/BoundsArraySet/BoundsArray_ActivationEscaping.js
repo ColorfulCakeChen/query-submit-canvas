@@ -10,12 +10,14 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
  * activation function's non-linear effect.
  *
  *
- *
  * @member {FloatValue.BoundsArray} boundsArray
  *   The element value bounds (per channel).
  *
- * @member {number} channelCount
+ * @member {number} length
  *   The channel count of the boundsArray (i.e. this.boundsArray.length).
+ *
+ * @member {number} channelCount
+ *   The same as .length.
  *
  * @member {ActivationEscaping.ScaleArraySet} activationEscaping_ScaleArraySet
  *   The scales for moving this.afterBias bounds into the linear domain of the activation function. That is, for
@@ -30,13 +32,21 @@ class BoundsArray_ActivationEscaping {
     this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet( channelCount );
   }
 
-  get channelCount() {
+  get length() {
     return this.boundsArray.length;
   }
 
+  get channelCount() {
+    return this.length;
+  }
+
+  set length( newLength ) {
+    this.boundsArray.length = newLength;
+    this.activationEscaping_ScaleArraySet.length = newLength;
+  }
+
   set channelCount( newChannelCount ) {
-    this.boundsArray.length = newChannelCount;
-    this.activationEscaping_ScaleArraySet.length = newChannelCount;
+    this.length = newChannelCount;
   }
 
   /**
