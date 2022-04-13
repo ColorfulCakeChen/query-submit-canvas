@@ -232,7 +232,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     tf.util.assert( ( this.inputChannelCount == inputScaleBoundsArray.scaleArraySet.undo.length ),
       `Pointwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
-        + `scaleArraySet.undo of previous convolution-bias-activation `
+        + `.output.scaleArraySet.undo of previous convolution-bias-activation `
         + `( ${inputScaleBoundsArray.scaleArraySet.undo.length} ).`
     );
 
