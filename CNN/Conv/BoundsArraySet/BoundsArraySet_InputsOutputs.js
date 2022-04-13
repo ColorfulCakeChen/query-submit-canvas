@@ -163,67 +163,35 @@ class InputsOutputs {
    *
    * @return {InputsOutputs}
    *   Return this (modified) object which is copied from aBoundsArraySet. The .input0 (, .input1) will just past
-   * to new InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied (including ActivationEscaping).
+   * to new InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied (including .activationEscaping_ScaleArraySet).
    */
-  set_outputs_all_byBoundsArraySet( aBoundsArraySet ) {
-    this.output0.set_all_byBoundsArray_ActivationEscaping( aBoundsArraySet.output0 );
-    this.output1?.set_all_byBoundsArray_ActivationEscaping( aBoundsArraySet.output1 );
+  set_outputs_all_byBoundsArraySet_Outputs( aBoundsArraySet_Outputs ) {
+    this.output0.set_all_byBoundsArray_ActivationEscaping( aBoundsArraySet_Outputs.output0 );
+    this.output1?.set_all_byBoundsArray_ActivationEscaping( aBoundsArraySet_Outputs.output1 );
     return this;
   }
 
   /**
-   * Set .output0 (and .output1) by .input0. But their this.activationEscaping_ScaleArraySet are set to default ( 1 ) (i.e. NOT copied
-   * from .input0).
+   * Set .output0 (and .output1) by .input0 (including .activationEscaping_ScaleArraySet).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
   set_outputs_all_by_input0() {
-    this.output0.set_all_byBoundsArray( this.input0.boundsArray );
-    this.output1?.set_all_byBoundsArray( this.input0.boundsArray ); // Note: also use this.input0 (not this.input1).
+    this.output0.set_all_byBoundsArray_ActivationEscaping( this.input0 );
+    this.output1?.set_all_byBoundsArray_ActivationEscaping( this.input0 ); // Note: also use this.input0 (not this.input1).
     return this;
   }
 
   /**
-   * Set .outputs[] by concatenating .input[ 0 ] and .input[ 1 ]. The length of .outputs[] will be modified.
+   * Set .output0 (and .output1) by concatenating .input0 and .input1. The length of .output0 (and .output1 if exists) will be modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
   set_outputs_all_by_concat_input0_input1() {
-
-//!!! ...unfinished... (2022/04/13)
-
-    let totalChannelCount = this.inputChannelCount0 + this.inputChannelCount1;
-    this.output0.channelCount = totalChannelCount;
-    this.output0.set_all_byBoundsArray_concat_input0_input1( this.inputs[ 0 ], this.inputs[ 1 ] );
-    }
-
-//!!! ...unfinished... (2022/04/13)
-    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
-
-    return this;
-  }
-
-//!!! ...unfinished... (2022/04/13)
-
-  /**
-   * Set .outputs[ 0 ] and .outputs[ 1 ] by splitting .input[ 0 ]. If .outputs[ 1 ] does not exist, it will be created. The length
-   * of both .outputs[ 0 ] and .outputs[ 1 ] will be modified.
-   *
-   * @return {InputsOutputs}
-   *   Return this (modified) object.
-   */
-  set_outputs_all_byBoundsArray_split_input0() {
-
-    if ( !this.outputs[ 1 ] )
-      this.outputs[ 1 ] = new FloatValue.BoundsArray( 0 );
-
-    this.inputs[ 0 ].split_to_lowerHalf_higherHalf( this.outputs[ 0 ], this.outputs[ 1 ] );
-
-//!!! ...unfinished... (2022/04/13)
-    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
-
+    this.output0.set_all_byBoundsArray_ActivationEscaping_concat_input0_input1( this.input0, this.input1 );
+    this.output1?.set_all_byBoundsArray_ActivationEscaping( this.output0 ); // Note: the same as .output0.
     return this;
   }
 
@@ -239,13 +207,24 @@ class InputsOutputs {
    *   Return this (modified) object.
    */
   set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
-      this.outputs[ outTensorIndex ].interleave_asGrouptTwo( arrayTemp );
-    }
+    this.output0.set_all_byInterleave_asGrouptTwo( arrayTemp );
+    this.output1?.set_all_byInterleave_asGrouptTwo( arrayTemp );
+    return this;
+  }
 
-//!!! ...unfinished... (2022/04/13)
-    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
+  /**
+   * Set .output0 and .output1 by splitting .input0. If .output1 does not exist, it will be created. The length
+   * of both .output0 and .output1 will be modified.
+   *
+   * @return {InputsOutputs}
+   *   Return this (modified) object.
+   */
+  set_outputs_all_byBoundsArray_split_input0() {
 
+    if ( !this.output1 )
+      this.output1 = new BoundsArray_ActivationEscaping( 0 ); // Use ( channelCount == 0 ) temporarily. It will be adjusted later.
+
+    this.input0.split_to_lowerHalf_higherHalf( this.output0, this.output1 );
     return this;
   }
 
