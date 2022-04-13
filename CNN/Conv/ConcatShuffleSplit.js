@@ -1,7 +1,7 @@
 export { Base };
 
-import * as FloatValue from "../Unpacker/FloatValue.js";
-import * as ConvBiasActivation from "./ConvBiasActivation.js";
+//import * as FloatValue from "../Unpacker/FloatValue.js";
+import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
 /**
@@ -33,15 +33,17 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
  * @member {boolean} bKeepInputTensor1
  *   If false, the second input tensor will be disposed after concatenating. If true, the second input tensor will be kept after concatenating.
  *
- * @member {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet0
- *   The previous convolution-bias-activation value bounds set of this ConcatShuffleSplit operation's input0.
+ * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
+ *   The element value bounds (per channel) of this concatenation operation's input0. It will be kept (not cloned) directly. So caller
+ * should not modify them.
  *
- * @member {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet1
- *   The previous convolution-bias-activation value bounds set of this ConcatShuffleSplit operation's input1.
+ * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
+ *   The element value bounds (per channel) of this concatenation operation's input1. It will be kept (not cloned) directly. So caller
+ * should not modify them.
  *
- * @member {BoundsArraySet[]} boundsArraySetArray
- *   The element value bounds (per channel) of this ConcatShuffleSplit operation. There will be one or two BoundsArraySet in this array.
- * 
+ * @member {BoundsArraySet.InputsOutputs} boundsArraySet
+ *   The element value bounds (per channel) of this concatenation operation.
+ *
  * @member {function} pfnConcatShuffleSplit
  *   This is a method. It has two parameters inputTensors[] and outputTensors[]. The inputTensors[] (tf.tensor3d[]) represents
  * all the images ( height x width x channel ) which will be concatenated, shuffle, split. They should have the same ( height x width )
@@ -57,13 +59,11 @@ class Base {
    */
   constructor(
     channelShuffler, bShuffleSplit = true, bKeepInputTensor0, bKeepInputTensor1,
-    previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 ) {
+    inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
 
     this.channelShuffler = channelShuffler;
-    this.previous_ConvBiasActivation_BoundsArraySet0 = previous_ConvBiasActivation_BoundsArraySet0;
-    this.previous_ConvBiasActivation_BoundsArraySet1 = previous_ConvBiasActivation_BoundsArraySet1;
     this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
-    Base.setup_BoundsArraySetArray.call( this );
+    Base.setup_BoundsArraySetArray.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
   }
 
   /**
@@ -118,7 +118,7 @@ class Base {
     if ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ) {
 
       tf.util.assert( ( this.channelShuffler instanceof ChannelShuffler.ConcatPointwiseConv ),
-        `ConcatShuffleSplit.Base.setup_BoundsArraySet(): `
+        `ConcatShuffleSplit.Base.adjust_pfnShuffleSplit(): `
           + `channelShuffler must be an instance of class ChannelShuffler.ConcatPointwiseConv.`
       );
 
@@ -145,8 +145,18 @@ class Base {
     }
   }
 
-  /** Create this.boundsArraySetArray[]. */
-  static setup_BoundsArraySetArray() {
+  /** Create this.boundsArraySet. */
+  static setup_BoundsArraySet( inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
+
+    // Concatenated value bounds array set.
+    let concatBoundsArraySet;
+    {
+      concatBoundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
+        1 // Arbitrarily set a legal (but temporary) outputChannelCount0. It will be adjusted later.
+      );
+
+      concatBoundsArraySet.set_outputs_all_by_concat_input0_input1(); // The outputChannelCount0 will be adjusted.
+    }
 
     if ( ( this.bShuffleSplit ) && ( this.channelShuffler ) ) { // Want and could do channel shuffling and splitting.
 
@@ -156,53 +166,31 @@ class Base {
           + `( other outputGroupCount does not supperted ).`
       );
 
-      // Concatenated value bounds array.
-      let concatBoundsArray;
+      // Shuffled value bounds array set.
+      let shuffledBoundsArraySet;
       {
-        let concatLength
-          = this.previous_ConvBiasActivation_BoundsArraySet0.output.length + this.previous_ConvBiasActivation_BoundsArraySet1.output.length;
+        shuffledBoundsArraySet = new BoundsArraySet.InputsOutputs( concatBoundsArraySet.output0, null,
+          concatBoundsArraySet.output0.channelCount );
 
-        concatBoundsArray = new FloatValue.BoundsArray( concatLength );
-
-        concatBoundsArray.set_all_byBoundsArray_concat_input0_input1(
-          this.previous_ConvBiasActivation_BoundsArraySet0.output, this.previous_ConvBiasActivation_BoundsArraySet1.output );
+        let arrayTemp = new Array( concatBoundsArraySet.output0.channelCount );
+        shuffledBoundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp );
       }
 
-      // Shuffled value bounds array.
-      let shuffledBoundsArray;
+      // Splitted value bounds array set.
+      let splittedBoundsArraySet;
       {
+        splittedBoundsArraySet = new BoundsArraySet.InputsOutputs( shuffledBoundsArraySet.output0, null,
+          1, 1  // Arbitrarily set a legal (but temporary) outputChannelCount0 and outputChannelCount1. It will be adjusted later.
+        );
 
-//!!! ...unfinished... (2022/04/11)
-        // Split value bounds array.
-        let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
-        let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
-        shuffledBoundsArray.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
+        splittedBoundsArraySet.set_outputs_all_byBoundsArray_split_input0();
       }
 
-//!!! ...unfinished... (2022/04/11)
-      this.boundsArraySetArray = [
-        new ConvBiasActivation.BoundsArraySet( ??, ?? ),
-        new ConvBiasActivation.BoundsArraySet( ??, ?? ),
-      ];
+      this.boundsArraySet = splittedBoundsArraySet;
 
     } else { // Only concatenation is needed.
-      this.boundsArraySetArray = [
-        ConvBiasActivation.BoundsArraySet.create_byBoundsArray_concat_input0_input1(
-          this.previous_ConvBiasActivation_BoundsArraySet0, this.previous_ConvBiasActivation_BoundsArraySet1 )
-      ];
+      this.boundsArraySet = concatBoundsArraySet;
     }
-
-
-//     this.boundsArraySet = ??? BoundsArraySet.create_byBoundsArray_concat_input0_input1(
-//       previous_ConvBiasActivation_BoundsArraySet0, previous_ConvBiasActivation_BoundsArraySet1 );
-//
-//
-//     // Split value bounds array.
-//     let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
-//     let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
-//     imageIn.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
-//
-//        BoundsArraySet.output_interleave_asGrouptTwo()
   }
 
 
