@@ -202,6 +202,38 @@ class ConvBiasActivation extends InputsOutputs {
     return this;
   }
 
+//!!!
+//from pointwise
+      // Round 0
+      {
+        this.boundsArraySet = new BoundsArraySet.Pointwise( previous_BoundsArraySet_ConvBiasActivation.outputs, this.outputChannelCount_Real );
+
+        // Determine .input
+        this.boundsArraySet.input.set_all_byBoundsArray( previous_BoundsArraySet_ConvBiasActivation.output0 );
+
+        // Determine .afterUndoPreviousActivationEscaping
+        this.boundsArraySet.afterUndoPreviousActivationEscaping
+          .set_all_byBoundsArray( this.boundsArraySet.input )
+          .multiply_all_byNs( previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales );
+      }
+
+//from depthwise
+      // Round 0
+      {
+        this.boundsArraySet = new BoundsArraySet.Depthwise( previous_BoundsArraySet_ConvBiasActivation.outputs, this.outputChannelCount );
+
+        // Determine .input
+        //
+        // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
+        this.boundsArraySet.input.set_all_byBoundsArray( previous_BoundsArraySet_ConvBiasActivation.output0 );
+
+        // Determine .afterUndoPreviousActivationEscaping
+        this.boundsArraySet.afterUndoPreviousActivationEscaping
+          .set_all_byBoundsArray( this.boundsArraySet.input )
+          .multiply_all_byNs( previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales );
+      }
+
+
   /**
    * Determine .afterActivationEscaping and .afterActivation (including (activationEscaping) .scaleArraySet), by .afterBias and
    * .bPassThrough and nActivationId.
