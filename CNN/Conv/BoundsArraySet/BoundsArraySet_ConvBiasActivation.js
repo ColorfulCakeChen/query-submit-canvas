@@ -9,6 +9,8 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
  * Element value bounds (per channel) for every operation's result of a convolution-bias-activation. The main purpose is to find out the
  * activationEscaping_ScaleArraySet so that it can be used to let channel escape from activation function's non-linear effect.
  *
+ *   - Only input0 is used. The input1 always is undefined.
+ *   - Only outputChannelCount0 is used. The outputChannelCount1 always is undefined.
  *
  * @member {FloatValue.BoundsArray} afterUndoPreviousActivationEscaping
  *   The element value bounds (per channel) after applying the previousConvBiasActivation.BoundsArraySet.ActivationEscaping.undo
