@@ -17,8 +17,8 @@ class Pointwise extends ConvBiasActivation {
 
   /**
    */
-  constructor( inputs, outputChannelCount0 ) {
-    super( inputs, outputChannelCount0 );
+  constructor( input0, outputChannelCount0 ) {
+    super( input0, outputChannelCount0 );
   }
 
   /**
