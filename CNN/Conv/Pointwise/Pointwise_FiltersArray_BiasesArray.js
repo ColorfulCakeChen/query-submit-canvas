@@ -19,7 +19,7 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
  * @member {BoundsArraySet.Pointwise} boundsArraySet
- *   The element value bounds (per channel) of input, beforeActivation, and output for this pointwise convolution.
+ *   The element value bounds (per channel) of this pointwise convolution.
  *
  * @member {number} outputChannelCount
  *   The output channel count of this pointwise convolutiuon.
@@ -208,12 +208,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {BoundsArraySet.ConvBiasActivation} previous_BoundsArraySet_ConvBiasActivation
-   *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
+   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
+   * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, previous_BoundsArraySet_ConvBiasActivation ) {
+  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -222,17 +223,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     // A2: So that inputFloat32Array could be released.
 
 
-    tf.util.assert( ( this.inputChannelCount == previous_BoundsArraySet_ConvBiasActivation.output.length ),
+    tf.util.assert( ( this.inputChannelCount == inputScaleBoundsArray.length ),
       `Pointwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
-        + `outputChannelCount of previous convolution-bias-activation ( ${previous_BoundsArraySet_ConvBiasActivation.output.length} ).`
+        + `outputChannelCount of previous convolution-bias-activation ( ${inputScaleBoundsArray.length} ).`
     );
 
-    tf.util.assert( ( this.inputChannelCount == previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.length ),
+    tf.util.assert( ( this.inputChannelCount == inputScaleBoundsArray.scaleArraySet.undo.length ),
       `Pointwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
-        + `activationEscaping_ScaleArraySet.undo of previous convolution-bias-activation `
-        + `( ${previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.length} ).`
+        + `scaleArraySet.undo of previous convolution-bias-activation `
+        + `( ${inputScaleBoundsArray.scaleArraySet.undo.length} ).`
     );
 
     //
@@ -385,7 +386,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     //
     //   - In the 1st round, extracting filter and bias value from sourceWeights[]. At the same time, calculating .afterFilter and
     //       .afterBias by these extracted values combined with undoPreviousEscapingScale
-    //       (i.e. previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). And then,
+    //       (i.e. inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ]). And then,
     //       Find out .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
     //
     //   - In the 2nd round, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
@@ -394,15 +395,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     {
       // Round 0
       {
-        this.boundsArraySet = new BoundsArraySet.Pointwise( previous_BoundsArraySet_ConvBiasActivation.outputs, this.outputChannelCount_Real );
-
-        // Determine .input
-        this.boundsArraySet.input.set_all_byBoundsArray( previous_BoundsArraySet_ConvBiasActivation.output0 );
-
-        // Determine .afterUndoPreviousActivationEscaping
-        this.boundsArraySet.afterUndoPreviousActivationEscaping
-          .set_all_byBoundsArray( this.boundsArraySet.input )
-          .multiply_all_byNs( previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales );
+        // Initialize element value bounds (per channel). Determine .input and .afterUndoPreviousActivationEscaping
+        this.boundsArraySet = new BoundsArraySet.Pointwise( inputScaleBoundsArray, this.outputChannelCount_Real );
       }
 
       // Round 1
@@ -412,8 +406,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
         // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
-        this.boundsArraySet.set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId(
-          this.nActivationId );
+        this.boundsArraySet.set_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
       }
 
       // Round 2
