@@ -207,6 +207,22 @@ class ScaleArray {
     return this;
   }
 
+
+  /**
+   * Rearrange scales by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
+   *
+   * @param {Array} arrayTemp
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance.
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_all_byInterleave_asGrouptTwo( arrayTemp ) {
+    ArrayInterleaver.interleave_asGrouptTwo( this.scales, 0, this.scales.length, arrayTemp );
+    return this;
+  }
+
+
   /**
    * @param {ScaleArray} lowerHalfScaleArray   The ScaleArray of the 1st output. Its .length will be modified.
    * @param {ScaleArray} higherHalfScaleArray  The ScaleArray of the 2nd output. Its .length will be modified.
@@ -233,20 +249,6 @@ class ScaleArray {
       higherHalfScaleArray.set_one_byBoundsArray( outChannel, this, inChannel );
     }
 
-    return this;
-  }
-
-  /**
-   * Rearrange scales by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
-   *
-   * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
-   * and improve performance.
-   *
-   * @return {ScaleArray} Return this (modified) object.
-   */
-  interleave_asGrouptTwo( arrayTemp ) {
-    ArrayInterleaver.interleave_asGrouptTwo( this.scales, 0, this.scales.length, arrayTemp );
     return this;
   }
 
