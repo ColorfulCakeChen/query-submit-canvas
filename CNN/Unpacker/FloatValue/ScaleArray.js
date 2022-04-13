@@ -207,7 +207,34 @@ class ScaleArray {
     return this;
   }
 
-//!!! ...unfinished... (2022/04/13) split
+  /**
+   * @param {ScaleArray} lowerHalfScaleArray   The ScaleArray of the 1st output. Its .length will be modified.
+   * @param {ScaleArray} higherHalfScaleArray  The ScaleArray of the 2nd output. Its .length will be modified.
+   *
+   * @return {ScaleArray} Return this (unmodified) object.
+   */
+  split_to_lowerHalf_higherHalf( lowerHalfScaleArray, higherHalfScaleArray ) {
+
+    // If not divided by 2, let lower half have one more.
+    let length_lowerHalf = Math.ceil( this.length / 2 );
+    let length_higherHalf = this.length - length_lowerHalf;
+
+    lowerHalfScaleArray.length = length_lowerHalf;
+    higherHalfScaleArray.length = length_higherHalf;
+
+    // Split value bounds array.
+    let inChannel = 0;
+
+    for ( let outChannel = 0; outChannel < length_lowerHalf; ++outChannel, ++inChannel ) {
+      lowerHalfScaleArray.set_one_byBoundsArray( outChannel, this, inChannel );
+    }
+
+    for ( let outChannel = 0; outChannel < length_higherHalf; ++outChannel, ++inChannel ) {
+      higherHalfScaleArray.set_one_byBoundsArray( outChannel, this, inChannel );
+    }
+
+    return this;
+  }
 
   /**
    * Rearrange scales by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
