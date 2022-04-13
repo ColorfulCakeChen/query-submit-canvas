@@ -91,6 +91,26 @@ class InputsOutputs {
     }
   }
 
+
+//!!! ...unfinished... (2022/04/13)
+//   get length() {
+//     return this.boundsArray.length;
+//   }
+//
+//   get channelCount() {
+//     return this.length;
+//   }
+//
+//   set length( newLength ) {
+//     this.boundsArray.length = newLength;
+//     this.activationEscaping_ScaleArraySet.length = newLength;
+//   }
+//
+//   set channelCount( newChannelCount ) {
+//     this.length = newChannelCount;
+//   }
+
+
   /**
    * @return {InputsOutputs}
    *   Return a newly created InputsOutputs which is a copy of this InputsOutputs. The .input0 (, .input1) will just past
