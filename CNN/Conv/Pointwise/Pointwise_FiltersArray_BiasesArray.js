@@ -3,9 +3,8 @@ export { FiltersArray_BiasesArray };
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import * as ConvBiasActivation from "../ConvBiasActivation.js";
+import * as BoundsArraySet from "../BoundsArraySet.js";
 import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPartInfo.js";
-import { BoundsArraySet } from  "./Pointwise_BoundsArraySet.js";
 
 /**
  * Extract pointwise convolution filters and biases.
@@ -19,7 +18,7 @@ import { BoundsArraySet } from  "./Pointwise_BoundsArraySet.js";
  *   The position which is ended to (non-inclusive) extract from inputFloat32Array.buffer by init(). Where to extract next weights.
  * Only meaningful when ( this.bInitOk == true ). This is relative to the inputFloat32Array.buffer (not to the inputFloat32Array.byteOffset).
  *
- * @member {BoundsArraySet} boundsArraySet
+ * @member {BoundsArraySet.Pointwise} boundsArraySet
  *   The element value bounds (per channel) of input, beforeActivation, and output for this pointwise convolution.
  *
  * @member {number} outputChannelCount
@@ -209,12 +208,12 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
+   * @param {BoundsArraySet.ConvBiasActivation} previous_BoundsArraySet_ConvBiasActivation
    *   The previous convolution-bias-activation value bounds set of this depthwise convolution.
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, previous_ConvBiasActivation_BoundsArraySet ) {
+  init( inputFloat32Array, byteOffsetBegin, previous_BoundsArraySet_ConvBiasActivation ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -223,17 +222,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     // A2: So that inputFloat32Array could be released.
 
 
-    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.output.length ),
+    tf.util.assert( ( this.inputChannelCount == previous_BoundsArraySet_ConvBiasActivation.output.length ),
       `Pointwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
-        + `outputChannelCount of previous convolution-bias-activation ( ${previous_ConvBiasActivation_BoundsArraySet.output.length} ).`
+        + `outputChannelCount of previous convolution-bias-activation ( ${previous_BoundsArraySet_ConvBiasActivation.output.length} ).`
     );
 
-    tf.util.assert( ( this.inputChannelCount == previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.length ),
+    tf.util.assert( ( this.inputChannelCount == previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.length ),
       `Pointwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
         + `activationEscaping_ScaleArraySet.undo of previous convolution-bias-activation `
-        + `( ${previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.length} ).`
+        + `( ${previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.length} ).`
     );
 
     //
@@ -256,8 +255,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_toBeExtracted = this.inputChannelCount; // Extract all weights as specified input/output channels.
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
           aFiltersBiasesPartInfoArray = [
-//!!! (2022/04/05 Remarked) Always run through all input channels.
-//            new FiltersBiasesPartInfo( this.inputChannelCount, [
             new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount, false ) ] )
           ];
@@ -270,8 +267,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           //this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf; // Not used in this case.
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
           aFiltersBiasesPartInfoArray = [
-//!!! (2022/04/05 Remarked) Always run through all input channels.
-//            new FiltersBiasesPartInfo( this.inputChannelCount, [
             new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
@@ -286,8 +281,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
           aFiltersBiasesPartInfoArray = [
-//!!! (2022/04/05 Remarked) Always run through all input channels.
-//            new FiltersBiasesPartInfo( this.inputChannelCount, [
             new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
               new ChannelPartInfo( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true ) ] )
@@ -304,59 +297,15 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
           this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
 
-//!!! ...unfinished... (2022/04/05) Need whole input channels for both two pointiwse.
-//           this.outputChannelCount_toBeExtracted = this.outputChannelCount; // (So that biasesShape_extracted will be correct.)
-//
-// //!!! ...unfinished... (2022/04/03) should assert if can not be divisible.
-//
-//           this.inputChannelCount_toBeExtracted
-//             = (   ( this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf )
-//                 + ( this.inputChannelCount_higherHalf * this.outputChannelCount_higherHalf ) )
-//               / this.outputChannelCount; // (So that this.outputChannelCount_toBeExtracted will be correct.)
-//
-//           aFiltersBiasesPartInfoArray = [
-//             new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf,  [
-//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
-//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf,  true ),
-//             ] ),
-//             new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
-//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_lowerHalf,   true ),
-//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false ),
-//             ] )
-//           ];
-
           aFiltersBiasesPartInfoArray = [
             new FiltersBiasesPartInfo( [
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,  false ),
-//!!! (2022/04/05 Remarked)
-//              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf,  true ),
             ] ),
             new FiltersBiasesPartInfo( [
-//!!! (2022/04/05 Remarked)
-//              new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_lowerHalf,   true ),
               new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_higherHalf, false ),
             ] )
           ];
 
-//!!! (2022/04/02 Remarked) Whole output channels should be used.
-//           aFiltersBiasesPartInfoArray = [
-//
-// //!!! (2022/04/01 Remarked) Whole input channels are used, but higher half is past-through.
-// //            new FiltersBiasesPartInfo( this.inputChannelCount_lowerHalf, [
-//             new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but higher half is ignored.
-//               new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,  this.outputChannelCount_lowerHalf, false )
-// //!!! (2022/04/01 Remarked) Whole input channels are used, but higher half is ignored.
-// //              new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,                                            0,  true )
-//             ] ),
-//
-// //!!! (2022/04/01 Remarked) Whole input channels are used, but lower half is past-through.
-// //            new FiltersBiasesPartInfo( this.inputChannelCount_higherHalf, [
-//             new FiltersBiasesPartInfo( this.inputChannelCount, [ // Whole input channels are used, but lower half is ignored.
-// //!!! (2022/04/01 Remarked) Whole input channels are used, but lower half is ignored.
-// //              new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf,                                  0,  true ),
-//               new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false )
-//             ] )
-//           ];
           break;
 
         // 3.4
@@ -369,8 +318,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
             this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
             aFiltersBiasesPartInfoArray = [
-//!!! (2022/04/05 Remarked) Always run through all input channels.
-//              new FiltersBiasesPartInfo( this.inputChannelCount,
               new FiltersBiasesPartInfo( [
                 new ChannelPartInfo(                                0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
                 new ChannelPartInfo( this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true ) ] )
@@ -385,8 +332,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
             this.outputChannelCount_Real = this.inputChannelCount; // (Note: In this case, this.outputChannelCount is zero. So use inputChannelCount.)
             this.inputChannelCount_toBeExtracted = this.outputChannelCount_toBeExtracted = 0; // Does not extract any weights.
             aFiltersBiasesPartInfoArray = [
-//!!! (2022/04/05 Remarked) Always run through all input channels.
-//              new FiltersBiasesPartInfo( this.inputChannelCount,
               new FiltersBiasesPartInfo( [
                 new ChannelPartInfo( 0, this.inputChannelCount, this.outputChannelCount_Real, true ) ] )
             ];
@@ -405,11 +350,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       filtersShape_extracted = [ 1, 1, this.inputChannelCount_toBeExtracted, this.outputChannelCount_toBeExtracted  ];
 
       if ( this.bBias ) {
-        
-//!!! ...unfinished... (2022/04/03)
-// For ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE (3),
-// is this still right?
-
         this.biasesShape = [ this.outputChannelCount_Real ];
         biasesShape_extracted = [ this.outputChannelCount_toBeExtracted ];
       }
@@ -445,7 +385,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     //
     //   - In the 1st round, extracting filter and bias value from sourceWeights[]. At the same time, calculating .afterFilter and
     //       .afterBias by these extracted values combined with undoPreviousEscapingScale
-    //       (i.e. previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). And then,
+    //       (i.e. previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales[ inChannel ]). And then,
     //       Find out .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
     //
     //   - In the 2nd round, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
@@ -454,21 +394,21 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     {
       // Round 0
       {
-        this.boundsArraySet = new BoundsArraySet( this.inputChannelCount, this.outputChannelCount_Real );
+        this.boundsArraySet = new BoundsArraySet.Pointwise( this.inputChannelCount, this.outputChannelCount_Real );
         
         // Determine .input
-        this.boundsArraySet.input.set_all_byBoundsArray( previous_ConvBiasActivation_BoundsArraySet.output );
+        this.boundsArraySet.input.set_all_byBoundsArray( previous_BoundsArraySet_ConvBiasActivation.output );
 
         // Determine .afterUndoPreviousActivationEscaping
         this.boundsArraySet.afterUndoPreviousActivationEscaping
           .set_all_byBoundsArray( this.boundsArraySet.input )
-          .multiply_all_byNs( previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales );
+          .multiply_all_byNs( previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales );
       }
 
       // Round 1
       {
         this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-          sourceWeights.weights, previous_ConvBiasActivation_BoundsArraySet, aFiltersBiasesPartInfoArray );
+          sourceWeights.weights, previous_BoundsArraySet_ConvBiasActivation, aFiltersBiasesPartInfoArray );
 
         // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
         this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
@@ -516,14 +456,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    * @param {Float32Array} sourceFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
+   * @param {BoundsArraySet.ConvBiasActivation} previous_BoundsArraySet_ConvBiasActivation
    *   The previous convolution-bias-activation value bounds set of this pointwise convolution.
    *
    * @param {Pointwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
    *   The input channel range array which describe lower/higher half channels index range.
    */
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-    sourceFloat32Array, previous_ConvBiasActivation_BoundsArraySet, aFiltersBiasesPartInfoArray ) {
+    sourceFloat32Array, previous_BoundsArraySet_ConvBiasActivation, aFiltersBiasesPartInfoArray ) {
 
     let tBounds = new FloatValue.Bounds( 0, 0 );
 
@@ -553,14 +493,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
       { // this.filtersArray
 
-//!!! (2022/04/05 Remarked) Always run through all input channels.
-//        for ( let inChannelSub = 0; inChannelSub < aFiltersBiasesPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-//           if ( inChannel >= this.inputChannelCount )
-//             break FiltersBiasesPartIndexLoop; // Never exceeds the total input channel count.
-
        for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
-          let undoPreviousEscapingScale = previous_ConvBiasActivation_BoundsArraySet.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
+          let undoPreviousEscapingScale = previous_BoundsArraySet_ConvBiasActivation.activationEscaping_ScaleArraySet.undo.scales[ inChannel ];
           let outChannel = outChannelBegin;
 
           InChannelPartIndexLoop:
@@ -653,11 +588,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     //
     this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
-//!!! (2022/04/05 Remarked) Always run through all input channels.
-//     tf.util.assert( ( inChannel == this.inputChannelCount ),
-//       `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-//         + `aFiltersBiasesPartInfoArray[] total input channel count ( ${inChannel} ) should be ( ${this.inputChannelCount} ).` );
-
     tf.util.assert( ( outChannelEnd == this.outputChannelCount_Real ),
       `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
         + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
@@ -733,7 +663,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     if ( this.biasesArray )
       FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.biasesArray, 0, this.biasesArray.length, arrayTemp ); // Shuffle biases.
 
-    this.boundsArraySet.output_interleave_asGrouptTwo( arrayTemp ); // Shuffle bounds array set of output.
+    this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ); // Shuffle bounds array set of output.
   }
 
 }
