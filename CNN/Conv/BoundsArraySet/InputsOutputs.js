@@ -166,6 +166,24 @@ class InputsOutputs {
     return this;
   }
 
+  /**
+   * Rearrange this.outputs[] channel information by interleaving as ( groupCount == 2 ). This channel count must be even
+   * (i.e. divisible by 2).
+   *
+   * @param {Array} arrayTemp
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance.
+   *
+   * @return {InputsOutputs}
+   *   Return this (modified) object.
+   */
+  set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ) {
+    for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
+      this.outputs[ outTensorIndex ].interleave_asGrouptTwo( arrayTemp );
+    }
+    return this;
+  }
+
   get inputTensorCount() { return this.inputs.length; }
 
   get input0() { return this.inputs[ 0 ]; }
