@@ -9,6 +9,7 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "../Pointwise/Pointwise_
 /**
  * The element value bounds for pointwise convolution-bias-activation.
  *
+ * Only input0 is used. The input1 always undefined.
  * Only outputChannelCount0 is used. The outputChannelCount1 always undefined.
  *
  * @see ConvBiasActivation
