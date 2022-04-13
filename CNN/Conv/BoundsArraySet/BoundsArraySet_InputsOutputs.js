@@ -72,7 +72,7 @@ class InputsOutputs {
     if ( input1 )
       this.input1 = input1;
 
-    // Determine outputs array.
+    // Determine outputs.
     if ( outputChannelCount0 > 0 ) {
       this.output0 = new BoundsArray_ActivationEscaping( outputChannelCount0 );
 
@@ -93,78 +93,69 @@ class InputsOutputs {
 
   /**
    * @return {InputsOutputs}
-   *   Return a newly created InputsOutputs which is a copy of this InputsOutputs. The this.inputs will just past
-   * to new InputsOutputs (i.e. NOT copied). But the this.outputs will be copied.
+   *   Return a newly created InputsOutputs which is a copy of this InputsOutputs. The .input0 (, .input1) will just past
+   * to new InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied.
    */
   clone() {
-    let result = new InputsOutputs( this.inputs, this.outputChannelCount0, this.outputChannelCount1 );
+    let result = new InputsOutputs( this.input0, this.input1, this.outputChannelCount0, this.outputChannelCount1 );
     result.set_outputs_all_byBoundsArraySet( this );
     return result;
   }
 
   /**
-   * Set:
-   *   - this.activationEscaping_ScaleArraySet to scale 1 (i.e. all are no scale).
+   * Set all outputs .activationEscaping_ScaleArraySet to scale 1 (i.e. all are no scale).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
-  set_activationEscaping_all_none() {
-    this.activationEscaping_ScaleArraySet.set_all_byN( 1 );
+  set_outputs_all_activationEscaping_all_none() {
+    this.output0.set_activationEscaping_all_none();
+    this.output1?.set_activationEscaping_all_none();
     return this;
   }
 
   /**
    * @param {FloatValue.Bounds} aBounds
-   *   Set all .outputs[] to the same as the specified aBounds. Set the this.activationEscaping_ScaleArraySet
-   * to default ( 1 ). The .inputs[] are not modified.
+   *   Set all .output0 (and output1) to the same as the specified aBounds. Set their this.activationEscaping_ScaleArraySet
+   * to default ( 1 ). The .input0 (and .input1) are not modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
   set_outputs_all_byBounds( aBounds ) {
-    for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
-      this.outputs[ outTensorIndex ].set_all_byBounds( aBounds );
-    }
-    super.set_activationEscaping_all_none();
+    this.output0.set_all_byBounds( aBounds );
+    this.output1?.set_all_byBounds( aBounds );
     return this;
   }
 
   /**
    * @param {BoundsArray} outputBoundsArray
-   *   The BoundsArray to be copied to all .outputs[].
+   *   The BoundsArray to be copied to .output0 (and .output1).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
   set_outputs_all_byBoundsArray( outputBoundsArray ) {
-    for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
-      this.outputs[ outTensorIndex ].set_all_byBoundsArray( outputBoundsArray );
-    }
-
-//!!! ...unfinished... (2022/04/13)
-    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
-
+    this.output0.set_all_byBoundsArray( outputBoundsArray );
+    this.output1?.set_all_byBoundsArray( outputBoundsArray );
     return this;
   }
 
   /**
    * @param {BoundsArraySet.InputsOutputs} aBoundsArraySet
-   *   The BoundsArraySet to be copied. Precondition: ( this.outputs.length == aBoundsArraySet.outputs.length ).
+   *   The BoundsArraySet to be copied. Precondition: ( this.output0.channelCount == aBoundsArraySet.output0.channelCount )
+   * && ( this.output1.channelCount == aBoundsArraySet.output1.channelCount ).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object which is copied from aBoundsArraySet.
    */
   set_outputs_all_byBoundsArraySet( aBoundsArraySet ) {
-    for ( let outTensorIndex = 0; outTensorIndex < this.outputs.length; ++outTensorIndex ) {
-      this.outputs[ outTensorIndex ].set_outputs_all_byBoundsArray( aBoundsArraySet.outputs[ outTensorIndex ] );
-    }
-
-//!!! ...unfinished... (2022/04/13)
-    this.activationEscaping_ScaleArraySet.set_byScaleArraySet( aBoundsArraySet.activationEscaping_ScaleArraySet );
-
+    this.output0.set_outputs_all_byBoundsArray( aBoundsArraySet.output0 );
+    this.output1?.set_outputs_all_byBoundsArray( aBoundsArraySet.output1 );
     return this;
   }
+
+//!!! ...unfinished... (2022/04/13)
 
   /**
    * Set .outputs[] by .input[ 0 ].
