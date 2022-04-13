@@ -57,6 +57,17 @@ class ScaleArray {
   }
 
   /**
+   * @param {number} thisIndex        The array index of this.scales[].
+   * @param {ScaleArray} aScaleArray  Set ( this.scales[ thisIndex ] ) by ( aScaleArray.scales[ aIndex ] ).
+   * @param {number} aIndex           The array index of aScaleArray.scales[].
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_one_byScaleArray( thisIndex, aScaleArray, aIndex ) {
+    return this.set_one_byN( thisIndex, aScaleArray.scales[ aIndex ] );
+  }
+
+  /**
    * Set this.scales[ thisIndex ] to a scale value which could let source bounds [ fromLower, fromUpper ] completely insides destination
    * bounds [ toLower, toUpper ].
    *
@@ -164,6 +175,39 @@ class ScaleArray {
     return this.set_all_byUndo_Ns( aScaleArray.scales );
   }
 
+
+  /**
+   * The this.length will be modified.
+   *
+   * @param {ScaleArray} inputScaleArray0  The ScaleArray of the 1st input.
+   * @param {ScaleArray} inputScaleArray1  The BoundsArray of the 2nd input.
+   *
+   * @return {ScaleArray} Return this (modified) object.
+   */
+  set_all_byScaleArray_concat_input0_input1( inputScaleArray0, inputScaleArray1 ) {
+
+    let totalLength = ( inputScaleArray0?.length ?? 0 ) + ( inputScaleArray1?.length ?? 0 );
+    this.length = totalLength;
+
+    // Concat value scale array.
+    let inChannel = 0;
+
+    if ( inputScaleArray0 ) {
+      for ( let inChannel0 = 0; inChannel0 < inputScaleArray0.length; ++inChannel0, ++inChannel ) {
+        this.set_one_byScaleArray( inChannel, inputScaleArray0, inChannel0 );
+      }
+    }
+
+    if ( inputScaleArray1 ) {
+      for ( let inChannel1 = 0; inChannel1 < inputScaleArray1.length; ++inChannel1, ++inChannel ) {
+        this.set_one_byScaleArray( inChannel, inputScaleArray1, inChannel1 );
+      }
+    }
+
+    return this;
+  }
+
+//!!! ...unfinished... (2022/04/13) split
 
   /**
    * Rearrange scales by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
