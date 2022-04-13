@@ -113,6 +113,15 @@ class ScaleArraySet {
     this.undo = new FloatValue.ScaleArray( arrayLength );
   }
 
+  get length() {
+    return this.do.length;
+  }
+
+  set length( newLength ) {
+    this.do.length = newLength;
+    this.undo.length = newLength;
+  }
+
   /**
    * @return {ScaleArraySet} Return a newly created ScaleArraySet which is a copy of this ScaleArraySet.
    */
