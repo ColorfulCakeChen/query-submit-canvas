@@ -10,12 +10,6 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
  * activationEscaping_ScaleArraySet so that it can be used to let channel escape from activation function's non-linear effect.
  *
  *
-
-//!!! (2022/04/11 Remarked)
-//  * @member {FloatValue.BoundsArray} input
-//  *   The (per channel) bounds of the input element value. Or say, the domain of the convolution-bias-activation.
-
- *
  * @member {FloatValue.BoundsArray} afterUndoPreviousActivationEscaping
  *   The element value bounds (per channel) after applying the previousConvBiasActivation.BoundsArraySet.ActivationEscaping.undo
  * to this.input0. (i.e. beforeFilter)
@@ -33,12 +27,6 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
  * @member {FloatValue.BoundsArray} afterActivation
  *   The element value bounds (per channel) after applying activation function to this.afterActivationEscaping. It is just
  * the this.output0.
- *
-
-//!!! (2022/04/11 Remarked)
-//  * @member {FloatValue.BoundsArray} output
-//  *   The (per channel) bounds of the output element value. Or say, the range of the convolution-bias-activation.
-
  *
  * @member {boolean[]} bPassThrough
  *   If true for a output channel, the output channel should be arranged to pass-through from input to output.
@@ -64,7 +52,7 @@ class ConvBiasActivation extends InputsOutputs {
 
     this.bPassThrough = new Array( outputChannelCount );
 
-    //this.set_all_byBounds.set_all_byBounds( Weights.Base.ValueBounds );
+    //this.set_outputs_all_byBounds( Weights.Base.ValueBounds );
   }
 
   /**
@@ -311,11 +299,10 @@ class ConvBiasActivation extends InputsOutputs {
     return this;
   }
 
-//!!! ...unfinished... (2022/04/13)
   /**
-   * Rearrange output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation,
-   * .activationEscaping_ScaleArraySet, .bPassThrough) by interleaving as ( groupCount == 2 ). The channel count must be even
-   * (i.e. divisible by 2).
+   * Rearrange output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation
+   * (i.e. output0, including (activationEscaping) .scaleArraySet), .bPassThrough) by interleaving as ( groupCount == 2 ).
+   * The channel count must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
    *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
@@ -325,11 +312,10 @@ class ConvBiasActivation extends InputsOutputs {
    *   Return this (modified) object.
    */
   set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    this.afterFilter.interleave_asGrouptTwo( arrayTemp );
-    this.afterBias.interleave_asGrouptTwo( arrayTemp );
-    this.afterActivationEscaping.interleave_asGrouptTwo( arrayTemp );
+    this.afterFilter.set_all_byInterleave_asGrouptTwo( arrayTemp );
+    this.afterBias.set_all_byInterleave_asGrouptTwo( arrayTemp );
+    this.afterActivationEscaping.set_all_byInterleave_asGrouptTwo( arrayTemp );
     super.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ); // i.e. this.afterActivation
-    this.activationEscaping_ScaleArraySet.interleave_asGrouptTwo( arrayTemp );
     FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.bPassThrough, 0, this.bPassThrough.length, arrayTemp );
     return this;
   }
