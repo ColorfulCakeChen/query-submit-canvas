@@ -5,7 +5,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ParamDesc from "../../Unpacker/ParamDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
-import * as ConvBiasActivation from "../ConvBiasActivation.js";
+import * as BoundsArraySet from "../BoundsArraySet.js";
 import * as ChannelCountCalculator from "../ChannelCountCalculator.js";
 import * as Pointwise from "../Pointwise.js";
 import * as Depthwise from "../Depthwise.js";
@@ -253,7 +253,7 @@ import { Params } from "./PointDepthPoint_Params.js";
  *
  *     - If both ( pointwise21ChannelCount == 0 ) and ( pointwise22ChannelCount == 0 ), it will be channelCount_concat1After_pointwise2Before.
  *
- * @member {ConvBiasActivation.BoundsArraySet} boundsArraySet
+ * @member {BoundsArraySet.ConvBiasActivation} boundsArraySet
  *   The element value bounds of this PointDepthPoint's input/output.
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
@@ -304,8 +304,19 @@ class Base extends ReturnOrClone.Base {
    * @param {Params} params
    *   A Params object. The params.extract() will be called to extract parameters.
    *
-   * @param {ConvBiasActivation.BoundsArraySet} previousBoundsArraySet
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
+   *   The element value bounds (per channel) of input. Usually, it is The .output0 of the previous PointDepthPoint value bounds
+   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
+   *   The element value bounds (per channel) of input. Usually, it is The .output1 of the previous PointDepthPoint value bounds
+   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *
+
+//!!! ...unfinished... (2022/04/13)
+   * @param {BoundsArraySet.ConvBiasActivation} previousBoundsArraySet
    *   The element value bounds of previous PointDepthPoint's input/output.
+
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
@@ -314,7 +325,7 @@ class Base extends ReturnOrClone.Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    */
-  * initer( progressParent, params, previousBoundsArraySet, channelShuffler_ConcatPointwiseConv ) {
+  * initer( progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv ) {
 
     // 0. Prepare
 
@@ -465,7 +476,7 @@ class Base extends ReturnOrClone.Base {
       0 // Default channelShuffler_outputGroupCount for pointwise1, is zero (never positive).
     );
 
-    if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd, previousBoundsArraySet ) )
+    if ( !this.pointwise1.init( params.defaultInput, this.byteOffsetEnd, inputScaleBoundsArray0 ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise1.byteOffsetEnd;
 
@@ -519,7 +530,7 @@ class Base extends ReturnOrClone.Base {
       nHigherHalfDifferent_depthwise1, inputChannelCount_lowerHalf_depthwise1
     );
 
-    if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.boundsArraySet ) )
+    if ( !this.depthwise1.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.boundsArraySet.output0 ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.depthwise1.byteOffsetEnd;
 
@@ -555,7 +566,11 @@ class Base extends ReturnOrClone.Base {
         ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, -1 // depthwise2 never has higher-half-different.
       );
 
-      if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.boundsArraySet ) )
+//!!! (2022/04/13 Remarked)
+// Because the depthwise2 processes the inputTensors[ 0 ] directly (i.e. not the pointwise1 result of inputTensors[ 0 ], and
+// not inputTensors[ 1 ]).
+//      if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.boundsArraySet ) )
+      if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd, inputScaleBoundsArray1 ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.depthwise2.byteOffsetEnd;
 
