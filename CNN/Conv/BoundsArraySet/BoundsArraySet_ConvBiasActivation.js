@@ -52,23 +52,15 @@ class ConvBiasActivation extends InputsOutputs {
    *   - Only input0 (always no input1), because convolution (no matter pointwise or depthwise) could handle one input tensor.
    *   - Only output0 (always no output1), because convolution (no matter pointwise or depthwise) always generate one output tensor.
    *
-   *
    */
-//!!! (2022/04/11 Remarked)
-//   constructor( inputChannelCount, outputChannelCount ) {
-//     this.input = new FloatValue.BoundsArray( inputChannelCount );
- 
   constructor( input0, outputChannelCount0 ) {
-    super( input0, undefined, outputChannelCount0, undefined ); 
+    super( input0, undefined, outputChannelCount0, undefined ); // input0 and .output0 (i.e. .afterActivation)
 
     this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( input0.length ); // channel count same as input0.
 
     this.afterFilter = new FloatValue.BoundsArray( outputChannelCount0 );
     this.afterBias = new FloatValue.BoundsArray( outputChannelCount0 );
     this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount0 );
-
-//!!! (2022/04/11 Remarked)
-//    this.afterActivation = new FloatValue.BoundsArray( outputChannelCount ); // i.e. .output
 
     this.bPassThrough = new Array( outputChannelCount );
 
@@ -222,19 +214,17 @@ class ConvBiasActivation extends InputsOutputs {
     return this;
   }
 
-//!!! ...unfinished... (2022/04/13)
   /**
-   * Determine .activationEscaping_ScaleArraySet and .afterActivationEscaping and .afterActivation, by .afterBias and .bPassThrough
-   * and nActivationId.
+   * Determine .afterActivationEscaping and .afterActivation (including (activationEscaping) .scaleArraySet), by .afterBias and
+   * .bPassThrough and nActivationId.
    *
    * The following properties will be used:
    *   - this.afterBias
    *   - this.bPassThrough
    *
    * The following properties will be modified:
-   *   - this.activationEscaping_ScaleArraySet
    *   - this.afterActivationEscaping
-   *   - this.afterActivation
+   *   - this.afterActivation (including (activationEscaping) .scaleArraySet)
    *
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this depthwise convolution.
@@ -242,19 +232,19 @@ class ConvBiasActivation extends InputsOutputs {
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
+  set_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
 
     for ( let outChannel = 0; outChannel < this.afterBias.length; ++outChannel ) {
 
-      // 1. Determine .activationEscaping_ScaleArraySet
+      // 1. Determine (activationEscaping) .scaleArraySet (of .output0)
       {
         // 1.1 Determine .do
 
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
 
           // Since no activation function, no need to escape. (i.e. scale = 1 for no scale)
-          this.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 );
+          this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 );
 
         } else {
 
@@ -263,35 +253,35 @@ class ConvBiasActivation extends InputsOutputs {
             // Calculate the scale for escaping bias result from activation function's non-linear domain into linear domain.
             //
             // Note: This does not work for avg/max pooling.
-            this.activationEscaping_ScaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper( outChannel,
+            this.output0.scaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper( outChannel,
               this.afterBias.lowers[ outChannel ], this.afterBias.uppers[ outChannel ],
               theActivationFunctionInfo.inputDomainLinear.lower, theActivationFunctionInfo.inputDomainLinear.upper
             );
 
-            let doEscapingScale = this.activationEscaping_ScaleArraySet.do.scales[ outChannel ];
+            let doEscapingScale = this.output0.scaleArraySet.do.scales[ outChannel ];
             tf.util.assert( ( Number.isNaN( doEscapingScale ) == false ),
               `ConvBiasActivation.BoundsArraySet.`
-                + `set_activationEscaping_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId(): `
-                + `this.activationEscaping_ScaleArraySet.do.scales[ ${outChannel} ] ( ${doEscapingScale} ) `
+                + `set_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId(): `
+                + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] ( ${doEscapingScale} ) `
                 + `should not be NaN. `
                 + `Please use activation function (e.g. tanh()) which has both negative and positive parts near origin point.`
             );
 
           } else { // Non pass-through half channels.
             // Since non-pass-through, no need to escape. (i.e. scale = 1 for no scale)
-            this.activationEscaping_ScaleArraySet.do.set_one_byN( outChannel, 1 );
+            this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 );
           }
         }
 
         // 1.2 Determine .undo (Prepared for the next convolution-bias-activation. Not for this.)
-        this.activationEscaping_ScaleArraySet.undo.set_one_byUndo_ScaleArray(
-          outChannel, this.activationEscaping_ScaleArraySet.do, outChannel );
+        this.output0.scaleArraySet.undo.set_one_byUndo_ScaleArray(
+          outChannel, this.output0.scaleArraySet.do, outChannel );
       }
 
       // 2. Determine .afterActivationEscaping
       this.afterActivationEscaping
         .set_one_byBoundsArray( outChannel, this.afterBias, outChannel )
-        .multiply_one_byNs( outChannel, this.activationEscaping_ScaleArraySet.do.scales, outChannel );
+        .multiply_one_byNs( outChannel, this.output0.scaleArraySet.do.scales, outChannel );
 
       // 3. Determine .afterActivation
       {
@@ -321,6 +311,7 @@ class ConvBiasActivation extends InputsOutputs {
     return this;
   }
 
+//!!! ...unfinished... (2022/04/13)
   /**
    * Rearrange output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation,
    * .activationEscaping_ScaleArraySet, .bPassThrough) by interleaving as ( groupCount == 2 ). The channel count must be even
