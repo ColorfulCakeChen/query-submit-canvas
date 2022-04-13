@@ -1,6 +1,5 @@
 export { InputsOutputs };
 
-//import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 
 /**
@@ -41,13 +40,8 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
  * @member {number} outputChannelCount0
  *   The channel count of 1st output (i.e. this.output0.channelCount).
  *
- * @member {number} inputChannelCount1
+ * @member {number} outputChannelCount1
  *   The channel count of 2nd output (i.e. this.output1.channelCount).
- *
- * @member {ActivationEscaping.ScaleArraySet} activationEscaping_ScaleArraySet
- *   The scales for moving this.afterBias bounds into the linear domain of the activation function. That is, for
- * letting this.afterBias escape from activation function's non-linear domain. And the .undo for undoing the scales.
- * Only output0 has this information.
  */
 class InputsOutputs {
 
@@ -89,26 +83,6 @@ class InputsOutputs {
       );
     }
   }
-
-
-//!!! ...unfinished... (2022/04/13)
-//   get length() {
-//     return this.boundsArray.length;
-//   }
-//
-//   get channelCount() {
-//     return this.length;
-//   }
-//
-//   set length( newLength ) {
-//     this.boundsArray.length = newLength;
-//     this.activationEscaping_ScaleArraySet.length = newLength;
-//   }
-//
-//   set channelCount( newChannelCount ) {
-//     this.length = newChannelCount;
-//   }
-
 
   /**
    * @return {InputsOutputs}
@@ -246,6 +220,7 @@ class InputsOutputs {
     this.input0.split_to_lowerHalf_higherHalf( this.output0, this.output1 );
     return this;
   }
+
 
   get inputTensorCount() {
     if ( this.input0 )
