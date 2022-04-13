@@ -215,6 +215,21 @@ class BoundsArray {
   }
 
   /**
+   * Rearrange bounds by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
+   *
+   * @param {Array} arrayTemp
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance.
+   *
+   * @return {BoundsArray} Return this (modified) object.
+   */
+  set_all_byInterleave_asGrouptTwo( arrayTemp ) {
+    ArrayInterleaver.interleave_asGrouptTwo( this.lowers, 0, this.lowers.length, arrayTemp );
+    ArrayInterleaver.interleave_asGrouptTwo( this.uppers, 0, this.uppers.length, arrayTemp );
+    return this;
+  }
+
+  /**
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {number} aLower     Clamp this.lowers[ thisIndex ] by aLower.
    * @param {number} aUpper     Clamp this.uppers[ thisIndex ] by aUpper.
@@ -682,21 +697,6 @@ class BoundsArray {
       higherHalfBoundsArray.set_one_byBoundsArray( outChannel, this, inChannel );
     }
 
-    return this;
-  }
-
-  /**
-   * Rearrange bounds by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
-   *
-   * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
-   * and improve performance.
-   *
-   * @return {BoundsArray} Return this (modified) object.
-   */
-  interleave_asGrouptTwo( arrayTemp ) {
-    ArrayInterleaver.interleave_asGrouptTwo( this.lowers, 0, this.lowers.length, arrayTemp );
-    ArrayInterleaver.interleave_asGrouptTwo( this.uppers, 0, this.uppers.length, arrayTemp );
     return this;
   }
 
