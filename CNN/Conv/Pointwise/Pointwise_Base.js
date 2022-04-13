@@ -47,19 +47,18 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
     super(
       inputChannelCount, outputChannelCount, bBias, nActivationId,
       nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf, channelShuffler_outputGroupCount );
-
   }
 
   /**
    * @param {Float32Array} inputFloat32Array
    *   A Float32Array whose values will be interpreted as weights.
    *
-   * @param {BoundsArraySet.ConvBiasActivation} previous_BoundsArraySet_ConvBiasActivation
+   * @param {BoundsArraySet.InputsOutputs} previousBoundsArraySet
    *   The previous convolution-bias-activation value bounds set of this pointwise convolution.
    *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, previous_BoundsArraySet_ConvBiasActivation ) {
+  init( inputFloat32Array, byteOffsetBegin, previousBoundsArraySet ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -77,7 +76,7 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
 //!!! (2022/02/21 Remarked) integrated into super class .init()
 //     // 1.2 Determine output value bounds (and activation escaping scale-translate).
-//     this.boundsArraySet.set_by( previous_BoundsArraySet_ConvBiasActivation,
+//     this.boundsArraySet.set_by( previousBoundsArraySet,
 //       this.bPointwise, this.inputChannelCount, this.bBias, this.nActivationId );
 
     let bExtractOk;
@@ -86,11 +85,11 @@ class Base extends FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTe
 
       this.byteOffsetBegin = this.byteOffsetEnd = byteOffsetBegin;
       this.tensorWeightCountExtracted = this.tensorWeightCountTotal = 0;
-      this.boundsArraySet = previous_BoundsArraySet_ConvBiasActivation; // Bypass previous to next.
+      this.boundsArraySet = previousBoundsArraySet; // Bypass previous to next.
 
     } else { // 3.
 
-      bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, previous_BoundsArraySet_ConvBiasActivation );
+      bExtractOk = super.init( inputFloat32Array, byteOffsetBegin, previousBoundsArraySet );
       if ( bExtractOk ) {
         try {
           if ( this.filtersShape && this.filtersArray ) {
