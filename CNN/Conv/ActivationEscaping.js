@@ -154,6 +154,32 @@ class ScaleArraySet {
   }
 
   /**
+   * The this.length will be modified.
+   *
+   * @param {ScaleArraySet} inputScaleArraySet0  The ScaleArraySet of the 1st input.
+   * @param {ScaleArraySet} inputScaleArraySet1  The ScaleArraySet of the 2nd input.
+   *
+   * @return {ScaleArraySet} Return this (modified) object.
+   */
+  set_all_byScaleArraySet_concat_input0_input1( inputScaleArraySet0, inputScaleArraySet1 ) {
+    this.do.set_all_byScaleArray_concat_input0_input1( inputScaleArraySet0.do, inputScaleArraySet1.do );
+    this.undo.set_all_byScaleArray_concat_input0_input1( inputScaleArraySet0.undo, inputScaleArraySet1.undo );
+    return this;
+  }
+
+  /**
+   * @param {ScaleArraySet} lowerHalfScaleArraySet   The ScaleArraySet of the 1st output. Its .length will be modified.
+   * @param {ScaleArraySet} higherHalfScaleArraySet  The ScaleArraySet of the 2nd output. Its .length will be modified.
+   *
+   * @return {ScaleArraySet} Return this (unmodified) object.
+   */
+  split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet, higherHalfScaleArraySet ) {
+    this.do.split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet.do, higherHalfScaleArraySet.do );
+    this.undo.split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet.undo, higherHalfScaleArraySet.undo );
+    return this;
+  }
+
+  /**
    * Rearrange elements by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
