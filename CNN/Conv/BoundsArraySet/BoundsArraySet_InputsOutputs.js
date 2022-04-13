@@ -1,7 +1,8 @@
 export { InputsOutputs };
 
-import * as FloatValue from "../../Unpacker/FloatValue.js";
-import * as ActivationEscaping from "../ActivationEscaping.js";
+//import * as FloatValue from "../../Unpacker/FloatValue.js";
+//import * as ActivationEscaping from "../ActivationEscaping.js";
+import { BoundsArray_ActivationEscaping } from "./BoundsArray_ActivationEscaping.js";
 
 /**
  * Element value bounds (per channel) for inputs and outputs of an operation.
@@ -10,44 +11,39 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
  * activation function's non-linear effect.
  *
  *
+ * @member {number} inputTensorCount
+ *   How many input tensors. It is 1, if only input0 exists. It is 2, if both input0 and input1 exist. 
  *
- * @member {FloatValue.BoundsArray[]} inputs
- *   The element value bounds (per channel) of all inputs (i.e. the domain of the operation). This array (which is past into
+ * @member {BoundsArray_ActivationEscaping} input0
+ *   The element value bounds (per channel) of 1st input (can NOT null). It is the domain of the operation. It (from constructor)
+ * will be kept (not cloned) directly. So caller should not modify them.
+ *
+ * @member {BoundsArray_ActivationEscaping} input1
+ *   The element value bounds (per channel) of 2nd input (can null or undefined). It is the domain of the operation. It (from
  * constructor) will be kept (not cloned) directly. So caller should not modify them.
  *
- * @member {number} inputTensorCount
- *   How many input tensors (i.e. this.inputs.length).
- *
- * @member {FloatValue.BoundsArray} input0
- *   The element value bounds (per channel) of 1st input (i.e. this.inputs[ 0 ]).
- *
- * @member {FloatValue.BoundsArray} input1
- *   The element value bounds (per channel) of 2nd input (i.e. this.inputs[ 1 ]).
- *
  * @member {number} inputChannelCount0
- *   The channel count of 1st input (i.e. this.input0.length).
+ *   The channel count of 1st input (i.e. this.input0.channelCount).
  *
  * @member {number} inputChannelCount1
- *   The channel count of 2nd input (i.e. this.input1.length).
- *
- * @member {FloatValue.BoundsArray[]} outputs
- *   The element value bounds (per channel) of all outputs (i.e. the range of the operation). The array is created by constructor
- * according to outputChannelCount0 and outputChannelCount1. 
+ *   The channel count of 2nd input (i.e. this.input1.channelCount).
  *
  * @member {number} outputTensorCount
- *   How many output tensors (i.e. this.outputs.length).
+ *   How many output tensors. It is 1, if only output0 exists. It is 2, if both output0 and output1 exist. 
  *
- * @member {FloatValue.BoundsArray} output0
- *   The element value bounds (per channel) of 1st output (i.e. this.outputs[ 0 ]).
+ * @member {BoundsArray_ActivationEscaping} output0
+ *   The element value bounds (per channel) of 1st output. It is the range of the operation). It is created by constructor
+ * according to outputChannelCount0 (must be positive).
  *
- * @member {FloatValue.BoundsArray} output1
- *   The element value bounds (per channel) of 2nd output (i.e. this.outputs[ 1 ]).
+ * @member {BoundsArray_ActivationEscaping} output1
+ *   The element value bounds (per channel) of 2nd output. It is the range of the operation). It is created by constructor
+ * according to outputChannelCount1 (if positive).
  *
  * @member {number} outputChannelCount0
- *   The channel count of 1st output (i.e. this.output0.length).
+ *   The channel count of 1st output (i.e. this.output0.channelCount).
  *
- * @member {number} outputChannelCount1
- *   The channel count of 2nd output (i.e. this.output1.length).
+ * @member {number} inputChannelCount1
+ *   The channel count of 2nd output (i.e. this.output1.channelCount).
  *
  * @member {ActivationEscaping.ScaleArraySet} activationEscaping_ScaleArraySet
  *   The scales for moving this.afterBias bounds into the linear domain of the activation function. That is, for
@@ -57,17 +53,33 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
 class InputsOutputs {
 
   /**
+   *
+   * @param {number} outputChannelCount0
+   *   The channel count of 1st output. (MUST positive)
+   *
+   * @param {number} outputChannelCount1
+   *   The channel count of 2nd output. (If undefined or null or zero or negative, there will be no output1.)
    */
-  constructor( inputs, outputChannelCount0, outputChannelCount1 ) {
-    this.inputs = inputs;
+  constructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
+
+    tf.util.assert( ( input0 instanceof BoundsArray_ActivationEscaping ),
+      `BoundsArraySet.InputsOutputs.constructor(): `
+        + `input0 ( ${input0} ) must exist and be an instance of class BoundsArray_ActivationEscaping.`
+    );
+
+    this.input0 = input0;
+
+    if ( input1 )
+      this.input1 = input1;
 
     // Determine outputs array.
     if ( outputChannelCount0 > 0 ) {
-      if ( outputChannelCount1 > 0 ) { // Two outputs.
-        this.outputs = [ new FloatValue.BoundsArray( outputChannelCount0 ), new FloatValue.BoundsArray( outputChannelCount1 ) ];
+      this.output0 = new BoundsArray_ActivationEscaping( outputChannelCount0 );
 
-      } else { // ( outputChannelCount1 <= 0 ), One output.
-        this.outputs = [ new FloatValue.BoundsArray( outputChannelCount0 ) ];
+      if ( outputChannelCount1 > 0 ) { // Two outputs.
+        this.output1 = new BoundsArray_ActivationEscaping( outputChannelCount1 );
+
+      // ( outputChannelCount1 <= 0 ), One output.
       }
 
     } else { // ( outputChannelCount0 <= 0 ), Illegal.
@@ -77,8 +89,6 @@ class InputsOutputs {
           + `output0 must exist (i.e. outputChannelCount0 ( ${outputChannelCount0} ) must > 0 ).`
       );
     }
-
-    this.activationEscaping_ScaleArraySet = new ActivationEscaping.ScaleArraySet( outputChannelCount0 );
   }
 
   /**
@@ -234,22 +244,38 @@ class InputsOutputs {
     return this;
   }
 
-  get inputTensorCount() { return this.inputs.length; }
+  get inputTensorCount() {
+    if ( this.input0 )
+      if ( this.input1 )
+        return 2;
+      else
+        return 1;
+    else
+      if ( this.input1 )
+        return 1;
+      else
+        return 0;
+  }
 
-  get input0() { return this.inputs[ 0 ]; }
-  get input1() { return this.inputs[ 1 ]; }
-
-  get inputChannelCount0() { return this.input0.length; }
-  get inputChannelCount1() { return this.input1.length; }
+  get inputChannelCount0() { return this.input0.channelCount; }
+  get inputChannelCount1() { return this.input1?.channelCount ?? 0; }
 
 
-  get outputTensorCount() { return this.outputs.length; }
+  get outputTensorCount() {
+    if ( this.output0 )
+      if ( this.output1 )
+        return 2;
+      else
+        return 1;
+    else
+      if ( this.output1 )
+        return 1;
+      else
+        return 0;
+  }
 
-  get output0() { return this.outputs[ 0 ]; }
-  get output1() { return this.outputs[ 1 ]; }
-
-  get outputChannelCount0() { return this.output0.length; }
-  get outputChannelCount1() { return this.output1.length; }
+  get outputChannelCount0() { return this.output0.channelCount; }
+  get outputChannelCount1() { return this.output1?.channelCount ?? 0; }
 
 }
 
