@@ -1,8 +1,7 @@
 export { InputsOutputs };
 
 //import * as FloatValue from "../../Unpacker/FloatValue.js";
-//import * as ActivationEscaping from "../ActivationEscaping.js";
-import { BoundsArray_ActivationEscaping } from "./BoundsArray_ActivationEscaping.js";
+import * as ActivationEscaping from "../ActivationEscaping.js";
 
 /**
  * Element value bounds (per channel) for inputs and outputs of an operation.
@@ -14,11 +13,11 @@ import { BoundsArray_ActivationEscaping } from "./BoundsArray_ActivationEscaping
  * @member {number} inputTensorCount
  *   How many input tensors. It is 1, if only input0 exists. It is 2, if both input0 and input1 exist. 
  *
- * @member {BoundsArray_ActivationEscaping} input0
+ * @member {ActivationEscaping.ScaleBoundsArray} input0
  *   The element value bounds (per channel) of 1st input (can NOT null). It is the domain of the operation. It (from constructor)
  * will be kept (not cloned) directly. So caller should not modify them.
  *
- * @member {BoundsArray_ActivationEscaping} input1
+ * @member {ActivationEscaping.ScaleBoundsArray} input1
  *   The element value bounds (per channel) of 2nd input (can null or undefined). It is the domain of the operation. It (from
  * constructor) will be kept (not cloned) directly. So caller should not modify them.
  *
@@ -31,11 +30,11 @@ import { BoundsArray_ActivationEscaping } from "./BoundsArray_ActivationEscaping
  * @member {number} outputTensorCount
  *   How many output tensors. It is 1, if only output0 exists. It is 2, if both output0 and output1 exist. 
  *
- * @member {BoundsArray_ActivationEscaping} output0
+ * @member {ActivationEscaping.ScaleBoundsArray} output0
  *   The element value bounds (per channel) of 1st output. It is the range of the operation). It is created by constructor
  * according to outputChannelCount0 (must be positive).
  *
- * @member {BoundsArray_ActivationEscaping} output1
+ * @member {ActivationEscaping.ScaleBoundsArray} output1
  *   The element value bounds (per channel) of 2nd output. It is the range of the operation). It is created by constructor
  * according to outputChannelCount1 (if positive).
  *
@@ -62,9 +61,9 @@ class InputsOutputs {
    */
   constructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
 
-    tf.util.assert( ( input0 instanceof BoundsArray_ActivationEscaping ),
+    tf.util.assert( ( input0 instanceof ActivationEscaping.ScaleBoundsArray ),
       `BoundsArraySet.InputsOutputs.constructor(): `
-        + `input0 ( ${input0} ) must exist and be an instance of class BoundsArray_ActivationEscaping.`
+        + `input0 ( ${input0} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
     );
 
     this.input0 = input0;
@@ -74,10 +73,10 @@ class InputsOutputs {
 
     // Determine outputs.
     if ( outputChannelCount0 > 0 ) {
-      this.output0 = new BoundsArray_ActivationEscaping( outputChannelCount0 );
+      this.output0 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount0 );
 
       if ( outputChannelCount1 > 0 ) { // Two outputs.
-        this.output1 = new BoundsArray_ActivationEscaping( outputChannelCount1 );
+        this.output1 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount1 );
 
       // ( outputChannelCount1 <= 0 ), One output.
       }
@@ -163,16 +162,16 @@ class InputsOutputs {
   }
 
   /**
-   * @param {BoundsArray_ActivationEscaping} outputBoundsArray_ActivationEscaping
-   *   The BoundsArray_ActivationEscaping to be copied to .output0 (and .output1). The .activationEscaping_ScaleArraySet are also
+   * @param {ActivationEscaping.ScaleBoundsArray} aScaleBoundsArray
+   *   The ScaleBoundsArray to be copied to .output0 (and .output1). The .activationEscaping_ScaleArraySet are also
    * copied. The .input0 (and .input1) are not modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
-  set_outputs_all_byBoundsArray_ActivationEscaping( outputBoundsArray_ActivationEscaping ) {
-    this.output0.set_all_byBoundsArray_ActivationEscaping( outputBoundsArray_ActivationEscaping );
-    this.output1?.set_all_byBoundsArray_ActivationEscaping( outputBoundsArray_ActivationEscaping );
+  set_outputs_all_byScaleBoundsArray( aScaleBoundsArray ) {
+    this.output0.set_all_byScaleBoundsArray( aScaleBoundsArray );
+    this.output1?.set_all_byScaleBoundsArray( aScaleBoundsArray );
     return this;
   }
 
@@ -186,8 +185,8 @@ class InputsOutputs {
    * to new InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied (including .activationEscaping_ScaleArraySet).
    */
   set_outputs_all_byBoundsArraySet_Outputs( aBoundsArraySet_Outputs ) {
-    this.output0.set_all_byBoundsArray_ActivationEscaping( aBoundsArraySet_Outputs.output0 );
-    this.output1?.set_all_byBoundsArray_ActivationEscaping( aBoundsArraySet_Outputs.output1 );
+    this.output0.set_all_byScaleBoundsArray( aBoundsArraySet_Outputs.output0 );
+    this.output1?.set_all_byScaleBoundsArray( aBoundsArraySet_Outputs.output1 );
     return this;
   }
 
@@ -198,8 +197,8 @@ class InputsOutputs {
    *   Return this (modified) object.
    */
   set_outputs_all_by_input0() {
-    this.output0.set_all_byBoundsArray_ActivationEscaping( this.input0 );
-    this.output1?.set_all_byBoundsArray_ActivationEscaping( this.input0 ); // Note: also use this.input0 (not this.input1).
+    this.output0.set_all_byScaleBoundsArray( this.input0 );
+    this.output1?.set_all_byScaleBoundsArray( this.input0 ); // Note: also use this.input0 (not this.input1).
     return this;
   }
 
@@ -210,8 +209,8 @@ class InputsOutputs {
    *   Return this (modified) object.
    */
   set_outputs_all_by_concat_input0_input1() {
-    this.output0.set_all_byBoundsArray_ActivationEscaping_concat_input0_input1( this.input0, this.input1 );
-    this.output1?.set_all_byBoundsArray_ActivationEscaping( this.output0 ); // Note: the same as .output0.
+    this.output0.set_all_byScaleBoundsArray_concat_input0_input1( this.input0, this.input1 );
+    this.output1?.set_all_byScaleBoundsArray( this.output0 ); // Note: the same as .output0.
     return this;
   }
 
@@ -242,7 +241,7 @@ class InputsOutputs {
   set_outputs_all_byBoundsArray_split_input0() {
 
     if ( !this.output1 )
-      this.output1 = new BoundsArray_ActivationEscaping( 0 ); // Use ( channelCount == 0 ) temporarily. It will be adjusted later.
+      this.output1 = new ActivationEscaping.ScaleBoundsArray( 0 ); // Use ( channelCount == 0 ) temporarily. It will be adjusted later.
 
     this.input0.split_to_lowerHalf_higherHalf( this.output0, this.output1 );
     return this;
