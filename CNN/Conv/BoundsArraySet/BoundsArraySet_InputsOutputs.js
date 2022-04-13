@@ -96,7 +96,7 @@ class InputsOutputs {
   }
 
   /**
-   * Set all outputs .activationEscaping_ScaleArraySet to scale 1 (i.e. all are no scale).
+   * Set all outputs (activationEscaping) .scaleArraySet to scale 1 (i.e. all are no scale).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -109,7 +109,7 @@ class InputsOutputs {
 
   /**
    * @param {FloatValue.Bounds} aBounds
-   *   Set all .output0 (and output1) to the same as the specified aBounds. Set their this.activationEscaping_ScaleArraySet
+   *   Set all .output0 (and output1) to the same as the specified aBounds. Set their (activationEscaping) this.scaleArraySet
    * to default ( 1 ). The .input0 (and .input1) are not modified.
    *
    * @return {InputsOutputs}
@@ -123,7 +123,7 @@ class InputsOutputs {
 
   /**
    * @param {BoundsArray} outputBoundsArray
-   *   The BoundsArray to be copied to .output0 (and .output1). Set their this.activationEscaping_ScaleArraySet
+   *   The BoundsArray to be copied to .output0 (and .output1). Set their (activationEscaping) this.scaleArraySet
    * to default ( 1 ). The .input0 (and .input1) are not modified.
    *
    * @return {InputsOutputs}
@@ -137,7 +137,7 @@ class InputsOutputs {
 
   /**
    * @param {ActivationEscaping.ScaleBoundsArray} aScaleBoundsArray
-   *   The ScaleBoundsArray to be copied to .output0 (and .output1). The .activationEscaping_ScaleArraySet are also
+   *   The ScaleBoundsArray to be copied to .output0 (and .output1). The (activationEscaping) .scaleArraySet are also
    * copied. The .input0 (and .input1) are not modified.
    *
    * @return {InputsOutputs}
@@ -150,13 +150,19 @@ class InputsOutputs {
   }
 
   /**
+   * Precondition:
+   *   - ( this.output0.channelCount == aBoundsArraySet.output0.channelCount ) &&
+   *   - ( this.output1.channelCount == aBoundsArraySet.output1.channelCount )
+   *
+   * This .input0 (and .input1) are not modified. But this .output0 (, .output1) will copy from aBoundsArraySet
+   * (including (activationEscaping) .scaleArraySet).
+   *
+   *
    * @param {BoundsArraySet.InputsOutputs} aBoundsArraySet
-   *   The BoundsArraySet to be copied. Precondition: ( this.output0.channelCount == aBoundsArraySet.output0.channelCount )
-   * && ( this.output1.channelCount == aBoundsArraySet.output1.channelCount ).
+   *   The BoundsArraySet to be copied.
    *
    * @return {InputsOutputs}
-   *   Return this (modified) object which is copied from aBoundsArraySet. The .input0 (, .input1) will just past
-   * to new InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied (including .activationEscaping_ScaleArraySet).
+   *   Return this (modified) object.
    */
   set_outputs_all_byBoundsArraySet_Outputs( aBoundsArraySet_Outputs ) {
     this.output0.set_all_byScaleBoundsArray( aBoundsArraySet_Outputs.output0 );
