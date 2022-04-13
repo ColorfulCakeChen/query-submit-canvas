@@ -394,10 +394,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     {
       // Round 0
       {
-        this.boundsArraySet = new BoundsArraySet.Pointwise( this.inputChannelCount, this.outputChannelCount_Real );
-        
+        this.boundsArraySet = new BoundsArraySet.Pointwise( previous_BoundsArraySet_ConvBiasActivation.outputs, this.outputChannelCount_Real );
+
         // Determine .input
-        this.boundsArraySet.input.set_all_byBoundsArray( previous_BoundsArraySet_ConvBiasActivation.output );
+        this.boundsArraySet.input.set_all_byBoundsArray( previous_BoundsArraySet_ConvBiasActivation.output0 );
 
         // Determine .afterUndoPreviousActivationEscaping
         this.boundsArraySet.afterUndoPreviousActivationEscaping
@@ -480,8 +480,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     // Extracting weights of filters and biases. (Including extra scale.)
     let sourceIndex = 0, filterIndex = 0, biasIndex = 0;
 
-//!!! (2022/04/05 Remarked) Always run through all input channels.
-//    let inChannel = 0;
     let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
 
     FiltersBiasesPartIndexLoop:
