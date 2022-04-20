@@ -4,6 +4,16 @@ import * as WorkerProxies from "./WorkerProxies.js";
 export { Config } from "./Net.js";
 export { Base };
 
+//!!! ...unfinished... (2022/04/20)
+// Since it is slow to transfer data between CPU and GPU (for WebGL), it seems not feasible to use multiple workers
+// to to process both competion side of an difference evolution.
+//
+// Perhaps, combine two neural network of both competion side into one larger neural network (suppose they have the
+// same neural network architecture, e.g. same layer count of ShuffleNetV2). Every (combined) pointwise and depthwise
+// convolution computes both side in one tensorflow.js function call. This may be faster than compute them in two
+// iteration.
+//
+
 /**
  * There are many neural networks inside. The apply() feeds the same input to the these different neural networks.
  *
