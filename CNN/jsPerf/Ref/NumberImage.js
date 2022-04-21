@@ -431,16 +431,6 @@ class Base {
       .set_all_byBoundsArray( imageOutNew.boundsArraySet.input0 )
       .add_all_byBoundsArray( another.boundsArraySet.output0 );
 
-//!!! (2022/04/21 Remarked)
-//     // Calculate value bounds of every output channels (i.e. .afterActivation; .output).
-//     {
-//       imageOutNew.boundsArraySet.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1. (i.e. no scale)
-//
-//       imageOutNew.boundsArraySet.afterActivation
-//         .set_all_byBoundsArray( this.boundsArraySet.afterActivation )
-//         .add_all_byBoundsArray( another.boundsArraySet.afterActivation );
-//     }
-
     return imageOutNew;
   }
 
@@ -457,14 +447,6 @@ class Base {
     if ( null == imageIn )
       return [ null, null ];
 
-//!!! ...unfinished... (2022/04/21) BoundsArraySet
-
-
-//!!! (2022/04/11 Remarked) Use BoundsArray.split_to_lowerHalf_higherHalf() instead.
-//     // If not divided by 2, let lower half have one more.
-//     let imageOutDepth_lowerHalf = Math.ceil( imageIn.depth / 2 );
-//     let imageOutDepth_higherHalf = imageIn.depth - imageOutDepth_lowerHalf;
-
     // Split value bounds array.
     let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
     let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
@@ -480,11 +462,11 @@ class Base {
     let imageOutArray = [
       new Base(
         imageIn.height, imageIn.width, imageOutDepth_lowerHalf, new Float32Array( imageOutLength_lowerHalf ),
-        new ConvBiasActivation.BoundsArraySet( imageIn.depth, imageOutDepth_lowerHalf ) ),
+        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, imageOutDepth_lowerHalf ) ),
 
       new Base(
         imageIn.height, imageIn.width, imageOutDepth_higherHalf, new Float32Array( imageOutLength_higherHalf ),
-        new ConvBiasActivation.BoundsArraySet( imageIn.depth, imageOutDepth_higherHalf ) )
+        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, imageOutDepth_higherHalf ) )
     ];
 
     let imageOut0 = imageOutArray[ 0 ];
@@ -520,29 +502,11 @@ class Base {
     }
 
     // Setup value bounds array.
-    imageOut0.boundsArraySet.set_all_byBoundsArray_input_output( boundsArray_lowerHalf, boundsArray_lowerHalf );
-    imageOut1.boundsArraySet.set_all_byBoundsArray_input_output( boundsArray_higherHalf, boundsArray_higherHalf );
-
-//!!! (2022/04/11 Remarked) Use BoundsArray.split_to_lowerHalf_higherHalf() instead.
-//     // Split value bounds array.
-//     {
-//       let inChannel = 0;
-//
-//       for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
-//         imageOut0.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn.boundsArraySet.output, inChannel );
-//       }
-//
-//       for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
-//         imageOut1.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn.boundsArraySet.output, inChannel );
-//       }
-//
-//       imageOut0.boundsArraySet.set_all_byBoundsArray_input_output( imageIn.boundsArraySet.output, imageOut0.boundsArraySet.output );
-//       imageOut1.boundsArraySet.set_all_byBoundsArray_input_output( imageIn.boundsArraySet.output, imageOut1.boundsArraySet.output );
-//    }
+    imageOut0.boundsArraySet.set_outputs_all_byBoundsArray( boundsArray_lowerHalf );
+    imageOut1.boundsArraySet.set_outputs_all_byBoundsArray( boundsArray_higherHalf );
 
     return imageOutArray;
   }
-
 
   /**
    * @param {NumberImage.Base} imageIn1   The source image1 to be processed.
