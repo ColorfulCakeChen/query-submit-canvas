@@ -2,6 +2,7 @@ export { Base };
 
 import * as MapTools from "../../util/MapTools.js";
 import * as RandTools from "../../util/RandTools.js";
+import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as NumberImage from "./NumberImage.js";
 import * as PointDepthPoint_Reference from "./PointDepthPoint_Reference.js";
@@ -123,11 +124,13 @@ class Base {
 
     // 2.1 The original image is requested.
     if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseFilterWidth == 1 ) && ( depthwiseStridesPad == 0 ) ) {
-      image = new NumberImage.Base( originalHeight, originalWidth, channelCount, null, null );
-      let elementCount = image.height * image.width * image.depth;
       let randomOffsetMin = -200; // Just choosed randomly.
       let randomOffsetMax = +200;
-      image.dataArray = RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
+
+      //!!! (2022/04/21 Remaked) Using Weights.Base.ValueBounds is more like real use case.
+      //let bAutoBounds = true;  // Image pixel channel value bounds are inside the real generated value bounds.
+      let bAutoBounds = false; // Image pixel channel value bounds are inside the default value bounds (i.e. Weights.Base.ValueBounds).
+      image = NumberImage.Base.create_bySequenceRandom( originalHeight, originalWidth, channelCount, randomOffsetMin, randomOffsetMax );
 
     // 2.2 The shrinked image requested.
     } else {
