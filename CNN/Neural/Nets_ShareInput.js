@@ -6,7 +6,8 @@ export { Base };
 
 //!!! ...unfinished... (2022/04/20)
 // Since it is slow to transfer data between CPU and GPU (for WebGL), it seems not feasible to use multiple workers
-// to to process both competion side of an difference evolution.
+// (which will transfer data between CPU and GPU multiple times) to process both competion side of an difference evolution
+// iteration.
 //
 // Perhaps, combine two neural network of both competion side into one larger neural network (suppose they have the
 // same neural network architecture, e.g. same layer count of ShuffleNetV2). Every (combined) pointwise and depthwise
