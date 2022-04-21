@@ -743,16 +743,26 @@ class Base extends ReturnOrClone.Base {
         + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
     );
 
-//!!! ...unfinished... (2022/04/21)
-    
-    // Because pointwise21 always exists, it has the default final output value bounds of this PointDepthPoint.
-    {
-      let inputBoundsArray = previousBoundsArraySet.output; // As previous output of this PointDepthPoint.
-      let outputBoundsArray = this.pointwise21.boundsArraySet.output; // As pointwise21.output.
-
-      this.boundsArraySet = new ConvBiasActivation.BoundsArraySet( inputBoundsArray.length, outputBoundsArray.length );
-      this.boundsArraySet.set_all_byBoundsArray_input_output( inputBoundsArray, outputBoundsArray );
-    }
+//!!! (2022/04/21 Remarked) should created after outChannels1 is determined.
+//
+//     // Because pointwise21 always exists, it has the default final output value bounds of this PointDepthPoint.
+//     {
+// //!!! (2022/04/21 Remarked)
+// //       let inputBoundsArray = previousBoundsArraySet.output; // As previous output of this PointDepthPoint.
+// //       let outputBoundsArray = this.pointwise21.boundsArraySet.output; // As pointwise21.output.
+// //
+// //       this.boundsArraySet = new ConvBiasActivation.BoundsArraySet( inputBoundsArray.length, outputBoundsArray.length );
+// //       this.boundsArraySet.set_all_byBoundsArray_input_output( inputBoundsArray, outputBoundsArray );
+//
+// //!!! ...unfinished... (2022/04/21)
+//       this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
+//         ??? inputBoundsArray.length, outputBoundsArray.length );
+//
+//       this.boundsArraySet.output0.set_all_byScaleBoundsArray( this.pointwise21.boundsArraySet.output0 );
+// ???
+//       if ( this.bPointwise22 )
+//         this.boundsArraySet.output1.set_all_byScaleBoundsArray( this.pointwise22.boundsArraySet.output0 );
+//     }
 
     // 5.4
     ++progressToAdvance.value;
@@ -786,14 +796,14 @@ class Base extends ReturnOrClone.Base {
 
       if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise21After_concat2Before ) {
         this.bShould_addInput0ToPointwise21 = true;
-        this.addInput0ToPointwise21 = new AddTwoTensors.Base();
+        this.addInput0ToPointwise21 = new AddTwoTensors.Base( false, false, inputScaleBoundsArray0, this.pointwise21.boundsArraySet.output0 );
       }
 
       // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount0_pointwise1Before
       // (not channelCount1_pointwise1Before).
       if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise22After_concat2Before ) {
         this.bShould_addInput0ToPointwise22 = true;
-        this.addInput0ToPointwise22 = new AddTwoTensors.Base();
+        this.addInput0ToPointwise22 = new AddTwoTensors.Base( false, false, inputScaleBoundsArray0, this.pointwise22.boundsArraySet.output0 );
       }
 
     }
