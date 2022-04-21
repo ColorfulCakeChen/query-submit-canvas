@@ -810,9 +810,10 @@ class Base extends ReturnOrClone.Base {
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
 
-    if ( this.bShouldAddInputToOutput ) { // If add-input-to-output will be done indeed, it affects the output value bounds.
-      this.boundsArraySet.output.add_all_byBoundsArray( this.boundsArraySet.input );
-    }
+//!!! (2022/04/21 Remarked) moved into AddTwoTensors.
+//     if ( this.bShouldAddInputToOutput ) { // If add-input-to-output will be done indeed, it affects the output value bounds.
+//       this.boundsArraySet.output.add_all_byBoundsArray( this.boundsArraySet.input );
+//     }
 
     // 6.2
     //
