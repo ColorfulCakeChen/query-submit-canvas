@@ -312,12 +312,6 @@ class Base extends ReturnOrClone.Base {
    *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous PointDepthPoint value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
-
-//!!! ...unfinished... (2022/04/13)
-   * @param {BoundsArraySet.ConvBiasActivation} previousBoundsArraySet
-   *   The element value bounds of previous PointDepthPoint's input/output.
-
-   *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
@@ -547,6 +541,9 @@ class Base extends ReturnOrClone.Base {
     }
 
     // 3.2 The depthwise2 operation.
+
+    let depthwise2_boundsArraySet_output0; // Because depthwise2 may not exist, track it by local variable (which will be used by concat1).
+
     this.bDepthwise2 = false;
     if ( this.bDepthwise2Requested ) {
 
@@ -578,6 +575,7 @@ class Base extends ReturnOrClone.Base {
       if ( this.bDepthwise2 ) {
         // The depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
         this.channelCount_depthwise2After_concat1Before = this.depthwise2.outputChannelCount;
+        depthwise2_boundsArraySet_output0 = this.depthwise2.boundsArraySet.output0;
         this.tensorWeightCountTotal += this.depthwise2.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += this.depthwise2.tensorWeightCountExtracted;
         TensorOpCounters.depthwise2 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise2", this.depthwise2, TensorOpCounters.input0 );
@@ -586,12 +584,14 @@ class Base extends ReturnOrClone.Base {
         // The depthwise2 is requested but not created. It means no depthwise operation (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ).
         // In this case, the depthwise2 should be short circuit to inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
         this.channelCount_depthwise2After_concat1Before = this.channelCount0_pointwise1Before;
+        depthwise2_boundsArraySet_output0 = inputScaleBoundsArray0;
         TensorOpCounters.depthwise2 = TensorOpCounters.input0;
       }
 
     } else {
       // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
       this.channelCount_depthwise2After_concat1Before = Math.max( 0, this.channelCount1_pointwise1Before ); // At least 0. Avoid negative.
+      depthwise2_boundsArraySet_output0 = inputScaleBoundsArray1;
       TensorOpCounters.depthwise2 = TensorOpCounters.input1;
     }
 
@@ -606,7 +606,7 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2022/04/11) What about the result BoundsArraySet of concat operation.
 
-      this.concat1 = new ConcatAlongAxisId2.Base( false, false );
+      this.concat1 = new ConcatAlongAxisId2.Base( false, false, this.depthwise1.boundsArraySet.output0, depthwise2_boundsArraySet_output0 );
 
       TensorOpCounters.concat1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_concat1",
         this.concat1, TensorOpCounters.depthwise1, TensorOpCounters.depthwise2 );
