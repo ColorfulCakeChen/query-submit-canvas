@@ -595,20 +595,24 @@ class Base extends ReturnOrClone.Base {
     yield progressRoot;  // depthwise filters was ready. Report progress.
 
     // 4. Concat1
+
+//!!! ...unfinished... (2022/04/21)
+    let concat1_boundsArraySet_output0; // Because concat1 may not exist, track it by local variable (which will be used by pointwise21).
+
     if ( this.bConcat1Requested ) {
       
       this.channelCount_concat1After_pointwise2Before
         = this.channelCount_depthwise1After_concat1Before + this.channelCount_depthwise2After_concat1Before;
 
-//!!! ...unfinished... (2022/04/11) What about the result BoundsArraySet of concat operation.
-
       this.concat1 = new ConcatAlongAxisId2.Base( false, false, this.depthwise1.boundsArraySet.output0, depthwise2_boundsArraySet_output0 );
+      concat1_boundsArraySet_output0 = this.concat1.boundsArraySet.output0;
 
       TensorOpCounters.concat1 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_concat1",
         this.concat1, TensorOpCounters.depthwise1, TensorOpCounters.depthwise2 );
 
     } else {
       this.channelCount_concat1After_pointwise2Before = this.channelCount_depthwise1After_concat1Before;
+      concat1_boundsArraySet_output0 = this.depthwise1.boundsArraySet;
       TensorOpCounters.concat1 = TensorOpCounters.depthwise1;
     }
 
@@ -671,7 +675,7 @@ class Base extends ReturnOrClone.Base {
 //!!! ...unfinished... (2022/04/11) The previous BoundsArraySet should not this.depthwise1.boundsArraySet.
 // It should consider concat operation.
 
-    if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd, this.depthwise1.boundsArraySet ) )
+    if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd, concat1_boundsArraySet_output0 ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise21.byteOffsetEnd;
 
@@ -944,11 +948,11 @@ class Base extends ReturnOrClone.Base {
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
-  init( progressParent, params, previousBoundsArraySet, channelShuffler_ConcatPointwiseConv ) {
+  init( progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer( progressParent, params, previousBoundsArraySet, channelShuffler_ConcatPointwiseConv );
+    let initer = this.initer( progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv );
     let initerNext;
     do {
       initerNext = initer.next();
