@@ -66,12 +66,10 @@ class Base {
       `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
-//!!! ...unfinished... (2022/04/21) BoundsArraySet.Pointwise
-
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
     let imageOut = new Base(
       imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
-      new Pointwise.BoundsArraySet( imageIn.depth, pointwiseChannelCount ) );
+      new BoundsArraySet.Pointwise( imageIn.boundsArraySet.output0, pointwiseChannelCount ) );
 
     // Pointwise Convolution
     for ( let y = 0; y < imageIn.height; ++y ) {
@@ -96,15 +94,11 @@ class Base {
       }
     }
 
-//!!! ...unfinished... (2022/04/21) BoundsArraySet.Pointwise
-
     {
       // Prepare value bounds of every output channels (i.e. .afterFilter).
       {
-        imageOut.boundsArraySet.input.set_all_byBoundsArray( imageIn.boundsArraySet.output );
-
         // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
-        imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input );
+        imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0 );
 
         imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
       }
@@ -130,7 +124,7 @@ class Base {
     imageOut.modifyByBias( bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
     // Activation
-    imageOut.modifyByActivation( pointwiseActivationId, imageIn.boundsArraySet, parametersDesc );
+    imageOut.modifyByActivation( pointwiseActivationId, parametersDesc );
 
     return imageOut;
   }
@@ -176,19 +170,15 @@ class Base {
           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
     }
 
-//!!! ...unfinished... (2022/04/21) BoundsArraySet.Depthwise
-
     let imageOut = new Base(
       outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ),
-      new Depthwise.BoundsArraySet( imageIn.depth, outputChannelCount ) );
+      new BoundsArraySet.Depthwise( imageIn.boundsArraySet.output0, outputChannelCount ) );
 
     // Prepare value bounds of every output channels (i.e. .afterFilter).
     let filtersArray_bBoundsCalculated, tBounds;
     {
-      imageOut.boundsArraySet.input.set_all_byBoundsArray( imageIn.boundsArraySet.output );
-
       // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
-      imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input );
+      imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0 );
 
       if ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ) { // For avg/max pooling, the value bounds will not change.
         imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
@@ -307,7 +297,7 @@ class Base {
     imageOut.modifyByBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
     // Activation
-    imageOut.modifyByActivation( depthwiseActivationId, imageIn.boundsArraySet, parametersDesc );
+    imageOut.modifyByActivation( depthwiseActivationId, parametersDesc );
 
     return imageOut;
   }
@@ -360,14 +350,9 @@ class Base {
     return imageIn;
   }
 
-//!!! ...unfinished... (2022/04/21) BoundsArraySet
-
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
    * @param {string}   nActivationId     The name string of this activation function.
-   *
-   * @param {ConvBiasActivation.BoundsArraySet} previous_ConvBiasActivation_BoundsArraySet
-   *   The element value bounds set of previous pointwise/depthwise convolution.
    *
    * @param {string}   parametersDesc A string for debug message of this point-depth-point.
    *
@@ -376,7 +361,7 @@ class Base {
    * just the original this.dataArray directly (when no activation function). Or, it may be a new Float32Array (when having activation
    * function).
    */
-  modifyByActivation( nActivationId, previous_ConvBiasActivation_BoundsArraySet, parametersDesc ) {
+  modifyByActivation( nActivationId, parametersDesc ) {
     let imageIn = this;
 
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
