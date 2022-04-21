@@ -3,7 +3,8 @@ export { Base };
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import * as ConvBiasActivation from "../../Conv/ConvBiasActivation.js";
+import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
+import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
 
@@ -16,11 +17,14 @@ import * as Depthwise from "../../Conv/Depthwise.js";
  * @member {number}   depth     Image channel count
  * @member {number[]|Float32Array} dataArray Image data
  *
- * @member {ConvBiasActivation.BoundsArraySet} boundsArraySet
- *   The element value bounds set of the pointwise or depthwise convolution.
+ * @member {BoundsArraySet.InputsOutput} boundsArraySet
+ *   The element value bounds set of this image.
  */
 class Base {
 
+  /**
+   *
+   */
   constructor( height, width, depth, dataArray, boundsArraySet ) {
     this.height = height;
     this.width = width;
@@ -28,9 +32,10 @@ class Base {
     this.dataArray = dataArray;
     this.boundsArraySet = boundsArraySet;
 
-    if ( !this.boundsArraySet ) { // Default bounds for an image.
-      this.boundsArraySet = new ConvBiasActivation.BoundsArraySet( depth, depth );
-      this.boundsArraySet.set_all_byBounds( Weights.Base.ValueBounds ); // Assume all images are inside the default value bounds.
+    if ( !this.boundsArraySet ) { // Default value bounds for an image.
+      let inputScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( depth );
+      this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, null, depth, undefined );
+      this.boundsArraySet.set_outputs_all_byBounds( Weights.Base.ValueBounds ); // Assume all images are inside the default value bounds.
     }
   }
 
