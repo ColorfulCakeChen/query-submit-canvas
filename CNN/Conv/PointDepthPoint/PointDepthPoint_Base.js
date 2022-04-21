@@ -563,11 +563,7 @@ class Base extends ReturnOrClone.Base {
         ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, -1 // depthwise2 never has higher-half-different.
       );
 
-//!!! (2022/04/13 Remarked)
-// Because the depthwise2 processes the inputTensors[ 0 ] directly (i.e. not the pointwise1 result of inputTensors[ 0 ], and
-// not inputTensors[ 1 ]).
-//      if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd, this.pointwise1.boundsArraySet ) )
-      if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd, inputScaleBoundsArray1 ) )
+      if ( !this.depthwise2.init( params.defaultInput, this.byteOffsetEnd, inputScaleBoundsArray0 ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.depthwise2.byteOffsetEnd;
 
@@ -575,7 +571,6 @@ class Base extends ReturnOrClone.Base {
       if ( this.bDepthwise2 ) {
         // The depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
         this.channelCount_depthwise2After_concat1Before = this.depthwise2.outputChannelCount;
-        depthwise2_boundsArraySet_output0 = this.depthwise2.boundsArraySet.output0;
         this.tensorWeightCountTotal += this.depthwise2.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += this.depthwise2.tensorWeightCountExtracted;
         TensorOpCounters.depthwise2 = new TensorOpCounter.Base( ( ++TensorOpCounterId ) + "_depthwise2", this.depthwise2, TensorOpCounters.input0 );
@@ -584,9 +579,10 @@ class Base extends ReturnOrClone.Base {
         // The depthwise2 is requested but not created. It means no depthwise operation (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ).
         // In this case, the depthwise2 should be short circuit to inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
         this.channelCount_depthwise2After_concat1Before = this.channelCount0_pointwise1Before;
-        depthwise2_boundsArraySet_output0 = inputScaleBoundsArray0;
         TensorOpCounters.depthwise2 = TensorOpCounters.input0;
       }
+
+      depthwise2_boundsArraySet_output0 = this.depthwise2.boundsArraySet.output0;
 
     } else {
       // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
