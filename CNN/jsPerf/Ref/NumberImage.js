@@ -5,8 +5,8 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
-import * as Pointwise from "../../Conv/Pointwise.js";
-import * as Depthwise from "../../Conv/Depthwise.js";
+//import * as Pointwise from "../../Conv/Pointwise.js";
+//import * as Depthwise from "../../Conv/Depthwise.js";
 
 /**
  * Image composed from numbers. For testing.
@@ -315,8 +315,6 @@ class Base {
   modifyByBias( bBias, biasesArray, biasName, parametersDesc ) {
     let imageIn = this;
 
-//!!! ...unfinished... (2022/04/21) BoundsArraySet
-
     imageIn.boundsArraySet.afterBias.set_all_byBoundsArray( imageIn.boundsArraySet.afterFilter );
     if ( !bBias )
       return imageIn;
@@ -390,26 +388,26 @@ class Base {
    * @param {NumberImage.Base} this        The first image to be used for adding. It must have the same size as another.
    * @param {NumberImage.Base} another     The second image to be used for adding. It must have the same size as this.
    *
-   * @param {string} addInputToOutputName  A string for debug message of this bias.
+   * @param {string} addName               A string for debug message of this addding operation.
    * @param {string} parametersDesc        A string for debug message of this point-depth-point.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of adding this and another.
    */
-  cloneBy_add( another, addInputToOutputName, parametersDesc ) {
+  cloneBy_add( another, addName, parametersDesc ) {
 
     // If the output dimensions ( height, width, depth ) is not the same as input, it is impossible to add-input-to-output.
     {
       tf.util.assert( ( another.height == this.height ),
-        `${addInputToOutputName}: another.height ( ${another.height} ) `
+        `${addName}: another.height ( ${another.height} ) `
           + `should match this.height ( ${this.height} ). (${parametersDesc})`);
 
       tf.util.assert( ( another.width == this.width ),
-        `${addInputToOutputName}: another.width ( ${another.width} ) `
+        `${addName}: another.width ( ${another.width} ) `
           + `should match this.width ( ${this.width} ). (${parametersDesc})`);
 
       tf.util.assert( ( another.depth == this.depth ),
-        `${addInputToOutputName}: another.depth ( ${another.depth} ) `
+        `${addName}: another.depth ( ${another.depth} ) `
           + `should match this.depth ( ${this.depth} ). (${parametersDesc})`);
     }
 
@@ -418,8 +416,6 @@ class Base {
       resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
     }
 
-//!!! ...unfinished... (2022/04/21) BoundsArraySet
-
     // Q: Why not just modify this directly?
     // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
     let imageOutNew = new Base(
@@ -427,17 +423,23 @@ class Base {
       this.width,
       this.depth,
       resultArray,
-      new ConvBiasActivation.BoundsArraySet( this.depth, this.depth )
+      new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, this.depth )
     );
 
     // Calculate value bounds of every output channels (i.e. .afterActivation; .output).
-    {
-      imageOutNew.boundsArraySet.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1. (i.e. no scale)
+    imageOutNew.boundsArraySet.output0
+      .set_all_byBoundsArray( imageOutNew.boundsArraySet.input0 )
+      .add_all_byBoundsArray( another.boundsArraySet.output0 );
 
-      imageOutNew.boundsArraySet.afterActivation
-        .set_all_byBoundsArray( this.boundsArraySet.afterActivation )
-        .add_all_byBoundsArray( another.boundsArraySet.afterActivation );
-    }
+//!!! (2022/04/21 Remarked)
+//     // Calculate value bounds of every output channels (i.e. .afterActivation; .output).
+//     {
+//       imageOutNew.boundsArraySet.activationEscaping_ScaleArraySet.set_all_byN( 1 ); // scale 1. (i.e. no scale)
+//
+//       imageOutNew.boundsArraySet.afterActivation
+//         .set_all_byBoundsArray( this.boundsArraySet.afterActivation )
+//         .add_all_byBoundsArray( another.boundsArraySet.afterActivation );
+//     }
 
     return imageOutNew;
   }
