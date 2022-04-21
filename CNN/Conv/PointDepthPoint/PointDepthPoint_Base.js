@@ -743,35 +743,15 @@ class Base extends ReturnOrClone.Base {
         + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
     );
 
-//!!! (2022/04/21 Remarked) should created after outChannels1 is determined.
-//
-//     // Because pointwise21 always exists, it has the default final output value bounds of this PointDepthPoint.
-//     {
-// //!!! (2022/04/21 Remarked)
-// //       let inputBoundsArray = previousBoundsArraySet.output; // As previous output of this PointDepthPoint.
-// //       let outputBoundsArray = this.pointwise21.boundsArraySet.output; // As pointwise21.output.
-// //
-// //       this.boundsArraySet = new ConvBiasActivation.BoundsArraySet( inputBoundsArray.length, outputBoundsArray.length );
-// //       this.boundsArraySet.set_all_byBoundsArray_input_output( inputBoundsArray, outputBoundsArray );
-//
-// //!!! ...unfinished... (2022/04/21)
-//       this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
-//         ??? inputBoundsArray.length, outputBoundsArray.length );
-//
-//       this.boundsArraySet.output0.set_all_byScaleBoundsArray( this.pointwise21.boundsArraySet.output0 );
-// ???
-//       if ( this.bPointwise22 )
-//         this.boundsArraySet.output1.set_all_byScaleBoundsArray( this.pointwise22.boundsArraySet.output0 );
-//     }
-
     // 5.4
     ++progressToAdvance.value;
     yield progressRoot;  // pointwise2 filters was ready. Report progress.
 
     // 6. Add-input-to-output
 
-    // Because addInput0ToPointwise21 may not exist, track it by local variable (which will be used by concat2ShuffleSplit).
-    let addInput0ToPointwise21_boundsArraySet_output0;
+    // Because addInput0ToPointwise21 and addInput0ToPointwise21 may not exist, track it by local variable (which will be used by
+    // concat2ShuffleSplit and this PointDepthPoint final bounds arrray set).
+    let addInput0ToPointwise21_boundsArraySet_output0, addInput0ToPointwise22_boundsArraySet_output0;
 
     // 6.1
     //
@@ -810,6 +790,9 @@ class Base extends ReturnOrClone.Base {
       if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise22After_concat2Before ) {
         this.bShould_addInput0ToPointwise22 = true;
         this.addInput0ToPointwise22 = new AddTwoTensors.Base( false, false, inputScaleBoundsArray0, this.pointwise22.boundsArraySet.output0 );
+        addInput0ToPointwise22_boundsArraySet_output0 = this.addInput0ToPointwise22.boundsArraySet.output0;
+      } else {
+        addInput0ToPointwise22_boundsArraySet_output0 = this.pointwise22.boundsArraySet.output0;
       }
     }
 
@@ -879,11 +862,15 @@ class Base extends ReturnOrClone.Base {
           break;
       }
 
-//!!! ...unfinished... (2022/04/11) What about the result BoundsArraySet of concat operation.
-
       this.concat2ShuffleSplit = new ConcatShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false,
-        addInput0ToPointwise21_boundsArraySet_output0, inputScaleBoundsArray1
-      );
+        addInput0ToPointwise21_boundsArraySet_output0, inputScaleBoundsArray1 );
+
+      {
+        this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
+          this.concat2ShuffleSplit.boundsArraySet.output0.channelCount );
+
+        this.boundsArraySet.output0.set_all_byBoundsArray( this.concat2ShuffleSplit.boundsArraySet.output0 );
+      }
 
       // In theory, concat2 use the result of add-input0-to-pointwise21 as first parameter. In reality, it usually uses the result
       // of pointwise21 (without add-input0-to-output) as first parameter.
@@ -895,16 +882,23 @@ class Base extends ReturnOrClone.Base {
       this.outChannels0 = this.channelCount_pointwise21After_concat2Before;
       this.outChannels1 = this.channelCount_pointwise22After_concat2Before;
 
+      {
+        this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
+          addInput0ToPointwise21_boundsArraySet_output0.channelCount, addInput0ToPointwise22_boundsArraySet_output0.channelCount );
+
+        this.boundsArraySet.output0.set_all_byBoundsArray( addInput0ToPointwise21_boundsArraySet_output0 );
+        this.boundsArraySet.output1.set_all_byBoundsArray( addInput0ToPointwise22_boundsArraySet_output0 );
+      }
+
       // Note: It should also be okay to set to TensorOpCounters.addInput0ToPointwise22).
       TensorOpCounters.concat2ShuffleSplit = TensorOpCounters.addInput0ToPointwise21;
     }
 
-//!!! ...unfinished... (2022/04/11)
-// For PointDepthPoint.Base, use BoundsArraySet.inputs_outputs instead of BoundsArraySet.ConvBiasActivation.
 
 //!!! ...unfinished... (2022/04/11)
 // For reduce memory footprint, release all BoundsArraySet of pointwise1, depthwise1, depthwise2, pointwise21, pointwise22, concat1, concat2ShuffleSplit,
 // addInput0ToPointwise21, addInput0ToPointwise22.
+
 
     ++progressToAdvance.value;
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
