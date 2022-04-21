@@ -66,6 +66,8 @@ class Base {
       `${pointwiseName} filters shape ( ${pointwiseFiltersArray.length} / ${pointwiseChannelCount} ) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
+//!!! ...unfinished... (2022/04/21) BoundsArraySet.Pointwise
+
     let imageOutLength = ( imageIn.height * imageIn.width * pointwiseChannelCount );
     let imageOut = new Base(
       imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
@@ -93,6 +95,8 @@ class Base {
         }
       }
     }
+
+//!!! ...unfinished... (2022/04/21) BoundsArraySet.Pointwise
 
     {
       // Prepare value bounds of every output channels (i.e. .afterFilter).
@@ -171,6 +175,8 @@ class Base {
           + `( ${depthwiseFiltersArray.length} / ( ${depthwiseFilterHeight} * ${depthwiseFilterWidth} * ${channelMultiplier} ) ) `
           + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
     }
+
+//!!! ...unfinished... (2022/04/21) BoundsArraySet.Depthwise
 
     let imageOut = new Base(
       outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ),
@@ -319,6 +325,8 @@ class Base {
   modifyByBias( bBias, biasesArray, biasName, parametersDesc ) {
     let imageIn = this;
 
+//!!! ...unfinished... (2022/04/21) BoundsArraySet
+
     imageIn.boundsArraySet.afterBias.set_all_byBoundsArray( imageIn.boundsArraySet.afterFilter );
     if ( !bBias )
       return imageIn;
@@ -351,6 +359,8 @@ class Base {
 
     return imageIn;
   }
+
+//!!! ...unfinished... (2022/04/21) BoundsArraySet
 
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
@@ -423,6 +433,8 @@ class Base {
       resultArray[ i ] = this.dataArray[ i ] + another.dataArray[ i ];
     }
 
+//!!! ...unfinished... (2022/04/21) BoundsArraySet
+
     // Q: Why not just modify this directly?
     // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
     let imageOutNew = new Base(
@@ -457,6 +469,9 @@ class Base {
 
     if ( null == imageIn )
       return [ null, null ];
+
+//!!! ...unfinished... (2022/04/21) BoundsArraySet
+
 
 //!!! (2022/04/11 Remarked) Use BoundsArray.split_to_lowerHalf_higherHalf() instead.
 //     // If not divided by 2, let lower half have one more.
@@ -578,6 +593,9 @@ class Base {
     let imageOutDepth = imageIn1.depth + imageIn2.depth;
     let imageOut = new Base(
       imageIn1.height, imageIn1.width, imageOutDepth, new Float32Array( imageOutLength ),
+
+//!!! ...unfinished... (2022/04/21) BoundsArraySet
+
 
 //!!! (2022/04/11 Remarked) Use BoundsArraySet.create_byBoundsArray_concat_input0_input1() instead.
 //      new ConvBiasActivation.BoundsArraySet( imageOutDepth, imageOutDepth )
