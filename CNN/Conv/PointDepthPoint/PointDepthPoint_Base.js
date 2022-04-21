@@ -770,6 +770,9 @@ class Base extends ReturnOrClone.Base {
 
     // 6. Add-input-to-output
 
+    // Because addInput0ToPointwise21 may not exist, track it by local variable (which will be used by concat2ShuffleSplit).
+    let addInput0ToPointwise21_boundsArraySet_output0;
+
     // 6.1
     //
     // Although caller could request add-input-to-output, it may or may not doable.
@@ -797,6 +800,9 @@ class Base extends ReturnOrClone.Base {
       if ( this.channelCount0_pointwise1Before == this.channelCount_pointwise21After_concat2Before ) {
         this.bShould_addInput0ToPointwise21 = true;
         this.addInput0ToPointwise21 = new AddTwoTensors.Base( false, false, inputScaleBoundsArray0, this.pointwise21.boundsArraySet.output0 );
+        addInput0ToPointwise21_boundsArraySet_output0 = this.addInput0ToPointwise21.boundsArraySet.output0;
+      } else {
+        addInput0ToPointwise21_boundsArraySet_output0 = this.pointwise21.boundsArraySet.output0;
       }
 
       // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount0_pointwise1Before
@@ -805,15 +811,9 @@ class Base extends ReturnOrClone.Base {
         this.bShould_addInput0ToPointwise22 = true;
         this.addInput0ToPointwise22 = new AddTwoTensors.Base( false, false, inputScaleBoundsArray0, this.pointwise22.boundsArraySet.output0 );
       }
-
     }
 
     this.bShouldAddInputToOutput = this.bShould_addInput0ToPointwise21 || this.bShould_addInput0ToPointwise22;
-
-//!!! (2022/04/21 Remarked) moved into AddTwoTensors.
-//     if ( this.bShouldAddInputToOutput ) { // If add-input-to-output will be done indeed, it affects the output value bounds.
-//       this.boundsArraySet.output.add_all_byBoundsArray( this.boundsArraySet.input );
-//     }
 
     // 6.2
     //
@@ -881,7 +881,9 @@ class Base extends ReturnOrClone.Base {
 
 //!!! ...unfinished... (2022/04/11) What about the result BoundsArraySet of concat operation.
 
-      this.concat2ShuffleSplit = new ConcatShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false );
+      this.concat2ShuffleSplit = new ConcatShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false,
+        addInput0ToPointwise21_boundsArraySet_output0, inputScaleBoundsArray1
+      );
 
       // In theory, concat2 use the result of add-input0-to-pointwise21 as first parameter. In reality, it usually uses the result
       // of pointwise21 (without add-input0-to-output) as first parameter.
