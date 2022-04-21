@@ -5,7 +5,7 @@ import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
-import * as ConvBiasActivation from "../../Conv/ConvBiasActivation.js";
+import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
 import * as ChannelCountCalculator from "../../Conv/ChannelCountCalculator.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
 import * as Depthwise from "../../Conv/Depthwise.js";
@@ -261,7 +261,8 @@ class Base {
       let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of pointDepthPoint create/dispose.
 
       let pointDepthPoint = Base.pointDepthPoint_create( testParams,
-        imageInArraySelected[ 0 ].boundsArraySet, // Problem: What about imageInArraySelected[ 1 ].boundsArraySet?
+        imageInArraySelected[ 0 ].boundsArraySet.output0,
+        imageInArraySelected[ 1 ].boundsArraySet.output0,
         channelShuffler_ConcatPointwiseConv );
 
       let parametersDescription = pointDepthPoint.parametersDescription;
@@ -381,12 +382,17 @@ class Base {
    * @param {PointDepthPoint_TestParams.Base} testParams
    *   The test parameters. It is the value of PointDepthPoint_TestParams.Base.ParamsGenerator()'s result.
    *
-   * @param {ConvBiasActivation.BoundsArraySet} previousBoundsArraySet
-   *   The previous PointDepthPoint's output convolution-bias-activation value bounds set.
-   *   
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
+   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous PointDepthPoint value bounds
+   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
+   *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous PointDepthPoint value bounds
+   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
-  static pointDepthPoint_create( testParams, previousBoundsArraySet, channelShuffler_ConcatPointwiseConv ) {
+  static pointDepthPoint_create( testParams, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv ) {
 
     let pointDepthPoint = new PointDepthPoint.Base();
 
@@ -404,7 +410,8 @@ class Base {
       testParams.in.bKeepInputTensor
     );
 
-    let bInitOk = pointDepthPoint.init( progress, extractedParams, previousBoundsArraySet, channelShuffler_ConcatPointwiseConv );
+    let bInitOk = pointDepthPoint.init( progress, extractedParams, inputScaleBoundsArray0, inputScaleBoundsArray1,
+      channelShuffler_ConcatPointwiseConv );
 
     let flags = {};
     PointDepthPoint.Params.setFlags_by.call( flags,
@@ -960,20 +967,6 @@ class Base {
   calcConcatShuffleSplit(
     concatenatedShape, outputGroupCount, imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
 
-//!!! (2021/11/26 Remarked)
-//     tf.util.assert(
-//       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
-//        && ( imageInArray[ 0 ].width ==  imageInArray[ 1 ].width )
-//        && ( imageInArray[ 0 ].depth ==  imageInArray[ 1 ].depth ) ),
-//
-//       `${concatShuffleSplitName}: The first input image's shape ( height, width, depth ) = `
-//         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
-//         + `should be the same as the second input image's shape `
-//         + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
-//         + `(${parametersDesc})`
-//     );
-
-//!!! (2021/11/23 Remarked) It seems not work.
     // Note: Although different depth is wierd, it might still work. So, allow it.
     tf.util.assert(
       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
@@ -1039,7 +1032,7 @@ class Base {
         new ConvBiasActivation.BoundsArraySet( imageDepth, imageDepth )
       );
 
-      //!!! ...unfinished... (2022/02/23) 
+      //!!! ...unfinished... (2022/02/23)
       // Because do not know how to shuffle the channel value bounds array, set to a default value instead.
       imageOutArray[ i ].boundsArraySet.set_all_byBounds( Weights.Base.ValueBounds );
     }
