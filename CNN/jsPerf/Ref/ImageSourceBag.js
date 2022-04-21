@@ -123,7 +123,7 @@ class Base {
 
     // 2.1 The original image is requested.
     if ( ( depthwiseFilterHeight == 1 ) && ( depthwiseFilterWidth == 1 ) && ( depthwiseStridesPad == 0 ) ) {
-      image = new NumberImage.Base( originalHeight, originalWidth, channelCount, null );
+      image = new NumberImage.Base( originalHeight, originalWidth, channelCount, null, null );
       let elementCount = image.height * image.width * image.depth;
       let randomOffsetMin = -200; // Just choosed randomly.
       let randomOffsetMax = +200;
