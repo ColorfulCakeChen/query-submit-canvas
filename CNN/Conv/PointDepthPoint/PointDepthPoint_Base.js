@@ -596,7 +596,6 @@ class Base extends ReturnOrClone.Base {
 
     // 4. Concat1
 
-//!!! ...unfinished... (2022/04/21)
     let concat1_boundsArraySet_output0; // Because concat1 may not exist, track it by local variable (which will be used by pointwise21).
 
     if ( this.bConcat1Requested ) {
@@ -672,9 +671,6 @@ class Base extends ReturnOrClone.Base {
       channelShuffler_outputGroupCount_pointwise2
     );
 
-//!!! ...unfinished... (2022/04/11) The previous BoundsArraySet should not this.depthwise1.boundsArraySet.
-// It should consider concat operation.
-
     if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd, concat1_boundsArraySet_output0 ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise21.byteOffsetEnd;
@@ -699,13 +695,10 @@ class Base extends ReturnOrClone.Base {
         channelShuffler_outputGroupCount_pointwise2
       );
 
-//!!! ...unfinished... (2022/04/11) The previous BoundsArraySet should not this.depthwise1.boundsArraySet.
-// It should consider concat operation.
-
       // Note: Strictly speaking, sometimes pointwise22 is dependent on depthwise2. But it does not matter for BoundsArraySet
-      // because depthwise1 and depthwise2 should have the same output value bounds.
+      // because depthwise1 and depthwise2 should have the same output value bounds. And so concat1_boundsArraySet_output0.
       //
-      if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd, this.depthwise1.boundsArraySet ) )
+      if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd, concat1_boundsArraySet_output0 ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.pointwise22.byteOffsetEnd;
 
@@ -750,6 +743,8 @@ class Base extends ReturnOrClone.Base {
         + `should be the same as params.input1ChannelCount ( ${params.input1ChannelCount} ).`
     );
 
+//!!! ...unfinished... (2022/04/21)
+    
     // Because pointwise21 always exists, it has the default final output value bounds of this PointDepthPoint.
     {
       let inputBoundsArray = previousBoundsArraySet.output; // As previous output of this PointDepthPoint.
