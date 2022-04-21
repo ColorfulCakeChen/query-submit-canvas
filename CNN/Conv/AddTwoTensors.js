@@ -1,5 +1,7 @@
 export { Base };
 
+import * as BoundsArraySet from "../BoundsArraySet.js";
+
 //!!! ...unfinished... (2021/05/30) may inherit from Pointwise?
 
 /**
@@ -11,6 +13,17 @@ export { Base };
  * @member {boolean} bKeepInputTensor1
  *   If false, the second input tensor will be disposed after adding. If true, the second input tensor will be kept after adding.
  *
+ * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
+ *   The element value bounds (per channel) of this add-two-tensors operation's input0. It will be kept (not cloned) directly. So caller
+ * should not modify them.
+ *
+ * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
+ *   The element value bounds (per channel) of this add-two-tensors operation's input1. It will be kept (not cloned) directly. So caller
+ * should not modify them.
+ *
+ * @member {BoundsArraySet.InputsOutputs} boundsArraySet
+ *   The element value bounds (per channel) of this concatenation operation.
+ *
  * @member {function} pfnAdd
  *   This is a method. It has two parameter ( inputTensor0, inputTensor1 ) and return a outputTensor. Both the inputTensor0 and
  * inputTensor1 are tf.tensor3d and represents an images ( height x width x channel ) which will be added. They should have the same
@@ -21,24 +34,28 @@ export { Base };
  */
 class Base {
 
-  constructor( bKeepInputTensor0, bKeepInputTensor1 ) {
+  constructor( bKeepInputTensor0, bKeepInputTensor1, inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
     Base.adjust_pfnAdd.call( this );
+    Base.setup_BoundsArraySetArray.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
   }
 
-  /**
-   *
-   */
-  init() {
 
 //!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
 // Perhaps, AddTwoTensors should be able to handle no-op (no add but just return input).
-
-//!!! ...unfinished... (2021/06/08)
-    this.pfnOperation = this.pfnAdd = Base.return_input_directly;    
-
-  }
+//
+//   /**
+//    *
+//    */
+//   init() {
+//
+// //!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
+// // Perhaps, AddTwoTensors should be able to handle no-op (no add but just return input).
+//
+// //!!! ...unfinished... (2021/06/08)
+//     this.pfnOperation = this.pfnAdd = Base.return_input_directly;    
+////   }
 
   /**
    * Adjust this.pfnAdd so that this.pfnAdd() will or will not dispose its inputTensors.
@@ -80,6 +97,20 @@ class Base {
         this.pfnAdd = Base.Add_and_destroy0_destroy1;
       }
     }
+  }
+
+  /** Create this.boundsArraySet. */
+  static setup_BoundsArraySet( inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
+
+    tf.util.assert( ( inputScaleBoundsArray0.channelCount == inputScaleBoundsArray1.channelCount ),
+      `AddTwoTensors.setup_BoundsArraySet(): `
+        + `input0 channel count ( ${inputScaleBoundsArray0.channelCount} ) should be the same as `
+        + `input1 channel count ( ${inputScaleBoundsArray1.channelCount} ).`
+    );
+
+    this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
+      inputScaleBoundsArray0.channelCount
+    );
   }
 
 //!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
