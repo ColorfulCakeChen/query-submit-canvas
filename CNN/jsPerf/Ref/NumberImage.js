@@ -604,9 +604,11 @@ class Base {
    * Weights.Base.ValueBounds. Default is false.
    *
    * @return {NumberImage.Base}
-   *   Return a generated new image.
+   *   Return a generated new image. Basically, they are sequential numbers which could be added by random offset between
+   * [ randomOffsetMin, randomOffsetMax].
    */
-  static create_byRandom( height, width, channelCount, randomOffsetMin = 0, randomOffsetMax = 0, bAutoBounds = false ) {
+  static create_bycreate_bySequenceRandomRandom(
+    height, width, channelCount, randomOffsetMin = 0, randomOffsetMax = 0, bAutoBounds = false ) {
 
     let elementCount = height * width * channelCount;
 
