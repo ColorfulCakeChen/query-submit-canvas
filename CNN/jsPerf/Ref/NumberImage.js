@@ -580,5 +580,54 @@ class Base {
     return imageOut;
   }
 
+  /**
+   *
+   * @param {number} height
+   *   The height of the generate image.
+   *
+   * @param {number} width
+   *   The width of the generate image.
+   *
+   * @param {number} channelCount
+   *   The channel count of the generate image.
+   *
+   * @param {number} randomOffsetMin
+   *   Every element of the generated number array will been shifted from the sequence id between
+   * [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly. Default is 0.
+   *
+   * @param {number} randomOffsetMax
+   *   Every element of the generated number array will been shifted from the sequence id between
+   * [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly. Default is 0.
+   *
+   * @param {boolean} bAutoBounds
+   *   If true, the value bounds will be is real bounds of the generated elements. If false, the value bounds will be
+   * Weights.Base.ValueBounds. Default is false.
+   *
+   * @return {NumberImage.Base}
+   *   Return a generated new image.
+   */
+  static create_byRandom( height, width, channelCount, randomOffsetMin = 0, randomOffsetMax = 0, bAutoBounds = false ) {
+
+    let elementCount = height * width * channelCount;
+
+    let tBounds;
+    if ( bAutoBounds ) {
+     tBounds = new FloatValue.Bounds( 0, 0 );
+    }
+
+    let dataArray = RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax, tBounds );
+
+    let boundsArraySet; // If null, assume all image pixels are inside the default value bounds (i.e. Weights.Base.ValueBounds).
+    if ( bAutoBounds ) {
+      let inputScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( channelCount );
+      inputScaleBoundsArray.set_all_byBounds( tBounds );
+
+      boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, undefined, channelCount, undefined );
+    }
+
+    let imageNew = new NumberImage.Base( height, width, channelCount, dataArray, boundsArraySet );
+    return imageNew;
+  }
+
 }
  
