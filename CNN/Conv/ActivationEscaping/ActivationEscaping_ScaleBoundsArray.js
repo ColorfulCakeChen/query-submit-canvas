@@ -73,6 +73,22 @@ class ScaleBoundsArray {
   }
 
   /**
+   * The .scaleArraySet will be set to 1 (i.e. no scale).
+   *
+   * @param {number} aLower  Set all this.boundsArray.lowers[] by aLower.
+   * @param {number} aUpper  Set all this.boundsArray.uppers[] by aUpper.
+   *
+   * @return {ScaleBoundsArray} Return this (modified) object.
+   */
+  set_all_byLowerUpper( aLower, aUpper ) {
+    this.boundsArray.set_all_byLowerUpper( aLower, aUpper );
+    super.set_activationEscaping_all_none();
+    return this;
+  }
+
+  /**
+   * The .scaleArraySet will be set to 1 (i.e. no scale).
+   *
    * @param {FloatValue.Bounds} aBounds
    *   Set .boundsArray to the same as the specified aBounds. Set the .scaleArraySet to default ( 1 ).
    *
@@ -80,12 +96,12 @@ class ScaleBoundsArray {
    *   Return this (modified) object.
    */
   set_all_byBounds( aBounds ) {
-    this.boundsArray.set_all_byBounds( aBounds );
-    super.set_activationEscaping_all_none();
-    return this;
+    return this.set_all_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
+   * The .scaleArraySet will be set to 1 (i.e. no scale).
+   *
    * @param {BoundsArray} aBoundsArray
    *   Set .boundsArray as the copy of the specified aBoundsArray. Set the .scaleArraySet to default ( 1 ).
    *
