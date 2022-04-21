@@ -5,6 +5,7 @@ import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
 import * as ValueMax from "../../ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
+import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
 import * as ChannelCountCalculator from "../../Conv/ChannelCountCalculator.js";
 import * as Pointwise from "../../Conv/Pointwise.js";
@@ -213,6 +214,7 @@ class Base {
     // For reducing memory allocation.
     this.testCorrectnessInfo = new TestCorrectnessInfo();
     this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4 );
+    this.arrayTemp_forInterleave_asGrouptTwo = []; // Used by calcConcatShuffleSplit().
   }
 
   /**
@@ -967,6 +969,13 @@ class Base {
   calcConcatShuffleSplit(
     concatenatedShape, outputGroupCount, imageInArray, imageOutArray, concatShuffleSplitName, parametersDesc ) {
 
+    tf.util.assert( ( imageInArray.length == 2 ),
+
+      `${concatShuffleSplitName}: `
+        + `The length of imageInArray[] ( ${imageInArray.length} ) must be 2. `
+        + `(${parametersDesc})`
+    );
+
     // Note: Although different depth is wierd, it might still work. So, allow it.
     tf.util.assert(
       (   ( imageInArray[ 0 ].height == imageInArray[ 1 ].height )
@@ -1016,6 +1025,9 @@ class Base {
       tensorInArray[ i ] = t;
     }
 
+    let inputScaleBoundsArray0 = imageInArray[ 0 ].boundsArraySet.output0;
+    let inputScaleBoundsArray1 = imageInArray[ 1 ].boundsArraySet.output0;
+
     // Concat-shuffle-split.
     // 
     // Using different channel shuffler implementation for comparsion correctness.
@@ -1028,15 +1040,17 @@ class Base {
       let imageWidth = t.shape[ 1 ];
       let imageDepth = t.shape[ 2 ];
 
-      imageOutArray[ i ] = new NumberImage.Base( imageHeight, imageWidth, imageDepth, t.dataSync(),
-        new ConvBiasActivation.BoundsArraySet( imageDepth, imageDepth )
-      );
-
-      //!!! ...unfinished... (2022/02/23)
-      // Because do not know how to shuffle the channel value bounds array, set to a default value instead.
-      imageOutArray[ i ].boundsArraySet.set_all_byBounds( Weights.Base.ValueBounds );
+      let rBoundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1, imageDepth );
+      imageOutArray[ i ] = new NumberImage.Base( imageHeight, imageWidth, imageDepth, t.dataSync(), rBoundsArraySet );
     }
-         
+
+    let tScaleBoundsArray = new ActivationEscaping.ScaleBoundsArray( 0 );
+    {
+      tScaleBoundsArray.set_all_byScaleBoundsArray_concat_input0_input1( inputScaleBoundsArray0, inputScaleBoundsArray1 ); // Bounds Concat
+      tScaleBoundsArray.set_all_byInterleave_asGrouptTwo( this.arrayTemp_forInterleave_asGrouptTwo ); // Bounds Shuffle
+      tScaleBoundsArray.split_to_lowerHalf_higherHalf( imageOutArray[ 0 ].output0, imageOutArray[ 1 ].outpu0 ); // Bounds Split
+    }
+
     // Release temporary tensors.
     tf.dispose( tensorInArray );
     tf.dispose( tensorOutArray );
