@@ -423,7 +423,7 @@ class Base {
       this.width,
       this.depth,
       resultArray,
-      new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, this.depth )
+      new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, undefined, this.depth )
     );
 
     // Calculate value bounds of every output channels (i.e. .afterActivation; .output).
@@ -462,11 +462,11 @@ class Base {
     let imageOutArray = [
       new Base(
         imageIn.height, imageIn.width, imageOutDepth_lowerHalf, new Float32Array( imageOutLength_lowerHalf ),
-        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, imageOutDepth_lowerHalf ) ),
+        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, undefined, imageOutDepth_lowerHalf ) ),
 
       new Base(
         imageIn.height, imageIn.width, imageOutDepth_higherHalf, new Float32Array( imageOutLength_higherHalf ),
-        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, imageOutDepth_higherHalf ) )
+        new BoundsArraySet.InputsOutputs( imageIn.boundsArraySet.output0, undefined, imageOutDepth_higherHalf ) )
     ];
 
     let imageOut0 = imageOutArray[ 0 ];
@@ -511,8 +511,8 @@ class Base {
   /**
    * @param {NumberImage.Base} imageIn1   The source image1 to be processed.
    * @param {NumberImage.Base} imageIn2   The source image2 to be processed.
-   * @param {string}   concatName        A string for debug message of this concatenation.
-   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   * @param {string} concatName           A string for debug message of this concatenation.
+   * @param {string} parametersDesc       A string for debug message of this point-depth-point.
    *
    * @return {NumberImage.Base}
    *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2. If imageIn2 is null, return imageIn1.
@@ -544,13 +544,7 @@ class Base {
     let imageOutDepth = imageIn1.depth + imageIn2.depth;
     let imageOut = new Base(
       imageIn1.height, imageIn1.width, imageOutDepth, new Float32Array( imageOutLength ),
-
-//!!! ...unfinished... (2022/04/21) BoundsArraySet
-
-
-//!!! (2022/04/11 Remarked) Use BoundsArraySet.create_byBoundsArray_concat_input0_input1() instead.
-//      new ConvBiasActivation.BoundsArraySet( imageOutDepth, imageOutDepth )
-      BoundsArraySet.create_byBoundsArray_concat_input0_input1( imageIn1.boundsArraySet, imageIn2.boundsArraySet )
+      new BoundsArraySet.InputsOutputs( imageIn1.boundsArraySet.output0, imageIn2.boundsArraySet.output0, imageOutDepth )
     );
 
     // Concatenate along the image depth.
@@ -580,21 +574,8 @@ class Base {
       }
     }
 
-//!!! (2022/04/11 Remarked) Use BoundsArraySet.create_byBoundsArray_concat_input0_input1() instead.
-//     // Concat value bounds array.
-//     {
-//       let outChannel = 0;
-//
-//       for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
-//         imageOut.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn1.boundsArraySet.output, in1Channel );
-//       }
-//
-//       for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
-//         imageOut.boundsArraySet.output.set_one_byBoundsArray( outChannel, imageIn2.boundsArraySet.output, in2Channel );
-//       }
-//
-//       imageOut.boundsArraySet.set_all_byBoundsArray_input_output( imageOut.boundsArraySet.output, imageOut.boundsArraySet.output );
-//     }
+    // Concat value bounds array.
+    imageOut.boundsArraySet.set_outputs_all_by_concat_input0_input1();
 
     return imageOut;
   }
