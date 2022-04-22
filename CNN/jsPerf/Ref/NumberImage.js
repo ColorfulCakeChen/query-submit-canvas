@@ -99,7 +99,7 @@ class Base {
       // Prepare value bounds of every output channels (i.e. .afterFilter).
       {
         // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
-        imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0 );
+        imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0.boundsArray );
 
         imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
       }
