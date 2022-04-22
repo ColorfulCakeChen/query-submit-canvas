@@ -751,7 +751,9 @@ class Base extends ReturnOrClone.Base {
 
     // Because addInput0ToPointwise21 and addInput0ToPointwise21 may not exist, track it by local variable (which will be used by
     // concat2ShuffleSplit and this PointDepthPoint final bounds arrray set).
-    let addInput0ToPointwise21_boundsArraySet_output0, addInput0ToPointwise22_boundsArraySet_output0;
+    //
+    let addInput0ToPointwise21_boundsArraySet_output0 = this.pointwise21.boundsArraySet.output0;
+    let addInput0ToPointwise22_boundsArraySet_output0 = this.pointwise22.boundsArraySet.output0;
 
     // 6.1
     //
@@ -781,8 +783,6 @@ class Base extends ReturnOrClone.Base {
         this.bShould_addInput0ToPointwise21 = true;
         this.addInput0ToPointwise21 = new AddTwoTensors.Base( false, false, inputScaleBoundsArray0, this.pointwise21.boundsArraySet.output0 );
         addInput0ToPointwise21_boundsArraySet_output0 = this.addInput0ToPointwise21.boundsArraySet.output0;
-      } else {
-        addInput0ToPointwise21_boundsArraySet_output0 = this.pointwise21.boundsArraySet.output0;
       }
 
       // Only inputTensors[ 0 ] will be used to add to output. So still check against channelCount0_pointwise1Before
@@ -791,8 +791,6 @@ class Base extends ReturnOrClone.Base {
         this.bShould_addInput0ToPointwise22 = true;
         this.addInput0ToPointwise22 = new AddTwoTensors.Base( false, false, inputScaleBoundsArray0, this.pointwise22.boundsArraySet.output0 );
         addInput0ToPointwise22_boundsArraySet_output0 = this.addInput0ToPointwise22.boundsArraySet.output0;
-      } else {
-        addInput0ToPointwise22_boundsArraySet_output0 = this.pointwise22.boundsArraySet.output0;
       }
     }
 
