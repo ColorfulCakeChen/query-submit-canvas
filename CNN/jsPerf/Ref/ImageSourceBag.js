@@ -1,7 +1,6 @@
 export { Base };
 
 import * as MapTools from "../../util/MapTools.js";
-import * as RandTools from "../../util/RandTools.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as NumberImage from "./NumberImage.js";
