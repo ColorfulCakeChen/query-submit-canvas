@@ -52,7 +52,7 @@ class ConvBiasActivation extends InputsOutputs {
     this.afterBias = new FloatValue.BoundsArray( outputChannelCount0 );
     this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount0 );
 
-    this.bPassThrough = new Array( outputChannelCount );
+    this.bPassThrough = new Array( outputChannelCount0 );
 
     //this.set_outputs_all_byBounds( Weights.Base.ValueBounds );
 
