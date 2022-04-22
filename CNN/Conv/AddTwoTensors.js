@@ -1,6 +1,6 @@
 export { Base };
 
-import * as BoundsArraySet from "../BoundsArraySet.js";
+import * as BoundsArraySet from "./BoundsArraySet.js";
 
 //!!! ...unfinished... (2021/05/30) may inherit from Pointwise?
 
