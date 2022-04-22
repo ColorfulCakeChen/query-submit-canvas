@@ -611,7 +611,7 @@ class Base extends ReturnOrClone.Base {
 
     } else {
       this.channelCount_concat1After_pointwise2Before = this.channelCount_depthwise1After_concat1Before;
-      concat1_boundsArraySet_output0 = this.depthwise1.boundsArraySet;
+      concat1_boundsArraySet_output0 = this.depthwise1.boundsArraySet.output0;
       TensorOpCounters.concat1 = TensorOpCounters.depthwise1;
     }
 
