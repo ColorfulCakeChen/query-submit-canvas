@@ -626,7 +626,7 @@ class Base {
       boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray, undefined, channelCount, undefined );
     }
 
-    let imageNew = new NumberImage.Base( height, width, channelCount, dataArray, boundsArraySet );
+    let imageNew = new Base( height, width, channelCount, dataArray, boundsArraySet );
     return imageNew;
   }
 
