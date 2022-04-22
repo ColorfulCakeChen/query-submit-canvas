@@ -242,11 +242,11 @@ class ScaleArray {
     let inChannel = 0;
 
     for ( let outChannel = 0; outChannel < length_lowerHalf; ++outChannel, ++inChannel ) {
-      lowerHalfScaleArray.set_one_byBoundsArray( outChannel, this, inChannel );
+      lowerHalfScaleArray.set_one_byScaleArray( outChannel, this, inChannel );
     }
 
     for ( let outChannel = 0; outChannel < length_higherHalf; ++outChannel, ++inChannel ) {
-      higherHalfScaleArray.set_one_byBoundsArray( outChannel, this, inChannel );
+      higherHalfScaleArray.set_one_byScaleArray( outChannel, this, inChannel );
     }
 
     return this;
