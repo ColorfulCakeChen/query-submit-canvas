@@ -156,8 +156,8 @@ class ScaleBoundsArray {
    *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    this.boundsArray.interleave_asGrouptTwo( arrayTemp );
-    this.scaleArraySet.interleave_asGrouptTwo( arrayTemp );
+    this.boundsArray.set_all_byInterleave_asGrouptTwo( arrayTemp );
+    this.scaleArraySet.set_all_byInterleave_asGrouptTwo( arrayTemp );
     return this;
   }
 
