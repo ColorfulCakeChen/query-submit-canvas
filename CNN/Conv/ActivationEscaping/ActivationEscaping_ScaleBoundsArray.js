@@ -139,7 +139,8 @@ class ScaleBoundsArray {
    */
   set_all_byScaleBoundsArray_concat_input0_input1( inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
     this.boundsArray.set_all_byBoundsArray_concat_input0_input1( inputScaleBoundsArray0.boundsArray, inputScaleBoundsArray1.boundsArray );
-    this.scaleArraySet.set_all_byScaleArray_concat_input0_input1( inputScaleBoundsArray0.scaleArraySet, inputScaleBoundsArray1.scaleArraySet );
+    this.scaleArraySet.set_all_byScaleArraySet_concat_input0_input1(
+      inputScaleBoundsArray0.scaleArraySet, inputScaleBoundsArray1.scaleArraySet );
     return this;
   }
 
