@@ -1,7 +1,7 @@
 export { Base };
 
 //import * as FloatValue from "../Unpacker/FloatValue.js";
-import * as BoundsArraySet from "../BoundsArraySet.js";
+import * as BoundsArraySet from "./BoundsArraySet.js";
 import * as ChannelShuffler from "./ChannelShuffler.js";
 
 /**
