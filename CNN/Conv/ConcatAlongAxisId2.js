@@ -1,6 +1,6 @@
 export { Base };
 
-import * as BoundsArraySet from "../BoundsArraySet.js";
+import * as BoundsArraySet from "./BoundsArraySet.js";
 
 /**
  * Concatenate two tensor3d ( height x width x channel ) always along the last axis (i.e. axisId = 2, along the channel axis). It could
