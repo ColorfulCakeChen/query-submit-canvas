@@ -82,7 +82,7 @@ class ScaleBoundsArray {
    */
   set_all_byLowerUpper( aLower, aUpper ) {
     this.boundsArray.set_all_byLowerUpper( aLower, aUpper );
-    super.set_activationEscaping_all_none();
+    this.set_activationEscaping_all_none();
     return this;
   }
 
@@ -110,7 +110,7 @@ class ScaleBoundsArray {
    */
   set_all_byBoundsArray( aBoundsArray ) {
     this.boundsArray.set_all_byBoundsArray( aBoundsArray );
-    super.set_activationEscaping_all_none();
+    this.set_activationEscaping_all_none();
     return this;
   }
 
