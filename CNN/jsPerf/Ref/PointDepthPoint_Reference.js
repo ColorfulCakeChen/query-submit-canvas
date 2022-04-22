@@ -264,7 +264,7 @@ class Base {
 
       let pointDepthPoint = Base.pointDepthPoint_create( testParams,
         imageInArraySelected[ 0 ].boundsArraySet.output0,
-        imageInArraySelected[ 1 ].boundsArraySet.output0,
+        imageInArraySelected[ 1 ]?.boundsArraySet.output0,
         channelShuffler_ConcatPointwiseConv );
 
       let parametersDescription = pointDepthPoint.parametersDescription;
