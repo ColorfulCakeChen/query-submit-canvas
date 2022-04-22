@@ -125,7 +125,7 @@ class ScaleBoundsArray {
    */
   set_all_byScaleBoundsArray( aScaleBoundsArray ) {
     this.boundsArray.set_all_byBoundsArray( aScaleBoundsArray.boundsArray );
-    this.scaleArraySet.set_byScaleArraySet( aScaleBoundsArray.scaleArraySet );
+    this.scaleArraySet.set_all_byScaleArraySet( aScaleBoundsArray.scaleArraySet );
     return this;
   }
 
