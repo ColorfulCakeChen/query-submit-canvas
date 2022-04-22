@@ -28,7 +28,7 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
  *
  * @member {FloatValue.BoundsArray} afterActivation
  *   The element value bounds (per channel) after applying activation function to this.afterActivationEscaping. It is just
- * the this.output0.
+ * the this.output0.boundsArray (without this.output0.scaleArraySet).
  *
  * @member {boolean[]} bPassThrough
  *   If true for a output channel, the output channel should be arranged to pass-through from input to output.
@@ -44,7 +44,7 @@ class ConvBiasActivation extends InputsOutputs {
    *
    */
   constructor( input0, outputChannelCount0 ) {
-    super( input0, undefined, outputChannelCount0, undefined ); // input0 and .output0 (i.e. .afterActivation)
+    super( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
 
     this.afterUndoPreviousActivationEscaping = new FloatValue.BoundsArray( input0.length ); // channel count same as input0.
 
@@ -111,8 +111,8 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * @param {FloatValue.Bounds} aBounds
-   *   Set all outputs related BoundsArray (.afterFilter, .afterBias, .afterActivationEscaping, .output (i.e. .afterActivation),
-   * .bPassThrough) to the same as the specified aBounds. Set the this.activationEscaping_ScaleArraySet
+   *   Set all outputs related BoundsArray (.afterFilter, .afterBias, .afterActivationEscaping, .output0.boundsArray
+   * (i.e. .afterActivation), .bPassThrough) to the same as the specified aBounds. Set the this.output0.scaleArraySet
    * to default ( 1 ). The .input0 are not modified.
    *
    * @return {ConvBiasActivation}
@@ -122,7 +122,7 @@ class ConvBiasActivation extends InputsOutputs {
     this.afterFilter.set_all_byBounds( aBounds );
     this.afterBias.set_all_byBounds( aBounds );
     this.afterActivationEscaping.set_all_byBounds( aBounds );
-    super.set_outputs_all_byBounds( aBounds ); // i.e. this.afterActivation, this.activationEscaping_ScaleArraySet
+    super.set_outputs_all_byBounds( aBounds ); // i.e. .output0.boundsArray (i.e. .afterActivation), .output0.scaleArraySet
     this.set_bPassThrough_all_none();
     return this;
   }
@@ -210,8 +210,9 @@ class ConvBiasActivation extends InputsOutputs {
     this.afterBias                          .set_all_byBoundsArray( aBoundsArraySet.afterBias );
     this.afterActivationEscaping            .set_all_byBoundsArray( aBoundsArraySet.afterActivationEscaping );
 
-    super.set_outputs_all_byBoundsArraySet( aBoundsArraySet ); // .afterActivation (i.e. .output0 (and .output1))
-   
+    // .output0.boundsArray (i.e. .afterActivation), .output0.scaleArraySet, .output1.boundsArray, .output1.scaleArraySet
+    super.set_outputs_all_byBoundsArraySet( aBoundsArraySet );
+
     for ( let i = 0; i < this.bPassThrough.length; ++i ) {
       this.bPassThrough[ i ] = aBoundsArraySet.bPassThrough[ i ];
     }
@@ -220,8 +221,8 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /**
-   * Determine .afterActivationEscaping and .afterActivation (including (activationEscaping) .scaleArraySet), by .afterBias and
-   * .bPassThrough and nActivationId.
+   * Determine .afterActivationEscaping, .output0.boundsArray (i.e. .afterActivation) and .output0.scaleArraySet,
+   * by .afterBias and .bPassThrough and nActivationId.
    *
    * The following properties will be used:
    *   - this.afterBias
@@ -229,7 +230,8 @@ class ConvBiasActivation extends InputsOutputs {
    *
    * The following properties will be modified:
    *   - this.afterActivationEscaping
-   *   - this.afterActivation (i.e. output0, including (activationEscaping) .scaleArraySet)
+   *   - this.output0.boundsArray (i.e. this.afterActivation)
+   *   - this.output0.scaleArraySet
    *
    * @param {number} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this depthwise convolution.
@@ -288,11 +290,11 @@ class ConvBiasActivation extends InputsOutputs {
         .set_one_byBoundsArray( outChannel, this.afterBias, outChannel )
         .multiply_one_byNs( outChannel, this.output0.scaleArraySet.do.scales, outChannel );
 
-      // 3. Determine .afterActivation (i.e. .output0)
+      // 3. Determine .afterActivation (i.e. .output0.boundsArray)
       {
         // If no activation function, the output range is determined by .afterActivationEscaping.
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-          this.output0.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel )
+          this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel )
 
         // Otherwise, the activation function dominates the output range.
         //
@@ -302,12 +304,12 @@ class ConvBiasActivation extends InputsOutputs {
         //       is more feasible (at least, will not become another bounds with Infinity).
         } else {
           if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels, it is clamped by the output range for linearDomainLinear.
-            //this.output0.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
-            this.output0.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+            //this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+            this.output0.boundsArray.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
 
           } else { // Non pass-through half channels, it is clamped by the output range for the whole input domain.
-            //this.output0.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
-            this.output0.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+            //this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+            this.output0.boundsArray.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
           }
         }
       }
@@ -318,8 +320,8 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * Rearrange output related channel information (.afterFilter, .afterBias, .afterActivationEscaping, .afterActivation
-   * (i.e. output0, including (activationEscaping) .scaleArraySet), .bPassThrough) by interleaving as ( groupCount == 2 ).
-   * The channel count must be even (i.e. divisible by 2).
+   * (i.e. .output0.boundsArray), output0.scaleArraySet (i.e. activationEscaping), .bPassThrough) by interleaving as
+   * ( groupCount == 2 ). The channel count must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
    *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
@@ -338,7 +340,7 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   get afterActivation() {
-    return this.output0;
+    return this.output0.boundsArray;
   }
 
 }
