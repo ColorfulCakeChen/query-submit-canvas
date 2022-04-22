@@ -177,8 +177,8 @@ class ScaleArraySet {
    * @return {ScaleArraySet} Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo( arrayTemp ) {
-    this.do.interleave_asGrouptTwo( arrayTemp );
-    this.undo.interleave_asGrouptTwo( arrayTemp );
+    this.do.set_all_byInterleave_asGrouptTwo( arrayTemp );
+    this.undo.set_all_byInterleave_asGrouptTwo( arrayTemp );
     return this;
   }
 
