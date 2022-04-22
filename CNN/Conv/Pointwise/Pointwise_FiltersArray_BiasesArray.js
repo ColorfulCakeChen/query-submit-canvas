@@ -422,8 +422,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
           // 3.4.1.2 bHigherHalfPassThroughShuffle
           // 3.4.2.2 bAllPassThroughShuffle
-          if ( this.channelShuffler_outputGroupCount > 0 ) {
-            this.output_interleave_asGrouptTwo(); // Pre-shuffle channels by shuffling the filters and biases.
+          if ( this.channelShuffler_outputGroupCount > 0 ) { // Pre-shuffle channels by shuffling the filters and biases.
+            this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
           }
           break;
       }
