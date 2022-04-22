@@ -607,7 +607,7 @@ class Base {
    *   Return a generated new image. Basically, they are sequential numbers which could be added by random offset between
    * [ randomOffsetMin, randomOffsetMax].
    */
-  static create_bycreate_bySequenceRandomRandom(
+  static create_bySequenceRandomRandom(
     height, width, channelCount, randomOffsetMin = 0, randomOffsetMax = 0, bAutoBounds = false ) {
 
     let elementCount = height * width * channelCount;
