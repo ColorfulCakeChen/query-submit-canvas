@@ -436,9 +436,9 @@ class Base {
   }
 
   /**
-   * @param {NumberImage.Base} imageIn   The source image to be processed.
-   * @param {string}   splitName         A string for debug message of this splitting.
-   * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
+   * @param {NumberImage.Base} imageIn  The source image to be processed.
+   * @param {string} splitName          A string for debug message of this splitting.
+   * @param {string} parametersDesc     A string for debug message of this point-depth-point.
    *
    * @return {NumberImage.Base[]}
    *   Return splitted images [ imageOut1, imageOut2 ] along the axis id 2. If imageIn is null, return [ null, null ].
@@ -449,13 +449,13 @@ class Base {
       return [ null, null ];
 
     // Split value bounds array.
-    let boundsArray_lowerHalf = new FloatValue.BoundsArray( 0 );
-    let boundsArray_higherHalf = new FloatValue.BoundsArray( 0 );
-    imageIn.split_to_lowerHalf_higherHalf( boundsArray_lowerHalf, boundsArray_higherHalf );
+    let rScaleBoundsArray_lowerHalf = new ActivationEscaping.ScaleBoundsArray( 0 );
+    let rScaleBoundsArray_higherHalf = new ActivationEscaping.ScaleBoundsArray( 0 );
+    imageIn.boundsArraySet.output0.split_to_lowerHalf_higherHalf( rScaleBoundsArray_lowerHalf, rScaleBoundsArray_higherHalf );
 
     // If not divided by 2, let lower half have one more.
-    let imageOutDepth_lowerHalf = boundsArray_lowerHalf.length;
-    let imageOutDepth_higherHalf = boundsArray_higherHalf.length;
+    let imageOutDepth_lowerHalf = rScaleBoundsArray_lowerHalf.length;
+    let imageOutDepth_higherHalf = rScaleBoundsArray_higherHalf.length;
 
     let imageOutLength_lowerHalf = ( imageIn.height * imageIn.width * imageOutDepth_lowerHalf );
     let imageOutLength_higherHalf = ( imageIn.height * imageIn.width * imageOutDepth_higherHalf );
@@ -503,8 +503,8 @@ class Base {
     }
 
     // Setup value bounds array.
-    imageOut0.boundsArraySet.set_outputs_all_byBoundsArray( boundsArray_lowerHalf );
-    imageOut1.boundsArraySet.set_outputs_all_byBoundsArray( boundsArray_higherHalf );
+    imageOut0.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_lowerHalf );
+    imageOut1.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_higherHalf );
 
     return imageOutArray;
   }
