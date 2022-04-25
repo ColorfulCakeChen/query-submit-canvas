@@ -328,6 +328,8 @@ class Base extends TestParams.Base {
     let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
       inputImage.depth, pointwise1ChannelCount, 0, this.out.bPointwise1Bias, 1, 0 );
 
+//!!! ...unfinished... (2022/04/25) How to let NumberImage.cloneBy_Xxx() fill imageOut's boundsArraySet.bPassThrough[] to true?
+
     let result = inputImage.cloneBy_pointwise( pointwise1ChannelCount,
       pointwisePassThrough.filtersArray, this.out.bPointwise1Bias,
       pointwisePassThrough.biasesArray, this.out.pointwise1ActivationId, pointwiseName, parametersDesc );
@@ -362,6 +364,8 @@ class Base extends TestParams.Base {
       this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
       this.out.bDepthwiseBias, 1, 0 );
+
+//!!! ...unfinished... (2022/04/25) How to let NumberImage.cloneBy_Xxx() fill imageOut's boundsArraySet.bPassThrough[] to true?
 
     let result = inputImage.cloneBy_depthwise( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight, this.out.depthwiseFilterWidth, this.out.depthwiseStridesPad,
@@ -429,6 +433,8 @@ class Base extends TestParams.Base {
   use_pointwise21_PassThrough( inputImage, pointwise21ChannelCount, pointwiseName, parametersDesc ) {
     let pointwisePassThrough = new ( Pointwise.PassThrough_FiltersArray_BiasesArray() )(
       inputImage.depth, pointwise21ChannelCount, 0, this.out.bPointwise21Bias, 1, 0 );
+
+//!!! ...unfinished... (2022/04/25) How to let NumberImage.cloneBy_Xxx() fill imageOut's boundsArraySet.bPassThrough[] to true?
 
     let result = inputImage.cloneBy_pointwise( pointwise21ChannelCount,
       pointwisePassThrough.filtersArray, this.out.bPointwise21Bias,
