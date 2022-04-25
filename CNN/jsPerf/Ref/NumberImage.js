@@ -370,7 +370,7 @@ class Base {
     // Calculate value bounds of every output channels (i.e. .afterActivation) by clamping as the activation function's output range.
     //
     // Note: Because NumberImage never do pass-through, there is always no activation-escaping (i.e. scale = 1 for no scale).
-    imageIn.boundsArraySet.set_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( nActivationId );
+    imageIn.boundsArraySet.set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId( nActivationId );
 
     let pfnActivation = theActivationFunctionInfo.pfn;
     if ( !pfnActivation )
