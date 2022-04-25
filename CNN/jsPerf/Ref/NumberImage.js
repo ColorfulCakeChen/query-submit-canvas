@@ -7,7 +7,7 @@ import * as Weights from "../../Unpacker/Weights.js";
 import * as ActivationEscaping from "../../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
 //import * as Pointwise from "../../Conv/Pointwise.js";
-//import * as Depthwise from "../../Conv/Depthwise.js";
+import * as Depthwise from "../../Conv/Depthwise.js";
 
 /**
  * Image composed from numbers. For testing.
