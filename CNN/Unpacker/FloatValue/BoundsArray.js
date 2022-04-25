@@ -230,6 +230,9 @@ class BoundsArray {
     return this;
   }
 
+
+//!!! ...unfinished... (2022/04/25 Added) .set_all_byBoundsArray_activation is un-tested.
+
   /**
    * Set this bounds array as the aBoundsArray with activation function applied.
    *
