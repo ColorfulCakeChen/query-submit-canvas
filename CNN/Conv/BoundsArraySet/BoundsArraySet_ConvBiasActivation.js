@@ -233,17 +233,16 @@ class ConvBiasActivation extends InputsOutputs {
 
       // 3. Determine .afterActivation (i.e. .output0.boundsArray)
       {
-        // If no activation function, the output range is determined by .afterActivationEscaping.
-        if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-          this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel )
+        this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel );
 
-        // Otherwise, the activation function dominates the output range.
+        // If there is activation function, the activation function dominates the output range.
         //
         // Note: Consider the implementation of ScaleArray.set_one_by_fromLowerUpper_toLowerUpper(), they are all not so good no
         //       matter using set_one_byXxx() or clamp_one_byXxx() of this.afterActivation. However, when using clamp_one_byXxx(),
-        //       even if the activation function output range has Infinity (e.g. RELU is [ 0, +Infinity ]), the result bounds
+        //       even if the activation function output range has Infinity (e.g. RELU is [ 0, +Infinity ]), the result's bounds
         //       is more feasible (at least, will not become another bounds with Infinity).
-        } else {
+        if ( nActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+
           if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels, it is clamped by the output range for linearDomainLinear.
             //this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
             this.output0.boundsArray.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
@@ -252,8 +251,40 @@ class ConvBiasActivation extends InputsOutputs {
             //this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
             this.output0.boundsArray.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
           }
+
+        // Otherwise, no activation function, the output range is determined by .afterActivationEscaping.
         }
       }
+
+//!!! (2022/04/25 Remarked) should this.output0.boundsArray.set_one_Xxx() first.
+//       {
+//         // If no activation function, the output range is determined by .afterActivationEscaping.
+//         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+//           this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel );
+//
+//         // Otherwise, the activation function dominates the output range.
+//         //
+//         // Note: Consider the implementation of ScaleArray.set_one_by_fromLowerUpper_toLowerUpper(), they are all not so good no
+//         //       matter using set_one_byXxx() or clamp_one_byXxx() of this.afterActivation. However, when using clamp_one_byXxx(),
+//         //       even if the activation function output range has Infinity (e.g. RELU is [ 0, +Infinity ]), the result bounds
+//         //       is more feasible (at least, will not become another bounds with Infinity).
+//         } else {
+//
+// //!!! ...unfinished... (2022/04/25) should this.output0.boundsArray.set_one_Xxx() first.
+//
+//           if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels, it is clamped by the output range for linearDomainLinear.
+//             //this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+//             this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel );
+//             this.output0.boundsArray.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRangeLinear );
+//
+//           } else { // Non pass-through half channels, it is clamped by the output range for the whole input domain.
+//             //this.output0.boundsArray.set_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+//             this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel );
+//             this.output0.boundsArray.clamp_one_byBounds( outChannel, theActivationFunctionInfo.outputRange );
+//           }
+//         }
+//       }
+
     }
 
     return this;
