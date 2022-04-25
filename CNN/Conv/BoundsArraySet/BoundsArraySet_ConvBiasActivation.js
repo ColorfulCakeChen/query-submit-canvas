@@ -239,7 +239,7 @@ class ConvBiasActivation extends InputsOutputs {
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  set_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
+  set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
 
     for ( let outChannel = 0; outChannel < this.afterBias.length; ++outChannel ) {
