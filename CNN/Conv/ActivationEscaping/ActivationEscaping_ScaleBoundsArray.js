@@ -130,6 +130,24 @@ class ScaleBoundsArray {
   }
 
   /**
+   * The aScaleBoundsArray0.scaleArraySet and aScaleBoundsArray1.scaleArraySet must have the same length and values.
+   *
+   * @param {ScaleBoundsArray} aScaleBoundsArray0  The ScaleBoundsArray of the 1st input.
+   * @param {ScaleBoundsArray} aScaleBoundsArray1  The ScaleBoundsArray of the 2nd input.
+   *
+   * @return {ScaleBoundsArray} Return this (modified) object.
+   */
+  set_all_byScaleBoundsArray_add( aScaleBoundsArray0, aScaleBoundsArray1 ) {
+
+    // Otherwise, they can not be added together.
+    aScaleBoundsArray0.scaleArraySet.assert_all_byScaleArraySet_equal( aScaleBoundsArray1.scaleArraySet );
+
+    this.boundsArray.set_all_byBoundsArray( aScaleBoundsArray0.boundsArray );
+    this.boundsArray.add_all_byBoundsArray( aScaleBoundsArray1.boundsArray );
+    return this;
+  }
+
+  /**
    * The this.length will be modified.
    *
    * @param {ScaleBoundsArray} inputScaleBoundsArray0  The ScaleBoundsArray of the 1st input.
