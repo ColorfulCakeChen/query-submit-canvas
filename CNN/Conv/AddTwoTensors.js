@@ -112,6 +112,9 @@ class Base {
       inputScaleBoundsArray0.channelCount
     );
 
+
+//!!! ...unfinished... (2022/04/25) What about the ScaleArraySet?
+
     this.boundsArraySet.output0.set_all_byBoundsArray( inputScaleBoundsArray1 );
     this.boundsArraySet.output0.add_all_byBoundsArray( inputScaleBoundsArray0 );
   }
