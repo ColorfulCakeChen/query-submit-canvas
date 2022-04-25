@@ -509,43 +509,55 @@ class HeightWidthDepth {
     this.test_Weights_Float32Array_RestrictedClone();
     this.test_ValueRange_valueInputOutputGenerator();
 
+    class BatchIdCalculator {
+      constructor() {
+        this.lastBatchId = -1;
+      }
+
+      checkAndDisplay( currentTestParamsId ) {
+        const batchMessageInterval = 30 * 1000; //100 * 1000; // Every so many test cases, display a message.
+
+        let currentBatchId = ( currentTestParamsId - ( currentTestParamsId % batchMessageInterval ) ) / batchMessageInterval;
+        if ( this.lastBatchId != currentBatchId ) {
+          let beginTestParamsId = ( this.lastBatchId + 1 ) * batchMessageInterval;
+          let endTestParamsId = ( currentBatchId + 1 ) * batchMessageInterval - 1;
+
+          console.log( `${tf.getBackend()}, `
+            + `testParams.id between [${beginTestParamsId} - ${endTestParamsId}] ...` );
+
+          this.lastBatchId = currentBatchId;
+        }
+      }
+    }
+
     tf.tidy( () => {
 
       let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerPool.
 
-//!!! (2021/12/24 Remarked) Now, height and width is parts of PointDepthPoint.Params
-//       // Test different input image width (even and odd).
-//       let originalImageSizeArray = [
-//         { height: 3, width: 4, depth: 4 },
-//         { height: 3, width: 5, depth: 4 },
-//       ];
-//
-//      for ( let originalImageSize of originalImageSizeArray ) {
       {
-
         // Note: imageSourceBag and channelShufflerPool should not be created outside tidy() because tidy() will dispose tensors
         //       dynamically created in them.
-//!!! (2021/12/24 Remarked) Now, height and width is parts of PointDepthPoint.Params
-//        let imageSourceBag = new ImageSourceBag.Base( originalImageSize.height, originalImageSize.width );
         let imageSourceBag = new ImageSourceBag.Base();
         let channelShufflerPool = new ChannelShufflerPool.Base( ChannelShuffler.ConcatPointwiseConv );
 
         let testParams = new PointDepthPoint_TestParams.Base();
-//!!! (2021/12/24 Remarked) Now, height and width is parts of PointDepthPoint.Params
-//        let testParamsGenerator = testParams.ParamsGenerator( originalImageSize.height, originalImageSize.width );
         let testParamsGenerator = testParams.ParamsGenerator();
         let testReference = new PointDepthPoint_Reference.Base();
 
-        let batchMessageInterval = 30 * 1000; //100 * 1000; // Every so many test cases, display a message.
+        let batchIdCalculator = new BatchIdCalculator();
         for ( let testParams of testParamsGenerator ) {
-          if ( ( testParams.id % batchMessageInterval ) == 0 )
-            console.log( `${tf.getBackend()}, `
-//!!! (2021/12/24 Remarked) Now, height and width is parts of PointDepthPoint.Params
-//              + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
-              + `testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
+
+          batchIdCalculator.checkAndDisplay( testParams.id );
+
+//!!! (2022/04/25 Remarked) Some test params id may be skipped (because parameters are illegal).
+//           if ( ( testParams.id % batchMessageInterval ) == 0 )
+//             console.log( `${tf.getBackend()}, `
+//               + `testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
 
           testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
         }
+
+        batchIdCalculator.checkAndDisplay( testParams.id );
 
         channelShufflerPool.disposeTensors();
         imageSourceBag.disposeTensors();
