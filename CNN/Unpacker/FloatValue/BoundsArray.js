@@ -1,6 +1,6 @@
 export { BoundsArray };
 
-import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as ValueDesc from "../ValueDesc.js";
 import { Bounds } from "./Bounds.js";
 import { ScaleTranslateArray } from "./ScaleTranslateArray.js";
 import { ArrayInterleaver } from "./ArrayInterleaver.js";
