@@ -212,7 +212,7 @@ class ConvBiasActivation extends InputsOutputs {
                   + ` ${ValueDesc.ActivationFunction.Singleton.getStringOf( nActivationId )}(${nActivationId}) ): `
                 + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] ( ${doEscapingScale} ) `
                 + `should not be NaN. `
-                + `Please use activation function (e.g. tanh()) which has both negative and positive parts near origin point.`
+                + `Please use activation function (e.g. clipByValue(), tanh()) which has both negative and positive parts near origin point.`
             );
 
           } else { // Non pass-through half channels.
