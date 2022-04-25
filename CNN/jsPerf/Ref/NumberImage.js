@@ -98,8 +98,12 @@ class Base {
     {
       // Prepare value bounds of every output channels (i.e. .afterFilter).
       {
-        // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
-        imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0.boundsArray );
+        // Note1: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has already been setup by BoundsArraySet.Pointwise() constructor.
+        // Note2: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
+
+//!!! (2022/04/25 Remarked)
+//         // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
+//         imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0.boundsArray );
 
         imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
       }
@@ -178,8 +182,12 @@ class Base {
     // Prepare value bounds of every output channels (i.e. .afterFilter).
     let filtersArray_bBoundsCalculated, tBounds;
     {
-      // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
-      imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0.boundsArray );
+      // Note1: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has already been setup by BoundsArraySet.Depthwise() constructor.
+      // Note2: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
+
+//!!! (2022/04/25 Remarked)
+//       // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
+//       imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0.boundsArray );
 
       if ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ) { // For avg/max pooling, the value bounds will not change.
         imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping );
