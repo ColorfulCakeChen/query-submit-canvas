@@ -222,8 +222,7 @@ class ConvBiasActivation extends InputsOutputs {
         }
 
         // 1.2 Determine .undo (Prepared for the next convolution-bias-activation. Not for this.)
-        this.output0.scaleArraySet.undo.set_one_byUndo_ScaleArray(
-          outChannel, this.output0.scaleArraySet.do, outChannel );
+        this.output0.scaleArraySet.undo.set_one_byUndo_ScaleArray( outChannel, this.output0.scaleArraySet.do, outChannel );
       }
 
       // 2. Determine .afterActivationEscaping
