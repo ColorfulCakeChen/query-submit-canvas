@@ -132,6 +132,40 @@ class ScaleArraySet {
   }
 
   /**
+   * Assert this and aScaleArraySet have the same length and values.
+   *
+   * @param {ScaleArraySet} aScaleArraySet  The ScaleArraySet to be compared.
+   *
+   * @return {ScaleArraySet} Return this (un-modified) object.
+   */
+  assert_all_byScaleArraySet_equal( aScaleArraySet ) {
+
+    tf.util.assert( ( this.length == aScaleArraySet.length ),
+      `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+        + `length count of this ( ${this.length} ) should be the same as `
+        + `length count of aScaleArraySet ( ${aScaleArraySet.length} ).`
+    );
+
+    for ( let i = 0; i < this.do.length; ++i ) {
+      tf.util.assert( ( this.do[ i ] == aScaleArraySet.do[ i ] ),
+        `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+          + `this.do[ ${i} ] ( ${this.do[ i ]} ) should be the same as `
+          + `aScaleArraySet.do[ ${i} ] ( ${aScaleArraySet.do[ i ]} ).`
+      );
+    }
+
+    for ( let i = 0; i < this.undo.length; ++i ) {
+      tf.util.assert( ( this.undo[ i ] == aScaleArraySet.undo[ i ] ),
+        `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+          + `this.undo[ ${i} ] ( ${this.undo[ i ]} ) should be the same as `
+          + `aScaleArraySet.undo[ ${i} ] ( ${aScaleArraySet.undo[ i ]} ).`
+      );
+    }
+
+    return this;
+  }
+
+  /**
    * @param {number} N  Set all scales[] by ( N ). Default are ( N = 1 ) (i.e. no scale).
    *
    * @return {ScaleArraySet} Return this (modified) object.
