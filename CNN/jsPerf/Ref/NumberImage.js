@@ -48,6 +48,7 @@ class Base {
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
+   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
    * @param {string}   pointwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
@@ -56,6 +57,7 @@ class Base {
    */
   cloneBy_pointwise(
     pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+    bPassThrough,
     pointwiseName, parametersDesc ) {
 
     let imageIn = this;
@@ -71,6 +73,8 @@ class Base {
     let imageOut = new Base(
       imageIn.height, imageIn.width, pointwiseChannelCount, new Float32Array( imageOutLength ),
       new BoundsArraySet.Pointwise( imageIn.boundsArraySet.output0, pointwiseChannelCount ) );
+
+    imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
 
     // Pointwise Convolution
     for ( let y = 0; y < imageIn.height; ++y ) {
@@ -89,6 +93,8 @@ class Base {
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + outChannel;
 
+//!!! ...unfinished... (2022/04/25) should apply imageIn.boundsArraySet.output0.scaleArraySet.undo[]
+
             imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
           }
         }
@@ -98,12 +104,7 @@ class Base {
     {
       // Prepare value bounds of every output channels (i.e. .afterFilter).
       {
-        // Note1: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has already been setup by BoundsArraySet.Pointwise() constructor.
-        // Note2: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
-
-//!!! (2022/04/25 Remarked)
-//         // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
-//         imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0.boundsArray );
+        // Note: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has already been setup by BoundsArraySet.Pointwise() constructor.
 
         imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
       }
@@ -137,6 +138,7 @@ class Base {
   /**
    * @param {NumberImage.Base} this      The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
+   * @param {boolean}  bPassThrough      Whether scale the output image for pass-through activation function (i.e. scale to the linear part).
    * @param {string}   depthwiseName     A string for debug message of this convolution.
    * @param {string}   parametersDesc    A string for debug message of this point-depth-point.
    *
@@ -146,6 +148,7 @@ class Base {
   cloneBy_depthwise(
     depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+    bPassThrough,
     depthwiseName, parametersDesc ) {
 
     let imageIn = this;
@@ -179,15 +182,12 @@ class Base {
       outputHeight, outputWidth, outputChannelCount, new Float32Array( outputElementCount ),
       new BoundsArraySet.Depthwise( imageIn.boundsArraySet.output0, outputChannelCount ) );
 
+    imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
+
     // Prepare value bounds of every output channels (i.e. .afterFilter).
     let filtersArray_bBoundsCalculated, tBounds;
     {
-      // Note1: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has already been setup by BoundsArraySet.Depthwise() constructor.
-      // Note2: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
-
-//!!! (2022/04/25 Remarked)
-//       // Note: Because NumberImage never do pass-through, there is always no activation-escaping. So it is not necessary to undo.
-//       imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0.boundsArray );
+      // Note: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has already been setup by BoundsArraySet.Depthwise() constructor.
 
       if ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ) { // For avg/max pooling, the value bounds will not change.
         imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping );
@@ -275,7 +275,9 @@ class Base {
 
                       default: // Convolution
                         imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * depthwiseFiltersArray[ filterIndex ];
-                        
+
+//!!! ...unfinished... (2022/04/25) should apply imageIn.boundsArraySet.output0.scaleArraySet.undo[]
+
                         // Calculate value bounds of every output channels (i.e. .afterFilter).
                         if ( !filtersArray_bBoundsCalculated[ filterIndex ] ) {
                           tBounds
