@@ -2,7 +2,6 @@ export { ConvBiasActivation };
 
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-//import * as Weights from "../../Unpacker/Weights.js";
 import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
 
 /**
@@ -38,6 +37,9 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
 class ConvBiasActivation extends InputsOutputs {
 
   /**
+   *   - The .input0 will be set as input0.
+   *   - The .afterUndoPreviousActivationEscaping will be set according to  input0 and input0.scaleArraySet.undo.scales.
+   *
    * Difference from (parent class) InputsOutputs:
    *   - Only input0 (always no input1), because convolution (no matter pointwise or depthwise) could handle one input tensor.
    *   - Only output0 (always no output1), because convolution (no matter pointwise or depthwise) always generate one output tensor.
@@ -53,8 +55,6 @@ class ConvBiasActivation extends InputsOutputs {
     this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount0 );
 
     this.bPassThrough = new Array( outputChannelCount0 );
-
-    //this.set_outputs_all_byBounds( Weights.Base.ValueBounds );
 
     this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales();
   }
