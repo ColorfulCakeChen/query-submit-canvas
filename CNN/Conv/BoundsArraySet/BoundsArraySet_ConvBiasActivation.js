@@ -12,8 +12,7 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
  *   - Only outputChannelCount0 is used. The outputChannelCount1 always is undefined.
  *
  * @member {FloatValue.BoundsArray} afterUndoPreviousActivationEscaping
- *   The element value bounds (per channel) after applying the previousConvBiasActivation.BoundsArraySet.ActivationEscaping.undo
- * to this.input0. (i.e. beforeFilter)
+ *   The element value bounds (per channel) after applying the input0.scaleArraySet.undo to this.input0. (i.e. beforeFilter)
  *
  * @member {FloatValue.BoundsArray} afterFilter
  *   The element value bounds (per channel) after applying the convolution filters to this.afterUndoPreviousActivationEscaping.
@@ -208,8 +207,9 @@ class ConvBiasActivation extends InputsOutputs {
 
             let doEscapingScale = this.output0.scaleArraySet.do.scales[ outChannel ];
             tf.util.assert( ( Number.isNaN( doEscapingScale ) == false ),
-              `ConvBiasActivation.BoundsArraySet.`
-                + `set_afterActivationEscaping_afterActivation_by_afterBias_bPassThrough_nActivationId(): `
+              `BoundsArraySet.ConvBiasActivation.`
+                + `set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId( `
+                  + ` ${ValueDesc.ActivationFunction.Singleton.getStringOf( nActivationId )}(${nActivationId}) ): `
                 + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] ( ${doEscapingScale} ) `
                 + `should not be NaN. `
                 + `Please use activation function (e.g. tanh()) which has both negative and positive parts near origin point.`
