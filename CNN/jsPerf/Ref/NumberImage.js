@@ -89,13 +89,14 @@ class Base {
           let inIndex = inIndexBaseC + inChannel;
           let filterIndexBase = ( inChannel * pointwiseChannelCount );
 
+          let undoPreviousEscapingScale = imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ];
+
           for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + outChannel;
 
-//!!! ...unfinished... (2022/04/25) should apply imageIn.boundsArraySet.output0.scaleArraySet.undo[]
-
-            imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * pointwiseFiltersArray[ filterIndex ];
+            imageOut.dataArray[ outIndex ]
+              += ( imageIn.dataArray[ inIndex ] * undoPreviousEscapingScale ) * pointwiseFiltersArray[ filterIndex ];
           }
         }
       }
@@ -221,6 +222,8 @@ class Base {
           let outChannelBase = inChannel * channelMultiplier;
           let outIndexBaseSubC = outIndexBaseC + outChannelBase;
 
+          let undoPreviousEscapingScale = imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ];
+
           for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
             let outChannel = outChannelBase + outChannelSub;
             let outIndex = outIndexBaseSubC + outChannelSub;
@@ -274,9 +277,8 @@ class Base {
                         break;
 
                       default: // Convolution
-                        imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] * depthwiseFiltersArray[ filterIndex ];
-
-//!!! ...unfinished... (2022/04/25) should apply imageIn.boundsArraySet.output0.scaleArraySet.undo[]
+                        imageOut.dataArray[ outIndex ]
+                          += ( imageIn.dataArray[ inIndex ] * undoPreviousEscapingScale ) * depthwiseFiltersArray[ filterIndex ];
 
                         // Calculate value bounds of every output channels (i.e. .afterFilter).
                         if ( !filtersArray_bBoundsCalculated[ filterIndex ] ) {
