@@ -276,7 +276,6 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bOutput1Requested,       this.valueOutMinMax.bOutput1Requested ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.valueOutMinMax.ActivationId ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount0_pointwise1Before,
                                                                                       this.valueOutMinMax.channelCount0_pointwise1Before ),
@@ -293,6 +292,7 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bDepthwiseBias,          this.valueOutMinMax.Bias ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
 
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.valueOutMinMax.ActivationId ),
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
@@ -734,14 +734,6 @@ class Base extends TestParams.Base {
 
       // (> 0) Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_XXX  (simplified ShuffleNetV2's tail)
       } else if ( paramsAll.channelCount1_pointwise1Before > 0 ) {
-
-//!!! ...unfinished... (2022/04/10) Really? Sure?
-//!!! ...unfinished... (2022/04/10)
-// Perhaps, when:
-//   ( this.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() ) // (-3) (ShuffleNetV2's body/tail)
-//
-// should also do this.
-
         pointwise2_inputChannelCount += paramsAll.channelCount1_pointwise1Before; // Add the channel count of the second input image.
       }
     }
