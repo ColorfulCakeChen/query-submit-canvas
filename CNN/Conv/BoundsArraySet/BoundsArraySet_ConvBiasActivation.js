@@ -230,6 +230,13 @@ class ConvBiasActivation extends InputsOutputs {
         .set_one_byBoundsArray( outChannel, this.afterBias, outChannel )
         .multiply_one_byNs( outChannel, this.output0.scaleArraySet.do.scales, outChannel );
 
+//!!! ...unfinished... (2022/04/25)
+// Since .afterActivationEscaping has already multiplied the .output0.scaleArraySet.do.scales,
+// it has already been the clamped value (i.e. already inside the theActivationFunctionInfo.outputRangeLinear.
+//
+// So, .afterActivation (i.e. .output0.boundsArray) should be the same as .afterActivationEscaping
+//
+
       // 3. Determine .afterActivation (i.e. .output0.boundsArray)
       {
         this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel );
