@@ -234,7 +234,8 @@ class ConvBiasActivation extends InputsOutputs {
 // Since .afterActivationEscaping has already multiplied the .output0.scaleArraySet.do.scales,
 // it has already been the clamped value (i.e. already inside the theActivationFunctionInfo.outputRangeLinear.
 //
-// So, .afterActivation (i.e. .output0.boundsArray) should be the same as .afterActivationEscaping
+// That is, .afterActivation (i.e. .output0.boundsArray) should be the same as .afterActivationEscaping.
+// So, the .afterActivationEscaping should be deprecated.
 //
 
       // 3. Determine .afterActivation (i.e. .output0.boundsArray)
