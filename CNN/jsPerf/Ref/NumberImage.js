@@ -427,6 +427,9 @@ class Base {
       new BoundsArraySet.InputsOutputs( this.boundsArraySet.output0, undefined, this.depth )
     );
 
+
+//!!! ...unfinished... (2022/04/25) What about the ScaleArraySet?
+
     // Calculate value bounds of every output channels (i.e. .afterActivation; .output).
     imageOutNew.boundsArraySet.output0
       .set_all_byBoundsArray( imageOutNew.boundsArraySet.input0 )
