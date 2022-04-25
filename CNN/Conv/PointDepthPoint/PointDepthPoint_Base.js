@@ -884,8 +884,8 @@ class Base extends ReturnOrClone.Base {
         this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
           addInput0ToPointwise21_boundsArraySet_output0.channelCount, addInput0ToPointwise22_boundsArraySet_output0?.channelCount );
 
-        this.boundsArraySet.output0.set_all_byBoundsArray( addInput0ToPointwise21_boundsArraySet_output0 );
-        this.boundsArraySet.output1?.set_all_byBoundsArray( addInput0ToPointwise22_boundsArraySet_output0 );
+        this.boundsArraySet.output0.set_all_byScaleBoundsArray( addInput0ToPointwise21_boundsArraySet_output0 );
+        this.boundsArraySet.output1?.set_all_byScaleBoundsArray( addInput0ToPointwise22_boundsArraySet_output0 );
       }
 
       // Note: It should also be okay to set to TensorOpCounters.addInput0ToPointwise22).
