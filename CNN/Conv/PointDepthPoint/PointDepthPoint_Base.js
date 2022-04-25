@@ -867,7 +867,7 @@ class Base extends ReturnOrClone.Base {
         this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
           this.concat2ShuffleSplit.boundsArraySet.output0.channelCount );
 
-        this.boundsArraySet.output0.set_all_byBoundsArray( this.concat2ShuffleSplit.boundsArraySet.output0 );
+        this.boundsArraySet.output0.set_all_byScaleBoundsArray( this.concat2ShuffleSplit.boundsArraySet.output0 );
       }
 
       // In theory, concat2 use the result of add-input0-to-pointwise21 as first parameter. In reality, it usually uses the result
