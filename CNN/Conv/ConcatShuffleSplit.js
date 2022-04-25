@@ -63,7 +63,7 @@ class Base {
 
     this.channelShuffler = channelShuffler;
     this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
-    Base.setup_BoundsArraySetArray.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
+    Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
   }
 
   /**
