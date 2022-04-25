@@ -230,6 +230,42 @@ class ConvBiasActivation extends InputsOutputs {
         .set_one_byBoundsArray( outChannel, this.afterBias, outChannel )
         .multiply_one_byNs( outChannel, this.output0.scaleArraySet.do.scales, outChannel );
 
+//!!! ...unfinished... (2022/04/25) This should be faster than calling activation function.
+
+      // 3. Determine .afterActivation (i.e. .output0.boundsArray)
+      {
+        this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterActivationEscaping, outChannel );
+
+        let targetRange;
+        if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels, it is clamped by the output range for linearDomainLinear.
+          targetRange = theActivationFunctionInfo.outputRangeLinear;
+
+        } else { // Non pass-through half channels, it is clamped by the output range for the whole input domain.
+          targetRange = theActivationFunctionInfo.outputRange;
+        }
+
+        // If there is activation function, the activation function dominates the output range.
+        if ( nActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+
+          // If the input and output linear bounds of the activation function is the same, it is better to use clamp_one_byXxx().
+          //
+          // This is especially true for the activation function output range has Infinity (e.g. RELU is [ 0, +Infinity ]), because
+          // the result's bounds is more feasible (at least, will not become another bounds with Infinity).
+          //
+          if (   ( theActivationFunctionInfo.inputDomainLinear.lower == theActivationFunctionInfo.outputRangeLinear.lower )
+              && ( theActivationFunctionInfo.inputDomainLinear.upper == theActivationFunctionInfo.outputRangeLinear.upper ) ) {
+            this.output0.boundsArray.clamp_one_byBounds( outChannel, targetRange );
+
+          // If the input and output linear bounds of the activation function is different, it must set_one_byXxx(). Otherwise,
+          // the result's bounds will be wrong.
+          } else {
+            this.output0.boundsArray.set_one_byBounds( outChannel, targetRange );
+          }
+              
+        // Otherwise, no activation function, the output range is determined by .afterActivationEscaping.
+        }
+      }
+
 //!!! ...unfinished... (2022/04/25)
 // Since .afterActivationEscaping has already multiplied the .output0.scaleArraySet.do.scales,
 // it has already been the clamped value (i.e. already inside the theActivationFunctionInfo.outputRangeLinear.
@@ -278,8 +314,12 @@ class ConvBiasActivation extends InputsOutputs {
 
     }
 
-    // 3. Determine .afterActivation (i.e. .output0.boundsArray)
-    this.output0.boundsArray.set_all_byBoundsArray_activation( this.afterActivationEscaping, nActivationId );
+//!!! (2022/04/25 Add and Remarked)
+//
+// //!!! ...unfinished... (2022/04/25) It may be slow to call activation function.
+//
+//     // 3. Determine .afterActivation (i.e. .output0.boundsArray)
+//     this.output0.boundsArray.set_all_byBoundsArray_activation( this.afterActivationEscaping, nActivationId );
 
     return this;
   }
