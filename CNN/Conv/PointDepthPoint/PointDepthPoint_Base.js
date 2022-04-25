@@ -753,7 +753,7 @@ class Base extends ReturnOrClone.Base {
     // concat2ShuffleSplit and this PointDepthPoint final bounds arrray set).
     //
     let addInput0ToPointwise21_boundsArraySet_output0 = this.pointwise21.boundsArraySet.output0;
-    let addInput0ToPointwise22_boundsArraySet_output0 = this.pointwise22.boundsArraySet.output0;
+    let addInput0ToPointwise22_boundsArraySet_output0 = this.pointwise22?.boundsArraySet.output0;
 
     // 6.1
     //
