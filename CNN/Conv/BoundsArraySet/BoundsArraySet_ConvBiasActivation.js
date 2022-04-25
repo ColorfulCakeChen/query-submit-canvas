@@ -83,6 +83,18 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /**
+   * @param {boolean} bPassThrough
+   * Set this.bPassThrough[] all to bPassThrough.
+   *
+   * @return {ConvBiasActivation}
+   *   Return this (modified) object.
+   */
+  set_bPassThrough_all( bPassThrough ) {
+    this.bPassThrough.fill( bPassThrough );
+    return this;
+  }
+
+  /**
    * Set:
    *   - this.bPassThrough[] to false (i.e. all are not pass-through).
    *
@@ -90,8 +102,7 @@ class ConvBiasActivation extends InputsOutputs {
    *   Return this (modified) object.
    */
   set_bPassThrough_all_none() {
-    this.bPassThrough.fill( false );
-    return this;
+    return this.set_bPassThrough_all( false );
   }
 
   /**
