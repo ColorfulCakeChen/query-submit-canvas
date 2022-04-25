@@ -127,65 +127,6 @@ class ConvBiasActivation extends InputsOutputs {
     return this;
   }
 
-//!!! ...unfinished... (2022/04/11)
-//!!! (2022/04/11 Remarked)
-//   /**
-//    * @param {BoundsArray} inputBoundsArray
-//    *   The BoundsArray to be copied to .input and .afterUndoPreviousActivationEscaping.
-//    *
-//    * @param {BoundsArray} outputBoundsArray
-//    *   The BoundsArray to be copied to .afterFilter, .afterBias, .afterActivationEscaping, .afterActivation.
-//    *
-//    * @return {BoundsArraySet}
-//    *   Return this (modified) object.
-//    */
-//   set_all_byBoundsArray_input_output( inputBoundsArray, outputBoundsArray ) {
-//     this.input                              .set_all_byBoundsArray( inputBoundsArray );
-//     this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( inputBoundsArray );
-//     this.afterFilter                        .set_all_byBoundsArray( outputBoundsArray );
-//     this.afterBias                          .set_all_byBoundsArray( outputBoundsArray );
-//     this.afterActivationEscaping            .set_all_byBoundsArray( outputBoundsArray );
-//     //this.afterActivation                    .set_all_byBoundsArray( outputBoundsArray );
-//     ??this.set_activationEscaping_bPassThrough_all_none();
-//     return this;
-//   }
-
-//!!! ...unfinished... (2022/04/11)
-//!!! (2022/04/11 Remarked)
-//   /**
-//    * @param {BoundsArray} aBoundsArray
-//    *   The BoundsArray to be copied. It will be copied to all BoundsArray in this object.
-//    *
-//    * @return {BoundsArraySet}
-//    *   Return this (modified) object.
-//    */
-//   set_all_byBoundsArray( aBoundsArray ) {
-//     return this.set_all_byBoundsArray_input_output( aBoundsArray, aBoundsArray );
-//   }
-
-//!!! ...unfinished... (2022/04/11)
-//!!! (2022/04/11 Remarked)
-//   /**
-//    * @param {BoundsArray} inputBoundsArray0
-//    *   The BoundsArray of the 1st input.
-//    *
-//    * @param {BoundsArray} inputBoundsArray1
-//    *   The BoundsArray of the 2nd input.
-//    *
-//    * @return {BoundsArraySet}
-//    *   Return a newly created object.
-//    */
-//   static create_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 ) {
-//     let rLength = inputBoundsArray0.length + inputBoundsArray1.length;
-//     let rBoundsArraySet = new BoundsArraySet( rLength, rLength );
-//
-//     // Concat value bounds array.
-//     rBoundsArraySet.input.set_all_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 );
-//
-//     // Spread to all value bounds array.
-//     return rBoundsArraySet.set_all_byBoundsArray_input_output( rBoundsArraySet.input, rBoundsArraySet.input );
-//   }
-
   /**
    * @param {BoundsArraySet.ConvBiasActivation} aBoundsArraySet
    *   The BoundsArraySet to be copied. The .inputs will just be referenced (NOT copied). But the other data members will be copied.
