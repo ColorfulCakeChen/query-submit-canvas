@@ -182,7 +182,7 @@ class Base {
       imageOut.boundsArraySet.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( imageOut.boundsArraySet.input0 );
 
       if ( depthwise_AvgMax_Or_ChannelMultiplier <= 0 ) { // For avg/max pooling, the value bounds will not change.
-        imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
+        imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping );
 
       } else { // For normal depthwise convolution, value bounds should be calculated by accumulation.
         imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
