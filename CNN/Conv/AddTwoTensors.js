@@ -112,11 +112,7 @@ class Base {
       inputScaleBoundsArray0.channelCount
     );
 
-
-//!!! ...unfinished... (2022/04/25) What about the ScaleArraySet?
-
-    this.boundsArraySet.output0.set_all_byBoundsArray( inputScaleBoundsArray1 );
-    this.boundsArraySet.output0.add_all_byBoundsArray( inputScaleBoundsArray0 );
+    this.boundsArraySet.output0.set_all_byScaleBoundsArray_add( inputScaleBoundsArray0, inputScaleBoundsArray1 );
   }
 
 //!!! ...unfinished... (2021/06/08) What if pointwise22 could be add-input-to-output but pointwise21 could not?
