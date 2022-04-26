@@ -551,33 +551,56 @@ class Base {
     let imageOut1 = imageOutArray[ 1 ];
 
     // Split along the image depth.
+    let inIndex = 0, outIndex_lowerHalf = 0, outIndex_higherHalf = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
-      let indexBaseX = ( y * imageIn.width );
 
       for ( let x = 0; x < imageIn.width; ++x ) {
-        let indexBaseC = ( indexBaseX + x );
-
-        let inIndexBaseC  = ( indexBaseC * imageIn.depth );
-
         let inChannel = 0;
 
-        let outIndexBaseC_lowerHalf = ( indexBaseC * imageOutDepth_lowerHalf );
-        let outIndexBaseC_higherHalf = ( indexBaseC * imageOutDepth_higherHalf );
-
         for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
-          let inIndex = inIndexBaseC + inChannel;
-          let outIndex_lowerHalf = outIndexBaseC_lowerHalf + outChannel;
           imageOut0.dataArray[ outIndex_lowerHalf ] = imageIn.dataArray[ inIndex ];
+          ++inIndex;
+          ++outIndex_lowerHalf;
         }
 
         for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
-          let inIndex = inIndexBaseC + inChannel;
-          let outIndex_higherHalf = outIndexBaseC_higherHalf + outChannel;
           imageOut1.dataArray[ outIndex_higherHalf ] = imageIn.dataArray[ inIndex ];
+          ++inIndex;
+          ++outIndex_higherHalf;
         }
 
       }
     }
+
+//!!! (2022/04/26 Remarked) The sequential index is enough and faster.
+//     // Split along the image depth.
+//     for ( let y = 0; y < imageIn.height; ++y ) {
+//       let indexBaseX = ( y * imageIn.width );
+//
+//       for ( let x = 0; x < imageIn.width; ++x ) {
+//         let indexBaseC = ( indexBaseX + x );
+//
+//         let inIndexBaseC  = ( indexBaseC * imageIn.depth );
+//
+//         let inChannel = 0;
+//
+//         let outIndexBaseC_lowerHalf = ( indexBaseC * imageOutDepth_lowerHalf );
+//         let outIndexBaseC_higherHalf = ( indexBaseC * imageOutDepth_higherHalf );
+//
+//         for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
+//           let inIndex = inIndexBaseC + inChannel;
+//           let outIndex_lowerHalf = outIndexBaseC_lowerHalf + outChannel;
+//           imageOut0.dataArray[ outIndex_lowerHalf ] = imageIn.dataArray[ inIndex ];
+//         }
+//
+//         for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
+//           let inIndex = inIndexBaseC + inChannel;
+//           let outIndex_higherHalf = outIndexBaseC_higherHalf + outChannel;
+//           imageOut1.dataArray[ outIndex_higherHalf ] = imageIn.dataArray[ inIndex ];
+//         }
+//
+//       }
+//     }
 
     // Setup value bounds array.
     imageOut0.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_lowerHalf );
@@ -638,7 +661,6 @@ class Base {
           ++outIndex;
         }
 
-        let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
         for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
           imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
           ++in2Index;
