@@ -115,11 +115,14 @@ class Base {
       for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
         let filterIndexBase = ( inChannel * pointwiseChannelCount );
 
+        let undoPreviousEscapingScale = imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ];
+
         for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
           let filterIndex = filterIndexBase + outChannel;
 
           tBounds
             .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+            .multiply_byN( undoPreviousEscapingScale )
             .multiply_byN( pointwiseFiltersArray[ filterIndex ] );
 
           imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
@@ -293,6 +296,11 @@ class Base {
                         if ( !filtersArray_bBoundsCalculated[ filterIndex ] ) {
                           tBounds
                             .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+
+//!!! ...unfinished... (2022/04/26)
+//        let undoPreviousEscapingScale = imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ];
+
+
                             .multiply_byN( depthwiseFiltersArray[ filterIndex ] );
 
                           imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
