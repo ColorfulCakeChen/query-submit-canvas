@@ -564,6 +564,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
                   let doEscapingScale = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
                   this.filtersArray[ filterIndex ] *= doEscapingScale; // filter wieghts scaled.
 
+//!!! ...unfinished... (2022/04/26) Is this correct?
                   this.boundsArraySet.afterFilter.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after filter also scaled.
 
                   ++filterIndex;
