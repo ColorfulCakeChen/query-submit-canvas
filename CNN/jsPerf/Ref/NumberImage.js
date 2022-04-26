@@ -135,11 +135,11 @@ class Base {
 
     // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
     // by .afterBias, bPassThrough and activation function's output range.
-    imageOut.boundsArraySet.set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
+    imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
 
 //!!! ...unfinished... (2022/04/26)
 // should .apply_doEscapingScale_to_filtersArray_biasesArray()
-// after .set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId
+// after .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId()
 // before call .modifyByActivation().
 
     // Activation
@@ -324,11 +324,11 @@ class Base {
 
     // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
     // by .afterBias, bPassThrough and activation function's output range.
-    imageOut.boundsArraySet.set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
+    imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
 
 //!!! ...unfinished... (2022/04/26)
 // should .apply_doEscapingScale_to_filtersArray_biasesArray()
-// after .set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId
+// after .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId()
 // before call .modifyByActivation().
 
     // Activation
