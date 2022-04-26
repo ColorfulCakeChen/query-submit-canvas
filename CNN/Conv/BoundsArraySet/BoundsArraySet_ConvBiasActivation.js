@@ -187,6 +187,7 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * Determine .output0.boundsArray (i.e. .afterActivation) and .output0.scaleArraySet by .afterBias and .bPassThrough and nActivationId.
+   * Also adjust .afterFilter and .afterBias by .output0.scaleArraySet.
    *
    * The following properties will be used:
    *   - this.afterBias
@@ -204,7 +205,7 @@ class ConvBiasActivation extends InputsOutputs {
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  set_output0_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
+  adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
     const theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfoById( nActivationId );
 
     let doEscapingScale;
