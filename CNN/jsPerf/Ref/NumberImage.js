@@ -364,15 +364,22 @@ class Base {
       `${biasName} shape (${biasesArray.length}) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
+    let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
-      let indexBaseX = ( y * imageIn.width );
+//!!! (2022/04/26 Remarked) The sequential index is enough and faster.
+//      let indexBaseX = ( y * imageIn.width );
 
       for ( let x = 0; x < imageIn.width; ++x ) {
-        let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
+//!!! (2022/04/26 Remarked) The sequential index is enough and faster.
+//        let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
 
-        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-          let inIndex = inIndexBaseC + inChannel;
-          imageIn.dataArray[ inIndex ] += biasesArray[ inChannel ];
+        for ( let channel = 0; channel < imageIn.depth; ++channel ) {
+//!!! (2022/04/26 Remarked) The sequential index is enough and faster.
+//           let inIndex = inIndexBaseC + channel;
+//           imageIn.dataArray[ inIndex ] += biasesArray[ channel ];
+
+          imageIn.dataArray[ index ] += biasesArray[ channel ];
+          ++index;
         }
       }
     }
@@ -407,15 +414,12 @@ class Base {
       `${scaleName} shape (${scaleArray.length}) `
         + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
 
+    let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
-      let indexBaseX = ( y * imageIn.width );
-
       for ( let x = 0; x < imageIn.width; ++x ) {
-        let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
-
-        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-          let inIndex = inIndexBaseC + inChannel;
-          imageIn.dataArray[ inIndex ] *= scaleArray.scales[ inChannel ];
+        for ( let channel = 0; channel < imageIn.depth; ++channel ) {
+          imageIn.dataArray[ index ] *= scaleArray.scales[ channel ];
+          ++index;
         }
       }
     }
