@@ -133,14 +133,15 @@ class Base {
     // Bias
     imageOut.modifyByBias( bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
-    // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
-    // by .afterBias, bPassThrough and activation function's output range.
-    imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
+    // Activation Escaping.
+    {
+      // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
+      // by .afterBias, bPassThrough and activation function's output range.
+      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
 
-//!!! ...unfinished... (2022/04/26)
-// should .apply_doEscapingScale_to_filtersArray_biasesArray()
-// after .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId()
-// before call .modifyByActivation().
+      // Before activation function, scale every element according to its channel.
+      imageOut.scale_byChannel( imageOut.boundsArraySet.output0.scaleArraySet.do, pointwiseName + " activation escaping scale", parametersDesc );
+    }
 
     // Activation
     imageOut.modifyByActivation( pointwiseActivationId, parametersDesc );
@@ -322,14 +323,15 @@ class Base {
     // Bias
     imageOut.modifyByBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
-    // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
-    // by .afterBias, bPassThrough and activation function's output range.
-    imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
+    // Activation Escaping.
+    {
+      // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
+      // by .afterBias, bPassThrough and activation function's output range.
+      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
 
-//!!! ...unfinished... (2022/04/26)
-// should .apply_doEscapingScale_to_filtersArray_biasesArray()
-// after .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId()
-// before call .modifyByActivation().
+      // Before activation function, scale every element according to its channel.
+      imageOut.scale_byChannel( imageOut.boundsArraySet.output0.scaleArraySet.do, depthwiseName + " activation escaping scale", parametersDesc );
+    }
 
     // Activation
     imageOut.modifyByActivation( depthwiseActivationId, parametersDesc );
@@ -378,6 +380,44 @@ class Base {
     // Calculate value bounds of every output channels (i.e. .afterBias) by shifting as the bias.
     for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
       imageIn.boundsArraySet.afterBias.add_one_byN( inChannel, biasesArray[ inChannel ] );
+    }
+
+    return imageIn;
+  }
+
+  /**
+   * Note: This method does not adjust any BoundsArray.
+   *
+   * @param {NumberImage.Base} this            The source image to be processed.
+   * @param {FloatValue.ScaleArray} scaleArray The scales for every channel.
+   * @param {string}   scaleName               A string for debug message of this scaling.
+   * @param {string}   parametersDesc          A string for debug message of this point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return this (modified) image whose every element is scaled according to its channel.
+   */
+  scale_byChannel( scaleArray, scaleName, parametersDesc ) {
+    let imageIn = this;
+
+    tf.util.assert( ( scaleArray != null ),
+      `${scaleName} scaleArray (${scaleArray}) `
+        + `should not be null. (${parametersDesc})`);
+
+    tf.util.assert( ( scaleArray.length == imageIn.depth ),
+      `${scaleName} shape (${scaleArray.length}) `
+        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})`);
+
+    for ( let y = 0; y < imageIn.height; ++y ) {
+      let indexBaseX = ( y * imageIn.width );
+
+      for ( let x = 0; x < imageIn.width; ++x ) {
+        let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
+
+        for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+          let inIndex = inIndexBaseC + inChannel;
+          imageIn.dataArray[ inIndex ] *= scaleArray.scales[ inChannel ];
+        }
+      }
     }
 
     return imageIn;
