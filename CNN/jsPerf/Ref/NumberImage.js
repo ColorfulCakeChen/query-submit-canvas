@@ -130,6 +130,15 @@ class Base {
     // Bias
     imageOut.modifyByBias( bPointwiseBias, pointwiseBiasesArray, pointwiseName + " bias", parametersDesc );
 
+    // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
+    // by .afterBias, bPassThrough and activation function's output range.
+    imageOut.boundsArraySet.set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
+
+//!!! ...unfinished... (2022/04/26)
+// should .apply_doEscapingScale_to_filtersArray_biasesArray()
+// after .set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId
+// before call .modifyByActivation().
+
     // Activation
     imageOut.modifyByActivation( pointwiseActivationId, parametersDesc );
 
@@ -309,6 +318,15 @@ class Base {
     // Bias
     imageOut.modifyByBias( bDepthwiseBias, depthwiseBiasesArray, depthwiseName + " bias", parametersDesc );
 
+    // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
+    // by .afterBias, bPassThrough and activation function's output range.
+    imageOut.boundsArraySet.set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
+
+//!!! ...unfinished... (2022/04/26)
+// should .apply_doEscapingScale_to_filtersArray_biasesArray()
+// after .set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId
+// before call .modifyByActivation().
+
     // Activation
     imageOut.modifyByActivation( depthwiseActivationId, parametersDesc );
 
@@ -379,9 +397,10 @@ class Base {
     if ( !theActivationFunctionInfo )
       return imageIn;
 
-    // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
-    // by .afterBias, bPassThrough and activation function's output range.
-    imageIn.boundsArraySet.set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId( nActivationId );
+//!!! (2022/04/26 Remarked) Moved to cloneBy_pointwise() and cloneBy_depthwise()
+//     // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
+//     // by .afterBias, bPassThrough and activation function's output range.
+//     imageIn.boundsArraySet.set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId( nActivationId );
 
     let pfnActivation = theActivationFunctionInfo.pfn;
     if ( !pfnActivation )
