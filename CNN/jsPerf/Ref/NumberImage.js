@@ -626,31 +626,54 @@ class Base {
     );
 
     // Concatenate along the image depth.
+    let in1Index = 0, in2Index = 0, outIndex = 0;
     for ( let y = 0; y < imageIn1.height; ++y ) {
-      let indexBaseX = ( y * imageIn1.width );
 
       for ( let x = 0; x < imageIn1.width; ++x ) {
-        let indexBaseC = ( indexBaseX + x );
-        let outIndexBaseC = ( indexBaseC * imageOut.depth );
-
         let outChannel = 0;
 
-        let in1IndexBaseC  = ( indexBaseC * imageIn1.depth );
         for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
-          let in1Index = in1IndexBaseC + in1Channel;
-          let outIndex = outIndexBaseC + outChannel;
           imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
+          ++in1Index;
+          ++outIndex;
         }
 
         let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
         for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
-          let in2Index = in2IndexBaseC + in2Channel;
-          let outIndex = outIndexBaseC + outChannel;
           imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
+          ++in2Index;
+          ++outIndex;
         }
-
       }
     }
+
+//!!! (2022/04/26 Remarked) The sequential index is enough and faster.
+//     // Concatenate along the image depth.
+//     for ( let y = 0; y < imageIn1.height; ++y ) {
+//       let indexBaseX = ( y * imageIn1.width );
+//
+//       for ( let x = 0; x < imageIn1.width; ++x ) {
+//         let indexBaseC = ( indexBaseX + x );
+//         let outIndexBaseC = ( indexBaseC * imageOut.depth );
+//
+//         let outChannel = 0;
+//
+//         let in1IndexBaseC  = ( indexBaseC * imageIn1.depth );
+//         for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
+//           let in1Index = in1IndexBaseC + in1Channel;
+//           let outIndex = outIndexBaseC + outChannel;
+//           imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
+//         }
+//
+//         let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
+//         for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
+//           let in2Index = in2IndexBaseC + in2Channel;
+//           let outIndex = outIndexBaseC + outChannel;
+//           imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
+//         }
+//
+//       }
+//     }
 
     // Concat value bounds array.
     imageOut.boundsArraySet.set_outputs_all_by_concat_input0_input1();
