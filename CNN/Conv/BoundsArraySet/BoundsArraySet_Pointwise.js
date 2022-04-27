@@ -10,7 +10,7 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "../Pointwise/Pointwise_
  * The element value bounds for pointwise convolution-bias-activation.
  *
  *   - Only input0 is used. The input1 always is undefined.
- *   - Only outputChannelCount0 is used. The outputChannelCount1 always is undefined.
+ *   - Only outputChannelCount0 is used. The outputChannelCount1 is always zero.
  *
  * @see ConvBiasActivation
  */
@@ -50,8 +50,7 @@ class Pointwise extends ConvBiasActivation {
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
 
-//!!! ...unfinished... (2022/04/26) Does this.outputChannelCount exist?
-            if ( outChannel >= this.outputChannelCount )
+            if ( outChannel >= this.outputChannelCount0 )
               break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
               this.bPassThrough[ outChannel ] = inChannelPartInfo.bPassThrough;
