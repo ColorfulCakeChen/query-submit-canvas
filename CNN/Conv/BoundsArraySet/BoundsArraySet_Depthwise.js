@@ -52,6 +52,8 @@ class Depthwise extends ConvBiasActivation {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
           for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+
+//!!! ...unfinished... (2022/04/26) Does this.inputChannelCount exist?
             if ( inChannel >= this.inputChannelCount )
               break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
