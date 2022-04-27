@@ -616,7 +616,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
     if ( this.biasesArray ) {
       let biasIndex = 0;
 
-      for ( let outChannel = 0; outChannel < this.outputChannelCount; ++outChannel, ++outChannel ) {
+      for ( let outChannel = 0; outChannel < this.outputChannelCount; ++outChannel ) {
 
         let doEscapingScale = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
         this.biasesArray[ biasIndex ] *= doEscapingScale; // bias wieghts scaled.
