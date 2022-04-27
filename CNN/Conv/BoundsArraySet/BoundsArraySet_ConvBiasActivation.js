@@ -225,6 +225,16 @@ class ConvBiasActivation extends InputsOutputs {
 
           if ( this.bPassThrough[ outChannel ] ) { // For pass-through half channels.
 
+            // If value bounds is [ 0, 0 ], adjust it to a range which includes zero.
+            //
+            // This could happen when filters are all zero for outChannel. This adjustment is necessary because the following
+            // .set_one_by_fromLowerUpper_toLowerUpper() can not work for bounds [ 0, 0 ].
+            //
+            if ( ( this.afterBias.lowers[ outChannel ] == 0 ) && ( this.afterBias.uppers[ outChannel ] == 0 ) ) {
+              this.afterBias.lowers[ outChannel ] = -1;
+              this.afterBias.uppers[ outChannel ] = +1;
+            }
+
             // Calculate the scale for escaping bias result from activation function's non-linear domain into linear domain.
             //
             // Note: This does not work for avg/max pooling.
