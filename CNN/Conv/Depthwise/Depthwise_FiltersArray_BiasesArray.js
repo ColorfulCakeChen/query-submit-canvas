@@ -399,6 +399,8 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     let inChannelBegin = 0, inChannelEnd = 0,   // [ inChannelBegin, inChannelEnd ) are input channels of the current FiltersBiasesPart.
         outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
 
+    let sourceWeight; // without been multiplied by undoPreviousEscapingScale.
+
     FiltersBiasesPartIndexLoop:
     for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
@@ -435,25 +437,41 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
                       if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                         if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
+                          sourceWeight = 1;
                           this.filtersArray[ filterIndex ] = undoPreviousEscapingScale; // The only one filter position (in the pass-through part) has non-zero value.
 
                         } else {
+                          sourceWeight = 0;
                           this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
                         }
 
                       } else { // Non-pass-through half channels.
-                        this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
+                        sourceWeight = sourceFloat32Array[ sourceIndex ];
+                        this.filtersArray[ filterIndex ] = sourceWeight * undoPreviousEscapingScale;
                         ++sourceIndex;
 
-//!!! ...unfinished... (2022/04/26)
-// The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
-// However, the this.filtersArray[ filterIndex ] also has been multiplied by undoPreviousEscapingScale.
-// The undoPreviousEscapingScale are multiplied twice.
+//!!! (2022/04/26 Remarked) Moved to outside loop because ( sourceWeight == 1 ) should also be calculated.
+//                         // Determine .afterFilter
+//                         //
+//                         // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+//                         //       The this.filtersArray[ filterIndex ] also has been multiplied by undoPreviousEscapingScale.
+//                         //       So use sourceWeight instead of this.filtersArray[ filterIndex ] here.
+//                         tBounds
+//                           .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+//                           .multiply_byN( sourceWeight );
+//
+//                         this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+                      }
 
-                        // Determine .afterFilter
+                      // Determine .afterFilter
+                      //
+                      // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+                      //       The this.filtersArray[ filterIndex ] also has been multiplied by undoPreviousEscapingScale.
+                      //       So use sourceWeight instead of this.filtersArray[ filterIndex ] here. Otherwise, it will be multipled twice.
+                      {
                         tBounds
                           .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-                          .multiply_byN( this.filtersArray[ filterIndex ] );
+                          .multiply_byN( sourceWeight );
 
                         this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
                       }
