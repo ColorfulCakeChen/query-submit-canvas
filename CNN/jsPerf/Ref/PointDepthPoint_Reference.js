@@ -362,8 +362,8 @@ class Base {
     function assert_byIndex( indexName, index, aScaleBoundsArray, refScaleBoundsArray ) {
 
       tf.util.assert(
-        ( ( aScaleBoundsArray == null ) && ( refScaleBoundsArray == null ) )
-        ( ( aScaleBoundsArray != null ) && ( refScaleBoundsArray != null ) ),
+        (   ( ( aScaleBoundsArray == null ) && ( refScaleBoundsArray == null ) )
+         || ( ( aScaleBoundsArray != null ) && ( refScaleBoundsArray != null ) ) ),
         `PointDepthPoint_Reference.Base.assert_imageOut_BoundsArraySet().assert_byIndex( `
           + `indexName=${indexName}, index=${index} ): `
           + `aScaleBoundsArray (${aScaleBoundsArray}) and refScaleBoundsArray (${refScaleBoundsArray}) `
