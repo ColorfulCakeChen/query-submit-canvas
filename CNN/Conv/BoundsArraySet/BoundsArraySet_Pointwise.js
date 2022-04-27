@@ -49,7 +49,6 @@ class Pointwise extends ConvBiasActivation {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
-
             if ( outChannel >= this.outputChannelCount0 )
               break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
