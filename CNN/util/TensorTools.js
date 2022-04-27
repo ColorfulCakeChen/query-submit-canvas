@@ -88,7 +88,7 @@ class Asserter_Equal {
 
     // Check both length.
     tf.util.assert( lhsNumberArray.length == rhsNumberArray.length,
-    `${prefixMsg} ${lhsNumberArrayName} length ( ${lhsNumberArray.length} ) should be ( ${rhsNumberArray.length} ). ${postfixMsg}` );
+      `${prefixMsg} ${lhsNumberArrayName} length ( ${lhsNumberArray.length} ) should be ( ${rhsNumberArray.length} ). ${postfixMsg}` );
 
     this.rhsNumberArray = rhsNumberArray; // For ElementComparator() to access.
 
