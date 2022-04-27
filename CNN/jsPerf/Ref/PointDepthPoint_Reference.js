@@ -322,13 +322,11 @@ class Base {
         Base.AssertTwoEqualValues( "outputTensorCount", pointDepthPoint.outputTensorCount, outputTensorCount, strNote );
       }
 
-//!!! ...unfinished... (2021/12/16) should assert comparing BoundsArraySet.
-//       {
-//         imageOutReferenceArray;
-//       }
+      // Test correctness of pointDepthPoint BoundsArraySet.
+      this.assert_imageOut_BoundsArraySet( pointDepthPoint.boundsArraySet, imageOutReferenceArray, strNote );
 
       // Test correctness of pointDepthPoint apply.
-      this.check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensor3dArray, strNote );
+      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, strNote );
 
       pointDepthPoint.disposeTensors();
       let memoryInfo_afterDispose = tf.memory();
@@ -351,15 +349,52 @@ class Base {
   }
 
   /**
-   * Check the PointDepthPoint's output according to input (for correctness testing).
+   * Check the PointDepthPoint's output's BoundsArraySet.
+   *
+   * @param {BoundsArraySet} aBoundsArraySet
+   *   The bounds array set of the PointDepthPoint_Reference's calcResult().
    *
    * @param {number[]} imageOutReferenceArray[ i ]
    *   Refernece output Image data.
+   */
+  assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReferenceArray, parametersDescription ) {
+
+    function assert_byOutputIndex( index, aScaleBoundsArray, refScaleBoundsArray ) {
+      this.asserter_Equal.assert_NumberArray_NumberArray(
+        aScaleBoundsArray.boundsArray.lowers, refScaleBoundsArray.boundsArray.lowers,
+        `PointDepthPoint`, `output${index}.boundsArray.lowers`, `outputRef${index}.boundsArray.lowers`, parametersDescription
+      );
+
+      this.asserter_Equal.assert_NumberArray_NumberArray(
+        aScaleBoundsArray.boundsArray.uppers, refScaleBoundsArray.boundsArray.uppers,
+        `PointDepthPoint`, `output${index}.boundsArray.uppers`, `outputRef${index}.boundsArray.uppers`, parametersDescription
+      );
+
+      this.asserter_Equal.assert_NumberArray_NumberArray(
+        aScaleBoundsArray.scaleArraySet.do.scales, refScaleBoundsArray.scaleArraySet.do.scales,
+        `PointDepthPoint`, `output${i}.scaleArraySet.do.scales`, `outputRef${i}.scaleArraySet.do.scales`, parametersDescription
+      );
+
+      this.asserter_Equal.assert_NumberArray_NumberArray(
+        aScaleBoundsArray.scaleArraySet.undo.scales, refScaleBoundsArray.scaleArraySet.undo.scales,
+        `PointDepthPoint`, `output${i}.scaleArraySet.undo.scales`, `outputRef${i}.scaleArraySet.undo.scales`, parametersDescription
+      );
+    }
+
+    assert_byOutputIndex( aBoundsArraySet.output0, imageOutReferenceArray[ 0 ].output0 );
+    assert_byOutputIndex( aBoundsArraySet.output1, imageOutReferenceArray[ 1 ].output0 );
+  }
+
+  /**
+   * Check the PointDepthPoint's output according to input (for correctness testing).
    *
    * @param {tf.tensor3d[]} outputTensors
    *   The output array of the PointDepthPoint's apply_and_destroy_or_keep().
+   *
+   * @param {number[]} imageOutReferenceArray[ i ]
+   *   Refernece output Image data.
    */
-  check_Input_Output_WeightsTable( imageOutReferenceArray, outputTensors, parametersDescription ) {
+  assert_imageOut_Tensors_byNumberArrays( outputTensors, imageOutReferenceArray, parametersDescription ) {
 
     let outputArrayRef;
     for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
