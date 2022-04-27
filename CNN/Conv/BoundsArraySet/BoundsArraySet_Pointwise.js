@@ -49,6 +49,8 @@ class Pointwise extends ConvBiasActivation {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
           for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+
+//!!! ...unfinished... (2022/04/26) Does this.outputChannelCount exist?
             if ( outChannel >= this.outputChannelCount )
               break InChannelPartIndexLoop; // Never exceeds the total output channel count.
 
