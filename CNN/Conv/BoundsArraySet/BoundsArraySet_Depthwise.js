@@ -9,8 +9,8 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "../Depthwise/Depthwise_
 /**
  * The element value bounds set for depthwise convolution-bias-activation.
  *
- *   - Only input0 is used. The input1 always is undefined.
- *   - Only outputChannelCount0 is used. The outputChannelCount1 always is undefined.
+ *   - Only input0 is used. The input1 is always undefined.
+ *   - Only outputChannelCount0 is used. The outputChannelCount1 is always zero.
  *
  * @see ConvBiasActivation
  */
@@ -22,6 +22,9 @@ class Depthwise extends ConvBiasActivation {
    */
   constructor( input0, outputChannelCount0 ) {
     super( input0, outputChannelCount0 );
+
+    // Infer channelMultiplier.
+    this.channelMultiplier = outputChannelCount0 / input0.channelCount;
   }
 
   /**
@@ -52,12 +55,9 @@ class Depthwise extends ConvBiasActivation {
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
           for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-
-//!!! ...unfinished... (2022/04/26) Does this.inputChannelCount exist?
-            if ( inChannel >= this.inputChannelCount )
+            if ( inChannel >= this.inputChannelCount0 )
               break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
-//!!! ...unfinished... (2022/04/26) Does this.channelMultiplier exist?
             for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
               this.bPassThrough[ outChannel ] = inChannelPartInfo.bPassThrough;
 
