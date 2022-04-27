@@ -57,6 +57,7 @@ class Depthwise extends ConvBiasActivation {
             if ( inChannel >= this.inputChannelCount )
               break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
+//!!! ...unfinished... (2022/04/26) Does this.channelMultiplier exist?
             for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
               this.bPassThrough[ outChannel ] = inChannelPartInfo.bPassThrough;
 
