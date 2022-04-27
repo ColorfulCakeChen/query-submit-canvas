@@ -520,12 +520,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                 //
                 // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
                 //       The this.filtersArray[ filterIndex ] also has been multiplied by undoPreviousEscapingScale.
-                //       So use sourceWeight instead of this.filtersArray[ filterIndex ] here.
-                tBounds
-                  .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-                  .multiply_byN( sourceWeight );
+                //       So use sourceWeight instead of this.filtersArray[ filterIndex ] here. Otherwise, it will be multipled twice.
+                {
+                  tBounds
+                    .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                    .multiply_byN( sourceWeight );
 
-                this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+                  this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+                }
 
               } else {
                 this.filtersArray[ filterIndex ] = 0; // All input channels which is not in range use zero filter to ignore the inputs.
