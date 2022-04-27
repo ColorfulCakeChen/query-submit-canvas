@@ -512,6 +512,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
                   ++sourceIndex;
                 }
 
+//!!! ...unfinished... (2022/04/26)
+// The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+// However, the this.filtersArray[ filterIndex ] also has been multiplied by undoPreviousEscapingScale.
+// The undoPreviousEscapingScale are multiplied twice.
+
                 // Determine .afterFilter
                 tBounds
                   .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
