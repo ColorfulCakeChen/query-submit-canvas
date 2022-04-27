@@ -602,14 +602,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       let filterIndex = 0;
 
       for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-        for ( let outChannel = 0; outChannel < this.outputChannelCount; ++outChannel, ++outChannel ) {
+        for ( let outChannel = 0; outChannel < this.outputChannelCount; ++outChannel ) {
 
           let doEscapingScale = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
           this.filtersArray[ filterIndex ] *= doEscapingScale; // filter wieghts scaled.
-
-//!!! (2022/04/26 Remarked) Moved to set_output0_by_afterBias_bPassThrough_nActivationId()
-// //!!! ...unfinished... (2022/04/26) Is this correct?
-//           this.boundsArraySet.afterFilter.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after filter also scaled.
 
           ++filterIndex;
 
@@ -624,10 +620,6 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
 
         let doEscapingScale = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
         this.biasesArray[ biasIndex ] *= doEscapingScale; // bias wieghts scaled.
-
-//!!! (2022/04/26 Remarked) Moved to set_output0_by_afterBias_bPassThrough_nActivationId()
-// //!!! ...unfinished... (2022/04/26) Is this correct?
-//         this.boundsArraySet.afterBias.multiply_one_byN( outChannel, doEscapingScale ); // value bounds after bias also scaled.
 
         ++biasIndex;
 
