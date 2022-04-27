@@ -121,6 +121,7 @@ class Base {
         for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
           let filterIndex = filterIndexBase + outChannel;
 
+          // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
           tBounds
             .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
 //!!! (2022/04/27 Remarked) imageOut.boundsArraySet.afterUndoPreviousActivationEscaping already has been multiplied by undoPreviousEscapingScale.
@@ -297,6 +298,8 @@ class Base {
 
                         // Calculate value bounds of every output channels (i.e. .afterFilter).
                         if ( !filtersArray_bBoundsCalculated[ filterIndex ] ) {
+
+                          // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
                           tBounds
                             .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
 
