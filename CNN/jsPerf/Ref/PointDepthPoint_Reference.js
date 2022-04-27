@@ -393,14 +393,14 @@ class Base {
       );
     }
 
-    assert_byIndex( "input", 0, aBoundsArraySet.input0, imageOutReferenceArray[ 0 ].input0 );
-    assert_byIndex( "input", 1, aBoundsArraySet.input1, imageOutReferenceArray[ 0 ].input1 );
-    assert_byIndex( "output", 0, aBoundsArraySet.output0, imageOutReferenceArray[ 0 ].output0 );
+    assert_byIndex( "input", 0, aBoundsArraySet.input0, imageOutReferenceArray[ 0 ].boundsArraySet.input0 );
+    assert_byIndex( "input", 1, aBoundsArraySet.input1, imageOutReferenceArray[ 0 ].boundsArraySet.input1 );
+    assert_byIndex( "output", 0, aBoundsArraySet.output0, imageOutReferenceArray[ 0 ].boundsArraySet.output0 );
 
     if ( imageOutReferenceArray[ 1 ] ) {
-      assert_byIndex( "input", 0, aBoundsArraySet.input0, imageOutReferenceArray[ 1 ].input0 );
-      assert_byIndex( "input", 1, aBoundsArraySet.input1, imageOutReferenceArray[ 1 ].input1 );
-      assert_byIndex( "output", 1, aBoundsArraySet.output1, imageOutReferenceArray[ 1 ].output0 );
+      assert_byIndex( "input", 0, aBoundsArraySet.input0, imageOutReferenceArray[ 1 ].boundsArraySet.input0 );
+      assert_byIndex( "input", 1, aBoundsArraySet.input1, imageOutReferenceArray[ 1 ].boundsArraySet.input1 );
+      assert_byIndex( "output", 1, aBoundsArraySet.output1, imageOutReferenceArray[ 1 ].boundsArraySet.output0 );
     }
   }
 
