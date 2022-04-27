@@ -359,7 +359,8 @@ class Base {
    */
   assert_imageOut_BoundsArraySet( aBoundsArraySet, imageOutReferenceArray, parametersDescription ) {
 
-    function assert_byIndex( indexName, index, aScaleBoundsArray, refScaleBoundsArray ) {
+    // Note: For using "this", defined as an arrow function.
+    let assert_byIndex = ( indexName, index, aScaleBoundsArray, refScaleBoundsArray ) => {
 
       tf.util.assert(
         (   ( ( aScaleBoundsArray == null ) && ( refScaleBoundsArray == null ) )
