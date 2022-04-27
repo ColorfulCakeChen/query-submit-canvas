@@ -340,6 +340,8 @@ class Base {
   }
 
   /**
+   * Note: This method will set .afterBias BoundsArray.
+   *
    * @param {NumberImage.Base} this     The source image to be processed.
    * @param {boolean}  bBias             Whether add bias.
    * @param {number[]} biasesArray       The bias values.
@@ -428,6 +430,8 @@ class Base {
   }
 
   /**
+   * Note: This method does not adjust any BoundsArray.
+   *
    * @param {NumberImage.Base} this      The source image to be processed.
    * @param {string}   nActivationId     The name string of this activation function.
    *
