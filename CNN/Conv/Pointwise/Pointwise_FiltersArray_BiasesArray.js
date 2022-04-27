@@ -484,8 +484,9 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
       filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
       { // this.filtersArray
+        let sourceWeight; // without been multiplied by undoPreviousEscapingScale.
 
-       for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+        for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
 
           let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
           let outChannel = outChannelBegin;
@@ -502,25 +503,27 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
               if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
                 if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                   if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) has non-zero value.
+                    sourceWeight = 1;
                     this.filtersArray[ filterIndex ] = undoPreviousEscapingScale;
                   } else {
+                    sourceWeight = 0;
                     this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
                   }
 
                 } else { // Non-pass-through half channels.
-                  this.filtersArray[ filterIndex ] = sourceFloat32Array[ sourceIndex ] * undoPreviousEscapingScale;
+                  sourceWeight = sourceFloat32Array[ sourceIndex ];
+                  this.filtersArray[ filterIndex ] = sourceWeight * undoPreviousEscapingScale;
                   ++sourceIndex;
                 }
 
-//!!! ...unfinished... (2022/04/26)
-// The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
-// However, the this.filtersArray[ filterIndex ] also has been multiplied by undoPreviousEscapingScale.
-// The undoPreviousEscapingScale are multiplied twice.
-
                 // Determine .afterFilter
+                //
+                // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+                //       The this.filtersArray[ filterIndex ] also has been multiplied by undoPreviousEscapingScale.
+                //       So use sourceWeight instead of this.filtersArray[ filterIndex ] here.
                 tBounds
                   .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-                  .multiply_byN( this.filtersArray[ filterIndex ] );
+                  .multiply_byN( sourceWeight );
 
                 this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
 
