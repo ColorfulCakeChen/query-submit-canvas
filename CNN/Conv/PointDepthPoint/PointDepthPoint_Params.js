@@ -76,7 +76,7 @@ class Params extends Weights.Params {
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
    *       - The input1 will not be used at all (will be ignored completely).
    *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
-   *       - ( bOutput1Requested is ignored. )
+   *       - ( bOutput1Requested is ignored. The output1 never esixts.)
    *       - It uses the same procedure as Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0).
    *       - The higher half of pointwise1, depthwise1, pointwise2 just pass through (i.e. do not change) the higher half of input0.
    *       - The lower half of pointwise2's result will be shuffled with the higher half of pointwise2's result.
