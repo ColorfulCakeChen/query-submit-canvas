@@ -211,7 +211,10 @@ class Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
-      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
+      pointwise1ChannelCount: [ 2, 0 + 3 - 1 ],
+//!!! (2022/04/28 Temp Remarked) For speed up problem testing.
+//      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
+
       pointwise21ChannelCount: [ 1, 1 + 3 - 1 ],
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
@@ -277,6 +280,12 @@ class Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
 
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount0_pointwise1Before,
+                                                                                      this.valueOutMinMax.channelCount0_pointwise1Before ),
+
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
+                                                                                      this.valueOutMinMax.channelCount1_pointwise1Before ),
+
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
                                                                                       this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
 
@@ -287,15 +296,6 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.valueOutMinMax.ActivationId ),
-
-
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount0_pointwise1Before,
-                                                                                      this.valueOutMinMax.channelCount0_pointwise1Before ),
-
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
-                                                                                      this.valueOutMinMax.channelCount1_pointwise1Before ),
-
-
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
