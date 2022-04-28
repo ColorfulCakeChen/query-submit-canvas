@@ -869,7 +869,7 @@ class Base extends ReturnOrClone.Base {
       }
 
       this.concat2ShuffleSplit = new ConcatShuffleSplit.Base( channelShuffler_ConcatPointwiseConv, bShuffleSplit, false, false,
-        addInput0ToPointwise21_boundsArraySet_output0, inputScaleBoundsArray1 );
+        addInput0ToPointwise21_boundsArraySet_output0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo );
 
       {
         this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
