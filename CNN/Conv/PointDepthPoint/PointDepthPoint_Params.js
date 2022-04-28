@@ -23,11 +23,15 @@ import * as Weights from "../../Unpacker/Weights.js";
  * ( pointwise22ChannelCount == 0 ), there will be no pointwise convolution after depthwise convolution. The pointwise22
  * convolution could achieve some kinds of channel shuffling of ShuffleNetV2_ByPointwise22.
  *
- *     - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
- *         (-3) (ShuffleNetV2's body/tail), it is always 0.
+ *     - If this.channelCount1_pointwise1Before is the following, pointwise22ChannelCount is always 0.
+ *       - Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1
+ *         (-3) (ShuffleNetV2's body/tail).
  *
- *     - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH )
- *         (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), it is always 0.
+ *       - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1
+ *         (-4) (ShuffleNetV2_ByMobileNetV1's head).
+ *
+ *       - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH
+ *         (-5) (ShuffleNetV2_ByMobileNetV1's body/tail).
  *
  *     - Otherwise,
  *         - If ( bOutput1Requested == false ), it will be 0.
@@ -72,7 +76,7 @@ class Params extends Weights.Params {
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
    *       - The input1 will not be used at all (will be ignored completely).
    *       - The input0 will be processed by pointwise1, depthwise1 operation, and pointwise2 convolution.
-   *       - Usually, ( bOutput1Requested == false ).
+   *       - ( bOutput1Requested is ignored. )
    *       - It uses the same procedure as Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT (0).
    *       - The higher half of pointwise1, depthwise1, pointwise2 just pass through (i.e. do not change) the higher half of input0.
    *       - The lower half of pointwise2's result will be shuffled with the higher half of pointwise2's result.
@@ -556,10 +560,12 @@ class Params extends Weights.Params {
 
     switch ( this.channelCount1_pointwise1Before ) {
       // In the following cases, there is always no pointwise22.
-      //   - TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail)
-      //   - ONE_INPUT_HALF_THROUGH               (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
+      //   - TWO_INPUTS_CONCAT_POINTWISE21_INPUT1    : (-3) (ShuffleNetV2's body/tail)
+      //   - ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: (-4) (ShuffleNetV2_ByMobileNetV1's head)
+      //   - ONE_INPUT_HALF_THROUGH                  : (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
       //
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1:  // (-3) (ShuffleNetV2's body/tail)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH:  // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         return 0;
         break;
