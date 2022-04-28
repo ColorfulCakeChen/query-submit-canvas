@@ -216,9 +216,20 @@ class Params extends Weights.Params {
    *
    *     - If ( bOutput1Requested == true ):
    *
-   *       - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
-   *           (-3) (ShuffleNetV2's body/tail), the output1 will always exist. Its channel count will be
-   *           channelCount_pointwise21After_concat2Before.
+   *       - If ( this.channelCount1_pointwise1Before
+   *                == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
+   *           (-3) (ShuffleNetV2's body/tail),
+   *           the output1 will exist. Its channel count will be channelCount_pointwise21After_concat2Before.
+   *
+   *       - If ( this.channelCount1_pointwise1Before
+   *                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 )
+   *           (-4) (ShuffleNetV2_ByMobileNetV1's head),
+   *           the output1 never exists.
+   *
+   *       - If ( this.channelCount1_pointwise1Before
+   *                == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH )
+   *           (-5) (ShuffleNetV2_ByMobileNetV1's body/tail),
+   *           the output1 never exists.
    *
    *       - Otherwise:
    *
@@ -326,7 +337,7 @@ class Params extends Weights.Params {
       // Do nothing.
 
     // 2.2 In (-4) (ShuffleNetV2_ByMobileNetV1's head) and (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), The output tensor count is always 1.
-    } else if (  ( channelCount1_pointwise1Before
+    } else if (   ( channelCount1_pointwise1Before
                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
                || ( channelCount1_pointwise1Before
                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
