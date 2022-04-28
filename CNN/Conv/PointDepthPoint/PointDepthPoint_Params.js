@@ -294,7 +294,8 @@ class Params extends Weights.Params {
 
     // The input tensor count is totally determined by channelCount1_pointwise1Before.
     if (   ( channelCount1_pointwise1Before > 0 )
-        || ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+        || ( channelCount1_pointwise1Before
+               == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
        )
       this.inputTensorCount = 2; // Two inputs.
     else
@@ -313,11 +314,17 @@ class Params extends Weights.Params {
     else
       this.outputTensorCount = 1; // One output.
 
-    // 2.1 In ShuffleNetV2's body/tail, The output tensor count is totally determined by bOutput1Requested.
-    if ( channelCount1_pointwise1Before == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
+    // 2.1 In (-3) (ShuffleNetV2's body/tail), The output tensor count is totally determined by bOutput1Requested.
+    if ( channelCount1_pointwise1Before
+           == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
       // Do nothing.
 
-    // 2.2 Otherwise, pointwise22 is output1 directly. The pointwise22ChannelCount (which is determined by pointwise21ChannelCount)
+    // 2.2 In (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), The output tensor count is always 1.
+    } else if ( channelCount1_pointwise1Before
+                  == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+      this.outputTensorCount = 1; // One output.
+
+    // 2.3 Otherwise, pointwise22 is output1 directly. The pointwise22ChannelCount (which is determined by pointwise21ChannelCount)
     //     determines it.
     } else {
       if ( pointwise21ChannelCount == 0 ) { // No pointwise21, then no pointwise22. So only one output.
