@@ -34,6 +34,15 @@ import { Params } from "./PointDepthPoint_Params.js";
  *
  * There are seven main combinations:
  *
+ *
+ *   - When
+ *     - ( channelCount1_pointwise1Before == -5 ): ONE_INPUT_HALF_THROUGH: (ShuffleNetV2_ByMobileNetV1's body/tail)
+ *     - ( channelCount1_pointwise1Before == -4 ): ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: (ShuffleNetV2_ByMobileNetV1's head)
+ * <pre>
+ * input0 - pointwise1 - depthwise1 ---------------- pointwise21 (include pointwise211 and pointwise212)
+ * </pre>
+ *
+ *
  *   - When ( channelCount1_pointwise1Before == -3 ) and ( bOutput1Requested == true ): TWO_INPUTS_CONCAT_POINTWISE21_INPUT1: TWO_OUTPUT:
  * (ShuffleNetV2's body)
  * <pre>
@@ -64,14 +73,6 @@ import { Params } from "./PointDepthPoint_Params.js";
  * input0 - pointwise1 - depthwise1 ---------------- pointwise21 - addInput0ToPointwise21
  *        \                                        \ pointwise22 - addInput0ToPointwise22
  *         \-----------------------------------------------------/
- * </pre>
- *
- *
- *   - When
- *     - ( channelCount1_pointwise1Before == -4 ): ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: (ShuffleNetV2_ByMobileNetV1's head)
- *     - ( channelCount1_pointwise1Before == -5 ): ONE_INPUT_HALF_THROUGH: (ShuffleNetV2_ByMobileNetV1's body/tail)
- * <pre>
- * input0 - pointwise1 - depthwise1 ---------------- pointwise21 (include pointwise211 and pointwise212)
  * </pre>
  *
  *
