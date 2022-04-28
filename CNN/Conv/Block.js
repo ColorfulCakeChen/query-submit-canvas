@@ -264,6 +264,10 @@ class Base {
    * @param {Params} params
    *   A Params object. The params.extract() will be called to extract parameters.
    *
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
+   *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
@@ -273,7 +277,7 @@ class Base {
    *
    * @see PointDepthPoint.Base.initer()
    */
-  * initer( progressParent, params ) {
+  * initer( progressParent, params, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Both MobileNetV3 and ShuffleNetV2:
     //   - They all do not use (depthwise convolution) channelMultiplier.
@@ -406,7 +410,7 @@ class Base {
       }
 
       step = this.stepsArray[ i ] = new PointDepthPoint.Base();
-      stepIniter = step.initer( progressForSteps.children[ i ], stepParams, this.channelShuffler );
+      stepIniter = step.initer( progressForSteps.children[ i ], stepParams, this.channelShuffler, arrayTemp_forInterleave_asGrouptTwo );
 
       this.bInitOk = yield* stepIniter;
       if ( !this.bInitOk )
@@ -448,7 +452,7 @@ class Base {
    *
    * @see PointDepthPoint.Base.init()
    */
-  init( progressParent, params ) {
+  init( progressParent, params, arrayTemp_forInterleave_asGrouptTwo ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
