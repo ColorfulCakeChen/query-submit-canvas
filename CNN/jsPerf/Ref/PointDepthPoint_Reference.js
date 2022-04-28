@@ -283,8 +283,8 @@ class Base {
 
       tf.util.assert( memoryInfo_apply_after.numTensors == ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ),
         `PointDepthPoint.apply() memory leak. `
-          + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-          + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
+          + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
+          + `should be ( ${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } ) `
           + `${strNote}` );
 
       tf.util.assert( inputTensor3dArray.length == 2,
