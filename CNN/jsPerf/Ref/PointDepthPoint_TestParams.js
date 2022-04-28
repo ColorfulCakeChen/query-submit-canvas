@@ -277,12 +277,6 @@ class Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bPointwise1Bias,         this.valueOutMinMax.Bias ),
 
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount0_pointwise1Before,
-                                                                                      this.valueOutMinMax.channelCount0_pointwise1Before ),
-
-      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
-                                                                                      this.valueOutMinMax.channelCount1_pointwise1Before ),
-
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwise_AvgMax_Or_ChannelMultiplier,
                                                                                       this.valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
 
@@ -293,6 +287,15 @@ class Base extends TestParams.Base {
       new TestParams.ParamDescConfig( PointDepthPoint.Params.depthwiseActivationId,   this.valueOutMinMax.ActivationId ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ActivationId,  this.valueOutMinMax.ActivationId ),
+
+
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount0_pointwise1Before,
+                                                                                      this.valueOutMinMax.channelCount0_pointwise1Before ),
+
+      new TestParams.ParamDescConfig( PointDepthPoint.Params.channelCount1_pointwise1Before,
+                                                                                      this.valueOutMinMax.channelCount1_pointwise1Before ),
+
+
       new TestParams.ParamDescConfig( PointDepthPoint.Params.pointwise1ChannelCount,  this.valueOutMinMax.pointwise1ChannelCount ),
 
       new TestParams.ParamDescConfig( PointDepthPoint.Params.bKeepInputTensor,        this.valueOutMinMax.bKeepInputTensor ),
