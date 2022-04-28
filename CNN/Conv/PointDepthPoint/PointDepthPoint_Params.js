@@ -325,9 +325,12 @@ class Params extends Weights.Params {
            == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
       // Do nothing.
 
-    // 2.2 In (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), The output tensor count is always 1.
-    } else if ( channelCount1_pointwise1Before
-                  == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) { // (-5)
+    // 2.2 In (-4) (ShuffleNetV2_ByMobileNetV1's head) and (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), The output tensor count is always 1.
+    } else if (  ( channelCount1_pointwise1Before
+                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 ) (-4)
+               || ( channelCount1_pointwise1Before
+                     == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+              ) {
       this.outputTensorCount = 1; // One output.
 
     // 2.3 Otherwise, pointwise22 is output1 directly. The pointwise22ChannelCount (which is determined by pointwise21ChannelCount)
@@ -339,35 +342,6 @@ class Params extends Weights.Params {
     }
   }
 
-//!!! (2021/11/26 Remarked) Since pointwise21ChannelCount always not zero, this is not necessary.
-//   /**
-//    * @return {number}
-//    *   Return the output channel count of pointwise21's result.
-//    */
-//   static calc_pointwise21ResultChannelCount(
-//            channelCount0_pointwise1Before,
-//            pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount ) {
-//
-//     // The channel count of pointwise21's result may not the same as pointwise21ChannelCount directly because
-//     // pointwise21ChannelCount may be zero. It should be determined by pointwise21, depthewise1, pointwise1, input0.
-//
-//     let result = pointwise21ChannelCount;
-//     if ( result <= 0 ) { // If no pointwise21, it is based on depthwise.
-//
-//       result = pointwise1ChannelCount;
-//       if ( result <= 0 ) { // If no pointwise1, it is based on input0.
-//         result = channelCount0_pointwise1Before;
-//       }
-//
-//       if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-//         result *= depthwise_AvgMax_Or_ChannelMultiplier;
-//
-//       } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
-//     }
-//
-//     return result;
-//   }
-
   /**
    * Determine the following properties:
    *   - this.input1ChannelCount
@@ -376,44 +350,17 @@ class Params extends Weights.Params {
            channelCount0_pointwise1Before, channelCount1_pointwise1Before,
            pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount ) {
 
-      if ( channelCount1_pointwise1Before > 0 ) { // Two inputs.
-        this.input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
+    if ( channelCount1_pointwise1Before > 0 ) { // Two inputs.
+      this.input1ChannelCount = channelCount1_pointwise1Before; // The second input's channel count as specifying.
 
-      } else if ( channelCount1_pointwise1Before
-                    == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3) Two inputs.
+    } else if ( channelCount1_pointwise1Before
+                  == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3) Two inputs.
 
-//!!! (2021/11/26 Remarked) call calc_pointwise21ResultChannelCount() instead.
-//         // Find out input1's channel count.
-//         //
-//         // Although The second input's channel count should be the same as pointwise21's result, however, it is not the
-//         // same as pointwise21ChannelCount directly because pointwise21ChannelCount may be zero. It should be determined
-//         // by pointwise21, depthewise1, pointwise1, input0.
-//         //
-//         this.input1ChannelCount = pointwise21ChannelCount;
-//         if ( this.input1ChannelCount <= 0 ) { // If no pointwise21, it is based on depthwise.
-//
-//           this.input1ChannelCount = pointwise1ChannelCount;
-//           if ( this.input1ChannelCount <= 0 ) { // If no pointwise1, it is based on input0.
-//             this.input1ChannelCount = channelCount0_pointwise1Before;
-//           }
-//
-//           if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-//             this.input1ChannelCount *= depthwise_AvgMax_Or_ChannelMultiplier;
-//
-//           } // ( When no channelMultiplier (i.e. ( channelMultiplier <= 0 ) ), it is viewed as ( channelMultiplier == 1 ).
-//         }
+      this.input1ChannelCount = pointwise21ChannelCount;
 
-//!!! (2021/11/26 Remarked) Since pointwise21ChannelCount always not zero, this is not necessary.
-//         // Find out input1's channel count. It should be the same as pointwise21's result.
-//         this.input1ChannelCount = Params.calc_pointwise21ResultChannelCount(
-//           channelCount0_pointwise1Before,
-//           pointwise1ChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
-
-        this.input1ChannelCount = pointwise21ChannelCount;
-
-      } else { // One input.
-        this.input1ChannelCount = 0;
-      }
+    } else { // One input.
+      this.input1ChannelCount = 0;
+    }
   }
 
   /**
