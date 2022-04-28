@@ -212,9 +212,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
    * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
    *
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
+   *
    * @return {boolean} Return true, if succeeded.
    */
-  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray ) {
+  init( inputFloat32Array, byteOffsetBegin, inputScaleBoundsArray, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Q1: Why is the inputFloat32Array not a parameter of constructor?
     // A1: The reason is to avoid keeping it as this.inputFloat32Array so that it could be released by memory garbage collector.
@@ -423,7 +427,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
           // 3.4.1.2 bHigherHalfPassThroughShuffle
           // 3.4.2.2 bAllPassThroughShuffle
           if ( this.channelShuffler_outputGroupCount > 0 ) { // Pre-shuffle channels by shuffling the filters and biases.
-            this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo();
+            this.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
           }
           break;
       }
