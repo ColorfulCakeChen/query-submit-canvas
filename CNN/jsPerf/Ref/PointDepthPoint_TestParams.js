@@ -769,8 +769,9 @@ class Base extends TestParams.Base {
     {
       let pointwise22ChannelCount;
 
-      // In ShuffleNetV2's body/tail, there is always no pointwise22.
+      // In (-3) (ShuffleNetV2's body/tail) and (-4) (-5) (ShuffleNetV2_ByMobileNetV1), there is always no pointwise22.
       if (   ( this.channelCount1_pointwise1Before__is__TWO_INPUTS_CONCAT_POINTWISE21_INPUT1() ) // (-3) (ShuffleNetV2's body/tail)
+          || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
           || ( this.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
          ) {
         pointwise22ChannelCount = 0;
