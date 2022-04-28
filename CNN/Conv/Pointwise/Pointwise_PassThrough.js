@@ -97,7 +97,8 @@ let PassThrough_FiltersArray_BiasesArray = ( Base = Object ) => class extends Ba
     if ( this.bBias ) {
       this.biasesShape =  [ 1, 1, outputChannelCount ];
       this.biasesArray = new Array( outputChannelCount );
-      this.biasesArray.fill( biasValue, 0, extractedCount );
+      this.biasesArray.fill( biasValue, 0, extractedCount ); // non-zero-hot.
+      this.biasesArray.fill( 0, extractedCount, outputChannelCount ); // Others are zero.
     }
   }
 
