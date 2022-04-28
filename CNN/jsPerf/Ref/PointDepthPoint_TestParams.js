@@ -451,8 +451,9 @@ class Base extends TestParams.Base {
    */
   use_pointwise22( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
     let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise22Bias,
-      this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise22ActivationId, false, pointwiseName, parametersDesc );
+      this.in.paramsNumberArrayObject.pointwise22Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
+      this.in.paramsNumberArrayObject.pointwise22Biases, this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
+      false, pointwiseName, parametersDesc );
     return result;
   }
 
@@ -469,8 +470,9 @@ class Base extends TestParams.Base {
    */
   use_pointwise222( inputImage, pointwise22ChannelCount, pointwiseName, parametersDesc ) {
     let result = inputImage.cloneBy_pointwise( pointwise22ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise222Filters, this.out.bPointwise22Bias,
-      this.in.paramsNumberArrayObject.pointwise222Biases, this.out.pointwise22ActivationId, false, pointwiseName, parametersDesc );
+      this.in.paramsNumberArrayObject.pointwise222Filters, this.out.bPointwise21Bias, // (Note: Not bPointwise22Bias)
+      this.in.paramsNumberArrayObject.pointwise222Biases, this.out.pointwise21ActivationId, // (Note: Not pointwise22ActivationId)
+      false, pointwiseName, parametersDesc );
     return result;
   }
 
