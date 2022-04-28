@@ -873,14 +873,7 @@ class Base extends ReturnOrClone.Base {
 
       {
         this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
-          this.concat2ShuffleSplit.boundsArraySet.output0.channelCount,
-          this.concat2ShuffleSplit.boundsArraySet.output1.channelCount,
-        );
-
-//!!! (2022/04/28 Remarked) output1 also needs.
-//         this.boundsArraySet.output0.set_all_byScaleBoundsArray( this.concat2ShuffleSplit.boundsArraySet.output0 );
-// !!!
-//         this.boundsArraySet.output1.set_all_byScaleBoundsArray( this.concat2ShuffleSplit.boundsArraySet.output1 );
+          this.concat2ShuffleSplit.boundsArraySet.output0.channelCount, this.concat2ShuffleSplit.boundsArraySet.output1?.channelCount );
 
         this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.concat2ShuffleSplit.boundsArraySet );
       }
