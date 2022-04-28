@@ -97,7 +97,7 @@ class Asserter_Equal {
     // Note: Array.every() seems faster than for-loop.
     tf.util.assert( lhsNumberArray.every( this.comparator ),
       `${prefixMsg} ${lhsNumberArrayName}[ ${this.elementIndex} ] `
-        + `( ${lhsNumberArray[ this.elementIndex ]} ) should be ( ${rhsNumberArray[ this.elementIndex ]} ) `
+        + `( ${lhsNumberArray[ this.elementIndex ]} ) should be ( ${rhsNumberArray[ this.elementIndex ]} ). `
         + `( ${lhsNumberArray} ) should be ( ${rhsNumberArray} ). `
         + `${postfixMsg}` );
   }
