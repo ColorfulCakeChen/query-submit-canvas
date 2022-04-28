@@ -312,6 +312,10 @@ class Base extends ReturnOrClone.Base {
    *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous PointDepthPoint value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
+   *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.getRoot() ) when ( done = false ).
    *
@@ -319,7 +323,9 @@ class Base extends ReturnOrClone.Base {
    *   Yield ( value = true ) when ( done = true ) successfully.
    *   Yield ( value = false ) when ( done = true ) failed.
    */
-  * initer( progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv ) {
+  * initer(
+    progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
+    arrayTemp_forInterleave_asGrouptTwo ) {
 
     // 0. Prepare
 
@@ -671,7 +677,8 @@ class Base extends ReturnOrClone.Base {
       channelShuffler_outputGroupCount_pointwise2
     );
 
-    if ( !this.pointwise21.init( params.defaultInput, this.byteOffsetEnd, concat1_boundsArraySet_output0 ) )
+    if ( !this.pointwise21.init(
+           params.defaultInput, this.byteOffsetEnd, concat1_boundsArraySet_output0, arrayTemp_forInterleave_asGrouptTwo ) )
       return false;  // e.g. input array does not have enough data.
     this.byteOffsetEnd = this.pointwise21.byteOffsetEnd;
 
@@ -698,7 +705,8 @@ class Base extends ReturnOrClone.Base {
       // Note: Strictly speaking, sometimes pointwise22 is dependent on depthwise2. But it does not matter for BoundsArraySet
       // because depthwise1 and depthwise2 should have the same output value bounds. And so concat1_boundsArraySet_output0.
       //
-      if ( !this.pointwise22.init( params.defaultInput, this.byteOffsetEnd, concat1_boundsArraySet_output0 ) )
+      if ( !this.pointwise22.init(
+             params.defaultInput, this.byteOffsetEnd, concat1_boundsArraySet_output0, arrayTemp_forInterleave_asGrouptTwo ) )
         return false;  // e.g. input array does not have enough data.
       this.byteOffsetEnd = this.pointwise22.byteOffsetEnd;
 
@@ -948,11 +956,16 @@ class Base extends ReturnOrClone.Base {
    *   Return true if successfully (and progressParent.valuePercentage will be equal to 100).
    *   Return false if failed (and progressParent.valuePercentage will be less than 100).
    */
-  init( progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv ) {
+  init(
+    progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
+    arrayTemp_forInterleave_asGrouptTwo ) {
 
     progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
 
-    let initer = this.initer( progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv );
+    let initer = this.initer(
+      progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
+      arrayTemp_forInterleave_asGrouptTwo );
+
     let initerNext;
     do {
       initerNext = initer.next();
