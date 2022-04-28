@@ -147,18 +147,18 @@ class ScaleArraySet {
     );
 
     for ( let i = 0; i < this.do.length; ++i ) {
-      tf.util.assert( ( this.do[ i ] == aScaleArraySet.do[ i ] ),
+      tf.util.assert( ( this.do.scales[ i ] == aScaleArraySet.do.scales[ i ] ),
         `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
-          + `this.do[ ${i} ] ( ${this.do[ i ]} ) should be the same as `
-          + `aScaleArraySet.do[ ${i} ] ( ${aScaleArraySet.do[ i ]} ).`
+          + `this.do.scales[ ${i} ] ( ${this.do.scales[ i ]} ) should be the same as `
+          + `aScaleArraySet.do.scales[ ${i} ] ( ${aScaleArraySet.do.scales[ i ]} ).`
       );
     }
 
     for ( let i = 0; i < this.undo.length; ++i ) {
       tf.util.assert( ( this.undo[ i ] == aScaleArraySet.undo[ i ] ),
         `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
-          + `this.undo[ ${i} ] ( ${this.undo[ i ]} ) should be the same as `
-          + `aScaleArraySet.undo[ ${i} ] ( ${aScaleArraySet.undo[ i ]} ).`
+          + `this.undo.scales[ ${i} ] ( ${this.undo.scales[ i ]} ) should be the same as `
+          + `aScaleArraySet.undo.scales[ ${i} ] ( ${aScaleArraySet.undo.scales[ i ]} ).`
       );
     }
 
