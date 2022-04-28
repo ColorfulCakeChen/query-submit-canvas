@@ -1040,7 +1040,6 @@ class Base extends ReturnOrClone.Base {
     this.bInitOk = false;
   }
 
-//!!! ...unfinished... (2022/04/11)
   /**
    * Release all BoundsArraySet of pointwise1, depthwise1, depthwise2, pointwise21, pointwise22,
    * concat1, addInput0ToPointwise21, addInput0ToPointwise22, concat2ShuffleSplit.
