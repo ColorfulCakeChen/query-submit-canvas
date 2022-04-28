@@ -777,10 +777,6 @@ class Base {
       } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
           imageIn1_beforePointwise1.depth, // No need same as pointwise1ChannelCount because depthwise2 and pointwise22 just pass-through it.
-
-//!!! (2022/04/28 Remarked)
-//          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise22 (with same structure of depthwise1 and pointwise21).
-
           "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
@@ -910,12 +906,17 @@ class Base {
 
     // 4.2 Pointwise22
     //
-    // ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4) or ONE_INPUT_TWO_DEPTHWISE (-2) or
+    // ONE_INPUT_TWO_DEPTHWISE (-2) or
     // ONE_INPUT_ADD_TO_OUTPUT (-1) or ONE_INPUT (0) or TWO_INPUTS (> 0).
     //
-    // (i.e. Not (-3) ShuffleNetV2's body/tail, Not (-5) ShuffleNetV2_ByMobileNetV1's body/tail)
-    if (   ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
+    // (i.e. Not (-3) (ShuffleNetV2's body/tail),
+    // Not (-4) (ShuffleNetV2_ByMobileNetV1's head), Not (-5) (ShuffleNetV2_ByMobileNetV1's body/tail) )
+    if (
+
+//!!! (2022/04/28 Remarked) (-4) (ShuffleNetV2_ByMobileNetV1's head) always does not have pointwise22 (and output1).
+//           ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+
+           ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_TWO_DEPTHWISE() ) // (-2) (ShuffleNetV2's head (simplified))
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_ADD_TO_OUTPUT() ) // (-1) (MobileNetV2)
         || ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT() )  // (  0) (MobileNetV1 (General Pointwise1-Depthwise1-Pointwise2))
         || ( testParams.channelCount1_pointwise1Before__is__TWO_INPUTS() ) // (> 0) (ShuffleNetV2's (and ShuffleNetV2_ByPointwise22's) body/tail)
@@ -924,7 +925,7 @@ class Base {
       // If output1 is requested, it comes from pointwise22 directly. The pointwise22 will have the same output channel count as pointwise21.
       let pointwise22ChannelCount;
 
-      if ( testParams.out.bOutput1Requested ) {    
+      if ( testParams.out.bOutput1Requested ) {
         pointwise22ChannelCount = pointwise21ChannelCount;
       } else {
         pointwise22ChannelCount = 0;
@@ -937,14 +938,15 @@ class Base {
       if ( pointwise22ChannelCount > 0 ) {
         pointwise22Result = testParams.use_pointwise22( concat1Result, pointwise22ChannelCount, "Pointwise22", this.paramsOutDescription );
 
-        // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-        if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
-          let pointwise222Result = testParams.use_pointwise222( concat1Result, pointwise22ChannelCount, "Pointwise222", this.paramsOutDescription );
-
-          pointwise22Result_beforeConcatWith_pointwise222 = pointwise22Result;
-          pointwise22Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise22Result, pointwise222Result,
-            "Concat_pointwise22_pointwise222 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
-        }
+//!!! (2022/04/28 Remarked) (-4) (ShuffleNetV2_ByMobileNetV1's head) always does not have output1.
+//         // (-4) (ShuffleNetV2_ByMobileNetV1's head)
+//         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
+//           let pointwise222Result = testParams.use_pointwise222( concat1Result, pointwise22ChannelCount, "Pointwise222", this.paramsOutDescription );
+//
+//           pointwise22Result_beforeConcatWith_pointwise222 = pointwise22Result;
+//           pointwise22Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise22Result, pointwise222Result,
+//             "Concat_pointwise22_pointwise222 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
+//         }
 
         // Residual Connection.
         //
