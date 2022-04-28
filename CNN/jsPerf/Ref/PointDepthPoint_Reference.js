@@ -265,7 +265,7 @@ class Base {
       let pointDepthPoint = Base.pointDepthPoint_create( testParams,
         imageInArraySelected[ 0 ].boundsArraySet.output0,
         imageInArraySelected[ 1 ]?.boundsArraySet.output0,
-        channelShuffler_ConcatPointwiseConv );
+        channelShuffler_ConcatPointwiseConv, this.arrayTemp_forInterleave_asGrouptTwo );
 
       let parametersDescription = pointDepthPoint.parametersDescription;
       strNote = `( testParams.id=${testParams.id}, ${parametersDescription} )`;
@@ -449,9 +449,15 @@ class Base {
    *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous PointDepthPoint value bounds
    * set. It will be kept (not cloned) directly. So caller should not modify them.
    *
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
+   *
    * @return {PointDepthPoint.Base} The created pointDepthPoint object.
    */
-  static pointDepthPoint_create( testParams, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv ) {
+  static pointDepthPoint_create(
+    testParams, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
+    arrayTemp_forInterleave_asGrouptTwo ) {
 
     let pointDepthPoint = new PointDepthPoint.Base();
 
@@ -470,7 +476,7 @@ class Base {
     );
 
     let bInitOk = pointDepthPoint.init( progress, extractedParams, inputScaleBoundsArray0, inputScaleBoundsArray1,
-      channelShuffler_ConcatPointwiseConv );
+      channelShuffler_ConcatPointwiseConv, arrayTemp_forInterleave_asGrouptTwo );
 
     let flags = {};
     PointDepthPoint.Params.setFlags_by.call( flags,
