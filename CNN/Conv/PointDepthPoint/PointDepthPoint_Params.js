@@ -34,13 +34,12 @@ import * as Weights from "../../Unpacker/Weights.js";
  *         - If ( bOutput1Requested == true ), it will be the same as pointwise21ChannelCount (note: might also be 0).
  *
  * @member {boolean} bPointwise22Bias
- *   If true, there will be a bias after the second pointwise2 convolution. It is always the same as bPointwise21Bias.
- * It is only meaningful if ( pointwise22ChannelCount > 0 ) (i.e. ( bOutput1Requested == true ) and ( pointwise21ChannelCount > 0 ) ).
+ *   If true, there will be a bias after pointwise22 (i.e. the second pointwise2 convolution). It is always the same as
+ * bPointwise21Bias. It is only meaningful if ( pointwise22ChannelCount > 0 ).
  *
  * @member {number} pointwise22ActivationId
- *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the second pointwise2 convolution. It
- * is always the same as pointwise22ActivationId. It is only meaningful if ( pointwise22ChannelCount > 0 )
- * (i.e. ( bOutput1Requested == true ) and ( pointwise21ChannelCount > 0 ) ).
+ *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after pointwise22 (i.e. the second
+ * pointwise2 convolution). It is always the same as pointwise21ActivationId. It is only meaningful if ( pointwise22ChannelCount > 0 ).
  */
 class Params extends Weights.Params {
 
