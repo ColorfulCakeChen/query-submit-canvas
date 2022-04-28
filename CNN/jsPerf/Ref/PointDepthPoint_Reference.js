@@ -768,7 +768,11 @@ class Base {
 
       } else if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH() ) { // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         imageIn1 = testParams.use_pointwise1_PassThrough( imageIn1_beforePointwise1, // pass-through input1 (not input0).
-          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise22 (with same structure of depthwise1 and pointwise21).
+          imageIn1_beforePointwise1.depth, // No need same as pointwise1ChannelCount because depthwise2 and pointwise22 just pass-through it.
+
+//!!! (2022/04/28 Remarked)
+//          pointwise1ChannelCount, // So that it could be processed by depthwise2 and pointwise22 (with same structure of depthwise1 and pointwise21).
+
           "Pointwise1_imageIn1_HigherHalfPassThrough", this.paramsOutDescription );
       }
 
