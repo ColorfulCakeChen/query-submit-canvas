@@ -873,9 +873,16 @@ class Base extends ReturnOrClone.Base {
 
       {
         this.boundsArraySet = new BoundsArraySet.InputsOutputs( inputScaleBoundsArray0, inputScaleBoundsArray1,
-          this.concat2ShuffleSplit.boundsArraySet.output0.channelCount );
+          this.concat2ShuffleSplit.boundsArraySet.output0.channelCount,
+          this.concat2ShuffleSplit.boundsArraySet.output1.channelCount,
+        );
 
-        this.boundsArraySet.output0.set_all_byScaleBoundsArray( this.concat2ShuffleSplit.boundsArraySet.output0 );
+//!!! (2022/04/28 Remarked) output1 also needs.
+//         this.boundsArraySet.output0.set_all_byScaleBoundsArray( this.concat2ShuffleSplit.boundsArraySet.output0 );
+// !!!
+//         this.boundsArraySet.output1.set_all_byScaleBoundsArray( this.concat2ShuffleSplit.boundsArraySet.output1 );
+
+        this.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.concat2ShuffleSplit.boundsArraySet );
       }
 
       // In theory, concat2 use the result of add-input0-to-pointwise21 as first parameter. In reality, it usually uses the result
@@ -899,12 +906,6 @@ class Base extends ReturnOrClone.Base {
       // Note: It should also be okay to set to TensorOpCounters.addInput0ToPointwise22).
       TensorOpCounters.concat2ShuffleSplit = TensorOpCounters.addInput0ToPointwise21;
     }
-
-
-//!!! ...unfinished... (2022/04/11)
-// For reduce memory footprint, release all BoundsArraySet of pointwise1, depthwise1, depthwise2, pointwise21, pointwise22, concat1, concat2ShuffleSplit,
-// addInput0ToPointwise21, addInput0ToPointwise22.
-
 
     ++progressToAdvance.value;
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
@@ -1037,6 +1038,25 @@ class Base extends ReturnOrClone.Base {
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
+  }
+
+//!!! ...unfinished... (2022/04/11)
+  /**
+   * Release all BoundsArraySet of pointwise1, depthwise1, depthwise2, pointwise21, pointwise22,
+   * concat1, addInput0ToPointwise21, addInput0ToPointwise22, concat2ShuffleSplit.
+   *
+   * This could reduce memory footprint.
+   */
+  dispose_all_sub_BoundsArraySet() {
+    delete this.pointwise1?.boundsArraySet;
+    delete this.depthwise1?.boundsArraySet;
+    delete this.depthwise2?.boundsArraySet;
+    delete this.pointwise21?.boundsArraySet;
+    delete this.pointwise22?.boundsArraySet;
+    delete this.concat1?.boundsArraySet;
+    delete this.addInput0ToPointwise21?.boundsArraySet;
+    delete this.addInput0ToPointwise22?.boundsArraySet;
+    delete this.concat2ShuffleSplit?.boundsArraySet;
   }
 
   /** Determine which apply_Xxx() function should be used.
