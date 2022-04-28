@@ -572,6 +572,8 @@ class Params extends Weights.Params {
     }
   }
 
+  // Note: pointwise22 use bias flag and activation id of pointwise21.
+
   get bPointwise22Bias()          { return this.bPointwise21Bias; }
   get pointwise22ActivationId()   { return this.pointwise21ActivationId; }
   get pointwise22ActivationName() { return this.pointwise21ActivationName; }
