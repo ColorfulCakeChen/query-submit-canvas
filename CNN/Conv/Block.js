@@ -420,6 +420,9 @@ class Base {
       this.tensorWeightCountTotal += step.tensorWeightCountTotal;
       this.tensorWeightCountExtracted += step.tensorWeightCountExtracted;
 
+//!!! ...unfinished... (2022/04/28)
+      step.dispose_all_sub_BoundsArraySet(); // Reduce memory footprint by release unused bounds array set.
+
       if ( 0 == i ) { // After step0 (i.e. for step1, 2, 3, ...)
         stepParamsMaker.configTo_afterStep0();
       }
@@ -429,6 +432,13 @@ class Base {
     this.stepLast = this.stepsArray[ this.stepsArray.length - 1 ]; // Shortcut to the last step.
 
     this.outputChannelCount = this.stepLast.outChannelsAll;
+
+    {
+//!!! ...unfinished... (2022/04/28)
+// Create Block self BoundsArraySet.InputsOutputs.
+
+      this.dispose_all_sub_BoundsArraySet(); // Release all steps' bounds array set for reducing memory footprint.
+    }
 
     // In our Block design, no matter which configuration, the outputChannelCount always is twice as sourceChannelCount.
     tf.util.assert( ( this.outputChannelCount == ( this.sourceChannelCount * 2 ) ),
@@ -490,6 +500,19 @@ class Base {
     this.tensorWeightCountTotal = this.tensorWeightCountExtracted = 0;
     this.byteOffsetBegin = this.byteOffsetEnd = -1;
     this.bInitOk = false;
+  }
+
+  /**
+   * Release all steps' BoundsArraySet. This could reduce memory footprint.
+   */
+  dispose_all_sub_BoundsArraySet() {
+    if ( !this.stepsArray )
+      return;
+
+    for ( let i = 0; i < this.stepsArray.length; ++i ) {
+      let step = this.stepsArray[ i ];
+      delete step.boundsArraySet;
+    }
   }
 
   /**
