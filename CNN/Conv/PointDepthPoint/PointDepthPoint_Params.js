@@ -26,6 +26,9 @@ import * as Weights from "../../Unpacker/Weights.js";
  *     - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 )
  *         (-3) (ShuffleNetV2's body/tail), it is always 0.
  *
+ *     - If ( this.channelCount1_pointwise1Before == Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH )
+ *         (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), it is always 0.
+ *
  *     - Otherwise,
  *         - If ( bOutput1Requested == false ), it will be 0.
  *         - If ( bOutput1Requested == true ), it will be the same as pointwise21ChannelCount (note: might also be 0).
