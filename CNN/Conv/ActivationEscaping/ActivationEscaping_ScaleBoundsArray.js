@@ -139,11 +139,14 @@ class ScaleBoundsArray {
    */
   set_all_byScaleBoundsArray_add( aScaleBoundsArray0, aScaleBoundsArray1 ) {
 
-    // Otherwise, they can not be added together.
+    // The two added source should have the same activation escaping scales. Otherwise, they can not be added together.
     aScaleBoundsArray0.scaleArraySet.assert_all_byScaleArraySet_equal( aScaleBoundsArray1.scaleArraySet );
 
-    this.boundsArray.set_all_byBoundsArray( aScaleBoundsArray0.boundsArray );
-    this.boundsArray.add_all_byBoundsArray( aScaleBoundsArray1.boundsArray );
+    this.scaleArraySet.set_all_byScaleArraySet( aScaleBoundsArray0.scaleArraySet ); // Keep same activation escaping scales.
+
+    this.boundsArray
+      .set_all_byBoundsArray( aScaleBoundsArray0.boundsArray )
+      .add_all_byBoundsArray( aScaleBoundsArray1.boundsArray );
     return this;
   }
 
