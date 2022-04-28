@@ -621,10 +621,12 @@ class Base {
 
     { // Test pointwise22ChannelCount.
 
-      // In ShuffleNetV2's body/tail, there is always no pointwise22.
-      if ( testParams.out.channelCount1_pointwise1Before
-             == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) { // (-3)
-
+      // In (-3) (ShuffleNetV2's body/tail) and (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), there is always no pointwise22.
+      if (   ( testParams.out.channelCount1_pointwise1Before
+                 == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 ) // (-3)
+          || ( testParams.out.channelCount1_pointwise1Before
+                 == PointDepthPoint.Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
+         ) {
         asserter.propertyValue( "pointwise22ChannelCount", 0 );
 
       // Otherwise, pointwise22 is output1 directly. It is determined by both bOutput1Requested and pointwise21ChannelCount.
