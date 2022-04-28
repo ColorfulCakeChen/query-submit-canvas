@@ -84,24 +84,6 @@ class InputsOutputs {
           + `outputChannelCount0 ( ${outputChannelCount0} ) can not be negative (i.e. must >= 0).`
       );
     }
-
-//!!! (2022/04/22 Remarked) .output0 will always be created, even if it is zero channel count.
-//     if ( outputChannelCount0 > 0 ) {
-//       this.output0 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount0 );
-//
-//       if ( outputChannelCount1 > 0 ) { // Two outputs.
-//         this.output1 = new ActivationEscaping.ScaleBoundsArray( outputChannelCount1 );
-//
-//       // ( outputChannelCount1 <= 0 ), One output.
-//       }
-//
-//     } else { // ( outputChannelCount0 <= 0 ), Illegal.
-//
-//       tf.util.assert( ( ( outputChannelCount0 <= 0 ) && ( outputChannelCount1 <= 0 ) ),
-//         `BoundsArraySet.InputsOutputs.constructor(): `
-//           + `output0 must exist (i.e. outputChannelCount0 ( ${outputChannelCount0} ) must > 0 ).`
-//       );
-//     }
   }
 
   /**
