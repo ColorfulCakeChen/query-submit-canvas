@@ -55,15 +55,19 @@ import * as ChannelShuffler from "./ChannelShuffler.js";
 class Base {
 
   /**
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
    *
    */
   constructor(
     channelShuffler, bShuffleSplit = true, bKeepInputTensor0, bKeepInputTensor1,
-    inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
+    inputScaleBoundsArray0, inputScaleBoundsArray1,
+    arrayTemp_forInterleave_asGrouptTwo ) {
 
     this.channelShuffler = channelShuffler;
     this.setShuffleSplit_KeepInputTensor( bShuffleSplit, bKeepInputTensor0, bKeepInputTensor1 );
-    Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1 );
+    Base.setup_BoundsArraySet.call( this, inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo );
   }
 
   /**
@@ -146,7 +150,7 @@ class Base {
   }
 
   /** Create this.boundsArraySet. */
-  static setup_BoundsArraySet( inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
+  static setup_BoundsArraySet( inputScaleBoundsArray0, inputScaleBoundsArray1, arrayTemp_forInterleave_asGrouptTwo ) {
 
     // Concatenated value bounds array set.
     let concatBoundsArraySet;
@@ -172,8 +176,8 @@ class Base {
         shuffledBoundsArraySet = new BoundsArraySet.InputsOutputs( concatBoundsArraySet.output0, null,
           concatBoundsArraySet.output0.channelCount );
 
-        let arrayTemp = new Array( concatBoundsArraySet.output0.channelCount );
-        shuffledBoundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp );
+        shuffledBoundsArraySet.output0.set_all_byScaleBoundsArray( concatBoundsArraySet.output0 );
+        shuffledBoundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo );
       }
 
       // Splitted value bounds array set.
