@@ -548,8 +548,10 @@ class Params extends Weights.Params {
     switch ( this.channelCount1_pointwise1Before ) {
       // In the following cases, there is always no pointwise22.
       //   - TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3): (ShuffleNetV2's body/tail)
+      //   - ONE_INPUT_HALF_THROUGH               (-5): (ShuffleNetV2_ByMobileNetV1's body/tail)
       //
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1:  // (-3) (ShuffleNetV2's body/tail)
+      case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH:  // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
         return 0;
         break;
 
