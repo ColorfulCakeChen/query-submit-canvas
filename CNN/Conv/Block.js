@@ -1,2 +1,2 @@
-export { Param } from "./Block_Param.js";
-export { Base } from "./Block_Base.js";
+export { Param } from "./Block/Block_Param.js";
+export { Base } from "./Block/Block_Base.js";
