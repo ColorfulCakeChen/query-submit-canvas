@@ -533,7 +533,7 @@ class HeightWidthDepth {
       }
 
       checkAndDisplay( currentTestParamsId ) {
-        const batchMessageInterval = 30 * 1000; //100 * 1000; // Every so many test cases, display a message.
+        const batchMessageInterval = 50 * 1000; //100 * 1000; // Every so many test cases, display a message.
 
         let currentBatchId = ( currentTestParamsId - ( currentTestParamsId % batchMessageInterval ) ) / batchMessageInterval;
         if ( this.lastBatchId != currentBatchId ) {
