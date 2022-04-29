@@ -655,9 +655,13 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
     );
 
-    for ( let indexBegin = 0; indexBegin < this.inputChannelCount; indexBegin += this.outputChannelCount ) { // Shuffle filters.
-      FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
-        this.filtersArray, indexBegin, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
+    { // Shuffle filters.
+      let filtersWeightsCount = this.inputChannelCount * this.outputChannelCount;
+
+      for ( let indexBegin = 0; indexBegin < filtersWeightsCount; indexBegin += this.outputChannelCount ) {
+        FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
+          this.filtersArray, indexBegin, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
+      }
     }
 
     if ( this.biasesArray )
