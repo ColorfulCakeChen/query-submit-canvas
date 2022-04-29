@@ -973,7 +973,7 @@ class Base {
           + `should be null, since there is no pointwise22. ${this.paramsOutDescription}`);
 
       let imageConcat2InArray = Array.from( imageOutArray );
-      
+
       // Note: When ONE_INPUT_HALF_THROUGH (-5) (ShuffleNetV2_ByMobileNetV1's body/tail), input1 has already been past-through by pointwise1,
       //       depthwise1 and pointwise21.
       //
