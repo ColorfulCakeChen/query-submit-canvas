@@ -221,9 +221,9 @@ class Base extends TestParams.Base {
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
-      Bias: undefined,
+//      Bias: undefined,
 //      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
-//      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
 //      ActivationId: undefined,
 //       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
@@ -244,9 +244,14 @@ class Base extends TestParams.Base {
           + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2 - 1
       ],
 
+//!!! (2022/04/29 Temp Remarked) For testing AVG only.
+//       depthwise_AvgMax_Or_ChannelMultiplier: [
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
+//       ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 0
       ],
 
       // (2021/10/06) Note: WASM seems not correct when ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ).
