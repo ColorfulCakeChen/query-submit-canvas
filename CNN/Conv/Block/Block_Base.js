@@ -1106,6 +1106,10 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
     }
   }
 
+//!!! ...unfinished... (2022/04/29)
+// Perhaps, former steps original channel count, latter steps twice channel count (by channelMultiplier = 2 ).
+// Performance may be better.
+
   /** @override */
   configTo_beforeStep0() {
     super.configTo_beforeStep0(); // Almost the same as MobileNetV2.
