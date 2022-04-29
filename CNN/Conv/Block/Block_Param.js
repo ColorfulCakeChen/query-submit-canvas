@@ -90,6 +90,9 @@ class Params extends Weights.Params {
    *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_POINTWISE22 ), (2),
    *       this block will be ShuffleNetV2_ByPointwise22. There is a channel shuffler by pointwise22.
    *
+   *   - If ( nWhetherShuffleChannel == ValueDesc.WhetherShuffleChannelSingleton.Ids.BY_MOBILE_NET_V1 ), (3),
+   *       this block will be ShuffleNetV2_ByMobileNetV1. There is a channel shuffler integrated inside pointwise21.
+   *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
