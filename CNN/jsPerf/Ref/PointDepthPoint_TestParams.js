@@ -214,8 +214,8 @@ class Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
+//!!! (2022/04/28 Temp) For testing large channel count.
 //      pointwise1ChannelCount: [ 2, 0 + 3 - 1 ],
-//!!! (2022/04/28 Temp Remarked) For speed up problem testing.
       pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
 
       pointwise21ChannelCount: [ 1, 1 + 3 - 1 ],
@@ -245,15 +245,15 @@ class Base extends TestParams.Base {
           + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2 - 1
       ],
 
-//!!! (2022/04/29 Temp Remarked) For testing AVG only.
-//       depthwise_AvgMax_Or_ChannelMultiplier: [
-//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
-//       ],
       depthwise_AvgMax_Or_ChannelMultiplier: [
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 0
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
       ],
+//!!! (2022/04/29 Temp) For testing AVG only.
+//       depthwise_AvgMax_Or_ChannelMultiplier: [
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 0
+//       ],
 
       // (2021/10/06) Note: WASM seems not correct when ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ).
       depthwiseFilterHeight: [ PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
