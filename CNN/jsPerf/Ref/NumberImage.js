@@ -115,17 +115,12 @@ class Base {
       for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
         let filterIndexBase = ( inChannel * pointwiseChannelCount );
 
-//!!! (2022/04/27 Remarked) imageOut.boundsArraySet.afterUndoPreviousActivationEscaping already has been multiplied by undoPreviousEscapingScale.
-//        let undoPreviousEscapingScale = imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ];
-
         for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
           let filterIndex = filterIndexBase + outChannel;
 
           // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
           tBounds
             .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-//!!! (2022/04/27 Remarked) imageOut.boundsArraySet.afterUndoPreviousActivationEscaping already has been multiplied by undoPreviousEscapingScale.
-//            .multiply_byN( undoPreviousEscapingScale )
             .multiply_byN( pointwiseFiltersArray[ filterIndex ] );
 
           imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
@@ -302,10 +297,6 @@ class Base {
                           // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
                           tBounds
                             .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
-
-//!!! (2022/04/27 Remarked) imageOut.boundsArraySet.afterUndoPreviousActivationEscaping already has been multiplied by undoPreviousEscapingScale.
-//                            .multiply_byN( undoPreviousEscapingScale )
-
                             .multiply_byN( depthwiseFiltersArray[ filterIndex ] );
 
                           imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
@@ -376,18 +367,8 @@ class Base {
 
     let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
-//!!! (2022/04/26 Remarked) The sequential index is enough and faster.
-//      let indexBaseX = ( y * imageIn.width );
-
       for ( let x = 0; x < imageIn.width; ++x ) {
-//!!! (2022/04/26 Remarked) The sequential index is enough and faster.
-//        let inIndexBaseC  = ( ( indexBaseX + x ) * imageIn.depth );
-
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
-//!!! (2022/04/26 Remarked) The sequential index is enough and faster.
-//           let inIndex = inIndexBaseC + channel;
-//           imageIn.dataArray[ inIndex ] += biasesArray[ channel ];
-
           imageIn.dataArray[ index ] += biasesArray[ channel ];
           ++index;
         }
@@ -456,11 +437,6 @@ class Base {
     let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.integerToObjectMap.get( nActivationId );
     if ( !theActivationFunctionInfo )
       return imageIn;
-
-//!!! (2022/04/26 Remarked) Moved to cloneBy_pointwise() and cloneBy_depthwise()
-//     // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
-//     // by .afterBias, bPassThrough and activation function's output range.
-//     imageIn.boundsArraySet.set_afterActivationEscaping_output0_by_afterBias_bPassThrough_nActivationId( nActivationId );
 
     let pfnActivation = theActivationFunctionInfo.pfn;
     if ( !pfnActivation )
@@ -584,36 +560,6 @@ class Base {
       }
     }
 
-//!!! (2022/04/26 Remarked) The sequential index is enough and faster.
-//     // Split along the image depth.
-//     for ( let y = 0; y < imageIn.height; ++y ) {
-//       let indexBaseX = ( y * imageIn.width );
-//
-//       for ( let x = 0; x < imageIn.width; ++x ) {
-//         let indexBaseC = ( indexBaseX + x );
-//
-//         let inIndexBaseC  = ( indexBaseC * imageIn.depth );
-//
-//         let inChannel = 0;
-//
-//         let outIndexBaseC_lowerHalf = ( indexBaseC * imageOutDepth_lowerHalf );
-//         let outIndexBaseC_higherHalf = ( indexBaseC * imageOutDepth_higherHalf );
-//
-//         for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
-//           let inIndex = inIndexBaseC + inChannel;
-//           let outIndex_lowerHalf = outIndexBaseC_lowerHalf + outChannel;
-//           imageOut0.dataArray[ outIndex_lowerHalf ] = imageIn.dataArray[ inIndex ];
-//         }
-//
-//         for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
-//           let inIndex = inIndexBaseC + inChannel;
-//           let outIndex_higherHalf = outIndexBaseC_higherHalf + outChannel;
-//           imageOut1.dataArray[ outIndex_higherHalf ] = imageIn.dataArray[ inIndex ];
-//         }
-//
-//       }
-//     }
-
     // Setup value bounds array.
     imageOut0.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_lowerHalf );
     imageOut1.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_higherHalf );
@@ -680,34 +626,6 @@ class Base {
         }
       }
     }
-
-//!!! (2022/04/26 Remarked) The sequential index is enough and faster.
-//     // Concatenate along the image depth.
-//     for ( let y = 0; y < imageIn1.height; ++y ) {
-//       let indexBaseX = ( y * imageIn1.width );
-//
-//       for ( let x = 0; x < imageIn1.width; ++x ) {
-//         let indexBaseC = ( indexBaseX + x );
-//         let outIndexBaseC = ( indexBaseC * imageOut.depth );
-//
-//         let outChannel = 0;
-//
-//         let in1IndexBaseC  = ( indexBaseC * imageIn1.depth );
-//         for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
-//           let in1Index = in1IndexBaseC + in1Channel;
-//           let outIndex = outIndexBaseC + outChannel;
-//           imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
-//         }
-//
-//         let in2IndexBaseC  = ( indexBaseC * imageIn2.depth );
-//         for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
-//           let in2Index = in2IndexBaseC + in2Channel;
-//           let outIndex = outIndexBaseC + outChannel;
-//           imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
-//         }
-//
-//       }
-//     }
 
     // Concat value bounds array.
     imageOut.boundsArraySet.set_outputs_all_by_concat_input0_input1();
