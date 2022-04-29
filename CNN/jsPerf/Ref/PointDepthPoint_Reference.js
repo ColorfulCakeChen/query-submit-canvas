@@ -213,7 +213,7 @@ class Base {
 
     // For reducing memory allocation.
     this.testCorrectnessInfo = new TestCorrectnessInfo();
-    this.asserter_Equal = new TensorTools.Asserter_Equal( 0.7 );
+    this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4 );
     this.arrayTemp_forInterleave_asGrouptTwo = []; // Used by calcConcatShuffleSplit().
   }
 
