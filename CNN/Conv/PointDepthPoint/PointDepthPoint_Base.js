@@ -955,7 +955,7 @@ class Base extends ReturnOrClone.Base {
     progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
     arrayTemp_forInterleave_asGrouptTwo ) {
 
-    progressParent = progressParent || ( new ValueMax.Percentage.Aggregate() );
+    progressParent = progressParent ?? ( new ValueMax.Percentage.Aggregate() );
 
     let initer = this.initer(
       progressParent, params, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv,
