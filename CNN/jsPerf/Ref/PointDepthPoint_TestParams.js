@@ -56,6 +56,7 @@ class Base extends TestParams.Base {
    *   Return this object self.
    */
   set_By_ParamsScattered(
+    inputHeight0, inputWidth0,
     channelCount0_pointwise1Before,
     channelCount1_pointwise1Before,
     pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
@@ -66,6 +67,7 @@ class Base extends TestParams.Base {
   ) {
     this.in.paramsNumberArrayObject = {};
     this.out = {
+      inputHeight0, inputWidth0,
       channelCount0_pointwise1Before,
       channelCount1_pointwise1Before,
       pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
