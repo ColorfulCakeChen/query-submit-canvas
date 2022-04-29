@@ -41,7 +41,6 @@ import { Param } from "./Block_Param.js";
  * @member {number} outputChannelCount
  *   The output channel count of this block's last step.
  *
-!!! ...unfinished... (2021/10/12)
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
  * weights, if they are used in tensors.
@@ -133,7 +132,8 @@ class Base {
     this.sourceChannelCount = params.sourceChannelCount;
     this.stepCountRequested = params.stepCountRequested;
     this.pointwise1ChannelCountRate = params.pointwise1ChannelCountRate;
-    this.depthwiseFilterHeight = params.depthwiseFilterHeight; // Assume depthwise filter's width equals its height.
+    this.depthwiseFilterHeight = params.depthwiseFilterHeight;
+    this.depthwiseFilterWidth = params.depthwiseFilterWidth;
     this.nActivationId = params.nActivationId;
     this.nActivationIdName = params.nActivationIdName;
     this.nActivationIdAtBlockEnd = params.nActivationIdAtBlockEnd;
@@ -390,6 +390,7 @@ class Base {
       + `stepCountRequested=${this.stepCountRequested}, stepCount=${this.stepCount}, `
       + `pointwise1ChannelCountRate=${this.pointwise1ChannelCountRate}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
+      + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
       + `nActivationIdName=${this.nActivationIdName}(${this.nActivationId}), `
       + `nActivationIdAtBlockEndName=${this.nActivationIdAtBlockEndName}(${this.nActivationIdAtBlockEnd}), `
       + `nWhetherShuffleChannel=${this.nWhetherShuffleChannelName}(${this.nWhetherShuffleChannel}), `
