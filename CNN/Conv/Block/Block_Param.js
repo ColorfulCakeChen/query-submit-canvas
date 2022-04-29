@@ -46,7 +46,7 @@ class Params extends Weights.Params {
    *       - Every step will use depthwise convolution ( strides = 1, pad = "valid" ) and pointwise21. So every step will
    *         shrink the input a little.
    *       - The step0's depthwise convolution will also use channel multiplier 2 to double the channel count.
-   *       - The stepLast may use a smaller depthwise filter so that it could just make ( output height, width ) as half of source.
+   *       - The stepLast may use a smaller depthwise filter so that it could just make output's ( height, width ) as half of source.
    *       - If ( depthwiseFilterHeight == 1 ), the depthwiseFilterHeight will become 2 forcibly. Otherwise, the source size
    *         could not be shrinked.
    *
