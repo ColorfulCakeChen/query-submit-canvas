@@ -157,7 +157,7 @@ class Base {
 
     // 2. Create every steps.
     let stepParamsMaker = Base.create_Params_to_PointDepthPointParams( params );
-    stepParamsMaker.determine_stepCount_depthwiseFilterHeight_Default_Last(); // Calculate the real step count.
+    stepParamsMaker.determine_stepCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real step count.
 
     for ( let i = 0; i < stepParamsMaker.stepCount; ++i ) { // Progress for step0, 1, 2, 3, ... 
       progressForSteps.addChild( new ValueMax.Percentage.Aggregate() );
