@@ -40,15 +40,23 @@ class Comparator {
 class Asserter_Equal {
 
   /**
+   * If ( differenceRate <= acceptableDifferenceRate ) or ( difference <= acceptableDifference ), two value are viewed as
+   * the same.
    *
+   * Because floating-point accumulated error of float32 (GPU) and float64 (CPU) is different, a little difference should be
+   * allowed. Otherwise, the comparison may hardly to pass this check.
    *
    * @param {number} acceptableDifferenceRate
-   *   How many difference (in ratio) between the tensor and numberArray (per element) is acceptable. Because floating-point
-   * accumulated error of float32 (GPU) and float64 (CPU) is different, a little difference should be allowed. Otherwise,
-   * the comparison may hardly to pass this check. Default is 0.4 (i.e. 40% difference is allowed).
+   *   How many difference (in ratio) between the numberArray and numberArray (per element) is acceptable. Useful for large
+   * value. Default is 0.4 (i.e. 40% difference is allowed).
+   *
+   * @param {number} acceptableDifference
+   *   How many difference (in absolute value) between the numberArray and numberArray (per element) is acceptable. Useful
+   * for small value. Default is 0.00001.
    */
-  constructor( acceptableDifferenceRate = 0.4 ) {
+  constructor( acceptableDifferenceRate = 0.4, acceptableDifference = 0.00001 ) {
     this.acceptableDifferenceRate = Math.abs( acceptableDifferenceRate );
+    this.acceptableDifference = Math.abs( acceptableDifference );
     this.comparator = Asserter_Equal.ElementComparator.bind( this );
 
     // Used by assert_Number_Number().
@@ -169,11 +177,9 @@ class Asserter_Equal {
 
     let valueRef = this.rhsNumberArray[ this.elementIndex = index ];
 
-//!!! (2022/04/29 Remarked) Sometimes, value and valueRef have different sign (i.e. one is positive, the other is negative).
-//    let delta = Math.abs( value - valueRef );
-
+    // 0. Confirm delta is positive (or zero).
+    //
     // Note: Sometimes, value and valueRef have different sign (i.e. one is positive, the other is negative).
-    //       Confirm delta is positive (or zero).
     let delta;
     if ( value > valueRef ) {
       delta = value - valueRef;
@@ -181,22 +187,30 @@ class Asserter_Equal {
       delta = valueRef - value;
     }
 
-    let valueAbs = Math.abs( value );
-    let valueRefAbs = Math.abs( valueRef );
-
-    // Ratio to the smaller one.
-    //
-    // When one of two compared values is zero, it will always be failed if compare to the larger value (got 100% delteRate).
-    let deltaRateBase = Math.min( valueAbs, valueRefAbs );
-
-    let deltaRate;
-    if ( deltaRateBase > 0 ) // Avoid divided by zero.
-      deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not to large even if value is large.
-    else
-      deltaRate = delta;
-
-    if ( deltaRate <= this.acceptableDifferenceRate )
+    // 1. by value difference.
+    if ( delta <= this.acceptableDifference )
       return true;
+
+    // 2. by value difference rate.
+    {
+      let valueAbs = Math.abs( value );
+      let valueRefAbs = Math.abs( valueRef );
+
+      // Ratio to the smaller one.
+      //
+      // When one of two compared values is zero, it will always be failed if compare to the larger value (got 100% delteRate).
+      let deltaRateBase = Math.min( valueAbs, valueRefAbs );
+
+      let deltaRate;
+      if ( deltaRateBase > 0 ) // Avoid divided by zero.
+        deltaRate = delta / deltaRateBase; // Using ratio so that the difference will not to large even if value is large.
+      else
+        deltaRate = delta;
+
+      if ( deltaRate <= this.acceptableDifferenceRate )
+        return true;
+    }
+
     return false;
   }
 
