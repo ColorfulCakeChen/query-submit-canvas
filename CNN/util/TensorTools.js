@@ -52,9 +52,9 @@ class Asserter_Equal {
    *
    * @param {number} acceptableDifference
    *   How many difference (in absolute value) between the numberArray and numberArray (per element) is acceptable. Useful
-   * for small value. Default is 0.00001.
+   * for small value. Default is 0.0001.
    */
-  constructor( acceptableDifferenceRate = 0.4, acceptableDifference = 0.00001 ) {
+  constructor( acceptableDifferenceRate = 0.4, acceptableDifference = 0.0001 ) {
     this.acceptableDifferenceRate = Math.abs( acceptableDifferenceRate );
     this.acceptableDifference = Math.abs( acceptableDifference );
     this.comparator = Asserter_Equal.ElementComparator.bind( this );
