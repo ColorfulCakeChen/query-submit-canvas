@@ -181,7 +181,6 @@ class HeightWidthDepth {
     let channelShuffler_ConcatPointwiseConv = this.channelShuffler_ConcatPointwiseConv
           = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, this.outputGroupCount );
 
-
     // inputHeight0, inputWidth0,
     // channelCount0_pointwise1Before, channelCount1_pointwise1Before,
     // pointwise1ChannelCount, bPointwise1Bias, pointwise1ActivationId,
@@ -546,14 +545,7 @@ class HeightWidthDepth {
 
         let batchIdCalculator = new BatchIdCalculator();
         for ( let testParams of testParamsGenerator ) {
-
           batchIdCalculator.checkAndDisplay( testParams.id );
-
-//!!! (2022/04/25 Remarked) Some test params id may be skipped (because parameters are illegal).
-//           if ( ( testParams.id % batchMessageInterval ) == 0 )
-//             console.log( `${tf.getBackend()}, `
-//               + `testParams.id between [${testParams.id} - ${testParams.id + batchMessageInterval - 1}] ...` );
-
           testReference.testCorrectness( imageSourceBag, testParams, channelShufflerPool );
         }
 
