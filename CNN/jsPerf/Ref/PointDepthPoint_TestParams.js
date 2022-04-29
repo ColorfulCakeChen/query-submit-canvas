@@ -209,7 +209,8 @@ class Base extends TestParams.Base {
    */
   * ParamsGenerator() {
 
-    let depthwiseFilterMaxSize = 5;
+//    let depthwiseFilterMaxSize = 5;
+    let depthwiseFilterMaxSize = 3;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
@@ -221,9 +222,9 @@ class Base extends TestParams.Base {
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
-//      Bias: undefined,
+      Bias: undefined,
 //      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
-      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+//      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
 //      ActivationId: undefined,
 //       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
@@ -264,8 +265,8 @@ class Base extends TestParams.Base {
         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
       ],
 
-//      bOutput1Requested: undefined,
-      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+      bOutput1Requested: undefined,
+//      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
       bKeepInputTensor: undefined,
 //      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
