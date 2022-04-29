@@ -26,11 +26,11 @@ class Params extends Weights.Params {
    * (not to the inputFloat32Array.byteOffset).
    *
    * @param {number} sourceHeight
-   *   The height of the source image which will be processed by apply_and_destroy_or_keep(). If null, it will be extracted from
+   *   The height of the source image which will be processed by apply(). If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
    *
    * @param {number} sourceWidth
-   *   The width of the source image which will be processed by apply_and_destroy_or_keep(). If null, it will be extracted from
+   *   The width of the source image which will be processed by apply(). If null, it will be extracted from
    * inputFloat32Array (i.e. by evolution).
    *
    * @param {number} sourceChannelCount
