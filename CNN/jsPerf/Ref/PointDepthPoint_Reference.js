@@ -67,12 +67,13 @@ class TestCorrectnessInfo {
       imageInArraySelected.fill( undefined );
       imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( inputHeight0, inputWidth0, channelCount0_pointwise1Before );
 
-//!!! ...unfinished... (2021/10/28) input1ChannelCount may zero.
-
       // Although input1 is only needed when ( bTwoInputs == true ), it is always prepared for calculating the shape of channel shuffler.
       // 
       // The shape of input1 (not input0) determines the concatenatedShape of channel shuffler because the input0 might be shrinked
       // by depthwise convolution.
+      //
+      // Note: input1ChannelCount may be zero.
+      //
       let imageIn1 = imageSourceBag.getImage_by(
         inputHeight0, inputWidth0, input1ChannelCount,
         depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
@@ -115,24 +116,7 @@ class TestCorrectnessInfo {
                      == ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH ) // (-5)
                ) {
 
-//!!! (2021/11/26 Remarked) Now, pointwise21ChannelCount is always positive.
-//                 // Because:
-//                 //   - PointDepthPoint_TestParams.generate_Filters_Biases() will double channelCount0_pointwise1Before and pointwise1ChannelCount.
-//                 //   - PointDepthPoint.initer() and PointDepthPoint_Reference.calResutl() will halve them.
-//                 //
-//                 // For simulating the same procedure, halve them here, too.
-//                 let channelCount0_pointwise1Before_lowerHalf = Math.ceil( testParams.out.channelCount0_pointwise1Before / 2 );
-//                 let pointwise1ChannelCount_lowerHalf = Math.ceil( testParams.out.pointwise1ChannelCount / 2 );
-//
-//                 // Note: The channel count of pointwise21's result may not the same as pointwise21ChannelCount (which may be zero).
-//                 let pointwise21ResultChannelCount = PointDepthPoint.Params.calc_pointwise21ResultChannelCount(
-//                   channelCount0_pointwise1Before_lowerHalf,
-//                   pointwise1ChannelCount_lowerHalf, depthwise_AvgMax_Or_ChannelMultiplier, pointwise21ChannelCount );
-//
-//                 let channelCount0_pointwise1Before_higherHalf = channelCount0_pointwise1Before - channelCount0_pointwise1Before_lowerHalf;
-//                 concatenatedDepth = 
-//                   pointwise21ResultChannelCount
-//                     + channelCount0_pointwise1Before_higherHalf; // Just like the past-through input1.
+              // Note: pointwise21ChannelCount is always positive (never zero or negative).
 
               // Because PointDepthPoint_TestParams.generate_Filters_Biases() will double pointwise21ChannelCount, it must be an even number
               // which could be splitted (into two groups).
@@ -342,7 +326,6 @@ class Base {
     } catch ( e ) {
       let backendName = tf.getBackend();
       console.log( `PointDepthPoint_Reference.js: testCorrectness(): backendName=${backendName}, `
-//        + `input image ( height, width ) = ( ${imageSourceBag.originalHeight}, ${imageSourceBag.originalWidth} ), `
         + `PointDepthPoint, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}` );
       throw e;
     }
@@ -940,16 +923,6 @@ class Base {
       if ( pointwise22ChannelCount > 0 ) {
         pointwise22Result = testParams.use_pointwise22( concat1Result, pointwise22ChannelCount, "Pointwise22", this.paramsOutDescription );
 
-//!!! (2022/04/28 Remarked) (-4) (ShuffleNetV2_ByMobileNetV1's head) always does not have output1.
-//         // (-4) (ShuffleNetV2_ByMobileNetV1's head)
-//         if ( testParams.channelCount1_pointwise1Before__is__ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1() ) {
-//           let pointwise222Result = testParams.use_pointwise222( concat1Result, pointwise22ChannelCount, "Pointwise222", this.paramsOutDescription );
-//
-//           pointwise22Result_beforeConcatWith_pointwise222 = pointwise22Result;
-//           pointwise22Result = NumberImage.Base.calcConcatAlongAxisId2( pointwise22Result, pointwise222Result,
-//             "Concat_pointwise22_pointwise222 (ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4))", this.paramsOutDescription );
-//         }
-
         // Residual Connection.
         //
         // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
@@ -1128,44 +1101,6 @@ class Base {
     // Release temporary tensors.
     tf.dispose( tensorInArray );
     tf.dispose( tensorOutArray );
-
-//!!! (2021/09/03 Remarked) The indexes is not so simple.
-//     let imageCount = 2; // No matter input or input, both are two images.
-//     let imageHeight = imageInArray[ 0 ].height;
-//     let imageWidth = imageInArray[ 0 ].width;
-//     let imageDepth = imageInArray[ 0 ].depth;
-//
-//     // Output images have the same shape as input images.
-//     for ( let i = 0; i < imageCount; ++i ) {
-//       imageOutArray[ i ] = {
-//         height:    imageInArray[ i ].height,
-//         width:     imageInArray[ i ].width,
-//         depth:     imageInArray[ i ].depth,
-//         dataArray: new Float32Array( imageInArray[ i ].dataArray.length ),
-//       };
-//     }
-//
-//     // Swap two images interleavely.
-//     let concatenatedChannelCount = ( imageDepth * imageCount );
-//     for ( let y = 0; y < imageHeight; ++y ) {
-//       let indexBaseX = ( y * imageWidth );
-//
-//       for ( let x = 0; x < imageWidth; ++x ) {
-//         let indexBaseC = ( ( indexBaseX + x ) * imageDepth );
-//
-//         for ( let c = 0; c < concatenatedChannelCount; ++c ) {
-//           let inImageIndex = Math.floor( c / imageDepth );  // from which input image.
-//           let inChannel = c % imageDepth;                   // from which channel (of the input image).
-//
-//           let outImageIndex = c % imageCount;               // to which output image.
-//           let outChannel = Math.floor( c / imageCount );    // to which channel (of the output image).
-//
-//           let inIndex = indexBaseC + inChannel;
-//           let outIndex = indexBaseC + outChannel;
-//           imageOutArray[ outImageIndex ].dataArray[ outIndex ] = imageInArray[ inImageIndex ].dataArray[ inIndex ];
-//         }
-//       }
-//     }
   }
 
   /**
