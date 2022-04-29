@@ -639,9 +639,11 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
    *   - Only ( outputGroupCount == 2 ) is supported.
    *   - The output channel count must be even (i.e. divisible by 2).
    *
-   *
+   * @param {Array} arrayTemp_forInterleave_asGrouptTwo
+   *   A temporary array for placing the original elements temporarily. Provide this array could reduce memory re-allocation
+   * and improve performance when doing Interleave_asGrouptTwo.
    */
-  set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo() {
+  set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo( arrayTemp_forInterleave_asGrouptTwo ) {
 
     tf.util.assert( ( this.channelShuffler_outputGroupCount == 2 ),
       `Pointwise.FiltersArray_BiasesArray.interleave_byGrouptTwo(): `
@@ -653,16 +655,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends Base {
         + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
     );
 
-    let arrayTemp = new Array( this.outputChannelCount );
-
     for ( let indexBegin = 0; indexBegin < this.inputChannelCount; indexBegin += this.outputChannelCount ) { // Shuffle filters.
-      FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.filtersArray, indexBegin, this.outputChannelCount, arrayTemp );
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
+        this.filtersArray, indexBegin, this.outputChannelCount, arrayTemp_forInterleave_asGrouptTwo );
     }
 
     if ( this.biasesArray )
-      FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.biasesArray, 0, this.biasesArray.length, arrayTemp ); // Shuffle biases.
+      FloatValue.ArrayInterleaver.interleave_asGrouptTwo(
+        this.biasesArray, 0, this.biasesArray.length, arrayTemp_forInterleave_asGrouptTwo ); // Shuffle biases.
 
-    this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ); // Shuffle bounds array set of output.
+    this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(
+      arrayTemp_forInterleave_asGrouptTwo ); // Shuffle bounds array set of output.
   }
 
 }
