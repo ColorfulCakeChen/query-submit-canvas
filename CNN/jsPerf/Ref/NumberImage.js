@@ -280,7 +280,9 @@ class Base {
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
-                        imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ];
+//!!! (2022/04/29 Remarked) Try average at evey adding. Hope that the accumulated error will be similar to tf.pool().
+//                        imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ];
+                        imageOut.dataArray[ outIndex ] += imageIn.dataArray[ inIndex ] / avgDivisor;
                         break;
 
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: // Max pooling
@@ -310,10 +312,11 @@ class Base {
               }
             }
 
-            // Avg pooling
-            if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
-              imageOut.dataArray[ outIndex ] /= avgDivisor; // So that every sum is averaged.
-            }
+//!!! (2022/04/29 Remarked) Try average at evey adding. Hope that the accumulated error will be similar to tf.pool().
+//             // Avg pooling
+//             if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
+//               imageOut.dataArray[ outIndex ] /= avgDivisor; // So that every sum is averaged.
+//             }
           }
         }
       }
