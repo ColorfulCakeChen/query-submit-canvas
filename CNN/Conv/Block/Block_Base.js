@@ -1059,11 +1059,17 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
 
     let blockParams = this.blockParams;
 
+//!!! ...unfinished... (2022/04/29) What if height and width need different step count?
+
     let differenceHeight = blockParams.sourceHeight - blockParams.outputHeight;
     //let differenceWidth =  blockParams.sourceWidth  - blockParams.outputWidth;
 
     if ( 0 == differenceHeight ) { // 1. No difference between source and output size.
       this.stepCount = 1; // Only one step is needed. (Avoid no steps. At least, there should be one step.)
+
+//!!! ...unfinished... (2022/04/29)
+// depthwiseFilterWidth is at least 2.
+// The only way to keep image size in ( depthwiseStridesPad == 0 ) seems no depthwise convolution.
 
       // The only one step (also the first and last step) should use filter size 1x1 so that the input size could be kept.
       this.depthwiseFilterHeight_Default = this.depthwiseFilterHeight_Last = 1;
