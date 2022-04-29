@@ -62,6 +62,14 @@ class Params extends Weights.Params {
    *   - If ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1 (no expanding) or ShuffleNetV2 (expanding by twice depthwise).
    *   - If ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2 (expanding by twice pointhwise1).
    *
+   * @param {number} depthwiseFilterHeight
+   *   The height of depthwise convolution's filter. At least 1 (so that 1D data could be processed). If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution).
+   *
+   * @param {number} depthwiseFilterWidth
+   *   The width of depthwise convolution's filter. At least 2 (so that meaningless ( 1 * 1 ) could be avoided). If null, it will
+   * be extracted from inputFloat32Array (i.e. by evolution).
+   *
    * @param {string} nActivationId
    *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
    * extracted from inputFloat32Array (i.e. by evolution).
@@ -106,7 +114,8 @@ class Params extends Weights.Params {
     sourceHeight, sourceWidth, sourceChannelCount,
     stepCountRequested,
     pointwise1ChannelCountRate,
-    depthwiseFilterHeight, nActivationId, nActivationIdAtBlockEnd,
+    depthwiseFilterHeight, depthwiseFilterWidth,
+    nActivationId, nActivationIdAtBlockEnd,
     nWhetherShuffleChannel,
     bKeepInputTensor
   ) {
@@ -129,6 +138,7 @@ class Params extends Weights.Params {
       [ Params.stepCountRequested,         stepCountRequested ],
       [ Params.pointwise1ChannelCountRate, pointwise1ChannelCountRate ],
       [ Params.depthwiseFilterHeight,      depthwiseFilterHeight ],
+      [ Params.depthwiseFilterWidth,       depthwiseFilterWidth ],
       [ Params.nActivationId,              nActivationId ],
       [ Params.nActivationIdAtBlockEnd,    nActivationIdAtBlockEnd ],
       [ Params.nWhetherShuffleChannel,     nWhetherShuffleChannel ],
@@ -184,6 +194,8 @@ class Params extends Weights.Params {
   get pointwise1ChannelCountRate()  { return this.parameterMapModified.get( Params.pointwise1ChannelCountRate ); }
 
   get depthwiseFilterHeight()       { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
+  get depthwiseFilterWidth()        { return this.parameterMapModified.get( Params.depthwiseFilterWidth ); }
+
   get nActivationId()               { return this.parameterMapModified.get( Params.nActivationId ); }
   get nActivationIdName()           { return Params.nActivationId.getStringOfValue( this.nActivationId ); }
   get nActivationIdAtBlockEnd()     { return this.parameterMapModified.get( Params.nActivationIdAtBlockEnd ); }
@@ -203,6 +215,7 @@ Params.sourceChannelCount =         new ParamDesc.Int(                   "source
 Params.stepCountRequested =         new ParamDesc.Int(                   "stepCountRequested",         1, (  1 * 1024 ) );
 Params.pointwise1ChannelCountRate = new ParamDesc.Int(                   "pointwise1ChannelCountRate", 0,             2 );
 Params.depthwiseFilterHeight =      new ParamDesc.Int(                   "depthwiseFilterHeight",      1,             9 );
+Params.depthwiseFilterWidth =       new ParamDesc.Int(                   "depthwiseFilterWidth",       2,             9 );
 Params.nActivationId =              new ParamDesc.ActivationFunction(    "nActivationId" );
 Params.nActivationIdAtBlockEnd =    new ParamDesc.ActivationFunction(    "nActivationIdAtBlockEnd" );
 Params.nWhetherShuffleChannel =     new ParamDesc.WhetherShuffleChannel( "nWhetherShuffleChannel" );
