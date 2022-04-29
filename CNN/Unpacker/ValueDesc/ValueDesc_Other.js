@@ -119,8 +119,8 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
  *
  * Convert number value into integer between [ 0, 3 ] representing operation:
  *   - 0: NONE (i.e. NotShuffleNet_NotMobileNet, or MobileNetV2)
- *   - 1: BY_POINTWISE22      (i.e. ShuffleNetV2_ByPointwise22)
- *   - 2: BY_CHANNEL_SHUFFLER (i.e. ShuffleNetV2)
+ *   - 1: BY_CHANNEL_SHUFFLER (i.e. ShuffleNetV2)
+ *   - 2: BY_POINTWISE22      (i.e. ShuffleNetV2_ByPointwise22)
  *   - 3: BY_MOBILE_NET_V1    (i.e. ShuffleNetV2_ByMobileNetV1)
  */
 class WhetherShuffleChannel extends Int {
