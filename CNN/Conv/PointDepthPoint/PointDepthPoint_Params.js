@@ -522,6 +522,8 @@ class Params extends Weights.Params {
       //   - ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: (-4) (ShuffleNetV2_ByMobileNetV1's head)
       //   - ONE_INPUT_HALF_THROUGH                  : (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
       //
+      // Note: TWO_INPUTS_CONCAT_POINTWISE21_INPUT1 (-3) (ShuffleNetV2's body/tail) does not have pointwise22, but could have output1.
+      //
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.TWO_INPUTS_CONCAT_POINTWISE21_INPUT1:  // (-3) (ShuffleNetV2's body/tail)
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1: // (-4) (ShuffleNetV2_ByMobileNetV1's head)
       case Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH:  // (-5) (ShuffleNetV2_ByMobileNetV1's body/tail)
@@ -592,9 +594,6 @@ Params.depthwiseStridesPad =     new ParamDesc.Int(                     "depthwi
 
 Params.bDepthwiseBias =          new ParamDesc.Bool(                    "bDepthwiseBias" );
 Params.depthwiseActivationId =   new ParamDesc.ActivationFunction(      "depthwiseActivationId" );
-
-//!!! (2021/11/26 Remarked) Force pointwise21ChannelCount always not zero. So that channelCount0_pointwise1Before_higherHalf could be determined.
-//Params.pointwise21ChannelCount = new ParamDesc.Int(                     "pointwise21ChannelCount", 0, ( 10 * 1024 ) );
 
 // Note: Force pointwise21ChannelCount always not zero. So that channelCount0_pointwise1Before_higherHalf could be determined
 // when ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH (-5).
