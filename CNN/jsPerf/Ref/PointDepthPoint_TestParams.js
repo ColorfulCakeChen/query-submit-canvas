@@ -213,23 +213,23 @@ class Base extends TestParams.Base {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
-      pointwise1ChannelCount: [ 2, 0 + 3 - 1 ],
+//      pointwise1ChannelCount: [ 2, 0 + 3 - 1 ],
 //!!! (2022/04/28 Temp Remarked) For speed up problem testing.
-//      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
+      pointwise1ChannelCount: [ 0, 0 + 3 - 1 ],
 
       pointwise21ChannelCount: [ 1, 1 + 3 - 1 ],
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
 //      Bias: undefined,
-      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
+//      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
 //!!! (2022/04/28 Temp Remarked) For speed up problem testing.
-//      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
 //      ActivationId: undefined,
-       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
 //!!! (2022/04/28 Temp Remarked) For speed up problem testing.
-//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       inputHeight0: [ 3, 3 ],
       inputWidth0: [ 4, 5 ],
@@ -533,7 +533,7 @@ class Base extends TestParams.Base {
    *   Return a number array.
    */
   static generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax ) {
-//!!! (2021/07/20 Temp Remarked) Fix to non-random to simplify debug.
+//!!! (2021/07/20 Temp Remarked) Fixed to non-random to simplify debug.
     return RandTools.generate_numberArray( elementCount, randomOffsetMin, randomOffsetMax );
 //    return RandTools.generate_numberArray( elementCount, 0, 0 );
   }
