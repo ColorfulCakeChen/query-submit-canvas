@@ -48,7 +48,7 @@ class Asserter_Equal {
    * the comparison may hardly to pass this check. Default is 0.4 (i.e. 40% difference is allowed).
    */
   constructor( acceptableDifferenceRate = 0.4 ) {
-    this.acceptableDifferenceRate = acceptableDifferenceRate;
+    this.acceptableDifferenceRate = Math.abs( acceptableDifferenceRate );
     this.comparator = Asserter_Equal.ElementComparator.bind( this );
 
     // Used by assert_Number_Number().
@@ -168,7 +168,18 @@ class Asserter_Equal {
   static ElementComparator( value, index ) {
 
     let valueRef = this.rhsNumberArray[ this.elementIndex = index ];
-    let delta = Math.abs( value - valueRef );
+
+//!!! (2022/04/29 Remarked) Sometimes, value and valueRef have different sign (i.e. one is positive, the other is negative).
+//    let delta = Math.abs( value - valueRef );
+
+    // Note: Sometimes, value and valueRef have different sign (i.e. one is positive, the other is negative).
+    //       Confirm delta is positive (or zero).
+    let delta;
+    if ( value > valueRef ) {
+      delta = value - valueRef;
+    } else {
+      delta = valueRef - value;
+    }
 
     let valueAbs = Math.abs( value );
     let valueRefAbs = Math.abs( valueRef );
