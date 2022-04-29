@@ -121,7 +121,7 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
  *   - 0: NONE (i.e. NotShuffleNet_NotMobileNet, or MobileNetV2)
  *   - 1: BY_POINTWISE22      (i.e. ShuffleNetV2_ByPointwise22)
  *   - 2: BY_CHANNEL_SHUFFLER (i.e. ShuffleNetV2)
-     - 3: BY_MOBILE_NET_V1    (i.e. ShuffleNetV2_ByMobileNetV1)
+ *   - 3: BY_MOBILE_NET_V1    (i.e. ShuffleNetV2_ByMobileNetV1)
  */
 class WhetherShuffleChannel extends Int {
 
