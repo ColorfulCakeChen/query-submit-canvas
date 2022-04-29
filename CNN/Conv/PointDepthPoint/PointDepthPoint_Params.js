@@ -167,12 +167,12 @@ class Params extends Weights.Params {
    *   - positive integer between [ 1, 32 ]: depthwise convolution and the number indicates channel multiplier.
    *
    * @param {number} depthwiseFilterHeight
-   *   The height of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
+   *   The height of depthwise convolution's filter. At least 1 (so that 1D data could be processed). If null, it will be extracted
+   * from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will be ignored.
    *
    * @param {number} depthwiseFilterWidth
-   *   The width of depthwise convolution's filter. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will also be ignored.
+   *   The width of depthwise convolution's filter. At least 2 (so that meaningless ( 1 * 1 ) could be avoided). If null, it will
+   * be extracted from inputFloat32Array (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will be ignored.
    *
    * @param {number} depthwiseStridesPad
    *   The strides and padding of depthwise convolution. If null, it will be extracted from inputFloat32Array (i.e. by evolution).
@@ -576,7 +576,7 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
 
 /** Define suitable value for depthwise convolution filter size.
  *
- * At least ( 1 * 2 ), because depthwise filter size ( height, width ):
+ * At least ( 1 * 2 ), because depthwise filter size ( height * width ):
  *   - ( 0 * 0 ) is meaningless.
  *   - ( 1 * 1 ) is wrongly calculated in backend WASM.
  *   - ( 1 * N ) is necessary for processing 1D data (e.g. sound, or text).
