@@ -235,13 +235,15 @@ class Base extends TestParams.Base {
 
       // Because the logic of bias and activation function is simpler than other, it is just randomly tested once
       // (i.e. ( undefined )) for speeding up testing.
-      Bias: undefined,
-//      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
+//!!! (2022/05/01 Temp Remarked) For debug.
+//      Bias: undefined,
+      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
 //      Bias: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
 
+//!!! (2022/05/01 Temp Remarked) For debug.
 //      ActivationId: undefined,
-//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+//       ActivationId: [ ValueDesc.ActivationFunction.Singleton.range.min, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
       inputHeight0: [ 3, 3 ],
       inputWidth0: [ 4, 5 ],
@@ -258,25 +260,12 @@ class Base extends TestParams.Base {
           + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2 - 1
       ],
 
-//!!! (2022/05/01 Temp Remarked) For test 1x1 depthwise conv in WASM.
       depthwise_AvgMax_Or_ChannelMultiplier: [
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
       ],
 
-//!!! (2022/04/29 Temp) For testing AVG only.
-//       depthwise_AvgMax_Or_ChannelMultiplier: [
-//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 0
-//       ],
-
-//!!! (2022/05/01 Temp) For test 1x1 depthwise conv in WASM.
-//       depthwise_AvgMax_Or_ChannelMultiplier: [
-//         0, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-//         2, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
-//       ],
-
-      // (2021/10/06) Note: WASM seems not correct when ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ).
+      // (2021/10/06) Note: WASM seems not correct when tf.pool() with ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ).
       depthwiseFilterHeight: [ PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
       depthwiseFilterWidth: [ PointDepthPoint.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 
@@ -286,8 +275,10 @@ class Base extends TestParams.Base {
         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
       ],
 
-      bOutput1Requested: undefined,
+//!!! (2022/05/01 Temp Remarked) For debug.
+//      bOutput1Requested: undefined,
 //      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+      bOutput1Requested: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min + 0 ],
 
       bKeepInputTensor: undefined,
 //      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
