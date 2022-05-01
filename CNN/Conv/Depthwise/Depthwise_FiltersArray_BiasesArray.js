@@ -118,7 +118,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       // (2022/05/01)
       // Teh tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
       // ourselves testing procedure.
-      tf.util.assert( ( ( this.out.depthwiseFilterHeight == 1 ) && ( this.out.depthwiseFilterWidth == 1 ) ) && ( tf.getBackend() == "wasm" ),
+      tf.util.assert( ( ( this.out.filterHeight == 1 ) && ( this.out.filterWidth == 1 ) ) && ( tf.getBackend() == "wasm" ),
         `Depthwise.FiltersArray_BiasesArray.constructor(): `
           + `Backend WASM seems not support tf.pool() (both AVG and MAX) with windowShape [ 1, 1 ].`
       );
