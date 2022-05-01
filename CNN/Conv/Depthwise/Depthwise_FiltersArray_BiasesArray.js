@@ -116,12 +116,14 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       // But tf.depthwiseConv2d() does not have this problem. Backend CPU and WebGL do not have this problem, too.
       //
       // (2022/05/01)
-      // Teh tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
+      // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
       // ourselves testing procedure.
-      tf.util.assert( ( ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) ) && ( tf.getBackend() != "wasm" ),
-        `Depthwise.FiltersArray_BiasesArray.constructor(): `
-          + `Backend WASM seems not support tf.pool() (both AVG and MAX) with windowShape [ 1, 1 ].`
-      );
+      if ( ( ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) ) && ( tf.getBackend() == "wasm" ) ) {
+        tf.util.assert( false,
+          `Depthwise.FiltersArray_BiasesArray.constructor(): `
+            + `Backend WASM seems not support tf.pool() (both AVG and MAX) with windowShape [ 1, 1 ].`
+        );
+      }
     }
 
     tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
