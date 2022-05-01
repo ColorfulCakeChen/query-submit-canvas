@@ -1031,6 +1031,8 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
 }
 
 
+//!!! ...unfinished... (2022/05/01) NotShuffleNet_NotMobileNet should be deprecated.
+
 /** Provide parameters for pure depthwise-pointwise convolutions.
  *
  * This configuration is similar to MobileNetV2 but with ( depthwiseStridesPad == 0 ), automatic step count, varing
