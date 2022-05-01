@@ -167,7 +167,7 @@ class Base extends TestParams.Base {
             return false;
             break;
         }
-        
+
         // (2021/07/20)
         // Note: In backend WASM, when filter size is ( 1 * 1 ), tf.pool() (both AVG and MAX) will calculate wrongly.
         // But tf.depthwiseConv2d() does not have this problem. Backend CPU and WebGL do not have this problem, too.
