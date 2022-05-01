@@ -587,7 +587,9 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
  * Avoid too large filter size. Otherwise, performance may be poor.
  */
 Params.depthwiseFilterHeight =   new ParamDesc.Int(                     "depthwiseFilterHeight", 1, ( 10 * 1024 ) );
-Params.depthwiseFilterWidth =    new ParamDesc.Int(                     "depthwiseFilterWidth",  2, ( 10 * 1024 ) );
+//!!! (2022/05/01 Temp Remarked) For test 1x1 depthwise conv in WASM.
+//Params.depthwiseFilterWidth =    new ParamDesc.Int(                     "depthwiseFilterWidth",  2, ( 10 * 1024 ) );
+Params.depthwiseFilterWidth =    new ParamDesc.Int(                     "depthwiseFilterWidth",  1, ( 10 * 1024 ) );
 
 /** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
 Params.depthwiseStridesPad =     new ParamDesc.Int(                     "depthwiseStridesPad",   0, 2 );
