@@ -209,8 +209,12 @@ class Base extends TestParams.Base {
    */
   * ParamsGenerator() {
 
-//    let depthwiseFilterMaxSize = 5;
-    let depthwiseFilterMaxSize = 3;
+    // (2022/04/30 Remarked) For speed up testing by reduce testing space.
+    //let depthwiseFilterMaxSize = 5;
+//!!! (2022/05/01 Temp Remarked) For test 1x1 depthwise conv in WASM.
+//    let depthwiseFilterMaxSize = 3;
+//!!! (2022/05/01 Temp) For test 1x1 depthwise conv in WASM.
+    let depthwiseFilterMaxSize = 1;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
@@ -245,15 +249,23 @@ class Base extends TestParams.Base {
           + ValueDesc.channelCount1_pointwise1Before.Singleton.integerToNameMap.size + 2 - 1
       ],
 
-      depthwise_AvgMax_Or_ChannelMultiplier: [
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
-      ],
+//!!! (2022/05/01 Temp Remarked) For test 1x1 depthwise conv in WASM.
+//       depthwise_AvgMax_Or_ChannelMultiplier: [
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
+//       ],
+
 //!!! (2022/04/29 Temp) For testing AVG only.
 //       depthwise_AvgMax_Or_ChannelMultiplier: [
 //         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
 //         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 0
 //       ],
+
+//!!! (2022/05/01 Temp) For test 1x1 depthwise conv in WASM.
+      depthwise_AvgMax_Or_ChannelMultiplier: [
+        0, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+        2, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
+      ],
 
       // (2021/10/06) Note: WASM seems not correct when ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ).
       depthwiseFilterHeight: [ PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
