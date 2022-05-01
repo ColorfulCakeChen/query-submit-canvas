@@ -176,7 +176,9 @@ class Base extends TestParams.Base {
         // (2022/05/01)
         // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
         // ourselves testing procedure.
-        if ( ( this.out.depthwiseFilterHeight == 1 ) && ( this.out.depthwiseFilterWidth == 1 ) ) {
+//!!! (2022/05/01 Remarked)
+//        if ( ( this.out.depthwiseFilterHeight == 1 ) && ( this.out.depthwiseFilterWidth == 1 ) ) {
+        if ( this.out.depthwiseFilterWidth == 1 ) {
           if ( tf.getBackend() == "wasm" )
             return false;
         }
