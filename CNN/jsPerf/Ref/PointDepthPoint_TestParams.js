@@ -263,7 +263,7 @@ class Base extends TestParams.Base {
 
 //!!! (2022/05/01 Temp) For test 1x1 depthwise conv in WASM.
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        0, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+        -1, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
         2, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
       ],
 
