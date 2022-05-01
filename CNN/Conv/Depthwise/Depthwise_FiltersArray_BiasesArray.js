@@ -110,15 +110,17 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
 
         throw msg;
       }
+    }
 
-      // (2021/07/20)
-      // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
-      // tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() will calculate wrongly. In backend CPU and WebGL, this problem does
-      // not exist.
-      //
-      // (2022/05/01)
-      // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
-      // ourselves testing procedure.
+    // (2021/07/20)
+    // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
+    // tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() will calculate wrongly. In backend CPU and WebGL, this problem does
+    // not exist.
+    //
+    // (2022/05/01)
+    // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
+    // ourselves testing procedure.
+    if ( AvgMax_Or_ChannelMultiplier != 0 ) {
 //!!! (2022/05/01 Remarked)
 //      if ( ( ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) ) && ( tf.getBackend() == "wasm" ) ) {
       if ( ( this.filterWidth == 1 ) && ( tf.getBackend() == "wasm" ) ) {
