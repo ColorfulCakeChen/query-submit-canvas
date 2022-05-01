@@ -576,19 +576,24 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
 
 /** Define suitable value for depthwise convolution filter size.
  *
- * At least ( 1 * 2 ), because depthwise filter size ( height * width ):
+ * At least ( 1 * 1 ), because for depthwise filter size ( height * width ):
  *   - ( 0 * 0 ) is meaningless.
- *   - ( 1 * 1 ) is wrongly calculated in backend WASM.
  *   - ( 1 * N ) is necessary for processing 1D data (e.g. sound, or text).
  *
  * For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
- * For depthwise convolution, it is meaningful if filter size is ( 1 * 1 ) because they could be used as simple channel multiplier.
+ *
+ * For depthwise convolution, it is still meaningful even if filter size is ( 1 * 1 ) because they still could filter value or
+ * be used as simple channel multiplier.
  *
  * Avoid too large filter size. Otherwise, performance may be poor.
+ *
+ *
+ * (2021/07/20)
+ * Note: In backend WASM, when filter size is ( 1 * 1 ), tf.pool() (both AVG and MAX) will calculate wrongly.
+ * But tf.depthwiseConv2d() does not have this problem. In backend CPU or WebGL, this problem does not exist.
+ *
  */
 Params.depthwiseFilterHeight =   new ParamDesc.Int(                     "depthwiseFilterHeight", 1, ( 10 * 1024 ) );
-//!!! (2022/05/01 Temp Remarked) For test 1x1 depthwise conv in WASM.
-//Params.depthwiseFilterWidth =    new ParamDesc.Int(                     "depthwiseFilterWidth",  2, ( 10 * 1024 ) );
 Params.depthwiseFilterWidth =    new ParamDesc.Int(                     "depthwiseFilterWidth",  1, ( 10 * 1024 ) );
 
 /** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
