@@ -167,6 +167,17 @@ class Base extends TestParams.Base {
             return false;
             break;
         }
+        
+        // (2021/07/20)
+        // Note: In backend WASM, when filter size is ( 1 * 1 ), tf.pool() (both AVG and MAX) will calculate wrongly.
+        // But tf.depthwiseConv2d() does not have this problem. Backend CPU and WebGL do not have this problem, too.
+        //
+        // (2022/05/01)
+        // This is issued seems not be recognized as problem and will not be fixed. So, we get around it by ourselves testing procedure.
+        if ( ( this.out.depthwiseFilterHeight == 1 ) && ( this.out.depthwiseFilterWidth == 1 ) ) {
+          if ( tf.getBackend() == "wasm" )
+            return false;
+        }
     }
 
     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
@@ -211,10 +222,7 @@ class Base extends TestParams.Base {
 
     // (2022/04/30 Remarked) For speed up testing by reduce testing space.
     //let depthwiseFilterMaxSize = 5;
-//!!! (2022/05/01 Temp Remarked) For test 1x1 depthwise conv in WASM.
-//    let depthwiseFilterMaxSize = 3;
-//!!! (2022/05/01 Temp) For test 1x1 depthwise conv in WASM.
-    let depthwiseFilterMaxSize = 1;
+    let depthwiseFilterMaxSize = 3;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
     this.valueOutMinMax = {
@@ -250,10 +258,10 @@ class Base extends TestParams.Base {
       ],
 
 //!!! (2022/05/01 Temp Remarked) For test 1x1 depthwise conv in WASM.
-//       depthwise_AvgMax_Or_ChannelMultiplier: [
-//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-//         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
-//       ],
+      depthwise_AvgMax_Or_ChannelMultiplier: [
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
+      ],
 
 //!!! (2022/04/29 Temp) For testing AVG only.
 //       depthwise_AvgMax_Or_ChannelMultiplier: [
@@ -262,10 +270,10 @@ class Base extends TestParams.Base {
 //       ],
 
 //!!! (2022/05/01 Temp) For test 1x1 depthwise conv in WASM.
-      depthwise_AvgMax_Or_ChannelMultiplier: [
-        -1, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-        2, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
-      ],
+//       depthwise_AvgMax_Or_ChannelMultiplier: [
+//         0, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+//         2, //ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
+//       ],
 
       // (2021/10/06) Note: WASM seems not correct when ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ).
       depthwiseFilterHeight: [ PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
