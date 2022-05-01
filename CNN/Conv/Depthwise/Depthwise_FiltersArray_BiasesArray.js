@@ -121,7 +121,7 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
       tf.util.assert( ( ( this.out.depthwiseFilterHeight == 1 ) && ( this.out.depthwiseFilterWidth == 1 ) ) && ( tf.getBackend() == "wasm" ),
         `Depthwise.FiltersArray_BiasesArray.constructor(): `
           + `Backend WASM seems not support tf.pool() (both AVG and MAX) with windowShape [ 1, 1 ].`
-      }
+      );
     }
 
     tf.util.assert( ( this.inputChannelCount_lowerHalf <= inputChannelCount ),
