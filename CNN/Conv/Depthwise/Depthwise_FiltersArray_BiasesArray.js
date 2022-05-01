@@ -121,12 +121,10 @@ let FiltersArray_BiasesArray = ( Base = Object ) => class extends PadInfoCalcula
     // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
     // ourselves testing procedure.
     if ( AvgMax_Or_ChannelMultiplier != 0 ) {
-//!!! (2022/05/01 Remarked)
-//      if ( ( ( this.filterHeight == 1 ) && ( this.filterWidth == 1 ) ) && ( tf.getBackend() == "wasm" ) ) {
       if ( ( this.filterWidth == 1 ) && ( tf.getBackend() == "wasm" ) ) {
         tf.util.assert( false,
           `Depthwise.FiltersArray_BiasesArray.constructor(): `
-            + `Backend WASM seems not support tf.pool() (both AVG and MAX) with windowShape [ 1, 1 ].`
+            + `In backend WASM, it seems that tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() can not work with filterWidth = 1.`
         );
       }
     }
