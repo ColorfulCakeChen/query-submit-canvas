@@ -590,7 +590,7 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
  *
  * (2021/07/20)
  * Note: In backend WASM, when filter size is ( 1 * 1 ), tf.pool() (both AVG and MAX) will calculate wrongly.
- * But tf.depthwiseConv2d() does not have this problem. In backend CPU or WebGL, this problem does not exist.
+ * But tf.depthwiseConv2d() does not have this problem. Backend CPU and WebGL do not have this problem, too.
  *
  */
 Params.depthwiseFilterHeight =   new ParamDesc.Int(                     "depthwiseFilterHeight", 1, ( 10 * 1024 ) );
