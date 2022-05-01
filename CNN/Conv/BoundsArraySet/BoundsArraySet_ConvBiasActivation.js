@@ -21,15 +21,6 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
  * @member {FloatValue.BoundsArray} afterBias
  *   The element value bounds (per channel) after applying the convolution biases to this.afterFilter. (i.e. beforeActivationEscaping)
  *
-
-//!!! (2022/04/26 Remarked) Deprecated. .afterFilter and .afterBias will be adjusted directly.
-//  * @member {FloatValue.BoundsArray} afterActivationEscaping
-//  *   The element value bounds (per channel) after applying this.activationEscaping_ScaleArraySet.do to this.afterBias. (i.e. beforeActivation)
-//  *
-//  * @member {FloatValue.BoundsArray} afterActivation
-//  *   The element value bounds (per channel) after applying activation function to this.afterActivationEscaping. It is just
-//  * the this.output0.boundsArray (without this.output0.scaleArraySet).
-
  *
  * @member {FloatValue.BoundsArray} afterActivation
  *   The element value bounds (per channel) after applying activation function to this.afterBias. It is just
@@ -58,9 +49,6 @@ class ConvBiasActivation extends InputsOutputs {
 
     this.afterFilter = new FloatValue.BoundsArray( outputChannelCount0 );
     this.afterBias = new FloatValue.BoundsArray( outputChannelCount0 );
-
-//!!! (2022/04/26 Remarked) Deprecated. .afterFilter and .afterBias will be adjusted directly.
-//    this.afterActivationEscaping = new FloatValue.BoundsArray( outputChannelCount0 );
 
     this.bPassThrough = new Array( outputChannelCount0 );
 
@@ -140,10 +128,6 @@ class ConvBiasActivation extends InputsOutputs {
   set_outputs_all_byBounds( aBounds ) {
     this.afterFilter.set_all_byBounds( aBounds );
     this.afterBias.set_all_byBounds( aBounds );
-
-//!!! (2022/04/26 Remarked) Deprecated. .afterFilter and .afterBias will be adjusted directly.
-//    this.afterActivationEscaping.set_all_byBounds( aBounds );
-
     super.set_outputs_all_byBounds( aBounds ); // i.e. .output0.boundsArray (i.e. .afterActivation), .output0.scaleArraySet
     this.set_bPassThrough_all_none();
     return this;
@@ -171,9 +155,6 @@ class ConvBiasActivation extends InputsOutputs {
     this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( aBoundsArraySet.afterUndoPreviousActivationEscaping );
     this.afterFilter                        .set_all_byBoundsArray( aBoundsArraySet.afterFilter );
     this.afterBias                          .set_all_byBoundsArray( aBoundsArraySet.afterBias );
-
-//!!! (2022/04/26 Remarked) Deprecated. .afterFilter and .afterBias will be adjusted directly.
-//    this.afterActivationEscaping            .set_all_byBoundsArray( aBoundsArraySet.afterActivationEscaping );
 
     // .output0.boundsArray (i.e. .afterActivation), .output0.scaleArraySet, .output1.boundsArray, .output1.scaleArraySet
     super.set_outputs_all_byBoundsArraySet( aBoundsArraySet );
@@ -264,12 +245,6 @@ class ConvBiasActivation extends InputsOutputs {
         this.output0.scaleArraySet.undo.set_one_byUndo_N( outChannel, doEscapingScale );
       }
 
-//!!! (2022/04/26 Remarked) Deprecated. .afterFilter and .afterBias will be adjusted directly.
-//       // 2. Determine .afterActivationEscaping
-//       this.afterActivationEscaping
-//         .set_one_byBoundsArray( outChannel, this.afterBias, outChannel )
-//         .multiply_one_byNs( outChannel, this.output0.scaleArraySet.do.scales, outChannel );
-
       // 2. Adjust .afterFilter and .afterBias
       this.afterFilter.multiply_one_byN( outChannel, doEscapingScale );
       this.afterBias.multiply_one_byN( outChannel, doEscapingScale );
@@ -320,10 +295,6 @@ class ConvBiasActivation extends InputsOutputs {
   set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ) {
     this.afterFilter.set_all_byInterleave_asGrouptTwo( arrayTemp );
     this.afterBias.set_all_byInterleave_asGrouptTwo( arrayTemp );
-
-//!!! (2022/04/26 Remarked) Deprecated. .afterFilter and .afterBias will be adjusted directly.
-//    this.afterActivationEscaping.set_all_byInterleave_asGrouptTwo( arrayTemp );
-
     super.set_outputs_all_byInterleave_asGrouptTwo( arrayTemp ); // i.e. this.afterActivation
     FloatValue.ArrayInterleaver.interleave_asGrouptTwo( this.bPassThrough, 0, this.bPassThrough.length, arrayTemp );
     return this;
