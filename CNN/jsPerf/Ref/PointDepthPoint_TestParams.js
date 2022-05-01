@@ -167,21 +167,23 @@ class Base extends TestParams.Base {
             return false;
             break;
         }
+    }
 
-        // (2021/07/20)
-        // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
-        // tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() will calculate wrongly. In backend CPU and WebGL, this problem does
-        // not exist.
-        //
-        // (2022/05/01)
-        // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
-        // ourselves testing procedure.
+    // (2021/07/20)
+    // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
+    // tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() will calculate wrongly. In backend CPU and WebGL, this problem does
+    // not exist.
+    //
+    // (2022/05/01)
+    // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
+    // ourselves testing procedure.
+    if ( this.out.depthwise_AvgMax_Or_ChannelMultiplier != 0 ) {
 //!!! (2022/05/01 Remarked)
-//        if ( ( this.out.depthwiseFilterHeight == 1 ) && ( this.out.depthwiseFilterWidth == 1 ) ) {
-        if ( this.out.depthwiseFilterWidth == 1 ) {
-          if ( tf.getBackend() == "wasm" )
-            return false;
-        }
+//      if ( ( this.out.depthwiseFilterHeight == 1 ) && ( this.out.depthwiseFilterWidth == 1 ) ) {
+      if ( this.out.depthwiseFilterWidth == 1 ) {
+        if ( tf.getBackend() == "wasm" )
+          return false;
+      }
     }
 
     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
