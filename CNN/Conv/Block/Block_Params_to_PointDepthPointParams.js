@@ -454,9 +454,15 @@ class ShuffleNetV2_ByPointwise22 extends ShuffleNetV2 {
 
 //!!! ...unfinished... (2021/10/14)
 /*
+ * Provide parameters for ShuffleNetV2_ByMobileNetV1 (i.e. concatenate, shuffle channel, split by integrated pointwise1, depthwise,
+ * pointwise21).
+ *
+ *
+ * 1. Reason
+ *
  * Accodring to testing, the original ShuffleNetV2 is faster than MobileNetV2 in backend CPU. This may result from lesser
  * computation. However, in backend WASM and WEBGL, MobileNetV2 is faster than the original ShuffleNetV2. The possible
- * reason may be that the concatenation-shuffle-split (even achieved by pointwise convolution) operation is not friendly
+ * reason may be that the concatenate-shuffle-split (even achieved by pointwise convolution) operation is not friendly
  * for WASM and WEBGL.
  *
  * This results in an idea that:
@@ -506,6 +512,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 // That is the depthwise needs use ( bHigherHalfDifferent == false ) in this case.
 
 }
+
 
 
 //!!! ...unfinished... (2022/05/02)
