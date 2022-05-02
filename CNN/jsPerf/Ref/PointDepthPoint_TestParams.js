@@ -187,7 +187,7 @@ class Base extends TestParams.Base {
     // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
     //
     // Note: When pad is "same", this restriction does not exist.
-    if ( 0 == this.out.depthwiseStridesPad ) {
+    if ( ValueDesc.StridesPad.pad_isValid( this.out.depthwiseStridesPad ) ) {
 
       if (   ( this.out.depthwiseFilterHeight > this.out.inputHeight0 )
           || ( this.out.depthwiseFilterWidth  > this.out.inputWidth0  ) )
@@ -271,6 +271,9 @@ class Base extends TestParams.Base {
       depthwiseFilterHeight: [ PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
       depthwiseFilterWidth: [ PointDepthPoint.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 
+      // (2022/05/02) Note: In some platform (e.g. mobile phone Moto e40), the right most pixel seems wrong of depthwise convolution
+      // when pad="same" in backend WebGL. But it is correct if pad="valid"
+      //
 //      depthwiseStridesPad: undefined,
 //!!! (2022/05/01 Temp Remarked) For debug (mobile phone).
 //       depthwiseStridesPad: [
