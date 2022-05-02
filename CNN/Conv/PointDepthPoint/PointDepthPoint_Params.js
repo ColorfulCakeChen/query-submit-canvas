@@ -499,7 +499,10 @@ class Params extends Weights.Params {
 
   get depthwiseFilterHeight()     { return this.parameterMapModified.get( Params.depthwiseFilterHeight ); }
   get depthwiseFilterWidth()      { return this.parameterMapModified.get( Params.depthwiseFilterWidth ); }
+
   get depthwiseStridesPad()       { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
+  get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getStringOfValue( this.depthwiseStridesPad ); }
+
   get bDepthwiseBias()            { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
   get depthwiseActivationId()     { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
   get depthwiseActivationName()   { return Params.depthwiseActivationId.getStringOfValue( this.depthwiseActivationId ); }
