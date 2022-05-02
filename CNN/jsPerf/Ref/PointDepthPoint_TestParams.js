@@ -272,7 +272,7 @@ class Base extends TestParams.Base {
       depthwiseFilterWidth: [ PointDepthPoint.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 
       // (2022/05/02) Note: The right most pixel of depthwise convolution seems wrong when pad="same" in backend WebGL
-      // of some platforms (e.g. mobile phone Moto e40). But the issue does exist when pad="valid" in those platforms.
+      // of some platforms (e.g. mobile phone Moto e40). But the issue does not exist when pad="valid" in those platforms.
       //
 //      depthwiseStridesPad: undefined,
 //!!! (2022/05/01 Temp Remarked) For debug (mobile phone).
