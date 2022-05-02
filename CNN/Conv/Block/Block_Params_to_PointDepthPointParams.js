@@ -67,8 +67,10 @@ class Base {
    *
    * The special points of a block's step 0 are:
    *   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2) (by depthwise convolution with strides = 2)
-   *   - Double channels. (By concat if ShuffleNetV2. By second pointwise if MobileNetV2.)
-   *   - Expand channels by channelMultiplier of depthwise convolution. (Our ShuffleNetV2_Simplified.)
+   *   - Double channels.
+   *     - By concat, if ShuffleNetV2.
+   *     - By channelMultiplier of depthwise convolution, if (Our) ShuffleNetV2 when ( pointwise1ChannelCount == 0 ).
+   *     - By pointwise21, if MobileNetV2.
    */
   configTo_beforeStep0() {}
 
