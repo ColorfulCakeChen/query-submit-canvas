@@ -576,9 +576,6 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 }
 
 
-
-//!!! ...unfinished... (2022/05/02)
-// Perhaps, class ShuffleNetV2_ByMobileNetV1_padValid.
 /**
  * This class is almost the same as ShuffleNetV2_ByMobileNetV1 except the depthwise convolution's padding is "valid" (instead of "same").
  *
@@ -612,8 +609,27 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
  * if ( pad = "valid" ). So, the only one bottom-most data will not be dropped diasterly.
  *
  */
+class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
+
+  /** @override */
+  configTo_beforeStep0() {
+    super.configTo_beforeStep0(); // Step0 is almost the same as ShuffleNetV2_ByMobileNetV1.
+
+    // Except padding is "valid" (not "same").
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
+  }
+
+  /** @override */
+  configTo_afterStep0() {
+    super.configTo_afterStep0(); // Step1, 2, 3, ... are almost the same as ShuffleNetV2_ByMobileNetV1.
+
+    // Except padding is "valid" (not "same").
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
+  }
+}
 
 
+//!!! ...unfinished... (2022/05/02)
 
 /** Provide parameters for MobileNetV2 (i.e. with pointwise1, with add-input-to-output).
  *
