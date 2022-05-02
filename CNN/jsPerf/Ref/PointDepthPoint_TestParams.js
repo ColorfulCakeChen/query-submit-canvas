@@ -271,21 +271,22 @@ class Base extends TestParams.Base {
       depthwiseFilterHeight: [ PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
       depthwiseFilterWidth: [ PointDepthPoint.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 
-      // (2022/05/02) Note: The right most pixel of depthwise convolution seems wrong when pad="same" in backend WebGL
-      // of some platforms (e.g. mobile phone Moto e40). But the issue does not exist when pad="valid" in those platforms.
+      // (2022/05/02) Note: The right-most pixel of depthwise convolution seems wrong when ( strides = 1, pad = "same" ) in backend
+      // WebGL of some platforms (e.g. mobile phone Moto e40). But the issue does not exist when ( strides = 2, pad = "same" ) or
+      // ( pad = "valid" ) in those platforms.
       //
 //      depthwiseStridesPad: undefined,
 //!!! (2022/05/01 Temp Remarked) For debug (mobile phone).
-//       depthwiseStridesPad: [
-//         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
-//         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
-//       ],
       depthwiseStridesPad: [
-//        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME, // (1)
-        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME, // (2)
-        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME, // (2)
-//        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
+        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
+        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
       ],
+//       depthwiseStridesPad: [
+// //        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME, // (1)
+//         ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME, // (2)
+//         ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME, // (2)
+// //        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
+//       ],
 
 //!!! (2022/05/01 Temp Remarked) For debug.
 //      bOutput1Requested: undefined,
