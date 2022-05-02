@@ -501,7 +501,7 @@ class Params extends Weights.Params {
   get depthwiseFilterWidth()      { return this.parameterMapModified.get( Params.depthwiseFilterWidth ); }
 
   get depthwiseStridesPad()       { return this.parameterMapModified.get( Params.depthwiseStridesPad ); }
-  get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getStringOfValue( this.depthwiseStridesPad ); }
+  get depthwiseStridesPadName()   { return ValueDesc.StridesPad.Singleton.getStringOf( this.depthwiseStridesPad ); }
 
   get bDepthwiseBias()            { return this.parameterMapModified.get( Params.bDepthwiseBias ); }
   get depthwiseActivationId()     { return this.parameterMapModified.get( Params.depthwiseActivationId ); }
@@ -600,9 +600,7 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
 Params.depthwiseFilterHeight =   new ParamDesc.Int(                     "depthwiseFilterHeight", 1, ( 10 * 1024 ) );
 Params.depthwiseFilterWidth =    new ParamDesc.Int(                     "depthwiseFilterWidth",  1, ( 10 * 1024 ) );
 
-/** Define suitable value for depthwise convolution strides and pad. */
 Params.depthwiseStridesPad =     new ParamDesc.StridesPad(              "depthwiseStridesPad" );
-
 Params.bDepthwiseBias =          new ParamDesc.Bool(                    "bDepthwiseBias" );
 Params.depthwiseActivationId =   new ParamDesc.ActivationFunction(      "depthwiseActivationId" );
 
