@@ -378,6 +378,7 @@ class Base extends ReturnOrClone.Base {
     this.depthwiseFilterHeight = params.depthwiseFilterHeight;
     this.depthwiseFilterWidth = params.depthwiseFilterWidth;
     this.depthwiseStridesPad = params.depthwiseStridesPad;
+    this.depthwiseStridesPadName = params.depthwiseStridesPadName;
     this.bDepthwiseBias = params.bDepthwiseBias;
     this.depthwiseActivationId = params.depthwiseActivationId;
     this.depthwiseActivationName = params.depthwiseActivationName;
@@ -776,7 +777,8 @@ class Base extends ReturnOrClone.Base {
     //
     // For example:
     //   - if MobileNetV2 and not step 0, should not destroy input tensor so that can add input to output.
-    //   - However, even if MobileNetV2, only if not setp 0 (whose strides == 2) of a block can add input to output.
+    //   - However, even if MobileNetV2, only if not setp 0 (whose strides == ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME (2))
+    //        of a block can add input to output.
     if ( ( this.bAddInputToOutputRequested ) && ( this.depthwise1.is_Output_Same_HeightWidth_As_Input() ) ) {
 
       // Note:
@@ -1509,7 +1511,7 @@ class Base extends ReturnOrClone.Base {
 
       + `depthwise_AvgMax_Or_ChannelMultiplier=${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-      + `depthwiseStridesPad=${this.depthwiseStridesPad}, `
+      + `depthwiseStridesPad=${this.depthwiseStridesPadName}(${this.depthwiseStridesPad}), `
       + `bDepthwiseBias=${this.bDepthwiseBias}, `
       + `depthwiseActivationName=${this.depthwiseActivationName}(${this.depthwiseActivationId}), `
 
