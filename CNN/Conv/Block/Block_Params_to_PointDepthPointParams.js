@@ -199,11 +199,11 @@ class ShuffleNetV2 extends Base {
 
     let blockParams = this.blockParams;
 
-    // Currently, ShuffleNetV2 (and ShuffleNetV2_ByPointwise22) must have at least 2 steps because PointDepthPoint
-    // can not achieve the head/body/tail of ShuffleNetV2 at the same time.
+    // ShuffleNetV2_Xxx must have at least 2 steps because PointDepthPoint can not achieve the head/body/tail of
+    // ShuffleNetV2 at the same time.
     tf.util.assert( this.stepCount >= 2,
-      `Block.Params.to_PointDepthPointParams.ShuffleNetV2(): `
-        + `stepCount ( ${this.stepCount} ) must be at least 2 in ShuffleNetV2 (and ShuffleNetV2_ByPointwise22).` );
+      `Block.Params_to_PointDepthPointParams.ShuffleNetV2(): `
+        + `stepCount ( ${this.stepCount} ) must be at least 2 in ShuffleNetV2_Xxx.` );
   }
 
   /** @override */
