@@ -923,6 +923,23 @@ Params.to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1 = class extends Param
 }
 
 
+//!!! ...unfinished... (2022/05/02)
+// Perhaps, class ShuffleNetV2_ByMobileNetV1_padValid. It is almost the same as ShuffleNetV2_ByMobileNetV1 except the
+// depthwise convolution's padding is "valid" (instead of "same").
+//
+// This configuration's reason is that the right most pixel of depthwise convolution seems wrong when pad="same" in backend WebGL
+// of some platforms (e.g. mobile phone Moto e40). But the issue does not exist when pad="valid" in those platforms.
+//
+// For achieving ShuffleNetV2 with depthwise padding "valid", ShuffleNetV2_ByMobileNetV1 is necessary because other ShuffleNetV2_ByXxx
+// (with depthwise padding "same") could not concatenate two channel groups whic have different image size (due to padding "valid").
+//
+// The disadvantage is that the right-most and bottom-most pixels will ba dropped when pass-through the higher half of depthwise
+// convolution due to padding "valid".
+//
+//
+
+
+
 /** Provide parameters for MobileNetV2 (i.e. with pointwise1, with add-input-to-output).
  *
  *
