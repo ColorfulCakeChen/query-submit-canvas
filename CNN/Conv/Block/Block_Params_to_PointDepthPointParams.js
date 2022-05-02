@@ -507,9 +507,10 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
  * The disadvantage is that the right-most and bottom-most pixels will be dropped when pass-through the higher half of depthwise
  * convolution due to padding "valid".
  *
- * This disadvantage has some influence for 2D data, but it could be a diaster for 1D data (e.g. voice). Because they have only one
- * line, dropping the bottom-most data means dropping all data.
- *
+ * Note: Although 1D data (e.g. voice) has only one line (i.e. the only bottom-most data) which should not be dropped (otherwise,
+ * all data are dropped), this disadvantage will not be a diaster for 1D data. The reason is that 1D data could only use depthwise
+ * convolution with ( depthwiseFilterHeight == 1 ). When filter size is 1 in some direction, the output size (in that direction) will
+ * always be the same as input even if ( pad = "valid" ).
  *
  */
 
