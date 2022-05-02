@@ -11,7 +11,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} AvgMax_Or_ChannelMultiplier   Depthwise operation. (ValueDesc.AvgMax_Or_ChannelMultiplier)
  * @member {number} filterHeight          The height of the depthwise convolution's filter.
  * @member {number} filterWidth           The width of the depthwise convolution's filter.
- * @member {number} stridesPad            The strides and padding of depthwise convolution. (PointDepthPoint.Params.depthwiseStridesPad)
+ * @member {number} stridesPad            The strides and padding of (depthwise) convolution. (ValueDesc.StridesPad)
  *
  * @member {number} channelMultiplier     The channel multiplier of the depthwise operation (according to AvgMax_Or_ChannelMultiplier).
  * @member {number} filterSize            The size of the depthwise convolution's filter. (= filterHeight * filterWidth)
@@ -71,10 +71,10 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
 
     // Strides and Padding.
     switch ( stridesPad ) {
-      case 0:  this.strides = 1; this.pad = "valid"; break;
+      case ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_VALID: this.strides = 1; this.pad = "valid"; break; // (0)
       default:
-      case 1:  this.strides = 1; this.pad = "same";  break;
-      case 2:  this.strides = 2; this.pad = "same";  break;
+      case ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_SAME:  this.strides = 1; this.pad = "same";  break; // (1)
+      case ValueDesc.StridesPad.Singleton.STRIDES_2_PAD_SAME:  this.strides = 2; this.pad = "same";  break; // (2)
     }
 
     // Assume strides width equals strides height.
