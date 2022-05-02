@@ -440,7 +440,7 @@ class ShuffleNetV2_ByPointwise22 extends ShuffleNetV2 {
   configTo_beforeStepLast() {
     super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
 
-    // In ShuffleNetV2_ByPointwise22, the stepLast only has output0 (no output1). And the output0 has double channel count of
+    // In ShuffleNetV2_ByPointwise22, the stepLast has only output0 (no output1). And the output0 has double channel count of
     // source input0.
     //
     // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
@@ -452,13 +452,12 @@ class ShuffleNetV2_ByPointwise22 extends ShuffleNetV2 {
 }
 
 
-//!!! ...unfinished... (2021/10/14)
 /*
  * Provide parameters for ShuffleNetV2_ByMobileNetV1 (i.e. concatenate, shuffle channel, split by integrated pointwise1, depthwise,
  * pointwise21).
  *
  *
- * 1. Reason
+ * 1. Motivation
  *
  * Accodring to testing, the original ShuffleNetV2 is faster than MobileNetV2 in backend CPU. This may result from lesser
  * computation. However, in backend WASM and WEBGL, MobileNetV2 is faster than the original ShuffleNetV2. The possible
@@ -553,9 +552,6 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     this.outChannels1 = 0;
   }
 
-
-//!!! ...unfinished... (2022/05/02)
-
   /** @override */
   configTo_afterStep0() {
     super.configTo_afterStep0(); // Step1, 2, 3, ... are almost the same as ShuffleNetV2.
@@ -569,23 +565,13 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     // Do nothing. Because pointwise21 has done channel shuffling.
   }
 
-
-//!!! ...unfinished... (2022/05/02)
-
   /** @override */
   configTo_beforeStepLast() {
     super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
 
-    // In ShuffleNetV2_ByPointwise22, the stepLast only has output0 (no output1). And the output0 has double channel count of
+    // In ShuffleNetV2_ByMobileNetV1, the stepLast still has only output0 (no output1). And the output0 has double channel count of
     // source input0.
-    //
-    // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
-    // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
-    // not changed.
-    this.pointwise21ChannelCount = this.blockParams.sourceChannelCount * 2;
-    this.bOutput1Requested = false;
   }
-
 }
 
 
