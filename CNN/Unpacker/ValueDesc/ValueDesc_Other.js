@@ -117,20 +117,22 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 
 /** Describe id, range, name of WhetherShuffleChannel.
  *
- * Convert number value into integer between [ 0, 3 ] representing operation:
- *   - 0: NONE (i.e. NotShuffleNet_NotMobileNet, or MobileNetV2)
- *   - 1: BY_CHANNEL_SHUFFLER (i.e. ShuffleNetV2)
- *   - 2: BY_POINTWISE22      (i.e. ShuffleNetV2_ByPointwise22)
- *   - 3: BY_MOBILE_NET_V1    (i.e. ShuffleNetV2_ByMobileNetV1)
+ * Convert number value into integer between [ 0, 4 ] representing operation:
+ *   - 0: NONE (i.e. MobileNetV2)
+ *   - 1: BY_CHANNEL_SHUFFLER        (i.e. ShuffleNetV2)
+ *   - 2: BY_POINTWISE22             (i.e. ShuffleNetV2_ByPointwise22)
+ *   - 3: BY_MOBILE_NET_V1           (i.e. ShuffleNetV2_ByMobileNetV1)
+ *   - 4: BY_MOBILE_NET_V1_PAD_VALID (i.e. ShuffleNetV2_ByMobileNetV1_padValid)
  */
 class WhetherShuffleChannel extends Int {
 
   constructor() {
-    super( 0, 3, [
-      "NONE",                // (0)
-      "BY_CHANNEL_SHUFFLER", // (1)
-      "BY_POINTWISE22",      // (2)
-      "BY_MOBILE_NET_V1",    // (3)
+    super( 0, 4, [
+      "NONE",                       // (0)
+      "BY_CHANNEL_SHUFFLER",        // (1)
+      "BY_POINTWISE22",             // (2)
+      "BY_MOBILE_NET_V1",           // (3)
+      "BY_MOBILE_NET_V1_PAD_VALID", // (4)
     ] );
   }
 
