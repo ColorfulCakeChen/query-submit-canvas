@@ -249,13 +249,13 @@ class ShuffleNetV2 extends Base {
 
     // NoPointwise1 ShuffleNetV2 (expanding by once depthwise).
     //
-    // If step0 does not have pointwise1 convolution before depthwise convolution, the depthwise2
-    // convolution (in original ShuffleNetV2) is not needed. Then, a simpler configuration could be used.
+    // If step0 does not have pointwise1 convolution before depthwise convolution, the depthwise2 convolution (in original ShuffleNetV2)
+    // is not needed. Then, a simpler configuration could be used.
     //
     // Just use once depthwise convolution (but with channel multipler 2) to double the channel count.
     if ( this.pointwise1ChannelCount == 0 ) {
       this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;  // Step0 double the channel count by depthwise channel multiplier.
+      this.depthwise_AvgMax_Or_ChannelMultiplier = 2; // Step0 double the channel count by depthwise channel multiplier.
     }
 
     this.bKeepInputTensor = blockParams.bKeepInputTensor; // Step0 may or may not keep input tensor according to caller's necessary.
