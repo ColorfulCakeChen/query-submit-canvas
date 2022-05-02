@@ -164,9 +164,6 @@ class Base {
 
     let stepParams, step, stepIniter;
 
-//!!! ...unfinished... (2021/11/10) should check whether channel shuffler is created successfully.
-// bInitOk. seems not necessary. because channel shuffler constructor will throw exception when failed.
-
     this.stepsArray = new Array( stepParamsMaker.stepCount );
     for ( let i = 0; i < this.stepsArray.length; ++i ) { // Step0, 1, 2, 3, ..., StepLast.
 
