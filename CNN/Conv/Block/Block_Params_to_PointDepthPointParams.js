@@ -513,7 +513,7 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 //!!! ...unfinished... (2022/05/02)
   /** @override */
   configTo_beforeStep0() {
-    super.configTo_beforeStep0();
+    super.configTo_beforeStep0(); // Use same input0, bias, activation, depthwise filter size (as ShuffleNetV2).
 
     let blockParams = this.blockParams;
 
@@ -546,7 +546,12 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
     //
     this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
 
-    this.bOutput1Requested = false; // In ShuffleNetV2_ByMobileNetV1, there is always only output0 (i.e. no output1).
+    // In ShuffleNetV2_ByMobileNetV1, there is always only output0 (i.e. no output1).
+    this.bOutput1Requested = false;
+
+    // In ShuffleNetV2_ByMobileNetV1's head, all steps have only output0 (with same depth as pointwise21 result) and no output1.
+    this.outChannels0 = this.pointwise21ChannelCount;
+    this.outChannels1 = 0;
   }
 
 
