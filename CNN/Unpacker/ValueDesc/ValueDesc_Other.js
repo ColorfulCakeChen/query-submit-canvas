@@ -118,18 +118,20 @@ AvgMax_Or_ChannelMultiplier.Singleton = new AvgMax_Or_ChannelMultiplier;
 
 /** Describe id, range, name of (convolution's) strides and pad.
  *
- * Convert number value into integer between [ 0, 4 ] representing strides and pad:
+ * Convert number value into integer between [ 0, 3 ] representing strides and pad:
  *   -  0: STRIDES_1_PAD_VALID (strides = 1, pad = "valid")
- *   -  1: STRIDES_1_PAD_SAME (strides = 1, pad = "same")
- *   -  2: STRIDES_2_PAD_SAME (strides = 2, pad = "same")
+ *   -  1: STRIDES_1_PAD_SAME  (strides = 1, pad = "same")
+ *   -  2: STRIDES_2_PAD_SAME  (strides = 2, pad = "same")
+ *   -  3: STRIDES_2_PAD_VALID (strides = 2, pad = "valid")
  */
 class StridesPad extends Int {
 
   constructor() {
-    super( 0, 2, [
+    super( 0, 3, [
       "STRIDES_1_PAD_VALID", // (0) (strides = 1, pad = "valid")
       "STRIDES_1_PAD_SAME",  // (1) (strides = 1, pad = "same")
       "STRIDES_2_PAD_SAME",  // (2) (strides = 2, pad = "same")
+      "STRIDES_2_PAD_VALID", // (3) (strides = 2, pad = "valid")
     ] );
   }
 
