@@ -271,8 +271,6 @@ class ShuffleNetV2 extends Base {
     this.inputHeight0 = blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
     this.inputWidth0 = blockParams.outputWidth;
 
-    let step0_outChannelsAll = this.outChannels0 + this.outChannels1;
-
     // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
     this.channelCount0_pointwise1Before = this.outChannels0;
 
@@ -290,14 +288,23 @@ class ShuffleNetV2 extends Base {
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
 
-//!!! ...unfinished... (2022/05/02) should be moved to another method so that it can be avoided to create channel shuffler in sub-class.
-    // In ShuffleNetV2, all steps (except step0) uses channel shuffler (with two convolution groups).
-    {
-      let outputGroupCount = 2; // Always with two convolution groups.
-      let concatenatedDepth = step0_outChannelsAll; // All steps always have the same total output channel count as step0.
-      let concatenatedShape = [ this.blockParams.sourceHeight, this.blockParams.sourceWidth, concatenatedDepth ];
-      this.channelShuffler = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, outputGroupCount );
-    }
+    this.channelShuffler_init(); // In ShuffleNetV2, all steps (except step0) uses channel shuffler (with two convolution groups).
+  }
+  
+  /**
+   * Create channel shuffler if necessary and put in this.channelShuffler.
+   *
+   * Sub-class could override this method. For example, if sub-class does not need channel shuffler, it could override and do
+   *  nothing so that it can be avoided to create channel shuffler in sub-class.
+   */
+  channelShuffler_init() {
+    let blockParams = this.blockParams;
+    let step0_outChannelsAll = this.outChannels0 + this.outChannels1;
+
+    let outputGroupCount = 2; // Always with two convolution groups.
+    let concatenatedDepth = step0_outChannelsAll; // All steps always have the same total output channel count as step0.
+    let concatenatedShape = [ blockParams.sourceHeight, blockParams.sourceWidth, concatenatedDepth ];
+    this.channelShuffler = new ChannelShuffler.ConcatPointwiseConv( concatenatedShape, outputGroupCount );
   }
 
   /** @override */
@@ -413,6 +420,11 @@ class ShuffleNetV2_ByPointwise22 extends ShuffleNetV2 {
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+  }
+
+  /** @override */
+  channelShuffler_init() {
+    // Do nothing. Because pointwise22 has done channel shuffling.
   }
 
   /** @override */
