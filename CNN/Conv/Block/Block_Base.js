@@ -660,7 +660,9 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps uses default depthwise filter size.
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Default;
-    this.depthwiseStridesPad = 2;                                    // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
+
+    // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
 
 //!!! ...unfinished... (2021/12/23) should be changed to like MobileNetV2:
 //   - depthwise always has bias and activation.
@@ -719,7 +721,9 @@ Params.to_PointDepthPointParams.ShuffleNetV2 = class extends Params.to_PointDept
 
     // In ShuffleNetV2, all steps (except step0 in NoPointwise1) will not double the channel count by depthwise.
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
-    this.depthwiseStridesPad = 1;  // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+
+    // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
 
@@ -840,7 +844,9 @@ Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22 = class extends Param
     this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
-    this.depthwiseStridesPad = 1;  // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+
+    // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
@@ -964,7 +970,9 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;                  // All steps will not double the channel count.
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default; // All steps uses default depthwise filter size.
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Default;
-    this.depthwiseStridesPad = 2;                                    // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
+
+    // Step0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
     this.bDepthwiseBias = true;
     this.depthwiseActivationId = blockParams.nActivationId;
 
@@ -1014,7 +1022,8 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
     //   - All steps (include step0) do not use input1.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_ADD_TO_OUTPUT;
 
-    this.depthwiseStridesPad = 1;  // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
   
@@ -1035,11 +1044,13 @@ Params.to_PointDepthPointParams.MobileNetV2 = class extends Params.to_PointDepth
 
 /** Provide parameters for pure depthwise-pointwise convolutions.
  *
- * This configuration is similar to MobileNetV2 but with ( depthwiseStridesPad == 0 ), automatic step count, varing
- * depthwiseFilterHeight, depthwiseFilterWidth, bias-activation at pointwise2 (not at depthwise), and without add-input-to-output.
+ * This configuration is similar to MobileNetV2 but with ( depthwiseStridesPad == ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID (0) ),
+ * automatic step count, varing depthwiseFilterHeight, depthwiseFilterWidth, bias-activation at pointwise2 (not at depthwise),
+ * and without add-input-to-output.
  *
  * Since it is similar to MobileNetV2, its performance could be compared to MobileNetV2 more eaily. Interestingly,
- * it is usually slower than MobileNetV2. The reason might be MobileNetV2's step0 uses ( depthwiseStridesPad == 2 ).
+ * it is usually slower than MobileNetV2. The reason might be MobileNetV2's step0 uses
+ * ( depthwiseStridesPad == ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME (2) ).
  * This shrinks ( height, width ) quickly so that data are reduced a lot.
  *
  */
@@ -1117,7 +1128,7 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
     super.configTo_beforeStep0(); // Almost the same as MobileNetV2.
 
     let blockParams = this.blockParams;
-    this.depthwiseStridesPad = 0; // In NotShuffleNet_NotMobileNet, always ( strides = 1, pad = "valid" ).
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // In NotShuffleNet_NotMobileNet, always ( strides = 1, pad = "valid" ).
 
     // In NotShuffleNet_NotMobileNet, depthwise convolution doesn't have activation.
     //
@@ -1143,7 +1154,7 @@ Params.to_PointDepthPointParams.NotShuffleNet_NotMobileNet = class extends Param
     //   - All steps (include step0) do not use input1.
     this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT;
 
-    this.depthwiseStridesPad = 0; // In NotShuffleNet_NotMobileNet, always ( strides = 1, pad = "valid" ).
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // In NotShuffleNet_NotMobileNet, always ( strides = 1, pad = "valid" ).
   }
 
 }
