@@ -597,8 +597,8 @@ Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMu
 Params.depthwiseFilterHeight =   new ParamDesc.Int(                     "depthwiseFilterHeight", 1, ( 10 * 1024 ) );
 Params.depthwiseFilterWidth =    new ParamDesc.Int(                     "depthwiseFilterWidth",  1, ( 10 * 1024 ) );
 
-/** Define suitable value for depthwise convolution strides and pad. Integer between [ 0, 2 ]. */
-Params.depthwiseStridesPad =     new ParamDesc.Int(                     "depthwiseStridesPad",   0, 2 );
+/** Define suitable value for depthwise convolution strides and pad. */
+Params.depthwiseStridesPad =     new ParamDesc.StridesPad(              "depthwiseStridesPad" );
 
 Params.bDepthwiseBias =          new ParamDesc.Bool(                    "bDepthwiseBias" );
 Params.depthwiseActivationId =   new ParamDesc.ActivationFunction(      "depthwiseActivationId" );
