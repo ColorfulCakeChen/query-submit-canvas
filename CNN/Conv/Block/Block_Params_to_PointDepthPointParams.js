@@ -2,6 +2,7 @@ export { Base };
 export { ShuffleNetV2 };
 export { ShuffleNetV2_ByPointwise22 };
 export { ShuffleNetV2_ByMobileNetV1 };
+export { ShuffleNetV2_ByMobileNetV1_padValid };
 export { MobileNetV2 };
 
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
