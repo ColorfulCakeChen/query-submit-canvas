@@ -498,11 +498,9 @@ class ShuffleNetV2_ByPointwise22 extends ShuffleNetV2 {
  */
 class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
-//!!! ...unfinished... (2021/10/14)
-
 //!!! ...unfinished... (2021/11/12)
 // When ( pointwise1ChannelCount == 0 ) (i.e. depthwise channel multiplier is 2 ), the depthwise should be just
-// the same as Params.to_PointDepthPointParams.ShuffleNetV2_ByPointwise22 and Params.to_PointDepthPointParams.ShuffleNetV2.
+// the same as Params_to_PointDepthPointParams.ShuffleNetV2_ByPointwise22 and Params_to_PointDepthPointParams.ShuffleNetV2.
 //
 //     if ( this.pointwise1ChannelCount == 0 ) {
 //       this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT; // no concatenate, no add-input-to-output.
@@ -510,6 +508,82 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 //     }
 //
 // That is the depthwise needs use ( bHigherHalfDifferent == false ) in this case.
+
+
+//!!! ...unfinished... (2022/05/02)
+  /** @override */
+  configTo_beforeStep0() {
+    super.configTo_beforeStep0();
+
+    let blockParams = this.blockParams;
+
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1;
+
+    // In ShuffleNetV2_ByMobileNetV1's head, if ( pointwise1ChannelCountRate != 0 ), pointwise1ChannelCount is always the same as input0's
+    // channel count. (i.e. pointwise1ChannelCountRate is always viewed as 1.)
+    //
+    // The input0 will be processed by pointwise1's lower half.
+    // The input0 will be copied as pointwise1's higher half.
+    //
+    if ( this.pointwise1ChannelCountRate > 0 ) {
+      this.pointwise1ChannelCount = blockParams.sourceChannelCount
+
+    // In ShuffleNetV2_ByMobileNetV1's head, if ( pointwise1ChannelCountRate == 0 ), pointwise1ChannelCount is also 0.
+    //
+    // The input0 will just be pass-through as pointwise1's lower half.
+    // The input0 will also be copied as pointwise1's higher half.
+    //
+    } else {
+      this.pointwise1ChannelCount = 0;
+    }
+
+    // In ShuffleNetV2_ByMobileNetV1's head, pointwise21ChannelCount is always twice of input0's channel count.
+    this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
+  }
+
+
+//!!! ...unfinished... (2022/05/02)
+
+  /** @override */
+  configTo_afterStep0() {
+    let blockParams = this.blockParams;
+
+    this.inputHeight0 = blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
+    this.inputWidth0 = blockParams.outputWidth;
+
+    // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
+    this.channelCount0_pointwise1Before = this.outChannels0;
+    this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
+
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
+
+    // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
+
+    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+  }
+
+  /** @override */
+  channelShuffler_init() {
+    // Do nothing. Because pointwise22 has done channel shuffling.
+  }
+
+
+//!!! ...unfinished... (2022/05/02)
+
+  /** @override */
+  configTo_beforeStepLast() {
+    super.configTo_beforeStepLast(); // Still, stepLast may use a different activation function after pointwise2 convolution.
+
+    // In ShuffleNetV2_ByPointwise22, the stepLast only has output0 (no output1). And the output0 has double channel count of
+    // source input0.
+    //
+    // Note: Although pointwise21 channel count changed, however, the pointwise1ChannelCount is not changed because the final
+    // output0 is viewed as concatenation of pointwise21 and pointwise22. In pointwise1's point of view, its pointwise2 does
+    // not changed.
+    this.pointwise21ChannelCount = this.blockParams.sourceChannelCount * 2;
+    this.bOutput1Requested = false;
+  }
 
 }
 
