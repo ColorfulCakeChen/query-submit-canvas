@@ -281,9 +281,9 @@ class Base extends TestParams.Base {
 //         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
 //       ],
       depthwiseStridesPad: [
-//        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID, // (3)
+        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME, // (1)
         ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME, // (2)
-        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID  // (3)
+//        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
       ],
 
 //!!! (2022/05/01 Temp Remarked) For debug.
