@@ -267,14 +267,19 @@ class Base extends TestParams.Base {
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min + 5 - 1
       ],
 
-      // (2021/10/06) Note: WASM seems not correct when tf.pool() with ( depthwiseFilterHeight == 1 ) and ( depthwiseFilterWidth == 1 ).
+      // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
       depthwiseFilterHeight: [ PointDepthPoint.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
       depthwiseFilterWidth: [ PointDepthPoint.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
 
 //      depthwiseStridesPad: undefined,
+//!!! (2022/05/01 Temp Remarked) For debug (mobile phone).
+//       depthwiseStridesPad: [
+//         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
+//         PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
+//       ],
       depthwiseStridesPad: [
-        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.min,
-        PointDepthPoint.Params.depthwiseStridesPad.valueDesc.range.max
+        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID, // (3)
+        ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID  // (3)
       ],
 
 //!!! (2022/05/01 Temp Remarked) For debug.
