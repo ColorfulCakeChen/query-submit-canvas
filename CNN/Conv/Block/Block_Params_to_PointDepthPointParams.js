@@ -324,15 +324,16 @@ class ShuffleNetV2 extends Base {
 }
 
 
-/** Provide parameters for ShuffleNetV2_ByPointwise22 (i.e. shuffle channel by pointwise22).
+/**
+ * Provide parameters for ShuffleNetV2_ByPointwise22 (i.e. shuffle channel by pointwise22).
  *
  * 1. ShuffleNetV2_ByPointwise22:
  *
  * Since channel shuffler could achieved efficiently by pointwise convolution, it is possible to combine the pointwise2
  * convolution (after depthwise convolution) and the pointwise convolution (of channel shuffler). That is:
  *   - Concatenate the output of depthwise convolution and the other output group.
- *   - Pointwise convolution to generate output group 1.
- *   - Pointwise convolution to generate output group 2.
+ *   - Pointwise convolution to generate output group 1. (i.e. pointwise21)
+ *   - Pointwise convolution to generate output group 2. (i.e. pointwise22)
  *
  * Although the channel shuffler is achieved by pointwise convolution without bias and activation function, however,
  * the pointwise21 convolution (before channel shuffler) indeed has bias and activation function. After combining
