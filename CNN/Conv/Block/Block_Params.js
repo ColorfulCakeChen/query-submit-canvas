@@ -49,8 +49,12 @@ class Params extends Weights.Params {
    * That is, pointwise1ChannelCount = ( pointwise21ChannelCount * pointwise1ChannelCountRate ).
    *   - If ( pointwise1ChannelCountRate == null ), it will be extracted from inputFloat32Array (i.e. by evolution).
    *   - If ( pointwise1ChannelCountRate == 0 ), there will be no pointwise1.
-   *   - If ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV1 (no expanding) or ShuffleNetV2 (expanding by twice depthwise).
-   *   - If ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2 (expanding by twice pointhwise1).
+   *   - If ( pointwise1ChannelCountRate == 1 ):
+   *       - For MobileNetV2: pointhwise1 is double. pointhwise21 is alwyas double. (Non-standard)
+   *       - For ShuffleNetV2: pointwise1 is single. depthwise is double. (Standard)
+   *   - If ( pointwise1ChannelCountRate == 2 ):
+   *       - For MobileNetV2: pointhwise1 is quadruple. pointhwise21 is double. (Standard)
+   *       - For ShuffleNetV2: pointwise1 is double. depthwise is quadruple! (Not suggested)
    *
    * @param {number} depthwiseFilterHeight
    *   The height of depthwise convolution's filter. At least 1 (so that 1D data could be processed). If null, it will be extracted
