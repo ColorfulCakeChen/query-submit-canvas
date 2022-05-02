@@ -1145,10 +1145,10 @@ class Base {
       + `bDepthwise2Requested=${flags.bDepthwise2Requested}, `
 
       + `depthwise_AvgMax_Or_ChannelMultiplier=`
-        + `${ValueDesc.StridesPad.Singleton.getStringOfValue( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier )}, `
+        + `${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getStringOf( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier )}, `
       + `depthwiseFilterHeight=${testParams.out.depthwiseFilterHeight}, depthwiseFilterWidth=${testParams.out.depthwiseFilterWidth}, `
       + `depthwiseStridesPad=`
-        + `${ValueDesc.StridesPad.Singleton.getStringOfValue( testParams.out.depthwiseStridesPad )}`
+        + `${ValueDesc.StridesPad.Singleton.getStringOf( testParams.out.depthwiseStridesPad )}`
         + `(${testParams.out.depthwiseStridesPad}), `
       + `bDepthwiseBias=${testParams.out.bDepthwiseBias}, `
       + `depthwiseActivationName=`
