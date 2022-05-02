@@ -85,7 +85,8 @@ class Params extends Weights.Params {
    *
    *   - Params.channelCount1_pointwise1Before.valueDesc.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1 (-4): (ShuffleNetV2_ByMobileNetV1's head)
    *       - Almost the same as ONE_INPUT_HALF_THROUGH (-5).
-   *       - The only different is that the higher half of depthwise1 does not just pass through.
+   *       - The pointwise1 will double channel count by copying input0 to higher half channels.
+   *       - The depthwise1 will process (not just pass through) the higher half channels.
    *       - Compared to ONE_INPUT_TWO_DEPTHWISE (-2) (simplified ShuffleNetV2's head), it is slower in backend CPU because
    *           of more computations. But strangely, it seems faster in backend WASM and WEBGL.
    *
