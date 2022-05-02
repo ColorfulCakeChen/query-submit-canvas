@@ -406,26 +406,34 @@ class ShuffleNetV2_ByPointwise22 extends ShuffleNetV2 {
 
   /** @override */
   configTo_afterStep0() {
-    let blockParams = this.blockParams;
+    super.configTo_beforeStepLast(); // Step1, 2, 3, ... are almost the same as ShuffleNetV2.
 
-    this.inputHeight0 = blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
-    this.inputWidth0 = blockParams.outputWidth;
-
-    // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
-    this.channelCount0_pointwise1Before = this.outChannels0;
+    // Except that ShuffleNetV2_ByPointwise22 does not have channel shuffler. The pointwise21 and pointwise22 will do channel shuffling.
     this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
 
-    this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
-
-    // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
-    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
-
-    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+//!!! (2022/05/02 Remarked) It seems enough to set this.channelCount1_pointwise1Before = this.outChannels1 (i.e. TWO_INPUTS).
+//
+//     let blockParams = this.blockParams;
+//
+//     this.inputHeight0 = blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
+//     this.inputWidth0 = blockParams.outputWidth;
+//
+//     // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
+//     this.channelCount0_pointwise1Before = this.outChannels0;
+//     this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
+//
+//     // In ShuffleNetV2, all steps (except step0 in NoPointwise1) will not double the channel count by depthwise.
+//     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
+//
+//     // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+//     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
+//
+//     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
   }
 
   /** @override */
   channelShuffler_init() {
-    // Do nothing. Because pointwise22 has done channel shuffling.
+    // Do nothing. Because ShuffleNetV2_ByPointwise22 uses pointwise21 and pointwise22 as channel shuffler.
   }
 
   /** @override */
