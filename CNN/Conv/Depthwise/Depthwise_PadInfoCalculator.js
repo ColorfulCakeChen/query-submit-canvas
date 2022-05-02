@@ -71,10 +71,10 @@ let PadInfoCalculator = ( Base = Object ) => class extends Base {
 
     // Strides and Padding.
     switch ( stridesPad ) {
-      case ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_VALID: this.strides = 1; this.pad = "valid"; break; // (0)
+      case ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID: this.strides = 1; this.pad = "valid"; break; // (0)
       default:
-      case ValueDesc.StridesPad.Singleton.STRIDES_1_PAD_SAME:  this.strides = 1; this.pad = "same";  break; // (1)
-      case ValueDesc.StridesPad.Singleton.STRIDES_2_PAD_SAME:  this.strides = 2; this.pad = "same";  break; // (2)
+      case ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME:  this.strides = 1; this.pad = "same";  break; // (1)
+      case ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME:  this.strides = 2; this.pad = "same";  break; // (2)
     }
 
     // Assume strides width equals strides height.
