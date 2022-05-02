@@ -135,6 +135,49 @@ class StridesPad extends Int {
     ] );
   }
 
+  /**
+   * @param {number} nStridesPadIds  The numeric identifier of StridesPad. (StridesPad.Singleton.Ids.Xxx)
+   * @return {number} Return the strides (1 or 2) of the StridesPad.Singleton.Ids.Xxx.
+   */
+  static strides_get( nStridesPadIds ) {
+    switch ( nStridesPadIds ) {
+      case StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID: return 1; // (0)
+      case StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME:  return 1; // (1)
+      case StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME:  return 2; // (2)
+      case StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID: return 2; // (3)
+      default:
+        return NaN;
+    }
+  }
+
+  /**
+   * @param {number} nStridesPadIds  The numeric identifier of StridesPad. (StridesPad.Singleton.Ids.Xxx)
+   * @return {boolean} Return true, if the pad of the StridesPad.Singleton.Ids.Xxx is "valid".
+   */
+  static pad_isValid( nStridesPadIds ) {
+    switch ( nStridesPadIds ) {
+      case StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID: // (0)
+      case StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID: // (3)
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * @param {number} nStridesPadIds  The numeric identifier of StridesPad. (StridesPad.Singleton.Ids.Xxx)
+   * @return {boolean} Return true, if the pad of the StridesPad.Singleton.Ids.Xxx is "same".
+   */
+  static pad_isSame( nStridesPadIds ) {
+    switch ( nStridesPadIds ) {
+      case StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME:  // (1)
+      case StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME:  // (2)
+        return true;
+      default:
+        return false;
+    }
+  }
+
 }
 
 /** The only one ValueDesc.StridesPad instance. */
