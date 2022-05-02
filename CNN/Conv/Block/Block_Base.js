@@ -928,6 +928,9 @@ Params.to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1 = class extends Param
 /**
  * This class is almost the same as ShuffleNetV2_ByMobileNetV1 except the depthwise convolution's padding is "valid" (instead of "same").
  *
+ *
+ * 1. Reason
+ *
  * This configuration's reason is that the right-most pixel of depthwise convolution seems wrong when ( strides = 1, pad = "same" )
  * in backend WebGL of some platforms (e.g. mobile phone Moto e40). But the issue does not exist when ( strides = 2, pad = "same" )
  * or ( pad = "valid" ) in those platforms.
@@ -935,8 +938,15 @@ Params.to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1 = class extends Param
  * For achieving ShuffleNetV2 with depthwise padding "valid", ShuffleNetV2_ByMobileNetV1 is necessary because other ShuffleNetV2_ByXxx
  * (with depthwise padding "same") could not concatenate two channel groups whic have different image size (due to padding "valid").
  *
- * The disadvantage is that the right-most and bottom-most pixels will ba dropped when pass-through the higher half of depthwise
+ *
+ * 2. Drawback
+ *
+ * The disadvantage is that the right-most and bottom-most pixels will be dropped when pass-through the higher half of depthwise
  * convolution due to padding "valid".
+ *
+ * This disadvantage has some influence for 2D data, but it could be a diaster for 1D data (e.g. voice). Because they have only one
+ * line, dropping the bottom-most data means dropping all data.
+ *
  *
  */
 
