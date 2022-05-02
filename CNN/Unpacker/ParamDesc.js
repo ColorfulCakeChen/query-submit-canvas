@@ -1,5 +1,9 @@
-export { Base, Same, Bool, Int, ActivationFunction, AvgMax_Or_ChannelMultiplier };
-export { channelCount1_pointwise1Before, WhetherShuffleChannel };
+export { Base, Same, Bool, Int };
+export { ActivationFunction };
+export { channelCount1_pointwise1Before };
+export { AvgMax_Or_ChannelMultiplier };
+export { StridesPad };
+export { WhetherShuffleChannel };
 
 import * as ValueDesc from "./ValueDesc.js";
 
@@ -104,6 +108,20 @@ class ActivationFunction extends Base {
 
 
 /**
+ * Describe some properties of an channelCount1_pointwise1Before parameter.
+ *
+ * @member {ValueDesc.channelCount1_pointwise1Before} valueDesc
+ *   The range of the parameter's all possible values. It is a ValueDesc.channelCount1_pointwise1Before object.
+ */
+class channelCount1_pointwise1Before extends Base {
+
+  constructor( paramName ) {
+    super( paramName, ValueDesc.channelCount1_pointwise1Before.Singleton );
+  }
+}
+
+
+/**
  * Describe some properties of an depthwise operation parameter.
  *
  * @member {ValueDesc.AvgMax_Or_ChannelMultiplier} valueDesc
@@ -118,15 +136,15 @@ class AvgMax_Or_ChannelMultiplier extends Base {
 
 
 /**
- * Describe some properties of an channelCount1_pointwise1Before parameter.
+ * Describe some properties of an strides and pad parameter.
  *
- * @member {ValueDesc.channelCount1_pointwise1Before} valueDesc
- *   The range of the parameter's all possible values. It is a ValueDesc.channelCount1_pointwise1Before object.
+ * @member {ValueDesc.StridesPad} valueDesc
+ *   The range of the parameter's all possible values. It is a ValueDesc.StridesPad object.
  */
-class channelCount1_pointwise1Before extends Base {
+class StridesPad extends Base {
 
   constructor( paramName ) {
-    super( paramName, ValueDesc.channelCount1_pointwise1Before.Singleton );
+    super( paramName, ValueDesc.StridesPad.Singleton );
   }
 }
 
