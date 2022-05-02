@@ -61,7 +61,8 @@ class Base {
     this.depthwiseFilterWidth_Default = this.depthwiseFilterWidth_Last = blockParams.depthwiseFilterWidth;
   }
 
-  /** Called before step0 is about to be created. Sub-class should override this method to adjust data members.
+  /**
+   * Called before step0 is about to be created. Sub-class should override this method to adjust data members.
    *
    * Step 0.
    *
@@ -74,11 +75,14 @@ class Base {
    */
   configTo_beforeStep0() {}
 
-  /** Called after step0 is created (i.e. before step1, 2, 3, ...). Sub-class should override this method to adjust data members.
+  /**
+   * Called after step0 is created (i.e. before step1, 2, 3, ...). Sub-class should override this method to adjust data members.
    */
   configTo_afterStep0() {}
 
-  /** Called before stepLast is about to be created. Sub-class could override this method to adjust data members. */
+  /**
+   * Called before stepLast is about to be created. Sub-class could override this method to adjust data members.
+   */
   configTo_beforeStepLast() {
     // By default, the stepLast of this block (i.e. at-block-end) may use a different activation function after pointwise2 convolution.
     //
