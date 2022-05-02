@@ -537,7 +537,13 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
       this.pointwise1ChannelCount = 0;
     }
 
+    // In ShuffleNetV2_ByMobileNetV1's head, depthwise always output the same channel count of pointwise1 real output channel count
+    // (which has already been doubled as twice of input0's channel count by PointDepthPoint internally).
+    //
+    this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
+
     // In ShuffleNetV2_ByMobileNetV1's head, pointwise21ChannelCount is always twice of input0's channel count.
+    //
     this.pointwise21ChannelCount = blockParams.sourceChannelCount * 2;
   }
 
