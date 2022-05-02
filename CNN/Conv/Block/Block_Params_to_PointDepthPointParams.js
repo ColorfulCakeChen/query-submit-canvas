@@ -406,7 +406,7 @@ class ShuffleNetV2_ByPointwise22 extends ShuffleNetV2 {
 
   /** @override */
   configTo_afterStep0() {
-    super.configTo_beforeStepLast(); // Step1, 2, 3, ... are almost the same as ShuffleNetV2.
+    super.configTo_afterStep0(); // Step1, 2, 3, ... are almost the same as ShuffleNetV2.
 
     // Except that ShuffleNetV2_ByPointwise22 does not have channel shuffler. The pointwise21 and pointwise22 will do channel shuffling.
     this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
@@ -510,14 +510,13 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 // That is the depthwise needs use ( bHigherHalfDifferent == false ) in this case.
 
 
-//!!! ...unfinished... (2022/05/02)
   /** @override */
   configTo_beforeStep0() {
-    super.configTo_beforeStep0(); // Use same input0, bias, activation, depthwise filter size (as ShuffleNetV2).
+    super.configTo_beforeStep0(); // Use same input0 (height, width, channel count), bias, activation, depthwise filter size (as ShuffleNetV2).
 
     let blockParams = this.blockParams;
 
-    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1;
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH_EXCEPT_DEPTHWISE1; // (-4)
 
     // In ShuffleNetV2_ByMobileNetV1's head, if ( pointwise1ChannelCountRate != 0 ), pointwise1ChannelCount is always the same as input0's
     // channel count. (i.e. pointwise1ChannelCountRate is always viewed as 1.)
@@ -559,26 +558,15 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
 
   /** @override */
   configTo_afterStep0() {
-    let blockParams = this.blockParams;
+    super.configTo_afterStep0(); // Step1, 2, 3, ... are almost the same as ShuffleNetV2.
 
-    this.inputHeight0 = blockParams.outputHeight; // all steps (except step0) inputs half the source image size.
-    this.inputWidth0 = blockParams.outputWidth;
-
-    // The ( input0, input1 ) of all steps (except step0) have the same depth as previous (also step0's) step's ( output0, output1 ).
-    this.channelCount0_pointwise1Before = this.outChannels0;
-    this.channelCount1_pointwise1Before = this.outChannels1; // i.e. TWO_INPUTS (with concatenation, without add-input-to-output).
-
-    this.depthwise_AvgMax_Or_ChannelMultiplier = 1; // All steps (except step0 if NoPointwise1 ShuffleNetV2) will not double the channel count.
-
-    // All steps (except step0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
-    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
-
-    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all steps (except step0) should not keep input tensor.
+    // Except that ShuffleNetV2_ByMobileNetV1 does not have channel shuffler. The pointwise21 will do channel shuffling.
+    this.channelCount1_pointwise1Before = ValueDesc.channelCount1_pointwise1Before.Singleton.Ids.ONE_INPUT_HALF_THROUGH; // (-5)
   }
 
   /** @override */
   channelShuffler_init() {
-    // Do nothing. Because pointwise22 has done channel shuffling.
+    // Do nothing. Because pointwise21 has done channel shuffling.
   }
 
 
