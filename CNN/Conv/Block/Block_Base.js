@@ -371,23 +371,27 @@ class Base {
         + `blockParams.stepCountRequested ( ${blockParams.stepCountRequested} ) must be >= 2.` );
 
     switch ( blockParams.nWhetherShuffleChannel ) {
-      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) 2. MobileNetV2 or MobileNetV1
+      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.NONE: // (0) MobileNetV2 or MobileNetV1
         // ( pointwise1ChannelCountRate == 0 ), will be similar to MobileNetV1.
         // ( pointwise1ChannelCountRate == 1 ), will be similar to MobileNetV2 without expanding.
         // ( pointwise1ChannelCountRate == 2 ), will be similar to MobileNetV2.
         return new Params_to_PointDepthPointParams.MobileNetV2( blockParams );
         break;
 
-      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) 3. ShuffleNetV2
+      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_CHANNEL_SHUFFLER: // (1) ShuffleNetV2
         return new Params_to_PointDepthPointParams.ShuffleNetV2( blockParams );
         break;
 
-      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) 4. ShuffleNetV2_ByPointwise22
+      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_POINTWISE22: // (2) ShuffleNetV2_ByPointwise22
         return new Params_to_PointDepthPointParams.ShuffleNetV2_ByPointwise22( blockParams );
         break;
 
-      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_MOBILE_NET_V1: // (3) 4. ShuffleNetV2_ByMobileNetV1
-        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByPointwise22( blockParams );
+      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_MOBILE_NET_V1: // (3) ShuffleNetV2_ByMobileNetV1
+        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1( blockParams );
+        break;
+
+      case ValueDesc.WhetherShuffleChannel.Singleton.Ids.BY_MOBILE_NET_V1_PAD_VALID: // (4) ShuffleNetV2_ByMobileNetV1
+        return new Params_to_PointDepthPointParams.ShuffleNetV2_ByMobileNetV1_padValid( blockParams );
         break;
 
       default:
