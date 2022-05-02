@@ -494,9 +494,10 @@ class ShuffleNetV2_ByMobileNetV1 extends ShuffleNetV2 {
  *
  * 1. Reason
  *
- * This configuration's reason is that the right-most pixel of depthwise convolution seems wrong when ( strides = 1, pad = "same" )
- * in backend WebGL of some platforms (e.g. mobile phone Moto e40). But the issue does not exist when ( strides = 2, pad = "same" )
- * or ( pad = "valid" ) in those platforms.
+ * Q: Why is this configuration necessary?
+ * A: The right-most pixel of depthwise convolution seems wrong when ( strides = 1, pad = "same" ) in backend WebGL of some
+ *    platforms (e.g. mobile phone Moto e40). But the issue does not exist when ( strides = 2, pad = "same" ) or ( pad = "valid" )
+ *    in those platforms.
  *
  * For achieving ShuffleNetV2 with depthwise padding "valid", ShuffleNetV2_ByMobileNetV1 is necessary because other ShuffleNetV2_ByXxx
  * (with depthwise padding "same") could not concatenate two channel groups whic have different image size (due to padding "valid").
