@@ -325,8 +325,12 @@ class Base {
 
     } catch ( e ) {
       let backendName = tf.getBackend();
-      console.log( `PointDepthPoint_Reference.js: testCorrectness(): backendName=${backendName}, `
-        + `PointDepthPoint, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}` );
+      let msg = `PointDepthPoint_Reference.js: testCorrectness(): backendName=${backendName}, `
+        + `PointDepthPoint, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
+
+      console.log( msg );
+      alert( msg );
+
       throw e;
     }
   }
